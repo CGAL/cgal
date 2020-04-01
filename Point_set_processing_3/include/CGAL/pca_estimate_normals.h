@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -46,7 +37,7 @@
 #include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
+#include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -83,7 +74,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   std::vector<Point> points;
   CGAL::Point_set_processing_3::internal::neighbor_query
     (query, tree, k, neighbor_radius, points);
-  
+
   // performs plane fitting by point-based PCA
   Plane plane;
   linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
@@ -118,7 +109,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
       , advancement (advancement)
       , interrupted (interrupted)
     { }
-    
+
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
@@ -132,7 +123,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 
   };
 #endif // CGAL_LINKED_WITH_TBB
-  
+
 
 } /* namespace internal */
 /// \endcond
@@ -151,9 +142,8 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 
    \pre `k >= 2`
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   and `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
@@ -186,7 +176,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
      \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename NamedParameters
 >
 void
@@ -201,7 +191,7 @@ pca_estimate_normals(
   CGAL_TRACE("Calls pca_estimate_normals()\n");
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
   typedef typename Kernel::FT FT;
@@ -210,8 +200,8 @@ pca_estimate_normals(
                               typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                             "Error: no normal map");
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
@@ -241,7 +231,7 @@ pca_estimate_normals(
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
+  std::vector<Point> kd_tree_points;
   for(it = points.begin(); it != points.end(); it++)
     kd_tree_points.push_back(get(point_map, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -253,13 +243,13 @@ pca_estimate_normals(
   // vectors (already normalized)
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
+                             "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       Point_set_processing_3::internal::Parallel_callback
         parallel_callback (callback, kd_tree_points.size());
-     
+
       std::vector<Vector> normals (kd_tree_points.size (),
                                    CGAL::NULL_VECTOR);
       CGAL::internal::PCA_estimate_normals<Kernel, Tree>
@@ -279,18 +269,18 @@ pca_estimate_normals(
     {
       std::size_t nb = 0;
       for(it = points.begin(); it != points.end(); it++, ++ nb)
-	{
-	  Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
-								     get(point_map,*it),
-								     tree,
-								     k, neighbor_radius);
+        {
+          Vector normal = internal::pca_estimate_normal<Kernel,Tree>(
+                                                                     get(point_map,*it),
+                                                                     tree,
+                                                                     k, neighbor_radius);
 
-	  put(normal_map, *it, normal); // normal_map[it] = normal
+          put(normal_map, *it, normal); // normal_map[it] = normal
           if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
             break;
-	}
+        }
     }
-   
+
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");
 }
@@ -298,7 +288,7 @@ pca_estimate_normals(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename ConcurrencyTag,
-	  typename PointRange
+          typename PointRange
 >
 void
 pca_estimate_normals(

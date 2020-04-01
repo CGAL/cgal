@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Andreas Fabri
 
@@ -43,8 +34,63 @@
 
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
 #endif
+
+namespace internal_tbb
+{
+//classic pointer{
+//normal
+template<typename T>
+void set_weighted_circumcenter(T* &t, T* value)
+{
+  t = value;
+}
+
+//overload for nullptr
+template<typename T>
+void set_weighted_circumcenter(T* &t, std::nullptr_t)
+{
+  t = nullptr;
+}
+template<typename T>
+bool compare_weighted_circumcenter(T* t)
+{
+  return t == nullptr;
+}
+
+template<typename T>
+void delete_circumcenter(T* &t )
+{
+  delete t;
+}
+//} atomic {
+//normal
+template<typename T>
+void set_weighted_circumcenter(std::atomic<T*>& t, T* value)
+{
+  t.load() = value;
+}
+
+//nullptr
+template<typename T>
+void set_weighted_circumcenter(std::atomic<T*>& t, std::nullptr_t)
+{
+  t = nullptr;
+}
+
+template<typename T>
+bool compare_weighted_circumcenter(std::atomic<T*>& t)
+{
+  return t.load() == nullptr;
+}
+template<typename T>
+void delete_circumcenter(std::atomic<T*>& t)
+{
+  delete t.load();
+}
+//}
+} //end internal_tbb
 
 namespace CGAL {
 
@@ -61,8 +107,9 @@ class Compact_mesh_cell_base_3_base
 protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0)
-    , weighted_circumcenter_(nullptr)
-  {}
+  {
+    internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
+  }
 
 public:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -161,7 +208,8 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits | char(1 << facet), current_bits) != current_bits)
+
+    while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)))
     {
       current_bits = bits_;
     }
@@ -174,7 +222,7 @@ public:
     char current_bits = bits_;
     char mask = char(15 & ~(1 << facet));
     char wanted_value = current_bits & mask;
-    while (bits_.compare_and_swap(wanted_value, current_bits) != current_bits)
+    while (!bits_.compare_exchange_weak(current_bits, wanted_value))
     {
       current_bits = bits_;
     }
@@ -191,18 +239,19 @@ public:
   /// this function "deletes" cc
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    if (weighted_circumcenter_.compare_and_swap(cc, nullptr) != nullptr)
+    Point_3* base_test = nullptr;
+    if (!weighted_circumcenter_.compare_exchange_strong(base_test, cc))
       delete cc;
   }
 
 private:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
-  tbb::atomic<char> bits_;
+  std::atomic<char> bits_;
 
 protected:
-  mutable tbb::atomic<Point_3*> weighted_circumcenter_;
+  mutable std::atomic<Point_3*> weighted_circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB
@@ -253,9 +302,9 @@ public:
 public:
   void invalidate_weighted_circumcenter_cache() const
   {
-    if (weighted_circumcenter_) {
-      delete weighted_circumcenter_;
-      weighted_circumcenter_ = nullptr;
+    if (!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)) {
+      internal_tbb::delete_circumcenter(weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
   }
 
@@ -270,7 +319,7 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_()  
+    , subdomain_index_()
     , sliver_cache_validity_(false)
   {}
 
@@ -337,8 +386,9 @@ public:
 
   ~Compact_mesh_cell_base_3()
   {
-    if(weighted_circumcenter_ != nullptr){
-      delete weighted_circumcenter_;
+    if(!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)){
+      internal_tbb::delete_circumcenter(weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
   }
 
@@ -606,14 +656,14 @@ public:
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
   void set_next_intrusive(Cell_handle c)
-  { 
-    next_intrusive_ = c; 
+  {
+    next_intrusive_ = c;
   }
 
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Cell_handle c)
-  { 
-    previous_intrusive_ = c; 
+  {
+    previous_intrusive_ = c;
   }
 #endif // CGAL_INTRUSIVE_LIST
 

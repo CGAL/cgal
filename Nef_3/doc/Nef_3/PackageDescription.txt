@@ -3,6 +3,13 @@
 /// \defgroup PkgNef3IOFunctions I/O Functions
 /// \ingroup PkgNef3Ref
 
+/*! Draw.
+  \code
+  #include <CGAL/draw_nef_3.h>
+  \endcode
+*/
+/// \defgroup PkgDrawNef3 Draw a Nef Polyhedron
+/// \ingroup PkgNef3Ref
 
 /*!
 \addtogroup PkgNef3Ref
@@ -63,6 +70,9 @@ a simple OpenGL visualization for debugging and illustrations.
 - `CGAL::convert_nef_polyhedron_to_polygon_soup()`
 - \link PkgNef3IOFunctions `CGAL::operator<<()` \endlink
 - \link PkgNef3IOFunctions `CGAL::operator>>()` \endlink
+
+\cgalCRPSection{Draw a Nef Polyhedron}
+- \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
 
 */
 

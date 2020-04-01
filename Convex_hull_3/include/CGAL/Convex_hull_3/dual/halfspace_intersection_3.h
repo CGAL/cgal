@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jocelyn Meyron
@@ -61,7 +52,7 @@ namespace CGAL
 
               // Typedefs for dual
 
-              typedef typename boost::graph_traits<Polyhedron_dual>::face_descriptor 
+              typedef typename boost::graph_traits<Polyhedron_dual>::face_descriptor
                 Facet_const_handle;
               typedef typename boost::graph_traits<Polyhedron_dual>::vertex_descriptor
                 Vertex_const_descriptor;
@@ -80,12 +71,12 @@ namespace CGAL
                                                        Line_3,
                                                        Plane_3 > > result_inter;
 
-                           
+
               boost::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
               size_t n = 0;
 
               // First, computing the primal vertices
-              for(Facet_const_handle fd : faces(_dual)){               
+              for(Facet_const_handle fd : faces(_dual)){
                 Halfedge_const_descriptor h = fd->halfedge();
                 // Build the dual plane corresponding to the current facet
                 Plane_3 p1 = h->vertex()->point();
@@ -143,7 +134,7 @@ namespace CGAL
             // Compute the equations of the facets of the polyhedron
             typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
             typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-            
+
             typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
             for(face_descriptor fd : faces(P))

@@ -1,20 +1,11 @@
 // Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias
@@ -33,7 +24,7 @@ namespace internal {
 /*1 1*/template <class FT>
 /*1 1*/Comparison_result
 compare_11_11( const FT& A1, const FT& B1,
-	       const FT& A2, const FT& B2 )
+               const FT& A2, const FT& B2 )
 {
   // Compares roots of (A1 X + B1) and (A2 X + B2).
   CGAL_precondition( A1 > 0 & A2 > 0 );
@@ -65,7 +56,7 @@ compare_21_11(const FT& A2, const FT& B2, const FT& C2,
 /*2 2*/template <class FT>
 /*2 1*/Comparison_result
 compare_22_21( const FT& A1p, const FT& B1p, const FT& C1p,
-	       const FT& A2p, const FT& B2p, const FT& C2p )
+               const FT& A2p, const FT& B2p, const FT& C2p )
 {
     // Compares the larger root of (A1 X^2 + B1 X + C1)
     //      to the smaller root of (A2 X^2 + B2 X + C2)
@@ -107,7 +98,7 @@ compare_22_21( const FT& A1p, const FT& B1p, const FT& C1p,
 /*2 2*/template <class FT> inline
 /*1 2*/Comparison_result
 compare_22_12( const FT& A1, const FT& B1, const FT& C1,
-	       const FT& A2, const FT& B2, const FT& C2 )
+               const FT& A2, const FT& B2, const FT& C2 )
 {
     // _22_12 boils down to _22_21 by :
     // - swapping the two polynomials
@@ -118,7 +109,7 @@ compare_22_12( const FT& A1, const FT& B1, const FT& C1,
 /*2 2*/template <class FT>
 /*1 1*/Comparison_result
 compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
-	       const FT& A2p, const FT& B2p, const FT& C2p )
+               const FT& A2p, const FT& B2p, const FT& C2p )
 {
   // Compares the smaller root of (A1 X^2 + B1 X + C1)
   //       to the smaller root of (A2 X^2 + B2 X + C2)
@@ -180,7 +171,7 @@ compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
 /*2 2*/template <class FT> inline
 /*2 2*/Comparison_result
 compare_22_22( const FT& A1, const FT& B1, const FT& C1,
-	       const FT& A2, const FT& B2, const FT& C2 )
+               const FT& A2, const FT& B2, const FT& C2 )
 {
   // _22_22 boils down to _22_11 by :
   // - changing the sign of the two roots (X <-> -X in the polynomial)
@@ -198,7 +189,7 @@ inline FT calcJ(const FT& A1, const FT& B1, const FT& A2, const FT& B2)
 
 template <class FT>
 inline FT calcK(const FT& A1, const FT& B1, const FT& C1,
-		const FT& A2, const FT& B2, const FT& C2)
+                const FT& A2, const FT& B2, const FT& C2)
 { return C1*A2+A1*C2-2*B1*B2; }
 
 template <class FT>
@@ -207,8 +198,8 @@ inline FT calcJp(const FT& B1, const FT& C1, const FT& B2, const FT& C2)
 
 template <class FT>
 inline FT calcP4(const FT& J,  const FT& Jp,
-		 const FT& A1, const FT& C1,
-		 const FT& A2, const FT& C2)
+                 const FT& A1, const FT& C1,
+                 const FT& A2, const FT& C2)
 { return CGAL_NTS square(A1*C2-C1*A2)-4*J*Jp;}
 
 template <class FT>

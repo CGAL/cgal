@@ -1,20 +1,11 @@
 // Copyright (c) 2001-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -86,7 +77,7 @@ std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
 
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
-  
+
 } //namespace INTERN_MP_FLOAT
 
 std::pair<double, int>
@@ -163,12 +154,12 @@ public:
   {
     const unsigned int sizeof_limb=8*sizeof(limb);
     const limb2 mask = 0x0000ffff;
-   
-    //Note: For Integer type, if the destination type is signed, the value is unchanged 
+
+    //Note: For Integer type, if the destination type is signed, the value is unchanged
     //if it can be represented in the destination type)
     low = static_cast<limb>(l & mask); //extract low bits from l
     high= static_cast<limb>((l - low) >> sizeof_limb); //extract high bits from l
-    
+
     CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
   }
 
@@ -318,7 +309,7 @@ public:
   }
 
   // Accessory function that finds the least significant bit set (its position).
-  static unsigned short 
+  static unsigned short
   lsb(limb l)
   {
     unsigned short nb = 0;
@@ -410,7 +401,7 @@ approximate_division(const MP_Float &n, const MP_Float &d);
 template <> class Algebraic_structure_traits< MP_Float >
   : public Algebraic_structure_traits_base< MP_Float,
                                             Unique_factorization_domain_tag
-	    // with some work on mod/div it could be Euclidean_ring_tag
+            // with some work on mod/div it could be Euclidean_ring_tag
                                           >  {
   public:
 
@@ -471,19 +462,19 @@ template <> class Algebraic_structure_traits< MP_Float >
 
   typedef INTERN_AST::Mod_per_operator< Type > Mod;
 // Default implementation of Divides functor for unique factorization domains
-  // x divides y if gcd(y,x) equals x up to inverses 
-  class Divides 
+  // x divides y if gcd(y,x) equals x up to inverses
+  class Divides
     : public CGAL::cpp98::binary_function<Type,Type,bool>{
   public:
-    bool operator()( const Type& x,  const Type& y) const {  
+    bool operator()( const Type& x,  const Type& y) const {
       return internal::division(y,x).second == 0 ;
     }
-    // second operator computing q = x/y 
-    bool operator()( const Type& x,  const Type& y, Type& q) const {    
+    // second operator computing q = x/y
+    bool operator()( const Type& x,  const Type& y, Type& q) const {
       std::pair<Type,Type> qr = internal::division(y,x);
       q=qr.first;
       return qr.second == 0;
-      
+
     }
     CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type , bool)
   };
@@ -534,7 +525,7 @@ template <> class Real_embeddable_traits< MP_Float >
 namespace INTERN_MP_FLOAT{
 
 //Sqrt_extension internally uses Algebraic_structure_traits
-template <class ACDE_TAG_, class FP_TAG>  
+template <class ACDE_TAG_, class FP_TAG>
 double
 to_double(const Sqrt_extension<MP_Float,MP_Float,ACDE_TAG_,FP_TAG> &x)
 {
@@ -569,7 +560,7 @@ to_double(const Sqrt_extension<MP_Float,MP_Float,ACDE_TAG_,FP_TAG> &x)
   std::pair<double, int> v3 = to_double_exp(d3);
   double scale3 = std::ldexp(1.0, n3.second - v3.second);
 
-  return ((n1.first / v1.first) * scale1) + 
+  return ((n1.first / v1.first) * scale1) +
          ((n2.first / v2.first) * scale2) *
          std::sqrt((n3.first / v3.first) * scale3);
 }
@@ -814,11 +805,11 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/) {
 #if 0
   if(is_zero(a)) {
-  	simplify_quotient(b,c); return;
+          simplify_quotient(b,c); return;
   } else if(is_zero(b)) {
-  	simplify_quotient(a,c); return;
+          simplify_quotient(a,c); return;
   } else if(is_zero(c)) {
-  	simplify_quotient(a,b); return;
+          simplify_quotient(a,b); return;
   }
   MP_Float::exponent_type va = a.exp +
     (MP_Float::exponent_type) a.v.size();
@@ -869,10 +860,10 @@ public:
 };
 
 inline MP_Float min BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_Float& y){
-  return (x<=y)?x:y; 
+  return (x<=y)?x:y;
 }
 inline MP_Float max BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_Float& y){
-  return (x>=y)?x:y; 
+  return (x>=y)?x:y;
 }
 
 

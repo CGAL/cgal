@@ -9,8 +9,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <boost/foreach.hpp>
-
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -24,7 +22,7 @@ int main()
   typedef std::vector<Point> MultiPoint;
   typedef std::vector<Linestring> MultiLinestring;
   typedef std::vector<Polygon> MultiPolygon;
-  
+
   Point p;
   {
     std::ifstream in("data/point.wkt");

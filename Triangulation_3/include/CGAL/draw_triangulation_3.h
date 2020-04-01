@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -31,7 +22,7 @@
 
 namespace CGAL
 {
-  
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorT3
 {
@@ -48,7 +39,7 @@ struct DefaultColorFunctorT3
   }
 };
 
-// Viewer class for T3 
+// Viewer class for T3
 template<class T3, class ColorFunctor>
 class SimpleTriangulation3ViewerQt : public Basic_viewer_qt
 {
@@ -58,7 +49,7 @@ class SimpleTriangulation3ViewerQt : public Basic_viewer_qt
   typedef typename T3::Finite_facets_iterator Facet_const_handle;
   typedef typename T3::Cell_handle            Cell_handle;
   typedef typename T3::Point                  Point;
- 
+
 public:
   /// Construct the viewer.
   /// @param at3 the t3 to view
@@ -71,7 +62,7 @@ public:
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false), 
+    Base(parent, title, true, true, true, false, false),
     t3(at3),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -88,7 +79,7 @@ protected:
     add_point_in_face(fh->first->vertex((fh->second+1)%4)->point());
     add_point_in_face(fh->first->vertex((fh->second+2)%4)->point());
     add_point_in_face(fh->first->vertex((fh->second+3)%4)->point());
-    
+
     face_end();
   }
 
@@ -109,16 +100,16 @@ protected:
     {
       for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin();
            it!=t3.finite_facets_end(); ++it)
-      { compute_face(it); } 
+      { compute_face(it); }
     }
-    
+
     for (typename T3::Finite_edges_iterator it=t3.finite_edges_begin();
          it!=t3.finite_edges_end(); ++it)
-    { compute_edge(it); } 
+    { compute_edge(it); }
 
     for (typename T3::Finite_vertices_iterator it=t3.finite_vertices_begin();
          it!=t3.finite_vertices_end(); ++it)
-    { compute_vertex(it); } 
+    { compute_vertex(it); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -126,7 +117,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -156,7 +147,7 @@ void draw(const CGAL_T3_TYPE& at3,
 #else
   bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-  
+
   if (!cgal_test_suite)
   {
     int argc=1;

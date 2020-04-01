@@ -15,13 +15,13 @@ typedef CGAL::Constrained_triangulation_plus_2<CDT> CDTp2;
 template <class CDT>
 void test() {
   CDT cdt;
-  cdt.insert_constraint(Point_2(  48.0923419883269,   299.7232779774145  ), 
+  cdt.insert_constraint(Point_2(  48.0923419883269,   299.7232779774145  ),
                         Point_2(  66.05373710316852,  434.231770798343   ));
-  cdt.insert_constraint(Point_2(  22.476834473530154, 110.79888079041085 ), 
+  cdt.insert_constraint(Point_2(  22.476834473530154, 110.79888079041085 ),
                         Point_2(  36.24523901070941,  304.88274418524736 ));
-  cdt.insert_constraint(Point_2(  23.319798016622762, 122.68156630438044 ), 
+  cdt.insert_constraint(Point_2(  23.319798016622762, 122.68156630438044 ),
                         Point_2(  36.24523901070941,  304.88274418524736 ));
-  cdt.insert_constraint(Point_2( 193.08640258787054,  291.60426613216123 ), 
+  cdt.insert_constraint(Point_2( 193.08640258787054,  291.60426613216123 ),
                         Point_2(-106.13354405627629,  310.30717824826723 ));
   // The insertion of the last constraint can lead to an infinite loop,
   // that actually ends with a segfault once the stack overflows.

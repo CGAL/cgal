@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_POINT_3_H
@@ -33,7 +24,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
-//#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h> 
+//#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
 // fixme, devrait
 // appeler fonction de global_functions_on_circular_arcs
 
@@ -64,10 +55,10 @@ class Circular_arc_point_3
 
   Base base;
 
-public: 
+public:
 
   Circular_arc_point_3() {}
-	
+
   Circular_arc_point_3(const Root_of_2 & x,
                        const Root_of_2 & y,
                        const Root_of_2 & z)
@@ -79,7 +70,7 @@ public:
   Circular_arc_point_3(const Point_3 & p)
   : base(p.x(),p.y(),p.z()){}
 
-  Circular_arc_point_3(const Sphere_3 &s1, 
+  Circular_arc_point_3(const Sphere_3 &s1,
                        const Sphere_3 &s2,
                        const Sphere_3 &s3,
                        const bool less_xyz = true) {
@@ -99,10 +90,10 @@ public:
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
-    } 
+    }
   }
 
-  Circular_arc_point_3(const Plane_3 &p, 
+  Circular_arc_point_3(const Plane_3 &p,
                        const Sphere_3 &s1,
                        const Sphere_3 &s2,
                        const bool less_xyz = true) {
@@ -122,10 +113,10 @@ public:
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
       CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
-    } 
+    }
   }
 
-  Circular_arc_point_3(const Plane_3 &p1, 
+  Circular_arc_point_3(const Plane_3 &p1,
                        const Plane_3 &p2,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
@@ -137,13 +128,13 @@ public:
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
-      CGAL_kernel_precondition(pair!=nullptr);      
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     }
   }
@@ -159,13 +150,13 @@ public:
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     }
   }
@@ -181,13 +172,13 @@ public:
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     }
   }
@@ -203,13 +194,13 @@ public:
       // the intersection must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     } else {
       // the intersections must be a point
       const std::pair<typename SK::Circular_arc_point_3, unsigned>* pair=
         boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[less_xyz?0:1]);
-      CGAL_kernel_precondition(pair!=nullptr);            
+      CGAL_kernel_precondition(pair!=nullptr);
       *this = pair->first.rep();
     }
   }
@@ -217,7 +208,7 @@ public:
   const Root_of_2 & x() const { return get_pointee_or_identity(base).x(); }
   const Root_of_2 & y() const { return get_pointee_or_identity(base).y(); }
   const Root_of_2 & z() const { return get_pointee_or_identity(base).z(); }
-	  
+
   const Root_for_spheres_2_3 & coordinates() const { return get_pointee_or_identity(base); }
 
   const CGAL::Bbox_3 bbox() const {
@@ -248,7 +239,7 @@ Circular_arc_point_3<SK>::operator!=(const Circular_arc_point_3<SK> &t) const
 {
   return !(*this == t);
 }
-    
+
 template < typename SK >
 std::ostream &
 print(std::ostream & os, const Circular_arc_point_3<SK> &p)

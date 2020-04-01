@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -43,9 +33,9 @@
     @param Zcosine 3 dimensional array containing Z axis cosine directions
     @return a negative value in case of failure */
 int readMincHeader(_image *im, const char* name,
-		   double *startx, double *starty, double *startz,
-		   double *stepx, double *stepy, double *stepz,
-		   double *Xcosine, double *Ycosine, double *Zcosine);
+                   double *startx, double *starty, double *startz,
+                   double *stepx, double *stepy, double *stepz,
+                   double *Xcosine, double *Ycosine, double *Zcosine);
 
 /** write an image in a minc file
     @param im image structure
@@ -63,10 +53,10 @@ int readMincHeader(_image *im, const char* name,
     @param range 2 dimensional array containing min an max image intensity
     @return a negative value in case of failure */
 int writeMincFile( const _image* im, const char *name, const char *sourceName,
-		   double startx, double starty, double startz,
-		   double stepx, double stepy, double stepz,
-		   const double *Xcosine, const double *Ycosine,
-		   const double *Zcosine, const double *range );
+                   double startx, double starty, double startz,
+                   double stepx, double stepy, double stepz,
+                   const double *Xcosine, const double *Ycosine,
+                   const double *Zcosine, const double *range );
 
 
 #endif

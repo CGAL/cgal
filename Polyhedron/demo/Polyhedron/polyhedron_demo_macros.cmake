@@ -30,7 +30,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     cgal_add_compilation_test(${plugin_name})
     if(BUILD_TESTING)
       set_property(TEST compilation_of__${plugin_name}
-        APPEND PROPERTY DEPENDS compilation_of__test_items)
+        APPEND PROPERTY DEPENDS compilation_of__all_scene_items)
     endif()
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt

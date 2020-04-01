@@ -32,17 +32,17 @@ int main()
 {
   // A start-shaped polygon, oriented counter-clockwise as required for outer contours.
   Point_2 pts[] = { Point_2(0,0),
-		    Point_2(700,0),
-		    Point_2(700,600),
-		    Point_2(0,600),
-		    Point_2(0,300),
-		    Point_2(300,300),
-		    Point_2(300,400),
-		    Point_2(600,400),
-		    Point_2(600,100),
-		    Point_2(300,100),
-		    Point_2(300,200),
-		    Point_2(0,200)
+                    Point_2(700,0),
+                    Point_2(700,600),
+                    Point_2(0,600),
+                    Point_2(0,300),
+                    Point_2(300,300),
+                    Point_2(300,400),
+                    Point_2(600,400),
+                    Point_2(600,100),
+                    Point_2(300,100),
+                    Point_2(300,200),
+                    Point_2(0,200)
                   } ;
 
   std::vector<Point_2> star(pts,pts+12);
@@ -82,7 +82,7 @@ int main()
       OffsetBuilder ob(*ss);
 
       ob.construct_offset_contours(offset, std::back_inserter(offset_contours));
-      
+
       if ( offset_contours.size()!=3 )
       {
         std::cerr << "ERROR: invalid number of componant!\n";

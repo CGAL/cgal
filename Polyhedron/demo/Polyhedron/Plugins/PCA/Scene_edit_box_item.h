@@ -43,7 +43,7 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
     void drawSpheres(CGAL::Three::Viewer_interface* viewer, const QMatrix4x4 f_matrix) const;
     void invalidateOpenGLBuffers();
-    
+
     //      5-----6
     //  .   |  .  |
     // 4------7   |

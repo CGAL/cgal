@@ -1,20 +1,11 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -43,14 +34,14 @@ namespace internal {
  *
  *  For details, see: Gonzalez-Vega,Lombardi,Recio,Roy: Determinants and Real
  *  Roots of Univariate Polynomials. Texts and Monographs in Symbolic
- *  Computation. Springer (1999) 300-316. 
+ *  Computation. Springer (1999) 300-316.
  *  Only the special case Q=1 is implemented
  */
   template<typename Polynomial_traits_d,typename OutputIterator>
     OutputIterator prs_principal_sturm_habicht_sequence
   (typename Polynomial_traits_d::Polynomial_d P,
      OutputIterator out) {
-      
+
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Get_coefficient coeff;
     typename Polynomial_traits_d::Degree degree;
@@ -69,7 +60,7 @@ namespace internal {
     }
     return out;
 
-  } 
+  }
 
   /*!
    *  \brief compute the leading coefficients of the Sturm-Habicht sequence of
@@ -81,7 +72,7 @@ namespace internal {
    *
    *  For details, see: Gonzalez-Vega,Lombardi,Recio,Roy: Determinants and Real
    *  Roots of Univariate Polynomials. Texts and Monographs in Symbolic
-   *  Computation. Springer (1999) 300-316. 
+   *  Computation. Springer (1999) 300-316.
    *  Only the special case Q=1 is implemented
    */
   template<typename Polynomial_traits_d,typename OutputIterator>
@@ -96,7 +87,7 @@ namespace internal {
 
     Polynomial Px = diff(P);
 
-    CGAL::internal::Simple_matrix<NT> M 
+    CGAL::internal::Simple_matrix<NT> M
         = CGAL::internal::polynomial_subresultant_matrix<Polynomial_traits_d>
             (P,Px,1);
     int n = static_cast<int>(M.row_dimension());
@@ -109,23 +100,23 @@ namespace internal {
     }
     *out++=lcoeff(Px);
     *out++=lcoeff(P);
-    
+
     return out;
 
-  } 
+  }
 
 
-  /*! 
+  /*!
    *  \brief compute the principal and coprincipal Sturm-Habicht sequence
    */
   template<typename Polynomial_traits_d,
            typename OutputIterator1,
-           typename OutputIterator2> 
+           typename OutputIterator2>
     void prs_first_two_sturm_habicht_coefficients
       (typename Polynomial_traits_d::Polynomial_d P,
        OutputIterator1 pstha,
        OutputIterator2 copstha) {
-    
+
     typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Get_coefficient coeff;
@@ -161,7 +152,7 @@ namespace internal {
    */
   template<typename Polynomial_traits_d,
            typename OutputIterator1,
-           typename OutputIterator2> 
+           typename OutputIterator2>
     void bezout_first_two_sturm_habicht_coefficients
       (typename Polynomial_traits_d::Polynomial_d P,
        OutputIterator1 pstha,
@@ -175,7 +166,7 @@ namespace internal {
     typename Polynomial_traits_d::Differentiate diff;
 
     Polynomial Px=diff(P);
-    CGAL::internal::Simple_matrix<NT> M 
+    CGAL::internal::Simple_matrix<NT> M
         = CGAL::internal::polynomial_subresultant_matrix<Polynomial_traits_d>
             (P,Px,2);
     int n = static_cast<int>(M.row_dimension());
@@ -199,43 +190,43 @@ namespace internal {
     *copstha++ = coeff(P,degree(P)-1);
   }
 
-  
+
     // the general function for CGAL::Integral_domain_without_division_tag
   template < typename Polynomial_traits_d,
-             typename OutputIterator1, 
+             typename OutputIterator1,
              typename OutputIterator2 > inline
-      void 
+      void
       first_two_sturm_habicht_coefficients_
-        (typename Polynomial_traits_d::Polynomial_d A, 
+        (typename Polynomial_traits_d::Polynomial_d A,
          OutputIterator1 pstha,
          OutputIterator2 copstha,
          CGAL::Integral_domain_without_division_tag){
 
         bezout_first_two_sturm_habicht_coefficients<Polynomial_traits_d>
             (A,pstha,copstha);
-  
+
     }
 
     // the general function for CGAL::Integral_domain_tag
     template < typename Polynomial_traits_d,
-               typename OutputIterator1, 
+               typename OutputIterator1,
                typename OutputIterator2 > inline
-      void 
+      void
       first_two_sturm_habicht_coefficients_
-        (typename Polynomial_traits_d::Polynomial_d A, 
+        (typename Polynomial_traits_d::Polynomial_d A,
          OutputIterator1 pstha,
          OutputIterator2 copstha,
          CGAL::Integral_domain_tag) {
 
         return prs_first_two_sturm_habicht_coefficients<Polynomial_traits_d>
             (A,pstha,copstha);
-  
+
     }
-    
+
     template < typename Polynomial_traits_d,
-               typename OutputIterator1, 
+               typename OutputIterator1,
                typename OutputIterator2 > inline
-      void 
+      void
       first_two_sturm_habicht_coefficients_
         (typename Polynomial_traits_d::Polynomial_d A,
          OutputIterator1 pstha,
@@ -243,33 +234,33 @@ namespace internal {
 
         typedef typename Polynomial_traits_d::Coefficient_type NT;
 
-        typedef typename 
-            CGAL::Algebraic_structure_traits<NT>::Algebraic_category 
+        typedef typename
+            CGAL::Algebraic_structure_traits<NT>::Algebraic_category
             Algebraic_category;
         first_two_sturm_habicht_coefficients_<Polynomial_traits_d>
             (A,pstha,copstha,Algebraic_category());
     }
 
     // the general function for CGAL::Integral_domain_without_division_tag
-    template <typename Polynomial_traits_d,typename OutputIterator> inline 
-      OutputIterator 
+    template <typename Polynomial_traits_d,typename OutputIterator> inline
+      OutputIterator
       principal_sturm_habicht_sequence_
-        (typename Polynomial_traits_d::Polynomial_d A, 
+        (typename Polynomial_traits_d::Polynomial_d A,
          OutputIterator out,
          CGAL::Integral_domain_without_division_tag) {
-      
+
         return bezout_principal_sturm_habicht_sequence<Polynomial_traits_d>
             (A,out);
     }
-      
+
     // the specialization for CGAL::Integral_domain_tag
     template <typename Polynomial_traits_d,typename OutputIterator> inline
       OutputIterator
       principal_sturm_habicht_sequence_
-        (typename Polynomial_traits_d::Polynomial_d A, 
+        (typename Polynomial_traits_d::Polynomial_d A,
          OutputIterator out,
          CGAL::Integral_domain_tag) {
-    
+
       return prs_principal_sturm_habicht_sequence<Polynomial_traits_d>(A,out);
     }
 
@@ -277,59 +268,59 @@ namespace internal {
       OutputIterator principal_sturm_habicht_sequence_
         (typename Polynomial_traits_d::Polynomial_d A,
          OutputIterator out) {
-        
+
       typedef typename Polynomial_traits_d::Coefficient_type NT;
-        
-      typedef typename 
-          CGAL::Algebraic_structure_traits<NT>::Algebraic_category 
+
+      typedef typename
+          CGAL::Algebraic_structure_traits<NT>::Algebraic_category
           Algebraic_category;
       return principal_sturm_habicht_sequence_<Polynomial_traits_d>
-          (A,out,Algebraic_category());  
+          (A,out,Algebraic_category());
     }
 
 
-  /*! 
+  /*!
    *  \brief computes the first two coefficients of each polynomial of
    *  the Sturm-Habicht sequence.
    *
    * This function is needed in Curve_analysis_2 for certain genericity checks
    */
   template < typename Polynomial_traits_d,
-             typename OutputIterator1, 
+             typename OutputIterator1,
              typename OutputIterator2 > inline
     void first_two_sturm_habicht_coefficients
-      (typename Polynomial_traits_d::Polynomial_d A, 
+      (typename Polynomial_traits_d::Polynomial_d A,
        OutputIterator1 pstha,
        OutputIterator2 copstha){
-      
+
       return CGAL::internal::first_two_sturm_habicht_coefficients_
           <Polynomial_traits_d> (A,pstha,copstha);
   }
 
 
-    
 
-  /*! 
+
+  /*!
    *  \brief compute the sequence of
    *  principal Sturm-Habicht coefficients
    */
   template <typename Polynomial_traits_d,typename OutputIterator> inline
     OutputIterator
     principal_sturm_habicht_sequence
-      (typename Polynomial_traits_d::Polynomial_d A, 
+      (typename Polynomial_traits_d::Polynomial_d A,
        OutputIterator out){
-      
+
       return CGAL::internal::principal_sturm_habicht_sequence_
           <Polynomial_traits_d>(A,out);
   }
-  
 
 
-  /*! 
+
+  /*!
    *  \brief compute the Sturm-Habicht sequence
    */
   template<typename Polynomial_traits_d,typename OutputIterator> OutputIterator
-    sturm_habicht_sequence(typename Polynomial_traits_d::Polynomial_d P, 
+    sturm_habicht_sequence(typename Polynomial_traits_d::Polynomial_d P,
                            OutputIterator out) {
     typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typename Polynomial_traits_d::Degree degree;
@@ -340,7 +331,7 @@ namespace internal {
     Polynomial P_x = diff(P);
 
     std::vector<Polynomial> stha;
-    
+
     CGAL::internal::polynomial_subresultants<Polynomial_traits_d>
         (P,P_x,std::back_inserter(stha));
     stha.push_back(P);
@@ -354,17 +345,17 @@ namespace internal {
         *out++ = -stha[i];
       }
     }
-    
+
     return out;
   }
 
-  /*! 
+  /*!
    *  \brief compute the Sturm-Habicht sequence with cofactors
    */
 template<typename Polynomial_traits_d,
     typename OutputIterator1,
     typename OutputIterator2,
-    typename OutputIterator3> 
+    typename OutputIterator3>
     OutputIterator1
     sturm_habicht_sequence_with_cofactors
       (typename Polynomial_traits_d::Polynomial_d P,
@@ -382,7 +373,7 @@ template<typename Polynomial_traits_d,
     Polynomial P_x = diff(P);
 
     std::vector<Polynomial> stha,co_f,co_fx;
-    
+
     CGAL::internal::polynomial_subresultants_with_cofactors<Polynomial_traits_d>
         (P,P_x,
          std::back_inserter(stha),
@@ -406,7 +397,7 @@ template<typename Polynomial_traits_d,
         *cofx_out++ = -co_fx[i];
       }
     }
-    
+
     return stha_out;
   }
 
@@ -414,10 +405,10 @@ template<typename Polynomial_traits_d,
 
 
 
-      
 
-  /*! 
-   *  \brief returns the number of roots of a polynomial with given 
+
+  /*!
+   *  \brief returns the number of roots of a polynomial with given
    *  principal Sturm-Habicht sequence (counted without multiplicity)
    */
   template<typename InputIterator>
@@ -431,7 +422,7 @@ template<typename Polynomial_traits_d,
     CGAL::Sign curr_sign;
     int k;
     InputIterator el=start;
-    
+
     //std::cout << "Sign of." << (*el) << std::endl;
 
     curr_sign=CGAL::sign(*el);
@@ -452,29 +443,29 @@ template<typename Polynomial_traits_d,
       el++;
 
       if(curr_sign==CGAL::ZERO) {
-	k++;
+        k++;
       }
       else {
-	if(k%2==0) { // k is even
-	  k=k/2;
-	  int pm_one = (curr_sign==last_non_zero ? 1 : -1);
-	  pm_one = (k%2==1) ? -pm_one : pm_one;
-	  m+=pm_one;
-	}
-	k=0;
-	last_non_zero=curr_sign;
+        if(k%2==0) { // k is even
+          k=k/2;
+          int pm_one = (curr_sign==last_non_zero ? 1 : -1);
+          pm_one = (k%2==1) ? -pm_one : pm_one;
+          m+=pm_one;
+        }
+        k=0;
+        last_non_zero=curr_sign;
       }
-	  
+
     }
     return m;
   }
 
-  /*! 
-   *  \brief returns the number of roots of a polynomial 
+  /*!
+   *  \brief returns the number of roots of a polynomial
    */
   template<typename Polynomial_d>
     int number_of_real_roots(Polynomial_d f) {
-      
+
       typedef CGAL::Polynomial_traits_d<Polynomial_d> Poly_traits_d;
       typedef typename Poly_traits_d::Coefficient_type Coeff;
       std::vector<Coeff> stha;

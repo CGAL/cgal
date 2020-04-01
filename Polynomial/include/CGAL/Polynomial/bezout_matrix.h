@@ -1,19 +1,10 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer
@@ -42,14 +33,14 @@ namespace internal {
 /*! \ingroup CGAL_resultant_matrix
  *  \brief construct hybrid Bezout matrix of two polynomials
  *
- *  If \c sub=0 ,  this function returns the hybrid Bezout matrix 
+ *  If \c sub=0 ,  this function returns the hybrid Bezout matrix
  *  of \c f and \c g.
  *  The hybrid Bezout matrix of two polynomials \e f and \e g
  *  (seen as polynomials in one variable) is a
  *  square matrix of size max(deg(<I>f</I>), deg(<I>g</I>)) whose entries
  *  are expressions in the polynomials' coefficients.
  *  Its determinant is the resultant of \e f and \e g, maybe up to sign.
- *  The function computes the same matrix as the Maple command 
+ *  The function computes the same matrix as the Maple command
  *  <I>BezoutMatrix</I>.
  *
  *  If \c sub>0 , this function returns the matrix obtained by chopping
@@ -70,8 +61,8 @@ namespace internal {
  */
 template <typename Polynomial_traits_d>
 typename internal::Simple_matrix< typename Polynomial_traits_d::Coefficient_type >
-hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f, 
-                     typename Polynomial_traits_d::Polynomial_d g, 
+hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f,
+                     typename Polynomial_traits_d::Polynomial_d g,
                      int sub = 0)
 {
 
@@ -141,17 +132,17 @@ hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f,
 template <typename Polynomial_traits_d>
 typename internal::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
 symmetric_bezout_matrix
-    (typename Polynomial_traits_d::Polynomial_d f, 
-     typename Polynomial_traits_d::Polynomial_d g, 
+    (typename Polynomial_traits_d::Polynomial_d f,
+     typename Polynomial_traits_d::Polynomial_d g,
      int sub = 0)
 {
 
-    
+
 
   // Note: The algorithm is taken from:
   // Chionh, Zhang, Goldman: Fast Computation of the Bezout and Dixon Resultant
   // Matrices. J.Symbolic Computation 33, 13-29 (2002)
-    
+
     typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
@@ -185,43 +176,43 @@ symmetric_bezout_matrix
     for(i=0;i<d;i++) {
       for(j=i;j<d;j++) {
         sum1 = ((j+sub)+1>m) ? NT(0) : -coeff(f,i+sub)*coeff(g,(j+sub)+1);
-	sum2 =  ((i+sub)>m)  ? NT(0) :  coeff(g,i+sub)*coeff(f,(j+sub)+1);
-	B[i][j]=sum1+sum2;
+        sum2 =  ((i+sub)>m)  ? NT(0) :  coeff(g,i+sub)*coeff(f,(j+sub)+1);
+        B[i][j]=sum1+sum2;
       }
     }
 
     // 2nd Step: Recursion adding
-    
+
     // First, set up the first line correctly
     for(i=0;i<d-1;i++) {
       stop = (sub<d-1-i) ? sub : d-i-1;
       for(j=1;j<=stop;j++) {
-          sum1 = ((i+sub+j)+1>m) ? NT(0) 
+          sum1 = ((i+sub+j)+1>m) ? NT(0)
                                  : -coeff(f,sub-j)*coeff(g,(i+sub+j)+1);
-          sum2 =  ((sub-j)>m)    ? NT(0) 
+          sum2 =  ((sub-j)>m)    ? NT(0)
                                  : coeff(g,sub-j)*coeff(f,(i+sub+j)+1);
-	
-	B[0][i]+=sum1+sum2;
+
+        B[0][i]+=sum1+sum2;
       }
     }
     // Now, compute the rest
     for(i=1;i<d-1;i++) {
       for(j=i;j<d-1;j++) {
-	B[i][j]+=B[i-1][j+1];
+        B[i][j]+=B[i-1][j+1];
       }
     }
 
-    
+
    //3rd Step: Exploit symmetry
     for(i=1;i<d;i++) {
       for(j=0;j<i;j++) {
-	B[i][j]=B[j][i];
+        B[i][j]=B[j][i];
       }
     }
-    
+
     return B;
 }
-    
+
 
 
 /*! \ingroup CGAL_resultant_matrix
@@ -241,23 +232,23 @@ symmetric_bezout_matrix
  */
 template <class Polynomial_traits_d>
 typename Polynomial_traits_d::Coefficient_type hybrid_bezout_subresultant(
-        typename Polynomial_traits_d::Polynomial_d f, 
-        typename Polynomial_traits_d::Polynomial_d g, 
+        typename Polynomial_traits_d::Polynomial_d f,
+        typename Polynomial_traits_d::Polynomial_d g,
         int sub = 0
-) { 
+) {
 
     typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
-    
+
     typedef internal::Simple_matrix<NT> Matrix;
 
     CGAL_precondition((degree(f) >= 0));
     CGAL_precondition((degree(g) >= 0));
-    
+
     if (is_zero(f) || is_zero(g)) return NT(0);
-    
+
     Matrix S = hybrid_bezout_matrix<Polynomial_traits_d>(f, g, sub);
     CGAL_assertion(S.row_dimension() == S.column_dimension());
     if (S.row_dimension() == 0) {
@@ -277,14 +268,14 @@ void symmetric_minors_to_subresultants(InputIterator in,
                                        int n,
                                        int m,
                                        bool swapped) {
-  
+
     typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
-    
+
     for(int i=0;i<m;i++) {
       bool negate = ((n-m+i+1) & 2)>>1; // (n-m+i+1)==2 or 3 mod 4
-      negate=negate ^ (swapped & ((n-m+i+1)*(i+1)));  
-      //...XOR (swapped AND (n-m+i+1)* (i+1) is odd) 
-      
+      negate=negate ^ (swapped & ((n-m+i+1)*(i+1)));
+      //...XOR (swapped AND (n-m+i+1)* (i+1) is odd)
+
       *out = idiv(*in,  negate ? -divisor : divisor);
       in++;
       out++;
@@ -293,10 +284,10 @@ void symmetric_minors_to_subresultants(InputIterator in,
 
 
 /*! \ingroup CGAL_resultant_matrix
- * \brief compute the principal subresultant coefficients as minors 
+ * \brief compute the principal subresultant coefficients as minors
  * of the symmetric Bezout matrix.
  *
- * Returns the sequence sres<sub>0</sub>,..,sres<sub>m</sub>, where 
+ * Returns the sequence sres<sub>0</sub>,..,sres<sub>m</sub>, where
  * sres<sub>i</sub> denotes the ith principal subresultant coefficient
  *
  * The function uses an extension of the Berkowitz method to compute the
@@ -305,7 +296,7 @@ void symmetric_minors_to_subresultants(InputIterator in,
  */
 template<class Polynomial_traits_d,class OutputIterator>
 OutputIterator symmetric_bezout_subresultants(
-	   typename Polynomial_traits_d::Polynomial_d f, 
+           typename Polynomial_traits_d::Polynomial_d f,
            typename Polynomial_traits_d::Polynomial_d g,
            OutputIterator sres)
 {
@@ -317,34 +308,34 @@ OutputIterator symmetric_bezout_subresultants(
     typename Polynomial_traits_d::Leading_coefficient lcoeff;
 
     typedef typename internal::Simple_matrix<NT> Matrix;
-    
+
     int n = degree(f);
     int m = degree(g);
-    
+
     bool swapped=false;
 
     if(n < m) {
       std::swap(f,g);
       std::swap(n,m);
       swapped=true;
-      
+
     }
 
     Matrix B = symmetric_bezout_matrix<Polynomial_traits_d>(f,g);
-    
+
     // Compute a_0^{n-m}
 
     NT divisor=ipower(lcoeff(f),n-m);
-    
+
     std::vector<NT> minors;
     minors_berkowitz(B,std::back_inserter(minors),n,m);
     CGAL::internal::symmetric_minors_to_subresultants(minors.begin(),sres,
                                                    divisor,n,m,swapped);
-    
-    return sres; 
+
+    return sres;
   }
 
-/* 
+/*
  * Return a modified version of the hybrid bezout matrix such that the minors
  * from the last k rows and columns give the subresultants
  */
@@ -357,12 +348,12 @@ modified_hybrid_bezout_matrix
     typedef typename Polynomial_traits_d::Coefficient_type NT;
 
     typedef typename internal::Simple_matrix<NT> Matrix;
-    
+
     typename Polynomial_traits_d::Degree degree;
 
     int n = degree(f);
     int m = degree(g);
-    
+
     int i,j;
 
     bool negate, swapped=false;
@@ -372,7 +363,7 @@ modified_hybrid_bezout_matrix
       std::swap(n,m);
       swapped=true;
     }
-    
+
     Matrix B = CGAL::internal::hybrid_bezout_matrix<Polynomial_traits_d>(f,g);
 
 
@@ -382,23 +373,23 @@ modified_hybrid_bezout_matrix
       B.swap_columns(i,n-i-1); // (**)
       i++;
     }
-    for(i=0;i<n;i++) { 
+    for(i=0;i<n;i++) {
       negate=(n-i-1) & 1; // Negate every second column because of (**)
       negate=negate ^ (swapped & (n-m+1)); // XOR negate everything because of(*)
       if(negate) {
-	for(j=0;j<n;j++) {
-	  B[j][i] *= -1;
-	}
+        for(j=0;j<n;j++) {
+          B[j][i] *= -1;
+        }
       }
     }
     return B;
 }
 
 /*! \ingroup CGAL_resultant_matrix
- * \brief compute the principal subresultant coefficients as minors 
+ * \brief compute the principal subresultant coefficients as minors
  * of the hybrid Bezout matrix.
  *
- * Returns the sequence sres<sub>0</sub>,...,sres<sub>m</sub>$, where 
+ * Returns the sequence sres<sub>0</sub>,...,sres<sub>m</sub>$, where
  * sres<sub>i</sub> denotes the ith principal subresultant coefficient
  *
  * The function uses an extension of the Berkowitz method to compute the
@@ -407,16 +398,16 @@ modified_hybrid_bezout_matrix
  */
 template<class Polynomial_traits_d,class OutputIterator>
 OutputIterator hybrid_bezout_subresultants(
-	   typename Polynomial_traits_d::Polynomial_d f, 
+           typename Polynomial_traits_d::Polynomial_d f,
            typename Polynomial_traits_d::Polynomial_d g,
-           OutputIterator sres) 
+           OutputIterator sres)
   {
 
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
 
     typedef typename internal::Simple_matrix<NT> Matrix;
-    
+
     int n = degree(f);
     int m = degree(g);
 
@@ -438,46 +429,46 @@ OutputIterator hybrid_bezout_subresultants(
     int n = A.row_dimension();
     int i=0;
     while(i<n-i-1) {
-        A.swap_rows(i,n-i-1); 
-        A.swap_columns(i,n-i-1); 
+        A.swap_rows(i,n-i-1);
+        A.swap_columns(i,n-i-1);
         i++;
     }
   }
-  
+
   // Produce S-matrix with the given matrix and integers.
   template<class NT,class InputIterator>
     typename internal::Simple_matrix<NT> s_matrix(
-	      const typename internal::Simple_matrix<NT>& B,
-	      InputIterator num,int size)
+              const typename internal::Simple_matrix<NT>& B,
+              InputIterator num,int size)
     {
       typename internal::Simple_matrix<NT> S(size);
       CGAL_precondition_code(int n = B.row_dimension();)
       CGAL_precondition(n==(int)B.column_dimension());
       int curr_num;
       bool negate;
-      
+
       for(int i=0;i<size;i++) {
-	curr_num=(*num);
-	num++;
-	negate = curr_num<0;
-	if(curr_num<0) {
-	  curr_num=-curr_num;
-	}
-	for(int j=0;j<size;j++) {
-	  
-	  S[j][i]=negate ? -B[j][curr_num-1] : B[j][curr_num-1];
-	  
-	}
+        curr_num=(*num);
+        num++;
+        negate = curr_num<0;
+        if(curr_num<0) {
+          curr_num=-curr_num;
+        }
+        for(int j=0;j<size;j++) {
+
+          S[j][i]=negate ? -B[j][curr_num-1] : B[j][curr_num-1];
+
+        }
       }
       return S;
     }
-  
+
   // Produces the integer sequence for the S-matrix, where c is the first entry
-  // of the sequence, s the number of desired diagonals and n the dimension 
+  // of the sequence, s the number of desired diagonals and n the dimension
   // of the base matrix
   template<class OutputIterator>
     OutputIterator s_matrix_integer_sequence(OutputIterator it,
-					      int c,int s,int n) {
+                                              int c,int s,int n) {
     CGAL_precondition(0<s);
     CGAL_precondition(s<=n);
     // c is interpreted modulo s wrt to the representants {1,..,s}
@@ -485,14 +476,14 @@ OutputIterator hybrid_bezout_subresultants(
     if(c==0) {
       c=s;
     }
-    
+
     int i, p=0, q=c;
     while(q<=n) {
       *it = q;
       it++;
       for(i=p+1;i<q;i++) {
-	*it = -i;
-	it++;
+        *it = -i;
+        it++;
       }
       p = q;
       q = q+s;
@@ -501,25 +492,25 @@ OutputIterator hybrid_bezout_subresultants(
   }
 
 /*! \ingroup CGAL_resultant_matrix
- * \brief computes the coefficients of the polynomial subresultant sequence 
+ * \brief computes the coefficients of the polynomial subresultant sequence
  *
  * Returns an upper triangular matrix <I>A</I> such that A<sub>i,j</sub> is
  * the coefficient of <I>x<sup>j-1</sup></I> in the <I>i</I>th polynomial
  * subresultant. In particular, the main diagonal contains the scalar
  * subresultants.
- * 
- * If \c d > 0 is specified, only the first \c d diagonals of <I>A</I> are 
+ *
+ * If \c d > 0 is specified, only the first \c d diagonals of <I>A</I> are
  * computed. In particular, setting \c d to one yields exactly the same
  * result as applying \c hybrid_subresultants or \c symmetric_subresultants
- * (except the different output format). 
+ * (except the different output format).
  *
  * These coefficients are computed as special minors of the hybrid Bezout matrix.
  * See also \c CGAL::minors_berkowitz
  */
 template<typename Polynomial_traits_d>
-typename internal::Simple_matrix<typename Polynomial_traits_d::Coefficient_type> 
+typename internal::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
 polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
-			       typename Polynomial_traits_d::Polynomial_d g,
+                               typename Polynomial_traits_d::Polynomial_d g,
                                int d=0) {
 
     typedef typename Polynomial_traits_d::Coefficient_type NT;
@@ -534,7 +525,7 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
     CGAL_precondition(d>=0);
 
     typedef internal::Simple_matrix<NT> Matrix;
-   
+
     bool swapped=false;
 
     if(n < m) {
@@ -552,7 +543,7 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
 
     // For easier notation, we swap all entries:
     internal::swap_entries<NT>(B);
-    
+
     // Compute the S-matrices and collect the minors
     std::vector<Matrix> s_mat(m);
     std::vector<std::vector<NT> > coeffs(d);
@@ -564,10 +555,10 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
       internal::swap_entries<NT>(S);
       //std::cout << S << std::endl;
       int Sdim = S.row_dimension();
-      int number_of_minors=(Sdim < m) ? Sdim : Sdim; 
-      
+      int number_of_minors=(Sdim < m) ? Sdim : Sdim;
+
       internal::minors_berkowitz(S,std::back_inserter(coeffs[i-1]),
-			    Sdim,number_of_minors);
+                            Sdim,number_of_minors);
 
     }
 
@@ -577,28 +568,28 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
 
     for(int i = 0; i < d; i++) {
       for(int j = 0;j < m-i ; j++) {
-	int s_index=(n-m+j+i+1)%d;
-	if(s_index==0) {
-	  s_index=d;
-	}
-	s_index--;
-	Ret[j][j+i]=coeffs[s_index][n-m+j];
-	
+        int s_index=(n-m+j+i+1)%d;
+        if(s_index==0) {
+          s_index=d;
+        }
+        s_index--;
+        Ret[j][j+i]=coeffs[s_index][n-m+j];
+
       }
     }
 
     typename CGAL::Algebraic_structure_traits<NT>::Integral_division idiv;
 
-    NT divisor = ipower(lcoeff(f),n-m); 
+    NT divisor = ipower(lcoeff(f),n-m);
 
     int bit_mask = swapped ? 1 : 0;
     // Divide through the divisor and set the correct sign
     for(int i=0;i<m;i++) {
       for(int j = i;j<m;j++) {
-	int negate = ((n-m+i+1) & 2)>>1; // (n-m+i+1)==2 or 3 mod 4
-	negate^=(bit_mask & ((n-m+i+1)*(i+1)));
-	//...XOR (swapped AND (n-m+i+1)* (i+1) is odd) 
-	Ret[i][j] = idiv(Ret[i][j],  negate>0 ? -divisor : divisor);
+        int negate = ((n-m+i+1) & 2)>>1; // (n-m+i+1)==2 or 3 mod 4
+        negate^=(bit_mask & ((n-m+i+1)*(i+1)));
+        //...XOR (swapped AND (n-m+i+1)* (i+1) is odd)
+        Ret[i][j] = idiv(Ret[i][j],  negate>0 ? -divisor : divisor);
       }
     }
 

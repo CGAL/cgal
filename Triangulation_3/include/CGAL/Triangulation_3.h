@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -37,6 +28,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <stack>
 
@@ -67,6 +59,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
+#include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/info_check.h>
@@ -440,8 +433,10 @@ public:
   typedef typename Tds::Vertex_handles         All_vertex_handles;
   typedef typename Tds::Facets                 All_facets;
   typedef typename Tds::Edges                  All_edges;
-  
+
   typedef typename Tds::Simplex                Simplex;
+
+  typedef typename GT::Construct_point_3       Construct_point_3;
 
 private:
   // This class is used to generate the Finite_*_iterators.
@@ -528,7 +523,7 @@ public:
 
   typedef Iterator_range<Finite_edges_iterator> Finite_edges;
   typedef Iterator_range<Finite_facets_iterator> Finite_facets;
-  
+
 private:
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
@@ -544,7 +539,7 @@ public:
 
 
   typedef Iterator_range<Point_iterator> Points;
-  
+
   // To have a back_inserter
   typedef Point                                               value_type;
   typedef const value_type&                                   const_reference;
@@ -572,7 +567,8 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  Point_3 construct_point(const P& p) const
+  typename boost::result_of<const Construct_point_3(const P&)>::type
+  construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
   }
@@ -1134,7 +1130,7 @@ public:
                                           Hidden_points_visitor& hider,
                                           bool *could_lock_zone = nullptr);
 
-  
+
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
@@ -1227,8 +1223,8 @@ public:
   }
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-  
-  
+
+
   Vertex_handle insert_in_cell(const Point& p, Cell_handle c);
   Vertex_handle insert_in_facet(const Point& p, Cell_handle c, int i);
   Vertex_handle insert_in_facet(const Point& p, const Facet& f) {
@@ -1271,6 +1267,17 @@ public:
   {
     // Some geometric preconditions should be tested...
     Vertex_handle v = _tds._insert_in_hole(cell_begin, cell_end, begin, i);
+    v->set_point(p);
+    return v;
+  }
+
+ // Internal function, cells should already be marked.
+  template <class Cells, class Facets>
+  Vertex_handle _insert_in_small_hole(const Point& p,
+                                      const Cells& cells,
+                                      const Facets& facets )
+  {
+    Vertex_handle v = _tds._insert_in_small_hole(cells, facets);
     v->set_point(p);
     return v;
   }
@@ -1329,7 +1336,10 @@ protected:
     CGAL_triangulation_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
-    std::stack<Cell_handle> cell_stack;
+    typedef boost::container::small_vector<Cell_handle,64> SV;
+    SV sv;
+    std::stack<Cell_handle, SV > cell_stack(sv);
+
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
 
@@ -1760,13 +1770,13 @@ public:
     return CGAL::filter_iterator(cells_end(), Infinite_tester(this));
   }
 
-  
+
   Finite_cell_handles finite_cell_handles() const
   {
-    return make_prevent_deref_range(finite_cells_begin(), finite_cells_end()); 
+    return make_prevent_deref_range(finite_cells_begin(), finite_cells_end());
   }
 
-  
+
   Cell_iterator cells_begin() const { return _tds.cells_begin(); }
   Cell_iterator cells_end() const { return _tds.cells_end(); }
 
@@ -1777,7 +1787,7 @@ public:
   {
     return _tds.cell_handles();
   }
-  
+
   Finite_vertices_iterator finite_vertices_begin() const
   {
     if(number_of_vertices() <= 0)
@@ -1793,9 +1803,9 @@ public:
 
   Finite_vertex_handles finite_vertex_handles() const
   {
-    return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end()); 
+    return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end());
   }
-  
+
   Vertex_iterator vertices_begin() const { return _tds.vertices_begin(); }
   Vertex_iterator vertices_end() const { return _tds.vertices_end(); }
 
@@ -1806,7 +1816,7 @@ public:
   {
     return _tds.vertex_handles();
   }
-  
+
   Finite_edges_iterator finite_edges_begin() const
   {
     if(dimension() < 1)
@@ -1823,11 +1833,11 @@ public:
   {
     return Finite_edges(finite_edges_begin(),finite_edges_end());
   }
-  
+
   Edge_iterator edges_begin() const { return _tds.edges_begin(); }
   Edge_iterator edges_end() const { return _tds.edges_end(); }
 
-  
+
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
   All_edges_iterator all_edges_end() const { return _tds.edges_end(); }
 
@@ -1835,7 +1845,7 @@ public:
   {
     return _tds.edges();
   }
-  
+
   Finite_facets_iterator finite_facets_begin() const
   {
     if(dimension() < 2)
@@ -1856,7 +1866,7 @@ public:
   Facet_iterator facets_begin() const { return _tds.facets_begin(); }
   Facet_iterator facets_end() const { return _tds.facets_end(); }
 
-  
+
   All_facets_iterator all_facets_begin() const { return _tds.facets_begin(); }
   All_facets_iterator all_facets_end() const { return _tds.facets_end(); }
 
@@ -1864,7 +1874,7 @@ public:
   {
     return _tds.facets();
   }
-  
+
   Point_iterator points_begin() const
   {
     return Point_iterator(finite_vertices_begin());
@@ -1878,7 +1888,7 @@ public:
   {
     return Points(points_begin(),points_end());
   }
-  
+
   // cells around an edge
   Cell_circulator incident_cells(const Edge& e) const
   {
@@ -3347,7 +3357,7 @@ side_of_facet(const Point& p,
   {
     // The following precondition is useless because it is written
     // in side_of_facet
-    // 	CGAL_triangulation_precondition(coplanar (p,
+    //         CGAL_triangulation_precondition(coplanar (p,
     //                                             c->vertex(0)->point,
     //                                             c->vertex(1)->point,
     //                                             c->vertex(2)->point));
@@ -3374,7 +3384,7 @@ side_of_facet(const Point& p,
   int inf = c->index(infinite);
   // The following precondition is useless because it is written
   // in side_of_facet
-  // 	CGAL_triangulation_precondition(coplanar (p,
+  //         CGAL_triangulation_precondition(coplanar (p,
   //                                     c->neighbor(inf)->vertex(0)->point(),
   //                                     c->neighbor(inf)->vertex(1)->point(),
   //                                     c->neighbor(inf)->vertex(2)->point()));
@@ -3751,15 +3761,14 @@ insert_in_conflict(const Point& p,
 
       // Ok, we really insert the point now.
       // First, find the conflict region.
-      std::vector<Cell_handle> cells;
-      cells.reserve(32);
+      boost::container::small_vector<Cell_handle,32> cells;
       Facet facet;
+
+      boost::container::small_vector<Facet,32> facets;
 
       // Parallel
       if(could_lock_zone)
       {
-        std::vector<Facet> facets;
-        facets.reserve(32);
 
         find_conflicts(c,
                        tester,
@@ -3781,28 +3790,30 @@ insert_in_conflict(const Point& p,
           }
           return Vertex_handle();
         }
-
-        facet = facets.back();
       }
       // Sequential
       else
       {
-        cells.reserve(32);
         find_conflicts(c,
                        tester,
                        make_triple(
-                         Oneset_iterator<Facet>(facet),
+                         std::back_inserter(facets),
                          std::back_inserter(cells),
                          Emptyset_iterator()));
       }
+
+      facet = facets.back();
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
-      Vertex_handle v = _insert_in_hole(p,
-                                        cells.begin(), cells.end(),
-                                        facet.first, facet.second);
+      Vertex_handle v =
+        tds().is_small_hole(facets.size()) ?
+        _insert_in_small_hole(p, cells, facets) :
+        _insert_in_hole(p,
+                        cells.begin(), cells.end(),
+                        facet.first, facet.second);
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
@@ -4020,9 +4031,9 @@ insert_outside_convex_hull(const Point& p, Cell_handle c)
   {
     case 1:
     {
-      // 	// p lies in the infinite edge neighboring c
-      // 	// on the other side of li
-      // 	return insert_in_edge(p,c->neighbor(1-li),0,1);
+      //         // p lies in the infinite edge neighboring c
+      //         // on the other side of li
+      //         return insert_in_edge(p,c->neighbor(1-li),0,1);
       return insert_in_edge(p,c,0,1);
     }
     case 2:

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -66,33 +57,33 @@ private:
     CGAL_precondition( t.is_segment() );
     if ( t.is_input() ) {
       return Site_2::construct_site_2(t.target_of_supporting_site(),
-				      t.source_of_supporting_site());
+                                      t.source_of_supporting_site());
     } else {
       if ( t.is_input(0) ) {
-	return Site_2::construct_site_2(t.target_of_supporting_site(),
-					t.source_of_supporting_site(),
-					t.target_of_crossing_site(1),
-					t.source_of_crossing_site(1),
-					false);
+        return Site_2::construct_site_2(t.target_of_supporting_site(),
+                                        t.source_of_supporting_site(),
+                                        t.target_of_crossing_site(1),
+                                        t.source_of_crossing_site(1),
+                                        false);
       } else if ( t.is_input(1) ) {
-	return Site_2::construct_site_2(t.target_of_supporting_site(),
-					t.source_of_supporting_site(),
-					t.target_of_crossing_site(0),
-					t.source_of_crossing_site(0),
-					true);
+        return Site_2::construct_site_2(t.target_of_supporting_site(),
+                                        t.source_of_supporting_site(),
+                                        t.target_of_crossing_site(0),
+                                        t.source_of_crossing_site(0),
+                                        true);
       } else {
-	return Site_2::construct_site_2(t.target_of_supporting_site(),
-					t.source_of_supporting_site(),
-					t.target_of_crossing_site(1),
-					t.source_of_crossing_site(1),
-					t.target_of_crossing_site(0),
-					t.source_of_crossing_site(0));
+        return Site_2::construct_site_2(t.target_of_supporting_site(),
+                                        t.source_of_supporting_site(),
+                                        t.target_of_crossing_site(1),
+                                        t.source_of_crossing_site(1),
+                                        t.target_of_crossing_site(0),
+                                        t.source_of_crossing_site(0));
       }
     }
   }
 
   Site_2 orient_segment(const Site_2& s, const Site_2& p,
-			const Orientation_2& orientation) const
+                        const Orientation_2& orientation) const
   {
     CGAL_precondition( s.is_segment() );
     CGAL_precondition( p.is_point() );
@@ -127,11 +118,11 @@ public:
       Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
 
       Oriented_side os = side_of_bisector(v1->site(), v2->site(), sp);
-      
+
       if ( os == ON_ORIENTED_BOUNDARY ) {
-	return e;
+        return e;
       } else {
-	return v;
+        return v;
       }
     }
 
@@ -153,30 +144,30 @@ public:
       // check if the query point is identical to an endpoint of a
       // segment that has a Voronoi face with zero area.
       if ( !dg.is_infinite(v1) && !dg.is_infinite(v2) ) {
-	Site_2 s1 = v1->site();
-	Site_2 s2 = v2->site();
-	if ( sv.is_point() && equal(sv, sp) &&
-	     s1.is_segment() && s2.is_segment() ) {
-	  bool b1 = equal(sv, s1.source_site()) || equal(sv, s1.target_site());
-	  bool b2 = equal(sv, s2.source_site()) || equal(sv, s2.target_site());
+        Site_2 s1 = v1->site();
+        Site_2 s2 = v2->site();
+        if ( sv.is_point() && equal(sv, sp) &&
+             s1.is_segment() && s2.is_segment() ) {
+          bool b1 = equal(sv, s1.source_site()) || equal(sv, s1.target_site());
+          bool b2 = equal(sv, s2.source_site()) || equal(sv, s2.target_site());
 
-	  if ( b1 && b2 ) { return Face_handle(fc); }
-	}
+          if ( b1 && b2 ) { return Face_handle(fc); }
+        }
       }
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
-	os1 = side_of_bisector(sv, v1->site(), sp);
+        os1 = side_of_bisector(sv, v1->site(), sp);
       }
       if ( !dg.is_infinite(v2) ) {
-	os2 = side_of_bisector(sv, v2->site(), sp);
+        os2 = side_of_bisector(sv, v2->site(), sp);
       }
 
       CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
       CGAL_assertion( os2 != ON_NEGATIVE_SIDE );
 
       if ( os1 == ON_ORIENTED_BOUNDARY && os2 == ON_ORIENTED_BOUNDARY ) {
-	return fc;
+        return fc;
       }
 
       ++fc;
@@ -194,39 +185,39 @@ public:
       // check if the query point is lies on the bisector between a
       // segment and its endpoint
       if ( !dg.is_infinite(v1) ) {
-	Site_2 s1 = v1->site();
-	if ( sv.is_point() &&  s1.is_segment() ) {
-	  bool b = equal(sv, s1.source_site()) || equal(sv, s1.target_site());
+        Site_2 s1 = v1->site();
+        if ( sv.is_point() &&  s1.is_segment() ) {
+          bool b = equal(sv, s1.source_site()) || equal(sv, s1.target_site());
 
-	  if ( b && equal(sv, sp) ) { return *ec; }
+          if ( b && equal(sv, sp) ) { return *ec; }
 
-	  Oriented_side os = side_of_bisector(sv, s1, sp);
+          Oriented_side os = side_of_bisector(sv, s1, sp);
 
-	  if ( b && os == ON_ORIENTED_BOUNDARY ) { return *ec; }
-	}
-	if ( sv.is_segment() && s1.is_point() ) {
-	  bool b = equal(sv.source_site(), s1) || equal(sv.target_site(), s1);
+          if ( b && os == ON_ORIENTED_BOUNDARY ) { return *ec; }
+        }
+        if ( sv.is_segment() && s1.is_point() ) {
+          bool b = equal(sv.source_site(), s1) || equal(sv.target_site(), s1);
 
-	  if ( b && equal(s1, sp) ) { return *ec; }
+          if ( b && equal(s1, sp) ) { return *ec; }
 
-	  Oriented_side os = side_of_bisector(sv, s1, sp);
+          Oriented_side os = side_of_bisector(sv, s1, sp);
 
-	  if ( b && os == ON_ORIENTED_BOUNDARY ) { return *ec; }
-	}
+          if ( b && os == ON_ORIENTED_BOUNDARY ) { return *ec; }
+        }
       }
 
       Oriented_side os1 = ON_POSITIVE_SIDE;
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
-	os1 = side_of_bisector(sv, v1->site(), sp);
+        os1 = side_of_bisector(sv, v1->site(), sp);
       }
 
       CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
 
       if ( os1 != ON_ORIENTED_BOUNDARY ) {
-	++ec;
-	continue;
+        ++ec;
+        continue;
       }
 
       // now find the correct part of the bisector on which the query
@@ -238,7 +229,7 @@ public:
       // if both v and v1 are points there is no need to check for
       // other Voronoi edges; there is only one.
       if ( sv.is_point() && s1.is_point() ) {
-	return *ec;
+        return *ec;
       }
 
       // the vertices v2 and v3 can only be infinite in two cases:
@@ -255,7 +246,7 @@ public:
 
 
       Oriented_side_2 vv_oriented_side =
-	dg.geom_traits().oriented_side_2_object();
+        dg.geom_traits().oriented_side_2_object();
 
       Orientation_2 orientation = dg.geom_traits().orientation_2_object();
 
@@ -264,27 +255,27 @@ public:
       Site_2 sp = Site_2::construct_site_2(p);
 
       if ( sv.is_segment() ) {
-	Site_2 svo = orient_segment(sv, sp, orientation);
-	o2 = vv_oriented_side(sv, v2->site(), s1, svo, sp);
-	o3 = vv_oriented_side(sv, s1, v3->site(), svo, sp);
-	CGAL_assertion( o2 != ON_ORIENTED_BOUNDARY );
-	CGAL_assertion( o3 != ON_ORIENTED_BOUNDARY );
-	if ( o2 == ON_NEGATIVE_SIDE && o3 == ON_POSITIVE_SIDE ) {
-	  return *ec;
-	}
+        Site_2 svo = orient_segment(sv, sp, orientation);
+        o2 = vv_oriented_side(sv, v2->site(), s1, svo, sp);
+        o3 = vv_oriented_side(sv, s1, v3->site(), svo, sp);
+        CGAL_assertion( o2 != ON_ORIENTED_BOUNDARY );
+        CGAL_assertion( o3 != ON_ORIENTED_BOUNDARY );
+        if ( o2 == ON_NEGATIVE_SIDE && o3 == ON_POSITIVE_SIDE ) {
+          return *ec;
+        }
       } else {
-	CGAL_assertion( s1.is_segment() );
-	Site_2 s1o = orient_segment(s1, sp, orientation);
-	o2 = vv_oriented_side(sv, v2->site(), s1, s1o, sp);
-	o3 = vv_oriented_side(sv, s1, v3->site(), s1o, sp);
-	CGAL_assertion( o2 != ON_ORIENTED_BOUNDARY );
-	CGAL_assertion( o3 != ON_ORIENTED_BOUNDARY );
-	if ( o2 == ON_POSITIVE_SIDE && o3 == ON_NEGATIVE_SIDE ) {
-	  return *ec;
-	}
+        CGAL_assertion( s1.is_segment() );
+        Site_2 s1o = orient_segment(s1, sp, orientation);
+        o2 = vv_oriented_side(sv, v2->site(), s1, s1o, sp);
+        o3 = vv_oriented_side(sv, s1, v3->site(), s1o, sp);
+        CGAL_assertion( o2 != ON_ORIENTED_BOUNDARY );
+        CGAL_assertion( o3 != ON_ORIENTED_BOUNDARY );
+        if ( o2 == ON_POSITIVE_SIDE && o3 == ON_NEGATIVE_SIDE ) {
+          return *ec;
+        }
       }
 
-      ++ec;      
+      ++ec;
     } while ( ec != ec_start );
 
     // the point lies in a Voronoi face

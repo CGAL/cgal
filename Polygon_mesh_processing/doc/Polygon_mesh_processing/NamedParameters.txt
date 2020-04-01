@@ -32,20 +32,27 @@ is the property map with the points associated to the vertices of the polygon me
 \cgalNPEnd
 
 \cgalNPBegin{vertex_index_map} \anchor PMP_vertex_index_map
-is the property map containing the index of each vertex of the input polygon mesh.\n
+is the property map associating a unique index to each vertex of a polygon mesh,
+between `0` and `num_vertices(g)-1`.
+If this parameter is not passed, internal machinery will create and initialize a vertex index
+property map, either using the internal property map if it exists or using an external map. The latter
+might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
 <b>Type:</b> a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and the value type
 \code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type>::value_type \endcode
-<b>Default:</b> \code boost::get(CGAL::vertex_index, pmesh)\endcode
+<b>Default:</b> an initialized vertex index property map
 \cgalNPEnd
 
 \cgalNPBegin{face_index_map} \anchor PMP_face_index_map
-is the property map containing the index of each face of the input polygon mesh.\n
+is the property map associating a unique index to each face of a polygon mesh,
+between `0` and `num_faces(g)-1`.
+If this parameter is not passed, internal machinery will create and initialize a face index
+property map, either using the internal property map if it exists or using an external map. The latter
+might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
 <b>Type:</b> a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type:
 \code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type \endcode
-<b>Default:</b> \code boost::get(CGAL::face_index, pmesh)\endcode
-If this internal property map exists, its values must be initialized.
+<b>Default:</b> an initialized face index property map
 \cgalNPEnd
 
 \cgalNPBegin{edge_is_constrained_map} \anchor PMP_edge_is_constrained_map
@@ -69,6 +76,14 @@ is the geometric traits instance used for the mesh processing operation.\n
 \code typename CGAL::Kernel_traits<
         typename boost::property_traits<
           typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
+\cgalNPEnd
+
+\cgalNPBegin{point_map} \anchor PMP_point_map
+ is the property map containing the points associated to the elements of the point range `points`.\n
+\b Type: a class model of `ReadablePropertyMap` with
+`PointRange::iterator::value_type` as key type and
+`geom_traits::Point_3` as value type. \n
+<b>Default value</b>: \code CGAL::Identity_property_map<geom_traits::Point_3>\endcode
 \cgalNPEnd
 
 \cgalNPBegin{vertex_incident_patches_map} \anchor PMP_vertex_incident_patches_map
@@ -332,7 +347,7 @@ Parameter used in `isotropic_remeshing()` to specify an alternative vertex proje
 \cgalNPEnd
 
 \cgalNPBegin{apply_per_connected_component} \anchor PMP_apply_per_connected_component
-Parameter used to indicate whether an algorithm should consider each connected component 
+Parameter used to indicate whether an algorithm should consider each connected component
 of a mesh independently.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`
@@ -404,31 +419,130 @@ still ensuring that the total sum of the coordinates is `1`.
 <b>Default:</b> `0`
 \cgalNPEnd
 
-\cgalNPBegin{use_angle_smoothing_t} \anchor PMP_use_angle_smoothing
+\cgalNPBegin{use_angle_smoothing} \anchor PMP_use_angle_smoothing
 Parameter used in the function `smooth_mesh()` to indicate if angle-based smoothing should be used.
 When this type of smoothing is used, the algorithm attempts to equalize angles incident to each vertex.
-
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
 
-\cgalNPBegin{use_area_smoothing_t} \anchor PMP_use_area_smoothing
+\cgalNPBegin{use_area_smoothing} \anchor PMP_use_area_smoothing
 Parameter used in the function `smooth_mesh()` to indicate if area-based smoothing should be used.
 When this type of smoothing is used, the algorithm attempts to equalize the areas of the triangles
 incident to each vertex. Since this can create elongated triangles, a second phase uses Delaunay-based
 flips to recover good shapes, unless specified otherwise (see below).
-
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
 
-\cgalNPBegin{use_Delaunay_flips_t} \anchor PMP_use_Delaunay_flips
+\cgalNPBegin{do_orientation_tests} \anchor PMP_do_orientation_tests
+Parameter used in `volume_connected_components()` to indicate if a surface orientation test
+must be performed to decide whether a surface connected component belong to a volume or not.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{do_self_intersection_tests} \anchor PMP_do_self_intersection_tests
+Parameter used in `volume_connected_components()` to indicate if the input triangle mesh
+might contains self-intersections that must be taken into account while detecting volume
+connected components.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{error_codes} \anchor PMP_error_codes
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
+holding the classification of a volume connected component identified by its id.
+The size of the container is exactly the number of volume connected components and the
+object at position `k` in the container corresponds to the classification of the volume connected component
+assigned the id `k`.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `container<Volume_error_code>` \n
+\b Default: None
+\cgalNPEnd
+
+\cgalNPBegin{face_connected_component_map} \anchor PMP_face_connected_component_map
+a property map that will contain for each face the id
+of its surface connected component in the range
+`[0, number of connected components - 1[`.
+\n
+<b>Type:</b> a class model of `WritablePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and `std::size_t` as value type\n
+\b Default: None
+\cgalNPEnd
+
+\cgalNPBegin{volume_inclusions} \anchor PMP_volume_inclusions
+a reference to a container holding a container of id of surface connected components.
+The container must be a model of the `BackInsertionSequence` concept,
+with a value type being a model of `BackInsertionSequence` of ids,
+both types having the functions `reserve()` and `push_back()`.
+The size of the container is exactly the number of surface connected components of the triangle mesh considered
+The container at position `k` contains the id of each surface connected components
+that is the first intersected by a ray with source on the surface connected component `k`
+and directed outside the finite volume enclosed by the surface connected component `k`.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `container< container<std::size_t> >` \n
+\b Default: None
+\cgalNPEnd
+
+\cgalParamBegin{connected_component_id_to_volume_id} \anchor PMP_connected_component_id_to_volume_id
+a `reference_wrapper` (either from `boost` or the standard library) containing
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
+with a value_type being `std::size_t`.
+The size of the container is exactly the number of connected components.
+For each connected component identified using its id `ccid`, the id of the volume it contributes
+to is the value at the position `ccid` in the parameter container.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `container<std::size_t>` \n
+\b Default: None
+\cgalParamEnd
+
+\cgalParamBegin{nesting_levels} \anchor PMP_nesting_levels
+a `reference_wrapper` (either from `boost` or the standard library) containing
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
+with a value_type being `std::size_t`.
+The size of the container is exactly the number of connected components.
+For each connected component identified using its id `ccid`, the container contains the number of
+connected components containing on their bounded side this component.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `container<std::size_t>` \n
+\b Default: None
+\cgalParamEnd
+
+\cgalParamBegin{is_cc_outward_oriented} \anchor PMP_is_cc_outward_oriented
+a `reference_wrapper` (either from `boost` or the standard library) containing
+a reference to an object that must be a model of the `BackInsertionSequence` concept,
+with a value_type being `bool`.
+The size of the container is exactly the number of connected components.
+For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
+called on the submesh corresponding to this connected component
+is the value at the position `ccid` in the parameter container.
+\n
+\b Type: a `reference_wrapper` (either from `boost` or the standard library)
+         over an object of type `container<bool>` \n
+\b Default: None
+\cgalParamEnd
+
+\cgalParamBegin{intersecting_volume_pairs_output_iterator} \anchor PMP_intersecting_volume_pairs_output_iterator
+Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
+Each pair of connected components intersecting will be reported using their ids.
+If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.
+\b Type : a model of `OutputIterator` \n
+\b Default : `#CGAL::Emptyset_iterator`
+\cgalParamEnd
+
+\cgalNPBegin{use_Delaunay_flips} \anchor PMP_use_Delaunay_flips
 Parameter used in the function `smooth_mesh()` to indicate if Delaunay-based flips should be used
 after area-based smoothing has been performed. A user wishing to preserve combinatorial information
 can set this parameter to `false`, but the mesh might have elongated elements.
-
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
@@ -439,7 +553,6 @@ Parameter used in the function `smooth_mesh()` to indicate if some sanity checks
 if the move of a vertex should be applied or rejected. These sanity checks consists of checking that
 no face incident to the vertex becomes inverted and that the minimum angle of the incident faces
 is not decreased by the move.
-
 \n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
@@ -449,12 +562,38 @@ is not decreased by the move.
 Parameter used in the functions `keep_large_connected_components()` and
 `keep_largest_connected_components()` to pass a property map that gives the size of a face when
 evaluating the size of a connected component (which is defined as the sum of the sizes of its faces).
-
 \n
 <b>Type:</b> a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
 a value type supporting construction from `0`, `operator+=()`, and comparison operators. \n
 <b>Default:</b> `CGAL::Constant_property_map<face_descriptor, std::size_t>` with value `1`
+\cgalNPEnd
+
+\cgalNPBegin{area_threshold} \anchor PMP_area_threshold
+Parameter used in the function `remove_connected_components_of_negligible_size()`
+to pass a threshold value such that all connected components with an area smaller
+than this value are removed from the mesh.
+\n
+<b>Type:</b> `Kernel::FT` \n
+<b>Default:</b> The square of one percent of the length of the diagonal of the bounding box of the mesh.
+\cgalNPEnd
+
+\cgalNPBegin{volume_threshold} \anchor PMP_volume_threshold
+Parameter used in the function `remove_connected_components_of_negligible_size()`
+to pass a threshold value such that all (closed) connected components with a volume smaller
+than this value are removed from the mesh.
+\n
+<b>Type:</b> `Kernel::FT` \n
+<b>Default:</b> The third power of one percent of the length of the diagonal of the bounding box of the mesh.
+\cgalNPEnd
+
+
+\cgalNPBegin{dry_run} \anchor PMP_dry_run
+Parameter that tells a function not to alter the input, but rather to only return the expected result.
+It is for example used in the fucntion `keep_large_connected_components()`.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPTableEnd

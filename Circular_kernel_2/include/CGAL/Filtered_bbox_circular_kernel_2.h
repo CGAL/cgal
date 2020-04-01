@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_FILTERED_BBOX_CIRCULAR_KERNEL_2_H
@@ -55,7 +46,7 @@ struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
   struct Handle { typedef Handle_for<T>    type; };
 
   template < typename Kernel2 >
-  struct Base { typedef Filtered_bbox_circular_kernel_base_ref_count<Kernel2, CircularKernel>  Type; };  
+  struct Base { typedef Filtered_bbox_circular_kernel_base_ref_count<Kernel2, CircularKernel>  Type; };
 
   template < typename T >
   struct Ambient_dimension {
@@ -82,7 +73,7 @@ struct Filtered_bbox_circular_kernel_type_equality_wrapper
   : public Type_equality_wrapper<K_base, FbcKernel>
 {
     typedef K_base                                  Kernel_base;
-    typedef CGAL::Circular_arc_2<FbcKernel>            Circular_arc_2;     
+    typedef CGAL::Circular_arc_2<FbcKernel>            Circular_arc_2;
     typedef CGAL::Line_arc_2<FbcKernel>                Line_arc_2;
     typedef CGAL::Circular_arc_point_2<FbcKernel>      Circular_arc_point_2;
 };
@@ -92,9 +83,9 @@ struct Filtered_bbox_circular_kernel_2
   : public Filtered_bbox_circular_kernel_type_equality_wrapper
      < internal::Filtered_bbox_circular_kernel_base_ref_count
          < Filtered_bbox_circular_kernel_2< CircularKernel >,
-           typename CircularKernel:: template 
+           typename CircularKernel:: template
            Base<Filtered_bbox_circular_kernel_2< CircularKernel > >::Type
-	 >,
+         >,
        Filtered_bbox_circular_kernel_2< CircularKernel >
      >
 {

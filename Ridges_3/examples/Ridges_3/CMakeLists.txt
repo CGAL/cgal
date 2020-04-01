@@ -11,8 +11,7 @@ if ( CGAL_FOUND )
   # use either Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-    
+
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
     if(TARGET Boost::program_options)
@@ -29,8 +28,11 @@ if ( CGAL_FOUND )
    endif()
 
    create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp)
+   CGAL_target_use_Eigen(Compute_Ridges_Umbilics)
    create_single_source_cgal_program( Ridges_Umbilics_SM.cpp)
+   CGAL_target_use_Eigen(Ridges_Umbilics_SM)
    create_single_source_cgal_program( Ridges_Umbilics_LCC.cpp)
+   CGAL_target_use_Eigen(Ridges_Umbilics_LCC)
 
   else()
 
@@ -39,7 +41,7 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()

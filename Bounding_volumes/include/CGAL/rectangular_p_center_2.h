@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -183,13 +174,13 @@ rectangular_p_center_2_binary_search(
   CGAL_optimisation_assertion(
     c_diffs.size() == pierce_it.number_of_points() *
     (pierce_it.number_of_points() - 1));
-  
+
   // sort it:
   sort( c_diffs.begin(), c_diffs.end());
   // search it:
   int b( 0);
   int e( c_diffs.size());
-  
+
   // invariant of the following loop:
   // forall 0 <= a < b: c_diffs[a] is infeasible  AND
   // forall e <= a < c_diffs.size(): c_diffs[a] is feasible
@@ -205,7 +196,7 @@ rectangular_p_center_2_binary_search(
     }
   } // while ( e > b)
   CGAL_optimisation_assertion( e == b);
-  
+
   // return the result:
   r = c_diffs[e];
   OutputIterator o_return( pierce_it( r, o, ok));
@@ -274,14 +265,14 @@ rectangular_p_center_2_matrix_search(
     x_coords.push_back(p->x());
     y_coords.push_back(p->y());
   }
-  
+
   // sort coordinates:
   sort( x_coords.begin(), x_coords.end());
   sort( y_coords.begin(), y_coords.end());
-  
+
   // create matrices:
   MatrixContainer matrices;
-  
+
   // create matrix of x-differences:
   matrices.push_back(
     Matrix( x_coords.begin(),
@@ -289,7 +280,7 @@ rectangular_p_center_2_matrix_search(
             x_coords.begin(),
             x_coords.end(),
             mop));
-  
+
   // create matrix of y-differences:
   matrices.push_back(
     Matrix( y_coords.begin(),
@@ -384,7 +375,7 @@ bool is_distance_greater_than_p
     ++it;
     --p;
   }
-  if (it!=end) return true; 
+  if (it!=end) return true;
   return false;
 }
 
@@ -393,7 +384,7 @@ bool is_distance_greater_than_p
   (Iterator begin,Iterator end,
    typename std::iterator_traits<Iterator>::difference_type p)
 {
-  return 
+  return
     is_distance_greater_than_p(begin,end,p,
       typename std::iterator_traits<Iterator>::iterator_category());
 }
@@ -412,7 +403,7 @@ rectangular_p_center_2(ForwardIterator f,
   CGAL_optimisation_precondition(p >= 2 && p < 5);
   r=0;
   if ( !internal::is_distance_greater_than_p(f,l,p) ) return std::copy(f,l,o);
-  
+
   if (p == 2)
     return rectangular_2_center_2(f, l, o, r, t);
   else if (p == 3)

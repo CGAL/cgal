@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
@@ -57,7 +48,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
 
-/*! 
+/*!
   \file Poisson_reconstruction_function.h
 */
 
@@ -113,7 +104,7 @@ struct Poisson_visitor {
   {}
 };
 
-struct Poisson_skip_vertices { 
+struct Poisson_skip_vertices {
   double ratio;
   Random& m_random;
   Poisson_skip_vertices(const double ratio, Random& random)
@@ -132,7 +123,7 @@ template <typename F1, typename F2>
 struct Special_wrapper_of_two_functions_keep_pointers {
   F1 *f1;
   F2 *f2;
-  Special_wrapper_of_two_functions_keep_pointers(F1* f1, F2* f2) 
+  Special_wrapper_of_two_functions_keep_pointers(F1* f1, F2* f2)
     : f1(f1), f2(f2) {}
 
   template <typename X>
@@ -145,16 +136,16 @@ struct Special_wrapper_of_two_functions_keep_pointers {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 }; // end struct Special_wrapper_of_two_functions_keep_pointers<F1, F2>
-/// \endcond 
+/// \endcond
 
 
 /*!
 \ingroup PkgPoissonSurfaceReconstruction3Ref
 
 \brief Implementation of the Poisson Surface Reconstruction method.
-  
+
 Given a set of 3D points with oriented normals sampled on the boundary
-of a 3D solid, the Poisson Surface Reconstruction method \cgalCite{Kazhdan06} 
+of a 3D solid, the Poisson Surface Reconstruction method \cgalCite{Kazhdan06}
 solves for an approximate indicator function of the inferred
 solid, whose gradient best matches the input normals. The output
 scalar function, represented in an adaptive octree, is then
@@ -164,7 +155,7 @@ iso-contoured using an adaptive marching cubes.
 algorithm which solves for a piecewise linear function on a 3D
 Delaunay triangulation instead of an adaptive octree.
 
-\tparam Gt Geometric traits class. 
+\tparam Gt Geometric traits class.
 
 \cgalModels `ImplicitFunction`
 
@@ -175,7 +166,7 @@ class Poisson_reconstruction_function
 // Public types
 public:
 
-  /// \name Types 
+  /// \name Types
   /// @{
 
   typedef Gt Geom_traits; ///< Geometric traits class
@@ -189,7 +180,7 @@ public:
   typedef typename Geom_traits::FT FT; ///< number type.
   typedef typename Geom_traits::Point_3 Point; ///< point type.
   typedef typename Geom_traits::Vector_3 Vector; ///< vector type.
-  typedef typename Geom_traits::Sphere_3 Sphere; 
+  typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// @}
 
@@ -278,22 +269,22 @@ private:
 // Public methods
 public:
 
-  /// \name Creation 
+  /// \name Creation
   /// @{
 
 
-  /*! 
-    Creates a Poisson implicit function from the  range of points `[first, beyond)`. 
+  /*!
+    Creates a Poisson implicit function from the  range of points `[first, beyond)`.
 
-    \tparam InputIterator iterator over input points. 
+    \tparam InputIterator iterator over input points.
 
     \tparam PointPMap is a model of `ReadablePropertyMap` with
       a `value_type = Point`.  It can be omitted if `InputIterator`
-      `value_type` is convertible to `Point`. 
-    
+      `value_type` is convertible to `Point`.
+
     \tparam NormalPMap is a model of `ReadablePropertyMap`
       with a `value_type = Vector`.
-  */ 
+  */
   template <typename InputIterator,
             typename PointPMap,
             typename NormalPMap
@@ -346,7 +337,7 @@ public:
   : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
   , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6))
   {
-    forward_constructor(first, beyond, 
+    forward_constructor(first, beyond,
       make_identity_property_map(
       typename std::iterator_traits<InputIterator>::value_type()),
       normal_pmap, Poisson_visitor());
@@ -364,12 +355,12 @@ public:
   {
     return m_tr->bounding_sphere();
   }
-  
+
   /// \cond SKIP_IN_MANUAL
   const Triangulation& tr() const {
     return *m_tr;
   }
-  
+
   // This variant requires all parameters.
   template <class SparseLinearAlgebraTraits_d,
             class Visitor>
@@ -377,7 +368,7 @@ public:
                                  SparseLinearAlgebraTraits_d solver,// = SparseLinearAlgebraTraits_d(),
                                  Visitor visitor,
                                  double approximation_ratio = 0,
-                                 double average_spacing_ratio = 5) 
+                                 double average_spacing_ratio = 5)
   {
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Delaunay refinement...\n";
@@ -391,7 +382,7 @@ public:
 
     internal::Poisson::Constant_sizing_field<Triangulation> sizing_field(CGAL::square(cell_radius_bound));
 
-    std::vector<int> NB; 
+    std::vector<int> NB;
 
     NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sizing_field,max_vertices,enlarge_ratio));
 
@@ -400,7 +391,7 @@ public:
       NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sizing_field,max_vertices,enlarge_ratio));
     }
 
-    if(approximation_ratio > 0. && 
+    if(approximation_ratio > 0. &&
        approximation_ratio * std::distance(m_tr->input_points_begin(),
                                            m_tr->input_points_end()) > 20) {
 
@@ -429,13 +420,13 @@ public:
       //make it deterministic
       Random random(0);
       Poisson_skip_vertices skip(1.-approximation_ratio,random);
-      
+
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
       CGAL::Timer approximation_timer; approximation_timer.start();
 
       CGAL::Timer sizing_field_timer; sizing_field_timer.start();
-      Poisson_reconstruction_function<Geom_traits> 
+      Poisson_reconstruction_function<Geom_traits>
         coarse_poisson_function(Some_points_iterator(m_tr->input_points_end(),
                                                      skip,
                                                      m_tr->input_points_begin()),
@@ -444,18 +435,18 @@ public:
                                 Normal_of_point_with_normal_map<Geom_traits>() );
       coarse_poisson_function.compute_implicit_function(solver, Poisson_visitor(),
                                                         0.);
-      internal::Poisson::Constant_sizing_field<Triangulation> 
+      internal::Poisson::Constant_sizing_field<Triangulation>
         min_sizing_field(CGAL::square(average_spacing));
-      internal::Poisson::Constant_sizing_field<Triangulation> 
+      internal::Poisson::Constant_sizing_field<Triangulation>
         sizing_field_ok(CGAL::square(average_spacing*average_spacing_ratio));
 
       Special_wrapper_of_two_functions_keep_pointers<
         internal::Poisson::Constant_sizing_field<Triangulation>,
         Poisson_reconstruction_function<Geom_traits> > sizing_field2(&min_sizing_field,
                                                                      &coarse_poisson_function);
-        
+
       sizing_field_timer.stop();
-      std::cerr << "Construction time of the sizing field: " << sizing_field_timer.time() 
+      std::cerr << "Construction time of the sizing field: " << sizing_field_timer.time()
                 << " seconds" << std::endl;
 
       NB.push_back( delaunay_refinement(radius_edge_ratio_bound,
@@ -467,12 +458,12 @@ public:
       CGAL_TRACE_STREAM << "SPECIAL PASS END (" << approximation_timer.time() <<  " seconds)" << std::endl;
     }
 
-    
+
     // Prints status
     CGAL_TRACE_STREAM << "Delaunay refinement: " << "added ";
     for(std::size_t i = 0; i < NB.size()-1; i++){
-      CGAL_TRACE_STREAM << NB[i] << " + "; 
-    } 
+      CGAL_TRACE_STREAM << NB[i] << " + ";
+    }
     CGAL_TRACE_STREAM << NB.back() << " Steiner points, "
                       << task_timer.time() << " seconds, "
                       << std::endl;
@@ -519,12 +510,12 @@ public:
     If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED`
     is defined, an overload with \link Eigen_solver_traits <tt>Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> ></tt> \endlink
     as default solver is provided.
-  
+
     \param solver sparse linear solver.
     \param smoother_hole_filling controls if the Delaunay refinement is done for the input points, or for an approximation of the surface obtained from a first pass of the algorithm on a sample of the points.
 
-    \return `false` if the linear solver fails. 
-  */ 
+    \return `false` if the linear solver fails.
+  */
   template <class SparseLinearAlgebraTraits_d>
   bool compute_implicit_function(SparseLinearAlgebraTraits_d solver, bool smoother_hole_filling = false)
   {
@@ -564,14 +555,14 @@ public:
   }
   /// \endcond
 
-  /*! 
-    `ImplicitFunction` interface: evaluates the implicit function at a 
-    given 3D query point. The function `compute_implicit_function()` must be 
-    called before the first call to `operator()`. 
-  */ 
+  /*!
+    `ImplicitFunction` interface: evaluates the implicit function at a
+    given 3D query point. The function `compute_implicit_function()` must be
+    called before the first call to `operator()`.
+  */
   FT operator()(const Point& p) const
   {
-    m_hint = m_tr->locate(p ,m_hint); 
+    m_hint = m_tr->locate(p ,m_hint);
 
     if(m_tr->is_infinite(m_hint)) {
       int i = m_hint->index(m_tr->infinite_vertex());
@@ -585,7 +576,7 @@ public:
            c * m_hint->vertex(2)->f() +
            d * m_hint->vertex(3)->f();
   }
-  
+
   /// \cond SKIP_IN_MANUAL
   void initialize_cell_indices()
   {
@@ -625,7 +616,7 @@ public:
 
   void initialize_duals() const
   {
-    Dual.resize(m_tr->number_of_cells());    
+    Dual.resize(m_tr->number_of_cells());
     int i = 0;
     for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
         fcit != m_tr->finite_cells_end();
@@ -651,18 +642,18 @@ public:
     const Point& pb = ch->vertex(1)->point();
     const Point& pc = ch->vertex(2)->point();
     const Point& pd = ch->vertex(3)->point();
-    
+
     Vector va = pa - pd;
     Vector vb = pb - pd;
     Vector vc = pc - pd;
-    
+
     internal::invert(va.x(), va.y(), va.z(),
            vb.x(), vb.y(), vb.z(),
            vc.x(), vc.y(), vc.z(),
            entry[0],entry[1],entry[2],entry[3],entry[4],entry[5],entry[6],entry[7],entry[8]);
   }
   /// \endcond
-  
+
   /// Returns a point located inside the inferred surface.
   Point get_inner_point() const
   {
@@ -693,7 +684,7 @@ private:
                                internal::Poisson::Constant_sizing_field<Triangulation>());
   }
 
-  template <typename Sizing_field, 
+  template <typename Sizing_field,
             typename Second_sizing_field>
   unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
                                    Sizing_field sizing_field, ///< cell radius bound (ignored if zero)
@@ -803,12 +794,12 @@ private:
     // it is closed using the smallest part of the sphere).
     std::vector<Vertex_handle> convex_hull;
     m_tr->adjacent_vertices (m_tr->infinite_vertex (),
-			     std::back_inserter (convex_hull));
+                             std::back_inserter (convex_hull));
     unsigned int nb_negative = 0;
     for (std::size_t i = 0; i < convex_hull.size (); ++ i)
       if (convex_hull[i]->f() < 0.0)
         ++ nb_negative;
-    
+
     if(nb_negative > convex_hull.size () / 2)
       flip_f();
 
@@ -825,7 +816,7 @@ private:
     Finite_vertices_iterator v, e;
     for(v = m_tr->finite_vertices_begin(),
         e= m_tr->finite_vertices_end();
-        v != e; 
+        v != e;
         v++)
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
@@ -944,14 +935,14 @@ private:
 
   // TODO: Some entities are computed too often
   // - nn and area should not be computed for the face and its opposite face
-  // 
+  //
   // divergent
   FT div_normalized(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
     cells.reserve(32);
     m_tr->incident_cells(v,std::back_inserter(cells));
-  
+
     FT div = 0;
     typename std::vector<Cell_handle>::iterator it;
     for(it = cells.begin(); it != cells.end(); it++)
@@ -997,7 +988,7 @@ private:
     std::vector<Cell_handle> cells;
     cells.reserve(32);
     m_tr->incident_cells(v,std::back_inserter(cells));
-  
+
     FT div = 0.0;
     typename std::vector<Cell_handle>::iterator it;
     for(it = cells.begin(); it != cells.end(); it++)
@@ -1005,14 +996,14 @@ private:
       Cell_handle cell = *it;
       if(m_tr->is_infinite(cell))
         continue;
-      
+
       const int index = cell->index(v);
       const Point& a = cell->vertex(m_tr->vertex_triple_index(index, 0))->point();
       const Point& b = cell->vertex(m_tr->vertex_triple_index(index, 1))->point();
       const Point& c = cell->vertex(m_tr->vertex_triple_index(index, 2))->point();
       const Vector nn = CGAL::cross_product(b-a,c-a);
 
-      div+= nn * (//v->normal() + 
+      div+= nn * (//v->normal() +
                   cell->vertex((index+1)%4)->normal() +
                   cell->vertex((index+2)%4)->normal() +
                   cell->vertex((index+3)%4)->normal());
@@ -1209,7 +1200,7 @@ private:
       A.set_coef(vi->index(),vi->index(), diagonal, true /*new*/);
     }
   }
-  
+
 
   /// Computes enlarged geometric bounding sphere of the embedded triangulation.
   Sphere enlarged_bounding_sphere(FT ratio) const

@@ -67,10 +67,10 @@ int main (int, char**)
   parameters.min_points = std::size_t(point_set.size() / 3);
   parameters.epsilon = 0.01;
   parameters.cluster_epsilon = 0.5;
-  parameters.normal_threshold = 0.9;   
+  parameters.normal_threshold = 0.9;
   ransac.detect(parameters);
-  
-  BOOST_FOREACH(boost::shared_ptr<Efficient_ransac::Shape> shape, ransac.shapes())
+
+  for(boost::shared_ptr<Efficient_ransac::Shape> shape : ransac.shapes())
     if (Sphere* sphere = dynamic_cast<Sphere*>(shape.get()))
       std::cerr << "Detected sphere of center " << sphere->center() // Center should be approx 0, 0, 0
                 << " and of radius " << sphere->radius() << std::endl; // Radius should be approx 1

@@ -31,11 +31,13 @@ if ( CGAL_FOUND )
 
   if(CGAL_Qt5_FOUND)
     target_link_libraries(draw_triangulation_2 PUBLIC CGAL::CGAL_Qt5)
+  else()
+    message(STATUS "NOTICE: The example draw_triangulation_2 requires Qt and will not be compiled.")
   endif()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

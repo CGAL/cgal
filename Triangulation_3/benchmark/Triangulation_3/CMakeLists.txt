@@ -1,29 +1,64 @@
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
 
-project( Triangulation_3_Benchmark )
+cmake_minimum_required(VERSION 3.1...3.15)
 
-cmake_minimum_required(VERSION 2.8.11)
+project( Triangulation_3 )
 
-find_package(CGAL QUIET)
 
-if ( CGAL_FOUND )
+# CGAL and its components
+find_package( CGAL QUIET COMPONENTS  )
 
-  include( ${CGAL_USE_FILE} )
+if ( NOT CGAL_FOUND )
 
-#  find_package( TBB QUIET )
+  message(STATUS "This project requires the CGAL library, and will not be compiled.")
+  return()
 
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
-  create_single_source_cgal_program( "incident_edges.cpp" )
-  create_single_source_cgal_program( "simple.cpp" )
-  create_single_source_cgal_program( "simple_2.cpp" )
-  create_single_source_cgal_program( "Triangulation_benchmark_3.cpp" )
-  create_single_source_cgal_program( "segment_traverser_benchmark.cpp" )
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
 endif()
 
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
+
+  return()
+
+endif()
+
+# include for local directory
+
+# include for local package
+
+
+# Creating entries for all C++ files with "main" routine
+# ##########################################################
+
+
+create_single_source_cgal_program( "incident_edges.cpp" )
+
+create_single_source_cgal_program( "simple_2.cpp" )
+
+create_single_source_cgal_program( "simple.cpp" )
+
+create_single_source_cgal_program( "Triangulation_benchmark_3.cpp" )
+
+create_single_source_cgal_program( "segment_traverser_benchmark.cpp" )
+
+find_package(benchmark)
+
+if(TARGET benchmark::benchmark)
+  find_package(TBB REQUIRED)
+  include( CGAL_target_use_TBB )
+
+  create_single_source_cgal_program( "DT3_benchmark_with_TBB.cpp" )
+  CGAL_target_use_TBB(DT3_benchmark_with_TBB)
+  target_link_libraries(DT3_benchmark_with_TBB PRIVATE benchmark::benchmark)
+
+  add_executable(DT3_benchmark_with_TBB_CCC_approximate_size DT3_benchmark_with_TBB.cpp)
+  CGAL_target_use_TBB(DT3_benchmark_with_TBB_CCC_approximate_size)
+  target_compile_definitions(DT3_benchmark_with_TBB_CCC_approximate_size PRIVATE CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE)
+  target_link_libraries(DT3_benchmark_with_TBB_CCC_approximate_size PRIVATE CGAL::CGAL benchmark::benchmark)
+endif()

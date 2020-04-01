@@ -3,26 +3,26 @@ namespace CGAL {
 /*!
 \ingroup PkgStreamLines2Ref
 
-This class implements the second order Runge-Kutta integrator. 
+This class implements the second order Runge-Kutta integrator.
 
-\tparam VectorField_2 has to be instantiated by a model of the concept `VectorField_2`. 
+\tparam VectorField_2 has to be instantiated by a model of the concept `VectorField_2`.
 
 \cgalModels `Integrator_2`
 
-\sa `Euler_integrator_2<VectorField_2>` 
+\sa `Euler_integrator_2<VectorField_2>`
 
 */
 template< typename VectorField_2 >
 class Runge_kutta_integrator_2 {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Creates a Runge-Kutta second order integrator with `integration_step` as integration step. 
-*/ 
-Runge_kutta_integrator_2(const FT & integration_step); 
+Creates a Runge-Kutta second order integrator with `integration_step` as integration step.
+*/
+Runge_kutta_integrator_2(const FT & integration_step);
 
 /// @}
 

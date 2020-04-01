@@ -12,7 +12,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -23,7 +23,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -53,6 +53,9 @@ create_single_source_cgal_program( "halfspace_intersection_3.cpp" )
 create_single_source_cgal_program( "lloyd_algorithm.cpp" )
 
 create_single_source_cgal_program( "quickhull_3.cpp" )
+
+create_single_source_cgal_program( "graph_hull_3.cpp" )
+
 
 create_single_source_cgal_program( "quickhull_any_dim_3.cpp" )
 

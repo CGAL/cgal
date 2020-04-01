@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez, Marc Pouget and Laurent Saboret
 
@@ -44,7 +35,7 @@
 #include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
+#include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -87,8 +78,8 @@ jet_smooth_point(
                                  Simple_cartesian<double>,
                                  SvdTraits> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
-  
-  std::vector<Point> points; 
+
+  std::vector<Point> points;
   CGAL::Point_set_processing_3::internal::neighbor_query
     (query, tree, k, neighbor_radius, points);
 
@@ -127,17 +118,17 @@ jet_smooth_point(
       , advancement (advancement)
       , interrupted (interrupted)
     { }
-    
+
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
       {
         if (interrupted)
           break;
-	output[i] = CGAL::internal::jet_smooth_point<Kernel, SvdTraits>(input[i], tree, k,
+        output[i] = CGAL::internal::jet_smooth_point<Kernel, SvdTraits>(input[i], tree, k,
                   neighbor_radius,
-									degree_fitting,
-									degree_monge);
+                                                                        degree_fitting,
+                                                                        degree_monge);
         ++ advancement;
       }
     }
@@ -165,9 +156,8 @@ jet_smooth_point(
 
    \pre `k >= 2`
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   and `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
@@ -201,7 +191,7 @@ jet_smooth_point(
 
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename NamedParameters
 >
 void
@@ -212,9 +202,9 @@ jet_smooth_point_set(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
@@ -222,7 +212,7 @@ jet_smooth_point_set(
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                          typename Kernel::FT(0));
   unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
@@ -244,12 +234,12 @@ jet_smooth_point_set(
 
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2);
-  
+
   typename PointRange::iterator it;
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
+  std::vector<Point> kd_tree_points;
   for(it = points.begin(); it != points.end(); it++)
     kd_tree_points.push_back(get(point_map, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -259,13 +249,13 @@ jet_smooth_point_set(
 
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
+                             "Parallel_tag is enabled but TBB is unavailable.");
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
      Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, kd_tree_points.size());
-     
+
      std::vector<Point> mutated_points (kd_tree_points.size (), CGAL::ORIGIN);
      CGAL::internal::Jet_smooth_pwns<Kernel, SvdTraits, Tree>
        f (tree, k, neighbor_radius, kd_tree_points, degree_fitting, degree_monge,
@@ -286,14 +276,14 @@ jet_smooth_point_set(
      {
        std::size_t nb = 0;
        for(it = points.begin(); it != points.end(); it++, ++ nb)
-	 {
-	   const typename boost::property_traits<PointMap>::reference p = get(point_map, *it);
-	   put(point_map, *it ,
-	       internal::jet_smooth_point<Kernel, SvdTraits>(
+         {
+           const typename boost::property_traits<PointMap>::reference p = get(point_map, *it);
+           put(point_map, *it ,
+               internal::jet_smooth_point<Kernel, SvdTraits>(
                    p,tree,k,neighbor_radius,degree_fitting,degree_monge) );
            if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
              break;
-	 }
+         }
      }
 }
 
@@ -301,7 +291,7 @@ jet_smooth_point_set(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename ConcurrencyTag,
-	  typename PointRange>
+          typename PointRange>
 void
 jet_smooth_point_set(
   PointRange& points,
@@ -311,7 +301,7 @@ jet_smooth_point_set(
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 /// \endcond
-  
+
 
 } //namespace CGAL
 

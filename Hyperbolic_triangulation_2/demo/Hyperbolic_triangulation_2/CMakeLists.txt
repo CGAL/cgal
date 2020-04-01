@@ -5,7 +5,7 @@ project (Hyperbolic_triangulation_2_Demo)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON) 
+set(CMAKE_AUTOMOC ON)
 
 if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
@@ -18,9 +18,9 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUN
   include_directories( BEFORE ./ ./include )
   # ui files, created with Qt Designer
   qt5_wrap_ui( UIS HDT2.ui )
-  
+
   qt5_add_resources ( RESOURCE_FILES resources/Delaunay_triangulation_2.qrc )
-  
+
   # cpp files
   add_executable ( HDT2 HDT2.cpp ${CGAL_Qt5_RESOURCE_FILES} ${RESOURCE_FILES} ${UIS})
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS HDT2 )

@@ -2,9 +2,9 @@
 //
 // Copyright (c) 1999 The CGAL Consortium
 //
-// 
-// 
-// 
+//
+//
+//
 //
 // ----------------------------------------------------------------------------
 // release       :
@@ -30,7 +30,7 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
-#endif 
+#endif
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>

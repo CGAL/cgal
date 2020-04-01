@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -71,14 +62,14 @@ monotone_matrix_search(
   CGAL_optimisation_assertion(
     M_new->number_of_rows() == 0 ||
       M_new->number_of_rows() == ( M.number_of_rows() + 1) >> 1);
-  
+
 
   // reduce M_new to a quadratic matrix:
-  
+
   // table to store the reduction permutation:
   // (incl. sentinel)
   int* reduction_table = new int[ M_new->number_of_rows() + 1];
-  
+
   if ( M_new->number_of_rows() < M_new->number_of_columns()) {
     // set sentinel:
     reduction_table[M_new->number_of_rows()] =
@@ -86,7 +77,7 @@ monotone_matrix_search(
     _reduce_matrix( *M_new, reduction_table, compare_strictly);
     CGAL_optimisation_assertion(
       M_new->number_of_columns() == M_new->number_of_rows());
-  
+
   } // if ( M_new->number_of_rows() < M_new->number_of_columns())
   else {
     // no reduction -> reduction_table is identity table:
@@ -96,30 +87,30 @@ monotone_matrix_search(
     reduction_table[M_new->number_of_columns()] =
       M_new->number_of_columns() - 1;
   }
-  
-  
+
+
 
   // recursion:
-  
+
   CGAL_optimisation_assertion(
     M_new->number_of_rows() >= M_new->number_of_columns());
-  
+
   // table to store the rmax values of M_new:
   // (incl. sentinel)
   int* t_new = new int[M_new->number_of_rows() + 1];
   t_new[M_new->number_of_rows()] = M_new->number_of_columns();
-  
+
   if ( M_new->number_of_rows() == 1)
     // recursion anchor:
     // we have just one element ==> no choice
     t_new[0] = 0;
   else
     monotone_matrix_search( *M_new, t_new);
-  
+
 
   // and conquer
   // -----------
-  
+
   int j( 0);       // actual index in t
   int j_new( 0);   // actual index in t_new
   do {
@@ -127,7 +118,7 @@ monotone_matrix_search(
     *(t+j) = reduction_table[t_new[j_new++]];
     if ( ++j >= M.number_of_rows())
       break;
-  
+
     // odd row
     // search *(t+j) between *(t+j-1) and t_new[j_new]:
     *(t+j) = reduction_table[t_new[j_new]];
@@ -195,7 +186,7 @@ _reduce_matrix(
     }
   } // while ( j2 - j1 <
     //         M.number_of_columns() - M.number_of_rows() + 1)
-  
+
   // M.number_of_columns() - M.number_of_rows() columns
   // have been deleted, now move columns
   // j2 .. M.number_of_columns()-1 to the first part
@@ -204,7 +195,7 @@ _reduce_matrix(
     M.replace_column( ++j1, j2);
     *(t+j1) = j2++;
   }
-  
+
   M.shrink_to_quadratic_size();
 } // _reduce_matrix( M, t)
 } //namespace CGAL

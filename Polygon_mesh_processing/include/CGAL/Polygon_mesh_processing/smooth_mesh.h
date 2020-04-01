@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Mael Rouxel-Labbé
@@ -33,6 +24,11 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -154,10 +150,9 @@ void smooth_mesh(const FaceRange& faces,
   using parameters::get_parameter;
 
   // named parameters
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits),
-                               GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                               get_property_map(CGAL::vertex_point, tmesh));
+                                          get_property_map(CGAL::vertex_point, tmesh));
 
   const bool use_angle_smoothing = choose_parameter(get_parameter(np, internal_np::use_angle_smoothing), true);
   bool use_area_smoothing = choose_parameter(get_parameter(np, internal_np::use_area_smoothing), true);
@@ -177,7 +172,7 @@ void smooth_mesh(const FaceRange& faces,
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             get(Vertex_property_tag(), tmesh));
+                                 get(Vertex_property_tag(), tmesh));
 
   // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
   if((std::is_same<VCMap, Default_VCMap>::value))
@@ -225,7 +220,6 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   Tree aabb_tree(input_triangles.begin(), input_triangles.end());
-  aabb_tree.accelerate_distance_queries();
 
   // Setup the working ranges and check some preconditions
   Angle_smoother angle_smoother(tmesh, vpmap, vcmap, gt);

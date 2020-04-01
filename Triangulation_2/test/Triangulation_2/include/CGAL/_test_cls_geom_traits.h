@@ -7,14 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
-// source        : 
+//
+// source        :
 // file          : include/CGAL/_test_cls_geom_traits.h
-// revision      : 
-// revision_date : 
+// revision      :
+// revision_date :
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -28,7 +28,7 @@ template <class Traits, class Point>
 void
 _test_cls_geom_traits(Point p[34], const Traits & )
 {
-  
+
   typedef typename Traits::Segment_2           Segment;
   typedef typename Traits::Triangle_2          Triangle;
 
@@ -36,7 +36,7 @@ _test_cls_geom_traits(Point p[34], const Traits & )
   Point p0(p[0]);
   Point p1 = p[1];
   Point p2 = p[2];
-  
+
   // Test Segment
   Segment s1(p0,p1);
   assert( &s1 == &s1 ); // to avoid a warning
@@ -44,7 +44,7 @@ _test_cls_geom_traits(Point p[34], const Traits & )
   // Test Triangle
   Triangle t1(p0,p1,p2);
   assert( &t1 == &t1 ); // to avoid a warning
-  
+
   // Test constructor
   Traits gt;
 
@@ -59,7 +59,7 @@ _test_cls_geom_traits(Point p[34], const Traits & )
   assert( compare_y_2(p[3],p[4]) == CGAL::SMALLER );
   assert( compare_y_2(p[4],p[3]) == CGAL::LARGER );
   assert( compare_y_2(p[4],p[5]) == CGAL::EQUAL );
-  
+
   // Test orientation()
   typename Traits::Orientation_2 orientation = gt.orientation_2_object();
   assert( orientation(p[9], p[10],p[11]) == CGAL::COUNTERCLOCKWISE );
@@ -67,7 +67,7 @@ _test_cls_geom_traits(Point p[34], const Traits & )
   assert( orientation(p[15],p[16],p[17]) == CGAL::COLLINEAR );
 
   // Test side_of_oriented_circle()
-  typename Traits::Side_of_oriented_circle_2 
+  typename Traits::Side_of_oriented_circle_2
     in_circle = gt.side_of_oriented_circle_2_object();
   assert( in_circle(p[18],p[19],p[20],p[21]) == CGAL::ON_NEGATIVE_SIDE );
   assert( in_circle(p[22],p[23],p[24],p[25]) == CGAL::ON_POSITIVE_SIDE );
@@ -93,14 +93,14 @@ _test_cls_delaunay_geom_traits(Point p[34], const Traits & )
   assert( closer(p[0],p[2],p[1]) == CGAL::LARGER);
   assert( closer(p[0],p[1],p[1]) == CGAL::EQUAL);
   assert( closer(p[0],p[0],p[0]) == CGAL::EQUAL);
-  
+
 
   // Test circumcenter()
-  typename Traits::Construct_circumcenter_2 
+  typename Traits::Construct_circumcenter_2
     circumcenter = gt.construct_circumcenter_2_object();
   Point c = circumcenter(p[30],p[31],p[32]);
-  assert( gt.compare_x_2_object()(p[33],c) ==	 CGAL::EQUAL &&
-	  gt.compare_y_2_object()(p[33],c) ==  CGAL::EQUAL );
-				    
+  assert( gt.compare_x_2_object()(p[33],c) ==         CGAL::EQUAL &&
+          gt.compare_y_2_object()(p[33],c) ==  CGAL::EQUAL );
+
   //Test bisector()
 }

@@ -20,7 +20,6 @@
 #include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -41,7 +40,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+typedef std::pair<Point, Vector> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
 
@@ -74,7 +73,7 @@ struct Counter {
       std::cerr << "Counter reached " << N << std::endl;
     }
   }
-  
+
 };
 
 struct InsertVisitor {
@@ -116,7 +115,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      
+
       return EXIT_FAILURE;
     }
 
@@ -178,7 +177,7 @@ int main(int argc, char * argv[])
                     vertices(input_mesh)){
         const Point& p = v->point();
         Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v,input_mesh);
-        points.push_back(Point_with_normal(p,n));
+        points.push_back(std::make_pair(p,n));
       }
     }
     // If XYZ file format
@@ -188,14 +187,14 @@ int main(int argc, char * argv[])
       // Reads the point set file in points[].
       // Note: read_xyz_points_and_normals() requires an iterator over points
       // + property maps to access each point's position and normal.
-      // The position property map can be omitted here as we use iterators over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
           !CGAL::read_xyz_points(
                                 stream,
                                 std::back_inserter(points),
-                                CGAL::parameters::normal_map
-                                (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))))
+                                CGAL::parameters::point_map
+                                (CGAL::make_first_of_pair_property_map(Point_with_normal())).
+                                normal_map (CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -224,7 +223,7 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+    bool points_have_normals = (points.begin()->second != CGAL::NULL_VECTOR);
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -233,10 +232,10 @@ int main(int argc, char * argv[])
 
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
-    
+
     Counter counter(std::distance(points.begin(), points.end()));
     InsertVisitor visitor(counter) ;
-    
+
 
     //***************************************
     // Computes implicit function
@@ -247,11 +246,10 @@ int main(int argc, char * argv[])
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_identity_property_map(PointList::value_type()),
-                              CGAL::make_normal_of_point_with_normal_map(PointList::value_type()),
+                              CGAL::make_first_of_pair_property_map(Point_with_normal()),
+                              CGAL::make_second_of_pair_property_map(Point_with_normal()),
                               visitor);
 
     #ifdef CGAL_EIGEN3_ENABLED
@@ -260,14 +258,14 @@ int main(int argc, char * argv[])
       {
         std::cerr << "Use Eigen 3\n";
         CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_symmetric_matrix<double>::EigenType> > solver;
-        if ( ! function.compute_implicit_function(solver, visitor, 
+        if ( ! function.compute_implicit_function(solver, visitor,
                                                 approximation_ratio,
                                                 average_spacing_ratio) )
         {
           std::cerr << "Error: cannot compute implicit function" << std::endl;
           return EXIT_FAILURE;
         }
-      }    
+      }
       else
       {
         std::cerr << "Error: invalid solver " << solver_name << "\n";
@@ -293,7 +291,9 @@ int main(int argc, char * argv[])
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, 6 /* knn = 1 ring */);
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
+      (points, 6 /* knn = 1 ring */,
+       CGAL::parameters::point_map (CGAL::make_first_of_pair_property_map(Point_with_normal())));
 
     // Gets one point inside the implicit surface
     Point inner_point = function.get_inner_point();
@@ -309,7 +309,7 @@ int main(int argc, char * argv[])
     FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines the implicit surface: requires defining a
-  	// conservative bounding sphere centered at inner point.
+          // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
@@ -360,14 +360,13 @@ int main(int argc, char * argv[])
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     AABB_tree tree(faces(output_mesh).first, faces(output_mesh).second, output_mesh);
-    tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh
     double max_distance = DBL_MIN;
     double avg_distance = 0;
     for (PointList::const_iterator p=points.begin(); p!=points.end(); p++)
     {
-      double distance = std::sqrt(tree.squared_distance(*p));
+      double distance = std::sqrt(tree.squared_distance(p->first));
 
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;

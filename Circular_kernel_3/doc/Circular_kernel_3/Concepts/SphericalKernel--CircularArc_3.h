@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
-Concept for arcs of circles. 
+Concept for arcs of circles.
 
 \cgalRefines `CopyConstructible`
 \cgalRefines `Assignable`

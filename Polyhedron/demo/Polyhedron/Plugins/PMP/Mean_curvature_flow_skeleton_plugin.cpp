@@ -14,7 +14,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 
 #include <Eigen/Sparse>
@@ -61,27 +61,27 @@ struct Polyline_visitor
 {
   typedef std::vector<Point> Polyline;
   typedef std::vector<std::size_t> Polyline_of_ids;
-  
+
   std::list<Polyline>& polylines;
   Skeleton& skeleton;
-  
+
   Polyline_visitor(std::list<Polyline>& lines, Skeleton& skeleton)
     : polylines(lines),
       skeleton(skeleton)
   {}
-  
+
   void start_new_polyline()
   {
     Polyline V;
     polylines.push_back(V);
   }
-  
+
   void add_node(boost::graph_traits<Skeleton>::vertex_descriptor vd)
   {
     Polyline& polyline = polylines.back();
     polyline.push_back(skeleton[vd].point);
   }
-  
+
   void end_polyline(){}
 };
 
@@ -102,7 +102,7 @@ public:
   {
     delete ui;
   }
-  
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
 
     this->mw = mainWindow;
@@ -189,17 +189,9 @@ public:
                                             "to a surface mesh item. The generated mcf group must be selected in "
                                             "order to continue an on-going set of operations. "));});
     ui->omega_H->setValue(0.1);
-    ui->omega_H->setSingleStep(0.1);
-    ui->omega_H->setDecimals(3);
     ui->omega_P->setValue(0.2);
-    ui->omega_P->setSingleStep(0.1);
-    ui->omega_P->setDecimals(3);
-    ui->min_edge_length->setDecimals(7);
     ui->min_edge_length->setValue(0.002 * diag);
-    ui->min_edge_length->setSingleStep(0.0000001);
-    ui->delta_area->setDecimals(7);
     ui->delta_area->setValue(1e-4);
-    ui->delta_area->setSingleStep(1e-5);
     ui->is_medially_centered->setChecked(false);
 
     ui->label_omega_H->setToolTip(QString("omega_H controls the velocity of movement and approximation quality"));
@@ -243,7 +235,7 @@ public:
 
     // the algorithm is only applicable on a mesh
     // that has only one connected component
-    
+
     boost::unordered_map<boost::graph_traits<Face_graph>::face_descriptor,int> cc(num_faces(*pMesh));
     std::size_t num_component = PMP::connected_components(*pMesh, boost::make_assoc_property_map(cc));
 
@@ -368,17 +360,17 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   if (num_vertices(item->skeleton_curve)==0 ) { QApplication::restoreOverrideCursor(); return;}
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
 
     // init the polyhedron simplex indices
   CGAL::set_halfedgeds_items_id(*item->input_triangle_mesh);
-  boost::property_map<Face_graph, boost::vertex_index_t>::type 
+  boost::property_map<Face_graph, boost::vertex_index_t>::type
     vimap = get(boost::vertex_index, *item->input_triangle_mesh);
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(*item->input_triangle_mesh));
-  
+
   Face_graph *smesh = item->input_triangle_mesh;
 
   boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm
@@ -431,7 +423,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     if(segment > nb_segment)
       nb_segment = segment + 1;
     put(fpim, fd, segment);
-    
+
   }
   item_segmentation->setItemIsMulticolor(true);
   item_segmentation->computeItemColorVectorAutomatically(true);
@@ -461,7 +453,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     if ( !is_mesh_valid(pMesh) ) return;
 
-    QTime time;
+    QElapsedTimer time;
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -499,7 +491,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Contract...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -524,7 +516,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Collapse...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -550,7 +542,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Split...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -575,7 +567,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Detect degeneracy...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -626,7 +618,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -660,7 +652,7 @@ if(!contracted_item)
     ps->insert(point);
   }
   ps->select_all();
-  
+
   if (item->fixedPointsItemIndex == -1)
   {
     item->fixedPointsItemIndex = scene->addItem(fixedPointsItem);
@@ -749,7 +741,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -810,7 +802,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -832,7 +824,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     ps->insert(point);
   }
   ps->select_all();
-  
+
   if (item->fixedPointsItemIndex == -1)
   {
     item->fixedPointsItemIndex = scene->addItem(fixedPointsItem);

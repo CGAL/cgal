@@ -39,7 +39,7 @@ struct Outlier_removal_functor
   void operator()()
   {
     // Computes outliers
-    *result = 
+    *result =
       CGAL::remove_outliers(*points,
                             nb_neighbors,
                             points->parameters().
@@ -70,7 +70,7 @@ public:
     actionOutlierRemoval->setObjectName("actionOutlierRemoval");
     autoConnectActions();
   }
-  
+
   //! Applicate for Point_sets with normals.
   bool applicable(QAction*) const {
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
@@ -92,6 +92,7 @@ class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::Outlie
     Point_set_demo_outlier_removal_dialog(QWidget * /*parent*/ = 0)
     {
       setupUi(this);
+      m_distanceThreshold->setMinimum(0.0);
     }
 
     double percentage() const { return m_inputPercentage->value(); }

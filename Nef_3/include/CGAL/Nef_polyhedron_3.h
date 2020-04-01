@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -100,8 +91,8 @@ std::istream& operator>>(std::istream& os, Nef_polyhedron_3<K,I,M>& NP);
 
 
 template <typename K, typename I, typename M>
-class Nef_polyhedron_3_rep 
-{ 
+class Nef_polyhedron_3_rep
+{
   typedef Nef_polyhedron_3_rep<K,I,M>                  Self;
   friend class Nef_polyhedron_3<K,I,M>;
  public:
@@ -124,14 +115,14 @@ class Nef_polyhedron_3_rep
  private:
   SNC_structure snc_;
   SNC_point_locator* pl_;
-  
+
  public:
   Nef_polyhedron_3_rep() : snc_(), pl_() {}
-  ~Nef_polyhedron_3_rep() { 
+  ~Nef_polyhedron_3_rep() {
     CGAL_NEF_TRACEN( "Nef_polyhedron_3_rep: destroying SNC structure "<<&snc_<<
-	    ", point locator "<<pl_);
-    snc_.clear(); 
-    delete pl_; 
+            ", point locator "<<pl_);
+    snc_.clear();
+    delete pl_;
   }
 };
 
@@ -145,12 +136,12 @@ halfspaces. |\Mtype| is closed under all binary set opertions |intersection|,
 |boundary|, |closure|, and |interior|.}*/
 
 template <typename Kernel_, typename Items_ = typename CGAL::Default_items<Kernel_>::Items, typename Mark_ = bool>
-class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, Items_, Mark_> >, 
-			 public SNC_const_decorator<SNC_structure<Kernel_,Items_,Mark_> >
-{ 
+class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, Items_, Mark_> >,
+                         public SNC_const_decorator<SNC_structure<Kernel_,Items_,Mark_> >
+{
  public:
-  /*{\Mtypes 7}*/  
-  
+  /*{\Mtypes 7}*/
+
   typedef Kernel_                                     Kernel;
   typedef Kernel_                                     Traits;
   typedef Items_                                      Items;
@@ -189,25 +180,25 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef enum { DEFAULT, NAIVE, WALKING, SPATIAL_SUBDIVISION  } Location_mode;
   /*{\Menum selection flag for the point location mode.}*/
 
-protected: 
+protected:
   struct AND {
-    Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false)const 
-    { return b1&&b2; } 
+    Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false)const
+    { return b1&&b2; }
   };
 
   struct OR {
     Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const
-    { return b1||b2; } 
+    { return b1||b2; }
   };
 
   struct DIFF {
-    Mark operator()(const Mark& b1, const Mark& b2, bool inverted=false) const 
+    Mark operator()(const Mark& b1, const Mark& b2, bool inverted=false) const
     { return (inverted) ? !b1&&b2  :  b1&&!b2 ; }
   };
 
   struct XOR {
-    Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const 
-    { return (b1&&!b2)||(!b1&&b2); } 
+    Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const
+    { return (b1&&!b2)||(!b1&&b2); }
   };
 
  public:
@@ -223,15 +214,15 @@ protected:
   typedef typename Nef_rep::SNC_point_locator   SNC_point_locator;
   typedef typename Nef_rep::SNC_point_locator_default
     SNC_point_locator_default;
-  typedef CGAL::Combine_with_halfspace<SNC_structure, SNC_point_locator> 
+  typedef CGAL::Combine_with_halfspace<SNC_structure, SNC_point_locator>
           Combine_with_halfspace;
 public:
- enum Intersection_mode { 
-	 CLOSED_HALFSPACE = Combine_with_halfspace::CLOSED_HALFSPACE, 
-     OPEN_HALFSPACE = Combine_with_halfspace::OPEN_HALFSPACE, 
+ enum Intersection_mode {
+         CLOSED_HALFSPACE = Combine_with_halfspace::CLOSED_HALFSPACE,
+     OPEN_HALFSPACE = Combine_with_halfspace::OPEN_HALFSPACE,
      PLANE_ONLY = Combine_with_halfspace::PLANE_ONLY};
 
-protected: 
+protected:
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SNC_simplify        SNC_simplify;
@@ -241,8 +232,8 @@ protected:
  typedef CGAL::Nef_polyhedron_S2<Kernel,Items,Mark,Sphere_map> Nef_polyhedron_S2;
  protected:
 
-  SNC_structure& snc() { return this->ptr()->snc_; } 
-  const SNC_structure& snc() const { return this->ptr()->snc_; } 
+  SNC_structure& snc() { return this->ptr()->snc_; }
+  const SNC_structure& snc() const { return this->ptr()->snc_; }
 
   SNC_point_locator*& pl() { return this->ptr()->pl_; }
   const SNC_point_locator* pl() const { return this->ptr()->pl_; }
@@ -270,19 +261,19 @@ protected:
   typedef typename SNC_structure::Halfedge_const_handle        Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_const_handle       Halffacet_const_handle;
   typedef typename SNC_structure::Volume_const_handle          Volume_const_handle;
-  typedef typename SNC_structure::SHalfedge_around_svertex_circulator 
+  typedef typename SNC_structure::SHalfedge_around_svertex_circulator
                                   SHalfedge_around_svertex_circulator;
-  typedef typename SNC_structure::SHalfedge_around_svertex_const_circulator 
+  typedef typename SNC_structure::SHalfedge_around_svertex_const_circulator
                                   SHalfedge_around_svertex_const_circulator;
-  typedef typename SNC_structure::SHalfedge_around_facet_circulator 
+  typedef typename SNC_structure::SHalfedge_around_facet_circulator
                                   SHalfedge_around_facet_circulator;
-  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator 
+  typedef typename SNC_structure::SHalfedge_around_facet_const_circulator
                                   SHalfedge_around_facet_const_circulator;
-  typedef typename SNC_structure::SHalfedge_around_sface_const_circulator 
+  typedef typename SNC_structure::SHalfedge_around_sface_const_circulator
                                   SHalfedge_around_sface_const_circulator;
-  typedef typename SNC_structure::Halffacet_cycle_const_iterator     
+  typedef typename SNC_structure::Halffacet_cycle_const_iterator
                                   Halffacet_cycle_const_iterator;
-  typedef typename SNC_structure::Halffacet_cycle_iterator     
+  typedef typename SNC_structure::Halffacet_cycle_iterator
                                   Halffacet_cycle_iterator;
   typedef typename SNC_structure::Infi_box                     Infi_box;
   typedef typename SNC_structure::Size_type Size_type;
@@ -312,11 +303,11 @@ protected:
   typedef typename SNC_decorator::Volume_iterator  Volume_iterator;
   typedef typename SNC_structure::Vertex_const_iterator
                                                     Vertex_const_iterator;
-  typedef typename SNC_structure::Halfedge_const_iterator 
+  typedef typename SNC_structure::Halfedge_const_iterator
                                                    Halfedge_const_iterator;
-  typedef typename SNC_structure::Halffacet_const_iterator     
+  typedef typename SNC_structure::Halffacet_const_iterator
                                                    Halffacet_const_iterator;
-  typedef typename SNC_structure::Volume_const_iterator     
+  typedef typename SNC_structure::Volume_const_iterator
                                                    Volume_const_iterator;
   typedef typename SNC_structure::Shell_entry_const_iterator
                                                    Shell_entry_const_iterator;
@@ -328,21 +319,21 @@ protected:
   typedef typename SM_decorator::SFace_iterator    SFace_iterator;
   typedef typename SM_decorator::SVertex_const_iterator
                                                    SVertex_const_iterator;
-  typedef typename SM_decorator::SHalfedge_const_iterator 
+  typedef typename SM_decorator::SHalfedge_const_iterator
                                                    SHalfedge_const_iterator;
-  typedef typename SM_decorator::SHalfloop_const_iterator 
+  typedef typename SM_decorator::SHalfloop_const_iterator
                                                    SHalfloop_const_iterator;
-  typedef typename SM_decorator::SFace_const_iterator     
+  typedef typename SM_decorator::SFace_const_iterator
                                                    SFace_const_iterator;
-  typedef typename SNC_decorator::SFace_cycle_const_iterator     
+  typedef typename SNC_decorator::SFace_cycle_const_iterator
                                                    SFace_cycle_const_iterator;
 
   typedef typename SNC_decorator::Association  Association;
 
 
- protected: 
+ protected:
   void initialize_infibox_vertices(Content space) {
-    SNC_constructor C(snc()); 
+    SNC_constructor C(snc());
     Infi_box::initialize_infibox_vertices(C, space == COMPLETE);
   }
 
@@ -351,7 +342,7 @@ protected:
   void create_intersection_vertex_of_h_and_e();
   void init_cube_vertices_depending_on_h(const Plane_3& p);
   void add_h_to_local_view_of_v();
-  
+
  public:
   void build_external_structure() {
     SNC_external_structure es(snc(), pl());
@@ -362,7 +353,7 @@ protected:
   /*{\Mcreation 3}*/
 
   Nef_polyhedron_3( Content space = EMPTY);
-		   
+
   /*{\Mcreate creates an instance |\Mvar| of type |\Mname|
   and initializes it to the empty set if |space == EMPTY|
   and to the whole space if |space == COMPLETE|.}*/
@@ -372,20 +363,20 @@ protected:
   halfspace on the negative side of |p| including |p| if |b==INCLUDED|,
   excluding |p| if |b==EXCLUDED|.}*/
 
-  Nef_polyhedron_3(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) 
+  Nef_polyhedron_3(const Nef_polyhedron_3<Kernel,Items, Mark>& N1)
  : Base(N1) , SNC_const_decorator() {
     set_snc(snc());
-  } 
-
-  Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) { 
-    Base::operator=(N1);
-    set_snc(snc());
-    return (*this); 
   }
 
-  ~Nef_polyhedron_3() { 
+  Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) {
+    Base::operator=(N1);
+    set_snc(snc());
+    return (*this);
+  }
+
+  ~Nef_polyhedron_3() {
     CGAL_NEF_TRACEN("~Nef_polyhedron_3: destructor called for snc "<<&snc()<<
-	   ", pl "<<pl());
+           ", pl "<<pl());
   }
 
    // RO: "vertex cycle to Nef" constructor (main part)
@@ -402,9 +393,9 @@ protected:
          v_first, v_last, normal, verb);
       if (is_nef)
       {
-	 // TO DO:
-	 // Wie kann der eigene point_locator pl() eingebunden werden?
-	 // Wie kann der Konstruktor umgangen werden?
+         // TO DO:
+         // Wie kann der eigene point_locator pl() eingebunden werden?
+         // Wie kann der Konstruktor umgangen werden?
          typedef CGAL::SNC_point_locator_by_spatial_subdivision
             <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
 
@@ -434,7 +425,7 @@ protected:
       *this = Nef_polyhedron_3 (v_first, v_last, normal, verb);
       set_snc (snc());
    }
-  
+
  template<typename Items, typename SNC_structure>
  class Sphere_map_creator {
    typedef typename SNC_structure::SM_decorator     SM_decorator;
@@ -442,39 +433,39 @@ protected:
    typedef typename SNC_structure::SVertex_handle   SVertex_handle;
    typedef typename SNC_structure::SFace_handle     SFace_handle;
    typedef typename SNC_structure::Sphere_point     Sphere_point;
-   
+
    public:
    Sphere_map_creator() {}
-   
+
    template<typename point_iterator>
    void create_end_sphere_map(SNC_structure& snc,
-			      point_iterator cur,
-			      point_iterator prev) {
+                              point_iterator cur,
+                              point_iterator prev) {
      Vertex_handle v(snc.new_vertex(*cur, true));
      SM_decorator SM(&*v);
      SVertex_handle sv(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-				      true));
+                                      true));
      SFace_handle sf(v->new_sface());
      SM.link_as_isolated_vertex(sv,sf);
    }
-   
+
    template<typename point_iterator>
    void create_sphere_map(SNC_structure& snc,
-			  point_iterator cur,
-			  point_iterator prev,
-			  point_iterator next) {
+                          point_iterator cur,
+                          point_iterator prev,
+                          point_iterator next) {
      Vertex_handle v(snc.new_vertex(*cur, true));
      SM_decorator SM(&*v);
      SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-				       true));
+                                       true));
      SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
-				       true));      
+                                       true));
      SFace_handle sf(v->new_sface());
      SM.link_as_isolated_vertex(sv1,sf);
      SM.link_as_isolated_vertex(sv2,sf);
    }
  };
- 
+
  template<typename SNC_structure>
  class Sphere_map_creator<CGAL::SNC_indexed_items, SNC_structure> {
    typedef typename SNC_structure::SM_decorator     SM_decorator;
@@ -482,41 +473,41 @@ protected:
    typedef typename SNC_structure::SVertex_handle   SVertex_handle;
    typedef typename SNC_structure::SFace_handle     SFace_handle;
    typedef typename SNC_structure::Sphere_point     Sphere_point;
-   
+
    bool first;
    int index;
  public:
    Sphere_map_creator() : first(true), index(0) {}
-     
+
      template<typename point_iterator>
        void create_end_sphere_map(SNC_structure& snc,
-				  point_iterator cur,
-				  point_iterator prev) {
+                                  point_iterator cur,
+                                  point_iterator prev) {
        Vertex_handle v(snc.new_vertex(*cur, true));
        SM_decorator SM(&*v);
        SVertex_handle sv(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-					true));
+                                        true));
        SFace_handle sf(v->new_sface());
        SM.link_as_isolated_vertex(sv,sf);
        if(first) {
-	 sv->set_index();
-	 index = sv->get_index();
-	 first = false;
+         sv->set_index();
+         index = sv->get_index();
+         first = false;
        } else
-	 sv->set_index(index);
+         sv->set_index(index);
      }
-     
+
      template<typename point_iterator>
        void create_sphere_map(SNC_structure& snc,
-			      point_iterator cur,
-			      point_iterator prev,
-			      point_iterator next) {
+                              point_iterator cur,
+                              point_iterator prev,
+                              point_iterator next) {
        Vertex_handle v(snc.new_vertex(*cur, true));
        SM_decorator SM(&*v);
        SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-					 true));
+                                         true));
        SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
-					 true));      
+                                         true));
        SFace_handle sf(v->new_sface());
        SM.link_as_isolated_vertex(sv1,sf);
        SM.link_as_isolated_vertex(sv2,sf);
@@ -525,7 +516,7 @@ protected:
        index = sv2->get_index();
      }
  };
- 
+
  template <typename InputIterator>
  Nef_polyhedron_3(InputIterator begin, InputIterator end, Polylines_tag) {
    typedef typename std::iterator_traits<InputIterator>::value_type
@@ -651,9 +642,9 @@ protected:
     delegate(mbv);
     set_snc(snc());
   }
-  
- Nef_polyhedron_3(const Nef_polyhedron& N, 
-		  SFace_const_iterator sf) 
+
+ Nef_polyhedron_3(const Nef_polyhedron& N,
+                  SFace_const_iterator sf)
  {
    SNC_structure rsnc;
    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
@@ -667,7 +658,7 @@ protected:
  }
 
 
- protected: 
+ protected:
 
   template<typename Kernel>
   class Triangulation_handler2 {
@@ -689,29 +680,29 @@ protected:
     Plane_3 supporting_plane;
 
   public:
-    Triangulation_handler2(Halffacet_const_handle f) : 
+    Triangulation_handler2(Halffacet_const_handle f) :
       visited(false), supporting_plane(f->plane()) {
 
       Halffacet_cycle_const_iterator fci;
       for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
-	if(fci.is_shalfedge()) {
+        if(fci.is_shalfedge()) {
           SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
-	  CGAL_For_all(sfc,send) {
+          CGAL_For_all(sfc,send) {
             CGAL_NEF_TRACEN("  insert point" << sfc->source()->source()->point());
-	    CTVertex_handle ctv = ct.insert(sfc->source()->source()->point());
-	    ctv2v[ctv] = sfc->source()->source();
+            CTVertex_handle ctv = ct.insert(sfc->source()->source()->point());
+            ctv2v[ctv] = sfc->source()->source();
           }
         }
       }
 
       for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
-	if(fci.is_shalfedge()) {
+        if(fci.is_shalfedge()) {
           SHalfedge_around_facet_const_circulator sfc(fci), send(sfc);
-	  CGAL_For_all(sfc,send) {
+          CGAL_For_all(sfc,send) {
             CGAL_NEF_TRACEN("  insert constraint" << sfc->source()->source()->point()
-	                     << "->" << sfc->source()->twin()->source()->point());
-	    ct.insert_constraint(sfc->source()->source()->point(),
-	                         sfc->source()->twin()->source()->point());
+                             << "->" << sfc->source()->twin()->source()->point());
+            ct.insert_constraint(sfc->source()->source()->point(),
+                                 sfc->source()->twin()->source()->point());
           }
         }
       }
@@ -739,15 +730,15 @@ protected:
     void traverse_triangulation(Face_handle f, int parent) {
       visited[f] = true;
       if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
-	Face_handle child(f->neighbor(ct.cw(parent)));
-	traverse_triangulation(child, child->index(f));
-      } 
+        Face_handle child(f->neighbor(ct.cw(parent)));
+        traverse_triangulation(child, child->index(f));
+      }
       if(!ct.is_constrained(Edge(f,ct.ccw(parent))) && !visited[f->neighbor(ct.ccw(parent))]) {
-	Face_handle child(f->neighbor(ct.ccw(parent)));
-	traverse_triangulation(child, child->index(f));
-      } 
-    } 
- 
+        Face_handle child(f->neighbor(ct.ccw(parent)));
+        traverse_triangulation(child, child->index(f));
+      }
+    }
+
     template<typename Triangle_3>
     bool get_next_triangle(Triangle_3& tr) {
       while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
@@ -759,9 +750,9 @@ protected:
 
     bool same_orientation(Plane_3 p1) const {
       if(p1.a() != 0)
-	return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
+        return CGAL::sign(p1.a()) == CGAL::sign(supporting_plane.a());
       if(p1.b() != 0)
-	return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
+        return CGAL::sign(p1.b()) == CGAL::sign(supporting_plane.b());
       return CGAL::sign(p1.c()) == CGAL::sign(supporting_plane.c());
     }
 
@@ -769,30 +760,30 @@ protected:
     void handle_triangles(PIB& pib, Index& VI) {
       while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
       while(fi != ct.finite_faces_end()) {
-	Plane_3 plane(fi->vertex(0)->point(),
-		      fi->vertex(1)->point(),
-		      fi->vertex(2)->point());
-	pib.begin_facet();
-	if(same_orientation(plane)) {
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
-	} else {
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
-	  pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
-	}
-	pib.end_facet();
-	do {
-	  ++fi;
-	} while(fi != ct.finite_faces_end() && visited[fi] == false);
+        Plane_3 plane(fi->vertex(0)->point(),
+                      fi->vertex(1)->point(),
+                      fi->vertex(2)->point());
+        pib.begin_facet();
+        if(same_orientation(plane)) {
+          pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
+          pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
+          pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
+        } else {
+          pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(0)]]);
+          pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(2)]]);
+          pib.add_vertex_to_facet(VI[ctv2v[fi->vertex(1)]]);
+        }
+        pib.end_facet();
+        do {
+          ++fi;
+        } while(fi != ct.finite_faces_end() && visited[fi] == false);
       }
     }
   };
- 
+
   template <class HDS>
   class Build_polyhedron : public CGAL::Modifier_base<HDS> {
-    
+
     class Visitor {
 
       typedef typename CGAL::Projection_traits_xy_3<Kernel>       XY;
@@ -802,58 +793,58 @@ protected:
       const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;
       const SNC_const_decorator& D;
-      
+
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
-	      const SNC_const_decorator& sd,
-	      Object_index<Vertex_const_iterator>& vi) : VI(vi), B(BB), D(sd){}
+              const SNC_const_decorator& sd,
+              Object_index<Vertex_const_iterator>& vi) : VI(vi), B(BB), D(sd){}
 
       void visit(Halffacet_const_handle opposite_facet) {
 
-	CGAL_NEF_TRACEN("Build_polyhedron: visit facet " << opposite_facet->plane());
- 
-	CGAL_assertion(Infi_box::is_standard(opposite_facet->plane()));
-	
-	SHalfedge_const_handle se;
-	Halffacet_cycle_const_iterator fc;
-     	
-	Halffacet_const_handle f = opposite_facet->twin();
+        CGAL_NEF_TRACEN("Build_polyhedron: visit facet " << opposite_facet->plane());
 
-	SHalfedge_around_facet_const_circulator 
-	  sfc1(f->facet_cycles_begin()), sfc2(sfc1);
-	
-	if(++f->facet_cycles_begin() != f->facet_cycles_end() ||
-	   ++(++(++sfc1)) != sfc2) {
-	  Vector_3 orth = f->plane().orthogonal_vector();
-	  int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
-	  c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
-	  
-	  if(c == 0) {
-	    Triangulation_handler2<YZ> th(f);
-	    th.handle_triangles(B, VI);
-	  } else if(c == 1) {
-	    Triangulation_handler2<XZ> th(f);
-	    th.handle_triangles(B, VI);
-	  } else if(c == 2) {
-	    Triangulation_handler2<XY> th(f);
-	    th.handle_triangles(B, VI);
-	  } else
-	    CGAL_error_msg( "wrong value");
+        CGAL_assertion(Infi_box::is_standard(opposite_facet->plane()));
 
-	} else {
+        SHalfedge_const_handle se;
+        Halffacet_cycle_const_iterator fc;
 
-	  B.begin_facet();
-	  fc = f->facet_cycles_begin();
-	  se = SHalfedge_const_handle(fc);
-	  CGAL_assertion(se!=0);
-	  SHalfedge_around_facet_const_circulator hc_start(se);
-	  SHalfedge_around_facet_const_circulator hc_end(hc_start);
-	  CGAL_For_all(hc_start,hc_end) {
-	    CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
-	    B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
-	  }
-	  B.end_facet();
-	}
+        Halffacet_const_handle f = opposite_facet->twin();
+
+        SHalfedge_around_facet_const_circulator
+          sfc1(f->facet_cycles_begin()), sfc2(sfc1);
+
+        if(++f->facet_cycles_begin() != f->facet_cycles_end() ||
+           ++(++(++sfc1)) != sfc2) {
+          Vector_3 orth = f->plane().orthogonal_vector();
+          int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
+          c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
+
+          if(c == 0) {
+            Triangulation_handler2<YZ> th(f);
+            th.handle_triangles(B, VI);
+          } else if(c == 1) {
+            Triangulation_handler2<XZ> th(f);
+            th.handle_triangles(B, VI);
+          } else if(c == 2) {
+            Triangulation_handler2<XY> th(f);
+            th.handle_triangles(B, VI);
+          } else
+            CGAL_error_msg( "wrong value");
+
+        } else {
+
+          B.begin_facet();
+          fc = f->facet_cycles_begin();
+          se = SHalfedge_const_handle(fc);
+          CGAL_assertion(se!=0);
+          SHalfedge_around_facet_const_circulator hc_start(se);
+          SHalfedge_around_facet_const_circulator hc_end(hc_start);
+          CGAL_For_all(hc_start,hc_end) {
+            CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
+            B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+          }
+          B.end_facet();
+        }
       }
 
       void visit(SFace_const_handle) {}
@@ -868,41 +859,41 @@ protected:
     const SNC_const_decorator& scd;
     Object_index<Vertex_const_iterator> VI;
 
-    Build_polyhedron(const SNC_const_decorator& s) : 
+    Build_polyhedron(const SNC_const_decorator& s) :
       scd(s), VI(s.vertices_begin(),s.vertices_end(),'V') {}
-    
+
     void operator()( HDS& hds) {
 
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
 
       int skip_volumes;
       if(Infi_box::extended_kernel()) {
-	B.begin_surface(scd.number_of_vertices()-8, 
-			scd.number_of_facets()-6,
-			scd.number_of_edges()-12);
-	skip_volumes = 2;
+        B.begin_surface(scd.number_of_vertices()-8,
+                        scd.number_of_facets()-6,
+                        scd.number_of_edges()-12);
+        skip_volumes = 2;
       }
       else {
-	B.begin_surface(scd.number_of_vertices(), 
-			2*scd.number_of_vertices()-4,
-			3*scd.number_of_vertices()-6);
-	skip_volumes = 1;
+        B.begin_surface(scd.number_of_vertices(),
+                        2*scd.number_of_vertices()-4,
+                        3*scd.number_of_vertices()-6);
+        skip_volumes = 1;
       }
-      
+
       int vertex_index = 0;
       Vertex_const_iterator v;
       CGAL_forall_vertices(v,scd) {
-	if(Infi_box::is_standard(v->point())) {
-	  VI[v]=vertex_index++;
-	  B.add_vertex(v->point());
-	}
-      }     
-      
+        if(Infi_box::is_standard(v->point())) {
+          VI[v]=vertex_index++;
+          B.add_vertex(v->point());
+        }
+      }
+
       Visitor V(B,scd,VI);
       Volume_const_handle c;
       CGAL_forall_volumes(c,scd)
-	if(skip_volumes-- <= 0)
-	  scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),V);
+        if(skip_volumes-- <= 0)
+          scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),V);
       B.end_surface();
       if ( B.error() ) B.rollback();
     }
@@ -911,35 +902,35 @@ protected:
 
   template <class HDS>
   class Build_polyhedron2 : public CGAL::Modifier_base<HDS> {
-    
+
     class Find_holes {
 
       Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
       int nov, nof;
 
     public:
-      Find_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_) 
-	: omit_vertex(omit_vertex_), nov(0), nof(0) {}
+      Find_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_)
+        : omit_vertex(omit_vertex_), nov(0), nof(0) {}
 
       void visit(Halffacet_const_handle f) {
-	++nof;
-	Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
-	for(++fc; fc != f->facet_cycles_end(); ++fc) {
-	  if(fc.is_shalfedge()) {
-	    --nof;
-	    SHalfedge_around_facet_const_circulator 
-	      sfc(fc), send(sfc);
-	    CGAL_For_all(sfc, send) {
-	      omit_vertex[sfc->source()->source()] = true;
-	      --nov;
-	    }
-	  } else if(fc.is_shalfloop()) {
-	    SHalfloop_const_handle sl(fc);
-	    omit_vertex[sl->incident_sface()->center_vertex()];
-	    --nov;
-	  } else
-	    CGAL_error_msg( "wrong handle type");
-	}
+        ++nof;
+        Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+        for(++fc; fc != f->facet_cycles_end(); ++fc) {
+          if(fc.is_shalfedge()) {
+            --nof;
+            SHalfedge_around_facet_const_circulator
+              sfc(fc), send(sfc);
+            CGAL_For_all(sfc, send) {
+              omit_vertex[sfc->source()->source()] = true;
+              --nov;
+            }
+          } else if(fc.is_shalfloop()) {
+            SHalfloop_const_handle sl(fc);
+            omit_vertex[sl->incident_sface()->center_vertex()];
+            --nov;
+          } else
+            CGAL_error_msg( "wrong handle type");
+        }
       }
 
       void visit(Vertex_const_handle) { ++nov; }
@@ -949,31 +940,31 @@ protected:
       void visit(SHalfloop_const_handle) {}
 
       int number_of_vertices() const {
-	return nov;
+        return nov;
       }
 
       int number_of_facets() const {
-	return nof;
+        return nof;
       }
     };
 
     class Add_vertices {
-      
+
       Polyhedron_incremental_builder_3<HDS>& B;
       Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
-      Object_index<Vertex_const_iterator>& VI;      
+      Object_index<Vertex_const_iterator>& VI;
       int vertex_index;
 
     public:
       Add_vertices(Polyhedron_incremental_builder_3<HDS>& B_,
-		   Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
-		   Object_index<Vertex_const_iterator>& VI_) 
-	: B(B_), omit_vertex(omit_vertex_), VI(VI_), vertex_index(0) {}
-	
+                   Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
+                   Object_index<Vertex_const_iterator>& VI_)
+        : B(B_), omit_vertex(omit_vertex_), VI(VI_), vertex_index(0) {}
+
       void visit(Vertex_const_handle v) {
-	if(omit_vertex[v]) return;
-	VI[v]=vertex_index++;
-	B.add_vertex(v->point());
+        if(omit_vertex[v]) return;
+        VI[v]=vertex_index++;
+        B.add_vertex(v->point());
       }
 
       void visit(Halffacet_const_handle) {}
@@ -990,37 +981,37 @@ protected:
       Polyhedron_incremental_builder_3<HDS>& B;
       const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
       SNC_const_decorator& D;
-      
+
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
-	      const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
-	      SNC_const_decorator& sd,
-	      Object_index<Vertex_const_iterator>& vi) 
-	: VI(vi), B(BB), omit_vertex(omit_vertex_), D(sd){}
+              const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
+              SNC_const_decorator& sd,
+              Object_index<Vertex_const_iterator>& vi)
+        : VI(vi), B(BB), omit_vertex(omit_vertex_), D(sd){}
 
       void visit(Halffacet_const_handle opposite_facet) {
 
-	CGAL_NEF_TRACEN("Build_polyhedron: visit facet " << opposite_facet->plane());
- 
-	CGAL_assertion(Infi_box::is_standard(opposite_facet->plane()));
-	
-	SHalfedge_const_handle se;
-	Halffacet_cycle_const_iterator fc;
-     	
-	Halffacet_const_handle f = opposite_facet->twin();
+        CGAL_NEF_TRACEN("Build_polyhedron: visit facet " << opposite_facet->plane());
 
-	fc = f->facet_cycles_begin();
-	se = SHalfedge_const_handle(fc);
-	CGAL_assertion(se!=0);
-	if(omit_vertex[se->source()->source()]) return;
-	B.begin_facet();
-	SHalfedge_around_facet_const_circulator hc_start(se);
-	SHalfedge_around_facet_const_circulator hc_end(hc_start);
-	CGAL_For_all(hc_start,hc_end) {
-	  CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
-	  B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
-	}
-	B.end_facet();
+        CGAL_assertion(Infi_box::is_standard(opposite_facet->plane()));
+
+        SHalfedge_const_handle se;
+        Halffacet_cycle_const_iterator fc;
+
+        Halffacet_const_handle f = opposite_facet->twin();
+
+        fc = f->facet_cycles_begin();
+        se = SHalfedge_const_handle(fc);
+        CGAL_assertion(se!=0);
+        if(omit_vertex[se->source()->source()]) return;
+        B.begin_facet();
+        SHalfedge_around_facet_const_circulator hc_start(se);
+        SHalfedge_around_facet_const_circulator hc_end(hc_start);
+        CGAL_For_all(hc_start,hc_end) {
+          CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
+          B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+        }
+        B.end_facet();
       }
 
       void visit(SFace_const_handle) {}
@@ -1037,20 +1028,20 @@ protected:
     Object_index<Vertex_const_iterator> VI;
     Unique_hash_map<Vertex_const_handle, bool> omit_vertex;
 
-    Build_polyhedron2(SFace_const_handle sf_, SNC_const_decorator& s) : 
-      sf(sf_), scd(s), VI(s.vertices_begin(),s.vertices_end(),'V'), 
+    Build_polyhedron2(SFace_const_handle sf_, SNC_const_decorator& s) :
+      sf(sf_), scd(s), VI(s.vertices_begin(),s.vertices_end(),'V'),
       omit_vertex(false) {}
-    
+
       void operator()(HDS& hds) {
 
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
-      
+
       Find_holes F(omit_vertex);
       scd.visit_shell_objects(sf, F);
 
-      B.begin_surface(F.number_of_vertices(), 
-		      F.number_of_facets(),
-		      F.number_of_vertices()+F.number_of_facets()-2);
+      B.begin_surface(F.number_of_vertices(),
+                      F.number_of_facets(),
+                      F.number_of_vertices()+F.number_of_facets()-2);
 
       Add_vertices A(B,omit_vertex, VI);
       scd.visit_shell_objects(sf, A);
@@ -1065,9 +1056,9 @@ protected:
 
 
  public:
- void delegate( Modifier_base<SNC_structure>& modifier, 
-		bool compute_external = false, 
-		bool do_simplify = true) {
+ void delegate( Modifier_base<SNC_structure>& modifier,
+                bool compute_external = false,
+                bool do_simplify = true) {
 
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
@@ -1076,7 +1067,7 @@ protected:
    if(compute_external) {
      SNC_external_structure es(snc());
      es.clear_external_structure();
-     
+
      build_external_structure();
    }
    if(do_simplify)
@@ -1091,9 +1082,9 @@ protected:
    SNC_and_PL(SNC_structure* s, SNC_point_locator* p) : sncp(s), pl(p) {}
  };
 
- void delegate( Modifier_base<SNC_and_PL>& modifier, 
-		bool compute_external = false,
-		bool do_simplify = false) {
+ void delegate( Modifier_base<SNC_and_PL>& modifier,
+                bool compute_external = false,
+                bool do_simplify = false) {
    // calls the `operator()' of the `modifier'. Precondition: The
    // `modifier' returns a consistent representation.
    if( this->is_shared()) clone_rep();
@@ -1109,7 +1100,7 @@ protected:
      simplify();
    CGAL_expensive_postcondition( is_valid());
  }
- 
+
  public:
 
  template<typename Polyhedron>
@@ -1122,7 +1113,7 @@ protected:
    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
    CGAL_precondition(is_simple());
    P.clear();
-   Build_polyhedron<HalfedgeDS> bp(*this);    
+   Build_polyhedron<HalfedgeDS> bp(*this);
    P.delegate(bp);
  }
 
@@ -1143,7 +1134,7 @@ protected:
     SNC_decorator D(snc());
     bool valid = D.is_valid(verb, level);
     verr << "end of CGAL::Nef_polyhedron_3<...>::is_valid(): structure is "
-	 << ( valid ? "valid." : "NOT VALID.") << std::endl;
+         << ( valid ? "valid." : "NOT VALID.") << std::endl;
     return valid;
   }
 
@@ -1152,29 +1143,29 @@ protected:
     Halfedge_const_iterator e;
     CGAL_forall_edges(e,snc())
       if(!is_edge_2manifold(e))
-	return false;
+        return false;
 
     CGAL_NEF_TRACEN("there is no edge with non-manifold situation");
 
     Vertex_const_iterator v;
     CGAL_forall_vertices(v,snc())
       if(!is_vertex_2manifold(v))
-	return false;
+        return false;
 
     CGAL_NEF_TRACEN("there is no vertex with non-manifold situation");
 /*
     Halffacet_iterator f;
     CGAL_forall_halffacets(f,snc())
       if(!is_facet_simple(f))
-	return false;
+        return false;
 
     CGAL_NEF_TRACEN("there are no holes");
 */
     return true;
   }
- 
+
  bool is_convex() const {
-   
+
    Vertex_const_iterator v;
    CGAL_forall_vertices(v, *this) {
 
@@ -1188,25 +1179,25 @@ protected:
      CGAL_forall_sfaces(sf,SD) {
        if(sf->volume() == Infi_box::getNirvana(snc())) continue;
        if(std::distance(sf->sface_cycles_begin(),sf->sface_cycles_end())!=1)
-	 return false;
+         return false;
        SFace_cycle_const_iterator sfi(sf->sface_cycles_begin());
        if(!sfi.is_shalfedge())
-	 return false;
+         return false;
        SHalfedge_const_handle se(sf->sface_cycles_begin());
        SHalfedge_around_sface_const_circulator sec(se),send(sec);
        CGAL_For_all(sec,send)
-	 if(spherical_orientation(sec->source()->point(),
-				  sec->snext()->source()->point(),
-				  sec->snext()->snext()->source()->point())<0) {
-	   std::cerr << "vertex at " << v->point() << " is not convex" << std::endl;
-	   return false;
-	 }
+         if(spherical_orientation(sec->source()->point(),
+                                  sec->snext()->source()->point(),
+                                  sec->snext()->snext()->source()->point())<0) {
+           std::cerr << "vertex at " << v->point() << " is not convex" << std::endl;
+           return false;
+         }
      }
    }
    return true;
  }
 
- private:  
+ private:
   bool is_edge_2manifold(const Halfedge_const_handle& e) const {
 
     SM_decorator SD;
@@ -1222,17 +1213,17 @@ protected:
       return false;
     }
 
-    if(++c != c2) { 
+    if(++c != c2) {
       CGAL_assertion(circulator_size(c) !=2);
       return false;
     }
-    
+
     CGAL_assertion(circulator_size(c) == 2);
     return true;
   }
- 
+
   bool is_vertex_2manifold(const Vertex_const_handle& v) const {
-     
+
     SFace_const_iterator sfi(v->sfaces_begin());
     if (++sfi != v->sfaces_last())
       return false;
@@ -1241,20 +1232,20 @@ protected:
   }
 
   bool is_facet_simple(const Halffacet_const_handle& f) const {
-    
+
     bool found_first = false;
-    Halffacet_cycle_const_iterator it; 
+    Halffacet_cycle_const_iterator it;
     CGAL_forall_facet_cycles_of(it,f)
       if (found_first || !it.is_shalfedge())
-	return false;
+        return false;
       else
-	found_first = true;
-   
+        found_first = true;
+
     return true;
   }
 
  public:
- 
+
   void clear(Content space = EMPTY)
     { *this = Nef_polyhedron_3(space); }
   /*{\Mop makes |\Mvar| the empty set if |space == EMPTY| and the
@@ -1262,14 +1253,14 @@ protected:
 
  bool is_empty() const {
    /*{\Mop returns true if |\Mvar| is empty, false otherwise.}*/
-   if(Infi_box::extended_kernel()) 
+   if(Infi_box::extended_kernel())
      return this->number_of_vertices() == 8 &&
             this->number_of_edges() == 12 &&
             this->number_of_facets() == 6 &&
             this->number_of_volumes() == 2 &&
             (++this->volumes_begin())->mark() == false;
 
-   else 
+   else
      return this->number_of_vertices() == 0 &&
             this->number_of_edges() == 0 &&
             this->number_of_facets() == 0 &&
@@ -1279,14 +1270,14 @@ protected:
 
  bool is_space() const {
   /*{\Mop returns true if |\Mvar| is the whole space, false otherwise.}*/
-   if(Infi_box::extended_kernel()) 
+   if(Infi_box::extended_kernel())
      return this->number_of_vertices() == 8 &&
             this->number_of_edges() == 12 &&
             this->number_of_facets() == 6 &&
             this->number_of_volumes() == 2 &&
             (++this->volumes_begin())->mark() == true;
 
-   else 
+   else
      return this->number_of_vertices() == 0 &&
             this->number_of_edges() == 0 &&
             this->number_of_facets() == 0 &&
@@ -1298,17 +1289,17 @@ protected:
 
  protected:
   void clone_rep() { *this = Nef_polyhedron_3<Kernel,Items, Mark>(snc(), pl()); }
-  void empty_rep() { 
+  void empty_rep() {
     SNC_structure rsnc;
     delete pl();
     *this = Nef_polyhedron_3<Kernel,Items, Mark>(rsnc, new SNC_point_locator_default,false);
   }
 
  public:
-  Nef_polyhedron_3( const SNC_structure& W, 
-		    SNC_point_locator* _pl = new SNC_point_locator_default,
-		    bool clone_pl = true,
-		    bool clone_snc = true);
+  Nef_polyhedron_3( const SNC_structure& W,
+                    SNC_point_locator* _pl = new SNC_point_locator_default,
+                    bool clone_pl = true,
+                    bool clone_snc = true);
 
   /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
   underlying structure of |W| is copied into |\Mvar|.}*/
@@ -1320,16 +1311,16 @@ protected:
     SNC_simplify simp(snc());
     bool simplified = simp.simplify();
     CGAL_NEF_TRACEN( "simplify(): structure simplified? "<<simplified);
-    
+
     if( simplified) {
 #ifdef CGAL_NEF3_UPDATE_K3TREE_AFTER_SIMPLIFICATION
       /*debug*/ snc().print_statistics();
-      Unique_hash_map<Vertex_handle, bool> 
-	V(false, snc().number_of_vertices());
-      Unique_hash_map<Halfedge_handle, bool> 
-	E(false, snc().number_of_halfedges());
-      Unique_hash_map<Halffacet_handle, bool> 
-	F(false, snc().number_of_halffacets());
+      Unique_hash_map<Vertex_handle, bool>
+        V(false, snc().number_of_vertices());
+      Unique_hash_map<Halfedge_handle, bool>
+        E(false, snc().number_of_halfedges());
+      Unique_hash_map<Halffacet_handle, bool>
+        F(false, snc().number_of_halffacets());
       Vertex_iterator v;
       Halfedge_iterator e;
       Halffacet_iterator f;
@@ -1407,7 +1398,7 @@ protected:
   }
 
   Nef_polyhedron_3<Kernel,Items, Mark> regularization() const
-  /*{\Mop    returns the regularized polyhedron (closure of 
+  /*{\Mop    returns the regularized polyhedron (closure of
     the interior).}*/
   { Nef_polyhedron_3<Kernel,Items, Mark> res = *this;
     res.extract_regularization();
@@ -1431,20 +1422,20 @@ protected:
   }
 
   Nef_polyhedron_3<Kernel,Items, Mark>
-   intersection(const Plane_3& plane, 
-		Intersection_mode im) const {
+   intersection(const Plane_3& plane,
+                Intersection_mode im) const {
     AND _and;
     SNC_structure rsnc;
     Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
     Combine_with_halfspace cwh(res.snc(), res.pl());
-    cwh.combine_with_halfspace(snc(), plane, _and, 
-							   static_cast<typename Combine_with_halfspace::Intersection_mode>(im));
+    cwh.combine_with_halfspace(snc(), plane, _and,
+                                                           static_cast<typename Combine_with_halfspace::Intersection_mode>(im));
     return res;
   }
 
-  Nef_polyhedron_3<Kernel,Items, Mark> 
+  Nef_polyhedron_3<Kernel,Items, Mark>
   join(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ { 
+  /*{\Mop returns |\Mvar| $\cup$ |N1|. }*/ {
     CGAL_NEF_TRACEN(" join between nef3 "<<&*this<<" and "<<&N1);
     if (is_empty()) return N1;
     if (N1.is_empty()) return *this;
@@ -1459,9 +1450,9 @@ protected:
     return res;
   }
 
-  Nef_polyhedron_3<Kernel,Items, Mark> 
+  Nef_polyhedron_3<Kernel,Items, Mark>
   difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  /*{\Mop returns |\Mvar| $-$ |N1|. }*/ { 
+  /*{\Mop returns |\Mvar| $-$ |N1|. }*/ {
     CGAL_NEF_TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
     if (is_empty()) return *this;
     if (N1.is_empty()) return *this;
@@ -1474,11 +1465,11 @@ protected:
     Binary_operation bo(res.snc());
     bo(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _diff);
     return res;
-  }    
+  }
 
-  Nef_polyhedron_3<Kernel,Items, Mark> 
+  Nef_polyhedron_3<Kernel,Items, Mark>
   symmetric_difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$ 
+  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/ {
     CGAL_NEF_TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
     if (is_empty()) return N1;
@@ -1501,7 +1492,7 @@ protected:
   operation \emph{complement}. There are also the corresponding
   modification operations |*=,+=,-=,^=|.}*/
 
-  Nef_polyhedron_3<Kernel,Items, Mark>  operator*(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const 
+  Nef_polyhedron_3<Kernel,Items, Mark>  operator*(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   { return intersection(N1); }
 
   Nef_polyhedron_3<Kernel,Items, Mark>  operator+(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
@@ -1515,21 +1506,21 @@ protected:
 
   Nef_polyhedron_3<Kernel,Items, Mark>  operator!() const
   { return complement(); }
-   
+
   Nef_polyhedron_3<Kernel,Items, Mark>& operator*=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1)
-  { 
+  {
 #ifdef CGAL_NEF_VISUAL_HULL
     CGAL_NEF_SETDTHREAD(19*43*71);
     std::cerr << "visual hull code " << std::endl;
     std::cerr << *this << std::endl;
     std::cerr << const_cast<Nef_polyhedron&>(N1) << std::endl;
     AND _and;
-    typename CGAL::Modifying_binary_operation<SNC_structure> 
+    typename CGAL::Modifying_binary_operation<SNC_structure>
       mbo(this->snc());
     mbo(const_cast<SNC_structure&>(N1.snc()), N1.pl(), pl(), _and);
     return *this;
 #else
-    *this = intersection(N1); return *this; 
+    *this = intersection(N1); return *this;
 #endif
   }
 
@@ -1552,42 +1543,42 @@ protected:
 
   bool operator!=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   { CGAL_NEF_TRACEN(" inequality comparision between nef3 "<<&*this<<" and "<<&N1);
-    return !operator==(N1); }  
+    return !operator==(N1); }
 
   bool operator<(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { return !N1.difference(*this).is_empty() && difference(N1).is_empty(); } 
+  { return !N1.difference(*this).is_empty() && difference(N1).is_empty(); }
 
   bool operator>(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { return difference(*this).is_empty() && !difference(N1).is_empty(); } 
+  { return difference(*this).is_empty() && !difference(N1).is_empty(); }
 
   bool operator<=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { return difference(N1).is_empty(); } 
+  { return difference(N1).is_empty(); }
 
   bool operator>=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { return N1.difference(*this).is_empty(); } 
+  { return N1.difference(*this).is_empty(); }
 
 
  bool is_90degree_rotation(const Aff_transformation_3& aff) const {
    if(aff.hm(0,3) != 0) return false;
    if(aff.hm(1,3) != 0) return false;
    if(aff.hm(2,3) != 0) return false;
-   if(CGAL_NTS abs(aff.hm(0,0)) + 
-      CGAL_NTS abs(aff.hm(0,1)) + 
+   if(CGAL_NTS abs(aff.hm(0,0)) +
+      CGAL_NTS abs(aff.hm(0,1)) +
       CGAL_NTS abs(aff.hm(0,2)) != aff.hm(3,3)) return false;
-   if(CGAL_NTS abs(aff.hm(1,0)) + 
-      CGAL_NTS abs(aff.hm(1,1)) + 
+   if(CGAL_NTS abs(aff.hm(1,0)) +
+      CGAL_NTS abs(aff.hm(1,1)) +
       CGAL_NTS abs(aff.hm(1,2)) != aff.hm(3,3)) return false;
-   if(CGAL_NTS abs(aff.hm(2,0)) + 
-      CGAL_NTS abs(aff.hm(2,1)) + 
+   if(CGAL_NTS abs(aff.hm(2,0)) +
+      CGAL_NTS abs(aff.hm(2,1)) +
       CGAL_NTS abs(aff.hm(2,2)) != aff.hm(3,3)) return false;
-   if(CGAL_NTS abs(aff.hm(0,0)) + 
-      CGAL_NTS abs(aff.hm(1,0)) + 
+   if(CGAL_NTS abs(aff.hm(0,0)) +
+      CGAL_NTS abs(aff.hm(1,0)) +
       CGAL_NTS abs(aff.hm(2,0)) != aff.hm(3,3)) return false;
-   if(CGAL_NTS abs(aff.hm(0,1)) + 
-      CGAL_NTS abs(aff.hm(1,1)) + 
+   if(CGAL_NTS abs(aff.hm(0,1)) +
+      CGAL_NTS abs(aff.hm(1,1)) +
       CGAL_NTS abs(aff.hm(2,1)) != aff.hm(3,3)) return false;
-   if(CGAL_NTS abs(aff.hm(0,2)) + 
-      CGAL_NTS abs(aff.hm(1,2)) + 
+   if(CGAL_NTS abs(aff.hm(0,2)) +
+      CGAL_NTS abs(aff.hm(1,2)) +
       CGAL_NTS abs(aff.hm(2,2)) != aff.hm(3,3)) return false;
    return true;
  }
@@ -1595,10 +1586,10 @@ protected:
  bool is_scaling(const Aff_transformation_3& aff) const {
    if(aff.hm(0,3) != 0) return false;
    if(aff.hm(1,3) != 0) return false;
-   if(aff.hm(2,3) != 0) return false;   
+   if(aff.hm(2,3) != 0) return false;
    if(aff.hm(0,1) != 0) return false;
    if(aff.hm(0,2) != 0) return false;
-   if(aff.hm(1,0) != 0) return false;   
+   if(aff.hm(1,0) != 0) return false;
    if(aff.hm(1,2) != 0) return false;
    if(aff.hm(2,0) != 0) return false;
    if(aff.hm(2,1) != 0) return false;
@@ -1629,15 +1620,15 @@ protected:
        se->twin()->source() = svtemp;
 
        if(full) {
-	 ftemp = se->facet();
-	 se->facet() = se->twin()->facet();
-	 se->twin()->facet() = ftemp;
+         ftemp = se->facet();
+         se->facet() = se->twin()->facet();
+         se->twin()->facet() = ftemp;
        }
        //       sftemp = se->incident_sface();
        //       se->incident_sface() = se->twin()->incident_sface();
        //       se->twin()->incident_sface() = sftemp;
      }
-       
+
      setemp = se->sprev();
      se->sprev() = se->snext();
      se->snext() = setemp;
@@ -1658,51 +1649,51 @@ protected:
        f->incident_volume() = f->twin()->incident_volume();
        f->twin()->incident_volume() = vtemp;
        Halffacet_cycle_iterator fc(f->facet_cycles_begin()),
-	 fct(f->twin()->facet_cycles_begin());
+         fct(f->twin()->facet_cycles_begin());
        while(fc!=f->facet_cycles_end()) {
-	 CGAL_assertion(fct!=f->twin()->facet_cycles_end());
-	 if(fc.is_shalfedge()) {
-	   CGAL_assertion(fct.is_shalfedge());
-	   setemp = fc;
-	   *fc = *fct;
-	   *fct = make_object(setemp);
-	 }
-	 ++fc;
-	 ++fct;
+         CGAL_assertion(fct!=f->twin()->facet_cycles_end());
+         if(fc.is_shalfedge()) {
+           CGAL_assertion(fct.is_shalfedge());
+           setemp = fc;
+           *fc = *fct;
+           *fct = make_object(setemp);
+         }
+         ++fc;
+         ++fct;
        }
      }
-   
+
      CGAL_forall_halffacets(f, snc()) {
        Halffacet_cycle_iterator fc(f->facet_cycles_begin());
        for(;fc!=f->facet_cycles_end();++fc) {
-	 if(fc.is_shalfedge()) {
-	   setemp = fc;
-	   SHalfedge_around_facet_circulator hfc(setemp),hend(hfc);
-	   ++hfc;
-	   CGAL_For_all(hfc,hend) {
-	     if ( CGAL::lexicographically_xyz_smaller(hfc->source()->source()->point(),
-						      setemp->source()->source()->point()))
-	       setemp = hfc;
-	   }
-	   *fc = make_object(setemp);
-	 }
+         if(fc.is_shalfedge()) {
+           setemp = fc;
+           SHalfedge_around_facet_circulator hfc(setemp),hend(hfc);
+           ++hfc;
+           CGAL_For_all(hfc,hend) {
+             if ( CGAL::lexicographically_xyz_smaller(hfc->source()->source()->point(),
+                                                      setemp->source()->source()->point()))
+               setemp = hfc;
+           }
+           *fc = make_object(setemp);
+         }
        }
      }
    }
  }
 
   void transform( const Aff_transformation_3& aff) {
-    
+
     if( this->is_shared())
       clone_rep();
     // only linear transform for the origin-centered sphere maps
     Aff_transformation_3 linear( aff.hm(0,0), aff.hm(0,1), aff.hm(0,2),
-				 aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
-				 aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
-				 aff.hm(3,3));
-    
+                                 aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
+                                 aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
+                                 aff.hm(3,3));
+
     SNC_constructor cstr(snc());
-    
+
     std::list<Vertex_handle> vertex_list;
     std::list<Vertex_handle> corner_list;
     std::list<Vertex_handle> delete_list;
@@ -1714,123 +1705,123 @@ protected:
 
     Vertex_iterator vi;
     CGAL_forall_vertices( vi, snc()) {
-      
+
       CGAL_NEF_TRACEN("transform vertex ");
       if(scale) {
-	if(is_standard(vi))
-	  vi->point() = vi->point().transform( aff);
-	else if(!Infi_box::is_infibox_corner(vi->point())) {
-	  vi->point() = normalized(Infi_box::normalize_transformed_vertex(vi->point().transform(aff)));
-	}
+        if(is_standard(vi))
+          vi->point() = vi->point().transform( aff);
+        else if(!Infi_box::is_infibox_corner(vi->point())) {
+          vi->point() = normalized(Infi_box::normalize_transformed_vertex(vi->point().transform(aff)));
+        }
       } else if (!is_standard(vi) && !ninety) {
-	if(Infi_box::is_infibox_corner(vi->point()))
-	  corner_list.push_back(vi);
-	vertex_list.push_back(vi);
+        if(Infi_box::is_infibox_corner(vi->point()))
+          corner_list.push_back(vi);
+        vertex_list.push_back(vi);
       } else {
-	vi->point() = vi->point().transform( aff);
-	SM_decorator sdeco(&*vi);
-	sdeco.transform( linear);
+        vi->point() = vi->point().transform( aff);
+        SM_decorator sdeco(&*vi);
+        sdeco.transform( linear);
       }
     }
 
     if(!this->is_bounded() && !ninety && !scale) {
       Halffacet_iterator fi;
       CGAL_forall_facets(fi, snc()) {
-	if(!is_standard(fi) || is_bounded(fi)) continue;
-	Plane_3 pt = fi->plane();
-	pt = pt.transform(aff);
-	std::list<Point_3> points(Infi_box::find_points_of_box_with_plane(cstr,pt));
-	std::list<Vertex_handle> newVertices;
-	newVertices = Infi_box::create_vertices_on_infibox(cstr,
-							   pt, points, fi->mark(), 
-							   fi->twin()->incident_volume()->mark(), 
-							   fi->incident_volume()->mark());
+        if(!is_standard(fi) || is_bounded(fi)) continue;
+        Plane_3 pt = fi->plane();
+        pt = pt.transform(aff);
+        std::list<Point_3> points(Infi_box::find_points_of_box_with_plane(cstr,pt));
+        std::list<Vertex_handle> newVertices;
+        newVertices = Infi_box::create_vertices_on_infibox(cstr,
+                                                           pt, points, fi->mark(),
+                                                           fi->twin()->incident_volume()->mark(),
+                                                           fi->incident_volume()->mark());
 
-	for(li = newVertices.begin(); li != newVertices.end(); ++li) {
-	  if(Infi_box::is_infibox_corner((*li)->point())) {
-	    li2 = corner_list.begin();
-	    while(li2 != corner_list.end() && (*li2)->point() != (*li)->point()) ++li2;
-	    CGAL_assertion(li2 != corner_list.end());
-	    delete_list.push_back(*li2);
-	    *li2 = *li;
-	  }
-	}
+        for(li = newVertices.begin(); li != newVertices.end(); ++li) {
+          if(Infi_box::is_infibox_corner((*li)->point())) {
+            li2 = corner_list.begin();
+            while(li2 != corner_list.end() && (*li2)->point() != (*li)->point()) ++li2;
+            CGAL_assertion(li2 != corner_list.end());
+            delete_list.push_back(*li2);
+            *li2 = *li;
+          }
+        }
       }
-      
+
       for(li = vertex_list.begin(); li != vertex_list.end();++li) {
-	SM_decorator SD(&**li);
-	if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
-	  Halffacet_handle hf[2];
-	  int i=0;
-	  SHalfedge_iterator sei;
-	  CGAL_forall_sedges(sei,SD) {
-	    if(!Infi_box::is_sedge_on_infibox(sei)) {
-	      hf[i] = sei->facet();
-	      if(hf[i]->is_twin()) hf[i] = hf[i]->twin();
-	      ++i;
-	    }
-	    if(i>1)
-	      break;
-	  }
-	}
+        SM_decorator SD(&**li);
+        if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
+          Halffacet_handle hf[2];
+          int i=0;
+          SHalfedge_iterator sei;
+          CGAL_forall_sedges(sei,SD) {
+            if(!Infi_box::is_sedge_on_infibox(sei)) {
+              hf[i] = sei->facet();
+              if(hf[i]->is_twin()) hf[i] = hf[i]->twin();
+              ++i;
+            }
+            if(i>1)
+              break;
+          }
+        }
       }
 
       Association A;
       SNC_external_structure es(snc());
       es.clear_external_structure();
       for(li = vertex_list.begin(); li != vertex_list.end();++li){
-	if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
-	  Vertex_handle v2;
-	  Vertex_handle v1 = cstr.create_for_infibox_overlay(*li);
-	  v1->point() = normalized(Infi_box::normalize_transformed_vertex((*li)->point().transform(aff)));
-	  SM_decorator sdeco(&*v1);
-	  sdeco.transform(linear);	    
-	  switch(Infi_box::type_of_infibox_point(v1->point())) {
-	  case 1: 
-	    v2 = cstr.create_from_point_on_infibox_facet(v1->point()); 
-	    break;
-	  case 2: 
-	    v2 = cstr.create_from_point_on_infibox_edge(v1->point());
-	    break;
-	  case 3: 
-	    v2 = cstr.create_from_point_on_infibox_vertex(v1->point());
-	    li2 = corner_list.begin();
-	    while(li2 != corner_list.end() && (*li2)->point() != v2->point()) ++li2;
-	    if(li2 != corner_list.end())
-	      delete_list.push_back(*li2);
-	    break;
-	  default: CGAL_error_msg( "wrong value");
-	  }
-	  Vertex_handle v = snc().new_vertex(v1->point(), (*li)->mark());
-	  SM_overlayer O(&*v);
-	  O.subdivide(&*v1, &*v2, A);
-	  AND _and;
-	  O.select(_and);
-	  O.simplify(A);
-	  snc().delete_vertex(v1);
-	  snc().delete_vertex(v2);
-	}
-	
-	if(Infi_box::is_infibox_corner((*li)->point())) {
-	  SM_decorator SD(&**li);
-	  if(SD.number_of_svertices() < 4)
-	    continue;
-	  li2 = corner_list.begin();
-	  while(li2 != corner_list.end() && (*li2)->point() != (*li)->point()) ++li2;
-	  CGAL_assertion(li2 != corner_list.end());
-	  if(*li == *li2) {
-	    delete_list.push_back(*li2);
-	    *li2 = cstr.create_from_point_on_infibox_vertex((*li)->point());
-	  }
-	} else 
-	  snc().delete_vertex(*li);	  
+        if(Infi_box::is_complex_facet_infibox_intersection(**li)) {
+          Vertex_handle v2;
+          Vertex_handle v1 = cstr.create_for_infibox_overlay(*li);
+          v1->point() = normalized(Infi_box::normalize_transformed_vertex((*li)->point().transform(aff)));
+          SM_decorator sdeco(&*v1);
+          sdeco.transform(linear);
+          switch(Infi_box::type_of_infibox_point(v1->point())) {
+          case 1:
+            v2 = cstr.create_from_point_on_infibox_facet(v1->point());
+            break;
+          case 2:
+            v2 = cstr.create_from_point_on_infibox_edge(v1->point());
+            break;
+          case 3:
+            v2 = cstr.create_from_point_on_infibox_vertex(v1->point());
+            li2 = corner_list.begin();
+            while(li2 != corner_list.end() && (*li2)->point() != v2->point()) ++li2;
+            if(li2 != corner_list.end())
+              delete_list.push_back(*li2);
+            break;
+          default: CGAL_error_msg( "wrong value");
+          }
+          Vertex_handle v = snc().new_vertex(v1->point(), (*li)->mark());
+          SM_overlayer O(&*v);
+          O.subdivide(&*v1, &*v2, A);
+          AND _and;
+          O.select(_and);
+          O.simplify(A);
+          snc().delete_vertex(v1);
+          snc().delete_vertex(v2);
+        }
+
+        if(Infi_box::is_infibox_corner((*li)->point())) {
+          SM_decorator SD(&**li);
+          if(SD.number_of_svertices() < 4)
+            continue;
+          li2 = corner_list.begin();
+          while(li2 != corner_list.end() && (*li2)->point() != (*li)->point()) ++li2;
+          CGAL_assertion(li2 != corner_list.end());
+          if(*li == *li2) {
+            delete_list.push_back(*li2);
+            *li2 = cstr.create_from_point_on_infibox_vertex((*li)->point());
+          }
+        } else
+          snc().delete_vertex(*li);
       }
 
       for(li = delete_list.begin(); li != delete_list.end(); ++li)
-	snc().delete_vertex(*li);
+        snc().delete_vertex(*li);
 
       if(!aff.is_even())
-	change_orientation();
+        change_orientation();
 
       while(cstr.erase_redundant_vertices()) ;
       cstr.correct_infibox_sedge_marks();
@@ -1838,88 +1829,88 @@ protected:
       build_external_structure();
       cstr.correct_infibox_sface_marks();
 
-      // are the upcoming lines necessary? 
+      // are the upcoming lines necessary?
       SNC_point_locator* old_pl = pl();
       pl() = pl()->clone();
       pl()->initialize(&snc());
-      delete old_pl;   
+      delete old_pl;
 
     } else {
       Halffacet_iterator fi;
       CGAL_forall_halffacets(fi,snc()) {
-	if(is_standard(fi) || ninety) {
-	  fi->plane() = fi->plane().transform( aff);
-#ifdef CGAL_NEF3_FACET_WITH_BOX 
-	  typedef typename Halffacet::Box Box;
-	  bool first = true;
-	  Halffacet_cycle_iterator cycle_it = fi->facet_cycles_begin();
-	  if( cycle_it.is_shalfedge() ) {
-	    SHalfedge_iterator edge_it(cycle_it);
-	    SHalfedge_around_facet_circulator
-	      start( edge_it ), end( edge_it );
-	    CGAL_For_all( start, end ) {
-	      const Point_3& p = start->source()->source()->point();
-	      typename Kernel::FT q[3];
-	      q[0] = p.x();
-	      q[1] = p.y();
-	      q[2] = p.z();
-	      if(first) {
-		fi->b = Box(q,q);
-		first = false;
-	      } else
-		fi->b.extend(q);
-	    }
-	  } else
-	    CGAL_error_msg( "is facet first cycle a SHalfloop?"); 
+        if(is_standard(fi) || ninety) {
+          fi->plane() = fi->plane().transform( aff);
+#ifdef CGAL_NEF3_FACET_WITH_BOX
+          typedef typename Halffacet::Box Box;
+          bool first = true;
+          Halffacet_cycle_iterator cycle_it = fi->facet_cycles_begin();
+          if( cycle_it.is_shalfedge() ) {
+            SHalfedge_iterator edge_it(cycle_it);
+            SHalfedge_around_facet_circulator
+              start( edge_it ), end( edge_it );
+            CGAL_For_all( start, end ) {
+              const Point_3& p = start->source()->source()->point();
+              typename Kernel::FT q[3];
+              q[0] = p.x();
+              q[1] = p.y();
+              q[2] = p.z();
+              if(first) {
+                fi->b = Box(q,q);
+                first = false;
+              } else
+                fi->b.extend(q);
+            }
+          } else
+            CGAL_error_msg( "is facet first cycle a SHalfloop?");
 #endif
-	}
-      }    
+        }
+      }
 
       if(!aff.is_even())
-	change_orientation(true);
+        change_orientation(true);
 
       if(aff.homogeneous(0,1) != 0 ||
-	 aff.homogeneous(0,2) != 0 ||
-	 aff.homogeneous(1,0) != 0 ||
-	 aff.homogeneous(1,2) != 0 ||
-	 aff.homogeneous(2,0) != 0 ||
-	 aff.homogeneous(2,1) != 0 ||
-	 aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
-	 aff.homogeneous(0,0) != aff.homogeneous(2,2) ||
-	 !this->is_bounded()) {
-	   SNC_point_locator* old_pl = pl();
-	   pl() = pl()->clone();
-	   pl()->initialize(&snc());
-	   delete old_pl;   
-	 }
-      else pl()->transform(aff); 
+         aff.homogeneous(0,2) != 0 ||
+         aff.homogeneous(1,0) != 0 ||
+         aff.homogeneous(1,2) != 0 ||
+         aff.homogeneous(2,0) != 0 ||
+         aff.homogeneous(2,1) != 0 ||
+         aff.homogeneous(0,0) != aff.homogeneous(1,1) ||
+         aff.homogeneous(0,0) != aff.homogeneous(2,2) ||
+         !this->is_bounded()) {
+           SNC_point_locator* old_pl = pl();
+           pl() = pl()->clone();
+           pl()->initialize(&snc());
+           delete old_pl;
+         }
+      else pl()->transform(aff);
     }
 
     SNC_constructor C(snc());
-    C.assign_indices(); 
+    C.assign_indices();
   }
-  
+
   /*{\Mtext \headerline{Exploration}
-  As Nef polyhedra are the result of forming complements 
+  As Nef polyhedra are the result of forming complements
   and intersections starting from a set |H| of halfspaces which are
-  defined by oriented planes in three space. The corresponding 
-  structure is represented by an extended wuerzburg structure 
-  $W = (V,E,F,C)$. For topological queries within |W| the following 
+  defined by oriented planes in three space. The corresponding
+  structure is represented by an extended wuerzburg structure
+  $W = (V,E,F,C)$. For topological queries within |W| the following
   types and operations allow exploration access to this structure.}*/
 
   /*{\Mtypes 3}*/
-    
+
     typedef CGAL::SNC_SM_explorer<SM_const_decorator>  SM_explorer;
 
-    SM_explorer SMexplorer(Vertex_const_handle v) const { 
+    SM_explorer SMexplorer(Vertex_const_handle v) const {
       SM_const_decorator SMCD(&*v);
-      return SM_explorer(SMCD); 
+      return SM_explorer(SMCD);
     }
 
   typedef typename SNC_structure::Object_list Object_list;
   typedef typename SNC_structure::Object_handle Object_handle;
   /*{\Mtypemember a generic handle to an object of the underlying
-  plane map. The kind of object |(vertex, halfedge, face)| can 
+  plane map. The kind of object |(vertex, halfedge, face)| can
   be determined and the object can be assigned to a corresponding
   handle by the three functions:\\
   |bool assign(Vertex_const_handle& h, Object_handle)|\\
@@ -1934,7 +1925,7 @@ protected:
   bool contains(Object_handle /*h*/) const
   /*{\Mop  returns true iff the object |h| is contained in the set
   represented by |\Mvar|.}*/
-    // { SNC_point_locator PL(snc()); return PL.mark(h);} 
+    // { SNC_point_locator PL(snc()); return PL.mark(h);}
     { CGAL_error_msg( "not implemented."); return false;}
 
   bool contained_in_boundary(Object_handle h) const
@@ -1948,14 +1939,14 @@ protected:
 
   Object_handle locate(const Point_3& p) const
   /*{\Mop  returns a generic handle |h| to an object (vertex, edge, facet,
-  volume) of the underlying SNC which contains the point |p| in its relative 
-  interior. The point |p| is contained in the set represented by |\Mvar| if 
+  volume) of the underlying SNC which contains the point |p| in its relative
+  interior. The point |p| is contained in the set represented by |\Mvar| if
   |\Mvar.contains(h)| is true.}*/ {
     CGAL_NEF_TRACEN( "locating point...");
     CGAL_assertion( pl() != nullptr);
 
     Object_handle o = pl()->locate(p);
-    
+
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -1977,7 +1968,7 @@ protected:
   $O(N^2)$ where $N$ is the size of the output plus the size of the
   input.
 
-  The point location operations run in linear query time without any 
+  The point location operations run in linear query time without any
   preprocessing.}*/
 
   /*{\Mexample Nef polyhedra are parameterized by a so called extended
@@ -2049,10 +2040,10 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b) {
   /*
   if(Infi_box::extended_kernel()) {
     SNC_structure snc1, snc2;
-    SNC_point_locator* pl1 = new SNC_point_locator_default; 
-    SNC_point_locator* pl2 = new SNC_point_locator_default; 
+    SNC_point_locator* pl1 = new SNC_point_locator_default;
+    SNC_point_locator* pl2 = new SNC_point_locator_default;
 
-    SNC_constructor c1(snc1); 
+    SNC_constructor c1(snc1);
     Infi_box::initialize_infibox_vertices(c1, true);
     SNC_external_structure es1(snc1, pl1);
     es1.build_external_structure();
@@ -2068,7 +2059,7 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b) {
     AND _and;
     Binary_operation bo(snc());
     bo(pl(), snc1, pl1, snc2, pl2, _and);
-    
+
     delete pl1;
     delete pl2;
   } else
@@ -2076,15 +2067,15 @@ Nef_polyhedron_3(const Plane_3& h, Boundary b) {
       ("Constructor is only available with extended kernels");
   */
 }
- 
+
 template <typename Kernel, typename Items, typename Mark>
 Nef_polyhedron_3<Kernel,Items, Mark>::
-Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl, 
-		  bool clone_pl,
-		  bool clone_snc) {
+Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
+                  bool clone_pl,
+                  bool clone_snc) {
   CGAL_assertion( clone_snc == true || clone_pl == false);
   // TODO: granados: define behavior when clone=false
-  //  CGAL_NEF_TRACEN("construction from an existing SNC structure (clone="<<clone<<")"); 
+  //  CGAL_NEF_TRACEN("construction from an existing SNC structure (clone="<<clone<<")");
 
   this->copy_on_write();
   if(clone_snc) {
@@ -2094,7 +2085,7 @@ Nef_polyhedron_3( const SNC_structure& W, SNC_point_locator* _pl,
   if(clone_pl) {
     pl() = _pl->clone();
     pl()->initialize(&snc());
-  } 
+  }
   else
     pl() = _pl;
 }
@@ -2108,16 +2099,16 @@ extract_complement() {
   SNC_decorator D(snc());
   Vertex_iterator v;
   CGAL_forall_vertices(v,D){
-    v->mark() = !v->mark(); 
+    v->mark() = !v->mark();
     SM_decorator SM(&*v);
     SM.extract_complement();
   }
 
   Halffacet_iterator f;
-  CGAL_forall_halffacets(f,D) f->mark() = !f->mark(); 
- 
+  CGAL_forall_halffacets(f,D) f->mark() = !f->mark();
+
   Volume_iterator c;
-  CGAL_forall_volumes(c,D) 
+  CGAL_forall_volumes(c,D)
     //    if(!(Infi_box::extended_kernel && c==D.volumes_begin()))
       c->mark() = !c->mark();
 }

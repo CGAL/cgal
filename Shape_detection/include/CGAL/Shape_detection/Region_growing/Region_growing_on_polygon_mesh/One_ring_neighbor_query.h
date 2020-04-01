@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
@@ -49,20 +40,20 @@ namespace Polygon_mesh {
 
     \brief Edge-adjacent faces connectivity in a polygon mesh.
 
-    This class returns all faces, which are edge-adjacent to a query face in a 
+    This class returns all faces, which are edge-adjacent to a query face in a
     polygon mesh being a `PolygonMesh`.
 
-    \tparam PolygonMesh 
+    \tparam PolygonMesh
     must be a model of `FaceListGraph`.
 
-    \tparam FaceRange 
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and 
+    \tparam FaceRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
     value type is the face type of a polygon mesh.
 
     \cgalModels `NeighborQuery`
   */
   template<
-  typename PolygonMesh, 
+  typename PolygonMesh,
   typename FaceRange = typename PolygonMesh::Face_range>
   class One_ring_neighbor_query {
 
@@ -72,7 +63,7 @@ namespace Polygon_mesh {
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
 
-    using Face_to_index_map 
+    using Face_to_index_map
     = internal::Item_to_index_property_map<Face_range>;
     /// \endcond
 
@@ -82,7 +73,7 @@ namespace Polygon_mesh {
     /*!
       \brief initializes all internal data structures.
 
-      \param pmesh 
+      \param pmesh
       an instance of a `PolygonMesh` that represents a polygon mesh
 
       \pre `faces(pmesh).size() > 0`
@@ -91,7 +82,7 @@ namespace Polygon_mesh {
       const PolygonMesh& pmesh) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
-    m_face_to_index_map(m_face_range) { 
+    m_face_to_index_map(m_face_range) {
 
       CGAL_precondition(m_face_range.size() > 0);
     }
@@ -99,13 +90,13 @@ namespace Polygon_mesh {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator retrieves indices of all faces, 
-      which are edge-adjacent to the face with the index `query_index`. 
+      This operator retrieves indices of all faces,
+      which are edge-adjacent to the face with the index `query_index`.
       These indices are returned in `neighbors`.
 
       \param query_index
@@ -117,7 +108,7 @@ namespace Polygon_mesh {
       \pre `query_index >= 0 && query_index < faces(pmesh).size()`
     */
     void operator()(
-      const std::size_t query_index, 
+      const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
 
       neighbors.clear();
@@ -131,7 +122,7 @@ namespace Polygon_mesh {
       const auto faces = faces_around_face(query_hedge, m_face_graph);
       for (const auto face : faces) {
         const std::size_t face_index = get(m_face_to_index_map, face);
-        
+
         if (face_index != std::size_t(-1)) // not a null face
           neighbors.push_back(face_index);
       }

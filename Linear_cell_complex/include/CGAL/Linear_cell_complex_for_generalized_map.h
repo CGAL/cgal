@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -105,40 +96,59 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-#ifdef DOXYGEN_RUNNING      
       Linear_cell_complex_for_generalized_map(const Self & alcc) : Base(alcc)
       {}
-#endif
-      
-      template < class LCC2 >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc) : Base(alcc)
+
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2>
+      Linear_cell_complex_for_generalized_map
+      (const Linear_cell_complex_for_generalized_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc) : Base(alcc)
       {}
 
-      template < class LCC2, typename Converters >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc,
-                                              Converters& converters) :
-        Base(alcc, converters)
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2, typename Converters>
+      Linear_cell_complex_for_generalized_map
+      (const Linear_cell_complex_for_generalized_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       const Converters& converters) : Base(alcc, converters)
       {}
 
-      template < class LCC2, typename Converters, typename DartInfoConverter >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc,
-                                              Converters& converters,
-                                              const DartInfoConverter&
-                                              dartinfoconverter) :
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2, typename Converters, typename DartInfoConverter>
+      Linear_cell_complex_for_generalized_map
+      (const Linear_cell_complex_for_generalized_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       const Converters& converters,
+       const DartInfoConverter& dartinfoconverter) :
         Base(alcc, converters, dartinfoconverter)
       {}
 
-      template < class LCC2, typename Converters, typename DartInfoConverter,
-                 typename PointConverter >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc,
-                                              Converters& converters,
-                                              const DartInfoConverter&
-                                              dartinfoconverter,
-                                              const PointConverter&
-                                              pointconverter) :
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2, typename Converters, typename DartInfoConverter,
+                typename PointConverter>
+      Linear_cell_complex_for_generalized_map
+      (const Linear_cell_complex_for_generalized_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       const Converters& converters,
+       const DartInfoConverter& dartinfoconverter,
+       const PointConverter& pointconverter) :
         Base(alcc, converters, dartinfoconverter, pointconverter)
       {}
 
+      Self & operator= (const Self & alcc)
+      {
+        Base::operator=(alcc);
+        return *this;
+      }
     };
 
 } // namespace CGAL

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
 
@@ -48,10 +39,10 @@ struct Cotangent_value_Meyer_impl
   {
     typedef typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type >::Kernel::Vector_3 Vector;
-    
+
     Vector a = get(ppmap, v0) - get(ppmap, v1);
     Vector b = get(ppmap, v2) - get(ppmap, v1);
-    
+
     double dot_ab = to_double(a*b);
     // rewritten for safer fp arithmetic
     //double dot_aa = a.squared_length();
@@ -61,17 +52,17 @@ struct Cotangent_value_Meyer_impl
     Vector cross_ab = CGAL::cross_product(a, b);
     double divider = to_double(CGAL::approximate_sqrt(cross_ab*cross_ab));
 
-    if(divider == 0 /*|| divider != divider*/) 
+    if(divider == 0 /*|| divider != divider*/)
     {
-      CGAL::collinear(get(ppmap, v0), get(ppmap, v1), get(ppmap, v2)) ? 
-        CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
-        CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
-      
+      CGAL::collinear(get(ppmap, v0), get(ppmap, v1), get(ppmap, v2)) ?
+        CGAL_warning_msg(false, "Infinite Cotangent value with degenerate triangle!") :
+        CGAL_warning_msg(false, "Infinite Cotangent value due to floating point arithmetic!");
+
 
       return dot_ab > 0 ? (std::numeric_limits<double>::max)() :
                          -(std::numeric_limits<double>::max)();
     }
-    
+
     return dot_ab / divider;
   }
 };
@@ -350,7 +341,7 @@ public:
         }
       }
     }
-    CGAL_warning(voronoi_area != 0 && "Zero voronoi area!");
+    CGAL_warning_msg(voronoi_area != 0, "Zero voronoi area!");
     return voronoi_area;
   }
 };
@@ -393,7 +384,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////// Edge Weight Calculators ///////////////////////////////////
-// Cotangent weight calculator 
+// Cotangent weight calculator
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template< class PolygonMesh,
@@ -413,7 +404,7 @@ struct Cotangent_weight_impl : CotangentValue
      // Only one triangle for border edges
     if (is_border_edge(he, pmesh))
      {
-       
+
        halfedge_descriptor he_cw = opposite( next(he, pmesh) , pmesh );
        vertex_descriptor v2 = source(he_cw, pmesh);
        if (is_border_edge(he_cw, pmesh) )
@@ -426,7 +417,7 @@ struct Cotangent_weight_impl : CotangentValue
      else
      {
        halfedge_descriptor he_cw = opposite( next(he, pmesh) , pmesh );
-       vertex_descriptor v2 = source(he_cw, pmesh);     
+       vertex_descriptor v2 = source(he_cw, pmesh);
        halfedge_descriptor he_ccw = prev( opposite(he, pmesh) , pmesh );
        vertex_descriptor v3 = source(he_ccw, pmesh);
 
@@ -480,7 +471,7 @@ public:
      // Only one triangle for border edges
     if (is_border_edge(he, pmesh()))
      {
-       
+
        halfedge_descriptor he_cw = opposite( next(he, pmesh()) , pmesh() );
        vertex_descriptor v2 = source(he_cw, pmesh());
        if (is_border_edge(he_cw, pmesh()) )
@@ -493,7 +484,7 @@ public:
      else
      {
        halfedge_descriptor he_cw = opposite( next(he, pmesh()) , pmesh() );
-       vertex_descriptor v2 = source(he_cw, pmesh());     
+       vertex_descriptor v2 = source(he_cw, pmesh());
        halfedge_descriptor he_ccw = prev( opposite(he, pmesh()) , pmesh() );
        vertex_descriptor v3 = source(he_ccw, pmesh());
 
@@ -516,7 +507,7 @@ struct Single_cotangent_weight_impl : CotangentValue
   double operator()(halfedge_descriptor he, PolygonMesh& pmesh, const VertexPointMap& ppmap)
   {
     if(is_border(he, pmesh)) { return 0.0;}
-     
+
     vertex_descriptor v0 = target(he, pmesh);
     vertex_descriptor v1 = source(he, pmesh);
 
@@ -559,7 +550,7 @@ public:
   double operator()(halfedge_descriptor he)
   {
     if(is_border(he, pmesh())) { return 0.0;}
-     
+
     vertex_descriptor v0 = target(he, pmesh());
     vertex_descriptor v1 = source(he, pmesh());
 
@@ -697,7 +688,7 @@ public:
     else
     {
       halfedge_descriptor he_cw = opposite( next(he, pmesh()) , pmesh() );
-      vertex_descriptor v2 = source(he_cw, pmesh());     
+      vertex_descriptor v2 = source(he_cw, pmesh());
       halfedge_descriptor he_ccw = prev( opposite(he, pmesh()) , pmesh() );
       vertex_descriptor v3 = source(he_ccw, pmesh());
 
@@ -720,7 +711,7 @@ private:
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     cos_angle = (std::max)(-1.0, (std::min)(1.0, cos_angle)); // clamp into [-1, 1]
     double angle = acos(cos_angle);
-    
+
     return ( tan(angle/2.0) );
   }
 
@@ -743,7 +734,7 @@ private:
   }
 };
 
-template< class PolygonMesh, 
+template< class PolygonMesh,
           class PrimaryWeight = Cotangent_weight<PolygonMesh>,
           class SecondaryWeight = Mean_value_weight<PolygonMesh> >
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight
@@ -815,7 +806,7 @@ public:
     Vector v = target(he, pmesh())->point() - source(he, pmesh())->point();
     double divider = CGAL::sqrt(v.squared_length());
     if(divider == 0.0) {
-      CGAL_warning(!"Scale dependent weight - zero length edge.");
+      CGAL_warning_msg(false, "Scale dependent weight - zero length edge.");
       return (std::numeric_limits<double>::max)();
     }
     return 1.0 / divider;

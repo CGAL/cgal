@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau
 
@@ -43,19 +34,19 @@ public:
   typedef typename Tr::Facet Facet;
 
   Surface_mesh_default_criteria_3(const FT angle_bound,
-				  const FT radius_bound,
-				  const FT distance_bound)
+                                  const FT radius_bound,
+                                  const FT distance_bound)
     : curvature_size_criterion(distance_bound),
       uniform_size_criterion(radius_bound),
       aspect_ratio_criterion(angle_bound)
-      
+
   {
     criterion_vector.reserve(4);
-    
+
     criterion_vector.push_back (&aspect_ratio_criterion);
     criterion_vector.push_back (&uniform_size_criterion);
     criterion_vector.push_back (&curvature_size_criterion);
-    
+
     criteria.set_criteria(criterion_vector);
   }
 
@@ -70,7 +61,7 @@ private:
 
   Surface_mesher::Uniform_size_criterion<Tr> uniform_size_criterion;
   // bound on radii of surface Delaunay balls
-  
+
   Surface_mesher::Aspect_ratio_criterion<Tr> aspect_ratio_criterion;
   // lower bound on minimum angle in degrees
 
@@ -80,7 +71,7 @@ private:
 
 template <typename Tr>
 std::ostream&
-operator<<(std::ostream& os, 
+operator<<(std::ostream& os,
            const typename Surface_mesh_default_criteria_3<Tr>::Quality& /*q*/)
 {
   return os << "q";
