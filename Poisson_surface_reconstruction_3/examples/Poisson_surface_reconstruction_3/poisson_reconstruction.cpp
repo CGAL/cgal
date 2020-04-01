@@ -185,16 +185,16 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       // Reads the point set file in points[].
-      // Note: read_xyz_points_and_normals() requires an iterator over points
+      // Note: read_XYZ() requires an iterator over points
       // + property maps to access each point's position and normal.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
           !CGAL::read_XYZ(
-                                stream,
-                                std::back_inserter(points),
-                                CGAL::parameters::point_map
-                                (CGAL::make_first_of_pair_property_map(Point_with_normal())).
-                                normal_map (CGAL::make_second_of_pair_property_map(Point_with_normal()))))
+            stream,
+            std::back_inserter(points),
+            CGAL::parameters::point_map
+            (CGAL::make_first_of_pair_property_map(Point_with_normal())).
+            normal_map (CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;

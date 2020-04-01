@@ -40,16 +40,16 @@ int main(void)
     FT sm_distance = 0.375; // Surface Approximation error w.r.t. point set average spacing.
 
     // Reads the point set file in points[].
-    // Note: read_xyz_points_and_normals() requires an iterator over points
+    // Note: read_XYZ() requires an iterator over points
     // + property maps to access each point's position and normal.
     PointList points;
     std::ifstream stream("data/kitten.xyz");
     if (!stream ||
         !CGAL::read_XYZ(
-                              stream,
-                              std::back_inserter(points),
-                              CGAL::parameters::point_map (Point_map()).
-                              normal_map (Normal_map())))
+          stream,
+          std::back_inserter(points),
+          CGAL::parameters::point_map (Point_map()).
+          normal_map (Normal_map())))
     {
       std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
       return EXIT_FAILURE;

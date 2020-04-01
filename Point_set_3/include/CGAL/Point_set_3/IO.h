@@ -29,12 +29,8 @@
 #include <CGAL/IO/PLY.h>
 
 namespace CGAL {
-
-namespace IO
-{
-
-namespace internal
-{
+namespace IO {
+namespace internal {
 
 template <typename Point,
           typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
@@ -127,50 +123,50 @@ public:
       if (dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<boost::int8_t>(m_point_set,
-                                                                 name));
+            (new PLY_property_to_point_set_property<boost::int8_t>(m_point_set,
+                                                                   name));
       }
       else if (dynamic_cast<PLY_read_typed_number<boost::uint8_t>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<boost::uint8_t>(m_point_set,
-                                                                  name));
+            (new PLY_property_to_point_set_property<boost::uint8_t>(m_point_set,
+                                                                    name));
       }
       else if (dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<boost::int16_t>(m_point_set,
-                                                                  name));
+            (new PLY_property_to_point_set_property<boost::int16_t>(m_point_set,
+                                                                    name));
       }
       else if (dynamic_cast<PLY_read_typed_number<boost::uint16_t>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<boost::uint16_t>(m_point_set,
-                                                                   name));
+            (new PLY_property_to_point_set_property<boost::uint16_t>(m_point_set,
+                                                                     name));
       }
       else if (dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<boost::int32_t>(m_point_set,
-                                                                  name));
+            (new PLY_property_to_point_set_property<boost::int32_t>(m_point_set,
+                                                                    name));
       }
       else if (dynamic_cast<PLY_read_typed_number<boost::uint32_t>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<boost::uint32_t>(m_point_set,
-                                                                   name));
+            (new PLY_property_to_point_set_property<boost::uint32_t>(m_point_set,
+                                                                     name));
       }
       else if (dynamic_cast<PLY_read_typed_number<float>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<float>(m_point_set,
-                                                         name));
+            (new PLY_property_to_point_set_property<float>(m_point_set,
+                                                           name));
       }
       else if (dynamic_cast<PLY_read_typed_number<double>*>(property))
       {
         m_properties.push_back
-          (new PLY_property_to_point_set_property<double>(m_point_set,
-                                                          name));
+            (new PLY_property_to_point_set_property<double>(m_point_set,
+                                                            name));
       }
     }
     if (has_normal[0] && has_normal[1] && has_normal[2])
@@ -194,7 +190,7 @@ public:
   void process_line (PLY_element& element)
   {
     FT x = (FT)0.,y = (FT)0., z = (FT)0.,
-      nx = (FT)0., ny = (FT)0., nz = (FT)0.;
+        nx = (FT)0., ny = (FT)0., nz = (FT)0.;
     element.assign (x, "x");
     element.assign (y, "y");
     element.assign (z, "z");
@@ -202,19 +198,18 @@ public:
     m_point_set.point(*(m_point_set.end() - 1)) = point;
 
     if (m_point_set.has_normal_map())
-      {
-        element.assign (nx, "nx");
-        element.assign (ny, "ny");
-        element.assign (nz, "nz");
-        Vector normal (nx, ny, nz);
-        m_point_set.normal(*(m_point_set.end() - 1)) = normal;
-      }
+    {
+      element.assign (nx, "nx");
+      element.assign (ny, "ny");
+      element.assign (nz, "nz");
+      Vector normal (nx, ny, nz);
+      m_point_set.normal(*(m_point_set.end() - 1)) = normal;
+    }
   }
 };
 
-}
-
-}
+}//end internal
+}//end IO
 
 /*!
   \ingroup PkgPointSet3IO
@@ -222,25 +217,25 @@ public:
 template <typename Point, typename Vector>
 bool
 read_XYZ(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   point_set.add_normal_map();
 
   bool out = CGAL::read_xyz_points
-    (stream,
-     point_set.index_back_inserter(),
-     CGAL::parameters::point_map(point_set.point_push_map()).
-     normal_map(point_set.normal_push_map()));
+      (stream,
+       point_set.index_back_inserter(),
+       CGAL::parameters::point_map(point_set.point_push_map()).
+       normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for (typename CGAL::Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
     if (point_set.normal(*it) != CGAL::NULL_VECTOR)
-      {
-        has_normals = true;
-        break;
-      }
+    {
+      has_normals = true;
+      break;
+    }
 
   if (!has_normals)
     point_set.remove_normal_map();
@@ -254,25 +249,25 @@ read_XYZ(
 template <typename Point, typename Vector>
 bool
 read_OFF(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   point_set.add_normal_map();
 
   bool out = CGAL::read_OFF
-    (stream,
-     point_set.index_back_inserter(),
-     CGAL::parameters::point_map(point_set.point_push_map()).
-     normal_map(point_set.normal_push_map()));
+      (stream,
+       point_set.index_back_inserter(),
+       CGAL::parameters::point_map(point_set.point_push_map()).
+       normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for (typename CGAL::Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
     if (point_set.normal(*it) != CGAL::NULL_VECTOR)
-      {
-        has_normals = true;
-        break;
-      }
+    {
+      has_normals = true;
+      break;
+    }
 
   if (!has_normals)
     point_set.remove_normal_map();
@@ -285,8 +280,8 @@ read_OFF(
 template <typename Point, typename Vector>
 bool
 read_PLY(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   std::string dummy;
   return read_PLY (stream, point_set, dummy);
@@ -314,15 +309,15 @@ read_PLY(
 template <typename Point, typename Vector>
 bool
 read_PLY(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
-  std::string& comments) ///< PLY comments.
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
+    std::string& comments) ///< PLY comments.
 {
   if(!stream)
-    {
-      std::cerr << "Error: cannot open file" << std::endl;
-      return false;
-    }
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
 
   IO::internal::PLY_reader reader;
   IO::internal::Point_set_3_filler<Point, Vector> filler(point_set);
@@ -380,9 +375,9 @@ read_PLY(
 template <typename Point, typename Vector>
 bool
 write_PLY(
-  std::ostream& stream, ///< output stream.
-  const CGAL::Point_set_3<Point, Vector>& point_set,  ///< point set.
-  const std::string& comments = std::string()) ///< PLY comments.
+    std::ostream& stream, ///< output stream.
+    const CGAL::Point_set_3<Point, Vector>& point_set,  ///< point set.
+    const std::string& comments = std::string()) ///< PLY comments.
 {
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::Index Index;
@@ -420,161 +415,161 @@ write_PLY(
   std::vector<IO::internal::Abstract_property_printer<Index>*> printers;
 
   for (std::size_t i = 0; i < prop.size(); ++ i)
+  {
+    if (prop[i] == "index")
+      continue;
+
+    if (prop[i] == "point")
     {
-      if (prop[i] == "index")
+      if (boost::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
+      {
+        stream << "property float x" << std::endl
+               << "property float y" << std::endl
+               << "property float z" << std::endl;
+      }
+      else
+      {
+        stream << "property double x" << std::endl
+               << "property double y" << std::endl
+               << "property double z" << std::endl;
+      }
+      printers.push_back (new IO::internal::Property_printer<Index,Point_map>(point_set.point_map()));
+      continue;
+    }
+    if (prop[i] == "normal")
+    {
+      if (boost::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
+      {
+        stream << "property float nx" << std::endl
+               << "property float ny" << std::endl
+               << "property float nz" << std::endl;
+      }
+      else
+      {
+        stream << "property double nx" << std::endl
+               << "property double ny" << std::endl
+               << "property double nz" << std::endl;
+      }
+      printers.push_back (new IO::internal::Property_printer<Index,Vector_map>(point_set.normal_map()));
+      continue;
+    }
+
+    bool okay = false;
+    {
+      Int8_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::int8_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property char " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Char_property_printer<Index,Int8_map>(pmap));
         continue;
-
-      if (prop[i] == "point")
-        {
-          if (boost::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
-          {
-            stream << "property float x" << std::endl
-                   << "property float y" << std::endl
-                   << "property float z" << std::endl;
-          }
-          else
-          {
-            stream << "property double x" << std::endl
-                   << "property double y" << std::endl
-                   << "property double z" << std::endl;
-          }
-          printers.push_back (new IO::internal::Property_printer<Index,Point_map>(point_set.point_map()));
-          continue;
-        }
-      if (prop[i] == "normal")
-        {
-          if (boost::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
-          {
-            stream << "property float nx" << std::endl
-                   << "property float ny" << std::endl
-                   << "property float nz" << std::endl;
-          }
-          else
-          {
-            stream << "property double nx" << std::endl
-                   << "property double ny" << std::endl
-                   << "property double nz" << std::endl;
-          }
-          printers.push_back (new IO::internal::Property_printer<Index,Vector_map>(point_set.normal_map()));
-          continue;
-        }
-
-      bool okay = false;
-      {
-        Int8_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::int8_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property char " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Char_property_printer<Index,Int8_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Uint8_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::uint8_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property uchar " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Char_property_printer<Index,Uint8_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Int16_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::int16_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property short " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Int16_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Uint16_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::uint16_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property ushort " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Uint16_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Int32_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::int32_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property int " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Int32_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Uint32_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property uint " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Uint32_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Int64_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property int " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
-            continue;
-          }
-      }
-      {
-        Uint64_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
-        if (okay)
-          {
-            stream << "property uint " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
-            continue;
-          }
-      }
-      {
-        Float_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<float>(prop[i]);
-        if (okay)
-          {
-            stream << "property float " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Float_map>(pmap));
-            continue;
-          }
-      }
-      {
-        Double_map pmap;
-        boost::tie (pmap, okay) = point_set.template property_map<double>(prop[i]);
-        if (okay)
-          {
-            stream << "property double " << prop[i] << std::endl;
-            printers.push_back (new IO::internal::Simple_property_printer<Index,Double_map>(pmap));
-            continue;
-          }
       }
     }
+    {
+      Uint8_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::uint8_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property uchar " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Char_property_printer<Index,Uint8_map>(pmap));
+        continue;
+      }
+    }
+    {
+      Int16_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::int16_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property short " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Int16_map>(pmap));
+        continue;
+      }
+    }
+    {
+      Uint16_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::uint16_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property ushort " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Uint16_map>(pmap));
+        continue;
+      }
+    }
+    {
+      Int32_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::int32_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property int " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Int32_map>(pmap));
+        continue;
+      }
+    }
+    {
+      Uint32_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property uint " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Uint32_map>(pmap));
+        continue;
+      }
+    }
+    {
+      Int64_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property int " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+        continue;
+      }
+    }
+    {
+      Uint64_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
+      if (okay)
+      {
+        stream << "property uint " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+        continue;
+      }
+    }
+    {
+      Float_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<float>(prop[i]);
+      if (okay)
+      {
+        stream << "property float " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Float_map>(pmap));
+        continue;
+      }
+    }
+    {
+      Double_map pmap;
+      boost::tie (pmap, okay) = point_set.template property_map<double>(prop[i]);
+      if (okay)
+      {
+        stream << "property double " << prop[i] << std::endl;
+        printers.push_back (new IO::internal::Simple_property_printer<Index,Double_map>(pmap));
+        continue;
+      }
+    }
+  }
 
   stream << "end_header" << std::endl;
 
   for (typename Point_set::const_iterator it = point_set.begin(); it != point_set.end(); ++ it)
+  {
+    for (std::size_t i = 0; i < printers.size(); ++ i)
     {
-      for (std::size_t i = 0; i < printers.size(); ++ i)
-        {
-          printers[i]->print(stream, *it);
-          if (get_mode (stream) == IO::ASCII)
-            stream << " ";
-        }
+      printers[i]->print(stream, *it);
       if (get_mode (stream) == IO::ASCII)
-        stream << std::endl;
+        stream << " ";
     }
+    if (get_mode (stream) == IO::ASCII)
+      stream << std::endl;
+  }
 
   for (std::size_t i = 0; i < printers.size(); ++ i)
     delete printers[i];
@@ -585,16 +580,16 @@ write_PLY(
 
 namespace internal
 {
-  template <typename PointSet, typename PropertyMap>
-  void check_if_property_is_used (PointSet& point_set,
-                                  PropertyMap& map)
-  {
-    for (typename PointSet::iterator it = point_set.begin(); it != point_set.end(); ++ it)
-      if (get(map, *it) != typename PropertyMap::value_type())
-        return;
+template <typename PointSet, typename PropertyMap>
+void check_if_property_is_used (PointSet& point_set,
+                                PropertyMap& map)
+{
+  for (typename PointSet::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+    if (get(map, *it) != typename PropertyMap::value_type())
+      return;
 
-    point_set.remove_property_map (map);
-  }
+  point_set.remove_property_map (map);
+}
 
 }
 
@@ -604,14 +599,14 @@ namespace internal
 template <typename Point, typename Vector>
 bool
 read_LAS(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   if(!stream)
-    {
-      std::cerr << "Error: cannot open file" << std::endl;
-      return false;
-    }
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
 
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::template Property_map<float> Float_map;
@@ -640,27 +635,27 @@ read_LAS(
   Ushort_map I = point_set.template add_property_map<unsigned short>("I", 0).first;
 
   bool okay
-    = read_LAS_with_properties
-    (stream, point_set.index_back_inserter(),
-     make_las_point_reader (point_set.point_push_map()),
-     std::make_pair (point_set.push_property_map (intensity), LAS_property::Intensity()),
-     std::make_pair (point_set.push_property_map (return_number), LAS_property::Return_number()),
-     std::make_pair (point_set.push_property_map (number_of_returns), LAS_property::Number_of_returns()),
-     std::make_pair (point_set.push_property_map (scan_direction_flag), LAS_property::Scan_direction_flag()),
-     std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS_property::Edge_of_flight_line()),
-     std::make_pair (point_set.push_property_map (classification), LAS_property::Classification()),
-     std::make_pair (point_set.push_property_map (synthetic_flag), LAS_property::Synthetic_flag()),
-     std::make_pair (point_set.push_property_map (keypoint_flag), LAS_property::Keypoint_flag()),
-     std::make_pair (point_set.push_property_map (withheld_flag), LAS_property::Withheld_flag()),
-     std::make_pair (point_set.push_property_map (scan_angle), LAS_property::Scan_angle()),
-     std::make_pair (point_set.push_property_map (user_data), LAS_property::User_data()),
-     std::make_pair (point_set.push_property_map (point_source_ID), LAS_property::Point_source_ID()),
-     std::make_pair (point_set.push_property_map (deleted_flag), LAS_property::Deleted_flag()),
-     std::make_pair (point_set.push_property_map (gps_time), LAS_property::GPS_time()),
-     std::make_pair (point_set.push_property_map (R), LAS_property::R()),
-     std::make_pair (point_set.push_property_map (G), LAS_property::G()),
-     std::make_pair (point_set.push_property_map (B), LAS_property::B()),
-     std::make_pair (point_set.push_property_map (I), LAS_property::I()));
+      = read_LAS_with_properties
+      (stream, point_set.index_back_inserter(),
+       make_las_point_reader (point_set.point_push_map()),
+       std::make_pair (point_set.push_property_map (intensity), LAS_property::Intensity()),
+       std::make_pair (point_set.push_property_map (return_number), LAS_property::Return_number()),
+       std::make_pair (point_set.push_property_map (number_of_returns), LAS_property::Number_of_returns()),
+       std::make_pair (point_set.push_property_map (scan_direction_flag), LAS_property::Scan_direction_flag()),
+       std::make_pair (point_set.push_property_map (edge_of_flight_line), LAS_property::Edge_of_flight_line()),
+       std::make_pair (point_set.push_property_map (classification), LAS_property::Classification()),
+       std::make_pair (point_set.push_property_map (synthetic_flag), LAS_property::Synthetic_flag()),
+       std::make_pair (point_set.push_property_map (keypoint_flag), LAS_property::Keypoint_flag()),
+       std::make_pair (point_set.push_property_map (withheld_flag), LAS_property::Withheld_flag()),
+       std::make_pair (point_set.push_property_map (scan_angle), LAS_property::Scan_angle()),
+       std::make_pair (point_set.push_property_map (user_data), LAS_property::User_data()),
+       std::make_pair (point_set.push_property_map (point_source_ID), LAS_property::Point_source_ID()),
+       std::make_pair (point_set.push_property_map (deleted_flag), LAS_property::Deleted_flag()),
+       std::make_pair (point_set.push_property_map (gps_time), LAS_property::GPS_time()),
+       std::make_pair (point_set.push_property_map (R), LAS_property::R()),
+       std::make_pair (point_set.push_property_map (G), LAS_property::G()),
+       std::make_pair (point_set.push_property_map (B), LAS_property::B()),
+       std::make_pair (point_set.push_property_map (I), LAS_property::I()));
 
   internal::check_if_property_is_used (point_set, intensity);
   internal::check_if_property_is_used (point_set, return_number);
@@ -690,14 +685,14 @@ read_LAS(
 template <typename Point, typename Vector>
 bool
 write_LAS(
-  std::ostream& stream, ///< output stream.
-  CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream, ///< output stream.
+    CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if(!stream)
-    {
-      std::cerr << "Error: cannot open file" << std::endl;
-      return false;
-    }
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
 
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::template Property_map<float> Float_map;
@@ -709,72 +704,72 @@ write_LAS(
   Ushort_map intensity;
   bool remove_intensity;
   boost::tie(intensity, remove_intensity)
-    = point_set.template add_property_map<unsigned short>("intensity", 0);
+      = point_set.template add_property_map<unsigned short>("intensity", 0);
 
   Uchar_map return_number;
   bool remove_return_number;
   boost::tie (return_number, remove_return_number)
-    = point_set.template add_property_map<unsigned char>("return_number", 0);
+      = point_set.template add_property_map<unsigned char>("return_number", 0);
 
   Uchar_map number_of_returns;
   bool remove_number_of_returns;
   boost::tie (number_of_returns, remove_number_of_returns)
-    = point_set.template add_property_map<unsigned char>("number_of_returns", 0);
+      = point_set.template add_property_map<unsigned char>("number_of_returns", 0);
 
   Uchar_map scan_direction_flag;
   bool remove_scan_direction_flag;
   boost::tie (scan_direction_flag, remove_scan_direction_flag)
-    = point_set.template add_property_map<unsigned char>("scan_direction_flag", 0);
+      = point_set.template add_property_map<unsigned char>("scan_direction_flag", 0);
 
   Uchar_map edge_of_flight_line;
   bool remove_edge_of_flight_line;
   boost::tie (edge_of_flight_line, remove_edge_of_flight_line)
-    = point_set.template add_property_map<unsigned char>("edge_of_flight_line", 0);
+      = point_set.template add_property_map<unsigned char>("edge_of_flight_line", 0);
 
   Uchar_map classification;
   bool remove_classification;
   boost::tie (classification, remove_classification)
-    = point_set.template add_property_map<unsigned char>("classification", 0);
+      = point_set.template add_property_map<unsigned char>("classification", 0);
 
   Uchar_map synthetic_flag;
   bool remove_synthetic_flag;
   boost::tie (synthetic_flag, remove_synthetic_flag)
-    = point_set.template add_property_map<unsigned char>("synthetic_flag", 0);
+      = point_set.template add_property_map<unsigned char>("synthetic_flag", 0);
 
   Uchar_map keypoint_flag;
   bool remove_keypoint_flag;
   boost::tie (keypoint_flag, remove_keypoint_flag)
-    = point_set.template add_property_map<unsigned char>("keypoint_flag", 0);
+      = point_set.template add_property_map<unsigned char>("keypoint_flag", 0);
 
   Uchar_map withheld_flag;
   bool remove_withheld_flag;
   boost::tie (withheld_flag, remove_withheld_flag)
-    = point_set.template add_property_map<unsigned char>("withheld_flag", 0);
+      = point_set.template add_property_map<unsigned char>("withheld_flag", 0);
 
   Float_map scan_angle;
   bool remove_scan_angle;
   boost::tie (scan_angle, remove_scan_angle)
-    = point_set.template add_property_map<float>("scan_angle", 0.);
+      = point_set.template add_property_map<float>("scan_angle", 0.);
 
   Uchar_map user_data;
   bool remove_user_data;
   boost::tie (user_data, remove_user_data)
-    = point_set.template add_property_map<unsigned char>("user_data", 0);
+      = point_set.template add_property_map<unsigned char>("user_data", 0);
 
   Ushort_map point_source_ID;
   bool remove_point_source_ID;
   boost::tie (point_source_ID, remove_point_source_ID)
-    = point_set.template add_property_map<unsigned short>("point_source_ID", 0);
+      = point_set.template add_property_map<unsigned short>("point_source_ID", 0);
 
   Uint_map deleted_flag;
   bool remove_deleted_flag;
   boost::tie (deleted_flag, remove_deleted_flag)
-    = point_set.template add_property_map<unsigned int>("deleted_flag", 0);
+      = point_set.template add_property_map<unsigned int>("deleted_flag", 0);
 
   Double_map gps_time;
   bool remove_gps_time;
   boost::tie (gps_time, remove_gps_time)
-    = point_set.template add_property_map<double>("gps_time", 0);
+      = point_set.template add_property_map<double>("gps_time", 0);
 
   Ushort_map R;
   bool remove_R;
@@ -790,52 +785,52 @@ write_LAS(
   boost::tie (I, remove_I) = point_set.template add_property_map<unsigned short>("I", 0);
 
   if (remove_R)
-    {
-      Uchar_map charR, charG, charB;
-      bool foundR, foundG, foundB;
-      boost::tie (charR, foundR) = point_set.template property_map<unsigned char>("r");
-      if (!foundR)
-        boost::tie (charR, foundR) = point_set.template property_map<unsigned char>("red");
-      boost::tie (charG, foundG) = point_set.template property_map<unsigned char>("g");
-      if (!foundG)
-        boost::tie (charG, foundG) = point_set.template property_map<unsigned char>("green");
-      boost::tie (charB, foundB) = point_set.template property_map<unsigned char>("b");
-      if (!foundB)
-        boost::tie (charB, foundB) = point_set.template property_map<unsigned char>("blue");
+  {
+    Uchar_map charR, charG, charB;
+    bool foundR, foundG, foundB;
+    boost::tie (charR, foundR) = point_set.template property_map<unsigned char>("r");
+    if (!foundR)
+      boost::tie (charR, foundR) = point_set.template property_map<unsigned char>("red");
+    boost::tie (charG, foundG) = point_set.template property_map<unsigned char>("g");
+    if (!foundG)
+      boost::tie (charG, foundG) = point_set.template property_map<unsigned char>("green");
+    boost::tie (charB, foundB) = point_set.template property_map<unsigned char>("b");
+    if (!foundB)
+      boost::tie (charB, foundB) = point_set.template property_map<unsigned char>("blue");
 
-      if (foundR && foundG && foundB)
-        {
-          for (typename Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
-            {
-              put (R, *it, (unsigned short)(get(charR, *it)));
-              put (G, *it, (unsigned short)(get(charG, *it)));
-              put (B, *it, (unsigned short)(get(charB, *it)));
-            }
-        }
+    if (foundR && foundG && foundB)
+    {
+      for (typename Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+      {
+        put (R, *it, (unsigned short)(get(charR, *it)));
+        put (G, *it, (unsigned short)(get(charG, *it)));
+        put (B, *it, (unsigned short)(get(charB, *it)));
+      }
     }
+  }
 
   bool okay
-    = write_LAS
-    (stream, point_set,
-     make_las_point_writer (point_set.point_map()),
-     std::make_pair (intensity, LAS_property::Intensity()),
-     std::make_pair (return_number, LAS_property::Return_number()),
-     std::make_pair (number_of_returns, LAS_property::Number_of_returns()),
-     std::make_pair (scan_direction_flag, LAS_property::Scan_direction_flag()),
-     std::make_pair (edge_of_flight_line, LAS_property::Edge_of_flight_line()),
-     std::make_pair (classification, LAS_property::Classification()),
-     std::make_pair (synthetic_flag, LAS_property::Synthetic_flag()),
-     std::make_pair (keypoint_flag, LAS_property::Keypoint_flag()),
-     std::make_pair (withheld_flag, LAS_property::Withheld_flag()),
-     std::make_pair (scan_angle, LAS_property::Scan_angle()),
-     std::make_pair (user_data, LAS_property::User_data()),
-     std::make_pair (point_source_ID, LAS_property::Point_source_ID()),
-     std::make_pair (deleted_flag, LAS_property::Deleted_flag()),
-     std::make_pair (gps_time, LAS_property::GPS_time()),
-     std::make_pair (R, LAS_property::R()),
-     std::make_pair (G, LAS_property::G()),
-     std::make_pair (B, LAS_property::B()),
-     std::make_pair (I, LAS_property::I()));
+      = write_LAS
+      (stream, point_set,
+       make_las_point_writer (point_set.point_map()),
+       std::make_pair (intensity, LAS_property::Intensity()),
+       std::make_pair (return_number, LAS_property::Return_number()),
+       std::make_pair (number_of_returns, LAS_property::Number_of_returns()),
+       std::make_pair (scan_direction_flag, LAS_property::Scan_direction_flag()),
+       std::make_pair (edge_of_flight_line, LAS_property::Edge_of_flight_line()),
+       std::make_pair (classification, LAS_property::Classification()),
+       std::make_pair (synthetic_flag, LAS_property::Synthetic_flag()),
+       std::make_pair (keypoint_flag, LAS_property::Keypoint_flag()),
+       std::make_pair (withheld_flag, LAS_property::Withheld_flag()),
+       std::make_pair (scan_angle, LAS_property::Scan_angle()),
+       std::make_pair (user_data, LAS_property::User_data()),
+       std::make_pair (point_source_ID, LAS_property::Point_source_ID()),
+       std::make_pair (deleted_flag, LAS_property::Deleted_flag()),
+       std::make_pair (gps_time, LAS_property::GPS_time()),
+       std::make_pair (R, LAS_property::R()),
+       std::make_pair (G, LAS_property::G()),
+       std::make_pair (B, LAS_property::B()),
+       std::make_pair (I, LAS_property::I()));
 
   if (remove_intensity) point_set.remove_property_map (intensity);
   if (remove_return_number) point_set.remove_property_map (return_number);
@@ -867,18 +862,18 @@ write_LAS(
 template <typename Point, typename Vector>
 bool
 write_XYZ(
-  std::ostream& stream, ///< output stream.
-  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream, ///< output stream.
+    const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
     return CGAL::write_XYZ
-      (stream, point_set,
-       CGAL::parameters::point_map(point_set.point_map()).
-       normal_map(point_set.normal_map()));
+        (stream, point_set,
+         CGAL::parameters::point_map(point_set.point_map()).
+         normal_map(point_set.normal_map()));
 
   return CGAL::write_XYZ
-    (stream, point_set,
-     CGAL::parameters::point_map(point_set.point_map()));
+      (stream, point_set,
+       CGAL::parameters::point_map(point_set.point_map()));
 }
 
 /*!
@@ -887,18 +882,18 @@ write_XYZ(
 template <typename Point, typename Vector>
 bool
 write_OFF(
-  std::ostream& stream, ///< output stream.
-  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream, ///< output stream.
+    const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
     return CGAL::write_OFF
-      (stream, point_set,
-       CGAL::parameters::point_map(point_set.point_map()).
-       normal_map(point_set.normal_map()));
+        (stream, point_set,
+         CGAL::parameters::point_map(point_set.point_map()).
+         normal_map(point_set.normal_map()));
 
   return CGAL::write_OFF
-    (stream, point_set,
-     CGAL::parameters::point_map(point_set.point_map()));
+      (stream, point_set,
+       CGAL::parameters::point_map(point_set.point_map()));
 }
 
 
@@ -968,8 +963,8 @@ std::ostream& operator<<(std::ostream& os,
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 read_off_point_set(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   return read_OFF(stream, point_set);
 }
@@ -982,8 +977,8 @@ read_off_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 read_xyz_point_set(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   return read_XYZ(stream, point_set);
 }
@@ -1009,9 +1004,9 @@ read_xyz_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 read_ply_point_set(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
-  std::string& comments) ///< PLY comments.
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
+    std::string& comments) ///< PLY comments.
 {
   return read_PLY(stream, point_set, comments);
 }
@@ -1036,8 +1031,8 @@ read_ply_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 read_las_point_set(
-  std::istream& stream, ///< input stream.
-  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream, ///< input stream.
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   return read_LAS(stream, point_set);
 }
@@ -1050,8 +1045,8 @@ read_las_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 write_las_point_set(
-  std::ostream& stream, ///< output stream.
-  CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream, ///< output stream.
+    CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   return write_LAS(stram, point_set);
 }
@@ -1064,8 +1059,8 @@ write_las_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 write_off_point_set(
-  std::ostream& stream, ///< output stream.
-  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream, ///< output stream.
+    const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   return write_OFF(stream, point_set);
 }
@@ -1078,8 +1073,8 @@ write_off_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 write_xyz_point_set(
-  std::ostream& stream,
-  const CGAL::Point_set_3<Point, Vector>& point_set)
+    std::ostream& stream,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return write_XYZ(stream, point_set);
 }
@@ -1092,9 +1087,9 @@ write_xyz_point_set(
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool
 write_ply_point_set(
-  std::ostream& stream,
-  const CGAL::Point_set_3<Point, Vector>& point_set,
-  const std::string& comments = std::string())
+    std::ostream& stream,
+    const CGAL::Point_set_3<Point, Vector>& point_set,
+    const std::string& comments = std::string())
 {
   return write_PLY(stream, point_set, comments);
 }

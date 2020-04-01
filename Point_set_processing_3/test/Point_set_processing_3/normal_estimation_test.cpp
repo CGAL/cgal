@@ -323,11 +323,11 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_XYZ(stream,
-                                      std::back_inserter(points),
-                                      CGAL::parameters::normal_map
-                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
-                  );
+          CGAL::read_XYZ(stream,
+                         std::back_inserter(points),
+                         CGAL::parameters::normal_map
+                         (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                         );
     }
     if (success)
     {

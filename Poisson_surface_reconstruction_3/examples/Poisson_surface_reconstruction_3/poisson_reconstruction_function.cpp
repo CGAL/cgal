@@ -19,14 +19,14 @@ int main(void)
   std::ifstream stream("data/kitten.xyz");
   if (!stream ||
       !CGAL::read_XYZ(
-           stream,
-           std::back_inserter(points),
-           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()).
-           normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
-    {
-      std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
-      return EXIT_FAILURE;
-    }
+        stream,
+        std::back_inserter(points),
+        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()).
+        normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
+  {
+    std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Polyhedron output_mesh;
 

@@ -28,8 +28,8 @@ int main(int argc, char*argv[])
     std::ifstream stream(fname);
     if (!stream ||
         !CGAL::read_XYZ(stream,
-                               std::back_inserter(points),
-                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
+                        std::back_inserter(points),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "Error: cannot read file " << fname<< std::endl;
         return EXIT_FAILURE;

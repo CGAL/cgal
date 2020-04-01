@@ -21,7 +21,7 @@ int main(int argc, char*argv[])
   std::ifstream stream(fname);
   if (!stream ||
       !CGAL::read_XYZ(stream, std::back_inserter(points),
-                             CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
+                      CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

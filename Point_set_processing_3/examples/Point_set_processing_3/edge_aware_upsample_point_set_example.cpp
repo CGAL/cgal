@@ -58,10 +58,10 @@ int main(int argc, char* argv[])
   std::ofstream out(output_filename);
   out.precision(17);
   if (!out ||
-     !CGAL::write_XYZ(
-      out, points,
-      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-      normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+      !CGAL::write_XYZ(
+        out, points,
+        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
     return EXIT_FAILURE;
   }

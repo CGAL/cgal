@@ -553,8 +553,8 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_LAS (stream, *(d->m_points)) &&
-            !isEmpty();
+      CGAL::read_LAS (stream, *(d->m_points)) &&
+      !isEmpty();
 
   std::cerr << d->m_points->info();
 
@@ -593,9 +593,9 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_PLY (stream, *(d->m_points), d->m_comments) &&
-            !isEmpty();
-    d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
+      CGAL::read_PLY (stream, *(d->m_points), d->m_comments) &&
+      !isEmpty();
+  d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
 
   if (!d->m_points->has_normal_map())
@@ -639,8 +639,8 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 
   d->m_points->clear();
   bool ok = stream &&
-    CGAL::read_OFF(stream, *(d->m_points)) &&
-            !isEmpty();
+      CGAL::read_OFF(stream, *(d->m_points)) &&
+      !isEmpty();
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
@@ -665,8 +665,8 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   d->m_points->clear();
 
   bool ok = stream &&
-    CGAL::read_XYZ (stream, *(d->m_points)) &&
-    !isEmpty();
+      CGAL::read_XYZ (stream, *(d->m_points)) &&
+      !isEmpty();
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;

@@ -102,7 +102,7 @@ void Scene::loadPointsOFF(const char* filename)
   /* 1. use CGAL::File_scanner_OFF to read in data --tested */
   readOFFPointsandFacets( filename, pts );
 
-  /* 2. use CGAL::read_off_points to read in data -- tested */
+  /* 2. use CGAL::read_OFF to read in data -- tested */
   /* Note: read in points only, i.e. normals and faces are ignored */
   /* Note: this function can NOT omit comments (starting with '#') */
 //  ifstream fin;
@@ -112,8 +112,8 @@ void Scene::loadPointsOFF(const char* filename)
 //    showError( QObject::tr("Error: cannot open file %1 for reading.").arg(filename) );
 //    return;
 //  }
-//  if ( !CGAL::read_off_points( fin,  // inout ifstream
-//                               back_inserter(pts) ) ) {  // output iterator over points
+//  if ( !CGAL::read_OFF( fin,  // inout ifstream
+//                         back_inserter(pts) ) ) {  // output iterator over points
 //    showError( QObject::tr("Error: cannot read file %1.").arg(filename) );
 //  }
 
@@ -147,12 +147,12 @@ void Scene::loadPointsXYZ(const char* filename)
     return;
   }
 
-  /* Use CGAL::read_xyz_points to read in data -- tested */
+  /* Use CGAL::read_XYZ to read in data -- tested */
   /* Note: this function reads in points only (normals are ignored) */
   /* Note: this function can NOT omit comments (starting with '#') */
   list<Point_3> pts;
   if( !CGAL::read_XYZ( fin,  // input ifstream
-                              back_inserter(pts) ) ) {  // output iterator over points
+                       back_inserter(pts) ) ) {  // output iterator over points
     showError( QObject::tr("Error: cannot read file %1.").arg(filename) );
   }
 

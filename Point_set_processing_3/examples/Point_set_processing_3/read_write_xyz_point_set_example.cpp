@@ -27,9 +27,9 @@ int main(int argc, char*argv[])
     std::ifstream in(fname);
     if (!in ||
         !CGAL::read_XYZ(
-            in,std::back_inserter(points),
-            CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
-            normal_map (CGAL::Second_of_pair_property_map<Pwn>())))
+          in,std::back_inserter(points),
+          CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
+          normal_map (CGAL::Second_of_pair_property_map<Pwn>())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;

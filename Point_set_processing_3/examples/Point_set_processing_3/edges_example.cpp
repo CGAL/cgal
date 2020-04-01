@@ -25,8 +25,8 @@ int main (int , char**) {
     std::ifstream stream("data/fandisk.off");
     if (!stream ||
         !CGAL::read_OFF(stream,
-                               std::back_inserter(points),
-                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
+                        std::back_inserter(points),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
         std::cerr << "Error: cannot read file data/fandisk.off" << std::endl;
         return EXIT_FAILURE;

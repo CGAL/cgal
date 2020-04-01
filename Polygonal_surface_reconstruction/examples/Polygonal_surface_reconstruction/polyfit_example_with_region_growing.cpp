@@ -100,10 +100,10 @@ int main()
 
   CGAL::Timer t;
   t.start();
-    if (!input_stream ||
-    !CGAL::read_XYZ(input_stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
+  if (!input_stream ||
+      !CGAL::read_XYZ(input_stream,
+                      std::back_inserter(points),
+                      CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
 
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;

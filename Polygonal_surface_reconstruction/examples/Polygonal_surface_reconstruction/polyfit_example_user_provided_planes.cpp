@@ -51,12 +51,12 @@ int main()
   t.start();
 
   if (!input_stream ||
-    !CGAL::read_PLY_with_properties(
-      input_stream,
-      std::back_inserter(points),
-      CGAL::make_ply_point_reader(Point_map()),
-      CGAL::make_ply_normal_reader(Normal_map()),
-      std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
+      !CGAL::read_PLY_with_properties(
+        input_stream,
+        std::back_inserter(points),
+        CGAL::make_ply_point_reader(Point_map()),
+        CGAL::make_ply_normal_reader(Normal_map()),
+        std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -94,8 +94,8 @@ int main()
     const std::string& output_file("data/ball_result.off");
     std::ofstream output_stream(output_file.c_str());
     if (output_stream && CGAL::write_off(output_stream, model))
-    std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
-  else {
+        std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
+    else {
         std::cerr << " Failed saving file." << std::endl;
         return EXIT_FAILURE;
     }
