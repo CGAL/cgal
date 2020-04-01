@@ -72,43 +72,38 @@ public:
     if (display_time)
     { t.start(); }
     
-    Original_map_wrapper::copy(m_local_map, const_cast<Mesh&>(amesh),
-                               m_origin_to_copy, m_copy_to_origin);
-
-    // Initialize m_is_hole
+    // Initialize m_is_perforated
     try
     {
-      m_is_hole=get_local_map().get_new_mark();
+      m_is_perforated=get_local_map().get_new_mark();
     }
     catch (typename Local_map::Exception_no_more_available_mark)
     {
       std::cerr<<"No more free mark, exit."<<std::endl;
       exit(-1);
     }
-    get_local_map().negate_mark(m_is_hole);
-    // Remove all boundary by adding faces, marked with m_is_hole
+
+    Original_map_wrapper::copy(m_local_map, const_cast<Mesh&>(amesh),
+                               m_origin_to_copy, m_copy_to_origin, m_is_perforated);
+
+    get_local_map().negate_mark(m_is_perforated);
+    // Remove all boundary by adding faces, marked with m_is_perforated
     get_local_map().template close<2>();
-    get_local_map().negate_mark(m_is_hole);
+    get_local_map().negate_mark(m_is_perforated);
 
-    for (auto it=get_local_map().darts().begin(),
-           itend=get_local_map().darts().end(); it!=itend; ++it)
-    {
-      if (get_local_map().template attribute<0>(it)==nullptr)
-      { get_local_map().template set_attribute<0>
-          (it, get_local_map().template create_attribute<0>()); }      
-    }
-
+    create_vertex_info();
+    
     if (display_time)
     {
       t.stop();
-      std::cout<<" [TIME] Shortest_noncontractible_cycle constructor: "
+      std::cout<<"[TIME] Shortest_noncontractible_cycle constructor: "
                <<t.time()<<" seconds."<<std::endl;
     }
   }
 
   ~Shortest_noncontractible_cycle()
   {
-    get_local_map().free_mark(m_is_hole);
+    get_local_map().free_mark(m_is_perforated);
   }
   
   template <class WeightFunctor>
@@ -160,18 +155,19 @@ public:
     for (auto it=get_local_map().template attributes<0>().begin(),
            itend=get_local_map().template attributes<0>().end(); it!=itend; ++it)
     {
+      Dart_handle dh=get_local_map().template dart_of_attribute<0>(it);
       typename WeightFunctor::Weight_t temp_length;
       if (first_check)
       {
-        if (!compute_cycle(get_local_map().template dart_of_attribute<0>(it), m_cycle,
-                           &temp_length, nullptr, wf)) continue;
-        min_length = temp_length;
-        first_check = false;
+        if (compute_cycle(dh, m_cycle, &temp_length, nullptr, wf))
+        {
+          min_length = temp_length;
+          first_check = false;
+        }
       }
       else
       {
-        if (compute_cycle(get_local_map().template dart_of_attribute<0>(it), m_cycle,
-                          &temp_length, &min_length, wf))
+        if (compute_cycle(dh, m_cycle, &temp_length, &min_length, wf))
         { min_length = temp_length; }
       }
     }
@@ -196,6 +192,29 @@ public:
   { return compute_edgewidth(nullptr, display_time); }
   
 protected:
+  int vertex_info(Dart_handle dh) const
+  { return get_local_map().template info<0>(dh); }
+  int& vertex_info(Dart_handle dh)
+  { return get_local_map().template info<0>(dh); }
+
+  void create_vertex_info()
+  {
+    for (auto it=get_local_map().darts().begin(),
+           itend=get_local_map().darts().end(); it!=itend; ++it)
+    {
+      if (get_local_map().template attribute<0>(it)==nullptr)
+      { get_local_map().template set_attribute<0>
+          (it, get_local_map().template create_attribute<0>(-1)); }
+    }
+  }
+  
+  void initialize_vertex_info()
+  {
+    for (auto it=get_local_map().template attributes<0>().begin(),
+           itend = get_local_map().template attributes<0>().end(); it != itend; ++it)
+    { get_local_map().template info_of_attribute<0>(it)=-1; }
+  }
+  
   template <class WeightFunctor, class Distance_>
   void compute_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
                              std::vector<Distance_>& distance_from_root,
@@ -243,7 +262,7 @@ protected:
     }
     // Begin Dijkstra
     pq.push(0);
-    get_local_map().template info<0>(root) = vertex_index;
+    vertex_info(root)=vertex_index;
     get_local_map().template mark_cell<0>(root, vertex_visited);
     distance_from_root.push_back(0);
 
@@ -252,7 +271,7 @@ protected:
       int u_index=pq.top();
       pq.pop();
       Dart_handle u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
-      CGAL_assertion(u_index==get_local_map().template info<0>(u));
+      CGAL_assertion(u_index==vertex_info(u));
       Dart_handle it=u;
       do
       {
@@ -265,13 +284,13 @@ protected:
           distance_from_root.push_back(distance_from_root[u_index]+w);
           spanning_tree.push_back(it);
           trace_index.push_back(u_index-1);
-          get_local_map().template info<0>(v)=v_index;
+          vertex_info(v)=v_index;
           get_local_map().template mark_cell<0>(v, vertex_visited);
           pq.push(v_index);
         }
         else
         {
-          int v_index=get_local_map().template info<0>(v);
+          int v_index=vertex_info(v);
           if (distance_from_root[v_index]>distance_from_root[u_index]+w)
           {
             CGAL_assertion(v_index>0);
@@ -309,7 +328,7 @@ protected:
     }
     // Begin BFS
     q.push(0);
-    get_local_map().template info<0>(root)=vertex_index;
+    vertex_info(root)=vertex_index;
     get_local_map().template mark_cell<0>(root, vertex_visited);
     distance_from_root.push_back(0);
     while (!q.empty())
@@ -317,7 +336,7 @@ protected:
       int u_index=q.front();
       q.pop();
       Dart_handle u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
-      CGAL_assertion(u_index==get_local_map().template info<0>(u));
+      CGAL_assertion(u_index==vertex_info(u));
       Dart_handle it=u;
       do
       {
@@ -330,7 +349,7 @@ protected:
           // `it` will lead to v
           q.push(v_index);
           trace_index.push_back(u_index-1);
-          get_local_map().template info<0>(v)=v_index;
+          vertex_info(v)=v_index;
           get_local_map().template mark_cell<0>(v, vertex_visited);
         }
         it=get_local_map().next(get_local_map().opposite2(it));
@@ -389,7 +408,7 @@ protected:
     for (auto it=get_local_map().darts().begin(), itend=get_local_map().darts().end();
          it!=itend; ++it)
     {
-      if (get_local_map().is_marked(it, m_is_hole))
+      if (get_local_map().is_marked(it, m_is_perforated))
       {
         if (!get_local_map().is_marked(it, face_deleted))
         { get_local_map().template mark_cell<2>(it, face_deleted); }
@@ -446,8 +465,7 @@ protected:
     for (auto it=get_local_map().darts().begin(),
            itend=get_local_map().darts().end(); it!=itend; ++it)
     {
-      if (it<get_local_map().opposite2(it) &&
-          get_local_map().template info<0>(it)>=0 &&
+      if (it<get_local_map().opposite2(it) && vertex_info(it)>=0 &&
           !get_local_map().is_marked(it, edge_deleted))
       { noncon_edges.push_back(it); }
 
@@ -464,21 +482,21 @@ protected:
   Dart_handle nonhole_dart_of_same_edge(Dart_handle dh)
   {
     CGAL_assertion(dh!=nullptr);
-    if (get_local_map().is_marked(dh, m_is_hole))
+    if (get_local_map().is_marked(dh, m_is_perforated))
     { dh = get_local_map().opposite2(dh); }
-    CGAL_assertion(!get_local_map().is_marked(dh, m_is_hole));
+    CGAL_assertion(!get_local_map().is_marked(dh, m_is_perforated));
     return dh;
   }
 
   Dart_handle nonhole_dart_of_same_edge(Dart_handle dh, bool& flip)
   {
     CGAL_assertion(dh!=nullptr);
-    if (get_local_map().is_marked(dh, m_is_hole))
+    if (get_local_map().is_marked(dh, m_is_perforated))
     {
       dh=get_local_map().opposite2(dh);
       flip=!flip;
     }
-    CGAL_assertion(!get_local_map().is_marked(dh, m_is_hole));
+    CGAL_assertion(!get_local_map().is_marked(dh, m_is_perforated));
     return dh;
   }
 
@@ -504,9 +522,7 @@ protected:
     std::vector<typename WeightFunctor::Weight_t> distance_from_root;
     m_spanning_tree.clear();
     m_trace_index.clear();
-    for (auto it=get_local_map().template attributes<0>().begin(),
-           itend = get_local_map().template attributes<0>().end(); it != itend; ++it)
-    { get_local_map().template info_of_attribute<0>(it)=-1; }
+    initialize_vertex_info();
     compute_spanning_tree(root, m_spanning_tree, distance_from_root, m_trace_index, wf);
     compute_noncon_edges(m_spanning_tree, m_noncon_edges);
 
@@ -517,7 +533,7 @@ protected:
     for (auto dh : m_noncon_edges)
     {
       Dart_handle a=dh, b=get_local_map().next(dh);
-      int index_a=get_local_map().template info<0>(a), index_b=get_local_map().template info<0>(b);
+      int index_a=vertex_info(a), index_b=vertex_info(b);
       typename WeightFunctor::Weight_t sum_distance=
         distance_from_root[index_a]+distance_from_root[index_b]
         +wf(m_copy_to_origin[nonhole_dart_of_same_edge(dh)]);
@@ -550,7 +566,7 @@ protected:
 
 protected:
   Local_map        m_local_map; /// the local map
-  size_type        m_is_hole;   /// mark holes
+  size_type        m_is_perforated;   /// mark holes
   Origin_to_copy   m_origin_to_copy; /// associative array from original darts to copies
   Copy_to_origin   m_copy_to_origin; /// associative array from copies to original darts
   Dart_container   m_spanning_tree, m_noncon_edges; // Darts in the spanning tree and in E_nc
