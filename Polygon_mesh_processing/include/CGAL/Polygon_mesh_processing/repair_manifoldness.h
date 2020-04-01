@@ -17,7 +17,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
-#include <CGAL/Polygon_mesh_processing/remove_self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/repair_self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -355,6 +355,8 @@ void separate_umbrellas(const UmbrellaContainer& umbrellas,
 #endif
 }
 
+// Currently performed with a hack: transform the borders into a single border
+// by manually adding a patch between the closest edges
 template <typename HalfedgeContainer_A, typename HalfedgeContainer_B,
           typename VPM_A, typename VPM_B,
           typename TriangleMesh,
@@ -378,8 +380,8 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
 
   typedef CGAL::Triple<int, int, int>                                           Face_indices;
 
-  CGAL_precondition(bhv_A.size() != 0);
-  CGAL_precondition(bhv_B.size() != 0);
+  CGAL_precondition(bhv_A.size() >= 3);
+  CGAL_precondition(bhv_B.size() >= 3);
 
   HCit_A canon_A;
   HCit_B canon_B;
@@ -432,30 +434,48 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
   std::cout << tbp << std::endl;
 #endif
 
+  std::ofstream border_out("results/hole_border.polylines.txt");
+  border_out.precision(17);
+
+  // Only a single ID is needed, the rest is 0, hole.size()-1, and quad_id + 1
+  std::size_t quad_id = static_cast<std::size_t>(-1);
+
   // Walk A's border
-  HCit_A it_A = canon_A, last_A = std::prev(bhv_A.end());
+  HCit_A last_A = std::prev(bhv_A.end());
+  HCit_A it_A = (canon_A == last_A) ? bhv_A.begin() : std::next(canon_A);
   do
   {
+    if(!hole_points.empty())
+      border_out << "2 " << hole_points.back() << " " << get(vpm_A, source(*it_A, pmesh_A)) << std::endl;
+
     hole_points.push_back(get(vpm_A, source(*it_A, pmesh_A)));
+    std::cout << "new point: " << hole_points.back() << std::endl;
+
     third_points.push_back(get(vpm_A, target(next(opposite(*it_A, pmesh_A), pmesh_A), pmesh_A)));
     it_A = (it_A == last_A) ? bhv_A.begin() : std::next(it_A);
   }
   while(it_A != canon_A);
 
   // vertical
+  border_out << "2 " << hole_points.back() << " " << sap << std::endl;
+
+  quad_id = hole_points.size();
   hole_points.push_back(sap);
   third_points.push_back(CGAL::midpoint(sbp, tap));
 
   // Walk B's border
-  HCit_B it_B = canon_B, last_B = std::prev(bhv_B.end());
+  HCit_B last_B = std::prev(bhv_B.end());
+  HCit_B it_B = (canon_B == last_B) ? bhv_B.begin() : std::next(canon_B);
   do
   {
+    border_out << "2 " << hole_points.back() << " " << get(vpm_B, source(*it_B, pmesh_B)) << std::endl;
     hole_points.push_back(get(vpm_B, source(*it_B, pmesh_B)));
     third_points.push_back(get(vpm_B, target(next(opposite(*it_B, pmesh_B), pmesh_B), pmesh_B)));
     it_B = (it_B == last_B) ? bhv_B.begin() : std::next(it_B);
   }
   while(it_B != canon_B);
 
+  border_out << "2 " << hole_points.back() << " " << sbp << std::endl;
   hole_points.push_back(sbp);
   third_points.push_back(CGAL::midpoint(tbp, sap));
 
@@ -483,6 +503,10 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
     }
   }
 
+  // add the missing quad
+  patch.emplace_back(quad_id, 0, quad_id+1);
+  patch.emplace_back(quad_id+1, 0, hole_points.size() - 1);
+
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::ofstream pout("results/patch.off");
   pout << std::setprecision(17);
@@ -509,6 +533,8 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
   return true;
 }
 
+// @todo shouldn't the orientation always be correct by construction?
+// Do this with combinatorics if it turns out it might not be
 template <typename Patch,
           typename PolygonMesh,
           typename VPM,
@@ -530,12 +556,20 @@ bool fix_patch_orientation(Patch& point_patch,
   const Point_ref h2sp = get(vpm, source(h2, pmesh));
   const Point_ref h2tp = get(vpm, target(h2, pmesh));
 
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::cout << "h1sp: " << h1sp << std::endl;
+  std::cout << "h1tp: " << h1tp << std::endl;
+  std::cout << "h2sp: " << h2sp << std::endl;
+  std::cout << "h2tp: " << h2tp << std::endl;
+#endif
+
   for(const auto& face : point_patch)
   {
     for(int i=0; i<3; ++i)
     {
       const Point& p1 = face[i];
       const Point& p2 = face[(i+1)%3];
+
       if(gt.equal_3_object()(p1, h1sp) && gt.equal_3_object()(p2, h1tp))
         ok_orientation_1 = true;
       if(gt.equal_3_object()(p1, h2sp) && gt.equal_3_object()(p2, h2tp))
@@ -577,35 +611,58 @@ bool merge_umbrellas(const typename boost::graph_traits<PolygonMesh>::halfedge_d
 
   CGAL_precondition(target(h1, pmesh) == target(h2, pmesh));
 
+  std::ofstream out_links("results/links.polylines.txt");
+  out_links.precision(17);
+
 #define CGAL_PMP_TREAT_NM_VERTICES_REMOVE_STARS
 #ifdef CGAL_PMP_TREAT_NM_VERTICES_REMOVE_STARS
-  // remove incident stars
+  // remove incident stars and create a tunnel
 
   std::vector<halfedge_descriptor> bhv_1, bhv_2;
   std::set<face_descriptor> faces_to_delete;
 
-  CGAL::Halfedge_around_target_iterator<PolygonMesh> havib, havie;
-  for(std::tie(havib, havie) = CGAL::halfedges_around_target(h1, pmesh); havib != havie; ++havib)
+  halfedge_descriptor ih = h1;
+  do
   {
-    bhv_1.push_back(*havib);
-    faces_to_delete.insert(face(*havib, pmesh));
-  }
+    CGAL_assertion(!is_border(ih, pmesh));
 
-  for(std::tie(havib, havie) = CGAL::halfedges_around_target(h2, pmesh); havib != havie; ++havib)
-  {
-    bhv_2.push_back(*havib);
-    faces_to_delete.insert(face(*havib, pmesh));
+    const halfedge_descriptor lh = prev(ih, pmesh);
+    bhv_1.push_back(lh);
+    out_links << "2 " << pmesh.point(source(lh, pmesh)) << " "  << pmesh.point(target(lh, pmesh)) << std::endl;
+    faces_to_delete.insert(face(lh, pmesh));
+
+    ih = prev(opposite(ih, pmesh), pmesh);
   }
+  while(ih != h1);
+
+  ih = h2;
+  do
+  {
+    CGAL_assertion(!is_border(ih, pmesh));
+
+    const halfedge_descriptor lh = prev(ih, pmesh);
+    bhv_2.push_back(lh);
+    out_links << "2 " << pmesh.point(source(lh, pmesh)) << " "  << pmesh.point(target(lh, pmesh)) << std::endl;
+    faces_to_delete.insert(face(lh, pmesh));
+
+    ih = prev(opposite(ih, pmesh), pmesh);
+  }
+  while(ih != h2);
+
 #else
   // clip with a sphere?
 
 #endif
+
+  dump_cc(faces_to_delete, pmesh, "results/faces_to_delete.off");
 
   // make sure that the holes are topological disks
   std::vector<std::vector<Point> > point_patch;
   point_patch.reserve(2 * bhv_1.size());
   if(!two_borders_hole_fill(bhv_1, pmesh, vpm, bhv_2, pmesh, vpm, std::back_inserter(point_patch), gt))
     return false;
+
+  dump_tentative_hole(point_patch, "results/tentative_patch.off");
 
   if(!check_patch_sanity<PolygonMesh>(point_patch))
   {
@@ -619,7 +676,7 @@ bool merge_umbrellas(const typename boost::graph_traits<PolygonMesh>::halfedge_d
   std::cout << "Replacing " << faces_to_delete.size() << " faces with " << point_patch.size() << " new faces" << std::endl;
 #endif
 
-  bool success = fix_patch_orientation(point_patch, h1, h2, pmesh, vpm, gt);
+  bool success = fix_patch_orientation(point_patch, bhv_1.front(), bhv_2.front(), pmesh, vpm, gt);
   if(!success)
   {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
@@ -676,7 +733,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type          Geom_traits;
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
-#define CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_NM_ONLY // @todo test the geometric version
+#define CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_NM_ONLY
 #ifdef CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_NM_ONLY
   // not worth getting a dynamic pmap: there are usually few non-manifold vertices
   std::unordered_map<vertex_descriptor, std::vector<halfedge_descriptor> > non_manifold_umbrellas;
@@ -689,7 +746,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
 #else
   typedef typename Geom_traits::Point_3                                       Point_3;
 
-  // a little brutal for now, we can do something better akin to non_manifold_vertices()
+  // @todo a little brutal for now, we can do something better akin to non_manifold_vertices()
   std::map<Point_3, std::vector<halfedge_descriptor> > non_manifold_umbrellas;
 
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
@@ -718,7 +775,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
     while(ih != done);
 
     // move cw
-    if(ih == done) // no
+    if(ih == done) // no null face incident to the vertex
     {
       ih = h;
       do
@@ -739,6 +796,9 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   for(const auto& e : non_manifold_umbrellas)
   {
     const std::vector<halfedge_descriptor>& cones = e.second;
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+    std::cout << "NM vertex with " << cones.size() << " incident stars" << std::endl;
+#endif
 
     CGAL_assertion(cones.size() >= 2);
     CGAL_assertion(std::set<halfedge_descriptor>(cones.begin(), cones.end()).size() == cones.size());
