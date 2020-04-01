@@ -46,9 +46,10 @@ namespace internal {
                                                             typename Generic_map::Dart_handle>;
 
     static void copy(Generic_map& target, Mesh_original& source,
-                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
+                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin,
+                     Generic_map::size_type mark_perforated)
     {
-      target.copy(source, &origin_to_copy, &copy_to_origin);
+      target.copy(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
     }
   };
 
@@ -64,9 +65,10 @@ namespace internal {
                                                             typename Generic_map::Dart_handle>;
 
     static void copy(Generic_map& target, Mesh_original& source,
-                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
+                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin,
+                     Generic_map::size_type mark_perforated)
     {
-      target.copy(source, &origin_to_copy, &copy_to_origin);
+      target.copy(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
     }
   };
 
@@ -82,9 +84,10 @@ namespace internal {
                                                             typename Generic_map::Dart_handle>;
 
     static void copy(Generic_map& target, Mesh_original& source,
-                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin)
+                     Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin,
+                     Generic_map::size_type mark_perforated)
     {
-      target.import_from_halfedge_graph(source, &origin_to_copy, &copy_to_origin);
+      target.import_from_halfedge_graph(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
     }
   };
   
