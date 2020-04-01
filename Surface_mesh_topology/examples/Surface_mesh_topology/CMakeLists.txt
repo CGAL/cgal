@@ -40,8 +40,23 @@ set(SOURCE_FILES
   unsew_edgewidth_repeatedly.cpp
   )
 
+set(HEADER_FILES
+  ../../include/CGAL/Curves_on_surface_topology.h
+  ../../include/CGAL/Polygonal_schema_fwd.h
+  ../../include/CGAL/draw_face_graph_with_paths.h
+  ../../include/CGAL/Polygonal_schema_min_items.h
+  ../../include/CGAL/Polygonal_schema.h
+  ../../include/CGAL/Path_on_surface.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Generic_map_selector.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Facewidth.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Shortest_noncontractible_cycle.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Path_generators.h
+  )
+
 foreach(cppfile ${SOURCE_FILES})
-  create_single_source_cgal_program("${cppfile}")
+  create_single_source_cgal_program( "${cppfile}" "${HEADER_FILES}")
 endforeach()
 
 if(CGAL_Qt5_FOUND)
