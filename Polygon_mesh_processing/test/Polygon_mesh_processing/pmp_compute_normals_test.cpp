@@ -1,4 +1,4 @@
-// #define CGAL_PMP_COMPUTE_NORMAL_DEBUG
+// #define CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
@@ -6,7 +6,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
+#include <CGAL/centroid.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <iostream>
 #include <fstream>
@@ -27,6 +30,7 @@ void test(const Mesh& mesh,
   typedef typename K::Vector_3                                            Vector;
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor         halfedge_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_descriptor             face_descriptor;
 
   typedef typename CGAL::GetVertexPointMap<Mesh>::const_type              VPMap;
@@ -63,12 +67,58 @@ void test(const Mesh& mesh,
   PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                   .geom_traits(K()));
 
-  for(vertex_descriptor v : vertices(mesh)) {
-    assert(get(vnormals, v) != CGAL::NULL_VECTOR);
+#if 1//def CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+  std::ofstream vn_out("vertex_normals.cgal.polylines.txt");
+  std::ofstream fn_out("face_normals.cgal.polylines.txt");
+
+  const CGAL::Bbox_3 bb = PMP::bbox(mesh);
+  const auto bbox_diagonal = CGAL::sqrt(CGAL::square(bb.xmax() - bb.xmin()) +
+                                        CGAL::square(bb.ymax() - bb.ymin()) +
+                                        CGAL::square(bb.zmax() - bb.zmin()));
+
+  for(vertex_descriptor v : vertices(mesh))
+    vn_out << "2 " << get(vpmap, v) << " " << get(vpmap, v) + 0.1 * bbox_diagonal * get(vnormals, v) << "\n";
+  vn_out.close();
+
+  for(face_descriptor f : faces(mesh))
+  {
+    std::list<typename K::Point_3> vertices;
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+      vertices.push_back(get(vpmap, target(h, mesh)));
+
+    const typename K::Point_3& c = CGAL::centroid(vertices.begin(), vertices.end());
+    fn_out << "2 " << c << " " << c + 0.1 * bbox_diagonal * get(fnormals, f) << "\n";
+  }
+  fn_out.close();
+#endif
+
+  // Check sanity of output
+  for(const face_descriptor f : faces(mesh))
+  {
+    // tests on non triangular meshes are @todo
+    if(CGAL::is_triangle(halfedge(f, mesh), mesh))
+    {
+      if(PMP::is_degenerate_triangle_face(f, mesh))
+        assert(get(fnormals, f) == CGAL::NULL_VECTOR);
+      else
+        assert(get(fnormals, f) != CGAL::NULL_VECTOR);
+    }
   }
 
-  for(face_descriptor f : faces(mesh)) {
-    assert(get(fnormals, f) != CGAL::NULL_VECTOR);
+  for(const vertex_descriptor v : vertices(mesh))
+  {
+    if(get(vnormals, v) == CGAL::NULL_VECTOR)
+    {
+      for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(v, mesh), mesh))
+      {
+        if(!is_border(h, mesh))
+        {
+          // There are other cases where a vertex normal can be null without the face normals being null,
+          // (only two incident faces with opposite normals, for example), but they are not tested for now.
+          assert(get(fnormals, face(h, mesh)) == CGAL::NULL_VECTOR);
+        }
+      }
+    }
   }
 }
 
@@ -160,6 +210,17 @@ int main()
   test("data/joint_refined.off");
   test("data/mannequin-devil.off");
   test("data/U.off");
+
+  test("data_degeneracies/deg_on_border.off");
+  test("data_degeneracies/degtri_edge.off");
+  test("data_degeneracies/degtri_three.off");
+  test("data_degeneracies/degtri_four.off");
+  test("data_degeneracies/degtri_nullface.off");
+  test("data_degeneracies/degtri_single.off");
+  test("data_degeneracies/existing_flip.off");
+  test("data_degeneracies/fused_vertices.off");
+  test("data_degeneracies/small_ccs.off");
+  test("data_degeneracies/trihole.off");
 
   std::cerr << "All done." << std::endl;
   return EXIT_SUCCESS;

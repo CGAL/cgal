@@ -41,9 +41,9 @@ struct Sequence_item
 };
 
 template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::type>
+  class VIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::const_type,
+  class HIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::const_type,
+  class FIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::const_type>
 struct Edge_sequence_collector
 {
   typedef typename Traits::Triangle_mesh Triangle_mesh;

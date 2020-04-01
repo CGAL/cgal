@@ -18,7 +18,6 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_callbacks.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_of_coplanar_triangles_3.h>
@@ -156,7 +155,8 @@ class Intersection_of_triangle_meshes
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
 
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
 
   typedef boost::unordered_set<face_descriptor> Face_set;
   typedef boost::unordered_map<edge_descriptor, Face_set> Edge_to_faces;
@@ -250,10 +250,11 @@ class Intersection_of_triangle_meshes
         if (callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
-    else
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                              edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                              callback, cutoff );
+    else {
+      CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                callback, cutoff );
+    }
   }
 
   // for autorefinement

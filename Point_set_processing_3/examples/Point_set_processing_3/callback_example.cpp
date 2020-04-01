@@ -18,12 +18,7 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Random_points_on_sphere_3<Point> Generator;
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // instance of std::function<bool(double)>
 struct Progress_to_std_cerr_callback

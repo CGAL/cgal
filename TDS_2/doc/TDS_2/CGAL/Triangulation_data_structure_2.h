@@ -48,10 +48,14 @@ public:
 
   typedef Triangulation_data_structure_2<VertexBase,FaceBase>  Tds;
 
-/// The vertex type.
+  /// The vertex type.
+  ///
+  /// \sa Section \ref TDS_2TheRebindMechanism
   typedef  typename VertexBase::template Rebind_TDS<Tds>::Other  Vertex;
 
-/// The face type.
+  /// The face type.
+  ///
+  /// \sa Section \ref TDS_2TheRebindMechanism
   typedef  typename FaceBase::template Rebind_TDS<Tds>::Other  Face;
 
 /// @}
