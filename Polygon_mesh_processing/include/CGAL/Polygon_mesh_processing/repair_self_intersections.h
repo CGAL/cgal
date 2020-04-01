@@ -10,8 +10,8 @@
 // Author(s)     : Sebastien Loriot,
 //                 Mael Rouxel-Labbé
 //
-#ifndef CGAL_POLYGON_MESH_PROCESSING_REMOVE_SELF_INTERSECTIONS_H
-#define CGAL_POLYGON_MESH_PROCESSING_REMOVE_SELF_INTERSECTIONS_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
+#define CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
@@ -1166,7 +1166,7 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     std::cout << "CC of size " << sub_cc.size() << " (total: " << cc_faces.size() << ")" << std::endl;
     ++cc_counter;
 
-#ifdef CGAL_PMP_REMOVE_SELF_¨INTERSECTION_OUTPUT
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
     dump_cc(sub_cc, tmesh, "results/current_cc.off");
 #endif
 
@@ -1863,4 +1863,4 @@ bool remove_self_intersections(TriangleMesh& tmesh)
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_REMOVE_SELF_INTERSECTIONS_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H

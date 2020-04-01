@@ -3,7 +3,7 @@
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <fstream>
-#include <CGAL/Polygon_mesh_processing/remove_degeneracies.h>
+#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 
 #include <iostream>
 #include <vector>

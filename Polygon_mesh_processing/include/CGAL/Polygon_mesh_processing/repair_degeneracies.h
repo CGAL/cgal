@@ -10,8 +10,8 @@
 // Author(s)     : Sebastien Loriot,
 //                 Mael Rouxel-Labbé
 //
-#ifndef CGAL_POLYGON_MESH_PROCESSING_REMOVE_DEGENERACIES_H
-#define CGAL_POLYGON_MESH_PROCESSING_REMOVE_DEGENERACIES_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_DEGENERACIES_H
+#define CGAL_POLYGON_MESH_PROCESSING_REPAIR_DEGENERACIES_H
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
@@ -2394,4 +2394,4 @@ bool remove_degenerate_faces(TriangleMesh& tmesh)
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_REMOVE_DEGENERACIES_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_REPAIR_DEGENERACIES_H
