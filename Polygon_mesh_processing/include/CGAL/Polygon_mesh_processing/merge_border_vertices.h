@@ -109,7 +109,7 @@ void detect_identical_mergeable_vertices(
 
   // check that intervals are disjoint or strictly nested
   // if there is only one issue we drop the whole cycle.
-  /// \todo shall we try to be more conservative?
+  // @todo shall we try to be more conservative?
   if (hedges_with_identical_point_target.empty()) return;
   std::set< std::pair<std::size_t, std::size_t> >::iterator it1 = intervals.begin(),
                                                             end2 = intervals.end(),

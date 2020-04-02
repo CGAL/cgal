@@ -150,11 +150,13 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::stitch_borders()`
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+- `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+- `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`
 
 \cgalCRPSection{Normal Computation Functions}
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
@@ -168,6 +170,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+- `CGAL::Polygon_mesh_processing::split_connected_components()`
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
@@ -179,6 +182,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::clip()`
+- `CGAL::Polygon_mesh_processing::split()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 
 \cgalCRPSection{Geometric Measure Functions}

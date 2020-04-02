@@ -7,3 +7,5 @@ include_directories( SYSTEM ${EIGEN3_INCLUDE_DIR} )
 add_definitions(-DCGAL_EIGEN3_ENABLED)
 
 set (EIGEN3_SETUP TRUE)
+
+message(DEPRECATION "This file UseEigen.cmake is deprecated, and the function `CGAL_target_use_Eigen` from CGAL_target_use_Eigen.cmake should be used instead.")

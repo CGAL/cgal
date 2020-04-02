@@ -493,7 +493,7 @@ public:
   /** This version computes the refinement point without handling
       clusters. The refinement point of an edge is just the middle point of
       the segment.
-      Saves the handles of the edge that will be splitted.
+      Saves the handles of the edge that will be split.
       This function is overridden in class Refine_edge_with_clusters.
   */
   Point refinement_point_impl(const Edge& edge) 

@@ -21,7 +21,7 @@
 #include <QDoubleSpinBox>
 #include <QMessageBox>
 #include <QTreeWidgetItem>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QColor>
 #include <QColorDialog>
 #include <QSettings>
@@ -708,7 +708,7 @@ void Volume::display_marchin_cube()
 #ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
   if(m_surface_mc.empty())
   {
-    QTime total_time;
+    QElapsedTimer total_time;
     total_time.start();
 
     values_list->save_values(fileinfo.absoluteFilePath());
@@ -824,7 +824,7 @@ void Volume::display_surface_mesher_result()
      m_view_surface) // Or it is computed and displayed, and one want
                      // to recompute it.
   {
-    QTime total_time;
+    QElapsedTimer total_time;
     total_time.start();
 
     values_list->save_values(fileinfo.absoluteFilePath());

@@ -9,7 +9,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QDebug>
 #include <QObject>
@@ -196,7 +196,7 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
       if(dialog.exec() == QDialog::Rejected)
         return;
 
-      QTime time;
+      QElapsedTimer time;
       time.start();
       std::cerr << "Detecting planes... ";
       QApplication::setOverrideCursor(Qt::WaitCursor);

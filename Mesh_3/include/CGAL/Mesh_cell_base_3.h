@@ -33,7 +33,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
 #endif
 
 namespace CGAL {
@@ -87,7 +87,7 @@ public:
   }
   
 protected:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
 };
 #endif // CGAL_LINKED_WITH_TBB

@@ -40,6 +40,15 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout << 
+    "Error: cannot read the file polygon_mesh.off!" << std::endl;
+    std::cout << 
+    "You can either create a symlink to the data folder or provide this file by hand." 
+    << std::endl << std::endl;
+    return false;
+  }
+
   Surface_mesh surface_mesh;
   in >> surface_mesh;
     
@@ -70,8 +79,8 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   // Test data.
-  assert(regions.size() >= 327 && regions.size() <= 331);
-  if (regions.size() < 327 || regions.size() > 331) 
+  assert(regions.size() >= 324 && regions.size() <= 328);
+  if (regions.size() < 324 || regions.size() > 328) 
     return false;
 
   for (const auto& region : regions)
@@ -81,8 +90,8 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
 
-  assert(unassigned_faces.size() >= 908 && unassigned_faces.size() <= 928);
-  if (unassigned_faces.size() < 908 || unassigned_faces.size() > 928) 
+  assert(unassigned_faces.size() >= 904 && unassigned_faces.size() <= 924);
+  if (unassigned_faces.size() < 904 || unassigned_faces.size() > 924) 
     return false;
 
   return true;

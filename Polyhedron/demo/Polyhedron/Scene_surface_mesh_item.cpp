@@ -33,6 +33,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
 
+#include <CGAL/exceptions.h>
 #include <CGAL/IO/File_writer_wavefront.h>
 #include <CGAL/IO/generic_copy_OFF.h>
 #include <CGAL/IO/OBJ_reader.h>
@@ -102,7 +103,10 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item_priv(const Scene_surface_mesh_item& other, Scene_surface_mesh_item* parent):
     smesh_(new SMesh(*other.d->smesh_)),
     idx_data_(other.d->idx_data_),
-    idx_edge_data_(other.d->idx_edge_data_)
+    idx_edge_data_(other.d->idx_edge_data_),
+    fpatch_id_map(other.d->fpatch_id_map),
+    min_patch_id(other.d->min_patch_id),
+    colors_(other.d->colors_)
   {
     item = parent;
     item->setTriangleContainer(1, new Triangle_container(VI::PROGRAM_WITH_LIGHT,
@@ -1578,7 +1582,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     try{
       CGAL::Polygon_mesh_processing::non_manifold_vertices(*d->smesh_, OutputIterator());
     }
-    catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+    catch( CGAL::internal::Throw_at_output_exception& )
     {
       d->has_nm_vertices = true;
     }
@@ -1656,7 +1660,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     //todo : add a test about cache validity
     if(is_triangle_mesh(*d->smesh_))
-      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*(d->smesh_));
+      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(*(d->smesh_));
     if (d->self_intersect)
       return QString("Yes");
     else if(is_triangle_mesh(*d->smesh_))

@@ -64,7 +64,7 @@ include(${CGAL_USE_FILE})
 find_package(Qt5
              QUIET
              COMPONENTS            OpenGL Script
-             OPTIONAL_COMPONENTS   ScriptTools)
+             OPTIONAL_COMPONENTS   ScriptTools WebSockets)
 
 if(Qt5_FOUND)
 
@@ -73,9 +73,6 @@ if(Qt5_FOUND)
 endif(Qt5_FOUND)
 
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
 
 find_package( METIS )
 
@@ -95,6 +92,11 @@ if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
   endif()
 endif()
 
+#find libssh for scene sharing
+find_package(LibSSH)
+if( NOT LIBSSH_FOUND )
+  message("NOTICE : The SSH features will be disabled.")
+endif()
 
 # Activate concurrency ? (turned OFF by default)
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3
@@ -131,7 +133,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
-  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui)
+  qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui Details.ui SSH_dialog.ui)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( ViewerUI_FILES  LightingDialog.ui)
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
@@ -195,6 +197,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
+  if(TARGET Qt5::WebSockets)
+    target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
+    message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+  endif()
+
   cgal_add_compilation_test(demo_framework)
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
@@ -251,7 +258,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
-
+  
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_surface_mesh_item)
+  endif()
   # special
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
@@ -262,6 +272,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_selection_item Scene_polyhedron_selection_item.cpp)
   target_link_libraries(scene_selection_item PUBLIC scene_item_decorator  scene_k_ring_selection)
+ if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_selection_item)
+  endif()
 
   add_item(scene_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
   target_link_libraries(scene_shortest_path_item PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)
@@ -270,12 +283,15 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   
   if(EIGEN3_FOUND )
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp texture.cpp)
+    CGAL_target_use_Eigen(scene_textured_item)
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_edit_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
       ${editionUI_FILES})
+    CGAL_target_use_Eigen(scene_edit_item)
     target_link_libraries(scene_edit_item PUBLIC scene_surface_mesh_item scene_k_ring_selection
       scene_basic_objects)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
+    CGAL_target_use_Eigen(scene_mcf_item)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp )
@@ -287,19 +303,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item PUBLIC scene_surface_mesh_item)
   
+  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+  if (EIGEN3_FOUND)
+    CGAL_target_use_Eigen(scene_points_with_normal_item)
+  endif()
+  
   find_package(LASLIB)
   if (LASLIB_FOUND)
-    include(${LASLIB_USE_FILE})
-    include_directories(${LASLIB_INCLUDE_DIR})
-    include_directories(${LASZIP_INCLUDE_DIR})
-    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+    CGAL_target_use_LASLIB(scene_points_with_normal_item)
     if (MSVC)
       target_compile_definitions( scene_points_with_normal_item PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
     endif()
-    target_link_libraries( scene_points_with_normal_item PUBLIC ${LASLIB_LIBRARIES})
-  else()
-    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   endif()
+  
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
@@ -323,11 +339,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     MainWindow.cpp
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
+    Use_ssh.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} 
     ${statisticsUI_FILES} ${SubViewerUI_files})
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)
+  if(LIBSSH_FOUND)
+    add_definitions(-DCGAL_USE_SSH)
+    target_link_libraries(polyhedron_demo PUBLIC ${LIBSSH_LIBRARIES})
+  endif() #libssh
+  if(TARGET Qt5::WebSockets)
+    add_definitions(-DCGAL_USE_WEBSOCKETS)
+    target_link_libraries(polyhedron_demo PUBLIC Qt5::WebSockets)
+  endif()
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )

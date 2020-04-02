@@ -296,6 +296,11 @@ public:
       items.pop_front();
     return ok;
   }
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_image_item*>(item))
+      return true;
+    return false;
+  }
   QString name() const override{ return "segmented images"; }
 
 
@@ -708,9 +713,9 @@ private:
     Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
     Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
 
-    x_item->setProperty("img",qVariantFromValue((void*)seg_img));
-    y_item->setProperty("img",qVariantFromValue((void*)seg_img));
-    z_item->setProperty("img",qVariantFromValue((void*)seg_img));
+    x_item->setProperty("img",QVariant::fromValue((void*)seg_img));
+    y_item->setProperty("img",QVariant::fromValue((void*)seg_img));
+    z_item->setProperty("img",QVariant::fromValue((void*)seg_img));
 
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));

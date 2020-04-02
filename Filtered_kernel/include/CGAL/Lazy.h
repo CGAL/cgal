@@ -731,6 +731,9 @@ public :
     PTR = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
   }
 
+  friend void swap(Lazy& a, Lazy& b) noexcept
+  { swap(static_cast<Handle&>(a), static_cast<Handle&>(b)); }
+
   const AT& approx() const
   { return ptr()->approx(); }
 

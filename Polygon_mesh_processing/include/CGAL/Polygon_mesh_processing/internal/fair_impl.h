@@ -118,7 +118,7 @@ public:
   {
     int depth = static_cast<int>(fc) + 1;
     if(depth < 0 || depth > 3) {
-      CGAL_warning(!"Continuity should be between 0 and 2 inclusively!");
+      CGAL_warning_msg(false, "Continuity should be between 0 and 2 inclusively!");
       return false; 
     }
 
@@ -139,7 +139,7 @@ public:
     for(vertex_descriptor vd : interior_vertices)
     {
       if( !vertex_id_map.insert(std::make_pair(vd, id)).second ) {
-        CGAL_warning(!"Duplicate vertex is found!");
+        CGAL_warning_msg(false, "Duplicate vertex is found!");
         return false;
       }
       ++id;
@@ -160,7 +160,7 @@ public:
     double D;
     bool prefactor_ok = solver.factor(A, D);
     if(!prefactor_ok) {
-      CGAL_warning(!"pre_factor failed!");
+      CGAL_warning_msg(false, "pre_factor failed!");
       return false;
     }
     #ifdef CGAL_PMP_FAIR_DEBUG
@@ -170,7 +170,7 @@ public:
     // solve
     bool is_all_solved = solver.linear_solver(Bx, X) && solver.linear_solver(By, Y) && solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
-      CGAL_warning(!"linear_solver failed!"); 
+      CGAL_warning_msg(false, "linear_solver failed!"); 
       return false; 
     }
     #ifdef CGAL_PMP_FAIR_DEBUG
