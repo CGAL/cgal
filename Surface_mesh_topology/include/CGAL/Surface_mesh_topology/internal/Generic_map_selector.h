@@ -12,6 +12,8 @@
 #ifndef CGAL_GENERIC_MAP_SELECTOR_H
 #define CGAL_GENERIC_MAP_SELECTOR_H
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Combinatorial_map.h>
