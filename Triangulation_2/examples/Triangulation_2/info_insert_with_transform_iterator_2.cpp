@@ -12,7 +12,7 @@ typedef Delaunay::Point                                             Point;
 typedef Delaunay::Vertex_handle                                     Vertex_handle;
 
 //a functor that returns a std::pair<Point,unsigned>.
-//the unsigned integer is incremented at each call to 
+//the unsigned integer is incremented at each call to
 //operator()
 struct Auto_count : public CGAL::cpp98::unary_function<const Point&,std::pair<Point,unsigned> >{
   mutable unsigned i;
@@ -32,13 +32,13 @@ int main()
   points.push_back(Point(2,2));
   points.push_back(Point(-1,0));
 
-  
+
   Delaunay T;
   T.insert( boost::make_transform_iterator(points.begin(),Auto_count()),
             boost::make_transform_iterator(points.end(),  Auto_count() )  );
 
   CGAL_assertion( T.number_of_vertices() == 6 );
-  
+
   // check that the info was correctly set.
   Delaunay::Finite_vertices_iterator vit;
   for (Vertex_handle v : T.finite_vertex_handles())
@@ -47,6 +47,6 @@ int main()
       exit(EXIT_FAILURE);
     }
   std::cout << "OK" << std::endl;
-  
+
   return 0;
 }

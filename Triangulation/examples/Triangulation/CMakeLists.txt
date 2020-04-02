@@ -15,9 +15,9 @@ endif()
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-  
-  find_package(Eigen3 3.1.0) 
-  if (EIGEN3_FOUND) 
+
+  find_package(Eigen3 3.1.0)
+  if (EIGEN3_FOUND)
     create_single_source_cgal_program( "barycentric_subdivision.cpp" )
     create_single_source_cgal_program( "delaunay_triangulation.cpp" )
     create_single_source_cgal_program( "convex_hull.cpp" )
@@ -41,8 +41,8 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

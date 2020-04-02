@@ -17,4 +17,4 @@ int main()
   Dist dist(P,P+3, Q, Q+3);
   return 0;
 
-} 
+}

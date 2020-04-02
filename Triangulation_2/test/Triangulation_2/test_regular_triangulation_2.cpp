@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // source        : $URL$
 // file          : test/Triangulation/test_triangulation_2.C
 // revision      : $revision$
@@ -46,7 +46,7 @@ int main()
   typedef Test_rep_homogeneous      RGt2;
   typedef CGAL::Regular_triangulation_2<RGt2>                    RCls2;
   _test_cls_regular_triangulation_2( RCls2() );
-  
+
   std::cout << "done" << std::endl;
   return 0;
 }

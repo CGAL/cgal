@@ -1,4 +1,4 @@
-// example: output basic constraint indices 
+// example: output basic constraint indices
 // the QP below is the first quadratic program example in the user manual
 #include <iostream>
 
@@ -20,8 +20,8 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
   // by default, we have a nonnegative QP with Ax <= b
-  Program qp (CGAL::SMALLER, true, 0, false, 0); 
-  
+  Program qp (CGAL::SMALLER, true, 0, false, 0);
+
   // now set the non-default entries: 0 <-> x, 1 <-> y
   qp.set_a(0, 0,  1); qp.set_a(1, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
   qp.set_a(0, 1, -1); qp.set_a(1, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
@@ -37,7 +37,7 @@ int main() {
   if (s.is_optimal()) { // we know that, don't we?
     std::cout << "Basic constraints: ";
     for (Solution::Index_iterator it = s.basic_constraint_indices_begin();
-	 it != s.basic_constraint_indices_end(); ++it)
+         it != s.basic_constraint_indices_end(); ++it)
       std::cout << *it << "  ";
     std::cout << std::endl;
   }

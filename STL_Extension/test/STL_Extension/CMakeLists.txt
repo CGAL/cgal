@@ -42,9 +42,13 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_Uncertain.cpp" )
   create_single_source_cgal_program( "test_vector.cpp" )
   create_single_source_cgal_program( "test_join_iterators.cpp" )
+  create_single_source_cgal_program( "test_for_each.cpp" )
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(test_for_each)
+  endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

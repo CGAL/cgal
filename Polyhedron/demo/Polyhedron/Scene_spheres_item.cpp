@@ -71,12 +71,12 @@ void Scene_spheres_item_priv::pick(int& id) const
 {
   if(!pickable)
     return;
-  
+
   if(id >= static_cast<int>(spheres.size()))
   {
     id = -1;
   }
-    
+
   int offset = 0;
   float color[4];
   for(std::size_t i=0; i<spheres.size(); ++i)
@@ -117,11 +117,11 @@ Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, std::size_t max
                                        ,false));
   }
   //for drawing
-  setTriangleContainer(0, 
+  setTriangleContainer(0,
                        new Tc(planed ? Vi::PROGRAM_CUTPLANE_SPHERES
                                      : Vi::PROGRAM_SPHERES
                                        ,false));
-  setEdgeContainer(0, 
+  setEdgeContainer(0,
                    new Ec(planed ? Vi::PROGRAM_CUTPLANE_SPHERES
                                  : Vi::PROGRAM_SPHERES
                                    ,false));
@@ -230,14 +230,14 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
     setBuffersFilled(true);
     setBuffersInit(viewer, true);
   }
-  
+
   if(d->has_plane)
   {
     QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
     getEdgeContainer(0)->setPlane(cp);
   }
   getEdgeContainer(0)->draw(viewer, false);
-  
+
 }
 void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CGAL::Color color)
 {
@@ -259,7 +259,7 @@ void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CG
     float b = B/255.0;
     d->picking_colors.push_back(r);
     d->picking_colors.push_back(g);
-    d->picking_colors.push_back(b); 
+    d->picking_colors.push_back(b);
   }
   d->edges_colors.push_back((float)color.red()/255);
   d->edges_colors.push_back((float)color.green()/255);
@@ -322,16 +322,16 @@ void Scene_spheres_item::computeElements() const
   {
     getTriangleContainer(0)->allocate(Tc::Flat_vertices, d->vertices.data(),
                                       static_cast<int>(d->vertices.size()*sizeof(float)));
-    
+
     getTriangleContainer(0)->allocate(Tc::Flat_normals, d->normals.data(),
                                       static_cast<int>(d->normals.size()*sizeof(float)));
 
     if(d->pickable)
       getTriangleContainer(1)->allocate(Tc::Flat_vertices, d->vertices.data(),
                                         static_cast<int>(d->vertices.size()*sizeof(float)));
-    
+
     d->nb_vertices = d->vertices.size();
-    
+
   }
   getTriangleContainer(0)->allocate(Tc::FColors, d->colors.data(),
                                     static_cast<int>(d->colors.size()*sizeof(float)));
@@ -354,22 +354,22 @@ void Scene_spheres_item::computeElements() const
   {
     getEdgeContainer(0)->allocate(Ec::Vertices, d->edges.data(),
                                   static_cast<int>(d->edges.size()*sizeof(float)));
-    
-    getEdgeContainer(0)->allocate(Ec::Normals, d->normals.data(), 
+
+    getEdgeContainer(0)->allocate(Ec::Normals, d->normals.data(),
                                   static_cast<int>(d->normals.size()*sizeof(float)));
     d->model_sphere_is_up = true;
     d->nb_edges = d->edges.size();
   }
   getEdgeContainer(0)->allocate(Ec::Colors, d->edges_colors.data(),
                                 static_cast<int>(d->edges_colors.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(Ec::Radius, d->radius.data(),
                                 static_cast<int>(d->radius.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(Ec::Centers, d->centers.data(),
                                 static_cast<int>(d->centers.size()*sizeof(float)));
   d->nb_centers = d->centers.size();
-  
+
 }
 
 void Scene_spheres_item::gl_initialization(Vi* viewer)

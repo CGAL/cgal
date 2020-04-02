@@ -264,7 +264,7 @@ struct Polyline_visitor
 
   ~Polyline_visitor()
   {//DEBUG
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
     for(const std::vector<P>& poly : polylines)
@@ -274,7 +274,7 @@ struct Polyline_visitor
         og << p << " ";
       og << std::endl;
     }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 2
   }
 
   void start_new_polyline()

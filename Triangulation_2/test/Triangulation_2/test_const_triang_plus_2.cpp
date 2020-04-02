@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation_2_constrained/test_const_triang_plus_2.h
 // source        : $URL$
 // revision      : $Id$
@@ -28,7 +28,7 @@
 #include <CGAL/_test_cls_const_triang_plus_2.h>
 
 
-typedef CGAL::Constrained_Delaunay_triangulation_2<TestK> CDt_ni;  
+typedef CGAL::Constrained_Delaunay_triangulation_2<TestK> CDt_ni;
 // Explicit instantiation of the whole class :
 template class CGAL::Constrained_triangulation_plus_2<CDt_ni>;
 
@@ -50,7 +50,7 @@ int main()
 
 
   _test_cls_const_triang_plus_2(CDtplus());
-  
+
   std::cout << "Testing constrained_triangulation_plus_2 "<<   std::endl;
   std::cout << " with Exact_intersections_tag : " << std::endl;
   typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;

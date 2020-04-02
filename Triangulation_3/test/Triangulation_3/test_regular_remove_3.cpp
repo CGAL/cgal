@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Christophe Delage (Christophe.Delage@sophia.inria.fr)
 
@@ -90,7 +90,7 @@ typedef Cls::Vertex_handle                         Vertex_handle;
 
 // We don't want to use compare_xyz because it thinks two weighted points
 // located at the same place with different weights are identical.
-struct less_xyzw 
+struct less_xyzw
 {
     bool operator() (const Weighted_point &p,
                      const Weighted_point &q) const
@@ -121,7 +121,7 @@ public:
     const Weighted_point &operator* () const { return _wp; }
     bool operator== (const point_iterator &i) const { return _i == i._i; }
     bool operator!= (const point_iterator &i) const { return ! (*this == i); }
-    
+
 protected:
     void set_point (int x, int y, int z, int w)
     {
@@ -191,7 +191,7 @@ struct point_iterator_3 : public point_iterator
     }
 };
 
-class point_reader 
+class point_reader
 {
     std::istream *in;
     Weighted_point wp;
@@ -234,7 +234,7 @@ void insert (Cls &T, point_set &points, int number)
     assert(T.is_valid());
     std::cout << " number of vertices: " << T.number_of_vertices()
         << std::endl;
-    
+
     std::cout << " number of degeneracies: " << degeneracy_counter << std::endl;
     degeneracy_counter = 0;
 }
@@ -255,7 +255,7 @@ void remove (Cls &T, point_set &points, int number)
         std::cout << "\r number of removed points:  " << i << std::flush;
     }
     std::cout << std::endl;
-    
+
     assert(number >= 0);
     assert(T.number_of_vertices() == 0);
     assert(T.is_valid());
@@ -274,7 +274,7 @@ void dim_jump (Cls &T, const Point &p, int dim)
     assert(T.is_valid());
     assert(v != Vertex_handle());
     assert(T.dimension() == dim + 1);
-    
+
     T.remove (v);
     assert(T.is_valid());
     assert(T.dimension() == dim);
@@ -289,14 +289,14 @@ bool test_case (std::istream &is)
     point_set points;
     Cls T;
     int number = 0;
-    
+
     do {
         ++number;
         points.insert (*pi);
         T.insert (*pi);
     } while (++pi != pend);
     assert(T.is_valid());
-    
+
     for (int i = 0; !points.empty(); ++i) {
         assert(T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
@@ -307,7 +307,7 @@ bool test_case (std::istream &is)
     }
     assert(T.number_of_vertices() == 0);
     assert(points.empty());
-    
+
     return true;
 }
 
@@ -325,11 +325,11 @@ int main(int argc, char **argv)
         std::ifstream fin ("data/regular_remove_3");
         assert(fin);
         std:: cout << " test `data/regular_remove_3'" << std::endl;
-        while (test_case (fin)) 
+        while (test_case (fin))
             // semicolon
             ;
     }
-    
+
     // Hardcoded seeds so that the test-suite is deterministic.
     boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
@@ -338,7 +338,7 @@ int main(int argc, char **argv)
     if (argc > 2) { std::istringstream iss(argv[2]); iss >>seed1; }
     if (argc > 3) { std::istringstream iss(argv[3]); iss >>seed2; }
     if (argc > 4) { std::istringstream iss(argv[4]); iss >>seed3; }
-    
+
     Cls T;
     point_set points;
 

@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Maxime Gimeno
 
@@ -75,7 +75,7 @@ bool establish_ssh_session(ssh_session &session,
     ssh_options_set( session, SSH_OPTIONS_PORT, &port );
     ssh_options_set( session, SSH_OPTIONS_USER, user );
     ssh_options_set( session, SSH_OPTIONS_HOST, server);
-    
+
     ssh_connect(session);
 #if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
     if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
@@ -112,7 +112,7 @@ bool establish_ssh_session(ssh_session &session,
     else
       break;
   }
-  
+
   if(!test_result(res))
   {
     ssh_disconnect(session);

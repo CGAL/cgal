@@ -10,7 +10,7 @@ typedef CGAL::Gmpzf                            ExactFPType;
 typedef CGAL::MP_Float                         ExactFPType;
 #endif
 typedef CGAL::Cartesian_d<double>              K;
-typedef CGAL::Polytope_distance_d_traits_d<K,ExactFPType, double >       
+typedef CGAL::Polytope_distance_d_traits_d<K,ExactFPType, double >
                                                Traits;
 typedef CGAL::Polytope_distance_d<Traits>      Polytope_distance;
 typedef K::Point_d                             Point;
@@ -20,9 +20,9 @@ int main()
 
   const int n = 256;   // number of points
   const int d = 64;   // dimension of points
-  
-  Point P[n];      // n points 
-      
+
+  Point P[n];      // n points
+
   double coordP[n][d] = { {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -281,11 +281,11 @@ int main()
 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}
 };
 
-  
+
   for (int i=0; i<n; ++i) {
     P[i] = Point(d, coordP[i], coordP[i]+d);
   }
-  
+
 //   double* coordRandomPoint = new double[d];
 //   srand((unsigned)time(0));
 //   for(int i = 0; i != 4; ++i) {
@@ -297,12 +297,12 @@ int main()
 //     }
 //     for(int o = 0; o != 16; ++o) {
 //       coordRandomPoint[i*16 + o] /= sum;
-//     }    
+//     }
 //   }
-  
+
 Point Q[1] = { Point(d, CGAL::ORIGIN) };
-  
-  Polytope_distance pd(P, P+n, Q, Q+1); 
+
+  Polytope_distance pd(P, P+n, Q, Q+1);
 
   // get squared distance
   std::cout << "Squared distance: " <<
@@ -325,7 +325,7 @@ Point Q[1] = { Point(d, CGAL::ORIGIN) };
        ++coord_it)
     std::cout << " " << *coord_it;
   std::cout << std::endl;
-  
+
   //std::cout << pd;
   return 0;
 

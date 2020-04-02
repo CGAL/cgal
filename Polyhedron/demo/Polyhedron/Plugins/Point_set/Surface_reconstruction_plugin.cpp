@@ -40,7 +40,7 @@ SMesh* poisson_reconstruct (Point_set& points,
 
 void scale_space (const Point_set& points,
                   std::vector<Scene_polygon_soup_item*>& items,
-                  bool jet_smoother, 
+                  bool jet_smoother,
                   unsigned int iterations,
                   unsigned int neighbors, unsigned int fitting, unsigned int monge,
                   unsigned int neighborhood_size, unsigned int samples,
@@ -69,7 +69,7 @@ public:
 #if defined(CGAL_USE_SCIP)
     m_solver->addItem("SCIP");
 #endif
-    
+
 #if defined(CGAL_USE_GLPK)
     m_solver->addItem("GLPK");
 #endif
@@ -92,14 +92,14 @@ public:
     tabWidget->setTabEnabled(3, false);
     tabWidget->setTabToolTip(3, QString("Polygonal requires normals, please estimate normals first"));
   }
-  
+
 
   void disable_structuring()
   {
     m_use_structuring->setEnabled(false);
     m_use_structuring->setToolTip(QString("Point Set Structuring requires detected planes, please detect shapes first"));
   }
-  
+
   // Advancing front
   double longest_edge () const { return m_longestEdge->value (); }
   double radius_ratio_bound () const { return m_radiusRatioBound->value (); }
@@ -137,7 +137,7 @@ public:
   double data_coverage() const { return m_data_coverage->value(); }
   double model_complexity() const { return m_model_complexity->value(); }
   QString solver_name() const { return m_solver->currentText(); }
-  
+
 };
 
 class Polyhedron_demo_surface_reconstruction_plugin :
@@ -164,7 +164,7 @@ public:
   void scale_space_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   void poisson_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   void polygonal_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
-  
+
   //! Applicate for Point_sets with normals.
   bool applicable(QAction*) const {
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
@@ -204,7 +204,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
       dialog.disable_structuring();
       dialog.disable_polygonal();
     }
-      
+
     if(!dialog.exec())
       return;
 
@@ -251,7 +251,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     std::cerr << "Advancing front reconstruction... ";
-      
+
     // Reconstruct point set as a polyhedron
     SMesh* mesh = advancing_front (*points,
                                    dialog.longest_edge(),
@@ -295,7 +295,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     std::cout << "Scale scape surface reconstruction...";
-      
+
     std::vector<Scene_polygon_soup_item*> reco_items;
 
     scale_space (*points, reco_items,

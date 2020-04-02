@@ -104,7 +104,7 @@ void DeleteCurveCallback< Arr_ >::reset( )
 }
 
 template < typename Arr_ >
-void 
+void
 DeleteCurveCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* /* event */)
 {
   if ( this->removableHalfedge == Halfedge_handle( ) )
@@ -144,7 +144,7 @@ mouseMoveEvent( QGraphicsSceneMouseEvent* event )
 }
 
 template < typename Arr_ >
-void 
+void
 DeleteCurveCallback< Arr_ >::
 highlightNearestCurve( QGraphicsSceneMouseEvent* event )
 {

@@ -4,8 +4,8 @@
 #include <CGAL/Set_movable_separability_2/Single_mold_translational_casting/is_pullout_direction.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::Vector_2                              	  Vector_2;
-typedef Kernel::Point_2                              	  Point_2;
+typedef Kernel::Vector_2                                        Vector_2;
+typedef Kernel::Point_2                                        Point_2;
 typedef Kernel::Direction_2                               Direction_2;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
 

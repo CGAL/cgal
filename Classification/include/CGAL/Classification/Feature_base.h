@@ -21,7 +21,7 @@
 namespace CGAL {
 
 namespace Classification {
-  
+
 /*!
   \ingroup PkgClassificationFeature
 
@@ -33,7 +33,7 @@ namespace Classification {
 class Feature_base
 {
   std::string m_name;
-  
+
 public:
 
   /// \cond SKIP_IN_MANUAL
@@ -51,7 +51,7 @@ public:
     \brief Changes the name of the feature.
   */
   void set_name (const std::string& name) { m_name = name; }
-  
+
   /*!
     \brief Returns the value taken by the feature for at the item for
     the item at position `index`. This method must be implemented by
@@ -75,11 +75,11 @@ class Feature_handle { };
 //typedef boost::shared_ptr<Feature_base> Feature_handle;
 
 class Feature_set;
-  
+
 class Feature_handle
 {
   friend Feature_set;
-  
+
   boost::shared_ptr<boost::shared_ptr<Feature_base> > m_base;
 
   template <typename Feature>
@@ -104,7 +104,7 @@ public:
   bool operator< (const Feature_handle& other) const { return *m_base < *(other.m_base); }
   bool operator== (const Feature_handle& other) const { return *m_base == *(other.m_base); }
 };
-  
+
 #endif
 
 

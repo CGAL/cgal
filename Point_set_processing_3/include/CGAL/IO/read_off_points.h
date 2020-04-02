@@ -80,7 +80,7 @@ read_off_points(
   using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
-  
+
   // basic geometric types
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
@@ -219,7 +219,7 @@ read_off_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
@@ -242,7 +242,7 @@ read_off_points_and_normals(
      geom_traits (Kernel()));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap,
           typename NormalPMap,
@@ -264,7 +264,7 @@ read_off_points_and_normals(
      geom_traits (kernel));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
@@ -284,7 +284,7 @@ read_off_points_and_normals(
      normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap,
           typename NormalPMap
@@ -303,7 +303,7 @@ read_off_points_and_normals(
      normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename NormalPMap
@@ -336,7 +336,7 @@ read_off_points_and_normals(
      CGAL::parameters::normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
@@ -356,7 +356,7 @@ read_off_points(
      geom_traits (kernel));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap,
           typename Kernel
@@ -375,7 +375,7 @@ read_off_points(
      geom_traits (kernel));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap
@@ -392,7 +392,7 @@ read_off_points(
      CGAL::parameters::point_map (point_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap
 >

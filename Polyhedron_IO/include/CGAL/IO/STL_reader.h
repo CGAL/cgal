@@ -17,7 +17,7 @@
 
 #include <CGAL/Container_helper.h>
 
-#include <boost/cstdint.hpp> 
+#include <boost/cstdint.hpp>
 
 #include <cctype>
 #include <iostream>

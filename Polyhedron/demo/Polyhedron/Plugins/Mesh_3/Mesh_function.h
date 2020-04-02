@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_DEMO_MESH_3_MESH_FUNCTION_H
@@ -57,7 +57,7 @@ struct Mesh_parameters
   double facet_angle;
   double facet_sizing;
   double facet_approx;
-  
+
   double tet_shape;
   double tet_sizing;
   double edge_sizing;
@@ -66,7 +66,7 @@ struct Mesh_parameters
   int manifold;
   const CGAL::Image_3* image_3_ptr;
   bool use_sizing_field_with_aabb_tree;
-  
+
   inline QStringList log() const;
 };
 
@@ -85,18 +85,18 @@ class Mesh_function
   : public Mesh_function_interface
 {
   typedef Domain_ Domain;
-  
+
 public:
   Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p);
-  
+
   ~Mesh_function();
-  
+
   // Launch
   virtual void launch();
-  
+
   // Stop
   virtual void stop();
-  
+
   // Logs
   virtual QStringList parameters_log() const;
   virtual QString status(double time_period) const;
@@ -107,13 +107,13 @@ private:
   typedef std::vector<std::pair<Point_3, Index> >   Initial_points_vector;
   typedef typename Initial_points_vector::iterator  Ipv_iterator;
   typedef C3t3::Vertex_handle                       Vertex_handle;
-  
+
   typedef C3t3::Triangulation                       Tr;
   typedef CGAL::Mesh_criteria_3<Tr>                 Mesh_criteria;
   typedef Mesh_criteria::Edge_criteria              Edge_criteria;
   typedef Mesh_criteria::Facet_criteria             Facet_criteria;
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;
-  
+
   typedef CGAL::Mesh_3::Mesher_3<C3t3, Mesh_criteria, Domain>   Mesher;
 
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
@@ -414,7 +414,7 @@ status(double time_period) const
   } else {
     // Get status and return a string corresponding to it
     typename Mesher::Mesher_status s = mesher_->status();
-  
+
     result = QString("Vertices: %1 \n"
                      "Vertices inserted last %2s: %3 \n\n"
                      "Bad facets: %4 \n"
@@ -426,7 +426,7 @@ status(double time_period) const
       .arg(s.cells_queue);
     last_report_ = s;
   }
-  
+
 #endif
   return result;
 }

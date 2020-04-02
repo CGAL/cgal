@@ -46,7 +46,7 @@ public:
   typedef typename Base::Construct_point_d             Construct_point_d;
   typedef typename Base::Compute_weight_d              Compute_weight_d;
   typedef typename Base::Power_side_of_power_sphere_d  Power_side_of_power_sphere_d;
-  typedef typename Base::In_flat_power_side_of_power_sphere_d 
+  typedef typename Base::In_flat_power_side_of_power_sphere_d
                                                        In_flat_power_side_of_power_sphere_d;
 
   //===========================================================================
@@ -85,7 +85,7 @@ public:
     Orientation_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
-    template <typename ForwardIterator> 
+    template <typename ForwardIterator>
     result_type operator()(ForwardIterator start, ForwardIterator end) const
     {
       Construct_point_d cp = m_traits.construct_point_d_object();
@@ -105,11 +105,11 @@ public:
 
   public:
     typedef Flat_orientation_d result_type;
-    
+
     Construct_flat_orientation_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
-    template <typename ForwardIterator> 
+    template <typename ForwardIterator>
     result_type operator()(ForwardIterator start, ForwardIterator end) const
     {
       Construct_point_d cp = m_traits.construct_point_d_object();
@@ -130,12 +130,12 @@ public:
 
   public:
     typedef Orientation result_type;
-    
+
     In_flat_orientation_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
-    template <typename ForwardIterator> 
-    result_type operator()(Flat_orientation_d orient, 
+    template <typename ForwardIterator>
+    result_type operator()(Flat_orientation_d orient,
       ForwardIterator start, ForwardIterator end) const
     {
       Construct_point_d cp = m_traits.construct_point_d_object();
@@ -148,7 +148,7 @@ public:
   };
 
   //===========================================================================
-  
+
   // Required by TriangulationTraits
   class Contained_in_affine_hull_d
   {
@@ -156,12 +156,12 @@ public:
 
   public:
     typedef bool result_type;
-    
+
     Contained_in_affine_hull_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
-    template <typename ForwardIterator> 
-    result_type operator()(ForwardIterator start, ForwardIterator end, 
+    template <typename ForwardIterator>
+    result_type operator()(ForwardIterator start, ForwardIterator end,
                            const Weighted_point_d & p) const
     {
       Construct_point_d cp = m_traits.construct_point_d_object();
@@ -182,7 +182,7 @@ public:
 
   public:
     typedef Comparison_result result_type;
-    
+
     Compare_lexicographically_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
@@ -193,7 +193,7 @@ public:
       return m_traits.compare_lexicographically_d_object()(cp(p), cp(q));
     }
   };
-  
+
   //===========================================================================
 
   // Only for Triangulation_off_ostream.h (undocumented)
@@ -203,7 +203,7 @@ public:
 
   public:
     typedef FT result_type;
-    
+
     Compute_coordinate_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
@@ -225,7 +225,7 @@ public:
 
   public:
     typedef int result_type;
-    
+
     Point_dimension_d(const RTTraits &kernel)
       : m_traits(kernel) {}
 
@@ -236,7 +236,7 @@ public:
       return m_traits.point_dimension_d_object()(cp(p));
     }
   };
-  
+
   //===========================================================================
   // Object creation
   //===========================================================================
@@ -246,31 +246,31 @@ public:
     return Less_coordinate_d(*this);
   }
   Contained_in_affine_hull_d contained_in_affine_hull_d_object() const
-  { 
-    return Contained_in_affine_hull_d(*this); 
+  {
+    return Contained_in_affine_hull_d(*this);
   }
   Orientation_d orientation_d_object() const
   {
-    return Orientation_d(*this); 
+    return Orientation_d(*this);
   }
   Construct_flat_orientation_d construct_flat_orientation_d_object() const
-  { 
+  {
     return Construct_flat_orientation_d(*this);
   }
   In_flat_orientation_d in_flat_orientation_d_object() const
-  { 
+  {
     return In_flat_orientation_d(*this);
   }
   Compare_lexicographically_d compare_lexicographically_d_object() const
-  { 
+  {
     return Compare_lexicographically_d(*this);
   }
   Compute_coordinate_d compute_coordinate_d_object() const
-  { 
+  {
     return Compute_coordinate_d(*this);
   }
   Point_dimension_d point_dimension_d_object() const
-  { 
+  {
     return Point_dimension_d(*this);
   }
 };

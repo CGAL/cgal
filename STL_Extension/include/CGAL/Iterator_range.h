@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -25,7 +25,7 @@ namespace CGAL {
   template <typename I>
   class Iterator_range
     : public std::pair<I,I>{
-    
+
     typedef std::pair<I,I> Base;
 
   public:
@@ -75,7 +75,7 @@ namespace CGAL {
     return std::tuple<I&, I&>{this->first, this->second};
   }
 
-  operator std::tuple<const I&, const I&>() const 
+  operator std::tuple<const I&, const I&>() const
   {
     return std::tuple<const I&, const I&>{this->first, this->second};
   }

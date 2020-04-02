@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Mesh P;
   //std::cin >> P;
@@ -38,16 +38,16 @@ int main(int argc, char* argv[])
   for(vertex_descriptor vd : vertices(P)){
     std::cout <<  "        " << P.point(vd) << "\n";
   }
-  
+
   std::cout << "        ]\n"
     "     }\n"
-    "      coordIndex [\n"; 
+    "      coordIndex [\n";
   for(vertex_descriptor vd : vertices(P)){
     if(predecessor[vd]!=vd){
       std::cout << "      " << std::size_t(vd) << ", " << std::size_t(predecessor[vd]) <<  ", -1\n";
     }
   }
-  
+
   std::cout << "]\n"
     "  }#IndexedLineSet\n"
     "}# Shape\n";

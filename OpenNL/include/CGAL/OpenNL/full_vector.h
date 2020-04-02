@@ -2,7 +2,7 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
+ *
  * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and

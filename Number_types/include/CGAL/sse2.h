@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -22,7 +22,7 @@
 #if defined ( _MSC_VER )
 #define CGAL_ALIGN_16  __declspec(align(16))
 #elif defined( __GNUC__ )
-#define  CGAL_ALIGN_16 __attribute__((aligned(16))) 
+#define  CGAL_ALIGN_16 __attribute__((aligned(16)))
 #endif
 
 #endif // CGAL_SSE2_H

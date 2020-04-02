@@ -44,19 +44,19 @@ if ( CGAL_FOUND )
     # Executables that require Eigen
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
     CGAL_target_use_Eigen(normal_estimation_test)
-    
+
     create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
     CGAL_target_use_Eigen(hierarchy_simplification_test)
-    
+
     create_single_source_cgal_program( "smoothing_test.cpp" )
     CGAL_target_use_Eigen(smoothing_test)
 
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
     CGAL_target_use_Eigen(vcm_plane_test)
-    
+
     create_single_source_cgal_program( "vcm_all_test.cpp" )
     CGAL_target_use_Eigen(vcm_all_test)
-    
+
     create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
     CGAL_target_use_Eigen(jet_pointer_as_property_map)
   else()

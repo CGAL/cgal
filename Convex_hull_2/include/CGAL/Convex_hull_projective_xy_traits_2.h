@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert
 
@@ -26,57 +26,57 @@
 namespace CGAL {
 
 template <class Point_3>
-class Less_xy_plane_xy_2 
+class Less_xy_plane_xy_2
 {
 public:
    typedef bool          result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q) const
-   { 
-     return 
+   {
+     return
         compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()) == SMALLER;
    }
 };
 
 template <class Point_3>
-class Equal_xy_plane_xy_2 
+class Equal_xy_plane_xy_2
 {
 public:
    typedef bool          result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q) const
-   { 
-     return 
+   {
+     return
         compare_lexicographically_xyC2(p.x(), p.y(), q.x(), q.y()) == EQUAL;
    }
 };
 
 template <class Point_3>
-class Less_yx_plane_xy_2 
+class Less_yx_plane_xy_2
 {
 public:
    typedef bool          result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q) const
-   { 
-     return 
+   {
+     return
         compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x()) == SMALLER;
    }
 };
 
 template <class Point_3>
-class Left_turn_plane_xy_2 
+class Left_turn_plane_xy_2
 {
 public:
    typedef bool          result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-   { 
-      return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()) == 
+   {
+      return orientationC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()) ==
                                                                  LEFT_TURN;
    }
 };
@@ -99,7 +99,7 @@ public:
       else if ( res == SMALLER )
          return true;
       else
-         return compare_lexicographically_xyC2(r.x(), r.y(), s.x(), s.y()) 
+         return compare_lexicographically_xyC2(r.x(), r.y(), s.x(), s.y())
              == SMALLER;
    }
 };
@@ -124,25 +124,25 @@ public:
          if (p.x() == r.x() && p.y() == r.y()) return false;
          if (q.x() == r.x() && q.y() == r.y()) return true;
          if (p.x() == q.x() && p.y() == q.y()) return false;
-         return 
-            collinear_are_ordered_along_lineC2(r.x(), r.y(), 
-                                               q.x(), q.y(), p.x(), p.y()); 
+         return
+            collinear_are_ordered_along_lineC2(r.x(), r.y(),
+                                               q.x(), q.y(), p.x(), p.y());
       }
    }
 };
 
 
 template <class Point_3>
-class Convex_hull_projective_xy_traits_2 
+class Convex_hull_projective_xy_traits_2
 {
 public:
     typedef Point_3                             Point_2;
     typedef Less_xy_plane_xy_2<Point_3>         Less_xy_2;
-    typedef Equal_xy_plane_xy_2<Point_3>        Equal_2;    
+    typedef Equal_xy_plane_xy_2<Point_3>        Equal_2;
     typedef Less_yx_plane_xy_2<Point_3>         Less_yx_2;
     typedef Left_turn_plane_xy_2<Point_3>       Left_turn_2;
     typedef Less_rotate_ccw_plane_xy_2<Point_3> Less_rotate_ccw_2;
-    typedef Less_dist_to_line_plane_xy_2<Point_3> 
+    typedef Less_dist_to_line_plane_xy_2<Point_3>
                                                 Less_signed_distance_to_line_2;
     Less_xy_2
     less_xy_2_object() const

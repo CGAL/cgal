@@ -1,19 +1,19 @@
-// Copyright (c) 2001,2002  
+// Copyright (c) 2001,2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
@@ -38,7 +38,7 @@
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
 #include "CGAL/_test_cls_circle_3.h"
- 
+
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
 int
@@ -47,7 +47,7 @@ main()
   typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >     Cls;
   typedef   CGAL::Cartesian<double>     Clsd;
 
-  
+
   std::cout << "Testing nested types with Cartesian<double> :" << std::endl;
   _test_kernel( Clsd() );
 
@@ -86,7 +86,7 @@ main()
   std::cout << "Testing 3d-2d with Cartesian<Quotient<Precise_integer> > :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-  
+
   std::cout << "All tests done" << std::endl;
   return 0;
 }

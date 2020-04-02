@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ilker O. Yaz
+// Author(s)     : Sebastien Loriot and Ilker O. Yaz
 
 
 #ifndef CGAL_ORIENT_POLYGON_MESH_H
@@ -19,16 +19,22 @@
 
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/utility.h>
 
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/ref.hpp>
+
+#include <functional>
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -152,12 +158,17 @@ namespace internal{
  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`
+ *      If this parameter is omitted, an internal property map for
+ *      `CGAL::vertex_point_t` must be available in `TriangleMesh`
+ *    \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \todo code : The following only handles polyhedron with one connected component
- *       the code, the sample example and the plugin must be updated.
+ * \note This function is only doing an orientation test for one connected component of `pmesh`.
+ *       For performance reasons, it is left to the user to call the function `does_bound_a_volume()`
+ *       on a triangulated version of `pmesh` to ensure the result returned is relevant.
+ *       For advanced usages, the function `volume_connected_components()` should be used instead.
  *
  * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
@@ -175,6 +186,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
 
   if (faces(pmesh).first == faces(pmesh).second)
     return true;
+
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -340,97 +352,6 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
       }
     }
 }
-namespace internal {
-
-template <class Kernel, class TriangleMesh, class VD, class Fid_map, class Vpm>
-void recursive_orient_volume_ccs( TriangleMesh& tm,
-                                  Vpm& vpm,
-                                  Fid_map& fid_map,
-                                  const std::vector<VD>& xtrm_vertices,
-                                  boost::dynamic_bitset<>& cc_handled,
-                                  const std::vector<std::size_t>& face_cc,
-                                  std::size_t xtrm_cc_id,
-                                  bool is_parent_outward_oriented)
-{
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
-  std::vector<face_descriptor> cc_faces;
-  for(face_descriptor fd : faces(tm))
-  {
-    if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
-      cc_faces.push_back(fd);
-  }
-// first check that the orientation of the current cc is consistant with its
-// parent cc containing it
-  bool new_is_parent_outward_oriented = internal::is_outward_oriented(
-         xtrm_vertices[xtrm_cc_id], tm, parameters::vertex_point_map(vpm));
-  if (new_is_parent_outward_oriented==is_parent_outward_oriented)
-  {
-    Polygon_mesh_processing::reverse_face_orientations(cc_faces, tm);
-    new_is_parent_outward_oriented = !new_is_parent_outward_oriented;
-  }
-  cc_handled.set(xtrm_cc_id);
-
-  std::size_t nb_cc = cc_handled.size();
-
-// get all cc that are inside xtrm_cc_id
-
-  typename Side_of_tm::AABB_tree aabb_tree(cc_faces.begin(), cc_faces.end(),
-                                           tm, vpm);
-  Side_of_tm side_of_cc(aabb_tree);
-
-  std::vector<std::size_t> cc_inside;
-  for(std::size_t id=0; id<nb_cc; ++id)
-  {
-    if (cc_handled.test(id)) continue;
-    if (side_of_cc(get(vpm,xtrm_vertices[id]))==ON_BOUNDED_SIDE)
-      cc_inside.push_back(id);
-  }
-
-// check whether we need another recursion for cc inside xtrm_cc_id
-  if (!cc_inside.empty())
-  {
-    std::size_t new_xtrm_cc_id = cc_inside.front();
-    boost::dynamic_bitset<> new_cc_handled(nb_cc,0);
-    new_cc_handled.set();
-    new_cc_handled.reset(new_xtrm_cc_id);
-    cc_handled.set(new_xtrm_cc_id);
-
-    std::size_t nb_candidates = cc_inside.size();
-    for (std::size_t i=1;i<nb_candidates;++i)
-    {
-      std::size_t candidate = cc_inside[i];
-      if(get(vpm,xtrm_vertices[candidate]).z() >
-         get(vpm,xtrm_vertices[new_xtrm_cc_id]).z()) new_xtrm_cc_id=candidate;
-      new_cc_handled.reset(candidate);
-      cc_handled.set(candidate);
-    }
-
-    internal::recursive_orient_volume_ccs<Kernel>(
-           tm, vpm, fid_map, xtrm_vertices, new_cc_handled, face_cc,
-           new_xtrm_cc_id, new_is_parent_outward_oriented);
-  }
-
-// now explore remaining cc included in the same cc as xtrm_cc_id
-  boost::dynamic_bitset<> cc_not_handled = ~cc_handled;
-  std::size_t new_xtrm_cc_id = cc_not_handled.find_first();
-  if (new_xtrm_cc_id == cc_not_handled.npos) return ;
-
-  for (std::size_t candidate = cc_not_handled.find_next(new_xtrm_cc_id);
-                   candidate < cc_not_handled.npos;
-                   candidate = cc_not_handled.find_next(candidate))
-  {
-     if(get(vpm,xtrm_vertices[candidate]).z() > get(vpm,xtrm_vertices[new_xtrm_cc_id]).z())
-        new_xtrm_cc_id = candidate;
-  }
-
-  internal::recursive_orient_volume_ccs<Kernel>(
-            tm, vpm, fid_map, xtrm_vertices, cc_handled, face_cc,
-            new_xtrm_cc_id, is_parent_outward_oriented);
-}
-
-}//end internal
 
 /**
 * \ingroup PMP_orientation_grp
@@ -442,6 +363,8 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 *
 * @param tm a closed triangulated surface mesh
 * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+*
+* \pre `CGAL::is_closed(tm)`
 *
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{vertex_point_map}
@@ -531,6 +454,789 @@ void orient(TriangleMesh& tm)
   orient(tm, parameters::all_default());
 }
 
+/*!
+ * \ingroup PMP_orientation_grp
+ * Enumeration type used to indicate the status of a set of faces
+ * classified by the function `volume_connected_components()`.
+ * The set of faces defines either a volume connected connected component
+ * in the case of `VALID_VOLUME` or a surface connected component otherwise.
+ */
+enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
+                         SURFACE_WITH_SELF_INTERSECTIONS, ///< The set of faces is self-intersecting
+                         VOLUME_INTERSECTION, ///< The set of faces intersects another surface connected component
+                         INCOMPATIBLE_ORIENTATION ///< The set of faces is included in a volume but has an incompatible orientation
+                       };
+namespace internal {
+
+// helper function to copy data
+template<class T, class RefToContainer>
+void copy_container_content(
+  const std::vector<T>& vec,
+  RefToContainer ref_wrapper)
+{
+  ref_wrapper.get().reserve(vec.size());
+  for(const T& t : vec)
+  {
+   ref_wrapper.get().push_back(t);
+  }
+}
+
+template<class T>
+void copy_container_content(
+  std::vector<T>& vec,
+  std::reference_wrapper<std::vector<T> > ref_wrapper)
+{
+  vec.swap(ref_wrapper.get());
+}
+
+template<class T>
+void copy_container_content(
+  std::vector<T>& vec,
+  boost::reference_wrapper<std::vector<T> > ref_wrapper)
+{
+  vec.swap(ref_wrapper.get());
+}
+
+template<class T>
+inline
+void copy_container_content(
+  std::vector<T>&,
+  internal_np::Param_not_found)
+{}
+
+template <class RefToContainer>
+void copy_nested_parents(
+  const std::vector< std::vector<std::size_t> >& nested_parents,
+  RefToContainer ref_to_vector)
+{
+  typedef typename RefToContainer::type Container;
+  typedef typename Container::value_type Container_value;
+
+  ref_to_vector.get().reserve(nested_parents.size());
+  for(const auto& t : nested_parents)
+  {
+    Container_value c;
+    c.reserve(t.size());
+    for(const std::size_t& val : t)
+      c.push_back(val);
+    ref_to_vector.get().push_back(c);
+  }
+}
+
+inline
+void copy_nested_parents(
+  std::vector< std::vector<std::size_t> >& nested_parents,
+  std::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
+{
+  nested_parents.swap(ref_to_vector.get());
+}
+
+inline
+void copy_nested_parents(
+  std::vector< std::vector<std::size_t> >& nested_parents,
+  boost::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
+{
+  nested_parents.swap(ref_to_vector.get());
+}
+
+inline
+void copy_nested_parents(
+  std::vector< std::vector<std::size_t> >&,
+  internal_np::Param_not_found)
+{}
+
+
+// helper function for setting id maps
+template <class TriangleMesh, class FaceIndexMap, class FaceCCIdMap>
+void set_f_cc_id(
+  const std::vector<std::size_t>& f_cc,
+  FaceIndexMap face_index_map,
+  FaceCCIdMap face_cc_map,
+  const TriangleMesh& tm)
+{
+  for(typename boost::graph_traits<TriangleMesh>::face_descriptor fd : faces(tm))
+    put(face_cc_map, fd, f_cc[ get(face_index_map, fd) ]);
+}
+
+template <class TriangleMesh, class FaceIndexMap>
+void set_f_cc_id(
+  const std::vector<std::size_t>&,
+  FaceIndexMap,
+  internal_np::Param_not_found,
+  const TriangleMesh&)
+{}
+
+template <class RefToVector>
+void copy_cc_to_volume_id(
+  std::vector<std::size_t>& cc_volume_ids,
+  RefToVector ref_to_vector)
+{
+  ref_to_vector.get().swap( cc_volume_ids );
+}
+
+inline
+void copy_cc_to_volume_id(
+  std::vector<std::size_t>&,
+  internal_np::Param_not_found)
+{}
+
+template <class RefToVector>
+void copy_nesting_levels(
+  std::vector<std::size_t>& nesting_levels,
+  RefToVector ref_to_vector)
+{
+  ref_to_vector.get().swap( nesting_levels );
+}
+
+inline
+void copy_nesting_levels(
+  std::vector<std::size_t>&,
+  internal_np::Param_not_found)
+{}
+
+template <class RefToBitset>
+void copy_orientation_bitset(
+  const std::vector<bool>& is_cc_outward_oriented,
+  RefToBitset ref_to_bs)
+{
+  ref_to_bs.get() = is_cc_outward_oriented;
+}
+
+inline
+void copy_orientation_bitset(
+  const std::vector<bool>&,
+  internal_np::Param_not_found)
+{}
+
+template <class OutputIterator>
+void set_cc_intersecting_pairs(
+  const std::set< std::pair<std::size_t, std::size_t> >& self_intersecting_cc,
+  OutputIterator out)
+{
+  for (const std::pair<std::size_t, std::size_t>& p : self_intersecting_cc)
+    *out++=p;
+}
+
+inline
+void set_cc_intersecting_pairs(
+  const std::set< std::pair<std::size_t, std::size_t> >&,
+  internal_np::Param_not_found)
+{}
+
+} // internal
+
+
+/*!
+ * \ingroup PMP_orientation_grp
+ * assigns to each face of `tm` an id corresponding to the volume connected component
+ * it contributes to.
+ *
+ * Using the adjacency relation of two faces along an edge, a triangle mesh can be split
+ * into connected components (*surface components* in the following).
+ * A surface component without boundary separates the 3D space into an infinite and
+ * a finite volume. We say that the finite volume is <i>enclosed</i> by this surface
+ * component.
+ *
+ * The volume connected components (*volume components* in the following) are defined as follows:
+ * Each surface component `S` that is outside any volume enclosed by
+ * another surface component defines the *outer boundary* of a volume component.
+ * Each surface component that is inside the volume enclosed by `S`
+ * defines a *hole* if it is included in no other volume enclosed by a surface component
+ * but `S`. Ignoring the identified volume component, the same procedure is recursively
+ * repeated for all surface components in each hole.
+ *
+ * There are some special cases:
+ * - a non-closed surface component is reported as a volume component ignoring any inclusion test
+ * - a self-intersecting surface component is reported as a volume component ignoring any inclusion test
+ * - a surface component intersecting another surface component
+ *   is reported as a volume component, and so are all the surface components inside its
+ *   enclosed volume
+ * - if `do_orientation_tests` is set to `true`, if the holes are not all equally oriented
+ *   (all inward or all outward) or if the holes and the outer boundary are equally
+ *   oriented, each surface component is reported as a volume component,
+ *   and so are all the surface components inside the corresponding enclosed volumes
+ * - If `do_orientation_tests` is set to `true` and the surface components that are
+ *   outside all enclosed volumes are inward oriented, they are then considered as holes
+ *   of the unbounded volume (that has no outer boundary)
+ *
+ * A property map for `CGAL::vertex_point_t` must be either available as an internal property map
+ * of `tm` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+ *
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam VolumeFaceIndexMap a model of `WritablePropertyMap` with
+ *                      `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+ *                      `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * @param tm the input triangle mesh
+ * @param volume_id_map the property map filled by this function with indices of volume components associated to the faces of `tm`
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * @pre `CGAL::is_closed(tm)`
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing a unique id per face of `tm`, in the range `[0, num_faces(tm)[`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_connected_component_map}
+ *     a property map filled by this function and that will contain for each face the id
+ *     of its surface component in the range `[0, number of surface components - 1[`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{volume_inclusions}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
+ *     with a value type being a model of `BackInsertionSequence` of `std::size_t`,
+ *     both types having the functions `reserve()` and `push_back()`.
+ *     The size of the container is exactly the number of surface components of `tm`.
+ *     The container at position `k` contains the ids of all the
+ *     surface components that are the first intersected by any ray with source on
+ *     the surface component `k` and directed outside the volume enclosed by the
+ *     surface component `k`. There is only one such id but when some surface components intersect.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{do_orientation_tests}
+ *     if `true` (the default value), the orientation of the faces of
+ *     each surface components will be taken into account for the definition of the volume.
+ *     If `false`, the face orientation is ignored and the volumes are defined only by the
+ *     nesting of surface components.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{error_codes}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a `value_type` being \link PMP_orientation_grp `Volume_error_code` \endlink
+ *     The size of the container is exactly the number of volume components.
+ *     The container indicates the status of a volume assigned to a set of faces.
+ *     The description of the value type is given in the documentation of the enumeration type.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{do_self_intersection_tests}
+ *     If `false` (the default value), it is assumed that `tm` does not contains any self-intersections.
+ *     if `true`, the input might contain some self-intersections and a test is done
+ *     prior to the volume decomposition.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{connected_component_id_to_volume_id}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a value_type being `std::size_t`.
+ *     The size of the container is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the id of the volume it contributes
+ *     to describe is the value at the position `ccid` in the container.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{nesting_levels}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a `value_type` being `std::size_t`.
+ *     The size of the container is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the container contains the number of
+ *     connected components containing on its bounded side this component.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{is_cc_outward_oriented}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a `value_type` being `bool`.
+ *     The size of the container is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented()`
+ *     called on the triangle mesh corresponding to this connected component
+ *     is the value at the position `ccid` in the container.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{intersecting_volume_pairs_output_iterator}
+ *     Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
+ *     Each pair of connected components intersecting will be reported using their ids.
+ *    If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.
+ *   \cgalParamEnd
+ *
+ * \cgalNamedParamsEnd
+ *
+ * \return the number of volume components defined by `tm`
+ */
+template <class TriangleMesh, class VolumeFaceIndexMap, class NamedParameters>
+std::size_t
+volume_connected_components(const TriangleMesh& tm,
+                                  VolumeFaceIndexMap volume_id_map,
+                            const NamedParameters& np)
+{
+  CGAL_precondition(is_triangle_mesh(tm));
+  CGAL_precondition(is_closed(tm));
+
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters>::const_type Vpm;
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh,
+                                              NamedParameters>::type FaceIndexMap;
+
+  typedef typename Kernel_traits<
+    typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                get_const_property_map(boost::vertex_point, tm));
+
+  FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
+
+  std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+
+// set the connected component id of each face
+  const std::size_t nb_cc = connected_components(tm,
+                              bind_property_maps(fid_map,make_property_map(face_cc)),
+                              parameters::face_index_map(fid_map));
+
+  // contains for each CC the CC that are in its bounded side
+  std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc);
+
+  // copy cc-id info
+  internal::set_f_cc_id(face_cc, fid_map, parameters::get_parameter(np, internal_np::face_connected_component_map), tm);
+
+  const bool do_self_intersection_tests =
+        parameters::choose_parameter(parameters::get_parameter(np, internal_np::do_self_intersection_tests),
+                            false);
+  const bool ignore_orientation_of_cc =
+    !parameters::choose_parameter(parameters::get_parameter(np, internal_np::do_orientation_tests),
+                         true);
+
+  const bool used_as_a_predicate =
+    parameters::choose_parameter(parameters::get_parameter(np, internal_np::i_used_as_a_predicate),
+                        false); // indicate if the function is called by does_bound_a_volume
+
+  CGAL_assertion(!used_as_a_predicate || !ignore_orientation_of_cc);
+
+  std::vector<Volume_error_code> error_codes;
+  std::vector<bool> is_cc_outward_oriented;
+  std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
+  std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
+
+  boost::dynamic_bitset<> cc_handled(nb_cc, 0);
+  std::size_t next_volume_id = 0;
+
+// Handle self-intersecting connected components
+  typedef std::pair<face_descriptor, face_descriptor> Face_pair;
+  std::vector<Face_pair> si_faces;
+  std::set< std::pair<std::size_t, std::size_t> > self_intersecting_cc; // due to self-intersections
+  if (do_self_intersection_tests)
+    self_intersections(tm, std::back_inserter(si_faces));
+  std::vector<bool> is_involved_in_self_intersection(nb_cc, false);
+
+  if (!si_faces.empty() && used_as_a_predicate)
+    return 0;
+
+  for(const Face_pair& fp : si_faces)
+  {
+    std::size_t first_cc_id = face_cc[ get(fid_map, fp.first) ];
+    std::size_t second_cc_id = face_cc[ get(fid_map, fp.second) ];
+
+    if (first_cc_id==second_cc_id)
+    {
+      if ( !cc_handled.test(first_cc_id) )
+      {
+        cc_handled.set(first_cc_id);
+        cc_volume_ids[first_cc_id]=next_volume_id++;
+        error_codes.push_back(SURFACE_WITH_SELF_INTERSECTIONS);
+      }
+    }
+    else
+    {
+      is_involved_in_self_intersection[first_cc_id] = true;
+      is_involved_in_self_intersection[second_cc_id] = true;
+      self_intersecting_cc.insert( make_sorted_pair(first_cc_id, second_cc_id) );
+    }
+  }
+
+  std::vector< std::vector<std::size_t> > nesting_parents(nb_cc);
+  if (!cc_handled.all())
+  {
+  // extract a vertex with max z coordinate for each connected component
+    std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
+    for(vertex_descriptor vd : vertices(tm))
+    {
+      halfedge_descriptor h = halfedge(vd, tm);
+      if (is_border(h, tm)) h = opposite(h, tm);
+      std::size_t cc_id = face_cc[get(fid_map, face(h, tm))];
+      if (cc_handled.test(cc_id)) continue;
+      if (xtrm_vertices[cc_id]==GT::null_vertex())
+        xtrm_vertices[cc_id]=vd;
+      else
+        if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
+          xtrm_vertices[cc_id]=vd;
+    }
+
+  // fill orientation vector for each surface CC
+    if (!ignore_orientation_of_cc)
+    {
+      is_cc_outward_oriented.resize(nb_cc);
+      for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+      {
+        if (cc_handled.test(cc_id)) continue;
+        is_cc_outward_oriented[cc_id] = internal::is_outward_oriented(xtrm_vertices[cc_id], tm, np);
+      }
+    }
+
+  //collect faces per CC
+    std::vector< std::vector<face_descriptor> > faces_per_cc(nb_cc);
+    std::vector< std::size_t > nb_faces_per_cc(nb_cc, 0);
+    for(face_descriptor fd : faces(tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      ++nb_faces_per_cc[ cc_id ];
+    }
+    for (std::size_t i=0; i<nb_cc; ++i)
+      if (!cc_handled.test(i))
+        faces_per_cc[i].reserve( nb_faces_per_cc[i] );
+    for(face_descriptor fd : faces(tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      faces_per_cc[ cc_id ].push_back(fd);
+    }
+
+  // init the main loop
+    // similar as above but exclusively contains cc ids included by more that one CC.
+    // The result will be then merged with nested_cc_per_cc but temporarilly we need
+    // another container to not more than once the inclusion testing (in case a CC is
+    // included by more than 2 CC) + associate such CC to only one volume
+    std::vector<std::vector<std::size_t> > nested_cc_per_cc_shared(nb_cc);
+    std::vector < boost::dynamic_bitset<> > level_k_nestings; // container containing CCs in the same volume (one bitset per volume) at level k
+    level_k_nestings.push_back( ~cc_handled );
+
+  // the following loop is exploring the nesting level by level (0 -> max_level)
+    std::size_t k = 0;
+    while (!level_k_nestings.empty())
+    {
+      std::vector < boost::dynamic_bitset<> > level_k_plus_1_nestings;
+      for(boost::dynamic_bitset<> cc_to_handle : level_k_nestings)
+      {
+        CGAL_assertion( cc_to_handle.any() );
+        while(cc_to_handle.any())
+        {
+        //extract a vertex with max z amongst all components
+          std::size_t xtrm_cc_id=cc_to_handle.find_first();
+          for(std::size_t id  = cc_to_handle.find_next(xtrm_cc_id);
+                          id != cc_to_handle.npos;
+                          id  = cc_to_handle.find_next(id))
+          {
+            if (get(vpm, xtrm_vertices[id]).z()>get(vpm,xtrm_vertices[xtrm_cc_id]).z())
+              xtrm_cc_id=id;
+          }
+          cc_to_handle.reset(xtrm_cc_id);
+          nesting_levels[xtrm_cc_id] = k;
+
+        // collect id inside xtrm_cc_id CC
+          typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
+          typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[xtrm_cc_id].begin(),
+                                                   faces_per_cc[xtrm_cc_id].end(),
+                                                   tm, vpm);
+          Side_of_tm side_of_cc(aabb_tree);
+
+          std::vector<std::size_t> cc_intersecting; // contains id of CC intersecting xtrm_cc_id
+
+          boost::dynamic_bitset<> nested_cc_to_handle(nb_cc, 0);
+          for(std::size_t id  = cc_to_handle.find_first();
+                          id != cc_to_handle.npos;
+                          id  = cc_to_handle.find_next(id))
+          {
+            if (self_intersecting_cc.count( make_sorted_pair(xtrm_cc_id, id) )!= 0)
+            {
+              cc_intersecting.push_back(id);
+              continue; // to not dot inclusion test for intersecting CCs
+            }
+
+            if (side_of_cc(get(vpm,xtrm_vertices[id]))==ON_BOUNDED_SIDE)
+            {
+              nested_cc_per_cc[xtrm_cc_id].push_back(id);
+              // mark nested CC as handle and collect them for the handling of the next level
+              nested_cc_to_handle.set(id);
+              cc_to_handle.reset(id);
+            }
+          }
+
+        //for each CC intersecting xtrm_cc_id, find the CCs included in both
+          for(std::size_t id : cc_intersecting)
+          {
+            typename Side_of_tm::AABB_tree aabb_tree(faces_per_cc[id].begin(),
+                                                     faces_per_cc[id].end(),
+                                                     tm, vpm);
+            Side_of_tm side_of_cc(aabb_tree);
+            for(std::size_t ncc_id : nested_cc_per_cc[xtrm_cc_id])
+            {
+              if (self_intersecting_cc.count( make_sorted_pair(ncc_id, id) )!= 0)
+                continue;
+              if (side_of_cc(get(vpm,xtrm_vertices[ncc_id]))==ON_BOUNDED_SIDE)
+                nested_cc_per_cc_shared[id].push_back(ncc_id);
+            }
+          }
+
+          if ( nested_cc_per_cc[xtrm_cc_id].empty() ) continue;
+          level_k_plus_1_nestings.push_back(nested_cc_to_handle);
+        }
+      }
+      ++k;
+      level_k_nestings.swap(level_k_plus_1_nestings);
+    }
+
+    // early return for orient_to_bound_a_volume
+    if (parameters::choose_parameter(parameters::get_parameter(np, internal_np::i_used_for_volume_orientation),false))
+    {
+      internal::copy_container_content(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
+      internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+      return 0;
+    }
+
+  // detect inconsistencies of the orientation at the level 0
+  // and check if all CC at level 0 are in the same volume
+    std::size_t ref_cc_id = nb_cc;
+    std::size_t FIRST_LEVEL = 0; // used to know if even or odd nesting is the top level
+    if(!ignore_orientation_of_cc)
+    {
+      for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+      {
+        if (cc_handled.test(cc_id)) continue;
+        if( nesting_levels[cc_id]==0 )
+        {
+          if(ref_cc_id==nb_cc)
+            ref_cc_id=cc_id;
+          else
+            if( is_cc_outward_oriented[cc_id] != is_cc_outward_oriented[ref_cc_id] )
+            {
+              if (used_as_a_predicate) return 0;
+              // all is indefinite
+              for(std::size_t id=0; id<nb_cc; ++id)
+              {
+                if (cc_handled.test(cc_id)) continue;
+                cc_volume_ids[id] = next_volume_id++;
+                error_codes.push_back(INCOMPATIBLE_ORIENTATION);
+              }
+              cc_handled.set();
+              break;
+            }
+        }
+      }
+
+      if (!cc_handled.all() && !is_cc_outward_oriented[ref_cc_id])
+      {
+        // all level 0 CC are in the same volume
+        for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+        {
+          if (cc_handled.test(cc_id)) continue;
+          if( nesting_levels[cc_id]==0 )
+          {
+            cc_handled.set(cc_id);
+            cc_volume_ids[cc_id]=next_volume_id;
+          }
+        }
+        ++next_volume_id;
+        error_codes.push_back(VALID_VOLUME);
+        FIRST_LEVEL = 1;
+      }
+    }
+
+  // apply volume classification using level 0 nesting
+    for(std::size_t cc_id=0; (!cc_handled.all()) && cc_id<nb_cc; ++cc_id)
+    {
+      if (cc_handled.test(cc_id)) continue;
+      CGAL_assertion( nesting_levels[cc_id]!=0 || ignore_orientation_of_cc || is_cc_outward_oriented[cc_id] );
+      if( nesting_levels[cc_id]%2 != FIRST_LEVEL ) continue; // we look for outer boundaries of volume only
+      cc_handled.set(cc_id);
+      cc_volume_ids[cc_id] = next_volume_id++;
+
+      //if the CC is involved in a self-intersection all nested CC are put in a separate volumes
+      if (is_involved_in_self_intersection[cc_id])
+      {
+        error_codes.push_back(VOLUME_INTERSECTION);
+        for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
+        {
+          cc_handled.set(ncc_id);
+          cc_volume_ids[ncc_id] = next_volume_id++;
+          error_codes.push_back(VOLUME_INTERSECTION);
+        }
+        continue;
+      }
+      else
+      {
+        if (!ignore_orientation_of_cc && !is_cc_outward_oriented[cc_id])
+        {
+          // invalid orientation, all children are marked as incorrectly oriented
+          if (used_as_a_predicate) return 0;
+          cc_handled.set(cc_id);
+          cc_volume_ids[cc_id] = next_volume_id++;
+          error_codes.push_back(INCOMPATIBLE_ORIENTATION);
+          for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
+          {
+            cc_handled.set(ncc_id);
+            cc_volume_ids[ncc_id] = next_volume_id++;
+            error_codes.push_back(INCOMPATIBLE_ORIENTATION);
+          }
+          continue;
+        }
+        else
+          error_codes.push_back(VALID_VOLUME);
+      }
+
+      for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
+      {
+        if (nesting_levels[ncc_id]==nesting_levels[cc_id]+1)
+        {
+          cc_handled.set(ncc_id);
+          if (!ignore_orientation_of_cc)
+          {
+            if (is_cc_outward_oriented[cc_id]==is_cc_outward_oriented[ncc_id])
+            {
+              // the surface component has an incorrect orientation wrt to its parent:
+              // we dump it and all included surface components as independant volumes.
+              cc_volume_ids[ncc_id] = next_volume_id++;
+              error_codes.push_back(INCOMPATIBLE_ORIENTATION);
+              if (used_as_a_predicate) return 0;
+              for(std::size_t nncc_id : nested_cc_per_cc[ncc_id])
+              {
+                cc_handled.set(nncc_id);
+                cc_volume_ids[nncc_id] = next_volume_id++;
+                error_codes.push_back(INCOMPATIBLE_ORIENTATION);
+              }
+              continue;
+            }
+          }
+          if (is_involved_in_self_intersection[ncc_id])
+          {
+            cc_volume_ids[ncc_id] = next_volume_id++;
+            error_codes.push_back(VOLUME_INTERSECTION);
+            for(std::size_t nncc_id : nested_cc_per_cc[ncc_id])
+            {
+              if (cc_handled.test(nncc_id))
+              {
+                error_codes[ cc_volume_ids[nncc_id] ] = VOLUME_INTERSECTION;
+                continue;
+              }
+              cc_handled.set(nncc_id);
+              cc_volume_ids[nncc_id] = next_volume_id++;
+              error_codes.push_back(VOLUME_INTERSECTION);
+            }
+            continue;
+          }
+          cc_volume_ids[ncc_id] = cc_volume_ids[cc_id];
+        }
+      }
+    }
+    if (used_as_a_predicate)
+    {
+      internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+      return 1;
+    }
+
+  // merge nested_cc_per_cc and nested_cc_per_cc_shared
+  // (done after the volume creation to assign a CC to a unique volume)
+    for(std::size_t id=0; id<nb_cc; ++id)
+    {
+      if (!nested_cc_per_cc_shared[id].empty())
+        nested_cc_per_cc[id].insert(nested_cc_per_cc[id].end(),
+                                    nested_cc_per_cc_shared[id].begin(),
+                                    nested_cc_per_cc_shared[id].end());
+    }
+
+
+  // extract direct nested parent (more than one in case of self-intersection)
+    for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+    {
+      for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
+      {
+        if (nesting_levels[cc_id]+1 == nesting_levels[ncc_id])
+          nesting_parents[ncc_id].push_back(cc_id);
+      }
+    }
+
+  // update volume id map
+    for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
+    {
+      for(face_descriptor fd : faces_per_cc[cc_id])
+        put(volume_id_map, fd, cc_volume_ids[cc_id]);
+    }
+  }
+  else
+  {
+    for(face_descriptor fd : faces(tm))
+    {
+      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
+      put(volume_id_map, fd, cc_volume_ids[cc_id]);
+    }
+  }
+
+  CGAL_assertion(next_volume_id == error_codes.size());
+  internal::copy_container_content(error_codes, parameters::get_parameter(np, internal_np::error_codes));
+  internal::copy_nested_parents(nesting_parents, parameters::get_parameter(np, internal_np::volume_inclusions));
+  internal::copy_container_content(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
+  internal::copy_container_content(cc_volume_ids, parameters::get_parameter(np, internal_np::connected_component_id_to_volume_id));
+  internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
+  internal::set_cc_intersecting_pairs(self_intersecting_cc, parameters::get_parameter(np, internal_np::intersecting_volume_pairs_output_iterator));
+
+  return next_volume_id;
+}
+
+/** \ingroup PMP_orientation_grp
+ *
+ * indicates if `tm` bounds a volume.
+ * See \ref coref_def_subsec for details.
+ *
+ * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * @param tm a closed triangulated surface mesh
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * @pre `CGAL::is_closed(tm)`
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing the index of each face of `tm`.
+ *   \cgalParamEnd
+ *   \cgalParamBegin{is_cc_outward_oriented}
+ *     a `reference_wrapper` (either from `boost` or the standard library) containing
+ *     a reference to an object of type `std::vector<bool>`.
+ *     The size of the vector is exactly the number of connected components.
+ *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
+ *     called on the submesh corresponding to this connected component
+ *     is the value at the position `ccid` in the parameter vector.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
+ */
+template <class TriangleMesh, class NamedParameters>
+bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor face_descriptor;
+
+  CGAL_precondition(is_closed(tm));
+  CGAL_precondition(is_triangle_mesh(tm));
+
+  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  std::size_t res =
+    volume_connected_components(tm, vidmap, np.do_orientation_tests(true)
+                                              .i_used_as_a_predicate(true));
+  CGAL_assertion(res==0 || res==1);
+
+  return res!=0;
+}
+
+/// \cond SKIP_IN_MANUAL
+template <class TriangleMesh>
+bool does_bound_a_volume(const TriangleMesh& tm)
+{
+  return does_bound_a_volume(tm, parameters::all_default());
+}
+
+template <class TriangleMesh, class VolumeFaceIndexMap>
+std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexMap volume_id_map)
+{
+  return volume_connected_components(tm, volume_id_map, parameters::all_default());
+}
+/// \endcond
+
 
 /** \ingroup PMP_orientation_grp
  *
@@ -542,6 +1248,8 @@ void orient(TriangleMesh& tm)
  *
  * @param tm a closed triangulated surface mesh
  * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ *
+ * @pre `CGAL::is_closed(tm)`
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
@@ -566,16 +1274,13 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
                               const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
-  typedef typename Graph_traits::vertex_descriptor                                 vertex_descriptor;
+  typedef typename Graph_traits::face_descriptor                                   face_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type                         Point;
-  typedef typename Kernel_traits<Point>::Kernel                                    Kernel;
-
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
-  if (!is_closed(tm)) return;
-  if (!is_triangle_mesh(tm)) return;
+  CGAL_assertion(is_closed(tm));
+  CGAL_assertion(is_triangle_mesh(tm));
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -588,56 +1293,250 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
+  std::vector<std::size_t> nesting_levels;
+  std::vector<bool> is_cc_outward_oriented;
+  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
 
+  volume_connected_components(tm, vidmap,
+                              parameters::vertex_point_map(vpm)
+                                          .nesting_levels(boost::ref(nesting_levels))
+                                          .face_connected_component_map(bind_property_maps(fid_map,make_property_map(face_cc)))
+                                          .i_used_for_volume_orientation(true)
+                                          .do_orientation_tests(true)
+                                          .is_cc_outward_oriented(boost::ref(is_cc_outward_oriented))
+                                          );
 
   // set the connected component id of each face
-  std::size_t nb_cc = connected_components(tm,
-                                           bind_property_maps(fid_map,make_property_map(face_cc)),
-                                           parameters::face_index_map(fid_map));
 
-  if (nb_cc == 1)
+
+  if (nesting_levels.empty()) //case 1 cc
   {
-    if( orient_outward != is_outward_oriented(tm))
+    if( orient_outward != is_cc_outward_oriented[0])
       reverse_face_orientations(faces(tm), tm);
     return ;
   }
-
-
-  boost::dynamic_bitset<> cc_handled(nb_cc, 0);
-
-  // extract a vertex with max z coordinate for each connected component
-  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
-  for(vertex_descriptor vd : vertices(tm))
+  std::size_t nb_cc = nesting_levels.size();
+  boost::dynamic_bitset<> cc_to_reverse(nb_cc, 0);
+  for(std::size_t i=0; i<nb_cc; ++i)
   {
-    std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
-    if (xtrm_vertices[cc_id]==Graph_traits::null_vertex())
-      xtrm_vertices[cc_id]=vd;
-    else
-      if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
-        xtrm_vertices[cc_id]=vd;
+    if ( ((nesting_levels[i]%2==0) == orient_outward) != is_cc_outward_oriented[i] )
+    {
+      cc_to_reverse.set(i);
+    }
   }
 
-  //extract a vertex with max z amongst all components
-  std::size_t xtrm_cc_id=0;
-  for(std::size_t id=1; id<nb_cc; ++id)
-    if (get(vpm, xtrm_vertices[id]).z()>get(vpm,xtrm_vertices[xtrm_cc_id]).z())
-      xtrm_cc_id=id;
+  std::vector<face_descriptor> faces_to_reverse;
+  for (face_descriptor f : faces(tm))
+    if ( cc_to_reverse.test( face_cc[get(fid_map, f)] ) )
+      faces_to_reverse.push_back(f);
 
-  bool is_parent_outward_oriented =
-      ! orient_outward;
-
-  internal::recursive_orient_volume_ccs<Kernel>(tm, vpm, fid_map,
-                                                xtrm_vertices,
-                                                cc_handled,
-                                                face_cc,
-                                                xtrm_cc_id,
-                                                is_parent_outward_oriented);
+  reverse_face_orientations(faces_to_reverse, tm);
 }
 
 template <class TriangleMesh>
 void orient_to_bound_a_volume(TriangleMesh& tm)
 {
   orient_to_bound_a_volume(tm, parameters::all_default());
+}
+
+/*!
+ * \ingroup PMP_orientation_grp
+ * reverses the connected components of `tm` having compatible boundary cycles
+ * that could be merged if their orientation were made compatible, and stitches them.
+ * Connected components are examined by increasing number of faces.
+ *
+ * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ *
+ * @param pm a surface mesh
+ * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `pm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing an index for each face initialized from 0 to num_faces(pm).
+ *   \cgalParamEnd
+ *   \cgalParamBegin{maximum_number_of_faces}
+ *     if not 0 (default), a connected component is considered reversible only
+ *     if it has no more faces than the value given. Otherwise, it is always considered reversible.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+ */
+template <class PolygonMesh, class NamedParameters>
+void merge_reversible_connected_components(PolygonMesh& pm,
+                                           const NamedParameters& np)
+{
+  typedef boost::graph_traits<PolygonMesh> GrT;
+  typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename GrT::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
+
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(vertex_point, pm));
+
+  typedef std::size_t F_cc_id;
+  typedef std::size_t B_cc_id;
+
+
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type Fidmap;
+  Fidmap fim = CGAL::get_initialized_face_index_map(pm, np);
+
+  typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
+  F_cc_id nb_cc = connected_components(pm, f_cc_ids, parameters::face_index_map(fim));
+
+  std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
+  for (face_descriptor f : faces(pm))
+    nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
+
+  std::map< std::pair<Point_3, Point_3>, std::vector<halfedge_descriptor> > border_hedges_map;
+  std::vector<halfedge_descriptor> border_hedges;
+  typedef typename boost::property_map<PolygonMesh, dynamic_halfedge_property_t<B_cc_id> >::type H_to_bcc_id;
+  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_cc_id>(), pm);
+  const B_cc_id base_value(-1);
+  const B_cc_id FILTERED_OUT(-2);
+
+  // collect border halfedges
+  for (halfedge_descriptor h : halfedges(pm))
+    if ( is_border(h, pm) )
+    {
+      put(h_bcc_ids, h, base_value);
+      border_hedges.push_back(h);
+    }
+
+  // compute the border cc id of all halfedges and mark those duplicated in their own cycle
+  B_cc_id bcc_id=0;
+  for (halfedge_descriptor h : border_hedges)
+  {
+    if (get(h_bcc_ids,h) == base_value)
+    {
+      typedef std::map< std::pair<Point_3, Point_3>, halfedge_descriptor> Hmap;
+      Hmap hmap;
+      for (halfedge_descriptor hh : halfedges_around_face(h, pm))
+      {
+        std::pair< typename Hmap::iterator, bool > insert_res =
+            hmap.insert(
+              std::make_pair(
+                make_sorted_pair(get(vpm, source(hh, pm)),
+                                 get(vpm, target(hh,pm))), hh) );
+        if (insert_res.second)
+          put(h_bcc_ids, hh, bcc_id);
+        else
+        {
+          put(h_bcc_ids, hh, FILTERED_OUT);
+          put(h_bcc_ids, insert_res.first->second, FILTERED_OUT);
+        }
+      }
+      ++bcc_id;
+    }
+  }
+
+  // fill endpoints -> hedges
+  for (halfedge_descriptor h : border_hedges)
+  {
+    if ( get(h_bcc_ids, h) != FILTERED_OUT)
+      border_hedges_map[std::make_pair(get(vpm, source(h, pm)), get(vpm, target(h, pm)))].push_back(h);
+  }
+
+  // max nb of faces for a CC to be reversed
+  const std::size_t threshold =
+    parameters::choose_parameter( parameters::get_parameter(np, internal_np::maximum_number_of_faces), 0);
+
+  std::vector<bool> border_cycle_to_ignore(bcc_id, false);
+  std::vector<F_cc_id> cycle_f_cc_id(bcc_id);
+  std::vector< std::vector<F_cc_id> > patch_neighbors(nb_cc);
+
+  for (const auto& p : border_hedges_map)
+  {
+    const std::vector<halfedge_descriptor>& hedges = p.second;
+    switch(hedges.size())
+    {
+      case 1:
+        // isolated border hedge nothing to do
+      break;
+      case 2:
+      {
+        F_cc_id cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], pm), pm)),
+                cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], pm), pm));
+
+        if (cc_id_0!=cc_id_1)
+        {
+          cycle_f_cc_id[ get(h_bcc_ids, hedges[0]) ] = cc_id_0;
+          cycle_f_cc_id[ get(h_bcc_ids, hedges[1]) ] = cc_id_1;
+          // WARNING: we might have duplicates here but it is not important for our usage
+          patch_neighbors[cc_id_0].push_back(cc_id_1);
+          patch_neighbors[cc_id_1].push_back(cc_id_0);
+          break;
+        }
+        CGAL_FALLTHROUGH;
+      }
+      default:
+        for (halfedge_descriptor h : hedges)
+          border_cycle_to_ignore[get(h_bcc_ids, h)]=true;
+    }
+  }
+
+  // sort the connected components with potential matches using their number
+  // of faces (sorted by decreasing number of faces)
+  std::set<F_cc_id> ccs_to_reverse;
+  std::vector<bool> reversible(nb_cc, false);
+  std::set< F_cc_id, std::function<bool(F_cc_id,F_cc_id)> > queue(
+    [&nb_faces_per_cc](F_cc_id i, F_cc_id j)
+    {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
+  );
+
+  for (B_cc_id i=0; i<bcc_id; ++i)
+  {
+    if ( !border_cycle_to_ignore[i] )
+    {
+      reversible[ cycle_f_cc_id[i] ] = true;
+      queue.insert(cycle_f_cc_id[i]);
+    }
+  }
+
+  // consider largest CC selected and reverse the neighbor patches if
+  // not already reversed or not marked as reversible
+  while( !queue.empty() )
+  {
+    F_cc_id f_cc_id = *queue.begin();
+    queue.erase( queue.begin() );
+    CGAL_assertion( reversible[f_cc_id] );
+    for (F_cc_id id : patch_neighbors[f_cc_id])
+    {
+      if (reversible[id] && (threshold==0 || threshold >= nb_faces_per_cc[id]))
+      {
+        CGAL_assertion( nb_faces_per_cc[f_cc_id] >= nb_faces_per_cc[id] );
+        ccs_to_reverse.insert(id);
+        reversible[id]=false;
+        queue.erase(id);
+      }
+    }
+  }
+
+  // reverse ccs and stitches boundaries
+  std::vector<face_descriptor> faces_to_reverse;
+  for (face_descriptor f : faces(pm))
+    if ( ccs_to_reverse.count( get(f_cc_ids, f) ) != 0 )
+      faces_to_reverse.push_back(f);
+
+  if ( !faces_to_reverse.empty() )
+  {
+    reverse_face_orientations(faces_to_reverse, pm);
+    stitch_borders(pm, np);
+  }
+}
+
+template <class PolygonMesh>
+void merge_reversible_connected_components(PolygonMesh& pm)
+{
+  merge_reversible_connected_components(pm, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

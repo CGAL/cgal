@@ -53,8 +53,8 @@ namespace Barycentric_coordinates {
 \pre The provided polygon is strictly convex.
 
 */
- 
-template<class Traits> 
+
+template<class Traits>
     class Wachspress_2
 {
 
@@ -101,10 +101,10 @@ public:
     // Computation of Wachspress Basis Functions
 
     // This function computes Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon.
-    // \pre The provided polygon is strictly convex. 
+    // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -127,7 +127,7 @@ public:
     // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm, const bool warning_tag = true)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -177,7 +177,7 @@ private:
     // WEIGHTS.
 
     // Compute Wachspress weights without normalization.
-    template<class OutputIterator> 
+    template<class OutputIterator>
         boost::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
@@ -390,7 +390,7 @@ private:
             // Index of the last polygon's vertex.
             const int last = int(number_of_vertices) - 1;
 
-            // Test all the consequent triplets of the polygon's vertices on collinearity. 
+            // Test all the consequent triplets of the polygon's vertices on collinearity.
             // In case we find at least one, return WEAKLY_CONVEX polygon.
             if(collinear_2(vertex[last], vertex[0], vertex[1]))
                 return WEAKLY_CONVEX;

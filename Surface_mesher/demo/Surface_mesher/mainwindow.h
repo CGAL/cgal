@@ -32,7 +32,7 @@ private Q_SLOTS:
   void on_action_OpenDirectory_triggered();
   void on_action_Quit_triggered();
   void on_action_Clone_triggered();
-  
+
 private:
   void closeEvent(QCloseEvent *event);
   Surface* surface;

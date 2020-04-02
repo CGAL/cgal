@@ -104,7 +104,7 @@ class Gmpfi:
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(mp_prec_t, Gmpfi_default_precision, CGAL_GMPFI_DEFAULT_PRECISION);
     return Gmpfi_default_precision;
   }
-        
+
 
         bool is_unique(){
 #ifdef CGAL_GMPFR_NO_REFCOUNT

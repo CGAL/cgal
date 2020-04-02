@@ -598,8 +598,16 @@ outside of the domain bounded by the input polygon mesh.
 of halfedges around faces.
 As a consequence, the normal computed for each face (see Section
 \ref PMPNormalComp) is also reversed.
-
-\subsection PolygonSoupExample Orientation Example
+- The function `CGAL::Polygon_mesh_processing::volume_connected_components()` provides information about
+the 3D arrangement of the surface connected components in a given triangle mesh. It comes with many
+named parameter options making it also a more general version of `is_outward_oriented()`.
+- The function `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`
+duplicates points and edges to make a soup orientable, without changing the orientation of the faces.
+- The function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
+takes an input mesh as a reference and orients the triangles of a soup according to it.
+- The function `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
+merges the connected components of a polygon mesh if possible.
+\subsection PolygonSoupExample Orientation Examples
 
 This example shows how to generate a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -609,6 +617,11 @@ polygon mesh to illustrate
 Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
+
+This example shows how to correctly repair and orient a soup to get a mesh from a reference :
+
+\cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
+
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing
@@ -790,6 +803,10 @@ enable the user to keep and remove only a selection of connected components,
 provided either as a range of faces that belong to the desired connected components
 or as a range of connected component ids (one or more per connected component).
 
+When a triangle mesh has no boundary, it partitions the 3D space in different volumes.
+The function `CGAL::Polygon_mesh_processing::volume_connected_components()` can be used to assign to
+each face an id per volume defined by the surface connected components.
+
 Finally, it can be useful to quickly remove some connected components, for example for noisy data
 where small connected components should be discarded in favor of major connected components.
 The function `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
@@ -806,7 +823,6 @@ Also, the function `CGAL::Polygon_mesh_processing::split_connected_components()`
 enables the user to split the connected components of a polygon mesh in as many
 polygon meshes.
 
-
 \subsection CCExample Connected Components Example
 
 The first example shows how to record the connected
@@ -822,7 +838,6 @@ The second example shows how to use the class template `Face_filtered_graph`
 which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
-
 
 \section PMPDistance Approximate Hausdorff Distance
 

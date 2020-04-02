@@ -3,9 +3,9 @@ namespace CGAL {
 namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
-    
+
     The class `Path_on_surface` represents a walk in a mesh which is either a model of `CombinatorialMap`, a model of `GeneralizedMap` or a model of a `FaceGraph`. Each object of this class is constructed from an external mesh on which the path should lie. A path is represented as a sequence of darts or halfedges, each one representing an oriented edge in the path. The class `Path_on_surface` behaves as a container for this sequence of darts/halfedges. Elements are added in the path one at a time to the path thanks to the `push_back()` method.
-    
+
     \tparam Mesh a model of `CombinatorialMap`, `GeneralizedMap` or of `FaceGraph`
   */
   template<typename Mesh>
@@ -31,17 +31,17 @@ namespace Surface_mesh_topology {
 
     /// returns the length of the path, i.e. its number of edges.
     std::size_t length() const;
-      
+
     /// returns the ith dart of the path.
     /// @pre i<`length()`.
     halfedge_descriptor operator[] (std::size_t i) const;
 
     /// clears this path.
     void clear();
-    
+
     /// returns `true` iff `hd` can be added at the end of this path.
     bool can_be_pushed(halfedge_descriptor hd) const;
-  
+
     /// adds `hd` at the end of this path.
     /// @pre `can_be_pushed(hd)`
     void push_back(halfedge_descriptor hd);
@@ -62,11 +62,11 @@ namespace Surface_mesh_topology {
 
     /// adds the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the positive circular order. To extend with a positive 1 turn thus amounts to extend with the `next()` pointer. (A zero turn corresponds to the `opposite()` pointer.)
     /// @pre !`is_empty()`
-    void extend_positive_turn(std::size_t nb); 
+    void extend_positive_turn(std::size_t nb);
 
     /// adds the dart/halfedge obtained by turning `nb` times around the target vertex of the last dart/halfedge in this path, in the negative circular order. To extend with a negative 1 turn thus amounts to extend with the composite pointer: `opposite(prev(opposite()))`.
     /// @pre !`is_empty()`
-    void extend_negative_turn(std::size_t nb); 
+    void extend_negative_turn(std::size_t nb);
 
     /// returns `true` iff the dart/halfedge with label `l` can be added at the end of this path.
     /// @pre Mesh must be a model of `PolygonalSchema` concept.

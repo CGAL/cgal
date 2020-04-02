@@ -49,7 +49,7 @@ int main(int argc, const char** argv)
     return EXIT_FAILURE;
   }
   input.close();
-  
+
   std::cerr << "Computing registration transformation using OpenGR Super4PCS.." << std::endl;
   // First, compute registration transformation using OpenGR Super4PCS
   K::Aff_transformation_3 res =
@@ -66,7 +66,7 @@ int main(int argc, const char** argv)
   // by OpenGR as initial transformation, and apply the transformation to pwns2
   // bool converged =
     CGAL::pointmatcher::register_point_sets
-      (pwns1, pwns2, 
+      (pwns1, pwns2,
        params::point_map(Point_map()).normal_map(Normal_map()),
        params::point_map(Point_map()).normal_map(Normal_map())
        .transformation(res));

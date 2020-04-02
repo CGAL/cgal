@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull3Functions
 
-fills a polyhedron with the convex hull of a set of 3D points contained in a 3D triangulation of \cgal. 
+fills a polyhedron with the convex hull of a set of 3D points contained in a 3D triangulation of \cgal.
 
 The polyhedron `pm` is cleared and the convex hull of the set of 3D points is stored in `pm`.
 

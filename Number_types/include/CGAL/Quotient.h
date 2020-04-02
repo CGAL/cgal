@@ -1,9 +1,9 @@
-// Copyright (c) 1999-2007  
+// Copyright (c) 1999-2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -306,11 +306,11 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_double(NT)& r)
 {
-  //num += r * den; 
-  NT r_num, r_den; 
+  //num += r * den;
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num = num*r_den + r_num*den;
-  den *=r_den; 
+  den *=r_den;
   return *this;
 }
 
@@ -320,10 +320,10 @@ Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_double(NT)& r)
 {
   //num -= r * den;
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num =  num*r_den - r_num*den;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -333,11 +333,11 @@ Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_double(NT)& r)
 {
   // num *= r;
-  
-  NT r_num, r_den; 
+
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_num;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -347,10 +347,10 @@ Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_double(NT)& r)
 {
   CGAL_precondition( r != 0 );
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_den;
-  den *= r_num; 
+  den *= r_num;
   return *this;
 }
 
@@ -402,15 +402,15 @@ operator>>(std::istream& in, Quotient<NT>& r)
   if(!in) return in;
   std::istream::sentry s(in); // skip whitespace
   if(in.peek()!='/'){
-	  if(!in.good()){
-		  in.clear(std::ios_base::eofbit);
-		  // unlikely to be some other reason?
-	  }
+          if(!in.good()){
+                  in.clear(std::ios_base::eofbit);
+                  // unlikely to be some other reason?
+          }
   } else {
-	  char c;
-	  in.get(c); // remove the '/'
-	  in >> den;
-	  if(!in) return in;
+          char c;
+          in.get(c); // remove the '/'
+          in >> den;
+          if(!in) return in;
   }
   r=Quotient<NT>(num,den);
   return in;

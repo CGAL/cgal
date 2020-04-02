@@ -24,7 +24,7 @@ public Q_SLOTS:
   virtual void close() = 0;
   virtual void draw() = 0;
   virtual void get_bbox(float&, float&, float&,
-			float&, float&, float&) = 0;
+                        float&, float&, float&) = 0;
   virtual void drawWithNames() {};
   virtual void postSelection(const QPoint&) {};
 Q_SIGNALS:

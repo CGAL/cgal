@@ -15,14 +15,14 @@ typedef CGAL::Surface_mesh<Point_3>               Surface_mesh;
 int main(int argc, char* argv[])
 {
   std::ifstream in( (argc>1)? argv[1] : "data/cross.off");
-  
+
   Surface_mesh poly;
   if(!in || !(in >> poly))
   {
     std::cerr<<"Could not find a correct input file."<<std::endl;
     return 1;
   }
-  
+
   Surface_mesh chull;
   // compute convex hull
   auto np = CGAL::parameters::all_default();

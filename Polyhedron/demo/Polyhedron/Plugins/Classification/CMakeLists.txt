@@ -9,7 +9,7 @@ if(EIGEN3_FOUND)
     message(STATUS "NOTICE: Boost Serialization not found. Classification plugin won't be available.")
     set(Classification_dependencies_met FALSE)
   endif()
-  
+
   if (NOT Boost_IOSTREAMS_FOUND)
     message(STATUS "NOTICE: Boost IOStreams not found. Classification plugin won't be available.")
     set(Classification_dependencies_met FALSE)
@@ -20,7 +20,7 @@ if(EIGEN3_FOUND)
     message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
   endif()
 
-  find_package(TensorFlow QUIET) 
+  find_package(TensorFlow QUIET)
   if (NOT TensorFlow_FOUND)
     message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
   endif()
@@ -30,7 +30,7 @@ if(EIGEN3_FOUND)
     polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES} KEYWORDS Classification)
     target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
       scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_selection_item scene_color_ramp)
-    
+
     CGAL_target_use_Eigen(classification_plugin)
     CGAL_target_use_Boost_IOStreams(classification_plugin)
     CGAL_target_use_Boost_Serialization(classification_plugin)
@@ -43,7 +43,7 @@ if(EIGEN3_FOUND)
     if(TBB_FOUND)
       CGAL_target_use_TBB(classification_plugin)
     endif()
-    
+
     add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
   endif()
 

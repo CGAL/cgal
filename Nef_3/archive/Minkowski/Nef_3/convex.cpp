@@ -10,7 +10,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/convex_hull_3.h> 
+#include <CGAL/convex_hull_3.h>
 
 using namespace std;
 
@@ -21,13 +21,13 @@ typedef Polyhedron::Point_3                                   Point;
 
 void read( const char* name, Polyhedron& poly) {
     ifstream in( name);
-    if ( ! in) { 
+    if ( ! in) {
         cerr << "minkowsky_sum: error: cannot open file '"<< name
              << "' for reading." << endl;
         exit( 1);
     }
     in >> poly;
-    if ( ! in) { 
+    if ( ! in) {
         cerr << "minkowsky_sum: error: reading from file '"<< name << "'."
              << endl;
         exit( 1);
@@ -58,7 +58,7 @@ struct Add_points {
 int main( int argc, char **argv) {
     if ( argc != 3) {
         cerr << "Usage: " << argv[0] << " <infile1> <infile2>" << endl;
-        cerr << "       Minkowsky sum of two 3d polyhedra in OFF format." 
+        cerr << "       Minkowsky sum of two 3d polyhedra in OFF format."
              << endl;
         cerr << "       Output in OFF to stdout." << endl;
         exit(1);

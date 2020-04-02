@@ -49,11 +49,11 @@ int main(int argc,char** argv)
     std::cerr << "or     main Input.xyz Queries.xyz nb_neighbors_needed\n";
     exit(EXIT_FAILURE);
   }
-  
+
   int nb_input_point,k,nb_queries;
   std::vector<Point_3> points;
   std::vector<Point_3> queries;
-  
+
   if (argc==3){
     nb_input_point=atoi(argv[1]);
     k=atoi(argv[2]);
@@ -64,17 +64,17 @@ int main(int argc,char** argv)
     queries.push_back(Point_3(0,0,0));
   }
   else{
-    k=atoi(argv[3]);    
+    k=atoi(argv[3]);
     nb_input_point=read_points(argv[1],std::back_inserter(points));
     nb_queries=read_points(argv[2],std::back_inserter(queries));
   }
 
   std::cout << "Looking for " << k << " nearest neighbors amongst " << nb_input_point << " points, with "<< nb_queries <<" query points.\n";
-  
+
   std::random_shuffle(points.begin(),points.end());
-  
+
   double STANN_time=0,ANN_time=0,OK_time=0;
-  
+
   CGAL::Timer time;
 //Building trees
 //--STANN
@@ -90,8 +90,8 @@ int main(int argc,char** argv)
   ANNdistArray     dists;       // near neighbor distances
   ANNkd_tree*      kdTree;      // search structure
   dataPts = annAllocPts(nb_input_point, 3);      // allocate data points
- 
-  
+
+
   queryPt = annAllocPt(3);          // allocate query point
   nnIdx = new ANNidx[k];            // allocate near neigh indices
   dists = new ANNdist[k];            // allocate near neighbor dists
@@ -102,27 +102,27 @@ int main(int argc,char** argv)
      dataPts[i][2]=points[i][2];
   }
   time.start();
-  kdTree = new ANNkd_tree(dataPts,nb_input_point,3);  
+  kdTree = new ANNkd_tree(dataPts,nb_input_point,3);
   time.stop();
   double ANN_tree=time.time();
   time.reset();
-//--OK_search  
+//--OK_search
   time.start();
   Splitter splitter(10); //bucket size can be changed here
   OK_search::Tree ok_tree(points.begin(),points.end(),splitter);
   ok_tree.build();
   time.stop();
-  double OK_tree=time.time();  
+  double OK_tree=time.time();
   time.reset();
-  
+
 boost::progress_display show_progress( nb_queries );
-  
-//running NN algorithms  
+
+//running NN algorithms
   for (std::vector<Point_3>::const_iterator it=queries.begin();it!=queries.end();++it)
   {
     const Point_3& query=*it;
-    
-  //STANN  
+
+  //STANN
     CGAL::Timer time;
     std::vector<long unsigned int> answer;
     time.start();
@@ -134,7 +134,7 @@ boost::progress_display show_progress( nb_queries );
     queryPt[0]=query[0];
     queryPt[1]=query[1];
     queryPt[2]=query[2];
-    
+
     time.start();
     kdTree->annkSearch(            // search
                     queryPt,            // query point
@@ -160,32 +160,32 @@ boost::progress_display show_progress( nb_queries );
     //~ std::cout << "depth of tree " << stats.depth << "\n";
     //~ std::cout << "sum of leaf aspect ratios " << stats.sum_ar << "\n";
     //~ std::cout << "average leaf aspect ratio " << stats.avg_ar << "\n";
-    //~ std::cout << "==================\n";      
-    
+    //~ std::cout << "==================\n";
+
     //~ std::cout << "====ANN tree  ====\n";
     //~ kdTree->Print(ANNtrue,std::cout);
-    //~ std::cout << "==================\n";  
+    //~ std::cout << "==================\n";
 
   //Ortho-k-NN
     std::vector<std::pair<Point_3,double> > ok_result;
-    ok_result.reserve(k);    
+    ok_result.reserve(k);
     time.start();
     OK_search ok_search(ok_tree, query,k);
     time.stop();
     std::copy(ok_search.begin(),ok_search.end(),std::back_inserter(ok_result));
     OK_time+=time.time();
-    
+
     //~ std::cout << std::endl; ok_tree.statistics(std::cout); std::cout << std::endl;
-    
+
     //~ std::cout << "====CGAL tree ====\n";
     //~ ok_tree.print();
-    //~ std::cout << "==================\n";  
-    
+    //~ std::cout << "==================\n";
+
     for (int i = 0; i < k; i++) {      //check results are the same
       if ( nnIdx[i]!=answer[i] ){
         std::cerr << "STANN and ANN produced different results\n";
         exit(EXIT_FAILURE);
-      }      
+      }
       if ( ok_result[i].first!=points[answer[i]] ){
         std::cerr << "CGAL::OK_search and STANN (ANN) produced different results\n";
         exit(EXIT_FAILURE);
@@ -193,14 +193,14 @@ boost::progress_display show_progress( nb_queries );
     }
     ++show_progress;
   }
-  
+
   std::cout << "Time to build trees\n";
   std::cout << "STANN ANN OK_search\n";
   std::cout << STANN_tree << " " << ANN_tree << " " << OK_tree << "\n";
   std::cout << "Time spent for all queries\n";
-  std::cout << "STANN ANN OK_search\n";  
-  std::cout << STANN_time << " " << ANN_time << " " << OK_time << "\n";  
-  
+  std::cout << "STANN ANN OK_search\n";
+  std::cout << STANN_time << " " << ANN_time << " " << OK_time << "\n";
+
   delete [] nnIdx;              // clean things up
   delete [] dists;
   delete kdTree;
