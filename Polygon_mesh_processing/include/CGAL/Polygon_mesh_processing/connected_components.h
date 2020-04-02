@@ -967,14 +967,14 @@ void split_connected_components_impl(FIMap fim,
   {
     for(const auto& f : faces(tm))
     {
-      faces_size_type patch = get(pidmap, f);
-      if(patch > nb_patches)
-        nb_patches = patch;
+      faces_size_type patch_id = get(pidmap, f);
+      if(patch_id > nb_patches)
+        nb_patches = patch_id;
     }
     nb_patches+=1;
   }
 
-  for(std::size_t i=0; i<nb_patches; ++i)
+  for(faces_size_type i=0; i<nb_patches; ++i)
   {
     CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>
         filter_graph(tm, i, pidmap, CGAL::parameters::face_index_map(fim)
