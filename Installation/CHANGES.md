@@ -24,6 +24,8 @@ Release date: June 2020
 ### CGAL and the Boost Graph Library (BGL)
  -   Introduced the function `set_triangulation_ids(Triangulation& tr)` which must be used to initialize vertex,
      edge, and face indices of a triangulation meant to be used with BGL algorithms.
+ -   Added function `alpha_expansion_graphcut()` which regularizes a
+     multi-label partition over a user-defined graph.
 
 ### Polygon Mesh Processing
 
@@ -119,8 +121,7 @@ Release date: June 2020
 ### STL Extensions for CGAL
  -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
      if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
-     
-
+ 
 ### Convex_hull_3
 - A new overload for `convex_hull_3()` that takes a model of `VertexListGraph` has been added.
 
