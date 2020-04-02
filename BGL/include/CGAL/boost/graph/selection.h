@@ -507,7 +507,7 @@ regularize_face_selection_borders(
                        get_const_property_map(vertex_point, mesh));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Kernel;
-  
+
   bool prevent_unselection = choose_parameter(get_parameter(np, internal_np::prevent_unselection),
                                               false);
 
