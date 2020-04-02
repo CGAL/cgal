@@ -395,7 +395,6 @@ public Q_SLOTS:
       return;
 
     boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
-    std::size_t index = 0;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
       if(selection_item->selected_facets.find(fh)
