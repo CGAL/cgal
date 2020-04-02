@@ -496,7 +496,6 @@ regularize_face_selection_borders(
   typedef typename GT::face_descriptor mesh_face_descriptor;
   typedef typename GT::halfedge_descriptor mesh_halfedge_descriptor;
   typedef typename GT::edge_descriptor mesh_edge_descriptor;
-  typedef typename GT::vertex_descriptor mesh_vertex_descriptor;
 
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
   FaceIndexMap face_index_map = CGAL::get_initialized_face_index_map(mesh, np);
