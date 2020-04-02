@@ -1022,8 +1022,8 @@ It also calls the `is_valid` member function of the cell.
 When `verbose` is set to `true`, messages are printed to give
 a precise indication on the kind of invalidity encountered.
 \cgalDebugEnd
-*/ 
-bool is_valid(Cell_handle c, bool verbose = false) const; 
+*/
+bool is_valid(Cell_handle c, bool verbose = false) const;
 /// @}
 
 
@@ -1031,13 +1031,13 @@ bool is_valid(Cell_handle c, bool verbose = false) const;
 /// @{
 /*!
   \ingroup PkgIOTDS3
-Reads a combinatorial triangulation from `is` and assigns it to `tds` 
-*/ 
-istream& operator>> (istream& is, TriangulationDataStructure_3 & tds); 
+Reads a combinatorial triangulation from `is` and assigns it to `tds`
+*/
+istream& operator>> (istream& is, TriangulationDataStructure_3 & tds);
 
 /*! \ingroup PkgIOTDS3
 Writes `tds` into the stream `os`
-*/ 
+*/
 ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds);
 
 /*! \ingroup PkgIOTDS3

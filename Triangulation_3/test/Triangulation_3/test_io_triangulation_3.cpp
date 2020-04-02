@@ -19,12 +19,12 @@ struct Update_vertex
   typedef typename T1::Vertex                  V1;
   typedef typename T2::Vertex                  V2;
   typedef typename T2::Point                   Point;
-  
+
   V2 operator()(const V1&)
   {
     return V2();
   }
-  
+
   void operator()(const V1& v1, V2& v2)
   {
     CGAL::Cartesian_converter<K1, K2> c;
@@ -32,7 +32,7 @@ struct Update_vertex
   }
 }; // end struct Update_vertex
 
-struct Update_cell {   
+struct Update_cell {
   template <typename C1, typename C2>
   void operator()(const C1&, C2&) {}
 }; // end struct Update_cell
@@ -48,8 +48,8 @@ int main()
   std::ofstream out("tr");
   out << T1;
   out.close();
-  
-  Tr2 T2;    
+
+  Tr2 T2;
   std::ifstream in("tr");
   T2.file_input<Tr1,Update_vertex<Tr1, Tr2>, Update_cell>(in);
   in.close();
@@ -59,8 +59,8 @@ int main()
   assert(*(pit)++ == Tr2::Point(1,0,0));
   assert(*(pit)++ == Tr2::Point(0,1,0));
   assert(*(pit)++ == Tr2::Point(0,0,1));
-  
-  
+
+
   std::cout << "done" << std::endl;
   return 0;
 }

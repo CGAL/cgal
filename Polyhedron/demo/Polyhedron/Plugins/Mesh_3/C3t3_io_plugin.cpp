@@ -405,12 +405,12 @@ struct Update_vertex
   typedef typename Tr1::Vertex                  V1;
   typedef typename Tr2::Vertex                  V2;
   typedef typename Tr2::Point                   Point;
-  
+
   V2 operator()(const V1&)
   {
     return V2();
   }
-  
+
   bool operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
@@ -432,9 +432,9 @@ struct Update_vertex
 }; // end struct Update_vertex
 
 struct Update_cell {
-  
+
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-   
+
   template <typename C1, typename C2>
   bool operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(c1.subdomain_index());
@@ -472,9 +472,9 @@ struct Update_vertex_from_CDT_3 {
 }; // end struct Update_vertex
 
 struct Update_cell_from_CDT_3 {
-  
+
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-  
+
   template <typename C1,typename C2>
   void operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(1);

@@ -2196,9 +2196,9 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
   bool is_valid_finite(Cell_handle c, bool verbose = false, int level=0) const;
-  
+
   //IO
-  template <typename Tr_src, 
+  template <typename Tr_src,
             typename ConvertVertex,
             typename ConvertCell>
   std::istream& file_input(std::istream& is,
