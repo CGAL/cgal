@@ -7,7 +7,6 @@
 #include <cstdlib>
 
 using LCC_3          =CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
-using CST            =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
 using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 
 double cycle_length(const LCC_3& lcc, const Path_on_surface& cycle)
@@ -21,10 +20,10 @@ double cycle_length(const LCC_3& lcc, const Path_on_surface& cycle)
 
 void display_cycle_info(const LCC_3& lcc, const Path_on_surface& cycle)
 { // Display information about the given cycle.
-  if (cycle.is_empty()) { std::cout<<"empty."<<std::endl; return; }
-  std::cout<<"  Root: "<<lcc.point(cycle[0])<<"; "
-           <<"  Number of edges: "<<cycle.length()<<"; "
-           <<"  Length: "<<cycle_length(lcc, cycle)<<std::endl;
+  if (cycle.is_empty()) { std::cout<<"Empty."<<std::endl; return; }
+  std::cout<<"Root: "<<lcc.point(cycle[0])<<"; "
+           <<"Number of edges: "<<cycle.length()<<"; "
+           <<"Length: "<<cycle_length(lcc, cycle)<<std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -40,7 +39,7 @@ int main(int argc, char* argv[])
   }
   std::cout<<"File '"<<filename<<"' loaded. Finding shortest non contractible cycle..."<<std::endl;
 
-  CST cst(lcc);
+  CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3> cst(lcc);
   LCC_3::Dart_const_handle root=lcc.darts().begin(); // Fix one vertex of the mesh
 
   Path_on_surface cycle1=

@@ -6,8 +6,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/draw_face_graph_with_paths.h>
 
-using Kernel         =CGAL::Simple_cartesian<double>;
-using Mesh           =CGAL::Surface_mesh<Kernel::Point_3>;
+using Mesh           =CGAL::Surface_mesh<CGAL::Simple_cartesian<double>::Point_3>;
 using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
 
 double cycle_length(const Mesh& mesh, const Path_on_surface& cycle)
@@ -22,10 +21,10 @@ double cycle_length(const Mesh& mesh, const Path_on_surface& cycle)
 
 void display_cycle_info(const Mesh& mesh, const Path_on_surface& cycle)
 { // Display information about the given cycle.
-  if (cycle.is_empty()) { std::cout<<"empty."<<std::endl; return; }
-  std::cout<<"  Root: "<<mesh.point(mesh.vertex(mesh.edge(cycle[0]), 0))<<"; "
-           <<"  Number of edges: "<<cycle.length()<<"; "
-           <<"  Length: "<<cycle_length(mesh, cycle)<<std::endl;
+  if (cycle.is_empty()) { std::cout<<"Empty."<<std::endl; return; }
+  std::cout<<"Root: "<<mesh.point(mesh.vertex(mesh.edge(cycle[0]), 0))<<"; "
+           <<"Number of edges: "<<cycle.length()<<"; "
+           <<"Length: "<<cycle_length(mesh, cycle)<<std::endl;
 }
 
 int main(int argc, char* argv[])
