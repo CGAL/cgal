@@ -35,18 +35,18 @@ namespace CGAL {
 
 template < typename FT_, typename Dim_,
 #if 1
-	 typename Vec_=Mix_vector<Array_vector<FT_, Dim_>,
-				  Vector_vector<FT_, Dim_>,
-				  FT_, Dim_>,
+         typename Vec_=Mix_vector<Array_vector<FT_, Dim_>,
+                                  Vector_vector<FT_, Dim_>,
+                                  FT_, Dim_>,
 #elif 0
-	 typename Vec_=Array_vector<FT_, Dim_>,
+         typename Vec_=Array_vector<FT_, Dim_>,
 #elif 0
-	 typename Vec_=Vector_vector<FT_, Dim_>,
+         typename Vec_=Vector_vector<FT_, Dim_>,
 #else
-	 // Dangerous because of alignment. Ok on x86_64 without AVX.
-	 typename Vec_=LA_eigen<FT_, Dim_>,
+         // Dangerous because of alignment. Ok on x86_64 without AVX.
+         typename Vec_=LA_eigen<FT_, Dim_>,
 #endif
-	 typename LA_=LA_eigen<FT_,Dim_> >
+         typename LA_=LA_eigen<FT_,Dim_> >
   /* Default LA to Vec or to LA_eigen? */
 struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 {
@@ -88,78 +88,78 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       Iterator_list;
 
     template<class, class=void, class=boost::integral_constant<int,0> > struct Functor {
-	    typedef Null_functor type;
+            typedef Null_functor type;
     };
     template<class D> struct Functor<Construct_ttag<Vector_tag>,D> {
-	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Null_vector> type;
+            typedef CartesianDVectorBase::Construct_LA_vector<Self,Null_vector> type;
     };
     template<class D> struct Functor<Construct_ttag<Point_tag>,D> {
-	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Origin> type;
+            typedef CartesianDVectorBase::Construct_LA_vector<Self,Origin> type;
     };
     template<class D> struct Functor<Construct_ttag<Point_cartesian_const_iterator_tag>,D> {
-	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
+            typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
     template<class D> struct Functor<Construct_ttag<Vector_cartesian_const_iterator_tag>,D> {
-	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
+            typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
     template<class D> struct Functor<Sum_of_vectors_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Has_vector_plus_minus_tag>::value> > {
-	    typedef CartesianDVectorBase::Sum_of_vectors<Self> type;
+            typedef CartesianDVectorBase::Sum_of_vectors<Self> type;
     };
     template<class D> struct Functor<Difference_of_vectors_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Has_vector_plus_minus_tag>::value> > {
-	    typedef CartesianDVectorBase::Difference_of_vectors<Self> type;
+            typedef CartesianDVectorBase::Difference_of_vectors<Self> type;
     };
     template<class D> struct Functor<Opposite_vector_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Has_vector_plus_minus_tag>::value> > {
-	    typedef CartesianDVectorBase::Opposite_vector<Self> type;
+            typedef CartesianDVectorBase::Opposite_vector<Self> type;
     };
     template<class D> struct Functor<Midpoint_tag,D,
       boost::integral_constant<int,
-	   !LA_vector::template Property<Has_vector_plus_minus_tag>::value
-	|| !LA_vector::template Property<Has_vector_scalar_ops_tag>::value> > {
-	    typedef CartesianDVectorBase::Midpoint<Self> type;
+           !LA_vector::template Property<Has_vector_plus_minus_tag>::value
+        || !LA_vector::template Property<Has_vector_scalar_ops_tag>::value> > {
+            typedef CartesianDVectorBase::Midpoint<Self> type;
     };
     template<class D> struct Functor<Compute_point_cartesian_coordinate_tag,D> {
-	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
+            typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
     };
     template<class D> struct Functor<Compute_vector_cartesian_coordinate_tag,D> {
-	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
+            typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
     };
     template<class D> struct Functor<Point_dimension_tag,D> {
-	    typedef CartesianDVectorBase::PV_dimension<Self> type;
+            typedef CartesianDVectorBase::PV_dimension<Self> type;
     };
     template<class D> struct Functor<Vector_dimension_tag,D> {
-	    typedef CartesianDVectorBase::PV_dimension<Self> type;
+            typedef CartesianDVectorBase::PV_dimension<Self> type;
     };
     template<class D> struct Functor<Orientation_of_vectors_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Has_determinant_of_iterator_to_vectors_tag>::value> > {
-	    typedef CartesianDVectorBase::Orientation_of_vectors<Self> type;
+            typedef CartesianDVectorBase::Orientation_of_vectors<Self> type;
     };
     template<class D> struct Functor<Orientation_of_points_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Has_determinant_of_iterator_to_points_tag>::value> > {
-	    typedef CartesianDVectorBase::Orientation_of_points<Self> type;
+            typedef CartesianDVectorBase::Orientation_of_points<Self> type;
     };
     template<class D> struct Functor<Scalar_product_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Has_dot_product_tag>::value> > {
-	    typedef CartesianDVectorBase::Scalar_product<Self> type;
+            typedef CartesianDVectorBase::Scalar_product<Self> type;
     };
     template<class D> struct Functor<Squared_distance_to_origin_tag,D,
       boost::integral_constant<int,!LA_vector::template Property<Stores_squared_norm_tag>::value> > {
-	    typedef CartesianDVectorBase::Squared_distance_to_origin_stored<Self> type;
+            typedef CartesianDVectorBase::Squared_distance_to_origin_stored<Self> type;
     };
     // Use integral_constant<int,2> in case of failure, to distinguish from the previous one.
     template<class D> struct Functor<Squared_distance_to_origin_tag,D,
       boost::integral_constant<int,
-	(LA_vector::template Property<Stores_squared_norm_tag>::value
-	 || !LA_vector::template Property<Has_dot_product_tag>::value)*2> > {
-	    typedef CartesianDVectorBase::Squared_distance_to_origin_via_dotprod<Self> type;
+        (LA_vector::template Property<Stores_squared_norm_tag>::value
+         || !LA_vector::template Property<Has_dot_product_tag>::value)*2> > {
+            typedef CartesianDVectorBase::Squared_distance_to_origin_via_dotprod<Self> type;
     };
     template<class D> struct Functor<Point_to_vector_tag,D> {
-	    typedef CartesianDVectorBase::Identity_functor<Self> type;
+            typedef CartesianDVectorBase::Identity_functor<Self> type;
     };
     template<class D> struct Functor<Vector_to_point_tag,D> {
-	    typedef CartesianDVectorBase::Identity_functor<Self> type;
+            typedef CartesianDVectorBase::Identity_functor<Self> type;
     };
 
     constexpr Cartesian_LA_base_d(){}

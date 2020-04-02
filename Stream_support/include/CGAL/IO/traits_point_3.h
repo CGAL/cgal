@@ -43,12 +43,12 @@ struct access<CGAL::Point_3<K> , 0>
   {
     return CGAL::to_double(p.x());
   }
-  
+
   static void set(CGAL::Point_3<K> & p, typename K::FT c)
   {
     p = CGAL::Point_3<K> (c, p.y(), p.z());
   }
-  
+
 };
 
 template< typename K >
@@ -58,12 +58,12 @@ struct access<CGAL::Point_3<K> , 1>
   {
     return CGAL::to_double(p.y());
   }
-  
+
   static void set(CGAL::Point_3<K> & p, typename K::FT c)
   {
     p = CGAL::Point_3<K> (p.x(), c, p.z());
   }
-  
+
 };
 template< typename K >
 struct access<CGAL::Point_3<K> , 2>
@@ -72,12 +72,12 @@ struct access<CGAL::Point_3<K> , 2>
   {
     return CGAL::to_double(p.z());
   }
-  
+
   static void set(CGAL::Point_3<K> & p, typename K::FT c)
   {
     p = CGAL::Point_3<K> (p.x(), p.y(), c);
   }
-  
+
 };
 
 }}}//end namespaces

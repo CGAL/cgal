@@ -169,10 +169,10 @@ Scene_item::Bbox Scene_item_rendering_helper::bbox() const {
   return priv->_bbox;
 }
 
-bool Scene_item_rendering_helper::isInit(CGAL::Three::Viewer_interface* viewer)const 
-{ 
+bool Scene_item_rendering_helper::isInit(CGAL::Three::Viewer_interface* viewer)const
+{
   if(priv->isinit.find(viewer) != priv->isinit.end())
-    return priv->isinit[viewer]; 
+    return priv->isinit[viewer];
   return false;
 }
 

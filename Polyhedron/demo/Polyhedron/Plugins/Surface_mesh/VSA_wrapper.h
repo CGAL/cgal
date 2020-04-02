@@ -138,7 +138,7 @@ public:
     // generate proxy colors
     m_proxy_colors.clear();
     m_proxy_colors.reserve(number_of_proxies());
-    
+
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
       m_proxy_colors.push_back(generate_random_color());
     }

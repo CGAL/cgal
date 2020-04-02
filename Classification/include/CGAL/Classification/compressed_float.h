@@ -39,7 +39,7 @@ typedef unsigned short compressed_float;
 #  else // Default = compress with unsigned char
 typedef unsigned char compressed_float;
 #  endif
- 
+
 inline compressed_float compress_float (const float& f, const float& min = 0.f, const float& max = 1.f)
 {
   return static_cast<compressed_float>
@@ -50,7 +50,7 @@ inline float decompress_float (const compressed_float& t, const float& min = 0.f
 {
   return ((max - min) * (t / float(std::numeric_limits<compressed_float>::max())) + min);
 }
-  
+
 #endif
 
 

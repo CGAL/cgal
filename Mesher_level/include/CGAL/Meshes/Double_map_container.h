@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -27,7 +27,7 @@ namespace CGAL {
   namespace Meshes {
 
     template <typename Elt, class Quality>
-    class Double_map_container 
+    class Double_map_container
     {
     public:
       typedef Elt Element;
@@ -46,8 +46,8 @@ namespace CGAL {
       {
         CGAL_assertion(!m.empty());
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-	std::cerr << "get_next_element_impl(" << &*(m.front()->second)
-		  << ")\n";
+        std::cerr << "get_next_element_impl(" << &*(m.front()->second)
+                  << ")\n";
 #endif
         return m.front()->second;
 
@@ -56,7 +56,7 @@ namespace CGAL {
       void add_bad_element(const Element& e, const Quality& q)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-	std::cerr << "add_bad_element(" << &*e << ")\n";
+        std::cerr << "add_bad_element(" << &*e << ")\n";
 #endif
         m.insert(e, q);
       }
@@ -69,7 +69,7 @@ namespace CGAL {
       void remove_element(const Element& e)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-	std::cerr << "remove_element(" << &*e << ")\n";
+        std::cerr << "remove_element(" << &*e << ")\n";
 #endif
         m.erase(e);
       }
@@ -77,10 +77,10 @@ namespace CGAL {
       typename Double_map<Element, Quality>::size_type
       size() const
       {
-	return m.size();
+        return m.size();
       }
     }; // end Double_map_container
-    
+
   } // end namespace Meshes
 } // end namespace CGAL
 

@@ -50,7 +50,7 @@ auto field = [](const Point& p, const int, const Mesh_domain::Index)
 #else
 struct Field {
   typedef ::FT FT;
-  
+
   FT operator()(const Point& p, const int, const Mesh_domain::Index) const {
     if(p.z() > 2) return 0.025;
     if(p.z() < -3) return 0.01;
@@ -67,8 +67,8 @@ int main()
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.5,
-			 facet_distance=field);
-  
+                         facet_distance=field);
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 

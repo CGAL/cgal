@@ -179,7 +179,7 @@ public:
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }
-  
+
   /// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
   /// provided in `factor()`.
   /// \return `true` if the solver is successful and `false` otherwise.

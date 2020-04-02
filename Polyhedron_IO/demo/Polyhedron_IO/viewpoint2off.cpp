@@ -85,9 +85,9 @@ int main( int argc, char **argv) {
         else if ( n < 3 ) {
             filename[n ++] = argv[i];
         } else {
-	    ++n;
+            ++n;
             break;
-	}
+        }
     }
     if ((n < 1) || (n > 3) || help) {
         if ( ! help)

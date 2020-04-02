@@ -16,7 +16,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -27,7 +27,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -38,8 +38,6 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 if(NOT EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.2 (or greater) is not found.")
-else()
-  include( ${EIGEN3_USE_FILE} )
 endif(NOT EIGEN3_FOUND)
 
 
@@ -47,5 +45,7 @@ endif(NOT EIGEN3_FOUND)
 # ##########################################################
 
 create_single_source_cgal_program( "solver_benchmark.cpp" )
+CGAL_target_use_Eigen(solver_benchmark)
 create_single_source_cgal_program( "mcf_scale_invariance.cpp" )
+CGAL_target_use_Eigen(mcf_scale_invariance)
 

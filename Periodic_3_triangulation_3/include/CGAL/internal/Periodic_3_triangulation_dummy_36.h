@@ -16,7 +16,7 @@ template < class GT, class TDS >
 inline std::vector<typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle >
 Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
 
-    
+
 static const unsigned V[216][4] = {
   { 3, 9, 4, 12 },
   { 28, 8, 3, 6 },
@@ -236,7 +236,7 @@ static const unsigned V[216][4] = {
   { 35, 0, 34, 32 }
 };
 
-  
+
 static const unsigned N[216][4] = {
    { 48, 7, 76, 55 },
    { 69, 118, 79, 149 },
@@ -674,7 +674,7 @@ static const int O[216][4] = {
   { 0,5,5,4 },
   { 6,7,2,4 }
 };
- 
+
   clear();
 
   Vertex_handle vertices[36];

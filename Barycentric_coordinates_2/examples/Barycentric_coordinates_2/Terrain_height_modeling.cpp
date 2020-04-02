@@ -70,7 +70,7 @@ int main()
 
     // Mesh this polygon.
 
-    // Create a constrained Delaunay triangulation.  
+    // Create a constrained Delaunay triangulation.
     CDT cdt;
 
     std::vector<Vertex_handle> vertex_handle(number_of_vertices);
@@ -114,7 +114,7 @@ int main()
         const Point &point = vertex_iterator->point();
         mean_value_coordinates(point, std::back_inserter(coordinates));
 
-        for(int j = 0; j < number_of_vertices; ++j) 
+        for(int j = 0; j < number_of_vertices; ++j)
             point_coordinates[j] = std::make_pair(vertices[j], coordinates[j]);
 
         Scalar f = CGAL::linear_interpolation(point_coordinates.begin(), point_coordinates.end(), Scalar(1), Value_access(point_function_value));

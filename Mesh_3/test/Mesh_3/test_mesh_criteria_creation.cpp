@@ -3,7 +3,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 
-// Domain 
+// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
@@ -27,13 +27,13 @@ int main()
   Tr::Point p2(1,0,0);
   Tr::Point p3(0,1,0);
   Tr::Point p4(0,0,1);
-  
+
   Tr tr;
   tr.insert(p1);
   tr.insert(p2);
   tr.insert(p3);
   tr.insert(p4);
-  
+
   Tr::Cell_handle ch = tr.finite_cells_begin();
   int k = 0;
   Tr::Facet f = std::make_pair(ch,k);
@@ -42,11 +42,11 @@ int main()
   Tr::Cell::Surface_patch_index surf_index_bis = 21;
   Tr::Vertex::Index index (surf_index);
   Tr::Vertex::Index index_bis(surf_index_bis);
-  
+
   // Init cell
   tr.dual(ch);
   ch->set_subdomain_index(sub_index);
-  
+
   // Init facet
   Tr::Bare_point facet_circum =
     tr.geom_traits().construct_weighted_circumcenter_3_object()(
@@ -55,18 +55,18 @@ int main()
   ch->set_surface_patch_index(k,surf_index);
   ch->set_facet_surface_center(k,facet_circum);
   ch->set_facet_surface_center_index(k,index);
-  
+
   // Init vertices
   ch->vertex(0)->set_dimension(2);
   ch->vertex(1)->set_dimension(2);
   ch->vertex(2)->set_dimension(2);
   ch->vertex(3)->set_dimension(2);
-  
+
   ch->vertex(0)->set_index(index);
   ch->vertex(1)->set_index(index);
   ch->vertex(2)->set_index(index_bis);
   ch->vertex(3)->set_index(index_bis);
-  
+
   // -----------------------------------
   // Test edge criteria
   // -----------------------------------
@@ -74,29 +74,29 @@ int main()
 
   Mc ec1(edge_size = 1);
   assert( ec1.edge_criteria_object().sizing_field(bp1,1,index) == 1 );
-  
+
   Mc ec2(edge_sizing_field = Esf(2));
   assert( ec2.edge_criteria_object().sizing_field(bp1,1,index) == 2 );
 
   Mc ec3(edge_sizing_field = 3.);
   assert( ec3.edge_criteria_object().sizing_field(bp1,1,index) == 3 );
-  
+
   Mc ec4(edge_size = 4.1,
          edge_sizing_field = Esf(4.2));
   assert( ec4.edge_criteria_object().sizing_field(bp1,1,index) == 4.1 );
-  
+
   Mc ec5(sizing_field = 5.);
   assert( ec5.edge_criteria_object().sizing_field(bp1,1,index) == 5 );
-  
+
   Mc ec6(sizing_field = 6.1,
          edge_sizing_field = 6.2);
   assert( ec6.edge_criteria_object().sizing_field(bp1,1,index) == 6.2 );
-  
+
   Mc ec7(sizing_field = 7.1,
          edge_size = 7.2);
   assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 7.2 );
-  
-  
+
+
   // -----------------------------------
   // Test facet criteria
   // -----------------------------------
@@ -143,19 +143,19 @@ int main()
           facet_size = 10.3,
           facet_sizing_field = Fsf(10.4),
           sizing_field = 10.5);
-  
+
   // Test construction from int
   Mc fc11(facet_size = 11);
   Mc fc12(facet_sizing_field = 12);
   Mc fc13(sizing_field = 13);
-  
+
   // Test topological criterion creation
   Mc fc14(facet_topology = CGAL::FACET_VERTICES_ON_SURFACE);
   assert( ! fc14.facet_criteria_object()(tr, f) );
-  
+
   Mc fc15(facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
   assert( fc15.facet_criteria_object()(tr, f) );
-  
+
   // -----------------------------------
   // Test cell criteria
   // -----------------------------------
@@ -179,7 +179,7 @@ int main()
   Mc cc4(cell_sizing_field = cell_size_nok,
          cell_size = cell_size_ok);
   assert( ! cc4.cell_criteria_object()(tr, ch) );
-  
+
   Mc cc5(sizing_field = cell_size_ok);
   assert( ! cc5.cell_criteria_object()(tr, ch) );
 
@@ -199,7 +199,7 @@ int main()
           cell_size = 10.2,
           cell_sizing_field = Csf(10.3),
           sizing_field = 10.4);
-  
+
   // Test construction from int
   Mc cc11(cell_size = 11);
   Mc cc12(cell_sizing_field = 12);

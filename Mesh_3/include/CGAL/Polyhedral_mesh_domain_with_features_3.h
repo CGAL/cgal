@@ -306,7 +306,7 @@ void dump_graph_edges(std::ostream& out, const Graph& g)
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   out.precision(17);
-  for(edge_descriptor e : edges(g))
+  for(edge_descriptor e : make_range(edges(g)))
   {
     vertex_descriptor s = source(e, g);
     vertex_descriptor t = target(e, g);
@@ -348,9 +348,6 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
 
-    using Mesh_3::internal::Get_face_index_pmap;
-    Get_face_index_pmap<Polyhedron> get_face_index_pmap(p);
-
     PIDMap pid_map = get(face_patch_id_t<Tag_>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     EIFMap eif_map = get(CGAL::edge_is_feature, p);
@@ -360,8 +357,8 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
       , eif_map
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(get_face_index_pmap(p))
-      .vertex_incident_patches_map(vip_map));
+                        .face_index_map(get_initialized_face_index_map(p))
+                        .vertex_incident_patches_map(vip_map));
 
     Mesh_3::internal::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
@@ -403,7 +400,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   this->add_features_with_context(polylines.begin(),
                                   polylines.end());
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {//DEBUG
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
@@ -416,7 +413,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
     }
     og.close();
   }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 2
 
 }
 
@@ -475,7 +472,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {// DEBUG
     dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }

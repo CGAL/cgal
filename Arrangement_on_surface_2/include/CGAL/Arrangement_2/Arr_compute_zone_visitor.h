@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ophir Setter      <ophirset@post.tau.ac.il>
 //
@@ -34,7 +34,7 @@ template <class Arrangement_, class OutputIterator_>
 class Arr_compute_zone_visitor
 {
 public:
-  
+
   typedef OutputIterator_                             OutputIterator;
   typedef Arrangement_                                Arrangement_2;
 

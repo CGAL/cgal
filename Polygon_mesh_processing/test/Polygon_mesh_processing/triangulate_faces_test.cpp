@@ -31,7 +31,7 @@ test_triangulate_faces()
     std::cerr << "Not a valid off file." << std::endl;
     return false;
   }
-  
+
   bool success = CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
   assert(CGAL::is_triangle_mesh(mesh));
 

@@ -130,7 +130,7 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, tmesh));
-  Traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits gt = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
 /// @todo handle boundary edges
 
@@ -356,7 +356,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                              get_const_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type           Traits;
-  Traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits gt = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   // Vertex property map that combines the VCM and the fact that extremities of a constrained edge should be constrained
   typedef CGAL::dynamic_vertex_property_t<bool>                                 Vertex_property_tag;

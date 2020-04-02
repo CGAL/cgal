@@ -23,52 +23,52 @@ following.
 class WeightedAlphaShapeTraits_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 A coordinate type.
-The type must provide a copy constructor, assignment, comparison 
-operators, negation, multiplication, division and allow the 
-declaration and initialization with a small integer constant 
-(cf. requirements for number types). 
- An obvious choice would be coordinate type of the point class. 
-*/ 
-typedef unspecified_type FT; 
+The type must provide a copy constructor, assignment, comparison
+operators, negation, multiplication, division and allow the
+declaration and initialization with a small integer constant
+(cf. requirements for number types).
+ An obvious choice would be coordinate type of the point class.
+*/
+typedef unspecified_type FT;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// Only a default constructor is required. Note that further constructors can be provided.
 /// @{
 
 /*!
-A default constructor. 
-*/ 
-  AlphaShapeTraits_2(); 
+A default constructor.
+*/
+  AlphaShapeTraits_2();
 
-/// @} 
+/// @}
 
-/// \name Constructions by function objects 
+/// \name Constructions by function objects
 /// @{
 
 /*!
-Returns an object, which has to be able to compute the squared radius of the 
+Returns an object, which has to be able to compute the squared radius of the
 orthogonal circle of the points `p0, p1, p2` or the squared radius of the
 smallest orthogonal circle of the points `p0, p1`, as `FT`.
-*/ 
+*/
 Compute_squared_radius_smallest_orthogonal_circle_2
 compute_squared_radius_smallest_orthogonal_circle_2_object();
 
-/// @} 
+/// @}
 
-/// \name Predicate by function object 
+/// \name Predicate by function object
 /// @{
 
 /*!
 Returns an object, which has to be able to compute the relative position of the
 point `test` to the smallest orthogonal circle of the points `p0, p1`.
-*/ 
+*/
 Power_side_of_bounded_power_circle_2
 power_side_of_bounded_power_circle_2_object();
 

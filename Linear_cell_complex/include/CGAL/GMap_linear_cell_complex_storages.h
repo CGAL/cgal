@@ -243,7 +243,7 @@ namespace CGAL {
       CGAL_assertion( ah!=nullptr );
       return ah->is_valid();
     }
-    
+
     // accessors and modifiers to the attribute ref counting given its handle
     template<unsigned int i>
     std::size_t get_attribute_ref_counting

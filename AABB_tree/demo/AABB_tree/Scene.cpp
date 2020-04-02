@@ -590,7 +590,7 @@ void Scene::update_bbox()
 }
 
 void Scene::draw(CGAL::QGLViewer* viewer)
-{       
+{
     if(!gl_init)
         initGL();
     if(!are_buffers_initialized)

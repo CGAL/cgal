@@ -35,25 +35,25 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Point_set {
 
-  /*! 
+  /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
     \brief Sorting of 3D points with respect to the local plane fit quality.
 
-    Indices of 3D input points are sorted with respect to the quality of the 
+    Indices of 3D input points are sorted with respect to the quality of the
     least squares plane fit applied to the neighboring points of each point.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam NeighborQuery 
+    \tparam NeighborQuery
     must be a model of `NeighborQuery`.
 
-    \tparam PointMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_3`.
   */
   template<
@@ -75,9 +75,9 @@ namespace Point_set {
     using Point_map = PointMap;
     using Seed_map = internal::Seed_property_map;
     /// \endcond
-    
+
     #ifdef DOXYGEN_RUNNING
-      /*! 
+      /*!
         an `LvaluePropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of input points.
       */
@@ -92,15 +92,15 @@ namespace Point_set {
     /*!
       \brief initializes all internal data structures.
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 3D points
 
-      \param neighbor_query 
-      an instance of `NeighborQuery` that is used internally to 
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
       access point's neighbors
 
       \param point_map
-      an instance of `PointMap` that maps an item from `input_range` 
+      an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_3`
 
       \pre `input_range.size() > 0`
@@ -112,12 +112,12 @@ namespace Point_set {
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_point_map(point_map),
-    m_to_local_converter() { 
-      
+    m_to_local_converter() {
+
       CGAL_precondition(input_range.size() > 0);
-      
+
       m_order.resize(m_input_range.size());
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) 
+      for (std::size_t i = 0; i < m_input_range.size(); ++i)
         m_order[i] = i;
       m_scores.resize(m_input_range.size());
     }
@@ -131,7 +131,7 @@ namespace Point_set {
       \brief sorts indices of input points.
     */
     void sort() {
-      
+
       compute_scores();
       CGAL_postcondition(m_scores.size() > 0);
 
@@ -171,7 +171,7 @@ namespace Point_set {
       std::vector<Local_point_3> points;
 
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        
+
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
@@ -191,10 +191,10 @@ namespace Point_set {
         Local_point_3 fitted_centroid;
 
         m_scores[i] = CGAL::linear_least_squares_fitting_3(
-          points.begin(), points.end(), 
-          fitted_plane, fitted_centroid, 
-          CGAL::Dimension_tag<0>(), 
-          Local_traits(), 
+          points.begin(), points.end(),
+          fitted_plane, fitted_centroid,
+          CGAL::Dimension_tag<0>(),
+          Local_traits(),
           CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
       }
     }
@@ -203,7 +203,7 @@ namespace Point_set {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
-    
+
     std::vector<std::size_t> m_order;
     std::vector<Local_FT> m_scores;
 

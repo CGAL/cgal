@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/test_delaunay_hierarchy_2.C
 // source        : $URL$
 // revision      : $Id$
@@ -42,7 +42,7 @@ template class CGAL::Triangulation_hierarchy_2<Dt>;
 
 int main()
 {
-  std::cout << "Testing Delaunay_hierarchy_2 " << std::endl; 
+  std::cout << "Testing Delaunay_hierarchy_2 " << std::endl;
   std::cout << " with Cartesian<double> points "<<  std::endl;
 
   typedef CGAL::Triangulation_hierarchy_2<Dt>  Dh;

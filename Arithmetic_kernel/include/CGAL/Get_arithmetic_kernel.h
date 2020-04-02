@@ -7,11 +7,11 @@
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de> 
+// Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================
 //
-//    \brief provide base class for Get_arithmetic_kernel  
+//    \brief provide base class for Get_arithmetic_kernel
 //
 
 #ifndef CGAL_GET_ARITHMETIC_KERNEL_H

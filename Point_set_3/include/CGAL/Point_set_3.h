@@ -52,7 +52,7 @@ namespace CGAL {
   All properties can be accessed as a range using the methods
   `points()`, `normals()`, and `range()` for points coordinates,
   normal vectors, and other properties respectively.
- 
+
   Removing a point with properties is achieved by moving its `Index`
   at the end of the container and keeping track of the number of
   removed elements. A garbage collection method must be called to
@@ -99,7 +99,7 @@ public:
     typedef Property_map<T> type;
   };
   /// \endcond
-  
+
   /*!
     \brief This represents a point with associated properties.
     \cgalModels `::Index`
@@ -122,7 +122,7 @@ public:
     template <class> friend struct Property_map;
     friend class std::vector<Index>;
     size_type value;
-    
+
   public:
     Index (const Index& index) : value (static_cast<size_type>(index)) { }
     Index (const std::size_t& value) : value (static_cast<size_type>(value)) { }
@@ -166,7 +166,7 @@ public:
     const_iterator m_begin;
     const_iterator m_end;
     std::size_t m_size;
-    
+
   public:
     Property_range (const Property_map<Type>& pmap,
                     typename Point_set::const_iterator begin,
@@ -177,7 +177,7 @@ public:
       m_end = boost::make_transform_iterator (end, Unary_function(pmap));
       m_size = size;
     }
-    
+
     const_iterator begin() const { return m_begin; }
     const_iterator end() const { return m_end; }
     std::size_t size() const { return m_size; }
@@ -197,7 +197,7 @@ protected:
   Vector_map m_normals;
   std::size_t m_nb_removed;
   /// \endcond
-  
+
 public:
 
   /// \name Construction, Destruction, Assignment
@@ -303,14 +303,14 @@ public:
     other.collect_garbage();
     resize (number_of_points() + other.number_of_points());
     m_base.transfer (other.m_base);
-    
+
     // Reset indices
     for (std::size_t i = 0; i < this->m_base.size(); ++ i)
       this->m_indices[i] = i;
 
     return true;
   }
-  
+
   /*!
     \brief Clears the point set properties and content.
 
@@ -325,7 +325,7 @@ public:
     boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
-  
+
   /*!
     \brief Clears all properties created.
 
@@ -354,7 +354,7 @@ public:
     is only used for optimization.
    */
   void reserve (std::size_t s) { m_base.reserve (s); }
-  
+
   /*!
     \brief Changes size of the point set.
 
@@ -391,7 +391,7 @@ public:
   }
 
   /// @}
-  
+
   /// \name Adding Points and Normals
   /// @{
 
@@ -476,7 +476,7 @@ public:
     return out;
   }
 
-  /*! 
+  /*!
     \brief Convenience method to copy a point with all its properties
     from another point set.
 
@@ -509,7 +509,7 @@ public:
   }
 
   /// @}
-  
+
   /// \name Accessors and Iterators
   /// @{
 
@@ -597,7 +597,7 @@ public:
     remove (first, end());
   }
   /// \endcond
-  
+
   /*!
     \brief Marks element specified by iterator as removed.
 
@@ -639,7 +639,7 @@ public:
 
   /// \name Garbage Management
   /// @{
-  
+
   /*!
     \brief Returns `true` if the element is marked as removed, `false`
     otherwise.
@@ -687,11 +687,11 @@ public:
   */
   std::size_t garbage_size () const { return number_of_removed_points(); }
   /// \endcond
-  
+
   /*!  \brief Returns `true` if there are elements marked as removed,
     `false` otherwise.
   */
-  bool has_garbage () const { return (m_nb_removed != 0); }  
+  bool has_garbage () const { return (m_nb_removed != 0); }
 
   /*!
     \brief Erases from memory the elements marked as removed.
@@ -717,7 +717,7 @@ public:
 
   /*!
     \brief Restores all removed points.
-    
+
     After removing one or several points, calling this method restores
     the point set to its initial state: points that were removed (and
     their associated properties) are restored.
@@ -755,7 +755,7 @@ public:
   using Property_map = unspecified_type;
 #endif
 
-  
+
   /*!
     \brief Tests whether property `name` of type `T` already exists.
 
@@ -770,7 +770,7 @@ public:
       pm = m_base.template get<T> (name);
     return pm.second;
   }
-  
+
   /*!
     \brief Adds a new property `name` of type `T` with given default value.
 
@@ -793,7 +793,7 @@ public:
     boost::tie (pm, added) = m_base.template add<T> (name, t);
     return std::make_pair (pm, added);
   }
-  
+
   /*!
     \brief Returns the property `name` of type `T`.
 
@@ -805,7 +805,7 @@ public:
     Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
   */
-  template <class T> 
+  template <class T>
   std::pair<Property_map<T>,bool>
   property_map (const std::string& name) const
   {
@@ -825,7 +825,7 @@ public:
     \return Returns `true` if the property was removed and `false` if
     the property was not found.
   */
-  template <class T> 
+  template <class T>
   bool remove_property_map (Property_map<T>& prop)
   {
     return m_base.template remove<T> (prop);
@@ -914,7 +914,7 @@ public:
   void copy_properties (const Point_set_3& other)
   {
     m_base.copy_properties (other.base());
-    
+
     m_normals = this->property_map<Vector> ("normal").first; // In case normal was added
   }
 
@@ -938,14 +938,14 @@ public:
     std::vector<std::string> prop = m_base.properties();
     prop.erase (prop.begin()); // remove "index"
     prop.erase (prop.begin()); // remove "point"
-    
+
     std::vector<std::pair<std::string, std::type_info> > out; out.reserve (prop.size());
     for (std::size_t i = 0; i < prop.size(); ++ i)
       out.push_back (std::make_pair (prop[i], m_base.get_type(prop[i])));
     return out;
   }
 
-  
+
   /*!
     \brief Returns a sequence of \ref psp_namedparameters "Named Parameters" for Point Set Processing algorithms.
 
@@ -1015,7 +1015,7 @@ public:
   {
     return Property_range<T> (pmap, begin(), end(), number_of_points());
   }
-  
+
   /*!
     \brief Returns a constant range of points.
   */
@@ -1031,9 +1031,9 @@ public:
   {
     return this->range<Vector> (m_normals);
   }
-  
+
   /// @}
-  
+
   /*!
     \name Push Property Maps and Inserters (Advanced)
 
@@ -1045,26 +1045,26 @@ public:
 
   /// @{
 
-  
+
 #ifdef DOXYGEN_RUNNING
   /// \cgalAdvancedType
-  /// \cgalAdvancedBegin  
+  /// \cgalAdvancedBegin
   /// Model of `OutputIterator` used to insert elements by defining
   /// the value of the property `Property`.
-  /// \cgalAdvancedEnd  
+  /// \cgalAdvancedEnd
   template <class Property>
   using Property_back_inserter = unspecified_type;
 
   /// \cgalAdvancedType
-  /// \cgalAdvancedBegin  
+  /// \cgalAdvancedBegin
   /// Model of `WritablePropertyMap` based on `Property` and that
   /// is allowed to push new items to the point set if needed.
   /// \cgalAdvancedEnd
   template <class Property>
   using Push_property_map = unspecified_type;
 #endif
-  
-  /// \cond SKIP_IN_MANUAL  
+
+  /// \cond SKIP_IN_MANUAL
   template <typename Property>
   class Property_back_inserter {
 
@@ -1080,9 +1080,9 @@ public:
     Point_set* ps;
     Property* prop;
     Index ind;
-  
+
   public:
-    
+
     Property_back_inserter(Point_set* ps, Property* prop, Index ind=Index())
       : ps(ps), prop (prop), ind(ind) {}
     Property_back_inserter& operator++() { return *this; }
@@ -1108,7 +1108,7 @@ public:
     typedef typename Property::value_type value_type;
     typedef value_type& reference;
     typedef boost::lvalue_property_map_tag category;
-    
+
     Point_set* ps;
     Property* prop;
     mutable Index ind;
@@ -1133,13 +1133,13 @@ public:
     }
 
   };
-  /// \endcond      
+  /// \endcond
 
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on indices
   /// \cgalAdvancedEnd
-  typedef Property_back_inserter<Index_map> Index_back_inserter; 
+  typedef Property_back_inserter<Index_map> Index_back_inserter;
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Back inserter on points
@@ -1222,7 +1222,7 @@ public:
 
   /// @}
 
-  
+
 private:
   /// \cond SKIP_IN_MANUAL
   void quick_sort_on_indices (std::ptrdiff_t begin, std::ptrdiff_t end)
@@ -1230,13 +1230,13 @@ private:
     std::stack<std::pair<std::ptrdiff_t, std::ptrdiff_t> >
       todo;
     todo.push (std::make_pair (begin, end));
-    
+
     while (!(todo.empty()))
       {
         std::pair<std::ptrdiff_t, std::ptrdiff_t>
           current = todo.top();
         todo.pop();
-        
+
         if (current.first < current.second)
           {
             std::ptrdiff_t p = current.first + (rand() % (current.second - current.first));
@@ -1262,7 +1262,7 @@ private:
   }
   /// \endcond
 
-  
+
 }; // end of class Point_set_3
 
 
@@ -1273,11 +1273,11 @@ private:
   \brief Append `other` at the end of `ps`.
 
   \relates Point_set_3
-  
+
    Shifts the indices of points of `other` by `ps.number_of_points() +
    other.number_of_points()`.
 
-   Copies entries of all property maps which have the same name in `ps` and `other`. 
+   Copies entries of all property maps which have the same name in `ps` and `other`.
    Property maps which are only in `other` are ignored.
 
    \note Garbage is collected in both point sets when calling this method.
@@ -1302,7 +1302,7 @@ namespace Point_set_processing_3
   public:
     typedef typename Kernel_traits<Point>::Kernel::FT type;
   };
-  
+
   namespace parameters
   {
     template <typename Point, typename Vector>

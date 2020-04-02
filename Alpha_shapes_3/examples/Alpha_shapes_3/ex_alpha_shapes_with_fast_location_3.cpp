@@ -38,15 +38,15 @@ int main()
   // compute alpha shape
   Alpha_shape_3 as(dt);
   std::cout << "Alpha shape computed in REGULARIZED mode by defaut."
-	    << std::endl;
+            << std::endl;
 
    // find optimal alpha values
   Alpha_shape_3::NT alpha_solid = as.find_alpha_solid();
   Alpha_iterator opt = as.find_optimal_alpha(1);
   std::cout << "Smallest alpha value to get a solid through data points is "
-	    << alpha_solid << std::endl;
+            << alpha_solid << std::endl;
   std::cout << "Optimal alpha value to get one connected component is "
-	    <<  *opt    << std::endl;
+            <<  *opt    << std::endl;
   as.set_alpha(*opt);
   assert(as.number_of_solid_components() == 1);
   return 0;

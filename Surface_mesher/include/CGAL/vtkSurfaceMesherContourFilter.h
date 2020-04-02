@@ -46,7 +46,7 @@ private:
   vtkCGALSurfaceMesherContourFilter(const vtkCGALSurfaceMesherContourFilter&);  // Not implemented.
   void operator=(const vtkCGALSurfaceMesherContourFilter&);  // Not implemented.
 };
-  
+
 // IMPLEMENTATION
 
 #include "vtkCellArray.h"
@@ -77,12 +77,12 @@ vtkCGALSurfaceMesherContourFilter::vtkCGALSurfaceMesherContourFilter()
 {
   Value = 0.;
 }
-  
+
 vtkCGALSurfaceMesherContourFilter::~vtkCGALSurfaceMesherContourFilter()
 {
 }
 
-int 
+int
 vtkCGALSurfaceMesherContourFilter::
 FillInputPortInformation(int, vtkInformation *info)
 {

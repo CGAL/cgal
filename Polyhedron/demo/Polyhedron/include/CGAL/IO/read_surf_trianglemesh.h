@@ -275,7 +275,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       std::cout << "\rOrientation of patch #" << (i + 1) << " done";
 
       if(!no_duplicates) //collect duplicates
-      { 
+      {
         for (std::size_t i = nbp_init; i < points.size(); ++i)
           *out++ = points[i];
         std::cout << " (non manifold -> "
@@ -286,8 +286,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
 
     Mesh& mesh = output[i];
 
-    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, std::vector<Point_3>, std::vector<Triangle_ind>>
-      converter(points, polygons);
+    PMP::internal::PS_to_PM_converter<std::vector<Point_3>, std::vector<Triangle_ind> > converter(points, polygons);
     converter(mesh, false/*insert_isolated_vertices*/);
 
     CGAL_assertion(PMP::remove_isolated_vertices(mesh) == 0);

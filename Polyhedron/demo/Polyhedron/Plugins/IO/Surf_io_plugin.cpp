@@ -94,7 +94,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   }
   if (!duplicated_points.empty())
     std::cout << duplicated_points.size() << " points have been duplicated." << std::endl;
-  
+
   std::vector<QColor> colors_;
   compute_color_map(QColor(100, 100, 255), static_cast<unsigned>(patches.size()),
                     std::back_inserter(colors_));

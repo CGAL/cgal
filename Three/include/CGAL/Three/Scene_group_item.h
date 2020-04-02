@@ -58,7 +58,7 @@ public :
         * Use it to prevent a child to be destroyed without its parent.
         */
         void lockChild(Scene_interface::Item_id id);
-    
+
         /*!
          * \brief Unlocks a child
          *
@@ -137,7 +137,7 @@ public :
        virtual void renderChildren(Viewer_interface *,
                  QMap<float, int>& picked_item_IDs, const QPoint &picked_pixel,
                  bool with_names);
-    
+
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children.
@@ -191,7 +191,7 @@ public :
     }
     //!Sets the alpha value for the froup and all its children.
         virtual void setAlpha(int) Q_DECL_OVERRIDE;
-    
+
     //! \brief Returns a list of all the direct children.
     //!
     //! Only returns children that have this item as a parent.
@@ -226,7 +226,7 @@ public :
     void moveUp(int);
     //!Moves a child down in the list.
     void moveDown(int);
-    
+
     void compute_bbox() const Q_DECL_OVERRIDE{};
 public Q_SLOTS:
     //!\brief Redraws children.

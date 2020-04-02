@@ -345,7 +345,7 @@ class Gmpfr:
 #  pragma warning(push)
 #  pragma warning(disable: 4244)
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
-#  pragma warning(pop)  
+#  pragma warning(pop)
 #else
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif

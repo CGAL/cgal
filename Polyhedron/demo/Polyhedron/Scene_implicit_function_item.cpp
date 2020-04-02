@@ -76,13 +76,13 @@ void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_i
 {
     item->getTriangleContainer(0)->initializeBuffers(viewer);
     item->getTriangleContainer(0)->setFlatDataSize(nb_quad);
-    
+
     item->getEdgeContainer(0)->initializeBuffers(viewer);
     item->getEdgeContainer(0)->setFlatDataSize(nb_cube);
-    
+
     item->getEdgeContainer(1)->initializeBuffers(viewer);
     item->getEdgeContainer(1)->setFlatDataSize(nb_grid);
-        
+
     positions_tex_quad.clear();
     positions_tex_quad.shrink_to_fit();
     texture_map.clear();
@@ -102,9 +102,9 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
 
     const CGAL::Three::Scene_item::Bbox& b = item->bbox();
     float x,y,z;
-    z = (b.zmax()+b.zmin())/2.0;
-    x = (b.xmax()+b.xmin())/2.0;
-    y = (b.ymax()+b.ymin())/2.0;
+    z = static_cast<float>(b.zmax()+b.zmin())/2.0f;
+    x = static_cast<float>(b.xmax()+b.xmin())/2.0f;
+    y = static_cast<float>(b.ymax()+b.ymin())/2.0f;
     // The Quad
     {
 
@@ -371,14 +371,14 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
     d->frame_->setOrientation(1., 0, 0, 0);
     d->init = true;
   }
-  
+
   if(d->frame_->isManipulated()) {
       if(d->need_update_) {
           compute_function_grid();
           d->need_update_ = false;
       }
   }
-  
+
   if(!isInit(viewer))
     initGL(viewer);
   if ( getBuffersFilled() &&
@@ -420,7 +420,7 @@ Scene_implicit_function_item::drawEdges(CGAL::Three::Viewer_interface* viewer) c
     computeElements();
     initializeBuffers(viewer);
   }
-    
+
     getEdgeContainer(0)->setColor(QColor(0,0,0));
     getEdgeContainer(0)->draw(viewer, true);
     QMatrix4x4 f_mat;
@@ -601,18 +601,18 @@ void Scene_implicit_function_item::computeElements() const
         d->positions_tex_quad.data(),
         static_cast<int>(d->positions_tex_quad.size()*sizeof(float)));
   d->nb_quad = d->positions_tex_quad.size();
-  
+
   getTriangleContainer(0)->allocate(
         Tc::Texture_map,
         d->texture_map.data(),
         static_cast<int>(d->texture_map.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(
         Ec::Vertices,
         d->positions_cube.data(),
         static_cast<int>(d->positions_cube.size()*sizeof(float)));
   d->nb_cube= d->positions_cube.size();
-  
+
   getEdgeContainer(1)->allocate(
         Ec::Vertices,
         d->positions_grid.data(),

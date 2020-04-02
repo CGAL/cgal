@@ -56,14 +56,14 @@ namespace Classification {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Point_set_neighborhood
 {
-  
+
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
-  
+
   class My_point_property_map{
     const PointRange* input;
     PointMap point_map;
-    
+
   public:
     typedef Point value_type;
     typedef const value_type& reference;
@@ -88,7 +88,7 @@ class Point_set_neighborhood
 
   Tree* m_tree;
   Distance m_distance;
-  
+
 public:
 
   /*!
@@ -210,7 +210,7 @@ public:
     std::vector<boost::uint32_t> indices;
     My_point_property_map pmap (&input, point_map);
     voxelize_point_set(input.size(), indices, pmap, voxel_size);
-    
+
     m_tree = new Tree (indices.begin(), indices.end(),
                        Splitter(),
                        Search_traits (pmap));
@@ -219,7 +219,7 @@ public:
   }
 
   /// @}
-  
+
   /// \cond SKIP_IN_MANUAL
   ~Point_set_neighborhood ()
   {
@@ -311,10 +311,10 @@ private:
     }
   }
 };
-  
+
 
 }
-  
+
 }
 
 

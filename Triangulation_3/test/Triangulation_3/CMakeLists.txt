@@ -49,8 +49,8 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

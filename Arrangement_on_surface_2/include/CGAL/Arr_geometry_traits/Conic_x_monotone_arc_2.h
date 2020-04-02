@@ -1290,7 +1290,7 @@ private:
     // greater than the source point), or to the left.
     Alg_kernel         ker;
     Comparison_result  dir_res = ker.compare_xy_2_object() (this->_source,
-							    this->_target);
+                                                            this->_target);
 
     CGAL_assertion (dir_res != EQUAL);
 

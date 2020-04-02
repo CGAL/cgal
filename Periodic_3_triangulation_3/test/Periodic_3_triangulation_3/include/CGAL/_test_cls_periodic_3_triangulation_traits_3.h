@@ -72,8 +72,8 @@ void _test_for_given_domain(const Traits & traits,
 
   // Create offset array for tests
   Offset o[9]={Offset( 0, 0, 0), Offset( 0, 1, 1), Offset( 1, 0, 1),
-	       Offset( 1, 1, 0), Offset( 1, 1, 1), Offset( 1, 0, 0),
-	       Offset(-1, 0, 0), Offset( 0, 0, 1), Offset( 1, 0,-1)};
+               Offset( 1, 1, 0), Offset( 1, 1, 1), Offset( 1, 0, 0),
+               Offset(-1, 0, 0), Offset( 0, 0, 1), Offset( 1, 0,-1)};
 
   // Test Compare_xyz_3
   assert(compare_xyz(p[0],p[1]) == CGAL::SMALLER);
@@ -122,7 +122,7 @@ void _test_for_given_domain(const Traits & traits,
   assert(soos(p[0],p[2],p[1],p[3],p[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(soos(p[0],p[2],p[1],p[3],p[6]) == CGAL::ON_POSITIVE_SIDE);
 
-  assert(soos(p[0],p[1],p[2],p[3],p[4],o[4],o[1],o[2],o[3],o[0]) 
+  assert(soos(p[0],p[1],p[2],p[3],p[4],o[4],o[1],o[2],o[3],o[0])
       == CGAL::ON_ORIENTED_BOUNDARY);
   assert(soos(p[0],p[1],p[2],p[3],p[5],o[4],o[1],o[2],o[3],o[0])
       == CGAL::ON_POSITIVE_SIDE);
@@ -148,7 +148,7 @@ void _test_for_given_domain(const Traits & traits,
   assert(compare_distance(p[0],p[4],p[1]) == CGAL::LARGER);
   assert(compare_distance(p[0],p[2],p[4]) == CGAL::SMALLER);
   assert(compare_distance(p[0],p[4],p[2]) == CGAL::LARGER);
-  
+
   assert(compare_distance(p[0],p[1],p[2],o[0],o[0],o[0]) == CGAL::EQUAL);
   assert(compare_distance(p[0],p[2],p[1],o[0],o[0],o[0]) == CGAL::EQUAL);
   assert(compare_distance(p[0],p[1],p[4],o[0],o[0],o[0]) == CGAL::SMALLER);
@@ -248,7 +248,7 @@ void _test_for_given_domain(const Traits & traits,
       == CGAL::ON_BOUNDED_SIDE);
   assert(sobs(p[0],p[1],p[4],p[5],o[4],o[1],o[0],o[0])
       == CGAL::ON_UNBOUNDED_SIDE);
-  assert(sobs(p[0],p[1],p[4],p[6],o[4],o[1],o[0],o[0]) 
+  assert(sobs(p[0],p[1],p[4],p[6],o[4],o[1],o[0],o[0])
       == CGAL::ON_BOUNDED_SIDE);
   assert(sobs(p[0],p[2],p[4],p[5],o[4],o[2],o[0],o[4])
       == CGAL::ON_UNBOUNDED_SIDE);
@@ -329,7 +329,7 @@ void _test_for_given_domain(const Traits & traits,
   assert(c == construct_circumcenter(p[1],p[3],p[4],p[2]));
   assert(c == construct_circumcenter(p[1],p[4],p[2],p[3]));
   assert(c == construct_circumcenter(p[1],p[4],p[3],p[2]));
-	  
+
   c = construct_circumcenter(p[0],p[1],p[2],p[3],o[4],o[1],o[2],o[3]);
   assert(compare_distance(c,p[0],p[1],o[0],o[4],o[1]) == CGAL::EQUAL);
   assert(compare_distance(c,p[1],p[2],o[0],o[1],o[2]) == CGAL::EQUAL);
@@ -365,16 +365,16 @@ void _test_cls_periodic_3_triangulation_traits_3() {
   traits.set_domain(Iso_cuboid(0,0,0,1,1,1));
 
   Point p[11]={Point(0,0,0,8),
-	       Point(4,0,0,8),
-	       Point(0,4,0,8),
-	       Point(0,0,4,8),
-	       Point(4,4,4,8),
-	       Point(2,4,2,8),
-	       Point(4,6,6,8),
-	       Point(4,0,4,8),
-	       Point(2,0,2,8),
-	       Point(4,0,6,8),
-	       Point(1,1,2,8)};
+               Point(4,0,0,8),
+               Point(0,4,0,8),
+               Point(0,0,4,8),
+               Point(4,4,4,8),
+               Point(2,4,2,8),
+               Point(4,6,6,8),
+               Point(4,0,4,8),
+               Point(2,0,2,8),
+               Point(4,0,6,8),
+               Point(1,1,2,8)};
 
   _test_for_given_domain(traits,p);
 
@@ -409,12 +409,12 @@ void _test_cls_periodic_3_triangulation_traits_3() {
   p[8] = Point(-2,-4,-2,8);
   p[9] = Point( 0,-4, 2,8);
   p[10]= Point(-3,-3,-2,8);
-  
+
   _test_for_given_domain(traits,p);
 
   // Test Iso_cuboid(-4,-4,-4,4,4,4)
   traits.set_domain(Iso_cuboid(-4,-4,-4,4,4,4));
-  
+
   p[0] = Point(-4,-4,-4);
   p[1] = Point( 0,-4,-4);
   p[2] = Point(-4, 0,-4);
@@ -426,6 +426,6 @@ void _test_cls_periodic_3_triangulation_traits_3() {
   p[8] = Point(-2,-4,-2);
   p[9] = Point( 0,-4, 2);
   p[10]= Point(-3,-3,-2);
-  
+
   _test_for_given_domain(traits,p);
 }

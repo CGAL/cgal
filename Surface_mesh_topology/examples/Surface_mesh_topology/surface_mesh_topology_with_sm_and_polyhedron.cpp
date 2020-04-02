@@ -34,7 +34,7 @@ void test(const FaceGraph& mesh)
 
   bool res1=cst.is_contractible(p1);
   std::cout<<"Path p1 "<<(res1?"IS":"IS NOT")<<" contractible."<<std::endl;
-  
+
   bool res2=cst.are_freely_homotopic(p1, p2);
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
@@ -78,6 +78,6 @@ int main(int argc, char** argv)
     }
     test(sm);
   }
-  
+
   return EXIT_SUCCESS;
 }

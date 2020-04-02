@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -70,7 +70,7 @@ public:
 
   typename cpp11::result_of<typename R::Construct_source_3(Segment_3)>::type
   source() const
-  { 
+  {
     return R_().construct_source_3_object()(*this);
   }
 
@@ -91,7 +91,7 @@ public:
   {
     return target();
   }
- 
+
   typename cpp11::result_of<typename R_::Construct_min_vertex_3(Segment_3)>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
@@ -127,9 +127,9 @@ public:
 
   bool has_on(const Point_3 &p) const
   { // TODO : use one predicate.
-    return R_().are_ordered_along_line_3_object()(source(), 
-					         p, 
-					         target());
+    return R_().are_ordered_along_line_3_object()(source(),
+                                                 p,
+                                                 target());
   }
 
   Segment_3 opposite() const
@@ -166,7 +166,7 @@ CGAL_KERNEL_INLINE
 typename cpp11::result_of<typename R_::Construct_min_vertex_3( Segment_3<R_> ) >::type
 Segment_3<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
-  typename R_::Less_xyz_3 less_xyz; 
+  typename R_::Less_xyz_3 less_xyz;
   return less_xyz(source(),target()) ? source() : target();
 }
 
@@ -175,7 +175,7 @@ CGAL_KERNEL_INLINE
 typename cpp11::result_of<typename R_::Construct_max_vertex_3( Segment_3<R_> ) >::type
 Segment_3<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
-  typename R_::Less_xyz_3 less_xyz; 
+  typename R_::Less_xyz_3 less_xyz;
   return less_xyz(source(),target()) ? target() : source();
 }
 

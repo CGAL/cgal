@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
@@ -37,35 +37,35 @@ class Optimisation_circle_2 {
     typedef           K_                K;
     typedef typename  K::Point_2        Point;
     typedef typename  K_::FT            Distance;
-    
+
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
     outside the class template. Therefore, all member functions are implemented
     in the class interface.
-    
+
     // creation
     Optimisation_circle_2( );
-    
+
     void  set( );
     void  set( const Point& p);
     void  set( const Point& p, const Point& q);
     void  set( const Point& p, const Point& q, const Point& r);
     void  set( const Point& center, const Distance& squared_radius);
-    
+
     // access functions
     const Point&     center        ( ) const;
     const Distance&  squared_radius( ) const
-    
+
     // equality tests
     bool  operator == ( const Optimisation_circle_2<K>& c) const;
     bool  operator != ( const Optimisation_circle_2<K>& c) const;
-    
+
     // predicates
     CGAL::Bounded_side  bounded_side( const Point& p) const;
     bool  has_on_bounded_side      ( const Point& p) const;
     bool  has_on_boundary          ( const Point& p) const;
     bool  has_on_unbounded_side    ( const Point& p) const;
-    
+
     bool  is_empty     ( ) const;
     bool  is_degenerate( ) const;
     **************************************************************************/
@@ -96,7 +96,7 @@ class Optimisation_circle_2 {
         _center         =  Point( CGAL::ORIGIN);
         _squared_radius = -Distance( 1);
     }
-    
+
     inline
     void
     set( const Point& p)
@@ -104,7 +104,7 @@ class Optimisation_circle_2 {
         _center         = p;
         _squared_radius = Distance( 0);
     }
-    
+
     inline
     void
     set( const Point& p, const Point& q)
@@ -112,7 +112,7 @@ class Optimisation_circle_2 {
         _center         = CGAL::midpoint( p, q);
         _squared_radius = CGAL::squared_distance( p, _center);
     }
-    
+
     inline
     void
     set( const Point& p, const Point& q, const Point& r)
@@ -120,7 +120,7 @@ class Optimisation_circle_2 {
         _center         = CGAL::circumcenter( p, q, r);
         _squared_radius = CGAL::squared_distance( p, _center);
     }
-    
+
     inline
     void
     set( const Point& center, const Distance& squared_radius)
@@ -137,7 +137,7 @@ class Optimisation_circle_2 {
     {
         return( _center);
     }
-    
+
     inline
     const Distance&
     squared_radius( ) const
@@ -153,7 +153,7 @@ class Optimisation_circle_2 {
         return( ( _center          == c._center        ) &&
                 ( _squared_radius  == c._squared_radius) );
     }
-    
+
     bool
     operator != ( const Optimisation_circle_2<K>& c) const
     {
@@ -169,35 +169,35 @@ class Optimisation_circle_2 {
         return( CGAL::Bounded_side( CGAL_NTS sign(
             _squared_radius - CGAL::squared_distance( p, _center))));
     }
-    
+
     inline
     bool
     has_on_bounded_side( const Point& p) const
     {
         return( CGAL::squared_distance( p, _center) < _squared_radius);
     }
-    
+
     inline
     bool
     has_on_boundary( const Point& p) const
     {
         return( CGAL::squared_distance( p, _center) == _squared_radius);
     }
-    
+
     inline
     bool
     has_on_unbounded_side( const Point& p) const
     {
         return( _squared_radius < CGAL::squared_distance( p, _center));
     }
-    
+
     inline
     bool
     is_empty( ) const
     {
         return( CGAL::is_negative( _squared_radius));
     }
-    
+
     inline
     bool
     is_degenerate( ) const

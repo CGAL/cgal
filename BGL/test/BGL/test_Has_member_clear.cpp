@@ -7,11 +7,11 @@ struct with_clear {
 
 struct wo_clear { };
 
-struct with_clear_but_args { 
+struct with_clear_but_args {
   void clear(int) {}
 };
 
-struct with_clear_but_const { 
+struct with_clear_but_const {
   void clear() const {}
 };
 

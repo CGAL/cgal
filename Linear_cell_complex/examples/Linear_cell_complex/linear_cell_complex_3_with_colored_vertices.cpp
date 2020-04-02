@@ -14,10 +14,10 @@ struct Myitem
   template<class Refs>
   struct Dart_wrapper
   {
-    typedef CGAL::Cell_attribute_with_point< Refs, int, CGAL::Tag_true, 
+    typedef CGAL::Cell_attribute_with_point< Refs, int, CGAL::Tag_true,
                                              Average_functor >
     Vertex_attribute;
-    
+
     typedef std::tuple<Vertex_attribute> Attributes;
   };
 };
@@ -51,23 +51,23 @@ Dart_handle make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
 int main()
 {
   LCC_3 lcc;
-  
+
   // Create two iso_cuboids.
   Dart_handle d1 = make_iso_cuboid(lcc, Point(-2, 0, 0), 1);
   Dart_handle d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
 
   // Set the "color" of all vertices of the first cube to 1.
-  for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator 
-         it=lcc.one_dart_per_incident_cell<0,3>(d1).begin(), 
+  for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator
+         it=lcc.one_dart_per_incident_cell<0,3>(d1).begin(),
          itend=lcc.one_dart_per_incident_cell<0,3>(d1).end(); it!=itend; ++it)
   { lcc.info<0>(it)=1; }
-  
+
   // Set the "color" of all vertices of the second cube to 19.
   for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator it=
          lcc.one_dart_per_incident_cell<0,3>(d2).begin(),
          itend=lcc.one_dart_per_incident_cell<0,3>(d2).end(); it!=itend; ++it)
   { lcc.info<0>(it)=19; }
-  
+
   // 3-Sew the two cubes along one facet.
   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
@@ -76,11 +76,11 @@ int main()
 
   // Set the color of the new vertex to 5.
   lcc.info<0>(d3)=5;
-  
+
   // Display all the vertices of the map.
-  for (LCC_3::Vertex_attribute_range::iterator 
+  for (LCC_3::Vertex_attribute_range::iterator
          it=lcc.vertex_attributes().begin(),
-         itend=lcc.vertex_attributes().end(); 
+         itend=lcc.vertex_attributes().end();
        it!=itend; ++it)
   {
     std::cout<<"point: "<<lcc.point_of_vertex_attribute(it)<<", "<<"color: "

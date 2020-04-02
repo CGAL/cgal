@@ -25,14 +25,14 @@ int main()
   std::vector<Weighted_point> points;
   for (int i = 0; i < N; ++i)
     points.push_back(Weighted_point(*rand_it++, rng.get_double(0., 10.)));
-  
+
   T t(D);
   CGAL_assertion(t.empty());
-  
+
   // Insert the points in the triangulation
   t.insert(points.begin(), points.end());
   CGAL_assertion( t.is_valid() );
-  std::cout << "Regular triangulation successfully computed: " 
+  std::cout << "Regular triangulation successfully computed: "
     << t.number_of_vertices() << " vertices, "
     << t.number_of_finite_full_cells() << " finite cells."
     << std::endl;

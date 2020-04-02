@@ -31,7 +31,7 @@ int main() {
   Arrangement_2 env;
   CGAL::insert_non_intersecting_curves(env,segments.begin(),segments.end());
 
-  // find the face of the query point 
+  // find the face of the query point
   // (usually you may know that by other means)
   Point_2 q(0.5, 2);
   Arrangement_2::Face_const_handle * face;
@@ -39,8 +39,8 @@ int main() {
   CGAL::Arr_point_location_result<Arrangement_2>::Type obj = pl.locate(q);
   // The query point locates in the interior of a face
   face = boost::get<Arrangement_2::Face_const_handle> (&obj);
-  
-  // compute non regularized visibility area  
+
+  // compute non regularized visibility area
   // Define visibiliy object type that computes non-regularized visibility area
   typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false> NSPV;
   Arrangement_2 non_regular_output;
@@ -53,9 +53,9 @@ int main() {
             << " edges:" << std::endl;
   for (Edge_const_iterator eit = non_regular_output.edges_begin(); eit != non_regular_output.edges_end(); ++eit)
     std::cout << "[" << eit->source()->point() << " -> " << eit->target()->point() << "]" << std::endl;
-   
 
-  // compute non regularized visibility area 
+
+  // compute non regularized visibility area
   // Define visibiliy object type that computes regularized visibility area
   typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true> RSPV;
   Arrangement_2 regular_output;
@@ -68,7 +68,7 @@ int main() {
             << " edges:" << std::endl;
   for (Edge_const_iterator eit = regular_output.edges_begin(); eit != regular_output.edges_end(); ++eit)
     std::cout << "[" << eit->source()->point() << " -> " << eit->target()->point() << "]" << std::endl;
-  
+
   return 0;
 }
 
