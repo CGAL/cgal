@@ -30,7 +30,7 @@ int main()
   const Point3 C(539.74609375, 332.431640625, 109.660400390625);
   const Point3 D(539.68266371486789, 333.13513011783971, 109.649658203125);
   const Point3 E(539.52898179930912, 332.45155212665065, 109.660400390625);
-  
+
   cdt.insert_constraint(A, B);
   cdt.insert_constraint(C, A);
   cdt.insert_constraint(D, B);

@@ -16,7 +16,7 @@ if ( CGAL_FOUND )
     # where CGAL_assume() does not help
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4723")
   endif()
-  
+
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
@@ -24,8 +24,8 @@ if ( CGAL_FOUND )
   endforeach()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

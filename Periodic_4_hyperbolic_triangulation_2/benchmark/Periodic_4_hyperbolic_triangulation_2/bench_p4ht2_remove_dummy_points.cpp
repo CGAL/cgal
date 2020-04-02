@@ -32,7 +32,7 @@ int main(int argc, char** argv)
   } else {
     iter = atoi(argv[1]);
   }
-  
+
   Side_of_original_octagon pred;
 
   int N = 500;

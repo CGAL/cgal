@@ -215,7 +215,7 @@ connected_components(const PolygonMesh& pmesh,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
-  
+
   EdgeConstraintMap ecmap
     = choose_parameter<EdgeConstraintMap>(get_parameter(np, internal_np::edge_is_constrained));
 

@@ -42,10 +42,10 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
 
   if (!in) {
-    std::cout << 
+    std::cout <<
     "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout << 
-    "You can either create a symlink to the data folder or provide this file by hand." 
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
     << std::endl << std::endl;
     assert(false);
     return EXIT_FAILURE;
@@ -67,21 +67,21 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, 
+    input_range,
     sphere_radius);
 
   Region_type region_type(
-    input_range, 
+    input_range,
     distance_threshold, angle_threshold, min_region_size);
 
   // Sort indices.
   Sorting sorting(
     input_range, neighbor_query);
   sorting.sort();
-    
+
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type, 
+    input_range, neighbor_query, region_type,
     sorting.seed_map());
 
   // Run the algorithm.

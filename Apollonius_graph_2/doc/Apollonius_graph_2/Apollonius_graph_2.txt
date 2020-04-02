@@ -1,16 +1,16 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Apollonius_Graphs
 \anchor chapterapollonius2
 \cgalAutoToc
 \authors Menelaos Karavelas and Mariette Yvinec
 
 This chapter describes the two-dimensional Apollonius graph
-of \cgal. We start with a few definitions in 
+of \cgal. We start with a few definitions in
 Section \ref secapollonius2definitions.
-The software design of the 2D Apollonius graph package is described 
+The software design of the 2D Apollonius graph package is described
 in Section \ref secapollonius2design.
 In Section \ref secapollonius2traits we discuss the geometric
 traits of the 2D Apollonius graph package and in Section
@@ -18,7 +18,7 @@ traits of the 2D Apollonius graph package and in Section
 structure suitable for fast nearest neighbor queries, is briefly
 described.
 
-\section secapollonius2definitions Definitions 
+\section secapollonius2definitions Definitions
 
 \cgalFigureBegin{figapollonius,apollonius_diagram.png,apollonius_graph.png}
 The Apollonius diagram (left) and its dual the Apollonius graph (right).
@@ -41,11 +41,11 @@ The Apollonius diagram is defined over a set of sites
 \f$ P_i=(c_i,w_i)\f$, \f$ i=1,\ldots,n\f$, where \f$ c_i\f$ is the point and \f$ w_i\f$
 the weight of \f$ P_i\f$. It is a subdivision of the plane into connected
 regions, called <I>cells</I>, associated with the sites (see
-\cgalFigureRef{figapollonius} (left)). The cell of a 
+\cgalFigureRef{figapollonius} (left)). The cell of a
 site \f$ P_i\f$ is the locus of points on the plane that are
 closer to \f$ P_i\f$ than any other site \f$ P_j\f$, \f$ j\neq i\f$.
 The distance \f$ \delta(x, P_i)\f$ of a point \f$ x\f$ in the plane to a
-site \f$ P_i\f$ is defined as: 
+site \f$ P_i\f$ is defined as:
 \f[ \delta(x,P_i)=\|x-c_i\|-w_i, \f]
 where \f$ \|\cdot\|\f$ denotes the Euclidean norm.
 It can easily be seen that it is a generalization of the Voronoi
@@ -69,7 +69,7 @@ means geometrically. We identify the 2D Euclidean plane with the
 seen as the vertical projection on the \f$ xy\f$-plane of the lower
 envelope of a set of 3D cones defined as follows: for each point \f$ p\f$
 in the set of 2D points we have a cone \f$ C_p\f$ whose apex is the point
-\f$ p\f$. The axis of 
+\f$ p\f$. The axis of
 \f$ C_p\f$ is a line parallel to the \f$ z\f$-axis passing through \f$ p\f$, the
 angle of \f$ C_p\f$ is \f$ 45^\circ\f$ and, finally \f$ C_p\f$ is facing in the
 positive \f$ z\f$-direction (that is, \f$ C_p\f$ is contained in the positive
@@ -100,7 +100,7 @@ such way is shown in \cgalFigureRef{figapollonius} (right).
 The Apollonius graph is uniquely defined once we have
 the Apollonius diagram. If the circles are in <I>general position</I>
 (see precise definition below), then the Apollonius graph is a graph
-with triangular faces away from 
+with triangular faces away from
 the convex hull of the set of circles (by triangular we mean that
 every face has exactly three edges). Near the convex hull we may
 have some spikes (i.e., vertices of degree 1). To unify our approach
@@ -177,7 +177,7 @@ one visible circle.
 two visible circles.
 </UL>
 
-\section secapollonius2design Software Design 
+\section secapollonius2design Software Design
 
 The 2D Apollonius graph class
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
@@ -234,14 +234,14 @@ default `true` and it indicates that hidden sites should be
 stored. The user can indicate that hidden sites may be discarded
 by setting this value to `false`.
 
-\section secapollonius2traits The Geometric Traits 
+\section secapollonius2traits The Geometric Traits
 
 The predicates required for the computation of the Apollonius graph
 are rather complicated. It is not the purpose of this document to
 discuss them in detail. The interested reader may refer to the papers
 by Karavelas and Emiris for the details
 \cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}. However, we would like to give a brief
-overview of what they 
+overview of what they
 compute. There are several predicates needed by this algorithm. We
 will discuss the most important/complicated ones. It turns out that
 it is much easier to describe them in terms of the Apollonius diagram,
@@ -285,7 +285,7 @@ The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circl
 What we essentially want to compute when we construct incrementally a
 Voronoi diagram, is whether the object to be inserted destroys an edge
 of the Voronoi diagram or not. In the case of points this is really
-easy and it amounts to the well known <I>incircle</I> test. 
+easy and it amounts to the well known <I>incircle</I> test.
 In the case
 of circles the situation is more complicated. We can have six possible
 outcomes as to what portion of an edge of the Apollonius diagram the
@@ -301,7 +301,7 @@ what the `Finite_edge_interior_conflict_2` and
 is the same predicate (same idea) applied to two different types of
 edges in the Apollonius diagram: a finite or an infinite edge. An edge
 is infinite if its dual edge in the Apollonius graph connects the
-site at infinity with the vertex corresponding to a (finite) circle; 
+site at infinity with the vertex corresponding to a (finite) circle;
 otherwise it is a finite edge.
 
 \cgalFigureAnchor{figag2edgeconflict}
@@ -399,7 +399,7 @@ they are not necessarily exact. All template parameters except
 `CK` have default values, which are explained in the reference
 manual.
 
-\section secapollonius2hierarchy The Apollonius Graph Hierarchy 
+\section secapollonius2hierarchy The Apollonius Graph Hierarchy
 
 The `Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>` class is nothing but the equivalent of the `Triangulation_hierarchy_2`
 class, applied to the Apollonius graph. It consists of a series of
@@ -415,7 +415,7 @@ consisting of more than 1,000 circles. This threshold holds for both
 the construction of the Apollonius diagram itself, as well as for
 nearest neighbor queries.
 
-\section secapollonius2examples Examples 
+\section secapollonius2examples Examples
 
 \subsection Apollonius_graph_2FirstExample First Example
 
@@ -433,6 +433,6 @@ nearest neighbor queries.
 
 \cgalExample{Apollonius_graph_2/ag2_hierarchy.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

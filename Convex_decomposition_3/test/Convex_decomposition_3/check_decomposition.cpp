@@ -28,7 +28,7 @@ void check_decomposition(Nef_polyhedron_3& N)
       convex_parts.push_back(tmp);
     }
   }
-  
+
   std::list<Nef_polyhedron_3>::iterator pi0, pi1;
   for(pi0 = convex_parts.begin(); pi0 != convex_parts.end(); ++pi0) {
     pi1 = pi0;

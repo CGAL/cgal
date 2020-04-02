@@ -3,10 +3,10 @@
 \ingroup PkgOptimalTransportationReconstruction2Concepts
 \cgalConcept
 
-The concept `OptimalTransportationReconstructionTraits_2` describes the requirements 
+The concept `OptimalTransportationReconstructionTraits_2` describes the requirements
 for the traits class of `CGAL::Optimal_transportation_reconstruction_2`.
 
-\cgalRefines `DelaunayTriangulationTraits_2` 
+\cgalRefines `DelaunayTriangulationTraits_2`
 
 \cgalHasModel Any model of the `Kernel` concept
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)
@@ -18,7 +18,7 @@ for the traits class of `CGAL::Optimal_transportation_reconstruction_2`.
 class OptimalTransportationReconstructionTraits_2 {
 public:
 
-  /// \name Types 
+  /// \name Types
   /// @{
 
   /*!
@@ -121,31 +121,31 @@ public:
   */
   typedef unspecified_type Compute_squared_distance_2;
 
-  /// @} 
+  /// @}
 
-  /// \name Creation 
+  /// \name Creation
   /// @{
 
   /*!
-  %Default constructor. 
-  */ 
-  OptimalTransportationReconstructionTraits_2(); 
+  %Default constructor.
+  */
+  OptimalTransportationReconstructionTraits_2();
 
   /*!
-  Copy constructor. 
-  */ 
-  OptimalTransportationReconstructionTraits_2 ( 
-  const OptimalTransportationReconstructionTraits_2& ); 
+  Copy constructor.
+  */
+  OptimalTransportationReconstructionTraits_2 (
+  const OptimalTransportationReconstructionTraits_2& );
 
   /*!
   Assignment operator.
-  */ 
-  OptimalTransportationReconstructionTraits_2& operator= 
-  (const OptimalTransportationReconstructionTraits_2& ); 
+  */
+  OptimalTransportationReconstructionTraits_2& operator=
+  (const OptimalTransportationReconstructionTraits_2& );
 
-  /// @} 
+  /// @}
 
-  /// \name Access to Predicate and Constructors Objects 
+  /// \name Access to Predicate and Constructors Objects
   /// @{
   Construct_point_2 construct_point_2_object();
   Construct_vector_2 construct_vector_2_object();

@@ -32,7 +32,7 @@ namespace CGAL {
             typename LCC::Dart_handle >* aface_to_dart=nullptr)
   {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
-    
+
     // Case of empty triangulations.
     if (atr.number_of_vertices()==0) return LCC::null_handle;
 
@@ -62,7 +62,7 @@ namespace CGAL {
     std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle> TC;
     std::map<typename Triangulation::Face_handle, typename LCC::Dart_handle>*
       mytc = (aface_to_dart==nullptr?&TC:aface_to_dart);
-    
+
     itmap_tcell maptcell_it;
 
     typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
@@ -89,7 +89,7 @@ namespace CGAL {
           else if ( it->vertex(2) == atr.infinite_vertex() )
             dart = alcc.previous(res);
         }
-        
+
         for (unsigned int i=0; i<3; ++i)
         {
           switch (i)
@@ -120,7 +120,7 @@ namespace CGAL {
     CGAL_assertion(dart!=LCC::null_handle);
     return dart;
   }
-  
+
 } // namespace CGAL
 
 #endif // CGAL_TRIANGULATION_2_TO_LCC_H

@@ -1,19 +1,19 @@
-// Copyright (c) 1999,2016  
+// Copyright (c) 1999,2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Olivier Devillers, Mariette Yvinec
- 
+
 
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H
 #define CGAL_PREDICATES_ON_POINTSH3_H
@@ -181,10 +181,10 @@ power_side_of_oriented_power_sphereH3(
     dthw *= dtwt;
 
     return - sign_of_determinant(dphx, dphy, dphz, dpz, dphw,
-	                         dqhx, dqhy, dqhz, dqz, dqhw,
-	                         drhx, drhy, drhz, drz, drhw,
-	                         dshx, dshy, dshz, dsz, dshw,
-	                         dthx, dthy, dthz, dtz, dthw);
+                                 dqhx, dqhy, dqhz, dqz, dqhw,
+                                 drhx, drhy, drhz, drz, drhw,
+                                 dshx, dshy, dshz, dsz, dshw,
+                                 dthx, dthy, dthz, dtz, dthw);
 }
 
 // The 2 degenerate are not speed critical, and they are quite boring and error

@@ -24,7 +24,7 @@
          operator() (const HEG& heg, Dart_const_handle dh)
 */
 ////////////////////////////////////////////////////////////////////////////////
-namespace CGAL 
+namespace CGAL
 {
 /// Is_free
 //template<typename HEG, unsigned int i>
@@ -49,7 +49,7 @@ struct Get_beta
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
 
-  static Dart_const_handle value(const HEG& /*heg*/, Dart_const_handle /*dh*/) 
+  static Dart_const_handle value(const HEG& /*heg*/, Dart_const_handle /*dh*/)
   { /* CGAL_static_assertion(false);*/
     std::cout<<"ERROR Get_beta<HEG, "<<i<<">"<<std::endl;
     CGAL_assertion(false);
@@ -60,21 +60,21 @@ template<typename HEG>
 struct Get_beta<HEG, 0>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
+  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh)
   { return prev(dh, heg); }
 };
 template<typename HEG>
 struct Get_beta<HEG, 1>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
+  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh)
   { return next(dh, heg); }
 };
 template<typename HEG>
 struct Get_beta<HEG, 2>
 {
   typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_handle;
-  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh) 
+  static Dart_const_handle value(const HEG& heg, Dart_const_handle dh)
   {
     //if (Is_free<HEG, 2>::value(heg, dh)) return Dart_const_handle();
     return opposite(dh, heg);
@@ -82,6 +82,6 @@ struct Get_beta<HEG, 2>
 };
 ////////////////////////////////////////////////////////////////////////////////
 } // namespace CGAL
-  
+
 #endif // CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H //
 // EOF //

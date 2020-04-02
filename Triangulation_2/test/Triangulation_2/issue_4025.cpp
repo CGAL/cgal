@@ -56,8 +56,8 @@ int main()
 
     Constraint_id ctIdCollinear=cdtp.insert_constraint(pointsListCollinear.begin(),pointsListCollinear.end());
     Constraint_id ctIdNoCollinear=cdtp.insert_constraint(pointsListNoCollinear.begin(),pointsListNoCollinear.end());
-    
-    
+
+
     //******************************* attempt with the collinear constraint
     Vertices_in_constraint_iterator vertexToRemoveCollinear=cdtp.vertices_in_constraint_begin(ctIdCollinear);
     vertexToRemoveCollinear++;
@@ -70,8 +70,8 @@ int main()
     std::cout<<"number of subconstraints "<<cdtp.number_of_subconstraints()<<std::endl; //--> 5, expected 4
     std::cout<<"number of constraints "<<cdtp.number_of_constraints()<<std::endl; //--> 1
     std::cout<<"number of vertex in constraint "<<countVertex(cdtp,ctIdCollinear)<<std::endl; //--> 6, expected 5
-    
-    
+
+
     //******************************* attempt with the collinear constraint
     Vertices_in_constraint_iterator vertexToRemoveNoCollinear=cdtp.vertices_in_constraint_begin(ctIdNoCollinear);
     vertexToRemoveNoCollinear++;

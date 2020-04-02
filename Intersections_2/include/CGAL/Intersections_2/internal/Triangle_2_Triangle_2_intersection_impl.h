@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -21,9 +21,10 @@
 
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Algebraic_structure_traits.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -155,7 +156,7 @@ public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, TRIANGLE, POLYGON};
     Triangle_2_Triangle_2_pair(typename K::Triangle_2 const *trian1,
                                typename K::Triangle_2 const *trian2)
-	: _trian1(trian1), _trian2(trian2), _known(false) {}
+        : _trian1(trian1), _trian2(trian2), _known(false) {}
 
     Intersection_results intersection_type() const;
 
@@ -277,12 +278,22 @@ typename K::Triangle_2
 Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
 {
   typedef typename K::Triangle_2 Triangle_2;
-    if (!_known)
-        intersection_type();
-    CGAL_kernel_assertion(_result == TRIANGLE);
+  if (!_known)
+    intersection_type();
+  CGAL_kernel_assertion(_result == TRIANGLE);
+  if(CGAL::left_turn(_pointlist.first->point,
+                     _pointlist.first->next->point,
+                     _pointlist.first->next->next->point))
+  {
     return Triangle_2(_pointlist.first->point,
-		      _pointlist.first->next->point,
-		      _pointlist.first->next->next->point);
+                      _pointlist.first->next->point,
+                      _pointlist.first->next->next->point);
+  }
+  else {
+    return Triangle_2(_pointlist.first->point,
+                      _pointlist.first->next->next->point,
+                      _pointlist.first->next->point);
+  }
 }
 
 template <class K>
@@ -294,7 +305,7 @@ Triangle_2_Triangle_2_pair<K>::intersection_segment() const
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_pointlist.first->point,
-		     _pointlist.first->next->point);
+                     _pointlist.first->next->point);
 }
 
 template <class K>
@@ -308,35 +319,65 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
 }
 
 
+//algorithm taken from here : https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+template <typename K,  typename Exact>
+struct Is_cw
+{
+  bool operator()(const std::vector<typename K::Point_2>& ps)
+  {
+    typename K::FT res(0);
+    std::size_t length = ps.size();
+    for(std::size_t i = 0; i<length; ++i)
+      res += (ps[(i+1)%length].x() - ps[i].x())*(ps[(i+1)%length].y()+ps[i].y());
+
+    return res > 0;
+  }
+};
+
+template <typename K>
+struct Is_cw<K, Tag_true>
+{
+  bool operator()(const std::vector<typename K::Point_2>& ps)
+  {
+    return CGAL::right_turn(ps[0], ps[1], ps[2]);
+  }
+};
 
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Triangle_2, typename K::Triangle_2>::result_type
-intersection(const typename K::Triangle_2 &tr1, 
-	     const typename K::Triangle_2 &tr2,
-	     const K&)
+intersection(const typename K::Triangle_2 &tr1,
+             const typename K::Triangle_2 &tr2,
+             const K&)
 {
-    typedef Triangle_2_Triangle_2_pair<K> is_t;
-    is_t ispair(&tr1, &tr2);
-    switch (ispair.intersection_type()) {
-    case is_t::NO_INTERSECTION:
+  typedef Triangle_2_Triangle_2_pair<K> Intersection_type;
+  Intersection_type ispair(&tr1, &tr2);
+  switch (ispair.intersection_type())
+  {
+    case Intersection_type::NO_INTERSECTION:
     default:
-        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>();
-    case is_t::POINT:
-        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
-    case is_t::SEGMENT:
-        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
-    case is_t::TRIANGLE:
-        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
-    case is_t::POLYGON: {
-        typedef std::vector<typename K::Point_2> Container;
-        Container points(ispair.vertex_count());
-        for (int i =0; i < ispair.vertex_count(); i++) {
-            points[i] = ispair.vertex(i);
-        }
-        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(points);
+      return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>();
+    case Intersection_type::POINT:
+      return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
+    case Intersection_type::SEGMENT:
+      return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
+    case Intersection_type::TRIANGLE:
+      return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
+    case Intersection_type::POLYGON:
+    {
+      typedef std::vector<typename K::Point_2> Container;
+      Container points(ispair.vertex_count());
+      for (int i =0; i < ispair.vertex_count(); i++)
+        points[i] = ispair.vertex(i);
+
+      if(Is_cw<K, typename Algebraic_structure_traits<typename K::FT>::Is_exact>()(points))
+      {
+        std::reverse(points.begin(), points.end());
+
+      }
+      return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(points);
     }
-    }
+  }
 }
 
 } // namespace internal

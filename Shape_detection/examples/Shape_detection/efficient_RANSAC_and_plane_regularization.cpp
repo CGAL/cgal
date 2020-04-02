@@ -27,17 +27,17 @@ typedef CGAL::Shape_detection::Efficient_RANSAC<Traits> Efficient_ransac;
 typedef CGAL::Shape_detection::Plane<Traits>            Plane;
 
 int main(int argc, char** argv) {
-  
+
   Pwn_vector points;
   std::ifstream stream(argc > 1 ? argv[1] : "data/cube.pwn");
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(
       stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
-      
+
     std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -61,6 +61,6 @@ int main(int argc, char** argv) {
                           false, // do not regularize coplanarity
                           true,  // regularize Z-symmetry (default)
                           10);   // 10 degrees of tolerance for parallelism / orthogonality
-  
+
   return EXIT_SUCCESS;
 }

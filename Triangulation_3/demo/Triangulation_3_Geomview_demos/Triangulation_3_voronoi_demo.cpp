@@ -56,7 +56,7 @@ int main()
   for (int z=0 ; z<3 ; z++)
     for (int y=0 ; y<3 ; y++)
       for (int x=0 ; x<3 ; x++)
-	  T.insert(Point(x, y, z));
+          T.insert(Point(x, y, z));
 
   T.is_valid(true);
 

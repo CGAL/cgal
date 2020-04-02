@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Poisson_Surface_Reconstruction
 \cgalAutoToc
 
@@ -28,6 +28,11 @@ function of the inferred solid (Poisson Surface Reconstruction -
 referred to as Poisson). Poisson is a two steps process: it requires
 solving for the implicit function before function evaluation.
 
+\note A \ref tuto_reconstruction "detailed tutorial on surface reconstruction"
+is provided with a guide to choose the most appropriate method along
+with pre- and post-processing.
+
+
 \section Poisson_surface_reconstruction_3Common Common Reconstruction Pipeline
 
 Surface reconstruction from point sets is often a sequential process
@@ -38,7 +43,7 @@ reduce noise in the input data; 5) Normal estimation and orientation
 when the normals are not already provided by the acquisition device;
 and 6) Surface reconstruction.
 
-\cgal provides algorithms for all steps listed above except alignment. 
+\cgal provides algorithms for all steps listed above except alignment.
 
 Chapter \ref chappoint_set_processing_3 "Point Set Processing"
 describes algorithms to pre-process the point set before
@@ -115,12 +120,12 @@ The following example reads a point set, creates a Poisson implicit function and
 
 
 The computed implicit functions can be iso-contoured to reconstruct a
-surface by using the \cgal surface mesh generator 
+surface by using the \cgal surface mesh generator
 \cgalCite{cgal:ry-gsddrm-06} \cgalCite{cgal:bo-pgsms-05} :
 
-`make_surface_mesh()` 
+`make_surface_mesh()`
 
-The parameter `Tag` affects the behavior of `make_surface_mesh()`: 
+The parameter `Tag` affects the behavior of `make_surface_mesh()`:
 - `Manifold_tag`: the output mesh is guaranteed to be a manifold surface without boundary.
 - `Manifold_with_boundary_tag`: the output mesh is guaranteed to be manifold and may have boundaries.
 - `Non_manifold_tag`: the output mesh has no guarantee and hence is outputted as a polygon soup.
@@ -137,8 +142,8 @@ a three dimensional triangulation.
 Other \cgal components provide functions to write the reconstructed
 surface mesh to the %Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96}
 and to convert it to a polyhedron (when it is manifold):
-- `output_surface_facets_to_off()` 
-- `output_surface_facets_to_polyhedron()` 
+- `output_surface_facets_to_off()`
+- `output_surface_facets_to_polyhedron()`
 
 See \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp "poisson_reconstruction_example.cpp" example above.
 
@@ -166,7 +171,7 @@ reconstruction method expects a dense 3D oriented point set (typically
 matching the epsilon-sampling condition \cgalCite{cgal:bo-pgsms-05}) and
 sampled over a closed, smooth surface. Oriented herein means that all
 3D points must come with consistently oriented normals to the inferred
-surface.  \cgalFigureRef{Poisson_surface_reconstruction_3figbimba} and \cgalFigureRef{Poisson_surface_reconstruction_3figeros} 
+surface.  \cgalFigureRef{Poisson_surface_reconstruction_3figbimba} and \cgalFigureRef{Poisson_surface_reconstruction_3figeros}
 illustrate cases where these ideal conditions are met.
 
 \cgalFigureBegin{Poisson_surface_reconstruction_3figbimba,bimba.jpg}
@@ -343,7 +348,7 @@ with the 03 option which maximizes speed.  All measurements were done using the 
 
 The point set chosen for benchmarking the Poisson implicit function is the Bimba con Nastrino point set
 (1.6 million points) depicted by \cgalFigureRef{Poisson_surface_reconstruction_3-fig-contouring_bench}.
-We measure the Poisson implicit function computation (i.e., the call to 
+We measure the Poisson implicit function computation (i.e., the call to
 `Poisson_reconstruction_function::compute_implicit_function()` denoted by Poisson solve hereafter)
 for this point set as well as for simplified versions obtained through random simplification.
 The following table provides Poisson solve computation times in seconds for an increasing number of points.
@@ -353,9 +358,9 @@ The following table provides Poisson solve computation times in seconds for an i
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
 
-Number of points (x1000) 
+Number of points (x1000)
 <TD class="math" ALIGN=CENTER NOWRAP>
-Poisson solve duration (in s) 
+Poisson solve duration (in s)
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -405,16 +410,16 @@ in mm (the Bimba con Nastrino statue is 324 mm tall).
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=3><HR>
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
-Approx. distance (*average spacing)    
+Approx. distance (*average spacing)
 <TD class="math" ALIGN=CENTER NOWRAP>
-Contouring duration (in s) 
+Contouring duration (in s)
 <TD class="math" ALIGN=CENTER NOWRAP>
-Reconstruction error (mm) 
+Reconstruction error (mm)
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=3><HR>
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
-0.1                                   
+0.1
 <TD class="math" ALIGN=CENTER NOWRAP>
 19.2
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -442,7 +447,7 @@ Reconstruction error (mm)
 0.36
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
-2                                     
+2
 <TD class="math" ALIGN=CENTER NOWRAP>
 0.8
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -461,16 +466,16 @@ for the Bimba con Nastrino point set simplified to 100k points.
 
 We measure the memory occupancy for the reconstruction of the full Bimba con Nastrino point
 set (1.8 millions points) as well as for simplified versions.\n
-The Poisson implicit function computation has a memory peak when solving the Poisson linear 
+The Poisson implicit function computation has a memory peak when solving the Poisson linear
 system using the sparse linear solver.
 
 <TABLE CELLSPACING=5 >
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
-Number of points (x1000) 
+Number of points (x1000)
 <TD class="math" ALIGN=CENTER NOWRAP>
-Memory occupancy (MBytes) 
+Memory occupancy (MBytes)
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -509,19 +514,19 @@ Memory occupancy (MBytes)
 \subsection SurfReconstPerfPSS Point Set Simplification
 
 Due to the memory limitations described above, we recommend to simplify the point sets captured by laser scanners.\n
-We measure the reconstruction error for the Bimba con Nastrino point set (1.6M points) as well as for 
-simplified versions. All reconstructions use the recommended contouring parameter 
+We measure the reconstruction error for the Bimba con Nastrino point set (1.6M points) as well as for
+simplified versions. All reconstructions use the recommended contouring parameter
 `approximation distance = 0.25 * the input point` set's average spacing.
-The reconstruction error is expressed as the average distance from input points to the reconstructed surface in mm 
+The reconstruction error is expressed as the average distance from input points to the reconstructed surface in mm
 (the Bimba con Nastrino statue is 324 mm tall).
 
 <TABLE CELLSPACING=5 >
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
-Number of points (x1000) 
+Number of points (x1000)
 <TD class="math" ALIGN=CENTER NOWRAP>
-Reconstruction error (mm) 
+Reconstruction error (mm)
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -530,7 +535,7 @@ Reconstruction error (mm)
 0.27
 <TR>
 <TD class="math" ALIGN=CENTER NOWRAP>
-120                       
+120
 <TD class="math" ALIGN=CENTER NOWRAP>
 0.15
 <TR>
@@ -570,10 +575,10 @@ as well as for simplified versions.
 
 \section SurfReconstDesignHistory Design and Implementation History
 
-The initial implementation was essentially done by Laurent Saboret, guided by Pierre Alliez and Ga\"el Guennebaud. 
+The initial implementation was essentially done by Laurent Saboret, guided by Pierre Alliez and Ga\"el Guennebaud.
 For later releases of the package Andreas Fabri worked on performance improvements, and Laurent Rineau added the
 two passes for dealing with holes.
 
 
-*/ 
+*/
 } /* namespace CGAL */

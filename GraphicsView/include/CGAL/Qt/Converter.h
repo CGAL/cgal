@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -64,7 +64,7 @@ public:
 private:
   bool clippingRectIsInitialized;
   CGAL_Iso_rectangle_2 clippingRect;
-  
+
 
 public:
 
@@ -99,18 +99,18 @@ public:
     return QPointF(to_double(p.x()), to_double(p.y()));
   }
 
-      
+
   CGAL_Segment_2 operator()(const QLineF& qs) const
   {
     return CGAL_Segment_2(operator()(qs.p1()), operator()(qs.p2()));
   }
- 
+
   QLineF operator()(const CGAL_Segment_2 &s) const
   {
     return QLineF(operator()(s.source()), operator()(s.target()));
   }
 
-  
+
   CGAL_Iso_rectangle_2 operator()(const QRectF& qr) const
   {
     return CGAL_Iso_rectangle_2(operator()(qr.bottomLeft()), operator()(qr.topRight()));
@@ -126,12 +126,12 @@ public:
   QRectF operator()(const CGAL::Bbox_2& bb) const
   {
     return QRectF(bb.xmin(),
-		  bb.ymin(),
-		  bb.xmax()-bb.xmin(),
-		  bb.ymax()-bb.ymin());
+                  bb.ymin(),
+                  bb.xmax()-bb.xmin(),
+                  bb.ymax()-bb.ymin());
   }
 
-     
+
   QLineF operator()(const CGAL_Ray_2 &r) const
   {
     CGAL_assertion(clippingRectIsInitialized);

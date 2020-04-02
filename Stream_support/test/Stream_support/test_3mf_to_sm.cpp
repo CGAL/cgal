@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   colors.clear();
   vertex_id_map.clear();
   i = 0;
-  
+
   vpm = get(boost::vertex_point, tube);
   for(auto v : tube.vertices())
   {

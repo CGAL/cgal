@@ -13,7 +13,7 @@
 
 #include <fstream>
 
-// Domain 
+// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
@@ -54,7 +54,7 @@ int main(int argc, char*argv[])
   Polyhedron poly;
   in >> poly;
   Mesh_domain domain(poly);
-  
+
   // Get sharp features
   domain.detect_features();
 
@@ -64,7 +64,7 @@ int main(int argc, char*argv[])
                          facet_size = 0.037,
                          facet_distance = 0.0037,
                          cell_radius_edge_ratio = 3);
-  
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 

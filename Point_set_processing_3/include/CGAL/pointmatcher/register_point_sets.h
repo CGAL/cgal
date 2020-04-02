@@ -34,7 +34,7 @@ namespace pointmatcher {
 // point_set_1 is reference while point_set_2 is data
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   
+
    Computes the registration of `point_set_2` with respect to `point_set_1` and
    applies it.
 
@@ -60,26 +60,26 @@ namespace pointmatcher {
      type is the value type of the iterator of `PointRange1` and whose value
      type `geom_traits::Vector_3`.\cgalParamEnd
 
-     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of 
-     its iterator is `ICP_config`. 
-     
+     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of
+     its iterator is `ICP_config`.
+
      The chain of filters to be applied to the reference point cloud. The reference
      point cloud is processed into an intermediate point cloud with the given chain
      of filters to be used in the alignment procedure. The chain is organized with
      the forward traversal order of the point set filters range.
-     
+
      The chain of point set filters are applied only once at the beginning of the
      ICP procedure, i.e., before the first iteration of the ICP algorithm.
-     
+
      The filters can have several purposes, including but are not limited to
      i) removal of noisy points which render alignment of point clouds difficult,
-     ii) removal of redundant points so as to speed up alignment, iii) addition 
-     of descriptive information to the points such as a surface normal vector, 
+     ii) removal of redundant points so as to speed up alignment, iii) addition
+     of descriptive information to the points such as a surface normal vector,
      or the direction from the point to the sensor.
 
      Corresponds to `referenceDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `referenceDataPointsFilters` configuration module. 
+     the `referenceDataPointsFilters` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -87,19 +87,19 @@ namespace pointmatcher {
      \cgalParamEnd
 
      \cgalParamBegin{matcher} is a model of `ICP_config`.
-     The method used for matching (linking) the points from `point_set_2`, to the 
+     The method used for matching (linking) the points from `point_set_2`, to the
      points in the reference cloud, `point_set_1`.
-     
+
      Corresponds to `matcher` configuration module of \ref thirdpartylibpointmatcher
      library. The matcher should be chosen and set from possible components of
-     the `matcher` configuration module. 
+     the `matcher` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, `KDTreeMatcher` is used.
      \cgalParamEnd
 
-     \cgalParamBegin{outlier_filters} is a model of `Range`. The value type of 
+     \cgalParamBegin{outlier_filters} is a model of `Range`. The value type of
      its iterator is `ICP_config`.
      The chain of filters to be applied to the matched (linked) point clouds after
      each processing iteration of the ICP algorithm to remove the links which do not
@@ -110,7 +110,7 @@ namespace pointmatcher {
 
      Corresponds to `outlierFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `outlierFilters` configuration module. 
+     the `outlierFilters` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -123,38 +123,38 @@ namespace pointmatcher {
 
      Corresponds to `errorMinimizer` configuration module of \ref thirdpartylibpointmatcher
      library. The error minimizer should be chosen and set from possible components of
-     the `errorMinimizer` configuration module. 
+     the `errorMinimizer` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, `PointToPlaneErrorMinimizer` is used.
      \cgalParamEnd
 
-     \cgalParamBegin{transformation_checkers} is a model of `Range`. The value type of 
+     \cgalParamBegin{transformation_checkers} is a model of `Range`. The value type of
      its iterator is `ICP_config`.
      The chain of transformation checkers. A transformation checker can stop the
      iteration depending on the conditions it defines.
-     
+
      The chain is organized with the forward traversal order of the transformation
      checkers range.
 
      Corresponds to `transformationCheckers` configuration module of \ref thirdpartylibpointmatcher
      library. The transformation checkers should be chosen and set from possible components of
-     the `transformationCheckers` configuration module. 
+     the `transformationCheckers` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, the chain of `CounterTransformationChecker` and
      `DifferentialTransformationChecker` is used.
      \cgalParamEnd
-     
+
      \cgalParamBegin{inspector} is a model of `ICP_config`.
      The inspector allows to log data at different steps for analysis. Inspectors
      typically provide deeper scrutiny than the logger.
 
      Corresponds to `inspector` configuration module of \ref thirdpartylibpointmatcher
      library. The inspector should be chosen and set from possible components of
-     the `inspector` configuration module. 
+     the `inspector` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -168,7 +168,7 @@ namespace pointmatcher {
 
      Corresponds to `logger` configuration module of \ref thirdpartylibpointmatcher
      library. The logger should be chosen and set from possible components of
-     the `logger` configuration module. 
+     the `logger` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -189,33 +189,33 @@ namespace pointmatcher {
      type is the value type of the iterator of `PointRange2` and whose value
      type `geom_traits::Vector_3`.\cgalParamEnd
 
-     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of 
+     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of
      its iterator is `ICP_config`.
 
      The chain of filters to be applied to the point cloud, `point_set_2`. The
      point cloud is processed into an intermediate point cloud with the given chain
      of filters to be used in the alignment procedure. The chain is organized with
      the forward traversal order of the point set filters range.
-     
+
      The chain of point set filters are applied only once at the beginning of the
      ICP procedure, i.e., before the first iteration of ICP algorithm.
-     
+
      The filters can have several purposes, including but are not limited to
      i) removal of noisy points which render alignment of point clouds difficult,
-     ii) removal of redundant points so as to speed up alignment, iii) addition 
-     of descriptive information to the points such as a surface normal vector, 
+     ii) removal of redundant points so as to speed up alignment, iii) addition
+     of descriptive information to the points such as a surface normal vector,
      or the direction from the point to the sensor.
 
      Corresponds to `readingDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `readingDataPointsFilters` configuration module. 
+     the `readingDataPointsFilters` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, `SamplingSurfaceNormalDataPointsFilter` is used.
      \cgalParamEnd
 
-     \cgalParamBegin{transformation} The affine transformation that is used as the 
+     \cgalParamBegin{transformation} The affine transformation that is used as the
      initial transformation for `point_set_2`.
 
      If this parameter is omitted, identity transformation is used.
@@ -223,7 +223,7 @@ namespace pointmatcher {
 
    \cgalNamedParamsEnd
    \return `true` if registration is converged, `false` otherwise. A log why it
-   failed to converge is written to `std::cerr` if the registration cannot converge. 
+   failed to converge is written to `std::cerr` if the registration cannot converge.
 */
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>
@@ -241,7 +241,7 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
   std::pair<typename Kernel::Aff_transformation_3, bool> res =
     compute_registration_transformation(point_set_1, point_set_2, np1, np2);
 
-  // property map type of point_set_2 
+  // property map type of point_set_2
   typedef typename CGAL::GetPointMap<PointRange2, NamedParameters2>::type PointMap2;
   PointMap2 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
 

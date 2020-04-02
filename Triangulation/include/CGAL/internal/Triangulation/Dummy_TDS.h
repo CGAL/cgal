@@ -21,7 +21,7 @@ namespace internal {
 namespace Triangulation {
 
 struct Dummy_TDS
-{ 
+{
     struct Vertex {};
     struct Vertex_handle {};
     struct Vertex_iterator {};

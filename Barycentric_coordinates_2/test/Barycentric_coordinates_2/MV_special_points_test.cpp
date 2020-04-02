@@ -120,6 +120,6 @@ int main()
     }
 
     cout << endl << "MV_special_points_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

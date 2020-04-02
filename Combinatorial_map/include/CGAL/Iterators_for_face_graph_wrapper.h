@@ -18,7 +18,7 @@
 
 namespace CGAL
 {
-  
+
   //****************************************************************************
   /* Class CMap_dart_iterator_basic_of_all: to iterate onto all the
    * darts of the face graph.
@@ -52,9 +52,9 @@ namespace CGAL
 
     FGW_dart_iterator_basic_of_all(const FGW_dart_iterator_basic_of_all& other):
       mmap(other.mmap),
-      m_it(other.m_it)      
+      m_it(other.m_it)
     {}
-    
+
     operator Dart_handle() const
     { return operator*(); }
 
@@ -63,7 +63,7 @@ namespace CGAL
 
     bool operator!=(const Self& other) const
     { return !(operator==(other)); }
-    
+
     /// Prefix ++ operator.
     Self& operator++()
     {
@@ -75,7 +75,7 @@ namespace CGAL
       }
       /*while(m_it!=halfedges(this->mmap.get_fg()).end() &&
             is_border(*m_it, this->mmap.get_fg())); */
-      
+
       return *this;
     }
 
@@ -88,7 +88,7 @@ namespace CGAL
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
       return *m_it;
     }
-    
+
   protected:
     const Map& mmap;
     typename boost::graph_traits<typename Map_::HEG>::halfedge_iterator m_it;
@@ -100,10 +100,10 @@ namespace CGAL
   {
   public:
     typedef FGW_basis_for_cell_iterator Self;
-    typedef Map_ Map;    
+    typedef Map_ Map;
     typedef typename Map::Dart_handle Dart_handle;
     typedef typename Map::size_type size_type;
-    
+
     /// Main constructor.
     FGW_basis_for_cell_iterator(const Map& amap, Dart_handle adart):
       mmap(amap),
@@ -125,7 +125,7 @@ namespace CGAL
 
     bool operator!=(const Self& other) const
     { return !(this->operator==(other)); }
-    
+
     operator Dart_handle() const
     { return operator*(); }
 
@@ -134,7 +134,7 @@ namespace CGAL
       CGAL_assertion(m_curdart!=Dart_handle());
       return m_curdart;
     }
-    
+
   protected:
     const Map& mmap;
     Dart_handle m_firstdart, m_curdart;
@@ -151,10 +151,10 @@ namespace CGAL
   public:
     typedef FGW_cell_iterator Self;
     typedef FGW_basis_for_cell_iterator<Map_> Base;
-    typedef Map_ Map;    
+    typedef Map_ Map;
     typedef typename Map::Dart_handle Dart_handle;
     typedef typename Map::size_type size_type;
-    
+
     FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart),
                                                             m_second_way(false)
     {}
@@ -180,7 +180,7 @@ namespace CGAL
         else
         {
           this->m_curdart=this->mmap.template beta<2, 1>(this->m_curdart);
-          if (this->m_curdart==this->m_firstdart) 
+          if (this->m_curdart==this->m_firstdart)
           { this->m_curdart=Dart_handle(); }
         }
       }
@@ -191,14 +191,14 @@ namespace CGAL
         { this->m_curdart=Dart_handle(); }
         else { this->m_curdart=this->mmap.template beta<2>(this->m_curdart); }
       }
-      
+
       return *this;
     }
 
     /// Postfix ++ operator.
     Self operator++(int)
     { Self res=*this; operator ++(); return res; }
-    
+
 protected:
   /// True if we already found a border dart, and thus turn in the second way
   bool m_second_way;
@@ -209,10 +209,10 @@ class FGW_cell_iterator<Map_, 1>: public FGW_basis_for_cell_iterator<Map_>  // E
   public:
     typedef FGW_cell_iterator Self;
     typedef FGW_basis_for_cell_iterator<Map_> Base;
-    typedef Map_ Map;    
+    typedef Map_ Map;
     typedef typename Map::Dart_handle Dart_handle;
     typedef typename Map::size_type size_type;
-    
+
     FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
     {}
 
@@ -232,13 +232,13 @@ class FGW_cell_iterator<Map_, 1>: public FGW_basis_for_cell_iterator<Map_>  // E
       }
       else
       { this->m_curdart=Dart_handle(); }
-      
+
       return *this;
     }
-    
+
     /// Postfix ++ operator.
     Self operator++(int)
-    { Self res=*this; operator ++(); return res; }    
+    { Self res=*this; operator ++(); return res; }
 };
 template<typename Map_>
 class FGW_cell_iterator<Map_, 2>: public FGW_basis_for_cell_iterator<Map_> // Face
@@ -246,13 +246,13 @@ class FGW_cell_iterator<Map_, 2>: public FGW_basis_for_cell_iterator<Map_> // Fa
 public:
   typedef FGW_cell_iterator Self;
   typedef FGW_basis_for_cell_iterator<Map_> Base;
-  typedef Map_ Map;    
+  typedef Map_ Map;
   typedef typename Map::Dart_handle Dart_handle;
   typedef typename Map::size_type size_type;
-  
+
   FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
   {}
-  
+
   /// Constructor with two darts in parameter (for end iterator).
   FGW_cell_iterator(const Map& amap, Dart_handle adart,
                     Dart_handle d2): Base(amap, adart, d2)
@@ -264,10 +264,10 @@ public:
     this->m_curdart=this->mmap.template beta<1>(this->m_curdart);
     if (this->m_curdart==this->m_firstdart)
     { this->m_curdart=Dart_handle(); }
-    
+
     return *this;
   }
-  
+
   /// Postfix ++ operator.
   Self operator++(int)
   { Self res=*this; operator ++(); return res; }
@@ -278,13 +278,13 @@ class FGW_cell_iterator<Map_, 3>: public FGW_basis_for_cell_iterator<Map_> // CC
 public:
   typedef FGW_cell_iterator Self;
   typedef FGW_basis_for_cell_iterator<Map_> Base;
-  typedef Map_ Map;    
+  typedef Map_ Map;
   typedef typename Map::Dart_handle Dart_handle;
   typedef typename Map::size_type size_type;
-  
+
   FGW_cell_iterator(const Map& amap, Dart_handle adart) : Base(amap, adart)
   { m_mark=this->mmap.get_new_mark(); }
-  
+
   /// Constructor with two darts in parameter (for end iterator).
   FGW_cell_iterator(const Map& amap, Dart_handle adart,
                     Dart_handle d2): Base(amap, adart, d2)
@@ -312,14 +312,14 @@ public:
     { this->m_curdart=Dart_handle(); }
     else
     { this->m_curdart=m_to_treat.top(); m_to_treat.pop(); }
-    
+
     return *this;
   }
-    
+
   /// Postfix ++ operator.
   Self operator++(int)
   { Self res=*this; operator ++(); return res; }
-  
+
 protected:
   typename Map_::size_type m_mark;
   std::stack<Dart_handle> m_to_treat;

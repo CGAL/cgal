@@ -83,23 +83,23 @@ int main(void)
    CPolygon_2 c_polygon;
 
    make_monotone_polygon(c_polygon);
-   assert(CGAL::is_y_monotone_2(c_polygon.vertices_begin(), 
+   assert(CGAL::is_y_monotone_2(c_polygon.vertices_begin(),
                                 c_polygon.vertices_end()));
 
    c_polygon.erase(c_polygon.vertices_begin(), c_polygon.vertices_end());
    make_nonmonotone_polygon(c_polygon);
-   assert(!CGAL::is_y_monotone_2(c_polygon.vertices_begin(), 
+   assert(!CGAL::is_y_monotone_2(c_polygon.vertices_begin(),
                                  c_polygon.vertices_end()));
 
    HPolygon_2 h_polygon;
 
    make_monotone_polygon(h_polygon);
-   assert(CGAL::is_y_monotone_2(h_polygon.vertices_begin(), 
+   assert(CGAL::is_y_monotone_2(h_polygon.vertices_begin(),
                                 h_polygon.vertices_end()));
 
    h_polygon.erase(h_polygon.vertices_begin(), h_polygon.vertices_end());
    make_nonmonotone_polygon(h_polygon);
-   assert(!CGAL::is_y_monotone_2(h_polygon.vertices_begin(), 
+   assert(!CGAL::is_y_monotone_2(h_polygon.vertices_begin(),
                                  h_polygon.vertices_end()));
    return 0;
 }

@@ -37,7 +37,7 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 int main (int argc, char** argv)
 {
   std::string filename = "data/b9_training.ply";
-  
+
   if (argc > 1)
     filename = argv[1];
 
@@ -46,7 +46,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   in >> pts;
-  
+
   Imap label_map;
   bool lm_found = false;
   boost::tie (label_map, lm_found) = pts.property_map<int> ("label");
@@ -62,7 +62,7 @@ int main (int argc, char** argv)
              std::back_inserter (ground_truth));
 
   Feature_set features;
-  
+
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
@@ -72,12 +72,12 @@ int main (int argc, char** argv)
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
 #endif
-  
+
   generator.generate_point_based_features (features);
 #ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
 #endif
-  
+
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
@@ -88,10 +88,10 @@ int main (int argc, char** argv)
   Label_handle roof = labels.add ("roof");
 
   std::vector<int> label_indices(pts.size(), -1);
-  
+
   std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
   Classification::OpenCV::Random_forest_classifier classifier (labels, features);
-  
+
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
@@ -106,12 +106,12 @@ int main (int argc, char** argv)
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 1, label_indices);
   t.stop();
-  
+
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
   Classification::Evaluation evaluation (labels, ground_truth, label_indices);
-  
+
   for (std::size_t i = 0; i < labels.size(); ++ i)
   {
     std::cerr << " * " << labels[i]->name() << ": "
@@ -133,7 +133,7 @@ int main (int argc, char** argv)
   for (std::size_t i = 0; i < label_indices.size(); ++ i)
   {
     label_map[i] = label_indices[i]; // update label map with computed classification
-    
+
     Label_handle label = labels[label_indices[i]];
 
     if (label == ground)
@@ -156,6 +156,6 @@ int main (int argc, char** argv)
   f << pts;
 
   std::cerr << "All done" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

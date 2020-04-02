@@ -113,8 +113,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
   }
 
   //Edges
-  typedef EPICK::Point_3		Point;
-  typedef SMesh::Edge_iterator	Edge_iterator;
+  typedef EPICK::Point_3                Point;
+  typedef SMesh::Edge_iterator        Edge_iterator;
 
   Edge_iterator he;
 
@@ -147,7 +147,7 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
   }
-  
+
   nb_face_verts = faces_buffer.size();
   nb_edge_verts = edges_buffer.size();
 }
@@ -170,8 +170,8 @@ void Scene_textured_surface_mesh_item::common_constructor()
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     initGL(viewer);
   }
-  d->nb_face_verts = 0; 
-  d->nb_edge_verts = 0; 
+  d->nb_face_verts = 0;
+  d->nb_edge_verts = 0;
   d->nb_border_verts = 0;
   d->are_buffers_filled = false;
   d->are_border_filled = false;
@@ -180,7 +180,7 @@ Scene_textured_surface_mesh_item::Scene_textured_surface_mesh_item()
 {
   d = new Scene_textured_surface_mesh_item_priv(this);
   common_constructor();
-  
+
 }
 
 Scene_textured_surface_mesh_item::Scene_textured_surface_mesh_item(SMesh* const p)
@@ -275,10 +275,10 @@ void Scene_textured_surface_mesh_item::drawEdges(
     initializeBuffers(viewer);
   }
   getEdgeContainer(0)->draw(viewer, true);
-  
+
   if(viewer->isOpenGL_4_3())
   {
-    
+
     QVector2D vp(viewer->width(), viewer->height());
     getEdgeContainer(1)->setViewport(vp);
     getEdgeContainer(1)->setWidth(4.0f);
@@ -356,13 +356,13 @@ void Scene_textured_surface_mesh_item::initializeBuffers(Viewer_interface *v) co
     d->edges_buffer.shrink_to_fit();
     d->faces_buffer.clear();
     d->faces_buffer.shrink_to_fit();
-    
+
     getEdgeContainer(1)->initializeBuffers(v);
     getEdgeContainer(1)->setFlatDataSize(d->nb_border_verts);
-    
+
     d->border_edges_buffer.clear();
     d->border_edges_buffer.shrink_to_fit();
-  
+
 }
 
 void Scene_textured_surface_mesh_item::computeElements() const
@@ -371,29 +371,29 @@ void Scene_textured_surface_mesh_item::computeElements() const
   if(!d->are_buffers_filled)
   {
     d->compute_normals_and_vertices();
-    
+
     getTriangleContainer(0)->setTupleSize(8);
     getTriangleContainer(0)->getVbo(Tc::Flat_vertices)->stride = 8 * sizeof(float);
     getTriangleContainer(0)->allocate(
           Tc::Flat_vertices,
           d->faces_buffer.data(),
           static_cast<int>(d->faces_buffer.size()*sizeof(float)));
-    
+
     getTriangleContainer(0)->getVbo(Tc::Flat_normals)->offset = 3 * sizeof(float);
     getTriangleContainer(0)->getVbo(Tc::Flat_normals)->stride = 8 * sizeof(float);
     getTriangleContainer(0)->allocate(
           Tc::Flat_normals,
           d->faces_buffer.data(),
           static_cast<int>(d->faces_buffer.size()*sizeof(float)));
-    
+
     getTriangleContainer(0)->getVbo(Tc::Texture_map)->offset = 6 * sizeof(float);
     getTriangleContainer(0)->getVbo(Tc::Texture_map)->stride = 8 * sizeof(float);
     getTriangleContainer(0)->allocate(
           Tc::Texture_map,
           d->faces_buffer.data(),
           static_cast<int>(d->faces_buffer.size()*sizeof(float)));
-    
-    
+
+
     //Edges
     getEdgeContainer(0)->setTupleSize(5);
     getEdgeContainer(0)->getVbo(Ec::Vertices)->stride = 5 * sizeof(float);
@@ -405,7 +405,7 @@ void Scene_textured_surface_mesh_item::computeElements() const
     getEdgeContainer(0)->allocate(Ec::Texture_map,
                                   d->edges_buffer.data(),
                                   static_cast<int>(d->edges_buffer.size()*sizeof(float)));
-    
+
     getTriangleContainer(0)->getTexture()->setData(d->texture.GetData());
     getEdgeContainer(0)->getTexture()->setData(d->texture.GetData());
     d->are_buffers_filled = true;
@@ -420,6 +420,6 @@ void Scene_textured_surface_mesh_item::computeElements() const
     d->are_border_filled = true;
   }
   setBuffersFilled(true);
-  QApplication::restoreOverrideCursor();  
+  QApplication::restoreOverrideCursor();
 }
 

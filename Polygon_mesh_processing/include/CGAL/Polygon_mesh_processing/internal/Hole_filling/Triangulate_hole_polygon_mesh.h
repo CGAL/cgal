@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ilker O. Yaz
 
@@ -30,7 +30,7 @@ namespace internal {
 
 
 template<class PolygonMesh, class OutputIterator>
-struct Tracer_polyhedron 
+struct Tracer_polyhedron
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -41,8 +41,8 @@ struct Tracer_polyhedron
   { }
 
   template <class LookupTable>
-  halfedge_descriptor 
-  operator()(const LookupTable& lambda, 
+  halfedge_descriptor
+  operator()(const LookupTable& lambda,
              int i, int k,
              bool last = true)
   {
@@ -54,14 +54,14 @@ struct Tracer_polyhedron
         {
           h = P[i+1];
           Euler::fill_hole(h,pmesh); }
-      else 
+      else
         { h = Euler::add_face_to_border(prev(P[i+1],pmesh), P[i+2/*k*/], pmesh); }
-      
+
       CGAL_assertion(face(h,pmesh) != boost::graph_traits<PolygonMesh>::null_face());
       *out++ = face(h,pmesh);
       return opposite(h,pmesh);
-    } 
-    else 
+    }
+    else
     {
       int la = lambda.get(i, k);
       h = operator()(lambda, i, la, false);
@@ -72,7 +72,7 @@ struct Tracer_polyhedron
           h = g;
           Euler::fill_hole(g,pmesh);
         }
-      else 
+      else
         { h = Euler::add_face_to_border(prev(h,pmesh), g, pmesh); }
 
       CGAL_assertion(face(h,pmesh) != boost::graph_traits<PolygonMesh>::null_face());
@@ -88,8 +88,8 @@ struct Tracer_polyhedron
 
 // This function is used in test cases (since it returns not just OutputIterator but also Weight)
 template<class PolygonMesh, class OutputIterator, class VertexPointMap, class Kernel>
-std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area> 
-triangulate_hole_polygon_mesh(PolygonMesh& pmesh, 
+std::pair<OutputIterator, CGAL::internal::Weight_min_max_dihedral_and_area>
+triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
             OutputIterator out,
             VertexPointMap vpmap,
@@ -100,7 +100,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename Kernel::Point_3 Point_3;
-  
+
   typedef std::map<vertex_descriptor, int>    Vertex_map;
   typedef typename Vertex_map::iterator       Vertex_map_it;
 
@@ -128,7 +128,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
                             CGAL::internal::Weight_min_max_dihedral_and_area::NOT_VALID());
     }
   } while (++circ != done);
-  
+
   // existing_edges contains neighborhood information between boundary vertices
   // more precisely if v_i is neighbor to any other vertex than v_(i-1) and v_(i+1),
   // this edge is put into existing_edges
@@ -173,7 +173,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   // fill hole using polyline function, with custom tracer for PolygonMesh
   Tracer_polyhedron<PolygonMesh, OutputIterator>
     tracer(out, pmesh, P_edges);
-  CGAL::internal::Weight_min_max_dihedral_and_area weight = 
+  CGAL::internal::Weight_min_max_dihedral_and_area weight =
     triangulate_hole_polyline(P, Q, tracer, WC(is_valid),
       use_delaunay_triangulation, k)
 #ifdef CGAL_USE_WEIGHT_INCOMPLETE

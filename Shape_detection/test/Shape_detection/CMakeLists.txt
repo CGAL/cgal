@@ -45,7 +45,7 @@ if(CGAL_FOUND)
         test_region_growing_on_degenerated_mesh)
       CGAL_target_use_Eigen(${target})
     endforeach()
-    
+
   endif()
 
   create_single_source_cgal_program(
@@ -79,6 +79,6 @@ if(CGAL_FOUND)
     "test_efficient_RANSAC_regularization.cpp")
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

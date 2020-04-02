@@ -15,7 +15,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 using namespace CGAL::Three;
-class Polyhedron_demo_convex_hull_plugin : 
+class Polyhedron_demo_convex_hull_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -38,7 +38,7 @@ public:
   QList<QAction*> actions()const {return _actions;}
 
   bool applicable(QAction*) const {
-    return 
+    return
       qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())) ||
@@ -59,21 +59,21 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
-  
-  Scene_polylines_item* lines_item = 
+
+  Scene_polylines_item* lines_item =
     qobject_cast<Scene_polylines_item*>(scene->item(index));
-  
-  Scene_polyhedron_selection_item* selection_item = 
+
+  Scene_polyhedron_selection_item* selection_item =
     qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
 
-  Scene_surface_mesh_item* sm_item = 
+  Scene_surface_mesh_item* sm_item =
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if( pts_item || lines_item || selection_item || sm_item)
   {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    
+
     QElapsedTimer time;
     time.start();
     std::cout << "Convex hull...";
@@ -90,7 +90,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
       SMesh* pMesh = sm_item->polyhedron();
       CGAL::convex_hull_3(*pMesh,
                           *pConvex_hull);
-                          
+
     }
     else{
       if (pts_item)
@@ -109,7 +109,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
         for(std::list<std::vector<Kernel::Point_3> >::const_iterator it = lines_item->polylines.begin();
             it != lines_item->polylines.end();
             ++it)  std::copy(it->begin(), it->end(),std::back_inserter( all_points ) );
-        
+
         CGAL::convex_hull_3(all_points.begin(),all_points.end(),*pConvex_hull);
       }
     }

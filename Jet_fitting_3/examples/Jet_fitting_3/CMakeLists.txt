@@ -33,7 +33,7 @@ if ( CGAL_FOUND )
    CGAL_target_use_Eigen(Mesh_estimation)
    create_single_source_cgal_program( "Single_estimation.cpp" )
    CGAL_target_use_Eigen(Single_estimation)
-   
+
   else()
     message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
   endif()

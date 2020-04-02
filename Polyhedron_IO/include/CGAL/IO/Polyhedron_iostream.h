@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -59,7 +59,7 @@ template < class Traits,
            template < class T, class I, class A>
            class HDS, class Alloc,
            class NamedParameters>
-bool 
+bool
 read_off(std::istream& in,
          Polyhedron_3<Traits,Items,HDS,Alloc>& P,
          NamedParameters np) {
@@ -88,9 +88,9 @@ template < class Traits,
            class Items,
            template < class T, class I, class A>
            class HDS, class Alloc>
-bool 
+bool
 read_off(std::istream& in,
-         Polyhedron_3<Traits,Items,HDS,Alloc>& P) 
+         Polyhedron_3<Traits,Items,HDS,Alloc>& P)
 {
   return read_off(in, P, parameters::all_default());
 }

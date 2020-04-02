@@ -739,18 +739,18 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
         mvMatrix.data()[i] = (float)mat[i];
     }
     // define material
-    QVector4D	ambient(0.1f, 0.1f, 0.1f, 1.0f);
-    QVector4D	diffuse( 0.9f,
+    QVector4D        ambient(0.1f, 0.1f, 0.1f, 1.0f);
+    QVector4D        diffuse( 0.9f,
                          0.9f,
                          0.9f,
                          0.0f );
 
-    QVector4D	specular(  0.0f,
+    QVector4D        specular(  0.0f,
                            0.0f,
                            0.0f,
                            0.0f );
 
-    QVector4D	position( -1.2f, 1.2f, .9797958971f, 1.0f  );
+    QVector4D        position( -1.2f, 1.2f, .9797958971f, 1.0f  );
     GLfloat shininess =  1.0f;
 
 

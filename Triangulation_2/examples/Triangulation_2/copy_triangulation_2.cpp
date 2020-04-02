@@ -29,7 +29,7 @@ struct Convert_vertex{
 
 struct Convert_face{
   DT2_epec::Face operator()(const DT2_epic::Face&) const { return DT2_epec::Face(); }
-  void operator()(const DT2_epic::Face&,DT2_epec::Face&) const {}  
+  void operator()(const DT2_epic::Face&,DT2_epec::Face&) const {}
 };
 
 int main()
@@ -41,7 +41,7 @@ int main()
   DT2_epic dt2_epic;
   dt2_epic.insert(points.begin(), points.end());
   DT2_epec dt2_epec;
-  dt2_epec.set_infinite_vertex( 
+  dt2_epec.set_infinite_vertex(
     dt2_epec.tds().copy_tds( dt2_epic.tds(),dt2_epic.infinite_vertex(), Convert_vertex(), Convert_face() ) );
 
   CGAL_assertion( dt2_epec.is_valid() );

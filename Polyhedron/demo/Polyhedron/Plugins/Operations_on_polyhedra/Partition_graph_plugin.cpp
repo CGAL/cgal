@@ -51,7 +51,7 @@ public:
   bool applicable(QAction*) const {
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  
+
   void init(QMainWindow* _mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     mw = _mw;
     this->scene = scene_interface;
@@ -63,7 +63,7 @@ public:
     if(actionNodalPartition) {
       connect(actionNodalPartition, SIGNAL(triggered()),this, SLOT(create_nodal_partition()));
     }
-    
+
     actionDualPartition = new QAction(
                 tr("Create a Dual Graph Based Partition")
           , mw);
@@ -79,7 +79,7 @@ private:
   enum PARTITION_TYPE{
     NODAL=0,
     DUAL};
-  
+
   void create_partition(PARTITION_TYPE type)
   {
     Scene_facegraph_item* item =
@@ -101,15 +101,15 @@ private:
       item->setItemIsMulticolor(true);
       item->computeItemColorVectorAutomatically(true);
     }
-    
+
     typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
     FaceGraph* fg =item->face_graph();
-    boost::property_map<FaceGraph, boost::vertex_index_t>::type 
+    boost::property_map<FaceGraph, boost::vertex_index_t>::type
       vimap = get(boost::vertex_index, *fg);
-    
+
     PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *fg);
     std::map<boost::graph_traits<FaceGraph>::vertex_descriptor,
-        int> vpm; 
+        int> vpm;
     if(type == DUAL)
       CGAL::METIS::partition_dual_graph(*fg,
                                         nparts,
@@ -135,7 +135,7 @@ private:
   {
     create_partition(DUAL);
   }
-  
+
 
 }; // end class Polyhedron_demo_affine_transform_plugin
 

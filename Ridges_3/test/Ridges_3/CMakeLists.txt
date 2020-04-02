@@ -17,14 +17,14 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "ridge_test.cpp" )
     CGAL_target_use_Eigen(ridge_test)
   else()
-  
+
     message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
 
   endif()
 
 else()
-  
+
   message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

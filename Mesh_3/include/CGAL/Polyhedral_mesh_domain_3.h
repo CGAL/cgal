@@ -163,7 +163,7 @@ public:
 
   template <typename P>
   struct Primitive_type {
-      //setting OneFaceGraphPerTree to false transforms the id type into 
+      //setting OneFaceGraphPerTree to false transforms the id type into
       //std::pair<FD, const FaceGraph*>.
     typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::const_type, CGAL::Tag_false> type;
 
@@ -180,7 +180,7 @@ public:
     }
   }; // Primitive_type (for non-Polyhedron_3)
 
- 
+
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
   typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
@@ -652,7 +652,7 @@ public:
     Query_cache &qc = query_cache.local();
     return qc.has_cache && (qc.cached_query == Cached_query(q));
 #else
-    return query_cache.has_cache 
+    return query_cache.has_cache
       && (query_cache.cached_query == Cached_query(q));
 #endif
   }
@@ -760,5 +760,5 @@ Is_in_domain::operator()(const Point_3& p) const
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-  
+
 #endif // POLYHEDRAL_MESH_TRAITS_3_H_

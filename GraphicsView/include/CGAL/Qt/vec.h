@@ -107,7 +107,7 @@ and can hence be used in place of Vec. See also operator const qreal*() .*/
   // Vec(const Vec& v) : x(v.x), y(v.y), z(v.z) {}
 
   /*! Equal operator. */
-#ifdef DOXYGEN_RUNNING  
+#ifdef DOXYGEN_RUNNING
   Vec &operator=(const Vec &v) {
     x = v.x;
     y = v.y;

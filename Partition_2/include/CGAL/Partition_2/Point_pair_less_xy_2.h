@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -35,11 +35,11 @@ class Point_pair_less_xy_2
    public:
      Point_pair_less_xy_2(const Traits& traits) : _less_xy_2(traits.less_xy_2_object())
      { }
-     
 
-     bool 
+
+     bool
      operator()(const Point_pair& p, const Point_pair& q) const
-     { 
+     {
         if (_less_xy_2(p.first, q.first))
             return true;
         else if (_less_xy_2(q.first, p.first))

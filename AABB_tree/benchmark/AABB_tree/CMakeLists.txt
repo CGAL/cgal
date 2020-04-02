@@ -10,7 +10,7 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 else ()
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -20,7 +20,7 @@ find_package( Boost REQUIRED )
 # include for local directory
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
 # include for local package

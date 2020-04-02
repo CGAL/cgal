@@ -117,7 +117,7 @@ public:
   }
 
 protected:
-  
+
   const Point& get_point(Dart_const_handle dh) const
   { return CGAL::Get_traits<Mesh>::get_point(mesh, dh); }
 
@@ -202,7 +202,7 @@ protected:
       cur=lcc.next(cur);
     }
     while(cur!=dh);
-    
+
     // CGAL::Color c=m_fcolor.run(*lcc, dh);
     face_begin(); //c);
 
@@ -315,7 +315,7 @@ protected:
 
     CGAL::Random random(static_cast<unsigned int>(i));
     CGAL::Color color=get_random_color(random);
-    
+
     add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
     for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
     {
@@ -326,7 +326,7 @@ protected:
       }
     }
   }
-  
+
 protected:
   const Mesh& mesh;
   const typename Get_map<Mesh, Mesh>::storage_type lcc;
@@ -338,7 +338,7 @@ protected:
   bool m_draw_marked_darts;
   typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
 };
-  
+
 template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,

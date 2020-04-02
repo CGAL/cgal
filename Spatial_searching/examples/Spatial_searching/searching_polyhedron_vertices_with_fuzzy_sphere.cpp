@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
   // search vertices
   CGAL::Fuzzy_sphere<Traits> fz(query, radius, epsilon, traits);
-  
+
   //collect vertices that are inside the sphere
   std::list<vertex_descriptor> result;
   tree.search(std::back_inserter(result), fz);

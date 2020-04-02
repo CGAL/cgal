@@ -19,10 +19,10 @@ if ( CGAL_FOUND )
   if( TBB_FOUND )
     include( CGAL_target_use_TBB )
     CGAL_target_use_TBB( parallel_spatial_sort_3 )
- endif()   
+ endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

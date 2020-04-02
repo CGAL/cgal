@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -38,8 +38,8 @@ struct Primitive_profiler
     result_type
     operator()(A&& ... a) const
     {
-	CGAL_KERNEL_PROFILER;
-	return P::operator()(std::forward<A>(a)...);
+        CGAL_KERNEL_PROFILER;
+        return P::operator()(std::forward<A>(a)...);
     }
 };
 

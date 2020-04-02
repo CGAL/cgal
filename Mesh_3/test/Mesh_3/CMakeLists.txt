@@ -23,7 +23,7 @@ if ( CGAL_FOUND )
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
   endif()
-  
+
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
@@ -94,7 +94,7 @@ if ( CGAL_FOUND )
       CGAL_target_use_Eigen(${target})
     endif()
   endforeach()
-  
+
   foreach(target
       test_meshing_verbose
       test_meshing_polyhedron_with_features
@@ -115,8 +115,8 @@ if ( CGAL_FOUND )
   endforeach()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 
