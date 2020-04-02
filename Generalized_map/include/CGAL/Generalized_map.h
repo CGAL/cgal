@@ -191,7 +191,7 @@ namespace CGAL {
      *  @post *this is valid.
      */
     template <typename GMap2, typename Dart_handle_2,
-              typename Converters, typename DartInfoConverter, 
+              typename Converters, typename DartInfoConverter,
               typename PointConverter>
     void generic_copy(GMap2& amap,
                       boost::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy,
@@ -239,14 +239,14 @@ namespace CGAL {
 
           (*origin_to_copy)[it]=new_dart;
           if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
-          
+
           internal::Copy_dart_info_functor
             <typename GMap2::Refs, Refs, DartInfoConverter>::run
             (static_cast<const typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
              it, new_dart, dartinfoconverter);
         }
       }
-      
+
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
       typename boost::unordered_map<Dart_handle_2, Dart_handle>::iterator
@@ -359,7 +359,7 @@ namespace CGAL {
            dartinfoconverter, pointconverter,
            copy_perforated_darts, mark_perforated);
     }
-    
+
     // (3a) copy(amap, converters)
     template<typename GMap2, typename Converters>
     void copy(GMap2& amap,
@@ -391,7 +391,7 @@ namespace CGAL {
       copy(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter,
            copy_perforated_darts, mark_perforated);
     }
-    
+
     // (4a) copy(amap)
     template<typename GMap2>
     void copy(GMap2& amap,
@@ -420,7 +420,7 @@ namespace CGAL {
       CGAL::cpp11::tuple<> converters;
       copy(amap, origin_to_copy, copy_to_origin, converters,
            copy_perforated_darts, mark_perforated);
-    }    
+    }
 
     // Copy constructor from a map having exactly the same type.
     Generalized_map_base (const Self & amap) : Generalized_map_base()
@@ -1018,7 +1018,7 @@ namespace CGAL {
     bool belong_to_same_cell(Dart_const_handle adart1,
                              Dart_const_handle adart2) const
     { return CGAL::belong_to_same_cell<Self, i, d>(*this, adart1, adart2); }
-  
+
     template <unsigned int i, unsigned int d=dimension>
     bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
     { return CGAL::is_whole_cell_unmarked<Self, i, d>(*this, adart, amark); }
@@ -1839,16 +1839,16 @@ namespace CGAL {
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
-      
+
       if (d2==opposite2(d1)) { return 0; }
-      
+
       Dart_const_handle dd1=d1;
       std::size_t res=1;
       while (next(dd1)!=d2)
       {
         if (this->template is_free<2>(next(dd1)))
         { return std::numeric_limits<std::size_t>::max(); }
-        
+
         ++res;
         dd1=opposite2(next(dd1));
 
@@ -1881,7 +1881,7 @@ namespace CGAL {
 
         ++res;
         dd1=opposite2(previous(dd1));
-        
+
         CGAL_assertion(!this->template is_free<0>(dd1));
         CGAL_assertion(previous(dd1)==d2 || dd1!=d1);
       }

@@ -208,7 +208,7 @@ namespace CGAL {
 
       CGAL_assertion(number_of_darts()==0);
     }
-    
+
     /** Copy the given combinatorial map 'amap' into *this.
      *  Note that both CMap can have different dimensions and/or non void attributes.
      *  Here CMap2 is necessarily non const; while Dart_handle_2 can be a const or non const handle.
@@ -257,7 +257,7 @@ namespace CGAL {
       // Create an mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      boost::unordered_map<Dart_handle_2, Dart_handle> local_dartmap; 
+      boost::unordered_map<Dart_handle_2, Dart_handle> local_dartmap;
       if (origin_to_copy==NULL) // Use local_dartmap if user does not provides its own unordered_map
       { origin_to_copy=&local_dartmap; }
 
@@ -272,10 +272,10 @@ namespace CGAL {
 
           if (mark_perforated!=NB_MARKS && amap.is_perforated(it))
           { mark(new_dart, mark_perforated); }
-          
+
           (*origin_to_copy)[it]=new_dart;
           if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
-          
+
           internal::Copy_dart_info_functor
             <typename CMap2::Refs, Refs, DartInfoConverter>::run
             (static_cast<typename CMap2::Refs&>(amap), static_cast<Refs&>(*this),
@@ -395,7 +395,7 @@ namespace CGAL {
            converters, dartinfoconverter, pointconverter,
            copy_perforated_darts, mark_perforated);
     }
-    
+
     // (3a) copy(amap, converters)
     template<typename CMap2, typename Converters>
     void copy(CMap2& amap,
@@ -427,7 +427,7 @@ namespace CGAL {
       copy(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter,
            copy_perforated_darts, mark_perforated);
     }
-    
+
     // (4a) copy(amap)
     template<typename CMap2>
     void copy(CMap2& amap,
@@ -567,7 +567,7 @@ namespace CGAL {
       // iterators...
       boost::unordered_map
         <typename boost::graph_traits<HEG>::halfedge_descriptor,
-         Dart_handle> local_dartmap; 
+         Dart_handle> local_dartmap;
       if (origin_to_copy==NULL) // Used local_dartmap if user does not provides its own unordered_map
       { origin_to_copy=&local_dartmap; }
 
@@ -582,7 +582,7 @@ namespace CGAL {
 
           if (mark_perforated!=NB_MARKS && CGAL::is_border(*it, heg))
           { mark(new_dart, mark_perforated); }
-          
+
           (*origin_to_copy)[*it]=new_dart;
           if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=*it; }
         }
@@ -597,7 +597,7 @@ namespace CGAL {
         basic_link_beta(dartmap_iter->second,
                         (*origin_to_copy)[CM_ADL_next(dartmap_iter->first, heg)],
             1);
-        
+
         if (!CGAL::is_border(CM_ADL_opposite(dartmap_iter->first, heg), heg) &&
             (dartmap_iter->first)<CM_ADL_opposite(dartmap_iter->first, heg))
         {
@@ -609,7 +609,7 @@ namespace CGAL {
 
       CGAL_assertion (is_valid());
     }
-    
+
     /** Clear the combinatorial map. Remove all darts and all attributes.
      *  Note that reserved marks are not free.
      */
@@ -1194,7 +1194,7 @@ namespace CGAL {
     bool belong_to_same_cell(Dart_const_handle adart1,
                              Dart_const_handle adart2) const
     { return CGAL::belong_to_same_cell<Self, i, d>(*this, adart1, adart2); }
-  
+
     template <unsigned int i, unsigned int d=dimension>
     bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
     { return CGAL::is_whole_cell_unmarked<Self, i, d>(*this, adart, amark); }
@@ -2726,16 +2726,16 @@ namespace CGAL {
       CGAL_assertion((!this->template is_free<1>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->template beta<1>(d1),
                                                 d2))); */
-      
+
       if (d2==beta<2>(d1)) { return 0; }
-      
+
       Dart_const_handle dd1=d1;
       std::size_t res=1;
       while (beta<1>(dd1)!=d2)
       {
         if (this->template is_free<2>(beta<1>(dd1)))
         { return std::numeric_limits<std::size_t>::max(); }
-        
+
         ++res;
         dd1=beta<1, 2>(dd1);
 
@@ -2752,7 +2752,7 @@ namespace CGAL {
       CGAL_assertion((!this->template is_free<1>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->template beta<1>(d1),
                                                 d2))); */
-      
+
       if (d2==beta<2>(d1)) { return 0; }
 
       if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
@@ -2766,10 +2766,10 @@ namespace CGAL {
       {
         if (this->template is_free<2>(beta<0>(dd1)))
         { return std::numeric_limits<std::size_t>::max(); }
-        
+
         ++res;
         dd1=beta<0, 2>(dd1);
-        
+
         CGAL_assertion(!this->template is_free<0>(dd1));
         CGAL_assertion(beta<0>(dd1)==d2 || dd1!=d1);
       }
@@ -3444,7 +3444,7 @@ namespace CGAL {
 #if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
       CGAL_USE(testDartInfo);
 #endif
-      
+
       typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
       bool match = true;
@@ -4813,6 +4813,6 @@ namespace CGAL {
 #endif
 
  #include <CGAL/enable_warnings.h>
- 
+
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //
