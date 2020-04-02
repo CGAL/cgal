@@ -49,17 +49,12 @@ int main (int argc, char** argv)
   
   Imap label_map;
   bool lm_found = false;
-  boost::tie (label_map, lm_found) = pts.property_map<int> ("label");
+  std::tie (label_map, lm_found) = pts.property_map<int> ("label");
   if (!lm_found)
   {
     std::cerr << "Error: \"label\" property not found in input file." << std::endl;
     return EXIT_FAILURE;
   }
-
-  std::vector<int> ground_truth;
-  ground_truth.reserve (pts.size());
-  std::copy (pts.range(label_map).begin(), pts.range(label_map).end(),
-             std::back_inserter (ground_truth));
 
   Feature_set features;
   
@@ -69,20 +64,14 @@ int main (int argc, char** argv)
   Feature_generator generator (pts, pts.point_map(),
                                5);  // using 5 scales
   
-#ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
-#endif
-  
   generator.generate_point_based_features (features);
-
-#ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
-#endif
   
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
-  // Add types
+  // Add labels
   Label_set labels;
   Label_handle ground = labels.add ("ground");
   Label_handle vegetation = labels.add ("vegetation");
@@ -96,13 +85,13 @@ int main (int argc, char** argv)
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  classifier.train (ground_truth);
+  classifier.train (pts.range(label_map));
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
   t.reset();
   t.start();
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 1, label_indices);
@@ -111,55 +100,20 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-  Classification::Evaluation evaluation (labels, ground_truth, label_indices);
-  
-  for (std::size_t i = 0; i < labels.size(); ++ i)
+  Classification::Evaluation evaluation (labels, pts.range(label_map), label_indices);
+
+  for (Label_handle l : labels)
   {
-    std::cerr << " * " << labels[i]->name() << ": "
-              << evaluation.precision(labels[i]) << " ; "
-              << evaluation.recall(labels[i]) << " ; "
-              << evaluation.f1_score(labels[i]) << " ; "
-              << evaluation.intersection_over_union(labels[i]) << std::endl;
+    std::cerr << " * " << l->name() << ": "
+              << evaluation.precision(l) << " ; "
+              << evaluation.recall(l) << " ; "
+              << evaluation.f1_score(l) << " ; "
+              << evaluation.intersection_over_union(l) << std::endl;
   }
 
   std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
             << "Mean F1 score = " << evaluation.mean_f1_score() << std::endl
             << "Mean IoU = " << evaluation.mean_intersection_over_union() << std::endl;
-
-  {
-    std::ofstream out ("toto.bin", std::ios_base::binary);
-    classifier.save_configuration(out);
-    
-    Classification::ETHZ::Random_forest_classifier classifier_2 (labels, features);
-    std::ifstream in ("toto.bin", std::ios_base::binary);
-    classifier_2.load_configuration(in);
-    
-    t.reset();
-    t.start();
-    Classification::classify_with_graphcut<CGAL::Sequential_tag>
-      (pts, pts.point_map(), labels, classifier_2,
-       generator.neighborhood().k_neighbor_query(12),
-       0.2f, 1, label_indices);
-    t.stop();
-  
-    std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
-
-    std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-    Classification::Evaluation evaluation (labels, ground_truth, label_indices);
-  
-    for (std::size_t i = 0; i < labels.size(); ++ i)
-    {
-      std::cerr << " * " << labels[i]->name() << ": "
-                << evaluation.precision(labels[i]) << " ; "
-                << evaluation.recall(labels[i]) << " ; "
-                << evaluation.f1_score(labels[i]) << " ; "
-                << evaluation.intersection_over_union(labels[i]) << std::endl;
-    }
-
-    std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
-              << "Mean F1 score = " << evaluation.mean_f1_score() << std::endl
-              << "Mean IoU = " << evaluation.mean_intersection_over_union() << std::endl;
-  }
 
   // Color point set according to class
   UCmap red = pts.add_property_map<unsigned char>("red", 0).first;
@@ -185,6 +139,10 @@ int main (int argc, char** argv)
       red[i] = 255; green[i] =   0; blue[i] = 170;
     }
   }
+
+  // Save configuration for later use
+  std::ofstream fconfig ("ethz_random_forest.bin", std::ios_base::binary);
+  classifier.save_configuration(fconfig);
 
   // Write result
   std::ofstream f ("classification.ply");

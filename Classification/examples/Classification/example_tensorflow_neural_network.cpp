@@ -49,17 +49,12 @@ int main (int argc, char** argv)
   
   Imap label_map;
   bool lm_found = false;
-  boost::tie (label_map, lm_found) = pts.property_map<int> ("label");
+  std::tie (label_map, lm_found) = pts.property_map<int> ("label");
   if (!lm_found)
   {
     std::cerr << "Error: \"label\" property not found in input file." << std::endl;
     return EXIT_FAILURE;
   }
-
-  std::vector<int> ground_truth;
-  ground_truth.reserve (pts.size());
-  std::copy (pts.range(label_map).begin(), pts.range(label_map).end(),
-             std::back_inserter (ground_truth));
 
   Feature_set features;
   
@@ -69,20 +64,14 @@ int main (int argc, char** argv)
   Feature_generator generator (pts, pts.point_map(),
                                5);  // using 5 scales
   
-#ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
-#endif
-  
   generator.generate_point_based_features (features);
-
-#ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
-#endif
   
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
-  // Add types
+  // Add labels
   Label_set labels;
   Label_handle ground = labels.add ("ground");
   Label_handle vegetation = labels.add ("vegetation");
@@ -96,7 +85,7 @@ int main (int argc, char** argv)
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  classifier.train (ground_truth,
+  classifier.train (pts.range(ground_truth),
                     true, // restart from scratch
                     100); // 100 iterations
   t.stop();
@@ -113,15 +102,15 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-  Classification::Evaluation evaluation (labels, ground_truth, label_indices);
+  Classification::Evaluation evaluation (labels, pts.range(ground_truth), label_indices);
   
-  for (std::size_t i = 0; i < labels.size(); ++ i)
+  for (Label_handle l : labels)
   {
-    std::cerr << " * " << labels[i]->name() << ": "
-              << evaluation.precision(labels[i]) << " ; "
-              << evaluation.recall(labels[i]) << " ; "
-              << evaluation.f1_score(labels[i]) << " ; "
-              << evaluation.intersection_over_union(labels[i]) << std::endl;
+    std::cerr << " * " << l->name() << ": "
+              << evaluation.precision(l) << " ; "
+              << evaluation.recall(l) << " ; "
+              << evaluation.f1_score(l) << " ; "
+              << evaluation.intersection_over_union(l) << std::endl;
   }
 
   std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
