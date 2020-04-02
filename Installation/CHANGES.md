@@ -53,6 +53,7 @@ Release date: June 2020
  -   The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh` now allows passing a point map (for the point range)
      and a vertex point map (for the polygon mesh) via named parameters.
  -   Added the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+ -   Added a new function `CGAL::Polygon_mesh_processing::sample_triangle_soup()` that generates points on a triangle soup surface.
 
 ### Point Set Processing
  -   Added wrapper functions for registration:
@@ -67,6 +68,7 @@ Release date: June 2020
      - `CGAL::pointmatcher::register_point_sets()` computes the registration transformation for two point
         sets using ICP algorithm implemented in the third party library libpointmatcher, and registers 
         the points sets by transforming the data point set using the computed transformation.
+
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
