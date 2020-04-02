@@ -601,7 +601,7 @@ As a consequence, the normal computed for each face (see Section
 - The function `CGAL::Polygon_mesh_processing::volume_connected_components()` provides information about
 the 3D arrangement of the surface connected components in a given triangle mesh. It comes with many
 named parameter options making it also a more general version of `is_outward_oriented()`.
-- The function `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`
+- The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
 duplicates points and edges to make a soup orientable, without changing the orientation of the faces.
 - The function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
 takes an input mesh as a reference and orients the triangles of a soup according to it.

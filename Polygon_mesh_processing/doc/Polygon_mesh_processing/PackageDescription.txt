@@ -141,7 +141,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::volume_connected_components()`
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
-- `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
 
