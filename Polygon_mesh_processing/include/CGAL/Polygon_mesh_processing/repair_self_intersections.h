@@ -258,7 +258,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
     CGAL_assertion(vf.size() == hedges.size());
 
     // update halfedge connections + face pointers
-    for(int i=0, n=vf.size(); i<n; ++i)
+    for(std::size_t i=0, n=vf.size(); i<n; ++i)
     {
       set_next(hedges[i], hedges[(i+1)%n], pmesh);
       set_face(hedges[i], f, pmesh);

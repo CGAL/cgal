@@ -652,4 +652,3 @@ bool is_selection_a_topological_disk(const FaceRange& face_selection,
 } //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_SELECTION_H
-
