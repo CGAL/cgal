@@ -529,9 +529,10 @@ void test_split()
 
   PMP::split(tm1, tm2);
   //try with np
+  typedef typename boost::graph_traits<TriangleMesh>::faces_size_type  faces_size_type;
   typename boost::template property_map<
-  TriangleMesh, CGAL::dynamic_face_property_t<int > >::type
-      pidmap = get(CGAL::dynamic_face_property_t<int>(), tm1);
+  TriangleMesh, CGAL::dynamic_face_property_t<faces_size_type> >::type
+      pidmap = get(CGAL::dynamic_face_property_t<face_size_type>(), tm1);
   CGAL::Polygon_mesh_processing::connected_components(
         tm1, pidmap, CGAL::parameters::all_default());
   PMP::split_connected_components(tm1,

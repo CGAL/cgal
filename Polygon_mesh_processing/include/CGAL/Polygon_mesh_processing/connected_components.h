@@ -299,7 +299,8 @@ template <typename PolygonMesh,
 std::size_t number_of_connected_components(const PolygonMesh& pmesh,
                                            const CGAL_PMP_NP_CLASS& np)
 {
-  typedef CGAL::dynamic_face_property_t<std::size_t>                                Face_property_tag;
+  typedef typename boost::graph_traits<PolygonMesh>::faces_size_type                faces_size_type;
+  typedef CGAL::dynamic_face_property_t<faces_size_type>                             Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag >::const_type Patch_ids_map;
 
   Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);
@@ -940,21 +941,22 @@ void split_connected_components_impl(FIMap fim,
                                      const PolygonMesh& tm,
                                      const NamedParameters& np)
 {
+  typedef typename boost::graph_traits<PolygonMesh>::faces_size_type  faces_size_type;
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::face_patch_t,
       NamedParameters,
       typename boost::template property_map<
-      PolygonMesh, CGAL::dynamic_face_property_t<int > >::const_type
-      > ::type Fpm;
+      PolygonMesh, CGAL::dynamic_face_property_t<faces_size_type > >::const_type> ::type
+      Fpm;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
   Fpm pidmap = choose_parameter(get_parameter(np, internal_np::face_patch),
-                                get(CGAL::dynamic_face_property_t<int>(), tm));
+                                get(CGAL::dynamic_face_property_t<faces_size_type>(), tm));
 
-  std::size_t nb_patches = 0;
+  faces_size_type nb_patches = 0;
   if(is_default_parameter(get_parameter(np, internal_np::face_patch)))
   {
     nb_patches = CGAL::Polygon_mesh_processing::connected_components(
@@ -965,7 +967,7 @@ void split_connected_components_impl(FIMap fim,
   {
     for(const auto& f : faces(tm))
     {
-      std::size_t patch = get(pidmap, f);
+      faces_size_type patch = get(pidmap, f);
       if(patch > nb_patches)
         nb_patches = patch;
     }
