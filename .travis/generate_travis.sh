@@ -21,14 +21,14 @@ for f in *
 do
   if [ -d  "$f/package_info/$f" ]
 	then
-		PACKAGES[$INDEX]+="$f"
+		PACKAGES[$INDEX]+="$f "
 		i=$[i+1]
 		if [ $i = 3 ]
 		then
 			i=0
  			INDEX=$[INDEX+1]
 		fi
-  	echo "$f " >> ./.travis/packages.txt
+	echo "$f" >> ./.travis/packages.txt
 	fi
 done
 if [ -f ".travis.yml" ] 
