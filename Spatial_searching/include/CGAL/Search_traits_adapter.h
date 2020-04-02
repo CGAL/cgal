@@ -182,7 +182,11 @@ public:
     }
 
     Dereference_type&
-    dereference() const { return const_cast<Dereference_type&>((*point)[idx]); }
+    dereference() const
+    {
+      // Point::operator[] takes an int as parameter...
+      return const_cast<Dereference_type&>((*point)[static_cast<int>(idx)]);
+    }
 
   };
 
