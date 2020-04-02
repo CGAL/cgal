@@ -67,7 +67,7 @@ public:
   Uncertain_conversion_exception(const std::string &s)
     : std::range_error(s) {}
 
-  ~Uncertain_conversion_exception() throw() {}
+  ~Uncertain_conversion_exception() noexcept {}
 };
 
 

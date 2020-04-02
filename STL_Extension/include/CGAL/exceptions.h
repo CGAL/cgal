@@ -97,7 +97,7 @@ public:
     m_msg( msg)
     {}
 
-    ~Failure_exception() throw() {}
+    ~Failure_exception() noexcept {}
 
     //! the name of the library that issues this message.
     std::string      library() const { return m_lib; }
