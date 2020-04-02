@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
            <<std::endl;
   std::string filename(argc==1?"data/3torus.off":argv[1]);
   bool draw=(argc<3?false:std::string(argv[2])=="-draw");
-  
+
   std::ifstream inp(filename);
   if (inp.fail())
   {
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   LCC_3 lcc;
   CGAL::load_off(lcc, inp);
   std::cout<<"File '"<<filename<<"' loaded. Finding the shortest noncontractible cycle..."<<std::endl;
-  
+
   CST cst(lcc);
   LCC_3::Dart_handle root=lcc.darts().begin(); // Fix one vertex of the mesh
   Path_on_surface cycle=

@@ -96,14 +96,14 @@ int main(int argc, char* argv[])
   bool time=false;
   CGAL::Random random; // Used when user do not provide its own seed.
   process_command_line(argc, argv, filename, draw, dist, time, random);
-  
+
   std::ifstream inp(filename);
   if (inp.fail())
   {
     std::cout<<"[ERROR] Cannot read file '"<<filename<<"'. Exiting program"<<std::endl;
     usage(argc, argv);
   }
-  
+
   LCC_3 lcc;
   CGAL::load_off(lcc, inp);
   std::cout<<"File '"<<filename<<"' loaded. Running the main program (seed="
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
   { cycle=cst.compute_shortest_noncontractible_cycle_with_basepoint(root, wf, time); }
   else
   { cycle=cst.compute_shortest_noncontractible_cycle_with_basepoint(root, time); }
-  
+
   if (cycle.length()==0)
   { std::cout<<"  Cannot find such cycle. Stop."<<std::endl; }
   else
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
     { cycle_length+=wf(cycle[i]); }
 
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
-    std::cout<<"  Cycle length: "<<cycle_length<<std::endl; 
+    std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
     std::cout<<"  Root: "<<lcc.point(root)<<std::endl;
     if (draw) { CGAL::draw(lcc, cycle); }
   }

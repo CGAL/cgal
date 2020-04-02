@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
   Weight_functor wf(sm);
   CST            cst(sm, true);
-  
+
   Path_on_surface cycle=cst.compute_edgewidth(wf, true);
   if (cycle.length()==0)
   { std::cout<<"  Cannot find edge-width. Stop."<<std::endl; }
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     double cycle_length=0;
     for (int i=0; i<cycle.length(); ++i)
     { cycle_length+=wf(cycle[i]); }
-  
+
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
     std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
     std::cout<<"  Root: "<<sm.point(sm.vertex(sm.edge(cycle[0]), 0))<<std::endl;

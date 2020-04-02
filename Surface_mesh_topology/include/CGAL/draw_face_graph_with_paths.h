@@ -72,7 +72,7 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
     if ( nb<2 ) return internal::Geom_utils
                   <typename Get_traits<Mesh>::Kernel, Local_kernel>::
                   get_local_vector(normal);
-    
+
     return internal::Geom_utils
       <typename Get_traits<Mesh>::Kernel, Local_kernel>::
       get_local_vector(typename Get_traits<Mesh>::Kernel::

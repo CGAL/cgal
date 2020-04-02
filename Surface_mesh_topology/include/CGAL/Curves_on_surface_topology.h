@@ -47,7 +47,7 @@ public:
 
 //================================================================================
 // Homotopy test
-  
+
   /// @return true iff the minimal quadrangulation is computed.
   bool is_minimal_quadrangulation_computed() const
   { return m_minimal_quadrangulation!=nullptr; }
@@ -87,7 +87,7 @@ public:
     return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
                                                            display_time);
   }
-  
+
   /// @return true iff 'p1' and 'p2' are base point freely homotopic.
   bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
                                 const Path_on_surface<Mesh>& p2,
@@ -103,7 +103,7 @@ public:
 
   bool is_shortest_noncontractible_cycle_representation_computed() const
   { return m_shortest_noncontractible_cycle!=nullptr; }
-  
+
   void compute_shortest_noncontractible_cycle_representation(bool display_time=false) const
   {
     if (m_shortest_noncontractible_cycle==nullptr)

@@ -41,7 +41,7 @@ namespace internal {
     using Mesh_original              = Mesh_;
     using Generic_map                = CGAL::Generalized_map<2, Shortest_noncontractible_cycle_local_map_items>;
     using Dart_const_handle_original = typename Mesh_original::Dart_const_handle;
-    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle, 
+    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle,
                                                             Dart_const_handle_original>;
     using Origin_to_copy_map         = boost::unordered_map<Dart_const_handle_original,
                                                             typename Generic_map::Dart_handle>;
@@ -60,7 +60,7 @@ namespace internal {
     using Mesh_original              = Mesh_;
     using Generic_map                = CGAL::Combinatorial_map<2, Shortest_noncontractible_cycle_local_map_items>;
     using Dart_const_handle_original = typename Mesh_original::Dart_const_handle;
-    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle, 
+    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle,
                                                             Dart_const_handle_original>;
     using Origin_to_copy_map         = boost::unordered_map<Dart_const_handle_original,
                                                             typename Generic_map::Dart_handle>;
@@ -78,7 +78,7 @@ namespace internal {
     using Mesh_original              = Mesh_;
     using Generic_map                = CGAL::Combinatorial_map<2, Shortest_noncontractible_cycle_local_map_items>;
     using Dart_const_handle_original = typename boost::graph_traits<Mesh_original>::halfedge_descriptor;
-    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle, 
+    using Copy_to_origin_map         = boost::unordered_map<typename Generic_map::Dart_handle,
                                                             Dart_const_handle_original>;
     using Origin_to_copy_map         = boost::unordered_map<Dart_const_handle_original,
                                                             typename Generic_map::Dart_handle>;
@@ -90,13 +90,13 @@ namespace internal {
       target.import_from_halfedge_graph(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
     }
   };
-  
+
   template <unsigned int d, class Refs, class Items, class Alloc, class Storage>
-  struct Generic_map_selector< CGAL::Generalized_map_base<d, Refs, Items, Alloc, Storage> > 
+  struct Generic_map_selector< CGAL::Generalized_map_base<d, Refs, Items, Alloc, Storage> >
     : SNC_for_generalized_map< CGAL::Generalized_map_base<d, Refs, Items, Alloc, Storage> > {};
 
   template <unsigned int d, class Items, class Alloc, class Storage>
-  struct Generic_map_selector< CGAL::Generalized_map<d, Items, Alloc, Storage> > 
+  struct Generic_map_selector< CGAL::Generalized_map<d, Items, Alloc, Storage> >
     : SNC_for_generalized_map< CGAL::Generalized_map<d, Items, Alloc, Storage> > {};
 
   template <unsigned int d, unsigned int d2, class Traits, class Items,

@@ -32,7 +32,7 @@ struct Shortest_noncontractible_cycle_default_weight_functor
   template <class T>
   Weight_t operator() (T) const { return 1; }
 };
-  
+
 namespace internal {
 
 template <class Mesh_>
@@ -71,7 +71,7 @@ public:
     CGAL::Timer t;
     if (display_time)
     { t.start(); }
-    
+
     // Initialize m_is_perforated
     try
     {
@@ -92,7 +92,7 @@ public:
     get_local_map().negate_mark(m_is_perforated);
 
     create_vertex_info();
-    
+
     if (display_time)
     {
       t.stop();
@@ -105,7 +105,7 @@ public:
   {
     get_local_map().free_mark(m_is_perforated);
   }
-  
+
   template <class WeightFunctor>
   Path compute_cycle(Original_dart_const_handle root_vertex,
                      typename WeightFunctor::Weight_t* length,
@@ -186,11 +186,11 @@ public:
   Path compute_edgewidth(typename WeightFunctor::Weight_t* length,
                          bool display_time=false)
   { return compute_edgewidth(length, WeightFunctor(), display_time); }
-  
+
   template <class WeightFunctor=Shortest_noncontractible_cycle_default_weight_functor>
   Path compute_edgewidth(bool display_time=false)
   { return compute_edgewidth(nullptr, display_time); }
-  
+
 protected:
   int vertex_info(Dart_handle dh) const
   { return get_local_map().template info<0>(dh); }
@@ -207,14 +207,14 @@ protected:
           (it, get_local_map().template create_attribute<0>(-1)); }
     }
   }
-  
+
   void initialize_vertex_info()
   {
     for (auto it=get_local_map().template attributes<0>().begin(),
            itend = get_local_map().template attributes<0>().end(); it != itend; ++it)
     { get_local_map().template info_of_attribute<0>(it)=-1; }
   }
-  
+
   template <class WeightFunctor, class Distance_>
   void compute_spanning_tree(Dart_handle root, Dart_container& spanning_tree,
                              std::vector<Distance_>& distance_from_root,
@@ -417,21 +417,21 @@ protected:
       {
         Dart_handle dh=it, dh_only_edge=nullptr;
         bool degree_one=true;
-        do // Here we do not use is_degree_one_face method because we want to 
+        do // Here we do not use is_degree_one_face method because we want to
         {  // mark tested all darts of the face in the same loop.
           get_local_map().template mark_cell<1,1>(dh, tested); // For CMap and GMap
           if (degree_one)
           {
             if (!get_local_map().is_marked(dh, edge_deleted))
             {
-              if (dh_only_edge!=nullptr) { degree_one=false; } 
+              if (dh_only_edge!=nullptr) { degree_one=false; }
               else { dh_only_edge=dh; }
             }
           }
           dh=get_local_map().next(dh);
         }
         while(dh!=it);
-        
+
         if (degree_one && dh_only_edge!=nullptr)
         {
           degree_one_faces.push(dh_only_edge);
@@ -471,7 +471,7 @@ protected:
 
       get_local_map().unmark(it, tested);
       get_local_map().unmark(it, edge_deleted);
-      get_local_map().unmark(it, face_deleted);   
+      get_local_map().unmark(it, face_deleted);
     }
 
     get_local_map().free_mark(tested);
@@ -506,7 +506,7 @@ protected:
     Original_dart_const_handle dh_original=m_copy_to_origin[dh];
     if (cycle.can_be_pushed(dh_original, flip))
     { cycle.push_back(dh_original, flip); }
-    else 
+    else
     {
       CGAL_assertion(cycle.can_be_pushed(dh_original, !flip));
       cycle.push_back(dh_original, !flip);

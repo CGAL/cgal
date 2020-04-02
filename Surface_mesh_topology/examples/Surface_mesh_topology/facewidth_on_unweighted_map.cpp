@@ -19,9 +19,9 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   {}
 
   template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const 
+  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const
   { return alcc.is_marked(dh, m_vertex_mark); }
-  
+
   template<typename LCC>
   CGAL::Color vertex_color(const LCC& /* alcc */,
                            typename LCC::Dart_const_handle /* dh */) const
@@ -50,7 +50,7 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   bool colored_volume(const LCC& /* alcc */,
                       typename LCC::Dart_const_handle /* dh */) const
   { return false; }
-  
+
   LCC_3::size_type m_vertex_mark, m_face_mark;
 };
 
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   LCC_3 lcc;
   CGAL::load_off(lcc, inp);
   std::cout<<"File '"<<filename<<"' loaded. Finding the facewidth..."<<std::endl;
-  
+
   CST cst(lcc, true);
   std::vector<Dart_const_handle> cycle=cst.compute_facewidth(true);
 
@@ -88,16 +88,16 @@ int main(int argc, char* argv[])
         if (i%2==0)
         { // Color the vertex
           lcc.mark_cell<0>(cycle[i], vertex_mark);
-        } 
-        else 
+        }
+        else
         { // Color the face
           lcc.mark_cell<2>(cycle[i], face_mark);
         }
       }
-      
+
       Draw_functor df(vertex_mark, face_mark);
       CGAL::draw(lcc, "Face width", false, df);
-      
+
       lcc.free_mark(vertex_mark);
       lcc.free_mark(face_mark);
     }

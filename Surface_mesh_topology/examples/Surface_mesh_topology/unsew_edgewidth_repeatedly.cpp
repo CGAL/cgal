@@ -39,9 +39,9 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   {}
 
   template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const 
+  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const
   { return alcc.is_marked(dh, is_root); }
-  
+
   template<typename LCC>
   CGAL::Color vertex_color(const LCC& /* alcc */,
                            typename LCC::Dart_const_handle /* dh */) const
@@ -68,7 +68,7 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,
                       typename LCC::Dart_const_handle /* dh */) const { return false; }
-  
+
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
 };
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 
       lcccopy.free_mark(belong_to_cycle_copy);
       lcccopy.free_mark(is_root_copy);
-    
+
       std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
       std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
       std::cout<<"  Root: "<<lcccopy.point(cycle[0])<<std::endl;

@@ -187,7 +187,7 @@ bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
   gm.mark_cell<1>(gm.alpha<0,1>(faces[5]), chosen_cycle); // 9-4
   gm.mark_cell<1>(gm.alpha<1,0,1,0>(faces[0]), chosen_cycle); // 4-5
   gm.mark_cell<1>(gm.alpha<0>(faces[2]), chosen_cycle); // 5-1
-  
+
   unsigned int cycle_length = 0;
   for (int i = 0; i < cycle.length(); ++i) {
     cycle_length += wf(cycle[i]);
@@ -197,7 +197,7 @@ bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
       return false;
     }
   }
-  
+
   if (cycle_length != 19) {
     std::cerr << "Fail find_cycle_in_nonorientable_gmap: Cycle length (" << cycle_length << ") is not as expected (should be 19).\n";
     return false;

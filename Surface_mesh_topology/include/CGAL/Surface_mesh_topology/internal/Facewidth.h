@@ -40,13 +40,13 @@ public:
 
   using Path             = CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
   using SNC              = Shortest_noncontractible_cycle<Local_map>;
-  
+
   Facewidth(const Mesh& amesh, bool display_time=false)
   {
     CGAL::Timer t;
     if (display_time)
     { t.start(); }
-    
+
     typename Original_map_wrapper::Origin_to_copy_map origin_to_radial;
     Original_map_wrapper::copy(m_radial_map, const_cast<Mesh&>(amesh),
                                origin_to_radial, m_copy_to_origin, Local_map::NB_MARKS);
@@ -82,7 +82,7 @@ public:
     for (auto it=m_radial_map.template one_dart_per_cell<2>().begin(),
          itend=m_radial_map.template one_dart_per_cell<2>().end(); it!=itend; ++it)
     { face_list.push_back(it); }
-    
+
     // Adding "centroids"
     std::vector<Dart_handle> centroids;
     for (auto it : face_list) // face_list contains dart handles of m_radial_map
@@ -124,7 +124,7 @@ public:
     }
 
     // Remove the marked edges of m_radial_map
-    for (auto dh : edge_list) 
+    for (auto dh : edge_list)
     {
       CGAL_assertion(m_radial_map.template is_removable<1>(dh));
       m_radial_map.template remove_cell<1>(dh);
@@ -158,11 +158,11 @@ public:
       if (m_radial_map.template info<0>(dh)==-1) { dh=m_radial_map.next(dh); }
       CGAL_assertion(m_radial_map.template info<0>(dh)!=-1);
       int vertex_index=m_radial_map.template info<0>(dh);
-      
+
       if (last_face_index==face_index)
       {
-        m_cycle.push_back(m_copy_to_origin[m_vertex_list[last_vertex_index]]);  
-        m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]); 
+        m_cycle.push_back(m_copy_to_origin[m_vertex_list[last_vertex_index]]);
+        m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]);
       }
 
       // if (first_vertex_index == -1) first_vertex_index = vertex_index;
@@ -175,7 +175,7 @@ public:
       t.stop();
       std::cout<<"[TIME] compute_facewidth: "<<t.time()<<" seconds."<<std::endl;
     }
-    
+
     return m_cycle;
   }
 
