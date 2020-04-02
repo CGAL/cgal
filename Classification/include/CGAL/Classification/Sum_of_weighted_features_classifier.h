@@ -300,12 +300,16 @@ public:
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
+    {
+      if (int(gt_value) != -1)
       {
-        training_sets[std::size_t(ground_truth[i])].push_back (i);
+        training_sets[std::size_t(gt_value)].push_back (i);
         ++ nb_tot;
       }
+      ++ i;
+    }
 
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
     for (std::size_t i = 0; i < m_labels.size(); ++ i)

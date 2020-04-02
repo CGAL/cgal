@@ -160,21 +160,26 @@ public:
 #endif
     
     std::size_t nb_samples = 0;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    for (const auto& gt_value : ground_truth)
+      if (int(gt_value) != -1)
         ++ nb_samples;
 
     cv::Mat training_features (int(nb_samples), int(m_features.size()), CV_32FC1);
     cv::Mat training_labels (int(nb_samples), 1, CV_32FC1);
 
-    for (std::size_t i = 0, index = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    std::size_t i = 0, index = 0;
+    for (const auto& gt_value : ground_truth)
+    {
+      if (int(gt_value) != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           training_features.at<float>(int(index), int(f)) = m_features[f]->value(i);
-        training_labels.at<float>(int(index), 0) = static_cast<float>(ground_truth[i]);
+        training_labels.at<float>(int(index), 0) = static_cast<float>(gt_value);
         ++ index;
       }
+      ++ i;
+    }
+     
 
 #if (CV_MAJOR_VERSION < 3)
     float* priors = new float[m_labels.size()];

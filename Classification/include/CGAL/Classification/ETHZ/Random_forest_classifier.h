@@ -183,10 +183,11 @@ public:
 #ifdef CGAL_CLASSIFICATION_VERBOSE
     std::vector<std::size_t> count (m_labels.size(), 0);
 #endif
-    
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
     {
-      int g = int(ground_truth[i]);
+      int g = int(gt_value);
       if (g != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
@@ -196,6 +197,7 @@ public:
         count[std::size_t(g)] ++;
 #endif
       }
+      ++ i;
     }
 
     CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers:" << std::endl;
