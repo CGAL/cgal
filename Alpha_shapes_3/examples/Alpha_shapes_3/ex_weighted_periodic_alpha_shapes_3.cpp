@@ -41,7 +41,7 @@ int main()
   int n;
   is >> n;
   std::cout << "Reading " << n << " points " << std::endl;
-  for( ; n>0 ; n--) 
+  for( ; n>0 ; n--)
   {
     Bare_point bp;
     if(is >> bp)
