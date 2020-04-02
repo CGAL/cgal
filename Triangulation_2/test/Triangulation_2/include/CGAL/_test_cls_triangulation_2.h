@@ -270,11 +270,13 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T2_3.is_valid() );
 
   // make sure inserting on a previous point does not insert it again
-  assert( T2_3.insert(p10) == v2_3_10 );
+  Vertex_handle vp10 = T2_3.insert(p10);
+  assert( vp10 == v2_3_10 );
   assert( T2_3.number_of_vertices() == 11 );
 
   // make sure push_back exists and does the same thing as insert
-  assert( T2_3.push_back(p10) == v2_3_10 );
+  Vertex_handle vp10 = T2_3.push_back(p10);
+  assert( vp10 == v2_3_10 );
   assert( T2_3.number_of_vertices() == 11 );
 
   // test generic iterator insert
@@ -288,14 +290,16 @@ _test_cls_triangulation_2( const Triangul & )
 
   // test list iterator insert
   Triangul T2_5;
-  assert( T2_5.insert(l.begin(), l.end()) == 10 );
+  std::ptrdiff_t T2_5_nv = T2_5.insert(l.begin(), l.end());
+  assert( T2_5_nv == 10 );
   assert( T2_5.dimension() == 2 );
   assert( T2_5.number_of_vertices() == 10 );
   assert( T2_5.is_valid() );
 
   // test list iterator insert
   Triangul T2_6;
-  assert( T2_6.insert(v.begin(), v.end()) == 10 );
+  std::ptrdiff_t T2_6_nv = T2_6.insert(v.begin(), v.end());
+  assert( T2_6_nv == 10 );
   assert( T2_6.dimension() == 2 );
   assert( T2_6.number_of_vertices() == 10 );
   assert( T2_6.is_valid() );
@@ -451,7 +455,8 @@ _test_cls_triangulation_2( const Triangul & )
 
   // A simple test to see if move returns the good vertex
   // when there is a collision
-  assert(TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point()) == vTM_1);
+  Vertex_handle mvTM_1 = TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point())
+  assert(mvTM_1 == vTM_1);
 
   /****************************/
   /***** CONSTRUCTORS (2) *****/
