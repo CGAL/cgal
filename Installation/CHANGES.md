@@ -2,7 +2,7 @@ Release History
 ===============
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
-=======
+
 ### 2D and 3D Linear Geometry Kernel
  - Add `CompareSignedDistanceToLine_2` in the 2D/3D Kernel concept to compare
    the signed distance of two points to a line, or the line passing through two given points.
