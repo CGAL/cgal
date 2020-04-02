@@ -120,7 +120,7 @@ struct Incrementer {
  *	If \f$ st \f$ is coplanar with a facet or collinear with an edge, at most one of the
  *	incident cells is traversed.
  *	If \f$ st \f$ intersects an edge or vertex, at most two incident cells are traversed:
- *	the cells intersecting \f$ st \f$ strictly in their interior.
+ *	the cells intersected by \f$ st \f$ strictly in their interior.
  *
  *	If \f$ s \f$ lies on the convex hull, traversal starts in an incident cell inside
  *	the convex hull. Similarly, if \f$ t \f$ lies on the convex hull, traversal ends in

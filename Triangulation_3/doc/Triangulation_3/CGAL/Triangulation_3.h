@@ -1302,32 +1302,32 @@ The triangulation defines an iterator that visits cells intersected by a line se
 
 The cells visited form a facet-connected region containing both source and target points of the line segment `[s,t]`.
 Each cell falls within one or more of the following categories:
-1. a finite cell whose interior is intersected by `[s,t]`
+1. a finite cell whose interior is intersected by `[s,t]`.
 2. a finite cell with a facet `f` whose interior is intersected by `[s,t]` in a line segment.
 If such a cell is visited, its neighbor incident to `f` is not visited.
 3. a finite cell with an edge `e` whose interior is intersected by `[s,t]` in a line segment.
 If such a cell is visited, none of the other cells incident to `e` are visited.
 4. a finite cell with an edge `e` whose interior is intersected by `[s,t]` in a point.
-This cell must form a connected component together with the other cells incident to `e` that are visited.
-Exactly two of these visited cells must also fall in category 1 or 2.
+This cell forms a connected component together with the other cells incident to `e` that are visited.
+Exactly two of these visited cells also fall in category 1 or 2.
 5. a finite cell with a vertex `v` that is an endpoint of `[s,t]`.
-This cell must also fit in either category 1 or 2.
-6. a finite cell with a vertex `v` that lies on the interior of `[s,t]`.
-This cell must form a connected component together with the other cells incident to `v` that are visited.
-Exactly two of these cells must also fall in category 1 or 2.
+This cell also fits in either category 1 or 2.
+6. a finite cell with a vertex `v` that lies in the interior of `[s,t]`.
+This cell forms a connected component together with the other cells incident to `v` that are visited.
+Exactly two of these cells also fall in category 1 or 2.
 7. an infinite cell with a finite facet whose interior is intersected by the interior of `[s,t]`.
 8. an infinite cell with a finite edge `e` whose interior is intersected by the interior of `[s,t]`.
 If such a cell is visited, its infinite neighbor incident to `e` is not visited.
-Among the other cells incident to `e` that are visited,
-exactly one must also fall in category 1 or 2.
-9. an infinite cell with a finite vertex `v` that lies on the interior of `[s,t]`.
+Among the finite cells incident to `e` that are visited,
+exactly one also falls in category 1 or 2.
+9. an infinite cell with a finite vertex `v` that lies in the interior of `[s,t]`.
 If such a cell is visited, none of the other infinite cells incident to `v` are visited.
-Among the other cells incident to `v` that are visited,
-exactly one must also fall in category 1, 2 or 3.
-
-In the special case where the segment does not intersect any finite facet, exactly one infinite cell is visited.
+Among the finite cells incident to `v` that are visited,
+exactly one also falls in category 1, 2, or 3.
+10. an infinite cell in the special case where the segment does not intersect any finite facet.
+In this case, exactly one infinite cell is visited.
 This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through
-the source of `[s,t]` and the vertex of `c` opposite of `f`.
+the point `s` and the vertex of `c` opposite of `f`.
 
 Note that for categories 4 and 6, it is not predetermined which incident cells are visited.
 However, exactly two of the incident cells `c0,c1` visited also fall in category 1 or 2.
@@ -1344,10 +1344,11 @@ Its `value_type` is `Cell_handle`.
 \cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `[vs,vt]`.
 
-The initial value of the iterator is the cell containing `vs` and intersecting the
-line segment `[vs,vt]`.
+The initial value of the iterator is the cell containing `vs` and intersected by the
+line segment `[vs,vt]` in its interior.
 
-The iterator remains valid until the first cell incident to `vt` is passed.
+The first cell incident to `vt` is the last valid value of the iterator.
+It is followed by `segment_traverser_cells_end(vs, vt)`.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
 \pre `triangulation.dimension() >= 2`
@@ -1377,9 +1378,14 @@ If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly 
 The initial value of the iterator is the cell containing `ps`.
 If more than one cell
 contains `ps` (e.g. if `ps` lies on a vertex),
-the initial value is the cell intersected by the line segment `[ps,pt]`.
+the initial value is the cell intersected by
+the interior of the line segment `[ps,pt]`.
+If `ps` lies outside the convex hull and `pt` inside the convex full,
+the initial value is the infinite cell which finite facet is intersected by
+the interior of `[ps,pt]`.
 
-The iterator remains valid until the first cell containing `pt` is passed.
+The first cell containing `pt` is the last valid value of the iterator.
+It is followed by `segment_traverser_cells_end(ps, pt)`.
 
 The optional argument `hint` can reduce the time to construct the iterator
 if it is geometrically close to `ps`.
@@ -1424,9 +1430,9 @@ Each simplex falls within one or more of the following categories:
 4. an edge `e` whose interior is intersected by `[s,t]` in a point,
 5. an edge `e` whose interior is intersected by `[s,t]` in a line segment,
 6. a vertex `v` lying on `[s,t]`,
-7. an infinite cell with a finite facet whose interior is intersected by the interior of `[s,t]`. 
-
-In the special case where the segment does not intersect any finite facet, exactly one infinite cell is visited.
+7. an infinite cell with a finite facet whose interior is intersected by the interior of `[s,t]`,
+8. an infinite cell in the special case where the segment does not intersect any finite facet.
+In this case, exactly one infinite cell is visited.
 This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through
 the source of `[s,t]` and the vertex of `c` opposite of `f`.
 

@@ -520,7 +520,8 @@ simplices can be stored in a set.
 \cgalModifBegin
 \subsection Triangulation3exsegmenttraverser Traversing the Triangulation Along a Segment
 
-The package provides a utility class that can be used to traverse the triangulation along a segment. All cells visited by this traverser are guaranteed to intersect the interior of the segment.
+The package provides iterators that can be used to traverse the triangulation along a segment.
+All cells (resp. simplices) visited by this traversal iterator are guaranteed to intersect the segment.
 \cgalModifEnd
 
 \cgalExample{Triangulation_3/segment_traverser_3.cpp}
