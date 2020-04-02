@@ -81,7 +81,7 @@ foreach(target
     example_mesh_classification
     example_cluster_classification
     example_opencv_random_forest
-    example_tensorflow_neural_network)
+    example_tensorflow_neural_network
     example_deprecated_conversion)
   if(TARGET ${target})
     CGAL_target_use_Eigen(${target})
