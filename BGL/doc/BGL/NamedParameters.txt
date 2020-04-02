@@ -195,6 +195,7 @@ operation.\n
 
 
 
+
 \cgalNPTableEnd
 
 */
