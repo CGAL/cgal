@@ -73,7 +73,7 @@ int main (int argc, char** argv)
 
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Features]
 
@@ -84,7 +84,7 @@ int main (int argc, char** argv)
   Feature_set features;
 
   features.begin_parallel_additions();
-  
+
   Feature_handle distance_to_plane = features.add<Distance_to_plane> (pts, Pmap(), eigen);
   Feature_handle dispersion = features.add<Dispersion> (pts, Pmap(), grid,
                                                         radius_neighbors);
@@ -92,7 +92,7 @@ int main (int argc, char** argv)
                                                       radius_dtm);
 
   features.end_parallel_additions();
-  
+
   //! [Features]
   ///////////////////////////////////////////////////////////////////
 
@@ -106,7 +106,7 @@ int main (int argc, char** argv)
 
   //! [Labels]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Weights]
 
@@ -115,12 +115,12 @@ int main (int argc, char** argv)
   classifier.set_weight (distance_to_plane, 6.75e-2f);
   classifier.set_weight (dispersion, 5.45e-1f);
   classifier.set_weight (elevation, 1.47e1f);
-  
+
   std::cerr << "Setting effects" << std::endl;
   classifier.set_effect (ground, distance_to_plane, Classifier::NEUTRAL);
   classifier.set_effect (ground, dispersion, Classifier::NEUTRAL);
   classifier.set_effect (ground, elevation, Classifier::PENALIZING);
-  
+
   classifier.set_effect (vegetation, distance_to_plane,  Classifier::FAVORING);
   classifier.set_effect (vegetation, dispersion, Classifier::FAVORING);
   classifier.set_effect (vegetation, elevation, Classifier::NEUTRAL);
@@ -138,7 +138,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Classify]
   std::vector<int> label_indices (pts.size(), -1);
-    
+
   CGAL::Real_timer t;
   t.start();
   Classification::classify<CGAL::Parallel_if_available_tag> (pts, labels, classifier, label_indices);
@@ -147,7 +147,7 @@ int main (int argc, char** argv)
   t.reset();
   //! [Classify]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Smoothing]
   t.start();
@@ -172,14 +172,14 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut performed in " << t.time() << " second(s)" << std::endl;
   //! [Graph_cut]
   ///////////////////////////////////////////////////////////////////
-  
+
   // Save the output in a colored PLY format
 
   std::vector<unsigned char> red, green, blue;
   red.reserve(pts.size());
   green.reserve(pts.size());
   blue.reserve(pts.size());
-  
+
   for (std::size_t i = 0; i < pts.size(); ++ i)
   {
     Label_handle label = labels[std::size_t(label_indices[i])];
@@ -200,7 +200,7 @@ int main (int argc, char** argv)
     green.push_back(g);
     blue.push_back(b);
   }
-  
+
   std::ofstream f ("classification.ply");
 
   CGAL::write_ply_points_with_properties
@@ -210,8 +210,8 @@ int main (int argc, char** argv)
      std::make_pair(CGAL::make_property_map(red), CGAL::PLY_property<unsigned char>("red")),
      std::make_pair(CGAL::make_property_map(green), CGAL::PLY_property<unsigned char>("green")),
      std::make_pair(CGAL::make_property_map(blue), CGAL::PLY_property<unsigned char>("blue")));
-  
-  
+
+
   std::cerr << "All done" << std::endl;
   return EXIT_SUCCESS;
 }

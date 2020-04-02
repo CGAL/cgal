@@ -21,7 +21,7 @@
 namespace CGAL {
 
 namespace Classification {
-  
+
 /*!
 \ingroup PkgClassificationLabel
 
@@ -31,19 +31,19 @@ algorithms.
 */
 class Label_set
 {
-  typedef std::vector<Label_handle> Base;
+  using Base = std::vector<Label_handle>;
   Base m_labels;
-  
+
 public:
-  
+
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type const_iterator; ///< A random access iterator with value type `Label_handle`.
-  typedef unspecified_type iterator; ///< A random access iterator with value type `Label_handle`.
+  using const_iterator = unspecified_type; ///< A random access iterator with value type `Label_handle`.
+  using iterator = unspecified_type; ///< A random access iterator with value type `Label_handle`.
 #else
-  typedef std::vector<Label_handle>::const_iterator const_iterator;
-  typedef std::vector<Label_handle>::iterator iterator;
+  using const_iterator = std::vector<Label_handle>::const_iterator;
+  using iterator = std::vector<Label_handle>::iterator;
 #endif
-  
+
   Label_set() { }
 
   /*!
@@ -52,12 +52,8 @@ public:
   Label_set(std::initializer_list<const char*> labels)
   {
     for (const char* l : labels)
-      m_labels.push_back (Label_handle(new Classification::Label(l)));
+      m_labels.push_back (std::make_shared<Classification::Label>(l));
   }
-  
-  /// \cond SKIP_IN_MANUAL
-  virtual ~Label_set() { }
-  /// \endcond
 
   /*!
     \brief Adds a label.
@@ -71,7 +67,7 @@ public:
   */
   Label_handle add (const char* name)
   {
-    Label_handle out (new Classification::Label (name));
+    Label_handle out = std::make_shared<Classification::Label> (name);
     m_labels.push_back (out);
     return out;
   }
@@ -83,7 +79,7 @@ public:
 
     \return `true` if the label was correctly removed,
     `false` if its handle was not found.
-  */ 
+  */
   bool remove (Label_handle label)
   {
     std::size_t idx = (std::size_t)(-1);
@@ -104,18 +100,18 @@ public:
   iterator begin() { return m_labels.begin(); }
   const_iterator end() const { return m_labels.end(); }
   iterator end() { return m_labels.end(); }
-  
+
   /*!
     \brief Returns how many labels are defined.
-  */  
+  */
   std::size_t size () const
   {
     return m_labels.size();
   }
-  
+
   /*!
     \brief Returns the \f$i^{th}\f$ label.
-  */  
+  */
   Label_handle operator[] (std::size_t i) const
   {
     return m_labels[i];

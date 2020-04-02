@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Classification.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -57,7 +57,7 @@ public:
 */
 class Label_handle { };
 #else
-typedef boost::shared_ptr<Label> Label_handle;
+typedef std::shared_ptr<Label> Label_handle;
 #endif
 
 } // namespace Classification

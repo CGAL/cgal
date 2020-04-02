@@ -46,8 +46,7 @@ namespace Feature {
 template <typename PointRange, typename PointMap>
 class Distance_to_plane : public Feature_base
 {
-
-  typedef typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel Kernel;
+  using Kernel = typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel;
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> distance_to_plane_feature;

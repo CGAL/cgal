@@ -56,37 +56,34 @@ namespace Classification {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Point_set_neighborhood
 {
-
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point;
+  using FT = typename GeomTraits::FT;
+  using Point = typename GeomTraits::Point_3;
 
   class My_point_property_map{
     const PointRange* input;
     PointMap point_map;
 
   public:
-    typedef Point value_type;
-    typedef const value_type& reference;
-    typedef boost::uint32_t key_type;
-    typedef boost::lvalue_property_map_tag category;
+    using value_type = typename boost::property_traits<PointMap>::value_type;
+    using reference = typename boost::property_traits<PointMap>::reference;
+    using key_type = std::uint32_t;
+    using category = typename boost::property_traits<PointMap>::category;
     My_point_property_map () { }
     My_point_property_map (const PointRange *input, PointMap point_map)
       : input (input), point_map (point_map) { }
-    reference operator[] (key_type k) const { return get(point_map, *(input->begin()+std::size_t(k))); }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i)
-    { return ppmap[i]; }
+    friend reference get (const My_point_property_map& ppmap, key_type i)
+    { return get(ppmap.point_map, *(ppmap.input->begin()+std::size_t(i))); }
   };
 
-  typedef Search_traits_3<GeomTraits> SearchTraits_3;
-  typedef Search_traits_adapter <boost::uint32_t, My_point_property_map, SearchTraits_3> Search_traits;
-  typedef Sliding_midpoint<Search_traits> Splitter;
-  typedef Distance_adapter<boost::uint32_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
-  typedef Kd_tree<Search_traits, Splitter, Tag_true, Tag_true> Tree;
-  typedef Fuzzy_sphere<Search_traits> Sphere;
-  typedef Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree> Knn;
+  using Search_traits_3 = Search_traits_3<GeomTraits>;
+  using Search_traits =  Search_traits_adapter<std::uint32_t, My_point_property_map, Search_traits_3>;
+  using Splitter = Sliding_midpoint<Search_traits>;
+  using Distance = Distance_adapter<std::uint32_t, My_point_property_map, Euclidean_distance<Search_traits_3> >;
+  using Tree = Kd_tree<Search_traits, Splitter, Tag_true, Tag_true>;
+  using Sphere = Fuzzy_sphere<Search_traits>;
+  using Knn = Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree>;
 
-
-  Tree* m_tree;
+  std::shared_ptr<Tree> m_tree;
   Distance m_distance;
 
 public:
@@ -102,7 +99,7 @@ public:
   class K_neighbor_query
   {
   public:
-    typedef typename Point_set_neighborhood::Point value_type; ///<
+    using value_type = typename Point_set_neighborhood::Point; ///<
   private:
     const Point_set_neighborhood& neighborhood;
     unsigned int k;
@@ -137,7 +134,7 @@ public:
   class Sphere_neighbor_query
   {
   public:
-    typedef typename Point_set_neighborhood::Point value_type; ///<
+    using value_type = typename Point_set_neighborhood::Point; ///<
   private:
     const Point_set_neighborhood& neighborhood;
     float radius;
@@ -164,7 +161,7 @@ public:
   friend class K_neighbor_query;
   friend class Sphere_neighbor_query;
 
-  Point_set_neighborhood () : m_tree (nullptr) { }
+  Point_set_neighborhood () { }
   /// \endcond
 
   /// \name Constructors
@@ -178,13 +175,13 @@ public:
   */
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map)
-    : m_tree (nullptr)
   {
     My_point_property_map pmap (&input, point_map);
-    m_tree = new Tree (boost::counting_iterator<boost::uint32_t> (0),
-                       boost::counting_iterator<boost::uint32_t> (boost::uint32_t(input.size())),
-                       Splitter(),
-                       Search_traits (pmap));
+    m_tree = std::make_shared<Tree>
+      (boost::counting_iterator<std::uint32_t> (0),
+       boost::counting_iterator<std::uint32_t> (std::uint32_t(input.size())),
+       Splitter(),
+       Search_traits (pmap));
     m_distance = Distance (pmap);
     m_tree->build();
   }
@@ -204,29 +201,20 @@ public:
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map,
                           float voxel_size)
-    : m_tree (nullptr)
   {
     // First, simplify
-    std::vector<boost::uint32_t> indices;
+    std::vector<std::uint32_t> indices;
     My_point_property_map pmap (&input, point_map);
     voxelize_point_set(input.size(), indices, pmap, voxel_size);
 
-    m_tree = new Tree (indices.begin(), indices.end(),
-                       Splitter(),
-                       Search_traits (pmap));
+    m_tree = std::make_shared<Tree> (indices.begin(), indices.end(),
+                                     Splitter(),
+                                     Search_traits (pmap));
     m_distance = Distance (pmap);
     m_tree->build();
   }
 
   /// @}
-
-  /// \cond SKIP_IN_MANUAL
-  ~Point_set_neighborhood ()
-  {
-    if (m_tree != nullptr)
-      delete m_tree;
-  }
-  /// \endcond
 
   /// \name Queries
   /// @{
@@ -269,34 +257,34 @@ private:
   }
 
   template <typename Map>
-  void voxelize_point_set (std::size_t nb_pts, std::vector<boost::uint32_t>& indices, Map point_map,
+  void voxelize_point_set (std::size_t nb_pts, std::vector<std::uint32_t>& indices, Map point_map,
                            float voxel_size)
   {
-    std::map<Point, std::vector<boost::uint32_t> > grid;
+    std::map<Point, std::vector<std::uint32_t> > grid;
 
-    for (boost::uint32_t i = 0; i < nb_pts; ++ i)
+    for (std::uint32_t i = 0; i < nb_pts; ++ i)
     {
       const Point& p = get(point_map, i);
       Point ref (std::floor(p.x() / voxel_size),
                  std::floor(p.y() / voxel_size),
                  std::floor(p.z() / voxel_size));
-      typename std::map<Point, std::vector<boost::uint32_t> >::iterator it;
+      typename std::map<Point, std::vector<std::uint32_t> >::iterator it;
       boost::tie (it, boost::tuples::ignore)
-        = grid.insert (std::make_pair (ref, std::vector<boost::uint32_t>()));
+        = grid.insert (std::make_pair (ref, std::vector<std::uint32_t>()));
       it->second.push_back (i);
     }
 
-    for (typename std::map<Point, std::vector<boost::uint32_t> >::iterator
+    for (typename std::map<Point, std::vector<std::uint32_t> >::iterator
            it = grid.begin(); it != grid.end(); ++ it)
     {
-      const std::vector<boost::uint32_t>& pts = it->second;
+      const std::vector<std::uint32_t>& pts = it->second;
       Point centroid = CGAL::centroid (boost::make_transform_iterator
                                        (pts.begin(),
                                         CGAL::Property_map_to_unary_function<Map>(point_map)),
                                        boost::make_transform_iterator
                                        (pts.end(),
                                         CGAL::Property_map_to_unary_function<Map>(point_map)));
-      boost::uint32_t chosen = 0;
+      std::uint32_t chosen = 0;
       float min_dist = (std::numeric_limits<float>::max)();
       for (std::size_t i = 0; i < pts.size(); ++ i)
       {

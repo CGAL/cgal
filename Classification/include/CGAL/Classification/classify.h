@@ -366,10 +366,10 @@ namespace internal {
       f (labels, classifier, output);
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
     }
@@ -398,10 +398,10 @@ namespace internal {
       f (labels, classifier, output, probabilities);
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
     }
@@ -466,10 +466,10 @@ namespace internal {
       f2 (input, item_map, labels, values, neighbor_query, output);
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f1);
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f2);
@@ -598,10 +598,10 @@ namespace internal {
       f (input, item_map, labels, classifier, neighbor_query, strength, indices, input_to_indices, output);
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size ()), f);
     }
