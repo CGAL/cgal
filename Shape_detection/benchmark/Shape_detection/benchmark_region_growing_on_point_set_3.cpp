@@ -128,6 +128,15 @@ int main(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout << 
+    "Error: cannot read the file point_set_3.xyz!" << std::endl;
+    std::cout << 
+    "You can either create a symlink to the data folder or provide this file by hand." 
+    << std::endl << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Input_range input;
   Point_3 p; Vector_3 n;
 

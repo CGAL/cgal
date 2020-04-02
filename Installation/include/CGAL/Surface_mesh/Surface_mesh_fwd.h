@@ -17,7 +17,7 @@
 namespace CGAL {
 
 // fwdS for the public interface
-template<typename K>
+template<typename P>
 class Surface_mesh;
 
   

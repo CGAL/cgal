@@ -46,6 +46,15 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout << 
+    "Error: cannot read the file point_set_2.xyz!" << std::endl;
+    std::cout << 
+    "You can either create a symlink to the data folder or provide this file by hand." 
+    << std::endl << std::endl;
+    return false;
+  }
+
   Input_range input_range;
   FT a, b, c, d, e, f;
 

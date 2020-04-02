@@ -18,10 +18,8 @@ if ( CGAL_FOUND )
 
   find_package(Eigen3)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
     create_single_source_cgal_program( "Epick_d.cpp" )
-
+    CGAL_target_use_Eigen(Epick_d)
   else()
 
     message(STATUS "NOTICE: This program requires the Eigen3 library, and will not be compiled.")

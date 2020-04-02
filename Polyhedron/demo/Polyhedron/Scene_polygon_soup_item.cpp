@@ -1,6 +1,3 @@
-#include <vector>
-#include <queue>
-
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
@@ -13,9 +10,6 @@
 #include <QApplication>
 #include <QtDebug>
 
-#include <set>
-#include <stack>
-#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/IO/OFF_reader.h>
@@ -23,6 +17,7 @@
 #include <CGAL/version.h> 
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
@@ -43,8 +38,14 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
 
+#include <algorithm>
+#include <iostream>
 #include <map>
+#include <queue>
+#include <set>
+#include <stack>
 #include <streambuf>
+#include <vector>
 
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
@@ -366,39 +367,13 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
   d->oriented = false;
 }
 
-
-#include <iostream>
 template<class PolygonMesh>
 void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
 {
   soup.clear();
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type VPMap;
-  VPMap vpmap = get(boost::vertex_point, mesh);
-  std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, int> vim;
-  int index=0;
-  //fill points
-  for(typename boost::graph_traits<PolygonMesh>::vertex_iterator vit =
-      vertices(mesh).begin(); vit != vertices(mesh).end(); ++vit)
-  {
-    soup.points.push_back(get(vpmap, *vit));
-    vim.insert(std::make_pair(*vit, index++));
-  }
-  //fill triangles
-  for(typename boost::graph_traits<PolygonMesh>::face_iterator fit =
-      faces(mesh).begin(); fit != faces(mesh).end(); ++fit)
-  {
-    Polygon_soup::Polygon_3 polygon;
-    for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
-                  CGAL::halfedges_around_face(halfedge(*fit, mesh), mesh))
-    {
-      polygon.push_back(vim[target(hd, mesh)]);
-    }
-    soup.polygons.push_back(polygon);
-  }
+  CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(mesh, soup.points, soup.polygons);
   soup.fill_edges();
-
 }
-
 
 void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
   if(!sm_item) return;

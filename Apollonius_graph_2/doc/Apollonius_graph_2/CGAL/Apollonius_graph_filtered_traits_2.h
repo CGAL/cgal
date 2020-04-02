@@ -20,8 +20,8 @@ This class has six template parameters. The first, third and fifth
 template parameters must be a models of the `Kernel` concept. The 
 second, fourth and sixth template parameters correspond to how 
 predicates are evaluated. There are two predefined possible values for 
-`Method_tag`, namely `CGAL::Sqrt_field_tag` and 
-`CGAL::Ring_tag`. The first one must be used when the number type 
+`Method_tag`, namely `CGAL::Field_with_sqrt_tag` and
+`CGAL::Integral_domain_without_division_tag`. The first one must be used when the number type
 used in the representation supports the exact evaluation of signs of 
 expressions involving all four basic operations and square roots, 
 whereas the second one requires the exact evaluation of signs of 
@@ -31,7 +31,7 @@ The way the predicates are evaluated is discussed in
 \cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}. 
 
 The default values for the template parameters are as follows: 
-`CM = CGAL::Ring_tag`, 
+`CM = CGAL::Integral_domain_without_division_tag`,
 `EK = CGAL::Simple_cartesian<CGAL::MP_Float>`, 
 `EM = CM`, 
 `FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`, 
@@ -41,8 +41,8 @@ The default values for the template parameters are as follows:
 
 \sa `Kernel` 
 \sa `ApolloniusGraphTraits_2` 
-\sa `CGAL::Ring_tag` 
-\sa `CGAL::Sqrt_field_tag` 
+\sa `CGAL::Integral_domain_without_division_tag`
+\sa `CGAL::Field_with_sqrt_tag`
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>` 
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>` 
 
