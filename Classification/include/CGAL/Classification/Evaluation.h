@@ -16,6 +16,11 @@
 
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
+
+#include <CGAL/Iterator_range.h>
+
+#include <boost/iterator/zip_iterator.hpp>
+
 #include <map>
 #include <cmath> // for std::isnan
 
@@ -115,10 +120,13 @@ public:
   void append (const GroundTruthIndexRange& ground_truth,
                const ResultIndexRange& result)
   {
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+
+    for (const auto& p : CGAL::make_range
+           (boost::make_zip_iterator(boost::make_tuple(ground_truth.begin(), result.begin())),
+            boost::make_zip_iterator(boost::make_tuple(ground_truth.end(), result.end()))))
     {
-      int gt = static_cast<int>(ground_truth[i]);
-      int res = static_cast<int>(result[i]);
+      int gt = static_cast<int>(get<0>(p));
+      int res = static_cast<int>(get<1>(p));
       if (gt == -1 || res == -1)
         continue;
       
