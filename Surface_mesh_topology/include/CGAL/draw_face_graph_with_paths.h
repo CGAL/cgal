@@ -20,6 +20,7 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
+#include <initializer_list>
 
 namespace CGAL {
 
@@ -385,12 +386,12 @@ void draw(const Mesh& alcc,
 
 template<class Mesh>
 void draw(const Mesh& alcc,
-          const Surface_mesh_topology::Path_on_surface<Mesh>& p,
+          std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
           const char* title="Mesh Viewer With Path",
           std::size_t amark=std::numeric_limits<std::size_t>::max(),
           bool nofill=false)
 {
-  std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths={p};
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths=l;
   draw(alcc, paths, title, amark, nofill);
 }
 

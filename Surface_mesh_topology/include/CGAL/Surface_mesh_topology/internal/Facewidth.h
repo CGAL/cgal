@@ -47,6 +47,7 @@ public:
     if (display_time)
     { t.start(); }
 
+    Local_map m_gmap; // TODO REMOVE
     typename Original_map_wrapper::Origin_to_copy_map origin_to_radial;
     Original_map_wrapper::copy(m_radial_map, const_cast<Mesh&>(amesh),
                                origin_to_radial, m_copy_to_origin, Local_map::NB_MARKS);
@@ -161,6 +162,9 @@ public:
 
       if (last_face_index==face_index)
       {
+        CGAL_assertion(m_radial_map.template belong_to_same_cell<0>(m_vertex_list[last_vertex_index],
+                                                                    dh));
+        
         m_cycle.push_back(m_copy_to_origin[m_vertex_list[last_vertex_index]]);
         m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]);
       }
@@ -180,7 +184,7 @@ public:
   }
 
 protected:
-  Local_map m_gmap, m_radial_map;
+  Local_map m_radial_map;
   std::vector<Dart_handle> m_vertex_list, m_face_list;
   std::vector<Original_dart_const_handle> m_cycle;
   typename Original_map_wrapper::Origin_to_copy_map m_origin_to_copy;

@@ -25,6 +25,7 @@ endif()
 # add_definitions("-D_GLIBCXX_DEBUG")
 
 set(SOURCE_FILES
+  basic_example_shortest_noncontractible_cycle.cpp
   basic_example_surface_mesh_topology.cpp
   basic_example_torus.cpp
   edgewidth_surface_mesh.cpp
@@ -35,7 +36,6 @@ set(SOURCE_FILES
   path_homotopy_with_symbols.cpp
   path_homotopy_with_symbols_2.cpp
   shortest_noncontractible_cycle_through_a_vertex.cpp
-  shortest_noncontractible_cycle_using_BFS.cpp
   surface_mesh_topology_with_sm_and_polyhedron.cpp
   unsew_edgewidth_repeatedly.cpp
   )
@@ -60,11 +60,13 @@ foreach(cppfile ${SOURCE_FILES})
 endforeach()
 
 if(CGAL_Qt5_FOUND)
+  target_link_libraries(basic_example_shortest_noncontractible_cycle PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(basic_example_surface_mesh_topology PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(basic_example_torus PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(facewidth_on_unweighted_map PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(open_path_homotopy PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(shortest_noncontractible_cycle_through_a_vertex PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(surface_mesh_topology_with_sm_and_polyhedron PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(unsew_edgewidth_repeatedly PUBLIC CGAL::CGAL_Qt5)
 endif()

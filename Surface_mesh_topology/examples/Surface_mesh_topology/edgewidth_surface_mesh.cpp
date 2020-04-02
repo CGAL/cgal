@@ -7,28 +7,29 @@
 #include <CGAL/draw_face_graph_with_paths.h>
 
 using Kernel         =CGAL::Simple_cartesian<double>;
-using Point          =Kernel::Point_3;
-using Mesh           =CGAL::Surface_mesh<Point>;
+using Mesh           =CGAL::Surface_mesh<Kernel::Point_3>;
 using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
-using CST            =CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>;
 
-struct Weight_functor
-{
-  using Weight_t=double;
-  Weight_functor(const Mesh& mesh) : m_mesh(mesh) {}
-  double operator()(Mesh::Halfedge_index he) const
-  {
-    const Point& A=m_mesh.point(m_mesh.vertex(m_mesh.edge(he), 0));
-    const Point& B=m_mesh.point(m_mesh.vertex(m_mesh.edge(he), 1));
-    return CGAL::sqrt(CGAL::squared_distance(A, B));
-  }
-private:
-  const Mesh& m_mesh;
-};
+double cycle_length(const Mesh& mesh, const Path_on_surface& cycle)
+{ // Compute the length of the given cycle.
+  double res=0;
+  for (int i=0; i<cycle.length(); ++i)
+  { res+=std::sqrt
+        (CGAL::squared_distance(mesh.point(mesh.vertex(mesh.edge(cycle[i]), 0)),
+                                mesh.point(mesh.vertex(mesh.edge(cycle[i]), 1)))); }
+  return res;
+}
+
+void display_cycle_info(const Mesh& mesh, const Path_on_surface& cycle)
+{ // Display information about the given cycle.
+  if (cycle.is_empty()) { std::cout<<"empty."<<std::endl; return; }
+  std::cout<<"  Root: "<<mesh.point(mesh.vertex(mesh.edge(cycle[0]), 0))<<"; "
+           <<"  Number of edges: "<<cycle.length()<<"; "
+           <<"  Length: "<<cycle_length(mesh, cycle)<<std::endl;
+}
 
 int main(int argc, char* argv[])
 {
-  std::cout<<"Program edgewidth_surface_mesh started."<<std::endl;
   std::string filename(argc==1?"data/3torus.off":argv[1]);
   bool draw=(argc<3?false:(std::string(argv[2])=="-draw"));
   std::ifstream inp(filename);
@@ -41,23 +42,16 @@ int main(int argc, char* argv[])
   inp>>sm;
   std::cout<<"File '"<<filename<<"' loaded. Finding edge-width of the mesh..."<<std::endl;
 
-  Weight_functor wf(sm);
-  CST            cst(sm, true);
+  CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh> cst(sm);
 
-  Path_on_surface cycle=cst.compute_edgewidth(wf, true);
-  if (cycle.length()==0)
-  { std::cout<<"  Cannot find edge-width. Stop."<<std::endl; }
-  else
-  {
-    double cycle_length=0;
-    for (int i=0; i<cycle.length(); ++i)
-    { cycle_length+=wf(cycle[i]); }
+  Path_on_surface cycle1=cst.compute_edgewidth();
 
-    std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
-    std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
-    std::cout<<"  Root: "<<sm.point(sm.vertex(sm.edge(cycle[0]), 0))<<std::endl;
-    if (draw) { CGAL::draw(sm, cycle); }
-  }
+  CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<Mesh> wf(sm);
+  Path_on_surface cycle2=cst.compute_edgewidth(wf);
+
+  std::cout<<"Cycle1: "; display_cycle_info(sm, cycle1);
+  std::cout<<"Cycle2: "; display_cycle_info(sm, cycle2);
+  if (draw) { CGAL::draw(sm, {cycle1, cycle2}); }
 
   return EXIT_SUCCESS;
 }

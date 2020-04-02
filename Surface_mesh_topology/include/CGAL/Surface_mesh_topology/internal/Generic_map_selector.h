@@ -14,8 +14,8 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
+// #include <CGAL/Polyhedron_3.h>
+// #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Generalized_map.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>

@@ -5,30 +5,14 @@
 #include <cstdlib>
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/squared_distance_3.h>
 #include <CGAL/draw_face_graph_with_paths.h>
 #include <CGAL/Random.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 using LCC_3            =CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
 using Dart_const_handle=LCC_3::Dart_const_handle;
-using Dart_handle=LCC_3::Dart_handle; // TODO REMOVE
 using Path_on_surface  =CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
-///////////////////////////////////////////////////////////////////////////////
-struct Weight_functor
-{
-  Weight_functor(const LCC_3& lcc) : m_lcc(lcc) { }
-  using Weight_t=double;
-  Weight_t operator()(Dart_const_handle dh) const
-  {
-    const LCC_3::Point& x=m_lcc.point(dh);
-    const LCC_3::Point& y=m_lcc.point(m_lcc.alpha<0>(dh));
-    return CGAL::sqrt(CGAL::squared_distance(x, y));
-  }
-private:
-  const LCC_3& m_lcc;
-};
 ///////////////////////////////////////////////////////////////////////////////
 [[ noreturn ]] void usage(int /*argc*/, char* argv[])
 {
@@ -109,11 +93,11 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Running the main program (seed="
            <<random.get_seed()<<")"<<std::endl;
 
-  Weight_functor wf(lcc);
+  CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<LCC_3> wf(lcc);
   CST            cst(lcc, time);
 
   /// Change the value of `root` to test the algorithm at another vertex
-  Dart_handle root=lcc.dart_handle(random.get_int(0, lcc.number_of_darts()));
+  Dart_const_handle root=lcc.dart_handle(random.get_int(0, lcc.number_of_darts()));
   std::cout<<"Finding the shortest noncontractible cycle..."<<std::endl;
   Path_on_surface cycle(lcc);
   if (dist)
@@ -132,7 +116,7 @@ int main(int argc, char* argv[])
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
     std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
     std::cout<<"  Root: "<<lcc.point(root)<<std::endl;
-    if (draw) { CGAL::draw(lcc, cycle); }
+    if (draw) { CGAL::draw(lcc, {std::ref(cycle)}); }
   }
 
   return EXIT_SUCCESS;

@@ -18,21 +18,13 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Cell_attribute.h>
 #include <CGAL/Surface_mesh_topology/internal/Generic_map_selector.h>
+#include <CGAL/Surface_mesh_topology/internal/Edge_weight_functor.h>
 #include <queue>
 #include <tuple>
 #include <unordered_map>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
-
-// Default weight, all edges have the same weight: 1.
-struct Shortest_noncontractible_cycle_default_weight_functor
-{
-  using Weight_t=unsigned int;
-  template <class T>
-  Weight_t operator() (T) const { return 1; }
-};
-
 namespace internal {
 
 template <class Mesh_>
@@ -129,13 +121,13 @@ public:
     return m_cycle;
   }
 
-  template <class WeightFunctor=Shortest_noncontractible_cycle_default_weight_functor>
+  template <class WeightFunctor=Unit_weight_functor>
   Path compute_cycle(Original_dart_const_handle root_vertex,
                      typename WeightFunctor::Weight_t* length,
                      bool display_time=false)
   { return compute_cycle(root_vertex, length, WeightFunctor(), display_time); }
 
-  template <class WeightFunctor=Shortest_noncontractible_cycle_default_weight_functor>
+  template <class WeightFunctor=Unit_weight_functor>
   Path compute_cycle(Original_dart_const_handle root_vertex,
                      bool display_time=false)
   { return compute_cycle(root_vertex, nullptr, display_time); }
@@ -182,12 +174,12 @@ public:
     return m_cycle;
   }
 
-  template <class WeightFunctor=Shortest_noncontractible_cycle_default_weight_functor>
+  template <class WeightFunctor=Unit_weight_functor>
   Path compute_edgewidth(typename WeightFunctor::Weight_t* length,
                          bool display_time=false)
   { return compute_edgewidth(length, WeightFunctor(), display_time); }
 
-  template <class WeightFunctor=Shortest_noncontractible_cycle_default_weight_functor>
+  template <class WeightFunctor=Unit_weight_functor>
   Path compute_edgewidth(bool display_time=false)
   { return compute_edgewidth(nullptr, display_time); }
 
@@ -221,7 +213,7 @@ protected:
                              std::vector<int>& trace_index,
                              const WeightFunctor& wf)
   {
-    if (std::is_same<WeightFunctor, Shortest_noncontractible_cycle_default_weight_functor>::value)
+    if (std::is_same<WeightFunctor, Unit_weight_functor>::value)
     { compute_BFS_tree(root, spanning_tree, distance_from_root, trace_index, wf); }
     else
     { compute_Dijkstra_tree(root, spanning_tree, distance_from_root, trace_index, wf); }
