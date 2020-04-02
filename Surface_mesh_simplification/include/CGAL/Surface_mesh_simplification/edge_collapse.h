@@ -91,59 +91,59 @@ int edge_collapse(TM& tmesh,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   typedef typename GetGeomTraits<TM, NamedParameters>::type         Geom_traits;
-  
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters, internal_np::Param_not_found > ::type        Cmo_type;
-  
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::max_normal_angle_change_t,
       NamedParameters, internal_np::Param_not_found > ::type        Angle_param_type;
-  
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::max_input_dist_placement_t,
       NamedParameters, internal_np::Param_not_found > ::type        Dist_param_type;
-  
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters, No_constrained_edge_map<TM> > ::type         Fcm_type;
-  
+
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::get_placement_policy_t,
       NamedParameters, LindstromTurk_placement<TM> > ::type         Placement_type;
-  
+
   typedef typename internal::GetPlacementType<Placement_type,
       Cmo_type>                                                     Tmp_placement;
-  
+
   typedef typename internal::HasAngleBound<typename Tmp_placement::type,
       Angle_param_type>                                             AnglePlacement;
-  
+
   typedef typename internal::HasDistBound<typename AnglePlacement::type,
       Geom_traits, Dist_param_type>                                 FinalPlacement;
-  
+
   Cmo_type c_map
       = get_parameter(np, internal_np::edge_is_constrained);
-  
+
   Placement_type placement
       = choose_parameter<LindstromTurk_placement<TM> >(get_parameter(np, internal_np::get_placement_policy));
-  
+
   bool do_constrain = choose_parameter(get_parameter(np, internal_np::constrain_geometry),
                                        true);
-  
+
   typename Tmp_placement::type tmp_placement = Tmp_placement::get_placement(c_map, placement,
                                                                             !internal::Has_nested_type_constrained_tag<Placement_type>::value && do_constrain);
-  
+
   double max_angle = choose_parameter(get_parameter(np, internal_np::max_normal_angle_change),
                                       CGAL_PI);
   double max_dist = choose_parameter(get_parameter(np, internal_np::max_input_dist_placement),
                                       -1);//default is ignored, so any value here is fine.
-  
+
   typename AnglePlacement::type angle_placement = AnglePlacement::get_placement(max_angle, tmp_placement);
   typename FinalPlacement::type final_placement = FinalPlacement::get_placement(max_dist, angle_placement);
   Fcm_type final_map = choose_parameter<No_constrained_edge_map<TM> >(get_parameter(np, internal_np::edge_is_constrained));
-  
+
   return internal::edge_collapse(tmesh, should_stop,
                                  choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits)),
                                  CGAL::get_initialized_vertex_index_map(tmesh, np),

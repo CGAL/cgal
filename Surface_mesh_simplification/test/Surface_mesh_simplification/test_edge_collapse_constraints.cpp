@@ -102,24 +102,24 @@ int main(int argc, char** argv)
 
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
-  
+
   SMS::edge_collapse(surface_mesh, stop,
                      CGAL::parameters::edge_is_constrained_map(constraints_map)
                      .max_normal_angle_change(5*CGAL_PI/180.0)
                      .get_placement(placement));
   assert(surface_mesh.number_of_edges() == 15 );
-  
+
   SMS::edge_collapse(surface_mesh, stop,
                      CGAL::parameters::edge_is_constrained_map(constraints_map)
                      .max_normal_angle_change(45*CGAL_PI/180.0)
                      .get_placement(placement));
-  
+
   std::ofstream out("out.off");
   out << surface_mesh;
   out.close();
   assert(surface_mesh.number_of_edges() == 12 );
-  
-  
+
+
   SMS::edge_collapse(surface_mesh, stop,
                      CGAL::parameters::edge_is_constrained_map(constraints_map)
                      .max_normal_angle_change(CGAL_PI)

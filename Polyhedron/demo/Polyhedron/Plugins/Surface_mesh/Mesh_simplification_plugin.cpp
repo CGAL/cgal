@@ -160,7 +160,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
           Scene_polyhedron_selection_item::Is_constrained_map<
           Scene_polyhedron_selection_item::Selection_set_edge> >
           placement (selection_item->constrained_edges_pmap());
-      
+
       CGAL::Surface_mesh_simplification::edge_collapse
           (pmesh, stop,
            CGAL::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
@@ -171,13 +171,13 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       CGAL::Surface_mesh_simplification::internal::Bounded_normal_change_placement
           <CGAL::Surface_mesh_simplification::LindstromTurk_placement
           <FaceGraph> > placement;
-      
+
       CGAL::Surface_mesh_simplification::edge_collapse
           (pmesh, stop,
            CGAL::parameters::vertex_index_map(get(boost::vertex_index, pmesh)).get_placement(placement));
     }
-    
-    std::cout << "ok (" << time.elapsed() << " ms, " 
+
+    std::cout << "ok (" << time.elapsed() << " ms, "
       << num_halfedges(pmesh) / 2 << " edges)" << std::endl;
 
     // update scene
