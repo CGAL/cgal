@@ -20,8 +20,7 @@
 #include <CGAL/for_each.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/property_map.h>
-
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/iterator.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -73,8 +72,7 @@ namespace Classification {
                  LabelIndexRange& output)
   {
     CGAL::for_each<ConcurrencyTag>
-      (CGAL::make_range (boost::counting_iterator<std::size_t>(0),
-                         boost::counting_iterator<std::size_t>(input.size())),
+      (CGAL::make_counting_range<std::size_t> (0, input.size()),
        [&](const std::size_t& s) -> bool
        {
          std::size_t nb_class_best=0;
@@ -110,8 +108,7 @@ namespace Classification {
                  ProbabilitiesRanges& probabilities)
   {
     CGAL::for_each<ConcurrencyTag>
-      (CGAL::make_range (boost::counting_iterator<std::size_t>(0),
-                         boost::counting_iterator<std::size_t>(input.size())),
+      (CGAL::make_counting_range<std::size_t> (0, input.size()),
        [&](const std::size_t& s) -> bool
        {
          std::size_t nb_class_best=0;
@@ -184,8 +181,7 @@ namespace Classification {
       (labels.size(), std::vector<float> (input.size(), -1.));
 
     CGAL::for_each<ConcurrencyTag>
-      (CGAL::make_range (boost::counting_iterator<std::size_t>(0),
-                         boost::counting_iterator<std::size_t>(input.size())),
+      (CGAL::make_counting_range<std::size_t> (0, input.size()),
        [&](const std::size_t& s) -> bool
        {
          std::vector<float> v;
@@ -197,8 +193,7 @@ namespace Classification {
        });
 
     CGAL::for_each<ConcurrencyTag>
-      (CGAL::make_range (boost::counting_iterator<std::size_t>(0),
-                         boost::counting_iterator<std::size_t>(input.size())),
+      (CGAL::make_counting_range<std::size_t> (0, input.size()),
        [&](const std::size_t& s) -> bool
        {
          std::vector<std::size_t> neighbors;
@@ -288,8 +283,8 @@ namespace Classification {
                                LabelIndexRange& output)
   {
     CGAL::Bbox_3 bbox = CGAL::bbox_3
-      (boost::make_transform_iterator (input.begin(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)),
-       boost::make_transform_iterator (input.end(), CGAL::Property_map_to_unary_function<ItemMap>(item_map)));
+      (CGAL::make_transform_iterator_from_property_map (input.begin(), item_map),
+       CGAL::make_transform_iterator_from_property_map (input.end(), item_map));
 
     double Dx = double(bbox.xmax() - bbox.xmin());
     double Dy = double(bbox.ymax() - bbox.ymin());
@@ -338,8 +333,7 @@ namespace Classification {
     }
 
     CGAL::for_each<ConcurrencyTag>
-      (CGAL::make_range (boost::counting_iterator<std::size_t>(0),
-                         boost::counting_iterator<std::size_t>(indices.size())),
+      (CGAL::make_counting_range<std::size_t> (0, indices.size()),
        [&](const std::size_t& sub) -> bool
        {
          if (indices[sub].empty())

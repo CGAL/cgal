@@ -278,12 +278,10 @@ private:
            it = grid.begin(); it != grid.end(); ++ it)
     {
       const std::vector<std::uint32_t>& pts = it->second;
-      Point centroid = CGAL::centroid (boost::make_transform_iterator
-                                       (pts.begin(),
-                                        CGAL::Property_map_to_unary_function<Map>(point_map)),
-                                       boost::make_transform_iterator
-                                       (pts.end(),
-                                        CGAL::Property_map_to_unary_function<Map>(point_map)));
+      Point centroid = CGAL::centroid (CGAL::make_transform_iterator_from_property_map
+                                       (pts.begin(), point_map),
+                                       CGAL::make_transform_iterator_from_property_map
+                                       (pts.end(), point_map));
       std::uint32_t chosen = 0;
       float min_dist = (std::numeric_limits<float>::max)();
       for (std::size_t i = 0; i < pts.size(); ++ i)

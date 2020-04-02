@@ -226,8 +226,8 @@ public:
   {
 
     m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_range.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
-       boost::make_transform_iterator (m_range.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
+      (CGAL::make_transform_iterator_from_property_map (m_range.begin(), m_point_map),
+       CGAL::make_transform_iterator_from_property_map (m_range.end(), m_point_map));
 
     CGAL::Real_timer t; t.start();
 
