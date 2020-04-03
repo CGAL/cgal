@@ -275,7 +275,7 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T2_3.number_of_vertices() == 11 );
 
   // make sure push_back exists and does the same thing as insert
-  Vertex_handle vp10 = T2_3.push_back(p10);
+  vp10 = T2_3.push_back(p10);
   assert( vp10 == v2_3_10 );
   assert( T2_3.number_of_vertices() == 11 );
 
@@ -455,7 +455,7 @@ _test_cls_triangulation_2( const Triangul & )
 
   // A simple test to see if move returns the good vertex
   // when there is a collision
-  Vertex_handle mvTM_1 = TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point())
+  Vertex_handle mvTM_1 = TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point());
   assert(mvTM_1 == vTM_1);
 
   /****************************/
