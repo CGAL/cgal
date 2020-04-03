@@ -13,6 +13,7 @@
 #define CGAL_BGL_IO_PLY_H
 
 #include <CGAL/IO/PLY.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -20,8 +21,86 @@
 #include <fstream>
 
 namespace CGAL {
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Read
+
+namespace IO {
+namespace internal {
+
+// Use CRTP to gain access to the protected members without getters/setters.
+template <typename FaceGraph, typename Point>
+class PLY_builder
+  : public Generic_facegraph_builder<FaceGraph, Point, PLY_builder<FaceGraph, Point> >
+{
+  typedef PLY_builder<FaceGraph, Point>                                         Self;
+  typedef Generic_facegraph_builder<FaceGraph, Point, Self>                     Base;
+
+  typedef typename Base::Point_container                                        Point_container;
+  typedef typename Base::Face                                                   Face;
+  typedef typename Base::Face_container                                         Face_container;
+
+public:
+  PLY_builder(std::istream& is_) : Base(is_) { }
+
+  //! TODO there must be a way to get at least the color maps from read_PLY with the nps.
+  template <typename NamedParameters>
+  bool read(std::istream& input,
+            Point_container& points,
+            Face_container& faces,
+            const NamedParameters&)
+  {
+    return read_PLY(input, points, faces);
+  }
+};
+
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY_BGL(std::istream& in,
+                  FaceGraph& g,
+                  const CGAL_BGL_NP_CLASS& np)
+{
+  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
+  typedef typename boost::property_traits<VPM>::value_type                      Point;
+
+  IO::internal::PLY_builder<FaceGraph, Point> builder(in);
+  return builder(g, np);
+}
+
+// document that too
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream in(fname);
+  return read_PLY(in, g, np);
+}
+
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_PLY(fname.c_str(), g, np);
+}
+
+template <typename FaceGraph>
+bool read_PLY(std::istream& is, FaceGraph& g) { return read_PLY(is, g, parameters::all_default()); }
+
+template <typename FaceGraph>
+bool read_PLY(const char* fname, FaceGraph& g) { return read_PLY(fname, g, parameters::all_default()); }
+
+template <typename FaceGraph>
+bool read_PLY(const std::string& fname, FaceGraph& g) { return read_PLY(fname, g, parameters::all_default()); }
+
+}//end internal
+}//end IO
+
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return IO::internal::read_PLY_BGL(in, g, np);
+}
 /*!
- Inserts the mesh in an output stream in PLY format.
+ Inserts the graph in an output stream in PLY format.
 
  If provided, the `comments` string is included line by line in
  the header of the PLY stream (each line will be precedeed by
@@ -31,18 +110,18 @@ namespace CGAL {
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `mesh` .
+      the property map with the points associated to the vertices of `g` .
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`
     \cgalParamEnd
     \cgalParamBegin{vertex_index_map}
-      is a property map containing for each vertex of `mesh` a unique index between `0` and `num_vertices(mesh)-1`.
+      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
     \cgalParamEnd
   \cgalNamedParamsEnd
  */
 template <class FaceGraph, class NamedParameters>
-bool write_PLY(std::ostream& out,
-               const FaceGraph& mesh,
+bool write_PLY(std::ostream& os,
+               const FaceGraph& g,
                const std::string& comments,
                const NamedParameters& np
                )
@@ -54,19 +133,19 @@ bool write_PLY(std::ostream& out,
   typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type Vpm;
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
 
-  VIMap vim = CGAL::get_initialized_vertex_index_map(mesh, np);
+  VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                         get_const_property_map(boost::vertex_point, mesh));
+                                         get_const_property_map(boost::vertex_point, g));
 
-  if(!out.good())
+  if(!os.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
   // Write header
-  out << "ply" << std::endl
-      << ((get_mode(out) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
+  os << "ply" << std::endl
+      << ((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
       << "comment Generated by the CGAL library" << std::endl;
 
   if(comments != std::string())
@@ -76,61 +155,61 @@ bool write_PLY(std::ostream& out,
     while(getline(iss, line))
     {
       if(line != "Generated by the CGAL library") // Avoid repeating the line if multiple savings
-        out << "comment " << line << std::endl;
+        os << "comment " << line << std::endl;
     }
   }
 
-  out << "element vertex " << num_vertices(mesh) << std::endl;
-  IO::internal::output_property_header(out, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+  os << "element vertex " << num_vertices(g) << std::endl;
+  IO::internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
 
-  out << "element face " << num_faces(mesh) << std::endl;
+  os << "element face " << num_faces(g) << std::endl;
   IO::internal::output_property_header(
-        out, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
+        os, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                             PLY_property<std::vector<int> >("vertex_indices")));
 
-  out << "end_header" << std::endl;
+  os << "end_header" << std::endl;
 
-  for(vertex_descriptor vd : vertices(mesh))
+  for(vertex_descriptor vd : vertices(g))
   {
     Point_3 p = get(vpm, vd);
-    IO::internal::output_properties(out, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+    IO::internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
   }
 
   std::vector<std::size_t> polygon;
-  for(face_descriptor fd : faces(mesh))
+  for(face_descriptor fd : faces(g))
   {
     polygon.clear();
-    for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, mesh), mesh))
-      polygon.push_back(get(vim, target(hd,mesh)));
-    IO::internal::output_properties(out, &polygon,
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, g), g))
+      polygon.push_back(get(vim, target(hd,g)));
+    IO::internal::output_properties(os, &polygon,
                                     std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                                                    PLY_property<std::vector<int> >("vertex_indices")));
   }
 
-  return out.good();
+  return os.good();
 }
 
 template <class FaceGraph>
-bool write_PLY(std::ostream& out,
-               const FaceGraph& mesh,
+bool write_PLY(std::ostream& os,
+               const FaceGraph& g,
                const std::string comments)
 {
-  return write_PLY(out, mesh, comments, parameters::all_default());
+  return write_PLY(os, g, comments, parameters::all_default());
 }
 
 template <class FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(std::ostream& out,
-               const FaceGraph& mesh,
+bool write_PLY(std::ostream& os,
+               const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  return write_PLY(out, mesh, "", np);
+  return write_PLY(os, g, "", np);
 }
 
 template <class FaceGraph>
-bool write_PLY(std::ostream& out,
-               const FaceGraph& mesh)
+bool write_PLY(std::ostream& os,
+               const FaceGraph& g)
 {
-  return write_PLY(out, mesh, "", parameters::all_default());
+  return write_PLY(os, g, "", parameters::all_default());
 }
 
 } // namespace CGAL

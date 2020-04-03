@@ -215,14 +215,14 @@ bool test_PLY()
   std::istringstream in(out.str());
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > polygons;
-
-  if(!CGAL::read_PLY(in, points, polygons)){
+  fg.clear();
+  if(!CGAL::read_PLY(in,fg, CGAL::parameters::all_default())){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
 
-  CGAL_assertion(points.size() == 4);
-  CGAL_assertion(polygons.size() == 4);
+  CGAL_assertion(num_vertices(fg) == 4);
+  CGAL_assertion(num_faces(fg) == 4);
 
   return true;
 }

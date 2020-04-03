@@ -17,6 +17,8 @@
 
 #include <CGAL/property_map.h>
 
+#include <boost/utility/enable_if.hpp>
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -315,7 +317,13 @@ read_PLY(std::istream& is,
 template <class PointRange, class PolygonRange>
 bool write_PLY(std::ostream& out,
                const PointRange& points,
-               const PolygonRange& polygons)
+               const PolygonRange& polygons
+               #ifndef DOXYGEN_RUNNING
+               ,typename boost::enable_if<
+                 typename boost::has_range_const_iterator<PointRange>::type
+               >::type* =0
+               #endif
+               )
 {
 
   typedef typename PointRange::value_type Point_3;
