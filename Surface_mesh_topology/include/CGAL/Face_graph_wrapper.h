@@ -5,15 +5,17 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_FACE_GRAPH_WRAPPER_H
 #define CGAL_FACE_GRAPH_WRAPPER_H 1
 
-#include <CGAL/Functors_for_face_graph_wrapper.h>
-#include <CGAL/Iterators_for_face_graph_wrapper.h>
+#include <CGAL/license/Surface_mesh_topology.h>
+
+#include <CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h>
+#include <CGAL/Surface_mesh_topology/internal/Iterators_for_face_graph_wrapper.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
@@ -124,15 +126,15 @@ public:
   Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
   {
     CGAL_assertion(B1>=0 && B1<=static_cast<int>(dimension));
-    if (B1==1) return Get_beta<HEG, 1>::value(m_fg, ADart);
-    if (B1==2) return Get_beta<HEG, 2>::value(m_fg, ADart);
-    return Get_beta<HEG, 0>::value(m_fg, ADart);
+    if (B1==1) return internal::Get_beta<HEG, 1>::value(m_fg, ADart);
+    if (B1==2) return internal::Get_beta<HEG, 2>::value(m_fg, ADart);
+    return internal::Get_beta<HEG, 0>::value(m_fg, ADart);
   }
   template<int B1>
   Dart_const_handle get_beta(Dart_const_handle ADart) const
   {
     CGAL_assertion(B1>=0 && B1<=static_cast<int>(dimension));
-    return Get_beta<HEG, B1>::value(m_fg, ADart);
+    return internal::Get_beta<HEG, B1>::value(m_fg, ADart);
   }
 
   bool is_empty() const
@@ -383,8 +385,8 @@ public:
   template<unsigned int i>
   struct Dart_of_cell_range
   {
-    typedef CGAL::FGW_cell_iterator<Self, i> iterator;
-    typedef CGAL::FGW_cell_iterator<Self, i> const_iterator;
+    typedef CGAL::internal::FGW_cell_iterator<Self, i> iterator;
+    typedef CGAL::internal::FGW_cell_iterator<Self, i> const_iterator;
     Dart_of_cell_range(const Self &amap, Dart_handle adart) : mmap(amap),
                                                               m_initdart(adart),
                                                               msize(0)
@@ -424,8 +426,8 @@ public:
   //**************************************************************************
   // Dart_range
   struct Dart_range {
-    typedef CGAL::FGW_dart_iterator_basic_of_all<Self> iterator;
-    typedef CGAL::FGW_dart_iterator_basic_of_all<Self> const_iterator;
+    typedef CGAL::internal::FGW_dart_iterator_basic_of_all<Self> iterator;
+    typedef CGAL::internal::FGW_dart_iterator_basic_of_all<Self> const_iterator;
     Dart_range(const Self &amap) : mmap(amap), msize(0)
     {}
     iterator begin() { return iterator(mmap); }

@@ -5,19 +5,21 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H
 #define CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
 #include <stack>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace internal {
 
   //****************************************************************************
   /* Class CMap_dart_iterator_basic_of_all: to iterate onto all the
@@ -326,6 +328,7 @@ protected:
 };
 ////////////////////////////////////////////////////////////////////////////////
 
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H //

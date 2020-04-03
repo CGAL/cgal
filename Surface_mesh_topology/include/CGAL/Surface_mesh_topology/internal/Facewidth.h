@@ -30,7 +30,7 @@ public:
   using Self=Facewidth<Mesh_>;
   using Mesh=Mesh_;
 
-  using Original_map_wrapper=internal::Generic_map_selector<Mesh>;
+  using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_facewidth>;
   using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
 
   using Local_map        =typename Original_map_wrapper::Generic_map;
@@ -41,7 +41,8 @@ public:
   using Path             = CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
   using SNC              = Shortest_noncontractible_cycle<Local_map>;
 
-  Facewidth(const Mesh& amesh, bool display_time=false)
+  Facewidth(const Mesh& amesh, bool display_time=false):
+    m_snc_to_find_facewidth(nullptr)
   {
     CGAL::Timer t;
     if (display_time)
@@ -131,6 +132,8 @@ public:
       m_radial_map.template remove_cell<1>(dh);
     }
 
+    m_snc_to_find_facewidth=std::make_unique<SNC>(m_radial_map, false);
+
     if (display_time)
     {
       t.stop();
@@ -146,7 +149,6 @@ public:
 
     m_cycle.clear();
     // Find edgewidth of the radial map
-    SNC snc_to_find_facewidth(m_radial_map, display_time);
     Path_on_surface<Local_map> edgewidth_of_radial_map=
         snc_to_find_facewidth.compute_edgewidth(display_time);
 
@@ -189,6 +191,7 @@ protected:
   std::vector<Original_dart_const_handle> m_cycle;
   typename Original_map_wrapper::Origin_to_copy_map m_origin_to_copy;
   typename Original_map_wrapper::Copy_to_origin_map m_copy_to_origin;
+  std::unique_ptr<SNC> m_snc_to_find_facewidth;
 };
 
 } // namespace internal

@@ -34,7 +34,7 @@ public:
   using Self=Shortest_noncontractible_cycle<Mesh_>;
   using Mesh=Mesh_;
 
-  using Original_map_wrapper=internal::Generic_map_selector<Mesh>;
+  using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_shortest_noncontractible_cycle>;
   using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
 
   using Local_map        =typename Original_map_wrapper::Generic_map;
@@ -558,7 +558,7 @@ protected:
 
 protected:
   Local_map        m_local_map; /// the local map
-  size_type        m_is_perforated;   /// mark holes
+  size_type        m_is_perforated;   /// mark for perforated darts
   Origin_to_copy   m_origin_to_copy; /// associative array from original darts to copies
   Copy_to_origin   m_copy_to_origin; /// associative array from copies to original darts
   Dart_container   m_spanning_tree, m_noncon_edges; // Darts in the spanning tree and in E_nc

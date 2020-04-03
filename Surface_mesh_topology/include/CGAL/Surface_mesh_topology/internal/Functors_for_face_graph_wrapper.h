@@ -5,16 +5,18 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H
 #define CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Iterators_for_face_graph_wrapper.h>
+#include <CGAL/Surface_mesh_topology/internal/Iterators_for_face_graph_wrapper.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 /** This file contains the following functors for Face_graph_wrapper:
@@ -24,8 +26,8 @@
          operator() (const HEG& heg, Dart_const_handle dh)
 */
 ////////////////////////////////////////////////////////////////////////////////
-namespace CGAL
-{
+namespace CGAL {
+namespace internal {
 /// Is_free
 //template<typename HEG, unsigned int i>
 //struct Is_free
@@ -81,6 +83,7 @@ struct Get_beta<HEG, 2>
   }
 };
 ////////////////////////////////////////////////////////////////////////////////
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_FUNCTORS_FOR_FACE_GRAPH_WRAPPER_H //
