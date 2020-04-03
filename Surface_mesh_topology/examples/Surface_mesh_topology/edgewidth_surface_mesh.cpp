@@ -48,8 +48,8 @@ int main(int argc, char* argv[])
   CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<Mesh> wf(sm);
   Path_on_surface cycle2=cst.compute_edgewidth(wf);
 
-  std::cout<<"Cycle1: "; display_cycle_info(sm, cycle1);
-  std::cout<<"Cycle2: "; display_cycle_info(sm, cycle2);
+  std::cout<<"Cycle 1 (pink): "; display_cycle_info(sm, cycle1);
+  std::cout<<"Cycle 2 (green): "; display_cycle_info(sm, cycle2);
   if (draw) { CGAL::draw(sm, {cycle1, cycle2}); }
 
   return EXIT_SUCCESS;

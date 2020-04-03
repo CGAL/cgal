@@ -3,6 +3,7 @@
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_face_graph_with_paths.h>
+#include <CGAL/Random.h>
 #include <iostream>
 #include <cstdlib>
 
@@ -40,7 +41,8 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Finding shortest non contractible cycle..."<<std::endl;
 
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3> cst(lcc);
-  LCC_3::Dart_const_handle root=lcc.darts().begin(); // Fix one vertex of the mesh
+  LCC_3::Dart_const_handle root=lcc.dart_handle
+      (CGAL::get_default_random().get_int(0, lcc.number_of_darts())); // One dart of the mesh
 
   Path_on_surface cycle1=
       cst.compute_shortest_noncontractible_cycle_with_basepoint(root);
@@ -49,8 +51,8 @@ int main(int argc, char* argv[])
   Path_on_surface cycle2=
       cst.compute_shortest_noncontractible_cycle_with_basepoint(root, wf);
 
-  std::cout<<"Cycle1: "; display_cycle_info(lcc, cycle1);
-  std::cout<<"Cycle2: "; display_cycle_info(lcc, cycle2);
+  std::cout<<"Cycle 1 (pink): "; display_cycle_info(lcc, cycle1);
+  std::cout<<"Cycle 2 (green): "; display_cycle_info(lcc, cycle2);
   if (draw) { CGAL::draw(lcc, {cycle1, cycle2}); }
 
   return EXIT_SUCCESS;

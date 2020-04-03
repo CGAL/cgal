@@ -47,22 +47,26 @@ set(HEADER_FILES
   ../../include/CGAL/Polygonal_schema_min_items.h
   ../../include/CGAL/Polygonal_schema.h
   ../../include/CGAL/Path_on_surface.h
+  ../../include/CGAL/Face_graph_wrapper.h
   ../../include/CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h
   ../../include/CGAL/Surface_mesh_topology/internal/Generic_map_selector.h
   ../../include/CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h
   ../../include/CGAL/Surface_mesh_topology/internal/Facewidth.h
   ../../include/CGAL/Surface_mesh_topology/internal/Shortest_noncontractible_cycle.h
   ../../include/CGAL/Surface_mesh_topology/internal/Path_generators.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h
+  ../../include/CGAL/Surface_mesh_topology/internal/Iterators_for_face_graph_wrapper.h
   )
 
 foreach(cppfile ${SOURCE_FILES})
-  create_single_source_cgal_program( "${cppfile}" "${HEADER_FILES}")
+  create_single_source_cgal_program("${cppfile}" "${HEADER_FILES}")
 endforeach()
 
 if(CGAL_Qt5_FOUND)
   target_link_libraries(basic_example_shortest_noncontractible_cycle PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(basic_example_surface_mesh_topology PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(basic_example_torus PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(edgewidth_surface_mesh PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(facewidth_on_unweighted_map PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(open_path_homotopy PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy PUBLIC CGAL::CGAL_Qt5)
