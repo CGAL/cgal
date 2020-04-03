@@ -232,7 +232,7 @@ namespace CGAL {
         if (copy_perforated_darts || !amap.is_perforated(it))
         {
           new_dart=mdarts.emplace();
-          init_dart(new_dart, amap.get_marks(it));
+          init_dart(new_dart); //, amap.get_marks(it));
 
           if (mark_perforated!=NB_MARKS && amap.is_perforated(it))
           { mark(new_dart, mark_perforated); }
