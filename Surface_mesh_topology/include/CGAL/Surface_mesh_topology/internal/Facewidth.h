@@ -150,7 +150,7 @@ public:
     m_cycle.clear();
     // Find edgewidth of the radial map
     Path_on_surface<Local_map> edgewidth_of_radial_map=
-        snc_to_find_facewidth.compute_edgewidth(display_time);
+        m_snc_to_find_facewidth->compute_edgewidth(display_time);
 
     int last_vertex_index=-1;
     int last_face_index=-1;
