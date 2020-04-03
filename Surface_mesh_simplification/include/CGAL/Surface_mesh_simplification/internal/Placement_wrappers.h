@@ -154,7 +154,7 @@ public:
           bool is_pos = is_positive(sp);
           bool is_sq_inf= CGAL::square(sp) < n1.squared_length() * n2.squared_length() * sq_cos_bound;
           // Simplified using !A.(B+C) + A.B.C == !A.(B+C) + B.C
-          if(!is_pos && (is_bound_pos || is_sq_inf) || is_bound_pos && is_sq_inf)
+          if((!is_pos && (is_bound_pos || is_sq_inf) )|| (is_bound_pos && is_sq_inf))
             return boost::optional<typename Profile::Point>();
 
           ++it;
