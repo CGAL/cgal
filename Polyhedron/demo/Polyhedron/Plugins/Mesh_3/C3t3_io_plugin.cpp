@@ -449,7 +449,6 @@ struct Update_cell {
   }
 }; // end struct Update_cell
 
-#include <CGAL/IO/Triangulation_file_input.h>
 
 template <typename Tr1, typename Tr2>
 struct Update_vertex_from_CDT_3 {
@@ -511,11 +510,10 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
     }
   }
   if(binary) CGAL::set_binary_mode(is);
-  if(CGAL::file_input<
+  if(c3t3.triangulation().file_input<
        Fake_CDT_3,
-       C3t3::Triangulation,
        Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
-       Update_cell_from_CDT_3>(is, c3t3.triangulation()))
+       Update_cell_from_CDT_3>(is))
   {
     c3t3.rescan_after_load_of_triangulation();
     std::cerr << "Try load a CDT_3... DONE";
@@ -555,11 +553,10 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   }
   if(binary) CGAL::set_binary_mode(is);
   else CGAL::set_ascii_mode(is);
-  std::istream& f_is = CGAL::file_input<
+  std::istream& f_is = c3t3.triangulation().file_input<
                          Fake_c3t3::Triangulation,
-                         C3t3::Triangulation,
                          Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
-                         Update_cell>(is, c3t3.triangulation());
+                         Update_cell>(is);
 
   c3t3.rescan_after_load_of_triangulation();
   return f_is.good();
