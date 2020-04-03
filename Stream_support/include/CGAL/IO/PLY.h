@@ -201,6 +201,18 @@ bool read_PLY(std::istream& is,
   return read_PLY(is, points, polygons, dummy_pui, fcolors, vcolors, dummy_pf);
 }
 
+//todo
+template <typename PointRange, typename PolygonRange,
+          typename VertexColorOutputIterator,
+          typename FaceColorOutputIterator>
+bool read_OFF(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              VertexColorOutputIterator vc_out,
+              FaceColorOutputIterator fc_out)
+{
+}
+
 /*!
  * \ingroup IOstreamFunctions
  *
