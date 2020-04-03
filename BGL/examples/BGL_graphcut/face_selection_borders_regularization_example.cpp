@@ -11,7 +11,7 @@ using Face_index = Mesh::Face_index;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "../BGL_surface_mesh/data/blobby.off");
+  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
 
   if(!in)
   {
