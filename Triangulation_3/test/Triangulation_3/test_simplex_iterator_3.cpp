@@ -71,8 +71,7 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
       = dt.segment_traverser_simplices_begin((v1->point() - 2.*v),
                                              (v2->point() + 3.*v));
     Segment_simplex_iterator stend
-      = dt.segment_traverser_simplices_end((v1->point() - 2. * v),
-                                           (v2->point() + 3. * v));
+      = dt.segment_traverser_simplices_end();
     for (; st != stend; ++st)
     {
       std::cout << st->dimension();
@@ -130,7 +129,7 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
     Segment_simplex_iterator st
       = dt.segment_traverser_simplices_begin((p1 - 2. * v), (p2 + 3.  * v));
     Segment_simplex_iterator stend
-      = dt.segment_traverser_simplices_end((p1 - 2. * v), (p2 + 3. * v));
+      = dt.segment_traverser_simplices_end();
     for (; st != stend; ++st)
     {
       std::cout << st->dimension();
@@ -193,7 +192,7 @@ void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
     Segment_simplex_iterator st
       = dt.segment_traverser_simplices_begin((p1 - 2. * v), (p2 + 3. * v));
     Segment_simplex_iterator stend
-      = dt.segment_traverser_simplices_end((p1 - 2. * v), (p2 + 3. * v));
+      = dt.segment_traverser_simplices_end();
     for (; st != stend; ++st)
     {
       std::cout << st->dimension();
@@ -315,7 +314,7 @@ void test_triangulation_on_a_grid()
     std::cout << "Query segment : (" << s.source()
                          << ") to (" << s.target() << ") [";
     Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(s.source(), s.target());
-    Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(s.source(), s.target());
+    Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();
 
     unsigned int inf = 0, fin = 0;
     unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
@@ -383,7 +382,7 @@ int main(int argc, char* argv[])
       << "\n\t(" << p1
       << ")\n\t(" << p2 << ")" << std::endl;
     Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
-    Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(p1, p2);
+    Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();
 
     // Count the number of finite cells traversed.
     unsigned int inf = 0, fin = 0;

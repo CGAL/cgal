@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s): Thijs van Lankveld
+// Author(s): Thijs van Lankveld, Jane Tournois
 
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
@@ -174,12 +174,9 @@ template < class Tr, class Inc >
 inline bool Triangulation_segment_cell_iterator_3<Tr,Inc>::
 operator==( const SCI& sci ) const {
     // To be equal, the iterators must traverse the same triangulations
-    // along the same line segment and they must have the same current cell.
-    // Note that to limit cost, we just compare the triangulation pointers.
+    // and they must have the same current cell.
     using CGAL::cpp11::get;
-    return ( &_tr == &sci._tr &&
-             ( _s_vertex == Vertex_handle() ? _source == sci._source : _s_vertex == sci._s_vertex ) &&
-             ( _t_vertex == Vertex_handle() ? _target == sci._target : _t_vertex == sci._t_vertex ) &&
+    return ( _tr == sci._tr &&
              get<0>(_cur) == get<0>(sci._cur) );
 }
 
@@ -358,7 +355,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
                                                               const Simplex& cur) const
 {
     using CGAL::cpp11::get;
-    boost::array<const Point*, 4> vert
+    std::array<const Point*, 4> vert
       = {&(get<0>(cur)->vertex(0)->point()),
          &(get<0>(cur)->vertex(1)->point()),
          &(get<0>(cur)->vertex(2)->point()),
@@ -673,7 +670,7 @@ walk_to_next_3_inf( int inf ) {
         return;
     }
 
-    boost::array < Point*, 4> vert;
+    std::array < Point*, 4> vert;
     for( int i = 0; i != 4; ++i )
         if( i != inf )
             vert[i] = &(get<0>(_cur)->vertex(i)->point());
@@ -776,7 +773,7 @@ void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2()
 {
     using CGAL::cpp11::get;
-    boost::array<Point*, 3> vert
+    std::array<Point*, 3> vert
               = { &(get<0>(_cur)->vertex(0)->point()),
                   &(get<0>(_cur)->vertex(1)->point()),
                   &(get<0>(_cur)->vertex(2)->point()) };

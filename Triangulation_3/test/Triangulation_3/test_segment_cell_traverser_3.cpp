@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
   std::cerr << dt.number_of_finite_cells() << '\n';
   Segment_cell_iterator ct = dt.segment_traverser_cells_begin(points[0], points[1]);
-  Segment_cell_iterator ctend = dt.segment_traverser_cells_end(points[0], points[1]);
+  Segment_cell_iterator ctend = dt.segment_traverser_cells_end();
 
   unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
   // Count the number of finite cells traversed.

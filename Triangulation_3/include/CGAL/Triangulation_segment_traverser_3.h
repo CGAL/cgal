@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s): Thijs van Lankveld
+// Author(s): Thijs van Lankveld, Jane Tournois
 
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
@@ -215,6 +215,10 @@ public:
     Triangulation_segment_cell_iterator_3( const Tr* tr, const Segment& S, Cell_handle hint = Cell_handle() );
 // \}
 
+    // private constructor that does not initialize the source and target.
+    // used for the end()
+    Triangulation_segment_cell_iterator_3(const Tr* tr);
+
 #ifndef CGAL_TST_ASSUME_CORRECT_TYPES
     // The virtual destructor is mainly defined to indicate to the casting
     // operators that this is a dynamic type.
@@ -222,9 +226,6 @@ public:
 #endif
     ~Triangulation_segment_cell_iterator_3() {}
     
-private:
-    //  private constructor that does not initialize the source and target.
-    Triangulation_segment_cell_iterator_3( const Tr* tr );
 
 public:
 // \name Accessors
@@ -562,6 +563,9 @@ public:
     , const Segment& seg, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, seg, hint)
   { set_curr_simplex_to_entry(); }
+  Triangulation_segment_simplex_iterator_3(const Tr* tr)
+    : _cell_iterator(tr)
+  {}
 
   bool operator==(const Simplex_iterator& sit) const
   {
@@ -648,9 +652,14 @@ public:
     {
     case 3 :/*Cell_handle*/
     {
-      if (!cell_iterator_is_ahead())
-        ++_cell_iterator;
-      set_curr_simplex_to_entry();
+      if(Cell_handle(_cell_iterator) == Cell_handle())
+        _curr_simplex = Simplex_3();
+      else
+      {
+        if (!cell_iterator_is_ahead())
+          ++_cell_iterator;
+        set_curr_simplex_to_entry();
+      }
       break;
     }
     case 2 :/*Facet*/
@@ -663,6 +672,11 @@ public:
         //taking cell_iterator one step forward
         CGAL_assertion(cell_has_facet(Cell_handle(_cell_iterator), get_facet()));
         ++_cell_iterator;
+        if (Cell_handle(_cell_iterator) == Cell_handle())
+        {
+          _curr_simplex = _cell_iterator.previous();
+          break;
+        }
       }
       else
         ch = _cell_iterator.previous();
@@ -707,13 +721,24 @@ public:
     case 1:/*Edge*/
     {
       Cell_handle ch = Cell_handle(_cell_iterator);
-
+      if (ch == _cell_iterator.previous())
+      {
+        _curr_simplex = Simplex_3();
+        break;
+      }
       Locate_type lt;
       int li, lj;
       _cell_iterator.entry(lt, li, lj);
 
       if (!cell_iterator_is_ahead())
+      {
         ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+        if (Cell_handle(_cell_iterator) == Cell_handle())
+        {
+          _curr_simplex = _cell_iterator.previous();
+          break;
+        }
+      }
 
       Cell_handle chnext = Cell_handle(_cell_iterator);
       Locate_type ltnext;
@@ -755,9 +780,20 @@ public:
     case 0 :/*Vertex_handle*/
     {
       Cell_handle ch = Cell_handle(_cell_iterator);
-
+      if (ch == _cell_iterator.previous())
+      {
+        _curr_simplex = Simplex_3();
+        break;
+      }
       if (!cell_iterator_is_ahead()) //_curr_simplex does contain v
+      {
         ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+        if (Cell_handle(_cell_iterator) == Cell_handle())
+        {
+          _curr_simplex = _cell_iterator.previous();
+          break;
+        }
+      }
       else
         ch = _cell_iterator.previous();
 

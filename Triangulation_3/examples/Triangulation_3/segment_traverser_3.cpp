@@ -6,11 +6,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <boost/foreach.hpp>
 
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Random.h>
-#include <CGAL/Timer.h>
 
 
 // Define the kernel.
@@ -49,7 +47,7 @@ int main(int argc, char* argv[])
   double zmin = points[0].z();
   double zmax = points[0].z();
 
-  BOOST_FOREACH(Point_3 p, points)
+  for(const Point_3& p : points)
   {
     xmin = (std::min)(xmin, p.x());
     ymin = (std::min)(ymin, p.y());
@@ -63,10 +61,8 @@ int main(int argc, char* argv[])
     DT dt( points.begin(), points.end() );
     assert( dt.is_valid() );
 
-    CGAL::default_random = CGAL::Random(0);
-    CGAL::Random rng(0);
-    CGAL::Timer time;
-    time.start();
+    CGAL::Random rng;
+    std::cout << "Random seed is " << CGAL::get_default_random().get_seed() << std::endl;
 
     for (unsigned int i = 0; i < nb_seg; ++i)
     {
@@ -78,38 +74,28 @@ int main(int argc, char* argv[])
                  rng.get_double(ymin, ymax),
                  rng.get_double(zmin, zmax));
 
-#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "Traverser " << (i + 1)
         << "\n\t(" << p1
         << ")\n\t(" << p2 << ")" << std::endl;
-#endif
+
       Segment_cell_iterator ct = dt.segment_traverser_cells_begin(p1, p2);
-      Segment_cell_iterator ctend = dt.segment_traverser_cells_begin(p1, p2);
+      Segment_cell_iterator ctend = dt.segment_traverser_cells_end();
 
       // Count the number of finite cells traversed.
       unsigned int inf = 0, fin = 0;
-      for( ; ct !=ctend; ++ct )
+      for( ; ct != ctend; ++ct )
       {
         if( dt.is_infinite(ct) )
-            ++inf;
+          ++inf;
         else
           ++fin;
       }
 
-#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "While traversing from " << p1 << " to " << p2 << std::endl;
       std::cout << inf << " infinite and "
                 << fin << " finite cells were visited." << std::endl;
       std::cout << std::endl << std::endl;
-#endif
     }
 
-    time.stop();
-    std::cout << "Triangulation has " << dt.number_of_vertices() << " vertices."
-      << std::endl;
-    std::cout << "Traversing cells of triangulation with "
-      << nb_seg << " segments took " << time.time() << " seconds."
-      << std::endl;
-
-     return 0;
+    return 0;
 }

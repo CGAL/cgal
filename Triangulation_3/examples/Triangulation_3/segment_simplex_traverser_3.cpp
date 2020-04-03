@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_simplex_3.h>
 
 #include <assert.h>
 #include <iostream>
@@ -9,9 +8,8 @@
 
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Random.h>
-#include <CGAL/Timer.h>
 
-//#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
+#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
@@ -19,9 +17,7 @@ typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
 typedef CGAL::Delaunay_triangulation_3< Kernel >  DT;
-typedef DT::Cell_handle                           Cell_handle;
 typedef DT::Segment_simplex_iterator              Segment_simplex_iterator;
-typedef CGAL::Triangulation_simplex_3<DT::Triangulation_data_structure> Simplex;
 
 int main(int argc, char* argv[])
 {
@@ -45,10 +41,8 @@ int main(int argc, char* argv[])
     DT dt( points.begin(), points.end() );
     assert( dt.is_valid() );
 
-    CGAL::default_random = CGAL::Random(0);
-    CGAL::Random rng(0);
-    CGAL::Timer time;
-    time.start();
+    CGAL::Random rng;
+    std::cout << "Random seed is " << CGAL::get_default_random().get_seed() << std::endl;
 
     unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
 
@@ -67,16 +61,16 @@ int main(int argc, char* argv[])
                 << "\n\t(" << p1
                 << ")\n\t(" << p2 << ")" << std::endl;
 #endif
+
       Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
-      Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(p1, p2);
+      Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();
 
       for (; st != stend; ++st)
       {
-        const Simplex s = st;
-        if (s.dimension() == 3)        ++nb_cells;
-        else if (s.dimension() == 2)   ++nb_facets;
-        else if (s.dimension() == 1)   ++nb_edges;
-        else if (s.dimension() == 0)   ++nb_vertex;
+        if (st->dimension() == 3)          ++nb_cells;
+        else if (st->dimension() == 2)     ++nb_facets;
+        else if (st->dimension() == 1)     ++nb_edges;
+        else if (st->dimension() == 0)     ++nb_vertex;
       }
 
 #ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
@@ -89,10 +83,8 @@ int main(int argc, char* argv[])
 #endif
     }
 
-    time.stop();
     std::cout << "Traversing simplices of triangulation with "
-      << nb_seg << " segments took " << time.time() << " seconds."
-      << std::endl;
+      << nb_seg << " segments :" << std::endl;
     std::cout << "\tnb cells     : " << nb_cells << std::endl;
     std::cout << "\tnb facets    : " << nb_facets << std::endl;
     std::cout << "\tnb edges     : " << nb_edges << std::endl;

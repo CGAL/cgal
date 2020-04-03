@@ -2198,12 +2198,6 @@ public:
     Segment_cell_iterator it(this, vs, vt);
     return it;
   }
-  Segment_cell_iterator segment_traverser_cells_end(Vertex_handle vs,
-                                                    Vertex_handle vt) const
-  {
-    Segment_cell_iterator it(this, vs, vt);
-    return it.end();
-  }
   Segment_cell_iterator segment_traverser_cells_begin(const Point& ps,
                                                       const Point& pt,
                                                       Cell_handle hint = Cell_handle()) const
@@ -2211,11 +2205,9 @@ public:
     Segment_cell_iterator it(this, ps, pt, hint);
     return it;
   }
-  Segment_cell_iterator segment_traverser_cells_end(const Point& ps,
-                                                    const Point& pt,
-                                                    Cell_handle hint = Cell_handle()) const
+  Segment_cell_iterator segment_traverser_cells_end() const
   {
-    Segment_cell_iterator it(this, ps, pt, hint);
+    Segment_cell_iterator it(this);
     return it.end();
   }
   Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs,
@@ -2224,12 +2216,6 @@ public:
     Segment_simplex_iterator it(this, vs, vt);
     return it;
   }
-  Segment_simplex_iterator segment_traverser_simplices_end(Vertex_handle vs,
-                                                           Vertex_handle vt) const
-  {
-    Segment_simplex_iterator it(this, vs, vt);
-    return it.end();
-  }
   Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps,
                                                              const Point& pt,
                                                              Cell_handle hint = Cell_handle()) const
@@ -2237,11 +2223,9 @@ public:
     Segment_simplex_iterator it(this, ps, pt, hint);
     return it;
   }
-  Segment_simplex_iterator segment_traverser_simplices_end(const Point& ps,
-                                                           const Point& pt,
-                                                           Cell_handle hint = Cell_handle()) const
+  Segment_simplex_iterator segment_traverser_simplices_end() const
   {
-    Segment_simplex_iterator it(this, ps, pt, hint);
+    Segment_simplex_iterator it(this);
     return it.end();
   }
 
