@@ -23,6 +23,8 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <boost/container/small_vector.hpp>
+
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
@@ -776,6 +778,8 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   typedef typename RangeofVertexRange::const_iterator VTR_const_it;
   typedef typename std::iterator_traits<VTR_const_it>::value_type Vertex_range;
 
+  typedef boost::container::small_vector<halfedge_descriptor,8> Halfedges;
+    
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
   Vid_map vid = CGAL::get_initialized_vertex_index_map(pm);
 
@@ -798,7 +802,8 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   std::vector<halfedge_descriptor> former_border_hedges;
 
   //TODO: use vertex index map for v -> vector
-  std::vector<std::vector<halfedge_descriptor> > outgoing_hedges(num_vertices(pm));
+  std::vector<Halfedges> outgoing_hedges(num_vertices(pm));
+
   for (const Vertex_range& vr : faces_to_add)
   {
     std::size_t nbh=vr.size();
@@ -890,7 +895,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
     }
   }
 
-  for (std::vector<halfedge_descriptor>& hedges: outgoing_hedges)
+  for (Halfedges& hedges: outgoing_hedges)
   {
     if (!hedges.empty())
       std::sort(hedges.begin(), hedges.end(), [&pm](halfedge_descriptor h1, halfedge_descriptor h2)
@@ -903,8 +908,8 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   {
     bool return_opposite = v2 < v1;
     if (return_opposite) std::swap(v1,v2);
-    const std::vector<halfedge_descriptor>& v1_outgoing_hedges = outgoing_hedges[get(vid,v1)];
-    typename std::vector<halfedge_descriptor>::const_iterator it_find =
+    const Halfedges& v1_outgoing_hedges = outgoing_hedges[get(vid,v1)];
+    typename Halfedges::const_iterator it_find =
       std::lower_bound(v1_outgoing_hedges.begin(),
                        v1_outgoing_hedges.end(),
                        v2, [&pm](halfedge_descriptor h, vertex_descriptor v){return target(h,pm) < v;});
@@ -943,7 +948,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   }
 
   // link border halfedges by turning around the vertex in the interior of the mesh
-  for (std::vector<halfedge_descriptor>& hedges : outgoing_hedges)
+  for (Halfedges& hedges : outgoing_hedges)
   {
     for (halfedge_descriptor h : hedges)
     {
