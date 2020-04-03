@@ -76,7 +76,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
                               const std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
                               const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& border_hedges,
                               const std::set<typename boost::graph_traits<PolygonMesh>::edge_descriptor>& interior_edges,
-                              const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& faces,
+                              const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& face_range,
                               const std::vector<std::vector<Point> >& patch,
                               PolygonMesh& pmesh,
                               VPM& vpm,
@@ -95,7 +95,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
   // To be used to create new elements
   std::vector<vertex_descriptor> vertex_stack(interior_vertices.begin(), interior_vertices.end());
   std::vector<edge_descriptor> edge_stack(interior_edges.begin(), interior_edges.end());
-  std::vector<face_descriptor> face_stack(faces.begin(), faces.end());
+  std::vector<face_descriptor> face_stack(face_range.begin(), face_range.end());
 
   // Introduce new vertices, convert the patch in vertex patches
   std::vector<Vertex_face> patch_with_vertices;
@@ -138,7 +138,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
 
       // edge is not a border, but one of the faces incident might be up for removal
       const halfedge_descriptor h = halfedge(eb.first, pmesh);
-      if(faces.count(face(h, pmesh)) == 0 && faces.count(face(opposite(h, pmesh), pmesh)) == 0)
+      if(face_range.count(face(h, pmesh)) == 0 && face_range.count(face(opposite(h, pmesh), pmesh)) == 0)
       {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
         std::cout << "Cannot deal with replacement patch (nm edge)" << std::endl;
@@ -218,9 +218,6 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
     }
 
     *out++ = f;
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    new_faces.push_back(f);
-#endif
 
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(vf.size());
@@ -268,6 +265,10 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
     }
 
     set_halfedge(f, hedges[0], pmesh);
+
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+    new_faces.push_back(f);
+#endif
   }
 
   // now remove the remaining superfluous vertices, edges, faces
@@ -286,7 +287,8 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::cout << "  DEBUG: Replacing range with patch: ";
-  std::cout << faces.size() << " triangles removed, " << patch.size() << " created\n";
+  std::cout << face_range.size() << " triangles removed, " << new_faces.size() << " created\n";
+  CGAL_assertion(new_faces.size() == patch.size());
 #endif
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -308,6 +310,8 @@ bool replace_faces_with_patch(const std::set<typename boost::graph_traits<Polygo
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor       edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
+
+  CGAL_assertion(!face_range.empty());
 
   std::vector<vertex_descriptor> border_vertices;
   std::set<vertex_descriptor> interior_vertices;
@@ -353,13 +357,13 @@ bool replace_faces_with_patch(const std::set<typename boost::graph_traits<Polygo
 }
 
 template <typename PolygonMesh, typename VPM, typename Point>
-bool replace_faces_with_patch(const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& faces,
+bool replace_faces_with_patch(const std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& face_range,
                               const std::vector<std::vector<Point> >& patch,
                               PolygonMesh& pmesh,
                               VPM& vpm)
 {
   CGAL::Emptyset_iterator out;
-  return replace_faces_with_patch(faces, patch, pmesh, vpm, out);
+  return replace_faces_with_patch(face_range, patch, pmesh, vpm, out);
 }
 
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
