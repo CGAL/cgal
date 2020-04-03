@@ -153,13 +153,17 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 
     if (selection_item)
     {
-      CGAL::Surface_mesh_simplification::internal::Bounded_normal_change_placement<
-          CGAL::Surface_mesh_simplification::internal::Constrained_placement<
+
+          typedef CGAL::Surface_mesh_simplification::internal::Constrained_placement<
           CGAL::Surface_mesh_simplification::LindstromTurk_placement<
-          FaceGraph> >,
+          FaceGraph>,
           Scene_polyhedron_selection_item::Is_constrained_map<
-          Scene_polyhedron_selection_item::Selection_set_edge> >
-          placement (selection_item->constrained_edges_pmap());
+          Scene_polyhedron_selection_item::Selection_set_edge> > Constraind_placement;
+          Constraind_placement c_placement (selection_item->constrained_edges_pmap(), true);
+
+          CGAL::Surface_mesh_simplification::internal::Bounded_normal_change_placement<
+              Constraind_placement>
+              placement(CGAL_PI,c_placement);
 
       CGAL::Surface_mesh_simplification::edge_collapse
           (pmesh, stop,
