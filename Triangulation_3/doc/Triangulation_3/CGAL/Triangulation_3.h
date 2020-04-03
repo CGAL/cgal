@@ -223,6 +223,8 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 /*!
 \cgalModifBegin
 iterator over cells intersected by a line segment.
+`Segment_cell_iterator` implements the concept `ForwardIterator` and is non-mutable.
+Its value type is `Cell_handle`.
 \cgalModifEnd
 */
 typedef unspecified_type Segment_cell_iterator;
@@ -230,6 +232,8 @@ typedef unspecified_type Segment_cell_iterator;
 /*!
 \cgalModifBegin
 iterator over simplices intersected by a line segment.
+`Segment_simplex_iterator` implements the concept `ForwardIterator` and is non-mutable.
+Its value type is `Triangulation_simplex_3 `.
 \cgalModifEnd
 */
 typedef unspecified_type Segment_simplex_iterator;
