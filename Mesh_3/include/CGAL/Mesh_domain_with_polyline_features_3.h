@@ -1165,6 +1165,13 @@ add_features_and_incidences(InputIterator first, InputIterator end,
 
     Curve_index curve_id = insert_edge(polyline.begin(), polyline.end());
     edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "Curve #" << curve_id << " is incident to the following patches: {";
+    for(auto id: patches_ids) {
+      std::cerr << " " << id;
+    }
+    std::cerr << "}\n";
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 1
     *indices_out++ = curve_id;
   }
 
@@ -1410,7 +1417,7 @@ compute_corners_incidences()
                      std::inserter(incidences,
                                    incidences.begin()));
     }
-#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     display_corner_incidences(std::cerr, cit->first, id);
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 

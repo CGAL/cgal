@@ -182,7 +182,7 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Constant_property_map<edge_descriptor, bool>(false));
+                                 Constant_property_map<edge_descriptor, bool>(false));
 
   // a constrained edge has constrained extremities
   for(face_descriptor f : faces)
@@ -234,8 +234,16 @@ void smooth_mesh(const FaceRange& faces,
 
   for(unsigned int i=0; i<nb_iterations; ++i)
   {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cout << "Iteration #" << i << std::endl;
+#endif
+
     if(use_area_smoothing)
     {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+      std::cout << "Smooth areas..." << std::endl;
+#endif
+
       // First apply area smoothing...
       area_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                              false /*apply moves as soon as they're calculated*/,
@@ -244,7 +252,7 @@ void smooth_mesh(const FaceRange& faces,
       {
         if(use_safety_constraints && does_self_intersect(tmesh))
         {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
           std::cerr << "Cannot re-project as there are self-intersections in the mesh!\n";
 #endif
           break;
@@ -260,6 +268,10 @@ void smooth_mesh(const FaceRange& faces,
     // ... then angle smoothing
     if(use_angle_smoothing)
     {
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+      std::cout << "Smooth angles..." << std::endl;
+#endif
+
       angle_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                               true /*apply all moves at once*/,
                               use_safety_constraints /*check if the min angle is improved*/);
@@ -268,7 +280,7 @@ void smooth_mesh(const FaceRange& faces,
       {
         if(use_safety_constraints && does_self_intersect(tmesh))
         {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
           std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
 #endif
           break;
