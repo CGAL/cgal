@@ -1,7 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
 
 #include <assert.h>
 #include <iostream>
@@ -13,18 +12,15 @@
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
-//#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
-
-typedef DT::Cell_handle                                         Cell_handle;
-
-typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Cell_traverser;
+typedef CGAL::Delaunay_triangulation_3< Kernel > DT;
+typedef DT::Cell_handle                          Cell_handle;
+typedef DT::Segment_cell_iterator                Segment_cell_iterator;
 
 int main(int argc, char* argv[])
 {
@@ -72,8 +68,6 @@ int main(int argc, char* argv[])
     CGAL::Timer time;
     time.start();
 
-    unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-
     for (unsigned int i = 0; i < nb_seg; ++i)
     {
       // Construct a traverser.
@@ -89,43 +83,21 @@ int main(int argc, char* argv[])
         << "\n\t(" << p1
         << ")\n\t(" << p2 << ")" << std::endl;
 #endif
-      Cell_traverser ct(dt, p1, p2);
+      Segment_cell_iterator ct = dt.segment_traverser_cells_begin(p1, p2);
+      Segment_cell_iterator ctend = dt.segment_traverser_cells_begin(p1, p2);
 
       // Count the number of finite cells traversed.
       unsigned int inf = 0, fin = 0;
-      for( ; ct != ct.end(); ++ct )
+      for( ; ct !=ctend; ++ct )
       {
         if( dt.is_infinite(ct) )
             ++inf;
         else
-        {
           ++fin;
-
-          DT::Locate_type lt;
-          int li, lj;
-          ct.entry(lt, li, lj);
-
-          switch (lt)
-          {
-          case DT::Locate_type::FACET:
-           ++nb_facets;
-           break;
-          case DT::Locate_type::EDGE:
-           ++nb_edges;
-           break;
-          case DT::Locate_type::VERTEX:
-           ++nb_vertex;
-           break;
-          default:
-           /*when source is in a cell*/
-           CGAL_assertion(lt == DT::Locate_type::CELL);
-          }
-        }
       }
 
 #ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
-      std::cout << "While traversing from " << ct.source()
-                << " to " << ct.target() << std::endl;
+      std::cout << "While traversing from " << p1 << " to " << p2 << std::endl;
       std::cout << inf << " infinite and "
                 << fin << " finite cells were visited." << std::endl;
       std::cout << std::endl << std::endl;
@@ -138,9 +110,6 @@ int main(int argc, char* argv[])
     std::cout << "Traversing cells of triangulation with "
       << nb_seg << " segments took " << time.time() << " seconds."
       << std::endl;
-    std::cout << "\tnb facets    : " << nb_facets << std::endl;
-    std::cout << "\tnb edges     : " << nb_edges << std::endl;
-    std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
 
      return 0;
 }

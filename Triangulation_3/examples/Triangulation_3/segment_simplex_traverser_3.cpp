@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 #include <assert.h>
 #include <iostream>
@@ -18,11 +18,10 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
-
-typedef DT::Cell_handle                                         Cell_handle;
-
-typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Simplex_traverser;
+typedef CGAL::Delaunay_triangulation_3< Kernel >  DT;
+typedef DT::Cell_handle                           Cell_handle;
+typedef DT::Segment_simplex_iterator              Segment_simplex_iterator;
+typedef CGAL::Triangulation_simplex_3<DT::Triangulation_data_structure> Simplex;
 
 int main(int argc, char* argv[])
 {
@@ -52,7 +51,6 @@ int main(int argc, char* argv[])
     time.start();
 
     unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-    unsigned int nb_collinear = 0;
 
     for (int i = 0; i < nb_seg; ++i)
     {
@@ -69,45 +67,21 @@ int main(int argc, char* argv[])
                 << "\n\t(" << p1
                 << ")\n\t(" << p2 << ")" << std::endl;
 #endif
-      Simplex_traverser st(dt, p1, p2);
+      Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
+      Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(p1, p2);
 
-      // Count the number of finite cells traversed.
-      unsigned int inf = 0, fin = 0;
-      for (; st != st.end(); ++st)
+      for (; st != stend; ++st)
       {
-        if( dt.is_infinite(st) )
-            ++inf;
-        else
-        {
-          ++fin;
-          if (st.is_facet())       ++nb_facets;
-          else if (st.is_edge())   ++nb_edges;
-          else if (st.is_vertex()) ++nb_vertex;
-          else if (st.is_cell())   ++nb_cells;
-
-          if (st.is_collinear())   ++nb_collinear;
-
-#ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
-          if (st.is_facet())
-            std::cout << "facet " << std::endl;
-          else if (st.is_edge())
-            std::cout << "edge " << std::endl;
-          else if (st.is_vertex())
-            std::cout << "vertex " << std::endl;
-          else
-          {
-            CGAL_assertion(st.is_cell());
-            std::cout << "cell " << std::endl;
-          }
-#endif
-        }
+        const Simplex s = st;
+        if (s.dimension() == 3)        ++nb_cells;
+        else if (s.dimension() == 2)   ++nb_facets;
+        else if (s.dimension() == 1)   ++nb_edges;
+        else if (s.dimension() == 0)   ++nb_vertex;
       }
 
 #ifdef CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
       std::cout << "While traversing from " << st.source()
                 << " to " << st.target() << std::endl;
-      std::cout << "\tinfinite cells : " << inf << std::endl;
-      std::cout << "\tfinite cells   : " << fin << std::endl;
       std::cout << "\tfacets   : " << nb_facets << std::endl;
       std::cout << "\tedges    : " << nb_edges << std::endl;
       std::cout << "\tvertices : " << nb_vertex << std::endl;
@@ -123,7 +97,6 @@ int main(int argc, char* argv[])
     std::cout << "\tnb facets    : " << nb_facets << std::endl;
     std::cout << "\tnb edges     : " << nb_edges << std::endl;
     std::cout << "\tnb vertices  : " << nb_vertex << std::endl;
-    std::cout << "\tnb collinear : " << nb_collinear << std::endl;
 
     return 0;
 }

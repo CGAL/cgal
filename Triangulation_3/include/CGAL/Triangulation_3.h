@@ -43,6 +43,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 
+#include <CGAL/Triangulation_segment_traverser_3.h>
+
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
@@ -523,6 +525,9 @@ public:
 
   typedef Iterator_range<Finite_edges_iterator> Finite_edges;
   typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+
+  typedef Triangulation_segment_cell_iterator_3<Self>    Segment_cell_iterator;
+  typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
 
 private:
   // Auxiliary iterators for convenience
@@ -2185,6 +2190,59 @@ public:
   OutputIterator finite_incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
   {
     return _tds.incident_edges_threadsafe(v, edges, Finite_filter(this));
+  }
+
+  Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle vs,
+                                                      Vertex_handle vt) const
+  {
+    Segment_cell_iterator it(this, vs, vt);
+    return it;
+  }
+  Segment_cell_iterator segment_traverser_cells_end(Vertex_handle vs,
+                                                    Vertex_handle vt) const
+  {
+    Segment_cell_iterator it(this, vs, vt);
+    return it.end();
+  }
+  Segment_cell_iterator segment_traverser_cells_begin(const Point& ps,
+                                                      const Point& pt,
+                                                      Cell_handle hint = Cell_handle()) const
+  {
+    Segment_cell_iterator it(this, ps, pt, hint);
+    return it;
+  }
+  Segment_cell_iterator segment_traverser_cells_end(const Point& ps,
+                                                    const Point& pt,
+                                                    Cell_handle hint = Cell_handle()) const
+  {
+    Segment_cell_iterator it(this, ps, pt, hint);
+    return it.end();
+  }
+  Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs,
+                                                             Vertex_handle vt) const
+  {
+    Segment_simplex_iterator it(this, vs, vt);
+    return it;
+  }
+  Segment_simplex_iterator segment_traverser_simplices_end(Vertex_handle vs,
+                                                           Vertex_handle vt) const
+  {
+    Segment_simplex_iterator it(this, vs, vt);
+    return it.end();
+  }
+  Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps,
+                                                             const Point& pt,
+                                                             Cell_handle hint = Cell_handle()) const
+  {
+    Segment_simplex_iterator it(this, ps, pt, hint);
+    return it;
+  }
+  Segment_simplex_iterator segment_traverser_simplices_end(const Point& ps,
+                                                           const Point& pt,
+                                                           Cell_handle hint = Cell_handle()) const
+  {
+    Segment_simplex_iterator it(this, ps, pt, hint);
+    return it.end();
   }
 
   size_type degree(Vertex_handle v) const

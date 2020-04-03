@@ -12,25 +12,18 @@
 #include <CGAL/Random.h>
 
 #define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
-#define CGAL_T3_TEST_SIMPLEX_TRAVERSER
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
-
-typedef DT::Cell_handle                                         Cell_handle;
-
-#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
-typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Traverser;
-#else                                                           
-typedef CGAL::Triangulation_segment_cell_iterator_3<DT>         Traverser;
-#endif
+typedef CGAL::Delaunay_triangulation_3<Kernel> DT;
+typedef DT::Cell_handle                        Cell_handle;
+typedef DT::Segment_simplex_iterator           Segment_simplex_iterator;
 
 template <typename Big_tuple>
-bool test(const DT dt, const Big_tuple& tuple);
+bool test(const DT& dt, const Big_tuple& tuple);
 
 int main(int, char* [])
 {
@@ -52,20 +45,20 @@ int main(int, char* [])
   vertices.reserve(points.size());
   DT dt;
   for(auto p: points) vertices.push_back(dt.insert(p));
-  DT::Cell_handle c;
-  assert( dt.is_valid() );
+  Cell_handle c;
+  assert(dt.is_valid());
   assert(dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
   assert(dt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
 
   std::cerr << dt.number_of_finite_cells() << '\n';
 
   const std::vector < std::tuple<Point_3, Point_3, std::array<unsigned, 4>>> queries = {
-  //    {{-1, 0,  0}, { 1, 0,  0}, {0, 0, 1, 2}}, // CFC
-  //    {{-1, 0,  0}, { 2, 0,  0}, {1, 0, 1, 2}}, // CFCV
-  //    {{ 2, 0,  0}, {-1, 0,  0}, {1, 0, 1, 2}}, // reverse
-  //    {{-2, 0,  0}, { 2, 0,  0}, {2, 0, 1, 2}}, // VCFCV
-  //    {{ 2, 0,  0}, {-2, 0,  0}, {2, 0, 1, 2}}, // reverse case: VCFCV
-  //    {{-3, 0,  0}, { 3, 0,  0}, {2, 0, 3, 2}}, // FVCFCVF
+      {{-1, 0,  0}, { 1, 0,  0}, {0, 0, 1, 2}}, // CFC
+      {{-1, 0,  0}, { 2, 0,  0}, {1, 0, 1, 2}}, // CFCV
+      {{ 2, 0,  0}, {-1, 0,  0}, {1, 0, 1, 2}}, // reverse
+      {{-2, 0,  0}, { 2, 0,  0}, {2, 0, 1, 2}}, // VCFCV
+      {{ 2, 0,  0}, {-2, 0,  0}, {2, 0, 1, 2}}, // reverse case: VCFCV
+      {{-3, 0,  0}, { 3, 0,  0}, {2, 0, 3, 2}}, // FVCFCVF
       {{-2, 0,  0}, { 2, 2, -2}, {2, 1, 1, 0}}, // VEVF
       {{ 2, 2, -2}, {-2, 0,  0}, {2, 1, 1, 0}}, // reverse case: FVEV
   };
@@ -78,7 +71,8 @@ int main(int, char* [])
 }
 
 template <typename Big_tuple>
-bool test(const DT dt, const Big_tuple& tuple) {
+bool test(const DT& dt, const Big_tuple& tuple)
+{
   bool result = true;
   using std::get;
   const auto& p1 = get<0>(tuple);
@@ -87,15 +81,18 @@ bool test(const DT dt, const Big_tuple& tuple) {
 
   std::cout << "\n#\n# Query segment: ( " << p1 << " , "
             << p2 << " )\n#\n";
-  Traverser st(dt, p1, p2);
+  Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
+  Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(p1, p2);
   
   unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
   unsigned int nb_collinear = 0;
 
   // Count the number of finite cells traversed.
   unsigned int inf = 0, fin = 0;
-  for (; st != st.end(); ++st) {
-    if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
+  for (; st != stend; ++st)
+  {
+    if (st->dimension() == 3
+      && dt.is_infinite(Cell_handle(*st)))
       ++inf;
     else {
       ++fin;

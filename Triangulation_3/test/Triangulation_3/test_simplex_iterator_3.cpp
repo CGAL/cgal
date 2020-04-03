@@ -21,7 +21,6 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_segment_traverser_3.h>
 
 #include <assert.h>
 #include <iostream>
@@ -45,9 +44,7 @@ typedef DT::Vertex_handle                           Vertex_handle;
 typedef DT::Cell_handle                             Cell_handle;
 typedef DT::Edge                                    Edge;
 typedef DT::Facet                                   Facet;
-
-typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Simplex_traverser;
-
+typedef DT::Segment_simplex_iterator                Segment_simplex_iterator;
 
 void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
 {
@@ -70,29 +67,36 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
                           << " ** " << v2->point() <<")"
                           << std::endl;
     std::cout << "\t(";
-    Simplex_traverser st(dt, v1->point() - 2.*v, v2->point() + 3.*v);
-    for (; st != st.end(); ++st)
+    Segment_simplex_iterator st
+      = dt.segment_traverser_simplices_begin((v1->point() - 2.*v),
+                                             (v2->point() + 3.*v));
+    Segment_simplex_iterator stend
+      = dt.segment_traverser_simplices_end((v1->point() - 2. * v),
+                                           (v2->point() + 3. * v));
+    for (; st != stend; ++st)
     {
-      std::cout << st.simplex_dimension();
-      if(Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
+      std::cout << st->dimension();
+      if(st->dimension() == 3
+        && Cell_handle(*st) != Cell_handle()
+        && dt.is_infinite(Cell_handle(*st)))
         std::cout << "i";
       std::cout << " ";
 
-      if (st.is_vertex() && st.get_vertex() == v1)
+      if (st->dimension() == 0 && Vertex_handle(*st) == v1)
       {
         ++st;
-        std::cout << st.simplex_dimension() << " ";
-        assert(st.is_edge());
-        Edge e = st.get_edge();
+        std::cout << st->dimension() << " ";
+        assert(st->dimension() == 1);
+        Edge e(*st);
         Vertex_handle ve1 = e.first->vertex(e.second);
         Vertex_handle ve2 = e.first->vertex(e.third);
         assert((ve1 == v1 && ve2 == v2)
             || (ve1 == v2 && ve2 == v1));
 
         ++st;
-        std::cout << st.simplex_dimension() << " ";
-        assert(st.is_vertex());
-        assert(st.get_vertex() == v2);
+        std::cout << st->dimension() << " ";
+        assert(st->dimension() == 0);
+        assert(Vertex_handle(*st) == v2);
       }
     }
     std::cout << ")" << std::endl;
@@ -123,30 +127,35 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
     std::cout << "TEST " << i << " (" << p1 << " ** " << p2 << ")"
       << std::endl;
     std::cout << "\t(";
-    Simplex_traverser st(dt, p1 - 2.*v, p2 + 3.*v);
-    for (; st != st.end(); ++st)
+    Segment_simplex_iterator st
+      = dt.segment_traverser_simplices_begin((p1 - 2. * v), (p2 + 3.  * v));
+    Segment_simplex_iterator stend
+      = dt.segment_traverser_simplices_end((p1 - 2. * v), (p2 + 3. * v));
+    for (; st != stend; ++st)
     {
-      std::cout << st.simplex_dimension();
-      if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
+      std::cout << st->dimension();
+      if (st->dimension() == 3
+        && Cell_handle(*st) != Cell_handle()
+        && dt.is_infinite(Cell_handle(*st)))
         std::cout << "i";
       std::cout << " ";
 
-      if (st.is_edge())
+      if (st->dimension() == 1)
       {
-        Edge e = st.get_edge();
+        Edge e = *st;
         Vertex_handle va = e.first->vertex(e.second);
         Vertex_handle vb = e.first->vertex(e.third);
         if ((va == v1 && vb == v2)
           || (va == v2 && vb == v1))
         {
           ++st;
-          std::cout << st.simplex_dimension() << " ";
-          assert(st.is_facet());
+          std::cout << st->dimension() << " ";
+          assert(st->dimension() == 2);
 
           ++st;
-          std::cout << st.simplex_dimension() << " ";
-          assert(st.is_edge());
-          Edge e2 = st.get_edge();
+          std::cout << st->dimension() << " ";
+          assert(st->dimension() == 1);
+          Edge e2 = *st;
           Vertex_handle va2 = e2.first->vertex(e2.second);
           Vertex_handle vb2 = e2.first->vertex(e2.third);
           assert(va == va2 || va == vb2 || vb == va2 || vb == vb2);
@@ -181,37 +190,42 @@ void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
     std::cout << "TEST " << i << " (" << p1 << " ** " << p2 << ")"
       << std::endl;
     std::cout << "\t(";
-    Simplex_traverser st(dt, p1 - 2.*v, p2 + 3.*v);
-    Simplex_traverser end = st.end();
-    for (; st != end; ++st)
+    Segment_simplex_iterator st
+      = dt.segment_traverser_simplices_begin((p1 - 2. * v), (p2 + 3. * v));
+    Segment_simplex_iterator stend
+      = dt.segment_traverser_simplices_end((p1 - 2. * v), (p2 + 3. * v));
+    for (; st != stend; ++st)
     {
-      std::cout << st.simplex_dimension();
-      if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
+      std::cout << st->dimension();
+      if (st->dimension() == 3 && dt.is_infinite(Cell_handle(*st)))
         std::cout << "i";
       std::cout << " ";
 
-      if (st.is_edge())
+      if (st->dimension() == 1)
       {
-        Edge e = st.get_edge();
+        Edge e = *st;
         Vertex_handle va = e.first->vertex(e.second);
         Vertex_handle vb = e.first->vertex(e.third);
         if ((va == v1 && vb == v2) || (va == v2 && vb == v1))
         {
           ++st;
-          std::cout << st.simplex_dimension() << " ";
-          assert(st.is_facet());
+          std::cout << st->dimension() << " ";
+          assert(st->dimension() == 2);
 
           ++st;
-          std::cout << st.simplex_dimension() << " ";
-          assert(st.is_vertex());
-          assert(st.get_vertex() == v3);
+          std::cout << st->dimension() << " ";
+          assert(st->dimension() == 0);
+          assert(Vertex_handle(*st) == v3);
         }
         ++st;
-        std::cout << st.simplex_dimension() << " ";
-        if (st == st.end())
+        std::cout << st->dimension() << " ";
+        if (st == stend)
           break;
-        else if (dt.is_infinite(st)) std::cout << "i ";
-        assert(st.is_cell());
+        else if (st->dimension() == 3
+          && Cell_handle(*st) != Cell_handle()
+          && dt.is_infinite(Cell_handle(*st)))
+          std::cout << "i ";
+        assert(st->dimension() == 3);
       }
     }
     std::cout << ")" << std::endl;
@@ -243,26 +257,28 @@ void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
     std::cout << "TEST " << i << " (" << p1 << " ** " << p2 << ")"
       << std::endl;
     std::cout << "\t(";
-    Simplex_traverser st(dt, p1 - 2.*v, p2 + 3.*v);
-    Simplex_traverser end = st.end();
-    for (; st != end; ++st)
+    Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1 - 2.*v, p2 + 3.*v);
+    Segment_simplex_iterator stend = dt.segment_traverser_simplices_begin(p1 - 2. * v, p2 + 3. * v);
+    for (; st != stend; ++st)
     {
-      std::cout << st.simplex_dimension();
-      if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st))
+      std::cout << st->dimension();
+      if (st->dimension() == 3
+        && Cell_handle(*st) != Cell_handle()
+        && dt.is_infinite(Cell_handle(*st)))
         std::cout << "i";
       std::cout << " ";
 
-      if (st.is_vertex() && st.get_vertex() == v1)
+      if (st->dimension() == 0 && Vertex_handle(*st) == v1)
       {
         ++st;
-        std::cout << st.simplex_dimension() << " ";
-        assert(st.is_facet());
-        assert(st.get_facet() == facets[i]
-            || st.get_facet() == dt.mirror_facet(facets[i]));
+        std::cout << st->dimension() << " ";
+        assert(st->dimension() == 2);
+        assert(Facet(*st) == facets[i]
+            || Facet(*st) == dt.mirror_facet(facets[i]));
         ++st;
-        std::cout << st.simplex_dimension() << " ";
-        assert(st.is_edge());
-        Edge e = st.get_edge();
+        std::cout << st->dimension() << " ";
+        assert(st->dimension() == 1);
+        Edge e(*st);
         Vertex_handle va = e.first->vertex(e.second);
         Vertex_handle vb = e.first->vertex(e.third);
         assert((va == v2 && vb == v3) || (va == v3 && vb == v2));
@@ -294,28 +310,27 @@ void test_triangulation_on_a_grid()
   //along a border of the cube
   queries[4] = Segment_3(Point_3(0., 0., 0.), Point_3(11., 0., 5.));
 
-  BOOST_FOREACH(Segment_3 s, queries)
+  for(const Segment_3& s : queries)
   {
     std::cout << "Query segment : (" << s.source()
                          << ") to (" << s.target() << ") [";
-    Simplex_traverser st(dt, s);
+    Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(s.source(), s.target());
+    Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(s.source(), s.target());
+
     unsigned int inf = 0, fin = 0;
     unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-    unsigned int nb_collinear = 0;
     for (; st != st.end(); ++st)
     {
-      std::cout << st.simplex_dimension() << " ";
+      std::cout << st->dimension() << " ";
       std::cout.flush();
-      if (st.is_cell())
+      if (st->dimension() == 3)
       {
-        if (dt.is_infinite(st)) ++inf;
-        else                    ++fin;
+        if (dt.is_infinite(Cell_handle(*st))) ++inf;
+        else                                  ++fin;
       }
-      if (st.is_facet())       ++nb_facets;
-      else if (st.is_edge())   ++nb_edges;
-      else if (st.is_vertex()) ++nb_vertex;
-
-      if (st.is_collinear())   ++nb_collinear;
+      if (st->dimension() == 2)      ++nb_facets;
+      else if (st->dimension() == 1) ++nb_edges;
+      else if (st->dimension() == 0) ++nb_vertex;
     }
     std::cout << "\b]" << std::endl;
 
@@ -324,7 +339,6 @@ void test_triangulation_on_a_grid()
     std::cout << "\tfacets         : " << nb_facets << std::endl;
     std::cout << "\tedges          : " << nb_edges << std::endl;
     std::cout << "\tvertices       : " << nb_vertex << std::endl;
-    std::cout << "\tcollinear      : " << nb_collinear << std::endl;
     std::cout << std::endl;
   }
 }
@@ -368,28 +382,29 @@ int main(int argc, char* argv[])
     std::cout << "Traverser " << (i + 1)
       << "\n\t(" << p1
       << ")\n\t(" << p2 << ")" << std::endl;
-    Simplex_traverser st(dt, p1, p2);
+    Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
+    Segment_simplex_iterator stend = dt.segment_traverser_simplices_end(p1, p2);
 
     // Count the number of finite cells traversed.
     unsigned int inf = 0, fin = 0;
     unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-    unsigned int nb_collinear = 0;
-    for (; st != st.end(); ++st)
+    for (; st != stend; ++st)
     {
-      if (st.is_cell())
+      if (st->dimension() == 3)
       {
-        if (Cell_handle(st) != Cell_handle() && dt.is_infinite(st)) ++inf;
-        else                                                        ++fin;
+        if (Cell_handle(*st) != Cell_handle()
+          && dt.is_infinite(Cell_handle(*st)))
+          ++inf;
+        else
+          ++fin;
       }
-      if (st.is_facet())       ++nb_facets;
-      else if (st.is_edge())   ++nb_edges;
-      else if (st.is_vertex()) ++nb_vertex;
-
-      if (st.is_collinear())   ++nb_collinear;
+      if (st->dimension() == 2)      ++nb_facets;
+      else if (st->dimension() == 1) ++nb_edges;
+      else if (st->dimension() == 0) ++nb_vertex;
     }
 
-    std::cout << "While traversing from " << st.source()
-      << " to " << st.target() << std::endl;
+    std::cout << "While traversing from " << p1
+              << " to " << p2 << std::endl;
     std::cout << "\tinfinite cells : " << inf << std::endl;
     std::cout << "\tfinite cells   : " << fin << std::endl;
     std::cout << "\tfacets   : " << nb_facets << std::endl;
