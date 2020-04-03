@@ -1303,6 +1303,11 @@ Points points() const;
 /*!\name Segment Cell Iterator
 \cgalModifBegin
 The triangulation defines an iterator that visits cells intersected by a line segment.
+Segment Cell Iterator iterates over a sequence of cells which union contains the segment `[s,t]`.
+The sequence of cells is "minimal" (removing any cell would make the union of the
+renaming cells not entirely containing `[s,t]`) and sorted along `[s,t]`.
+The "minimality" of the sequence implies that in degenerate cases,
+only one cell incident to the traversed simplex will be reported.
 
 The cells visited form a facet-connected region containing both source and target points of the line segment `[s,t]`.
 Each cell falls within one or more of the following categories:
