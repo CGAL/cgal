@@ -26,7 +26,7 @@
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 #include <boost/optional.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 /// \file AABB_traits.h
 
@@ -268,21 +268,29 @@ public:
                     PrimitiveIterator beyond,
                     const typename AT::Bounding_box& bbox) const
       {
-        PrimitiveIterator middle = first + (beyond - first)/2;
+        PrimitiveIterator middle = first + (beyond - first)/2; // C++20: std::midpoint
+
+		decltype(Traits::less_x) comparator;
+
         switch(Traits::longest_axis(bbox))
         {
         case AT::CGAL_AXIS_X: // sort along x
-          std::nth_element(first, middle, beyond, boost::bind(Traits::less_x,_1,_2,m_traits));
+          comparator = Traits::less_x;
           break;
         case AT::CGAL_AXIS_Y: // sort along y
-          std::nth_element(first, middle, beyond, boost::bind(Traits::less_y,_1,_2,m_traits));
+          comparator = Traits::less_y;
           break;
         case AT::CGAL_AXIS_Z: // sort along z
-          std::nth_element(first, middle, beyond, boost::bind(Traits::less_z,_1,_2,m_traits));
+          comparator = Traits::less_z;
           break;
         default:
           CGAL_error();
         }
+
+        std::nth_element(first, middle, beyond,
+                         [comparator, this](auto first, auto second) {
+                           return comparator(first, second, m_traits);
+                         });
       }
   };
 
