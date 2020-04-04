@@ -270,7 +270,7 @@ public:
       {
         PrimitiveIterator middle = first + (beyond - first)/2; // C++20: std::midpoint
 
-		decltype(Traits::less_x) comparator;
+        decltype(Traits::less_x) comparator;
 
         switch(Traits::longest_axis(bbox))
         {
