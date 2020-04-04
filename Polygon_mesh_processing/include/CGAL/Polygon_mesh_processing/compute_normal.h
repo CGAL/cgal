@@ -98,6 +98,12 @@ void sum_normals(const PM& pmesh,
     const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
+
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+    std::cout << "Normal of " << f << " pts: " << pv << " ; " << pvn << " ; " << pvnn << std::endl;
+    std::cout << " --> " << n << std::endl;
+#endif
+
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
 
     he = next(he, pmesh);
@@ -228,7 +234,7 @@ void compute_face_normals(const PolygonMesh& pmesh,
   {
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(face_normals, f, vec);
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "normal at face " << f << " is " << get(face_normals, f) << std::endl;
 #endif
   }
@@ -544,6 +550,10 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
   typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Compute_squared_length_3 csl_3 = traits.compute_squared_length_3_object();
 
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+  std::cout << "Compute normal as weighted sums; type: " << vn_type << std::endl;
+#endif
+
   Vector_3 normal = cv_3(CGAL::NULL_VECTOR);
 
   halfedge_descriptor h = halfedge(v, pmesh);
@@ -570,7 +580,13 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
         const FT den = CGAL::approximate_sqrt(csl_3(v1) * csl_3(v2));
 
         if(den == FT(0))
+        {
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+          std::cout << "Null denominator, switching to no weights" << std::endl;
+#endif
+
           return compute_vertex_normal_as_sum_of_weighted_normals(v, NO_WEIGHT, face_normals, vpmap, pmesh, traits);
+        }
 
         n = traits.construct_scaled_vector_3_object()(n, FT(1) / den);
         normal = traits.construct_sum_of_vectors_3_object()(normal, n);
@@ -665,9 +681,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << std::endl << std::endl;
-  std::cout << "----------------------------------------------------------------------" << std::endl;
-  std::cout << "compute vertex at " << get(vpmap, v)
+  std::cout << "<----- compute vertex normal at " << get(vpmap, v)
             << ", must compute face normals? " << must_compute_face_normals << std::endl;
 #endif
 
@@ -687,7 +701,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     }
   }
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "Incident face normals:" << std::endl;
   for(halfedge_descriptor h : CGAL::halfedges_around_target(v, pmesh))
   {
