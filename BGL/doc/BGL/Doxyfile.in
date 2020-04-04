@@ -27,18 +27,6 @@ EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"
 
-# macros to be used inside the code
-ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
-ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
-ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref BGL_\1 \"\1\"</td><td>"
-ALIASES += "cgalParamEnd=</td></tr>"
-
-#macros for NamedParameters.txt
-ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
-ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
-ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
-ALIASES += "cgalNPEnd=</td></tr>"
-
 EXTRACT_ALL=NO
 HIDE_UNDOC_MEMBERS         =  YES
 HIDE_UNDOC_CLASSES         =  YES

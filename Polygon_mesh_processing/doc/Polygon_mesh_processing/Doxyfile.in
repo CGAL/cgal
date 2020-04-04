@@ -7,23 +7,7 @@ HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
 
 # macros to be used inside the code
-ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">"
-ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
-ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref PMP_\1 \"\1\"</td><td>"
-ALIASES += "cgalParamEnd=</td></tr>"
-ALIASES += "cgalParamNBegin{1}=<tr><td class=\"paramname\"> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button> <div class=\"content\">\endhtmlonly<ul>"
-ALIASES += "cgalParamDescription{1}=<li>\1</li>"
-ALIASES += "cgalParamType{1}=<li><b>Type: </b>\1</li>"
-ALIASES += "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>"
-ALIASES += "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>"
-ALIASES += "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>"
 ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
-
-#macros for NamedParameters.txt
-ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
-ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
-ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
-ALIASES += "cgalNPEnd=</td></tr>"
 
 EXAMPLE_PATH += ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR}
 
