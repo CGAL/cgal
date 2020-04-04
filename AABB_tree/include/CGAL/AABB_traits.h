@@ -270,26 +270,26 @@ public:
       {
         PrimitiveIterator middle = first + (beyond - first)/2; // C++20: std::midpoint
 
-        decltype(Traits::less_x) comparator;
+        auto lesser = Traits::less_x;
 
         switch(Traits::longest_axis(bbox))
         {
         case AT::CGAL_AXIS_X: // sort along x
-          comparator = Traits::less_x;
           break;
         case AT::CGAL_AXIS_Y: // sort along y
-          comparator = Traits::less_y;
+          lesser = Traits::less_y;
           break;
         case AT::CGAL_AXIS_Z: // sort along z
-          comparator = Traits::less_z;
+          lesser = Traits::less_z;
           break;
         default:
           CGAL_error();
+		  return;
         }
 
         std::nth_element(first, middle, beyond,
-                         [comparator, this](auto first, auto second) {
-                           return comparator(first, second, m_traits);
+                         [lesser, this](auto first, auto second) {
+                           return lesser(first, second, m_traits);
                          });
       }
   };
