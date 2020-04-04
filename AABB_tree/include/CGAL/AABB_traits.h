@@ -284,7 +284,7 @@ public:
           break;
         default:
           CGAL_error();
-		  return;
+          return;
         }
 
         std::nth_element(first, middle, beyond,
