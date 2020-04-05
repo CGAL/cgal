@@ -27,12 +27,30 @@ namespace CGAL {
 namespace Surface_mesh_topology {
 namespace internal {
 
-template <class Mesh_>
+template<class SNC, bool Copy>
+struct Get_original_dart
+{
+  static typename SNC::Original_dart_const_handle
+  run(SNC* snc, typename SNC::Dart_handle dh)
+  { return snc->m_copy_to_origin[dh]; }
+};
+
+template<class SNC>
+struct Get_original_dart<SNC, false>
+{
+  static typename SNC::Original_dart_const_handle
+  run(SNC* /* snc */, typename SNC::Dart_handle dh)
+  { return dh; }
+};
+
+template <class Mesh_, bool Copy>
 class Shortest_noncontractible_cycle
 {
 public:
-  using Self=Shortest_noncontractible_cycle<Mesh_>;
+  using Self=Shortest_noncontractible_cycle<Mesh_, Copy>;
   using Mesh=Mesh_;
+
+  friend struct Get_original_dart<Self, Copy>;
 
   using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_shortest_noncontractible_cycle>;
   using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
@@ -51,11 +69,11 @@ public:
 
   /// @return the local map
   const Local_map& get_local_map() const
-  { return m_local_map; }
+  { return *m_local_map; }
 
   /// @return the local map
   Local_map& get_local_map()
-  { return m_local_map; }
+  { return *m_local_map; }
 
   Shortest_noncontractible_cycle(const Mesh& amesh, bool display_time=false) :
     m_cycle(amesh)
@@ -64,18 +82,12 @@ public:
     if (display_time)
     { t.start(); }
 
-    // Initialize m_is_perforated
-    try
-    {
-      m_is_perforated=get_local_map().get_new_mark();
-    }
-    catch (typename Local_map::Exception_no_more_available_mark)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
+    m_local_map=new Local_map;
 
-    Original_map_wrapper::copy(m_local_map, const_cast<Mesh&>(amesh),
+    // Initialize m_is_perforated
+    m_is_perforated=get_local_map().get_new_mark();
+
+    Original_map_wrapper::copy(*m_local_map, amesh,
                                m_origin_to_copy, m_copy_to_origin, m_is_perforated);
 
     get_local_map().negate_mark(m_is_perforated);
@@ -93,9 +105,21 @@ public:
     }
   }
 
+  // Here amesh is already closed, and have 0-attributes with int.
+  // Thus the mesh is not copied.
+  Shortest_noncontractible_cycle(Mesh* amesh, size_type perforated_mark,
+                                 bool display_time=false) :
+    m_local_map(amesh),
+    m_is_perforated(perforated_mark),
+    m_cycle(*amesh)
+  {}
+
   ~Shortest_noncontractible_cycle()
   {
-    get_local_map().free_mark(m_is_perforated);
+    if (Copy)
+    {
+      delete m_local_map;
+    }
   }
 
   template <class WeightFunctor>
@@ -268,7 +292,7 @@ protected:
       do
       {
         Dart_handle v=get_local_map().next(it);
-        Distance_ w=wf(m_copy_to_origin[nonhole_dart_of_same_edge(it)]);
+        Distance_ w=wf(Get_original_dart<Self, Copy>::run(this, nonhole_dart_of_same_edge(it)));
         if (!get_local_map().is_marked(v, vertex_visited))
         {
           int v_index=++vertex_index;
@@ -495,7 +519,8 @@ protected:
   void add_to_cycle(Dart_handle dh, Path& cycle, bool flip=false)
   {
     dh=nonhole_dart_of_same_edge(dh, flip);
-    Original_dart_const_handle dh_original=m_copy_to_origin[dh];
+    Original_dart_const_handle
+        dh_original=Get_original_dart<Self, Copy>::run(this, dh);
     if (cycle.can_be_pushed(dh_original, flip))
     { cycle.push_back(dh_original, flip); }
     else
@@ -528,7 +553,7 @@ protected:
       int index_a=vertex_info(a), index_b=vertex_info(b);
       typename WeightFunctor::Weight_t sum_distance=
         distance_from_root[index_a]+distance_from_root[index_b]
-        +wf(m_copy_to_origin[nonhole_dart_of_same_edge(dh)]);
+        +wf(Get_original_dart<Self, Copy>::run(this, nonhole_dart_of_same_edge(dh)));
       if (first_check || min_distance > sum_distance)
       {
         min_distance=sum_distance;
@@ -557,7 +582,7 @@ protected:
   }
 
 protected:
-  Local_map        m_local_map; /// the local map
+  Local_map*       m_local_map; /// the local map
   size_type        m_is_perforated;   /// mark for perforated darts
   Origin_to_copy   m_origin_to_copy; /// associative array from original darts to copies
   Copy_to_origin   m_copy_to_origin; /// associative array from copies to original darts

@@ -30,7 +30,7 @@ public:
   using Self=Facewidth<Mesh_>;
   using Mesh=Mesh_;
 
-  using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_facewidth>;
+  using Original_map_wrapper=internal::Generic_map_selector<Mesh, Items_for_shortest_noncontractible_cycle>;
   using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
 
   using Local_map        =typename Original_map_wrapper::Generic_map;
@@ -39,7 +39,7 @@ public:
   using size_type        = typename Local_map::size_type;
 
   using Path             = CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
-  using SNC              = Shortest_noncontractible_cycle<Local_map>;
+  using SNC              = Shortest_noncontractible_cycle<Local_map, false>;
 
   Facewidth(const Mesh& amesh, bool display_time=false):
     m_snc_to_find_facewidth(nullptr)
@@ -48,91 +48,62 @@ public:
     if (display_time)
     { t.start(); }
 
-    Local_map m_gmap; // TODO REMOVE
     typename Original_map_wrapper::Origin_to_copy_map origin_to_radial;
-    Original_map_wrapper::copy(m_radial_map, const_cast<Mesh&>(amesh),
-                               origin_to_radial, m_copy_to_origin, Local_map::NB_MARKS);
-    m_copy_to_origin.clear();
-    Original_map_wrapper::copy(m_gmap, const_cast<Mesh&>(amesh),
-                               m_origin_to_copy, m_copy_to_origin, Local_map::NB_MARKS); // TODO BETTER
-    // Initialize 0-attributes for m_gmap
-    int counter = 0;
-    for (auto it=m_gmap.darts().begin(), itend=m_gmap.darts().end(); it!=itend; ++it)
+    typename Original_map_wrapper::Copy_to_origin_map local_radial_to_origin;
+
+    m_is_perforated=m_radial_map.get_new_mark();
+    Original_map_wrapper::copy(m_radial_map, amesh, origin_to_radial,
+                               local_radial_to_origin, m_is_perforated);
+
+    m_radial_map.negate_mark(m_is_perforated);
+    // Remove all boundary by adding faces, marked with m_is_perforated
+    m_radial_map.template close<2>();
+    m_radial_map.negate_mark(m_is_perforated);
+
+    m_mark_new_vertex=m_radial_map.get_new_mark();
+    size_type face_treated=m_radial_map.get_new_mark();
+    size_type original_darts=m_radial_map.get_new_mark();
+    m_radial_map.negate_mark(original_darts); // All original darts are marked
+
+    for (typename Local_map::Dart_range::iterator it=m_radial_map.darts().begin();
+         it!=m_radial_map.darts().end(); ++it)
     {
-      if (m_gmap.template attribute<0>(it)==NULL)
+      if (!m_radial_map.is_marked(it, m_is_perforated) &&
+          !m_radial_map.is_marked(it, face_treated) &&
+          m_radial_map.is_marked(it, original_darts))
       {
-        m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>(counter++));
-        m_vertex_list.push_back(it);
+        m_radial_map.template mark_cell<2>(it, face_treated);
+        Dart_handle new_vertex=m_radial_map.insert_cell_0_in_cell_2(it);
+        for (auto itv=m_radial_map.template darts_of_cell_basic<0>(new_vertex, m_mark_new_vertex).begin(),
+             itvend=m_radial_map.template darts_of_cell_basic<0>(new_vertex, m_mark_new_vertex).end();
+             itv!=itvend; ++itv)
+        {
+          m_radial_map.mark(itv, m_mark_new_vertex);
+          m_radial_to_original[m_radial_map.opposite2(itv)]=
+              local_radial_to_origin[m_radial_map.next(itv)];
+        }
       }
     }
 
-    // m_face_list contains dart handles of m_gmap
-    for (auto it=m_gmap.template one_dart_per_cell<2>().begin(),
-         itend=m_gmap.template one_dart_per_cell<2>().end(); it!=itend; ++it)
-    { m_face_list.push_back(it); }
-
-    // Create edge_list
-    std::vector<Dart_handle> edge_list;
-    for (auto it=m_radial_map.template one_dart_per_cell<1>().begin(),
-         itend=m_radial_map.template one_dart_per_cell<1>().end(); it!=itend; ++it)
-    { edge_list.push_back(it); }
-
-    // m_radial_map hasn't been changed so far
-
-    // face_list contains dart handles of m_radial_map
-    std::vector<Dart_handle> face_list;
-    for (auto it=m_radial_map.template one_dart_per_cell<2>().begin(),
-         itend=m_radial_map.template one_dart_per_cell<2>().end(); it!=itend; ++it)
-    { face_list.push_back(it); }
-
-    // Adding "centroids"
-    std::vector<Dart_handle> centroids;
-    for (auto it : face_list) // face_list contains dart handles of m_radial_map
+    // Remove the original edges of m_radial_map, and create vertex info.
+    for (auto it=m_radial_map.darts().begin(), itend=m_radial_map.darts().end();
+         it!=itend; ++it)
     {
-      auto new_vertex=m_radial_map.insert_cell_0_in_cell_2(it);
-      centroids.push_back(new_vertex);
+      if (m_radial_map.template attribute<0>(it)==nullptr)
+      { m_radial_map.template set_attribute<0>
+          (it, m_radial_map.template create_attribute<0>(-1)); }
+
+      if (m_radial_map.is_marked(it, original_darts))
+      { m_radial_map.template remove_cell<1>(it); }
     }
 
-    // Initialize 1-attributes of m_radial_map
-    for (auto it=m_radial_map.darts().begin(), itend=m_radial_map.darts().end(); it!=itend; ++it)
-    {
-      if (m_radial_map.template attribute<1>(it)==NULL)
-      { m_radial_map.template set_attribute<1>(it, m_radial_map.template create_attribute<1>()); }
-    }
+    CGAL_assertion(m_radial_map.is_whole_map_unmarked(original_darts));
+    CGAL_assertion(m_radial_map.is_whole_map_unmarked(face_treated));
 
-    // Assign values
-    for (int i=0; i<centroids.size(); ++i)
-    {
-      auto u=centroids[i];
-      bool first_run=true;
-      for (Dart_handle it=u; first_run || it!=u; it=m_radial_map.next(m_radial_map.opposite2(it)))
-      {
-        first_run=false;
-        m_radial_map.template info<1>(it)=i;
-      }
-    }
+    m_radial_map.free_mark(original_darts);
+    m_radial_map.free_mark(face_treated);
 
-    // Initialize 0-attributes of m_radial_map
-    for (auto it=m_radial_map.darts().begin(), itend=m_radial_map.darts().end(); it!=itend; ++it)
-    {
-      if (m_radial_map.template attribute<0>(it)==NULL)
-      { m_radial_map.template set_attribute<0>(it, m_radial_map.template create_attribute<0>(-1)); }
-    }
-    for (auto att_it=m_gmap.template attributes<0>().begin(),
-         att_itend = m_gmap.template attributes<0>().end(); att_it != att_itend; ++att_it)
-    {
-      auto it_radial = origin_to_radial[m_copy_to_origin[att_it->dart()]];
-      m_radial_map.template info<0>(it_radial)=att_it->info();
-    }
-
-    // Remove the marked edges of m_radial_map
-    for (auto dh : edge_list)
-    {
-      CGAL_assertion(m_radial_map.template is_removable<1>(dh));
-      m_radial_map.template remove_cell<1>(dh);
-    }
-
-    m_snc_to_find_facewidth=std::make_unique<SNC>(m_radial_map, false);
+    m_snc_to_find_facewidth=std::make_unique<SNC>(&m_radial_map, m_is_perforated);
 
     if (display_time)
     {
@@ -147,33 +118,18 @@ public:
     if (display_time)
     { t.start(); }
 
-    m_cycle.clear();
     // Find edgewidth of the radial map
     Path_on_surface<Local_map> edgewidth_of_radial_map=
-        m_snc_to_find_facewidth->compute_edgewidth(display_time);
+        m_snc_to_find_facewidth->compute_edgewidth();
 
-    int last_vertex_index=-1;
-    int last_face_index=-1;
-    for (int i=0, n=edgewidth_of_radial_map.length(); i<=n; i++)
+    std::vector<Original_dart_const_handle> cycle;
+    cycle.reserve(edgewidth_of_radial_map.length());
+    for (int i=0, n=edgewidth_of_radial_map.length(); i<n; i++)
     {
-      Dart_const_handle dh=edgewidth_of_radial_map[i%n];
-      int face_index=m_radial_map.template info<1>(dh);
-      if (m_radial_map.template info<0>(dh)==-1) { dh=m_radial_map.next(dh); }
-      CGAL_assertion(m_radial_map.template info<0>(dh)!=-1);
-      int vertex_index=m_radial_map.template info<0>(dh);
-
-      if (last_face_index==face_index)
-      {
-        CGAL_assertion(m_radial_map.template belong_to_same_cell<0>(m_vertex_list[last_vertex_index],
-                                                                    dh));
-        
-        m_cycle.push_back(m_copy_to_origin[m_vertex_list[last_vertex_index]]);
-        m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]);
-      }
-
-      // if (first_vertex_index == -1) first_vertex_index = vertex_index;
-      last_vertex_index=vertex_index;
-      last_face_index=face_index;
+      Dart_handle dh=m_radial_map.dart_handle
+          (const_cast<typename Local_map::Dart&>(*edgewidth_of_radial_map.get_ith_real_dart(i)));
+      if (!m_radial_map.is_marked(dh, m_mark_new_vertex))
+      { cycle.push_back(m_radial_to_original[dh]); }
     }
 
     if (display_time)
@@ -182,15 +138,14 @@ public:
       std::cout<<"[TIME] compute_facewidth: "<<t.time()<<" seconds."<<std::endl;
     }
 
-    return m_cycle;
+    return cycle;
   }
 
 protected:
   Local_map m_radial_map;
-  std::vector<Dart_handle> m_vertex_list, m_face_list;
-  std::vector<Original_dart_const_handle> m_cycle;
-  typename Original_map_wrapper::Origin_to_copy_map m_origin_to_copy;
-  typename Original_map_wrapper::Copy_to_origin_map m_copy_to_origin;
+  size_type m_is_perforated;   /// mark for perforated darts
+  size_type m_mark_new_vertex; /// mark for new vertices
+  typename Original_map_wrapper::Copy_to_origin_map m_radial_to_original;
   std::unique_ptr<SNC> m_snc_to_find_facewidth;
 };
 

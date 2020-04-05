@@ -36,18 +36,6 @@ namespace internal {
     };
   };
 
-  struct Items_for_facewidth
-  {
-    template <class Map>
-    struct Dart_wrapper {
-      // TODO dart_const_handle associated with vertices and with edges
-      using Vertex_attribute = CGAL::Cell_attribute<Map, int>;
-      using Edge_attribute   = CGAL::Cell_attribute<Map, int>;
-      using Face_attribute   = void;
-      using Attributes       = CGAL::cpp11::tuple<Vertex_attribute, Edge_attribute, Face_attribute>;
-    };
-  };
-
   template <class Mesh_, class Items_>
   struct SNC_for_generalized_map
   {

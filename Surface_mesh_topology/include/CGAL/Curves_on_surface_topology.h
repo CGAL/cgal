@@ -32,7 +32,7 @@ public:
   using Reduced_map            =typename Minimal_quadrangulation::Local_map;
 
   // Types for shortest noncontractible cycle
-  using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh>;
+  using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh, true>;
   using Facewidth                     =typename internal::Facewidth<Mesh>;
   using Dart_const_handle             =typename Shortest_noncontractible_cycle::Original_dart_const_handle;
   using halfedge_descriptor           =Dart_const_handle ; // To be compatible with BGL

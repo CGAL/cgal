@@ -6,6 +6,7 @@
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_linear_cell_complex.h>
+#include <CGAL/draw_face_graph_with_paths.h> // TEMPO REMOVE
 
 using LCC_3            =CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
@@ -70,6 +71,8 @@ int main(int argc, char* argv[])
   CGAL::load_off(lcc, inp);
   std::cout<<"File '"<<filename<<"' loaded. Finding the facewidth..."<<std::endl;
 
+  // draw_radial(lcc); // TODO REMOVE
+
   CST cst(lcc, true);
   std::vector<Dart_const_handle> cycle=cst.compute_facewidth(true);
 
@@ -77,23 +80,26 @@ int main(int argc, char* argv[])
   { std::cout<<"  Cannot find such cycle. Stop."<<std::endl; }
   else
   {
-    std::cout<<"  Number of faces: "<<cycle.size()/2<<std::endl;
+    std::cout<<"  Number of faces: "<<cycle.size()<<std::endl;
 
     if (draw)
     {
+      int nbv=0, nbf=0;
       LCC_3::size_type vertex_mark = lcc.get_new_mark();
       LCC_3::size_type face_mark = lcc.get_new_mark();
       for (int i=0; i<cycle.size(); ++i)
       {
-        if (i%2==0)
-        { // Color the vertex
-          lcc.mark_cell<0>(cycle[i], vertex_mark);
-        }
-        else
-        { // Color the face
-          lcc.mark_cell<2>(cycle[i], face_mark);
-        }
+        // Color the vertex
+        if (!lcc.is_marked(cycle[i], vertex_mark))
+        { lcc.mark_cell<0>(cycle[i], vertex_mark); ++nbv; }
+        else std::cout<<"Vertex already marked!"<<std::endl;
+        // Color the face
+        if (!lcc.is_marked(cycle[i], face_mark))
+        { lcc.mark_cell<2>(cycle[i], face_mark); ++nbf; }
+        else std::cout<<"Face already marked!"<<std::endl;
       }
+
+      std::cout<<"#v="<<nbv<<"   #f="<<nbf<<std::endl;
 
       Draw_functor df(vertex_mark, face_mark);
       CGAL::draw(lcc, "Face width", false, df);
