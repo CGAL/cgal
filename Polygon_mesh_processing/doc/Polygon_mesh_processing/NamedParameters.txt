@@ -491,7 +491,7 @@ and directed outside the finite volume enclosed by the surface connected compone
 \b Default: None
 \cgalNPEnd
 
-\cgalParamBegin{connected_component_id_to_volume_id} \anchor PMP_connected_component_id_to_volume_id
+\cgalNPBegin{connected_component_id_to_volume_id} \anchor PMP_connected_component_id_to_volume_id
 a `reference_wrapper` (either from `boost` or the standard library) containing
 a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `std::size_t`.
@@ -502,9 +502,9 @@ to is the value at the position `ccid` in the parameter container.
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
          over an object of type `container<std::size_t>` \n
 \b Default: None
-\cgalParamEnd
+\cgalNPEnd
 
-\cgalParamBegin{nesting_levels} \anchor PMP_nesting_levels
+\cgalNPBegin{nesting_levels} \anchor PMP_nesting_levels
 a `reference_wrapper` (either from `boost` or the standard library) containing
 a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `std::size_t`.
@@ -515,9 +515,9 @@ connected components containing on their bounded side this component.
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
          over an object of type `container<std::size_t>` \n
 \b Default: None
-\cgalParamEnd
+\cgalNPEnd
 
-\cgalParamBegin{is_cc_outward_oriented} \anchor PMP_is_cc_outward_oriented
+\cgalNPBegin{is_cc_outward_oriented} \anchor PMP_is_cc_outward_oriented
 a `reference_wrapper` (either from `boost` or the standard library) containing
 a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `bool`.
@@ -529,15 +529,15 @@ is the value at the position `ccid` in the parameter container.
 \b Type: a `reference_wrapper` (either from `boost` or the standard library)
          over an object of type `container<bool>` \n
 \b Default: None
-\cgalParamEnd
+\cgalNPEnd
 
-\cgalParamBegin{intersecting_volume_pairs_output_iterator} \anchor PMP_intersecting_volume_pairs_output_iterator
+\cgalNPBegin{intersecting_volume_pairs_output_iterator} \anchor PMP_intersecting_volume_pairs_output_iterator
 Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
 Each pair of connected components intersecting will be reported using their ids.
 If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.
 \b Type : a model of `OutputIterator` \n
 \b Default : `#CGAL::Emptyset_iterator`
-\cgalParamEnd
+\cgalNPEnd
 
 \cgalNPBegin{use_Delaunay_flips} \anchor PMP_use_Delaunay_flips
 Parameter used in the function `smooth_mesh()` to indicate if Delaunay-based flips should be used
