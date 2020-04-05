@@ -459,7 +459,7 @@ namespace CGAL {
     }
 
     // Copy constructor from a map having exactly the same type.
-    Combinatorial_map_base (const Self & amap)
+    Combinatorial_map_base (const Self & amap): Combinatorial_map_base()
     { copy(amap); }
 
     // "Copy constructor" from a map having different type.

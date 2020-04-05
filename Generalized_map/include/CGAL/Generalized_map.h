@@ -423,7 +423,7 @@ namespace CGAL {
     }
 
     // Copy constructor from a map having exactly the same type.
-    Generalized_map_base (const Self & amap) : Generalized_map_base()
+    Generalized_map_base(const Self & amap) : Generalized_map_base()
     { copy(amap); }
 
     // "Copy constructor" from a map having different type.
