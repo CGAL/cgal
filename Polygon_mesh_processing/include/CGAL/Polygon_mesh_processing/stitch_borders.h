@@ -575,11 +575,11 @@ std::size_t stitch_borders_impl(PM& pmesh,
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param h a border halfedge of the polygon mesh `pm`
 /// \param pm the polygon mesh to be stitched
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -763,10 +763,10 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param pm the polygon mesh to be stitched
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -864,10 +864,10 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param pmesh the polygon mesh to be modified by stitching
-/// @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

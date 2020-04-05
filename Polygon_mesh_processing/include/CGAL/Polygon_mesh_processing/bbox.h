@@ -43,10 +43,10 @@ namespace CGAL {
     *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param pmesh a polygon mesh
-    * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *   \cgalParamNBegin{vertex_point_map}
@@ -98,11 +98,11 @@ namespace CGAL {
     *  computes a bounding box of a vertex of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param vd a descriptor of a vertex in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *   \cgalParamNBegin{vertex_point_map}
@@ -147,11 +147,11 @@ namespace CGAL {
     *  computes a bounding box of an edge of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param ed a descriptor of an edge in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *   \cgalParamNBegin{vertex_point_map}
@@ -198,11 +198,11 @@ namespace CGAL {
     *  computes a bounding box of a face of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param fd a descriptor of a face in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *   \cgalParamNBegin{vertex_point_map}

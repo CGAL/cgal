@@ -64,7 +64,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///
 /// removes connected components whose area or volume is under a certain threshold value.
 ///
-/// Thresholds are provided via \ref pmp_namedparameters "Named Parameters". (see below).
+/// Thresholds are provided via \ref bgl_namedparameters "Named Parameters". (see below).
 /// If thresholds are not provided by the user, default values are computed as follows:
 /// - the area threshold is taken as the square of one percent of the length of the diagonal
 ///   of the bounding box of the mesh.
@@ -78,10 +78,10 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// by passing zero (`0`) as threshold value.
 ///
 /// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param tmesh the triangulated polygon mesh
-/// \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -89,6 +89,8 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `TriangleMesh`}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{geom_traits}

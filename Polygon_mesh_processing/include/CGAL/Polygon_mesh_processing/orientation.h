@@ -152,10 +152,10 @@ namespace internal{
  *      isolated connected component.
  *
  * @tparam PolygonMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param pmesh the closed polygon mesh to be tested
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -367,10 +367,10 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * inward or outward oriented.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters
 *
 * @param tm a closed triangulated surface mesh
-* @param np an optional sequence of \ref pmp_namedparameters among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
 *
 * \pre `CGAL::is_closed(tm)`
 *
@@ -400,7 +400,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 *     \cgalParamDescription{If `true`, each connected component will be outward oriented (and inward oriented if `false`).}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`true`}
-*   \cgalParamEnd
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
@@ -682,17 +682,17 @@ void set_cc_intersecting_pairs(
  *   of the unbounded volume (that has no outer boundary)
  *
  * A property map for `CGAL::vertex_point_t` must be either available as an internal property map
- * of `tm` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+ * of `tm` or provided as one of the \ref bgl_namedparameters "Named Parameters".
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam VolumeFaceIndexMap a model of `WritablePropertyMap` with
  *                      `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and
  *                      `boost::graph_traits<TriangleMesh>::%faces_size_type` as value type.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the input triangle mesh
  * @param volume_id_map the property map filled by this function with indices of volume components associated to the faces of `tm`
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
@@ -1234,10 +1234,10 @@ volume_connected_components(const TriangleMesh& tm,
  * See \ref coref_def_subsec for details.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm a closed triangulated surface mesh
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
@@ -1309,10 +1309,10 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  * See \ref coref_def_subsec for a precise definition.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm a closed triangulated surface mesh
- * @param np an optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
@@ -1337,7 +1337,7 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  *     \cgalParamDefault{`true`}
  *     \cgalParamExtra{If the outer connected components are inward oriented,
  *                     it means that the infinity will be considered as part of the volume bounded by `tm`.}
- *   \cgalParamEnd
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
@@ -1419,24 +1419,36 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  * Connected components are examined by increasing number of faces.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param pm a surface mesh
- * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np optional sequence of \ref bgl_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `pm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing an index for each face initialized from 0 to num_faces(pm).
- *   \cgalParamEnd
- *   \cgalParamBegin{maximum_number_of_faces}
- *     if not 0 (default), a connected component is considered reversible only
- *     if it has no more faces than the value given. Otherwise, it is always considered reversible.
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pm`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pm` a unique index
+ *                           between `0` and `num_faces(pm) - 1`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{maximum_number_of_faces}
+ *     \cgalParamDescription{If not `0`, a connected component is considered reversible only
+ *                           if it has no more faces than the value given.
+ *                           Otherwise, it is always considered reversible.}
+ *     \cgalParamType{`std::size_t`}
+ *     \cgalParamDefault{`0`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template <class PolygonMesh, class NamedParameters>

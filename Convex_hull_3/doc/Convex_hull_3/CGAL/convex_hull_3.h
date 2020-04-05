@@ -44,7 +44,7 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  * if the convex hull is a point or a segment, endpoints will be added in `pm` as isolated vertices.
  *
  * \tparam VertexListGraph a model of `VertexListGraph`.
- * \tparam PolygonMesh must be a model of `MutableFaceGraph`.
+ * \tparam PolygonMesh must be a model of `MutableFaceGraph`. an internal property map for `CGAL::vertex_point_t` must be available.
  * \tparam NamedParameters a sequence of named parameters
  *
  * \param g the graph
@@ -52,11 +52,15 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  * \param np an optional sequence of named parameters among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `VertexListGraph`
- * \cgalParamEnd
-* \cgalNamedParamsEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `g`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<VertexListGraph>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `VertexListGraph`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  * \attention The user must include the header file of the `PolygonMesh` and `VertexListGraph` types.
  */
 template <class VertexListGraph, class PolygonMesh, class NamedParameters>

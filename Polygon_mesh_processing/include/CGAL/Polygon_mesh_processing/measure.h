@@ -56,11 +56,11 @@ namespace Polygon_mesh_processing {
   * The edge is given by one of its halfedges, or the edge itself.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param h one halfedge of the edge to compute the length
   * @param pmesh the polygon mesh to which `h` belongs
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -79,7 +79,7 @@ namespace Polygon_mesh_processing {
   * \cgalNamedParamsEnd
   *
   * @return the length of `h`. The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `pmesh`.
   *
@@ -145,11 +145,11 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   * that contains a given halfedge.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param h a halfedge of the border polyline of which the length is computed
   * @param pmesh the polygon mesh to which `h` belongs
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -169,7 +169,7 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   *
   * @return the length of the sequence of border edges of `face(h, pmesh)`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `pmesh`.
   *
@@ -216,10 +216,10 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   * a halfedge that is part of this border and the length of this border.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -243,7 +243,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *     deduced from the graph traits corresponding to the type `PolygonMesh`.
   *   - `second`: the length of the longest border
   *     The return type `FT` is a number type. It is
-  *     either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  *     either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   *     or the geometric traits class deduced from the point property map
   *     of `pmesh`
   *
@@ -305,11 +305,11 @@ longest_border(const PolygonMesh& pmesh)
   * triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param f the face of which the area is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -331,7 +331,7 @@ longest_border(const PolygonMesh& pmesh)
   *
   * @return the area of `f`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
@@ -388,11 +388,11 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
           model of `Range`.
           Its iterator type is `InputIterator`.
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param face_range the range of faces of which the area is computed
   * @param tmesh the triangulated surface mesh to which the faces of `face_range` belong
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -412,7 +412,7 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   *
   * @return sum of face areas of `faces`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
@@ -458,10 +458,10 @@ area(FaceRange face_range, const TriangleMesh& tmesh)
   * computes the surface area of a triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the triangulated surface mesh
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -481,7 +481,7 @@ area(FaceRange face_range, const TriangleMesh& tmesh)
   *
   * @return the surface area of `tmesh`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
@@ -517,10 +517,10 @@ area(const TriangleMesh& tmesh)
   * a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * @pre `tmesh` is closed
   *
@@ -542,7 +542,7 @@ area(const TriangleMesh& tmesh)
   *
   * @return the volume bounded by `tmesh`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   */
@@ -598,11 +598,11 @@ volume(const TriangleMesh& tmesh)
   * computes the aspect ratio of a face of a given triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param f the face of which the aspect ratio is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -623,7 +623,7 @@ volume(const TriangleMesh& tmesh)
   * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
   * @return the aspect ratio of `f`. The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   */
@@ -718,10 +718,10 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceListGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * @pre `tmesh` is closed
   *

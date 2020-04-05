@@ -39,12 +39,12 @@ namespace Polygon_mesh_processing {
 /// \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence` whose
 ///                      value type is itself a model of the concepts `RandomAccessContainer` and
 ///                      `BackInsertionSequence` whose value type is `std::size_t`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param mesh the mesh whose faces are being put in the polygon soup
 /// \param points points making the polygons of the soup
 /// \param polygons each element in the vector describes a polygon using the indices of the points in `points`
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

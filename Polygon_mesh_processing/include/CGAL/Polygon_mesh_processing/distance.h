@@ -700,11 +700,11 @@ struct Triangle_structure_sampler_for_triangle_soup
  *  holding objects of the same point type as
  *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
  *  point map property map, if provided, or the value type of the internal point property map otherwise
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the triangle mesh to be sampled
  * @param out output iterator to be filled with sample points
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -867,12 +867,12 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
  *                      whose value_type is an unsigned integral value.
  * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param points the points of the soup
  * @param triangles a `TriangleRange` containing the triangles of the soup to be sampled
  * @param out output iterator to be filled with sample points
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{geom_traits}
@@ -1070,15 +1070,15 @@ double approximate_Hausdorff_distance(
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm2`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm2`
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`,
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`,
  *            forwarded to `sample_triangle_mesh()`.
  *
- * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm2` among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" for `tm2` among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1139,11 +1139,11 @@ double approximate_symmetric_Hausdorff_distance(
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param points the range of points of interest
  * @param tm the triangle mesh to compute the distance to
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1185,14 +1185,14 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm a triangle mesh
  * @param points a range of points
  * @param precision for each triangle of `tm`, the distance of its farthest point from `points` is bounded.
  *                  A triangle is subdivided into sub-triangles so that the difference of its distance bounds
  *                  is smaller than `precision`. `precision` must be strictly positive to avoid infinite loops.
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

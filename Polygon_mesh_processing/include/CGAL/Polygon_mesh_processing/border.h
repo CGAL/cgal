@@ -154,14 +154,14 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * @tparam HalfedgeOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh to which the faces in `face_range` belong
   * @param face_range the range of faces defining the patch whose border halfedges
   *                   are collected
   * @param out the output iterator that collects the border halfedges of the patch,
   *            seen from outside.
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{face_index_map}

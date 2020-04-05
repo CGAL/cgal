@@ -100,13 +100,13 @@ namespace internal {
  *
  *  \tparam PolygonMesh a model of `FaceGraph`
  *  \tparam FaceOutputIterator a model of `OutputIterator` with value type `boost::graph_traits<PolygonMesh>::%face_descriptor`.
- *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+ *  \param np an optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -183,11 +183,11 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
- *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
- * \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+ * \param np an optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -292,13 +292,13 @@ namespace internal {
 //  *  returns the number of connected components in the mesh.
 //  *
 //  *  A property map for `CGAL::face_index_t` must be either available as an internal property map
-//  *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+//  *  to `pmesh` or provided as one of the \ref bgl_namedparameters "Named Parameters".
 //  *
 //  *  \tparam PolygonMesh a model of `FaceGraph`
-//  *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//  *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //  *
 //  *  \param pmesh the polygon mesh
-//  *  \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+//  *  \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 //  *
 //  * \cgalNamedParamsBegin
 //  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -350,12 +350,12 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param nb_components_to_keep the number of components to be kept. If this number is larger than
  *                              the number of components in the mesh, all components are kept.
- * \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -503,11 +503,11 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam ThresholdValueType the type of the threshold value
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param threshold_value any connected component with a size (strictly) smaller than this value will be discarded
- * \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -787,13 +787,13 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
 *         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
-* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param components_to_keep the range of ids of connected components to keep
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+* \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_index_map}
@@ -831,13 +831,13 @@ void keep_connected_components(PolygonMesh& pmesh
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
 *         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
-* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * \param components_to_remove the range of ids of connected components to remove
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+* \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_index_map}
@@ -871,13 +871,13 @@ void remove_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be removed.
 *
 * \param components_to_remove a face range, including one face or more on each component to be removed
 * \param pmesh the polygon mesh
-* \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+* \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_is_constrained_map}
@@ -941,13 +941,13 @@ void remove_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be kept.
 *
 * \param pmesh the polygon mesh
 * \param components_to_keep a face range, including one face or more on each component to be kept
-* \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+* \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_is_constrained_map}

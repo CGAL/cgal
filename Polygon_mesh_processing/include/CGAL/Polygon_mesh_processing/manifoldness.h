@@ -393,26 +393,38 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
 /// duplicates all the non-manifold vertices of the input mesh.
 ///
 /// @tparam PolygonMesh a model of `HalfedgeListGraph` and `MutableHalfedgeGraph`
-/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param pm the surface mesh to be repaired
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-///       The type of this map is model of `ReadWritePropertyMap`.
-///       If this parameter is omitted, an internal property map for
-///       `CGAL::vertex_point_t` should be available in `PolygonMesh`
-///    \cgalParamEnd
-///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
-///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
-///     vertices, as well as the original non-manifold vertex in the input mesh.
-///  \cgalParamEnd
-///   \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
-///      `std::vector<vertex_descriptor>`. The first vertex of each vector is a non-manifold vertex
-///       of the input mesh, followed by the new vertices that were created to fix this precise
-///       non-manifold configuration.
-///  \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{vertex_is_constrained_map}
+///     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `pm`.}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `bool` as value type. It must be default constructible.}
+///     \cgalParamDefault{a default property map where no vertex is constrained}
+///     \cgalParamExtra{`put(vcm, v, true)` will be called for each duplicated
+///                     vertices, as well as the original non-manifold vertex in the input mesh.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{output_iterator}
+///     \cgalParamDescription{An output iterator to collect the duplicated vertices. The first vertex
+///                           of each vector is a non-manifold vertex of the input mesh,
+///                           followed by the new vertices that were created to fix this precise
+///                           non-manifold configuration.}
+///     \cgalParamType{a model of `OutputIterator` with value type `std::vector<vertex_descriptor>`}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \return the number of vertices created.

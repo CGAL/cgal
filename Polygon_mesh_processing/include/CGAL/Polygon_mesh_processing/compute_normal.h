@@ -116,11 +116,11 @@ void sum_normals(const PM& pmesh,
 * \ingroup PMP_normal_grp
 * computes the outward unit vector normal to face `f`.
 * @tparam PolygonMesh a model of `FaceGraph`
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param f the face whose normal is computed
 * @param pmesh the polygon mesh containing `f`
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -141,7 +141,7 @@ void sum_normals(const PM& pmesh,
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+* either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
 * or from the geometric traits class deduced from the point property map
 * of `pmesh`.
 *
@@ -199,7 +199,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * @param pmesh the polygon mesh
 * @param face_normals the property map in which the normals are written
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -615,7 +615,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 *
 * @param v the vertex whose normal is computed
 * @param pmesh the polygon mesh containing `v`
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -636,7 +636,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
-* either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+* either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
 *
@@ -745,7 +745,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the normals are written
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -845,7 +845,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vertex_nor
 * @param pmesh the polygon mesh
 * @param vertex_normals the property map in which the vertex normals are written
 * @param face_normals the property map in which the face normals are written
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}

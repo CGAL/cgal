@@ -169,12 +169,12 @@ bool simplify_polygon(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concept `SequenceContainer`
 //                      whose value_type is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
-// \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamNBegin{geom_traits}
@@ -223,12 +223,12 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concepts `SequenceContainer`
 //                      and `Swappable` whose value_type is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
-// \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamNBegin{geom_traits}
@@ -328,7 +328,7 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concept `Container`
 //                      whose value_type is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
@@ -490,12 +490,12 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 /// \tparam PolygonRange a model of the concept `RandomAccessContainer`
 ///                      whose value_type is itself a model of the concept `RandomAccessContainer`
 ///                      whose value_type is `std::size_t`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np an optional \ref pmp_namedparameters "Named Parameters" described below
+/// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{geom_traits}
@@ -880,12 +880,12 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
 ///                      whose value_type is itself a model of the concepts `RandomAccessContainer`
 ///                      and `ReversibleContainer` whose value_type is `std::size_t`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{geom_traits}
@@ -1044,12 +1044,12 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 /// \tparam PolygonRange a model of the concept `SequenceContainer`.
 ///                      whose value_type is itself a model of the concepts `SequenceContainer`,
 ///                      `Swappable`, and `ReversibleContainer` whose value_type is `std::size_t`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{geom_traits}

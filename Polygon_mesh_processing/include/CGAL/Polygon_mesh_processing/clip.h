@@ -416,13 +416,13 @@ void split_along_edges(TriangleMesh& tm,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(clipper)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param clipper triangulated surface mesh used to clip `tm`
-  * @param np_tm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np_c optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np_tm optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_c optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   *
   * \cgalNamedParamsBegin
@@ -511,12 +511,12 @@ clip(TriangleMesh& tm,
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param plane plane whose negative side defines the half-space to intersect `tm` with.
   *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -606,13 +606,13 @@ bool clip(TriangleMesh& tm,
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param splitter triangulated surface mesh used to split `tm`
-  * @param np_tm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np_s optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np_tm optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_s optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -688,12 +688,12 @@ void split(TriangleMesh& tm,
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param plane the plane that will be used to split `tm`.
   *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -766,11 +766,11 @@ void split(TriangleMesh& tm,
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param iso_cuboid iso-cuboid used to clip `tm`.
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}

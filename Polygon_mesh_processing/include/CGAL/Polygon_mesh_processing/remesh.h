@@ -43,13 +43,13 @@ namespace Polygon_mesh_processing {
 *         models of `Hashable`.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
 * @param target_edge_length the edge length that is targeted in the remeshed patch.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * @pre if constraints protection is activated, the constrained edges must
 * not be longer than 4/3*`target_edge_length`
@@ -60,6 +60,8 @@ namespace Polygon_mesh_processing {
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{geom_traits}
@@ -339,13 +341,13 @@ void isotropic_remeshing(
 *         has an internal property map for `CGAL::vertex_point_t`.
 * @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
-* @param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+* @param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
 
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -353,6 +355,8 @@ void isotropic_remeshing(
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{face_index_map}

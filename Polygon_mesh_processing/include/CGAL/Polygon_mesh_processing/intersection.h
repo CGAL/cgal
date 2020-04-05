@@ -345,7 +345,7 @@ struct Throw_at_first_output {
  *  model of `RandomAccessRange`.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param face_range1 the range of faces of `tm1` to check for intersections.
  * \param face_range2 the range of faces of `tm2` to check for intersections.
@@ -353,8 +353,8 @@ struct Throw_at_first_output {
  * \param tm2 the second triangulated surface mesh.
  * \param out output iterator to be filled with all pairs of faces that intersect.
  *  First and second element in the pairs correspond to faces of `tm1` and `tm2` respectively
- * \param np1 an optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
- * \param np2 an optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
+ * \param np1 an optional sequence of \ref bgl_namedparameters for `tm1`, among the ones listed below
+ * \param np2 an optional sequence of \ref bgl_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -371,7 +371,7 @@ struct Throw_at_first_output {
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *     \cgalParamExtra{np1 only}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -485,13 +485,13 @@ compute_face_face_intersection(const FaceRange& face_range1,
  *  elements in their respective range. In the case of the polyline, this position is the index of
  * the segment intersecting the face (which is the index  of the first point of the
  * segment following the range order.)
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param face_range the range of faces of `tm` to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np an optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters for `tm`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -506,7 +506,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -614,13 +614,13 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  *   `std::pair<std::size_t, std::pair<std::size_t, std::size_t> >`.
  * Each pair holds the index of the face and a pair containing the index of the polyline in the range and the index of
  * the first point of the segment in the polyline.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param face_range the range of `tm` faces to check for intersections.
  * \param polyline_range the range of polylines to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np an optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters for `tm`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -636,7 +636,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  * \return `out`
@@ -935,13 +935,13 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tm1 the first triangulated surface mesh to check for intersections
  * \param tm2 the second triangulated surface mesh to check for intersections
  * \param out output iterator to be filled with all pairs of faces that intersect
- * \param np1 an optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
- * \param np2 an optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
+ * \param np1 an optional sequence of \ref bgl_namedparameters for `tm1`, among the ones listed below
+ * \param np2 an optional sequence of \ref bgl_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -957,7 +957,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *     \cgalParamExtra{np1 only}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -998,12 +998,12 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  *  elements in their respective range. In the case of the polyline, this position is the index
  * of the segment that holds the intersection, so it is the index of the first point of the
  * segment following the range order.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tm the triangulated surface mesh to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np an optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters for `tm`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1018,7 +1018,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -1214,13 +1214,13 @@ bool do_intersect(const Polyline& polyline1,
  * @pre `!do_overlap_test_of_bounded_sides || CGAL::is_closed(tm2)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm2`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm2`
  *
  * @param tm1 the first triangulated surface mesh to check for intersections
  * @param tm2 the second triangulated surface mesh to check for intersections
- * @param np1 an optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
- * @param np2 an optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters for `tm1`, among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters for `tm2`, among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1237,7 +1237,7 @@ bool do_intersect(const Polyline& polyline1,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *     \cgalParamExtra{np1 only}
  *   \cgalParamNEnd
  *
@@ -1318,11 +1318,11 @@ bool do_intersect(const TriangleMesh& tm1,
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points. The point type of the range must be the
  *  same as the value type of the vertex point map.
  * \cgalDescribePolylineType
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polylines the range of polylines to check for intersections.
- * @param np an optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1337,7 +1337,7 @@ bool do_intersect(const TriangleMesh& tm1,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -1383,11 +1383,11 @@ bool do_intersect(const TriangleMesh& tm,
  * \tparam Polyline a `RandomAccessRange` of points. The point type of the range must be the
  *  same as the value type of the vertex point map.
  * \cgalDescribePolylineType
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polyline the polyline to check for intersections.
- * @param np an optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1402,7 +1402,7 @@ bool do_intersect(const TriangleMesh& tm,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -1603,8 +1603,8 @@ struct Mesh_callback
  *
  * \tparam TriangleMeshRange a model of `RandomAccessRange` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters" for the algorithm
- * \tparam NamedParametersRange a range of \ref pmp_namedparameters "Named Parameters" for the meshes.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters" for the algorithm
+ * \tparam NamedParametersRange a range of \ref bgl_namedparameters "Named Parameters" for the meshes.
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
  * \param out output iterator used to collect pairs of intersecting meshes.
@@ -1709,8 +1709,8 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
  * @tparam OutputIterator an output iterator in which `std::vector` of points
  *                        can be put. The point type is the one from the
  *                        vertex property map
@@ -1719,8 +1719,8 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  * @param tm2 second input triangulated surface mesh
  * @param polyline_output output iterator of polylines. Each polyline will be
  *        given as a vector of points
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1793,7 +1793,7 @@ namespace experimental {
  * @param tm input triangulated surface mesh
  * @param polyline_output output iterator of polylines. Each polyline will be
  *        given as a vector of points
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

@@ -188,12 +188,12 @@ public:
  /*!
   * adds mesh `tm` to the set of meshes to be considered for intersection.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * \return the id of `tm` used to refer to that mesh.
   *
   * @param tm triangulated surface mesh to add
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -249,13 +249,13 @@ public:
   * adds an instance of a triangulated surface mesh using an external tree of its faces.
   * \warning The tree is not copied and the lifetime of `tree` must be longer than that of this class.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * \return the id of `tm` used to refer to that mesh.
   *
   * @param tree an AABB-tree of faces of a mesh
   * @param tm triangulated surface mesh
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -497,11 +497,11 @@ public:
   * intended to be used before calling the `add_mesh()` overload taking an AABB-tree instead of a mesh
   * as input parameter.
   *
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
   * @param [out] points will contain one point per connected component of `tm`
-  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}

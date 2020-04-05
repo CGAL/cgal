@@ -89,18 +89,18 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParametersOut0 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut1 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut2 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut3 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut1 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut2 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut3 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
   * @param output an array of output surface meshes
-  * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -146,7 +146,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @param nps_out a tuple of optional sequences of \ref pmp_namedparameters "Named Parameters" each among the ones listed below
+  * @param nps_out a tuple of optional sequences of \ref bgl_namedparameters "Named Parameters" each among the ones listed below
   *        (`tm_out` being used to refer to the output surface mesh in `output` corresponding to a given named parameter sequence)
   *
   * \cgalNamedParamsBegin
@@ -476,15 +476,15 @@ corefine_and_compute_boolean_operations(
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
-  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
-  * @tparam NamedParametersOut a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
   * @param tm_out output surface mesh
-  * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-  * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -530,7 +530,7 @@ corefine_and_compute_boolean_operations(
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @param np_out optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np_out optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
@@ -655,13 +655,13 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm1 first input triangulated surface mesh
  * @param tm2 second input triangulated surface mesh
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -785,7 +785,7 @@ namespace experimental {
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -877,7 +877,7 @@ autorefine(      TriangleMesh& tm,
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

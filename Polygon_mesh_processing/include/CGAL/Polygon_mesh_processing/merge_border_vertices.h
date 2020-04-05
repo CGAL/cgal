@@ -262,11 +262,11 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 /// merges identical vertices around a cycle of boundary edges.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+/// @tparam NamedParameter a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param h a halfedge that belongs to a boundary cycle.
 /// @param pm the polygon mesh which contains the boundary cycle.
-/// @param np an optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional parameter of \ref bgl_namedparameters "Named Parameters" listed below.
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -317,10 +317,10 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// extracts boundary cycles and merges the duplicated vertices of each cycle.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+/// @tparam NamedParameter a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param pm the polygon mesh which contains the cycles.
-/// @param np an optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional parameter of \ref bgl_namedparameters "Named Parameters" listed below.
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

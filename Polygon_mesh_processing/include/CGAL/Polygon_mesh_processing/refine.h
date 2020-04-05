@@ -36,13 +36,13 @@ namespace Polygon_mesh_processing {
     holding `boost::graph_traits<TriangleMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<TriangleMesh>::%vertex_descriptor` for patch vertices
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param tmesh triangle mesh with patches to be refined
   @param faces the range of faces defining the patches to refine
   @param faces_out output iterator into which descriptors of new faces are recorded
   @param vertices_out output iterator into which descriptors of new vertices are recorded
-  @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}

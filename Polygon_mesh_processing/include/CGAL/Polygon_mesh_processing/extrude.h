@@ -118,8 +118,8 @@ struct Identity_functor
  *
  * @tparam InputMesh a model of `FaceListGraph`
  * @tparam OutputMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor providing
  * \code {.cpp}
  * void operator()`(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)
@@ -134,7 +134,7 @@ struct Identity_functor
  * `input` in order to shape the bottom part of the extrusion.
  * @param top functor that will transform all points copied from
  * `input` in order to shape the top part of the extrusion.
- * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -146,7 +146,7 @@ struct Identity_functor
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -244,13 +244,13 @@ void extrude_mesh(const InputMesh& input,
  * @tparam InputMesh a model of the concept `FaceListGraph`
  * @tparam OutputMesh a model of the concept `FaceListGraph` and `MutableFaceGraph`
  * @tparam Vector_3 vector type from the same CGAL kernel as the point of the vertex point map used for `OutputMesh`.
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  *
  * @param input an open surface mesh to extrude.
  * @param output a surface mesh that will contain the result of the extrusion.
  * @param v the vector defining the direction of the extrusion
- * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -263,7 +263,7 @@ void extrude_mesh(const InputMesh& input,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

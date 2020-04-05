@@ -337,12 +337,12 @@ self_intersections_impl(const FaceRange& face_range,
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param face_range the range of faces to check for self-intersection.
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -357,7 +357,7 @@ self_intersections_impl(const FaceRange& face_range,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
@@ -404,14 +404,14 @@ self_intersections(const FaceRange& face_range,
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect.
               In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
               will be put in `out` before any other self intersection between non-degenerate faces.
               These are the only pairs where degenerate faces will be reported.
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -426,7 +426,7 @@ self_intersections(const FaceRange& face_range,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -463,11 +463,11 @@ self_intersections(const TriangleMesh& tmesh, FacePairOutputIterator out)
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam FaceRange a range of `face_descriptor`
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param face_range the set of faces to test for self-intersection
  * @param tmesh the triangulated surface mesh to be tested
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -482,7 +482,7 @@ self_intersections(const TriangleMesh& tmesh, FacePairOutputIterator out)
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -520,10 +520,10 @@ bool does_self_intersect(const FaceRange& face_range,
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be tested
- * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -538,7 +538,7 @@ bool does_self_intersect(const FaceRange& face_range,
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{the geometric traits class must be compatible with the vertex point types}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

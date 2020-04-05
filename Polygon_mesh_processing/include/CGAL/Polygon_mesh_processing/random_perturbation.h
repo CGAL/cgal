@@ -106,13 +106,13 @@ namespace internal {
 *         vertices of type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
 *         Its iterator type is `ForwardIterator`.
 * @tparam TriangleMesh model of `MutableFaceGraph`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param vertices the range of vertices to be perturbed
 * @param tmesh the triangulated surface mesh
 * @param perturbation_max_size the maximal length of moves that can be applied to
 *        vertices of `tmesh`.
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}

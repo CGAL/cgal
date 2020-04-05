@@ -562,11 +562,11 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
 ///
 /// \tparam FT must be a model of `FieldNumberType`
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param loc the location from which a point is constructed
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -1072,13 +1072,13 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param query a point, whose type is equal to the value type of the vertex point property map
 ///              (either user-provided via named parameters or the internal point map of the mesh `tm`)
 /// \param fd a face of `tm`
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -1571,11 +1571,11 @@ void build_AABB_tree(const TriangleMesh& tm,
 /// \tparam TriangleMesh must be a model of `FaceListGraph`
 /// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param tm a triangulated surface mesh
 /// \param outTree output parameter that stores the computed `AABB_tree`
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -1637,12 +1637,12 @@ void build_AABB_tree(const TriangleMesh& tm, AABB_tree<AABBTraits>& outTree)
 /// \tparam TriangleMesh must be a model of `FaceListGraph`
 /// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
 /// \param tree an AABB tree containing the triangular faces of the input surface mesh to perform the point location with
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -1742,11 +1742,11 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Po
 ///          an AABB tree that you can store and use the function `locate_with_AABB_tree()`.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -1835,12 +1835,12 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
 /// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param ray a ray to intersect with the input triangulated surface mesh
 /// \param tree an AABB tree containing the triangular faces of the input surface mesh to perform the point location with
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -1979,11 +1979,11 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ra
 ///          that accept a reference to an AABB tree as input.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param ray a ray to intersect with the input triangulated surface mesh
 /// \param tm the input triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

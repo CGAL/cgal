@@ -783,8 +783,8 @@ namespace experimental {
 //                        and value type `GetGeomTraits<PolygonMesh, NamedParameters_A>::type::FT`
 // \tparam ToleranceMap_B a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 //                        and value type `GetGeomTraits<PolygonMesh, NamedParameters_A>::type::FT`
-// \tparam NamedParameters_A a sequence of \ref pmp_namedparameters "Named Parameters"
-// \tparam NamedParameters_B a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters_A a sequence of \ref bgl_namedparameters "Named Parameters"
+// \tparam NamedParameters_B a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param halfedge_range_A a range of halfedges of the first mesh defining a set of vertices (as targets of the halfeges)
 // \param tm_A the first mesh to which the vertices in `halfedge_range_A` belong
@@ -792,7 +792,7 @@ namespace experimental {
 // \param halfedge_range_B a range of vertices of the second mesh defining a set of vertices (as targets of the halfeges)
 // \param tolerance_map_B a tolerance map associating to each vertex of the second range a tolerance value
 // \param tm_B the target mesh to which the vertices in `halfedge_range_B` belong
-// \param np_A optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
+// \param np_A optional \ref bgl_namedparameters "Named Parameters" related to the source mesh,
 //             amongst those described below:
 //
 // \cgalNamedParamsBegin
@@ -806,7 +806,7 @@ namespace experimental {
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
-// \param np_B optional \ref pmp_namedparameters "Named Parameters" related to the target mesh,
+// \param np_B optional \ref bgl_namedparameters "Named Parameters" related to the target mesh,
 //             amongst those described below:
 //
 // \cgalNamedParamsBegin

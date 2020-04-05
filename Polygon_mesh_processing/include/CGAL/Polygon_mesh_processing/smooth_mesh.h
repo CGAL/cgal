@@ -52,11 +52,11 @@ namespace Polygon_mesh_processing {
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}

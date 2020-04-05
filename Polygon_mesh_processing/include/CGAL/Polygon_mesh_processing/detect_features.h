@@ -236,17 +236,17 @@ template<typename GT,
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
  * \tparam FT a number type. It is
- * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+ * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
  * or from the geometric traits class deduced from the point property map
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type. It must be default constructible.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
- * \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_feature_degree_map}
@@ -380,20 +380,20 @@ namespace internal
  *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam FT a number type. It is
- * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+ * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
  * or from the geometric traits class deduced from the point property map
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  * \tparam PatchIdMap a model of `ReadWritePropertyMap` with
    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
    and the desired patch id, model of `CopyConstructible` as value type.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
  * \param patch_id_map the property map that will contain the surface patch ids for the faces of `pmesh`.
- * \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_feature_degree_map}
