@@ -94,24 +94,24 @@ public:
     and automatically picks the `standard_index` and `color` of the
     label:
 
-    - \"unassigned\" is given standard index 2 and color `(0, 0, 0)`
-    - \"ground\" is given standard index 2 and color `(186, 189, 182)`
-    - \"low_vegetation\" is given standard index 3 and color `(78, 154, 6)`
-    - \"medium_vegetation\" is given standard index 4 and color `(138, 226, 52)`
-    - \"high_vegetation\" is given standard index 5 and color `(204, 255, 201)`
-    - \"building\" is given standard index 6 and color `(245, 121, 0)`
-    - \"noise\" is given standard index 7 and color `(128, 0, 0)`
-    - \"reserved\" is given standard index 8 and color `(233, 185, 110)`
-    - \"water\" is given standard index 9 and color `(114, 159, 207)`
-    - \"rail\" is given standard index 10 and color `(136, 46, 25)`
-    - \"road_surface\" is given standard index 11 and color `(56, 56, 56)`
-    - \"reserved_2\" is given standard index 12 and color `(193, 138, 51)`
-    - \"wire_guard\" is given standard index 13 and color `(37, 61, 136)`
-    - \"wire_conductor\" is given standard index 14 and color `(173, 127, 168)`
-    - \"transmission_tower\" is given standard index 15 and color `(136, 138, 133)`
-    - \"wire_connect\" is given standard index 16 and color `(145, 64, 236)`
-    - \"bridge_deck\" is given standard index 17 and color `(213, 93, 93)`
-    - \"high_noise\" is given standard index 18 and color `(255, 0, 0)`
+    - `"unassigned"` is given standard index 2 and color `(0, 0, 0)`
+    - `"ground"` is given standard index 2 and color `(186, 189, 182)`
+    - `"low_vegetation"` is given standard index 3 and color `(78, 154, 6)`
+    - `"medium_vegetation"` is given standard index 4 and color `(138, 226, 52)`
+    - `"high_vegetation"` is given standard index 5 and color `(204, 255, 201)`
+    - `"building"` is given standard index 6 and color `(245, 121, 0)`
+    - `"noise"` is given standard index 7 and color `(128, 0, 0)`
+    - `"reserved"` is given standard index 8 and color `(233, 185, 110)`
+    - `"water"` is given standard index 9 and color `(114, 159, 207)`
+    - `"rail"` is given standard index 10 and color `(136, 46, 25)`
+    - `"road_surface"` is given standard index 11 and color `(56, 56, 56)`
+    - `"reserved_2"` is given standard index 12 and color `(193, 138, 51)`
+    - `"wire_guard"` is given standard index 13 and color `(37, 61, 136)`
+    - `"wire_conductor"` is given standard index 14 and color `(173, 127, 168)`
+    - `"transmission_tower"` is given standard index 15 and color `(136, 138, 133)`
+    - `"wire_connect"` is given standard index 16 and color `(145, 64, 236)`
+    - `"bridge_deck"` is given standard index 17 and color `(213, 93, 93)`
+    - `"high_noise"` is given standard index 18 and color `(255, 0, 0)`
 
     If the name is not found, the label is given standard index
     `std::size_t(-1)` and a random color.

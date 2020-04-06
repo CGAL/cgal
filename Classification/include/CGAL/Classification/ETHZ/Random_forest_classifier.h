@@ -322,6 +322,10 @@ public:
     The input file should be a GZIP container written by the
     `save_configuration()` method from CGAL 5.1 and earlier. The
     output is a valid configuration for CGAL 5.2 and later.
+
+    \note This function and depends on the Boost libraries
+    [Serialization](https://www.boost.org/libs/serialization) and
+    [IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
   */
   static void convert_deprecated_configuration_to_new_format (std::istream& input, std::ostream& output)
   {
