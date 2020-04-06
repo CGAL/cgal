@@ -238,28 +238,71 @@ public:
   /*!
     \brief Generate geometric features based on point position information.
 
-    At each scale, the following features are generated:
+    This is a meta-function that calls the following functions:
 
-    - `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and 2
-    - `CGAL::Classification::Feature::Distance_to_plane`
-    - `CGAL::Classification::Feature::Elevation`
-    - `CGAL::Classification::Feature::Height_above`
-    - `CGAL::Classification::Feature::Height_below`
-    - `CGAL::Classification::Feature::Vertical_dispersion`
-    - `CGAL::Classification::Feature::Vertical_range`
-    - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
+    - `generate_eigen_features()`
+    - `generate_dispersion_features()`
+    - `generate_elevation_features()`
+    - The version of `generate_normal_based_features()` without a normal map
 
     \param features the feature set where the features are instantiated.
    */
   void generate_point_based_features (Feature_set& features)
   {
+    generate_eigen_features (features);
+    generate_dispersion_features (features);
+    generate_elevation_features (features);
+    generate_normal_based_features (features);
+  }
+
+  /*!
+    \brief Generate geometric eigen features.
+
+    At each scale, features
+    `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and
+    2 are generated.
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_eigen_features (Feature_set& features)
+  {
     for (int j = 0; j < 3; ++ j)
       for (std::size_t i = 0; i < m_scales.size(); ++ i)
         features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), (unsigned int)(j));
+  }
+
+  /*!
+    \brief Generate geometric features based on local dispersion information.
+
+    At each scale, the following features are generated:
+
+    - `CGAL::Classification::Feature::Distance_to_plane`
+    - `CGAL::Classification::Feature::Vertical_dispersion`
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_dispersion_features (Feature_set& features)
+  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Distance_to_plane> (i, m_input, m_point_map, eigen(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Dispersion> (i, m_input, m_point_map, grid(i), radius_neighbors(i));
+  }
+
+  /*!
+    \brief Generate geometric features based on elevation information.
+
+    At each scale, the following features are generated:
+
+    - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Height_above`
+    - `CGAL::Classification::Feature::Height_below`
+    - `CGAL::Classification::Feature::Vertical_range`
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_elevation_features (Feature_set& features)
+  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Elevation> (i, m_input, m_point_map, grid(i), radius_dtm(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
@@ -268,6 +311,20 @@ public:
       features.add_with_scale_id<Height_above> (i, m_input, m_point_map, grid(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Vertical_range> (i, m_input, m_point_map, grid(i));
+  }
+
+
+  /*!
+    \brief Generate geometric features based on normal analysis information.
+
+    At each scale, the version of
+    `CGAL::Classification::Feature::Verticality` based on eigenvalue
+    is generated.
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_normal_based_features (Feature_set& features)
+  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Verticality> (i, m_input, eigen(i));
   }
@@ -283,7 +340,6 @@ public:
 
     \param features the feature set where the features are instantiated.
     \param normal_map property map to access the normal vectors of the input points (if any).
-
    */
   template <typename VectorMap>
   void generate_normal_based_features(Feature_set& features, const VectorMap& normal_map)
