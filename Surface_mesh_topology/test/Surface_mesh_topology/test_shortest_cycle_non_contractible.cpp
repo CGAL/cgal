@@ -41,7 +41,8 @@ void load_sm(SM& sm, const std::string& filename)
 }
 
 template<typename Mesh>
-bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double length)
+bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double length,
+                             std::size_t nbfaces)
 {
   bool res=true;
   
@@ -52,8 +53,8 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
   CGAL::Surface_mesh_topology::Path_on_surface<Mesh> cycle=cst.compute_edgewidth();
   if (cycle.length()!=nbedges)
   {
-    std::cout<<"[ERROR]: number of edges for the cycle is not minimal ("<<cycle.length()
-             <<">"<<nbedges<<")."<<std::endl;
+    std::cout<<"[ERROR]: number of edges for the cycle is not correct ("<<cycle.length()
+             <<"!="<<nbedges<<")."<<std::endl;
     res=false;
   }
   
@@ -67,6 +68,15 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
              <<">"<<length<<")."<<std::endl;
     res=false;
   }
+
+  auto facewidth=cst.compute_facewidth();
+  if (facewidth.size()!=nbfaces)
+  {
+    std::cout<<"[ERROR]: number of faces for the face width is not correct ("<<cycle.length()
+             <<"!="<<nbfaces<<")."<<std::endl;
+    res=false;
+  }
+  
   return res;
 }
 
@@ -74,13 +84,14 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
 /// Compute edge width for the given mesh (loaded in filename), and test if
 /// the size of the cycle is nbedges for unit weight and the length of the cycle
 /// is smaller than length for Euclidean length weight.
-bool test(const char* filename, std::size_t nbedges, double length)
+bool test(const char* filename, std::size_t nbedges, double length,
+                             std::size_t nbfaces)
 {
   bool res=true;
   
   LCC_CM lcc_cm;
   load_lcc(lcc_cm, filename);
-  if (!test_one_data_structure(lcc_cm, nbedges, length))
+  if (!test_one_data_structure(lcc_cm, nbedges, length, nbfaces))
   {
     std::cout<<"[ERROR] for Linear_cell_complex_for_combinatorial_map."<<std::endl;
     res=false;
@@ -88,7 +99,7 @@ bool test(const char* filename, std::size_t nbedges, double length)
   
   LCC_GM lcc_gm;
   load_lcc(lcc_gm, filename);
-  if (!test_one_data_structure(lcc_cm, nbedges, length))
+  if (!test_one_data_structure(lcc_cm, nbedges, length, nbfaces))
   {
     std::cout<<"[ERROR] for Linear_cell_complex_for_generalized_map."<<std::endl;
     res=false;
@@ -96,7 +107,7 @@ bool test(const char* filename, std::size_t nbedges, double length)
 
   SM sm;
   load_sm(sm, filename);
-  if (!test_one_data_structure(lcc_cm, nbedges, length))
+  if (!test_one_data_structure(lcc_cm, nbedges, length, nbfaces))
   {
     std::cout<<"[ERROR] for Surface_mesh."<<std::endl;
     res=false;
@@ -104,7 +115,7 @@ bool test(const char* filename, std::size_t nbedges, double length)
 
   Poly poly;
   load_sm(sm, filename);
-  if (!test_one_data_structure(lcc_cm, nbedges, length))
+  if (!test_one_data_structure(lcc_cm, nbedges, length, nbfaces))
   {
     std::cout<<"[ERROR] for Polyhedron_3."<<std::endl;
     res=false;
@@ -118,18 +129,18 @@ int main()
   bool res=true;
   std::cout<<"[BEGIN] Test shortest cycle non contractible "<<std::flush;
 
-  if (!test("data/elephant-with-holes.off", 5, 0.0515047))
+  if (!test("data/elephant-with-holes.off", 5, 0.0515047, 7))
   {
     std::cout<<"[ERROR] for data/elephant-with-holes.off."<<std::endl;
     res=false;
   }
     
-  if (!test("data/obj1.off", 4, 16.2814))
+  if (!test("data/obj1.off", 4, 16.2814, 4))
   { std::cout<<"[ERROR] for data/obj1.off."<<std::endl;
     res=false;
   }
 
-  if (!test("data/obj1-with-holes.off", 4, 16.6082))
+  if (!test("data/obj1-with-holes.off", 4, 16.6082, 4))
   {
     std::cout<<"[ERROR] for data/elephant-with-holes.off."<<std::endl;
     res=false;
