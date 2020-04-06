@@ -39,6 +39,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Handle_hash_function.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -1310,8 +1311,20 @@ namespace internal {
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
     typedef Time_stamper_impl<typename DSC::value_type> Stamper;
-    return Stamper::hash_value(&*i);
+    return Stamper::hash_value(i.operator->());
   }
+
+namespace handle {
+  // supply a specialization for Hash_functor
+  template<class DSC, bool Const>
+  struct Hash_functor<CC_iterator<DSC, Const>>{
+    std::size_t
+    operator()(const CC_iterator<DSC, Const>& i)
+    {
+      return hash_value(i);
+    }
+  };
+} // namespace handle
 
 } // namespace internal
 
