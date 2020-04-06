@@ -516,7 +516,7 @@ protected:
     return dh;
   }
 
-  void add_to_cycle(Dart_handle dh, Path& cycle, bool flip=false)
+  void add_to_cycle(Dart_handle dh, Path& cycle, bool flip)
   {
     dh=nonhole_dart_of_same_edge(dh, flip);
     Original_dart_const_handle
@@ -554,7 +554,7 @@ protected:
       typename WeightFunctor::Weight_t sum_distance=
         distance_from_root[index_a]+distance_from_root[index_b]
         +wf(Get_original_dart<Self, Copy>::run(this, nonhole_dart_of_same_edge(dh)));
-      if (first_check || min_distance > sum_distance)
+      if (first_check || sum_distance<min_distance)
       {
         min_distance=sum_distance;
         min_noncon_edge=dh;
@@ -563,21 +563,26 @@ protected:
         first_check=false;
       }
     }
+
     if (first_check) { return false; } // no cycle found
-    if (max_length!=nullptr && min_distance>=*max_length) { return false; } // abort
-    if (length!=nullptr) { *length=(min_distance<0?0:min_distance); }
+
+    if (max_length!=nullptr && min_distance>=*max_length)
+    { return false; } // Here the cycle is too long
+
     cycle.clear();
     // Trace back the path from `a` to root
     for (int ind=min_a-1; ind!=-1; ind=m_trace_index[ind])
-    { add_to_cycle(m_spanning_tree[ind], cycle, true); }
+    {  add_to_cycle(m_spanning_tree[ind], cycle, true); }
     // Reverse: now it is the path from root to `a`
     cycle.reverse();
-    add_to_cycle(min_noncon_edge, cycle);
+    add_to_cycle(min_noncon_edge, cycle, false);
     // Trace back the path from `b` to root
     for (int ind=min_b-1; ind!=-1; ind=m_trace_index[ind])
     { add_to_cycle(m_spanning_tree[ind], cycle, true); }
+
     cycle.update_is_closed();
     CGAL_assertion(cycle.is_closed());
+    if (length!=nullptr) { *length=(min_distance<0?0:min_distance); }
 
     return true;
   }
