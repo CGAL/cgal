@@ -192,26 +192,42 @@ jet_smooth_point_set(
   Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
     callback_wrapper (callback, nb_points);
 
+  std::vector<typename Kernel::Point_3> smoothed (points.size());
+
+  typedef boost::zip_iterator
+     <boost::tuple<iterator,
+                   typename std::vector<typename Kernel::Point_3>::iterator> > Zip_iterator;
+
   CGAL::for_each<ConcurrencyTag>
-    (points,
-     [&](value_type vt)
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), smoothed.begin())),
+                       boost::make_zip_iterator (boost::make_tuple (points.end(), smoothed.end()))),
+     [&](const typename Zip_iterator::reference& t)
      {
        if (callback_wrapper.interrupted())
          return false;
 
-       put (point_map, vt,
-            CGAL::internal::jet_smooth_point<SvdTraits>
-            (get (point_map, vt), neighbor_query,
-             k,
-             neighbor_radius,
-             degree_fitting,
-             degree_monge));
+       get<1>(t) = CGAL::internal::jet_smooth_point<SvdTraits>
+         (get (point_map, get<0>(t)), neighbor_query,
+          k,
+          neighbor_radius,
+          degree_fitting,
+          degree_monge);
        ++ callback_wrapper.advancement();
 
        return true;
      });
 
   callback_wrapper.join();
+
+  // Finally, update points
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), smoothed.begin())),
+                       boost::make_zip_iterator (boost::make_tuple (points.end(), smoothed.end()))),
+     [&](const typename Zip_iterator::reference& t)
+     {
+       put (point_map, get<0>(t), get<1>(t));
+       return true;
+     });
 }
 
 
