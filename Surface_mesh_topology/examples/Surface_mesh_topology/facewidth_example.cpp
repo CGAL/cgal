@@ -6,7 +6,6 @@
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_linear_cell_complex.h>
-#include <CGAL/draw_face_graph_with_paths.h> // TEMPO REMOVE
 
 using LCC_3            =CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;

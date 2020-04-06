@@ -1,12 +1,9 @@
 /*!
-\example Surface_mesh_topology/path_homotopy.cpp
-\example Surface_mesh_topology/basic_example_surface_mesh_topology.cpp
+\example Surface_mesh_topology/basic_example_path_homotopy.cpp
+\example Surface_mesh_topology/basic_example_shortest_noncontractible_cycle.cpp
+\example Surface_mesh_topology/edgewidth_surface_mesh.cpp
+\example Surface_mesh_topology/facewidth_example.cpp
+\example Surface_mesh_topology/open_path_homotopy.cpp
 \example Surface_mesh_topology/path_homotopy_with_symbols.cpp
 \example Surface_mesh_topology/path_homotopy_with_symbols_2.cpp
-\example Surface_mesh_topology/open_path_homotopy.cpp
-\example Surface_mesh_topology/shortest_noncontractible_cycle_through_a_vertex.cpp
-\example Surface_mesh_topology/shortest_noncontractible_cycle_using_BFS.cpp
-\example Surface_mesh_topology/edgewidth_surface_mesh.cpp
-\example Surface_mesh_topology/facewidth_on_unweighted_map.cpp
-\example Surface_mesh_topology/unsew_edgewidth_repeatedly.cpp
 */

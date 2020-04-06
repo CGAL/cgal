@@ -37,10 +37,7 @@ void test(const FaceGraph& mesh, bool draw)
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
   if (draw)
-  {
-    std::vector<Path_on_surface<FaceGraph> > paths={p1, p2};
-    CGAL::draw(mesh, paths);
-  }
+  { CGAL::draw(mesh, {p1, p2}); }
 }
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)

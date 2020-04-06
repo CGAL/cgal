@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
     std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
     std::cout<<"  Root: "<<lcc.point(root)<<std::endl;
-    if (draw) { CGAL::draw(lcc, {std::ref(cycle)}); }
+    if (draw) { CGAL::draw(lcc, {cycle}); }
   }
 
   return EXIT_SUCCESS;

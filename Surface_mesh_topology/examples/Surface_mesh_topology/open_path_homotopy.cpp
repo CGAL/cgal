@@ -63,10 +63,7 @@ int main(int argc, char* argv[])
            <<" base point homotopic with path p3 (orange)."<<std::endl;
 
   if (draw)
-  {
-    std::vector<Path_on_surface<SM> > paths={p1, p2, p3};
-    CGAL::draw(sm, paths);
-  }
+  { CGAL::draw(sm, {p1, p2, p3}); }
 
   return EXIT_SUCCESS;
 }

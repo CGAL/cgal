@@ -116,7 +116,7 @@ The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_fa
 \section SMTopology_Examples Examples
 \subsection SMTopology_Example_I Simple Example
 The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if \cgal was compiled with Qt5.
-\cgalExample{Surface_mesh_topology/basic_example_surface_mesh_topology.cpp}
+\cgalExample{Surface_mesh_topology/basic_example_path_homotopy.cpp}
 
 \subsection SMTopology_Example_II Polygonal Schema Examples
 Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
@@ -135,20 +135,16 @@ In this third example, we create non closed paths on the same mesh as in the fir
 
 In the next three examples, we present various way to compute shortest non-contractible cycles.
 
-One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case.
-\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_using_BFS.cpp}
+One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case. Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart. Note that the time complexity is raised by a logarithmic factor.
 
-Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart. Note that the time complexity is raised by a logarithmic factor.
-\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_through_a_vertex.cpp}
+\cgalExample{Surface_mesh_topology/basic_example_shortest_noncontractible_cycle.cpp}
 
 In order to find the edge-width of the surface, one can make use of the routine `edge_width` as follows:
 \cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
 
-\subsection SMTopology_Example_VII Compute Face-width
-
 The following example computes the face-width and illustrates it using CGAL Basic Viewer.
 
-\cgalExample{Surface_mesh_topology/facewidth_on_unweighted_map.cpp}
+\cgalExample{Surface_mesh_topology/facewidth_example.cpp}
 
 \section SMTopology_Benchmarks Benchmarks
 

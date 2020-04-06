@@ -171,7 +171,8 @@ protected:
       for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend; ++it )
       {
-        if ( !m_nofaces && !lcc.is_marked(it, markfaces) )
+        if (!m_nofaces && !lcc.is_marked(it, markfaces) &&
+            !lcc.is_perforated(it))
         {
           compute_face(it);
           lcc.template mark_cell<2>(it, markfaces);
@@ -183,11 +184,11 @@ protected:
           lcc.template mark_cell<1>(it, markedges);
         }
 
-        /*if ( !lcc.is_marked(it, markvertices) )
+        if ( !lcc.is_marked(it, markvertices) )
         {
           compute_vertex(it);
           lcc.template mark_cell<0>(it, markvertices);
-        }*/
+        }
       }
     }
 
