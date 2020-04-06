@@ -30,6 +30,7 @@
 #include <map>
 #include <utility>
 #include <stack>
+#include <tuple>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -40,7 +41,6 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <CGAL/tuple.h>
 
 // If defined, type casting is done statically,
 // reducing type-safety overhead.
@@ -127,8 +127,7 @@ public:
 
     typedef typename Tr::Locate_type                    Locate_type;            //< defines the simplex type returned from location.
 
-    typedef CGAL::cpp11::tuple<Cell_handle,Locate_type,int,int>
-                                                        Simplex;                //< defines the simplex type.
+    typedef std::tuple<Cell_handle,Locate_type,int,int> Simplex;                //< defines the simplex type.
 
     typedef Cell                                        value_type;             //< defines the value type the iterator refers to.
     typedef Cell&                                       reference;              //< defines the reference type of the iterator.
@@ -251,8 +250,7 @@ public:
 	 */
     const Cell      cell() const
     {
-      using CGAL::cpp11::get;
-      return *get<0>(_cur);
+      return *std::get<0>(_cur);
     }
 
     //  gives a handle to the current cell.
@@ -263,8 +261,7 @@ public:
 	 */
     Cell_handle     handle()
     {
-      using CGAL::cpp11::get;
-      return get<0>(_cur);
+      return std::get<0>(_cur);
     }
 
     //  gives the previous cell.
@@ -277,8 +274,7 @@ public:
 	 */
     Cell_handle     previous() const
     {
-      using CGAL::cpp11::get;
-      return get<0>(_prev);
+      return std::get<0>(_prev);
     }
 
     //  provides a dereference operator.
@@ -286,8 +282,7 @@ public:
 	 */
     Cell*           operator->()
     {
-      using CGAL::cpp11::get;
-      return &*get<0>(_cur);
+      return &*std::get<0>(_cur);
     }
 
     //  provides an indirection operator.
@@ -295,8 +290,7 @@ public:
 	 */
     Cell&           operator*()
     {
-      using CGAL::cpp11::get;
-      return *get<0>(_cur);
+      return *std::get<0>(_cur);
     }
 
     //  provides a conversion operator.
@@ -304,8 +298,7 @@ public:
 	 */
     operator const  Cell_handle() const
     {
-      using CGAL::cpp11::get;
-      return get<0>(_cur);
+      return std::get<0>(_cur);
     }
 
     //  provides a conversion operator.
@@ -320,8 +313,7 @@ public:
 	 */
     bool            has_next() const
     {
-      using CGAL::cpp11::get;
-      return get<0>(_cur) != Cell_handle();
+      return std::get<0>(_cur) != Cell_handle();
     }
 
     //  gives the simplex through which the current cell was entered.
@@ -330,16 +322,14 @@ public:
 	 */
     void            entry( Locate_type& lt, int& li, int& lj ) const
     {
-      using CGAL::cpp11::get;
-      lt = get<1>(_cur); li = get<2>(_cur); lj = get<3>(_cur);
+      lt = std::get<1>(_cur); li = std::get<2>(_cur); lj = std::get<3>(_cur);
     }
     //  gives the simplex through which the previous cell was exited.
     /* 	\pre the current cell is not the initial cell.
 	 */
     void            exit( Locate_type& lt, int& li, int& lj ) const
     {
-      using CGAL::cpp11::get;
-      lt = get<1>(_prev); li = get<2>(_prev); lj = get<3>(_prev);
+      lt = std::get<1>(_prev); li = std::get<2>(_prev); lj = std::get<3>(_prev);
     }
 
     //  gives the past-the-end iterator associated with this iterator.
@@ -399,8 +389,7 @@ public:
      */
     bool            operator==( const Cell_handle& ch ) const
     {
-      using CGAL::cpp11::get;
-      return ch == get<0>(_cur);
+      return ch == std::get<0>(_cur);
     }
 		
     //  compares the current cell with `ch`.
@@ -411,8 +400,7 @@ public:
      */
     bool            operator!=( const Cell_handle& ch ) const
     {
-      using CGAL::cpp11::get;
-      return ch != get<0>(_cur);
+      return ch != std::get<0>(_cur);
     }
 // \}
 
@@ -600,7 +588,7 @@ private:
     //check what is the entry type of _cell_iterator
     if (Cell_handle(_cell_iterator) == Cell_handle())
     {
-      //where did the segment get out from previous cell
+      //where did the segment std::get out from previous cell
       cell = _cell_iterator.previous();
       _cell_iterator.exit(lt, li, lj);
     }
