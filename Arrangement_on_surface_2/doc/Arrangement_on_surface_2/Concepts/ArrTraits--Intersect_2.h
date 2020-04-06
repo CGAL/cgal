@@ -18,7 +18,7 @@ public:
 
 /*! computes the intersections of `xc1` and `xc2` and inserts them <I>in an
  * ascending lexicographic \f$ xy\f$-order</I> into a range begining at
- * `oi`. The value-type of `OutputIterator` is `boost::variant` of either the
+ * `oi`. The type `OutputIterator` dereferences a `boost::variant` of either the
  * type `pair<ArrTraits::Point_2,ArrTraits::Multiplicity>` or the type
  * `ArrTraits::X_monotone_curve_2`. An object of the former type represents an
  * intersection point with its multiplicity (in case the multiplicity is
