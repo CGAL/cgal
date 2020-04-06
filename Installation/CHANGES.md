@@ -6,19 +6,34 @@ Release History
 
 Release date: June 2020
 
+### 2D Arrangement on Suurface
+ -   Changed intersection return type from legacy CGAL::Object to modern
+     boost::variant.
+     As there is an implicit conversion from boost::variant to CGAL::Object, the
+     new code is backward compatible. However, it is recomnded that all calls
+     to the intersection functions are fixed to use the new return type.
+
+### 2D Regularized Boolean Operations
+ -   Changed intersection return type from legacy CGAL::Object to modern
+     boost::variant.
+
+### 2D Minkowski sums
+ -   Changed intersection return type from legacy CGAL::Object to modern
+     boost::variant.
+
 ### Surface Mesh Topology (new package)
 
  -   This package allows to compute some topological invariants of
      surfaces. For now, it is possible to test if two (closed) curves
      on a combinatorial surface are homotopic. The user can choose
-     between free homotopy and homotopy with fixed endpoints. 
+     between free homotopy and homotopy with fixed endpoints.
      A contractibility test is also provided.
 
 ### 3D Fast Intersection and Distance Computation
 -   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
     the new function `do_not_accelerate_distance_queries()` before the first distance query.
 
-### Intersecting Sequences of dD Iso-oriented Boxes 
+### Intersecting Sequences of dD Iso-oriented Boxes
  -   Added parallel versions of the functions `CGAL::box_intersection_d()` and `CGAL::box_self_intersection_d()`.
 
 ### CGAL and the Boost Graph Library (BGL)
@@ -27,7 +42,7 @@ Release date: June 2020
 
 ### Polygon Mesh Processing
 
--   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
+-   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`,
     which can be used to remove connected components whose area or volume is under a certain threshold.
     Area and volume thresholds are either specified by the user or deduced from the bounding box of the mesh.
 -   Added the function `CGAL::Polygon_mesh_processing::volume_connected_component()` that can be used to
@@ -39,10 +54,10 @@ Release date: June 2020
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
 -   New function to split meshes along a mesh or a plane:
-    `CGAL::Polygon_mesh_processing::split()` 
+    `CGAL::Polygon_mesh_processing::split()`
 -   New function to split a single mesh containing several connected components into several meshes containing one connected component:
     `CGAL::Polygon_mesh_processing::split_connected_components()`
- -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
+ -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()`
      and `CGAL::Polygon_mesh_processing::self_intersections()`.
  -   The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh` now allows passing a point map (for the point range)
      and a vertex point map (for the polygon mesh) via named parameters.
@@ -52,14 +67,14 @@ Release date: June 2020
  -   Added wrapper functions for registration:
      - `CGAL::OpenGR::compute_registration_transformation()` computes the registration transformation
         for two point sets using Super4PCS algorithm implemented in the third party library OpenGR.
-     - `CGAL::OpenGR::register_point_sets()` computes the registration transformation for two point 
+     - `CGAL::OpenGR::register_point_sets()` computes the registration transformation for two point
         sets using Super4PCS algorithm implemented in the third party library OpenGR, and registers
         the points sets by transforming the data point set using the computed transformation.
      - `CGAL::pointmatcher::compute_registration_transformation()` computes the registration
         transformation for two point sets using ICP algorithm implemented in the third party library
         libpointmatcher.
      - `CGAL::pointmatcher::register_point_sets()` computes the registration transformation for two point
-        sets using ICP algorithm implemented in the third party library libpointmatcher, and registers 
+        sets using ICP algorithm implemented in the third party library libpointmatcher, and registers
         the points sets by transforming the data point set using the computed transformation.
 
 ### 2D Triangulations
@@ -115,7 +130,7 @@ Release date: June 2020
 ### STL Extensions for CGAL
  -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
      if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
-     
+
 
 ### Convex_hull_3
 - A new overload for `convex_hull_3()` that takes a model of `VertexListGraph` has been added.
@@ -145,13 +160,13 @@ Release date: November 2019
 
 ### [Polygonal Surface Reconstruction](https://doc.cgal.org/5.0/Manual/packages.html#PkgPolygonalSurfaceReconstruction) (new package)
 
- -   This package provides a method for piecewise planar object reconstruction from point clouds. 
-     The method takes as input an unordered point set sampled from a piecewise planar object 
-     and outputs a compact and watertight surface mesh interpolating the input point set. 
-     The method assumes that all necessary major planes are provided (or can be extracted from 
-     the input point set using the shape detection method described in Point Set Shape Detection, 
-     or any other alternative methods).The method can handle arbitrary piecewise planar objects 
-     and is capable of recovering sharp features and is robust to noise and outliers. See also 
+ -   This package provides a method for piecewise planar object reconstruction from point clouds.
+     The method takes as input an unordered point set sampled from a piecewise planar object
+     and outputs a compact and watertight surface mesh interpolating the input point set.
+     The method assumes that all necessary major planes are provided (or can be extracted from
+     the input point set using the shape detection method described in Point Set Shape Detection,
+     or any other alternative methods).The method can handle arbitrary piecewise planar objects
+     and is capable of recovering sharp features and is robust to noise and outliers. See also
      the associated [blog entry](https://www.cgal.org/2019/08/05/Polygonal_surface_reconstruction/).
 
 ### [Shape Detection](https://doc.cgal.org/5.0/Manual/packages.html#PkgShapeDetection) (major changes)
@@ -166,11 +181,11 @@ Release date: November 2019
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.0/Manual/packages.html#PkgKernel23)
  -   Added a new concept, [`ComputeApproximateAngle_3`](https://doc.cgal.org/5.0/Kernel_23/classKernel_1_1ComputeApproximateAngle__3.html),
      to the 3D Kernel concepts to compute the approximate angle between two 3D vectors. Corresponding functors
-     in the model ([`Compute_approximate_angle_3`](https://doc.cgal.org/5.0/Kernel_23/classKernel.html#a183c9ac358a4ccddc04e680f8ed16c0b)) 
+     in the model ([`Compute_approximate_angle_3`](https://doc.cgal.org/5.0/Kernel_23/classKernel.html#a183c9ac358a4ccddc04e680f8ed16c0b))
      and free function ([`approximate_angle`](https://doc.cgal.org/5.0/Kernel_23/group__approximate__angle__grp.html))
      have also been added.
- -   The following objects are now hashable and thus trivially usable 
-     with [`std::unordered_set`](https://en.cppreference.com/w/cpp/container/unordered_set) 
+ -   The following objects are now hashable and thus trivially usable
+     with [`std::unordered_set`](https://en.cppreference.com/w/cpp/container/unordered_set)
      and [`std::unordered_map`](https://en.cppreference.com/w/cpp/header/unordered_map):
      `CGAL::Aff_transformation_2`, `CGAL::Aff_transformation_3`,
      `CGAL::Bbox_2`, `CGAL::Bbox_3`, `CGAL::Circle_2`,
@@ -180,11 +195,11 @@ Release date: November 2019
      `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/latest/Manual/packages.html#PkgPolygonMeshProcessing)
- -   Introduced a [wide range of new functions](https://doc.cgal.org/5.0/Polygon_mesh_processing/index.html#title36) 
+ -   Introduced a [wide range of new functions](https://doc.cgal.org/5.0/Polygon_mesh_processing/index.html#title36)
      related to location of queries on a triangle mesh,
      such as [`CGAL::Polygon_mesh_processing::locate(Point, Mesh)`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__locate__grp.html#gada09bd8740ba69ead9deca597d53cf15).
      The location of a point on a triangle mesh is expressed as the pair of a face and the barycentric
-     coordinates of the point in this face, enabling robust manipulation of locations 
+     coordinates of the point in this face, enabling robust manipulation of locations
      (for example, intersections of two 3D segments living within the same face).
  -   Added the mesh smoothing function [`smooth_mesh()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__meshing__grp.html#gaa0551d546f6ab2cd9402bea12d8332a3),
      which can be used to improve the quality of triangle elements based on various geometric characteristics.
@@ -207,14 +222,14 @@ Release date: November 2019
      or vertices appearing in multiple umbrellas) of a mesh.
 
 ### [3D Point Set](https://doc.cgal.org/5.0/Manual/packages.html#PkgPointSet3)
- -   The [PLY IO functions](https://doc.cgal.org/5.0/Point_set_3/group__PkgPointSet3IO.html) now take an additional optional parameter to 
+ -   The [PLY IO functions](https://doc.cgal.org/5.0/Point_set_3/group__PkgPointSet3IO.html) now take an additional optional parameter to
      read/write comments from/in the PLY header.
 
 ### [Point Set Processing](https://doc.cgal.org/latest/Manual/packages.html#PkgPointSetProcessing3)
  -   **Breaking change**: the API using iterators and overloads for optional parameters (deprecated since
      CGAL 4.12) has been removed. The current (and now only) API uses ranges and Named Parameters.
  -   Added the possibility to use the named parameter
-     [`neighbor_radius`](https://doc.cgal.org/5.0/Point_set_processing_3/group__psp__namedparameters.html#PSP_neighbor_radius) 
+     [`neighbor_radius`](https://doc.cgal.org/5.0/Point_set_processing_3/group__psp__namedparameters.html#PSP_neighbor_radius)
      to use spherical neighbor queries instead of K-nearest neighbors queries for the following functions:
      [`CGAL::bilateral_smooth_point_set()`](https://doc.cgal.org/5.0/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga4f82723e2f0bb33f3677e29e0208a256),
      [`CGAL::jet_estimate_normals()`](https://doc.cgal.org/5.0/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga0cd0f87de690d4edf82740e856efa491),
@@ -257,7 +272,7 @@ Release date: November 2019
 ### [3D Triangulations](https://doc.cgal.org/5.0/Manual/packages.html#PkgTriangulation3)
  -   **Breaking change**: The [constructor](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html#a63f67cf6aaadcee14318cf56a36d247a)
      and the [`insert()`](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html#ad3353128386bbb51f79d0263e7f67337)
-     function of [`CGAL::Triangulation_3`](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html) 
+     function of [`CGAL::Triangulation_3`](https://doc.cgal.org/5.0/Triangulation_3/classCGAL_1_1Triangulation__3.html)
      which take a range of points as argument are now guaranteed to
      insert the points following the order of `InputIterator`. Note
      that this change only affects the base class `Triangulation_3`
@@ -269,14 +284,14 @@ Release date: November 2019
 
 ### [Surface Mesh](https://doc.cgal.org/5.0/Manual/packages.html#PkgSurfaceMesh)
  -   Introduced new functions to read and write using the PLY format,
-     [`CGAL::read_ply()`](https://doc.cgal.org/5.0/Surface_mesh/group__PkgSurface__mesh.html#ga42f6ad486ddab74e13d3dc53f511c343) 
-     and [`CGAL::write_ply()`](https://doc.cgal.org/5.0/Surface_mesh/group__PkgSurface__mesh.html#ga77bbb79d449c981895eedb6c3c23bd14), 
+     [`CGAL::read_ply()`](https://doc.cgal.org/5.0/Surface_mesh/group__PkgSurface__mesh.html#ga42f6ad486ddab74e13d3dc53f511c343)
+     and [`CGAL::write_ply()`](https://doc.cgal.org/5.0/Surface_mesh/group__PkgSurface__mesh.html#ga77bbb79d449c981895eedb6c3c23bd14),
      enabling users to save and load additional property maps of the surface mesh.
 
 ###  [CGAL and Solvers](https://doc.cgal.org/5.0/Manual/packages.html#PkgSolverInterface)
  -   Added [concepts](https://doc.cgal.org/5.0/Solver_interface/group__PkgSolverInterfaceConcepts.html)
-     and [models](https://doc.cgal.org/5.0/Solver_interface/group__PkgSolverInterfaceRef.html) 
-     for solving Mixed Integer Programming (MIP) problems with or without constraints. 
+     and [models](https://doc.cgal.org/5.0/Solver_interface/group__PkgSolverInterfaceRef.html)
+     for solving Mixed Integer Programming (MIP) problems with or without constraints.
 
 ### [3D Boolean Operations on Nef Polyhedra](https://doc.cgal.org/5.0/Manual/packages.html#PkgNef3)
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: [`CGAL::convert_nef_polyhedron_to_polygon_soup()`](https://doc.cgal.org/5.0/Nef_3/group__PkgNef3IOFunctions.html#ga28a9eb4da0cd6153f0c16f7f9eaf6665)
@@ -305,7 +320,7 @@ Release 4.14
 Release date: March 2019
 
 ### 2D Periodic Hyperbolic Triangulations (new package)
- 
+
  -   This package allows the computation of Delaunay triangulations of
      the Bolza surface.  The Bolza surface is the most symmetric
      hyperbolic surface of genus 2. Its fundamental domain is the
