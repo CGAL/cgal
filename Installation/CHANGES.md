@@ -8,6 +8,12 @@ Release History
    the signed distance of two points to a line, or the line passing through two given points.
    Corresponding functors in the model (`Compare_signed_distance_to_line_2`) are also added.
 
+### 2D Triangulations
+ - Add function `split_subconstraint_graph_into_constraints()` to
+   `Constrained_triangulation_plus_2` to initialize the constraints
+   from a soup of disconnected segments that should first be split
+   into polylines.
+
 
 Release 5.0
 -----------
