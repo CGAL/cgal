@@ -25,6 +25,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/utility.h>
 
@@ -435,26 +436,26 @@ void enforce_non_manifold_vertex_separation(NMVM nm_marks,
     if(is_border(h, pmesh))
       h = opposite(h, pmesh);
 
-    halfedge_descriptor new_h = split_edge_and_triangulate_incident_faces(h, pmesh);
-
     const vertex_descriptor vs = source(h, pmesh);
     const vertex_descriptor vt = target(h, pmesh);
     const Point_ref sp = get(vpm, vs);
     const Point_ref tp = get(vpm, vt);
     const Point mp = gt.construct_midpoint_3_object()(sp, tp);
 
+    halfedge_descriptor new_h = split_edge_and_triangulate_incident_faces(h, pmesh);
     put(vpm, target(new_h, pmesh), mp);
   }
 }
 
-// @todo that's a rough version of something smarter to be still done
+// this is an alternate function in the case where radius is smaller
+// than the shortest incident edge length incident to target(h, pmesh)
 template <typename PolygonMesh, typename VPM, typename GeomTraits>
 typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
-dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-         const typename GeomTraits::FT radius,
-         PolygonMesh& pmesh,
-         VPM vpm,
-         const GeomTraits& gt)
+dig_star_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+              const typename GeomTraits::FT radius,
+              PolygonMesh& pmesh,
+              VPM vpm,
+              const GeomTraits& gt)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
@@ -480,14 +481,15 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
     if(is_border(ih_to_split, pmesh))
       ih_to_split = opposite(ih_to_split, pmesh);
 
-    const halfedge_descriptor new_ih = split_edge_and_triangulate_incident_faces(ih_to_split, pmesh);
-
     // note that below uses 'ih', which always points to nm point
     const Point_ref spt = get(vpm, vs);
     Vector tsv(tpt, spt);
-    internal::normalize(tsv, gt);
+    CGAL_assertion(CGAL::square(radius) <= tsv.squared_length());
 
+    internal::normalize(tsv, gt);
     const Point new_pt = tpt + radius * tsv;
+
+    const halfedge_descriptor new_ih = split_edge_and_triangulate_incident_faces(ih_to_split, pmesh);
     put(vpm, target(new_ih, pmesh), new_pt);
 
     ih = next_ih;
@@ -511,6 +513,149 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
   return opposite(anchor_h, pmesh);
 }
 
+// note that this also refines the mesh
+template <typename FaceSet, typename PolygonMesh, typename VPM, typename GeomTraits>
+void gather_faces_to_delete(FaceSet& faces_to_delete,
+                            const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                            const typename GeomTraits::FT radius,
+                            PolygonMesh& pmesh,
+                            VPM vpm,
+                            const GeomTraits& gt)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor          edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
+
+  typedef typename boost::property_traits<VPM>::reference                     Point_ref;
+  typedef typename boost::property_traits<VPM>::value_type                    Point;
+
+  typedef typename GeomTraits::FT                                             FT;
+  typedef typename GeomTraits::Vector_3                                       Vector;
+
+  typedef CGAL::dynamic_vertex_property_t<FT>                                 Distance_tag;
+  typedef typename boost::property_map<PolygonMesh, Distance_tag>::type       Vertex_distance_map;
+
+  Vertex_distance_map vertex_distance = get(Distance_tag(), pmesh);
+
+  // @todo something without heat method ?
+  // @fixme this heat method may corefine the mesh close to other nm vertices and mess things up
+  vertex_descriptor source_v = target(h, pmesh);
+  CGAL::Heat_method_3::estimate_geodesic_distances(pmesh, vertex_distance, source_v);
+
+  // Roughly corefine the mesh with the geodesic circle
+  // @todo consider an edge set growing from the source vertex
+  std::vector<edge_descriptor> edges_to_split;
+  for(const edge_descriptor e : edges(pmesh))
+  {
+    const bool is_s_in = (get(vertex_distance, source(e, pmesh)) <= radius);
+    const bool is_t_in = (get(vertex_distance, target(e, pmesh)) <= radius);
+    if(is_s_in != is_t_in)
+      edges_to_split.push_back(e);
+  }
+
+  std::cout << edges_to_split.size() << " to split" << std::endl;
+
+  // Actual split
+  for(edge_descriptor e : edges_to_split)
+  {
+    halfedge_descriptor h = halfedge(e, pmesh);
+    if(is_border(h, pmesh))
+      h = opposite(h, pmesh);
+
+    const vertex_descriptor vs = source(h, pmesh);
+    const vertex_descriptor vt = target(h, pmesh);
+    const Point_ref spt = get(vpm, vs);
+    const Point_ref tpt = get(vpm, vt);
+    Vector tsv(tpt, spt);
+
+    const FT dist_at_vs = get(vertex_distance, vs);
+    const FT dist_at_vt = get(vertex_distance, vt);
+    if(dist_at_vs == radius || dist_at_vt == radius) // nothing to do
+      continue;
+
+    Point new_p;
+    if(dist_at_vs < dist_at_vt)
+    {
+      CGAL_assertion(dist_at_vs < radius && radius <= dist_at_vt);
+      const FT lambda = (radius - dist_at_vs) / (dist_at_vt - dist_at_vs);
+      new_p = spt - lambda * tsv;
+    }
+    else
+    {
+      CGAL_assertion(dist_at_vt < radius && radius <= dist_at_vs);
+      const FT lambda = (radius - dist_at_vt) / (dist_at_vs - dist_at_vt);
+      new_p = tpt + lambda * tsv;
+    }
+
+    halfedge_descriptor new_h = split_edge_and_triangulate_incident_faces(h, pmesh);
+    put(vpm, target(new_h, pmesh), new_p);
+    put(vertex_distance, target(new_h, pmesh), radius);
+  }
+
+  // @todo grow the face selection from the source vertex instead
+  for(face_descriptor f : faces(pmesh))
+  {
+    bool is_face_in = true;
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      if(get(vertex_distance, target(h, pmesh)) > radius)
+      {
+        is_face_in = false;
+        break;
+      }
+    }
+
+    if(is_face_in)
+      faces_to_delete.insert(f);
+  }
+}
+
+template <typename PolygonMesh, typename VPM, typename GeomTraits>
+typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+         const typename GeomTraits::FT radius,
+         PolygonMesh& pmesh,
+         VPM vpm,
+         const GeomTraits& gt)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
+
+  // 'set' complexity should be fine, it's not supposed to be a large number of faces
+  std::set<face_descriptor> faces_to_delete; // aka the selection
+  gather_faces_to_delete(faces_to_delete, h, radius, pmesh, vpm, gt);
+
+  std::cout << faces_to_delete.size() << " faces in selection" << std::endl;
+  CGAL_assertion(!faces_to_delete.empty());
+
+
+
+  if(!is_selection_a_topological_disk(faces_to_delete, pmesh))
+    return boost::graph_traits<PolygonMesh>::null_halfedge();
+
+  // check that no face of the selection is on the border of the mesh
+  halfedge_descriptor anchor_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+  for(face_descriptor f : faces_to_delete)
+  {
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      CGAL_assertion(!is_border(h, pmesh));
+      if(is_border_edge(h, pmesh))
+        return boost::graph_traits<PolygonMesh>::null_halfedge();
+      else if(faces_to_delete.count(face(opposite(h, pmesh), pmesh)) == 0)
+        anchor_h = opposite(h, pmesh);
+    }
+  }
+
+  // now delete the faces
+  for(face_descriptor f : faces_to_delete)
+    Euler::remove_face(halfedge(f, pmesh), pmesh);
+
+  CGAL_postcondition(is_border(opposite(anchor_h, pmesh), pmesh));
+  return opposite(anchor_h, pmesh);
+}
+
 // compute the faces to remove
 template <typename UmbrellaContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
 std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
@@ -527,12 +672,16 @@ dig_holes(UmbrellaContainer& umbrellas,
   {
     // @tmp gotta compute, say 1/3rd of the smallest incident edge, something like that
     halfedge_descriptor hole_h = dig_hole(h, radius, pmesh, vpm, gt);
+    if(hole_h == boost::graph_traits<PolygonMesh>::null_halfedge())
+    {
+      std::cerr << "Warning: dig_hole() failed" << std::endl;
+      return std::vector<halfedge_descriptor>();
+    }
+
     holes.push_back(hole_h);
   }
 
-  std::ofstream out_pr("results/post_ref.off");
-  out_pr << std::setprecision(17) << pmesh;
-  out_pr.close();
+  std::ofstream("results/dug.off") << std::setprecision(17) << pmesh;
 
   return holes;
 }
@@ -715,8 +864,6 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
   return true;
 }
 
-// @todo shouldn't the orientation always be correct by construction?
-// Do this with combinatorics if it turns out it might not be
 template <typename Patch,
           typename PolygonMesh,
           typename VPM,
@@ -830,7 +977,8 @@ bool merge_holes(const typename boost::graph_traits<PolygonMesh>::halfedge_descr
     return false;
   }
 
-  // @todo not useful?
+  // @todo shouldn't the orientation always be correct by construction?
+  // Do this with combinatorics if it turns out it can be not correct
   success = fix_patch_orientation(point_patch, bhv_1.front(), bhv_2.front(), pmesh, vpm, gt);
   if(!success)
   {
@@ -1046,7 +1194,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   typedef typename Geom_traits::FT                                            FT;
   typedef typename Geom_traits::Point_3                                       Point;
 
-  const FT radius = 0.25; // @todo automatic or np
+  const FT radius = 0.75; // @todo automatic or np
 
   // Collect the non-manifold vertices
   typedef CGAL::dynamic_vertex_property_t<bool>                               Mark;
