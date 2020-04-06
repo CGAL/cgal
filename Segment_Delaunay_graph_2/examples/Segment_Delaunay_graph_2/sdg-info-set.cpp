@@ -200,8 +200,7 @@ int main()
   assert( ifs );
 
   SDG2 sdg;
-  Gt::Point_2 init(0,0);
-  Site_2 site = Site_2::construct_site_2(init);
+  Site_2 site;
   Generate_info generate;
 
   // read the sites and their info and insert them in the
