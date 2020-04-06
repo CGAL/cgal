@@ -6,20 +6,20 @@ Release History
 
 Release date: June 2020
 
-### 2D Arrangement on Suurface
- -   Changed intersection return type from legacy CGAL::Object to modern
-     boost::variant.
+### 2D Arrangement on Surface
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant`.
      As there is an implicit conversion from boost::variant to CGAL::Object, the
-     new code is backward compatible. However, it is recomnded that all calls
+     new code is backward compatible. However, it is recommended that all calls
      to the intersection functions are fixed to use the new return type.
 
 ### 2D Regularized Boolean Operations
- -   Changed intersection return type from legacy CGAL::Object to modern
-     boost::variant.
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant`.
 
 ### 2D Minkowski sums
- -   Changed intersection return type from legacy CGAL::Object to modern
-     boost::variant.
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant`.
 
 ### Surface Mesh Topology (new package)
 
