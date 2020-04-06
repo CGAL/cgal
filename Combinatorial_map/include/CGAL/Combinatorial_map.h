@@ -598,7 +598,8 @@ namespace CGAL {
                         (*origin_to_copy)[CM_ADL_next(dartmap_iter->first, heg)],
             1);
 
-        if (!CGAL::is_border(CM_ADL_opposite(dartmap_iter->first, heg), heg) &&
+        if ((copy_perforated_darts ||
+             !CGAL::is_border(CM_ADL_opposite(dartmap_iter->first, heg), heg)) &&
             (dartmap_iter->first)<CM_ADL_opposite(dartmap_iter->first, heg))
         {
           basic_link_beta(dartmap_iter->second,
