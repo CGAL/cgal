@@ -90,7 +90,6 @@ int main(int argc, char** argv)
   // detect border edges
   for(edge_descriptor ed : edges(surface_mesh))
   {
-    halfedge_descriptor hd = halfedge(ed, surface_mesh);
     if(is_border(ed, surface_mesh))
     {
       ++nb_sharp_edges;
