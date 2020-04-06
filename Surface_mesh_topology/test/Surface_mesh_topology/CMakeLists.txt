@@ -36,6 +36,7 @@ set(SOURCE_FILES
   test_homotopy.cpp
   test_homotopy_with_polygonal_schema.cpp
   tests_path_on_surface.cpp
+  test_shortest_cycle_non_contractible.cpp
   )
 
 foreach(cppfile ${SOURCE_FILES})
