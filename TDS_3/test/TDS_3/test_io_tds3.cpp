@@ -61,7 +61,7 @@ int main()
   // we now have a simplex in dimension 4
   // cell incident to PV[0]
   Cell_handle c = PV[0]->cell();
-  int ind;
+  int ind=0;
   // PV[0] is the vertex of index ind in c
   // insertion of a new vertex in the facet opposite to PV[0]
   PV[5] = T.insert_in_facet(c, ind);
