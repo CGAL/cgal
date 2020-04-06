@@ -242,17 +242,6 @@ public:
 	 */
     const Point&    target() const      { return _target; }
 
-    //  gives the current cell.
-    /*  By invariance, this cell is intersected by the segment
-	 *	between `source()` and `target()`.
-	 *	\return the current cell.
-	 *	\sa `handle()`.
-	 */
-    const Cell      cell() const
-    {
-      return *std::get<0>(_cur);
-    }
-
     //  gives a handle to the current cell.
     /*  By invariance, this cell is intersected by the segment
 	 *	between `source()` and `target()`.
@@ -274,7 +263,7 @@ public:
 	 */
     Cell_handle     previous() const
     {
-      return std::get<0>(_prev);
+      return prev_cell();
     }
 
     //  provides a dereference operator.
@@ -313,7 +302,7 @@ public:
 	 */
     bool            has_next() const
     {
-      return std::get<0>(_cur) != Cell_handle();
+      return this->cell() != Cell_handle();
     }
 
     //  gives the simplex through which the current cell was entered.
@@ -322,14 +311,14 @@ public:
 	 */
     void            entry( Locate_type& lt, int& li, int& lj ) const
     {
-      lt = std::get<1>(_cur); li = std::get<2>(_cur); lj = std::get<3>(_cur);
+      lt = this->lt(); li = this->li(); lj = this->lj();
     }
     //  gives the simplex through which the previous cell was exited.
     /* 	\pre the current cell is not the initial cell.
 	 */
     void            exit( Locate_type& lt, int& li, int& lj ) const
     {
-      lt = std::get<1>(_prev); li = std::get<2>(_prev); lj = std::get<3>(_prev);
+      lt = prev_lt(); li = prev_li(); lj = prev_lj();
     }
 
     //  gives the past-the-end iterator associated with this iterator.
@@ -463,6 +452,33 @@ private:
     // Gives the edge incident to the same cell that is not incident to any of the input vertices.
     Edge opposite_edge(Cell_handle c, int li, int lj) const;
     Edge opposite_edge(const Edge& e) const;
+
+    // ref-accessors to the simplex, for use in internal code
+    // access _cur
+    Cell_handle& cell()             { return std::get<0>(_cur); }
+    Cell_handle const& cell() const { return std::get<0>(_cur); }
+
+    Locate_type& lt()             { return std::get<1>(_cur); }
+    Locate_type const& lt() const { return std::get<1>(_cur); }
+
+    int& li()             { return std::get<2>(_cur); }
+    int const& li() const { return std::get<2>(_cur); }
+
+    int& lj()             { return std::get<3>(_cur); }
+    int const& lj() const { return std::get<3>(_cur); }
+
+    // access _prev
+    Cell_handle& prev_cell()             { return std::get<0>(_prev); }
+    Cell_handle const& prev_cell() const { return std::get<0>(_prev); }
+
+    Locate_type& prev_lt()             { return std::get<1>(_prev); }
+    Locate_type const& prev_lt() const { return std::get<1>(_prev); }
+
+    int& prev_li()             { return std::get<2>(_prev); }
+    int const& prev_li() const { return std::get<2>(_prev); }
+
+    int& prev_lj()             { return std::get<3>(_prev); }
+    int const& prev_lj() const { return std::get<3>(_prev); }
 
 }; // class Triangulation_segment_cell_iterator_3
 	

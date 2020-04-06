@@ -90,9 +90,9 @@ Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, Vertex_hand
     _s_vertex = Vertex_handle();
     _t_vertex = t;
 
-    std::get<0>(_cur) = _tr->locate( s, std::get<1>(_cur), std::get<2>(_cur), std::get<3>(_cur), hint );
+    cell() = _tr->locate( s, lt(), li(), lj(), hint );
 
-    CGAL_triangulation_postcondition( std::get<0>(_cur) != Cell_handle() );
+    CGAL_triangulation_postcondition( cell() != Cell_handle() );
 
     jump_to_intersecting_cell();
 }
@@ -111,9 +111,9 @@ Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, const Point
     _s_vertex = Vertex_handle();
     _t_vertex = Vertex_handle();
 
-    std::get<0>(_cur) = _tr->locate( s, std::get<1>(_cur), std::get<2>(_cur), std::get<3>(_cur), hint );
+    cell() = _tr->locate( s, lt(), li(), lj(), hint );
 
-    CGAL_triangulation_postcondition( std::get<0>(_cur) != Cell_handle() );
+    CGAL_triangulation_postcondition( cell() != Cell_handle() );
 
     jump_to_intersecting_cell();
 }
@@ -143,7 +143,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::end() const {
 template < class Tr, class Inc >
 inline Triangulation_segment_cell_iterator_3<Tr,Inc>&
 Triangulation_segment_cell_iterator_3<Tr,Inc>::operator++() {
-    CGAL_triangulation_precondition( std::get<0>(_cur) != Cell_handle() );
+    CGAL_triangulation_precondition( cell() != Cell_handle() );
     increment();
     return *this;
 }
@@ -161,7 +161,7 @@ inline typename Triangulation_segment_cell_iterator_3<Tr,Inc>::Cell_handle
 Triangulation_segment_cell_iterator_3<Tr,Inc>::complete() {
     while( has_next() )
         increment();
-    return std::get<0>(_prev);
+    return prev_cell();
 }
 
 template < class Tr, class Inc >
@@ -170,7 +170,7 @@ operator==( const SCI& sci ) const {
     // To be equal, the iterators must traverse the same triangulations
     // and they must have the same current cell.
     return ( _tr == sci._tr &&
-             std::get<0>(_cur) == std::get<0>(sci._cur) );
+             cell() == sci.cell() );
 }
 
 template < class Tr, class Inc >
@@ -183,7 +183,7 @@ template < class Tr, class Inc >
 inline bool Triangulation_segment_cell_iterator_3<Tr,Inc>::
 operator==( Nullptr_t CGAL_triangulation_assertion_code(n) ) const {
     CGAL_triangulation_assertion( n == NULL );
-    return std::get<0>(_cur) == Cell_handle();
+    return cell() == Cell_handle();
 }
 
 template < class Tr, class Inc >
@@ -197,10 +197,10 @@ void Triangulation_segment_cell_iterator_3<Tr, Inc>::
 jump_to_intersecting_cell()
 {
   //copy current simplex
-  Cell_handle ch = std::get<0>(_cur);
+  Cell_handle ch = cell();
   Locate_type lt;
-  int li, lj;
-  entry(lt, li, lj);
+  int li, clj;
+  entry(lt, li, clj);
 
   if (lt == Tr::FACET || lt == Tr::EDGE || lt == Tr::VERTEX)
   {
@@ -215,25 +215,25 @@ jump_to_intersecting_cell()
 
     if (lt == Tr::VERTEX)
     {
-      std::get<0>(_cur) = new_ch;
-      //std::get<1>(_cur) is Locate_type and unchanged
-      std::get<2>(_cur) = new_ch->index(ch->vertex(li));
-      //std::get<3>(_cur) is lj and unchanged
-      CGAL_assertion(std::get<0>(_cur)->vertex(std::get<2>(_cur)) == ch->vertex(li));
+      cell() = new_ch;
+      //lt() is Locate_type and unchanged
+      this->li() = new_ch->index(ch->vertex(li));
+      //lj() is lj and unchanged
+      CGAL_assertion(cell()->vertex(this->li()) == ch->vertex(li));
     }
     else if (lt == Tr::EDGE)
     {
-      std::get<0>(_cur) = new_ch;
-      //std::get<1>(_cur) is Locate_type and unchanged
-      std::get<2>(_cur) = new_ch->index(ch->vertex(li));
-      std::get<3>(_cur) = new_ch->index(ch->vertex(lj));
+      cell() = new_ch;
+      //lt() is Locate_type and unchanged
+      this->li() = new_ch->index(ch->vertex(li));
+      this->lj() = new_ch->index(ch->vertex(clj));
     }
     else
     {
-      std::get<0>(_cur) = new_ch;
-      //std::get<1>(_cur) is Locate_type and unchanged
-      std::get<2>(_cur) = new_ch->index(ch);
-      //std::get<3>(_cur) is lj and unchanged
+      cell() = new_ch;
+      //lt() is Locate_type and unchanged
+      this->li() = new_ch->index(ch);
+      //lj() is lj and unchanged
     }
   }
 
@@ -249,10 +249,10 @@ walk_to_next() {
     
     // Check if the target is in the current cell.
     int ti;
-    if( std::get<0>(_cur)->has_vertex( _t_vertex, ti ) ) {
+    if( cell()->has_vertex( _t_vertex, ti ) ) {
         // The target is inside the cell.
-        _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, ti, -1 );
-        std::get<0>(_cur) = Cell_handle();
+        _prev = Simplex( cell(), Tr::VERTEX, ti, -1 );
+        cell() = Cell_handle();
         return;
     }
 
@@ -262,7 +262,7 @@ walk_to_next() {
     switch( _tr->dimension() ) {
         case 3: {
             // Infinite cells should be handled differently.
-            if( std::get<0>(_cur)->has_vertex( _tr->infinite_vertex(), inf ) )
+            if( cell()->has_vertex( _tr->infinite_vertex(), inf ) )
                 walk_to_next_3_inf( inf );
             else
             {
@@ -272,14 +272,14 @@ walk_to_next() {
                 _prev = p.first;
                 _cur = p.second;
 
-              } while (std::get<0>(_cur) != Cell_handle()//end
-                    && !std::get<0>(_cur)->has_vertex(_tr->infinite_vertex(), inf)
+              } while (cell() != Cell_handle()//end
+                    && !cell()->has_vertex(_tr->infinite_vertex(), inf)
                     && have_same_entry(backup, _cur));
             }
             break;
         }
         case 2: {
-            if( std::get<0>(_cur)->has_vertex( _tr->infinite_vertex(), inf ) )
+            if( cell()->has_vertex( _tr->infinite_vertex(), inf ) )
                 walk_to_next_2_inf( inf );
             else
                 walk_to_next_2();
@@ -289,7 +289,7 @@ walk_to_next() {
 #ifdef CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
     if(_tr->dimension() == 3)
     {
-      Cell_handle c = std::get<0>(_cur);
+      Cell_handle c = cell();
       if (c != Cell_handle() && !_tr->is_infinite(c)) //hard to say anything in this case
       {
         typename Tr::Segment seg(_source, _target);
@@ -649,20 +649,20 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_3_inf( int inf )
 {
-    CGAL_triangulation_precondition( _tr->is_infinite( std::get<0>(_cur)->vertex(inf) ) );
+    CGAL_triangulation_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
 
     // If this cell was reached by traversal from a finite one, it must be the final cell.
-    Cell_handle fin = std::get<0>(_cur)->neighbor(inf);
-    if( fin == std::get<0>(_prev) ) {
+    Cell_handle fin = cell()->neighbor(inf);
+    if( fin == prev_cell() ) {
         _prev = _cur;
-        std::get<0>(_cur) = Cell_handle();
+        cell() = Cell_handle();
         return;
     }
 
     std::array < Point*, 4> vert;
     for( int i = 0; i != 4; ++i )
         if( i != inf )
-            vert[i] = &(std::get<0>(_cur)->vertex(i)->point());
+            vert[i] = &(cell()->vertex(i)->point());
     vert[inf] = &_target;
     Orientation o[4];
 
@@ -670,8 +670,8 @@ walk_to_next_3_inf( int inf )
     if( _tr->orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE ) {
         // The target lies in an infinite cell.
         // Note that we do not traverse to other infinite cells.
-        _prev = Simplex( std::get<0>(_cur), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
-        std::get<0>(_cur) = Cell_handle();
+        _prev = Simplex( cell(), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
+        cell() = Cell_handle();
         return;
     }
 
@@ -689,8 +689,8 @@ walk_to_next_3_inf( int inf )
         }
         
         // Skip the previous cell.
-        Cell_handle next = std::get<0>(_cur)->neighbor(li);
-        if( next == std::get<0>(_prev) ) {
+        Cell_handle next = cell()->neighbor(li);
+        if( next == prev_cell() ) {
             o[li] = POSITIVE;
             continue;
         }
@@ -707,45 +707,45 @@ walk_to_next_3_inf( int inf )
         // The target lies behind the plane through the source and two finite vertices.
         // Traverse to the incident infinite cell.
         CGAL_triangulation_assertion( _tr->is_infinite( next ) );
-        _prev = Simplex( std::get<0>(_cur), Tr::FACET, li, -1 );
-        _cur = Simplex( next, Tr::FACET, next->index( std::get<0>(_prev) ), -1 );
+        _prev = Simplex( cell(), Tr::FACET, li, -1 );
+        _cur = Simplex( next, Tr::FACET, next->index( prev_cell() ), -1 );
         return;
     }
 
     // The line enters the convex hull here (or lies on the finite facet).
-    std::get<0>(_prev) = std::get<0>(_cur);
-    std::get<0>(_cur) = fin;
+    prev_cell() = cell();
+    cell() = fin;
 
     // Check through which simplex the line traverses.
     switch( o[0]+o[1]+o[2]+o[3] ) {
         case 3:
-            std::get<1>(_prev) = Tr::FACET;
-            std::get<2>(_prev) = inf;
-            std::get<1>(_cur) = Tr::FACET;
-            std::get<2>(_cur) = std::get<0>(_cur)->index(std::get<0>(_prev));
+            prev_lt() = Tr::FACET;
+            prev_li() = inf;
+            lt() = Tr::FACET;
+            this->li() = cell()->index(prev_cell());
             return;
         case 2:
-            std::get<1>(_prev) = Tr::EDGE;
-            std::get<1>(_cur) = Tr::EDGE;
+            prev_lt() = Tr::EDGE;
+            lt() = Tr::EDGE;
             for( int i = 0; i < 4; ++i ) {
                 if( o[i] == COPLANAR && i != inf ) {
-                    Edge opp = opposite_edge( std::get<0>(_prev), inf, i );
-                    std::get<2>(_prev) = opp.second;
-                    std::get<3>(_prev) = opp.third;
-                    std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
-                    std::get<3>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<3>(_prev) ) );
+                    Edge opp = opposite_edge( prev_cell(), inf, i );
+                    prev_li() = opp.second;
+                    prev_lj() = opp.third;
+                    this->li() = cell()->index( prev_cell()->vertex( prev_li() ) );
+                    this->lj() = cell()->index( prev_cell()->vertex( prev_lj() ) );
                     return;
                 }
             }
             CGAL_triangulation_assertion( false );
             return;
         case 1:
-            std::get<1>(_prev) = Tr::VERTEX;
-            std::get<1>(_cur) = Tr::VERTEX;
+            prev_lt() = Tr::VERTEX;
+            lt() = Tr::VERTEX;
             for( int i = 0; i < 4; ++i ) {
                 if( o[i] == POSITIVE ) {
-                    std::get<2>(_prev) = i;
-                    std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex(i) );
+                    prev_li() = i;
+                    this->li() = cell()->index( prev_cell()->vertex(i) );
                     return;
                 }
             }
@@ -762,52 +762,52 @@ void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2()
 {
     std::array<Point*, 3> vert
-              = { &(std::get<0>(_cur)->vertex(0)->point()),
-                  &(std::get<0>(_cur)->vertex(1)->point()),
-                  &(std::get<0>(_cur)->vertex(2)->point()) };
+              = { &(cell()->vertex(0)->point()),
+                  &(cell()->vertex(1)->point()),
+                  &(cell()->vertex(2)->point()) };
 
-    switch( std::get<1>(_cur) ) {
+    switch( lt() ) {
         case Tr::VERTEX: {
             // First we try the incident edges.
-            Orientation ocw = CGAL::coplanar_orientation( *vert[std::get<2>(_cur)], *vert[_tr->cw(std::get<2>(_cur))], *vert[_tr->ccw(std::get<2>(_cur))], _target );
-            if( std::get<0>(_cur)->neighbor( _tr->ccw(std::get<2>(_cur)) ) != std::get<0>(_prev) && ocw == NEGATIVE) {
-                Cell_handle tmp = std::get<0>(_cur)->neighbor( _tr->ccw(std::get<2>(_cur)) );
+            Orientation ocw = CGAL::coplanar_orientation( *vert[li()], *vert[_tr->cw(li())], *vert[_tr->ccw(li())], _target );
+            if( cell()->neighbor( _tr->ccw(li()) ) != prev_cell() && ocw == NEGATIVE) {
+                Cell_handle tmp = cell()->neighbor( _tr->ccw(li()) );
                 _prev = _cur;
-                std::get<0>(_cur) = tmp;
-                std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex(std::get<2>(_cur)) );
+                cell() = tmp;
+                li() = cell()->index( prev_cell()->vertex(li()) );
                 return;
             }
-            Orientation occw = CGAL::coplanar_orientation( *vert[std::get<2>(_cur)], *vert[_tr->ccw(std::get<2>(_cur))], *vert[_tr->cw(std::get<2>(_cur))], _target );
-            if( std::get<0>(_cur)->neighbor( _tr->cw(std::get<2>(_cur)) ) != std::get<0>(_prev) && occw == NEGATIVE) {
-                Cell_handle tmp = std::get<0>(_cur)->neighbor( _tr->cw(std::get<2>(_cur)) );
+            Orientation occw = CGAL::coplanar_orientation( *vert[li()], *vert[_tr->ccw(li())], *vert[_tr->cw(li())], _target );
+            if( cell()->neighbor( _tr->cw(li()) ) != prev_cell() && occw == NEGATIVE) {
+                Cell_handle tmp = cell()->neighbor( _tr->cw(li()) );
                 _prev = _cur;
-                std::get<0>(_cur) = tmp;
-                std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex(std::get<2>(_cur)) );
+                cell() = tmp;
+                li() = cell()->index( prev_cell()->vertex(li()) );
                 return;
             }
 
             // Then we try the opposite edge.
-            Orientation op = CGAL::coplanar_orientation( *vert[_tr->ccw(std::get<2>(_cur))], *vert[_tr->cw(std::get<2>(_cur))], *vert[std::get<2>(_cur)], _target );
+            Orientation op = CGAL::coplanar_orientation( *vert[_tr->ccw(li())], *vert[_tr->cw(li())], *vert[li()], _target );
             if( op == NEGATIVE) {
-                Cell_handle tmp = std::get<0>(_cur)->neighbor(std::get<2>(_cur));
-                std::get<0>(_prev) = std::get<0>(_cur);
-                std::get<0>(_cur) = tmp;
+                Cell_handle tmp = cell()->neighbor(li());
+                prev_cell() = cell();
+                cell() = tmp;
 
                 switch( ocw+occw ) {
                     case 2:
-                        std::get<1>(_prev) = Tr::EDGE;
-                        std::get<2>(_prev) = _tr->ccw( std::get<2>(_cur) );
-                        std::get<3>(_prev) = _tr->cw( std::get<2>(_cur) );
-                        std::get<1>(_cur) = Tr::EDGE;
-                        std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
-                        std::get<3>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<3>(_prev) ) );
+                        prev_lt() = Tr::EDGE;
+                        prev_li() = _tr->ccw( li() );
+                        prev_lj() = _tr->cw( li() );
+                        lt() = Tr::EDGE;
+                        li() = cell()->index( prev_cell()->vertex( prev_li() ) );
+                        lj() = cell()->index( prev_cell()->vertex( prev_lj() ) );
                         return;
                     case 1:
-                        std::get<1>(_prev) = Tr::VERTEX;
-                        std::get<1>(_cur) = Tr::VERTEX;
-                        if( ocw == COLLINEAR ) std::get<2>(_prev) = _tr->cw( std::get<2>(_cur) );
-                        else std::get<2>(_cur) = _tr->ccw( std::get<2>(_cur) );
-                        std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
+                        prev_lt() = Tr::VERTEX;
+                        lt() = Tr::VERTEX;
+                        if( ocw == COLLINEAR ) prev_li() = _tr->cw( li() );
+                        else li() = _tr->ccw( li() );
+                        li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         return;
                     default:
                         // The current vertex is the target.
@@ -819,49 +819,49 @@ walk_to_next_2()
             // The target lies in this cell.
             switch( ocw+occw+op ) {
             case 3:
-                _prev = Simplex( std::get<0>(_cur), Tr::FACET, 3, -1 );
+                _prev = Simplex( cell(), Tr::FACET, 3, -1 );
                 break;
             case 2:
                 if( ocw == 0 )
-                    _prev = Simplex( std::get<0>(_cur), Tr::EDGE, _tr->ccw(std::get<2>(_cur)), -1 );
+                    _prev = Simplex( cell(), Tr::EDGE, _tr->ccw(li()), -1 );
                 else if( occw == 0 )
-                    _prev = Simplex( std::get<0>(_cur), Tr::EDGE, _tr->cw(std::get<2>(_cur)), -1 );
+                    _prev = Simplex( cell(), Tr::EDGE, _tr->cw(li()), -1 );
                 else
-                    _prev = Simplex( std::get<0>(_cur), Tr::EDGE, std::get<2>(_cur), -1 );
+                    _prev = Simplex( cell(), Tr::EDGE, li(), -1 );
                 break;
             case 1:
                 if( ocw == 1 )
-                    _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->ccw(std::get<2>(_cur)), -1 );
+                    _prev = Simplex( cell(), Tr::VERTEX, _tr->ccw(li()), -1 );
                 else if( occw == 1 )
-                    _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->cw(std::get<2>(_cur)), -1 );
+                    _prev = Simplex( cell(), Tr::VERTEX, _tr->cw(li()), -1 );
                 else
-                    _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, std::get<2>(_cur), -1 );
+                    _prev = Simplex( cell(), Tr::VERTEX, li(), -1 );
                 break;
             case 0:
                 CGAL_triangulation_assertion(false);
-                _prev = Simplex( std::get<0>(_cur), Tr::OUTSIDE_AFFINE_HULL, -1, -1 );
+                _prev = Simplex( cell(), Tr::OUTSIDE_AFFINE_HULL, -1, -1 );
                 break;
             }
-            std::get<0>(_cur) = Cell_handle();
+            cell() = Cell_handle();
             return;
         }
         case Tr::EDGE: {
-            int lk = 3 - std::get<2>(_cur) - std::get<3>(_cur);
+            int lk = 3 - li() - lj();
 
-            if( std::get<0>(_cur)->neighbor(lk) != std::get<0>(_prev) ) {
+            if( cell()->neighbor(lk) != prev_cell() ) {
                 // Check the edge itself
-                switch( CGAL::coplanar_orientation( *vert[std::get<2>(_cur)], *vert[std::get<3>(_cur)], *vert[lk], _target ) ) {
+                switch( CGAL::coplanar_orientation( *vert[li()], *vert[lj()], *vert[lk], _target ) ) {
                     //_prev = _cur; //code not reached
                     case COLLINEAR:
                         // The target lies in this cell.
-                        std::get<0>(_cur) = Cell_handle();
+                        cell() = Cell_handle();
                         return;
                     case NEGATIVE: {
                         // The target lies opposite of the edge.
-                        Cell_handle tmp = std::get<0>(_cur)->neighbor(lk);
-                        std::get<0>(_cur) = tmp;
-                        std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex(std::get<2>(_cur)) );
-                        std::get<3>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex(std::get<3>(_cur)) );
+                        Cell_handle tmp = cell()->neighbor(lk);
+                        cell() = tmp;
+                        li() = cell()->index( prev_cell()->vertex(li()) );
+                        lj() = cell()->index( prev_cell()->vertex(lj()) );
                         return;
                     }
                     default:
@@ -869,30 +869,30 @@ walk_to_next_2()
                 }
             }
 
-            Orientation o = CGAL::coplanar_orientation( _source, *vert[lk], *vert[std::get<2>(_cur)], _target );
+            Orientation o = CGAL::coplanar_orientation( _source, *vert[lk], *vert[li()], _target );
             Orientation op;
             switch( o ) {
                 case POSITIVE: {
                     // The ray passes through the edge ik.
-                    op = CGAL::coplanar_orientation( *vert[lk], *vert[std::get<2>(_cur)], _source, _target );
+                    op = CGAL::coplanar_orientation( *vert[lk], *vert[li()], _source, _target );
                     if( op == NEGATIVE ) {
-                        Cell_handle tmp = std::get<0>(_cur)->neighbor(std::get<3>(_cur));
-                        std::get<0>(_prev) = std::get<0>(_cur);
-                        std::get<0>(_cur) = tmp;
+                        Cell_handle tmp = cell()->neighbor(lj());
+                        prev_cell() = cell();
+                        cell() = tmp;
 
-                        if( CGAL::collinear( _source, *vert[std::get<2>(_cur)], _target ) ) {
-                            std::get<1>(_prev) = Tr::VERTEX;
-                            std::get<2>(_prev) = std::get<2>(_cur);
-                            std::get<1>(_cur) = Tr::VERTEX;
-                            std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
+                        if( CGAL::collinear( _source, *vert[li()], _target ) ) {
+                            prev_lt() = Tr::VERTEX;
+                            prev_li() = li();
+                            lt() = Tr::VERTEX;
+                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         }
                         else {
-                            std::get<1>(_prev) = Tr::EDGE;
-                            std::get<2>(_prev) = std::get<2>(_cur);
-                            std::get<3>(_prev) = lk;
-                            std::get<1>(_cur) = Tr::EDGE;
-                            std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
-                            std::get<3>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<3>(_prev) ) );
+                            prev_lt() = Tr::EDGE;
+                            prev_li() = li();
+                            prev_lj() = lk;
+                            lt() = Tr::EDGE;
+                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
+                            lj() = cell()->index( prev_cell()->vertex( prev_lj() ) );
                         }
                         return;
                     }
@@ -900,31 +900,31 @@ walk_to_next_2()
                 }
                 default: {
                     // The ray passes through the edge jk.
-                    op = CGAL::coplanar_orientation( *vert[lk], *vert[std::get<3>(_cur)], _source, _target );
+                    op = CGAL::coplanar_orientation( *vert[lk], *vert[lj()], _source, _target );
                     if( op == NEGATIVE ) {
-                        Cell_handle tmp = std::get<0>(_cur)->neighbor(std::get<2>(_cur));
-                        std::get<0>(_prev) = std::get<0>(_cur);
-                        std::get<0>(_cur) = tmp;
+                        Cell_handle tmp = cell()->neighbor(li());
+                        prev_cell() = cell();
+                        cell() = tmp;
 
-                        if( CGAL::collinear( _source, *vert[std::get<3>(_cur)], _target ) ) {
-                            std::get<1>(_prev) = Tr::VERTEX;
-                            std::get<2>(_prev) = std::get<3>(_cur);
-                            std::get<1>(_cur) = Tr::VERTEX;
-                            std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
+                        if( CGAL::collinear( _source, *vert[lj()], _target ) ) {
+                            prev_lt() = Tr::VERTEX;
+                            prev_li() = lj();
+                            lt() = Tr::VERTEX;
+                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         }
                         else if( o == COLLINEAR ) {
-                            std::get<1>(_prev) = Tr::VERTEX;
-                            std::get<2>(_prev) = lk;
-                            std::get<1>(_cur) = Tr::VERTEX;
-                            std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
+                            prev_lt() = Tr::VERTEX;
+                            prev_li() = lk;
+                            lt() = Tr::VERTEX;
+                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         }
                         else {
-                            std::get<1>(_prev) = Tr::EDGE;
-                            std::get<2>(_prev) = lk;
-                            std::get<3>(_prev) = std::get<3>(_cur);
-                            std::get<1>(_cur) = Tr::EDGE;
-                            std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
-                            std::get<3>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
+                            prev_lt() = Tr::EDGE;
+                            prev_li() = lk;
+                            prev_lj() = lj();
+                            lt() = Tr::EDGE;
+                            li() = cell()->index( prev_cell()->vertex( prev_li() ) );
+                            lj() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         }
                         return;
                     }
@@ -934,22 +934,22 @@ walk_to_next_2()
 
             // The target lies in this cell.
             if( op == POSITIVE )
-                _prev = Simplex( std::get<0>(_cur), Tr::FACET, 3, -1 );
+                _prev = Simplex( cell(), Tr::FACET, 3, -1 );
             else {
                 CGAL_triangulation_assertion( op == ZERO );
                 switch( o ) {
                 case POSITIVE:
-                    _prev = Simplex( std::get<0>(_cur), Tr::EDGE, std::get<2>(_cur), lk );
+                    _prev = Simplex( cell(), Tr::EDGE, li(), lk );
                     break;
                 case NEGATIVE:
-                    _prev = Simplex( std::get<0>(_cur), Tr::EDGE, std::get<3>(_cur), lk );
+                    _prev = Simplex( cell(), Tr::EDGE, lj(), lk );
                     break;
                 case ZERO:
-                    _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, lk, -1 );
+                    _prev = Simplex( cell(), Tr::VERTEX, lk, -1 );
                     break;
                 }
             }
-            std::get<0>(_cur) = Cell_handle();
+            cell() = Cell_handle();
             return;
         }
         case Tr::FACET: {
@@ -959,8 +959,8 @@ walk_to_next_2()
             bool calc[3] = { false, false, false };
 
             for( int j = 0; j != 3; ++j, li = _tr->ccw(li) ) {
-                Cell_handle next = std::get<0>(_cur)->neighbor(li);
-                if( next == std::get<0>(_prev) )
+                Cell_handle next = cell()->neighbor(li);
+                if( next == prev_cell() )
                     continue;
 
                 // The target should lie on the other side of the edge.
@@ -976,8 +976,8 @@ walk_to_next_2()
                 if( o[_tr->ccw(li)] == NEGATIVE )
                     continue;
                 else if( op == COLLINEAR && o[_tr->ccw(li)] == COLLINEAR ) {
-                    _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->ccw(li), -1 );
-                    std::get<0>(_cur) = Cell_handle();
+                    _prev = Simplex( cell(), Tr::VERTEX, _tr->ccw(li), -1 );
+                    cell() = Cell_handle();
                     return;
                 }
 
@@ -988,29 +988,29 @@ walk_to_next_2()
                 if( o[_tr->cw(li)] == POSITIVE )
                     continue;
                 else if( op == COLLINEAR && o[_tr->cw(li)] == COLLINEAR ) {
-                    _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->cw(li), -1 );
-                    std::get<0>(_cur) = Cell_handle();
+                    _prev = Simplex( cell(), Tr::VERTEX, _tr->cw(li), -1 );
+                    cell() = Cell_handle();
                     return;
                 }
 
-                std::get<0>(_prev) = std::get<0>(_cur);
-                std::get<0>(_cur) = next;
+                prev_cell() = cell();
+                cell() = next;
 
                 switch( o[_tr->ccw(li)] + o[_tr->cw(li)] ) {
                     case 2:
-                        std::get<1>(_prev) = Tr::EDGE;
-                        std::get<2>(_prev) = _tr->ccw(li);
-                        std::get<3>(_prev) = _tr->cw(li);
-                        std::get<1>(_cur) = Tr::EDGE;
-                        std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( _tr->ccw(li) ) );
-                        std::get<3>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( _tr->cw(li) ) );
+                        prev_lt() = Tr::EDGE;
+                        prev_li() = _tr->ccw(li);
+                        prev_lj() = _tr->cw(li);
+                        lt() = Tr::EDGE;
+                        this->li() = cell()->index( prev_cell()->vertex( _tr->ccw(li) ) );
+                        this->lj() = cell()->index( prev_cell()->vertex( _tr->cw(li) ) );
                         return;
                     case 1:
-                        std::get<1>(_prev) = Tr::VERTEX;
-                        std::get<1>(_cur) = Tr::VERTEX;
-                        if( o[_tr->ccw(li)] == COLLINEAR ) std::get<2>(_prev) = _tr->ccw(li);
-                        else std::get<2>(_prev) = _tr->cw(li);
-                        std::get<2>(_cur) = std::get<0>(_cur)->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) );
+                        prev_lt() = Tr::VERTEX;
+                        this->lt() = Tr::VERTEX;
+                        if( o[_tr->ccw(li)] == COLLINEAR ) prev_li() = _tr->ccw(li);
+                        else prev_li() = _tr->cw(li);
+                        this->li() = cell()->index( prev_cell()->vertex( prev_li() ) );
                         return;
                     default:
                         CGAL_triangulation_assertion( false );
@@ -1019,8 +1019,8 @@ walk_to_next_2()
             }
 
             // The target lies in this cell.
-            _prev = Simplex( std::get<0>(_cur), Tr::FACET, 3, -1 );
-            std::get<0>(_cur) = Cell_handle();
+            _prev = Simplex( cell(), Tr::FACET, 3, -1 );
+            cell() = Cell_handle();
             return;
         }
         default:
@@ -1032,75 +1032,75 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2_inf( int inf )
 {
-    CGAL_triangulation_precondition( _tr->is_infinite( std::get<0>(_cur)->vertex(3) ) );
-    CGAL_triangulation_precondition( _tr->is_infinite( std::get<0>(_cur)->vertex(inf) ) );
+    CGAL_triangulation_precondition( _tr->is_infinite( cell()->vertex(3) ) );
+    CGAL_triangulation_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
 
     // If this cell was reached by traversal from a finite one, it must be the final cell.
-    Cell_handle fin = std::get<0>(_cur)->neighbor(inf);
-    if (fin == std::get<0>(_prev)) {
+    Cell_handle fin = cell()->neighbor(inf);
+    if (fin == prev_cell()) {
         _prev = _cur;
-        std::get<0>(_cur) = Cell_handle();
+        cell() = Cell_handle();
         return;
     }
 
     // Check the neighboring cells.
     Orientation occw = CGAL::coplanar_orientation( _source,
-      std::get<0>(_cur)->vertex( _tr->ccw(inf))->point(),
-      std::get<0>(_cur)->vertex(_tr->cw(inf))->point(),
+      cell()->vertex( _tr->ccw(inf))->point(),
+      cell()->vertex(_tr->cw(inf))->point(),
       _target );
     if( occw == NEGATIVE ) {
-        Cell_handle tmp = std::get<0>(_cur)->neighbor(_tr->cw(inf));
-        _prev = Simplex( std::get<0>(_cur), Tr::EDGE, _tr->ccw(inf), inf );
-        _cur = Simplex( tmp, Tr::EDGE, tmp->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) ), tmp->index( std::get<0>(_prev)->vertex( std::get<3>(_prev) ) ) );
+        Cell_handle tmp = cell()->neighbor(_tr->cw(inf));
+        _prev = Simplex( cell(), Tr::EDGE, _tr->ccw(inf), inf );
+        _cur = Simplex( tmp, Tr::EDGE, tmp->index( prev_cell()->vertex( prev_li() ) ), tmp->index( prev_cell()->vertex( prev_lj() ) ) );
         return;
     }
     Orientation ocw = CGAL::coplanar_orientation( _source,
-      std::get<0>(_cur)->vertex( _tr->cw(inf))->point(),
-      std::get<0>(_cur)->vertex(_tr->ccw(inf))->point(),
+      cell()->vertex( _tr->cw(inf))->point(),
+      cell()->vertex(_tr->ccw(inf))->point(),
       _target );
     if( ocw == NEGATIVE ) {
-        Cell_handle tmp = std::get<0>(_cur)->neighbor(_tr->ccw(inf));
-        _prev = Simplex( std::get<0>(_cur), Tr::EDGE, _tr->cw(inf), inf );
-        _cur = Simplex( tmp, Tr::EDGE, tmp->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) ), tmp->index( std::get<0>(_prev)->vertex( std::get<3>(_prev) ) ) );
+        Cell_handle tmp = cell()->neighbor(_tr->ccw(inf));
+        _prev = Simplex( cell(), Tr::EDGE, _tr->cw(inf), inf );
+        _cur = Simplex( tmp, Tr::EDGE, tmp->index( prev_cell()->vertex( prev_li() ) ), tmp->index( prev_cell()->vertex( prev_lj() ) ) );
         return;
     }
     Orientation op = CGAL::coplanar_orientation(
-      std::get<0>(_cur)->vertex( _tr->ccw(inf) )->point(),
-      std::get<0>(_cur)->vertex( _tr->cw(inf) )->point(),
+      cell()->vertex( _tr->ccw(inf) )->point(),
+      cell()->vertex( _tr->cw(inf) )->point(),
       _source, _target );
     switch( op ) {
     case NEGATIVE:
         if( occw == COLLINEAR ) {
-            _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->ccw(inf), -1 );
-            _cur = Simplex( fin, Tr::VERTEX, fin->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) ), -1 );
+            _prev = Simplex( cell(), Tr::VERTEX, _tr->ccw(inf), -1 );
+            _cur = Simplex( fin, Tr::VERTEX, fin->index( prev_cell()->vertex( prev_li() ) ), -1 );
             return;
         }
         if( ocw == COLLINEAR ) {
-            _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->cw(inf), -1 );
-            _cur = Simplex( fin, Tr::VERTEX, fin->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) ), -1 );
+            _prev = Simplex( cell(), Tr::VERTEX, _tr->cw(inf), -1 );
+            _cur = Simplex( fin, Tr::VERTEX, fin->index( prev_cell()->vertex( prev_li() ) ), -1 );
             return;
         }
-        _prev = Simplex( std::get<0>(_cur), Tr::EDGE, _tr->ccw(inf), _tr->cw(inf) );
-        _cur = Simplex( fin, Tr::EDGE, fin->index( std::get<0>(_prev)->vertex( std::get<2>(_prev) ) ), fin->index( std::get<0>(_prev)->vertex( std::get<3>(_prev) ) ) );
+        _prev = Simplex( cell(), Tr::EDGE, _tr->ccw(inf), _tr->cw(inf) );
+        _cur = Simplex( fin, Tr::EDGE, fin->index( prev_cell()->vertex( prev_li() ) ), fin->index( prev_cell()->vertex( prev_lj() ) ) );
         return;
     case COLLINEAR:
         if( occw == COLLINEAR ) {
-            _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->ccw(inf), -1 );
-            std::get<0>(_cur) = Cell_handle();
+            _prev = Simplex( cell(), Tr::VERTEX, _tr->ccw(inf), -1 );
+            cell() = Cell_handle();
             return;
         }
         if( ocw == COLLINEAR ) {
-            _prev = Simplex( std::get<0>(_cur), Tr::VERTEX, _tr->cw(inf), -1 );
-            std::get<0>(_cur) = Cell_handle();
+            _prev = Simplex( cell(), Tr::VERTEX, _tr->cw(inf), -1 );
+            cell() = Cell_handle();
             return;
         }
-        _prev = Simplex( std::get<0>(_cur), Tr::EDGE, _tr->ccw(inf), _tr->cw(inf) );
-        std::get<0>(_cur) = Cell_handle();
+        _prev = Simplex( cell(), Tr::EDGE, _tr->ccw(inf), _tr->cw(inf) );
+        cell() = Cell_handle();
         return;
     case POSITIVE:
         // The tarstd::std::get lies in this infinite cell.
-        _prev = Simplex( std::get<0>(_cur), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
-        std::get<0>(_cur) = Cell_handle();
+        _prev = Simplex( cell(), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
+        cell() = Cell_handle();
         return;
     }
 }
