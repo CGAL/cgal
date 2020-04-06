@@ -40,9 +40,9 @@ struct Euclidean_length_weight_functor
 
   Weight_t operator() (Dart_const_handle dh) const
   {
-    CGAL::sqrt(CGAL::squared_distance
-               (Get_traits<Mesh>::get_point(m_mesh, dh),
-                Get_traits<Mesh>::get_point(m_mesh, m_map.other_extremity(dh))));
+    return CGAL::sqrt(CGAL::squared_distance
+                      (Get_traits<Mesh>::get_point(m_mesh, dh),
+                       Get_traits<Mesh>::get_point(m_mesh, m_map.other_extremity(dh))));
   }
 
 protected:

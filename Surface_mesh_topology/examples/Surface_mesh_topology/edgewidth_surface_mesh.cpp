@@ -41,12 +41,12 @@ int main(int argc, char* argv[])
   inp>>sm;
   std::cout<<"File '"<<filename<<"' loaded. Finding edge-width of the mesh..."<<std::endl;
 
-  CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh> cst(sm);
+  CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh> cst(sm, true);
 
-  Path_on_surface cycle1=cst.compute_edgewidth();
+  Path_on_surface cycle1=cst.compute_edgewidth(true);
 
   CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<Mesh> wf(sm);
-  Path_on_surface cycle2=cst.compute_edgewidth(wf);
+  Path_on_surface cycle2=cst.compute_edgewidth(wf, true);
 
   std::cout<<"Cycle 1 (pink): "; display_cycle_info(sm, cycle1);
   std::cout<<"Cycle 2 (green): "; display_cycle_info(sm, cycle2);

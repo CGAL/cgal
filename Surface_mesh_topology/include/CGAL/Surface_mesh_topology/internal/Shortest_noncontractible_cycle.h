@@ -108,7 +108,7 @@ public:
   // Here amesh is already closed, and have 0-attributes with int.
   // Thus the mesh is not copied.
   Shortest_noncontractible_cycle(Mesh* amesh, size_type perforated_mark,
-                                 bool display_time=false) :
+                                 bool /*display_time*/=false) :
     m_local_map(amesh),
     m_is_perforated(perforated_mark),
     m_cycle(*amesh)
@@ -522,11 +522,11 @@ protected:
     Original_dart_const_handle
         dh_original=Get_original_dart<Self, Copy>::run(this, dh);
     if (cycle.can_be_pushed(dh_original, flip))
-    { cycle.push_back(dh_original, flip); }
+    { cycle.push_back(dh_original, flip, false); }
     else
     {
       CGAL_assertion(cycle.can_be_pushed(dh_original, !flip));
-      cycle.push_back(dh_original, !flip);
+      cycle.push_back(dh_original, !flip, false);
     }
   }
 
@@ -576,6 +576,7 @@ protected:
     // Trace back the path from `b` to root
     for (int ind=min_b-1; ind!=-1; ind=m_trace_index[ind])
     { add_to_cycle(m_spanning_tree[ind], cycle, true); }
+    cycle.update_is_closed();
     CGAL_assertion(cycle.is_closed());
 
     return true;
