@@ -34,14 +34,7 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/bounding_box.h>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <CGAL/Real_timer.h>
-#include <CGAL/demangle.h>
 
 
 namespace CGAL {

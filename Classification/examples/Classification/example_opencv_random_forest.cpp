@@ -37,7 +37,7 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 int main (int argc, char** argv)
 {
   std::string filename = "data/b9_training.ply";
-  
+
   if (argc > 1)
     filename = argv[1];
 
@@ -46,7 +46,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   in >> pts;
-  
+
   Imap label_map;
   bool lm_found = false;
   std::tie (label_map, lm_found) = pts.property_map<int> ("label");
@@ -57,7 +57,7 @@ int main (int argc, char** argv)
   }
 
   Feature_set features;
-  
+
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
@@ -67,7 +67,7 @@ int main (int argc, char** argv)
   features.begin_parallel_additions();
   generator.generate_point_based_features (features);
   features.end_parallel_additions();
-  
+
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
@@ -78,10 +78,10 @@ int main (int argc, char** argv)
   Label_handle roof = labels.add ("roof");
 
   std::vector<int> label_indices(pts.size(), -1);
-  
+
   std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
   Classification::OpenCV::Random_forest_classifier classifier (labels, features);
-  
+
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
@@ -96,12 +96,12 @@ int main (int argc, char** argv)
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 1, label_indices);
   t.stop();
-  
+
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
   Classification::Evaluation evaluation (labels, pts.range(label_map), label_indices);
-  
+
   for (Label_handle l : labels)
   {
     std::cerr << " * " << l->name() << ": "
@@ -123,21 +123,12 @@ int main (int argc, char** argv)
   for (std::size_t i = 0; i < label_indices.size(); ++ i)
   {
     label_map[i] = label_indices[i]; // update label map with computed classification
-    
-    Label_handle label = labels[label_indices[i]];
 
-    if (label == ground)
-    {
-      red[i] = 245; green[i] = 180; blue[i] =   0;
-    }
-    else if (label == vegetation)
-    {
-      red[i] =   0; green[i] = 255; blue[i] =  27;
-    }
-    else if (label == roof)
-    {
-      red[i] = 255; green[i] =   0; blue[i] = 170;
-    }
+    Label_handle label = labels[label_indices[i]];
+    const CGAL::Color& color = label->color();
+    red[i] = color.red();
+    green[i] = color.green();
+    blue[i] = color.blue();
   }
 
   // Write result
@@ -146,6 +137,6 @@ int main (int argc, char** argv)
   f << pts;
 
   std::cerr << "All done" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

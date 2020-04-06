@@ -48,7 +48,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   bool classif_found = false;
   boost::tie (m_classif, classif_found) = m_points->point_set()->add_property_map<int>("label", -1);
 
-  training_found = !training_found; // add_property_map returns false if 
+  training_found = !training_found; // add_property_map returns false if
   classif_found = !classif_found;   // property was already there
 
   bool las_found = false;
@@ -73,11 +73,11 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       training_found = true;
     }
   }
-    
+
   if (training_found || classif_found)
   {
     std::vector<int> used_indices;
-    
+
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
     {
@@ -140,7 +140,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         }
       }
     }
-    
+
     std::map<int, std::string> label_names;
     if (las_found) // Use LAS standard
     {
@@ -183,7 +183,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         }
       }
     }
-    
+
     for (std::size_t i = 0; i < used_indices.size(); ++ i)
     {
       if (used_indices[i] == -1)
@@ -200,8 +200,6 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         oss << "label_" << i;
         new_label = m_labels.add(oss.str().c_str());
       }
-
-      m_label_colors.push_back (this->get_new_label_color (new_label->name()));
     }
   }
   else
@@ -210,11 +208,8 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     m_labels.add("vegetation");
     m_labels.add("roof");
     m_labels.add("facade");
-
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      m_label_colors.push_back (this->get_new_label_color (m_labels[i]->name()));
   }
-  
+
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -257,7 +252,7 @@ Point_set_item_classification::~Point_set_item_classification()
     {
       Point_set::Property_map<unsigned char> las_classif
         = m_points->point_set()->add_property_map<unsigned char>("classification", 0).first;
-    
+
       std::vector<unsigned char> label_indices;
 
       unsigned char custom = 19;
@@ -308,14 +303,14 @@ Point_set_item_classification::~Point_set_item_classification()
         unsigned char lc = 1; // unclassified in LAS standard
         if (c != -1)
           lc = label_indices[std::size_t(c)];
-        
+
         las_classif[*it] = lc;
 
         int t = m_training[*it];
         unsigned char lt = 1; // unclassified in LAS standard
         if (t != -1)
           lt = label_indices[std::size_t(t)];
-        
+
         m_training[*it] = int(lt);
       }
 
@@ -365,19 +360,19 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
   m_index_color = index;
 
   int index_color = real_index_color();
-    
+
   // Colors
   static Color_ramp ramp;
   ramp.build_rainbow();
   reset_indices();
-  
+
   if (index_color == -1) // item color
     m_points->point_set()->remove_colors();
   else
   {
     if (!m_points->point_set()->has_colors())
       m_points->point_set()->add_colors();
-    
+
     if (index_color == 0) // real colors
     {
 
@@ -392,9 +387,9 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
       {
         QColor color (0, 0, 0);
         std::size_t c = m_classif[*it];
-          
+
         if (c != std::size_t(-1))
-          color = m_label_colors[c];
+          color = label_qcolor (m_labels[c]);
 
         m_points->point_set()->set_color(*it, color);
       }
@@ -407,10 +402,10 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
         QColor color (0, 0, 0);
         int c = m_training[*it];
         int c2 = m_classif[*it];
-          
+
         if (c != -1)
-          color = m_label_colors[std::size_t(c)];
-          
+          color = label_qcolor (m_labels[std::size_t(c)]);
+
         float div = 1;
         if (c != c2)
           div = 2;
@@ -449,7 +444,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
           return;
         }
         Feature_handle feature = m_features[corrected_index];
-        
+
         float min = std::numeric_limits<float>::max();
         float max = -std::numeric_limits<float>::max();
 
@@ -477,7 +472,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
           float v = (feature->value(*it) - min) / (max - min);
           if (v < 0.f) v = 0.f;
           if (v > 1.f) v = 1.f;
-          
+
           m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
         }
 
@@ -489,7 +484,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
       }
     }
   }
-  
+
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
        it != m_points->point_set()->end(); ++ it)
     m_points->point_set()->set_color(*it, 255, 0, 0);
@@ -498,7 +493,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
 int Point_set_item_classification::real_index_color() const
 {
   int out = m_index_color;
-  
+
   if (out == 0 && m_color == Point_set::Property_map<CGAL::Color>())
     out = -1;
   return out;
@@ -524,7 +519,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
     delete m_generator;
 
   reset_indices();
-  
+
   std::cerr << "Computing features with " << nb_scales << " scale(s) and ";
   if (voxel_size == -1)
     std::cerr << "automatic voxel size" << std::endl;
@@ -537,9 +532,9 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
   bool normals = m_points->point_set()->has_normal_map();
   if (normals)
     normal_map = m_points->point_set()->normal_map();
-  
+
   bool colors = (m_color != Point_set::Property_map<CGAL::Color>());
-  
+
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
@@ -550,7 +545,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
 
   CGAL::Real_timer t;
   t.start();
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.begin_parallel_additions();
 #endif
@@ -562,7 +557,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
     m_generator->generate_color_based_features (m_features, m_color);
   if (echo)
     m_generator->generate_echo_based_features (m_features, echo_map);
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.end_parallel_additions();
 #endif
@@ -635,7 +630,7 @@ void Point_set_item_classification::select_random_region()
         current_idx ++;
       else
         unselected.push_back (*it);
-  
+
   }
   else
   {
@@ -651,7 +646,7 @@ void Point_set_item_classification::select_random_region()
       else
         unselected.push_back (*it);
   }
-  
+
   for (std::size_t i = 0; i < unselected.size(); ++ i)
     *(m_points->point_set()->begin() + i) = unselected[i];
   for (std::size_t i = 0; i < selected.size(); ++ i)
@@ -665,7 +660,7 @@ void Point_set_item_classification::select_random_region()
 void Point_set_item_classification::add_remaining_point_set_properties_as_features()
 {
   const std::vector<std::string>& prop = m_points->point_set()->base().properties();
-  
+
   for (std::size_t i = 0; i < prop.size(); ++ i)
   {
     if (prop[i] == "index" ||
@@ -715,13 +710,13 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
   m_label_probabilities.resize (m_labels.size());
   for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
     m_label_probabilities[i].resize (m_points->point_set()->size(), -1);
-  
+
   std::vector<int> training (m_points->point_set()->size(), -1);
   std::vector<int> indices (m_points->point_set()->size(), -1);
 
   std::vector<std::size_t> nb_label (m_labels.size(), 0);
   std::size_t nb_total = 0;
-  
+
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
   {
@@ -803,24 +798,24 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
       while (iss >> s)
         hidden_layers.push_back (std::size_t(s));
     }
-    
+
     m_neural_network->train (training,
                              dialog.get<QCheckBox>("restart")->isChecked(),
                              dialog.get<QSpinBox>("trials")->value(),
                              dialog.get<DoubleEdit>("learning_rate")->value(),
                              dialog.get<QSpinBox>("batch_size")->value(),
                              hidden_layers);
-      
+
     CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                      m_labels, *m_neural_network,
                                                      indices, m_label_probabilities);
 #endif
   }
-  
+
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
     m_classif[*it] = indices[*it];
-  
+
   if (m_index_color == 1 || m_index_color == 2)
      change_color (m_index_color);
 }
@@ -869,7 +864,6 @@ bool Point_set_item_classification::run (int method, int classifier,
     run (method, *m_neural_network, subdivisions, smoothing);
 #endif
   }
-  
+
   return true;
 }
-

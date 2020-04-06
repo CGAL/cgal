@@ -34,19 +34,7 @@
 
 #include <CGAL/bounding_box.h>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <CGAL/Real_timer.h>
-#include <CGAL/demangle.h>
-
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/task_group.h>
-#include <mutex>
-#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 

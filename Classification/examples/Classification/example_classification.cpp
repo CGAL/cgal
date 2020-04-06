@@ -83,7 +83,7 @@ int main (int argc, char** argv)
   std::cerr << "Computing features" << std::endl;
   Feature_set features;
 
-  features.begin_parallel_additions();
+  features.begin_parallel_additions(); // No effect in sequential mode
 
   Feature_handle distance_to_plane = features.add<Distance_to_plane> (pts, Pmap(), eigen);
   Feature_handle dispersion = features.add<Dispersion> (pts, Pmap(), grid,
@@ -91,7 +91,7 @@ int main (int argc, char** argv)
   Feature_handle elevation = features.add<Elevation> (pts, Pmap(), grid,
                                                       radius_dtm);
 
-  features.end_parallel_additions();
+  features.end_parallel_additions(); // No effect in sequential mode
 
   //! [Features]
   ///////////////////////////////////////////////////////////////////
@@ -100,9 +100,15 @@ int main (int argc, char** argv)
   //! [Labels]
 
   Label_set labels;
+
+  // Init name only
   Label_handle ground = labels.add ("ground");
-  Label_handle vegetation = labels.add ("vegetation");
-  Label_handle roof = labels.add ("roof");
+
+  // Init name and color
+  Label_handle vegetation = labels.add ("vegetation", CGAL::Color(0,255,0));
+
+  // Init name, Color and standard index (here, ASPRS building index)
+  Label_handle roof = labels.add ("roof", CGAL::Color (255, 0, 0), 6);
 
   //! [Labels]
   ///////////////////////////////////////////////////////////////////

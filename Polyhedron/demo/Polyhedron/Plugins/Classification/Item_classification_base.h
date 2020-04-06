@@ -52,9 +52,9 @@ public:
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
   typedef CGAL::Classification::TensorFlow::Neural_network_classifier<> Neural_network;
 #endif
-  
+
 public:
-  
+
   Item_classification_base() { }
   virtual ~Item_classification_base() { }
 
@@ -66,7 +66,7 @@ public:
   virtual void compute_features (std::size_t nb_scales, float voxel_size) = 0;
 
   virtual std::string feature_statistics () const { return std::string(); }
-  
+
   virtual void add_selection_to_training_set (std::size_t label) = 0;
   virtual void reset_training_set (std::size_t label) = 0;
   virtual void reset_training_set_of_selection() = 0;
@@ -76,7 +76,7 @@ public:
   virtual void validate_selection () = 0;
   virtual void train(int classifier, const QMultipleInputDialog&) = 0;
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
-  
+
   virtual void update_color () = 0;
   virtual void change_color (int index, float* vmin = NULL, float* vmax = NULL) = 0;
   virtual CGAL::Three::Scene_item* generate_one_item (const char* name,
@@ -85,19 +85,23 @@ public:
                                            const char* name) const = 0;
 
   bool features_computed() const { return (m_features.size() != 0); }
-  std::size_t number_of_features() const { return m_features.size(); }  
+  std::size_t number_of_features() const { return m_features.size(); }
   Feature_handle feature(std::size_t i) { return m_features[i]; }
   float weight (Feature_handle f) const { return m_sowf->weight(f); }
   void set_weight (Feature_handle f, float w) const { m_sowf->set_weight(f,w); }
   Sum_of_weighted_features::Effect effect (Label_handle l, Feature_handle f) const { return m_sowf->effect(l,f); }
   void set_effect (Label_handle l, Feature_handle f, Sum_of_weighted_features::Effect e)
   { m_sowf->set_effect (l, f, e); }
-  
+
+  QColor label_qcolor (Label_handle l) const
+  {
+    return QColor (l->color().red(), l->color().green(), l->color().blue());
+  }
+
   virtual QColor add_new_label (const char* name)
   {
     m_labels.add(name);
-    m_label_colors.push_back (get_new_label_color (name));
-    
+
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
 
@@ -113,13 +117,12 @@ public:
     delete m_neural_network;
     m_neural_network = new Neural_network (m_labels, m_features);
 #endif
-    
-    return m_label_colors.back();
+
+    return label_qcolor (m_labels[m_labels.size() - 1]);
   }
   virtual void remove_label (std::size_t position)
   {
     m_labels.remove(m_labels[position]);
-    m_label_colors.erase (m_label_colors.begin() + position);
 
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -137,11 +140,10 @@ public:
     m_neural_network = new Neural_network (m_labels, m_features);
 #endif
   }
-  
+
   virtual void clear_labels ()
   {
     m_labels.clear();
-    m_label_colors.clear();
 
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -256,69 +258,24 @@ public:
     }
   }
 
-  const QColor& label_color(std::size_t i) const { return m_label_colors[i]; }
+  QColor label_color(std::size_t i) const
+  {
+    return label_qcolor (m_labels[i]);
+  }
   void change_label_color (std::size_t position, const QColor& color)
   {
-    m_label_colors[position] = color;
+    m_labels[position]->set_color
+      (CGAL::Color (color.red(), color.green(), color.blue()));
   }
   void change_label_name (std::size_t position, const std::string& name)
   {
     m_labels[position]->set_name (name);
   }
 
-  QColor get_new_label_color (const std::string& name)
-  {
-    QColor color (64 + rand() % 192,
-                  64 + rand() % 192,
-                  64 + rand() % 192);
-      
-    if (name == "ground")
-      color = QColor (186, 189, 182);
-    else if (name == "low_veget")
-      color = QColor (78, 154, 6);
-    else if (name == "med_veget"
-             || name == "vegetation")
-      color = QColor (138, 226, 52);
-    else if (name == "high_veget")
-      color = QColor (204, 255, 201);
-    else if (name == "building"
-             || name == "roof")
-      color = QColor (245, 121, 0);
-    else if (name == "noise")
-      color = QColor (0, 0, 0);
-    else if (name == "reserved")
-      color = QColor (233, 185, 110);
-    else if (name == "water")
-      color = QColor (114, 159, 207);
-    else if (name == "rail")
-      color = QColor (136, 46, 25);
-    else if (name == "road_surface")
-      color = QColor (56, 56, 56);
-    else if (name == "reserved_2")
-      color = QColor (193, 138, 51);
-    else if (name == "wire_guard")
-      color = QColor (37, 61, 136);
-    else if (name == "wire_conduct")
-      color = QColor (173, 127, 168);
-    else if (name == "trans_tower")
-      color = QColor (136, 138, 133);
-    else if (name == "wire_connect")
-      color = QColor (145, 64, 236);
-    else if (name == "bridge_deck")
-      color = QColor (213, 93, 93);
-    else if (name == "high_noise")
-      color = QColor (255, 0, 0);
-    else if (name == "facade")
-      color = QColor (77, 131, 186);
-    
-    return color;
-  }
-
 protected:
 
   Label_set m_labels;
   Feature_set m_features;
-  std::vector<QColor> m_label_colors;
   Sum_of_weighted_features* m_sowf;
   ETHZ_random_forest* m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
@@ -327,7 +284,7 @@ protected:
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
   Neural_network* m_neural_network;
 #endif
-  
+
 };
 
 

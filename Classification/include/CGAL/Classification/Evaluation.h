@@ -38,7 +38,6 @@ namespace Classification {
 class Evaluation
 {
   const Label_set& m_labels;
-  mutable std::map<Label_handle, std::size_t> m_map_labels;
   std::vector<std::vector<std::size_t> > m_confusion; // confusion matrix
 
 public:
@@ -56,7 +55,7 @@ public:
   {
     init();
   }
-  
+
   /*!
 
     \brief Instantiates an evaluation object and computes all
@@ -86,9 +85,6 @@ public:
   /// \cond SKIP_IN_MANUAL
   void init()
   {
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      m_map_labels[m_labels[i]] = i;
-
     m_confusion.resize (m_labels.size());
     for (std::size_t i = 0; i < m_confusion.size(); ++ i)
       m_confusion[i].resize (m_labels.size(), 0);
@@ -103,7 +99,7 @@ public:
   }
   /// \endcond
 
-  
+
   /*!
     \brief Append more items to the evaluation object.
 
@@ -129,11 +125,11 @@ public:
       int res = static_cast<int>(get<1>(p));
       if (gt == -1 || res == -1)
         continue;
-      
+
       ++ m_confusion[std::size_t(res)][std::size_t(gt)];
-    }      
+    }
   }
-  
+
   /// @}
 
   /// \name Label Evaluation
@@ -149,17 +145,17 @@ public:
   */
   float precision (Label_handle label) const
   {
-    std::size_t idx = m_map_labels[label];
+    std::size_t idx = label->index();
     if (!label_has_ground_truth(idx))
       return std::numeric_limits<float>::quiet_NaN();
-    
+
     std::size_t total = 0;
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       total += m_confusion[idx][i];
 
     if (total == 0)
       return 0.f;
-    
+
     return m_confusion[idx][idx] / float(total);
   }
 
@@ -173,10 +169,10 @@ public:
   */
   float recall (Label_handle label) const
   {
-    std::size_t idx = m_map_labels[label];
+    std::size_t idx = label->index();
     if (!label_has_ground_truth(idx))
       return std::numeric_limits<float>::quiet_NaN();
-    
+
     std::size_t total = 0;
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       total += m_confusion[i][idx];
@@ -201,7 +197,7 @@ public:
 
     if (p == 0.f && r == 0.f)
       return 0.f;
-    
+
     return 2.f * p * r / (p + r);
   }
 
@@ -215,8 +211,8 @@ public:
   */
   float intersection_over_union (Label_handle label) const
   {
-    std::size_t idx = m_map_labels[label];
-    
+    std::size_t idx = label->index();
+
     std::size_t total = 0;
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
     {
@@ -229,7 +225,7 @@ public:
   }
 
   /// @}
-  
+
   /// \name Global Evaluation
   /// @{
 
@@ -239,11 +235,11 @@ public:
   */
   std::size_t confusion (Label_handle ground_truth, Label_handle result)
   {
-    std::size_t idx_gt = m_map_labels[ground_truth];
-    std::size_t idx_r = m_map_labels[result];
+    std::size_t idx_gt = ground_truth->index();
+    std::size_t idx_r = result->index();
     return m_confusion[idx_gt][idx_r];
   }
-  
+
   /*!
     \brief Returns the number of misclassified items.
   */
@@ -287,7 +283,7 @@ public:
     }
     return true_positives / float(total);
   }
-  
+
   /*!
     \brief Returns the mean \f$F_1\f$ score of the training over all
     labels (see `f1_score()`).
@@ -304,7 +300,7 @@ public:
       }
     return mean / nb;
   }
-  
+
   /*!
     \brief Returns the mean intersection over union of the training
     over all labels (see `intersection_over_union()`).
@@ -329,7 +325,7 @@ public:
 
   /// \name Output Formatting Functions
   /// @{
-  
+
   /*!
     \brief Outputs the evaluation in a simple ASCII format to the stream `os`.
   */
@@ -387,7 +383,7 @@ public:
        << "</ul>" << std::endl;
 
     const Label_set& labels = evaluation.m_labels;
-    
+
     os <<  "<h2>Detailed Results</h2>" << std::endl
        << "<table>" << std::endl
        << "  <tr>" << std::endl
@@ -414,7 +410,7 @@ public:
            << "    <td></td>" << std::endl
            << "    <td></td>" << std::endl
            << "  </tr>" << std::endl;
-        
+
     os <<  "</table>" << std::endl;
 
     os <<  "<h2>Confusion Matrix</h2>" << std::endl
@@ -444,7 +440,7 @@ public:
       os << "    <td><strong>" << sum << "</strong></td>" << std::endl;
       os <<  "  </tr>" << std::endl;
     }
-    
+
     os <<  "  <tr>" << std::endl
        << "    <td><strong>GROUND TRUTH</strong></td>" << std::endl;
     std::size_t total = 0;
@@ -461,18 +457,17 @@ href=\"https://doc.cgal.org/latest/Classification/index.html\">CGAL \
 Classification package</a>.</em></p>" << std::endl
        <<  "</body>" << std::endl
        << "</html>" << std::endl;
-    
+
     return os;
   }
-  
+
   /// @}
 
 };
 
-  
+
 } // namespace Classification
 
 } // namespace CGAL
 
 #endif // CGAL_CLASSIFICATION_EVALUATION_H
-
