@@ -24,12 +24,15 @@
  * in the arrangement package.
  */
 
+#include <fstream>
+
+#include <boost/variant.hpp>
+
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
-#include <fstream>
 
 namespace CGAL {
 

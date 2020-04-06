@@ -26,6 +26,8 @@
 #include <iostream>
 #include <list>
 
+#include <boost/variant.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>

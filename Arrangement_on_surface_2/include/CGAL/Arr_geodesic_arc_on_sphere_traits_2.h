@@ -25,6 +25,8 @@
 
 #include <fstream>
 
+#include <boost/variant.hpp>
+
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
 #include <CGAL/tss.h>

@@ -22,7 +22,6 @@
 
 #include <CGAL/disable_warnings.h>
 
-
 /*! \file
  * This file was developed at Inria, France, and copied over to the
  * Arrangement_2 package, which it is now part of. It contains a traits
@@ -30,11 +29,12 @@
  * It is based on the circular kernel.
  */
 
-#include <CGAL/basic.h>
-#include <boost/variant.hpp>
-#include <CGAL/Arr_tags.h>
-
 #include <vector>
+
+#include <boost/variant.hpp>
+
+#include <CGAL/basic.h>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
   namespace VariantFunctors{

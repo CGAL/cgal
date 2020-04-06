@@ -18,15 +18,16 @@
  * Header file for the _Conic_x_monotone_arc_2<Conic_arc_2> class.
  */
 
-#include <CGAL/Arr_geometry_traits/Conic_intersections_2.h>
-
 #include <map>
 #include <ostream>
 
+#include <boost/variant.hpp>
+
+#include <CGAL/Arr_geometry_traits/Conic_intersections_2.h>
+
 namespace CGAL {
 
-/*!
- * Representation of an x-monotone conic arc.
+/*! Representation of an x-monotone conic arc.
  * The class is templated by a representation of a general bounded conic arc.
  */
 
