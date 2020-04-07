@@ -779,7 +779,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   typedef typename std::iterator_traits<VTR_const_it>::value_type Vertex_range;
 
   typedef boost::container::small_vector<halfedge_descriptor,8> Halfedges;
-    
+
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
   Vid_map vid = CGAL::get_initialized_vertex_index_map(pm);
 
