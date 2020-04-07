@@ -554,7 +554,7 @@ void gather_faces_to_delete(FaceSet& faces_to_delete,
       edges_to_split.push_back(e);
   }
 
-  std::cout << edges_to_split.size() << " to split" << std::endl;
+  std::cout << edges_to_split.size() << " edges to split" << std::endl;
 
   // Actual split
   for(edge_descriptor e : edges_to_split)
@@ -629,10 +629,11 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
   std::cout << faces_to_delete.size() << " faces in selection" << std::endl;
   CGAL_assertion(!faces_to_delete.empty());
 
-
-
   if(!is_selection_a_topological_disk(faces_to_delete, pmesh))
+  {
+    std::cerr << "Warning: selection is not a topological disk" << std::endl;
     return boost::graph_traits<PolygonMesh>::null_halfedge();
+  }
 
   // check that no face of the selection is on the border of the mesh
   halfedge_descriptor anchor_h = boost::graph_traits<PolygonMesh>::null_halfedge();
@@ -642,7 +643,10 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
     {
       CGAL_assertion(!is_border(h, pmesh));
       if(is_border_edge(h, pmesh))
+      {
+        std::cerr << "Warning: face on border in selection" << std::endl;
         return boost::graph_traits<PolygonMesh>::null_halfedge();
+      }
       else if(faces_to_delete.count(face(opposite(h, pmesh), pmesh)) == 0)
         anchor_h = opposite(h, pmesh);
     }
@@ -670,18 +674,10 @@ dig_holes(UmbrellaContainer& umbrellas,
   std::vector<halfedge_descriptor> holes;
   for(const halfedge_descriptor h : umbrellas)
   {
-    // @tmp gotta compute, say 1/3rd of the smallest incident edge, something like that
     halfedge_descriptor hole_h = dig_hole(h, radius, pmesh, vpm, gt);
-    if(hole_h == boost::graph_traits<PolygonMesh>::null_halfedge())
-    {
-      std::cerr << "Warning: dig_hole() failed" << std::endl;
-      return std::vector<halfedge_descriptor>();
-    }
-
-    holes.push_back(hole_h);
+    if(hole_h != boost::graph_traits<PolygonMesh>::null_halfedge())
+      holes.push_back(hole_h);
   }
-
-  std::ofstream("results/dug.off") << std::setprecision(17) << pmesh;
 
   return holes;
 }
@@ -1058,6 +1054,7 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 
   std::vector<halfedge_descriptor> holes;
   holes = dig_holes(umbrellas, radius, pmesh, vpm, gt);
+  std::ofstream("results/dug.off") << std::setprecision(17) << pmesh;
 
   if(treatment == SEPARATE)
     return fill_holes(holes, pmesh, vpm, gt);
@@ -1194,7 +1191,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   typedef typename Geom_traits::FT                                            FT;
   typedef typename Geom_traits::Point_3                                       Point;
 
-  const FT radius = 0.75; // @todo automatic or np
+  const FT radius = 0.25; // @todo automatic or np
 
   // Collect the non-manifold vertices
   typedef CGAL::dynamic_vertex_property_t<bool>                               Mark;
@@ -1219,8 +1216,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   if(treatment == MERGE)
   {
     internal::enforce_non_manifold_vertex_separation(nm_marks, pmesh, vpm, gt);
-
-    std::ofstream("results/comb_separated.off") << std::setprecision(17) << pmesh;
+    std::ofstream("results/enforced_separation.off") << std::setprecision(17) << pmesh;
   }
 
   for(const auto& e : nm_points)
@@ -1230,13 +1226,15 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
     CGAL_assertion(std::set<halfedge_descriptor>(umbrellas.begin(), umbrellas.end()).size() == umbrellas.size());
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "NM vertex with " << umbrellas.size() << " incident umbrellas:";
+    std::cout << "NM vertex at pos " << get(vpm, target(umbrellas.front(), pmesh))
+              << " with " << umbrellas.size() << " incident umbrellas:";
     for(const halfedge_descriptor h : umbrellas)
       std::cout << " " << h;
     std::cout << std::endl;
 #endif
 
     internal::treat_umbrellas(umbrellas, treatment, radius, pmesh, vpm, gt);
+    std::ofstream("results/intermediary.off") << std::setprecision(17) << pmesh;
     std::cin.get();
   }
 
