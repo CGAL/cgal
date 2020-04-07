@@ -12,7 +12,7 @@ This package provides a toolbox for manipulating curves on a combinatorial surfa
 
 
 \section SMTopology Introduction
-\subsection SMTopology_shortest Shortest non contractible curve
+\subsection SMTopology_shortest Shortest non-contractible curve
 
 Given a combinatorial surface, one may consider <em>combinatorial curves</em>, which are described as sequences of edges, or <em>topological curves</em>, which are continuous curves on the topological surface underlying the combinatorial surface. The length of a combinatorial curve is the sum of the lengths of its edges. Here, we measure the length of a topological curve as the number of crossings of this curve with the vertex-edge graph of the combinatorial surface.
 A closed curve, either topological or combinatorial, that cannot be continuously deformed to a point on the topological surface is said <em>non-contractible</em>. This package offers the following functions:
@@ -21,9 +21,9 @@ A closed curve, either topological or combinatorial, that cannot be continuously
 - Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible combinatorial  curve without the previous vertex requirement. When all the edges have the same unit length, the length of a shortest non-contractible curve is known as the <em>edge-width</em> of the surface.
 - Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible topological curve. It can be assumed that this curve does not cross the edges of \f$\cal{M}\f$ and only passes through the vertices. It follows that the curve can be described by a circular sequence of traversed faces alternating with the vertices it passes through. The length of this curve (i.e., the number of vertices it passes through) is known as the <em>face-width</em> of the surface.
 
-It is important to clarify how we compare the lengths of two combinatorial curves in order to compute the shortest one. "Shortest" can be understood as "having the least amount of edges" or "having the smallest total length of its edges". In the former case, we consider that the mesh is unweighted; in the latter case, we consider that the mesh is weighted, and one must specify how the weight, or length, of each edge is calculated (see concept `WeightFunctor`).
+It is important to clarify how we compare the lengths of two combinatorial curves in order to compute the shortest one. "Shortest" can be understood as "having the least amount of edges" or "having the smallest total length of its edges". In the former case, we consider that the mesh is unweighted; in the latter case, we consider that the mesh is weighted, and one must specify how the weight, or length, of each edge is calculated (see concept `WeightFunctor`). When the vertices of the mesh have Euclidean coordinates, the Eudlidean distance between two connected vertices defines a natural weight for the corresponding edge. A weight functor EuclideanLength is provided for this purpose.
 
-The algorithm to find a shortest non-contractible curve through a specified vertex is based on the paper by Cabello et al. \cgalCite{cvl-ew-12}. The time complexity is linear, though in the weighted case it is raised by a logarithmic factor. Computing the edge-width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map. Computing the face-width consists of constructing the radial graph of the original mesh and computing the edge-width of the radial graph. It thus takes quadratic time. Computing face-width on weighted maps is currently not supported.
+The algorithm to find a shortest non-contractible curve through a specified vertex is based on the paper by Cabello et al. \cgalCite{cvl-ew-12}. The time complexity is linear, though in the weighted case it is raised by a logarithmic factor, assuming that the weight computation takes constant time per edge. Computing the edge-width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map. Computing the face-width consists of constructing the radial graph of the original mesh and computing the edge-width of the radial graph. It thus takes quadratic time. Computing face-width on weighted maps is currently not supported.
 
 \subsection SMTopology_homotopy Homotopy test
 
@@ -48,7 +48,7 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
-All the computations in this package, either for the shortest non contractible curve or for the homotopy tests,  are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
+All the computations in this package, either for the shortest non-contractible curve or for the homotopy tests,  are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
 The input surface is supposed to be connected and orientable.
 The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
 
@@ -67,7 +67,7 @@ The user can add facets to the surface one at a time. Each facet is specified by
 \cgalFigureBegin{fig_sm_incremental-builder, incremental-builder.svg}
  Left, a surface described by a single facet with eight edges pairwise identified. The resulting (topological) surface is shown in \cgalFigureRef{fig_cut-open}. Middle, a surface described by three labeled quadrilaterals. Right, a single labeled facet. The corresponding surface is topologically equivalent to the middle example.
 \cgalFigureEnd
-The code for creating the above left and middle examples appear in the \ref SMTopology_Example_II "polygonal schema examples" below.
+The code for creating the above left and middle examples appear in the \ref SMTopology_Example_VI_VII "polygonal schema examples" below.
 The class provides the following functionalities.
 - \ref PolygonalSchema::add_facet "add_facet(s)" adds a polygon to the current collection of polygons. If the polygon has "n" sides, "s" is a sequence of "n" edge labels possibly preceded by a minus and separated by blanks.
 - alternatively, the user can add a facet by adding edge labels one at a time using the member functions \ref PolygonalSchema::init_facet "init_facet()", \ref PolygonalSchema::add_edges_to_facet "add_edges_to_facet()" and \ref PolygonalSchema::finish_facet "finish_facet()"
@@ -96,7 +96,7 @@ The above functions return an instance of \link Surface_mesh_topology::Path_on_s
 
 \subsection SMTopology_Compute_facewidth Compute Face-width
 
-Facewidth returns a shortest non contractible topological curve described as a circular sequence of traversed faces alternating with the vertices it passes through. Each face or vertex in this sequence is identified by one of its dart handles.
+Facewidth returns a shortest non-contractible topological curve described as a circular sequence of traversed faces alternating with the vertices it passes through. Each face or vertex in this sequence is identified by one of its dart handles.
 In practice, we choose the same dart handle for a face as for the next vertex it passes through. This way, we only need to return one dart handle for a face and its following vertex in the sequence.
 
 The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth()` \endlink computes the sequence of dart handles as described above and returns an `std::vector` of dart handles, where each dart represents a traversed face followed by an incident  vertex. 
@@ -122,24 +122,30 @@ Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the 
 
 \section SMTopology_Examples Examples
 
-\subsection SMTopology_Example_IV_V_VI Compute Shortest Non-contractible Cycle Examples
+\subsection SMTopology_Example_I_II_III Compute Shortest Non-contractible Cycle Examples
 
 In the next three examples, we present various ways to compute shortest non-contractible cycles.
 
 One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case.
-\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_using_BFS.cpp}
+\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle.cpp}
 
 Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart. Note that the time complexity is raised by a logarithmic factor.
-\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_through_a_vertex.cpp}
+\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_2.cpp}
 
 In order to find the edge-width of the surface, one can make use of the routine `edge_width` as follows:
 \cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
 
-\subsection SMTopology_Example_I Simple Example
+\subsection SMTopology_Example_IV Compute Face-width
+
+The following example computes the face-width and illustrates it using CGAL Basic Viewer.
+
+\cgalExample{Surface_mesh_topology/facewidth.cpp}
+
+\subsection SMTopology_Example_V Basic Homotopy Test Example
 The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if \cgal was compiled with Qt5.
 \cgalExample{Surface_mesh_topology/path_homotopy_double_torus.cpp}
 
-\subsection SMTopology_Example_II Polygonal Schema Examples
+\subsection SMTopology_Example_VI_VII Polygonal Schema Examples
 Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
 In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. See left \cgalFigureRef{fig_sm_incremental-builder} for an illustration. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint.
 \cgalExample{Surface_mesh_topology/path_homotopy_with_symbols.cpp}
@@ -147,16 +153,10 @@ In this first example, we build a genus two torus surface from a single face, al
 In this second example, we build a genus two torus surface from a set of three squares. See middle  \cgalFigureRef{fig_sm_incremental-builder} for an illustration. The first two faces are added each with a single call to the member function `add_facet()`. The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
 \cgalExample{Surface_mesh_topology/path_homotopy_with_symbols_2.cpp}
 
-\subsection SMTopology_Example_III Open Path Example
+\subsection SMTopology_Example_VIII Open Path Example
 
 In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints. Here, a `Surface_mesh` is used as an alternative to a `CombinatorialMap`.
 \cgalExample{Surface_mesh_topology/open_path_homotopy.cpp}
-
-\subsection SMTopology_Example_VII Compute Face-width
-
-The following example computes the face-width and illustrates it using CGAL Basic Viewer.
-
-\cgalExample{Surface_mesh_topology/facewidth_example.cpp}
 
 \section SMTopology_Benchmarks Benchmarks
 
@@ -190,6 +190,23 @@ The third benchmark is similar to the previous one, except that we use a genus 5
 Note that the linear time implementation of the algorithms is remarkably observed in each benchmark.
 
 \section SMTopology_Theory Implementation Details
+
+\subsection SMTopology_SNC Compute Shortest Non-contractible Cycle
+
+The algorithm to find shortest non-contractible cycle through a vertex in \cgalCite{cvl-ew-12} can be summarized as follows.
+
+A mesh \f$\cal{M}\f$ consists of components such as vertices, edges, and faces, thus it can be seen as a graph \f$G\f$ embedded in the surface \f$\Sigma\f$.
+
+Let \f$T\f$ be a spanning tree of \f$G\f$. Let \f$C^*\f$ be the subgraph of the dual graph \f$G^*\f$ of \f$G\f$ with the same vertex set as \f$G^*\f$ and the edge set be \f$E(G^*)\backslash E(T)^*\f$. Repeatedly remove from \f$C^*\f$ the edges with an incident vertex of degree one, the remaining set of edges is denoted as \f$E_{nc}(T)^*\f$. It has been proven that for any edge \f$ab\in E_{nc}(T)\f$, the concatenation of the path from a vertex \f$v\f$ following \f$T\f$ to \f$a\f$, the edge \f$ab\f$, and the path from \f$b\f$ following \f$T\f$ back to \f$v\f$ is a closed path (denoted as \f$\tau(T, v, ab)\f$) and is non-contractible. Furthermore, if \f$T\f$ is a BFS tree (or Dijkstra tree in the weighted case) rooted at \f$v\f$, the shortest cycle found among \f$\tau(T, v, e)\f$ for any \f$e\in E_{nc}(T)\f$ is the shortest non-contractible cycle through \f$v\f$.
+
+Although it is said in \ref SMTopology_Input that the given mesh should be closed (no dart is 2-free), the algorithm to find shortest non-contractible cycles also works even if the surface contains boundaries.
+
+\subsection SMTopology_Facewidth Compute Face-width
+
+The reader is recommended to read the section \ref SMTopology_SNC before reading this section.
+
+The face-width is the minimum number of intersection points between \f$G\f$ and 
+any non-contractible cycle of \f$\Sigma\f$ (these cycles do not necessarily follow the edges of \f$G\f$). As a result, the face-width of \f$G\f$ is half the edge-width of \f$R(G)\f$, where \f$R(G)\f$ denotes the radial graph of \f$G\f$. The radial graph of \f$G\f$ is a bipartite graph, constructed as follows. Start with the original graph. For every face of the original graph, add a vertex in the interior of the face and connect this vertex to all the vertices of the face. After doing this for all faces, remove all edges from the original graph.
 
 \subsection SMTopology_Quad_System Reducing to a Quadrangulation
 
@@ -243,24 +260,6 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 
 \subsection SMTopology_Homotopy_Test Homotopy Test
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
-
-\subsection SMTopology_SNC Compute Shortest Non-contractible Cycle
-
-The algorithm to find shortest non-contractible cycle through a vertex in \cgalCite{cvl-ew-12} can be summarized as follows.
-
-A mesh \f$\cal{M}\f$ consists of components such as vertices, edges, and faces, thus it can be seen as a graph \f$G\f$ embedded in the surface \f$\Sigma\f$.
-
-Let \f$T\f$ be a spanning tree of \f$G\f$. Let \f$C^*\f$ be the subgraph of the dual graph \f$G^*\f$ of \f$G\f$ with the same vertex set as \f$G^*\f$ and the edge set be \f$E(G^*)\backslash E(T)^*\f$. Repeatedly remove from \f$C^*\f$ the edges with an incident vertex of degree one, the remaining set of edges is denoted as \f$E_{nc}(T)^*\f$. It has been proven that for any edge \f$ab\in E_{nc}(T)\f$, the path from a vertex \f$v\f$ following \f$T\f$ to \f$a\f$, the edge \f$ab\f$, and the path from \f$b\f$ following \f$T\f$ back to \f$v\f$ is a closed path (denoted as \f$\tau(T, v, ab)\f$) and is a non-contractible cycle. Furthermore, if \f$T\f$ is a BFS tree (or Dijkstra tree in the weighted case) rooted at \f$v\f$, the shortest cycle found among \f$\tau(T, v, e)\f$ for any \f$e\in E_{nc}(T)\f$ is the shortest non-contractible cycle through \f$v\f$.
-
-Although it is said in \ref SMTopology_Input that the given mesh should be closed (no dart is 2-free), the algorithm to find shortest non-contractible cycles also works even if the surface contains boundaries.
-
-\subsection SMTopology_Facewidth Compute Face-width
-
-The reader is highly recommended to read the section \ref SMTopology_SNC before reading this section.
-
-Face-width is the minimum number of common points, among all non-contractible cycles of \f$\Sigma\f$ (these cycles do not necessarily follow the edges of \f$G\f$), between the cycle and \f$G\f$.
-
-As a result, the face-width of \f$G\f$ is half the edge-width of \f$R(G)\f$, where \f$R(G)\f$ denotes the radial graph of \f$G\f$. The radial graph of \f$G\f$ is a bipartite graph, constructed as follows. Start with a radial graph exactly the same as the original graph. For every face of the radial graph, add a vertex and connect this vertex to all the vertices of the face. After doing for all faces, remove all edges that are copied from the original graph.
 
 \section Implementation History
 
