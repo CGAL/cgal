@@ -110,6 +110,11 @@ public:
 
 #endif
 
+/*!
+  \ingroup PkgClassificationFeature
+
+  \brief Casts a feature handle to a specialized feature pointer.
+*/
 template <typename FeatureType>
 FeatureType* feature_cast (Feature_handle fh)
 {

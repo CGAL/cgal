@@ -356,7 +356,7 @@ public:
   /*!
     \brief Outputs the evaluation as an HTML page to the stream `os`.
   */
-  static std::ostream& write_evaluation_to_html (std::ostream& os, const Evaluation& evaluation)
+  static std::ostream& output_to_html (std::ostream& os, const Evaluation& evaluation)
   {
     os <<  "<!DOCTYPE html>" << std::endl
        << "<html>" << std::endl
