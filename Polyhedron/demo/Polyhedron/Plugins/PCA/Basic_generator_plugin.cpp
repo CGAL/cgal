@@ -55,7 +55,7 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    
+
     QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
     if(!menu){
       QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
@@ -766,7 +766,7 @@ struct Point_generator
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 0);
+                 bl.z() + j*(ur.z()-bl.z())/(h-1));
   }
 };
 template<class Facegraph_item>

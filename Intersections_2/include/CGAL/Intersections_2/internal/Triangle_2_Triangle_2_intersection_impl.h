@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -23,7 +23,7 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -155,7 +155,7 @@ public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, TRIANGLE, POLYGON};
     Triangle_2_Triangle_2_pair(typename K::Triangle_2 const *trian1,
                                typename K::Triangle_2 const *trian2)
-	: _trian1(trian1), _trian2(trian2), _known(false) {}
+        : _trian1(trian1), _trian2(trian2), _known(false) {}
 
     Intersection_results intersection_type() const;
 
@@ -281,8 +281,8 @@ Triangle_2_Triangle_2_pair<K>::intersection_triangle() const
         intersection_type();
     CGAL_kernel_assertion(_result == TRIANGLE);
     return Triangle_2(_pointlist.first->point,
-		      _pointlist.first->next->point,
-		      _pointlist.first->next->next->point);
+                      _pointlist.first->next->point,
+                      _pointlist.first->next->next->point);
 }
 
 template <class K>
@@ -294,7 +294,7 @@ Triangle_2_Triangle_2_pair<K>::intersection_segment() const
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_pointlist.first->point,
-		     _pointlist.first->next->point);
+                     _pointlist.first->next->point);
 }
 
 template <class K>
@@ -312,9 +312,9 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Triangle_2, typename K::Triangle_2>::result_type
-intersection(const typename K::Triangle_2 &tr1, 
-	     const typename K::Triangle_2 &tr2,
-	     const K&)
+intersection(const typename K::Triangle_2 &tr1,
+             const typename K::Triangle_2 &tr2,
+             const K&)
 {
     typedef Triangle_2_Triangle_2_pair<K> is_t;
     is_t ispair(&tr1, &tr2);

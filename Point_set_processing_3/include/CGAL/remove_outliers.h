@@ -146,21 +146,21 @@ remove_outliers(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                          typename Kernel::FT(0));
   double threshold_percent = choose_parameter(get_parameter(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                               std::function<bool(double)>());
-  
+                                                                 std::function<bool(double)>());
+
   typedef typename Kernel::FT FT;
-  
+
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
 
@@ -186,7 +186,7 @@ remove_outliers(
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
+  std::vector<Point> kd_tree_points;
   for(it = points.begin(); it != points.end(); it++)
     kd_tree_points.push_back( get(point_map, *it) );
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());

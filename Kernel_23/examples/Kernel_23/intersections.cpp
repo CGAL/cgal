@@ -32,7 +32,7 @@ int main()
 {
   std::vector<Segment> input;
 
-  
+
   // Prepare point generator for the horizontal segment, length 200.
   P1 p1( Point(-100,0), Point(100,0));
 

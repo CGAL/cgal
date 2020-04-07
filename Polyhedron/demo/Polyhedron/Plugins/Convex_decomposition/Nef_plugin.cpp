@@ -151,7 +151,7 @@ Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
     std::cerr << "Convex decomposition...";
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    
+
     std::list<Scene_surface_mesh_item*> convex_parts;
     item->convex_decomposition(convex_parts);
     int i = 0;
@@ -181,8 +181,8 @@ void
 Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_nef_polyhedron_item* item = 
+
+  Scene_nef_polyhedron_item* item =
     qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));
 
   if(item)
@@ -260,9 +260,9 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
                          .arg(QString("Convert to Nef Polyhedron"))
                          .arg(menu ? menu->title() : "Boolean Operations"));
   }
-  Scene_nef_polyhedron_item* itemA = 
+  Scene_nef_polyhedron_item* itemA =
     qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA));
-  Scene_nef_polyhedron_item* itemB = 
+  Scene_nef_polyhedron_item* itemB =
     qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexB));
   if(!itemA || !itemB)
     return;
@@ -291,7 +291,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
     (*new_item) -= (*itemB);
     break;
   case MINKOWSKI_SUM:
-    new_item = Scene_nef_polyhedron_item::sum(*itemA, 
+    new_item = Scene_nef_polyhedron_item::sum(*itemA,
                                               *itemB);
   }
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -311,7 +311,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
   case MINKOWSKI_SUM:
     name = tr("Minkowski sum of %1 and %2");
   }
-  
+
   new_item->setName(name.arg(itemA->name(), itemB->name()));
   new_item->setColor(Qt::green);
   new_item->setRenderingMode(FlatPlusEdges);

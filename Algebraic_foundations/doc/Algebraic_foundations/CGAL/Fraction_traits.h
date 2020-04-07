@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-An instance of `Fraction_traits` is a model of `FractionTraits`, 
-where `T` is the associated type. 
+An instance of `Fraction_traits` is a model of `FractionTraits`,
+where `T` is the associated type.
 
 \cgalModels `FractionTraits`
 

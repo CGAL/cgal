@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
-  
+
   std::ofstream out("filled.off");
   out.precision(17);
   out << poly << std::endl;

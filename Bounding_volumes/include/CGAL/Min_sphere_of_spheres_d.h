@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Kaspar Fischer
 
@@ -48,30 +48,30 @@ namespace CGAL_MINIBALL_NAMESPACE {
     typedef typename Traits::Algorithm Algorithm;
     static const int D = Traits::D;
     typedef typename Traits::Cartesian_const_iterator CIt;
-  
+
   private: // traits class:
     Traits t; // To allow the traits to not only vary at compile- but
               // also at runtime, we instantiate it here.
-  
+
   private: // for internal consisteny checks:
     // The following variable is true if and only if the miniball
     // has been computed of all inserted balls, i.e. iff every checked-in
     // ball has been respected in the miniball computation.
     bool is_up_to_date;
-  
-    boost::rand48 rng;  
+
+    boost::rand48 rng;
 
   public: // iterators:
     typedef const Result *Cartesian_const_iterator; // coordinate iterator
-  
+
     class Support_iterator {
       typedef typename std::vector<const Sphere*>::const_iterator It;
       It it;
-  
+
     private:
       friend class Min_sphere_of_spheres_d<Traits>;
       Support_iterator(It it) : it(it) {}
-  
+
     public:
       const Sphere& operator*() { return *(*it); }
       Support_iterator& operator++() { ++it; return *this; }
@@ -82,10 +82,10 @@ namespace CGAL_MINIBALL_NAMESPACE {
       }
       bool operator!=(const Support_iterator& i) { return it != i.it; }
     };
-  
+
   public: // construction and destruction:
     inline Min_sphere_of_spheres_d(const Traits& traits = Traits());
-  
+
     template<typename InputIterator>
     inline Min_sphere_of_spheres_d(InputIterator begin,InputIterator end,
                                    const Traits& traits = Traits()) :
@@ -94,59 +94,59 @@ namespace CGAL_MINIBALL_NAMESPACE {
       CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc()));
       insert(begin,end);            // todo. better way?
     }
-  
+
 
     inline void insert(const Sphere& b);
-  
+
     template<typename InputIterator>
     inline void insert(InputIterator begin,InputIterator end) {
       S.insert(S.end(), begin, end);
       is_up_to_date = false;
 #ifdef CGAL_MINIBALL_DEBUG
-      for(std::size_t i = 0; i < S.size(); i++){ 
-        CGAL_MINIBALL_ASSERT(t.radius(S[i]) >= FT(0)); 
+      for(std::size_t i = 0; i < S.size(); i++){
+        CGAL_MINIBALL_ASSERT(t.radius(S[i]) >= FT(0));
       }
 #endif
     }
-  
+
     inline void clear();
-  
+
     template<typename InputIterator>
     inline void set(InputIterator begin,InputIterator end) {
       clear();
       insert(begin,end);
     }
-  
+
   public: // predicates and accessors:
     inline bool is_empty();
-  
+
     inline const Result& radius();
-  
+
     inline Cartesian_const_iterator center_cartesian_begin();
     inline Cartesian_const_iterator center_cartesian_end();
-  
+
     inline const FT& discriminant();
-  
+
     inline Support_iterator support_begin();
-  
+
     inline Support_iterator support_end();
-  
+
     inline const Traits& traits() const {
       return t;
     }
-  
+
   public: // validity check:
     bool is_valid();
 
   private:
     bool is_valid(const Tag_true is_exact);
     bool is_valid(const Tag_false is_exact);
-  
+
   private:
     void update();
     void update(LP_algorithm);
     void update(Farthest_first_heuristic);
-  
+
     bool find_farthest(int from,int to,int& i,
                        Tag_true use_sqrt,Tag_false is_exact);
     bool find_farthest(int from,int to,int& i,
@@ -155,14 +155,14 @@ namespace CGAL_MINIBALL_NAMESPACE {
                        Tag_false use_sqrt,Tag_false is_exact);
     bool find_farthest(int from,int to,int& i,
                        Tag_false use_sqrt,Tag_true is_exact);
-  
+
   private:
     std::vector<Sphere> S;         // list of the added bals
     std::vector<const Sphere *> l; // list of pointers to the added bals
     Min_sphere_of_spheres_d_impl::
       Support_set<Traits> ss;      // current support set
     int e;                         // l[0..(e-1)] is a basis
-  
+
   private: // forbid copy constructing and assignment (because our
            // pointers in ss would be wrong then):
     Min_sphere_of_spheres_d(const Min_sphere_of_spheres_d&);
@@ -243,9 +243,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // set up the vector l containing pointers to the balls in S:
     CGAL_MINIBALL_ASSERT(l.size() == 0);
     for (typename std::vector<Sphere>::const_iterator it = S.begin();
-	 it != S.end(); ++it)
+         it != S.end(); ++it)
       l.push_back(&(*it));
-    
+
     // compute the miniball:
     update(Algorithm());
     is_up_to_date = true;

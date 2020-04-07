@@ -191,7 +191,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 </TABLE>
 </DIV>
 
-Additional overloads are provided for the type `Point_2` combined with any other type with the result type being 
+Additional overloads are provided for the type `Point_2` combined with any other type with the result type being
 `boost::optional< boost::variant< Point_2 > >`.
 
 \cgalHeading{3D Intersections}
@@ -293,7 +293,7 @@ p    <TD>Point_3, or Segment_3</TD>
 </TABLE>
 </DIV>
 
-Additional overloads are provided for the type `Point_3` combined with any other type with the result type being 
+Additional overloads are provided for the type `Point_3` combined with any other type with the result type being
 `boost::optional< boost::variant< Point_3 > >`.
 
 

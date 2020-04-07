@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_H
@@ -27,7 +27,7 @@ class Arr_polyhedral_sgm_overlay {
 private:
   typedef typename Sgm::Point_3                         Point_3;
   typedef typename Sgm::Vector_3                        Vector_3;
-  
+
 public:
   typedef typename Sgm::Face_handle                     Face_handle;
   typedef typename Sgm::Vertex_handle                   Vertex_handle;
@@ -37,12 +37,12 @@ public:
   typedef typename Sgm::Vertex_const_handle             Vertex_const_handle;
   typedef typename Sgm::Halfedge_const_handle           Halfedge_const_handle;
 
-  typedef typename Sgm::Ccb_halfedge_const_circulator 
+  typedef typename Sgm::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
 
   typedef typename Sgm::Halfedge_around_vertex_const_circulator
     Arr_halfedge_around_vertex_const_circulator;
-  
+
   /*! 1 */
   void create_face(Face_const_handle f1, Face_const_handle f2, Face_handle f)
   {

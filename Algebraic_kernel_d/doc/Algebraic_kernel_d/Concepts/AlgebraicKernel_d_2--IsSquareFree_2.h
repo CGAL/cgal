@@ -3,9 +3,9 @@
 \ingroup PkgAlgebraicKernelDConceptsBi
 \cgalConcept
 
-Computes whether the given bivariate polynomial is square free. 
+Computes whether the given bivariate polynomial is square free.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction`
 
 \sa `AlgebraicKernel_d_2::MakeSquareFree_2`
 \sa `AlgebraicKernel_d_2::SquareFreeFactorize_2`
@@ -15,29 +15,29 @@ Computes whether the given bivariate polynomial is square free.
 class AlgebraicKernel_d_2::IsSquareFree_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef bool result_type; 
+*/
+typedef bool result_type;
 
 /*!
 
-*/ 
-typedef AlgebraicKernel_d_2::Polynomial_2 argument_type; 
+*/
+typedef AlgebraicKernel_d_2::Polynomial_2 argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-Computes whether \f$ p\f$ is square free. 
-*/ 
-result_type operator()(const argument_type& p); 
+Computes whether \f$ p\f$ is square free.
+*/
+result_type operator()(const argument_type& p);
 
 /// @}
 

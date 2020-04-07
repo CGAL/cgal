@@ -7,14 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
-// source        : 
+//
+// source        :
 // file          : include/CGAL/_test_fct_is_infinite.h
-// revision      : 
-// revision_date : 
+// revision      :
+// revision_date :
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -35,7 +35,7 @@ _test_fct_is_infinite( const Triangulation &T )
 
   // test infinite_vertex() and is_infinite(Vertex_handle)
   assert( T.is_infinite(T.infinite_vertex()) );
-  
+
   // test finite_vertex()
   // missing in the documentation is the precondition that there
   // must be at least one vertex
@@ -45,7 +45,7 @@ _test_fct_is_infinite( const Triangulation &T )
   // test is_infinite(Edge)
   // an infinite face always has two infinite edges
   if ( T.infinite_face() != NULL )
-    { 
+    {
       int index = T.infinite_face()->index(T.infinite_vertex());
       assert( T.is_infinite( Edge(T.infinite_face(),(index+1)%3)) );
       assert( T.is_infinite( Edge(T.infinite_face(),(index+2)%3)) );
@@ -59,8 +59,8 @@ _test_fct_is_infinite( const Triangulation &T )
   // -> for edge iterator
   for(All_edges_iterator aei = T.all_edges_begin();
                            aei != T.all_edges_end(); aei++) {
-    if (T.is_infinite(aei)) 
-	assert ( T.is_infinite(aei->first->vertex(T.ccw(aei->second)))
-	      || T.is_infinite(aei->first->vertex(T.cw(aei->second))));
+    if (T.is_infinite(aei))
+        assert ( T.is_infinite(aei->first->vertex(T.ccw(aei->second)))
+              || T.is_infinite(aei->first->vertex(T.cw(aei->second))));
   }
 }

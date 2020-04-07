@@ -26,7 +26,6 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <boost/mpl/if.hpp>
 

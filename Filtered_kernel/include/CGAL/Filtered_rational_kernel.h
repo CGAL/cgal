@@ -46,7 +46,7 @@ struct Approximate_exact_pair
   typedef std::pair<T1,T2> Base;
 
   typedef T1 Approximate_type;
-  
+
   Approximate_exact_pair()
   {}
 
@@ -61,7 +61,7 @@ struct Approximate_exact_pair
   Approximate_exact_pair(const std::pair<T1,T2>& p)
     : Base(p), eii(true)
   {}
-  
+
   const T1& approx() const
   {
     return this->first;
@@ -72,7 +72,7 @@ struct Approximate_exact_pair
     if(!eii){
       typedef typename Kernel_traits<T1>::Kernel K1;
       typedef typename Kernel_traits<T2>::Kernel K2;
-      
+
       Cartesian_converter<K1,K2,Infimum_to_double> convert;
       const_cast<Self*>(this)->second = convert(this->first);
       eii = true;
@@ -86,10 +86,10 @@ private:
 
 template <typename T1, typename T2>
 const T2& exact(const Approximate_exact_pair <T1,T2>& p)
-{ 
+{
   return p.exact();
 }
-  
+
 namespace mpl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
@@ -161,7 +161,7 @@ struct Pairify <const Interval_nt<false>&, const typename CGAL::internal::Exact_
 };
 
 } // namespace frk
-  
+
 #define SPEC_NT_GETTER(X) \
 template <> \
 struct Getter<X>\
@@ -246,14 +246,14 @@ approx(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullp
 {
   return approx(a.rep());
 }
-  
+
 template <class A1, class A2>
 const A2&
 exact(const std::pair<A1,A2>& p)
 {
   return p.second;
 }
-  
+
 template <class A1, class A2>
 const A2&
 exact(const Filtered_rational<A1,A2>& p)
@@ -277,7 +277,7 @@ class Filtered_rational_predicate
 public:
   // CGAL_static_assertion((std::is_same<typename AP::result_type, typename EP::result_type>::value));
   typedef typename EP::result_type result_type;
-  
+
 public:
   Filtered_rational_predicate(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
 
@@ -378,15 +378,15 @@ struct Approx_converter
   operator()(const T&t) const
   { return approx(t); }
 
-  
+
   const Null_vector&
   operator()(const Null_vector& n) const
   { return n; }
-  
+
   const Bbox_2&
   operator()(const Bbox_2& b) const
   { return b; }
-  
+
   const Bbox_3&
   operator()(const Bbox_3& b) const
   { return b; }
@@ -406,11 +406,11 @@ struct Exact_converter
   const Null_vector&
   operator()(const Null_vector& n) const
   { return n; }
-  
+
   const Bbox_2&
   operator()(const Bbox_2& b) const
   { return b; }
-  
+
   const Bbox_3&
   operator()(const Bbox_3& b) const
   { return b; }
@@ -418,7 +418,7 @@ struct Exact_converter
 
 }// namespace FRK
 
-  
+
 template < class AK, class EK, class Kernel_ >
 class Filtered_rational_kernel_generic_base
 {
@@ -528,29 +528,29 @@ class Filtered_rational_kernel_base
 public:
   typedef Filtered_rational_kernel_base<AK,EK,Kernel_> Self;
   typedef Filtered_rational_kernel_generic_base<AK,EK,Kernel_> Base;
-  
+
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_2;
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_3;
 
 
-  
+
   class Construct_point_3
     : public Base::Construct_point_3
   {
   public:
     typedef typename Kernel_::Point_3 Point_3;
     using Base::Construct_point_3::operator();
-    
+
     template<typename>
     struct result {
       typedef Point_3 type;
     };
-    
+
     template<typename F>
     struct result<F(Point_3)> {
       typedef const Point_3& type;
     };
-    
+
     const Point_3& operator()(const Point_3& p) const
     {
       return p;
@@ -566,7 +566,7 @@ public:
   {
     return Construct_point_3();
   }
-  
+
   class Construct_object_2
   {
     typedef typename Kernel_::Object_2   Object_2;
@@ -794,7 +794,7 @@ public:
   public:
 
     typedef Cartesian_const_iterator_2 result_type;
-    
+
     template <typename PV>
     Cartesian_const_iterator_2 operator()(const PV& pv) const
     {
@@ -815,9 +815,9 @@ public:
 
   class Construct_cartesian_const_iterator_3 {
   public:
-    
+
     typedef Cartesian_const_iterator_3 result_type;
-    
+
     template <typename PV>
     Cartesian_const_iterator_3 operator()(const PV& pv) const
     {
@@ -841,7 +841,7 @@ template < class AK, class EK >
 class Filtered_rational_kernel_without_type_equality
   : public Filtered_rational_kernel_base<AK,EK,Filtered_rational_kernel_without_type_equality<AK,EK>>
 {};
-  
+
 template < class AK, class EK >
 class Filtered_rational_kernel
   : public
@@ -851,7 +851,7 @@ class Filtered_rational_kernel
                                                                                                                                                    // >
 {
 };
-  
+
 } //namespace CGAL
 
 #endif // CGAL_FILTERED_RATIONAL_KERNEL_H

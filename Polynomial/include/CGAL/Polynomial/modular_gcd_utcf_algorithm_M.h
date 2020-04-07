@@ -9,11 +9,11 @@
 //
 // Author(s)     :  Dominik Huelse <dominik.huelse@gmx.de>
 //                  Michael Hemmer <mhemmer@uni-mainz.de>
-//                 
+//
 // ============================================================================
 
 /*! \file CGAL/Polynomial/modular_gcd_utcf_algorithm_M.h
-  provides gcd for Polynomials, based on Modular arithmetic. 
+  provides gcd for Polynomials, based on Modular arithmetic.
 */
 
 
@@ -38,14 +38,14 @@ namespace internal{
 template <class NT> Polynomial<NT> gcd_utcf_UFD(Polynomial<NT>,Polynomial<NT>);
 
 
-template <class NT> 
+template <class NT>
 Polynomial< Polynomial<NT> > modular_gcd_utcf_algorithm_M(
         const Polynomial< Polynomial<NT> >& FF1 ,
         const Polynomial< Polynomial<NT> >& FF2 ){
     return gcd_utcf_UFD(FF1, FF2);
 }
 
-template <class NT> 
+template <class NT>
 Polynomial<NT> modular_gcd_utcf_algorithm_M(
         const Polynomial<NT>& FF1 ,
         const Polynomial<NT>& FF2 ){
@@ -64,16 +64,16 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 
     typedef typename CGAL::Modular_traits<Poly>::Residue_type   MPoly;
     typedef typename CGAL::Modular_traits<Scalar>::Residue_type MScalar;
-    
+
     typedef Chinese_remainder_traits<Poly> CRT;
-    typename CRT::Chinese_remainder chinese_remainder; 
-    
-    CGAL::Real_timer timer; 
-    
- 
+    typename CRT::Chinese_remainder chinese_remainder;
+
+    CGAL::Real_timer timer;
+
+
     if(FF1.is_zero()){
         if(FF2.is_zero()){
-            return Poly(1);// TODO: return 0 for CGAL 
+            return Poly(1);// TODO: return 0 for CGAL
         }
         else{
             //      std::cout<<"\nFF1 is zero"<<std::endl;
@@ -89,19 +89,19 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
         result = Poly(CGAL::gcd(FF1.content(),FF2.content()));
         return CGAL::canonicalize(result);
     }
-        
+
     Poly F1 = CGAL::canonicalize(FF1);
     Poly F2 = CGAL::canonicalize(FF2);
-       
-    Scalar f1 = scalar_factor(F1.lcoeff());  // ilcoeff(F1) 
-    Scalar f2 = scalar_factor(F2.lcoeff());  // ilcoeff(F2) 
+
+    Scalar f1 = scalar_factor(F1.lcoeff());  // ilcoeff(F1)
+    Scalar f2 = scalar_factor(F2.lcoeff());  // ilcoeff(F2)
     Scalar g_ = scalar_factor(f1,f2);
-    
+
     //std::cout <<" g_   : "<< g_ << std::endl;
-    
+
     bool solved = false;
     int prime_index = -1;
-    int n = 0; // number of lucky primes 
+    int n = 0; // number of lucky primes
     int degree_F1 = F1.degree();
     int degree_F2 = F2.degree();
     int degree_e = (std::min)(degree_F1,degree_F2);
@@ -110,7 +110,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     MPoly   mF1,mF2,mG_;
 
     typename CRT::Scalar_type p,q,pq,s,t;
-    Poly Gs,H1s,H2s, Gs_old; // s =^ star 
+    Poly Gs,H1s,H2s, Gs_old; // s =^ star
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_init.stop();
 #endif
@@ -123,7 +123,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
             do{
                 int current_prime = -1;
                 prime_index++;
-		if(prime_index >= 2000){
+                if(prime_index >= 2000){
                     std::cerr<<"primes in the array exhausted"<<std::endl;
                     current_prime = internal::get_next_lower_prime(current_prime);
                 }
@@ -158,53 +158,53 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_gcd.stop();
 #endif
-            
+
             //mH1 = CGAL::integral_div(mF1,mG_);
             //mH2 = CGAL::integral_div(mF2,mG_);
             //---------------------------------------
-            // return if G is constant 
+            // return if G is constant
             if (mG_ == MPoly(1)) return Poly(1);
             // --------------------------------------
         }// repeat until mG_ degree is less equal the known bound
-         // check prime 
+         // check prime
         while( mG_.degree() > degree_e);
-       
-        if( mG_.degree() < degree_e ){
-            if( n != 0 ) std::cout << "UNLUCKY PRIME !!"<< std::endl; 
 
-            // restart chinese remainder 
+        if( mG_.degree() < degree_e ){
+            if( n != 0 ) std::cout << "UNLUCKY PRIME !!"<< std::endl;
+
+            // restart chinese remainder
             // ignore previous unlucky primes
-            n=1; 
+            n=1;
             degree_e= mG_.degree();
         }else{
             CGAL_postcondition( mG_.degree() == degree_e);
             n++; // increase number of lucky primes
         }
-     
+
         // --------------------------------------
         // try chinese remainder
-        
-//        std::cout <<" chinese remainder round :" << n << std::endl; 
+
+//        std::cout <<" chinese remainder round :" << n << std::endl;
         typename CGAL::Modular_traits<Poly>::Modular_image_representative inv_map;
-        if(n == 1){ 
+        if(n == 1){
             // init chinese remainder
-            q =  CGAL::Residue::get_current_prime(); // implicit ! 
+            q =  CGAL::Residue::get_current_prime(); // implicit !
             Gs_old  = Gs  = inv_map(mG_);
-            
+
             //H1s_old = H1s = inv_map(mH1);
             //H2s_old = H2s = inv_map(mH2);
         }else{
             // continue chinese remainder
-            
-            p = CGAL::Residue::get_current_prime(); // implicit! 
-             
+
+            p = CGAL::Residue::get_current_prime(); // implicit!
+
             Gs_old  = Gs ;
             //H1s_old = H1s ;
             //H2s_old = H2s ;
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_CR.start();
 #endif
-//            chinese_remainder(q,Gs ,p,inv_map(mG_),pq,Gs);             
+//            chinese_remainder(q,Gs ,p,inv_map(mG_),pq,Gs);
 //            cached_extended_euclidean_algorithm(q,p,s,t);
             internal::Cached_extended_euclidean_algorithm
               <typename CRT::Scalar_type, 1> ceea;
@@ -219,10 +219,10 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 
         try{
             if( n != 1 && Gs == Gs_old ){
-                Poly r1,r2; 
+                Poly r1,r2;
 #ifdef CGAL_MODULAR_GCD_TIMER
                 timer_division.start();
-#endif 
+#endif
 
                 typedef CGAL::Algebraic_structure_traits< Poly > ASTE_Poly;
                 typename ASTE_Poly::Divides divides;
@@ -230,35 +230,35 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
                 bool div1=divides(Gs,g_*F1,H1s);
                 bool div2=divides(Gs,g_*F2,H2s);
                 if (div1 && div2){
-                    solved = true; 
+                    solved = true;
                 }
                 // this is the old code
-//                 NT dummy; 
+//                 NT dummy;
 //                Poly::euclidean_division(g_*F1,Gs,H1s,r1);
 //                Poly::euclidean_division(g_*F2,Gs,H2s,r2);
 //                if (r1.is_zero() && r2.is_zero())
-//                      solved = true;       
-      
+//                      solved = true;
+
 #ifdef CGAL_MODULAR_GCD_TIMER
                 timer_division.stop();
 #endif
 //                std::cout << "number of primes used : "<< n << std::endl;
             } // end while
-           
+
         }catch(...){}
- 
+
     }
-    
-    
+
+
     //TODO CGAL: change this to multivariat content
 //    Scalar scalar_content_f1 = scalar_factor(FF1);
 //    Scalar scalar_content_f2 = scalar_factor(FF2);
 //    Scalar scalar_content_gcd = CGAL::gcd(scalar_content_f1,scalar_content_f2);
 //    Poly result = CGAL::canonicalize(Gs)*Poly(scalar_content_gcd);
-//    return result; 
+//    return result;
 
     return CGAL::canonicalize(Gs);
-    
+
 }
 
 }  // namespace internal

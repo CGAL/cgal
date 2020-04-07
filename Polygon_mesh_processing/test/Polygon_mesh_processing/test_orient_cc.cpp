@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
@@ -12,22 +14,21 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> SMesh;
 
 template<class TriangleMesh, class NamedParameters>
-bool test_orientation(TriangleMesh& tm, bool is_positive, const NamedParameters& np)
+bool test_orientation(const TriangleMesh& tm, bool is_positive, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
-  typedef typename CGAL::GetFaceIndexMap<TriangleMesh, NamedParameters>::const_type Fid_map;
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::const_type Fid_map;
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
-  
+
   Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                              CGAL::get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_parameter(get_parameter(np, CGAL::internal_np::face_index),
-                                     CGAL::get_const_property_map(boost::face_index, tm));
+  Fid_map fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -127,5 +128,6 @@ int main()
     return 1;
   }
 
+  std::cout << "Done!" << std::endl;
   return 0;
 }

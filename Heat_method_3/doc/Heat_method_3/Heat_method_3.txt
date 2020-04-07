@@ -33,7 +33,7 @@ generally improves the quality of the solution.  The cost of this preprocessing
 step roughly doubles the overall preprocessing cost.
 
 \cgalFigureBegin{landscape_meshes, landscape.jpg}
-  Isolines placed on a mesh without and with iDT remeshing. 
+  Isolines placed on a mesh without and with iDT remeshing.
 \cgalFigureEnd
 
 In the next section we give some examples. Section \ref sec_HM_definitions presents
@@ -237,11 +237,11 @@ We perform the benchmark on an Intel Core i7-7700HQ, 2.8HGz, and compiled with V
 <center>
 Number of triangles  | Initialization iDT (sec) | Distance computation iDT (sec) | Initialization Direct (sec) | Distance computation Direct (sec)
 --------------------:| ----------- :            | ---------------- :             | ------------------:         | --------------:
-30,000               |  0.18                    |  0.02                          |  0.12                       |  0.01                 
-200,000              |  1.82                    |  1.31                          |  1.32                       |  0.11                 
-500,000              | 10.45                    |  0.75                          |  8.07                       |  0.55                 
-1,800,000            | 38.91                    |  2.24                          | 35.68                       |  1.1                  
- 
+30,000               |  0.18                    |  0.02                          |  0.12                       |  0.01
+200,000              |  1.82                    |  1.31                          |  1.32                       |  0.11
+500,000              | 10.45                    |  0.75                          |  8.07                       |  0.55
+1,800,000            | 38.91                    |  2.24                          | 35.68                       |  1.1
+
 </center>
 
 

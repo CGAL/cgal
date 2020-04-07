@@ -42,7 +42,7 @@ void neighbor_query (const Point& query,
   typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
   typedef CGAL::Fuzzy_sphere<TreeTraits> Sphere;
-  
+
   if (neighbor_radius != FT(0))
   {
     Sphere fs (query, neighbor_radius, 0, tree.traits());
@@ -50,7 +50,7 @@ void neighbor_query (const Point& query,
     // if k=0, no limit on the number of neighbors returned
     if (k == 0)
       k = (std::numeric_limits<unsigned int>::max)();
-    
+
     try
     {
       std::function<void(const Point&)> back_insert_with_limit
@@ -60,7 +60,7 @@ void neighbor_query (const Point& query,
           if (points.size() == k)
             throw Maximum_points_reached_exception();
         };
-      
+
       auto function_output_iterator
         = boost::make_function_output_iterator (back_insert_with_limit);
 
@@ -77,7 +77,7 @@ void neighbor_query (const Point& query,
     else
       k = 0;
   }
-  
+
   if (k != 0)
   {
     // Gather set of (k+1) neighboring points.

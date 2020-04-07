@@ -4,7 +4,7 @@
 //#define CGAL_PROFILE
 //#define CGAL_USE_SSE2_FABS
 //#define CGAL_USE_SSE2_MAX
-//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise 
+//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
@@ -48,12 +48,12 @@ int main(int argc, char* argv[])
   std::cout << m.approx().x().is_point() << std::endl;
 
   bool b = CGAL::collinear(p,q,m);
-  
-#else  
-  CGAL::get_default_random() = CGAL::Random(0);
-  std::cout << "seed:  " << CGAL::get_default_random().get_seed() << std::endl; 
 
-  std::cout << typeid(K::FT).name() << std::endl; 
+#else
+  CGAL::get_default_random() = CGAL::Random(0);
+  std::cout << "seed:  " << CGAL::get_default_random().get_seed() << std::endl;
+
+  std::cout << typeid(K::FT).name() << std::endl;
   int n;
   double x,y,z;
   std::vector<Point_3> points;
@@ -73,23 +73,23 @@ int main(int argc, char* argv[])
   rtimer.start();
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
-  
+
   if(true){
-    std::cout << "Sequential" << std::endl; 
+    std::cout << "Sequential" << std::endl;
     DT dt(points.begin(), points.end());
     V = dt.number_of_vertices();
     C = dt.number_of_cells();
   } else {
-    /* 
+    /*
     std::cout << "Parallel" << std::endl;
-	CGAL::Bbox_3 bb  = CGAL::bounding_box(points.begin(), points.end()).bbox();
-	
+        CGAL::Bbox_3 bb  = CGAL::bounding_box(points.begin(), points.end()).bbox();
+
     PDT::Lock_data_structure locking_ds(bb, 50);
-	
+
     PDT pdt(points.begin(), points.end(), &locking_ds);
     V = pdt.number_of_vertices();
     C = pdt.number_of_cells();
-    */	
+    */
   }
   timer.stop();
   rtimer.stop();
@@ -97,8 +97,8 @@ int main(int argc, char* argv[])
   std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
 
   std::cout << "Time elapsed: "
-	  << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
-	  << "ms" << std::endl;
+          << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
+          << "ms" << std::endl;
 
   std::cerr << "|V| = " <<  V << " |C| = " << C  << std::endl << timer.time() << " sec"  << rtimer.time() << " sec" << std::endl;
 #endif

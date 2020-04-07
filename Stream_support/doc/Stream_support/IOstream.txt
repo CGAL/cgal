@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_IO_Streams
 \anchor Chapter_operator_for_IO_streams
 \cgalAutoToc
@@ -234,10 +234,10 @@ and `YELLOW`.
 \section IOstreamStream Stream Support
 
 Three classes are provided by \cgal as adaptors to input and output stream
-iterators. The class `Istream_iterator` is an input iterator adaptor and 
-is particularly useful for classes that are similar but not compatible to 
-`std::istream`. Similarly, the class `Ostream_iterator` is an output 
-iterator adaptor. The class `Verbose_ostream` can be used as an output 
+iterators. The class `Istream_iterator` is an input iterator adaptor and
+is particularly useful for classes that are similar but not compatible to
+`std::istream`. Similarly, the class `Ostream_iterator` is an output
+iterator adaptor. The class `Verbose_ostream` can be used as an output
 stream. The stream
 output operator `<<` is defined for any type. The class
 stores in an internal state a stream and whether the
@@ -251,7 +251,7 @@ the state is inactive, nothing happens.
 WKT stands for <em>Well Known Text</em> and it is a text markup language for representing
 vector geometry objects on a geographical map. See the
 <A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
-CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon. 
+CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon.
 Free functions are provided for reading and writing several \cgal types
 in those WKT types, namely:
 - `CGAL::Point_2`
@@ -268,14 +268,14 @@ looking like this:
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <PolySet>
-    	<Polygon>
-		<Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
-		<Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
-		<Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
+            <Polygon>
+                <Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
+                <Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
+                <Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
         </Polygon>
     </PolySet>
 
 \cgalExample{Stream_support/read_xml.cpp}
-*/ 
+*/
 } /* namespace CGAL */
 

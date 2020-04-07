@@ -12,12 +12,12 @@ associating quadrics to vertices.
 Note however, that they may still be wrapped with slight behavior modifying classes
 such as `Constrained_placement` or `Bounded_normal_change_placement`.
 
-Note that these policies depend on the third party \ref thirdpartyEigen library.
-
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model
                      of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 \tparam GeomTraits must be a model of `Kernel`. If you have passed a traits class in the optional
                    named parameters in the call to `edge_collapse()`, the types must be identical.
+
+These policies depend on the third party \ref thirdpartyEigen library.
 
 */
 template <typename TriangleMesh, typename GeomTraits>

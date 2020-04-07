@@ -14,24 +14,21 @@ if ( CGAL_FOUND )
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
     create_single_source_cgal_program( "singular_value_decomposition.cpp" )
+    CGAL_target_use_Eigen(singular_value_decomposition)
     create_single_source_cgal_program( "sparse_solvers.cpp" )
+    CGAL_target_use_Eigen(sparse_solvers)
+    create_single_source_cgal_program( "diagonalize_matrix.cpp" )
+    CGAL_target_use_Eigen(diagonalize_matrix)
   endif()
 
-  create_single_source_cgal_program( "diagonalize_matrix.cpp" )
   create_single_source_cgal_program( "mixed_integer_program.cpp" )
 
   find_package( SCIP QUIET)
 
   if (SCIP_FOUND)
 
-    include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
-
-    target_link_libraries( mixed_integer_program PRIVATE ${SCIP_LIBRARIES} )
-
-    target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_SCIP)
-
+    CGAL_target_use_SCIP(mixed_integer_program)
     message("SCIP found and used")
 
   else()
@@ -40,12 +37,7 @@ if ( CGAL_FOUND )
 
       if (GLPK_FOUND)
 
-        include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
-
-        target_link_libraries( mixed_integer_program PRIVATE ${GLPK_LIBRARIES} )
-
-        target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_GLPK)
-
+        CGAL_target_use_GLPK(mixed_integer_program)
         message("GLPK found and used")
 
       else()
@@ -58,8 +50,8 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

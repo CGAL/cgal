@@ -147,7 +147,7 @@ public:
     centroid_functor(traits.construct_centroid_3_object()),
     collinear_functor(traits.collinear_3_object()),
     tree(create_traits(mesh, vertex_point_map)),
-    use_diagonal(use_diagonal) 
+    use_diagonal(use_diagonal)
   {
     typedef typename boost::property_traits<VertexPointPmap>::reference Point_ref;
     face_iterator it, end;
@@ -279,7 +279,7 @@ public:
     bool accept_if_acute,
     const Disk_samples_list& disk_samples) const {
     if(cone_angle < 0.0 || cone_angle > CGAL_PI) {
-      CGAL_warning(false && "Cone angle is clamped between [0, CGAL_PI].");
+      CGAL_warning_msg(false, "Cone angle is clamped between [0, CGAL_PI].");
       cone_angle = (std::min)(CGAL_PI, (std::max)(0.0, cone_angle));
     }
 
@@ -318,7 +318,7 @@ public:
         Segment segment(center, target_point);
 
         if(traits.is_degenerate_3_object()(segment)) {
-          CGAL_warning(false &&
+          CGAL_warning_msg(false,
                        "A degenerate segment is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
@@ -328,7 +328,7 @@ public:
         Ray ray(center, ray_direction);
 
         if(traits.is_degenerate_3_object()(ray)) {
-          CGAL_warning(false &&
+          CGAL_warning_msg(false,
                        "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
@@ -374,7 +374,7 @@ private:
     double cone_angle,
     bool accept_if_acute,
     const Disk_samples_list& disk_samples) const {
-    
+
     const Point p1 = get(vertex_point_map,target(halfedge(facet,mesh),mesh));
     const Point p2 = get(vertex_point_map,target(next(halfedge(facet,mesh),mesh),mesh));
     const Point p3 = get(vertex_point_map,target(prev(halfedge(facet,mesh),mesh),mesh));

@@ -29,21 +29,21 @@ struct Sequence_item
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::face_descriptor face_descriptor;
-  
+
   Sequence_item_type type;
   size_t index;
   Barycentric_coordinates faceAlpha;
   FT edgeAlpha;
-  
+
   halfedge_descriptor halfedge;
   vertex_descriptor vertex;
   face_descriptor face;
 };
 
-template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::type>
+template <class Traits,
+  class VIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::const_type,
+  class HIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::const_type,
+  class FIM = typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::const_type>
 struct Edge_sequence_collector
 {
   typedef typename Traits::Triangle_mesh Triangle_mesh;
@@ -60,9 +60,9 @@ struct Edge_sequence_collector
   VertexIndexMap m_vertexIndexMap;
   HalfedgeIndexMap m_halfedgeIndexMap;
   FaceIndexMap m_faceIndexMap;
-  
+
   std::vector<Sequence_item<Traits> > m_sequence;
-  
+
   Edge_sequence_collector(Triangle_mesh& g)
     : m_vertexIndexMap(get(boost::vertex_index, g))
     , m_halfedgeIndexMap(get(CGAL::halfedge_index, g))
@@ -76,7 +76,7 @@ struct Edge_sequence_collector
     , m_faceIndexMap(faceIndexMap)
   {
   }
-  
+
   void operator()(halfedge_descriptor he, FT alpha)
   {
     Sequence_item<Traits> item;
@@ -86,7 +86,7 @@ struct Edge_sequence_collector
     item.halfedge = he;
     m_sequence.push_back(item);
   }
-  
+
   void operator()(vertex_descriptor v)
   {
     Sequence_item<Traits> item;
@@ -95,7 +95,7 @@ struct Edge_sequence_collector
     item.vertex = v;
     m_sequence.push_back(item);
   }
-  
+
   void operator()(face_descriptor f, Barycentric_coordinates alpha)
   {
     Sequence_item<Traits> item;
@@ -127,7 +127,7 @@ template <class Triangle_mesh>
 typename Triangle_mesh::Halfedge_handle make_regular_tetrahedron(Triangle_mesh& out)
 {
   typedef typename Triangle_mesh::Traits::FT FT;
-  
+
   FT rsqrt2 = FT(1.0) / CGAL::sqrt(FT(2.0));
   out.clear();
   typename Triangle_mesh::Halfedge_handle result = out.make_tetrahedron(
@@ -143,24 +143,24 @@ template <class Triangle_mesh>
 size_t face_vertex_index(typename boost::graph_traits<Triangle_mesh>::face_descriptor face, typename boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex, Triangle_mesh& g)
 {
   size_t index = 0;
-  
+
   typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
-  
+
   halfedge_descriptor currentEdge(CGAL::halfedge(face, g));
   halfedge_descriptor startEdge = currentEdge;
-  
+
   do
   {
     if (CGAL::source(currentEdge, g) == vertex)
     {
       return index;
     }
-    
+
     ++index;
     currentEdge = CGAL::next(currentEdge, g);
   }
   while (currentEdge != startEdge);
-  
+
   return index;
 }
 

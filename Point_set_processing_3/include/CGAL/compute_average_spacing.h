@@ -112,22 +112,22 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 
   public:
     Compute_average_spacings(Tree& tree, unsigned int k, std::vector<Point>& points,
-			     std::vector<FT>& output,
+                             std::vector<FT>& output,
                              cpp11::atomic<std::size_t>& advancement,
                              cpp11::atomic<bool>& interrupted)
       : tree(tree), k (k), input (points), output (output)
       , advancement (advancement)
       , interrupted (interrupted)
     { }
-    
+
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
       {
         if (interrupted)
           break;
-        
-	output[i] = CGAL::internal::compute_average_spacing<Kernel,Tree>(input[i], tree, k);
+
+        output[i] = CGAL::internal::compute_average_spacing<Kernel,Tree>(input[i], tree, k);
         ++ advancement;
       }
     }
@@ -150,9 +150,8 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 
    \pre `k >= 2.`
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   and `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
@@ -179,7 +178,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
    of `points`.
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
 >
 #ifdef DOXYGEN_RUNNING
@@ -196,15 +195,15 @@ compute_average_spacing(
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
 
   typedef typename Kernel::Point_3 Point;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
-  
+
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
   typedef Search_traits_3<Kernel> Tree_traits;
@@ -221,7 +220,7 @@ compute_average_spacing(
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
+  std::vector<Point> kd_tree_points;
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
     kd_tree_points.push_back(get(point_map, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -233,13 +232,13 @@ compute_average_spacing(
 
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
+                             "Parallel_tag is enabled but TBB is unavailable.");
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
      Point_set_processing_3::internal::Parallel_callback
        parallel_callback (callback, kd_tree_points.size());
-     
+
      std::vector<FT> spacings (kd_tree_points.size (), -1);
      CGAL::internal::Compute_average_spacings<Kernel, Tree>
        f (tree, k, kd_tree_points, spacings,
@@ -271,7 +270,7 @@ compute_average_spacing(
          }
        }
      }
-   
+
   // return average spacing
    return sum_spacings / (FT)(nb);
 }

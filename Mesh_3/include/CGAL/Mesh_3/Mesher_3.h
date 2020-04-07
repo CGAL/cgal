@@ -50,7 +50,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#  include <tbb/task_scheduler_init.h>
+#  include <thread>
 #endif
 
 #include <boost/format.hpp>
@@ -218,7 +218,7 @@ public:
            );
 
   /// Destructor
-  ~Mesher_3() 
+  ~Mesher_3()
   {
     // The lock data structure is going to be destroyed
     r_c3t3_.triangulation().set_lock_data_structure(nullptr);
@@ -659,7 +659,7 @@ initialize()
 #  endif
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-        float(tbb::task_scheduler_init::default_num_threads())
+        float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()

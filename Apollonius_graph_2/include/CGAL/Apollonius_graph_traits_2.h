@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -48,7 +48,7 @@ public:
 
   // BASIC TYPES
   //------------
-private:  
+private:
   typedef Apollonius_graph_traits_2<Rep,MTag>           Self;
   typedef
   CGAL_APOLLONIUS_GRAPH_2_NS::Apollonius_graph_kernel_wrapper_2<Rep>  Kernel;
@@ -75,6 +75,8 @@ public:
 
   // CONSTRUCTIONS
   //--------------
+  typedef typename Kernel::Construct_point_2      Construct_point_2;
+
   // vertex and dual site
   typedef CGAL_APOLLONIUS_GRAPH_2_NS::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
@@ -102,7 +104,7 @@ public:
 
   typedef CGAL_APOLLONIUS_GRAPH_2_NS::Is_hidden_2<Kernel,MTag>  Is_hidden_2;
 
-  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Oriented_side_of_bisector_2<Kernel,MTag> 
+  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Oriented_side_of_bisector_2<Kernel,MTag>
   /*                                          */ Oriented_side_of_bisector_2;
 
   typedef CGAL_APOLLONIUS_GRAPH_2_NS::Vertex_conflict8_2<Kernel,MTag>
@@ -138,15 +140,19 @@ public:
   }
 
   Construct_object_2
-  construct_object_2_object() const { 
+  construct_object_2_object() const {
     return Construct_object_2();
   }
 
+  Construct_point_2
+  construct_point_2_object() const {
+    return Construct_point_2();
+  }
 
   // CONSTRUCTIONS
   //--------------
   Construct_Apollonius_vertex_2
-  construct_Apollonius_vertex_2_object() const { 
+  construct_Apollonius_vertex_2_object() const {
     return Construct_Apollonius_vertex_2();
   }
 

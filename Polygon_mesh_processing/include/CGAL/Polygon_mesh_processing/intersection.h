@@ -17,19 +17,26 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/mpl/if.hpp>
-#include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <CGAL/box_intersection_d.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
+
+#include <boost/function_output_iterator.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/mpl/if.hpp>
+
+#include <exception>
+#include <iterator>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
@@ -401,11 +408,13 @@ compute_face_face_intersection(const FaceRange& face_range1,
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
-  
+
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
+
   CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
                b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
-  
+
   if(!CGAL::do_overlap(b1, b2))
   {
     return out;
@@ -414,12 +423,8 @@ compute_face_face_intersection(const FaceRange& face_range1,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(
-        std::distance( boost::begin(face_range1), boost::end(face_range1) )
-        );
-  boxes2.reserve(
-        std::distance( boost::begin(face_range2), boost::end(face_range2) )
-        );
+  boxes1.reserve(std::distance(boost::begin(face_range1), boost::end(face_range1)));
+  boxes2.reserve(std::distance(boost::begin(face_range2), boost::end(face_range2)));
 
   typedef typename GetVertexPointMap<TM, NamedParameters1>::const_type VertexPointMap1;
   typedef typename GetVertexPointMap<TM, NamedParameters2>::const_type VertexPointMap2;
@@ -433,6 +438,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
        typename boost::property_traits<VertexPointMap1>::value_type,
        typename boost::property_traits<VertexPointMap2>::value_type
        >::value) );
+
   for(face_descriptor f : face_range1)
   {
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm1), f));
@@ -449,20 +455,16 @@ compute_face_face_intersection(const FaceRange& face_range1,
   std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
                                    boost::make_counting_iterator<const Box*>(&boxes2[0]+boxes2.size()));
 
-
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters1>::type GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np1, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np1, internal_np::geom_traits));
 
   internal::Intersect_faces<TM,
                             GeomTraits,
                             Box,
                             OutputIterator,
                             VertexPointMap1,
-                            VertexPointMap2> Intersect_faces(tm1, tm2,
-                                                             out,
-                                                             vpmap1, vpmap2,
-                                                             gt);
+                            VertexPointMap2> Intersect_faces(tm1, tm2, out, vpmap1, vpmap2, gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -541,21 +543,16 @@ compute_face_polyline_intersection( const FaceRange& face_range,
         typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
-  faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
+  faces.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
 
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
 
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(
-        std::distance( boost::begin(face_range), boost::end(face_range) )
-        );
-
-  boxes2.reserve(
-        std::distance( boost::begin(polyline), boost::end(polyline) ) - 1
-        );
-
+  boxes1.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
+  boxes2.reserve(std::distance(boost::begin(polyline), boost::end(polyline)) - 1);
 
   for(face_descriptor f : face_range)
   {
@@ -571,7 +568,6 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   }
 
   // generate box pointers
-
   std::vector<const Box*> box1_ptr(boost::make_counting_iterator<const Box*>(&boxes1[0]),
                                    boost::make_counting_iterator<const Box*>(&boxes1[0]+boxes1.size()));
   std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
@@ -579,7 +575,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
 
   internal::Intersect_face_polyline<TM,
                                     GeomTraits,
@@ -587,12 +583,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
                                     OutputIterator,
                                     Polyline,
                                     VertexPointMap>
-                                    Intersect_face_polyline(tm,
-                                                            faces,
-                                                            polyline,
-                                                            out,
-                                                            vpmap,
-                                                            gt);
+                                    Intersect_face_polyline(tm, faces, polyline, out, vpmap, gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -652,7 +643,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   using parameters::get_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  
+
   CGAL::Bbox_3 b1,b2;
   b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
   for(std::size_t i =0; i< polyline_range.size(); ++i)
@@ -660,10 +651,10 @@ compute_face_polylines_intersection(const FaceRange& face_range,
     b2 += CGAL::bbox_3(polyline_range[i].begin(),
                        polyline_range[i].end());
   }
-  
+
   if(!CGAL::do_overlap(b1,b2))
     return out;
-  
+
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -672,34 +663,32 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
-  CGAL_static_assertion(
-        (boost::is_same<Point,
-        typename boost::range_value<Polyline>::type>::value));
+  CGAL_static_assertion((boost::is_same<Point, typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
   faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
 
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
 
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(
-        std::distance( boost::begin(face_range), boost::end(face_range) )
-        );
+  boxes1.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
 
   std::size_t polylines_size = 0;
   for(Polyline poly : polyline_range)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
   }
-  boxes2.reserve( polylines_size );
+  boxes2.reserve(polylines_size);
 
   for(face_descriptor f : face_range)
   {
     faces.push_back(f);
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
   }
+
   std::size_t range_size = std::distance( boost::begin(polyline_range), boost::end(polyline_range) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
@@ -722,7 +711,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
 
   internal::Intersect_face_polylines<TM,
                                      GeomTraits,
@@ -730,12 +719,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                      PolylineRange,
                                      OutputIterator,
                                      VertexPointMap>
-                                     Intersect_face_polyline(tm,
-                                                             faces,
-                                                             polyline_range,
-                                                             out,
-                                                             vpmap,
-                                                             gt);
+                                     Intersect_face_polyline(tm, faces, polyline_range, out, vpmap, gt);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -773,18 +757,15 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
                                        OutputIterator out,
                                        const Kernel& K)
 {
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
+
   typedef typename Kernel::Point_3 Point;
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(
-        std::distance( boost::begin(polyline1), boost::end(polyline1) ) - 1
-        );
-
-  boxes2.reserve(
-        std::distance( boost::begin(polyline2), boost::end(polyline2) ) - 1
-        );
+  boxes1.reserve(std::distance(boost::begin(polyline1), boost::end(polyline1)) - 1);
+  boxes2.reserve(std::distance(boost::begin(polyline2), boost::end(polyline2)) - 1);
 
   for(std::size_t i =0; i< polyline1.size()-1; ++i)
   {
@@ -813,10 +794,7 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
                                 Kernel,
                                 Box,
                                 OutputIterator>
-                                intersect_polylines(polyline1,
-                                                    polyline2,
-                                                    out,
-                                                    K);
+                                intersect_polylines(polyline1, polyline2, out, K);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -856,7 +834,9 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
                                          const Kernel& K)
 {
   //info.first is the index of the polyline in the range, info.second is the index of the point in the polyline
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
+
   typedef typename Kernel::Point_3 Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
 
@@ -871,6 +851,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
     b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
+
   polylines_size = 0;
   for(Polyline poly : polylines2)
   {
@@ -878,9 +859,10 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
     b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
-  
+
   if(!CGAL::do_overlap(b1,b2))
     return out;
+
   std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
@@ -915,15 +897,11 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
 
 
   // compute intersections filtered out by boxes
-
   internal::Intersect_polyline_ranges<PolylineRange,
                                       Kernel,
                                       Box,
                                       OutputIterator>
-                                      intersect_polylines(polylines1,
-                                                          polylines2,
-                                                          out,
-                                                          K);
+                                      intersect_polylines(polylines1, polylines2, out, K);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
@@ -1229,6 +1207,7 @@ bool do_intersect(const TriangleMesh& tm1,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
   bool test_overlap =  choose_parameter(get_parameter(np1, internal_np::overlap_test),false) ||
                        choose_parameter(get_parameter(np2, internal_np::overlap_test),false);
 
@@ -1254,7 +1233,7 @@ bool do_intersect(const TriangleMesh& tm1,
     VertexPointMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
     typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
-    GeomTraits gt = choose_parameter(get_parameter(np1, internal_np::geom_traits), GeomTraits());
+    GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np1, internal_np::geom_traits));
 
     return internal::is_mesh2_in_mesh1(tm1, tm2, vpm1, vpm2, gt) ||
            internal::is_mesh2_in_mesh1(tm2, tm1, vpm2, vpm1, gt);
@@ -1595,7 +1574,9 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
   bool report_overlap =  choose_parameter(get_parameter(np, internal_np::overlap_test),false);
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator> Mesh_box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator, Box_policy> Mesh_box;
+
   std::vector<Mesh_box> boxes;
   boxes.reserve(std::distance(range.begin(), range.end()));
 
@@ -1604,21 +1585,18 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
     boxes.push_back( Mesh_box(Polygon_mesh_processing::bbox(*it), it) );
   }
 
-  std::vector<Mesh_box*> boxes_ptr(
-        boost::make_counting_iterator(&boxes[0]),
-    boost::make_counting_iterator(&boxes[0]+boxes.size()));
+  std::vector<Mesh_box*> boxes_ptr(boost::make_counting_iterator(&boxes[0]),
+                                   boost::make_counting_iterator(&boxes[0]+boxes.size()));
 
   typedef typename boost::range_value<NamedParametersRange>::type NP_rng;
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters, NP_rng>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
-
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
   std::ptrdiff_t cutoff = 2000;
   internal::Mesh_callback<TriangleMeshRange, GT, OutputIterator, NamedParametersRange> callback(range, out, report_overlap, gt, nps);
-  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
-                                callback, cutoff);
+  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(), callback, cutoff);
   return callback.m_iterator;
 }
 
@@ -1634,7 +1612,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
 template <class TriangleMeshRange, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
-                                          OutputIterator out)
+                                         OutputIterator out)
 {
   return intersecting_meshes(range, out, parameters::all_default());
 }
@@ -1827,9 +1805,10 @@ surface_self_intersection(const TriangleMesh& tm,
     CGAL::Polygon_mesh_processing::parameters::all_default()
   );
 }
-} //end of namespace experimental
 
-} } //end of namespace CGAL::Polygon_mesh_processing
+} //end of namespace experimental
+} //end of namespace Polygon_mesh_processing
+} //end of namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

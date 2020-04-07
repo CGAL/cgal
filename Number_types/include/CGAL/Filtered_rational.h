@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2007  
+// Copyright (c) 2005-2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -43,7 +43,7 @@ public:
   typedef Filtered_rational<NT1, NT2> Self;
 
   Filtered_rational() {}
-  
+
   Filtered_rational(int i)
     : _n1(i)
   { CGAL_assertion(is_valid()); }
@@ -52,7 +52,7 @@ public:
     : _n1(d)
   {
     CGAL_assertion(is_valid()); }
-  
+
   Filtered_rational(const NT1 &_n1, const NT2 &_n2)
     : _n1(_n1), _n2(_n2), eii(true)
   { CGAL_assertion(is_valid()); }
@@ -71,7 +71,7 @@ public:
     _n2 = np.second;
     eii = true;
   }
-  
+
   // The following need to be dependant on NT1 != {NT2,int,double} ...
   //Filtered_rational(const NT1 &n1) : _n1(n1), _n2(n1) {}
   //Filtered_rational(const NT2 &n2) : _n1(n2), _n2(n2) {}
@@ -90,7 +90,7 @@ public:
 
   // Accessors and setters.
   const NT1& n1() const { return _n1; }
-  
+
   const NT2& n2() const
   {
     if(!eii){
@@ -102,8 +102,8 @@ public:
   }
 
   NT1& n1() { return _n1; }
-  
-  NT2& n2() { 
+
+  NT2& n2() {
     if(!eii){
       assert(_n1.is_point());
       _n2 = NT2(_n1.inf());
@@ -111,9 +111,9 @@ public:
     }
     return _n2;
   }
-  
+
   const NT1& approx() const { return _n1; }
-  
+
   // Validity checking: the exact number must be in the interval
 
   bool is_valid() const
@@ -124,7 +124,7 @@ public:
 
 };
 
-  
+
 
 template < typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
@@ -253,7 +253,7 @@ operator==(const Filtered_rational<NT1, NT2> &a,
   if(a.n1().is_point() && (b.n1().is_point())){
     return a.n1().inf() == b.n1().inf();
   }
-  
+
   if(a.n1().do_overlap(b.n1())){
     return a.n2() == b.n2();
   }
@@ -265,7 +265,7 @@ bool
 operator!=(const Filtered_rational<NT1, NT2> &a,
            const Filtered_rational<NT1, NT2> &b)
 {
-  
+
   return ! (a == b);
 }
 
@@ -445,7 +445,7 @@ class FR_AST_base
 template < typename NT1, typename NT2>
 class FR_AST_base
 < Filtered_rational<NT1, NT2> , Integral_domain_without_division_tag>
-:public Algebraic_structure_traits_base<Filtered_rational<NT1, NT2>, 
+:public Algebraic_structure_traits_base<Filtered_rational<NT1, NT2>,
 Integral_domain_without_division_tag>
 {
 private:
@@ -532,8 +532,8 @@ public:
             CGAL_NT_CHECK_DEBUG("AST::Integral_division");
             return Type(typename AST2::Integral_division()(a.n2(),b.n2()));
         }
-    }; 
-  
+    };
+
   class Divides
     : public CGAL::cpp98::binary_function< Type, Type, bool > {
   public:
@@ -548,9 +548,9 @@ public:
     }
     bool operator()( const Type& a, const Type& b, Type& q) const {
       CGAL_NT_CHECK_DEBUG("AST::Divides");
-      NT1 q1; 
+      NT1 q1;
       bool result1 =  typename AST1::Divides()(a.n1(),b.n1(),q1);
-      NT2 q2; 
+      NT2 q2;
       CGAL_assertion_code( bool result2 = ) // needed for CGAL_assert only
         typename AST2::Divides()(a.n2(),b.n2(),q2);
       q = Type(q1,q2);
@@ -668,14 +668,14 @@ private:
   typedef Algebraic_structure_traits<NT1> AST1;
   typedef Algebraic_structure_traits<NT2> AST2;
   typedef Filtered_rational<NT1, NT2> Type;
-public:  
+public:
   class Inverse
     : public CGAL::cpp98::unary_function< Type, Type > {
   public:
     Type operator()( const Type& a ) const {
       NT1 r1 = typename AST1::Inverse()(a.n1());
       NT2 r2 = typename AST2::Inverse()(a.n2());
-      return Type(r1,r2); 
+      return Type(r1,r2);
     }
   };
 
@@ -967,12 +967,12 @@ operator>> (std::istream & is, Filtered_rational<NT1, NT2> &b)
 }
 
 
-template < typename NT1, typename NT2>  
+template < typename NT1, typename NT2>
 bool fit_in_double(const Filtered_rational<NT1, NT2> &a, double &r)
 {
   return fit_in_double(a.n1(),r);
 }
-    
+
 } //namespace CGAL
 
 #endif // CGAL_FILTERED_RATIONAL_H

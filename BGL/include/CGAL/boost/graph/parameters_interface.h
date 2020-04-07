@@ -17,6 +17,8 @@ CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 CGAL_add_named_parameter(vertex_index_t, vertex_index, vertex_index_map)
 CGAL_add_named_parameter(graph_visitor_t, graph_visitor, visitor)
 
+CGAL_add_named_parameter(point_t, point_map, point_map)
+
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
@@ -93,14 +95,14 @@ CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_place
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
 CGAL_add_named_parameter(random_seed_t, random_seed, random_seed)
-CGAL_add_named_parameter(tolerance_map_t, tolerance_map, tolerance_map)
+CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
+CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
 CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
 
 // List of named parameters used in the Point Set Processing package
-CGAL_add_named_parameter(point_t, point_map, point_map)
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
 CGAL_add_named_parameter(normal_t, normal_map, normal_map)
 CGAL_add_named_parameter(diagonalize_traits_t, diagonalize_traits, diagonalize_traits)
@@ -122,6 +124,15 @@ CGAL_add_named_parameter(plane_index_t, plane_index_map, plane_index_map)
 CGAL_add_named_parameter(select_percentage_t, select_percentage, select_percentage)
 CGAL_add_named_parameter(require_uniform_sampling_t, require_uniform_sampling, require_uniform_sampling)
 CGAL_add_named_parameter(point_is_constrained_t, point_is_constrained, point_is_constrained_map)
+CGAL_add_named_parameter(transformation_t, transformation, transformation)
+CGAL_add_named_parameter(point_set_filters_t, point_set_filters, point_set_filters)
+CGAL_add_named_parameter(matcher_t, matcher, matcher)
+CGAL_add_named_parameter(outlier_filters_t, outlier_filters, outlier_filters)
+CGAL_add_named_parameter(error_minimizer_t, error_minimizer, error_minimizer)
+CGAL_add_named_parameter(transformation_checkers_t, transformation_checkers, transformation_checkers)
+CGAL_add_named_parameter(inspector_t, inspector, inspector)
+CGAL_add_named_parameter(logger_t, logger, logger)
+CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatcher_config)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
@@ -142,4 +153,10 @@ CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
 CGAL_add_named_parameter(anchors_t, anchors, anchors)
 CGAL_add_named_parameter(triangles_t, triangles, triangles)
+
+CGAL_add_named_parameter(number_of_samples_t, number_of_samples, number_of_samples)
+CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
+CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
+CGAL_add_named_parameter(overlap_t, overlap, overlap)
+CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -124,14 +124,14 @@ template < typename CK, bool UseStaticFilters = true >
 struct Filtered_kernel_adaptor
   : public Filtered_kernel_base<CK>
 {
-	enum { Has_static_filters = false };
+        enum { Has_static_filters = false };
 };
 
 template < typename CK >
 struct Filtered_kernel_adaptor<CK, true>
   : public Static_filters_base<CK>
 {
-	enum { Has_static_filters = true };
+        enum { Has_static_filters = true };
 };
 
 // UseStaticFilters has a default value, depending on
@@ -142,7 +142,7 @@ struct Filtered_kernel
                Type_equality_wrapper<
                    typename CK:: template Base< Filtered_kernel<CK, UseStaticFilters> >::Type,
                    Filtered_kernel<CK, UseStaticFilters> >,
-	       UseStaticFilters >
+               UseStaticFilters >
 {};
 
 } //namespace CGAL

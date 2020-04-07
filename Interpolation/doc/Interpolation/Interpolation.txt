@@ -312,7 +312,7 @@ neighbors of \f$ \mathbf{x}\f$, we have
 \f[ Z^0(\mathbf{x}) = \ccSum{i}{}{ \lambda_i(\mathbf{x}) (a + \mathbf{b}^t\mathbf{p_i})} = a+\mathbf{b}^t \mathbf{x} \f]
 by the barycentric coordinate property.
 
-This interpolation is implemented through the function `	CGAL::linear_interpolation()`.
+This interpolation is implemented through the function `        CGAL::linear_interpolation()`.
 The first example in Subsection \ref subsecinterpol_examples shows how the function is
 called.
 

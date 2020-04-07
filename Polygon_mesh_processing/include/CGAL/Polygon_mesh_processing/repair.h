@@ -111,10 +111,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// As a consequence of the last sentence, the area or volume criteria can be disabled
 /// by passing zero (`0`) as threshold value.
 ///
-/// Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-/// must be either available as internal property maps
-/// to `tmesh` or provided as \ref pmp_namedparameters "Named Parameters".
-///
 /// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
@@ -129,8 +125,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
 ///   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tmesh` \cgalParamEnd
 ///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
-///                                     If this parameter is omitted, an internal property map for
-///                                     `CGAL::vertex_point_t` should be available in `TriangleMesh` \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
 ///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
 ///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
@@ -155,16 +149,15 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GT::FT                                                          FT;
-  const GT traits = choose_parameter(get_parameter(np, internal_np::vertex_point), GT());
+  const GT traits = choose_parameter<GT>(get_parameter(np, internal_np::vertex_point));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point_3;
   const VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                    get_const_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename GetFaceIndexMap<TriangleMesh, NamedParameters>::type            FaceIndexMap;
-  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
-                                      get_property_map(boost::face_index, tmesh));
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap fim = CGAL::get_initialized_face_index_map(tmesh, np);
 
   FT area_threshold = choose_parameter(get_parameter(np, internal_np::area_threshold), FT(-1));
   FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
@@ -178,7 +171,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,
                                                        Emptyset_iterator>::type Output_iterator;
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;
@@ -992,7 +985,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           vertex_descriptor vd = remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove, face_set);
           if (vd == GT::null_vertex())
           {
-            // TODO: if some border edges are later removed, the edge might be processable later
+            // @todo: if some border edges are later removed, the edge might be processable later
             // for example if it belongs to  boundary cycle of edges where the number of non-degenerate
             // edges is 2. That's what happen with fused_vertices.off in the testsuite where the edges
             // are not processed the same way with Polyhedron and Surface_mesh. In the case of Polyhedron
@@ -1198,7 +1191,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           }
           while(true);
 
-          /// \todo use the area criteria? this means maybe continue exploration of larger cc
+          // @todo use the area criteria? this means maybe continue exploration of larger cc
           // mark faces of completetly explored cc
           for (index=0; index< nb_cc; ++index)
           {
@@ -1369,15 +1362,15 @@ bool remove_degenerate_edges(TriangleMesh& tmesh)
 //         - `Compare_distance_3` to compute the distance between 2 points
 //         - `Collinear_3` to check whether 3 points are collinear
 //         - `Less_xyz_3` to compare lexicographically two points
-///        - `Equal_3` to check whether 2 points are identical.
-///       For each functor Foo, a function `Foo foo_object()` must be provided.
+//        - `Equal_3` to check whether 2 points are identical.
+//       For each functor Foo, a function `Foo foo_object()` must be provided.
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
-// \todo the function might not be able to remove all degenerate faces.
+// @todo the function might not be able to remove all degenerate faces.
 //       We should probably do something with the return type.
 //
-/// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
+// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
 bool remove_degenerate_faces(const FaceRange& face_range,
                              TriangleMesh& tmesh,
@@ -1397,9 +1390,9 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_property_map(vertex_point, tmesh));
+                                          get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
@@ -1478,7 +1471,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   // Then, remove triangles made of 3 collinear points
 
   // start by filtering out border faces
-  // TODO: shall we avoid doing that in case a non-manifold vertex on the boundary or if a whole component disappear?
+  // @todo: shall we avoid doing that in case a non-manifold vertex on the boundary or if a whole component disappear?
   std::set<face_descriptor> border_deg_faces;
   for(face_descriptor f : degenerate_face_set)
   {
@@ -1685,7 +1678,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           all_removed=false;
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
           std::cout << "  WARNING: flip is not possible\n";
-          // \todo Let p and q be the vertices opposite to `edge_to_flip`, and let
+          // @todo Let p and q be the vertices opposite to `edge_to_flip`, and let
           //       r be the vertex of `edge_to_flip` that is the furthest away from
           //       the edge `pq`. In that case I think we should remove all the triangles
           //       so that the triangle pqr is in the mesh.
@@ -1786,7 +1779,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           (cc_faces.size()+boundary_hedges.size())/2 != 1)
       {
         //cc_faces does not define a topological disk
-        /// \todo Find to way to handle that case
+        // @todo Find to way to handle that case
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
         std::cout << "  WARNING: Cannot remove the component of degenerate faces: not a topological disk.\n";
 #endif
@@ -1932,7 +1925,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       CGAL_assertion(get(vpmap,source(side_one.front(), tmesh))==side_points.front());
       CGAL_assertion(get(vpmap,target(side_one.back(), tmesh))==side_points.back());
 
-      //\todo the reordering could lead to the apparition of null edges.
+      // @todo the reordering could lead to the apparition of null edges.
       std::sort(side_points.begin(), side_points.end());
 
       CGAL_assertion(std::unique(side_points.begin(), side_points.end())==side_points.end());
@@ -1950,7 +1943,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       CGAL_assertion(get(vpmap,source(side_two.front(), tmesh))==side_points.front());
       CGAL_assertion(get(vpmap,target(side_two.back(), tmesh))==side_points.back());
 
-      //\todo the reordering could lead to the apparition of null edges.
+      // @todo the reordering could lead to the apparition of null edges.
       std::sort(side_points.begin(), side_points.end());
 
       CGAL_assertion(std::unique(side_points.begin(), side_points.end())==side_points.end());
@@ -2136,7 +2129,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           if ( target(next(opposite(h_side1, tmesh), tmesh), tmesh) ==
                target(next(opposite(h_side2, tmesh), tmesh), tmesh) )
           {
-            CGAL_assertion(!"Forbidden simplification");
+            CGAL_error_msg("Forbidden simplification");
           }
 
           h_side2 = prev(h_side2, tmesh);
@@ -2624,7 +2617,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
     Emptyset_iterator
   > ::type                                                            Output_iterator;
 
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));
@@ -2993,7 +2986,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         vertex_descriptor v = source(h, tm);
         hole_points.push_back( get(vpmap, v) );
         border_vertices.push_back(v);
-        third_points.push_back(get(vpmap, target(next(opposite(h, tm), tm), tm))); // TODO fix me for mesh border edges
+        third_points.push_back(get(vpmap, target(next(opposite(h, tm), tm), tm))); // @todo fix me for mesh border edges
       }
       CGAL_assertion(hole_points.size() >= 3);
 
@@ -3195,7 +3188,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
     {
       typedef std::pair<face_descriptor, face_descriptor> Face_pair;
       std::vector<Face_pair> self_inter;
-      // TODO : possible optimization to reduce the range to check with the bbox
+      // @todo : possible optimization to reduce the range to check with the bbox
       // of the previous patches or something.
       self_intersections(tm, std::back_inserter(self_inter));
 

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Surface_Mesh_Generation
 
 \authors Laurent Rineau and Mariette Yvinec
@@ -11,7 +11,7 @@ namespace CGAL {
 \image html segmented_head.png
 \image latex segmented_head.png
 
-\section SurfaceMesher_section_intro Introduction 
+\section SurfaceMesher_section_intro Introduction
 
 This package provides a function template
 to compute a triangular mesh approximating a surface.
@@ -57,7 +57,7 @@ surface, and is within a small bounded distance
 The algorithm can also be used for non smooth surfaces
 but then there is no guarantee.
 
-\section SurfaceMesher_section_interface The Surface Mesh Generator Interface for Smooth Surfaces 
+\section SurfaceMesher_section_interface The Surface Mesh Generator Interface for Smooth Surfaces
 
 The meshing process is launched through a call to a function template.
 There are two overloaded versions of the meshing function
@@ -231,7 +231,7 @@ Surface mesh of an iso-contour extracted from a gray level 3D image
 
 \cgalExample{Surface_mesher/mesh_a_3d_gray_image.cpp}
 
-\section SurfaceMesher_section_criteria Meshing Criteria, Guarantees and Variations 
+\section SurfaceMesher_section_criteria Meshing Criteria, Guarantees and Variations
 
 \anchor SurfaceMesher_section_variations
 
@@ -278,7 +278,7 @@ with the size of the mesh expected by the user,
 and still have a guarantee that
 the output mesh forms a manifold surface.
 The function `make_surface_mesh()` has specialized versions
-for the following tag types: 
+for the following tag types:
 
 `Manifold_tag`: the output mesh is guaranteed to be a manifold
 surface without boundary.
@@ -291,10 +291,10 @@ guarantees nothing else.
 
 \section Surface_mesherOutput Output
 
-This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96} and to convert it to a `FaceGraph` (when it is manifold): 
+This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96} and to convert it to a `FaceGraph` (when it is manifold):
 
-- `output_surface_facets_to_off()` 
-- `output_surface_facets_to_polyhedron()` 
+- `output_surface_facets_to_off()`
+- `output_surface_facets_to_polyhedron()`
 - `facets_in_complex_2_to_triangle_mesh()`
 
 \section Surface_mesherUndocumented Undocumented Features Available in Demos
@@ -303,12 +303,12 @@ The Polyhedron demo has a feature that allows to remesh a polyhedral
 surface, using the 3D Surface Mesh Generator. That has been implemented as
 a special model of `SurfaceMeshTraits_3`, for polyhedra. That traits
 class is not yet documented because its interface and code have not yet
-been stabilized. 
+been stabilized.
 
 The Surface Mesh Generator demo allows to mesh not only gray level images,
 but also segmented images, when voxels are labelled with a domain
 index. Such images are for example the result of a segmentation of 3D
-medical images. 
+medical images.
 
 \section Surface_mesherDesign Design and Implementation History
 
@@ -322,6 +322,6 @@ described in \cgalCite{cgal:ry-gsddrm-06}.
 David Rey, Steve Oudot and Andreas Fabri have participated
 in the development of this package.
 
-*/ 
+*/
 } /* namespace CGAL */
 

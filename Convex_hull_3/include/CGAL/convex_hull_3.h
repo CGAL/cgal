@@ -37,6 +37,7 @@
 #include <memory>
 #include <list>
 #include <vector>
+#include <type_traits>
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
@@ -49,6 +50,9 @@
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/is_iterator.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -379,7 +383,7 @@ struct Projection_traits{
   typedef CGAL::Projection_traits_xy_3<K> Traits_xy_3;
   typedef CGAL::Projection_traits_yz_3<K> Traits_yz_3;
   typedef CGAL::Projection_traits_xz_3<K> Traits_xz_3;
-    
+
     Traits_xy_3 construct_traits_xy_3_object()const
     {return Traits_xy_3();}
     Traits_yz_3 construct_traits_yz_3_object()const
@@ -440,7 +444,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename PTraits::Traits_xy_3 Traits_xy_3;
   typedef typename PTraits::Traits_yz_3 Traits_yz_3;
   typedef typename PTraits::Traits_xz_3 Traits_xz_3;
-  
+
   PTraits ptraits(traits);
 
   std::list<Point_3> CH_2;
@@ -558,7 +562,7 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
    typedef typename std::list<Point>::iterator Outside_set_iterator;
    CGAL_ch_assertion(!outside_set.empty());
 
-   typename Traits::Plane_3 plane = 
+   typename Traits::Plane_3 plane =
        traits.construct_plane_3_object()(f->vertex(0)->point(),
                                          f->vertex(1)->point(),
                                          f->vertex(2)->point());
@@ -625,7 +629,7 @@ ch_quickhull_3_scan(TDS_2& tds,
   typedef typename TDS_2::Edge                            Edge;
   typedef typename TDS_2::Face_handle                     Face_handle;
   typedef typename TDS_2::Vertex_handle                   Vertex_handle;
-  typedef typename Traits::Point_3			  Point_3;
+  typedef typename Traits::Point_3                          Point_3;
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
   typedef std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge> Border_edges;
@@ -761,8 +765,8 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
                           InputIterator point3_it, Polyhedron_3& P,
                           const Traits& traits)
 {
-  typedef typename Traits::Point_3	  		  Point_3;
-  typedef typename Traits::Plane_3		      	  Plane_3;
+  typedef typename Traits::Point_3                            Point_3;
+  typedef typename Traits::Plane_3                                Plane_3;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
   typedef Triangulation_data_structure_2<
@@ -851,7 +855,7 @@ void
 convex_hull_3(InputIterator first, InputIterator beyond,
               Object& ch_object, const Traits& traits)
 {
-  typedef typename Traits::Point_3	  		  Point_3;
+  typedef typename Traits::Point_3                            Point_3;
   typedef std::list<Point_3>                              Point_3_list;
   typedef typename Point_3_list::iterator                 P3_iterator;
   typedef std::pair<P3_iterator,P3_iterator>              P3_iterator_pair;
@@ -1036,13 +1040,39 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
-                   Polyhedron_3& polyhedron)
+                   Polyhedron_3& polyhedron,
+                   typename std::enable_if<
+                     CGAL::is_iterator<InputIterator>::value
+                   >::type* =0) //workaround to avoid ambiguity with next overload.
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3, Polyhedron_3>::type Traits;
    convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
+
+template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm,
+                   const NamedParameters& np)
+{
+  typedef typename GetVertexPointMap<VertexListGraph, NamedParameters>::const_type Vpmap;
+  typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
+  Vpmap vpm = CGAL::parameters::choose_parameter(
+        CGAL::parameters::get_parameter(np, internal_np::vertex_point),
+        get_const_property_map(boost::vertex_point, g));
+
+  Vpmap_fct v2p(vpm);
+  convex_hull_3(boost::make_transform_iterator(vertices(g).begin(), v2p),
+                boost::make_transform_iterator(vertices(g).end(), v2p), pm);
+}
+
+template <class VertexListGraph, class PolygonMesh>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm)
+{
+  convex_hull_3(g,pm,CGAL::parameters::all_default());
+}
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator

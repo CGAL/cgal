@@ -9,7 +9,7 @@
 
 #include <QMainWindow>
 using namespace CGAL::Three;
-class Polyhedron_demo_camera_positions_plugin : 
+class Polyhedron_demo_camera_positions_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {

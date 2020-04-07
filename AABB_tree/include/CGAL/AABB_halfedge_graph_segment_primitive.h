@@ -47,7 +47,7 @@ namespace CGAL {
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
  *
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
- *   as key type and a \cgal Kernel `Point_3` as value type. 
+ *   as key type and a \cgal Kernel `Point_3` as value type.
  * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`.
  *                         The default is `typename boost::property_map< HalfedgeGraph,vertex_point_t>::%const_type`.
  * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.

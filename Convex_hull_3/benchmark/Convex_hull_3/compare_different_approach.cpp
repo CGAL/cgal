@@ -36,7 +36,7 @@ void load_from_file(const char* path,std::vector<Point_3>& points)
   }
   while (--nbpt>0);
 }
-  
+
 int main(int argc,char** argv)
 {
   std::vector<Point_3> points;
@@ -91,6 +91,6 @@ int main(int argc,char** argv)
   CGAL::convex_hull_incremental_3( ek_points.begin(), ek_points.end(), poly2, false);
   time.stop();
   std::cout << "incremental EPEC " << time.time() <<" "<< poly2.size_of_vertices() << std::endl;
-  
+
   return 0;
 }

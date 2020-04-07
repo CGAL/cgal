@@ -48,7 +48,7 @@ int main(int argc, char*argv[])
   std::cerr << (100. * std::distance(first_to_remove, points.end()) / (double)(points.size()))
             << "% of the points are considered outliers when using a distance threshold of "
             << 2. * average_spacing << std::endl;
-  
+
 
   ///////////////////
   // SECOND OPTION //

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Linear_and_Quadratic_Programming_Solver
 \anchor QPsolver
 \cgalAutoToc
@@ -20,24 +20,24 @@ namespace CGAL {
 \newcommand{\qplambda}{\mathbf{\lambda}}
 \f$
 
-\section secQPdef Which Programs can be Solved? 
+\section secQPdef Which Programs can be Solved?
 
-This package lets you solve <I>convex quadratic programs</I> of the 
+This package lets you solve <I>convex quadratic programs</I> of the
 general form
 \f{eqnarray*}{
-\mbox{(QP)}& \mbox{minimize} 
+\mbox{(QP)}& \mbox{minimize}
 & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
 &\mbox{subject to} & A\qpx\qprel \qpb, \\
 & & \qpl \leq \qpx \leq \qpu
 \f}
 in \f$ n\f$ real variables \f$ \qpx=(x_0,\ldots,x_{n-1})\f$.
 
-Here, 
+Here,
 <UL>
-<LI>\f$ A\f$ is an \f$ m\times n\f$ matrix (the constraint matrix), 
+<LI>\f$ A\f$ is an \f$ m\times n\f$ matrix (the constraint matrix),
 <LI>\f$ \qpb\f$ is an \f$ m\f$-dimensional vector (the right-hand side),
-<LI>\f$ \qprel\f$ is an \f$ m\f$-dimensional vector of relations 
-from \f$ \{\leq, =, \geq\}\f$, 
+<LI>\f$ \qprel\f$ is an \f$ m\f$-dimensional vector of relations
+from \f$ \{\leq, =, \geq\}\f$,
 
 <LI>\f$ \qpl\f$ is an \f$ n\f$-dimensional vector of lower
 bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$ j\f$
@@ -48,7 +48,7 @@ bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$
 quadratic objective function),
 
 <LI>\f$ \qpc\f$ is an \f$ n\f$-dimensional vector (the linear objective
-function), and 
+function), and
 <LI>\f$ c_0\f$ is a constant.
 
 </UL>
@@ -58,11 +58,11 @@ Section \ref secQProbustness on robustness briefly discusses
 the case of \f$ D\f$ not being positive-semidefinite and therefore not
 defining a convex program.
 
-<I>Solving</I> the program means to find an \f$ n\f$-vector \f$ \qpx^*\f$ 
-such that \f$ A\qpx^*\qprel \qpb, 
+<I>Solving</I> the program means to find an \f$ n\f$-vector \f$ \qpx^*\f$
+such that \f$ A\qpx^*\qprel \qpb,
 \qpl\leq \qpx^*\leq \qpu\f$ (a <I>feasible solution</I>),
-and with the smallest objective function value 
-\f$ {\qpx^*}^TD\qpx^*+\qpc^T\qpx^*+c_0\f$ 
+and with the smallest objective function value
+\f$ {\qpx^*}^TD\qpx^*+\qpc^T\qpx^*+c_0\f$
 among all feasible solutions.
 
 There might be no feasible solution at all, in which
@@ -73,10 +73,10 @@ which case the program is <I>unbounded</I>.
 \section QP_solverDesign Design, Efficiency, and Robustness
 
 The design of the package is quite simple. The linear
-or quadratic program to be solved is supplied in form of an object 
-of a class that is a model of the concept `QuadraticProgram` 
-(or some specialized other concepts, e.g. for linear programs). \cgal provides a number of easy-to-use and flexible models, see Section 
-\ref secQPfirst below. The input data may be of any given number 
+or quadratic program to be solved is supplied in form of an object
+of a class that is a model of the concept `QuadraticProgram`
+(or some specialized other concepts, e.g. for linear programs). \cgal provides a number of easy-to-use and flexible models, see Section
+\ref secQPfirst below. The input data may be of any given number
 type, such as `double`, `int`, or any exact type.
 
 Then the program is solved using the function
@@ -89,56 +89,56 @@ floating-point-filtering are chosen by default for certain programs
 changed; see Section \ref secQPcustomization for details).
 
 The output of this is an object of `Quadratic_program_solution<ET>`
-which you can in turn query for various things: what is the status of 
-the program (optimally solved, infeasible, or unbounded?), what are 
+which you can in turn query for various things: what is the status of
+the program (optimally solved, infeasible, or unbounded?), what are
 the values of the optimal solution \f$ \qpx^*\f$, what is the associated
 objective function value, etc.
 
 You can in particular get <I>certificates</I> for the solution. In short,
-these are proofs that the output is correct. Thus, if you don't believe 
-in the solution (whether it says "optimally solved", "infeasible", 
+these are proofs that the output is correct. Thus, if you don't believe
+in the solution (whether it says "optimally solved", "infeasible",
 or "unbounded"), you can verify it yourself by using the certificates.
 Section \ref secQPcertificates says more about this.
 
 \subsection QP_solverEfficiency Efficiency
 
 The concept `QuadraticProgram` (as well as the
-other specialized ones) require a <I>dense interface</I> 
-of the program, in terms of <I>random-access iterators</I> over 
+other specialized ones) require a <I>dense interface</I>
+of the program, in terms of <I>random-access iterators</I> over
 the matrices and vectors of (QP). Zero entries therefore play no
 special role and are treated like all other entries by the
 interface.
 
 This has mainly historical
-reasons: the original motivation behind this package was 
-low-dimensional geometric optimization where 
-a dense representation is appropriate and efficient. In fact, 
+reasons: the original motivation behind this package was
+low-dimensional geometric optimization where
+a dense representation is appropriate and efficient. In fact,
 the \cgal packages `Min_annulus_d<Traits>` and
-`Polytope_distance_d<Traits>` internally use the linear 
+`Polytope_distance_d<Traits>` internally use the linear
 and quadratic programming solver.
 
 As a user, however, you don't necessarily have to provide a dense
 <I>representation</I> of your program. You do not pass vectors or
-matrices to the solution functions, but rather specify the vectors 
-and matrices through iterators. The iterator abstraction 
-easily allows to build models that convert a sparse representation 
-into a dense interface. The predefined models `Quadratic_program<NT>` 
-and `Quadratic_program_from_mps<NT>` do exactly this; in using them, 
+matrices to the solution functions, but rather specify the vectors
+and matrices through iterators. The iterator abstraction
+easily allows to build models that convert a sparse representation
+into a dense interface. The predefined models `Quadratic_program<NT>`
+and `Quadratic_program_from_mps<NT>` do exactly this; in using them,
 you can forget about the dense interface.
 
-Nevertheless, if you care about efficiency, you cannot completely 
+Nevertheless, if you care about efficiency, you cannot completely
 ignore the issue. If
 you think about a quadratic program in \f$ n\f$ variables and \f$ m\f$
 constraints, its dense interface has \f$ \Theta(n^2 + mn)\f$ entries,
-even if actually very few of them are nonzero. This has consequences 
+even if actually very few of them are nonzero. This has consequences
 for the complexity of the internal computations. In fact, a single
-iteration of the solution process has complexity at least 
-\f$ \Omega(mn)\f$, since usually, all entries of the matrix \f$ A\f$ are accessed. 
+iteration of the solution process has complexity at least
+\f$ \Omega(mn)\f$, since usually, all entries of the matrix \f$ A\f$ are accessed.
 This implies that problems where \f$ \min(n,m)\f$ is large cannot be solved
 efficiently, even if the number of nonzero entries in the problem
 description is very small.
 
-We can actually be quite precise about performance, in terms of the 
+We can actually be quite precise about performance, in terms of the
 following parameters.
 
 <DL>
@@ -148,9 +148,9 @@ following parameters.
 <DT>\f$r\f$</DT><DD>the rank of the quadratic objective function matrix \f$D\f$.</DD>
 </DL>
 
-The time required to solve the problems is in most cases linear in 
+The time required to solve the problems is in most cases linear in
 \f$ \max(n,m)\f$, but with a factor heavily depending on \f$ \min(n,e)+r\f$.
-Therefore, the solver will be efficient only if \f$ \min(n,e)+r\f$ is 
+Therefore, the solver will be efficient only if \f$ \min(n,e)+r\f$ is
 small.
 
 Here are the scenarios in which this applies:
@@ -164,25 +164,25 @@ possibly a large number of variables,
 </UL>
 
 How small is small? If \f$ \min(n,e)+r\f$ is up to \f$ 10\f$, the solver will
-probably be very fast, even if \f$ \max(n,m)\f$ goes into the millions. 
-If \f$ \min(n,m)+r\f$ is up to a few hundreds, you may still get a solution 
+probably be very fast, even if \f$ \max(n,m)\f$ goes into the millions.
+If \f$ \min(n,m)+r\f$ is up to a few hundreds, you may still get a solution
 within reasonable time, depending on the problem characteristics.
 
 If you have a problem where both \f$ n\f$ and \f$ e\f$ are well above
 \f$ 1,000\f$, say, then chances are high that \cgal cannot solve it
 within reasonable time.
 
-\subsection secQProbustness Robustness 
+\subsection secQProbustness Robustness
 
 Given that you use an <I>exact number type</I> in the function
-`solve_quadratic_program` (or in the other, specialized 
+`solve_quadratic_program` (or in the other, specialized
 solution functions), the solver
 will give you <I>exact rational output</I>, for <I>every</I>
 convex quadratic program. It may fail to compute a solution only if
 <OL>
-<LI>The quadratic program is too large (see the previous subsection 
+<LI>The quadratic program is too large (see the previous subsection
 on efficiency).
-<LI>The quadratic objective function matrix \f$ D\f$ is not 
+<LI>The quadratic objective function matrix \f$ D\f$ is not
 positive-semidefinite (see the discussion below).
 <LI>The floating-point filter used by default for certain programs
 and input type `double` fails due to a <I>double</I> exponent
@@ -202,41 +202,41 @@ The second item merits special attention. First, you may ask why the
 solver does not check that \f$ D\f$ is positive semidefinite. But recall
 that \f$ D\f$ is given by a dense interface, and it would therefore cost
 \f$ \Omega(n^2)\f$ time already to access all entries of the matrix \f$ D\f$.
-The solver itself gets away with accessing much less entries of 
+The solver itself gets away with accessing much less entries of
 \f$ D\f$ in the relevant case where \f$ r\f$, the rank of \f$ D\f$, is small.
 
 Nevertheless, the solver contains some runtime checks
 that may detect that the matrix \f$ D\f$ is not positive-semidefinite. But
 you may as well get an "optimal solution" in this case, even with
-valid certificates. The validity of these certificates, however, 
+valid certificates. The validity of these certificates, however,
 depends on \f$ D\f$ being positive-semidefinite; if this is not the case, the
 certificates only prove that the solver has found a "critical point" of
 your (nonconvex) program, but there are no guarantees whatsoever that
 this is a global optimum, or even a local optimum.
 
-\section secQPfirst How to Enter and Solve a Program 
+\section secQPfirst How to Enter and Solve a Program
 
-In this section, we describe how you can supply and solve your problem, 
-using the \cgal program models and solution functions. 
-There are two essentially different ways to proceed, 
-and we will discuss them in turn. In short, 
+In this section, we describe how you can supply and solve your problem,
+using the \cgal program models and solution functions.
+There are two essentially different ways to proceed,
+and we will discuss them in turn. In short,
 <UL>
-<LI>you can let the model take care of your program data; you start 
+<LI>you can let the model take care of your program data; you start
 from an empty program and then simply insert the non-zero entries, or
-read them from a file (more generally, any input stream) in 
-`MPSFormat`. You can also change program entries at any time. 
+read them from a file (more generally, any input stream) in
+`MPSFormat`. You can also change program entries at any time.
 This is usually the most convenient way if you don't want to care
 about representation issues;
-<LI>you can maintain the data yourself and only supply suitable 
-random-access iterators over the matrices and vectors. This is 
+<LI>you can maintain the data yourself and only supply suitable
+random-access iterators over the matrices and vectors. This is
 advantageous if you already have the data (explicitly, or implicitly
-encoded, for example through iterators) and want to avoid copying 
-of data. Typically, this happens if you write generic iterator-based 
-code. 
+encoded, for example through iterators) and want to avoid copying
+of data. Typically, this happens if you write generic iterator-based
+code.
 </UL>
 
 Our running example is the following quadratic program in two variables:
-\f[ 
+\f[
 \begin{array}{lrcl}
 \mbox{minimize} & x^2 + 4(y-4)^2 &(=& x^2 + 4y^2 - 32y + 64) \\
 \mbox{subject to} & x + y &\leq& 7 \\
@@ -250,11 +250,11 @@ Our running example is the following quadratic program in two variables:
 \cgalFigureRef{figQPfirst_qp} shows a picture. It
 depicts the five inequalities of the program, along with the
 <I>feasible region</I> (green), the set of points that satisfy all the
-five constraints. The dashed elliptic curves represent <I>contour lines</I> 
+five constraints. The dashed elliptic curves represent <I>contour lines</I>
 of the objective function, i.e., along each dashed curve, the objective
 function value is constant.
 
-The global minimum of the objective function is attained at 
+The global minimum of the objective function is attained at
 the point \f$ (0,4)\f$, and the minimum within the feasible region appears
 at the point \f$ (2,3)\f$ marked with a black dot. The value of the objective
 function at this optimal solution is \f$ 2^2 + 4(3-4)^2 = 8\f$.
@@ -265,27 +265,27 @@ A quadratic program in two variables
 
 \subsection QP_solverConstructingaProgramfromData Constructing a Program from Data
 
-Here is how this quadratic program can be solved in \cgal 
+Here is how this quadratic program can be solved in \cgal
 according to the first way (letting the model take care of
-the data). We use `int` as the input type, and 
+the data). We use `int` as the input type, and
 `MP_Float` or `Gmpz` (which is faster and preferable if
 <TT>GMP</TT> is installed) as the exact type for the
 internal computations. In larger examples, it pays off to use
-`double` as input type in order to profit from the 
+`double` as input type in order to profit from the
 automatic floating-point filtering that takes place then.
 
-For examples 
-how to work with the input type `double`, we refer to 
+For examples
+how to work with the input type `double`, we refer to
 Sections \ref secQPiterators and \ref secQPcustomization.
 
-<B>Note:</B> For the quadratic objective function, the entries 
-of the matrix \f$ 2D\f$ have to be provided, rather than \f$ D\f$. Although 
-this is common to almost all quadratic programming solvers, it 
+<B>Note:</B> For the quadratic objective function, the entries
+of the matrix \f$ 2D\f$ have to be provided, rather than \f$ D\f$. Although
+this is common to almost all quadratic programming solvers, it
 can easily be overlooked by a novice.
 
 \cgalExample{QP_solver/first_qp.cpp}
 
-Asuming that <TT>GMP</TT> is installed, the 
+Asuming that <TT>GMP</TT> is installed, the
 output of the of the above program is:
 \verbatim
 status: OPTIMAL
@@ -294,7 +294,7 @@ variable values:
 0: 2/1
 1: 3/1
 \endverbatim
-If <TT>GMP</TT> is not installed, the values are of course the same, 
+If <TT>GMP</TT> is not installed, the values are of course the same,
 but numerator and denominator might have a common divisor that is not
 factored out.
 
@@ -312,10 +312,10 @@ as before.
 \subsection QP_solverConstructingaProgramfromIterators Constructing a Program from Iterators
 
 The following program again solves our running example from above,
-with the same output, but this time with iterators over data stored 
-in suitable containers. You can see that we also store zero 
+with the same output, but this time with iterators over data stored
+in suitable containers. You can see that we also store zero
 entries here (in \f$ D\f$). For this toy problem, the previous two
-approaches (program from data/stream) are clearly preferable, 
+approaches (program from data/stream) are clearly preferable,
 but Section \ref secQPiterators shows an
 example where it makes sense to use the iterator-based approach.
 
@@ -333,22 +333,22 @@ the vector `fl` for the finiteness of the lower bounds.
 \ref secQPmakers we show how the explicit construction of
 this type can be circumvented.
 
-\section secQPlp Solving Linear and Nonnegative Programs 
+\section secQPlp Solving Linear and Nonnegative Programs
 
-Let us reconsider the general form of (QP) from Section \ref secQPdef 
+Let us reconsider the general form of (QP) from Section \ref secQPdef
 above. If \f$ D=0\f$, the quadratic program is in fact a <I>linear program</I>,
-and in the case that the bound vectors \f$ l\f$ is the zero vector and all 
-entries of \f$ u\f$ are \f$ \infty\f$, the program is said to be <I>nonnegative</I>. 
+and in the case that the bound vectors \f$ l\f$ is the zero vector and all
+entries of \f$ u\f$ are \f$ \infty\f$, the program is said to be <I>nonnegative</I>.
 The package offers dedicated models and solution methods for these special
 cases.
 
-From an interface perspective, this is just syntactic sugar: in the 
-model `Quadratic_program<NT>`, we can easily set the default bounds 
+From an interface perspective, this is just syntactic sugar: in the
+model `Quadratic_program<NT>`, we can easily set the default bounds
 so that a nonnegative program results, and a linear program is
 obtained by simply not inserting any \f$ D\f$-entries. Even in the
-iterator-based approach (see 
+iterator-based approach (see
 \ref QP_solver/first_qp_from_iterators.cpp), linear
-and nonnegative programs can easily be defined through suitable 
+and nonnegative programs can easily be defined through suitable
 `Const_oneset_iterator<T>`-style iterators.
 
 The main reason for having dedicated solution methods for linear and
@@ -356,36 +356,36 @@ nonnegative programs is efficiency: if the solver knows that the program
 is linear, it can save some computations compared to the general solver
 that unknowingly has to fiddle around with a zero \f$ D\f$-matrix. As in
 Section \ref secQProbustness above, we can argue that checking in
-advance whether \f$ D=0\f$ is not an option in general, since this may require 
+advance whether \f$ D=0\f$ is not an option in general, since this may require
 \f$ \Omega(n^2)\f$ time on the dense interface.
 
 Similarly, if the solver knows that the program is nonnegative, it
-will be more efficient than under the general bounds 
+will be more efficient than under the general bounds
 \f$ \qpl\leq \qpx \leq \qpu\f$.
 You can argue that nonnegativity <I>is</I> something that could easily
 be checked in time \f$ O(n)\f$ beforehand, but then again nonnegative
 programs are so frequent that the syntactic sugar aspect becomes
-somewhat important. After all, we can save four iterators in 
-specifying a nonnegative linear program in terms of the concept 
-`NonnegativeLinearProgram` rather than 
+somewhat important. After all, we can save four iterators in
+specifying a nonnegative linear program in terms of the concept
+`NonnegativeLinearProgram` rather than
 `LinearProgram`.
 
 Often, there are no bounds at all for the variables, i.e., all entries
-of \f$ \qpl\f$ are \f$ -\infty\f$, and all entries of \f$ \qpu\f$ 
+of \f$ \qpl\f$ are \f$ -\infty\f$, and all entries of \f$ \qpu\f$
 are \f$ \infty\f$ (this is
 called a <I>free</I> program). There is no dedicated solution method
 for this case (a free quadratic or linear program is treated like a
 general quadratic or linear program), but all predefined models make
-it easy to specify all sorts of default bounds, covering the free 
+it easy to specify all sorts of default bounds, covering the free
 case.
 
 \subsection QP_solverTheLinearProgrammingSolver The Linear Programming Solver
 
-Let's go back to our first quadratic program from above and change it 
+Let's go back to our first quadratic program from above and change it
 into a linear program by simply removing the quadratic part of the
 objective function:
 
-\f[ 
+\f[
 \begin{array}{lrcl}
 \mbox{minimize} & - 32y + 64 \\
 \mbox{subject to} & x + y &\leq& 7 \\
@@ -434,7 +434,7 @@ If we go back to our first quadratic program and
 remove the constraint \f$ y\leq 4\f$, we arrive at a nonnegative quadratic
 program:
 
-\f[ 
+\f[
 \begin{array}{lrcl}
 \mbox{minimize} & x^2 + 4(y-4)^2 &(=& x^2 + 4y^2 - 32y + 64) \\
 \mbox{subject to} & x + y &\leq& 7 \\
@@ -443,9 +443,9 @@ program:
 \end{array}
 \f]
 
-\cgalFigureRef{figQPfirst_nonnegative_qp} contains 
-the illustration; since the constraint \f$ y\leq 4\f$ was 
-redundant, the feasible region and the optimal solution do 
+\cgalFigureRef{figQPfirst_nonnegative_qp} contains
+the illustration; since the constraint \f$ y\leq 4\f$ was
+redundant, the feasible region and the optimal solution do
 not change.
 
 \cgalFigureBegin{figQPfirst_nonnegative_qp,first_nonnegative_qp.png}
@@ -477,7 +477,7 @@ the same time we remove the constant objective function term to get
 a "minimal" input and a "shortest" program; the optimal value is
 \f$ -32(11/3)=-352/3\f$.
 
-\f[ 
+\f[
 \begin{array}{lrcl}
 \mbox{minimize} & - 32y \\
 \mbox{subject to} & x + y &\leq& 7 \\
@@ -503,11 +503,11 @@ variable values:
 1: 11/3
 \endverbatim
 
-\section secQPiterators Working from Iterators 
+\section secQPiterators Working from Iterators
 
 Here we present a somewhat more advanced example that emphasizes the
-usefulness of solving linear and quadratic programs from iterators. 
-Let's look at a situation in which a linear program is given implicitly, 
+usefulness of solving linear and quadratic programs from iterators.
+Let's look at a situation in which a linear program is given implicitly,
 and access to it is gained through properly constructed iterators.
 
 The problem we are going to solve is the following: given points
@@ -515,24 +515,24 @@ The problem we are going to solve is the following: given points
 \f$ p\f$ in the convex hull of \f$ \{p_1,\ldots,p_{n}\}\f$? In formulas, this is
 the case if and only if there are real coefficients
 \f$ \lambda_1,\ldots,\lambda_n\f$ such that \f$ p\f$ is a convex combination of
-\f$ p_1,\ldots,p_n\f$: 
+\f$ p_1,\ldots,p_n\f$:
 \f$
 p = \ccSum{j=1}{n}{~\lambda_j~p_j}, \quad \ccSum{j=1}{n}{~\lambda_j} = 1,
 \quad \lambda_j \geq 0 \mbox{~for all $j$.}
 \f$
 
 
-The problem of testing the existence of such \f$ \lambda_j\f$ can 
+The problem of testing the existence of such \f$ \lambda_j\f$ can
 be expressed as a linear program. It becomes particularly easy
 when we use the homogeneous representations of the points: if
 \f$ q_1,\ldots,q_n,q\in\mathbb{R}^{d+1}\f$ are homogeneous coordinates for
-\f$ p_1,\ldots,p_n,p\f$ with positive homogenizing coordinates 
+\f$ p_1,\ldots,p_n,p\f$ with positive homogenizing coordinates
 \f$ h_1,\ldots,h_n,h\f$, we have
 \f[q_j = h_j \cdot (p_j \mid 1) \mbox{~for all $j$, and~} q = h \cdot
 (p\mid 1).\f] Now, nonnegative \f$\lambda_1,\ldots,\lambda_n\f$ are
 suitable coefficients for a convex combination if and only if
 \f[\ccSum{j=1}{n}{~ \lambda_j(p_j \mid 1)} = (p\mid 1), \f]
-equivalently, if there are \f$\mu_1,\ldots,\mu_n\f$ 
+equivalently, if there are \f$\mu_1,\ldots,\mu_n\f$
 (with \f$\mu_j = \lambda_j \cdot h/{h_j}\f$ for all \f$j\f$) such that
 \f[\ccSum{j=1}{n}{~\mu_j~q_j} = q, \quad \mu_j \geq 0\mbox{~for all $j$}.\f]
 
@@ -540,9 +540,9 @@ The linear program now tests for the existence of nonnegative \f$ \mu_j\f$
 that satisfy the latter equation. Below is the code; it defines a
 function that solves the linear program, given \f$ p\f$ and
 \f$ p_1,\ldots,p_n\f$ (through an iterator range). The only (mild)
-trickery involved is the construction of the nested iterator 
+trickery involved is the construction of the nested iterator
 through a fixed column of the constraint matrix \f$ A\f$. We get this
-from transforming the iterator through the points using a functor 
+from transforming the iterator through the points using a functor
 that maps a point to an iterator through its homogeneous coordinates.
 
 \cgalExample{QP_solver/solve_convex_hull_containment_lp.h}
@@ -551,25 +551,25 @@ To see this in action, let us call it with \f$ p_1=(0,0), p_2=(10,0),
 p_3=(0,10)\f$ fixed (they define a triangle) and all integral points \f$ p\f$
 in \f$ [0,10]^2\f$. We know that \f$ p\f$ is in the convex hull of
 \f$ \{p_1,p_2,p_3\}\f$ if and only if its two coordinates sum up to \f$ 10\f$ at
-most. As the exact type, we use `MP_Float` or `Gmpzf` 
+most. As the exact type, we use `MP_Float` or `Gmpzf`
 (which is faster and preferable if <TT>GMP</TT> is installed).
 
 \cgalExample{QP_solver/convex_hull_containment.cpp}
 
-\subsection secQPmakers Using Makers 
+\subsection secQPmakers Using Makers
 
-You already noticed in the previous example that the actual 
-template arguments for 
-`Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
-can be quite elaborate, and this only gets worse if you plug more 
-iterators into each other. In general, you want to construct a 
+You already noticed in the previous example that the actual
+template arguments for
+`Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>`
+can be quite elaborate, and this only gets worse if you plug more
+iterators into each other. In general, you want to construct a
 program from given expressions for the iterators, but the
-types of these expressions are probably very complicated and 
+types of these expressions are probably very complicated and
 difficult to look up.
 
 You can avoid the explicit construction of the type
-`Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
-if you only need an expression of it, e.g. to pass it directly 
+`Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>`
+if you only need an expression of it, e.g. to pass it directly
 as an argument to the solving function. Here is an alternative
 version of `QP_solver/solve_convex_hull_containment_lp.h`
 that shows how this works. In effect, you get shorter and more
@@ -591,9 +591,9 @@ The following example shows how we can access the important variables,
 using the iterators `basic_variable_indices_begin()` and
 `basic_variable_indices_end()`.
 
-We generate a set of points that form a 4-gon in \f$ [0,4]^2\f$, and then find 
-the ones that contribute to the convex combinations of all 25 lattice 
-points in \f$ [0,4]^2\f$. If the lattice point in question is not in the 4-gon, 
+We generate a set of points that form a 4-gon in \f$ [0,4]^2\f$, and then find
+the ones that contribute to the convex combinations of all 25 lattice
+points in \f$ [0,4]^2\f$. If the lattice point in question is not in the 4-gon,
 we simply output this fact.
 
 \cgalExample{QP_solver/important_variables.cpp}
@@ -603,13 +603,13 @@ convex combination, even through there are lattice points that lie
 in the convex hull of less than three of the points. This shows that
 the set of basic variables that we access in the example does not
 necessarily coincide with the set of important variables as defined
-above. In fact, it is only guaranteed that a non-basic variable 
+above. In fact, it is only guaranteed that a non-basic variable
 attains one of its bounds, but there might be basic variables that
 also have this property. In linear and quadratic programming terms,
 such a situation is called a <I>degeneracy</I>.
 
-There is also the concept of an important constraint: this is 
-typically a constraint in the system \f$ A\qpx\qprel\qpb\f$ 
+There is also the concept of an important constraint: this is
+typically a constraint in the system \f$ A\qpx\qprel\qpb\f$
 that is satisfied with equality at \f$ \qpx^*\f$. Program
 \ref QP_solver/first_qp_basic_constraints.cpp
 shows how these can be accessed, using the iterators
@@ -618,11 +618,11 @@ shows how these can be accessed, using the iterators
 
 Again, we have a disagreement
 between "basic" and "important": it is guaranteed that all
-basic constraints are satisfied with equality at \f$ \qpx^*\f$, but there 
+basic constraints are satisfied with equality at \f$ \qpx^*\f$, but there
 might be non-basic constraints that are satisfied with equality
 as well.
 
-\section secQPcertificates Solution Certificates 
+\section secQPcertificates Solution Certificates
 
 Suppose the solver tells you that the problem you have entered is
 infeasible. Why should you believe this? Similarly, you can
@@ -630,11 +630,11 @@ quite easily verify that a claimed optimal solution is feasible,
 but why is there no better one?
 
 Certificates are proofs that the solver can give you in order
-to convince you that what it claims is indeed true. The archetype 
+to convince you that what it claims is indeed true. The archetype
 of such a proof is <I>Farkas Lemma</I> \cgalCite{cgal:mg-uulp-06}.
 
 <B>Farkas Lemma:</B> <I>Either</I> the inequality system
-\f[ 
+\f[
 \begin{array}{rcl}
 A \qpx & \leq & \qpb \\
 \qpx & \geq & 0
@@ -642,10 +642,10 @@ A \qpx & \leq & \qpb \\
 \f]
 has a solution \f$ \qpx^*\f$, <I>or</I> there exists a vector \f$ \qpy\f$ such
 that
-\f[ 
+\f[
 \begin{array}{rcl}
-\qpy &\geq& 0\\ 
-\qpy^TA &\geq& 0\\ 
+\qpy &\geq& 0\\
+\qpy^TA &\geq& 0\\
 \qpy^T\qpb & < & 0,
 \end{array}
 \f]
@@ -654,7 +654,7 @@ but not both.
 Thus, if someone wants to convince you that the first system in
 the Farkas Lemma is infeasible, that person can simply give you
 a vector \f$ \qpy\f$ that solves the second system. Since you can easily
-verify yourself that the \f$ \qpy\f$ you got satisfies this second system, 
+verify yourself that the \f$ \qpy\f$ you got satisfies this second system,
 you now have a certificate for the infeasibility of the first system,
 assuming that you believe in Farkas Lemma.
 
@@ -672,73 +672,73 @@ that you can see in action in the programs
 \ref QP_solver/unboundedness_certificate.cpp.
 The underlying variants of Farkas Lemma are somewhat more
 complicated, due to the mixed relations in \f$ \qprel\f$ and the general
-bounds. The certificate section of `Quadratic_program_solution<ET>` 
+bounds. The certificate section of `Quadratic_program_solution<ET>`
 gives the full picture and mathematically proves the correctness
 of the certificates.
 
-\section secQPcustomization Customizing the Solver 
+\section secQPcustomization Customizing the Solver
 
 Sometimes it is necessary to alter the default behavior of the solver.
 This can be done by passing a suitably prepared object of the class
-`Quadratic_program_options` to the solution functions. Most options 
-concern "soft" issues like verbosity, but there are two notable case 
+`Quadratic_program_options` to the solution functions. Most options
+concern "soft" issues like verbosity, but there are two notable case
 where it is of critical importance to be able to change the defaults.
 
-\subsection secQPcustomizationfiltering Exponent Overflow in Double Using Floating-Point Filters 
+\subsection secQPcustomizationfiltering Exponent Overflow in Double Using Floating-Point Filters
 
 The filtered version of the solver that is used for some problems
 by default on input
 type `double` internally constructs double-approximations of exact
 multiprecision values. If these exact values are extremely large, this
 may lead to <I>infinite</I> `double` values and incorrect results.
-In debug mode, the solver will notice this through a certificate 
+In debug mode, the solver will notice this through a certificate
 cross-check in the end (or even earlier). In this case, it is advisable
 to explicitly switch to a non-filtered <I>pricing strategy</I>, see
 \link CGAL::Quadratic_program_pricing_strategy `Quadratic_program_pricing_strategy`\endlink.
 
-<B>Hint:</B> 
+<B>Hint:</B>
 If you have a program where the number of variables \f$ n\f$ and the number of
-constraints \f$ m\f$ have the same order of 
+constraints \f$ m\f$ have the same order of
 magnitude, the filtering will usually have
-no dramatic effect on the performance, so in that case you might as well 
-switch to `QP_PARTIAL_DANTZIG` 
-to be safe from the issue described here (see 
-\ref QP_solver/cycling.cpp 
+no dramatic effect on the performance, so in that case you might as well
+switch to `QP_PARTIAL_DANTZIG`
+to be safe from the issue described here (see
+\ref QP_solver/cycling.cpp
 for an example that shows how to change the pricing strategy).
 
-\subsection secQPcustomizationcycling The Solver Internally Cycles 
+\subsection secQPcustomizationcycling The Solver Internally Cycles
 
-Consider the following program. It reads a nonnegative linear program from 
+Consider the following program. It reads a nonnegative linear program from
 the file <TT>cycling.mps</TT> (which is in the example directory as well),
 and then solves it in verbose mode, using <I>Bland's rule</I>, see
 \link CGAL::Quadratic_program_pricing_strategy `Quadratic_program_pricing_strategy`\endlink.
 \cgalExample{QP_solver/cycling.cpp}
 
-If you comment the line 
+If you comment the line
 
 \verbatim
 options.set_pricing_strategy(CGAL::QP_BLAND); // Bland's rule
 \endverbatim
 
 you will see that the solver cycles: the verbose mode outputs the same
-sequence of six iterations over and over again. By switching to 
-`QP_BLAND`, the solution process typically slows down a bit 
+sequence of six iterations over and over again. By switching to
+`QP_BLAND`, the solution process typically slows down a bit
 (it may also speed up in some cases), but now it is guaranteed that
 no cycling occurs.
 
-In general, the verbose mode can be of use when you are not sure whether 
+In general, the verbose mode can be of use when you are not sure whether
 the solver "has died", or whether it simply takes very long to solve
 your problem. We refer to the class `Quadratic_program_options`
 for further details.
 
-\section secQPbenchmark Some Benchmarks for Convex Hull Containment 
+\section secQPbenchmark Some Benchmarks for Convex Hull Containment
 
 Here we want to show what you can expect from the solver's performance
-in a specific application; we don't know whether this application is 
-typical in your case, and we make no claims whatsoever about the 
+in a specific application; we don't know whether this application is
+typical in your case, and we make no claims whatsoever about the
 performance in other applications.
 
-Still, the example shows that the performance can be dramatically 
+Still, the example shows that the performance can be dramatically
 affected by switching between pricing strategies, and we give some
 hints on how to achieve good performance in general.
 
@@ -765,7 +765,7 @@ If you compile with the macros <TT>NDEBUG</TT> or
 performance!!), you will see runtimes that qualitatively look as
 follows (on your machine, the actual runtimes will roughly be some
 fixed multiples of the numbers in the table below, and they might
-vary with the random choices). The default choice of the pricing 
+vary with the random choices). The default choice of the pricing
 strategy in that case is `QP_PARTIAL_FILTERED_DANTZIG`.
 
 Strategy                      | Runtime in seconds
@@ -796,14 +796,14 @@ Strategy                      | Runtime in seconds
 `QP_PARTIAL_FILTERED_DANTZIG` | 1.34
 
 In general, if your problem has a high variable/constraint or
-constraint/variable ratio, then filtering will typically pay off. 
+constraint/variable ratio, then filtering will typically pay off.
 In such cases, it might be beneficial to encode your problem using
-input type `double` in order to profit from the filtering (but 
+input type `double` in order to profit from the filtering (but
 see the issue discussed in Section \ref secQPcustomizationfiltering).
 
 \subsection QP_solverBenchd100 d=100, n=100,000
 
-Conversely, the filtering effect deteriorates if the points/dimension ratio 
+Conversely, the filtering effect deteriorates if the points/dimension ratio
 becomes smaller.
 
 Strategy                      | Runtime in seconds
@@ -818,7 +818,7 @@ Strategy                      | Runtime in seconds
 \subsection QP_solverBenchd500 d=500, n=1,000
 
 If the points/dimension ratio tends to a constant, filtering is no
-longer a clear winner. The reason is that in this case, 
+longer a clear winner. The reason is that in this case,
 the necessary exact calculations with multiprecision numbers
 dominate the overall runtime.
 
@@ -832,12 +832,12 @@ Strategy                      | Runtime in seconds
 `QP_PARTIAL_FILTERED_DANTZIG` | 2.61
 
 In general, if you have a program where the number of variables
-and the number of constraints have the same order of magnitude, then 
+and the number of constraints have the same order of magnitude, then
 the saving gained from using the filtered approach is typically
 small. In such a situation, you should consider switching to
 a non-filtered variant in order to avoid the rare issue discussed
 in Section \ref secQPcustomizationfiltering altogether.
 
-*/ 
+*/
 } /* namespace CGAL */
 

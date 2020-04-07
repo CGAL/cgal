@@ -28,7 +28,7 @@ struct Exact_vertex_point_map
     : tm_ptr(nullptr)
   {}
 
-  
+
   Exact_vertex_point_map(Mesh& tm)
     : tm_ptr(&tm)
   {
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
   std::cout << "Union was successfully computed\n";
   //std::ofstream output("union.off");
   //output << out;
-  
+
   }
   std::cout << t.time() << " sec." << std::endl;
   return 0;

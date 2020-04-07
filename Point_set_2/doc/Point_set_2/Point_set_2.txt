@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Range_and_Neighbor_Search
 \anchor chapterPointset2
 \cgalAutoToc
@@ -17,13 +17,13 @@ Typical examples of queries are:
 find out whether a given object is contained in the set,
 find all objects of the set lying in a given area (e.g. rectangle),
 find the object closest to a given point or
-find the pair of objects in the set lying closest to each other. 
-Furthermore, the set should be dynamic in the sense that deletions and 
+find the pair of objects in the set lying closest to each other.
+Furthermore, the set should be dynamic in the sense that deletions and
 insertions of objects can be performed efficiently.
 
 In computational geometry literature one can find many different data structures for
-maintaining sets of geometric objects. Most of them are data structures 
-that have been developed to support a single very special kind of query 
+maintaining sets of geometric objects. Most of them are data structures
+that have been developed to support a single very special kind of query
 operation.
 Examples are Voronoi diagrams for answering nearest neighbor
 searches, range trees for orthogonal range queries, partition trees
@@ -78,6 +78,6 @@ point set.
 
 \cgalExample{Point_set_2/range_search.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   halfedge_descriptor hd = *halfedges(P).first;
   {
     halfedge_around_face_circulator hafc(hd,P), done(hafc);
-    
+
     do {
       std::cout << get(CGAL::vertex_point, P, target(*hafc,P)) << std::endl;
       ++hafc;
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   }
   {
     vertex_around_target_circulator havc(hd,P), done(havc);
-    
+
     do {
       std::cout << get(CGAL::vertex_point, P, *havc) << std::endl;
       ++havc;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
   }
   {
     face_around_target_circulator havc(hd,P), done(havc);
-    
+
     do {
       //std::cout << get(CGAL::vertex_point, P, *havc) << std::endl;
       ++havc;
@@ -114,14 +114,14 @@ int main(int argc, char* argv[])
    {
     halfedge_around_face_iterator vit, end;
     boost::tie(vit,end) = halfedges_around_face(hd,P);
-    
+
     while(vit!= end) {
       halfedge_descriptor hd = *vit;
       std::cout << get(CGAL::vertex_point, P, target(hd,P)) << std::endl;
       ++vit;
     }
   }
- 
+
 
   {
     out_edge_iterator ohi, end;
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
       halfedge_descriptor hd2 = halfedge(ed,P);
       std::cout << get(CGAL::vertex_point, P, target(hd2,P)) << std::endl;
     }
-  } 
+  }
 
   {
     for(edge_descriptor ed : out_edges(target(hd,P),P)){

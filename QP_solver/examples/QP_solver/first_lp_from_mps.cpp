@@ -1,4 +1,4 @@
-// example: read linear program in MPS format from file 
+// example: read linear program in MPS format from file
 // the LP below is the first linear program example in the user manual
 #include <iostream>
 #include <fstream>
