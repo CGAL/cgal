@@ -379,12 +379,7 @@ namespace Classification {
            assigned_label[j] = nb_class_best;
          }
 
-#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-         CGAL::internal::Alpha_expansion_graph_cut_boost graphcut;
-#else
-         CGAL::internal::Alpha_expansion_graph_cut_boykov_kolmogorov graphcut;
-#endif
-         graphcut(edges, edge_weights, probability_matrix, assigned_label);
+         CGAL::alpha_expansion_graphcut (edges, edge_weights, probability_matrix, assigned_label);
 
          for (std::size_t i = 0; i < assigned_label.size(); ++ i)
            output[indices[sub][i]] = static_cast<typename LabelIndexRange::iterator::value_type>(assigned_label[i]);
