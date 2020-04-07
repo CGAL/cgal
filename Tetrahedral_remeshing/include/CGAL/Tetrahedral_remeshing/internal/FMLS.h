@@ -27,7 +27,7 @@
 #include <vector>
 #include <unordered_set>
 
-#include <CGAL/Tetrahedral_remeshing/internal/Tetrahedral_remeshing_helpers.h>
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/Vec3D.h>
 
 #include <boost/functional/hash.hpp>
