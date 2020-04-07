@@ -362,29 +362,6 @@ bool add_faces(const PointRangeContainer& pr_range,
 }
 
 template <typename PolygonMesh>
-bool is_star_without_border(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-                            const PolygonMesh& g)
-{
-  CGAL::Halfedge_around_target_iterator<PolygonMesh> havib, havie;
-  for(std::tie(havib, havie) = CGAL::halfedges_around_target(h, g); havib != havie; ++havib)
-  {
-    if(is_border(*havib, g))
-      return false;
-  }
-  return true;
-}
-
-// @todo relax that once pinched star merging is done
-template <typename HalfedgeContainer, typename PolygonMesh>
-bool are_umbrellas_mergeable(const HalfedgeContainer& umbrellas,
-                             const PolygonMesh& pmesh)
-{
-  return !(umbrellas.size() > 2 ||
-           !internal::is_star_without_border(umbrellas.front(), pmesh) ||
-           !internal::is_star_without_border(umbrellas.back(), pmesh));
-}
-
-template <typename PolygonMesh>
 typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
 split_edge_and_triangulate_incident_faces(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                                           PolygonMesh& pmesh)
@@ -533,18 +510,47 @@ void gather_faces_to_delete(FaceSet& faces_to_delete,
   typedef typename GeomTraits::FT                                             FT;
   typedef typename GeomTraits::Vector_3                                       Vector;
 
+  typedef CGAL::dynamic_edge_property_t<bool>                                 Considered_tag;
+  typedef typename boost::property_map<PolygonMesh, Considered_tag>::type     Considered_edge_map;
+
   typedef CGAL::dynamic_vertex_property_t<FT>                                 Distance_tag;
   typedef typename boost::property_map<PolygonMesh, Distance_tag>::type       Vertex_distance_map;
 
   Vertex_distance_map vertex_distance = get(Distance_tag(), pmesh);
 
-  // @todo something without heat method ?
-  // @fixme this heat method may corefine the mesh close to other nm vertices and mess things up
   vertex_descriptor source_v = target(h, pmesh);
   CGAL::Heat_method_3::estimate_geodesic_distances(pmesh, vertex_distance, source_v);
 
-  // Roughly corefine the mesh with the geodesic circle
-  // @todo consider an edge set growing from the source vertex
+  // Corefine the mesh with a piecewise(face)-linear approximation of the geodesic circle
+  std::set<face_descriptor> faces_to_consider;
+  std::stack<halfedge_descriptor> halfedges_to_consider;
+  halfedges_to_consider.push(opposite(h, pmesh));
+
+  Considered_edge_map considered_edges = get(Considered_tag(), pmesh);
+  while(!halfedges_to_consider.empty())
+  {
+    const halfedge_descriptor curr_h = halfedges_to_consider.top();
+    halfedges_to_consider.pop();
+    put(considered_edges, edge(curr_h, pmesh), true);
+
+    if(!is_border(curr_h, pmesh))
+      faces_to_consider.insert(face(curr_h, pmesh));
+    if(!is_border(opposite(curr_h, pmesh), pmesh))
+      faces_to_consider.insert(face(opposite(curr_h, pmesh), pmesh));
+
+    vertex_descriptor curr_v = source(curr_h, pmesh);
+    if(get(vertex_distance, curr_v) > radius)
+      continue;
+
+    for(halfedge_descriptor adj_h : CGAL::halfedges_around_source(curr_h, pmesh))
+    {
+      if(get(considered_edges, edge(adj_h, pmesh))) // already visited
+        continue;
+
+      halfedges_to_consider.push(adj_h);
+    }
+  }
+
   std::vector<edge_descriptor> edges_to_split;
   for(const edge_descriptor e : edges(pmesh))
   {
@@ -591,10 +597,24 @@ void gather_faces_to_delete(FaceSet& faces_to_delete,
     halfedge_descriptor new_h = split_edge_and_triangulate_incident_faces(h, pmesh);
     put(vpm, target(new_h, pmesh), new_p);
     put(vertex_distance, target(new_h, pmesh), radius);
+
+    // @todo might be simplifiable?
+    if(!is_border(h, pmesh))
+    {
+      faces_to_consider.insert(face(h, pmesh));
+      faces_to_consider.insert(face(new_h, pmesh));
+    }
+    if(!is_border(opposite(h, pmesh), pmesh))
+    {
+      faces_to_consider.insert(face(opposite(h, pmesh), pmesh));
+      faces_to_consider.insert(face(opposite(new_h, pmesh), pmesh));
+    }
   }
 
-  // @todo grow the face selection from the source vertex instead
-  for(face_descriptor f : faces(pmesh))
+  std::cout << faces_to_consider.size() << " faces to consider" << std::endl;
+  dump_cc(faces_to_consider, pmesh, "results/faces_to_consider.off");
+
+  for(face_descriptor f : faces_to_consider)
   {
     bool is_face_in = true;
     for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
