@@ -96,6 +96,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::dry_run).v == 59);
   assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 60);
   assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 61);
+  assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -198,6 +199,7 @@ void test(const NamedParameters& np)
   check_same_type<59>(get_parameter(np, CGAL::internal_np::dry_run));
   check_same_type<60>(get_parameter(np, CGAL::internal_np::do_lock_mesh));
   check_same_type<61>(get_parameter(np, CGAL::internal_np::do_simplify_border));
+  check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -376,6 +378,7 @@ int main()
                          .inspector(A<9032>(9032))
                          .logger(A<9033>(9033))
                          .maximum_normal_deviation(A<9034>(9034))
+                         .maximum_number_of_faces(A<78910>(78910))
        );
   return EXIT_SUCCESS;
 }

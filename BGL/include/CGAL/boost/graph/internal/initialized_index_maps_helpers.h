@@ -35,9 +35,11 @@ bool is_index_map_valid(IndexMap idmap,
 
   Id_type max_id = static_cast<Id_type>(num_simplices);
   std::vector<bool> indices(max_id);
-  for(const auto& d : range)
+
+  // According to concepts, the descriptor ranges such as 'vertices(g)' return a 'std::pair<it, it>'
+  for(auto it = range.first; it != range.second; ++it)
   {
-    const Id_type id = get(idmap, d);
+    const Id_type id = get(idmap, *it);
     if(id >= 0 && id < max_id && !indices[id])
     {
       indices[id] = true;

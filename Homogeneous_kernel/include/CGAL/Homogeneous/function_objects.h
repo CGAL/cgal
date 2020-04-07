@@ -762,6 +762,52 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
+  class Compare_signed_distance_to_line_2
+  {
+    typedef typename K::Point_2   Point_2;
+    typedef typename K::Line_2    Line_2;
+    typedef typename K::Less_signed_distance_to_line_2 Less_signed_distance_to_line_2;
+
+  public:
+    typedef Comparison_result   result_type;
+
+    result_type
+    operator()(const Point_2& p, const Point_2& q,
+               const Point_2& r, const Point_2& s) const
+    {
+      typedef typename K::RT RT;
+
+      const RT & phx = p.hx();
+      const RT & phy = p.hy();
+      const RT & phw = p.hw();
+      const RT & qhx = q.hx();
+      const RT & qhy = q.hy();
+      const RT & qhw = q.hw();
+      const RT & rhx = r.hx();
+      const RT & rhy = r.hy();
+      const RT & rhw = r.hw();
+      const RT & shx = s.hx();
+      const RT & shy = s.hy();
+      const RT & shw = s.hw();
+
+      RT  scaled_dist_r_minus_scaled_dist_s =
+          ( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
+          - ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
+
+      return compare(scaled_dist_r_minus_scaled_dist_s, 0);
+    }
+
+    result_type
+    operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
+    {
+      Less_signed_distance_to_line_2 less = K().less_signed_distance_to_line_2_object();
+      if (less(l, p, q)) return SMALLER;
+      if (less(l, q, p)) return LARGER;
+      return EQUAL;
+    }
+  };
+
+  template <typename K>
   class Compare_slope_2
   {
     typedef typename K::Line_2             Line_2;
@@ -4109,26 +4155,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_2& p, const Point_2& q,
                const Point_2& r, const Point_2& s) const
     {
-      typedef typename K::RT RT;
-
-      const RT & phx= p.hx();
-      const RT & phy= p.hy();
-      const RT & phw= p.hw();
-      const RT & qhx= q.hx();
-      const RT & qhy= q.hy();
-      const RT & qhw= q.hw();
-      const RT & rhx= r.hx();
-      const RT & rhy= r.hy();
-      const RT & rhw= r.hw();
-      const RT & shx= s.hx();
-      const RT & shy= s.hy();
-      const RT & shw= s.hw();
-
-      RT  scaled_dist_r_minus_scaled_dist_s =
-        ( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
-        - ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
-
-      return scaled_dist_r_minus_scaled_dist_s < 0;
+      return Compare_signed_distance_to_line_2<K>().operator()(p, q, r, s) == SMALLER;
     }
 
     result_type

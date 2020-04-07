@@ -36,6 +36,7 @@ CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_ite
 CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
 CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
 CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
+CGAL_add_named_parameter(implementation_tag_t, implementation_tag, implementation_tag)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
@@ -135,6 +136,7 @@ CGAL_add_named_parameter(plane_index_t, plane_index_map, plane_index_map)
 CGAL_add_named_parameter(select_percentage_t, select_percentage, select_percentage)
 CGAL_add_named_parameter(require_uniform_sampling_t, require_uniform_sampling, require_uniform_sampling)
 CGAL_add_named_parameter(point_is_constrained_t, point_is_constrained, point_is_constrained_map)
+CGAL_add_named_parameter(maximum_number_of_faces_t, maximum_number_of_faces, maximum_number_of_faces)
 CGAL_add_named_parameter(transformation_t, transformation, transformation)
 CGAL_add_named_parameter(point_set_filters_t, point_set_filters, point_set_filters)
 CGAL_add_named_parameter(matcher_t, matcher, matcher)

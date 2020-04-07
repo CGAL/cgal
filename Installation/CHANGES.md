@@ -2,6 +2,20 @@ Release History
 ===============
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
+
+### 2D and 3D Linear Geometry Kernel
+ - Add `CompareSignedDistanceToLine_2` in the 2D/3D Kernel concept to compare
+   the signed distance of two points to a line, or the line passing through two given points.
+   Corresponding functors in the model (`Compare_signed_distance_to_line_2`) are also added.
+
+### 2D Triangulations
+ - Add function `split_subconstraint_graph_into_constraints()` to
+   `Constrained_triangulation_plus_2` to initialize the constraints
+   from a soup of disconnected segments that should first be split
+   into polylines.
+
+
+Release 5.0
 -----------
 
 Release date: June 2020
@@ -40,6 +54,8 @@ Release date: June 2020
 ### CGAL and the Boost Graph Library (BGL)
  -   Introduced the function `set_triangulation_ids(Triangulation& tr)` which must be used to initialize vertex,
      edge, and face indices of a triangulation meant to be used with BGL algorithms.
+ -   Added function `alpha_expansion_graphcut()` which regularizes a
+     multi-label partition over a user-defined graph.
 
 ### Polygon Mesh Processing
 
@@ -54,6 +70,10 @@ Release date: June 2020
     components that would be removed with the specified threshold, but without actually removing them.
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
+-   Introduced the new functions `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`,
+    `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`,
+    and `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()` that can be helpful 
+    when repairing a polygon soup.
 -   New function to split meshes along a mesh or a plane:
     `CGAL::Polygon_mesh_processing::split()`
 -   New function to split a single mesh containing several connected components into several meshes containing one connected component:
@@ -63,6 +83,7 @@ Release date: June 2020
  -   The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh` now allows passing a point map (for the point range)
      and a vertex point map (for the polygon mesh) via named parameters.
  -   Added the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+ -   Added a new function `CGAL::Polygon_mesh_processing::sample_triangle_soup()` that generates points on a triangle soup surface.
 
 ### Point Set Processing
  -   Added wrapper functions for registration:
@@ -77,6 +98,7 @@ Release date: June 2020
      - `CGAL::pointmatcher::register_point_sets()` computes the registration transformation for two point
         sets using ICP algorithm implemented in the third party library libpointmatcher, and registers
         the points sets by transforming the data point set using the computed transformation.
+
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
@@ -131,8 +153,7 @@ Release date: June 2020
 ### STL Extensions for CGAL
  -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
      if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
-
-
+ 
 ### Convex_hull_3
 - A new overload for `convex_hull_3()` that takes a model of `VertexListGraph` has been added.
 
