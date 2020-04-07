@@ -21,6 +21,7 @@
 #include <boost/iterator/filter_iterator.hpp>
 
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
