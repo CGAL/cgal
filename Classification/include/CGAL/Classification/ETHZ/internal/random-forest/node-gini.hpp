@@ -97,11 +97,13 @@ public:
         return std::make_pair(best_thresh, float(best_loss));
     }
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /* version */)
     {
         ar & boost::serialization::make_nvp("base",  boost::serialization::base_object< Node< NodeGini<Splitter>, ForestParams, Splitter > >(*this));
     }
+#endif
 };
 
 }

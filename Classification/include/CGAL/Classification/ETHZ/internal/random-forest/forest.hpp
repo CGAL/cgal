@@ -223,12 +223,14 @@ public:
         return sum/trees.size();
     }
 #endif
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /* version */)
     {
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(trees);
     }
+#endif
 
     void write (std::ostream& os)
     {

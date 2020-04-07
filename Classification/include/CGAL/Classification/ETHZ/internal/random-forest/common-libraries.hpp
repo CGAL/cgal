@@ -40,7 +40,9 @@
 #endif
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/normal_distribution.hpp>
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/vector.hpp>
+#endif
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
@@ -93,6 +95,7 @@ struct ForestParams {
         min_samples_per_node(5),
         sample_reduction(0.368f)
     {}
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -105,6 +108,7 @@ struct ForestParams {
         ar & BOOST_SERIALIZATION_NVP(min_samples_per_node);
         ar & BOOST_SERIALIZATION_NVP(sample_reduction);
     }
+#endif
 
     void write (std::ostream& os)
     {
@@ -173,6 +177,7 @@ struct QuadraticSplitter {
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -180,6 +185,7 @@ struct QuadraticSplitter {
         ar & BOOST_SERIALIZATION_NVP(w);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct LinearSplitter {
@@ -211,12 +217,14 @@ struct LinearSplitter {
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(w);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct AxisAlignedSplitter {
@@ -256,12 +264,14 @@ struct AxisAlignedSplitter {
         data_points.push_back(std::make_pair(sample_fval, sample_class));
       }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(feature);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 
     void write (std::ostream& os)
     {
@@ -274,7 +284,6 @@ struct AxisAlignedSplitter {
       is.read((char*)(&feature), sizeof(int));
       is.read((char*)(&threshold), sizeof(FeatureType));
     }
-
 };
 
 struct AxisAlignedRandomSplitGenerator {

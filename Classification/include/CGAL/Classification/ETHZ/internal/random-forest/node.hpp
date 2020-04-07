@@ -21,8 +21,15 @@
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
 #include "../dataview.h"
 #include "common-libraries.hpp"
+
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/scoped_ptr.hpp>
 #include <boost/serialization/vector.hpp>
+#else
+#include <boost/scoped_ptr.hpp>
+#include <vector>
+#endif
+
 #if VERBOSE_NODE_LEARNING
 #include <cstdio>
 #endif
@@ -228,6 +235,7 @@ public:
         right->train(samples, labels, sample_idxes + offset_right, n_samples_right, split_generator, gen);
     }
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -243,6 +251,7 @@ public:
           ar & BOOST_SERIALIZATION_NVP(right);
         }
     }
+#endif
 
     void write (std::ostream& os)
     {

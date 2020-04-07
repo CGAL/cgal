@@ -38,10 +38,12 @@
 
 #include <CGAL/tags.h>
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#endif
 
 #ifdef BOOST_MSVC
 #  pragma warning(pop)
@@ -327,6 +329,9 @@ public:
     [Serialization](https://www.boost.org/libs/serialization) and
     [IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
   */
+#if defined(DOXYGEN_RUNNING) || \
+  (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
+   defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION))
   static void convert_deprecated_configuration_to_new_format (std::istream& input, std::ostream& output)
   {
     Label_set dummy_labels;
@@ -335,10 +340,13 @@ public:
     classifier.load_deprecated_configuration(input);
     classifier.save_configuration(output);
   }
+#endif
 
 /// @}
 
   /// \cond SKIP_IN_MANUAL
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
+  defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
   void load_deprecated_configuration (std::istream& input)
   {
     CGAL::internal::liblearning::RandomForest::ForestParams params;
@@ -350,7 +358,7 @@ public:
     boost::archive::text_iarchive ias(ins);
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
-  /// \endcond
+#endif
 
 
 };
