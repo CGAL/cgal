@@ -307,6 +307,9 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Geometrical treatment
 
+// @todo something without heat method ? (SMSP)
+// @handle geodesic spheres that intersect
+
 enum NM_TREATMENT
 {
   SEPARATE = 0,
@@ -642,20 +645,33 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
 
+  std::cout << "Digging hole incident to halfedge: " << h << " ("
+            << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
+
+  CGAL_precondition(!is_border(h, pmesh));
+
   // 'set' complexity should be fine, it's not supposed to be a large number of faces
-  std::set<face_descriptor> faces_to_delete; // aka the selection
+  std::set<face_descriptor> faces_to_delete; // aka 'selection'
   gather_faces_to_delete(faces_to_delete, h, radius, pmesh, vpm, gt);
 
   std::cout << faces_to_delete.size() << " faces in selection" << std::endl;
   CGAL_assertion(!faces_to_delete.empty());
 
+  bool is_selection_ok = true;
+
+  // If the selection is not a topological disk, just don't do anything
+  // because we won't know how to fill it back
   if(!is_selection_a_topological_disk(faces_to_delete, pmesh))
   {
     std::cerr << "Warning: selection is not a topological disk" << std::endl;
     return boost::graph_traits<PolygonMesh>::null_halfedge();
   }
 
-  // check that no face of the selection is on the border of the mesh
+  // If the selection has faces on the border of the mesh, we don't know how to fill the hole
+  // so just dig, but don't return any halfedge to indicate that we can't fill/merge
+  //
+  // @todo just return the polyline that is the border of the selection? And then just delete
+  // the code that grabs bhv_A/bhv_B and plug polylines and we're done?
   halfedge_descriptor anchor_h = boost::graph_traits<PolygonMesh>::null_halfedge();
   for(face_descriptor f : faces_to_delete)
   {
@@ -665,19 +681,32 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
       if(is_border_edge(h, pmesh))
       {
         std::cerr << "Warning: face on border in selection" << std::endl;
-        return boost::graph_traits<PolygonMesh>::null_halfedge();
+        is_selection_ok = false;
+        break;
       }
       else if(faces_to_delete.count(face(opposite(h, pmesh), pmesh)) == 0)
+      {
         anchor_h = opposite(h, pmesh);
+      }
     }
+
+    if(!is_selection_ok)
+      break;
   }
 
-  // now delete the faces
+  // delete the faces whether there are faces on the border or not
   for(face_descriptor f : faces_to_delete)
     Euler::remove_face(halfedge(f, pmesh), pmesh);
 
-  CGAL_postcondition(is_border(opposite(anchor_h, pmesh), pmesh));
-  return opposite(anchor_h, pmesh);
+  if(is_selection_ok)
+  {
+    CGAL_postcondition(is_border(opposite(anchor_h, pmesh), pmesh));
+    return opposite(anchor_h, pmesh);
+  }
+  else
+  {
+    return boost::graph_traits<PolygonMesh>::null_halfedge();
+  }
 }
 
 // compute the faces to remove
@@ -1082,9 +1111,9 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
   if(holes.size() != 2)
   {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "merging treatment requested, but configuration makes it impossible" << std::endl;
+    std::cout << "Merging treatment requested, but configuration makes it impossible" << std::endl;
 #endif
-    return fill_holes(umbrellas, pmesh, vpm, gt);
+    return fill_holes(holes, pmesh, vpm, gt);
   }
   else
   {
@@ -1242,14 +1271,13 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   for(const auto& e : nm_points)
   {
     const std::vector<halfedge_descriptor>& umbrellas = e.second;
-    CGAL_assertion(umbrellas.size() >= 2);
     CGAL_assertion(std::set<halfedge_descriptor>(umbrellas.begin(), umbrellas.end()).size() == umbrellas.size());
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
     std::cout << "NM vertex at pos " << get(vpm, target(umbrellas.front(), pmesh))
-              << " with " << umbrellas.size() << " incident umbrellas:";
+              << " with " << umbrellas.size() << " incident umbrellas:" << std::endl;
     for(const halfedge_descriptor h : umbrellas)
-      std::cout << " " << h;
+      std::cout << h << " (" << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
     std::cout << std::endl;
 #endif
 
