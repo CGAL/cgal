@@ -39,7 +39,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
-#include <CGAL/Handle_hash_function.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -1316,6 +1315,10 @@ namespace internal {
 
 namespace handle {
   // supply a specialization for Hash_functor
+
+  // forward declare base template
+  template <class H> struct Hash_functor;
+
   template<class DSC, bool Const>
   struct Hash_functor<CC_iterator<DSC, Const>>{
     std::size_t
