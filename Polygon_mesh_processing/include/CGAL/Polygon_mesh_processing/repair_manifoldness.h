@@ -308,7 +308,12 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 /// Geometrical treatment
 
 // @todo something without heat method ? (SMSP)
-// @handle geodesic spheres that intersect
+// @todo handle geodesic spheres that intersect
+// @todo make dig_hole() return the border of the hole, and then distinguish:
+//       - two borders + merge requested: ok if both closed or both open
+//       - merge otherwise
+
+// @todo can make maps of Points lighter with a vertex as key, and a custom equal comparing actual points
 
 enum NM_TREATMENT
 {
@@ -669,9 +674,6 @@ dig_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
 
   // If the selection has faces on the border of the mesh, we don't know how to fill the hole
   // so just dig, but don't return any halfedge to indicate that we can't fill/merge
-  //
-  // @todo just return the polyline that is the border of the selection? And then just delete
-  // the code that grabs bhv_A/bhv_B and plug polylines and we're done?
   halfedge_descriptor anchor_h = boost::graph_traits<PolygonMesh>::null_halfedge();
   for(face_descriptor f : faces_to_delete)
   {
@@ -1098,9 +1100,6 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
 
-  // @todo
-  // treat_pinched_vertices(umbrellas, radius, treatment, pmesh, vpm, gt);
-
   std::vector<halfedge_descriptor> holes;
   holes = dig_holes(umbrellas, radius, pmesh, vpm, gt);
   std::ofstream("results/dug.off") << std::setprecision(17) << pmesh;
@@ -1156,8 +1155,6 @@ void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] =
   CGAL_precondition(nm_points.empty());
 
   Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pmesh);
-
-  // @todo here again a could be map with a vertex as key
   std::unordered_map<Point, halfedge_descriptor> visited_points;
 
   for(halfedge_descriptor h : halfedges(pmesh))
@@ -1252,7 +1249,6 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   typedef std::vector<halfedge_descriptor>                                    Cones;
   std::unordered_map<Point, Cones> nm_points;
 
-  // @todo could be made lighter with a vertex as key, using a custom equal
   internal::geometrically_non_manifold_vertices(nm_points, nm_marks, pmesh, vpm, gt);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
