@@ -43,7 +43,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   in >> pts;
-  
+
   Imap label_map;
   bool lm_found = false;
   std::tie (label_map, lm_found) = pts.property_map<int> ("label");
@@ -56,10 +56,10 @@ int main (int argc, char** argv)
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;
   t.start();
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Generator]
-  
+
   Feature_set features;
 
   std::size_t number_of_scales = 5;
@@ -68,17 +68,17 @@ int main (int argc, char** argv)
   features.begin_parallel_additions();
   generator.generate_point_based_features (features);
   features.end_parallel_additions();
-  
+
   //! [Generator]
   ///////////////////////////////////////////////////////////////////
-  
+
   t.stop();
   std::cerr << features.size() << " feature(s) generated in " << t.time() << " second(s)" << std::endl;
-    
+
   Label_set labels = { "ground", "vegetation", "roof" };
 
   Classifier classifier (labels, features);
-  
+
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
@@ -98,7 +98,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
   Classification::Evaluation evaluation (labels, pts.range(label_map), label_indices);
-  
+
   for (Label_handle l : labels)
   {
     std::cerr << " * " << l->name() << ": "
@@ -111,7 +111,7 @@ int main (int argc, char** argv)
   std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
             << "Mean F1 score = " << evaluation.mean_f1_score() << std::endl
             << "Mean IoU = " << evaluation.mean_intersection_over_union() << std::endl;
-  
+
 
   /// Save the configuration to be able to reload it later
   std::ofstream fconfig ("config.xml");
@@ -119,6 +119,6 @@ int main (int argc, char** argv)
   fconfig.close();
 
   std::cerr << "All done" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

@@ -1,6 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QFileDialog>
-#include <QColorDialog> 
+#include <QColorDialog>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Three/Three.h>
@@ -55,13 +55,13 @@ class Polyhedron_demo_classification_plugin :
   Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-    
+
   struct LabelButton
   {
     QPushButton* color_button;
     QMenu* menu;
     char shortcut;
-    
+
     QColor color;
 
     QLabel* label2;
@@ -74,13 +74,13 @@ class Polyhedron_demo_classification_plugin :
       : shortcut (shortcut), color (color)
     {
       color_button = new QPushButton (tr("%1 (%2)").arg(name).arg((char)(std::toupper(shortcut))), parent);
-      
+
       menu = new QMenu("Label Menu", color_button);
 
       QColor text_color (255, 255, 255);
       if (color.red() * 0.299 + color.green() * 0.587 + color.blue() * 0.114 > 128)
         text_color = QColor (0, 0, 0);
-      
+
       QString s("QPushButton { font-weight: bold; background: #"
                 + QString(color.red() < 16? "0" : "") + QString::number(color.red(),16)
                 + QString(color.green() < 16? "0" : "") + QString::number(color.green(),16)
@@ -93,8 +93,8 @@ class Polyhedron_demo_classification_plugin :
 
       color_button->setStyleSheet(s);
       color_button->setMenu(menu);
-      
-      
+
+
       label2 = new QLabel (name, parent);
       effect = new QComboBox;
       effect->addItem("Penalized");
@@ -128,14 +128,14 @@ class Polyhedron_demo_classification_plugin :
 
 
 public:
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
       return
         qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
         || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
   void print_message(QString message) { CGAL::Three::Three::information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionClassification; }
-  
+
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
 
@@ -160,7 +160,7 @@ public:
             SLOT(on_add_new_label_clicked()));
 
     label_menu->addSeparator();
-    
+
     QAction* use_config_building = label_menu->addAction ("Use configuration ground/vegetation/building");
     connect(use_config_building,  SIGNAL(triggered()), this,
             SLOT(on_use_config_building_clicked()));
@@ -173,17 +173,17 @@ public:
 
     label_menu->addSeparator();
 
-    
+
     QAction* generate = label_menu->addAction ("Create one point set item per label");
     connect(generate,  SIGNAL(triggered()), this,
             SLOT(on_generate_items_button_clicked()));
 
     label_menu->addSeparator();
-        
+
     QAction* clear_labels = label_menu->addAction ("Clear labels");
     connect(clear_labels,  SIGNAL(triggered()), this,
             SLOT(on_clear_labels_clicked()));
-    
+
     ui_widget.setupUi(dock_widget);
     ui_widget_adv.setupUi(dock_widget_adv);
     addDockWidget(dock_widget);
@@ -202,7 +202,7 @@ public:
     action_reset_local = ui_widget.training_menu->addAction ("Reset training set of selection");
     connect(action_reset_local,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_set_of_selection_clicked()));
-    
+
     action_reset = ui_widget.training_menu->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
@@ -222,7 +222,7 @@ public:
     action_train->setShortcut(Qt::SHIFT | Qt::Key_T);
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
-    
+
     ui_widget.classifier_menu->addSeparator();
 
     action_run = ui_widget.classifier_menu->addAction ("Classify");
@@ -247,11 +247,11 @@ public:
             SLOT(on_load_config_button_clicked()));
 
     ui_widget.classifier_menu->addSeparator();
-    
+
     QAction* switch_classifier = ui_widget.classifier_menu->addAction ("Switch to another classifier...");
     connect(switch_classifier,  SIGNAL(triggered()), this,
             SLOT(on_switch_classifier_clicked()));
-    
+
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
 
@@ -275,7 +275,7 @@ public:
     {
       connect(scene_obj, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this,
               SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
-        
+
       connect(scene_obj, SIGNAL(itemIndexSelected(int)), this,
               SLOT(update_plugin(int)));
     }
@@ -288,7 +288,7 @@ public:
 
 
 public Q_SLOTS:
-  
+
   void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     Item_map::iterator it = item_map.find(scene_item);
     if (it != item_map.end())
@@ -300,7 +300,7 @@ public Q_SLOTS:
   }
 
   void classification_action()
-  { 
+  {
     dock_widget->show();
     dock_widget->raise();
     if (Scene_points_with_normal_item* points_item
@@ -323,7 +323,7 @@ public Q_SLOTS:
       else
         print_message("Warning: can't find Surface Mesh Selection plugin");
     }
-    
+
     on_help_clicked();
   }
 
@@ -340,7 +340,7 @@ public Q_SLOTS:
     if (oknotok.exec() == QMessageBox::Yes)
       close_classification();
   }
-  
+
   void close_classification()
   {
     for (Item_map::iterator it = item_map.begin(); it != item_map.end(); ++ it)
@@ -419,7 +419,7 @@ public Q_SLOTS:
     if (classif != NULL)
       {
         enable_computation();
-        
+
         // Clear class labels
         for (std::size_t i = 0; i < label_buttons.size(); ++ i)
           {
@@ -440,7 +440,7 @@ public Q_SLOTS:
                                       classif->label_color(i),
                                       get_shortcut (i, classif->label(i)->name().c_str())));
         add_label_button();
-        
+
         // Enabled classif if features computed
         if (classif->features_computed())
           enable_classif();
@@ -478,7 +478,7 @@ public Q_SLOTS:
       = qobject_cast<Scene_polyhedron_selection_item*>(item);
     if (selection_item)
       item = selection_item->polyhedron_item();
-    
+
     Item_map::iterator it = item_map.find(item);
 
     if (it != item_map.end())
@@ -490,7 +490,7 @@ public Q_SLOTS:
 
     return NULL;
   }
-  
+
 
   Item_classification_base* create_from_item(Scene_points_with_normal_item* points_item)
   {
@@ -498,14 +498,14 @@ public Q_SLOTS:
       return item_map[points_item];
 
     bool use_clusters = false;
-    
+
     if (points_item->point_set()->has_property_map<int> ("shape"))
     {
       QMessageBox::StandardButton reply
         = QMessageBox::question(NULL, "Point Set Classification",
                                 "This point set is divided in clusters. Do you want to classify clusters instead of points?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-      
+
       use_clusters = (reply == QMessageBox::Yes);
     }
 
@@ -518,7 +518,7 @@ public Q_SLOTS:
       classif = new Point_set_item_classification (points_item);
 
     item_map.insert (std::make_pair (points_item, classif));
-    
+
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
     return classif;
@@ -552,7 +552,7 @@ public Q_SLOTS:
     std::cerr << "Error: unknown classifier" << std::endl;
     return -1;
   }
-  
+
   void run (Item_classification_base* classif, int method,
             std::size_t subdivisions = 1,
             double smoothing = 0.5)
@@ -606,9 +606,9 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
-    
+
     QMultipleInputDialog dialog ("Compute Features", mw);
     QSpinBox* scales = dialog.add<QSpinBox> ("Number of scales:");
     scales->setRange (1, 99);
@@ -624,7 +624,7 @@ public Q_SLOTS:
     float vsize = float(voxel_size->value());
     if (vsize == 0.f)
       vsize = -1.f; // auto value
-    
+
     classif->compute_features (std::size_t(scales->value()), vsize);
 
     update_plugin_from_item(classif);
@@ -639,7 +639,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QString filename;
@@ -674,15 +674,15 @@ public Q_SLOTS:
                                               tr("%1 (CGAL Neural Network config).xml").arg(classif->item()->name()),
                                               "CGAL TensorFlow Neural Network classification configuration (*.xml);;");
 #endif
-    
+
     if (filename == QString())
       return;
 
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     classif->save_config (filename.toStdString().c_str(), classifier);
-    
+
     QApplication::restoreOverrideCursor();
 
   }
@@ -694,7 +694,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
     QString filename;
 
@@ -744,7 +744,7 @@ public Q_SLOTS:
   {
     float vmin = std::numeric_limits<float>::infinity();
     float vmax = std::numeric_limits<float>::infinity();
-    
+
     classif->change_color (index, &vmin, &vmax);
 
     if (vmin == std::numeric_limits<float>::infinity() || vmax == std::numeric_limits<float>::infinity())
@@ -761,17 +761,17 @@ public Q_SLOTS:
       ui_widget.maxDisplay->setEnabled(true);
       ui_widget.maxDisplay->setText(tr("Max (%1)").arg(vmax));
     }
-    
+
     item_changed(classif->item());
   }
 
-  
+
   void on_display_button_clicked(int index)
   {
     Item_classification_base* classif
       = get_classification();
     if(!classif)
-      return; 
+      return;
 
     change_color (classif, index);
   }
@@ -806,7 +806,7 @@ public Q_SLOTS:
     if (vmin == std::numeric_limits<float>::infinity()
         || vmax ==  std::numeric_limits<float>::infinity())
       return;
-    
+
     bool ok = false;
     vmin = float(QInputDialog::getDouble((QWidget*)mw,
                                          tr("Set display ramp minimum value (saturate under):"),
@@ -818,13 +818,13 @@ public Q_SLOTS:
       return;
 
     int index = ui_widget.display->currentIndex();
-    
+
     classif->change_color (index, &vmin, &vmax);
     ui_widget.minDisplay->setText(tr("Min* (%1)").arg(vmin));
-    
+
     item_changed(classif->item());
   }
-  
+
   void on_max_display_button_clicked()
   {
     Item_classification_base* classif
@@ -838,7 +838,7 @@ public Q_SLOTS:
     if (vmin == std::numeric_limits<float>::infinity()
         || vmax ==  std::numeric_limits<float>::infinity())
       return;
-    
+
     bool ok = false;
     vmax = float(QInputDialog::getDouble((QWidget*)mw,
                                          tr("Set display ramp maximum value (saturate over):"),
@@ -850,10 +850,10 @@ public Q_SLOTS:
       return;
 
     int index = ui_widget.display->currentIndex();
-    
+
     classif->change_color (index, &vmin, &vmax);
     ui_widget.maxDisplay->setText(tr("Max* (%1)").arg(vmax));
-    
+
     item_changed(classif->item());
   }
 
@@ -864,7 +864,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
@@ -883,7 +883,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -895,7 +895,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
-  
+
   void on_run_graphcut_button_clicked()
   {
     Item_classification_base* classif
@@ -903,7 +903,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QMultipleInputDialog dialog ("Classify with Graph Cut", mw);
@@ -917,7 +917,7 @@ public Q_SLOTS:
 
     if (dialog.exec() != QDialog::Accepted)
       return;
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
@@ -935,11 +935,11 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    
+
     if (label_clicked == NULL)
       std::cerr << "Error" << std::endl;
     else
@@ -965,7 +965,7 @@ public Q_SLOTS:
         scene->addItem (points_item);
     }
   }
-  
+
   void on_generate_items_button_clicked()
   {
     Item_classification_base* classif
@@ -973,10 +973,10 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     std::vector<Scene_item*> new_items;
@@ -989,13 +989,13 @@ public Q_SLOTS:
           = qobject_cast<Scene_points_with_normal_item*>(new_items[i]);
         if (!points_item)
           continue;
-        
+
         if (points_item->point_set()->empty())
           delete points_item;
         else
           scene->addItem (points_item);
       }
-    
+
     QApplication::restoreOverrideCursor();
   }
 
@@ -1003,7 +1003,7 @@ public Q_SLOTS:
   {
     classif->clear_labels();
   }
-  
+
   void add_new_label (Item_classification_base* classif, const std::string& name)
   {
     add_new_label (LabelButton (dock_widget,
@@ -1015,7 +1015,7 @@ public Q_SLOTS:
     QColor color = classif->add_new_label (name.c_str());
     label_buttons.back().change_color (color);
   }
-  
+
   void on_add_new_label_clicked()
   {
     Item_classification_base* classif
@@ -1023,7 +1023,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     bool ok;
@@ -1054,7 +1054,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     if (classif->number_of_labels() != 0)
@@ -1063,7 +1063,7 @@ public Q_SLOTS:
         = QMessageBox::question(NULL, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-      
+
       if (reply == QMessageBox::No)
         return;
     }
@@ -1081,7 +1081,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     if (classif->number_of_labels() != 0)
@@ -1090,7 +1090,7 @@ public Q_SLOTS:
         = QMessageBox::question(NULL, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-      
+
       if (reply == QMessageBox::No)
         return;
     }
@@ -1109,7 +1109,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     if (classif->number_of_labels() != 0)
@@ -1118,7 +1118,7 @@ public Q_SLOTS:
         = QMessageBox::question(NULL, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-      
+
       if (reply == QMessageBox::No)
         return;
     }
@@ -1150,7 +1150,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     if (classif->number_of_labels() != 0)
@@ -1159,7 +1159,7 @@ public Q_SLOTS:
         = QMessageBox::question(NULL, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
-      
+
       if (reply == QMessageBox::No)
         return;
     }
@@ -1174,7 +1174,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     classif->reset_training_sets();
@@ -1189,7 +1189,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     classif->reset_training_set_of_selection();
@@ -1204,7 +1204,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
@@ -1217,11 +1217,11 @@ public Q_SLOTS:
       ui_widget.labelGrid->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
 
       int position = row_index * 3 + column_index;
-      
+
       classif->reset_training_set
         (position);
     }
-    
+
     item_changed(classif->item());
   }
 
@@ -1232,7 +1232,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     classif->validate_selection();
@@ -1245,7 +1245,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     classif->select_random_region();
@@ -1254,10 +1254,10 @@ public Q_SLOTS:
     CGAL::Three::Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
     CGAL::Bbox_3 bbox = classif->bbox();
     const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
-    
+
     viewer->camera()->fitBoundingBox(CGAL::qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
                                      CGAL::qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
-    
+
 
 
     viewer->camera()->setPivotPoint (CGAL::qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
@@ -1272,7 +1272,7 @@ public Q_SLOTS:
     if(!classif)
     {
       print_message("Error: there is no point set classification item!");
-      return; 
+      return;
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1291,20 +1291,20 @@ public Q_SLOTS:
 
     QRadioButton* ethz = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_ETHZ_ID);
     ethz->setChecked(true);
-    
+
     QRadioButton* sowf = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_SOWF_ID);
 
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     QRadioButton* tensorflow = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_TENSORFLOW_ID);
 #endif
-    
+
 #ifdef CGAL_LINKED_WITH_OPENCV
     QRadioButton* opencv = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_OPENCV_ID);
 #endif
 
     if (dialog.exec() != QDialog::Accepted)
       return;
-    
+
     if (ethz->isChecked())
       classifier->setText(CGAL_CLASSIFICATION_ETHZ_ID);
     else if (sowf->isChecked())
@@ -1326,7 +1326,7 @@ public Q_SLOTS:
     else
       dock_widget_adv->hide();
   }
-  
+
   void on_train_clicked()
   {
     Item_classification_base* classif
@@ -1334,11 +1334,11 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QMultipleInputDialog dialog ("Train Classifier", mw);
-    
+
     int classifier = get_classifier();
     if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Featuers
     {
@@ -1371,10 +1371,10 @@ public Q_SLOTS:
       QCheckBox* restart = dialog.add<QCheckBox> ("Restart from scratch: ", "restart");
       restart->setChecked (false);
     }
-    
+
     if (dialog.exec() != QDialog::Accepted)
       return;
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
@@ -1388,7 +1388,7 @@ public Q_SLOTS:
   char get_shortcut (std::size_t position, const char* name)
   {
     std::set<char> used_letters;
-    
+
     used_letters.insert('t'); // used for "train"
     used_letters.insert('s'); // used for "random select"
     for (std::size_t i = 0; i < label_buttons.size(); ++ i)
@@ -1410,7 +1410,7 @@ public Q_SLOTS:
 
     return fallback;
   }
-  
+
   void add_new_label (const LabelButton& label_button)
   {
     label_buttons.push_back (label_button);
@@ -1421,20 +1421,20 @@ public Q_SLOTS:
 
     ui_widget.labelGrid->addWidget (label_buttons.back().color_button, x, y);
 
-    QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set"); 
+    QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set");
 
     add_selection->setShortcut(Qt::SHIFT | (Qt::Key_A + (label_button.shortcut - 'a')));
 //    add_selection->setShortcut(Qt::Key_0 + label_buttons.size() - 1);
-    
+
     connect(add_selection,  SIGNAL(triggered()), this,
             SLOT(on_add_selection_to_training_set_clicked()));
-    
+
     QAction* reset = label_buttons.back().menu->addAction ("Reset training set");
     connect(reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_set_clicked()));
 
     label_buttons.back().menu->addSeparator();
-    
+
     QAction* change_color = label_buttons.back().menu->addAction ("Change color");
     connect(change_color,  SIGNAL(triggered()), this,
             SLOT(on_color_changed_clicked()));
@@ -1477,7 +1477,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
@@ -1492,11 +1492,11 @@ public Q_SLOTS:
       int position = row_index * 3 + column_index;
 
       classif->remove_label (position);
-    
+
       ui_widget.labelGrid->removeWidget (label_buttons[position].color_button);
       label_buttons[position].color_button->deleteLater();
       label_buttons[position].menu->deleteLater();
-            
+
       ui_widget_adv.gridLayout->removeWidget (label_buttons[position].label2);
       delete label_buttons[position].label2;
       ui_widget_adv.gridLayout->removeWidget (label_buttons[position].effect);
@@ -1508,7 +1508,7 @@ public Q_SLOTS:
           int position = i - 1;
           int x = position / 3;
           int y = position % 3;
-          
+
           ui_widget.labelGrid->addWidget (label_buttons[i].color_button, x, y);
           ui_widget_adv.gridLayout->addWidget (label_buttons[i].label2, (int)i, 0);
           ui_widget_adv.gridLayout->addWidget (label_buttons[i].effect, (int)i, 2);
@@ -1528,7 +1528,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
@@ -1541,13 +1541,13 @@ public Q_SLOTS:
       ui_widget.labelGrid->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
 
       int position = row_index * 3 + column_index;
-    
+
       QColor color = label_buttons[position].color;
       color = QColorDialog::getColor(color, (QWidget*)mw, "Change color of label");
 
       if (!color.isValid())
         return;
-      
+
       label_buttons[position].change_color (color);
       classif->change_label_color (position,
                                    color);
@@ -1563,7 +1563,7 @@ public Q_SLOTS:
     if(!classif)
     {
       print_message("Error: there is no point set classification item!");
-      return; 
+      return;
     }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
@@ -1576,7 +1576,7 @@ public Q_SLOTS:
       ui_widget.labelGrid->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
 
       int position = row_index * 3 + column_index;
-      
+
       bool ok;
       QString name =
         QInputDialog::getText((QWidget*)mw,
@@ -1591,7 +1591,7 @@ public Q_SLOTS:
 
       classif->change_label_name (position, name.toStdString());
     }
-    
+
     update_plugin_from_item(classif);
     classif->update_color ();
     item_changed(classif->item());
@@ -1604,7 +1604,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
@@ -1620,7 +1620,7 @@ public Q_SLOTS:
       classif->add_selection_to_training_set
         (position);
     }
-    
+
     item_changed(classif->item());
   }
 
@@ -1629,11 +1629,11 @@ public Q_SLOTS:
     Item_classification_base* classif
       = get_classification();
     if(!classif)
-        return; 
+        return;
 
     if (classif->number_of_features() <= (std::size_t)v)
       return;
-    
+
     Item_classification_base::Feature_handle
       att = classif->feature(v);
 
@@ -1663,7 +1663,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
     Item_classification_base::Feature_handle
       att = classif->feature(ui_widget_adv.selected_feature->currentIndex());
@@ -1684,7 +1684,7 @@ public Q_SLOTS:
     if(!classif)
       {
         print_message("Error: there is no point set classification item!");
-        return; 
+        return;
       }
     Item_classification_base::Feature_handle
       att = classif->feature(ui_widget_adv.selected_feature->currentIndex());
@@ -1735,10 +1735,10 @@ private:
   QAction* action_run_graphcut;
   QAction* action_save_config;
   QAction* action_load_config;
-  
+
   std::vector<LabelButton> label_buttons;
   QPushButton* label_button;
-  
+
   Ui::Classification ui_widget;
   Ui::ClassificationAdvanced ui_widget_adv;
 

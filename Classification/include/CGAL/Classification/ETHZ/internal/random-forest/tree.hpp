@@ -40,13 +40,13 @@ public:
     { }
 
     template<typename SplitGenerator>
-    void train(DataView2D<FeatureType> samples, 
-               DataView2D<int> labels, 
-               int* sample_idxes, 
-               size_t n_samples, 
+    void train(DataView2D<FeatureType> samples,
+               DataView2D<int> labels,
+               int* sample_idxes,
+               size_t n_samples,
                SplitGenerator split_generator,
                RandomGen const& gen
-               ) 
+               )
     {
         // copy generator
         RandomGen my_gen = gen;
