@@ -1,3 +1,16 @@
+// Copyright (c) 2020 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Jane Tournois, Noura Faraj
+
+
 #ifndef CGAL_TETRAHEDRAL_REMESHING_FMLS_H
 #define CGAL_TETRAHEDRAL_REMESHING_FMLS_H
 
@@ -5,18 +18,6 @@
 // FMLS
 // A Fast Moving Least Square operator for 3D
 // points sets.
-// 
-// Copyright (C) 2006-2011 Tamy Boubekeur
-// All rights reserved.
-// -------------------------------------------
-
-// -------------------------------------------
-// Disclaimer: this code is dirty in the
-// meaning that there is no attention paid to
-// proper class attribute access, memory
-// management or optimisation of any kind. It
-// is designed for quick-and-dirty testing
-// purpose.
 // -------------------------------------------
 
 #include <CGAL/number_utils.h>
