@@ -1550,7 +1550,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Self& p)
   {
-    p.display();
+    const_cast<Self&>(p).display(); // Problem of const correctness: todo solve
     return os;
   }
 
