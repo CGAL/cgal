@@ -72,7 +72,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
                            const CGAL::Surface_mesh_topology::Path_on_surface<LCC_CM>& cycle)
 {
   bool res=true;
-  
+
   // Cycle is the smallest non contractible cycle with unary weight on double-torus-2-d.off.
   // Its length is 48.
   // 1) We create a cycle parallel to this first one.
@@ -113,7 +113,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
              <<nbedges<<"!=96"<<std::endl;
     res=false;
   }
-  
+
   Marked_weight_functor<LCC_CM> wf(map, mark);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_CM> cst(map);
 
@@ -135,7 +135,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
              <<"cycle and cycle2 are not homotopic."<<std::endl;
     res=false;
   }
-  
+
   return res;
 }
 
@@ -163,7 +163,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
     if (!test_weighted(mesh, cycle))
     { res=false; }
   }
-  
+
   std::cout<<"."<<std::flush;
   cycle=cst.compute_edgewidth(wf);
   double l=0.;
@@ -205,7 +205,7 @@ bool test(const char* filename, std::size_t nbedges, double length, std::size_t 
   }
   }
 
-  {    
+  {
   LCC_GM lcc_gm;
   load_lcc(lcc_gm, filename);
   if (!test_one_data_structure(lcc_gm, nbedges, length, nbfaces,
@@ -237,7 +237,7 @@ bool test(const char* filename, std::size_t nbedges, double length, std::size_t 
     res=false;
   }
   }
-  
+
   return res;
 }
 
