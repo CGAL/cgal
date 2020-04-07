@@ -20,6 +20,7 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
+#include <CGAL/Face_graph_wrapper.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <CGAL/Surface_mesh_topology/internal/Path_generators.h>
