@@ -61,6 +61,7 @@ create_single_source_cgal_program( "example_feature.cpp" )
 create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
 create_single_source_cgal_program( "example_cluster_classification.cpp" )
+create_single_source_cgal_program( "example_deprecated_conversion.cpp" )
 
 if (OpenCV_FOUND)
   create_single_source_cgal_program( "example_opencv_random_forest.cpp" )
@@ -80,7 +81,8 @@ foreach(target
     example_mesh_classification
     example_cluster_classification
     example_opencv_random_forest
-    example_tensorflow_neural_network)
+    example_tensorflow_neural_network
+    example_deprecated_conversion)
   if(TARGET ${target})
     CGAL_target_use_Eigen(${target})
     CGAL_target_use_Boost_IOStreams(${target})
@@ -90,4 +92,3 @@ foreach(target
     endif()
   endif()
 endforeach()
-

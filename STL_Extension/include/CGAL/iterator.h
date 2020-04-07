@@ -27,6 +27,8 @@
 #include <CGAL/result_of.h>
 #include <CGAL/tuple.h>
 #include <CGAL/use.h>
+#include <CGAL/property_map.h>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
@@ -1480,6 +1482,43 @@ struct Range_iterator_type<RangeRef&>       { typedef typename RangeRef::iterato
 template <typename RangeRef>
 struct Range_iterator_type<const RangeRef&> { typedef typename RangeRef::const_iterator type; };
 
+// Syntaxic sugar for transform_iterator+pmap_to_unary_function
+template <typename Iterator, typename Pmap>
+typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>, Iterator>
+make_transform_iterator_from_property_map (Iterator it, Pmap pmap)
+{
+  return boost::make_transform_iterator (it, CGAL::Property_map_to_unary_function<Pmap>(pmap));
+}
+
+// Syntaxic sugar for make_range+transform_iterator+pmap_to_unary_function
+template <typename Range, typename Pmap>
+CGAL::Iterator_range<typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>,
+                                                        typename Range::const_iterator> >
+make_transform_range_from_property_map (const Range& range, Pmap pmap)
+{
+  return CGAL::make_range
+    (make_transform_iterator_from_property_map (range.begin(), pmap),
+     make_transform_iterator_from_property_map (range.end(), pmap));
+}
+
+// Syntaxic sugar for make_range+transform_iterator+pmap_to_unary_function
+template <typename Range, typename Pmap>
+CGAL::Iterator_range<typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>,
+                                                        typename Range::iterator> >
+make_transform_range_from_property_map (Range& range, Pmap pmap)
+{
+  return CGAL::make_range
+    (make_transform_iterator_from_property_map (range.begin(), pmap),
+     make_transform_iterator_from_property_map (range.end(), pmap));
+}
+
+template <typename SizeType>
+CGAL::Iterator_range<boost::counting_iterator<SizeType> >
+make_counting_range (const SizeType begin, const SizeType end)
+{
+  return CGAL::make_range (boost::counting_iterator<SizeType>(begin),
+                           boost::counting_iterator<SizeType>(end));
+}
 
 
 } //namespace CGAL

@@ -34,19 +34,7 @@
 
 #include <CGAL/bounding_box.h>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <CGAL/Real_timer.h>
-#include <CGAL/demangle.h>
-
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/task_group.h>
-#include <mutex>
-#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
@@ -101,55 +89,44 @@ class Mesh_feature_generator
 {
 
 public:
-  typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
-  typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::face_iterator face_iterator;
-  typedef typename CGAL::Iterator_range<face_iterator> Face_range;
+  using face_descriptor = typename boost::graph_traits<FaceListGraph>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<FaceListGraph>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<FaceListGraph>::vertex_descriptor;
+  using face_iterator = typename boost::graph_traits<FaceListGraph>::face_iterator;
+  using Face_range = typename CGAL::Iterator_range<face_iterator>;
 
-  typedef typename PointMap::value_type       Point;
-  typedef CGAL::Identity_property_map<face_descriptor> Face_map;
+  using Point = typename PointMap::value_type;
+  using Face_map = CGAL::Identity_property_map<face_descriptor>;
   /// \endcond
-
 
 public:
 
-  typedef Classification::Planimetric_grid
-  <GeomTraits, Face_range, PointMap>                    Planimetric_grid;
-  typedef Classification::Mesh_neighborhood
-  <FaceListGraph>                                        Neighborhood;
-  typedef Classification::Local_eigen_analysis           Local_eigen_analysis;
+  using Planimetric_grid = Classification::Planimetric_grid<GeomTraits, Face_range, PointMap>;
+  using Neighborhood = Classification::Mesh_neighborhood<FaceListGraph>;
+  using Local_eigen_analysis = Classification::Local_eigen_analysis;
 
   /// \cond SKIP_IN_MANUAL
-  typedef Classification::Feature_handle                 Feature_handle;
-
-  typedef Classification::Feature::Distance_to_plane
-  <Face_range, PointMap>                                 Distance_to_plane;
-  typedef Classification::Feature::Elevation
-  <GeomTraits, Face_range, PointMap>                    Elevation;
-  typedef Classification::Feature::Height_below
-  <GeomTraits, Face_range, PointMap>                    Height_below;
-  typedef Classification::Feature::Height_above
-  <GeomTraits, Face_range, PointMap>                    Height_above;
-  typedef Classification::Feature::Vertical_range
-  <GeomTraits, Face_range, PointMap>                    Vertical_range;
-  typedef Classification::Feature::Vertical_dispersion
-  <GeomTraits, Face_range, PointMap>                    Dispersion;
-  typedef Classification::Feature::Verticality
-  <GeomTraits>                                          Verticality;
-  typedef Classification::Feature::Eigenvalue           Eigenvalue;
+  using Feature_handle = Classification::Feature_handle;
+  using Distance_to_plane = Classification::Feature::Distance_to_plane<Face_range, PointMap>;
+  using Elevation = Classification::Feature::Elevation<GeomTraits, Face_range, PointMap>;
+  using Height_below = Classification::Feature::Height_below<GeomTraits, Face_range, PointMap>;
+  using Height_above =  Classification::Feature::Height_above<GeomTraits, Face_range, PointMap>;
+  using Vertical_range = Classification::Feature::Vertical_range<GeomTraits, Face_range, PointMap>;
+  using Dispersion = Classification::Feature::Vertical_dispersion<GeomTraits, Face_range, PointMap>;
+  using Verticality = Classification::Feature::Verticality<GeomTraits>;
+  using Eigenvalue = Classification::Feature::Eigenvalue;
   /// \endcond
 
 private:
 
   struct Scale
   {
-    Neighborhood* neighborhood;
-    Planimetric_grid* grid;
-    Local_eigen_analysis* eigen;
+    std::unique_ptr<Neighborhood> neighborhood;
+    std::unique_ptr<Planimetric_grid> grid;
+    std::unique_ptr<Local_eigen_analysis> eigen;
     float voxel_size;
 
     Scale (const FaceListGraph& input,
@@ -157,12 +134,13 @@ private:
            PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            std::size_t nb_scale,
-           Planimetric_grid* lower_grid = nullptr)
+           const std::unique_ptr<Planimetric_grid>& lower_grid
+           = std::unique_ptr<Planimetric_grid>())
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
       t.start();
-      neighborhood = new Neighborhood (input);
+      neighborhood = std::make_unique<Neighborhood> (input);
       t.stop();
 
       CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
@@ -170,7 +148,7 @@ private:
       t.reset();
       t.start();
 
-      eigen = new Local_eigen_analysis
+      eigen = std::make_unique<Local_eigen_analysis>
         (Local_eigen_analysis::create_from_face_graph
          (input, neighborhood->n_ring_neighbor_query(nb_scale + 1),
           ConcurrencyTag(), DiagonalizeTraits()));
@@ -183,42 +161,22 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == nullptr)
-        grid = new Planimetric_grid (range, point_map, bbox, this->voxel_size);
+      if (!lower_grid)
+        grid = std::make_unique<Planimetric_grid> (range, point_map, bbox, this->voxel_size);
       else
-        grid = new Planimetric_grid(lower_grid);
+        grid = std::make_unique<Planimetric_grid>(lower_grid.get());
       t.stop();
       CGAL_CLASSIFICATION_CERR << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
-    }
-    ~Scale()
-    {
-      if (neighborhood != nullptr)
-        delete neighborhood;
-      if (grid != nullptr)
-        delete grid;
-      delete eigen;
-    }
-
-    void reduce_memory_footprint(bool delete_neighborhood)
-    {
-      delete grid;
-      grid = nullptr;
-      if (delete_neighborhood)
-      {
-        delete neighborhood;
-        neighborhood = nullptr;
-      }
     }
 
     float grid_resolution() const { return voxel_size; }
     float radius_neighbors() const { return voxel_size * 3; }
     float radius_dtm() const { return voxel_size * 10; }
-
   };
 
   Iso_cuboid_3 m_bbox;
-  std::vector<Scale*> m_scales;
+  std::vector<std::unique_ptr<Scale> > m_scales;
 
   const FaceListGraph& m_input;
   Face_range m_range;
@@ -256,14 +214,14 @@ public:
   {
 
     m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_range.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
-       boost::make_transform_iterator (m_range.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
+      (CGAL::make_transform_iterator_from_property_map (m_range.begin(), m_point_map),
+       CGAL::make_transform_iterator_from_property_map (m_range.end(), m_point_map));
 
     CGAL::Real_timer t; t.start();
 
     m_scales.reserve (nb_scales);
 
-    m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
+    m_scales.emplace_back (std::make_unique<Scale> (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
 
     if (voxel_size == -1.f)
       voxel_size = m_scales[0]->grid_resolution();
@@ -271,7 +229,7 @@ public:
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
+      m_scales.emplace_back (std::make_unique<Scale> (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
     }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
@@ -280,25 +238,8 @@ public:
 
   /// @}
 
-  /// \cond SKIP_IN_MANUAL
-  virtual ~Mesh_feature_generator()
-  {
-    clear();
-  }
-
-  void reduce_memory_footprint()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-    {
-      m_scales[i]->reduce_memory_footprint(i > 0);
-    }
-  }
-  /// \endcond
-
-
   /// \name Feature Generation
   /// @{
-
 
   /*!
     \brief Generate geometric features based on face information.
@@ -404,15 +345,6 @@ public:
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
   /// @}
-
-private:
-
-  void clear()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      delete m_scales[i];
-    m_scales.clear();
-  }
 
 };
 

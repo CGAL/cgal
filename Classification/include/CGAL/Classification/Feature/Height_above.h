@@ -49,10 +49,8 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Height_above : public Feature_base
 {
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
-
-  typedef Image<float> Image_float;
-  typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Image_float = Image<float>;
+  using Grid = Planimetric_grid<GeomTraits, PointRange, PointMap>;
 
   const PointRange& input;
   PointMap point_map;

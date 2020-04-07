@@ -16,15 +16,13 @@
 
 #include <CGAL/Classification/Feature_base.h>
 
-#include <boost/make_shared.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
-#include <mutex>
 #include <tbb/task_group.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <vector>
 #include <utility>
+#include <memory>
 
 namespace CGAL {
 
@@ -40,7 +38,7 @@ the addition and the deletion of features.
 */
 class Feature_set
 {
-  typedef std::vector<Feature_handle> Base;
+  using Base = std::vector<Feature_handle>;
   Base m_features;
 
   struct Compare_name
@@ -54,10 +52,18 @@ class Feature_set
   };
 
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::task_group* m_tasks;
+  std::unique_ptr<tbb::task_group> m_tasks;
 #endif // CGAL_LINKED_WITH_TBB
 
 public:
+
+#ifdef DOXYGEN_RUNNING
+  using const_iterator = unspecified_type; ///< A random access iterator with value type `Feature_handle`.
+  using iterator = unspecified_type; ///< A random access iterator with value type `Feature_handle`.
+#else
+  using const_iterator = std::vector<Feature_handle>::const_iterator;
+  using iterator = std::vector<Feature_handle>::iterator;
+#endif
 
   /// \name Constructor
   /// @{
@@ -66,24 +72,9 @@ public:
     \brief Creates an empty feature set.
   */
   Feature_set()
-#ifdef CGAL_LINKED_WITH_TBB
-    : m_tasks(nullptr)
-#endif
   { }
 
   /// @}
-
-  /// \cond SKIP_IN_MANUAL
-  virtual ~Feature_set()
-  {
-#ifdef CGAL_LINKED_WITH_TBB
-    if (m_tasks != nullptr)
-      delete m_tasks;
-    for (std::size_t i = 0; i < m_adders.size(); ++ i)
-      delete m_adders[i];
-#endif
-  }
-  /// \endcond
 
   /// \name Modifications
   /// @{
@@ -113,20 +104,21 @@ public:
   Feature_handle add (T&& ... t)
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    if (m_tasks != nullptr)
+    if (m_tasks)
     {
       m_features.push_back (Feature_handle());
 
-      Parallel_feature_adder<Feature, T...>* adder
-        = new Parallel_feature_adder<Feature, T...>(m_features.back(), std::forward<T>(t)...);
-
-      m_adders.push_back (adder);
+      Parallel_feature_adder_ptr<Feature, T...> adder
+        = std::make_unique<Parallel_feature_adder<Feature, T...> >
+        (m_features.back(), std::forward<T>(t)...);
       m_tasks->run (*adder);
+
+      m_adders.emplace_back (std::move (adder));
     }
     else
 #endif
     {
-       m_features.push_back (Feature_handle (new Feature(std::forward<T>(t)...)));
+      m_features.push_back (Feature_handle (std::make_unique<Feature>(std::forward<T>(t)...)));
     }
     return m_features.back();
   }
@@ -136,20 +128,21 @@ public:
   Feature_handle add_with_scale_id (std::size_t i, T&& ... t)
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    if (m_tasks != nullptr)
+    if (m_tasks)
     {
       m_features.push_back (Feature_handle());
 
-      Parallel_feature_adder<Feature, T...>* adder
-        = new Parallel_feature_adder<Feature, T...>(i, m_features.back(), std::forward<T>(t)...);
-
-      m_adders.push_back (adder);
+      Parallel_feature_adder_ptr<Feature, T...> adder
+        = std::make_unique<Parallel_feature_adder<Feature, T...> >
+        (i, m_features.back(), std::forward<T>(t)...);
       m_tasks->run (*adder);
+
+      m_adders.emplace_back (std::move (adder));
     }
     else
 #endif
     {
-       m_features.push_back (Feature_handle (new Feature(std::forward<T>(t)...)));
+      m_features.push_back (Feature_handle (std::make_unique<Feature>(std::forward<T>(t)...)));
        m_features.back()->set_name (m_features.back()->name() + "_" + std::to_string(i));
     }
     return m_features.back();
@@ -190,8 +183,6 @@ public:
   /// @{
 
 
-#if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
-
   /*!
     \brief Initializes structures to compute features in parallel.
 
@@ -199,7 +190,8 @@ public:
     should be called before making several calls of `add()`. After the
     calls of `add()`, `end_parallel_additions()` should be called.
 
-    \note This function requires \ref thirdpartyTBB.
+    \note If \ref thirdpartyTBB is not available, this function does
+    nothing.
 
     \warning As arguments of `add()` are passed by reference and that new
     threads are started if `begin_parallel_additions()` is used, it is
@@ -212,7 +204,9 @@ public:
   */
   void begin_parallel_additions()
   {
-    m_tasks = new tbb::task_group;
+#ifdef CGAL_LINKED_WITH_TBB
+    m_tasks = std::make_unique<tbb::task_group>();
+#endif
   }
 
   /*!
@@ -224,27 +218,30 @@ public:
     should be called after `begin_parallel_additions()` and several
     calls of `add()`.
 
-    \note This function requires \ref thirdpartyTBB.
+    \note If \ref thirdpartyTBB is not available, this function does
+    nothing.
 
     \sa `begin_parallel_additions()`
   */
   void end_parallel_additions()
   {
+#ifdef CGAL_LINKED_WITH_TBB
     m_tasks->wait();
-    delete m_tasks;
-    m_tasks = nullptr;
-
-    for (std::size_t i = 0; i < m_adders.size(); ++ i)
-      delete m_adders[i];
+    m_tasks.release();
     m_adders.clear();
-  }
 #endif
+  }
 
   /// @}
 
 
   /// \name Access
   /// @{
+
+  const_iterator begin() const { return m_features.begin(); }
+  iterator begin() { return m_features.begin(); }
+  const_iterator end() const { return m_features.end(); }
+  iterator end() { return m_features.end(); }
 
   /*!
     \brief Returns how many features are defined.
@@ -293,18 +290,18 @@ private:
   {
     std::size_t scale;
     mutable Feature_handle fh;
-    boost::shared_ptr<std::tuple<T...> > args;
+    std::shared_ptr<std::tuple<T...> > args;
 
     Parallel_feature_adder (Feature_handle fh, T&& ... t)
       : scale (std::size_t(-1)), fh (fh)
     {
-      args = boost::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
+      args = std::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
     }
 
     Parallel_feature_adder (std::size_t scale, Feature_handle fh, T&& ... t)
       : scale(scale), fh (fh)
     {
-      args = boost::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
+      args = std::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
     }
 
     template<int ...>
@@ -325,7 +322,7 @@ private:
     template <typename Tuple, int ... S>
     void add_feature (Tuple& t, seq<S...>) const
     {
-      fh.attach (new Feature (std::forward<T>(std::get<S>(t))...));
+      fh.attach (std::make_unique<Feature> (std::forward<T>(std::get<S>(t))...));
       if (scale != std::size_t(-1))
         fh->set_name (fh->name() + "_" + std::to_string(scale));
     }
@@ -337,7 +334,11 @@ private:
 
   };
 
-  std::vector<Abstract_parallel_feature_adder*> m_adders;
+  using Abstract_parallel_feature_adder_ptr = std::unique_ptr<Abstract_parallel_feature_adder>;
+  template <typename Feature, typename ... T>
+  using Parallel_feature_adder_ptr = std::unique_ptr<Parallel_feature_adder<Feature, T...> >;
+
+  std::vector<Abstract_parallel_feature_adder_ptr> m_adders;
 
   /// \endcond
 };

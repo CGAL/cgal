@@ -300,12 +300,16 @@ public:
   {
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (int(ground_truth[i]) != -1)
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
+    {
+      if (int(gt_value) != -1)
       {
-        training_sets[std::size_t(ground_truth[i])].push_back (i);
+        training_sets[std::size_t(gt_value)].push_back (i);
         ++ nb_tot;
       }
+      ++ i;
+    }
 
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
@@ -896,10 +900,10 @@ private:
       std::size_t gt = j;
 
 #ifndef CGAL_LINKED_WITH_TBB
-      CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+      CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                  "Parallel_tag is enabled but TBB is unavailable.");
 #else
-      if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+      if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       {
         std::vector<std::mutex> tp_mutex (m_labels.size());
         std::vector<std::mutex> fp_mutex (m_labels.size());

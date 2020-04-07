@@ -200,8 +200,6 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
         oss << "label_" << i;
         new_label = m_labels.add(oss.str().c_str());
       }
-
-      m_label_colors.push_back (this->get_new_label_color (new_label->name()));
     }
   }
   else
@@ -210,9 +208,6 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     m_labels.add("vegetation");
     m_labels.add("roof");
     m_labels.add("facade");
-
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      m_label_colors.push_back (this->get_new_label_color (m_labels[i]->name()));
   }
 
   update_comments_of_point_set_item();
@@ -247,7 +242,13 @@ Point_set_item_classification::~Point_set_item_classification()
   if (m_points != NULL)
   {
     // For LAS saving, convert classification info in the LAS standard
-    if (m_input_is_las)
+    QString filename = m_points->property("source filename").toString();
+
+    if (m_input_is_las ||
+        (!filename.isEmpty() && (filename.endsWith(QString(".las")) ||
+                                 filename.endsWith(QString(".LAS")) ||
+                                 filename.endsWith(QString(".laz")) ||
+                                 filename.endsWith(QString(".LAZ")))))
     {
       Point_set::Property_map<unsigned char> las_classif
         = m_points->point_set()->add_property_map<unsigned char>("classification", 0).first;
@@ -388,7 +389,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
         std::size_t c = m_classif[*it];
 
         if (c != std::size_t(-1))
-          color = m_label_colors[c];
+          color = label_qcolor (m_labels[c]);
 
         m_points->point_set()->set_color(*it, color);
       }
@@ -403,7 +404,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
         int c2 = m_classif[*it];
 
         if (c != -1)
-          color = m_label_colors[std::size_t(c)];
+          color = label_qcolor (m_labels[std::size_t(c)]);
 
         float div = 1;
         if (c != c2)
@@ -670,6 +671,7 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
         prop[i] == "training" ||
         prop[i] == "label" ||
         prop[i] == "classification" ||
+        prop[i] == "scan_direction_flag" ||
         prop[i] == "real_color" ||
         prop[i] == "shape" ||
         prop[i] == "red" || prop[i] == "green" || prop[i] == "blue" ||
@@ -731,14 +733,14 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
   for (std::size_t i = 0; i < m_labels.size(); ++ i)
     std::cerr << " * " << m_labels[i]->name() << ": " << nb_label[i] << " point(s)" << std::endl;
 
-  if (classifier == 0)
-    {
-      m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
-      CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                       m_labels, *m_sowf,
-                                                       indices, m_label_probabilities);
-    }
-  else if (classifier == 1)
+  if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER)
+  {
+    m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
+    CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                     m_labels, *m_sowf,
+                                                     indices, m_label_probabilities);
+  }
+  else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
     if (m_ethz != NULL)
       delete m_ethz;
@@ -750,7 +752,7 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
                                                      m_labels, *m_ethz,
                                                      indices, m_label_probabilities);
   }
-  else if (classifier == 2)
+  else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest != NULL)
@@ -764,7 +766,7 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
                                                      indices, m_label_probabilities);
 #endif
   }
-  else if (classifier == 3)
+  else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     if (m_neural_network != NULL)
@@ -829,9 +831,9 @@ bool Point_set_item_classification::run (int method, int classifier,
     }
   reset_indices();
 
-  if (classifier == 0)
+  if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER)
     run (method, *m_sowf, subdivisions, smoothing);
-  else if (classifier == 1)
+  else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
     if (m_ethz == NULL)
     {
@@ -840,7 +842,7 @@ bool Point_set_item_classification::run (int method, int classifier,
     }
     run (method, *m_ethz, subdivisions, smoothing);
   }
-  else if (classifier == 2)
+  else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest == NULL)
@@ -851,7 +853,7 @@ bool Point_set_item_classification::run (int method, int classifier,
     run (method, *m_random_forest, subdivisions, smoothing);
 #endif
   }
-  else if (classifier == 3)
+  else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     if (m_neural_network == NULL)
@@ -865,4 +867,3 @@ bool Point_set_item_classification::run (int method, int classifier,
 
   return true;
 }
-

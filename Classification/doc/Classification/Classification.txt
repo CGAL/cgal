@@ -8,10 +8,6 @@ namespace CGAL {
 
 This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
-\note This component requires C++11 and depends on the Boost libraries
-[Serialization](https://www.boost.org/libs/serialization) and
-[IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
-
 \section Classification_Organization Package Organization
 
 %Classification of data sets is achieved as follows (see Figure \cgalFigureRef{Classification_organization_fig}):
@@ -35,7 +31,9 @@ Currently, \cgal provides data structures to handle classification of point sets
 
 \subsection Classification_labels Label Set
 
-A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names are not used for identification: two labels in the same set can have the same name (but not the same handle).
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name, an index (in a label set), a standard index (for example, the index of the label in the ASPRS standard) and a color. It is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names, standard indices and colors are not used for identification: two labels in the same set can have the same name, standard index and color but not the same handle.
+
+If labels are initialized with their names only, standard indices and colors can be deduced in some cases (see [Label_set::add()](@ref CGAL::Classification::Label_set::add)).
 
 The following code snippet shows how to add labels to the classification object:
 
@@ -230,6 +228,14 @@ cases where many labels are used (more than five).
 An [example](\ref Classification_example_ethz_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
 to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
+
+\subsubsection Classification_ETHZ_random_forest_deprecated Deprecated IO
+
+The IO functions of this classifier were changed in \cgal
+5.2. Configurations generated from previous versions are not valid
+anymore and should be converted first as shown in the following example:
+
+\cgalExample{Classification/example_deprecated_conversion.cpp}
 
 \subsection Classification_OpenCV_random_forest OpenCV Random Forest
 

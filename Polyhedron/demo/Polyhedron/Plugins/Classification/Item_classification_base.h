@@ -10,15 +10,31 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
-#include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
+
+
 #include <CGAL/Classification/ETHZ/Random_forest_classifier.h>
+#include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
+
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+#  include <CGAL/Classification/TensorFlow/Neural_network_classifier.h>
+#endif
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/OpenCV/Random_forest_classifier.h>
+#  include <CGAL/Classification/OpenCV/Random_forest_classifier.h>
 #endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-#include <CGAL/Classification/TensorFlow/Neural_network_classifier.h>
-#endif
+
+#define CGAL_CLASSIFICATION_ETHZ_ID "Random Forest (ETHZ)"
+#define CGAL_CLASSIFICATION_ETHZ_NUMBER 0
+
+#define CGAL_CLASSIFICATION_TENSORFLOW_ID "Neural Network (TensorFlow)"
+#define CGAL_CLASSIFICATION_TENSORFLOW_NUMBER 1
+
+#define CGAL_CLASSIFICATION_OPENCV_ID "Random Forest (OpenCV)"
+#define CGAL_CLASSIFICATION_OPENCV_NUMBER 2
+
+#define CGAL_CLASSIFICATION_SOWF_ID "Sum of Weighted Features"
+#define CGAL_CLASSIFICATION_SOWF_NUMBER 3
+
 
 class Item_classification_base
 {
@@ -77,10 +93,14 @@ public:
   void set_effect (Label_handle l, Feature_handle f, Sum_of_weighted_features::Effect e)
   { m_sowf->set_effect (l, f, e); }
 
+  QColor label_qcolor (Label_handle l) const
+  {
+    return QColor (l->color().red(), l->color().green(), l->color().blue());
+  }
+
   virtual QColor add_new_label (const char* name)
   {
     m_labels.add(name);
-    m_label_colors.push_back (get_new_label_color (name));
 
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -98,12 +118,11 @@ public:
     m_neural_network = new Neural_network (m_labels, m_features);
 #endif
 
-    return m_label_colors.back();
+    return label_qcolor (m_labels[m_labels.size() - 1]);
   }
   virtual void remove_label (std::size_t position)
   {
     m_labels.remove(m_labels[position]);
-    m_label_colors.erase (m_label_colors.begin() + position);
 
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -125,7 +144,6 @@ public:
   virtual void clear_labels ()
   {
     m_labels.clear();
-    m_label_colors.clear();
 
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -172,23 +190,25 @@ public:
         return;
       }
 
-    if (classifier == 0)
+    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER)
     {
       std::ofstream f (filename);
       m_sowf->save_configuration (f);
     }
-    else if (classifier == 1)
+    else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
     {
+      std::cerr << "D ";
       std::ofstream f (filename, std::ios_base::out | std::ios_base::binary);
       m_ethz->save_configuration (f);
+      std::cerr << "E ";
     }
-    else if (classifier == 2)
+    else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->save_configuration (filename);
 #endif
     }
-    else if (classifier == 3)
+    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
     {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
       std::ofstream f (filename);
@@ -204,25 +224,30 @@ public:
         return;
       }
 
-    if (classifier == 0)
+    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER)
     {
       std::ifstream f (filename);
       m_sowf->load_configuration (f, true);
     }
-    else if (classifier == 1)
+    else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
     {
       if (m_ethz == NULL)
         m_ethz = new ETHZ_random_forest (m_labels, m_features);
       std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
-      m_ethz->load_configuration (f);
+
+      // Handle deprecated files
+      if (std::string(filename).find(".gz") != std::string::npos)
+        m_ethz->load_deprecated_configuration(f);
+      else
+        m_ethz->load_configuration (f);
     }
-    else if (classifier == 2)
+    else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->load_configuration (filename);
 #endif
     }
-    else if (classifier == 3)
+    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
     {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
       if (m_neural_network == NULL)
@@ -233,69 +258,24 @@ public:
     }
   }
 
-  const QColor& label_color(std::size_t i) const { return m_label_colors[i]; }
+  QColor label_color(std::size_t i) const
+  {
+    return label_qcolor (m_labels[i]);
+  }
   void change_label_color (std::size_t position, const QColor& color)
   {
-    m_label_colors[position] = color;
+    m_labels[position]->set_color
+      (CGAL::Color (color.red(), color.green(), color.blue()));
   }
   void change_label_name (std::size_t position, const std::string& name)
   {
     m_labels[position]->set_name (name);
   }
 
-  QColor get_new_label_color (const std::string& name)
-  {
-    QColor color (64 + rand() % 192,
-                  64 + rand() % 192,
-                  64 + rand() % 192);
-
-    if (name == "ground")
-      color = QColor (186, 189, 182);
-    else if (name == "low_veget")
-      color = QColor (78, 154, 6);
-    else if (name == "med_veget"
-             || name == "vegetation")
-      color = QColor (138, 226, 52);
-    else if (name == "high_veget")
-      color = QColor (204, 255, 201);
-    else if (name == "building"
-             || name == "roof")
-      color = QColor (245, 121, 0);
-    else if (name == "noise")
-      color = QColor (0, 0, 0);
-    else if (name == "reserved")
-      color = QColor (233, 185, 110);
-    else if (name == "water")
-      color = QColor (114, 159, 207);
-    else if (name == "rail")
-      color = QColor (136, 46, 25);
-    else if (name == "road_surface")
-      color = QColor (56, 56, 56);
-    else if (name == "reserved_2")
-      color = QColor (193, 138, 51);
-    else if (name == "wire_guard")
-      color = QColor (37, 61, 136);
-    else if (name == "wire_conduct")
-      color = QColor (173, 127, 168);
-    else if (name == "trans_tower")
-      color = QColor (136, 138, 133);
-    else if (name == "wire_connect")
-      color = QColor (145, 64, 236);
-    else if (name == "bridge_deck")
-      color = QColor (213, 93, 93);
-    else if (name == "high_noise")
-      color = QColor (255, 0, 0);
-    else if (name == "facade")
-      color = QColor (77, 131, 186);
-
-    return color;
-  }
-
 protected:
 
   Label_set m_labels;
   Feature_set m_features;
-  std::vector<QColor> m_label_colors;
   Sum_of_weighted_features* m_sowf;
   ETHZ_random_forest* m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV

@@ -56,8 +56,8 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Vertical_dispersion : public Feature_base
 {
-  typedef Classification::Image<compressed_float> Image_cfloat;
-  typedef Classification::Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Image_cfloat = Classification::Image<compressed_float>;
+  using Grid = Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>;
 
   const Grid& grid;
   Image_cfloat Dispersion;

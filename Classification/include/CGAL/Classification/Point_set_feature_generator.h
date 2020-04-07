@@ -30,24 +30,11 @@
 #include <CGAL/Classification/Feature/Height_above.h>
 #include <CGAL/Classification/Feature/Vertical_range.h>
 
-// Experimental feature, not used officially
-#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
-#include <CGAL/Classification/Feature/Gradient_of_feature.h>
-#endif
-
-#include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/internal/verbosity.h>
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/bounding_box.h>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <CGAL/Real_timer.h>
-#include <CGAL/demangle.h>
 
 
 namespace CGAL {
@@ -102,71 +89,54 @@ class Point_set_feature_generator
 {
 
 public:
-  typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
-  typedef typename PointRange::const_iterator Iterator;
-  typedef typename PointMap::value_type       Point;
+  using Iterator = typename PointRange::const_iterator;
+  using Point = typename PointMap::value_type;
   /// \endcond
 
-  typedef Classification::Planimetric_grid
-  <GeomTraits, PointRange, PointMap>                    Planimetric_grid;
-  typedef Classification::Point_set_neighborhood
-  <GeomTraits, PointRange, PointMap>                    Neighborhood;
-  typedef Classification::Local_eigen_analysis           Local_eigen_analysis;
+  using Planimetric_grid = Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>;
+  using Neighborhood = Classification::Point_set_neighborhood<GeomTraits, PointRange, PointMap>;
+  using Local_eigen_analysis = Classification::Local_eigen_analysis;
 
   /// \cond SKIP_IN_MANUAL
-  typedef Classification::Feature_handle                 Feature_handle;
-  typedef Classification::Label                          Label;
-  typedef Classification::Label_handle                   Label_handle;
-
-  typedef Classification::Feature::Distance_to_plane
-  <PointRange, PointMap>                                 Distance_to_plane;
-  typedef Classification::Feature::Elevation
-  <GeomTraits, PointRange, PointMap>                    Elevation;
-  typedef Classification::Feature::Height_below
-  <GeomTraits, PointRange, PointMap>                    Height_below;
-  typedef Classification::Feature::Height_above
-  <GeomTraits, PointRange, PointMap>                    Height_above;
-  typedef Classification::Feature::Vertical_range
-  <GeomTraits, PointRange, PointMap>                    Vertical_range;
-  typedef Classification::Feature::Vertical_dispersion
-  <GeomTraits, PointRange, PointMap>                    Dispersion;
-  typedef Classification::Feature::Verticality
-  <GeomTraits>                                          Verticality;
-  typedef Classification::Feature::Eigenvalue           Eigenvalue;
-
-  typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
-
-#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
-  typedef Classification::Feature::Gradient_of_feature
-  <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
-#endif
+  using Feature_handle = Classification::Feature_handle;
+  using Distance_to_plane = Classification::Feature::Distance_to_plane<PointRange, PointMap>;
+  using Elevation = Classification::Feature::Elevation<GeomTraits, PointRange, PointMap>;
+  using Height_below = Classification::Feature::Height_below<GeomTraits, PointRange, PointMap>;
+  using Height_above = Classification::Feature::Height_above<GeomTraits, PointRange, PointMap>;
+  using Vertical_range = Classification::Feature::Vertical_range<GeomTraits, PointRange, PointMap>;
+  using Dispersion = Classification::Feature::Vertical_dispersion<GeomTraits, PointRange, PointMap>;
+  using Verticality = Classification::Feature::Verticality<GeomTraits>;
+  using Eigenvalue = Classification::Feature::Eigenvalue;
+  using Neighbor_query = typename Neighborhood::K_neighbor_query;
   /// \endcond
 
 private:
 
   struct Scale
   {
-    Neighborhood* neighborhood;
-    Planimetric_grid* grid;
-    Local_eigen_analysis* eigen;
+    std::unique_ptr<Neighborhood> neighborhood;
+    std::unique_ptr<Planimetric_grid> grid;
+    std::unique_ptr<Local_eigen_analysis> eigen;
     float voxel_size;
 
     Scale (const PointRange& input, PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
-           Planimetric_grid* lower_grid = nullptr)
+           const std::unique_ptr<Planimetric_grid>& lower_grid
+           = std::unique_ptr<Planimetric_grid>())
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
       t.start();
-      if (lower_grid == nullptr)
-        neighborhood = new Neighborhood (input, point_map);
+      if (!lower_grid)
+        neighborhood = std::make_unique<Neighborhood> (input, point_map);
       else
-        neighborhood = new Neighborhood (input, point_map, voxel_size);
+        neighborhood = std::make_unique<Neighborhood> (input, point_map, voxel_size);
       t.stop();
 
-      if (lower_grid == nullptr)
+      if (!lower_grid)
         CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
         CGAL_CLASSIFICATION_CERR << "Neighborhood with voxel size " << voxel_size
@@ -174,7 +144,7 @@ private:
       t.reset();
       t.start();
 
-      eigen = new Local_eigen_analysis
+      eigen = std::make_unique<Local_eigen_analysis>
         (Local_eigen_analysis::create_from_point_set
          (input, point_map, neighborhood->k_neighbor_query(12), ConcurrencyTag(), DiagonalizeTraits()));
 
@@ -187,32 +157,13 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == nullptr)
-        grid = new Planimetric_grid (input, point_map, bbox, this->voxel_size);
+      if (!lower_grid)
+        grid = std::make_unique<Planimetric_grid> (input, point_map, bbox, this->voxel_size);
       else
-        grid = new Planimetric_grid(lower_grid);
+        grid = std::make_unique<Planimetric_grid>(lower_grid.get());
       t.stop();
       CGAL_CLASSIFICATION_CERR << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
-    }
-    ~Scale()
-    {
-      if (neighborhood != nullptr)
-        delete neighborhood;
-      if (grid != nullptr)
-        delete grid;
-      delete eigen;
-    }
-
-    void reduce_memory_footprint(bool delete_neighborhood)
-    {
-      delete grid;
-      grid = nullptr;
-      if (delete_neighborhood)
-      {
-        delete neighborhood;
-        neighborhood = nullptr;
-      }
     }
 
     float grid_resolution() const { return voxel_size; }
@@ -222,7 +173,7 @@ private:
   };
 
   Iso_cuboid_3 m_bbox;
-  std::vector<Scale*> m_scales;
+  std::vector<std::unique_ptr<Scale> > m_scales;
 
   const PointRange& m_input;
   PointMap m_point_map;
@@ -256,14 +207,14 @@ public:
     : m_input (input), m_point_map (point_map)
   {
     m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
-       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
+      (CGAL::make_transform_iterator_from_property_map (m_input.begin(), m_point_map),
+       CGAL::make_transform_iterator_from_property_map (m_input.end(), m_point_map));
 
     CGAL::Real_timer t; t.start();
 
     m_scales.reserve (nb_scales);
 
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
+    m_scales.emplace_back (std::make_unique<Scale> (m_input, m_point_map, m_bbox, voxel_size));
 
     if (voxel_size == -1.f)
       voxel_size = m_scales[0]->grid_resolution();
@@ -271,7 +222,7 @@ public:
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
+      m_scales.push_back (std::make_unique<Scale> (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
     }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
@@ -280,21 +231,6 @@ public:
 
   /// @}
 
-  /// \cond SKIP_IN_MANUAL
-  virtual ~Point_set_feature_generator()
-  {
-    clear();
-  }
-
-  void reduce_memory_footprint()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-    {
-      m_scales[i]->reduce_memory_footprint(i > 0);
-    }
-  }
-  /// \endcond
-
   /// \name Feature Generation
   /// @{
 
@@ -302,28 +238,71 @@ public:
   /*!
     \brief Generate geometric features based on point position information.
 
-    At each scale, the following features are generated:
+    This is a meta-function that calls the following functions:
 
-    - `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and 2
-    - `CGAL::Classification::Feature::Distance_to_plane`
-    - `CGAL::Classification::Feature::Elevation`
-    - `CGAL::Classification::Feature::Height_above`
-    - `CGAL::Classification::Feature::Height_below`
-    - `CGAL::Classification::Feature::Vertical_dispersion`
-    - `CGAL::Classification::Feature::Vertical_range`
-    - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
+    - `generate_eigen_features()`
+    - `generate_dispersion_features()`
+    - `generate_elevation_features()`
+    - The version of `generate_normal_based_features()` without a normal map
 
     \param features the feature set where the features are instantiated.
    */
   void generate_point_based_features (Feature_set& features)
   {
+    generate_eigen_features (features);
+    generate_dispersion_features (features);
+    generate_elevation_features (features);
+    generate_normal_based_features (features);
+  }
+
+  /*!
+    \brief Generate geometric eigen features.
+
+    At each scale, features
+    `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and
+    2 are generated.
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_eigen_features (Feature_set& features)
+  {
     for (int j = 0; j < 3; ++ j)
       for (std::size_t i = 0; i < m_scales.size(); ++ i)
         features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), (unsigned int)(j));
+  }
+
+  /*!
+    \brief Generate geometric features based on local dispersion information.
+
+    At each scale, the following features are generated:
+
+    - `CGAL::Classification::Feature::Distance_to_plane`
+    - `CGAL::Classification::Feature::Vertical_dispersion`
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_dispersion_features (Feature_set& features)
+  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Distance_to_plane> (i, m_input, m_point_map, eigen(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Dispersion> (i, m_input, m_point_map, grid(i), radius_neighbors(i));
+  }
+
+  /*!
+    \brief Generate geometric features based on elevation information.
+
+    At each scale, the following features are generated:
+
+    - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Height_above`
+    - `CGAL::Classification::Feature::Height_below`
+    - `CGAL::Classification::Feature::Vertical_range`
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_elevation_features (Feature_set& features)
+  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Elevation> (i, m_input, m_point_map, grid(i), radius_dtm(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
@@ -332,6 +311,20 @@ public:
       features.add_with_scale_id<Height_above> (i, m_input, m_point_map, grid(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Vertical_range> (i, m_input, m_point_map, grid(i));
+  }
+
+
+  /*!
+    \brief Generate geometric features based on normal analysis information.
+
+    At each scale, the version of
+    `CGAL::Classification::Feature::Verticality` based on eigenvalue
+    is generated.
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_normal_based_features (Feature_set& features)
+  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Verticality> (i, m_input, eigen(i));
   }
@@ -347,7 +340,6 @@ public:
 
     \param features the feature set where the features are instantiated.
     \param normal_map property map to access the normal vectors of the input points (if any).
-
    */
   template <typename VectorMap>
   void generate_normal_based_features(Feature_set& features, const VectorMap& normal_map)
@@ -450,51 +442,6 @@ public:
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
   /// @}
-
-
-private:
-
-  void clear()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      delete m_scales[i];
-    m_scales.clear();
-  }
-
-#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
-  void generate_gradient_features(Feature_set& features)
-  {
-    std::size_t size = features->size();
-
-    for (std::size_t i = 0; i < size; ++ i)
-    {
-      for (int j = m_scales.size() - 1; j >= 0; -- j)
-      {
-        std::ostringstream oss;
-        oss << "_" << j;
-        if ((*features)[i]->name().find (oss.str()))
-        {
-          const Neighbor_query& neighbor_query = neighborhood(std::size_t(j)).k_neighbor_query(6);
-          features->template add<Gradient_of_feature> (m_input, m_point_map, (*features)[i], neighbor_query);
-          break;
-        }
-      }
-    }
-  }
-#endif
-
-  template <typename T>
-  const T& get_parameter (const T& t)
-  {
-    return t;
-  }
-
-  template <typename T>
-  Constant_property_map<Iterator, T>
-  get_parameter (const Default&)
-  {
-    return Constant_property_map<Iterator, T>();
-  }
 
 };
 

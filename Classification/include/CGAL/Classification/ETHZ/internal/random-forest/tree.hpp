@@ -121,6 +121,18 @@ public:
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(root_node);
     }
+
+    void write (std::ostream& os)
+    {
+      root_node->write(os);
+    }
+
+    void read (std::istream& is)
+    {
+      root_node.reset(new NodeT(0, params));
+      root_node->read(is);
+    }
+
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
       root_node->get_feature_usage(count);

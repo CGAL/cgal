@@ -71,7 +71,7 @@ class Random_forest_classifier
 
   const Label_set& m_labels;
   const Feature_set& m_features;
-  Forest* m_rfc;
+  std::shared_ptr<Forest> m_rfc;
 
 public:
 
@@ -84,7 +84,7 @@ public:
   */
   Random_forest_classifier (const Label_set& labels,
                             const Feature_set& features)
-    : m_labels (labels), m_features (features), m_rfc (nullptr)
+    : m_labels (labels), m_features (features)
   { }
 
   /*!
@@ -100,20 +100,12 @@ public:
   */
   Random_forest_classifier (const Random_forest_classifier& other,
                             const Feature_set& features)
-    : m_labels (other.m_labels), m_features (features), m_rfc (nullptr)
+    : m_labels (other.m_labels), m_features (features)
   {
     std::stringstream stream;
     other.save_configuration(stream);
     this->load_configuration(stream);
   }
-
-  /// \cond SKIP_IN_MANUAL
-  ~Random_forest_classifier ()
-  {
-    if (m_rfc != nullptr)
-      delete m_rfc;
-  }
-  /// \endcond
 
   /// @}
 
@@ -180,30 +172,40 @@ public:
     std::vector<int> gt;
     std::vector<float> ft;
 
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+    std::vector<std::size_t> count (m_labels.size(), 0);
+#endif
+
+    std::size_t i = 0;
+    for (const auto& gt_value : ground_truth)
     {
-      int g = int(ground_truth[i]);
+      int g = int(gt_value);
       if (g != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           ft.push_back(m_features[f]->value(i));
         gt.push_back(g);
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+        count[std::size_t(g)] ++;
+#endif
       }
+      ++ i;
     }
 
-    CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers:" << std::endl;
+#ifdef CGAL_CLASSIFICATION_VERBOSE
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      std::cerr << " * " << m_labels[i]->name() << ": " << count[i] << " inlier(s)" << std::endl;
+#endif
 
     CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
 
-    if (m_rfc != nullptr && reset_trees)
-    {
-      delete m_rfc;
-      m_rfc = nullptr;
-    }
+    if (m_rfc && reset_trees)
+      m_rfc.reset();
 
-    if (m_rfc == nullptr)
-      m_rfc = new Forest (params);
+    if (!m_rfc)
+      m_rfc = std::make_shared<Forest> (params);
 
     CGAL::internal::liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
 
@@ -277,33 +279,70 @@ public:
     This allows to easily save and recover a specific classification
     configuration.
 
-    The output file is written in an GZIP container that is readable
-    by the `load_configuration()` method.
+    The output file is written in a binary format that is readable by
+    the `load_configuration()` method.
   */
   void save_configuration (std::ostream& output) const
   {
-    boost::iostreams::filtering_ostream outs;
-    outs.push(boost::iostreams::gzip_compressor());
-    outs.push(output);
-    boost::archive::text_oarchive oas(outs);
-    oas << BOOST_SERIALIZATION_NVP(*m_rfc);
+    m_rfc->write(output);
   }
 
   /*!
     \brief Loads a configuration from the stream `input`.
 
-    The input file should be a GZIP container written by the
+    The input file should be a binary file written by the
     `save_configuration()` method. The feature set of the classifier
     should contain the exact same features in the exact same order as
     the ones present when the file was generated using
     `save_configuration()`.
+
+    \warning If the file you are trying to load was saved using CGAL
+    5.1 or earlier, you have to convert it first using
+    `convert_deprecated_configuration_to_new_format()` as the exchange
+    format for ETHZ Random Forest changed in CGAL 5.2.
+
   */
   void load_configuration (std::istream& input)
   {
     CGAL::internal::liblearning::RandomForest::ForestParams params;
-    if (m_rfc != nullptr)
-      delete m_rfc;
-    m_rfc = new Forest (params);
+    m_rfc = std::make_shared<Forest> (params);
+
+    m_rfc->read(input);
+  }
+
+  /// @}
+
+  /// \name Deprecated Input/Output
+  /// @{
+
+  /*!
+    \brief Converts a deprecated GZ configuration to a new BIN
+    configuration.
+
+    The input file should be a GZIP container written by the
+    `save_configuration()` method from CGAL 5.1 and earlier. The
+    output is a valid configuration for CGAL 5.2 and later.
+
+    \note This function and depends on the Boost libraries
+    [Serialization](https://www.boost.org/libs/serialization) and
+    [IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
+  */
+  static void convert_deprecated_configuration_to_new_format (std::istream& input, std::ostream& output)
+  {
+    Label_set dummy_labels;
+    Feature_set dummy_features;
+    Random_forest_classifier classifier (dummy_labels, dummy_features);
+    classifier.load_deprecated_configuration(input);
+    classifier.save_configuration(output);
+  }
+
+/// @}
+
+  /// \cond SKIP_IN_MANUAL
+  void load_deprecated_configuration (std::istream& input)
+  {
+    CGAL::internal::liblearning::RandomForest::ForestParams params;
+    m_rfc = std::make_shared<Forest> (params);
 
     boost::iostreams::filtering_istream ins;
     ins.push(boost::iostreams::gzip_decompressor());
@@ -311,8 +350,8 @@ public:
     boost::archive::text_iarchive ias(ins);
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
+  /// \endcond
 
-/// @}
 
 };
 

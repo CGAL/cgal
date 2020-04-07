@@ -51,12 +51,12 @@ template <typename GeomTraits, typename PointRange, typename PointMap>
 class Planimetric_grid
 {
 public:
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
 private:
-  typedef Image<std::vector<boost::uint32_t> > Image_indices;
-  typedef Image<bool> Image_bool;
+  using Image_indices = Image<std::vector<std::uint32_t> >;
+  using Image_bool = Image<bool>;
 
   const PointRange* m_points;
   PointMap m_point_map;
@@ -74,7 +74,7 @@ private:
 public:
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator; ///< A forward iterator with value type `std::size_t`.
+  using iterator = unspecified_type; ///< A forward iterator with value type `std::size_t`.
 #else
   class iterator
     : public boost::iterator_facade<iterator,
@@ -216,9 +216,9 @@ public:
     for (std::size_t i = 0; i < input.size(); ++ i)
     {
       const Point_3& p = get(point_map, *(input.begin()+i));
-      std::size_t x = (boost::uint32_t)((p.x() - bbox.xmin()) / grid_resolution);
-      std::size_t y = (boost::uint32_t)((p.y() - bbox.ymin()) / grid_resolution);
-      m_grid(x,y).push_back (boost::uint32_t(i));
+      std::size_t x = (std::uint32_t)((p.x() - bbox.xmin()) / grid_resolution);
+      std::size_t y = (std::uint32_t)((p.y() - bbox.ymin()) / grid_resolution);
+      m_grid(x,y).push_back (std::uint32_t(i));
     }
   }
 

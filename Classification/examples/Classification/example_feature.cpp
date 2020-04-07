@@ -115,7 +115,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Classifying" << std::endl;
   std::vector<int> label_indices(pts.size(), -1);
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.5, 1, label_indices);
