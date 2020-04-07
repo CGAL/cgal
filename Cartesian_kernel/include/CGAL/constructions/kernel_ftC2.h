@@ -280,9 +280,13 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
       // > include\cgal\constructions\kernel_ftc2.h(287) :
       // >   warning C4723: potential divide by 0
 #if defined(BOOST_MSVC)
-#pragma warning(suppress:4723)
+#pragma warning( push )
+#pragma warning( disable : 4723)
 #endif
       x = -c/a;
+#if defined(BOOST_MSVC)
+#pragma warning( pop )
+#endif
       y = 1 - i * a;
     }
   else
