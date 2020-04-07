@@ -10,14 +10,15 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
   {
   std::cout << "Reading from stream\n";
   Mesh m;
   CGAL::Real_timer timer;
   timer.start();
-  std::ifstream(argv[1]) >> m;
+  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  in >> m;
   timer.stop();
   std::cout << "  is_valid? " << CGAL::is_valid_polygon_mesh(m) << "\n";
   std::cout << "Total time: " << timer.time() << std::endl << std::endl;
@@ -28,7 +29,7 @@ int main(int, char** argv)
   Mesh m;
   CGAL::Real_timer timer;
   timer.start();
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
   std::vector<Kernel::Point_3> points;
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
   CGAL::read_OFF(in, points, triangles);
@@ -52,7 +53,7 @@ int main(int, char** argv)
   Mesh m;
   CGAL::Real_timer timer;
   timer.start();
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
   std::vector<Kernel::Point_3> points;
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
   CGAL::read_OFF(in, points, triangles);
