@@ -297,6 +297,17 @@ that has as value type `Vertex_handle`.
   range type for iterating over the points of the finite vertices.
  */
   typedef Iterator_range<unspecified_type> Points;
+
+/*!
+  range type for iterating over the cells intersected by a line segment.
+*/
+  typedef Iterator_range<unspecified_type> Segment_traverser_cell_handles;
+
+/*!
+  range type for iterating over the simplices intersected by a line segment.
+*/
+  typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
+
 /// @}
 
 /// \name Creation 
@@ -1295,7 +1306,17 @@ Finite_vertex_handles finite_vertex_handles() const;
   returns a range of iterators over the points of finite vertices.
 */
 Points points() const;
-  
+
+/*!
+  returns a range of iterators over the cells intersected by a line segment
+*/
+Segment_traverser_cell_handles segment_traverser_cell_handles() const;
+
+/*!
+  returns a range of iterators over the simplices intersected by a line segment
+*/
+Segment_traverser_simplices segment_traverser_simplices() const;
+
  
 /// @} 
 
