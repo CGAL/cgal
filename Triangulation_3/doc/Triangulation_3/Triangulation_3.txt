@@ -524,7 +524,8 @@ The package provides iterators that can be used to traverse the triangulation al
 All cells (resp. simplices) visited by this traversal iterator are guaranteed to intersect the segment.
 \cgalModifEnd
 
-\cgalExample{Triangulation_3/segment_traverser_3.cpp}
+\cgalExample{Triangulation_3/segment_cell_traverser_3.cpp}
+\cgalExample{Triangulation_3/segment_simplex_traverser_3.cpp}
 
 \subsection Triangulation_3FindingtheCellsinConflict Finding the Cells in Conflict with a Point in a Delaunay Triangulation
 
