@@ -37,7 +37,9 @@ class Filtered_rational
 {
   NT1 _n1;
   mutable NT2 _n2;
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
   bool eii = false; // eii means "exact is initialized"
+#endif
 public:
 
   typedef Filtered_rational<NT1, NT2> Self;
@@ -54,22 +56,33 @@ public:
     CGAL_assertion(is_valid()); }
 
   Filtered_rational(const NT1 &_n1, const NT2 &_n2)
-    : _n1(_n1), _n2(_n2), eii(true)
+    : _n1(_n1), _n2(_n2)
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+    , eii(true)
+#endif
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(const std::pair<NT1,NT2> &np)
-    : _n1(np.first), _n2(np.second), eii(true)
+    : _n1(np.first), _n2(np.second)
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+    , eii(true)
+#endif
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(const NT2 &_n2)
-    : _n1(to_interval(_n2)), _n2(_n2), eii(true)
+    : _n1(to_interval(_n2)), _n2(_n2)
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+    , eii(true)
+#endif
   { CGAL_assertion(is_valid()); }
 
   Self& operator=(const std::pair<NT1,NT2> &np)
   {
     _n1 = np.first;
     _n2 = np.second;
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     eii = true;
+#endif
   }
 
   // The following need to be dependant on NT1 != {NT2,int,double} ...
@@ -93,22 +106,26 @@ public:
 
   const NT2& n2() const
   {
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     if(!eii){
       assert(_n1.is_point());
       _n2 = NT2(_n1.inf());
       eii = true;
     }
+#endif
     return _n2;
   }
 
   NT1& n1() { return _n1; }
 
   NT2& n2() {
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     if(!eii){
       assert(_n1.is_point());
       _n2 = NT2(_n1.inf());
       eii = true;
     }
+#endif
     return _n2;
   }
 

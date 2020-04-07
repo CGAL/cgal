@@ -49,17 +49,24 @@ struct Approximate_exact_pair
 
   Approximate_exact_pair()
   {}
-
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
   Approximate_exact_pair(const T1& t1)
     : Base(t1,T2())
   {}
-
+#endif
+  
   Approximate_exact_pair(const T1& t1, const T2& t2)
-    : Base(t1,t2), eii(true)
+    : Base(t1,t2)
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+    , eii(true)
+#endif
   {}
 
   Approximate_exact_pair(const std::pair<T1,T2>& p)
-    : Base(p), eii(true)
+    : Base(p)
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+    , eii(true)
+#endif
   {}
 
   const T1& approx() const
@@ -69,6 +76,7 @@ struct Approximate_exact_pair
 
   const T2& exact() const
   {
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     if(!eii){
       typedef typename Kernel_traits<T1>::Kernel K1;
       typedef typename Kernel_traits<T2>::Kernel K2;
@@ -77,11 +85,14 @@ struct Approximate_exact_pair
       const_cast<Self*>(this)->second = convert(this->first);
       eii = true;
     }
+#endif
     return this->second;
   }
 
 private:
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
   bool eii = false; // exact is initialized
+#endif
 };
 
 template <typename T1, typename T2>
@@ -558,7 +569,12 @@ public:
 
     Point_3 operator()(Return_base_tag tag, double x, double y, double z) const
     {
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
       return Point_3(typename AK::Point_3(AK().construct_point_3_object()(tag, x, y, z)));
+#else      
+      return std::make_pair(typename AK::Point_3(AK().construct_point_3_object()(tag, x, y, z)),
+                            typename EK::Point_3(EK().construct_point_3_object()(tag,x,y,z)));
+#endif
     }
   };
 
