@@ -42,7 +42,7 @@ class Evaluation
 
 public:
 
-  /// \name Constructor
+  /// \name Constructors
   /// @{
 
   /*!
@@ -99,6 +99,10 @@ public:
   }
   /// \endcond
 
+  /// @}
+
+  /// \name Modification
+  /// @{
 
   /*!
     \brief Append more items to the evaluation object.
@@ -134,6 +138,17 @@ public:
 
   /// \name Label Evaluation
   /// @{
+
+  /*!
+    \brief Returns the number of items whose ground truth is
+    `ground_truth` and which were classified as `result`.
+  */
+  std::size_t confusion (Label_handle ground_truth, Label_handle result)
+  {
+    std::size_t idx_gt = ground_truth->index();
+    std::size_t idx_r = result->index();
+    return m_confusion[idx_gt][idx_r];
+  }
 
   /*!
 
@@ -228,17 +243,6 @@ public:
 
   /// \name Global Evaluation
   /// @{
-
-  /*!
-    \brief Returns the number of items whose ground truth is
-    `ground_truth` and which were classified as `result`.
-  */
-  std::size_t confusion (Label_handle ground_truth, Label_handle result)
-  {
-    std::size_t idx_gt = ground_truth->index();
-    std::size_t idx_r = result->index();
-    return m_confusion[idx_gt][idx_r];
-  }
 
   /*!
     \brief Returns the number of misclassified items.

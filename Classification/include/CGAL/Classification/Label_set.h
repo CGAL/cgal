@@ -48,6 +48,9 @@ public:
   using iterator = std::vector<Label_handle>::iterator;
 #endif
 
+  /// \name Constructors
+  /// @{
+
   Label_set() { }
 
   /*!
@@ -58,6 +61,11 @@ public:
     for (const char* l : labels)
       add (l);
   }
+
+  /// @}
+
+  /// \name Modifications
+  /// @{
 
   /*!
     \brief Adds a label.
@@ -219,6 +227,20 @@ public:
     return true;
   }
 
+  /*!
+    \brief Removes all labels.
+  */
+  void clear ()
+  {
+    m_labels.clear();
+  }
+
+  /// @}
+
+
+  /// \name Access
+  /// @{
+
   const_iterator begin() const { return m_labels.begin(); }
   iterator begin() { return m_labels.begin(); }
   const_iterator end() const { return m_labels.end(); }
@@ -240,13 +262,8 @@ public:
     return m_labels[i];
   }
 
-  /*!
-    \brief Removes all labels.
-  */
-  void clear ()
-  {
-    m_labels.clear();
-  }
+  /// @}
+
 };
 
 

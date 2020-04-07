@@ -28,9 +28,9 @@ class Label_set;
 /*!
 \ingroup PkgClassificationLabel
 
-\brief %Classification label (for example: vegetation, ground, etc.)
-defined as a set of relationships with classification features.
+\brief %Classification label (for example: vegetation, ground, etc.).
 
+\note Labels should always be constructed from a `CGAL::Classification::Label_set` object.
 */
 class Label
 {
@@ -54,12 +54,13 @@ public:
   { }
   /// \endcond
 
+  /// \name Access
+  /// @{
+
   /*!
     returns the name of the classification label (e.g. vegetation).
   */
   const std::string& name() const { return m_name; }
-
-  void set_name (const std::string& name) { m_name = name; }
 
   /*!
     returns the index of the classification label in the label set.
@@ -75,8 +76,6 @@ public:
   */
   std::size_t standard_index() const { return m_standard_index; }
 
-  void set_standard_index(std::size_t idx) { m_standard_index = idx; }
-
   /*!
     returns the color used to represent the label.
 
@@ -86,7 +85,17 @@ public:
     `Color_channel`).
   */
   const CGAL::Color& color() const { return m_color; }
+
+  /// @}
+
+  /// \name Modification
+  /// @{
+
+  void set_name (const std::string& name) { m_name = name; }
+  void set_standard_index(std::size_t idx) { m_standard_index = idx; }
   void set_color (const Color& color) { m_color = color; }
+
+  /// @}
 };
 
 #ifdef DOXYGEN_RUNNING
