@@ -8,7 +8,6 @@
 #include <fstream>
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/draw_face_graph_with_paths.h> // TEMPO REMOVE
 
 using namespace CGAL::Surface_mesh_topology;
 
@@ -261,8 +260,9 @@ int main()
   if (!test("data/elephant-with-holes.off", 5, 0.0515047, 7))
   { std::cout<<"[ERROR] for data/elephant-with-holes.off."<<std::endl; res=false; }
 
-  if (!test("data/obj1.off", 4, 16.2814, 4))
-  { std::cout<<"[ERROR] for data/obj1.off."<<std::endl; res=false; }
+  /* Decrease computation time
+     if (!test("data/obj1.off", 4, 16.2814, 4))
+      { std::cout<<"[ERROR] for data/obj1.off."<<std::endl; res=false; } */
 
   if (!test("data/obj1-with-holes.off", 4, 16.6082, 4))
   { std::cout<<"[ERROR] for data/elephant-with-holes.off."<<std::endl; res=false; }
