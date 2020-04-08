@@ -39,8 +39,6 @@ struct Epick_d_help1
   constexpr Epick_d_help1(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
-// determinant is only safe for use with integers with this condition, see LA_eigen/LA.h
-
 #define CGAL_BASE \
   Cartesian_filter_K< \
     Epick_d_help1<Dim>, \
