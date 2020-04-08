@@ -318,15 +318,15 @@ points in the domain.
 
 If an input point set represents several objects which are spatially
 separated, a clustering algorithm can be applied to identify connected
-components on a nearest neighbors graph built using a query sphere of
+components on a nearest neighbor graph built using a query sphere of
 fixed radius centered on each point.
 
 The clustering is stored in a cluster map which associates each input
 point with the index of the cluster it belongs to: users can then use
 this map however they find it relevant to their use case, for example
-segmenting the input point set into several (one per
-cluster). \cgalFigureRef{Point_set_processing_3figclustering} shows different clustering
-outputs.
+segmenting the input point set into one point set per
+cluster. \cgalFigureRef{Point_set_processing_3figclustering} shows
+different clustering outputs.
 
 \cgalFigureBegin{Point_set_processing_3figclustering,clustering.png}
 Point Set Clustering outputs (one color per cluster). Top: input point

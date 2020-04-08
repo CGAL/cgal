@@ -63,7 +63,7 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   Identifies connected components on a nearest neighbors graph built
+   Identifies connected components on a nearest neighbor graph built
    using a query sphere of fixed radius centered on each point.
 
    \tparam PointRange is a model of `Range`. The value type of its
@@ -110,7 +110,7 @@ std::size_t cluster_point_set (PointRange& points,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
@@ -161,11 +161,11 @@ std::size_t cluster_point_set (PointRange& points,
   // Flooding algorithm from each point
   std::size_t done = 0;
   std::size_t size = points.size();
-  
+
   for (iterator it = points.begin(); it != points.end(); ++ it)
   {
     const value_type& p = *it;
-    
+
     if (get (cluster_map, p) != -1)
       continue;
 
@@ -181,7 +181,7 @@ std::size_t cluster_point_set (PointRange& points,
 
       put (cluster_map, *current, nb_clusters);
       ++ done;
-      
+
       if (callback && !callback (callback_factor * (done + 1) / double(size)))
         return (nb_clusters + 1);
 
@@ -207,7 +207,7 @@ std::size_t cluster_point_set (PointRange& points,
     for (const value_type& p : points)
     {
       std::size_t c0 = get (cluster_map, p);
-      
+
       neighbors.clear();
       neighbor_query.get_iterators (get (point_map, p), 0, neighbor_radius,
                                     std::back_inserter (neighbors), false);
@@ -230,7 +230,7 @@ std::size_t cluster_point_set (PointRange& points,
     auto last = std::unique (adj.begin(), adj.end());
     std::copy (adj.begin(), last, adjacencies);
   }
-  
+
   return nb_clusters;
 }
 
