@@ -268,6 +268,13 @@ line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
   return (-a*x-c) / b;
 }
 
+// Silence a warning for MSVC 2017
+// > include\cgal\constructions\kernel_ftc2.h(287) :
+// >   warning C4723: potential divide by 0
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4723)
+#endif
 template < class FT >
 inline
 void
@@ -276,17 +283,8 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      // Silence a warning for MSVC 2017
-      // > include\cgal\constructions\kernel_ftc2.h(287) :
-      // >   warning C4723: potential divide by 0
-#if defined(BOOST_MSVC)
-#pragma warning( push )
-#pragma warning( disable : 4723)
-#endif
+
       x = -c/a;
-#if defined(BOOST_MSVC)
-#pragma warning( pop )
-#endif
       y = 1 - i * a;
     }
   else
@@ -295,6 +293,9 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
       y = -(a+c)/b - i * a;
     }
 }
+#if defined(BOOST_MSVC)
+#pragma warning(pop)
+#endif
 
 template < class FT >
 inline
