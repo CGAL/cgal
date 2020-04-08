@@ -319,21 +319,55 @@ public:
 //  void clear() { }
 
   // number of canonical simplicies of each dimension
+
+  /// Returns the number of vertices. Counts all vertices that are
+  /// representatives of the same point in the 1-cover as one vertex.
   size_type number_of_vertices() const
   {
-    // @todo something better than this naive way (flag vertex/edge/face classes)
-    size_type nv = 0;
-    typename DT2::Finite_vertices_iterator vit = dt2.finite_vertices_begin(),
-                                                                vend = dt2.finite_vertices_end();
-    for(; vit!=vend; ++vit)
-      if(is_canonical(vit))
-        ++nv;
-
-    return nv;
+    if(is_1_cover)
+      return p2t2.number_of_vertices();
+    else
+      return dt2.number_of_vertices() / 9;
   }
 
-//  size_type number_of_edges() const { }
-//  size_type number_of_faces() const { }
+  size_type number_of_edges() const
+  {
+    if(is_1_cover)
+      return p2t2.number_of_edges();
+    else
+    {
+      // Exploiting Euler's formula that #f - #e + #v = 0 on the torus
+      return number_of_faces() + number_of_vertices();
+
+    //   // Alternative naive implementation
+    //   size_type ne = 0;
+    //   typename DT2::Finite_edges_iterator eit = dt2.finite_edges_begin(),
+    //                                       eend = dt2.finite_edges_end();
+    //   for(; eit!=eend; ++eit)
+    //     if(is_canonical(*eit))
+    //       ++ne;
+
+    //   return ne;
+    }
+  }
+
+  size_type number_of_faces() const
+  {
+    if(is_1_cover)
+      return p2t2.number_of_faces();
+    else
+    {
+      // @todo something better than this naive way (flag edge/face classes)
+      size_type nf = 0;
+      typename DT2::Finite_faces_iterator fit = dt2.finite_faces_begin(),
+                                          fend = dt2.finite_faces_end();
+      for(; fit!=fend; ++fit)
+        if(is_canonical(fit))
+          ++nf;
+
+      return nf;
+    }
+  }
 
 //   Vertices_iterator vertices_begin() const { }
 //   Vertices_iterator vertices_end() const { }

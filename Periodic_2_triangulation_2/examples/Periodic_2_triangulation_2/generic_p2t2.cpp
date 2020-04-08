@@ -65,6 +65,10 @@ int main()
   PDT::Vertex_handle vh7 = T.insert(Point(0.8, 0.55));
   std::cout << "Is simplicial complex (vh7): " << T.is_simplicial_complex() << std::endl;
 
+  std::cout << "Number of vertices: " << T.number_of_vertices() << std::endl;
+  std::cout << "Number of edges: " << T.number_of_edges() << std::endl;
+  std::cout << "Number of faces: " << T.number_of_faces() << std::endl;
+
   // Draw everything surrounding the vertex in red.
   PDT::Face_handle some_face = PDT::Face_handle();
   std::set<PDT::Face_handle> incident_faces2 = T.incident_faces(vh7);
