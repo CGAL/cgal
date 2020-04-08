@@ -89,7 +89,7 @@ int main()
     }
   }
 
-  draw(T.dt2, "Post-Insertion");
+//  draw(T.dt2, "Post-Insertion");
 
   T.convert_to_1_cover();
 //  T.insert(Point(0.3, 0.12));
