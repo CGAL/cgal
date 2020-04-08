@@ -6,7 +6,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_triangulation_2.h>
-#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Periodic_2_triangulation_traits_2.h>
 
 #include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_vertex_base_2_generic.h>
 #include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_face_base_2_generic.h>
@@ -19,9 +19,7 @@
 #include <iostream>
 
 namespace CGAL {
-
 namespace Periodic_2_triangulations_2 {
-
 namespace internal {
 
 // @todo: convert_to_1_cover
@@ -42,8 +40,8 @@ public:
 
   typedef typename CGAL::Periodic_2_offset_2             Offset;
 
-  typedef cpp11::array<Vector, 2>                        Basis;
-  typedef cpp11::array<Vector, 3>                        Voronoi_face_normals;
+  typedef std::array<Vector, 2>                        Basis;
+  typedef std::array<Vector, 3>                        Voronoi_face_normals;
 
   // Constructors
   Lattice_2(const Vector& v0, const Vector& v1, const GT& gt = GT())
@@ -193,9 +191,37 @@ public:
 
 private:
   FT systole_sq_length_;
-  CGAL::cpp11::array<Vector, 2> basis_;
-  CGAL::cpp11::array<Vector, 3> Vfn_;
-  const GT& gt_;
+  std::array<Vector, 2> basis_;
+  std::array<Vector, 3> Vfn_;
+  const GT gt_; // @todo pointer
+};
+
+template < typename K_, typename Construct_point_2_base_>
+class Lattice_construct_point_2
+  : public Construct_point_2_base_
+{
+  typedef Construct_point_2_base_            Base;
+  typedef K_                                 Kernel;
+
+  typedef typename Kernel::Point_2           Point;
+  typedef CGAL::Periodic_2_offset_2          Offset;
+
+  typedef internal::Lattice_2<K_>            Lattice;
+
+public:
+  Lattice_construct_point_2(const Lattice* lattice, const Base& cp)
+    : Base(cp), lattice_(lattice)
+  { }
+
+  using Base::operator();
+
+  Point operator()(const Point& p, const Offset& o) const
+  {
+    return lattice_->translate_by_offset(p, o);
+  }
+
+private:
+  const Lattice* lattice_;
 };
 
 } // end namespace internal
@@ -213,7 +239,7 @@ public:
   typedef TDS                                  Triangulation_data_structure;
   typedef GT                                   Geom_traits;
 
-  typedef typename CGAL::Periodic_2_offset_2   Offset;
+  typedef typename CGAL::Periodic_2_offset_2   Offset; // @fixme should be defined by the traits
 
   typedef typename GT::FT                      FT;
   typedef typename GT::Point_2                 Point;
@@ -242,13 +268,16 @@ public:
   typedef Tag_true                              Periodic_tag;
 
   typedef Periodic_2_triangulations_2::internal::Lattice_2<GT> Lattice;
-  typedef typename Lattice::Basis                             Basis;
-  typedef typename Lattice::Voronoi_face_normals              Voronoi_face_normals;
+  typedef typename Lattice::Basis                              Basis;
+  typedef typename Lattice::Voronoi_face_normals               Voronoi_face_normals;
 
   typedef CGAL::Delaunay_triangulation_2<GT, TDS>       DT2;
 
-  typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<GT, Offset> P2T2_GT;
-  typedef CGAL::Periodic_2_triangulation_2<P2T2_GT, TDS>               P2T2;
+  typedef typename GT::Construct_point_2                         Base_CP2;
+  typedef Periodic_2_triangulations_2::internal::Lattice_construct_point_2<GT, Base_CP2> CP2;
+
+  typedef CGAL::Periodic_2_triangulation_traits_base_2<GT, Offset, Lattice, CP2> P2T2_GT;
+  typedef CGAL::Periodic_2_triangulation_2<P2T2_GT, TDS>                    P2T2;
 
   enum Locate_type
   {
@@ -265,7 +294,7 @@ public:
   Periodic_2_Delaunay_triangulation_2_generic(InputIterator first, InputIterator beyond,
                                               const Basis& basis,
                                               const GT& gt = GT())
-    : lattice_(basis), is_1_cover(false), gt_(gt)
+    : lattice_(basis), is_1_cover(false), gt_(gt), p2t2_gt_(lattice_, gt_), p2t2(lattice_, p2t2_gt_)
   {
     sq_circumradius_threshold = 0.25 * lattice_.systole_sq_length();
     insert(first, beyond);
@@ -343,7 +372,7 @@ public:
         continue;
 
       typename DT2::Vertex_circulator vc = dt2.incident_vertices(vit), done = vc;
-      cpp11::unordered_set<Vertex_handle> neighbours;
+      std::unordered_set<Vertex_handle> neighbours;
       do
       {
         Vertex_handle cv = canonical_vertex(vc);
@@ -771,6 +800,11 @@ public:
     std::vector<Incident_face> vec;
     vec.push_back(icf);
 
+    std::cout << "set incidences for edge: " << std::endl;
+    for(const auto v : e)
+      std::cout << v->point() << " ";
+    std::cout << std::endl;
+
     std::pair<typename Incident_faces_map::iterator, bool> is_insert_successful =
         incident_faces_map.insert(std::make_pair(e, vec));
     if(!is_insert_successful.second) // the entry already exists in the map
@@ -788,7 +822,7 @@ public:
     p2t2.clear();
     p2t2.tds().set_dimension(2);
 
-    cpp11::unordered_map<Vertex_handle /*dt2*/, Vertex_handle /*p2t2*/> vertex_correspondence_map;
+    std::unordered_map<Vertex_handle /*dt2*/, Vertex_handle /*p2t2*/> vertex_correspondence_map;
 
     typename DT2::Finite_vertices_iterator vit = dt2.finite_vertices_begin(),
                                            vend = dt2.finite_vertices_end();
@@ -803,7 +837,7 @@ public:
     }
 
     // @todo array instead of vector
-    typedef std::map<std::set<Vertex_handle>,
+    typedef std::map<std::set<Vertex_handle>, // two vertices of an edge
                      std::vector<std::pair<Face_handle, int> > > Incident_faces_map;
     Incident_faces_map incident_faces_map;
 
@@ -822,10 +856,10 @@ public:
       Vertex_handle p2t2_vh2 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(2)));
 
       Face_handle fh = p2t2.tds().create_face(p2t2_vh0, p2t2_vh1, p2t2_vh2);
-      // @fixme: Store these as relative offsets (i.e. relative to vertex 0)?
-      fh->set_offsets(fit->vertex(0)->offset(),
-                      fit->vertex(1)->offset(),
-                      fit->vertex(2)->offset());
+
+      fh->set_offsets(fit->vertex(0)->offset()-fit->vertex(0)->offset(),
+                      fit->vertex(1)->offset()-fit->vertex(0)->offset(),
+                      fit->vertex(2)->offset()-fit->vertex(0)->offset());
 
       add_edge_to_incident_faces_map(fh, 0, incident_faces_map);
       add_edge_to_incident_faces_map(fh, 1, incident_faces_map);
@@ -838,6 +872,9 @@ public:
           fh->vertex(i)->set_face(fh);
       }
     }
+
+    std::cout << dt2.number_of_vertices() / 9 << " canonical vertices in dt2" << std::endl;
+    std::cout << cfc << " canonical faces in dt2" << std::endl;
 
     // Set up adjacencies
     typename Incident_faces_map::const_iterator ifit = incident_faces_map.begin();
@@ -854,18 +891,17 @@ public:
       p2t2.tds().set_adjacency(f0, i0, f1, i1);
     }
 
-    std::cout << dt2.number_of_vertices() / 9 << " canonical vertices in dt2" << std::endl;
     std::cout << p2t2.number_of_vertices() << " vertices in p2t2" << std::endl;
-
-    std::cout << cfc << " canonical faces in dt2" << std::endl;
     std::cout << p2t2.number_of_faces() << " canonical faces in p2t2" << std::endl;
 
-    CGAL_postcondition(p2t2.tds().is_valid());
-    CGAL_postcondition(p2t2.is_valid());
+    CGAL_postcondition(p2t2.tds().is_valid(true));
+    CGAL_postcondition(p2t2.is_valid(true));
   }
 
 public:
+  Geom_traits gt_;
   DT2 dt2; // @tmp, shouldn't be exposed
+  P2T2_GT p2t2_gt_;
   P2T2 p2t2;
 
 private:
@@ -873,13 +909,12 @@ private:
 
   bool is_1_cover;
 
-  cpp11::unordered_map<Vertex_handle /*periodic copy*/,
-                       Vertex_handle /*canonical*/> canonical_vertices;
+  std::unordered_map<Vertex_handle /*periodic copy*/,
+                     Vertex_handle /*canonical*/> canonical_vertices;
 
   std::set<Face_handle> faces_with_too_big_circumradius;
   FT sq_circumradius_threshold;
 
-  Geom_traits gt_;
   Triangulation_data_structure tds_;
 
   // A list of those offsets such that the domain translated along the offset

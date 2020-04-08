@@ -34,11 +34,14 @@
 namespace CGAL {
 
 template <class K_,
-          class Off_ = typename CGAL::Periodic_2_offset_2 >
+          class Off_, // = CGAL::Periodic_2_offset_2,
+          class Domain_, // = Default,
+          class PeriodicConstructPoint_2_> // = Default>
 class Periodic_2_triangulation_traits_base_2
   : public K_
 {
-  typedef Periodic_2_triangulation_traits_base_2<K_, Off_>         Self;
+  typedef Periodic_2_triangulation_traits_base_2<
+            K_, Off_, Domain_, PeriodicConstructPoint_2_> Self;
   typedef K_                                                       Base;
 
 public:
@@ -52,10 +55,11 @@ public:
   typedef typename Kernel::Triangle_2           Triangle_2;
   typedef typename Kernel::Iso_rectangle_2      Iso_rectangle_2;
 
+  typedef Domain_                               Domain;
+
   typedef Offset                                Periodic_2_offset_2;
 
-  typedef Periodic_2_construct_point_2<Self, typename Kernel::Construct_point_2>
-      Construct_point_2;
+  typedef PeriodicConstructPoint_2_             Construct_point_2; // @fixme Default::Get...
 
   // Triangulation predicates
   typedef Functor_with_offset_points_adaptor_2<Self, typename Kernel::Less_x_2>
@@ -78,14 +82,14 @@ public:
   // Constructor
   virtual ~Periodic_2_triangulation_traits_base_2() { }
 
-  Periodic_2_triangulation_traits_base_2(const Iso_rectangle_2& domain,
+  Periodic_2_triangulation_traits_base_2() { } // @tmp
+  Periodic_2_triangulation_traits_base_2(const Domain& domain,
                                          const Kernel& k)
     : Base(k), _domain(domain)
   { }
 
   // Access
-  virtual void set_domain(const Iso_rectangle_2& domain) { _domain = domain; }
-  Iso_rectangle_2 get_domain() const { return _domain; }
+  const Domain& get_domain() const { return _domain; }
 
   // Operations
   Construct_point_2 construct_point_2_object() const {
@@ -118,7 +122,7 @@ public:
   }
 
 protected:
-  Iso_rectangle_2 _domain;
+  Domain _domain;
 };
 
 
@@ -136,6 +140,7 @@ class Periodic_2_triangulation_traits_2;
 namespace CGAL
 {
 
+#if 0
 template <class K_, class Off_>
 class Periodic_2_triangulation_traits_2<K_, Off_, false>
   : public Periodic_2_triangulation_traits_base_2<K_, Off_>
@@ -169,6 +174,7 @@ public:
     : Base(domain, k)
   { }
 };
+#endif
 
 } //namespace CGAL
 

@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/internal/Generic_P2T2/Periodic_2_Delaunay_triangulation_2_generic.h>
 
@@ -41,14 +42,14 @@ int main()
   // the triangulation break down.
   // --> Use exact constructions for now, in the future hopefully
   // we replace these constructions with predicates.
-  
+
   CGAL::cpp11::array<Vector, 2> basis;
   // the reduced version of this basis should be equivalent to
   // CGAL::make_array(Vector(-0.5, 1), Vector(1.5, 0));
   basis = CGAL::make_array(Vector(4, 1), Vector(-2.5, -1));
 
 #if 1
-  std::vector<Point> pts { Point(0, 0), Point(-0.2, -0.6) };
+  std::vector<Point> pts { Point(0, 0), Point(-0.21, -0.6) };
 #else
   std::vector<Point> pts = generate_lattice();
 #endif
@@ -60,9 +61,9 @@ int main()
   PDT::Vertex_handle vh4 = T.insert(Point(0.2, -0.2));
   PDT::Vertex_handle vh5 = T.insert(Point(0, -0.52));
   PDT::Vertex_handle vh6 = T.insert(Point(0.6, 0));
-  std::cout << "Is simplicial complex: " << T.is_simplicial_complex() << std::endl;
+  std::cout << "Is simplicial complex (vh6): " << T.is_simplicial_complex() << std::endl;
   PDT::Vertex_handle vh7 = T.insert(Point(0.8, 0.55));
-  std::cout << "Is simplicial complex: " << T.is_simplicial_complex() << std::endl;
+  std::cout << "Is simplicial complex (vh7): " << T.is_simplicial_complex() << std::endl;
 
   // Draw everything surrounding the vertex in red.
   PDT::Face_handle some_face = PDT::Face_handle();
@@ -91,7 +92,7 @@ int main()
   draw(T.dt2, "Post-Insertion");
 
   T.convert_to_1_cover();
-//  T.p2t2.insert(Point(0.3, 0.12));
+//  T.insert(Point(0.3, 0.12));
 
   return EXIT_SUCCESS;
 }

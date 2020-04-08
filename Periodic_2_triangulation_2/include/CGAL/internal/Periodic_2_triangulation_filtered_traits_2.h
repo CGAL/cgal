@@ -33,6 +33,8 @@
 
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+
 namespace CGAL
 {
 // The Offset_converter is parametrized by a usual kernel converter,
@@ -214,5 +216,7 @@ public:
 };
 
 } //namespace CGAL
+
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 #endif // CGAL_PERIODIC_2_TRIANGULATION_FILTERED_TRAITS_2_H

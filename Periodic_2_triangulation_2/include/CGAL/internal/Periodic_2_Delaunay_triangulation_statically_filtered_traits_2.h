@@ -26,6 +26,8 @@
 #include <CGAL/internal/Static_filters/Periodic_2_side_of_oriented_circle_2.h>
 #include <CGAL/internal/Periodic_2_Delaunay_triangulation_filtered_traits_2.h>
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+
 namespace CGAL {
 
 template<class K_,
@@ -55,5 +57,7 @@ public:
 };
 
 } //namespace CGAL
+
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 #endif // CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_STATICALLY_FILTERED_TRAITS_2_H

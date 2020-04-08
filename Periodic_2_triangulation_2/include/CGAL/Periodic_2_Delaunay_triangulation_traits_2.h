@@ -22,6 +22,8 @@
 #ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 #define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
 #include <CGAL/internal/Periodic_2_construct_point_2.h>
@@ -128,5 +130,7 @@ public:
 };
 
 } //namespace CGAL
+
+#endif
 
 #endif // CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H

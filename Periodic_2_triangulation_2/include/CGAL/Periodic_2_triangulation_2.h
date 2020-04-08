@@ -79,7 +79,7 @@ public:
   /// The periodic offset type
   typedef typename Gt::Periodic_2_offset_2 Offset;
   /// The iso rectangle type
-  typedef typename Gt::Iso_rectangle_2 Iso_rectangle;
+  typedef typename Gt::Domain Domain;
   /// Integer tuple to store the number of sheets in each direction of space.
   typedef array<int, 2> Covering_sheets;
 
@@ -268,9 +268,8 @@ public:
   /// \name Constructors
   //\{
   /// Constructor
-  Periodic_2_triangulation_2(
-      const Iso_rectangle &domain = Iso_rectangle(0, 0, 1, 1),
-      const Geom_traits &geom_traits = Geom_traits());
+  Periodic_2_triangulation_2(const Domain &domain,
+                             const Geom_traits &geom_traits = Geom_traits());
 
   /// Copy constructor
   Periodic_2_triangulation_2(const Periodic_2_triangulation_2<Gt, Tds> &tr);
@@ -284,11 +283,13 @@ public:
   /// Clear the triangulation
   void clear();
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   /// Serialize the triangulation to an output stream
   std::ostream& save(std::ostream& os) const;
 
   /// Deserialize the triangulation from an input stream
   std::istream& load(std::istream& is);
+#endif
 
   //\}
 
@@ -311,7 +312,7 @@ public:
     return _tds;
   }
   /// Returns the domain of the 1-sheeted cover.
-  const Iso_rectangle & domain() const
+  const Domain & domain() const
   {
     return _domain;
   }
@@ -737,11 +738,10 @@ public:
 
   /// Remove a vertex from a 2D triangulation with number_of_vertices() == 1
   void remove_first(Vertex_handle v);
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
   /// Changes the domain. Note that this function calls clear(), i.e.,
   /// it erases the existing triangulation.
-  void set_domain(const Iso_rectangle &domain)
+  void set_domain(const Domain &domain)
   {
     clear();
     _domain = domain;
@@ -751,6 +751,7 @@ public:
     _edge_length_threshold =
         FT(0.166) * (_domain.xmax() - _domain.xmin()) * (_domain.xmax() - _domain.xmin());
   }
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   //\}
 
   /// \name Point location
@@ -1341,7 +1342,7 @@ private:
   Covering_sheets _cover;
 
   /// The domain
-  Iso_rectangle _domain;
+  Domain _domain;
 
 protected:
   // @fixme this covering stuff should really be at the Delaunay level (will need
@@ -1367,16 +1368,16 @@ private:
 
 // CONSTRUCTORS
 template<class Gt, class Tds>
-Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
-    const Iso_rectangle & domain, const Geom_traits& geom_traits)
-  : _gt(geom_traits), _tds()
-  , _cover(make_array(1, 1))
-  , _domain(domain)
-  , _too_long_edge_counter(0)
+Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(const Domain & domain,
+                                                                const Geom_traits& geom_traits)
+  : _gt(geom_traits), _tds(),
+    _cover(make_array(1, 1)),
+    _domain(domain),
+    _too_long_edge_counter(0)
 {
-  CGAL_triangulation_precondition(_domain.xmax() - _domain.xmin() ==
-                                  _domain.ymax() - _domain.ymin());
-  set_domain(_domain);
+//  CGAL_triangulation_precondition(_domain.xmax() - _domain.xmin() ==
+//                                  _domain.ymax() - _domain.ymin());
+//  set_domain(_domain);
 }
 
 // copy constructor duplicates vertices and faces
@@ -4077,7 +4078,7 @@ inline bool Periodic_2_triangulation_2<GT, Tds>::is_triangulation_in_1_sheet() c
   return true;
 }
 
-
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 template<class Gt, class Tds>
 std::ostream&
 Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
@@ -4404,6 +4405,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   CGAL_triangulation_expensive_assertion( is_valid() );
   return is;
 }
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 namespace internal
 {
@@ -4490,6 +4492,7 @@ test_next(const Periodic_2_triangulation_2<GT, Tds1> &t1,
 
 } // namespace internal
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 template<class Gt, class Tds>
 std::istream&
 operator>>(std::istream& is, Periodic_2_triangulation_2<Gt, Tds> &tr)
@@ -4614,6 +4617,7 @@ operator!=(const Periodic_2_triangulation_2<GT, Tds1> &t1,
 {
   return ! (t1 == t2);
 }
+#endif
 
 #define CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 #include <CGAL/Periodic_2_triangulation_dummy_12.h>
