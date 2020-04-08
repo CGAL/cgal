@@ -51,26 +51,26 @@ template<> struct Functors_without_division<Dimension_tag<6> > {
 };
 
 template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >
-struct Cartesian_filter_K : public Base_,
-  private Store_kernel<EK_>
+struct Cartesian_filter_K : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_filter_K(){}
-    CGAL_CONSTEXPR Cartesian_filter_K(int d):Base_(d){}
+    CGAL_NO_UNIQUE_ADDRESS Store_kernel<AK_> sak;
+    CGAL_NO_UNIQUE_ADDRESS Store_kernel<EK_> sek;
     //FIXME: or do we want an instance of AK and EK belonging to this kernel,
     //instead of a reference to external ones?
-    CGAL_CONSTEXPR Cartesian_filter_K(AK_ const&,EK_ const&b):Base_(),Store_kernel<EK_>(b){}
-    CGAL_CONSTEXPR Cartesian_filter_K(int d,AK_ const&,EK_ const&b):Base_(d),Store_kernel<EK_>(b){}
+    CGAL_CONSTEXPR Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),sak(a),sek(b){}
+    CGAL_CONSTEXPR Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),sak(a),sek(b){}
     typedef Base_ Kernel_base;
     typedef AK_ AK;
     typedef EK_ EK;
-    CGAL_static_assertion_msg(internal::Do_not_store_kernel<AK>::value, "Only handle stateless kernels as AK");
-    AK approximate_kernel()const{return {};}
+    typedef typename Store_kernel<AK_>::reference_type AK_rt;
+    AK_rt approximate_kernel()const{return sak.kernel();}
     typedef typename Store_kernel<EK_>::reference_type EK_rt;
-    EK_rt exact_kernel()const{return this->Store_kernel<EK>::kernel();}
+    EK_rt exact_kernel()const{return sek.kernel();}
 
     // MSVC is too dumb to perform the empty base optimization.
     typedef boost::mpl::and_<
       internal::Do_not_store_kernel<Kernel_base>,
+      internal::Do_not_store_kernel<AK>,
       internal::Do_not_store_kernel<EK> > Do_not_store_kernel;
 
     //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
