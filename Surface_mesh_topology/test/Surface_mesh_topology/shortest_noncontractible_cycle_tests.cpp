@@ -231,21 +231,21 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
               << "(" << cycle1.length() << ", " << cycle2.length() << ", " << cycle3.length() << ").\n";
     return false;
   }
-  
+
   if (!cycle1.is_valid())
   {
     std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: cycle1 is ill-formed\n";
-    return false;    
+    return false;
   }
   if (!cycle2.is_valid())
   {
     std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: cycle2 is ill-formed\n";
-    return false;    
+    return false;
   }
   if (!cycle3.is_valid())
   {
     std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: cycle3 is ill-formed\n";
-    return false;    
+    return false;
   }
 
   double cycle_length1, cycle_length2, cycle_length3;
@@ -258,9 +258,9 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     v1.push_back(lcc_cm.point(e));
   }
   v1.push_back(lcc_cm.point(cycle1.get_ith_real_dart(0)));
-  
+
   int i=0;
-  while (lcc_gm.point(cycle2.get_ith_real_dart(i))!=v1[0]) 
+  while (lcc_gm.point(cycle2.get_ith_real_dart(i))!=v1[0])
   {
     if (i==cycle2.length())
     {
@@ -276,7 +276,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     v2.push_back(lcc_gm.point(e));
   }
   v2.push_back(lcc_gm.point(cycle2.get_ith_real_dart(i)));
-  
+
   i=0;
   while (sm.point(sm.source(cycle3.get_ith_real_dart(i)))!=v1[0])
   {
@@ -294,7 +294,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     v3.push_back(sm.point(sm.source(e)));
   }
   v3.push_back(sm.point(sm.source(cycle3.get_ith_real_dart(i))));
-  
+
   int v2orientation=0, v3orientation=0;
   bool same=true;
   for (int i=0; i<v1.size(); ++i)
@@ -310,7 +310,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     { if (v1[i]!=v2[i]) { same=false; } }
     else if (v2orientation==2)
     { if (v1[i]!=v2[j]) { same=false; } }
-    
+
     if (v3orientation==0)
     {
       if (v1[i]==v3[i] && v1[i]!=v3[j]) { v3orientation==1; }
@@ -321,7 +321,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     { if (v1[i]!=v3[i]) { same=false; } }
     else if (v3orientation==2)
     { if (v1[i]!=v3[j]) { same=false; } }
-    
+
     if (!same)
     {
       std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in the vertex ordering.\n";
