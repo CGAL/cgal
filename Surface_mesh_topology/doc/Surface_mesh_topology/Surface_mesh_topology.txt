@@ -12,16 +12,20 @@ This package provides a toolbox for manipulating curves on a combinatorial surfa
 
 
 \section SMTopology Introduction
+
+All the computations in this package, either for the shortest non-contractible curve or for the homotopy tests,  are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
+The input surface is supposed to be connected and orientable.
+
 \subsection SMTopology_shortest Shortest non-contractible curve
 
 Given a combinatorial surface, one may consider <em>combinatorial curves</em>, which are described as sequences of edges, or <em>topological curves</em>, which are continuous curves on the topological surface underlying the combinatorial surface. The length of a combinatorial curve is the sum of the lengths of its edges. Here, we measure the length of a topological curve as the number of crossings of this curve with the vertex-edge graph of the combinatorial surface.
 A closed curve, either topological or combinatorial, that cannot be continuously deformed to a point on the topological surface is said <em>non-contractible</em>. This package offers the following functions:
 
-- Given a surface mesh \f$\cal{M}\f$ and a dart handle `dh`, compute a shortest non-contractible combinatorial curve passing through the source vertex of `dh`.
-- Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible combinatorial  curve without the previous vertex requirement. When all the edges have the same unit length, the length of a shortest non-contractible curve is known as the <em>edge-width</em> of the surface.
+- Given a surface mesh \f$\cal{M}\f$ and a dart handle `dh`, compute a shortest non-contractible combinatorial curve passing through the source vertex of `dh`,
+- Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible combinatorial  curve without the previous vertex requirement. When all the edges have the same unit length, the length of a shortest non-contractible curve is known as the <em>edge-width</em> of the surface,
 - Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible topological curve. It can be assumed that this curve does not cross the edges of \f$\cal{M}\f$ and only passes through the vertices. It follows that the curve can be described by a circular sequence of traversed faces alternating with the vertices it passes through. The length of this curve (i.e., the number of vertices it passes through) is known as the <em>face-width</em> of the surface.
 
-It is important to clarify how we compare the lengths of two combinatorial curves in order to compute the shortest one. "Shortest" can be understood as "having the least amount of edges" or "having the smallest total length of its edges". In the former case, we consider that the mesh is unweighted; in the latter case, we consider that the mesh is weighted, and one must specify how the weight, or length, of each edge is calculated (see concept `WeightFunctor`). When the vertices of the mesh have Euclidean coordinates, the Eudlidean distance between two connected vertices defines a natural weight for the corresponding edge. A weight functor EuclideanLength is provided for this purpose.
+It is important to clarify how we compare the lengths of two combinatorial curves in order to compute the shortest one. "Shortest" can be understood as "having the least amount of edges" or "having the smallest total length of its edges". In the former case, we consider that the mesh is unweighted; in the latter case, we consider that the mesh is weighted, and one must specify how the weight, or length, of each edge is calculated (see concept `WeightFunctor`). When the vertices of the mesh have Euclidean coordinates, the Eudlidean distance between two connected vertices defines a natural weight for the corresponding edge. A weight functor \link CGAL::Surface_mesh_topology::Euclidean_length_weight_functor `Euclidean_length_weight_functor`\endlink is provided for this purpose.
 
 The algorithm to find a shortest non-contractible curve through a specified vertex is based on the paper by Cabello et al. \cgalCite{cvl-ew-12}. The time complexity is linear, though in the weighted case it is raised by a logarithmic factor, assuming that the weight computation takes constant time per edge. Computing the edge-width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map. Computing the face-width consists of constructing the radial graph of the original mesh and computing the edge-width of the radial graph. It thus takes quadratic time. Computing face-width on weighted maps is currently not supported.
 
@@ -48,14 +52,12 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
-All the computations in this package, either for the shortest non-contractible curve or for the homotopy tests,  are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
-The input surface is supposed to be connected and orientable.
 The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
 
 Each combinatorial curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object in this class behaves as a list. This list is initially empty and the halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides four ways for extending a nonempty path.
-- Simply push the next halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function. One can also specify if this halfedge should have its direction flipped so as to satisfy the condition of a `Path_on_surface` (see the description of \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "`can_be_pushed()`" below) This can be done even when the path is empty.
-- The user may push the index of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart.
-- The path may be extended with the member function \ref Surface_mesh_topology::Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path. Calling this previous halfedge `h`, extending by a positive one turn is thus equivalent to extend the path with `next(h)`. An analogous member function \ref Surface_mesh_topology::Path_on_surface::extend_negative_turn "extend_negative_turn()" is provided for convenience.
+- Simply push the next halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function. One can also specify if this halfedge should have its direction flipped so as to satisfy the condition of a `Path_on_surface` (see the description of \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "`can_be_pushed()`" below) This can be done even when the path is empty,
+- The user may push the index of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart,
+- The path may be extended with the member function \ref Surface_mesh_topology::Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path. Calling this previous halfedge `h`, extending by a positive one turn is thus equivalent to extend the path with `next(h)`. An analogous member function \ref Surface_mesh_topology::Path_on_surface::extend_negative_turn "extend_negative_turn()" is provided for convenience,
 - Finally, when the input surface is a model of `PolygonalSchema`, which is a model of `GenericMap` with labeled edges as explained in section \ref SMTopology_Schema, the user may push the label of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()".
 
 In the first two cases, let A be the source vertex of the added dart or the target vertex if the added dart is flipped, let B be the target vertex of the last dart in the path or the source vertex if the last dart is flipped: A and B should coincide. The user is responsible for ensuring this condition. The member functions \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()", \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" and \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_label "can_be_pushed_by_label()" return `true` if and only if the condition is satisfied.
@@ -87,10 +89,11 @@ A `Surface_mesh_topology::Curves_on_surface_topology` can be constructed with a 
 
 Since the data structures to represent a surface are edge-centralized, in order to specify a vertex where the curve is computed, the user can use any dart belonging to this vertex. We use the term <em>cycle</em> as a synonymous of closed curve.
 
-The class \link Surface_mesh_topology::Curves_on_surface_topology `Curves_on_surface_topology` \endlink also provides two functions:
+The class \link Surface_mesh_topology::Curves_on_surface_topology `Curves_on_surface_topology` \endlink provides the following three functions:
 
-- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint(dh, weight_functor)` \endlink : Compute a shortest non-contractible cycle going through the source vertex of `dh`.
-- \link Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth(weight_functor)` \endlink : Very similar to the previous function, except that one does not specify a vertex. It computes a shortest non-contractible cycle through every vertex and returns the shortest cycle among them.
+- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint(dh, weight_functor)` \endlink: Compute a shortest non-contractible cycle going through the source vertex of `dh`,
+- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle `compute_shortest_noncontractible_cycle(weight_functor)` \endlink:  Very similar to the previous function, except that one does not specify a vertex. It computes a shortest non-contractible cycle through every vertex and returns the shortest cycle among them,
+- \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth()` \endlink: Compute the edge-width of the mesh, equivalent to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle `compute_shortest_noncontractible_cycle(`\endlink \link CGAL::Surface_mesh_topology::Unit_weight_functor `Unit_weight_functor())`\endlink.
 
 The above functions return an instance of \link Surface_mesh_topology::Path_on_surface `Path_on_surface` \endlink. The optional argument `weight_functor` is used to calculate the length of the edges. If not given, all the edge lengths are set to 1, i.e. the mesh is unweighted.
 
@@ -101,7 +104,15 @@ In practice, we choose the same dart handle for a face as for the next vertex it
 
 The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth()` \endlink computes the sequence of dart handles as described above and returns an `std::vector` of dart handles, where each dart represents a traversed face followed by an incident  vertex.
 
-\subsection SMTopology_Build Internal Surface Representation for Homotopy Tests
+\subsection SMTopology_Queries Testing Homotopy
+
+Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_topology::Curves_on_surface_topology` provides the following three functions:
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\f$) returns `true` if the closed curve \f$p_1\f$ is contractible,
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::are_freely_homotopic "are_freely_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic,
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::are_homotopic_with_fixed_endpoints "are_homotopic_with_fixed_endpoints"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
 
 A common first step in the homotopy test algorithms is to simplify the input combinatorial surface. This preprocessing step is done once and for all for a given mesh, the first time an homotopy test is called. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_topology::Curves_on_surface_topology`. It has 2 vertices and \f$2g\f$ quadrilaterals where \f$g\f$ is the genus of
 the input surface. This is otherwise independent of the size of input surface,
@@ -109,35 +120,25 @@ the input surface. This is otherwise independent of the size of input surface,
 
 Each time a `Surface_mesh_topology::Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Curves_on_surface_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
 
-\subsection SMTopology_Queries Testing Homotopy
-
-Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_topology::Curves_on_surface_topology` provides the following three functions:
-
-- \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\f$) returns `true` if the closed curve \f$p_1\f$ is contractible.
-
-- \ref Surface_mesh_topology::Curves_on_surface_topology::are_freely_homotopic "are_freely_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic.
-
-- \ref Surface_mesh_topology::Curves_on_surface_topology::are_homotopic_with_fixed_endpoints "are_homotopic_with_fixed_endpoints"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
-
-
 \section SMTopology_Examples Examples
 
 \subsection SMTopology_Example_I_II_III Compute Shortest Non-contractible Cycle Examples
 
-In the next three examples, we present various ways to compute shortest non-contractible cycles.
+In the next two examples, we present various ways to compute shortest non-contractible cycles.
 
-One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case.
+One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case (first call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint  `compute_shortest_noncontractible_cycle_with_basepoint`\endlink). Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart (second call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint`\endlink). Note that the time complexity is raised by a logarithmic factor.
+
 \cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle.cpp}
 
-Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart. Note that the time complexity is raised by a logarithmic factor.
-\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_2.cpp}
+In order to find the edge-width of the surface, one can make use of the routine \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth`\endlink as in the following example. The weighted shortest non contractible cycle is also computed (calling \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle `compute_shortest_noncontractible_cycle`\endlink). In this example, a `Surface_mesh` is used to store the mesh.
 
-In order to find the edge-width of the surface, one can make use of the routine `edge_width` as follows:
 \cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
+
+In these two examples, the mesh and the cycles can be visualized if \cgal was compiled with Qt5.
 
 \subsection SMTopology_Example_IV Compute Face-width
 
-The following example computes the face-width and illustrates it using CGAL Basic Viewer.
+The following example computes the face-width, and visualizes it if \cgal was compiled with Qt5.
 
 \cgalExample{Surface_mesh_topology/facewidth.cpp}
 
