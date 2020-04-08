@@ -30,6 +30,18 @@ std::vector<Point> generate_lattice()
 
 int main()
 {
+  // Remark: the basis
+  // basis = CGAL::make_array(Vector(4, 1), Vector(-2.5, -1));
+  // with the point set
+  // std::vector<Point> pts { Point(0, 0), Point(-0.4, -0.6) };
+  // are not in general position. If using inexact constructions,
+  // this yields an inconsistent triangulation (i.e. the are 4
+  // points forming a rectangle, but different periodic copies
+  // of this rectangle are triangulated differently), making
+  // the triangulation break down.
+  // --> Use exact constructions for now, in the future hopefully
+  // we replace these constructions with predicates.
+  
   CGAL::cpp11::array<Vector, 2> basis;
   // the reduced version of this basis should be equivalent to
   // CGAL::make_array(Vector(-0.5, 1), Vector(1.5, 0));

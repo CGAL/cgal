@@ -174,7 +174,7 @@ public:
       else
       {
         Vector tv = vfn;
-        tv = gt_.construct_scaled_vector_2_object()(tv, - std::floor(sp + 0.5) );
+        tv = gt_.construct_scaled_vector_2_object()(tv, - std::floor(CGAL::to_double(sp + 0.5) ));
         cp = gt_.construct_translated_point_2_object()(cp, tv);
         vfn_pos = 0;
       }
