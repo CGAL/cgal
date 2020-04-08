@@ -4,19 +4,10 @@
 // Copyright (C) 2014 GeometryFactory
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
 #ifndef CGAL_SURFACE_MESH_IO_H
@@ -157,7 +148,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
     // properties
     typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>                 normals;
     typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
-    
+
     if (has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
     if (has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
 
@@ -173,7 +164,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
     }while(1);
 
     // #Vertice, #Faces, #Edges
-    in >> nV >> nF >> nE; 
+    in >> nV >> nF >> nE;
     getline(in,line); // reads eol
 
     mesh.clear();
@@ -255,7 +246,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
 /// This function reads an `OFF` file into a `Surface_mesh`. It
 /// supports the `OFF` vertex properties normal, color, and vertex
 /// coordinates. If a property is detected in the `OFF` file, it will be
-/// read into the `mesh` as a vertex property with the name 
+/// read into the `mesh` as a vertex property with the name
 /// `"v:normal"`, `"v:color"`, and `"v:texcoord"`, respectivly.
 ///
 /// @param mesh The mesh that should contain the file contents.
@@ -323,7 +314,7 @@ bool read_off(Surface_mesh<K>& mesh, const std::string& filename)
 ///
 /// @returns `true`, if reading succeeded, `false` otherwise
 ///
-#endif 
+#endif
 template <typename K>
 bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 {
@@ -349,7 +340,7 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 ///
 /// @return `true`, if reading succeeded, `false` otherwise
 ///
-#endif 
+#endif
 template <typename K>
 bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename) {
       // clear mesh before reading from file
@@ -385,7 +376,7 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename) {
 ///
 #endif
 template <typename K>
-bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename) 
+bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
 {
       // extract file extension
     std::string::size_type dot(filename.rfind("."));
@@ -404,7 +395,6 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
 }
 
 /// group io
-/// @}
 template <class P, class Writer>
 void
 generic_print_surface_mesh( std::ostream&   out,
@@ -432,6 +422,19 @@ generic_print_surface_mesh( std::ostream&   out,
                          ::CGAL::to_double( get(map, *vi).z()));
 
     hint = index_map.insert(hint, std::make_pair(*vi, id++));
+  }
+  typedef typename boost::property_traits<VPmap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel K;
+  typename Surface_mesh<P>::template Property_map<typename Surface_mesh<P>::Vertex_index, typename K::Vector_3 > vnormals;
+  bool has_normals = false;
+  boost::tie(vnormals, has_normals) = M.template property_map<typename Surface_mesh<P>::Vertex_index, typename K::Vector_3>("v:normal");
+  if(has_normals)
+  {
+    for( VCI vi = vertices(M).begin(); vi != vertices(M).end(); ++vi) {
+      writer.write_vertex_normal( ::CGAL::to_double( get(vnormals, *vi).x()),
+                                  ::CGAL::to_double( get(vnormals, *vi).y()),
+                                  ::CGAL::to_double( get(vnormals, *vi).z()));
+    }
   }
 
   writer.write_facet_header();

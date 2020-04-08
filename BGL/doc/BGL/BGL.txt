@@ -254,15 +254,9 @@ The main function illustrates the access to the `id()` field.
 \section BGLTriangulations Triangulations as Models of the Boost Graph Concept
 
 Triangulations have vertices and faces, allowing for a direct translation
-as a graph. An edge is defined as a pair of a face handle and the
-index of the edge.
-Particular care has to be taken with the infinite vertex and its incident
-edges. One can either use a
-<a href="https://www.boost.org/libs/graph/doc/filtered_graph.html">boost::filtered_graph</a>
-in order to make the infinite edges
-invisible, or one can have a property map that returns an infinite length
-for these edges.
-A complete list can be found in the documentation of \link BGLT2GT boost::graph_traits \endlink.
+as a graph. A halfedge is defined as a pair of a face handle and the
+index of the edge. A complete list can be found in the documentation
+of \link BGLT2GT boost::graph_traits \endlink.
 
 A classical example for an algorithm that is a combination of
 computational geometry and graph theory is the <I>Euclidean Minimum
@@ -291,7 +285,7 @@ use the property map returned by the call `get(boost::vertex_index,ft)`.
 This property map assumes that the vertex has a
 member function `id()` that returns a reference to an int.
 Therefore \cgal offers a class `Triangulation_vertex_base_with_id_2`.
-It is in the users responsibility to set the indices properly.
+It is in the user's responsibility to set the indices properly.
 
 The example further illustrates that the graph traits also works
 for the Delaunay triangulation.
@@ -659,6 +653,74 @@ can be done directly using `Face_filtered_graph`.
 
 Using \ref BGLNamedParameters some of the many options of METIS can be customized,
 as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
+
+\section BGLGraphcut Graph Cut
+
+An optimal partition from a set of labels can be computed through a
+graph cut approach called alpha expansion
+\cgalCite{Boykov2001FastApproximate}. \cgal provides
+`CGAL::alpha_expansion_graphcut()` which, for a graph \f$(V,E)\f$,
+computes the partition `f` that minimizes the following cost function:
+
+\f[
+  \mathrm{C}(f) = \sum_{\{v0,v1\} \in E} C_E(v0,v1) + \sum_{v \in V} C_V(f_v)
+  \f]
+
+where \f$C_E(v0,v1)\f$ is the edge cost of assigning a different label
+to \f$v0\f$ and \f$v1\f$, and \f$C_V(f_v)\f$ is the vertex cost of
+assigning the label \f$f\f$ to the vertex \f$v\f$.
+
+Three different implementations are provided and can be selected by
+using one of the following tags:
+
+- `CGAL::Alpha_expansion_boost_adjacency_list_tag` (default)
+- `CGAL::Alpha_expansion_boost_compressed_sparse_raw_tag`
+- `CGAL::Alpha_expansion_MaxFlow_tag`, released under GPL
+  license and provided by the \ref PkgSurfaceMeshSegmentationRef
+  package
+
+All these implementations produce the exact same result but behave
+differently in terms of timing and memory (see
+\cgalFigureRef{alpha_exp}). The _MaxFlow_ implementation is the
+fastest, but it grows rapidly in memory when increasing the complexity
+of the input graph and labeling; the _compressed sparse raw_ (CSR) is very
+efficient from a memory point of view but becomes very slow as the
+complexity of the input graph and labeling increases; the _adjacency
+list_ version provides a good compromise and is therefore the default
+implementation.
+
+\cgalFigureBegin{alpha_exp, alpha_expansion.png}
+Comparison of time and memory consumed by the different alpha
+expansion implementations.
+\cgalFigureEnd
+
+The following example shows how to apply the alpha expansion algorithm
+to a `boost::adjacency_list` describing a 2D array with 3 labels "X",
+" " and "O":
+
+\cgalExample{BGL_graphcut/alpha_expansion_example.cpp}
+
+The output of this program shows how the initial 2D array is
+regularized spatially:
+
+```
+Input:
+XOX
+XX X O
+OX  OO
+X  OOX
+  OXOO
+
+Alpha expansion...
+
+Output:
+XXX
+XX   O
+XX  OO
+X  OOO
+  OOOO
+```
+
+
 */
 } /* namespace CGAL */
-

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces
 \anchor chapJetfitting3
 \cgalAutoToc
@@ -17,7 +17,7 @@ cloud.
 
 Note that this package needs the third party library \ref thirdpartyEigen "Eigen" to be installed to compile the example code..
 
-\section secintro Introduction 
+\section secintro Introduction
 
 \subsection Jet_fitting_3Overview Overview
 
@@ -38,7 +38,7 @@ applied geometry \cgalCite{cgal:p-smrqt-01} (section 3, page 7), and all
 of them need to define a neighborhood around the point at which the
 estimation is computed. Our method relies on smooth differential
 geometry calculations, carried out on smooth objects <I>fitted</I> from
-the sample points. 
+the sample points.
 Datasets amenable to such a processing are naturally unstructured
 point clouds, as well as meshes - whose topological information may
 be discarded.
@@ -52,7 +52,7 @@ properties, so that any estimation method must come with an
 asymptotic convergence analysis of the results returned. For the
 method developed in this \cgal package, the
 interested will find such an analysis in
-\cgalCite{cgal:cp-edqpf-05}, (Theorem 3) - it should be stressed 
+\cgalCite{cgal:cp-edqpf-05}, (Theorem 3) - it should be stressed
 the error bounds proved therein are optimal.
 
 On the other hand, any estimation method may be applied to arbitrarily
@@ -78,7 +78,7 @@ function. Letting \f$ h.o.t.\f$ stand for <I>higher order terms</I>, one
 has :
 
 \f{equation}{
-z(x,y)=J_{B,d}(x,y) + h.o.t. \ ; \quad 
+z(x,y)=J_{B,d}(x,y) + h.o.t. \ ; \quad
 J_{B,d}(x,y)=\ccSum{k=0}{d}{(\ccSum{i=0}{i}{
 \frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}})}.
 \f}
@@ -101,7 +101,7 @@ has the following canonical form :
 
 \f{eqnarray}{
 z(x,y) =  & \frac{1}{2}(k_1x^2 + k_2y^2)+
-	\frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
+        \frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
   &  +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + h.o.t.
 \f}
 
@@ -140,7 +140,7 @@ approximation reduces to linear algebra operations.
 Further details can be found in section \ref Jet_fitting_3Mathematical and in
 \cgalCite{cgal:cp-edqpf-05} (section 6).
 
-\subsection secdegcases Degenerate Cases 
+\subsection secdegcases Degenerate Cases
 
 As usual, the fitting procedure may run into (almost) degenerate
 cases:
@@ -209,7 +209,7 @@ b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)\f$ for \f$ d' = 4\f$.
 
 </UL>
 
-In addition, the class `Monge_via_jet_fitting` stores 
+In addition, the class `Monge_via_jet_fitting` stores
 <UL>
 <LI>the condition number of the fitting system,
 <LI>the coordinate system of the PCA (in which the fitting is performed).
@@ -226,8 +226,8 @@ class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, on
 
 \subsubsection Jet_fitting_3TemplateparameterLocalKernel Template parameter LocalKernel
 
-This is a parameter of the class 
-`Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. 
+This is a parameter of the class
+`Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`.
 This concept defines the vector and number types used for local
 computations and to store the PCA basis data.
 
@@ -242,7 +242,7 @@ one can use
 
 This concept provides the number, vector and matrix types for algebra
 operations required by the fitting method in
-`Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>` 
+`Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`
 . The main method is a linear solver using a singular value decomposition.
 
 \subsubsection Jet_fitting_3CompatibilityRequirements Compatibility Requirements
@@ -254,7 +254,7 @@ systems and linear algebra operations are performed with this
 kernel. This implies that the number types `LocalKernel::%FT` and
 `SvdTraits::%FT` must be identical.
 Second the Monge basis and coefficients, computed with the
-`LocalKernel`, are converted back to the `DataKernel` 
+`LocalKernel`, are converted back to the `DataKernel`
 (this is done using the `Cartesian_converter` and the
 `NT_converter`).
 
@@ -279,7 +279,7 @@ computed using rings on the triangulation. Results are twofold:
 <LI>a human readable text file featuring the `::CGAL::Monge_via_jet_fitting::Monge_form` and
 numerical informations on the computation: condition number and the
 PCA basis;
-<LI>another text file that records raw data (better for a vizualization
+<LI>another text file that records raw data (better for a visualization
 post-processing).
 </UL>
 
@@ -327,9 +327,9 @@ sampling quality can be assessed. For a good sampling, the eigenvector
 associated to the smallest eigenvalue should roughly give the normal
 direction.
 
-\subsection secsolving Solving the Interpolation / Approximation Problem 
+\subsection secsolving Solving the Interpolation / Approximation Problem
 
-<B>Input: samples, fitting-basis 
+<B>Input: samples, fitting-basis
 Output: coefficients \f$ A_{i,j}\f$
 of the bivariate fitted polynomial in the fitting-basis </B>
 
@@ -338,7 +338,7 @@ Computations are done in the fitting-basis and the origin is the point
 translation (\f$ -p\f$) and multiplication by \f$ P_{W\rightarrow F}\f$.
 
 The fitting process consists of finding the coefficients
-\f$ A_{i,j}\f$ of the degree \f$ d\f$ polynomial 
+\f$ A_{i,j}\f$ of the degree \f$ d\f$ polynomial
 
 \anchor eqanswer
 \f{equation}{
@@ -355,8 +355,8 @@ given by
 
 \anchor eqfitlinalg
 \f{eqnarray}{
- A =  & (A_{0,0}, A_{1,0},A_{0,1}, \ldots , A_{0,d})^T \\ 
- Z=  &(z_1, z_2,\ldots , z_N)^T \\ 
+ A =  & (A_{0,0}, A_{1,0},A_{0,1}, \ldots , A_{0,d})^T \\
+ Z=  &(z_1, z_2,\ldots , z_N)^T \\
  M=  &(1,x_i,\ y_i,\ \frac{x_i^2}{2},\ldots ,
 \ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}
 \f}
@@ -384,7 +384,7 @@ its diagonal. Denote \f$ r\f$ the rank of \f$ M\f$, we can decompose
 \f$ S= \left( \begin{array}{cc}
 D_r & 0_{r,\ N_d-r}\\
 0_{N-r,\ r} & 0_{N-r,\ N_d-r}
-\end{array} 
+\end{array}
 \right).
 \f$
 The number \f$ r\f$, which is the number of non zero singular values, is
@@ -396,7 +396,7 @@ A= V
 \left( \begin{array}{cc}
 D_r^{-1} & 0_{N_d-r,\ r}\\
 0_{r,\ N-r} & 0_{N_d-r,\ N-r}
-\end{array} 
+\end{array}
 \right)
  U^TZ.
 \f}
@@ -419,7 +419,7 @@ Remark: as an alternative, other methods may be used to solve the
 system. A \f$ QR\f$ decomposition can be substituted to the \f$ SVD\f$. One can
 also use the normal equation \f$ M^TMX=MTB\f$ and apply methods for square
 systems such as \f$ LU\f$, \f$ QR\f$ or Cholesky since \f$ M^TM\f$ is symmetric
-definite positive when \f$ M\f$ has full rank. 
+definite positive when \f$ M\f$ has full rank.
 The advantages of the \f$ SVD\f$
 is that it works directly on the rectangular system and gives the
 condition number of the system. For more on these alternatives, see
@@ -427,8 +427,8 @@ condition number of the system. For more on these alternatives, see
 
 \subsection Jet_fitting_3PrincipalCurvatureDirections Principal Curvature / Directions
 
-<B>Input: coefficients of the fit \f$ A_{i,j}\f$, 
-fitting-basis 
+<B>Input: coefficients of the fit \f$ A_{i,j}\f$,
+fitting-basis
 
 Output: Monge basis wrt fitting-basis and world-basis
 </B>
@@ -442,13 +442,13 @@ Expanding Eq. ( \ref eqanswer ) yields:
 
 \f{eqnarray}{
 J_{A,d}(x,y)&=
-A_{0,0}+A_{1,0}x+A_{0,1}y+\frac{1}{2}(A_{2,0}x^2+2A_{1,1}xy+A_{0,2}y^2) 
-+ \frac{1}{6}(A_{3,0}x^3+3A_{2,1}x^2y+\ldots )+ \ldots 
+A_{0,0}+A_{1,0}x+A_{0,1}y+\frac{1}{2}(A_{2,0}x^2+2A_{1,1}xy+A_{0,2}y^2)
++ \frac{1}{6}(A_{3,0}x^3+3A_{2,1}x^2y+\ldots )+ \ldots
 \f}
 
 <UL>
 <LI>The origin, that is the point of the fitted surface where the
-estimation is performed, is \f$ (0,0,A_{0,0})\f$. 
+estimation is performed, is \f$ (0,0,A_{0,0})\f$.
 <LI>The normal is
 \f$ n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}\f$.
 <LI>Curvature related properties are retrieved resorting to
@@ -520,5 +520,5 @@ f_{0,0,1} ^{2}}}
 \f}
 
 
-*/ 
+*/
 } /* namespace CGAL */

@@ -23,7 +23,7 @@ int main() {
   Random_points_iterator rpit( 1.0);
 
   Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(N));
+            N_Random_points_iterator(N));
 
   Point_d query(0,0);
 

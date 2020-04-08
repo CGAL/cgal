@@ -9,7 +9,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::cpp11::array<unsigned char, 3> Color;
+typedef std::array<unsigned char, 3> Color;
 
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Property_map<Color> Color_map;
@@ -21,7 +21,7 @@ void print_point_set (const Point_set& point_set)
   boost::tie (color, boost::tuples::ignore) = point_set.property_map<Color>("color");
   FT_map intensity;
   boost::tie (intensity, boost::tuples::ignore) =  point_set.property_map<FT>("intensity");
-  
+
   std::cerr << "Content of point set:" << std::endl;
   for (Point_set::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)

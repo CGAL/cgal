@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastien Loriot <sebastien.loriot@cgal.org>,
 //                 Jane Tournois
@@ -80,7 +71,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
-typedef boost::property_traits<boost::property_map<FaceGraph, 
+typedef boost::property_traits<boost::property_map<FaceGraph,
 CGAL::vertex_point_t>::type>::value_type Point;
 
 
@@ -236,7 +227,7 @@ namespace CGAL{
     std::map<vertex_descriptor, vtkIdType> Vids;
     vtkIdType inum = 0;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+    for(vertex_descriptor v : vertices(pmesh))
     {
       const Point_3& p = get(vpmap, v);
       vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
@@ -244,10 +235,10 @@ namespace CGAL{
                                   CGAL::to_double(p.z()));
       Vids[v] = inum++;
     }
-    BOOST_FOREACH(face_descriptor f, faces(pmesh))
+    for(face_descriptor f : faces(pmesh))
     {
       vtkIdList* cell = vtkIdList::New();
-      BOOST_FOREACH(halfedge_descriptor h,
+      for(halfedge_descriptor h :
                     halfedges_around_face(halfedge(f, pmesh), pmesh))
       {
         cell->InsertNextId(Vids[target(h, pmesh)]);
@@ -291,7 +282,7 @@ class Polyhedron_demo_vtk_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "vtk_io_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "vtk_io_plugin.json")
 
 public:
   typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
@@ -299,17 +290,19 @@ public:
 
 
   QString nameFilters() const {
-    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
+    return "VTK XML UnstructuredGrid (*.vtu);;VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp)"; }
   QString name() const { return "vtk_plugin"; }
   bool canSave(const CGAL::Three::Scene_item* item)
   {
+
     return (qobject_cast<const Scene_facegraph_item*>(item)
             || qobject_cast<const Scene_c3t3_item*>(item));
   }
-  
-  
-  bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+
+
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   {
+    Scene_item* item = items.front();
     std::string extension = fileinfo.suffix().toLower().toStdString();
     if ( extension != "vtk" && extension != "vtp" && extension != "vtu")
       return false;
@@ -349,17 +342,18 @@ public:
           qobject_cast<const Scene_c3t3_item*>(item);
       if(!c3t3_item || extension != "vtu")
         return false;
-      
+
       std::ofstream os(output_filename.data());
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
-      
+
       CGAL::output_to_vtu(os, c3t3);
     }
+    items.pop_front();
     return true;
   }
 
-  bool canLoad() const { return true; }
+  bool canLoad(QFileInfo) const { return true; }
 
   template <class vtkReader>
   vtkSmartPointer<vtkReader>
@@ -374,11 +368,14 @@ public:
     return reader;
   }
 
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo)
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     std::string extension=fileinfo.suffix().toLower().toStdString();
     if (extension != "vtk" && extension != "vtp" && extension != "vtu")
-      return 0;
+    {
+      ok = false;
+      return QList<Scene_item*>();
+    }
 
     std::string fname = fileinfo.absoluteFilePath().toStdString();
 
@@ -389,9 +386,12 @@ public:
       Scene_facegraph_item* item =
           new Scene_facegraph_item();
       item->setName(fileinfo.completeBaseName());
-      return item;
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<<item;
     }
-    
+
     vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
@@ -421,7 +421,8 @@ public:
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
     if (obs->GetWarning())
     {
@@ -442,7 +443,8 @@ public:
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
     if (obs->GetWarning())
     {
@@ -475,9 +477,8 @@ public:
        || (is_c3t3 && is_polyline) )
     {
       group = new Scene_group_item(fileinfo.baseName());
-      group->setScene(CGAL::Three::Three::scene());
     }
-  
+
     if(is_polygon_mesh)
     {
       FaceGraph* poly = new FaceGraph();
@@ -492,11 +493,14 @@ public:
         }
         else{
           poly_item->setName(fileinfo.baseName());
-          return poly_item;
+          ok = true;
+          if(add_to_scene)
+            CGAL::Three::Three::scene()->addItem(poly_item);
+          return QList<Scene_item*>()<<poly_item;
         }
       }
     }
-    
+
     if (is_c3t3)
     {
       typedef boost::array<int, 3> Facet; // 3 = id
@@ -544,7 +548,7 @@ public:
         }
       }
       CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
-      
+
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
            cit != c3t3_item->c3t3().triangulation().finite_cells_end();
@@ -560,7 +564,7 @@ public:
           }
         }
       }
-      
+
       //if there is no facet in the complex, we add the border facets.
       if(c3t3_item->c3t3().number_of_facets_in_complex() == 0)
       {
@@ -570,10 +574,10 @@ public:
              ++fit)
         {
           typedef C3t3::Triangulation::Cell_handle      Cell_handle;
-          
+
           Cell_handle c = fit->first;
           Cell_handle nc = c->neighbor(fit->second);
-          
+
           // By definition, Subdomain_index() is supposed to be the id of the exterior
           if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
              nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
@@ -593,16 +597,19 @@ public:
       }
       else{
         c3t3_item->setName(fileinfo.baseName());
-        return c3t3_item;
+        ok = true;
+        if(add_to_scene)
+          CGAL::Three::Three::scene()->addItem(c3t3_item);
+        return QList<Scene_item*>()<<c3t3_item;
       }
     }
-    
+
     if(is_polyline)
     {
       std::vector< std::vector<Point> > segments;
       extract_segments_from_vtkPointSet(data,segments);
       Scene_polylines_item* polyline_item = new Scene_polylines_item();
-      BOOST_FOREACH(const std::vector<Point>& segment, segments)
+      for(const std::vector<Point>& segment : segments)
           polyline_item->polylines.push_back(segment);
       if(group)
       {
@@ -612,13 +619,20 @@ public:
       }
       else{
         polyline_item->setName(fileinfo.baseName());
-        return polyline_item;
+        ok = true;
+        if(add_to_scene)
+          CGAL::Three::Three::scene()->addItem(polyline_item);
+        return QList<Scene_item*>()<<polyline_item;
       }
     }
-    
-    if(group)
-      return group;
-    
+
+    if(group){
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(group);
+      return QList<Scene_item*>()<<group;
+    }
+
     QApplication::restoreOverrideCursor();
     QMessageBox::warning(CGAL::Three::Three::mainWindow(),
                          "Problematic file",
@@ -631,7 +645,10 @@ public:
       point_item->point_set()->insert(Point_3(p[0], p[1], p[2]));
     }
     point_item->setName(fileinfo.baseName());
-    return point_item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(point_item);
+    return QList<Scene_item*>()<<point_item;
   }
 }; // end Polyhedron_demo_vtk_plugin
 

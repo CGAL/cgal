@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -44,8 +36,9 @@ namespace qglviewer{
  focusDistance(). */
 CGAL_INLINE_FUNCTION
 Camera::Camera(QObject *parent)
-    : frame_(NULL), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
+    : frame_(nullptr), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
       projectionMatrixIsUpToDate_(false) {
+  m_zMin = 0;
   setParent(parent);
   // #CONNECTION# Camera copy constructor
   interpolationKfi_ = new KeyFrameInterpolator;
@@ -75,7 +68,7 @@ Camera::Camera(QObject *parent)
   // Dummy values
   setScreenWidthAndHeight(600, 400);
 
-  
+
   // focusDistance is set from setFieldOfView()
 
   // #CONNECTION# Camera copy constructor
@@ -101,7 +94,7 @@ Camera::~Camera() {
 
 /*! Copy constructor. Performs a deep copy using operator=(). */
 CGAL_INLINE_FUNCTION
-Camera::Camera(const Camera &camera) : QObject(), frame_(NULL) {
+Camera::Camera(const Camera &camera) : QObject(), frame_(nullptr) {
   // #CONNECTION# Camera constructor
   interpolationKfi_ = new KeyFrameInterpolator;
   // Requires the interpolationKfi_
@@ -144,7 +137,7 @@ Camera &Camera::operator=(const Camera &camera) {
   projectionMatrixIsUpToDate_ = false;
 
   // frame_ and interpolationKfi_ pointers are not shared.
-  frame_->setReferenceFrame(NULL);
+  frame_->setReferenceFrame(nullptr);
   frame_->setPosition(camera.position());
   frame_->setOrientation(camera.orientation());
 
@@ -162,7 +155,7 @@ Camera &Camera::operator=(const Camera &camera) {
 
 You should not call this method when the Camera is associated with a CGAL::QGLViewer,
 since the latter automatically updates these values when it is resized (hence
-overwritting your values).
+overwriting your values).
 
 Non-positive dimension are silently replaced by a 1 pixel value to ensure
 frustrum coherence.
@@ -228,7 +221,7 @@ qreal Camera::zNear() const {
       z = zMin;
       break;
     case Camera::ORTHOGRAPHIC:
-      z = 0.0;
+      z = m_zMin;
       break;
     }
   return z;
@@ -260,7 +253,7 @@ void Camera::setFieldOfView(qreal fov) {
 /*! Defines the Camera type().
 
 Changing the camera Type alters the viewport and the objects' sizes can be
-changed. This method garantees that the two frustum match in a plane normal to
+changed. This method guarantees that the two frustum match in a plane normal to
 viewDirection(), passing through the pivotPoint().
 
 Prefix the type with \c Camera if needed, as in:
@@ -291,7 +284,7 @@ either. Use addKeyFrameToPath() and playPath() instead.
 This method is actually mainly useful if you derive the ManipulatedCameraFrame
 class and want to use an instance of your new class to move the Camera.
 
-A \c NULL \p mcf pointer will silently be ignored. The calling method is
+A \c nullptr \p mcf pointer will silently be ignored. The calling method is
 responsible for deleting the previous frame() pointer if needed in order to
 prevent memory leaks. */
 CGAL_INLINE_FUNCTION
@@ -1483,7 +1476,7 @@ int project(qreal objx, qreal objy, qreal objz, GLdouble *modelview,
       fTempo[6]=projection[2]*fTempo[0]+projection[6]*fTempo[1]+projection[10]*fTempo[2]+projection[14]*fTempo[3];
       fTempo[7]=projection[3]*fTempo[0]+projection[7]*fTempo[1]+projection[11]*fTempo[2]+projection[15]*fTempo[3];
       //The result normalizes between -1 and 1
-      if(fTempo[7]==0.0)	//The w value
+      if(fTempo[7]==0.0)        //The w value
          return 0;
       fTempo[7]=1.0/fTempo[7];
       //Perspective division
@@ -1495,7 +1488,7 @@ int project(qreal objx, qreal objy, qreal objz, GLdouble *modelview,
       *winX=(fTempo[4]*0.5+0.5)*viewport[2]+viewport[0];
       *winY=(fTempo[5]*0.5+0.5)*viewport[3]+viewport[1];
       //This is only correct when glDepthRange(0.0, 1.0)
-      *winZ=(1.0+fTempo[6])*0.5;	//Between 0 and 1
+      *winZ=(1.0+fTempo[6])*0.5;        //Between 0 and 1
       return 1;
 }
 
@@ -1695,12 +1688,12 @@ CGAL_INLINE_FUNCTION
    /* last check */
    if (0.0 == r3[3])
       return 0;
-   s = 1.0 / r3[3];		/* now back substitute row 3 */
+   s = 1.0 / r3[3];                /* now back substitute row 3 */
    r3[4] *= s;
    r3[5] *= s;
    r3[6] *= s;
    r3[7] *= s;
-   m2 = r2[3];			/* now back substitute row 2 */
+   m2 = r2[3];                        /* now back substitute row 2 */
    s = 1.0 / r2[2];
    r2[4] = s * (r2[4] - r3[4] * m2), r2[5] = s * (r2[5] - r3[5] * m2),
       r2[6] = s * (r2[6] - r3[6] * m2), r2[7] = s * (r2[7] - r3[7] * m2);
@@ -1710,14 +1703,14 @@ CGAL_INLINE_FUNCTION
    m0 = r0[3];
    r0[4] -= r3[4] * m0, r0[5] -= r3[5] * m0,
       r0[6] -= r3[6] * m0, r0[7] -= r3[7] * m0;
-   m1 = r1[2];			/* now back substitute row 1 */
+   m1 = r1[2];                        /* now back substitute row 1 */
    s = 1.0 / r1[1];
    r1[4] = s * (r1[4] - r2[4] * m1), r1[5] = s * (r1[5] - r2[5] * m1),
       r1[6] = s * (r1[6] - r2[6] * m1), r1[7] = s * (r1[7] - r2[7] * m1);
    m0 = r0[2];
    r0[4] -= r2[4] * m0, r0[5] -= r2[5] * m0,
       r0[6] -= r2[6] * m0, r0[7] -= r2[7] * m0;
-   m0 = r0[1];			/* now back substitute row 0 */
+   m0 = r0[1];                        /* now back substitute row 0 */
    s = 1.0 / r0[0];
    r0[4] = s * (r0[4] - r1[4] * m0), r0[5] = s * (r0[5] - r1[5] * m0),
       r0[6] = s * (r0[6] - r1[6] * m0), r0[7] = s * (r0[7] - r1[7] * m0);
@@ -1763,7 +1756,7 @@ int unProject(GLdouble winx, GLdouble winy, GLdouble winz, GLdouble *modelview, 
 
 /*! Returns the screen projected coordinates of a point \p src defined in the \p frame coordinate
  system.
- When \p frame in \c NULL (default), \p src is expressed in the world coordinate system.
+ When \p frame in \c nullptr (default), \p src is expressed in the world coordinate system.
  The x and y coordinates of the returned Vec are expressed in pixel, (0,0) being the \e upper left
  corner of the window. The z coordinate ranges between 0.0 (near plane) and 1.0 (excluded, far
  plane). See the \c gluProject man page for details.
@@ -1847,7 +1840,7 @@ Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
  /endcode
  Where z is the distance from the point you project to the camera, along the viewDirection().
  See the \c gluUnProject man page for details.
- The result is expressed in the \p frame coordinate system. When \p frame is \c NULL (default), the
+ The result is expressed in the \p frame coordinate system. When \p frame is \c nullptr (default), the
  result is expressed in the world coordinates system. The possible \p frame Frame::referenceFrame()
  are taken into account.
  projectedCoordinatesOf() performs the inverse transformation.
@@ -1899,14 +1892,14 @@ void Camera::getUnprojectedCoordinatesOf(const qreal src[3], qreal res[3],
 
 /*! Returns the KeyFrameInterpolator that defines the Camera path number \p i.
 
-If path \p i is not defined for this index, the method returns a \c NULL
+If path \p i is not defined for this index, the method returns a \c nullptr
 pointer. */
 CGAL_INLINE_FUNCTION
 KeyFrameInterpolator *Camera::keyFrameInterpolator(unsigned int i) const {
   if (kfi_.contains(i))
     return kfi_[i];
   else
-    return NULL;
+    return nullptr;
 }
 
 /*! Sets the KeyFrameInterpolator that defines the Camera path of index \p i.
@@ -2379,14 +2372,14 @@ void Camera::getFrustum(double frustum[6])
         E(projectionMatrix_[14]),F(projectionMatrix_[10]);
     double B1 = (B+1)/(1-B), D1 = (1-D)/(D+1),
         E1=(E+1)/(1-E);
-    
+
     l = -2*B1/(1+B1*A);
     r = 2+A*l;
     t = 2*D1/(C*(1+D1));
     b =t -2/C;
     n = -2/(F*(1+E1));
     f=n-2/F;
-    
+
   }
   frustum[0] = l;
   frustum[1] = r;

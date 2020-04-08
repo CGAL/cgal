@@ -79,6 +79,8 @@ const char* slotName(RenderingMode mode) {
         return SLOT(setGouraudMode());
     case PointsPlusNormals:
         return SLOT(setPointsPlusNormalsMode());
+    case GouraudPlusEdges:
+        return SLOT(setGouraudPlusEdgesMode());
     default:
         Q_ASSERT(false);
         return "";
@@ -89,7 +91,7 @@ const char* slotName(RenderingMode mode) {
 QString CGAL::Three::Scene_item::renderingModeName() const
 {
     return CGAL::Three::Three::modeName(renderingMode());
-} 
+}
 QMenu* CGAL::Three::Scene_item::contextMenu()
 {
     if(defaultContextMenu) {
@@ -223,5 +225,5 @@ float Scene_item::alpha() const
 
 void Scene_item::setAlpha(int )
 {
- 
+
 }

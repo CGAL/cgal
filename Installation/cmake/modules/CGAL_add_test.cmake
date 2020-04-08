@@ -95,10 +95,33 @@ function(cgal_add_compilation_test exe_name)
     return()
   endif()
   add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
   set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(NOT TARGET ALL_CGAL_TARGETS)
+    add_custom_target( ALL_CGAL_TARGETS )
+  endif()
+  if(NOT TARGET cgal_check_build_system)
+    add_custom_target(cgal_check_build_system)
+    add_dependencies( ALL_CGAL_TARGETS cgal_check_build_system )
+  endif()
+  if(NOT TEST check_build_system)
+    add_test(NAME "check_build_system"
+      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
+    set_property(TEST "check_build_system"
+      APPEND PROPERTY LABELS "Installation")
+    if(POLICY CMP0066) # cmake 3.7 or later
+      set_property(TEST "check_build_system"
+        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+    endif()
+  endif()
+  if(POLICY CMP0066) # cmake 3.7 or later
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  endif()
 endfunction(cgal_add_compilation_test)
+
+option(CGAL_TEST_DRAW_FUNCTIONS "If set, the ctest command will not skip the tests of the draw functions.")
 
 function(cgal_setup_test_properties test_name)
   if(ARGC GREATER 1)
@@ -109,12 +132,22 @@ function(cgal_setup_test_properties test_name)
   #      message(STATUS "  working dir: ${CMAKE_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(NOT CGAL_TEST_DRAW_FUNCTIONS)
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY ENVIRONMENT CGAL_TEST_SUITE=1)
+  endif()
+
   if(exe_name)
     set_property(TEST "${test_name}"
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
   endif()
 
-  if(POLICY CMP0066) # CMake 3.7 or later
+  get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
+  get_filename_component(_binary_dir_abs ${CMAKE_CURRENT_BINARY_DIR} ABSOLUTE)
+  string(FIND "${_binary_dir_abs}" "${_source_dir_abs}" _search_binary_in_source)
+
+  if(_search_binary_in_source EQUAL "-1"
+     AND POLICY CMP0066) # CMake 3.7 or later
     if(NOT TEST ${PROJECT_NAME}_SetupFixture)
       if(ANDROID)
         add_test(NAME ${PROJECT_NAME}_SetupFixture
@@ -232,24 +265,29 @@ function(cgal_add_test exe_name)
 #  message("Add test ${test_name}")
   set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
   if(NOT ARGS AND EXISTS ${cin_file})
-    if(ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH)
-      set(cmd ${exe_name})
+    if(CGAL_RUN_TESTS_THROUGH_SSH)
+      add_test(NAME ${test_name} COMMAND bash -c "${TIME_COMMAND} ${ssh_executable}  ${SSH_HOST} \"cd ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} && ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/${exe_name} 3< <(cat; kill -INT 0) < ${exe_name}.cin\" <&1")
     else()
-      set(cmd $<TARGET_FILE:${exe_name}>)
+      if(ANDROID)
+        set(cmd ${exe_name})
+      else()
+        set(cmd $<TARGET_FILE:${exe_name}>)
+      endif()
+      add_test(NAME ${test_name}
+        COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
+        -DCMD:STRING=${cmd}
+        -DCIN:STRING=${cin_file}
+        -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
+        -DCGAL_RUN_TESTS_THROUGH_SSH=${CGAL_RUN_TESTS_THROUGH_SSH}
+        -DSSH_HOST=${SSH_HOST}
+        -Dssh_executable=${ssh_executable}
+        -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
+        -DPROJECT_NAME=${PROJECT_NAME}
+        -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
+      set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cin_file})
+      #	message(STATUS "add test: ${exe_name} < ${cin_file}")
     endif()
-    add_test(NAME ${test_name}
-      COMMAND ${TIME_COMMAND} ${CMAKE_COMMAND}
-      -DCMD:STRING=${cmd}
-      -DCIN:STRING=${cin_file}
-      -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
-      -DSSH=${SSH}
-      -DSSH_HOST=${SSH_HOST}
-      -DCGAL_REMOTE_TEST_DIR_PREFIX=${CGAL_REMOTE_TEST_DIR_PREFIX}
-      -DPROJECT_NAME=${PROJECT_NAME}
-      -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cin_file})
-    #	message(STATUS "add test: ${exe_name} < ${cin_file}")
   else()
     if(NOT ARGS AND NOT cgal_add_test_TEST_NAME)
       if(ARGC GREATER 2 AND ARGV2)

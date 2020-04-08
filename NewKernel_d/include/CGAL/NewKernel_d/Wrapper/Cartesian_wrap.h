@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -27,8 +18,8 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro 'BOOST_PP_EXPAND_I'
-                                // http://lists.boost.org/boost-users/2014/11/83291.php
-#endif 
+                                // https://lists.boost.org/boost-users/2014/11/83291.php
+#endif
 #include <CGAL/NewKernel_d/Wrapper/Point_d.h>
 #include <CGAL/NewKernel_d/Wrapper/Vector_d.h>
 #include <CGAL/NewKernel_d/Wrapper/Segment_d.h>
@@ -48,20 +39,20 @@ namespace CGAL {
 namespace internal {
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Is_wrapper)
 template<class T,bool=has_Is_wrapper<T>::value> struct Is_wrapper {
-	enum { value=false };
-	typedef Tag_false type;
+        enum { value=false };
+        typedef Tag_false type;
 };
 template<class T> struct Is_wrapper<T,true> {
-	typedef typename T::Is_wrapper type;
-	enum { value=type::value };
+        typedef typename T::Is_wrapper type;
+        enum { value=type::value };
 };
 
 template<class T,bool=is_iterator_type<T,std::input_iterator_tag>::value> struct Is_wrapper_iterator {
-	enum { value=false };
-	typedef Tag_false type;
+        enum { value=false };
+        typedef Tag_false type;
 };
 template<class T> struct Is_wrapper_iterator<T,true> :
-	Is_wrapper<typename std::iterator_traits<typename CGAL::decay<T>::type>::value_type>
+        Is_wrapper<typename std::iterator_traits<typename CGAL::decay<T>::type>::value_type>
 { };
 
 struct Forward_rep {
@@ -75,13 +66,13 @@ struct Forward_rep {
 //template <class T,class=typename std::enable_if<Is_wrapper<typename std::decay<T>::type>::value>::type>
 //typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&
 //operator()(T&& t) const {
-//	return static_cast<typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&>(t.rep());
+//        return static_cast<typename Type_copy_cvref<T,typename std::decay<T>::type::Rep>::type&&>(t.rep());
 //};
 //
 //template <class T,class=typename std::enable_if<Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
 //transforming_iterator<Forward_rep,typename std::decay<T>::type>
 //operator()(T&& t) const {
-//	return make_transforming_iterator(std::forward<T>(t),Forward_rep());
+//        return make_transforming_iterator(std::forward<T>(t),Forward_rep());
 //};
 //#else
 template <class T,bool=Is_wrapper<T>::value,bool=Is_wrapper_iterator<T>::value> struct result_;
@@ -122,8 +113,8 @@ CGAL_REGISTER_OBJECT_WRAPPER(Weighted_point);
 template < typename Base_ , typename Derived_ = Default >
 struct Cartesian_wrap : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_wrap(){}
-    CGAL_CONSTEXPR Cartesian_wrap(int d):Base_(d){}
+    constexpr Cartesian_wrap(){}
+    constexpr Cartesian_wrap(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
     // TODO: pass the 2 types Self and Derived to the wrappers, they can use Self for most purposes and Derived only for Kernel_traits' typedef R.
@@ -140,36 +131,15 @@ struct Cartesian_wrap : public Base_
       bool=Provides_functor<Kernel_base, T>::value,
       bool=boost::mpl::contains<Wrapped_list,typename map_result_tag<T>::type>::type::value>
     struct Functor {
-	    typedef typename Get_functor<Kernel_base, T>::type B;
-	    struct type {
-		    B b;
-		    type(){}
-		    type(Self const&k):b(k){}
-		    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX11
-		    template<class...U> result_type operator()(U&&...u)const{
-			    return b(internal::Forward_rep()(u)...);
-		    }
-#else
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return b(BOOST_PP_ENUM(N,CGAL_VAR,)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-// In case the last argument needs to be non-const. Fragile...
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U),class V> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u),V&v)const{ \
-			    return b(BOOST_PP_ENUM(N,CGAL_VAR,),internal::Forward_rep()(v)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,8,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
-	    };
+            typedef typename Get_functor<Kernel_base, T>::type B;
+            struct type {
+                    B b;
+                    type(){}
+                    type(Self const&k):b(k){}
+                    template<class...U> decltype(auto) operator()(U&&...u)const{
+                            return b(internal::Forward_rep()(u)...);
+                    }
+            };
     };
 
     // Preserve the difference between Null_functor and nothing.
@@ -180,29 +150,18 @@ struct Cartesian_wrap : public Base_
     //Translate both the arguments and the result
     //TODO: Check Is_wrapper instead of relying on map_result_tag?
     template<class T,class D> struct Functor<T,D,Construct_tag,true,true> {
-	    typedef typename Get_functor<Kernel_base, T>::type B;
-	    struct type {
-		    B b;
-		    type(){}
-		    type(Self const&k):b(k){}
-		    typedef typename map_result_tag<T>::type result_tag;
-		    // FIXME: Self or Derived?
-		    typedef typename Get_type<Self,result_tag>::type result_type;
-#ifdef CGAL_CXX11
-		    template<class...U> result_type operator()(U&&...u)const{
-			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
-		    }
-#else
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,CGAL_VAR,)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
-	    };
+            typedef typename Get_functor<Kernel_base, T>::type B;
+            struct type {
+                    B b;
+                    type(){}
+                    type(Self const&k):b(k){}
+                    typedef typename map_result_tag<T>::type result_tag;
+                    // FIXME: Self or Derived?
+                    typedef typename Get_type<Self,result_tag>::type result_type;
+                    template<class...U> result_type operator()(U&&...u)const{
+                            return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
+                    }
+            };
     };
 
 };
@@ -210,8 +169,8 @@ struct Cartesian_wrap : public Base_
 template < typename Base_ >
 struct Cartesian_refcount : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_refcount(){}
-    CGAL_CONSTEXPR Cartesian_refcount(int d):Base_(d){}
+    constexpr Cartesian_refcount(){}
+    constexpr Cartesian_refcount(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_refcount Self;
 
@@ -226,73 +185,45 @@ struct Cartesian_refcount : public Base_
 #undef CGAL_Kernel_obj
 
     template<class T> struct Dispatch {
-	    //typedef typename map_functor_type<T>::type f_t;
-	    typedef typename map_result_tag<T>::type r_t;
-	    enum {
-		    is_nul = boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value,
-		    ret_rcobj = boost::is_same<r_t,Point_tag>::value || boost::is_same<r_t,Vector_tag>::value
-	    };
+            //typedef typename map_functor_type<T>::type f_t;
+            typedef typename map_result_tag<T>::type r_t;
+            enum {
+                    is_nul = boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value,
+                    ret_rcobj = boost::is_same<r_t,Point_tag>::value || boost::is_same<r_t,Vector_tag>::value
+            };
     };
 
     //Translate the arguments
     template<class T,class D=void,bool=Dispatch<T>::is_nul,bool=Dispatch<T>::ret_rcobj> struct Functor {
-	    typedef typename Get_functor<Kernel_base, T>::type B;
-	    struct type {
-		    B b;
-		    type(){}
-		    type(Self const&k):b(k){}
-		    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX11
-		    template<class...U> result_type operator()(U&&...u)const{
-			    return b(internal::Forward_rep()(u)...);
-		    }
-#else
-		    result_type operator()()const{
-			    return b();
-		    }
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return b(BOOST_PP_ENUM(N,CGAL_VAR,)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
-	    };
+            typedef typename Get_functor<Kernel_base, T>::type B;
+            struct type {
+                    B b;
+                    type(){}
+                    type(Self const&k):b(k){}
+                    typedef typename B::result_type result_type;
+                    template<class...U> result_type operator()(U&&...u)const{
+                            return b(internal::Forward_rep()(u)...);
+                    }
+            };
     };
 
     //Translate both the arguments and the result
     template<class T,class D,bool b> struct Functor<T,D,true,b> {
-	    typedef Null_functor type;
+            typedef Null_functor type;
     };
 
     template<class T,class D> struct Functor<T,D,false,true> {
-	    typedef typename Get_functor<Kernel_base, T>::type B;
-	    struct type {
-		    B b;
-		    type(){}
-		    type(Self const&k):b(k){}
-		    typedef typename map_result_tag<T>::type result_tag;
-		    typedef typename Get_type<Self,result_tag>::type result_type;
-#ifdef CGAL_CXX11
-		    template<class...U> result_type operator()(U&&...u)const{
-			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
-		    }
-#else
-		    result_type operator()()const{
-			     return result_type(Eval_functor(),b);
-		    }
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,CGAL_VAR,)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
-	    };
+            typedef typename Get_functor<Kernel_base, T>::type B;
+            struct type {
+                    B b;
+                    type(){}
+                    type(Self const&k):b(k){}
+                    typedef typename map_result_tag<T>::type result_tag;
+                    typedef typename Get_type<Self,result_tag>::type result_type;
+                    template<class...U> result_type operator()(U&&...u)const{
+                            return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
+                    }
+            };
     };
 
 };

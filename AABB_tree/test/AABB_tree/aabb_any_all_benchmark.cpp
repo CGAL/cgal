@@ -1,5 +1,3 @@
-#define CGAL_INTERSECTION_VERSION 2
-
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -31,7 +29,7 @@ const int runs = 10;
 template<typename Tree>
 struct FilterP {
   const Tree* t;
-  
+
   template<typename T>
   bool operator()(const T& tt) { return !t->do_intersect(tt); }
 };
@@ -40,11 +38,7 @@ struct FilterP {
 template<typename ForwardIterator, typename Tree>
 std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, long& counter) {
       typedef
-#if CGAL_INTERSECTION_VERSION < 2
-        typename Tree::Object_and_primitive_id
-#else
         typename Tree::AABB_traits::template Intersection_and_primitive_id<typename ForwardIterator::value_type>::Type
-#endif
         Obj_type;
 
   std::vector<Obj_type> v;
@@ -61,7 +55,7 @@ std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, lo
 }
 
 template<typename K>
-boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name) { 
+boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name) {
   typedef typename K::FT FT;
   typedef typename K::Ray_3 Ray;
   typedef typename K::Line_3 Line;
@@ -81,15 +75,15 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   // Random seeded to 23, cube size equal to the magic number 2
   CGAL::Random r(23);
   CGAL::Random_points_in_cube_3<Point, CGAL::Creator_uniform_3<FT, Point> > g( 2., r);
-  
+
   std::vector<Point> points;
   points.reserve(elements * 2);
-  CGAL::cpp11::copy_n(g, elements * 2, std::back_inserter(points));
-  
+  std::copy_n(g, elements * 2, std::back_inserter(points));
+
   // generate a bunch of happy random primitives
   std::vector<Line> lines;
   lines.reserve(elements);
-  
+
   // forward
   for(std::size_t i = 0; i < points.size(); i += 2)
   {
@@ -118,13 +112,13 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   // filter all primitives that do not intersect
 
   FilterP<Tree> p = { &tree };
-  
+
   lines.erase(std::remove_if(lines.begin(), lines.end(), p), lines.end());
 
   rays.erase(std::remove_if(rays.begin(), rays.end(), p), rays.end());
 
   segments.erase(std::remove_if(segments.begin(), segments.end(), p), segments.end());
-  
+
   boost::tuple<std::size_t, std::size_t, std::size_t, long> tu;
 
     {
@@ -136,7 +130,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
         long counter = 0L;
         tu = boost::make_tuple(intersect(lines.begin(), lines.end(), tree, counter),
                                intersect(rays.begin(), rays.end(), tree, counter),
-                               intersect(segments.begin(), segments.end(), tree, counter), 
+                               intersect(segments.begin(), segments.end(), tree, counter),
                                // cant use counter here
                                0);
         boost::get<3>(tu) = counter;
@@ -170,7 +164,7 @@ int main()
   std::cout << "| Epic kernel |";
   boost::tuple<std::size_t, std::size_t, std::size_t, long> t5 = test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
   std::cout << " | " << std::endl;
-  
+
   std::size_t a, b, c;
   long d;
 

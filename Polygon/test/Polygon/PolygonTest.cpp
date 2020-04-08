@@ -283,7 +283,7 @@ void test_update_operations(const ListPolygon& p,
 
   VC c = q.vertices_circulator();
   q.set(c, *middle);
-  q.insert(c, Point(2,3)); 
+  q.insert(c, Point(2,3));
   q.erase(q.vertices_circulator());
 
   pgn.push_back(Point(pgn.vertices_begin()->x(), 3));

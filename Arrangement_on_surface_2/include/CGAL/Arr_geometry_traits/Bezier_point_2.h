@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
@@ -54,7 +45,7 @@ template <class RatKernel_, class AlgKernel_, class NtTraits_,
           class BoundingTraits_>
 class _Bezier_point_2_rep
 {
-  friend class _Bezier_point_2<RatKernel_, AlgKernel_, NtTraits_, 
+  friend class _Bezier_point_2<RatKernel_, AlgKernel_, NtTraits_,
                                BoundingTraits_>;
 
 public:
@@ -75,7 +66,7 @@ public:
   typedef _Bezier_point_2_rep<Rat_kernel,
                               Alg_kernel,
                               Nt_traits,
-                              Bounding_traits>    Self; 
+                              Bounding_traits>    Self;
 
 private:
 
@@ -108,7 +99,7 @@ private:
     Originator (const Curve_2& c, const Algebraic& t) :
       _curve (c),
       _xid (0),
-      p_t (NULL)
+      p_t (nullptr)
     {
       set_parameter (t);
     }
@@ -118,7 +109,7 @@ private:
                 const Algebraic& t) :
       _curve (c),
       _xid (xid),
-      p_t (NULL)
+      p_t (nullptr)
     {
       set_parameter (t);
     }
@@ -128,7 +119,7 @@ private:
       _curve (c),
       _xid (0),
       _bpb (bpb),
-      p_t (NULL)
+      p_t (nullptr)
     {}
 
     /*! Constructor with bounding information and no exact representation. */
@@ -137,7 +128,7 @@ private:
       _curve (c),
       _xid (xid),
       _bpb (bpb),
-      p_t (NULL)
+      p_t (nullptr)
     {}
 
     /*! Copy constructor. */
@@ -145,17 +136,17 @@ private:
       _curve (other._curve),
       _xid (other._xid),
       _bpb (other._bpb),
-      p_t (NULL)
+      p_t (nullptr)
     {
       // Deep copy of lazy instantiation
-      if (other.p_t != NULL)
+      if (other.p_t != nullptr)
         p_t = new Algebraic (*(other.p_t));
     }
 
     /*! Destructor. */
-    ~Originator() 
+    ~Originator()
     {
-      if (p_t != NULL)
+      if (p_t != nullptr)
         delete p_t;
     }
 
@@ -167,9 +158,9 @@ private:
         return (*this);
 
       // Free memory, if necessary.
-      if (p_t != NULL)
+      if (p_t != nullptr)
         delete p_t;
-      p_t = NULL;
+      p_t = nullptr;
 
       // Copy the data members.
       _curve = other._curve;
@@ -177,7 +168,7 @@ private:
       _bpb = other._bpb;
 
       // Deep copy of lazy instantiation
-      if (other.p_t != NULL)
+      if (other.p_t != nullptr)
         p_t = new Algebraic (*(other.p_t));
 
       return (*this);
@@ -211,27 +202,27 @@ private:
     /*! Check if the algberaic parameter is available. */
     bool has_parameter () const
     {
-      return (p_t != NULL);
+      return (p_t != nullptr);
     }
 
-    /*! 
+    /*!
      * Get the algebraic parameter.
      * \pre The parameter value is available.
      */
     const Algebraic& parameter () const
     {
-      CGAL_precondition (p_t != NULL);
+      CGAL_precondition (p_t != nullptr);
       return (*p_t);
     }
 
     /*!
-     * Set the parameter value. 
+     * Set the parameter value.
      * \pre The parameter value is not yet set.
      */
     void set_parameter (const Algebraic& t)
     {
-      CGAL_precondition (p_t == NULL);
-      
+      CGAL_precondition (p_t == nullptr);
+
       p_t = new Algebraic (t);
 
       // Update the Bez_point_bound by converting t to an interval of doubles
@@ -275,7 +266,7 @@ private:
 
     /*! Constructor given control points an a t-range. */
     Subcurve (const Control_points& _ctrl,
-              const BoundNT& _tmin, 
+              const BoundNT& _tmin,
               const BoundNT& _tmax) :
       ctrl (_ctrl),
       t_min (_tmin),
@@ -283,7 +274,7 @@ private:
     {}
 
     /*! Constructor given a t-range. */
-    Subcurve (const BoundNT& _tmin, 
+    Subcurve (const BoundNT& _tmin,
               const BoundNT& _tmax) :
       t_min (_tmin),
       t_max (_tmax)
@@ -305,28 +296,28 @@ public:
 
   /*! Default constructor. */
   _Bezier_point_2_rep () :
-    p_alg_x (NULL),
-    p_rat_x (NULL),
-    p_alg_y (NULL),
-    p_rat_y (NULL)
+    p_alg_x (nullptr),
+    p_rat_x (nullptr),
+    p_alg_y (nullptr),
+    p_rat_y (nullptr)
   {}
 
   /*! Copy constructor. */
   _Bezier_point_2_rep (const Self& pt) :
-    p_alg_x (NULL),
-    p_rat_x (NULL),
-    p_alg_y (NULL),
-    p_rat_y (NULL),
+    p_alg_x (nullptr),
+    p_rat_x (nullptr),
+    p_alg_y (nullptr),
+    p_rat_y (nullptr),
     _origs (pt._origs),
     _bbox (pt._bbox)
   {
-    if (pt.p_alg_x != NULL)
+    if (pt.p_alg_x != nullptr)
       p_alg_x = new Algebraic (*(pt.p_alg_x));
-    if (pt.p_rat_x != NULL)
+    if (pt.p_rat_x != nullptr)
       p_rat_x = new Rational (*(pt.p_rat_x));
-    if (pt.p_alg_y != NULL)
+    if (pt.p_alg_y != nullptr)
       p_alg_y = new Algebraic (*(pt.p_alg_y));
-    if (pt.p_rat_y != NULL)
+    if (pt.p_rat_y != nullptr)
       p_rat_y = new Rational (*(pt.p_rat_y));
   }
 
@@ -335,18 +326,18 @@ public:
    * \param x The exact x-coordinate.
    * \param y The exact y-coordinate.
    */
-  _Bezier_point_2_rep (const Algebraic& x, const Algebraic& y, bool) : 
-    p_rat_x (NULL),
-    p_rat_y (NULL)
+  _Bezier_point_2_rep (const Algebraic& x, const Algebraic& y, bool) :
+    p_rat_x (nullptr),
+    p_rat_y (nullptr)
   {
     p_alg_x = new Algebraic (x);
     p_alg_y = new Algebraic (y);
 
     // Initialize the bounding box.
     Nt_traits                         nt_traits;
-    const std::pair<double, double>&  x_bnd = 
+    const std::pair<double, double>&  x_bnd =
                                         nt_traits.double_interval (x);
-    const std::pair<double, double>&  y_bnd = 
+    const std::pair<double, double>&  y_bnd =
                                         nt_traits.double_interval (y);
 
     _bbox.min_x = x_bnd.first;
@@ -407,13 +398,13 @@ public:
   /*! Destructor. */
   ~_Bezier_point_2_rep ()
   {
-    if (p_rat_x != NULL)
+    if (p_rat_x != nullptr)
       delete p_rat_x;
-    if (p_alg_x != NULL)
+    if (p_alg_x != nullptr)
       delete p_alg_x;
-    if (p_rat_y != NULL)
+    if (p_rat_y != nullptr)
       delete p_rat_y;
-    if (p_alg_y != NULL)
+    if (p_alg_y != nullptr)
       delete p_alg_y;
   }
 
@@ -423,26 +414,26 @@ public:
     if (this == &pt)
       return (*this);
 
-    if (p_rat_x != NULL)
+    if (p_rat_x != nullptr)
       delete p_rat_x;
-    if (p_alg_x != NULL)
+    if (p_alg_x != nullptr)
       delete p_alg_x;
-    if (p_rat_y != NULL)
+    if (p_rat_y != nullptr)
       delete p_rat_y;
-    if (p_alg_y != NULL)
+    if (p_alg_y != nullptr)
       delete p_alg_y;
-    p_alg_x = p_rat_x = p_alg_y = p_rat_y = NULL;
+    p_alg_x = p_rat_x = p_alg_y = p_rat_y = nullptr;
 
 
-    if (pt.p_alg_x != NULL)
+    if (pt.p_alg_x != nullptr)
       p_alg_x = new Algebraic (*(pt.p_alg_x));
-    if (pt.p_rat_x != NULL)
+    if (pt.p_rat_x != nullptr)
       p_rat_x = new Rational (*(pt.p_rat_x));
-    if (pt.p_alg_y != NULL)
+    if (pt.p_alg_y != nullptr)
       p_alg_y = new Algebraic (*(pt.p_alg_y));
-    if (pt.p_rat_y != NULL)
+    if (pt.p_rat_y != nullptr)
       p_rat_y = new Rational (*(pt.p_rat_y));
-  
+
     _origs = pt._origs;
     _bbox = pt._bbox;
 
@@ -452,13 +443,13 @@ public:
   /*! Check if the point is exactly computed. */
   inline bool is_exact () const
   {
-    return (p_alg_x != NULL && p_alg_y != NULL);
+    return (p_alg_x != nullptr && p_alg_y != nullptr);
   }
 
   /*! Check if the point has rational coordinates. */
   inline bool is_rational () const
   {
-    return (p_rat_x != NULL && p_rat_y != NULL);
+    return (p_rat_x != nullptr && p_rat_y != nullptr);
   }
 
   /*!
@@ -485,12 +476,12 @@ public:
    * Determines the vertical position of the point with respect to an
    * x-monotone subcurve, given by its control polygon.
    * \param cp The control polygon of the subcurve.
-   * \param t_min Defines the smallest parameter value of the subcurve. 
-   * \param t_max Defines the largest parameter value of the subcurve. 
+   * \param t_min Defines the smallest parameter value of the subcurve.
+   * \param t_max Defines the largest parameter value of the subcurve.
    * \return SMALLER if the point is located below the curve;
    *         LARGER if the point is located above the curve;
    *         EQUAL if we cannot determine its precise position.
-   */  
+   */
   Comparison_result vertical_position (const Control_points& cp,
                                        const BoundNT& t_min,
                                        const BoundNT& t_max);
@@ -516,7 +507,7 @@ private:
   void _make_exact (Bezier_cache& cache);
 };
 
-template <class RatKernel_, class AlgKernel_, class NtTraits_, 
+template <class RatKernel_, class AlgKernel_, class NtTraits_,
           class BoundingTraits_>
 class _Bezier_point_2 :
   public Handle_for<_Bezier_point_2_rep<RatKernel_,
@@ -703,7 +694,7 @@ public:
   operator Rat_point_2 () const
   {
     CGAL_precondition (_rep().is_rational());
-    
+
     return (Rat_point_2 (*(_rep().p_rat_x), *(_rep().p_rat_y)));
   }
 
@@ -714,7 +705,7 @@ public:
   bool refine () const
   {
     Bpt_rep&             rep = const_cast<Bpt_rep&> (_rep());
-    
+
     return (rep._refine());
   }
 
@@ -724,7 +715,7 @@ public:
   void fit_to_bbox () const
   {
     Bpt_rep&             rep = const_cast<Bpt_rep&> (_rep());
-    
+
     return (rep._fit_to_bbox());
   }
 
@@ -747,7 +738,7 @@ public:
    * \return The comparison result;
    */
   Comparison_result compare_x (const Self& pt,
-                               Bezier_cache& cache) const 
+                               Bezier_cache& cache) const
   {
     if (this->identical (pt))
       return (EQUAL);
@@ -767,7 +758,7 @@ public:
    * \return The comparison result;
    */
   Comparison_result compare_xy (const Self& pt,
-                                Bezier_cache& cache) const 
+                                Bezier_cache& cache) const
   {
     if (this->identical (pt))
       return EQUAL;
@@ -785,12 +776,12 @@ public:
 
       CGAL_assertion (this->identical (pt));
     }
-      
+
     return (res);
   }
 
   /*!
-   * Determine if the two points are equal. 
+   * Determine if the two points are equal.
    */
   bool equals (const Self& pt,
                Bezier_cache& cache) const
@@ -802,8 +793,8 @@ public:
    * Determines the vertical position of the point with respect to an
    * x-monotone subcurve, given by its control polygon.
    * \param cp The control polygon of the subcurve.
-   * \param t_min Defines the smallest parameter value of the subcurve. 
-   * \param t_max Defines the largest parameter value of the subcurve. 
+   * \param t_min Defines the smallest parameter value of the subcurve.
+   * \param t_max Defines the largest parameter value of the subcurve.
    * \return SMALLER if the point is located below the curve;
    *         LARGER if the point is located above the curve;
    *         EQUAL if we cannot determine its precise position.
@@ -934,9 +925,9 @@ public:
   }
 
   /*! Get the bounding box of the point. */
-  void get_bbox (typename Bounding_traits::NT& min_x, 
-                 typename Bounding_traits::NT& min_y, 
-                 typename Bounding_traits::NT& max_x, 
+  void get_bbox (typename Bounding_traits::NT& min_x,
+                 typename Bounding_traits::NT& min_y,
+                 typename Bounding_traits::NT& max_x,
                  typename Bounding_traits::NT& max_y) const
   {
     min_x = _rep()._bbox.min_x;
@@ -964,10 +955,10 @@ private:
 /*!
  * Exporter for Bezier points.
  */
-template <class Rat_kernel, class Alg_kernel, class Nt_traits, 
+template <class Rat_kernel, class Alg_kernel, class Nt_traits,
           class Bounding_traits>
-std::ostream& 
-operator<< (std::ostream& os, 
+std::ostream&
+operator<< (std::ostream& os,
             const _Bezier_point_2<Rat_kernel, Alg_kernel, Nt_traits,
                                   Bounding_traits> & pt)
 {
@@ -978,9 +969,9 @@ operator<< (std::ostream& os,
   else
   {
     typename Bounding_traits::NT   min_x, min_y, max_x, max_y;
-    
+
     pt.get_bbox(min_x, min_y, max_x, max_y);
-    os << '~' << CGAL::to_double ((min_x + max_x) / 2) 
+    os << '~' << CGAL::to_double ((min_x + max_x) / 2)
        << " ~" << CGAL::to_double ((min_y + max_y) / 2);
   }
 
@@ -1060,8 +1051,8 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
         (const Curve_2& B, const Algebraic& t0) :
-  p_rat_x (NULL),
-  p_rat_y (NULL)
+  p_rat_x (nullptr),
+  p_rat_y (nullptr)
 {
   // Create the originator pair <B(t), t0>.
   // Note that this constructor also takes care of the Bez_bound
@@ -1070,16 +1061,16 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
 
   // Set the point coordinates.
   const Alg_point_2   p = B (t0);
-  
+
   p_alg_x = new Algebraic (p.x());
   p_alg_y = new Algebraic (p.y());
-  
+
   // Set the bounding box for this point, by converting x, y to two ranges
   // of doubles.
   Nt_traits                         nt_traits;
-  const std::pair<double, double>&  x_bnd = 
+  const std::pair<double, double>&  x_bnd =
                                         nt_traits.double_interval (*p_alg_x);
-  const std::pair<double, double>&  y_bnd = 
+  const std::pair<double, double>&  y_bnd =
                                         nt_traits.double_interval (*p_alg_y);
 
   _bbox.min_x = x_bnd.first;
@@ -1095,8 +1086,8 @@ template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
         (const Curve_2& B, unsigned int xid,
          const Algebraic& t0) :
-  p_rat_x (NULL),
-  p_rat_y (NULL)
+  p_rat_x (nullptr),
+  p_rat_y (nullptr)
 {
   // Create the originator pair <B(t), t0>.
   // Note that this constructor also takes care of the Bez_bound
@@ -1105,16 +1096,16 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_point_2_rep
 
   // Set the point coordinates.
   const Alg_point_2   p = B (t0);
-  
+
   p_alg_x = new Algebraic (p.x());
   p_alg_y = new Algebraic (p.y());
-  
+
   // Set the bounding box for this point, by converting x, y  to two ranges
   // of doubles.
   Nt_traits                         nt_traits;
-  const std::pair<double, double>&  x_bnd = 
+  const std::pair<double, double>&  x_bnd =
                                         nt_traits.double_interval (*p_alg_x);
-  const std::pair<double, double>&  y_bnd = 
+  const std::pair<double, double>&  y_bnd =
                                         nt_traits.double_interval (*p_alg_y);
 
   _bbox.min_x = x_bnd.first;
@@ -1147,7 +1138,7 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::compare_x
     // Compare the x-ranges of the bounding boxes.
     if (CGAL::compare (_bbox.max_x, pt._bbox.min_x) == SMALLER)
       return (SMALLER);
-    
+
     if (CGAL::compare (_bbox.min_x, pt._bbox.max_x) == LARGER)
       return (LARGER);
 
@@ -1183,7 +1174,7 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::compare_x
     {
       if (can_refine1)
         can_refine1 = this->_refine();
-      
+
       if (! can_refine1)
         this->_make_exact (cache);
     }
@@ -1196,7 +1187,7 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::compare_x
     {
       if (can_refine2)
         can_refine2 = pt._refine();
-      
+
       if (! can_refine2)
         pt._make_exact (cache);
     }
@@ -1327,7 +1318,7 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::vertical_position
         bisect_control_polygon_2 (iter->ctrl.begin(), iter->ctrl.end(),
                                   std::back_inserter(scv_left.ctrl),
                                   std::front_inserter(scv_right.ctrl));
-        
+
         subcurves.insert (iter, scv_left);
         subcurves.insert (iter, scv_right);
         subcurves.erase(iter++);
@@ -1349,7 +1340,7 @@ _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::vertical_position
 
       // If we got here without entering one of the clauses above,
       // then iter has not been incremented yet.
-      ++iter; 
+      ++iter;
     }
 
     // If we reached here without splitting a subcurve, then we have a
@@ -1424,7 +1415,7 @@ bool _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_refine ()
 
     return (true);
   }
-  
+
   if (orig1.point_bound().type == Bez_point_bound::INTERSECTION_PT)
   {
     CGAL_assertion(_origs.size() == 2);
@@ -1545,7 +1536,7 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_fit_to_bbox ()
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
         (Bezier_cache& cache)
-{                
+{
   if (is_exact())
     return;
 
@@ -1580,7 +1571,7 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
         Originator&   orig = const_cast<Originator&> (*org_it);
 
         orig.set_parameter (*vt_it);
-        
+
         // Evaluate the curve at the given parameter value.
         const Alg_point_2&   p = org_it->curve() (*vt_it);
 
@@ -1589,9 +1580,9 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
 
         // Update the bounding box.
         Nt_traits                         nt_traits;
-        const std::pair<double, double>&  x_bnd = 
+        const std::pair<double, double>&  x_bnd =
                                         nt_traits.double_interval (*p_alg_x);
-        const std::pair<double, double>&  y_bnd = 
+        const std::pair<double, double>&  y_bnd =
                                         nt_traits.double_interval (*p_alg_y);
 
         _bbox.min_x = x_bnd.first;
@@ -1641,9 +1632,9 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
                              orig2.curve().y_norm(),
                              do_ovlp);
   typename Bezier_cache::Intersection_iter                  intr_it;
-                             
+
   CGAL_assertion (! do_ovlp);
-                    
+
   // Look for a parameter pair within the ranges of the bounding intervals.
   const Algebraic      s_min = nt_traits.convert (orig1.point_bound().t_min);
   const Algebraic      s_max = nt_traits.convert (orig1.point_bound().t_max);
@@ -1666,9 +1657,9 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
       p_alg_y = new Algebraic (intr_it->y);
 
       // Update the bounding box.
-      const std::pair<double, double>&  x_bnd = 
+      const std::pair<double, double>&  x_bnd =
                                           nt_traits.double_interval (*p_alg_x);
-      const std::pair<double, double>&  y_bnd = 
+      const std::pair<double, double>&  y_bnd =
                                           nt_traits.double_interval (*p_alg_y);
 
       _bbox.min_x = x_bnd.first;

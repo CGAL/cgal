@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
@@ -31,7 +31,7 @@ void test_lazy_exact_nt() {
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-        
+
         CGAL::test_real_embeddable<NT>();
     }{
         typedef typename AK::Rational ET;
@@ -50,13 +50,13 @@ void test_lazy_exact_nt() {
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-        
+
         CGAL::test_real_embeddable<NT>();
 
         CGAL::test_fraction_traits<NT>();
         CGAL::test_rational_traits<NT>();
     }
-    {        
+    {
         typedef typename AK::Integer ET;
 
         typedef CGAL::Algebraic_structure_traits< ET > AST;
@@ -73,10 +73,10 @@ void test_lazy_exact_nt() {
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-        
+
         CGAL::test_real_embeddable<NT>();
     }
-    
+
     {   // see also  Coercion_traits_test.C
         typedef CGAL::Lazy_exact_nt< typename AK::Integer > LI;
         typedef CGAL::Lazy_exact_nt< typename AK::Rational > LR;
@@ -84,7 +84,7 @@ void test_lazy_exact_nt() {
         CGAL_static_assertion((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
         CGAL_static_assertion((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
         CGAL_static_assertion((boost::is_same< typename CT::Type,LR>::value));
-        
+
         LI  i(4);
         LR  r(4);
         typename CT::Cast cast;
@@ -101,7 +101,7 @@ void test_lazy_exact_nt() {
         CGAL_static_assertion((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_false>::value));
 #endif
 #endif
-    }  
+    }
 }
 
 int main() {

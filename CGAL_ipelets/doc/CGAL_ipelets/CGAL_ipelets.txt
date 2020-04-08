@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_CGAL_Ipelets
 \anchor chapcgalipelets
 \cgalAutoToc
@@ -9,24 +9,24 @@ namespace CGAL {
 
 \section CGAL_ipeletsIntroduction Introduction
 
-The Ipe extensible drawing editor (<A HREF="http://tclab.kaist.ac.kr/ipe/">http://tclab.kaist.ac.kr/ipe/</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
+The Ipe extensible drawing editor (<A HREF="http://ipe.otfried.org">http://ipe.otfried.org</A>) \cgalCite{schwarzkopf1995ede}, \cgalCite{ipe:man-09}
 is a tool used by computational geometry researchers to produce 2D figures for inclusion in articles or presentations.
 The extensible adjective sheds a light on an important feature:
 the possibility for users to write small extensions (called <I>ipelets</I>)
-to interface any algorithm with Ipe. This feature is especially interesting 
+to interface any algorithm with Ipe. This feature is especially interesting
 to produce illustrations in a paper describing a new algorithm.
 This package provides one class
 that eases the writing of ipelets based on \cgal, reducing the needed knowledge of the API of Ipe.
 This class is designed to fulfill most of the needs to implement an ipelet for a 2D \cgal algorithm.
 In addition, this package comes with more than ten complete examples
 of ipelets: alpha-shape, arrangements, Voronoi diagrams, convex hulls, Hilbert curve, k-order Delaunay,
-2D mesh, Minkowski sum, polygon partition, random generators, triangulations \f$ \dots\f$ 
+2D mesh, Minkowski sum, polygon partition, random generators, triangulations \f$ \dots\f$
 
-\section seccgal_ipelets CGAL Ipelets 
+\section seccgal_ipelets CGAL Ipelets
 
 The class `Ipelet_base` derives from the class `Ipelets` from Ipe
-and has one template parameter indicating 
-which kernel must be used within the ipelet. 
+and has one template parameter indicating
+which kernel must be used within the ipelet.
 In practice, we recommend to use either `Exact_predicates_exact_constructions_kernel`
 or `Exact_predicates_inexact_constructions_kernel`.
 
@@ -37,7 +37,7 @@ The second method, `draw_in_ipe` draws \cgal objects in the Ipe
 window. These functions handle basic objects such as points, segments, polygons, circles and circular arcs.
 
 The registration of an ipelet into Ipe can be done using the macro
-`CGAL_IPELET`. `CGAL_IPELET(ipelet_class_name)` 
+`CGAL_IPELET`. `CGAL_IPELET(ipelet_class_name)`
 must follow the definition of the ipelet class, in the same file source file.
 
 \section CGAL_ipeletsExample Example
@@ -47,8 +47,8 @@ interface the \cgal 2D Delaunay triangulation with Ipe.
 
 \cgalExample{CGAL_ipelets/simple_triangulation.cpp}
 
-\image html example.png 
-\image latex example.png 
+\image html example.png
+\image latex example.png
 
 \section CGAL_ipeletsInstallation Installation of the Demo Ipelets
 
@@ -59,7 +59,7 @@ The compilation of these demo requires the source tree and the library of Ipe.
 If your Ipe installation is not detected you need to set the cmake
 variables `IPE_INCLUDE_DIR` and `IPE_LIBRARIES`. If you want
 to install ipelets automatically (using `make install` for example)
-you also need to set the cmake variable `IPELET_INSTALL_DIR`, 
+you also need to set the cmake variable `IPELET_INSTALL_DIR`,
 if the ipelet installation path has not already been detected.
 These ipelets have been tested with the versions 6.0pre28 to 6.0pre32 of Ipe,
 as well as with the version 7 (at least up to version 7.10).
@@ -68,7 +68,7 @@ to compile an ipelet, please refer to the Ipe manual.
 
 Below is the list of ipelets provided by the demo:
 
-\section Ipelets_list List of provided Ipelets 
+\section Ipelets_list List of provided Ipelets
 
 \subsection alpha_shapes_ipelet Alpha Shapes
 
@@ -152,13 +152,13 @@ circle (also called additively weighted Voronoi diagram).
 </ul>
 
 \subsection distance_ipelet Distance
-The input selection must be two marks. 
+The input selection must be two marks.
 The distance between the two marks is output (for few seconds)
 in the bottom of Ipe window. Can be computed in points, centimeters, or inches.
 <ul>
-<li><b> Distance between two marks (pts):</b> 
-<li><b> Distance between two marks (cm):</b> 
-<li><b> Distance between two marks (inch):</b> 
+<li><b> Distance between two marks (pts):</b>
+<li><b> Distance between two marks (cm):</b>
+<li><b> Distance between two marks (inch):</b>
 </ul>
 
 

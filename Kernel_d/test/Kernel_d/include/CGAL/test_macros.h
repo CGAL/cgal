@@ -1,7 +1,6 @@
 #ifndef CGAL_TEST_MACROS_H
 #define CGAL_TEST_MACROS_H
 
-#include <CGAL/basic.h>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -32,7 +31,7 @@ else
                  << #datai << " : " << S.str() << " failed." <<std::endl; \
     }                                                                     \
 }
-   
+
 #define CGAL_TEST_END return cgal_test_res
 
 #undef TRACE
@@ -51,8 +50,8 @@ std::vector<T> make_vector(const T& t1, const T& t2, const T& t3)
 { std::vector<T> V(3); V[0]=t1; V[1]=t2; V[2]=t3; return V; }
 
 template <class T>
-std::vector<T> make_vector(const T& t1, const T& t2, 
-	                   const T& t3, const T& t4)
+std::vector<T> make_vector(const T& t1, const T& t2,
+                           const T& t3, const T& t4)
 { std::vector<T> V(4); V[0]=t1; V[1]=t2; V[2]=t3; V[3]=t4; return V; }
 
 

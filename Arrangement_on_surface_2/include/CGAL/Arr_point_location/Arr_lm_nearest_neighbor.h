@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
@@ -42,7 +33,7 @@ namespace CGAL {
 
 /*! \class
  * A class that answers nearest neighbor queries.
- * It recieves a set of points, and builds a kd-tree for them.
+ * It receives a set of points, and builds a kd-tree for them.
  * Given a query point, it finds the closest point to the query.
  */
 template <typename Arrangement_>
@@ -113,7 +104,7 @@ public:
     bool operator== (const NN_Point_2& nnp) const
     { return (m_vec[0] == nnp.m_vec[0] && m_vec[1] == nnp.m_vec[1]); }
 
-    bool operator!= (const NN_Point_2& nnp) const 
+    bool operator!= (const NN_Point_2& nnp) const
     { return (m_vec[0] != nnp.m_vec[0] || m_vec[1] != nnp.m_vec[1]); }
   };
 
@@ -124,7 +115,7 @@ public:
   struct Construct_coord_iterator
   {
     typedef const Approximate_number_type*      result_type;
-    
+
     /*! Get an iterator for the approximate coordinates. */
     const Approximate_number_type* operator()(const NN_Point_2& nnp) const
     { return (nnp.begin()); }
@@ -146,9 +137,9 @@ protected:
   Tree* m_tree;        // The search tree.
   bool  m_is_empty;    // Is the search tree empty.
 
-public: 
+public:
   bool is_empty() const { return m_is_empty; }
-  
+
 private:
   typedef Arr_landmarks_nearest_neighbor<Arrangement_2>     Self;
 
@@ -161,7 +152,7 @@ private:
 public:
   /*! Default constructor. */
   Arr_landmarks_nearest_neighbor () :
-    m_tree(NULL),
+    m_tree(nullptr),
     m_is_empty(true)
   {}
 
@@ -177,7 +168,7 @@ public:
   template <class InputIterator>
   void init(InputIterator begin, InputIterator end)
   {
-    CGAL_precondition_msg(m_tree == NULL,
+    CGAL_precondition_msg(m_tree == nullptr,
                           "The search tree is already initialized.");
 
     if (begin != end) {
@@ -191,11 +182,11 @@ public:
   }
 
   /*! Clear the search tree. */
-  void clear() 
+  void clear()
   {
-    if (m_tree != NULL)
+    if (m_tree != nullptr)
       delete m_tree;
-    m_tree = NULL;
+    m_tree = nullptr;
     m_is_empty = true;
   }
 
@@ -209,7 +200,7 @@ public:
    */
   Point_2 find_nearest_neighbor(const Point_2& q, PL_result_type &obj) const
   {
-    CGAL_precondition_msg(m_tree != NULL && ! m_is_empty,
+    CGAL_precondition_msg(m_tree != nullptr && ! m_is_empty,
                           "The search tree is not initialized.");
 
     // Create an NN_Point_2 object from the query point and use it to
@@ -219,7 +210,7 @@ public:
 
     // For some reason search.begin()->first fails
     const NN_Point_2&  nearest_p = (*(search.begin())).first;
-    obj = nearest_p.object();   
+    obj = nearest_p.object();
     return nearest_p.point();
   }
 };

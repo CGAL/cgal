@@ -44,8 +44,8 @@ int main(int argc, char* argv[]) {
   K_neighbor_search search(tree, query, K,0,true,tr_dist);
   std::cout <<"The "<< K << " nearest vertices to the query point at (0,0,0) are:" << std::endl;
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
-    std::cout << "vertex " << &*(it->first) << " : " << vppmap[it->first] << " at distance " 
-	      << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
+    std::cout << "vertex " << &*(it->first) << " : " << vppmap[it->first] << " at distance "
+              << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
   return 0;
 }

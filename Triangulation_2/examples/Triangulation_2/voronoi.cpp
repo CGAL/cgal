@@ -26,6 +26,6 @@ int main( )
     else if (CGAL::object_cast<K::Ray_2>(&o)) {++nr;}
   }
   std::cout << "The Voronoi diagram has " << ns << " finite edges "
-	    << " and " << nr << " rays" << std::endl;
+            << " and " << nr << " rays" << std::endl;
   return 0;
 }

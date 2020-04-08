@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Remy Thomasse  <remy.thomasse@inria.fr>
@@ -188,7 +179,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
   do {  // Initialization
     long init =
         static_cast<long>((std::min)(static_cast<std::size_t>(100), n - simulated_points));
-    
+
     generate_points_annulus(init, -CGAL_PI, CGAL_PI, 0, radius, l,
                             gen);
 
@@ -202,7 +193,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
 
   std::size_t T = n;
   if (!fast) T = static_cast<std::size_t>(std::floor(n / std::pow(std::log(static_cast<double>(n)), 2)));
-  
+
   while (simulated_points < n) {
     // l is a list coming from a convex hull operation. we are moving the
     // points s.t the angles are from -pi to pi.
@@ -273,7 +264,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, Generator& gen,
   typedef typename Traits::Point_2 Points;
   std::list<Points> l;
   internal::random_convex_hull_in_disc_2(n, radius, l, gen, traits, fast);
-  cpp11::copy_n(l.begin(),l.size(),it);
+  std::copy_n(l.begin(),l.size(),it);
 }
 
 }  // namespace CGAL

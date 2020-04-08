@@ -17,7 +17,7 @@ public:
   typedef typename Old_kernel::Point_2                          Old_point_2;
   typedef typename Old_kernel::FT                               FT;
   typedef typename Old_kernel::RT                               RT;
-  typedef typename Old_kernel::Segment_2                        Segment_2;  
+  typedef typename Old_kernel::Segment_2                        Segment_2;
 
 public:
   /*! The new point type */
@@ -41,7 +41,7 @@ public:
     /*! \brief sets the data of the extended point */
     void set_data(int data) { m_data = data; }
   };
-  
+
   template <typename K, typename OldK> class New_construct_point_2 {
     typedef typename K::RT              RT;
     typedef typename K::Point_2         Point_2;
@@ -61,10 +61,10 @@ public:
     Rep operator()(CGAL::Return_base_tag, const RT& x, const RT& y) const
     { return Rep(x, y); }
 
-    Rep operator()(CGAL::Return_base_tag, const RT& x, const RT& y, 
+    Rep operator()(CGAL::Return_base_tag, const RT& x, const RT& y,
                    const RT& w) const
     { return Rep(x, y, w); }
-    
+
     // End of hell
 
     Point_2 operator()(CGAL::Origin o) const { return New_point_2(0, 0, 0); }
@@ -78,7 +78,7 @@ public:
       Point_2 p = base_operator(l);
       return p;
     }
-    
+
     Point_2 operator()(const Line_2 & l, int i) const
     {
       typename OldK::Construct_point_2 base_operator;
@@ -89,16 +89,16 @@ public:
     Point_2 operator()(const RT & x, const RT & y, const RT & w) const
     {
       if(w != 1) {
-	return New_point_2(x/w, y/w, 0); 
+        return New_point_2(x/w, y/w, 0);
       } else {
-	return New_point_2(x,y, 0);
+        return New_point_2(x,y, 0);
       }
     }
   };
 
   typedef New_point_2                                   Point_2;
   typedef New_construct_point_2<Kernel, Old_kernel>     Construct_point_2;
-  
+
   Construct_point_2 construct_point_2_object() const
   { return Construct_point_2(); }
 
@@ -144,7 +144,7 @@ int main()
   p1.set_data(1);
   p2.set_data(2);
   p3.set_data(3);
- 
+
   // Create the curves:
   cv[0] = X_monotone_curve_2(p0, p1);
   cv[1] = X_monotone_curve_2(p1, p2);
@@ -169,6 +169,6 @@ int main()
     const X_monotone_curve_2 & cv = eit->curve();
     std::cout << cv << std::endl;
   }
-  
+
   return 0;
 }

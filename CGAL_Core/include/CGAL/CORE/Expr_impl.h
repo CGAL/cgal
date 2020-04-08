@@ -4,35 +4,24 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Expr.cpp
  *
- * Written by 
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>
  *       Vijay Karamcheti <vijayk@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -45,9 +34,9 @@
 
 #include <CGAL/CORE/Expr.h>
 #include <cmath>
-#include <sstream> 
+#include <sstream>
 
-namespace CORE { 
+namespace CORE {
 
 #if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
 unsigned int BFMSS_counter = 0;
@@ -91,21 +80,21 @@ const Expr& Expr::getOne() {
 CGAL_INLINE_FUNCTION
 void Expr::doubleInterval(double & lb, double & ub) const {
   double d = doubleValue();
-  if (! CGAL_CORE_finite(d)) {	// if overflow, underflow or NaN
+  if (! CGAL_CORE_finite(d)) {        // if overflow, underflow or NaN
     lb = ub = d;
     return;
   }
   int sign = ((* this) -Expr(d)).sign();
   // Seems like doubleValue() always give a lower bound,
-  // 	so sign = 0 or 1 (never -1).
+  //         so sign = 0 or 1 (never -1).
   //std::cout << "Sign = " << sign << std::endl;
   if (sign == 0) {
     lb = ub = d;
     return;
   }
   int exp;
-  frexp(d, & exp);  	// get the exponent of d
-  exp--;		// the exp from frexp satisfies
+  frexp(d, & exp);          // get the exponent of d
+  exp--;                // the exp from frexp satisfies
   //     2^{exp-1} <= d < 2^{exp}
   // But, we want exp to satisfy
   //     2^{exp} <= d < 2^{exp+1}
@@ -125,7 +114,7 @@ void Expr::doubleInterval(double & lb, double & ub) const {
 CGAL_INLINE_FUNCTION
 BigInt floor(const Expr& e, Expr &sub) {
   if (e==0) {
-	  return 0;
+          return 0;
   }
   BigInt f = e.approx(CORE_INFTY, 2).BigIntValue();
   sub = e-f;
@@ -181,14 +170,14 @@ NodeInfo::NodeInfo() : appValue(CORE_REAL_ZERO), appComputed(false),
     v2p(EXTLONG_ZERO), v2m(EXTLONG_ZERO),
     v5p(EXTLONG_ZERO), v5m(EXTLONG_ZERO),
     u25(EXTLONG_ZERO), l25(EXTLONG_ZERO),
-    ratFlag(0), ratValue(NULL) { }
+    ratFlag(0), ratValue(nullptr) { }
 
 /********************************************************
  *  class ExprRep
  ********************************************************/
 //  constructor
 CGAL_INLINE_FUNCTION
-ExprRep::ExprRep() : refCount(1), nodeInfo(NULL), ffVal(0.0) { }
+ExprRep::ExprRep() : refCount(1), nodeInfo(nullptr), ffVal(0.0) { }
 
 // Computes the root bit bound of the expression.
 // In effect, computeBound() returns the current value of low.
@@ -289,8 +278,8 @@ void ExprRep::reduceToBigRat(const BigRat& rat) {
   sign() = value.sign();
   uMSB() = value.MSB();
   lMSB() = value.MSB();
-  // length() = value.length(); 	// fixed? original = 1
-  measure() = value.height();		// measure <= height for rational value
+  // length() = value.length();         // fixed? original = 1
+  measure() = value.height();                // measure <= height for rational value
 
   // BFMSS[2,5] bound.
   value.ULV_E(u25(), l25(), v2p(), v2m(), v5p(), v5m());
@@ -312,14 +301,14 @@ void ExprRep::reduceToBigRat(const BigRat& rat) {
   lc() = l_e;
   tc() = u_e;
 
-  if (ratValue() == NULL)
+  if (ratValue() == nullptr)
     ratValue() = new BigRat(rat);
   else
     *(ratValue()) = rat;
 }
 
 // This only copies the current information of the argument e to
-// 	*this ExprRep.
+//         *this ExprRep.
 CGAL_INLINE_FUNCTION
 void ExprRep::reduceTo(const ExprRep *e) {
   if (e->appComputed()) {
@@ -339,7 +328,7 @@ void ExprRep::reduceTo(const ExprRep *e) {
   sign() = e->sign();
   uMSB() = e->uMSB();
   lMSB() = e->lMSB();
-  // length() = e->length(); 	// fixed? original = 1
+  // length() = e->length();         // fixed? original = 1
   measure() = e->measure();
 
   // BFMSS[2,5] bound.
@@ -351,7 +340,7 @@ void ExprRep::reduceTo(const ExprRep *e) {
   v5m() = e->v5m();
 
   high() = e->high();
-  low() = e->low();		// fixed? original = 0
+  low() = e->low();                // fixed? original = 0
   lc() = e->lc();
   tc() = e->tc();
 
@@ -364,22 +353,22 @@ void ExprRep::reduceTo(const ExprRep *e) {
   // a BigRat value.  This reduction is done if the global variable
   // get_static_rationalReduceFlag()=true.  The default value is false.
   // This is the intepretation of ratFlag:
-  //	ratFlag < 0 means irrational
-  //	ratFlag = 0 means not initialized
-  //	ratFlag > 0 means rational
+  //        ratFlag < 0 means irrational
+  //        ratFlag = 0 means not initialized
+  //        ratFlag > 0 means rational
   // Currently, ratFlag>0 is an upper bound on the size of the expression,
   // since we recursively compute
-  // 		ratFlag(v) = ratFlag(v.lchild)+ratFlag(v.rchild) + 1.
+  //                 ratFlag(v) = ratFlag(v.lchild)+ratFlag(v.rchild) + 1.
   // PROPOSAL: if ratFlag() > RAT_REDUCE_THRESHHOLD
-  // 	then we automatically do a reduction.  We must determine
-  // 	an empirical value for RAT_REDUCE_THRESHOLD
+  //         then we automatically do a reduction.  We must determine
+  //         an empirical value for RAT_REDUCE_THRESHOLD
 
   if (get_static_rationalReduceFlag()) {
     ratFlag() = e->ratFlag();
 
-    if (e->ratFlag() > 0 && e->ratValue() != NULL) {
+    if (e->ratFlag() > 0 && e->ratValue() != nullptr) {
       ratFlag() ++;
-      if (ratValue() == NULL)
+      if (ratValue() == nullptr)
         ratValue() = new BigRat(*(e->ratValue()));
       else
         *(ratValue()) = *(e->ratValue());
@@ -405,19 +394,19 @@ void ExprRep::reduceToZero() {
   sign() = 0;
   uMSB() = CORE_negInfty;
   lMSB() = CORE_negInfty;
-  // length() = 0; 	// fixed? original = 1
+  // length() = 0;         // fixed? original = 1
   measure() = EXTLONG_ZERO;
 
   // BFMSS[2,5] bound.
   u25() = l25() = v2p() = v2m() = v5p() = v5m() = EXTLONG_ZERO;
 
-  low() = EXTLONG_ONE;		// fixed? original = 0
+  low() = EXTLONG_ONE;                // fixed? original = 0
   high() = lc() = tc() = EXTLONG_ZERO;
 
   if (get_static_rationalReduceFlag()) {
     if (ratFlag() > 0) {
       ratFlag() ++;
-      if (ratValue() == NULL)
+      if (ratValue() == nullptr)
         ratValue() = new BigRat(0);
       else
         *(ratValue()) = 0;
@@ -465,7 +454,7 @@ void ExprRep::approx(const extLong& relPrec = get_static_defRelPrec(),
     // to avoid huge lMSB which would cause long time and problems.
 
     // if it is a rational node
-    if (get_static_rationalReduceFlag() && ratFlag() > 0 && ratValue() != NULL)
+    if (get_static_rationalReduceFlag() && ratFlag() > 0 && ratValue() != nullptr)
       appValue() = Real(*(ratValue())).approx(relPrec, absPrec); //< shouldn't
                          // this case be done by computeApproxValue()?
     else
@@ -487,7 +476,7 @@ void ExprRep::approx(const extLong& relPrec = get_static_defRelPrec(),
 // return an approximate value to certain precision.
 CGAL_INLINE_FUNCTION
 const Real& ExprRep::getAppValue(const extLong& relPrec,
-		const extLong& absPrec) {
+                const extLong& absPrec) {
   if (getSign()) {
     approx(relPrec, absPrec);
     return appValue();
@@ -508,26 +497,26 @@ std::ostream& operator<<(std::ostream& o, ExprRep& rep) {
 
 // Chee, Zilin: July 17, 2002
 //  Original algorithm is wrongly implemented, and can take time
-//	 exponential in the size of the dag.
+//         exponential in the size of the dag.
 //
 //  METHOD:
-//	Inductively assume that all "visited" flags are false.
-//	This calls for a reimplementation of "count()" and "clearFlag()".
-//	Actually, we did not have to fix the count() function.
+//        Inductively assume that all "visited" flags are false.
+//        This calls for a reimplementation of "count()" and "clearFlag()".
+//        Actually, we did not have to fix the count() function.
 //
 //  (1) First recursively compute d_e for each node
-//		by calling the count() function.
-//	Important thing is count() will turn the "visited" flags
-//		to be true, so that there is no double counting.
-//	Furthermore, if d_e had already been computed, the
-//		arithmetic for d_e can be avoided (in this case,
-//		it is only the setting of "visited" flag that we
-//		are interested in!
+//                by calling the count() function.
+//        Important thing is count() will turn the "visited" flags
+//                to be true, so that there is no double counting.
+//        Furthermore, if d_e had already been computed, the
+//                arithmetic for d_e can be avoided (in this case,
+//                it is only the setting of "visited" flag that we
+//                are interested in!
 //  (2) At the end of count(), we have set all reachable nodes
-//		to "visited", and their d_e have been computed.
+//                to "visited", and their d_e have been computed.
 //  (3) Now, call clearFlag() to recursively clear all reachable
-//		nodes.  NOTE THAT PREVIOUSLY, clearFlag() was called
-//		first!  This obvious is wrong
+//                nodes.  NOTE THAT PREVIOUSLY, clearFlag() was called
+//                first!  This obvious is wrong
 
 CGAL_INLINE_FUNCTION
 extLong ExprRep::degreeBound() {
@@ -556,15 +545,15 @@ void ConstRep::initNodeInfo() {
 }
 CGAL_INLINE_FUNCTION
 void UnaryOpRep::initNodeInfo() {
-  if (child->nodeInfo == NULL)
+  if (child->nodeInfo == nullptr)
     child->initNodeInfo();
   nodeInfo = new NodeInfo();
 }
 CGAL_INLINE_FUNCTION
 void BinOpRep::initNodeInfo() {
-  if (first->nodeInfo == NULL)
+  if (first->nodeInfo == nullptr)
     first->initNodeInfo();
-  if (second->nodeInfo == NULL)
+  if (second->nodeInfo == nullptr)
     second->initNodeInfo();
   nodeInfo = new NodeInfo();
 }
@@ -780,7 +769,7 @@ void NegRep::computeExactFlags() {
   }
 
   if (get_static_rationalReduceFlag()) {
-    if (child->ratFlag()>0 && child->ratValue() != NULL) {
+    if (child->ratFlag()>0 && child->ratValue() != nullptr) {
       BigRat val = -(*(child->ratValue()));
       reduceToBigRat(val);
       ratFlag() = child->ratFlag()+1;
@@ -1035,7 +1024,7 @@ void MultRep::computeApproxValue(const extLong& relPrec,
     std::ostringstream oss;
     oss << "CORE WARNING: a huge lMSB in AddSubRep " <<  lMSB();
     core_error(oss.str(),
-	 	__FILE__, __LINE__, false);
+                 __FILE__, __LINE__, false);
   }
 
   extLong r   = relPrec + EXTLONG_FOUR;
@@ -1058,11 +1047,11 @@ void DivRep::computeApproxValue(const extLong& relPrec,
     std::ostringstream oss;
     oss << "CORE WARNING: a huge lMSB in AddSubRep " << lMSB();
     core_error(oss.str(),
-	 	__FILE__, __LINE__, false);
+                 __FILE__, __LINE__, false);
   }
 
-  extLong rr  = relPrec + EXTLONG_SEVEN;		// These rules come from
-  extLong ra  = uMSB() + absPrec + EXTLONG_EIGHT;	// Koji's Master Thesis, page 65
+  extLong rr  = relPrec + EXTLONG_SEVEN;                // These rules come from
+  extLong ra  = uMSB() + absPrec + EXTLONG_EIGHT;        // Koji's Master Thesis, page 65
   extLong ra2 = core_max(ra, EXTLONG_TWO);
   extLong r   = core_min(rr, ra2);
   extLong  af  = - first->lMSB() + r;
@@ -1070,7 +1059,7 @@ void DivRep::computeApproxValue(const extLong& relPrec,
 
   extLong pr = relPrec + EXTLONG_SIX;
   extLong pa = uMSB() + absPrec + EXTLONG_SEVEN;
-  extLong p  = core_min(pr, pa);	// Seems to be an error:
+  extLong p  = core_min(pr, pa);        // Seems to be an error:
   // p can be negative here!
   // Also, this does not conform to
   // Koji's thesis which has a default

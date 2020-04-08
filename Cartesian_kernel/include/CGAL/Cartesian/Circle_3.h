@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Monique Teillaud, Pedro Machado, Sebastien Loriot
 
 #ifndef CGAL_CARTESIAN_CIRCLEC3_H
@@ -47,7 +38,7 @@ class CircleC3 {
   };
 
   typedef typename R_::template Handle<Rep>::type  Base;
-  Base base;  
+  Base base;
 
 public:
   typedef R_                                     R;
@@ -63,7 +54,7 @@ public:
                 plane_from_point_direction(center, d));
   }
 
-  CircleC3(const Point_3& center, const FT& squared_r, const Vector_3& normal) 
+  CircleC3(const Point_3& center, const FT& squared_r, const Vector_3& normal)
   {
     CGAL_kernel_assertion(squared_r >= FT(0));
     // non-degenerated Vector
@@ -91,11 +82,11 @@ public:
     // s1,s2 must intersect
     CGAL_kernel_precondition(!(obj.is_empty()));
     const typename R::Circle_3* circle_ptr=object_cast<typename R::Circle_3>(&obj);
-    if(circle_ptr!=NULL)
+    if(circle_ptr!=nullptr)
       base = Rep(circle_ptr->diametral_sphere(), circle_ptr->supporting_plane());
     else {
       const typename R::Point_3* point=object_cast<typename R::Point_3>(&obj);
-      CGAL_kernel_precondition(point!=NULL);
+      CGAL_kernel_precondition(point!=nullptr);
       CircleC3 circle = CircleC3(*point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }
@@ -108,28 +99,28 @@ public:
     // s1,s2 must intersect
     CGAL_kernel_precondition(!(obj.is_empty()));
     const typename R::Circle_3* circle_ptr=object_cast<typename R::Circle_3>(&obj);
-    if(circle_ptr!=NULL)
+    if(circle_ptr!=nullptr)
       base = Rep(circle_ptr->diametral_sphere(), circle_ptr->supporting_plane());
     else {
       const typename R::Point_3* point=object_cast<typename R::Point_3>(&obj);
-      CGAL_kernel_precondition(point!=NULL);
+      CGAL_kernel_precondition(point!=nullptr);
       CircleC3 circle = CircleC3(*point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }
   }
 
   CircleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r) {
-	  // p, q, r are not collinear
-	  CGAL_kernel_precondition(!R().collinear_3_object()(p, q, r));
-		Plane_3 p1 = R().construct_plane_3_object()(p, q, r);
+          // p, q, r are not collinear
+          CGAL_kernel_precondition(!R().collinear_3_object()(p, q, r));
+                Plane_3 p1 = R().construct_plane_3_object()(p, q, r);
     Plane_3 p2 = R().construct_bisector_3_object()(p, q);
     Plane_3 p3 = R().construct_bisector_3_object()(p, r);
     Object obj = R().intersect_3_object()(p1, p2, p3);
     // must be a point, otherwise they are collinear
     const Point_3& center=*object_cast<Point_3>(&obj);
-		FT sqr = R().compute_squared_distance_3_object()(center, r);
-		Sphere_3 s = R().construct_sphere_3_object()(center, sqr);
-		base = Rep(s, p1);
+                FT sqr = R().compute_squared_distance_3_object()(center, r);
+                Sphere_3 s = R().construct_sphere_3_object()(center, sqr);
+                base = Rep(s, p1);
   }
 
   const Plane_3& supporting_plane() const

@@ -1,25 +1,19 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -27,6 +21,7 @@
 #include <CGAL/MP_Float.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <cassert>
 
@@ -49,12 +44,15 @@
 #include "CGAL/_test_fct_coplanar_3.h"
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
- 
+
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
+template <typename Cls>
+void test();
 int
 main()
 {
+  CGAL::Set_ieee_double_precision double_precision_guard;
   typedef CGAL::Cartesian<double>                               Clsdb;
   typedef CGAL::Filtered_kernel<Clsdb>                          Clsd;
 
@@ -71,6 +69,16 @@ main()
   std::cout << "Testing IO with F_k<Cartesian<double>>:" << std::endl;
   _test_io( Clsd() );
 
+  std::cout << "Testing with Epeck:\n";
+  test<Cls>();
+  std::cout << "Testing with Epick:\n";
+  test<CGAL::Epick>();
+
+  return 0;
+}
+
+template <typename Cls>
+void test() {
   std::cout << "Testing 2d :";
   std::cout << std::endl;
   _test_2( Cls() );
@@ -101,6 +109,4 @@ main()
   std::cout << "Testing 3d-2d :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-  
-  return 0;
 }

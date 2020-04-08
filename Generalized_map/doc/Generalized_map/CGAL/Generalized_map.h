@@ -64,7 +64,7 @@ Information associated with darts. Equal to `void` if `Dart_info` is not defined
 typedef Items::Dart_wrapper<Self>::Dart_info Dart_info;
 
 /*!
-The tuple of cell attributes. Equal to `CGAL::cpp11::tuple<>` if `Attributes` is not defined in the items class.
+The tuple of cell attributes. Equal to `std::tuple<>` if `Attributes` is not defined in the items class.
 */
 typedef Items::Dart_wrapper<Self>::Attributes Attributes;
 

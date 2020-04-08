@@ -1,8 +1,8 @@
 # This is the CMake script for compiling this folder.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Poisson_surface_reconstruction_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 # Find CGAL
 find_package(CGAL QUIET)
@@ -24,19 +24,20 @@ if ( CGAL_FOUND )
   # Find Eigen3 (requires 3.1.0 or greater)
   find_package(Eigen3 3.1.0)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-  endif()
-  
-  if (EIGEN3_FOUND)
     # Executables that require Eigen 3
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
+    CGAL_target_use_Eigen(poisson_reconstruction_example)
     create_single_source_cgal_program( "poisson_reconstruction.cpp" )
+    CGAL_target_use_Eigen(poisson_reconstruction)
     create_single_source_cgal_program( "poisson_reconstruction_function.cpp" )
+    CGAL_target_use_Eigen(poisson_reconstruction_function)
+    create_single_source_cgal_program( "tutorial_example.cpp" )
+    CGAL_target_use_Eigen(tutorial_example)
   else()
     message(STATUS "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
   endif()
 
-  
+
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")

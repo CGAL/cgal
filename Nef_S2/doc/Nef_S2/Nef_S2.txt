@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere
 \cgalAutoToc
 
@@ -16,7 +16,7 @@ halfspaces.
 Due to the fact that all other binary set operations like union,
 difference and symmetric difference can be reduced to intersection and
 complement calculations, Nef polyhedra are also closed under those
-operations. Also, Nef polyhedra are closed under topological unary 
+operations. Also, Nef polyhedra are closed under topological unary
 set operations. Given a Nef polyhedron one can determine its interior, its
 boundary, and its closure.
 
@@ -80,10 +80,10 @@ qualified as being positively or negatively oriented.
 
 In this first example `Nef_polyhedron_S2` is parametrized with a %CGAL
 Kernel as traits class. The types comprising the spherical geometry can be
-retrieved from the type `Nef_polyhedron_S2<Traits>` as is done in the example 
+retrieved from the type `Nef_polyhedron_S2<Traits>` as is done in the example
 with the type
 `Nef_polyhedron_S2::Sphere_circle`. Then three Nef polyhedra are created: \f$ N1\f$ is a halfsphere
-including the boundary, \f$ N2\f$ is another halfsphere without the boundary, and 
+including the boundary, \f$ N2\f$ is another halfsphere without the boundary, and
 \f$ N3\f$ is the intersection of \f$ N1\f$ and \f$ N2\f$.
 
 \cgalExample{Nef_S2/nef_s2_simple.cpp}
@@ -95,7 +95,7 @@ sphere, \f$ N2\f$ is a halfsphere which includes the boundary, \f$ N3\f$ is crea
 with the copy constructor, \f$ N4\f$ is created as an arrangement of a set
 of `Nef_polyhedron_S2::Sphere_segment`s, and \f$ N5\f$ is created as the empty set.
 
-The example also shows the use of unary set operations, binary operations, 
+The example also shows the use of unary set operations, binary operations,
 and binary predicates: \f$ N3\f$ is defined as the complement of \f$ N2\f$, \f$ N1\f$ is
 compared with the union of \f$ N2\f$ and \f$ N3\f$, \f$ N5\f$ is united with \f$ N2\f$ and then
 intersected with \f$ N4\f$. At last, it is tested if \f$ N5\f$ is a subset of \f$ N2\f$ and
@@ -106,11 +106,11 @@ if \f$ N5\f$ is not equal to \f$ N4\f$.
 \subsection Nef_S2Exploration Exploration
 
 By recursively composing binary and unary operations one can end with
-a very complex rectilinear structure. `Nef_polyhedron_S2` allows 
+a very complex rectilinear structure. `Nef_polyhedron_S2` allows
 read-only exploration of the structure.
 
 In the following example, a random `Nef_polyhedron_S2 S` created from
-`n` halfspheres is explored. Each sface is composed of one outer 
+`n` halfspheres is explored. Each sface is composed of one outer
 sface cycles and an arbitrary number of inner sfaces cycles. The outer cycle
 is either an shalfloop or a cycle of shalfedges. An inner cycles additionally
 can be an isolated vertex. The example shows how to get the entry item `it`
@@ -118,7 +118,7 @@ to all sface cycles of an sface `sf` and how to find out what type of item
 it is.
 
 The macro `CGAL_forall_sface_cycles_of` is equivalent to a for-loop
-on the range `[sf->sface_cycles_begin(), sf->sface_cycles_end())`. An 
+on the range `[sf->sface_cycles_begin(), sf->sface_cycles_end())`. An
 `Nef_polyhedron_S2::SFace_cycle_const_iterator` either represents a `Nef_polyhedron_S2::SVertex_const_handle`,
 a `Nef_polyhedron_S2::SHalfedge_const_handle` or a `Nef_polyhedron_S2::SHalfloop_const_handle`. In order
 to find out which handle type is represented, the functions
@@ -129,18 +129,18 @@ Afterwards the iterator can be casted to the proper handle type.
 
 \subsection Nef_S2PointLocation Point Location
 
-Using the `locate` function, it is possible to retrive an item at a
-certain location on the sphere. In the following example, the item at 
-location `Sphere_point(1,0,0)` in a random `Nef_polyhedron_S2` is 
+Using the `locate` function, it is possible to retrieve an item at a
+certain location on the sphere. In the following example, the item at
+location `Sphere_point(1,0,0)` in a random `Nef_polyhedron_S2` is
 retrieved. `locate` returns an instance of type `Nef_polyhedron_S2::Object_handle`, which
-is a container for any handle type. Here, it either a 
-`Nef_polyhedron_S2::SVertex_const_handle`, a `Nef_polyhedron_S2::SHalfedge_const_handle`, 
-a `Nef_polyhedron_S2::SHafloop_const_handle` or a `Nef_polyhedron_S2::SFace_const_handle`. The function 
+is a container for any handle type. Here, it either a
+`Nef_polyhedron_S2::SVertex_const_handle`, a `Nef_polyhedron_S2::SHalfedge_const_handle`,
+a `Nef_polyhedron_S2::SHafloop_const_handle` or a `Nef_polyhedron_S2::SFace_const_handle`. The function
 `assign()` performs the cast operation and returns a Boolean which
 indicates whether the cast was successful or not.
 
 \cgalExample{Nef_S2/nef_s2_point_location.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

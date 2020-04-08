@@ -26,13 +26,13 @@ double rerr(double exact,double approx) {
 
 template<int d,int D>
 void atomicTest(const int test,const std::string& name,Perturbation perturb,
-		const std::vector< Ball<double,D> >& S,
-		const RunFlag) {
+                const std::vector< Ball<double,D> >& S,
+                const RunFlag) {
   // open the file containing the exact radius and center:
   std::string filename("data/results.");
   filename += toStr(test);
   std::ifstream ed(filename.c_str());
-  
+
   // read number of coordinates and exact radius:
   int no;
   ed >> no;
@@ -52,18 +52,18 @@ void atomicTest(const int test,const std::string& name,Perturbation perturb,
   CGAL::Min_sphere_of_spheres_d<DUT> fumb(S.begin(),S.end());
   CGAL::Min_sphere_of_spheres_d<DAT> famb(S.begin(),S.end());
 
-  std::cout << "    Double with sqrts: " << std::setw(50) 
-	    << std::setprecision(30) << rerr(exact,dumb.radius())
-	    << std::endl;
-  std::cout << "    Double w/o sqrts:  " << std::setw(50) 
-	    << std::setprecision(30) << rerr(exact,damb.radius())
-	    << std::endl;
-  std::cout << "    Float with sqrts:  " << std::setw(50) 
-	    << std::setprecision(30) << rerr(exact,fumb.radius())
-	    << std::endl;
-  std::cout << "    Float w/o sqrts:   " << std::setw(50) 
-	    << std::setprecision(30) << rerr(exact,famb.radius())
-	    << std::endl;
+  std::cout << "    Double with sqrts: " << std::setw(50)
+            << std::setprecision(30) << rerr(exact,dumb.radius())
+            << std::endl;
+  std::cout << "    Double w/o sqrts:  " << std::setw(50)
+            << std::setprecision(30) << rerr(exact,damb.radius())
+            << std::endl;
+  std::cout << "    Float with sqrts:  " << std::setw(50)
+            << std::setprecision(30) << rerr(exact,fumb.radius())
+            << std::endl;
+  std::cout << "    Float w/o sqrts:   " << std::setw(50)
+            << std::setprecision(30) << rerr(exact,famb.radius())
+            << std::endl;
 }
 
 int main(int argnr,char **argv) {
@@ -87,7 +87,7 @@ int main(int argnr,char **argv) {
        << "for the details." << endl
        << "---------------------------------------------------------" << endl
        << "Running testsuite (this may take a while)..." << endl
-       << "READ THE FINAL 'TEST RESULTS' line(s)..." << endl 
+       << "READ THE FINAL 'TEST RESULTS' line(s)..." << endl
        << "---------------------------------------------------------" << endl
        << endl;
 

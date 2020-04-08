@@ -7,7 +7,6 @@
 //
 // Compatibility: works with or without CGAL
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Exact_rational.h>
@@ -93,11 +92,11 @@ int main(int,char **) {
 
   // check in the balls:
   Minsphere mb(S.begin(),S.end());
-  
+
   // measure time:
   mb.is_empty();
   time = clock() - time;
-  
+
   // output running time:
   cout << "----------------------------------------------------" << endl
        << "Benchmark: "
@@ -105,17 +104,17 @@ int main(int,char **) {
        << "s (in units of " << 1.0/CLOCKS_PER_SEC << "s)." << endl
        << "----------------------------------------------------" << endl
        << endl;
-  
+
   // for the fun of it, output the radius:
   Minsphere::Result radius = mb.radius();
   cout << "(Radius: " << to_double(radius,mb.discriminant()) << ')' << endl;
 
   // check whether the computed ball is indeed the minsphere:
   bool valid = mb.is_valid();
-  if (valid) 
+  if (valid)
     cout << "Validity check passed." << endl;
-  else 
+  else
     cout << "WARNING: Validity check *not* passed!" << endl
-	 << "Please contact the author <fischerk@inf.ethz.ch>!" << endl;
+         << "Please contact the author <fischerk@inf.ethz.ch>!" << endl;
   return valid? 0 : 1;
 }

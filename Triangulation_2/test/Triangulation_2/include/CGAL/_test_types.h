@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float Rtype;
 
@@ -20,7 +19,7 @@ typedef CGAL::Homogeneous<Rtype>              Test_rep_homogeneous;
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 typedef CGAL::Simple_cartesian<double>  K1;
-typedef CGAL::Filtered_kernel<K1> TestK; 
+typedef CGAL::Filtered_kernel<K1> TestK;
 
 typedef CGAL::Quotient<Ftype>                       Exact_type;
 typedef CGAL::Simple_cartesian<Exact_type>          EK;

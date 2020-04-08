@@ -25,7 +25,7 @@ using std::cout; using std::endl; using std::string;
 
 int main()
 {
-    const Point first_vertex  = Point(0, 0); 
+    const Point first_vertex  = Point(0, 0);
     const Point second_vertex = Point(1, 0);
     const Point third_vertex  = Point(Scalar(1)/Scalar(2), 1);
 

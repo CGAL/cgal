@@ -12,7 +12,6 @@
 #include <vector>
 #include <fstream>
 #include <limits>
-#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -27,7 +26,7 @@ double max_coordinate(const Mesh& mesh)
   VPmap vpmap = get(CGAL::vertex_point,mesh);
 
   double max_coord = -std::numeric_limits<double>::infinity();
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     Point p = get(vpmap, v);
     max_coord = (std::max)(max_coord, p.x());
@@ -48,7 +47,7 @@ int main(int argc, char* argv[])
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
- 
+
   CGAL::Side_of_triangle_mesh<Mesh, K> inside(mesh);
 
   double size = max_coordinate(mesh);

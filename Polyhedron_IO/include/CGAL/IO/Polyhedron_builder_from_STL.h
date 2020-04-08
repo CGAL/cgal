@@ -1,19 +1,10 @@
 // Copyright (c) 2015 GeometryFactory
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
 
@@ -31,8 +22,8 @@ namespace CGAL{
 template <class HDS>
 class Polyhedron_builder_from_STL : public CGAL::Modifier_base<HDS> {
   typedef typename HDS::Vertex::Point Point_3;
-  typedef std::vector<cpp11::array<double, 3> > Points_3;
-  typedef cpp11::array<int,3> Facet;
+  typedef std::vector<std::array<double, 3> > Points_3;
+  typedef std::array<int,3> Facet;
   typedef std::vector<Facet> Surface;
 
   std::istream& is;
@@ -67,7 +58,7 @@ public:
     }
     if(B.error())
       {
-        std::cerr << "An error occured while creating a Polyhedron" << std::endl;
+        std::cerr << "An error occurred while creating a Polyhedron" << std::endl;
         B.rollback();
       }
 

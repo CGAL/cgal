@@ -3,128 +3,129 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes3
 
-An object of the class `Vector_3` is a vector in the three-dimensional 
-vector space \f$ \mathbb{R}^3\f$. Geometrically spoken a vector is the difference 
-of two points \f$ p_2\f$, \f$ p_1\f$ and denotes the direction and the distance 
-from \f$ p_1\f$ to \f$ p_2\f$. 
+An object of the class `Vector_3` is a vector in the three-dimensional
+vector space \f$ \mathbb{R}^3\f$. Geometrically spoken a vector is the difference
+of two points \f$ p_2\f$, \f$ p_1\f$ and denotes the direction and the distance
+from \f$ p_1\f$ to \f$ p_2\f$.
 
-\cgal defines a symbolic constant \ref NULL_VECTOR. We 
-will explicitly state where you can pass this constant as an argument 
-instead of a vector initialized with zeros. 
+\cgal defines a symbolic constant \ref NULL_VECTOR. We
+will explicitly state where you can pass this constant as an argument
+instead of a vector initialized with zeros.
 
 \cgalModels `Kernel::Vector_3`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
-\sa `cross_product_grp` 
-\sa `determinant_grp` 
+\sa `cross_product_grp`
+\sa `determinant_grp`
 
 */
 template< typename Kernel >
 class Vector_3 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-An iterator for enumerating the 
-%Cartesian coordinates of a vector. 
-*/ 
-typedef unspecified_type Cartesian_const_iterator; 
+An iterator for enumerating the
+%Cartesian coordinates of a vector.
+*/
+typedef unspecified_type Cartesian_const_iterator;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-introduces the vector `b-a`. 
-*/ 
-Vector_3(const Point_3<Kernel> &a, const Point_3<Kernel> &b); 
+introduces the vector `b-a`.
+*/
+Vector_3(const Point_3<Kernel> &a, const Point_3<Kernel> &b);
 
 /*!
-introduces the vector `s.target()-s.source()`. 
-*/ 
-Vector_3(const Segment_3<Kernel> &s); 
+introduces the vector `s.target()-s.source()`.
+*/
+Vector_3(const Segment_3<Kernel> &s);
 
 /*!
-introduces a vector having the same direction as `r`. 
-*/ 
-Vector_3(const Ray_3<Kernel> &r); 
+introduces a vector having the same direction as `r`.
+*/
+Vector_3(const Ray_3<Kernel> &r);
 
 /*!
-introduces a vector having the same direction as `l`. 
-*/ 
-Vector_3(const Line_3<Kernel> &l); 
+introduces a vector having the same direction as `l`.
+*/
+Vector_3(const Line_3<Kernel> &l);
 
 /*!
-introduces a null vector `v`. 
-*/ 
-Vector_3(const Null_vector &NULL_VECTOR); 
+introduces a null vector `v`.
+*/
+Vector_3(const Null_vector &NULL_VECTOR);
 
 /*!
-introduces a vector `v` initialized to `(x, y, z)`. 
-*/ 
-Vector_3(int x, int y, int z); 
+introduces a vector `v` initialized to `(x, y, z)`.
+*/
+Vector_3(int x, int y, int z);
 
 /*!
-introduces a vector `v` initialized to `(x, y, z). 
-*/ 
-Vector_3(double x, double y, double z); 
+introduces a vector `v` initialized to `(x, y, z)`.
+*/
+Vector_3(double x, double y, double z);
 
 /*!
-introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw).
-*/ 
-Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1)); 
+introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw)`.
+*/
+Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));
 
 /*!
-introduces a vector `v` initialized to `(x, y, z)`. 
-*/ 
-Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z); 
+introduces a vector `v` initialized to `(x, y, z)`.
+*/
+Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 
-/// @} 
+/// @}
 
 /// \name Coordinate Access
 /// There are two sets of coordinate access functions, namely to the
 /// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
-/// loose information with the homogeneous representation, because the
+/// lose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
 /// @{
 
 /*!
-returns the homogeneous \f$ x\f$ coordinate. 
-*/ 
-Kernel::RT hx() const; 
+returns the homogeneous \f$ x\f$ coordinate.
+*/
+Kernel::RT hx() const;
 
 /*!
-returns the homogeneous \f$ y\f$ coordinate. 
-*/ 
-Kernel::RT hy() const; 
+returns the homogeneous \f$ y\f$ coordinate.
+*/
+Kernel::RT hy() const;
 
 /*!
-returns the homogeneous \f$ z\f$ coordinate. 
-*/ 
-Kernel::RT hz() const; 
+returns the homogeneous \f$ z\f$ coordinate.
+*/
+Kernel::RT hz() const;
 
 /*!
-returns the homogenizing coordinate. 
-*/ 
-Kernel::RT hw() const; 
+returns the homogenizing coordinate.
+*/
+Kernel::RT hw() const;
 
 /*!
-returns the `x`-coordinate of `v`, that is `hx()`/`hw()`. 
-*/ 
-Kernel::FT x() const; 
+returns the `x`-coordinate of `v`, that is `hx()`/`hw()`.
+*/
+Kernel::FT x() const;
 
 /*!
-returns the `y`-coordinate of `v`, that is `hy()`/`hw()`. 
-*/ 
-Kernel::FT y() const; 
+returns the `y`-coordinate of `v`, that is `hy()`/`hw()`.
+*/
+Kernel::FT y() const;
 
 /*!
-returns the `z` coordinate of `v`, that is `hz()`/`hw()`. 
-*/ 
-Kernel::FT z() const; 
+returns the `z` coordinate of `v`, that is `hz()`/`hw()`.
+*/
+Kernel::FT z() const;
 
 /// @}
 
@@ -136,52 +137,52 @@ Kernel::FT z() const;
 
 /*!
 returns the i'th homogeneous coordinate of `v`.
-\pre \f$ 0\leq i \leq3\f$. 
-*/ 
-Kernel::RT homogeneous(int i) const; 
+\pre \f$ 0\leq i \leq3\f$.
+*/
+Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `v`.
-\pre \f$ 0\leq i \leq2\f$. 
-*/ 
-Kernel::FT cartesian(int i) const; 
+\pre \f$ 0\leq i \leq2\f$.
+*/
+Kernel::FT cartesian(int i) const;
 
 /*!
-returns `cartesian(i)`. 
-\pre \f$ 0\leq i \leq2\f$. 
-*/ 
-Kernel::FT operator[](int i) const; 
+returns `cartesian(i)`.
+\pre \f$ 0\leq i \leq2\f$.
+*/
+Kernel::FT operator[](int i) const;
 
 /*!
-returns an iterator to the %Cartesian coordinates 
-of `v`, starting with the 0th coordinate. 
-*/ 
-Cartesian_const_iterator cartesian_begin() const; 
+returns an iterator to the %Cartesian coordinates
+of `v`, starting with the 0th coordinate.
+*/
+Cartesian_const_iterator cartesian_begin() const;
 
 /*!
-returns an off the end iterator to the %Cartesian 
-coordinates of `v`. 
-*/ 
-Cartesian_const_iterator cartesian_end() const; 
+returns an off the end iterator to the %Cartesian
+coordinates of `v`.
+*/
+Cartesian_const_iterator cartesian_end() const;
 
 /*!
-returns the dimension (the constant 3). 
-*/ 
-int dimension() const; 
+returns the dimension (the constant 3).
+*/
+int dimension() const;
 
 /*!
-returns the vector obtained by applying `t` on `v`. 
-*/ 
-Vector_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const; 
+returns the vector obtained by applying `t` on `v`.
+*/
+Vector_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const;
 
 /*!
-returns the direction of `v`. 
-*/ 
-Direction_3<Kernel> direction() const; 
+returns the direction of `v`.
+*/
+Direction_3<Kernel> direction() const;
 
-/// @} 
+/// @}
 
-/// \name Operators 
+/// \name Operators
 /// @{
 
 /*!
@@ -198,9 +199,9 @@ Test for inequality. You can compare a vector with the
 bool operator!=(const Vector_3<Kernel> &w) const;
 
 /*!
-Addition. 
-*/ 
-Vector_3<Kernel> operator+(const Vector_3<Kernel> &w) const; 
+Addition.
+*/
+Vector_3<Kernel> operator+(const Vector_3<Kernel> &w) const;
 
 /*!
 Addition.
@@ -208,9 +209,9 @@ Addition.
 Vector_3<Kernel>& operator+=(const Vector_3<Kernel> &w);
 
 /*!
-Subtraction. 
-*/ 
-Vector_3<Kernel> operator-(const Vector_3<Kernel> &w) const; 
+Subtraction.
+*/
+Vector_3<Kernel> operator-(const Vector_3<Kernel> &w) const;
 
 /*!
 Subtraction.
@@ -218,14 +219,14 @@ Subtraction.
 Vector_3<Kernel>& operator-=(const Vector_3<Kernel> &w);
 
 /*!
-Returns the opposite vector. 
-*/ 
-Vector_3<Kernel> operator-() const; 
+Returns the opposite vector.
+*/
+Vector_3<Kernel> operator-() const;
 
 /*!
-Division by a scalar. 
-*/ 
-Vector_3<Kernel> operator/(const Kernel::RT &s) const; 
+Division by a scalar.
+*/
+Vector_3<Kernel> operator/(const Kernel::RT &s) const;
 
 /*!
 Division by a scalar.
@@ -233,8 +234,8 @@ Division by a scalar.
 Vector_3<Kernel>& operator/=(const Kernel::RT &s);
 
 /*!
-returns the scalar product (= inner product) of the two vectors. 
-*/ 
+returns the scalar product (= inner product) of the two vectors.
+*/
 Kernel::FT operator*(const Vector_3<Kernel> &w) const;
 
 /*!
@@ -255,32 +256,32 @@ Kernel::FT squared_length() const;
 ///@{
 
 /*!
-Multiplication with a scalar from the right. 
-\relates Vector_3 
-*/ 
-Vector_3<Kernel> 
-operator*(const Vector_3<Kernel> &v, const Kernel::RT &s); 
+Multiplication with a scalar from the right.
+\relates Vector_3
+*/
+Vector_3<Kernel>
+operator*(const Vector_3<Kernel> &v, const Kernel::RT &s);
 
 /*!
-Multiplication with a scalar from the right. 
-\relates Vector_3 
-*/ 
-Vector_3<Kernel> 
-operator*(const Vector_3<Kernel> &v, const Kernel::FT &s); 
+Multiplication with a scalar from the right.
+\relates Vector_3
+*/
+Vector_3<Kernel>
+operator*(const Vector_3<Kernel> &v, const Kernel::FT &s);
 
 /*!
-Multiplication with a scalar from the left. 
-\relates Vector_3 
-*/ 
-Vector_3<Kernel> 
-operator*(const Kernel::RT &s, const Vector_3<Kernel> &v); 
+Multiplication with a scalar from the left.
+\relates Vector_3
+*/
+Vector_3<Kernel>
+operator*(const Kernel::RT &s, const Vector_3<Kernel> &v);
 
 /*!
-Multiplication with a scalar from the left. 
-\relates Vector_3 
-*/ 
-Vector_3<Kernel> 
-operator*(const Kernel::FT &s, const Vector_3<Kernel> &v); 
+Multiplication with a scalar from the left.
+\relates Vector_3
+*/
+Vector_3<Kernel>
+operator*(const Kernel::FT &s, const Vector_3<Kernel> &v);
 
 /// @}
 

@@ -3,50 +3,50 @@ namespace Qt {
 /*!
 \ingroup PkgGraphicsViewGraphicsItemClasses
 
-An object of type `VoronoiGraphicsItem` is a graphics item that 
-encapsulates a Delaunay triangulation in order to draw its dual, the 
-Voronoi diagram. 
+An object of type `VoronoiGraphicsItem` is a graphics item that
+encapsulates a Delaunay triangulation in order to draw its dual, the
+Voronoi diagram.
 
-\tparam DT must be a 2D Delaunay triangulation class. 
+\tparam DT must be a 2D Delaunay triangulation class.
 
 */
 template< typename DT >
 class VoronoiGraphicsItem : public Qt::GraphicsItem {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Constructs a graphics item for the dual of the 
-Delaunay triangulation `dt`. 
-*/ 
-VoronoiGraphicsItem<DT>(DT* dt); 
+Constructs a graphics item for the dual of the
+Delaunay triangulation `dt`.
+*/
+VoronoiGraphicsItem<DT>(DT* dt);
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns the pen used to draw edges. 
-*/ 
-QPen edgesPen()() const; 
+Returns the pen used to draw edges.
+*/
+QPen edgesPen()() const;
 
 /*!
-Set the pen used to draw edges. 
-*/ 
-void setEdgesPen()(const QPen& p); 
+Set the pen used to draw edges.
+*/
+void setEdgesPen()(const QPen& p);
 
 /*!
-Returns `true`, iff edges are drawn. 
-*/ 
-bool visibleEdges(); 
+Returns `true`, iff edges are drawn.
+*/
+bool visibleEdges();
 
 /*!
-Set the property. 
-*/ 
-bool setVisibleEdges(bool b); 
+Set the property.
+*/
+bool setVisibleEdges(bool b);
 
 /// @}
 

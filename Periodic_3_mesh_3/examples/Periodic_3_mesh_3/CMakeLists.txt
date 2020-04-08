@@ -1,9 +1,9 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Periodic_3_mesh_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
@@ -14,7 +14,7 @@ find_package( CGAL QUIET  COMPONENTS ImageIO )
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
-else()  
+else()
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
 endif()
@@ -26,8 +26,6 @@ find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
-else()
-  include( ${EIGEN3_USE_FILE} )
 endif()
 
 # Boost and its components
@@ -46,3 +44,13 @@ create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_subdomains.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_optimizers.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_features.cpp" )
+
+
+foreach(target
+    mesh_implicit_shape
+    mesh_implicit_multi_domain
+    mesh_implicit_shape_with_subdomains
+    mesh_implicit_shape_with_optimizers
+    mesh_implicit_shape_with_features)
+  CGAL_target_use_Eigen(${target})
+endforeach()

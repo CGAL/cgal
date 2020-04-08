@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot, Florent Lafarge
 
@@ -32,7 +23,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -43,7 +33,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #endif // CGAL_LINKED_WITH_TBB
 
 #define CLASSIFICATION_TRAINING_QUICK_ESTIMATION
@@ -70,7 +60,7 @@ public:
     NEUTRAL = 1, ///< The feature has no effect on this type
     PENALIZING = 2 ///< Low values of the feature favor this type
   };
-  
+
 private:
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -82,11 +72,11 @@ private:
     std::vector<std::size_t>& m_true_positives;
     std::vector<std::size_t>& m_false_positives;
     std::vector<std::size_t>& m_false_negatives;
-    std::vector<tbb::mutex>& m_tp_mutex;
-    std::vector<tbb::mutex>& m_fp_mutex;
-    std::vector<tbb::mutex>& m_fn_mutex;
+    std::vector<std::mutex>& m_tp_mutex;
+    std::vector<std::mutex>& m_fp_mutex;
+    std::vector<std::mutex>& m_fn_mutex;
 
-    
+
   public:
 
     Compute_iou (std::vector<std::size_t>& training_set,
@@ -95,9 +85,9 @@ private:
                  std::vector<std::size_t>& true_positives,
                  std::vector<std::size_t>& false_positives,
                  std::vector<std::size_t>& false_negatives,
-                 std::vector<tbb::mutex>& tp_mutex,
-                 std::vector<tbb::mutex>& fp_mutex,
-                 std::vector<tbb::mutex>& fn_mutex)
+                 std::vector<std::mutex>& tp_mutex,
+                 std::vector<std::mutex>& fp_mutex,
+                 std::vector<std::mutex>& fn_mutex)
       : m_training_set (training_set)
       , m_classifier (classifier)
       , m_label (label)
@@ -108,7 +98,7 @@ private:
       , m_fp_mutex (fp_mutex)
       , m_fn_mutex (fn_mutex)
     { }
-    
+
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for (std::size_t k = r.begin(); k != r.end(); ++ k)
@@ -170,7 +160,7 @@ public:
 
   /// \name Constructor
   /// @{
-  
+
 /*!
 
   \brief Instantiates the classifier using the sets of `labels` and `features`.
@@ -227,9 +217,9 @@ public:
   }
   /// \endcond
 
-  /*! 
+  /*!
     \brief Sets the `effect` of `feature` on `label`.
-  */ 
+  */
   void set_effect (Label_handle label, Feature_handle feature,
                    Effect effect)
   {
@@ -243,9 +233,9 @@ public:
   }
   /// \endcond
 
-  /*! 
+  /*!
     \brief Returns the `effect` of `feature` on `label`.
-  */ 
+  */
   Effect effect (Label_handle label, Feature_handle feature) const
   {
     return m_effect_table[m_map_labels[label]][m_map_features[feature]];
@@ -321,9 +311,9 @@ public:
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       CGAL::cpp98::random_shuffle (training_sets[i].begin(), training_sets[i].end());
 #endif
-    
+
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;
-    
+
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       if (training_sets.size() <= i || training_sets[i].empty())
         std::cerr << "WARNING: \"" << m_labels[i]->name() << "\" doesn't have a training set." << std::endl;
@@ -334,7 +324,7 @@ public:
     std::size_t nb_trials = 100;
     float wmin = 1e-5f, wmax = 1e5f;
     float factor = std::pow (wmax/wmin, 1.f / float(nb_trials));
-    
+
     for (std::size_t j = 0; j < m_features.size(); ++ j)
     {
       Feature_handle feature = m_features[j];
@@ -392,11 +382,11 @@ public:
       feature_train[i].factor
         = std::pow (feature_train[i].wmax / feature_train[i].wmin,
                     1.f / float(nb_trials_per_feature));
-    
-    
+
+
     float best_score = 0.;
     best_score = compute_mean_iou<ConcurrencyTag>(training_sets);
-    
+
     CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
@@ -407,13 +397,13 @@ public:
       const Feature_training& tr = feature_train[i];
       std::size_t current_feature_changed = tr.i;
       Feature_handle current_feature = m_features[current_feature_changed];
-        
+
       std::size_t nb_used = 0;
       for (std::size_t j = 0; j < m_features.size(); ++ j)
       {
         if (j == current_feature_changed)
           continue;
-            
+
         set_weight(j, best_weights[j]);
         estimate_feature_effect(j, training_sets);
         if (feature_useful(j))
@@ -421,7 +411,7 @@ public:
         else
           set_weight(j, 0.);
       }
-        
+
       set_weight(current_feature_changed, tr.wmin);
       for (std::size_t j = 0; j < nb_trials_per_feature; ++ j)
       {
@@ -447,7 +437,7 @@ public:
       set_weight(i, best_weights[i]);
 
     estimate_features_effects(training_sets);
-    
+
     CGAL_CLASSIFICATION_CERR << std::endl << "Best score found is at least " << 100. * best_score
                              << "% of correct classification" << std::endl;
 
@@ -502,7 +492,7 @@ public:
       }
 
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;
-    
+
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       if (training_sets.size() <= i || training_sets[i].empty())
         std::cerr << "WARNING: \"" << m_labels[i]->name() << "\" doesn't have a training set." << std::endl;
@@ -513,7 +503,7 @@ public:
     std::size_t nb_trials = 100;
     float wmin = 1e-5, wmax = 1e5;
     float factor = std::pow (wmax/wmin, 1. / (float)nb_trials);
-    
+
     for (std::size_t j = 0; j < m_features.size(); ++ j)
     {
       Feature_handle feature = m_features[j];
@@ -566,9 +556,9 @@ public:
 
     CGAL_CLASSIFICATION_CERR << "Trials = " << nb_tests << ", features = " << feature_train.size() << std::endl;
 
-    
+
     float best_score = compute_mean_iou<ConcurrencyTag>(training_sets);
-    
+
     CGAL_CLASSIFICATION_CERR << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
     CGAL_CLASSIFICATION_CERR << 100. * best_score << "% (found at initialization)" << std::endl;
@@ -603,7 +593,7 @@ public:
       set_weight(i, best_weights[i]);
 
     estimate_features_effects(training_sets);
-    
+
     CGAL_CLASSIFICATION_CERR << std::endl << "Best score found is at least " << 100. * best_score
                              << "% of correct classification" << std::endl;
 
@@ -644,7 +634,7 @@ public:
 
   /// \name Input/Output
   /// @{
-  
+
   /*!
     \brief Saves the current configuration in the stream `output`.
 
@@ -666,7 +656,7 @@ public:
       if (weight(m_features[i]) == 0)
         continue;
       boost::property_tree::ptree ptr;
-        
+
       ptr.put("name", m_features[i]->name());
       ptr.put("weight", weight(m_features[i]));
       tree.add_child("classification.features.feature", ptr);
@@ -702,7 +692,7 @@ public:
                                     boost::property_tree::xml_writer_make_settings<char>(' ', 3));
 #endif
   }
-  
+
   /*!
     \brief Loads a configuration from the stream `input`. A
     configuration is a set of weights and effects.
@@ -744,7 +734,7 @@ public:
     boost::property_tree::ptree tree;
     boost::property_tree::read_xml(input, tree);
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.features"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.features"))
     {
       std::string name = v.second.get<std::string>("name");
       std::map<std::string, std::size_t>::iterator
@@ -759,7 +749,7 @@ public:
       }
     }
 
-    BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.labels"))
+    for(boost::property_tree::ptree::value_type& v : tree.get_child("classification.labels"))
     {
       std::string label_name = v.second.get<std::string>("name");
       std::map<std::string, std::size_t>::iterator
@@ -774,14 +764,14 @@ public:
         out = false;
         continue;
       }
-        
-      BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, v.second)
+
+      for(boost::property_tree::ptree::value_type& v2 : v.second)
       {
         if (v2.first == "name")
           continue;
-            
+
         std::string feature_name = v2.second.get<std::string>("name");
-            
+
         std::map<std::string, std::size_t>::iterator
           found2 = map_n2f.find (feature_name);
         std::size_t f = 0;
@@ -807,7 +797,7 @@ public:
   }
 
   /// @}
-  
+
 private:
 
   float value (std::size_t label, std::size_t feature, std::size_t index) const
@@ -819,7 +809,7 @@ private:
     else
       return ignored (feature, index);
   }
-  
+
   float normalized (std::size_t feature, std::size_t index) const
   {
     return (std::max) (0.f, (std::min) (1.f, m_features[feature]->value(index) / m_weights[feature]));
@@ -844,12 +834,12 @@ private:
   }
 
 
-  
+
   void estimate_feature_effect (std::size_t feature,
                                 std::vector<std::vector<std::size_t> >& training_sets)
   {
     std::vector<float> mean (m_labels.size(), 0.);
-                                  
+
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
     {
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
@@ -858,7 +848,7 @@ private:
 #else
       std::size_t training_set_size = training_sets[j].size();
 #endif
-      
+
       for (std::size_t k = 0; k < training_set_size; ++ k)
       {
         float val = normalized(feature, training_sets[j][k]);
@@ -868,11 +858,11 @@ private:
     }
 
     std::vector<float> sd (m_labels.size(), 0.);
-        
+
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
     {
       Label_handle clabel = m_labels[j];
-            
+
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
       std::size_t training_set_size = (std::min) (std::size_t(0.1 * training_sets[j].size()),
                                                   std::size_t(10000));
@@ -911,9 +901,9 @@ private:
 #else
       if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       {
-        std::vector<tbb::mutex> tp_mutex (m_labels.size());
-        std::vector<tbb::mutex> fp_mutex (m_labels.size());
-        std::vector<tbb::mutex> fn_mutex (m_labels.size());
+        std::vector<std::mutex> tp_mutex (m_labels.size());
+        std::vector<std::mutex> fp_mutex (m_labels.size());
+        std::vector<std::mutex> fn_mutex (m_labels.size());
         Compute_iou f(training_sets[j], *this, j,
                       true_positives, false_positives, false_negatives,
                       tp_mutex, fp_mutex, fn_mutex);
@@ -945,9 +935,9 @@ private:
           ++ false_negatives[gt];
         }
     }
-    
+
     float out = 0.;
-    
+
     for (std::size_t j = 0; j < m_labels.size(); ++ j)
     {
       float iou = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
@@ -957,7 +947,7 @@ private:
     return out / m_labels.size();
   }
 
-  
+
   bool feature_useful (std::size_t feature)
   {
     Effect side = effect(0, feature);
@@ -966,7 +956,7 @@ private:
         return true;
     return false;
   }
-  
+
 };
 
 }

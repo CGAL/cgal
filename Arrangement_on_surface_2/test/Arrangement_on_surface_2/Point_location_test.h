@@ -16,7 +16,6 @@
 
 #include <vector>
 
-#include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -641,20 +640,6 @@ private:
 #define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)
 #endif
 
-#if defined(CGAL_CFG_NO_CPP0X_LAMBDAS)
-#define MEASURE_NAIVE_PL(timer, op) op
-#define MEASURE_SIMPLE_PL(timer, op) op
-#define MEASURE_WALK_PL(timer, op) op
-#define MEASURE_LM_PL(timer, op) op
-#define MEASURE_LM_RANDOM_PL(timer, op) op
-#define MEASURE_LM_GRID_PL(timer, op) op
-#define MEASURE_LM_HALTON_PL(timer, op) op
-#define MEASURE_LM_MIDDLE_EDGES_PL(timer, op) op
-#define MEASURE_LM_SPECIFIED_POINTS_PL(timer, op) op
-#define MEASURE_TRIANGULATION_PL(timer, op) op
-#define MEASURE_TRAPEZOID_RIC_PL(timer, op) op
-#define MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer, op) op
-#else
 #define MEASURE_NAIVE_PL(timer, op) measure<NAIVE_PL>(timer, [&](){ op; });
 #define MEASURE_SIMPLE_PL(timer, op) measure<SIMPLE_PL>(timer, [&](){ op; });
 #define MEASURE_WALK_PL(timer, op) measure<WALK_PL>(timer, [&](){ op; });
@@ -675,7 +660,6 @@ private:
   measure<TRAPEZOID_RIC_PL>(timer, [&](){ op; });
 #define MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer, op) \
   measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){ op; });
-#endif
 
 //! Constructor.
 template <typename GeomTraits, typename TopolTraits>
@@ -1107,7 +1091,7 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
     Face_const_handle* fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
     if (fh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	Face_const_handle* fh_cur =
+        Face_const_handle* fh_cur =
           boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           if ((*fh_cur) != (*fh_ref)) {
@@ -1122,13 +1106,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a face." << std::endl;
         result += -1;
-	Halfedge_const_handle* hh_cur =
+        Halfedge_const_handle* hh_cur =
           boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
-	if (hh_cur) {
+        if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
         }
-	Vertex_const_handle* vh_cur =
+        Vertex_const_handle* vh_cur =
           boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
@@ -1148,7 +1132,7 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
       boost::get<Halfedge_const_handle>(&(objs[0][qi]));
     if (hh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	Halfedge_const_handle* hh_cur =
+        Halfedge_const_handle* hh_cur =
           boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           if (((*hh_cur) != (*hh_ref)) && ((*hh_cur)->twin() != (*hh_ref))) {
@@ -1165,13 +1149,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Expected: a halfedge, " << (*hh_ref)->curve()
                   << std::endl;
         result += -1;
-	Face_const_handle* fh_cur =
+        Face_const_handle* fh_cur =
           boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	Vertex_const_handle* vh_cur =
+        Vertex_const_handle* vh_cur =
           boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
@@ -1187,7 +1171,7 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
       boost::get<Vertex_const_handle>(&(objs[0][qi]));
     if (vh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	Vertex_const_handle* vh_cur =
+        Vertex_const_handle* vh_cur =
           boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           if ((*vh_cur) != (*vh_ref)) {
@@ -1203,13 +1187,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a vertex: "<< (*vh_ref)->point() << std::endl;
         result += -1;
-	Face_const_handle* fh_cur =
+        Face_const_handle* fh_cur =
           boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	Halfedge_const_handle* hh_cur =
+        Halfedge_const_handle* hh_cur =
           boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;

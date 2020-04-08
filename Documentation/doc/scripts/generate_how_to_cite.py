@@ -66,7 +66,7 @@ The %CGAL Project.
  <em>%CGAL User and Reference Manual</em>.
  %CGAL Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
 [&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| 
-<a href="https://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html">http</a>&nbsp;]
+<a href="packages.html">http</a>&nbsp;]
 
 </td>
 </tr>
@@ -133,7 +133,7 @@ def gen_txt_entry(title, authors, bib, anchor,k):
  In <em>%CGAL User and Reference Manual</em>. %CGAL Editorial Board,\n\
   ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.\n\
 [&nbsp;<a href=\"how_to_cite.html#"+bib+"-${CGAL_RELEASE_YEAR_ID}\">bib</a>&nbsp;| \n\
-<a href=\"https://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#"+anchor+"\">http</a>&nbsp;]\n\
+<a href=\"packages.html#"+anchor+"\">http</a>&nbsp;]\n\
 \n\
 </td>\n\
 </tr>\n\n\n"
@@ -157,7 +157,7 @@ def protect_upper_case(title):
   return title.replace("dD","{dD}").replace("2D","{2D}").replace("3D","{3D}").replace("CGAL","{CGAL}").replace("Qt","{Qt}").replace("Boost","{Boost}")
 
 def protect_accentuated_letters(authors):
-  res=authors.replace(u"é",r"{\'e}").replace(u"è",r"{\`e}").replace(u"É",r"{\'E}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace("%","")
+  res=authors.replace(u"é",r"{\'e}").replace(u"è",r"{\`e}").replace(u"É",r"{\'E}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace(u"ı",r"{\i}").replace(u"Ş",r"{\c{S}}").replace(u"ş",r"{\c{s}}").replace("%","")
   try:
     res.encode('ascii')
   except UnicodeEncodeError:

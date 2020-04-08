@@ -19,7 +19,7 @@ it has to be instantiated by a model of the concept
 `TriangulationDataStructure_2` with some additional
 functionality in faces.
 By default, the triangulation data structure is instantiated by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>,                  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
 
 \cgalHeading{Traversal of the Triangulation}
 
@@ -206,6 +206,7 @@ public:
   */
   typedef Tds::difference_type difference_type;
 
+/// @}
 
   /*!
   \name Handles, Iterators and Circulators
@@ -886,13 +887,13 @@ public:
   /*!
   returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is
   opposite to `f`.
-  \pre $0 \\leqle i \\leqle 2$.
+  \pre \f$ 0 \leq i \leq 2\f$.
   */
   Vertex_handle mirror_vertex(Face_handle f, int i) const;
 
   /*!
   returns the index of `f` in its \f$ i^{th}\f$ neighbor.
-  \pre $0 \\leqle i \\leqle 2$.
+  \pre \f$0 \leq i \leq 2\f$.
   */
   int mirror_index(Face_handle f, int i) const;
 
@@ -956,11 +957,6 @@ public:
 /// \image html insert1.png "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
 /// \image html insert2.png "Insertion in a face."
-/// @{
-
-
-
-/// @}
 
 /// \name
 /// \cgalAdvancedBegin
@@ -1059,12 +1055,12 @@ public:
 /// @{
 
   /*!
-  Returns \f$ i+1\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$.
+  Returns \f$ i+1\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
   */
   int ccw(int i) const;
 
   /*!
-  Returns \f$ i+2\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$.
+  Returns \f$ i+2\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
   */
   int cw(int i) const;
 

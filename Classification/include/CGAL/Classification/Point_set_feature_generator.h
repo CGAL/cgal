@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -51,7 +42,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -100,10 +90,8 @@ template <typename GeomTraits,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
           typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-          typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-          typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
 #if defined(DOXYGEN_RUNNING)
           typename DiagonalizeTraits>
@@ -112,7 +100,7 @@ template <typename GeomTraits,
 #endif
 class Point_set_feature_generator
 {
-  
+
 public:
   typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
 
@@ -120,7 +108,7 @@ public:
   typedef typename PointRange::const_iterator Iterator;
   typedef typename PointMap::value_type       Point;
   /// \endcond
-  
+
   typedef Classification::Planimetric_grid
   <GeomTraits, PointRange, PointMap>                    Planimetric_grid;
   typedef Classification::Point_set_neighborhood
@@ -147,17 +135,15 @@ public:
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
-  
+
   typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
 
 #ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
   typedef Classification::Feature::Gradient_of_feature
   <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
 #endif
-  
-  typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
-    
+
 private:
 
   struct Scale
@@ -166,32 +152,32 @@ private:
     Planimetric_grid* grid;
     Local_eigen_analysis* eigen;
     float voxel_size;
-    
+
     Scale (const PointRange& input, PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
-           Planimetric_grid* lower_grid = NULL)
+           Planimetric_grid* lower_grid = nullptr)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
       t.start();
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         neighborhood = new Neighborhood (input, point_map);
       else
         neighborhood = new Neighborhood (input, point_map, voxel_size);
       t.stop();
-      
-      if (lower_grid == NULL)
+
+      if (lower_grid == nullptr)
         CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
         CGAL_CLASSIFICATION_CERR << "Neighborhood with voxel size " << voxel_size
                                  << " computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
       t.start();
-      
+
       eigen = new Local_eigen_analysis
         (Local_eigen_analysis::create_from_point_set
          (input, point_map, neighborhood->k_neighbor_query(12), ConcurrencyTag(), DiagonalizeTraits()));
-      
+
       float range = eigen->mean_range();
       if (this->voxel_size < 0)
         this->voxel_size = range;
@@ -201,7 +187,7 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         grid = new Planimetric_grid (input, point_map, bbox, this->voxel_size);
       else
         grid = new Planimetric_grid(lower_grid);
@@ -211,9 +197,9 @@ private:
     }
     ~Scale()
     {
-      if (neighborhood != NULL)
+      if (neighborhood != nullptr)
         delete neighborhood;
-      if (grid != NULL)
+      if (grid != nullptr)
         delete grid;
       delete eigen;
     }
@@ -221,18 +207,18 @@ private:
     void reduce_memory_footprint(bool delete_neighborhood)
     {
       delete grid;
-      grid = NULL;
+      grid = nullptr;
       if (delete_neighborhood)
       {
         delete neighborhood;
-        neighborhood = NULL;
+        neighborhood = nullptr;
       }
     }
 
     float grid_resolution() const { return voxel_size; }
     float radius_neighbors() const { return voxel_size * 3; }
     float radius_dtm() const { return voxel_size * 10; }
-    
+
   };
 
   Iso_cuboid_3 m_bbox;
@@ -240,12 +226,12 @@ private:
 
   const PointRange& m_input;
   PointMap m_point_map;
-  
+
 public:
-  
+
   /// \name Constructor
   /// @{
-  
+
   /*!
     \brief Initializes a feature generator from an input range.
 
@@ -254,7 +240,7 @@ public:
     `CGAL::compute_average_spacing()` using 6 neighbors. The data
     structures needed (`Neighborhood`, `Planimetric_grid` and
     `Local_eigen_analysis`) are computed at `nb_scales` recursively
-    larger scales. 
+    larger scales.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -274,14 +260,14 @@ public:
        boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
 
     CGAL::Real_timer t; t.start();
-    
+
     m_scales.reserve (nb_scales);
-    
+
     m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
 
     if (voxel_size == -1.f)
       voxel_size = m_scales[0]->grid_resolution();
-    
+
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
@@ -293,66 +279,8 @@ public:
   }
 
   /// @}
-  
+
   /// \cond SKIP_IN_MANUAL
-  
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // deprecated
-  template <typename VectorMap = Default,
-            typename ColorMap = Default,
-            typename EchoMap = Default>
-  CGAL_DEPRECATED_MSG("you are using a deprecated constructor of CGAL::Classification::Point_set_feature_generator, please update your code")
-  Point_set_feature_generator(Feature_set& features,
-                              const PointRange& input,
-                              PointMap point_map,
-                              std::size_t nb_scales,
-                              VectorMap normal_map = VectorMap(),
-                              ColorMap color_map = ColorMap(),
-                              EchoMap echo_map = EchoMap(),
-                              float voxel_size = -1.f)
-    : m_input (input), m_point_map (point_map)
-  {
-    m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
-       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
-
-    CGAL::Real_timer t; t.start();
-    
-    m_scales.reserve (nb_scales);
-    
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
-
-    if (voxel_size == -1.f)
-      voxel_size = m_scales[0]->grid_resolution();
-    
-    for (std::size_t i = 1; i < nb_scales; ++ i)
-    {
-      voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
-    }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
-    t.reset();
-
-    typedef typename Default::Get<VectorMap, typename GeomTraits::Vector_3 >::type
-      Vmap;
-    typedef typename Default::Get<ColorMap, RGB_Color >::type
-      Cmap;
-    typedef typename Default::Get<EchoMap, std::size_t >::type
-      Emap;
-
-    generate_point_based_features (features);
-    generate_normal_based_features (features, get_parameter<Vmap>(normal_map));
-    generate_color_based_features (features, get_parameter<Cmap>(color_map));
-    generate_echo_based_features (features, get_parameter<Emap>(echo_map));
-  }
-
-  // Functions to remove when deprecated constructor is removed
-  void generate_normal_based_features(const CGAL::Constant_property_map<Iterator, typename GeomTraits::Vector_3>&) { }
-  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, RGB_Color>&) { }
-  void generate_echo_based_features(const CGAL::Constant_property_map<Iterator, std::size_t>&) { }
-#endif
-  
   virtual ~Point_set_feature_generator()
   {
     clear();
@@ -435,7 +363,7 @@ public:
 
     \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
     the value type of the iterator of `PointRange` and value type is
-    `CGAL::Classification::RGB_Color`.
+    `CGAL::Color`.
 
     \param features the feature set where the features are instantiated.
     \param color_map property map to access the colors of the input points (if any).
@@ -494,12 +422,12 @@ public:
 
   /// \name Parameters
   /// @{
-  
+
   /*!
     \brief Returns the number of scales that were computed.
   */
   std::size_t number_of_scales() const { return m_scales.size(); }
-  
+
   /*!
     \brief Returns the grid resolution at scale `scale`. This
     resolution is the length and width of a cell of the
@@ -523,7 +451,7 @@ public:
 
   /// @}
 
-    
+
 private:
 
   void clear()
@@ -572,7 +500,7 @@ private:
 
 
 } // namespace Classification
-  
+
 } // namespace CGAL
 
 

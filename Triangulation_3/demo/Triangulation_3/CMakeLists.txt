@@ -1,9 +1,9 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project (Triangulation_3_Demo)
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -32,7 +32,7 @@ endif(Qt5_FOUND)
 option(CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3
   "Activate parallelism in Triangulation_3"
   OFF)
-  
+
 # And add -DCGAL_CONCURRENT_TRIANGULATION_3 if that option is ON
 if( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   add_definitions( -DCGAL_CONCURRENT_TRIANGULATION_3 )
@@ -83,13 +83,13 @@ else( CGAL_FOUND AND Qt5_FOUND)
 
   if(NOT CGAL_Qt5_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "the CGAL Qt5 library, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif()      	   
+  endif()
 
   if(NOT Qt5_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif()      	   
+  endif()
 
-  
+
   message(STATUS "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled.")
 
 endif( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND  )

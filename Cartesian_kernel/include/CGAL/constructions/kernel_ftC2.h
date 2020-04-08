@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr, Herve Bronnimann, Sylvain Pion
 
@@ -64,7 +55,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   CGAL_kernel_assertion ( ! CGAL_NTS is_zero(den) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }
@@ -187,10 +178,10 @@ inline
 void
 line_from_pointsC2(const FT &px, const FT &py,
                    const FT &qx, const FT &qy,
-                   FT &a, FT &b, FT &c) 
+                   FT &a, FT &b, FT &c)
 {
   // The horizontal and vertical line get a special treatment
-  // in order to make the intersection code robust for doubles 
+  // in order to make the intersection code robust for doubles
   if(py == qy){
     a = 0 ;
     if(qx > px){
@@ -227,7 +218,7 @@ inline
 void
 line_from_point_directionC2(const FT &px, const FT &py,
                             const FT &dx, const FT &dy,
-                            FT &a, FT &b, FT &c) 
+                            FT &a, FT &b, FT &c)
 {
   a = - dy;
   b = dx;
@@ -238,8 +229,8 @@ template < class FT >
 CGAL_KERNEL_INLINE
 void
 bisector_of_pointsC2(const FT &px, const FT &py,
-		     const FT &qx, const FT &qy,
-		     FT &a, FT &b, FT& c )
+                     const FT &qx, const FT &qy,
+                     FT &a, FT &b, FT& c )
 {
   a = 2 * (px - qx);
   b = 2 * (py - qy);
@@ -251,8 +242,8 @@ template < class FT >
 CGAL_KERNEL_INLINE
 void
 bisector_of_linesC2(const FT &pa, const FT &pb, const FT &pc,
-		    const FT &qa, const FT &qb, const FT &qc,
-		    FT &a, FT &b, FT &c)
+                    const FT &qa, const FT &qb, const FT &qc,
+                    FT &a, FT &b, FT &c)
 {
   // We normalize the equations of the 2 lines, and we then add them.
   FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb));
@@ -277,10 +268,10 @@ line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
   return (-a*x-c) / b;
 }
 
-template < class FT > 
+template < class FT >
 inline
 void
-line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
+line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
                  FT &x, FT &y)
 {
   if (CGAL_NTS is_zero(b))
@@ -304,12 +295,12 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
     }
 }
 
-template < class FT > 
+template < class FT >
 inline
 void
 perpendicular_through_pointC2(const FT &la, const FT &lb,
-		              const FT &px, const FT &py,
-			      FT &a, FT &b, FT &c)
+                              const FT &px, const FT &py,
+                              FT &a, FT &b, FT &c)
 {
   a = -lb;
   b = la;
@@ -320,8 +311,8 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 void
 line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
-		     const FT &px, const FT &py,
-		     FT &x, FT &y)
+                     const FT &px, const FT &py,
+                     FT &x, FT &y)
 {
   if (certainly(is_zero(la))) // horizontal line
   {
@@ -440,7 +431,7 @@ weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
   CGAL_assertion ( den != RT(0) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }

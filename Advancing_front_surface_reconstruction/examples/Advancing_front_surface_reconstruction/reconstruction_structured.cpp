@@ -3,8 +3,7 @@
 #include <algorithm>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_with_normal_3.h>
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/structure_point_set.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -22,10 +21,10 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // Efficient RANSAC types
-typedef CGAL::Shape_detection_3::Shape_detection_traits
-  <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
-typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
+typedef CGAL::Shape_detection::Efficient_RANSAC_traits
+  <Kernel, Pwn_vector, Point_map, Normal_map>              Traits;
+typedef CGAL::Shape_detection::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection::Plane<Traits>               Plane;
 
 // Point set structuring type
 typedef CGAL::Point_set_with_structure<Kernel>               Structure;
@@ -46,7 +45,7 @@ struct On_the_fly_pair{
   typedef std::pair<Point, std::size_t> result_type;
 
   On_the_fly_pair(const Pwn_vector& points) : points(points) {}
-  
+
   result_type
   operator()(std::size_t i) const
   {
@@ -60,7 +59,7 @@ struct Priority_with_structure_coherence {
 
   Structure& structure;
   double bound;
-  
+
   Priority_with_structure_coherence(Structure& structure,
                                     double bound)
     : structure (structure), bound (bound)
@@ -112,10 +111,10 @@ int main (int argc, char* argv[])
   Pwn_vector points;
 
   const char* fname = (argc>1) ? argv[1] : "data/cube.pwn";
-  // Loading point set from a file. 
+  // Loading point set from a file.
   std::ifstream stream(fname);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
@@ -151,8 +150,8 @@ int main (int argc, char* argv[])
                  op.cluster_epsilon,  // Same parameter as RANSAC
                  CGAL::parameters::point_map (Point_map()).
                  normal_map (Normal_map()).
-                 plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
-                 plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+                 plane_map (CGAL::Shape_detection::Plane_map<Traits>()).
+                 plane_index_map(CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)));
 
 
   for (std::size_t i = 0; i < pss.size(); ++ i)
@@ -195,6 +194,6 @@ int main (int argc, char* argv[])
   std::cerr << "all done\n" << std::endl;
 
   f.close();
-  
+
   return 0;
 }

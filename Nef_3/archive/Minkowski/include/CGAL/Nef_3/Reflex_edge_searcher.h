@@ -11,7 +11,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
 
   typedef Nef_                                            Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_structure          SNC_structure;
-  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;  
+  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;
 
   typedef typename SNC_structure::Vertex_handle           Vertex_handle;
   typedef typename SNC_structure::Vertex_const_handle     Vertex_const_handle;
@@ -47,11 +47,11 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   Sphere_point dir;
   //  Reflex_vertex_map vertex_map;
 
-  Reflex_edge_searcher(Sphere_point dir_in) // , Reflex_vertex_map& vertex_map_) 
+  Reflex_edge_searcher(Sphere_point dir_in) // , Reflex_vertex_map& vertex_map_)
     : dir(dir_in) {} // , vertex_map(vertex_map_) {}
 
-  int is_reflex_edge(Halfedge_handle e) {    
-    SHalfedge_around_svertex_circulator 
+  int is_reflex_edge(Halfedge_handle e) {
+    SHalfedge_around_svertex_circulator
       svc(e->out_sedge()), send(svc);
     int isrse = 0;
     CGAL_For_all(svc, send)
@@ -66,25 +66,25 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   void operator()(SNC_structure& snc) {
     pos.clear();
     neg.clear();
-    
+
     Vertex_iterator vi;
     CGAL_forall_vertices(vi, snc) {
       SHalfedge_iterator sei;
       for(sei = vi->shalfedges_begin();
-	  sei != vi->shalfedges_end(); ++sei) {
-	if(!sei->incident_sface()->mark()) continue;
-	int isrse = CGAL::is_reflex_sedge<SNC_structure>(sei, dir);
-	CGAL_NEF_TRACEN("isrse final " << sei->source()->source()->point()
-			<< "->" << sei->source()->twin()->source()->point()
-			<< ": " << isrse);
-	if((isrse&1)==1) pos.push_back(sei->source()->twin());
-	if((isrse&2)==2) neg.push_back(sei->source());
-	/*
-	if((isrse&2)==2) {
+          sei != vi->shalfedges_end(); ++sei) {
+        if(!sei->incident_sface()->mark()) continue;
+        int isrse = CGAL::is_reflex_sedge<SNC_structure>(sei, dir);
+        CGAL_NEF_TRACEN("isrse final " << sei->source()->source()->point()
+                        << "->" << sei->source()->twin()->source()->point()
+                        << ": " << isrse);
+        if((isrse&1)==1) pos.push_back(sei->source()->twin());
+        if((isrse&2)==2) neg.push_back(sei->source());
+        /*
+        if((isrse&2)==2) {
           sei->source()->mark()=false;
           sei->source()->twin()->mark()=false;
-	}
-	*/
+        }
+        */
       }
     }
   }
@@ -92,30 +92,30 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   /*
   void operator()(SNC_structure& snc) {
     pos.clear();
-    neg.clear();    
+    neg.clear();
 
     Reflex_edge_visitor rev(pos,neg,dir);
     SNC_decorator D(snc);
     Volume_iterator c;
     CGAL_forall_volumes(c, snc) {
       if(c->mark())
-	for(Shell_entry_iterator shi=c->shells_begin(); shi!=c->shells_end(); ++shi) {
-	  D.visit_shell_objects(SFace_handle(shi),rev);
-	}
-      }  
+        for(Shell_entry_iterator shi=c->shells_begin(); shi!=c->shells_end(); ++shi) {
+          D.visit_shell_objects(SFace_handle(shi),rev);
+        }
+      }
     }
   */
-  void handle_new_edge(Halfedge_handle e) { 
-    if(normalized(e->point()) == dir || 
+  void handle_new_edge(Halfedge_handle e) {
+    if(normalized(e->point()) == dir ||
        normalized(e->twin()->point()) == dir) {
       CGAL_error_msg( "should not happen");
       return;
     }
 
-    if(e->twin()->source()->point() < 
+    if(e->twin()->source()->point() <
        e->source()->point())
       e = e->twin();
-    SHalfedge_around_svertex_circulator 
+    SHalfedge_around_svertex_circulator
       svc(e->out_sedge()), send(svc);
     int pushed = 0;
     CGAL_For_all(svc, send) {
@@ -125,7 +125,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
       if((pushed&=2==0) && (isrse&2==2)) neg.push_back(svc->source());
       pushed |= isrse;
       if(pushed == 3)
-	break;
+        break;
     }
   }
 

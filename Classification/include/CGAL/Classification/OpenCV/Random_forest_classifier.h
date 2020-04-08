@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -25,13 +16,23 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
-#if (CV_MAJOR_VERSION < 3)
-#include <cv.h>
-#include <ml.h>
+
+#include <opencv2/opencv.hpp>
+
+//In opencv version 2.X the first digit is named EPOCH,
+//until version 3.0 where EPOCH disappears and it becomes MAJOR. Hence this
+//weird condition
+#ifdef CV_VERSION_EPOCH
+  #if  CV_VERSION_MAJOR == 4 && CV_VERSION_MINOR>= 11
+    #include <opencv2/ml.hpp>
+  #else
+    #include <opencv2/ml/ml.hpp>
+  #endif
 #else
-#include <opencv/cv.h>
-#include <opencv/ml.h>
+  #include <opencv2/ml.hpp>
 #endif
+
+
 
 namespace CGAL {
 
@@ -57,7 +58,7 @@ class Random_forest_classifier
   int m_max_categories;
   int m_max_number_of_trees_in_the_forest;
   float m_forest_accuracy;
-  
+
 #if (CV_MAJOR_VERSION < 3)
   CvRTrees* rtree;
 #else
@@ -65,14 +66,14 @@ class Random_forest_classifier
 #endif
 
 public:
-  
+
   /// \name Constructor
   /// @{
-  
+
 /*!
   \brief Instantiates the classifier using the sets of `labels` and `features`.
 
-  Parameters documentation is copy-pasted from [the official documentation of OpenCV](http://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
+  Parameters documentation is copy-pasted from [the official documentation of OpenCV](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
   \param labels label set used.
   \param features feature set used.
@@ -95,7 +96,7 @@ public:
       m_max_number_of_trees_in_the_forest (max_number_of_trees_in_the_forest),
       m_forest_accuracy (forest_accuracy)
 #if (CV_MAJOR_VERSION < 3)
-    , rtree (NULL)
+    , rtree (nullptr)
 #endif
   {  }
 
@@ -103,30 +104,30 @@ public:
   ~Random_forest_classifier ()
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
 #endif
   }
   /// \endcond
-  
+
   /// @}
 
   /// \name Parameters
   /// @{
-  
+
   void set_max_depth (int max_depth) { m_max_depth = max_depth; }
   void set_min_sample_count (int min_sample_count) { m_min_sample_count = min_sample_count; }
   void set_max_categories (int max_categories) { m_max_categories = max_categories; }
   void set_max_number_of_trees_in_the_forest (int max_number_of_trees_in_the_forest)
   { m_max_number_of_trees_in_the_forest = max_number_of_trees_in_the_forest; }
   void set_forest_accuracy (float forest_accuracy) { m_forest_accuracy = forest_accuracy; }
-  
-  
+
+
   /// @}
 
   /// \name Training
   /// @{
-  
+
   /*!
     \brief Runs the training algorithm.
 
@@ -147,7 +148,7 @@ public:
   void train (const LabelIndexRange& ground_truth)
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
 #endif
 
@@ -157,7 +158,7 @@ public:
               << CV_MAJOR_VERSION << "."
               << CV_MINOR_VERSION << ")" << std::endl;
 #endif
-    
+
     std::size_t nb_samples = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
       if (int(ground_truth[i]) != -1)
@@ -205,7 +206,7 @@ public:
     rtree->setUseSurrogates(false);
     rtree->setPriors(cv::Mat());
     rtree->setCalculateVarImportance(false);
-    
+
     cv::TermCriteria criteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, 0.01f);
     rtree->setTermCriteria (criteria);
 
@@ -224,7 +225,7 @@ public:
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
     out.resize (m_labels.size(), 0.);
-    
+
     cv::Mat feature (1, int(m_features.size()), CV_32FC1);
     for (std::size_t f = 0; f < m_features.size(); ++ f)
       feature.at<float>(0, int(f)) = m_features[f]->value(item_index);
@@ -243,9 +244,9 @@ public:
 #else
 
     std::vector<float> result (1, 0);
-    
+
     rtree->predict (feature, result);
-    
+
     for (std::size_t i = 0; i < out.size(); ++ i)
       if (i == std::size_t(result[0]))
         out[i] = 1.f;
@@ -286,7 +287,7 @@ public:
   void load_configuration (const char* filename)
   {
 #if (CV_MAJOR_VERSION < 3)
-    if (rtree != NULL)
+    if (rtree != nullptr)
       delete rtree;
     rtree = new CvRTrees;
     rtree->load(filename);
@@ -295,6 +296,7 @@ public:
 #endif
   }
 
+  /// @}
 
 };
 

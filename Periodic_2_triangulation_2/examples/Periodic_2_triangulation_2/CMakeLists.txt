@@ -2,11 +2,15 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Periodic_2_triangulation_2_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
-find_package(CGAL QUIET COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5)
+
+if(CGAL_Qt5_FOUND)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+endif()
 
 if ( CGAL_FOUND )
 
@@ -24,9 +28,12 @@ if ( CGAL_FOUND )
     target_link_libraries(generic_p2t2 PUBLIC CGAL::CGAL_Qt5)
   endif()
 
+  if(CGAL_Qt5_FOUND)
+    target_link_libraries(draw_periodic_2_triangulation_2 PUBLIC CGAL::CGAL_Qt5)
+  endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
@@ -42,7 +33,7 @@
 namespace CGAL {
 
 class Index_generator {
-  
+
  public:
   static int get_unique_index()
   {
@@ -83,25 +74,25 @@ class SNC_indexed_items {
     bool is_valid( bool verb = false, int level = 0) const {
       bool valid = Base::is_valid(verb, level);
 
-      Halffacet_cycle_const_iterator 
-	fci(this->facet_cycles_begin());
+      Halffacet_cycle_const_iterator
+        fci(this->facet_cycles_begin());
       if(!fci.is_shalfedge()) return false;
       SHalfedge_const_handle set(fci);
       int index = set->get_index();
       for(; fci != this->facet_cycles_end(); ++fci) {
-	if(fci.is_shalfedge()) {
-	  SHalfedge_const_handle se(fci);
-	  SHalfedge_around_facet_const_circulator 
-	    sfc(se), send(sfc);
-	  do {	    
-	    valid = valid && sfc->get_index() == index;
-	    ++sfc;
-	  } while(sfc != send);
-	} else if(fci.is_shalfloop()) {
-	  SHalfloop_const_handle sl(fci);
-	  valid = valid && sl->get_index() == index;
-	} else
-	  return false;
+        if(fci.is_shalfedge()) {
+          SHalfedge_const_handle se(fci);
+          SHalfedge_around_facet_const_circulator
+            sfc(se), send(sfc);
+          do {
+            valid = valid && sfc->get_index() == index;
+            ++sfc;
+          } while(sfc != send);
+        } else if(fci.is_shalfloop()) {
+          SHalfloop_const_handle sl(fci);
+          valid = valid && sl->get_index() == index;
+        } else
+          return false;
       }
       return valid;
     }
@@ -115,8 +106,8 @@ class SNC_indexed_items {
     bool init_ifacet;
   public:
     SHalfloop() : Base(), index(0), init_ifacet(false) {}
-    SHalfloop(const SHalfloop<Refs>& sl) 
-      : Base(sl), index(0), 
+    SHalfloop(const SHalfloop<Refs>& sl)
+      : Base(sl), index(0),
       ifacet(sl.ifacet), init_ifacet(sl.init_ifacet) {}
     SHalfloop<Refs>& operator=(const SHalfloop<Refs>& sl) {
       (Base&) *this = (Base) sl;
@@ -126,15 +117,15 @@ class SNC_indexed_items {
       return *this;
     }
 
-    void set_index(int idx = Index_generator::get_unique_index()) 
+    void set_index(int idx = Index_generator::get_unique_index())
     { index = idx; }
     int get_index() const { return index; }
-    Halffacet_const_handle get_index_facet() const { 
+    Halffacet_const_handle get_index_facet() const {
       if(init_ifacet)
-	return ifacet;
+        return ifacet;
       return this->facet();
     }
-    void set_index_facet(Halffacet_const_handle f) { 
+    void set_index_facet(Halffacet_const_handle f) {
       ifacet = f;
       init_ifacet = true;
     }
@@ -150,9 +141,9 @@ class SNC_indexed_items {
   public:
     SHalfedge() : Base(), index(0), index2(0), init_ifacet(false) {}
     SHalfedge(const SHalfedge<Refs>& se)
-      : Base(se), index(se.index), index2(se.index2), 
+      : Base(se), index(se.index), index2(se.index2),
       ifacet(se.ifacet), init_ifacet(se.init_ifacet) {}
-    SHalfedge<Refs>& operator=(const SHalfedge<Refs>& se) { 
+    SHalfedge<Refs>& operator=(const SHalfedge<Refs>& se) {
       (Base&) *this = (Base) se;
       index = se.index;
       index2 = se.index2;
@@ -161,22 +152,22 @@ class SNC_indexed_items {
       return *this;
     }
 
-    void set_index(int idx = Index_generator::get_unique_index()) 
+    void set_index(int idx = Index_generator::get_unique_index())
     { index = index2 = idx; }
-    int get_index() const { 
-      return index; 
+    int get_index() const {
+      return index;
     }
     void set_forward_index(int idx)  { index  = idx;}
     void set_backward_index(int idx) { index2 = idx;}
     int get_forward_index() { return index;  }
     int get_backward_index() { return index2; }
     int get_smaller_index() { return index < index2 ? index : index2; }
-    Halffacet_const_handle get_index_facet() const { 
-      if(init_ifacet) 
-	return ifacet;
+    Halffacet_const_handle get_index_facet() const {
+      if(init_ifacet)
+        return ifacet;
       return this->facet();
     }
-    void set_index_facet(Halffacet_const_handle f) { 
+    void set_index_facet(Halffacet_const_handle f) {
       ifacet = f;
       init_ifacet = true;
     }
@@ -196,7 +187,7 @@ class SNC_indexed_items {
       return *this;
     }
 
-    void set_index(int idx = Index_generator::get_unique_index()) 
+    void set_index(int idx = Index_generator::get_unique_index())
     { index = idx; }
     int get_index() const { return index; }
   };

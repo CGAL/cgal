@@ -28,7 +28,7 @@ int main()
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
     CGAL::Random_points_in_cube_d<Triangulation::Point> rand_it(D, 1.0);
     std::vector<Triangulation::Point> points;
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+    std::copy_n(rand_it, N, std::back_inserter(points));
 
     Triangulation t(D);                      // create triangulation
     CGAL_assertion(t.empty());
@@ -39,9 +39,9 @@ int main()
     typedef std::vector<Face> Faces;
     Faces edges;
     std::back_insert_iterator<Faces> out(edges);
-    t.tds().incident_faces(t.infinite_vertex(), 1, out);  
+    t.tds().incident_faces(t.infinite_vertex(), 1, out);
     // collect faces of dimension 1 (edges) incident to the infinite vertex
-    std::cout << "There are " << edges.size() 
+    std::cout << "There are " << edges.size()
               << " vertices on the convex hull." << std::endl;
 
 #include "triangulation1.cpp" // See below

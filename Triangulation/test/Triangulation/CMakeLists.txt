@@ -1,9 +1,9 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
   message(STATUS "NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled.")
@@ -13,10 +13,9 @@ endif()
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-  
-  find_package(Eigen3 3.1.0) 
-  if (EIGEN3_FOUND) 
-    include( ${EIGEN3_USE_FILE} ) 
+
+  find_package(Eigen3 3.1.0)
+  if (EIGEN3_FOUND)
     include_directories (BEFORE "include")
 
     create_single_source_cgal_program( "test_triangulation.cpp" )
@@ -25,6 +24,15 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "test_tds.cpp" )
     create_single_source_cgal_program( "test_torture.cpp" )
     create_single_source_cgal_program( "test_insert_if_in_star.cpp" )
+    foreach(target
+        test_triangulation
+        test_delaunay
+        test_regular
+        test_tds
+        test_torture
+        test_insert_if_in_star)
+      CGAL_target_use_Eigen(${target})
+    endforeach()
 
   else()
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")

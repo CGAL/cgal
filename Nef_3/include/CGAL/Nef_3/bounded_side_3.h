@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -38,31 +29,31 @@
 
 namespace CGAL {
 
-template <class Point_2, class Point_3> 
+template <class Point_2, class Point_3>
 Point_2 point_3_get_x_y_point_2(Point_3 p) {
   return( Point_2(p.hx(), p.hy(), p.hw()) );
 }
 
-template <class Point_2, class Point_3> 
+template <class Point_2, class Point_3>
 Point_2 point_3_get_y_z_point_2(Point_3 p) {
   return( Point_2(p.hy(), p.hz(), p.hw()) );
 }
 
-template <class Point_2, class Point_3> 
+template <class Point_2, class Point_3>
 Point_2 point_3_get_z_x_point_2(Point_3 p) {
   return( Point_2(p.hz(), p.hx(), p.hw()) );
 }
 
 template <class IteratorForward, class R>
 Bounded_side bounded_side_3(IteratorForward first,
-			    IteratorForward last,
+                            IteratorForward last,
                             const Point_3<R>& point,
                             typename R::Plane_3 plane = typename R::Plane_3(0,0,0,0)) {
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
   typedef typename R::Plane_3 Plane_3;
-  
+
   if(plane == Plane_3(0,0,0,0)) {
     // TO TEST: code never tested
     IteratorForward p(first);
@@ -105,7 +96,7 @@ Bounded_side bounded_side_3(IteratorForward first,
   }
   Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
   points.clear();
-  return side;  
+  return side;
 }
 
 } //namespace CGAL
@@ -113,47 +104,47 @@ Bounded_side bounded_side_3(IteratorForward first,
 #ifdef WRONG_IMPLEMENTATION
 /* The following code is wrong since Proyector_.. structures must not return
    references to temporal objects */
-template < class Point_2, class Point_3> 
+template < class Point_2, class Point_3>
 struct Project_XY {
   typedef Point_3                  argument_type;
   typedef Point_2                  result_type;
-  Point_2 operator()( Point_3& p) const { 
+  Point_2 operator()( Point_3& p) const {
     return Point_2(p.hx(), p.hy(), p.hw());
   }
-  const Point_2 operator()( const Point_3& p) const { 
+  const Point_2 operator()( const Point_3& p) const {
     return Point_2(p.hx(), p.hy(), p.hw());
   }
 };
 
-template < class Point_2, class Point_3> 
+template < class Point_2, class Point_3>
 struct Project_YZ {
   typedef Point_3                  argument_type;
   typedef Point_2                  result_type;
-  Point_2 operator()( Point_3& p) const { 
+  Point_2 operator()( Point_3& p) const {
     return Point_2(p.hy(), p.hz(), p.hw());
   }
-  const Point_2 operator()( const Point_3& p) const { 
+  const Point_2 operator()( const Point_3& p) const {
     return Point_2(p.hy(), p.hz(), p.hw());
   }
 };
 
-template < class Point_2, class Point_3> 
+template < class Point_2, class Point_3>
 struct Project_XZ {
   typedef Point_3                  argument_type;
   typedef Point_2                  result_type;
-  Point_2 operator()( Point_3& p) const { 
+  Point_2 operator()( Point_3& p) const {
     return Point_2(p.hx(), p.hz(), p.hw());
   }
-  const Point_2 operator()( const Point_3& p) const { 
+  const Point_2 operator()( const Point_3& p) const {
     return Point_2(p.hx(), p.hz(), p.hw());
   }
 };
 
 template <class IC, class R>
 Bounded_side bounded_side_3(IC first,
-			    IC last,
-			    const Point_3<R>& point,
-			    Plane_3<R> plane = Plane_3<R>(0,0,0,0)) {
+                            IC last,
+                            const Point_3<R>& point,
+                            Plane_3<R> plane = Plane_3<R>(0,0,0,0)) {
 
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;

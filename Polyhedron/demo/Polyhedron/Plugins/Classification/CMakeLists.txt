@@ -2,62 +2,50 @@ include( polyhedron_demo_macros )
 
 if(EIGEN3_FOUND)
 
-  set(classification_linked_libraries)
-  set(classification_compile_definitions)
-  
-  find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
+  set(Classification_dependencies_met TRUE)
 
-  if( WIN32 )
-# to avoid a warning with old cmake
-    set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
-    set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
-    find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
-    if( Boost_ZLIB_FOUND AND Boost_BZIP2_FOUND)
-      set(classification_linked_libraries ${classification_linked_libraries}
-        ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
-    endif()
+  find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
+  if (NOT Boost_SERIALIZATION_FOUND)
+    message(STATUS "NOTICE: Boost Serialization not found. Classification plugin won't be available.")
+    set(Classification_dependencies_met FALSE)
   endif()
 
-  if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND AND (NOT WIN32 OR Boost_ZLIB_FOUND))
+  if (NOT Boost_IOSTREAMS_FOUND)
+    message(STATUS "NOTICE: Boost IOStreams not found. Classification plugin won't be available.")
+    set(Classification_dependencies_met FALSE)
+  endif()
+
+  find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
+  if (NOT OpenCV_FOUND)
+    message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
+  endif()
+
+  find_package(TensorFlow QUIET)
+  if (NOT TensorFlow_FOUND)
+    message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
+  endif()
+
+  if (Classification_dependencies_met)
     qt5_wrap_ui( classificationUI_FILES Classification_widget.ui Classification_advanced_widget.ui )
     polyhedron_demo_plugin(classification_plugin Classification_plugin Point_set_item_classification Cluster_classification Surface_mesh_item_classification ${classificationUI_FILES} KEYWORDS Classification)
-    
-    set(classification_linked_libraries ${classification_linked_libraries}
-      ${Boost_SERIALIZATION_LIBRARY}
-      ${Boost_IOSTREAMS_LIBRARY})
-    
-    find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
-    if (OpenCV_FOUND)
-      message(STATUS "Found OpenCV ${OpenCV_VERSION}")
-      include_directories(${OpenCV_INCLUDE_DIRS})
-      set(classification_linked_libraries ${classification_linked_libraries}
-        ${OpenCV_LIBS})
-      set(classification_compile_definitions ${classification_compile_definitions}
-        "-DCGAL_LINKED_WITH_OPENCV")
-    else()
-      message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
-    endif()
-
-    find_package(TensorFlow QUIET)
-    if (TensorFlow_FOUND)
-      message(STATUS "Found TensorFlow")
-      set(classification_linked_libraries ${classification_linked_libraries}
-        ${TensorFlow_LIBRARY})
-      set(classification_compile_definitions ${classification_compile_definitions}
-        "-DCGAL_LINKED_WITH_TENSORFLOW")
-      include_directories( ${TensorFlow_INCLUDE_DIR} )
-    else()
-      message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
-    endif()
-    
     target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
-      scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_selection_item scene_color_ramp ${classification_linked_libraries})
-    add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
-    target_compile_definitions(classification_plugin PUBLIC ${classification_compile_definitions})
-  else()
-    message(STATUS "NOTICE: Boost Serialization or IO Streams or ZLIB not found. Classification plugin won't be available.")
-  endif()
+      scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_selection_item scene_color_ramp)
 
+    CGAL_target_use_Eigen(classification_plugin)
+    CGAL_target_use_Boost_IOStreams(classification_plugin)
+    CGAL_target_use_Boost_Serialization(classification_plugin)
+    if(OpenCV_FOUND)
+      CGAL_target_use_OpenCV(classification_plugin)
+    endif()
+    if(TensorFlow_FOUND)
+      CGAL_target_use_TensorFlow(classification_plugin)
+    endif()
+    if(TBB_FOUND)
+      CGAL_target_use_TBB(classification_plugin)
+    endif()
+
+    add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)
+  endif()
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Classification plugin will not be available.")

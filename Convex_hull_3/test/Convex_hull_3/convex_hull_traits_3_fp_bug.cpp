@@ -23,16 +23,16 @@ int main()
   CGAL::Polyhedron_3<K> r;
   CGAL::convex_hull_3(pointset.begin(), pointset.end(), r);
   assert(r.size_of_vertices()==82);
-  
+
   CGAL::Polyhedron_3<EK> s;
   CGAL::copy_face_graph(r,s);
   assert(CGAL::is_strongly_convex_3(s));
 
   CGAL::Cartesian_converter<K, EK> to_EK;
   CGAL::Side_of_triangle_mesh<CGAL::Polyhedron_3<EK>, EK> sotm(s);
-  
-  
-  BOOST_FOREACH(K::Point_3 p, pointset)
+
+
+  for(K::Point_3 p : pointset)
   {
     assert(sotm(to_EK(p)) != CGAL::ON_UNBOUNDED_SIDE);
   }

@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -36,7 +27,7 @@ namespace CGAL {
   { typedef Exact_predicates_inexact_constructions_kernel type; };
   template <>
   struct LCC_default_kernel<3>
-  { typedef Exact_predicates_inexact_constructions_kernel type; };  
+  { typedef Exact_predicates_inexact_constructions_kernel type; };
 
   /** Trait class for Linear_cell_complex class.
    *  dD version (for the moment there is only one dD kernel in CGAL).
@@ -46,11 +37,11 @@ namespace CGAL {
   struct Linear_cell_complex_traits : public Kernel
   {
     static const unsigned int ambient_dimension = d_;
-    
+
     typedef typename Kernel::FT          FT;
     typedef typename Kernel::Point_d     Point;
     typedef typename Kernel::Vector_d    Vector;
-    
+
     // Constructions
     struct Construct_translated_point
     {
@@ -67,7 +58,7 @@ namespace CGAL {
       Vector operator() (const CGAL::Origin&, const Point& p)
       { return operator() (Point(ambient_dimension, CGAL::Origin()), p); }
     };
-    
+
     struct Construct_sum_of_vectors
     {
       Vector operator() (const Vector&v1, const Vector& v2)
@@ -94,7 +85,7 @@ namespace CGAL {
   struct Linear_cell_complex_traits<2,Kernel> : public Kernel
   {
     static const unsigned int ambient_dimension = 2;
-    
+
     typedef typename Kernel::FT          FT;
     typedef typename Kernel::Point_2     Point;
     typedef typename Kernel::Vector_2    Vector;
@@ -107,7 +98,7 @@ namespace CGAL {
 
     typedef typename Kernel::Construct_sum_of_vectors_2
     Construct_sum_of_vectors;
-    
+
     typedef typename Kernel::Construct_scaled_vector_2
     Construct_scaled_vector;
 
@@ -126,9 +117,9 @@ namespace CGAL {
     typedef typename Kernel::FT          FT;
     typedef typename Kernel::Point_3     Point;
     typedef typename Kernel::Vector_3    Vector;
-    
+
     // Constructions
-    typedef typename Kernel::Construct_translated_point_3 
+    typedef typename Kernel::Construct_translated_point_3
     Construct_translated_point;
 
     typedef typename Kernel::Construct_vector_3 Construct_vector;
@@ -136,9 +127,9 @@ namespace CGAL {
     typedef typename Kernel::Construct_sum_of_vectors_3
     Construct_sum_of_vectors;
 
-    typedef typename Kernel::Construct_scaled_vector_3 
+    typedef typename Kernel::Construct_scaled_vector_3
     Construct_scaled_vector;
-    
+
     typedef typename Kernel::Construct_midpoint_3
     Construct_midpoint;
   };

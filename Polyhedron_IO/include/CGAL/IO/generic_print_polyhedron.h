@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -24,7 +15,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
@@ -37,7 +28,7 @@ namespace CGAL {
 
 template <class Polyhedron, class Writer, class Vpm>
 void
-generic_print_polyhedron( std::ostream&     out, 
+generic_print_polyhedron( std::ostream&     out,
                           const Polyhedron& P,
                           Writer&           writer,
                           const Vpm& vpm ) {
@@ -50,7 +41,7 @@ generic_print_polyhedron( std::ostream&     out,
                          P.size_of_vertices(),
                          P.size_of_halfedges(),
                          P.size_of_facets());
-    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::vertex_descriptor vi, vertices(P)) {
+    for(typename boost::graph_traits<Polyhedron>::vertex_descriptor vi : vertices(P)) {
         writer.write_vertex( ::CGAL::to_double( get(vpm, vi).x()),
                              ::CGAL::to_double( get(vpm, vi).y()),
                              ::CGAL::to_double( get(vpm, vi).z()));
@@ -76,9 +67,9 @@ generic_print_polyhedron( std::ostream&     out,
 
 template <class Polyhedron, class Writer>
 void
-generic_print_polyhedron( std::ostream&     out, 
+generic_print_polyhedron( std::ostream&     out,
                           const Polyhedron& P,
-                          Writer&           writer) 
+                          Writer&           writer)
 {
   generic_print_polyhedron(out, P, writer,
                            get(CGAL::vertex_point, P));

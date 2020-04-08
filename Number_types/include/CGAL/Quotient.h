@@ -1,24 +1,15 @@
-// Copyright (c) 1999-2007  
+// Copyright (c) 1999-2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hemmer
@@ -31,8 +22,6 @@
 
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
-
-#include <CGAL/number_type_basic.h>
 
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
@@ -119,28 +108,9 @@ class Quotient
     return *this;
   }
 
-#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }
-
-#else
-  template <class T1, class T2>
-  Quotient(T1 && n, T2 && d)
-     : num(std::forward<T1>(n)), den(std::forward<T2>(d))
-  { CGAL_postcondition( den != 0 ); }
-
-  Quotient(NT && n)
-    : num(std::move(n)), den(1) {}
-
-  Quotient& operator=(NT && n)
-  {
-    num = std::move(n);
-    den = 1;
-    return *this;
-  }
-#endif
 
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
@@ -336,11 +306,11 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_double(NT)& r)
 {
-  //num += r * den; 
-  NT r_num, r_den; 
+  //num += r * den;
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num = num*r_den + r_num*den;
-  den *=r_den; 
+  den *=r_den;
   return *this;
 }
 
@@ -350,10 +320,10 @@ Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_double(NT)& r)
 {
   //num -= r * den;
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num =  num*r_den - r_num*den;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -363,11 +333,11 @@ Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_double(NT)& r)
 {
   // num *= r;
-  
-  NT r_num, r_den; 
+
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_num;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -377,10 +347,10 @@ Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_double(NT)& r)
 {
   CGAL_precondition( r != 0 );
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_den;
-  den *= r_num; 
+  den *= r_num;
   return *this;
 }
 
@@ -432,15 +402,15 @@ operator>>(std::istream& in, Quotient<NT>& r)
   if(!in) return in;
   std::istream::sentry s(in); // skip whitespace
   if(in.peek()!='/'){
-	  if(!in.good()){
-		  in.clear(std::ios_base::eofbit);
-		  // unlikely to be some other reason?
-	  }
+          if(!in.good()){
+                  in.clear(std::ios_base::eofbit);
+                  // unlikely to be some other reason?
+          }
   } else {
-	  char c;
-	  in.get(c); // remove the '/'
-	  in >> den;
-	  if(!in) return in;
+          char c;
+          in.get(c); // remove the '/'
+          in >> den;
+          if(!in) return in;
   }
   r=Quotient<NT>(num,den);
   return in;

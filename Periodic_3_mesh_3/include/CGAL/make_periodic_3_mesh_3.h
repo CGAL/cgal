@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stéphane Tayeb,
 //                 Mikhail Bogdanov,
@@ -93,8 +84,7 @@ struct C3t3_initializer_base
                   const MeshDomain& domain,
                   const MeshCriteria& criteria,
                   bool with_features,
-                  bool nonlinear = false,
-                  const int nb_initial_points = -1)
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
     c3t3.triangulation().set_domain(domain.bounding_box());
     c3t3.triangulation().insert_dummy_points();
@@ -102,8 +92,7 @@ struct C3t3_initializer_base
 
     // Call the basic initialization from c3t3, which handles features and
     // adds a bunch of points on the surface
-    Base::operator()(c3t3, domain, criteria, with_features,
-                     nonlinear, nb_initial_points);
+    Base::operator()(c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -119,9 +108,10 @@ struct C3t3_initializer
                                 MeshDomainHasHasFeatures, HasFeatures> Base;
 
   void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
-                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+                  bool with_features,
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
-    return Base::operator()(c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+    return Base::operator()(c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -133,10 +123,11 @@ template <typename C3T3,
 struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, HasFeatures>
 {
   void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
-                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+                  bool with_features,
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
     C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, typename MeshDomain::Has_features>()
-        (c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+        (c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -152,18 +143,21 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
   virtual ~C3t3_initializer() { }
 
   // this override will be used when initialize_features() is called, in make_mesh_3.h
-  virtual void initialize_features(C3T3& c3t3,
-                                   const MeshDomain& domain,
-                                   const MeshCriteria& criteria,
-                                   bool nonlinear = false)
+  virtual void
+  initialize_features(C3T3& c3t3,
+                      const MeshDomain& domain,
+                      const MeshCriteria& criteria,
+                      const parameters::internal::Mesh_3_options& mesh_options)
   {
-    return Periodic_3_mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria, nonlinear);
+    return Periodic_3_mesh_3::internal::init_c3t3_with_features
+      (c3t3, domain, criteria, mesh_options.nonlinear_growth_of_balls);
   }
 
   void operator()(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
-                  bool with_features, bool nonlinear = false, const int nb_initial_points = -1)
+                  bool with_features,
+                  const parameters::internal::Mesh_3_options& mesh_options)
   {
-    return Base::operator()(c3t3, domain, criteria, with_features, nonlinear, nb_initial_points);
+    return Base::operator()(c3t3, domain, criteria, with_features, mesh_options);
   }
 };
 
@@ -176,8 +170,6 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
 
 // Manual redirections
 // boost::parameter can't handle make_periodic_3_mesh_3 return_type alone...
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
 template <typename C3T3, typename MD, typename MC, typename ... T>
 C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
 {
@@ -186,70 +178,11 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
   return c3t3;
 }
 
-#else
-
-template <typename C3T3, typename MD, typename MC>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC, typename Arg1>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC, typename Arg1, typename Arg2>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
-                            const Arg3& a3)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
-                            const Arg3& a3, const Arg4& a4)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4);
-  return c3t3;
-}
-
-template <typename C3T3, typename MD, typename MC,
-          typename Arg1, typename Arg2, typename Arg3,
-          typename Arg4, typename Arg5>
-C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc,
-                            const Arg1& a1, const Arg2& a2, const Arg3& a3,
-                            const Arg4& a4, const Arg5& a5)
-{
-  C3T3 c3t3;
-  make_periodic_3_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4,a5);
-  return c3t3;
-}
-#endif
-
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro
 #endif
-  
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/boost/parameter.h>
@@ -318,8 +251,7 @@ void make_periodic_3_mesh_3_impl(C3T3& c3t3,
                                                              domain,
                                                              criteria,
                                                              with_features,
-                                                             mesh_options.nonlinear_growth_of_balls,
-                                                             mesh_options.number_of_initial_points);
+                                                             mesh_options);
 
   // Build mesher and launch refinement process
   refine_periodic_3_mesh_3(c3t3, domain, criteria,

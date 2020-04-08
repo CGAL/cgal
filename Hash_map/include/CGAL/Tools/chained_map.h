@@ -1,25 +1,16 @@
-// Copyright (c) 1997-2000  
+// Copyright (c) 1997-2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Courtesy of LEDA
 #ifndef CGAL_CHAINED_MAP_H
@@ -36,7 +27,7 @@ template <typename T, typename Allocator = CGAL_ALLOCATOR(T) > class chained_map
 template <typename T> class chained_map_elem;
 
 template <typename T>
-class chained_map_elem 
+class chained_map_elem
 {
   template<typename T2, typename Alloc> friend class chained_map;
   std::size_t k; T i;
@@ -46,8 +37,8 @@ class chained_map_elem
 template <typename T, typename Allocator>
 class chained_map
 {
-   const std::size_t NULLKEY; 
-   const std::size_t NONNULLKEY;
+   const std::size_t nullptrKEY;
+   const std::size_t NONnullptrKEY;
 
    chained_map_elem<T> STOP;
 
@@ -60,16 +51,12 @@ class chained_map
    chained_map_elem<T>* old_table;
    chained_map_elem<T>* old_table_end;
    chained_map_elem<T>* old_free;
-   std::size_t old_table_size;           
-   std::size_t old_table_size_1;  
+   std::size_t old_table_size;
+   std::size_t old_table_size_1;
 
    std::size_t old_index;
-#ifdef CGAL_CXX11
    typedef std::allocator_traits<Allocator> Allocator_traits;
    typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
-#else
-   typedef typename Allocator::template rebind<chained_map_elem<T> >::other allocator_type;
-#endif
 
    allocator_type alloc;
 
@@ -79,10 +66,10 @@ public:
 private:
    void init_inf(T& x)   const { x = STOP.i; }
 
-   
+
    chained_map_elem<T>*  HASH(std::size_t x)  const
    { return table + (x & table_size_1);  }
-   
+
    void init_table(std::size_t t);
    void rehash();
    void del_old_table();
@@ -91,12 +78,8 @@ private:
 
    void destroy(chained_map_elem<T>* item)
    {
-#ifdef CGAL_CXX11
      typedef std::allocator_traits<allocator_type> Allocator_type_traits;
      Allocator_type_traits::destroy(alloc,item);
-#else
-     alloc.destroy(item);
-#endif
    }
 
 public:
@@ -106,15 +89,15 @@ public:
    std::size_t index(chained_map_item it) const { return it->k; }
    T&            inf(chained_map_item it) const { return it->i; }
 
-   chained_map(std::size_t n = 1); 
+   chained_map(std::size_t n = 1);
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
-   
+
 
    void clear_entries();
    void clear();
-   ~chained_map() 
-   { 
+   ~chained_map()
+   {
      if (old_table)
      {
        for (chained_map_item item = old_table ; item != old_table_end ; ++item)
@@ -139,64 +122,60 @@ inline T& chained_map<T, Allocator>::access(std::size_t x)
 { chained_map_item p = HASH(x);
 
   if (old_table) del_old_table();
-  if ( p->k == x ) { 
-     old_index = x; 
+  if ( p->k == x ) {
+     old_index = x;
      return p->i;
   }
   else {
-    if ( p->k == NULLKEY ) {
+    if ( p->k == nullptrKEY ) {
       p->k = x;
       init_inf(p->i);  // initializes p->i to xdef
       old_index = x;
       return p->i;
-    } else 
+    } else
       return access(p,x);
   }
 }
 
 template <typename T, typename Allocator>
 void chained_map<T, Allocator>::init_table(std::size_t t)
-{ 
+{
   table_size = t;
   table_size_1 = t-1;
   table = alloc.allocate(t + t/2);
   for (std::size_t i = 0 ; i < t + t/2 ; ++i){
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(alloc,table + i);
-#else
-    alloc.construct(table + i, chained_map_elem<T>());
-#endif
   }
 
   free = table + t;
-  table_end = table + t + t/2;      
+  table_end = table + t + t/2;
 
-  for (chained_map_item p = table; p < free; p++) 
-  { p->succ = &STOP; 
-    p->k = NULLKEY;
+  for (chained_map_item p = table; p < free; p++)
+  { p->succ = &STOP;
+    p->k = nullptrKEY;
   }
-  table->k = NONNULLKEY;
+  table->k = NONnullptrKEY;
 }
 
 
 template <typename T, typename Allocator>
 inline void chained_map<T, Allocator>::insert(std::size_t x, T y)
-{ chained_map_item q = HASH(x);                                    
-  if ( q->k == NULLKEY ) {      
-    q->k = x;                                                  
-    q->i = y; 
-  } else { 
-    free->k = x;                                                
-    free->i = y;                                                
-    free->succ = q->succ;                                       
-    q->succ = free++; 
-  }                                         
+{ chained_map_item q = HASH(x);
+  if ( q->k == nullptrKEY ) {
+    q->k = x;
+    q->i = y;
+  } else {
+    free->k = x;
+    free->i = y;
+    free->succ = q->succ;
+    q->succ = free++;
+  }
 }
 
-                                                                            
+
 template <typename T, typename Allocator>
 void chained_map<T, Allocator>::rehash()
-{ 
+{
   old_table = table;
   old_table_end = table_end;
   old_table_size = table_size;
@@ -211,8 +190,8 @@ void chained_map<T, Allocator>::rehash()
 
   for(p = old_table + 1; p < old_table_mid; p++)
   { std::size_t x = p->k;
-    if ( x != NULLKEY ) // list p is non-empty
-    { chained_map_item q = HASH(x);  
+    if ( x != nullptrKEY ) // list p is non-empty
+    { chained_map_item q = HASH(x);
       q->k = x;
       q->i = p->i;
     }
@@ -261,9 +240,9 @@ template <typename T, typename Allocator>
 T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 {
   STOP.k = x;
-  chained_map_item q = p->succ; 
+  chained_map_item q = p->succ;
   while (q->k != x) q = q->succ;
-  if (q != &STOP) 
+  if (q != &STOP)
   { old_index = x;
     return q->i;
   }
@@ -275,7 +254,7 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
     p = HASH(x);
   }
 
-  if (p->k == NULLKEY)
+  if (p->k == nullptrKEY)
   { p->k = x;
     init_inf(p->i);  // initializes p->i to xdef
     return p->i;
@@ -291,11 +270,11 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 
 
 template <typename T, typename Allocator>
-chained_map<T, Allocator>::chained_map(std::size_t n) : 
-  NULLKEY(0), NONNULLKEY(1), old_table(0)
-{ 
+chained_map<T, Allocator>::chained_map(std::size_t n) :
+  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
+{
   if (n < 512)
-    init_table(512); 
+    init_table(512);
   else {
     std::size_t ts = 1;
     while (ts < n) ts <<= 1;
@@ -305,14 +284,14 @@ chained_map<T, Allocator>::chained_map(std::size_t n) :
 
 
 template <typename T, typename Allocator>
-chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D) : 
-  NULLKEY(0), NONNULLKEY(1), old_table(0)
-{ 
+chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D) :
+  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
+{
   init_table(D.table_size);
   STOP.i = D.STOP.i; // xdef
 
-  for(chained_map_item p = D.table + 1; p < D.free; p++) 
-  { if (p->k != NULLKEY || p >= D.table + D.table_size)
+  for(chained_map_item p = D.table + 1; p < D.free; p++)
+  { if (p->k != nullptrKEY || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //D.copy_inf(p->i);  // see chapter Implementation
     }
@@ -321,7 +300,7 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D) :
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_map<T, Allocator>& D)
-{ 
+{
   clear_entries();
 
   for (chained_map_item item = table ; item != table_end ; ++item)
@@ -332,8 +311,8 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
   init_table(D.table_size);
   STOP.i = D.STOP.i; // xdef
 
-  for(chained_map_item p = D.table + 1; p < D.free; p++) 
-  { if (p->k != NULLKEY || p >= D.table + D.table_size)
+  for(chained_map_item p = D.table + 1; p < D.free; p++)
+  { if (p->k != nullptrKEY || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //copy_inf(p->i);    // see chapter Implementation
     }
@@ -342,14 +321,14 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 }
 
 template <typename T, typename Allocator>
-void chained_map<T, Allocator>::clear_entries() 
+void chained_map<T, Allocator>::clear_entries()
 { for(chained_map_item p = table + 1; p < free; p++)
-    if (p->k != NULLKEY || p >= table + table_size) 
-      p->i = T();  
+    if (p->k != nullptrKEY || p >= table + table_size)
+      p->i = T();
 }
 
 template <typename T, typename Allocator>
-void chained_map<T, Allocator>::clear() 
+void chained_map<T, Allocator>::clear()
 {
   clear_entries();
 
@@ -357,30 +336,30 @@ void chained_map<T, Allocator>::clear()
     destroy(item);
   alloc.deallocate(table, table_end - table);
 
-  init_table(512); 
+  init_table(512);
 }
 
 template <typename T, typename Allocator>
-typename chained_map<T, Allocator>::chained_map_item 
-chained_map<T, Allocator>::lookup(std::size_t x) const 
+typename chained_map<T, Allocator>::chained_map_item
+chained_map<T, Allocator>::lookup(std::size_t x) const
 { chained_map_item p = HASH(x);
   ((std::size_t &)STOP.k) = x;  // cast away const
-  while (p->k != x) 
+  while (p->k != x)
   { p = p->succ; }
   return (p == &STOP) ? 0 : p;
 }
 
 
 template <typename T, typename Allocator>
-typename chained_map<T, Allocator>::chained_map_item 
+typename chained_map<T, Allocator>::chained_map_item
 chained_map<T, Allocator>::first_item() const
 { return next_item(table); }
 
 template <typename T, typename Allocator>
-typename chained_map<T, Allocator>::chained_map_item 
-chained_map<T, Allocator>::next_item(chained_map_item it) const 
+typename chained_map<T, Allocator>::chained_map_item
+chained_map<T, Allocator>::next_item(chained_map_item it) const
 { if (it == 0) return 0;
-  do it++; while (it < table + table_size && it->k == NULLKEY);
+  do it++; while (it < table + table_size && it->k == nullptrKEY);
   return (it < free ? it : 0);
 }
 
@@ -389,13 +368,13 @@ void chained_map<T, Allocator>::statistics() const
 { std::cout << "table_size: " << table_size <<"\n";
   std::size_t n = 0;
   for (chained_map_item p = table + 1; p < table + table_size; p++)
-     if (p ->k != NULLKEY) n++;
+     if (p ->k != nullptrKEY) n++;
   std::size_t used_in_overflow = free - (table + table_size );
   n += used_in_overflow;
   std::cout << "number of entries: " << n << "\n";
-  std::cout << "fraction of entries in first position: " << 
+  std::cout << "fraction of entries in first position: " <<
                ((double) (n - used_in_overflow))/n <<"\n";
-  std::cout << "fraction of empty lists: " << 
+  std::cout << "fraction of empty lists: " <<
                ((double) (n - used_in_overflow))/table_size<<"\n";
 }
 

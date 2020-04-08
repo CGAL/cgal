@@ -1,19 +1,10 @@
 // Copyright (c) 2012  INRIA Bordeaux Sud-Ouest (France), All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Gael Guennebaud
 
@@ -29,7 +20,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_sparse_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix`</a>
 that represents general matrices, be they symmetric or not.
 
@@ -64,7 +55,7 @@ public:
   Eigen_sparse_matrix()  :
       m_is_already_built(false)
   {}
-  
+
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
@@ -120,7 +111,7 @@ public:
     m_triplets.swap(other.m_triplets);
   }
 
-  
+
   /// Delete this object and the wrapped matrix.
   ~Eigen_sparse_matrix() { }
 
@@ -202,7 +193,7 @@ public:
     if(m_is_symmetric && (j > i))
       return;
 
-    if(m_is_already_built){      
+    if(m_is_already_built){
       CGAL_precondition(i < row_dimension());
       CGAL_precondition(j < column_dimension());
       m_matrix.coeffRef(i,j) += val;
@@ -279,7 +270,7 @@ public:
     m_matrix.makeCompressed();
     return m_matrix;
   }
-  
+
 
 public:
 
@@ -289,8 +280,8 @@ public:
   {
     return Eigen_sparse_matrix(c* M.eigen_object());
   }
-  
-  
+
+
   friend Eigen_sparse_matrix
   operator+(const Eigen_sparse_matrix& M0, const Eigen_sparse_matrix& M1)
   {
@@ -298,7 +289,7 @@ public:
   }
   /// \endcond
 
-  
+
   // Fields
 private:
   mutable bool m_is_already_built;
@@ -312,11 +303,11 @@ private:
   bool m_is_symmetric;
 }; // Eigen_sparse_matrix
 
-  
+
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_sparse_symmetric_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 
 Since the matrix is symmetric, only the lower triangle part is stored.
@@ -352,10 +343,10 @@ struct Eigen_sparse_symmetric_matrix
 /*!
 \ingroup PkgSolverInterfaceRef
 
-The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+The class `Eigen_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.
 
-\cgalModels `SvdTraits::Matrix` 
+\cgalModels `SvdTraits::Matrix`
 
 \tparam T Number type.
 

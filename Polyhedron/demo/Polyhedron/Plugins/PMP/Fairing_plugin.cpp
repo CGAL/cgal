@@ -14,7 +14,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -37,11 +37,11 @@ class Polyhedron_demo_fairing_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "fairing_plugin.json")
 public:
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
-    || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
+    || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
   void print_message(QString message) { CGAL::Three::Three::information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
@@ -64,12 +64,13 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
+    ui_widget.Density_control_factor_spin_box->setMaximum(96.989999999999995);
     addDockWidget(dock_widget);
     dock_widget->setWindowTitle(tr(
                                   "Fairing "
                                   ));
-    
-    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
+
+    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
   virtual void closure()

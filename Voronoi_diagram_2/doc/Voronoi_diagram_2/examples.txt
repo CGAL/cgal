@@ -1,4 +1,5 @@
 /*!
 \example Voronoi_diagram_2/vd_2_point_location.cpp
 \example Voronoi_diagram_2/vd_2_point_location_sdg_linf.cpp
+\example Voronoi_diagram_2/draw_voronoi_diagram_2.cpp
 */

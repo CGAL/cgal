@@ -40,7 +40,7 @@ int main() {
 
   std::cout << "The approximate probability that 3 spheres with radius 1"
             << std::endl;
-  std::cout << "choosen (uniformly) randomly on a 5x5x5 box intersect is: "
+  std::cout << "chosen (uniformly) randomly on a 5x5x5 box intersect is: "
             << ((double)count)/((double)(10000)) << std::endl;
 
   return 0;

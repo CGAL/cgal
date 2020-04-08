@@ -2,9 +2,9 @@
 //
 // Copyright (c) 1999 The CGAL Consortium
 //
-// 
-// 
-// 
+//
+//
+//
 //
 // ----------------------------------------------------------------------------
 // release       :
@@ -37,17 +37,17 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits)
   typedef typename std::vector< Point_2 >::iterator  V_iter;
   V_iter VIfirst = VI.begin();
   V_iter VIlast  = VI.end();
-  switch (alg) 
+  switch (alg)
   {
-      case ch_JARVIS:  
-                ch_jarvis(VIfirst, VIlast, std::back_inserter(VO), ch_traits); 
+      case ch_JARVIS:
+                ch_jarvis(VIfirst, VIlast, std::back_inserter(VO), ch_traits);
                 break;
       case ch_GRAHAM_ANDREW:
-                ch_graham_andrew(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_graham_andrew(VIfirst, VIlast, std::back_inserter(VO),
                                       ch_traits);
                 break;
       case ch_EDDY:
-                ch_eddy(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_eddy(VIfirst, VIlast, std::back_inserter(VO),
                              ch_traits);
                 break;
       case ch_AKL_TOUSSAINT:
@@ -55,11 +55,11 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits)
                                        ch_traits);
                 break;
       case ch_BYKAT:
-                ch_bykat(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_bykat(VIfirst, VIlast, std::back_inserter(VO),
                               ch_traits);
                 break;
       case ch_BYKAT_WITH_THRESHOLD:
-                ch_bykat_with_threshold(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_bykat_with_threshold(VIfirst, VIlast, std::back_inserter(VO),
                                              ch_traits);
                 break;
       case ch_LOWER_UPPER:
@@ -70,23 +70,23 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits)
                 break;
       case ch_ALL:
                 return
-                     ch__test(VIfirst, VIlast, ch_traits, 
+                     ch__test(VIfirst, VIlast, ch_traits,
                                    ch_JARVIS, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_GRAHAM_ANDREW, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_EDDY, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_BYKAT, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_BYKAT_WITH_THRESHOLD, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_LOWER_UPPER, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_AKL_TOUSSAINT, check_level);
       case ch_DEFAULT:
       default:
-                convex_hull_2( VIfirst, VIlast, std::back_inserter(VO), 
+                convex_hull_2( VIfirst, VIlast, std::back_inserter(VO),
                                ch_traits);
                 break;
   }
@@ -94,27 +94,27 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits)
   switch (check_level)
   {
       case ch_CHECK_CONVEXITY:
-                return is_ccw_strongly_convex_2( VO.begin(), VO.end(), 
+                return is_ccw_strongly_convex_2( VO.begin(), VO.end(),
                                                       ch_traits);
       case ch_CHECK_CONTAINEMENT:
                 return ch_brute_force_check_2( VIfirst, VIlast,
-                                                    VO.begin(), VO.end(), 
+                                                    VO.begin(), VO.end(),
                                                     ch_traits);
       case ch_NO_CHECK:
                 return true;
       case ch_CHECK_ALL:
       default:
-                return is_ccw_strongly_convex_2( VO.begin(), VO.end(), 
+                return is_ccw_strongly_convex_2( VO.begin(), VO.end(),
                                                       ch_traits)
                     && ch_brute_force_check_2( VIfirst, VIlast,
-                                                    VO.begin(), VO.end(), 
+                                                    VO.begin(), VO.end(),
                                                     ch_traits);
   }
 }
 
 template <class InputIterator, class Traits>
 bool
-ch__test(InputIterator first, InputIterator last, const Traits& ch_traits, 
+ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
               ch_Algorithm alg )
 {
   ch_Check_status check_level = ch_CHECK_ALL;
@@ -124,17 +124,17 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
   typedef typename std::vector< Point_2 >::iterator  V_iter;
   V_iter VIfirst = VI.begin();
   V_iter VIlast  = VI.end();
-  switch (alg) 
+  switch (alg)
   {
-      case ch_JARVIS:  
-                ch_jarvis(VIfirst, VIlast, std::back_inserter(VO), ch_traits); 
+      case ch_JARVIS:
+                ch_jarvis(VIfirst, VIlast, std::back_inserter(VO), ch_traits);
                 break;
       case ch_GRAHAM_ANDREW:
-                ch_graham_andrew(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_graham_andrew(VIfirst, VIlast, std::back_inserter(VO),
                                       ch_traits);
                 break;
       case ch_EDDY:
-                ch_eddy(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_eddy(VIfirst, VIlast, std::back_inserter(VO),
                              ch_traits);
                 break;
       case ch_AKL_TOUSSAINT:
@@ -142,11 +142,11 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
                                        ch_traits);
                 break;
       case ch_BYKAT:
-                ch_bykat(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_bykat(VIfirst, VIlast, std::back_inserter(VO),
                               ch_traits);
                 break;
       case ch_BYKAT_WITH_THRESHOLD:
-                ch_bykat_with_threshold(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_bykat_with_threshold(VIfirst, VIlast, std::back_inserter(VO),
                                              ch_traits);
                 break;
       case ch_LOWER_UPPER:
@@ -157,23 +157,23 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
                 break;
       case ch_ALL:
                 return
-                     ch__test(VIfirst, VIlast, ch_traits, 
+                     ch__test(VIfirst, VIlast, ch_traits,
                                    ch_JARVIS, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_GRAHAM_ANDREW, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_EDDY, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_BYKAT, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_BYKAT_WITH_THRESHOLD, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_LOWER_UPPER, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_AKL_TOUSSAINT, check_level);
       case ch_DEFAULT:
       default:
-                ( VIfirst, VIlast, std::back_inserter(VO), 
+                ( VIfirst, VIlast, std::back_inserter(VO),
                                            ch_traits);
                 break;
   }
@@ -181,27 +181,27 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
   switch (check_level)
   {
       case ch_CHECK_CONVEXITY:
-                return is_ccw_strongly_convex_2( VO.begin(), VO.end(), 
+                return is_ccw_strongly_convex_2( VO.begin(), VO.end(),
                                                       ch_traits);
       case ch_CHECK_CONTAINEMENT:
                 return ch_brute_force_check_2( VIfirst, VIlast,
-                                                    VO.begin(), VO.end(), 
+                                                    VO.begin(), VO.end(),
                                                     ch_traits);
       case ch_NO_CHECK:
                 return true;
       case ch_CHECK_ALL:
       default:
-                return is_ccw_strongly_convex_2( VO.begin(), VO.end(), 
+                return is_ccw_strongly_convex_2( VO.begin(), VO.end(),
                                                       ch_traits)
                     && ch_brute_force_check_2( VIfirst, VIlast,
-                                                    VO.begin(), VO.end(), 
+                                                    VO.begin(), VO.end(),
                                                     ch_traits);
   }
 }
 
 template <class InputIterator, class Traits>
 bool
-ch__test(InputIterator first, InputIterator last, const Traits& ch_traits, 
+ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
               ch_Algorithm alg, ch_Check_status check_level)
 {
   typedef typename Traits::Point_2   Point_2;
@@ -210,17 +210,17 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
   typedef typename std::vector< Point_2 >::iterator  V_iter;
   V_iter VIfirst = VI.begin();
   V_iter VIlast  = VI.end();
-  switch (alg) 
+  switch (alg)
   {
-      case ch_JARVIS:  
-                ch_jarvis(VIfirst, VIlast, std::back_inserter(VO), ch_traits); 
+      case ch_JARVIS:
+                ch_jarvis(VIfirst, VIlast, std::back_inserter(VO), ch_traits);
                 break;
       case ch_GRAHAM_ANDREW:
-                ch_graham_andrew(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_graham_andrew(VIfirst, VIlast, std::back_inserter(VO),
                                       ch_traits);
                 break;
       case ch_EDDY:
-                ch_eddy(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_eddy(VIfirst, VIlast, std::back_inserter(VO),
                              ch_traits);
                 break;
       case ch_AKL_TOUSSAINT:
@@ -228,11 +228,11 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
                                        ch_traits);
                 break;
       case ch_BYKAT:
-                ch_bykat(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_bykat(VIfirst, VIlast, std::back_inserter(VO),
                               ch_traits);
                 break;
       case ch_BYKAT_WITH_THRESHOLD:
-                ch_bykat_with_threshold(VIfirst, VIlast, std::back_inserter(VO), 
+                ch_bykat_with_threshold(VIfirst, VIlast, std::back_inserter(VO),
                                              ch_traits);
                 break;
       case ch_LOWER_UPPER:
@@ -243,23 +243,23 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
                 break;
       case ch_ALL:
                 return
-                     ch__test(VIfirst, VIlast, ch_traits, 
+                     ch__test(VIfirst, VIlast, ch_traits,
                                    ch_JARVIS, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_GRAHAM_ANDREW, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_EDDY, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_BYKAT, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_BYKAT_WITH_THRESHOLD, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_LOWER_UPPER, check_level)
-                  && ch__test(VIfirst, VIlast, ch_traits, 
+                  && ch__test(VIfirst, VIlast, ch_traits,
                                    ch_AKL_TOUSSAINT, check_level);
       case ch_DEFAULT:
       default:
-                convex_hull_2( VIfirst, VIlast, std::back_inserter(VO), 
+                convex_hull_2( VIfirst, VIlast, std::back_inserter(VO),
                                ch_traits);
                 break;
   }
@@ -267,20 +267,20 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
   switch (check_level)
   {
       case ch_CHECK_CONVEXITY:
-                return is_ccw_strongly_convex_2( VO.begin(), VO.end(), 
+                return is_ccw_strongly_convex_2( VO.begin(), VO.end(),
                                                       ch_traits);
       case ch_CHECK_CONTAINEMENT:
                 return ch_brute_force_check_2( VIfirst, VIlast,
-                                                    VO.begin(), VO.end(), 
+                                                    VO.begin(), VO.end(),
                                                     ch_traits);
       case ch_NO_CHECK:
                 return true;
       case ch_CHECK_ALL:
       default:
-                return is_ccw_strongly_convex_2( VO.begin(), VO.end(), 
+                return is_ccw_strongly_convex_2( VO.begin(), VO.end(),
                                                       ch_traits)
                     && ch_brute_force_check_2( VIfirst, VIlast,
-                                                    VO.begin(), VO.end(), 
+                                                    VO.begin(), VO.end(),
                                                     ch_traits);
   }
 }

@@ -103,7 +103,7 @@ struct Info_set_convert_info
 
   inline
   result_type operator()(const Info_set<Info_item>& info0,
-			 const Info_set<Info_item>& , bool) const
+                         const Info_set<Info_item>& , bool) const
   {
     // just return the info of the supporting segment
     return info0;
@@ -122,7 +122,7 @@ struct Info_set_merge_info
 
   inline
   Info_set<Info_item> operator()(const Info_set<Info_item>& info0,
-				 const Info_set<Info_item>& info1) const
+                                 const Info_set<Info_item>& info1) const
   {
     typedef typename Info_set<Info_item>::Info_list       Info_list;
 
