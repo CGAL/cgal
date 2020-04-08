@@ -20,32 +20,27 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   clear();
 
   Vertex_handle vertices[12];
-  // 6 faces per row, 4 rows
-  Face_handle faces[24];
+  Face_handle faces[24]; // 6 faces per row, 4 rows
 
   // Initialise vertices:
-  for (int i = 0; i < 4; i++)
+  for(int i=0; i<4; ++i)
+  {
+    for(int j=0; j<3; ++j)
     {
-      for (int j = 0; j < 3; j++)
-        {
-          // Initialise virtual vertices out of the domain for debugging
-          vertices[3 * i + j] = _tds.create_vertex();
-          Point p(j * (1.0 / 3.0) + i * (1.0 / 6.0), i * (1.0 / 4.0) );
-          p = Point((p.x() > FT(0.9375) ? (std::max)( p.x() - 1, FT(0) ) : p.x()),
-                    p.y());
-          p = Point((_domain.xmax() - _domain.xmin()) * p.x(),
-                    (_domain.xmax() - _domain.xmin()) * p.y());
-          p = Point(p.x() + _domain.xmin(),
-                    p.y() + _domain.ymin());
-          vertices[3 * i + j]->set_point(p);
-        }
+      // Initialise virtual vertices out of the domain for debugging
+      vertices[3 * i + j] = _tds.create_vertex();
+      Point p(j * (1.0 / 3.0) + i * (1.0 / 6.0), i * (1.0 / 4.0) );
+      p = Point((p.x() > FT(0.9375) ? (std::max)( p.x() - 1, FT(0) ) : p.x()), p.y());
+      p = Point((domain().xmax() - domain().xmin()) * p.x(),
+                (domain().xmax() - domain().xmin()) * p.y());
+      p = Point(p.x() + domain().xmin(), p.y() + domain().ymin());
+      vertices[3 * i + j]->set_point(p);
     }
+  }
 
   // Create faces:
-  for (int i = 0; i < 24; i++)
-    {
-      faces[i] = _tds.create_face();
-    }
+  for(int i=0; i<24; ++i)
+    faces[i] = _tds.create_face();
 
   // bottom row
   faces[0]->set_vertices(vertices[0], vertices[1], vertices[3]);
@@ -54,6 +49,7 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   faces[3]->set_vertices(vertices[0], vertices[3], vertices[5]);
   faces[4]->set_vertices(vertices[1], vertices[4], vertices[3]);
   faces[5]->set_vertices(vertices[2], vertices[5], vertices[4]);
+
   // second row
   faces[6]->set_vertices(vertices[3], vertices[4], vertices[6]);
   faces[7]->set_vertices(vertices[4], vertices[5], vertices[7]);
@@ -61,6 +57,7 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   faces[9]->set_vertices(vertices[3], vertices[6], vertices[8]);
   faces[10]->set_vertices(vertices[4], vertices[7], vertices[6]);
   faces[11]->set_vertices(vertices[5], vertices[8], vertices[7]);
+
   // third row
   faces[12]->set_vertices(vertices[6], vertices[7], vertices[9]);
   faces[13]->set_vertices(vertices[7], vertices[8], vertices[10]);
@@ -68,6 +65,7 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   faces[15]->set_vertices(vertices[6], vertices[9], vertices[11]);
   faces[16]->set_vertices(vertices[7], vertices[10], vertices[9]);
   faces[17]->set_vertices(vertices[8], vertices[11], vertices[10]);
+
   // fourth row
   faces[18]->set_vertices(vertices[9], vertices[10], vertices[2]);
   faces[19]->set_vertices(vertices[10], vertices[11], vertices[0]);
@@ -146,10 +144,8 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   _cover = make_array(1, 1);
 
   std::vector<Vertex_handle> ret_vector(12);
-  for (int i = 0; i < 12; i++)
-    {
-      ret_vector[i] = vertices[i];
-    }
+  for(int i=0; i<12; ++i)
+    ret_vector[i] = vertices[i];
 
   CGAL_assertion(is_valid());
 

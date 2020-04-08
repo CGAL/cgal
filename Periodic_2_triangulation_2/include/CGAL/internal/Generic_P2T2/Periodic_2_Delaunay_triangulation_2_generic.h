@@ -8,12 +8,10 @@
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 
+#include <CGAL/draw_triangulation_2.h>
 #include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_vertex_base_2_generic.h>
 #include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_face_base_2_generic.h>
 #include <CGAL/utility.h>
-
-#include <CGAL/draw_triangulation_2.h>
-#include <CGAL/unordered.h>
 
 #include <utility>
 #include <iostream>
@@ -22,7 +20,6 @@ namespace CGAL {
 namespace Periodic_2_triangulations_2 {
 namespace internal {
 
-// @todo: convert_to_1_cover
 // @todo steal the get_vertex(Face_handle, int, Vertex& /*canonical*/, Offset) from P2T2_GT
 
 // @todo incorporate that in a P2T2GenericTraits class
@@ -698,7 +695,7 @@ public:
   Vertex_handle insert_in_dt2(const Point& p)
   {
     const Point cp = lattice_.construct_canonical_point(p);
-    std::cout << "Insert: " << p << " canonical: " << cp << std::endl;
+    std::cout << "Insert (DT2): " << p << " canonical: " << cp << std::endl;
 
     std::cout << dt2.number_of_vertices() << " vertices" << std::endl;
     if(dt2.dimension() >= 2) // equivalent to !dt2.empty() since we insert duplicate vertices
@@ -771,9 +768,10 @@ public:
 
   Vertex_handle insert_in_p2t2(const Point& p)
   {
-    // @todo (point must be canonicalized?)
-    // return p2t2.insert(p);
-    return Vertex_handle();
+    const Point cp = lattice_.construct_canonical_point(p);
+    std::cout << "Insert (P2T2): " << p << " canonical: " << cp << std::endl;
+
+    return p2t2.insert(p);
   }
 
   template <class InputIterator>

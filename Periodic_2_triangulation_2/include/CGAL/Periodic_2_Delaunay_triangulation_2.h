@@ -62,20 +62,20 @@ public:
 
   typedef typename Base::size_type              size_type;
   typedef typename Base::Locate_type            Locate_type;
-  typedef typename Base::Face_handle            Face_handle;
+
   typedef typename Base::Vertex_handle          Vertex_handle;
+  typedef typename Base::Vertex_circulator      Vertex_circulator;
+  typedef typename Base::Vertex_iterator        Vertex_iterator;
   typedef typename Base::Edge                   Edge;
   typedef typename Base::Edge_circulator        Edge_circulator;
+  typedef typename Base::Edge_iterator          Edge_iterator;
+  typedef typename Base::Face_handle            Face_handle;
   typedef typename Base::Face_circulator        Face_circulator;
-  typedef typename Base::Vertex_circulator      Vertex_circulator;
+  typedef typename Base::Face_iterator          Face_iterator;
+  typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Base::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Base::Finite_faces_iterator  Finite_faces_iterator;
-  typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Base::All_faces_iterator     All_faces_iterator;
-
-  typedef typename Base::Edge_iterator          Edge_iterator;
-  typedef typename Base::Face_iterator          Face_iterator;
-  typedef typename Base::Vertex_iterator        Vertex_iterator;
 
   typedef typename Base::Periodic_segment_iterator  Periodic_segment_iterator;
   typedef typename Base::Periodic_triangle_iterator Periodic_triangle_iterator;
@@ -92,9 +92,9 @@ public:
   using Base::cw;
   using Base::ccw;
   using Base::create_face;
-  using Base::insert_too_long_edge;
   using Base::locate;
   using Base::remove_degree_init;
+  using Base::construct_point;
 
   using Base::combine_offsets;
   using Base::get_offset;
@@ -108,11 +108,13 @@ public:
   using Base::domain;
   using Base::geom_traits;
   using Base::tds;
-  using Base::is_infinite;
   using Base::number_of_vertices;
+  using Base::vertices_begin;
+  using Base::vertices_end;
+  using Base::edges_begin;
+  using Base::edges_end;
   using Base::faces_begin;
-  using Base::finite_edges_begin;
-  using Base::finite_edges_end;
+  using Base::faces_end;
   using Base::incident_faces;
 
   using Base::orientation;
