@@ -183,9 +183,17 @@ public:
 
   Point translate_by_offset(const Point& p, const Offset o) const
   {
+    std::cout << "Reduced basis b[0] = " << basis_[0] << std::endl;
+    std::cout << "Reduced basis b[1] = " << basis_[1] << std::endl;
+
+    std::cout << "translate_by_offset(" << p << " Off: " << o << ") = ";
+
     Vector translation = gt_.construct_sum_of_vectors_2_object()(
         gt_.construct_scaled_vector_2_object()(basis_[0], o.x()),
         gt_.construct_scaled_vector_2_object()(basis_[1], o.y()));
+
+    std::cout << gt_.construct_translated_point_2_object()(p, translation) << std::endl;
+
     return gt_.construct_translated_point_2_object()(p, translation);
   }
 
@@ -217,6 +225,7 @@ public:
 
   Point operator()(const Point& p, const Offset& o) const
   {
+    CGAL_assertion(lattice_ != nullptr);
     return lattice_->translate_by_offset(p, o);
   }
 

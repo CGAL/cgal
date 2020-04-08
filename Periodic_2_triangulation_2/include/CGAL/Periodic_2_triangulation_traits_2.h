@@ -122,7 +122,7 @@ public:
   }
 
 protected:
-  Domain _domain;
+  const Domain& _domain;
 };
 
 
