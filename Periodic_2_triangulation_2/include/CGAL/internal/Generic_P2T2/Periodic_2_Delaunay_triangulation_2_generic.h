@@ -33,6 +33,8 @@ public:
   typedef typename GT::Vector_2                          Vector;
   typedef typename GT::Point_2                           Point;
 
+  typedef typename CGAL::Periodic_2_offset_2             Offset;
+
   typedef cpp11::array<Vector, 2>                        Basis;
   typedef cpp11::array<Vector, 3>                        Voronoi_face_normals;
 
@@ -60,9 +62,48 @@ public:
     construct_Voronoi_face_normals();
   }
 
-  // @tmp
   void reduce_basis()
   {
+    bool reduced = false;
+    while (!reduced)
+    {
+      FT c01 = gt_.compute_scalar_product_2_object()(basis_[0], basis_[1]);
+      FT c00 = gt_.compute_scalar_product_2_object()(basis_[0], basis_[0]);
+      FT c11 = gt_.compute_scalar_product_2_object()(basis_[1], basis_[1]);
+      if (c11 < c00) {
+        std::swap(basis_[0], basis_[1]);
+        std::swap(c00, c11);
+      }
+      if (4*c01*c01 <= c00*c00) {
+        // Basis is Lagrange-reduced.
+        if (c01 > 0) {
+          // Negate b1 if necessary to ensure obtuse angle between b0 and b1.
+          basis_[1] = gt_.construct_opposite_vector_2_object()(basis_[1]);
+        }
+        reduced = true;
+      } else {
+        // Basis is not Lagrange-reduced.
+        if (c01 > 0) {
+          // b1 -= b0
+          basis_[1] = gt_.construct_sum_of_vectors_2_object()(basis_[1], 
+                        gt_.construct_opposite_vector_2_object()(basis_[0]));
+        } else {
+          // b1 += b0
+          basis_[1] = gt_.construct_sum_of_vectors_2_object()(basis_[1], basis_[0]);
+        }
+      }
+    }
+    CGAL_assertion(basis_is_reduced());
+  }
+
+  // Only used in assertion check.
+  bool basis_is_reduced()
+  {
+    Vector ext = gt_.construct_opposite_vector_2_object()(
+                   gt_.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
+    return gt_.compute_scalar_product_2_object()(basis_[0], basis_[1]) <= 0 &&
+        gt_.compute_scalar_product_2_object()(basis_[0], ext) <= 0 &&
+        gt_.compute_scalar_product_2_object()(basis_[1], ext) <= 0;
   }
 
   void construct_Voronoi_face_normals()
@@ -127,6 +168,14 @@ public:
     }
 
     return cp;
+  }
+
+  Point translate_by_offset(const Point& p, const Offset o) const
+  {
+    Vector translation = gt_.construct_sum_of_vectors_2_object()(
+        gt_.construct_scaled_vector_2_object()(basis_[0], o.x()),
+        gt_.construct_scaled_vector_2_object()(basis_[1], o.y()));
+    return gt_.construct_translated_point_2_object()(p, translation);
   }
 
 private:
@@ -219,14 +268,14 @@ public:
 //  void clear() { }
 
   void add_edge_to_incident_faces_map(const Face_handle fh, int i,
-                                      boost::unordered_map<
+                                      std::unordered_map<
                                         std::set<Vertex_handle>,
                                         std::vector< // @todo array
                                           std::pair<Face_handle, int> > >& incident_faces_map)
   {
     typedef std::set<Vertex_handle>                                            Edge_vertices;
     typedef std::pair<Face_handle, int>                                        Incident_face;
-    typedef boost::unordered_map<Edge_vertices, std::vector<Incident_face> >   Incident_faces_map;
+    typedef std::unordered_map<Edge_vertices, std::vector<Incident_face> >   Incident_faces_map;
 
     // the opposite vertex of f in c is i
     Edge_vertices e;
@@ -269,7 +318,7 @@ public:
       vertex_correspondence_map[vit] = vh;
     }
 
-    typedef boost::unordered_map<
+    typedef std::unordered_map<
               std::set<Vertex_handle>,
                 std::vector<std::pair<Face_handle, int> > > Incident_faces_map;
     Incident_faces_map incident_faces_map;
@@ -289,6 +338,7 @@ public:
       Vertex_handle p2t2_vh2 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(2)));
 
       Face_handle fh = p2t2.tds().create_face(p2t2_vh0, p2t2_vh1, p2t2_vh2);
+      // @fixme: Store these as relative offsets (i.e. relative to vertex 0)?
       fh->set_offsets(fit->vertex(0)->offset(),
                       fit->vertex(1)->offset(),
                       fit->vertex(2)->offset());
@@ -364,7 +414,46 @@ public:
 
   // @todo two versions, one using the sufficient condition, one checking for real.
   // "For real" --> P3T3 is_embeddable_in_...
-  bool is_simplicial_complex() const { }
+  // "For real" is implemented below.
+  bool is_simplicial_complex() const
+  {
+    // Ensure there is no edge between a vertex and itself.
+    typename DT2::Finite_faces_iterator fit = dt2.faces_begin(),
+                                 fend = dt2.faces_end();
+    for(; fit!=fend; ++fit) {
+      if (!is_canonical(fit))
+        continue;
+      Vertex_handle vh0 = canonical_vertex(fit->vertex(0));
+      Vertex_handle vh1 = canonical_vertex(fit->vertex(1));
+      Vertex_handle vh2 = canonical_vertex(fit->vertex(2));
+
+      if (vh0 == vh1 || vh0 == vh2 || vh1 == vh2) {
+        return false;
+      }
+    }
+
+    // Ensure there are no two edges between the same pair of vertices.
+    typename DT2::Finite_vertices_iterator vit = dt2.vertices_begin(),
+                                 vend = dt2.vertices_end();
+    for(; vit!=vend; ++vit) {
+      if (!is_canonical(vit))
+        continue;
+    
+      typename DT2::Vertex_circulator vc = dt2.incident_vertices(vit), done = vc;
+      cpp11::unordered_set<Vertex_handle> neighbours;
+      do
+      {
+        Vertex_handle cv = canonical_vertex(vc);
+        if (neighbours.find(cv) != neighbours.end())
+          return false; // Some neighbouring vertex appeared multiple times.
+        neighbours.insert(cv);
+      }
+      while(++vc != done);
+    }
+
+
+    return true;
+  }
 
   /// Constructions
   Point construct_point(const Point& /*p*/, const Offset& /*off*/) const { }
@@ -408,22 +497,47 @@ public:
     return (vh->offset() == Offset(0, 0));
   }
 
+  Offset compute_offset(const Edge e) const
+  {
+    Face_handle fh = e.first;
+    int i = e.second;
+    return compute_offset(fh->vertex(dt2.cw(i)), fh->vertex(dt2.ccw(i)));
+  }
+
+  bool is_canonical(const Edge e) const
+  {
+    if(dt2.is_infinite(e.first))
+      return false;
+
+    return compute_offset(e) == Offset(0, 0);
+  }
+
+  // Offset of an edge represented by its two vertices
+  Offset compute_offset(const Vertex_handle vh1, const Vertex_handle vh2) const
+  {
+    return min(vh1->offset(), vh2->offset());
+  }
+
+  // Canonicity of an edge represented by its two vertices
+  bool is_canonical(const Vertex_handle vh1, const Vertex_handle vh2) const
+  {
+    if(dt2.is_infinite(vh1) || dt2.is_infinite(vh2))
+      return false;
+
+    return compute_offset(vh1, vh2) == Offset(0, 0);
+  }
+
+  Offset compute_offset(const Face_handle fh) const
+  {
+    return min(fh->vertex(0)->offset(), fh->vertex(1)->offset(), fh->vertex(2)->offset());
+  }
+
   bool is_canonical(const Face_handle fh) const
   {
     if(dt2.is_infinite(fh))
       return false;
 
-    int min_off_x = std::numeric_limits<int>::max(),
-        min_off_y = std::numeric_limits<int>::max();
-
-    for(int i=0; i<3; i++)
-    {
-      Vertex_handle vh = fh->vertex(i);
-      min_off_x = (std::min)(min_off_x, vh->offset().x());
-      min_off_y = (std::min)(min_off_y, vh->offset().y());
-    }
-
-    return (min_off_x == 0 && min_off_y == 0);
+    return compute_offset(fh) == Offset(0, 0);
   }
 
   template <typename ForwardFaceIterator>
@@ -437,7 +551,7 @@ public:
 
   void reset_all_canonicity()
   {
-    typename DT2::Faces_iterator fit = dt2.faces_begin(),
+    typename DT2::Finite_faces_iterator fit = dt2.faces_begin(),
                                  fend = dt2.faces_end();
     for(; fit!=fend; ++fit)
       fit->set_canonical_flag(false);
@@ -465,12 +579,67 @@ public:
   }
 
   /// Low level functions to mascarade the DT2 as a periodic triangulation
-  Offset compute_offset_shift(const Offset& off_1, const Offset& off_2) const
+  Point construct_barycenter(const Face_handle& fh) const
   {
-    Offset shift_off((std::min)(off_1.x(), off_2.x()),
-                     (std::min)(off_1.y(), off_2.y()));
+    Vector v0 = Vector(CGAL::ORIGIN, fh->vertex(0)->point());
+    Vector v1 = Vector(CGAL::ORIGIN, fh->vertex(1)->point());
+    Vector v2 = Vector(CGAL::ORIGIN, fh->vertex(2)->point());
+    Vector bcv = gt_.construct_scaled_vector_2_object()(
+              gt_.construct_sum_of_vectors_2_object()(v0,
+                gt_.construct_sum_of_vectors_2_object()(v1,v2)),
+            FT(1)/3);
+    return Point(bcv.x(), bcv.y());
+  }
 
-    return shift_off;
+  // Given a face having a vertex in the domain, and an offset such that
+  // at least one of the translated vertices has a vertex in the domain,
+  // return the handle of the translated face.
+  // This is done by computing the barycenter of the original face, and
+  // locating the face containing the translate of the barycenter.
+  Face_handle find_translated_face(const Face_handle& fh, const Offset& o) const
+  {
+    // The code commented out below does the same and is simpler,
+    // but uses a construction and point location.
+    // Point translated_barycenter = lattice_.translate_by_offset(
+    //     construct_barycenter(fh), o);
+    // return dt2.locate(translated_barycenter);
+
+    // Find a vertex whose translate is in the domain.
+    bool vertex_found = false;
+    int j=0;
+    for (; j<3; ++j) {
+      if (fh->vertex(j)->offset() == -o) {
+        vertex_found = true;
+        break;
+      }
+    }
+    CGAL_assertion(vertex_found);
+    Vertex_handle cv = canonical_vertices.at(fh->vertex(j));
+    Vertex_handle v_ccw = fh->vertex(dt2.ccw(j));
+    Vertex_handle v_cw = fh->vertex(dt2.cw(j));
+
+    // Scan through the incident faces and find the one that is
+    // equivalent to fh.
+    Face_circulator fc = dt2.incident_faces(cv), done = fc;
+    do
+    {
+      if(dt2.is_infinite(fc)) // shouldn't ever happen
+        continue;
+      
+      int cj = fc->index(cv);
+      Vertex_handle cv_ccw = fc->vertex(dt2.ccw(cj));
+      Vertex_handle cv_cw = fc->vertex(dt2.cw(cj));
+
+      if (canonical_vertices.at(cv_ccw) == canonical_vertices.at(v_ccw)
+          && cv_ccw->offset() == v_ccw->offset() + o
+          && canonical_vertices.at(cv_cw) == canonical_vertices.at(v_cw)
+          && cv_cw->offset() == v_cw->offset() + o) {
+        return Face_handle(fc);
+      }
+    }
+    while(++fc != done);
+    CGAL_assertion(false);
+    return Face_handle();
   }
 
   // @todo something smarter, this function is core to everything else
@@ -481,48 +650,28 @@ public:
     if(is_canonical(fh->neighbor(i)))
       return fh->neighbor(i);
 
-    Vertex_handle e_vh_0 = fh->vertex((i+1)%3);
-    Vertex_handle e_vh_1 = fh->vertex((i+2)%3);
+    // Translate the face so that the corresponding edge is canonical.
+    Offset edge_off = compute_offset(std::make_pair(fh, i));
+    Face_handle fh_trans = find_translated_face(fh, -edge_off);
 
-    Offset shift_off = compute_offset_shift(e_vh_0->offset(), e_vh_1->offset());
-    Offset ce_vh_0_off = e_vh_0->offset() - shift_off;
-
-    Vertex_handle ce_vh_0 = periodic_vertices.at(
-                              canonical_vertices.at(e_vh_0)).at(ce_vh_0_off);
-
-    Vertex_handle cvh_1 = canonical_vertices.at(e_vh_1);
-
-    Face_handle adj_fh;
-
-    Face_circulator fc = dt2.incident_faces(ce_vh_0), done = fc;
-    do
-    {
-      if(dt2.is_infinite(fc))
-        continue;
-
-      Vertex_handle ccw_ce_vh_0 = fc->vertex(dt2.ccw(fc->index(ce_vh_0)));
-
-      if(canonical_vertices.at(ccw_ce_vh_0) != cvh_1)
-        continue;
-
-      if(ccw_ce_vh_0->offset() == (e_vh_1->offset() - shift_off))
-        adj_fh = fc;
+    // Find the vertex corresponding to vertex(i) in the original.
+    bool vertex_found = false;
+    int j=0;
+    for (; j<3; ++j) {
+      if (canonical_vertices.at(fh_trans->vertex(j)) == canonical_vertices.at(fh->vertex(i))
+          && fh_trans->vertex(j)->offset() == fh->vertex(i)->offset() - edge_off) {
+        vertex_found = true;
+        break;
+      }
     }
-    while(++fc != done);
+    CGAL_assertion(vertex_found); 
 
-    CGAL_assertion(adj_fh != Face_handle());
-
-    // Now, we have the correct face, but it might not be canonical
-    // @todo to find the canonical face, you can find the canonical offset
-    // of the face, and then look at the difference of offset between the offset
-    // of the vertices in the canonical face and in 'adj_fh'
-
-    // @tmp
-    Face_handle c_adj_fh = adj_fh;
-    return c_adj_fh;
-
-    CGAL_postcondition(false);
-    return Face_handle();
+    // Get the neighbour in DT2 and check if it's canonical.
+    Face_handle neighbor = fh_trans->neighbor(j);
+    if(is_canonical(neighbor))
+      return neighbor;
+    else // if not, find the canonical translate.
+      return find_translated_face(neighbor, -compute_offset(neighbor));
   }
 
   /// Iterators and Circulators
@@ -535,15 +684,11 @@ public:
     if(!is_canonical(vh))
       vh = canonical_vertices.at(vh);
 
-    Face_circulator tds_fc = dt2.incident_faces(vh);
-
-    // @todo check (when this function is switched to a Circulator if we must
-    // walk cw or ccw)
-    Face_handle fh = tds_fc->neighbor(dt2.ccw(tds_fc->index(vh))), done = fh;
+    Face_circulator tds_fc = dt2.incident_faces(vh), done = tds_fc;
 
     do
-    {
-      ifhs.insert(fh);
+    {      
+      ifhs.insert(find_translated_face(tds_fc, -compute_offset(tds_fc)));
 
       // @todo when proper periodic traits are used to construct dt2 (that is,
       // insert (p, off) instead of constructing the offsetted point,
@@ -553,30 +698,13 @@ public:
       //
       // "Real" offsetted point is then done via a 'construct_point(cp, off)' function
       // in the triangulation class
-      int vh_idx = -1;
 
-      for(int i=0; i<3; ++i)
-      {
-        Vertex_handle vhi = fh->vertex(i);
-        Vertex_handle cvhi = canonical_vertex(vhi);
-
-        if(dt2.is_infinite(vhi))
-          continue;
-
-        // @fixme this is actually not sufficient, you might have the same vertex
-        // appearing multiple times in the face. You need to look at the difference
-        // of offsets between 'fh' and 'fhn' and deduce which vertex is the correct one.
-        if(cvhi == vh)
-          vh_idx = i;
-      }
-
-      CGAL_assertion(vh_idx != -1);
-
-      fh = neighbor(fh, dt2.ccw(vh_idx));
+      // The alternative is to use the neighbourhood relation of the faces, and
+      // traverse along edges around the central vertex, in the process possibly
+      // shifting the center vertex around to stay canonical. 
+      // Incomplete code of this in a previous commit.
     }
-    while(fh != done);
-
-    std::cout << ifhs.size() << " incident faces" << std::endl;
+    while(++tds_fc != done);
 
     return ifhs;
   }
@@ -622,33 +750,27 @@ public:
 
     mark_canonical_faces(vh);
 
-    for(int off_x=-3; off_x<4; ++off_x)
+    canonical_vertices[vh] = vh;
+    for (const std::vector<int> off : overlapping_offsets)
     {
-      for(int off_y=-3; off_y<4; ++off_y)
+      // @fixme Insert without constructions (cf P3T3)
+      const Vector off_v = gt_.construct_sum_of_vectors_2_object()(
+                             gt_.construct_scaled_vector_2_object()(
+                               lattice_.basis()[0], off[0]),
+                             gt_.construct_scaled_vector_2_object()(
+                               lattice_.basis()[1], off[1]));
+
+      const Point off_p = cp + off_v;
+
+      if(lattice_.is_in_scaled_domain(off_p, 3))
       {
-        if(off_x == 0 && off_y == 0)
-          continue;
+        Vertex_handle vh_copy = dt2.insert(off_p);
+        CGAL_assertion(vh_copy != Vertex_handle());
+        vh_copy->set_offset(Offset(off[0], off[1]));
 
-        // @fixme Insert without constructions (cf P3T3)
-        const Vector off_v = gt_.construct_sum_of_vectors_2_object()(
-                               gt_.construct_scaled_vector_2_object()(
-                                 lattice_.basis()[0], off_x),
-                               gt_.construct_scaled_vector_2_object()(
-                                 lattice_.basis()[1], off_y));
+        canonical_vertices[vh_copy] = vh;
 
-        const Point off_p = cp + off_v;
-
-        if(lattice_.is_in_scaled_domain(off_p, 3))
-        {
-          Vertex_handle vh_copy = dt2.insert(off_p);
-          CGAL_assertion(vh_copy != Vertex_handle());
-          vh_copy->set_offset(Offset(off_x, off_y));
-
-          canonical_vertices[vh_copy] = vh;
-          periodic_vertices[vh][vh_copy->offset()] = vh_copy;
-
-          mark_canonical_faces(vh_copy);
-        }
+        mark_canonical_faces(vh_copy);
       }
     }
 
@@ -682,13 +804,19 @@ private:
   cpp11::unordered_map<Vertex_handle /*periodic copy*/,
                        Vertex_handle /*canonical*/> canonical_vertices;
 
-  // @todo hopefully don't need to use this eventually
-  cpp11::unordered_map<Vertex_handle /*canonical*/,
-                       std::map<Offset, // @todo unordered
-                                Vertex_handle /*periodic copy*/> > periodic_vertices;
 
   Geom_traits gt_;
   Triangulation_data_structure tds_;
+
+  // A list of those offsets such that the domain translated along the offset
+  // overlaps the scaled domain.
+  // Could be static?
+  const std::vector<std::vector<int> > overlapping_offsets = {
+      // entirely contained in scaled domains 
+      {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, 1},  
+      // intersecting the scaled domain
+      {-1, -2}, {1, 2}, {-2, -1}, {2, 1}, {-1, 1}, {1, -1} 
+    };
 };
 
 } //namespace CGAL
