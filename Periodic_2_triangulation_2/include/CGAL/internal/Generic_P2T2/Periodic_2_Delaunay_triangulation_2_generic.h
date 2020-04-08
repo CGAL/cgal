@@ -24,7 +24,14 @@ namespace Periodic_2_triangulations_2 {
 
 namespace internal {
 
+// @todo: convert_to_1_cover
+// @todo steal the get_vertex(Face_handle, int, Vertex& /*canonical*/, Offset) from P2T2_GT
+
 // @todo incorporate that in a P2T2GenericTraits class
+// @todo number_of_edges/faces + iterators (use an if() to switch between DT2 / P2T2)
+
+// @todo: switch to Bowyer watson?
+
 template < class GT >
 class Lattice_2
 {
@@ -86,7 +93,7 @@ public:
         // Basis is not Lagrange-reduced.
         if (c01 > 0) {
           // b1 -= b0
-          basis_[1] = gt_.construct_sum_of_vectors_2_object()(basis_[1], 
+          basis_[1] = gt_.construct_sum_of_vectors_2_object()(basis_[1],
                         gt_.construct_opposite_vector_2_object()(basis_[0]));
         } else {
           // b1 += b0
@@ -481,6 +488,10 @@ public:
 
   Face_handle get_canonical_face(const Face_handle& fh) const
   {
+    std::cout << "Getting canonical face of: " << dt2.point(fh, 0) << " "
+                                               << dt2.point(fh, 1) << " "
+                                               << dt2.point(fh, 2) << std::endl;
+
     return find_translated_face(fh, -compute_offset(fh));
   }
 
@@ -500,15 +511,13 @@ public:
   // Given a face having a vertex in the domain, and an offset such that
   // at least one of the translated vertices has a vertex in the domain,
   // return the handle of the translated face.
-  // This is done by computing the barycenter of the original face, and
-  // locating the face containing the translate of the barycenter.
   Face_handle find_translated_face(const Face_handle& fh, const Offset& o) const
   {
     // The code commented out below does the same and is simpler,
     // but uses a construction and point location.
-    // Point translated_barycenter = lattice_.translate_by_offset(
-    //     construct_barycenter(fh), o);
-    // return dt2.locate(translated_barycenter);
+//    Point translated_barycenter = lattice_.translate_by_offset(
+//        construct_barycenter(fh), o);
+//    return dt2.locate(translated_barycenter);
 
     // Find a vertex whose translate is in the domain.
     bool vertex_found = false;
@@ -544,7 +553,7 @@ public:
       }
     }
     while(++fc != done);
-    CGAL_assertion(false);
+    CGAL_assertion_msg(false, "couldn't find face");
     return Face_handle();
   }
 
@@ -570,7 +579,7 @@ public:
         break;
       }
     }
-    CGAL_assertion(vertex_found); 
+    CGAL_assertion(vertex_found);
 
     // Get the neighbour in DT2 and check if it's canonical.
     Face_handle neighbor = fh_trans->neighbor(j);
@@ -607,7 +616,7 @@ public:
 
       // The alternative is to use the neighbourhood relation of the faces, and
       // traverse along edges around the central vertex, in the process possibly
-      // shifting the center vertex around to stay canonical. 
+      // shifting the center vertex around to stay canonical.
       // Incomplete code of this in a previous commit.
     }
     while(++tds_fc != done);
@@ -651,12 +660,16 @@ public:
   Vertex_handle insert_in_dt2(const Point& p)
   {
     const Point cp = lattice_.construct_canonical_point(p);
+    std::cout << "Insert: " << p << " canonical: " << cp << std::endl;
 
+    std::cout << dt2.number_of_vertices() << " vertices" << std::endl;
     if(dt2.dimension() >= 2) // equivalent to !dt2.empty() since we insert duplicate vertices
     {
       // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
       std::vector<Face_handle> faces_in_conflict;
       dt2.get_conflicts(cp, std::back_inserter(faces_in_conflict));
+      std::cout << faces_in_conflict.size() << " faces in conflict" << std::endl;
+
       for(Face_handle fh : faces_in_conflict)
       {
         // @fixme? is this safe? Are all faces returned by the get_conflicts
@@ -697,15 +710,21 @@ public:
     }
 
     // Update the current maximum circumradius value
+    std::cout << "Gather faces with too big circumradius" << std::endl;
     Face_circulator fc = dt2.incident_faces(vh), done(fc);
     do
     {
-      const FT sq_cr = compute_squared_circumradius(fc);
+      CGAL_assertion(!dt2.is_infinite(fc));
+
+      Face_handle cfh = get_canonical_face(fc);
+      const FT sq_cr = compute_squared_circumradius(cfh);
+      std::cout << " sq_cr: " << sq_cr << " sys:" << sq_circumradius_threshold << std::endl;
       if(sq_cr > sq_circumradius_threshold)
-        faces_with_too_big_circumradius.insert(get_canonical_face(fc));
+        faces_with_too_big_circumradius.insert(cfh);
     }
     while(++fc != done);
 
+    std::cout << faces_with_too_big_circumradius.size() << " faces with too big sq_cr" << std::endl;
     // if(faces_with_too_big_circumradius.empty())
     //   convert_to_1_cover();
 
@@ -867,10 +886,10 @@ private:
   // overlaps the scaled domain.
   // Could be static?
   const std::vector<std::vector<int> > overlapping_offsets = {
-      // entirely contained in scaled domains 
-      {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, 1},  
+      // entirely contained in scaled domains
+      {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, 1},
       // intersecting the scaled domain
-      {-1, -2}, {1, 2}, {-2, -1}, {2, 1}, {-1, 1}, {1, -1} 
+      {-1, -2}, {1, 2}, {-2, -1}, {2, 1}, {-1, 1}, {1, -1}
     };
 };
 

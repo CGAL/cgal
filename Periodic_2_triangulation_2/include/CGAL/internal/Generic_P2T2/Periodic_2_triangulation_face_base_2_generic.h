@@ -79,13 +79,14 @@ public:
   void set_canonical_flag(const bool b) { is_canonical = b; }
   bool get_canonical_flag() const { return is_canonical; }
 
-  // @tmp: For testing, remove this later.
-  bool has_color;
-  CGAL::Color color;
-
 private:
   bool is_canonical;
   cpp11::array<Offset, 3> _off;
+
+public:
+  // @tmp: For testing, remove this later.
+  bool has_color;
+  CGAL::Color color;
 };
 
 template < class Tds >
