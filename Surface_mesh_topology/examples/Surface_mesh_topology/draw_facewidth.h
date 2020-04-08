@@ -62,10 +62,10 @@ void draw_facewidth(const LCC& lcc,
     if (!lcc.is_marked(cycle[i], face_mark))
     { lcc.template mark_cell<2>(cycle[i], face_mark); ++nbf; }
   }
-  
+
   Facewidth_draw_functor<LCC> df(vertex_mark, face_mark);
   CGAL::draw(lcc, "Face width", false, df);
-  
+
   lcc.free_mark(vertex_mark);
   lcc.free_mark(face_mark);
 }
