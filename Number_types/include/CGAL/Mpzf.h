@@ -340,17 +340,37 @@ struct Mpzf {
     exp=x.exp;
     if(size!=0) mpn_copyi(data(),x.data(),asize);
   }
-#if !defined(CGAL_MPZF_USE_CACHE)
+#if defined(CGAL_MPZF_USE_CACHE)
+  Mpzf(Mpzf&& x)noexcept:size(x.size),exp(x.exp){
+    auto xd = x.data();
+    while(*--xd==0);
+    if (xd != x.cache) {
+      data() = x.data();
+      x.init();
+    } else {
+      init();
+      if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
+    }
+    x.size = 0;
+  }
+#else
   Mpzf(Mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
     x.exp = 0;
   }
-  Mpzf& operator=(Mpzf&& x){
-    std::swap(size,x.size);
+  Mpzf& operator=(Mpzf&& x)noexcept{
+    size = x.size;
+    // In case something tries to read it, size needs to be smaller than data
+    x.size = 0;
     exp = x.exp;
     std::swap(data(),x.data());
     return *this;
+  }
+  friend void swap(Mpzf&a, Mpzf&b)noexcept{
+    std::swap(a.size, b.size);
+    std::swap(a.exp, b.exp);
+    std::swap(a.data(), b.data());
   }
   friend Mpzf operator-(Mpzf&& x){
     Mpzf ret = std::move(x);
