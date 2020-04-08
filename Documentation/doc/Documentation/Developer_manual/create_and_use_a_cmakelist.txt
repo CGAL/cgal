@@ -1,5 +1,5 @@
 /*!
-\page devman_create_and_use_a_cmakelist How to use CGAL with CMake
+\page devman_create_and_use_a_cmakelist How to use %CGAL with CMake
 
 This page will explain how to manually create a CMakeLists.txt file to link a custom program with CGAL.
 A base can be created using the script `cgal_create_CMakeLists`. Its usage is detailed in Section \ref devman_create_cgal_CMakeLists.
@@ -18,57 +18,27 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 target_link_libraries(my_executable CGAL::CGAL CGAL::CGAL_Core)
 \endcode
 
-There are also some cmake macros to link with CGAL dependencies. For example, to link with eigen, you can use
-
-\code
-CGAL_target_use_Eigen(<target>)
-\endcode
-For more details on these macros, see \subpage thirdparty.
+There are also some cmake macros to link with CGAL dependenciesthat can be found in
+the section \subpage thirdparty.
 
 \note The CGAL targets define the following compiler flags :
   - `-frounding-math` with gcc
   - `/fp:strict /fp:except-` with MSVC
 
 \section secexample Minimal Example Using Qt5
-This section describes a minimal example of a program that uses CGAL and Qt5 for some GUI features.
+This section describes a minimal example of a program that uses %CGAL and Qt5 for some GUI features.
 
 \subsection subcmake CMakeLists.txt
-\code
-cmake_minimum_required(VERSION 3.1)
-project(test_cgal)
-#CGAL_Qt5 is needed for the drawing and CGAL_Core is needed for this special Kernel.
-find_package(CGAL REQUIRED COMPONENTS Qt5 Core)
-if(CGAL_FOUND AND CGAL_Qt5_FOUND)
-  #required to use basic_viewer
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-  #create the executable of the application
-  add_executable(test_ test.cpp)
-  #link it with the required CGAL libraries
-  target_link_libraries(test_ CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
-else()
-  message("ERROR: this program requires CGAL and CGAL_Qt5 and will not be compiled.")
-endif()
+\dontinclude Surface_mesh/CMakeLists.txt
+\skip cmake
+\until if ( CGAL_FOUND )
+\skip #create the executable of the application
+\until "draw_surface_mesh.cpp"
+\skip if(CGAL_Qt5_FOUND )
+\until target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
+\skip endif
+\until #end of the file
 
-\endcode
-\subsection subtestcpp test.cpp
-\code{.cpp}
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/draw_surface_mesh.h>
-
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
-typedef K::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Mesh;
-
-
-int main()
-{
-  Mesh m;
-  CGAL::make_icosahedron<Mesh, Point>(m);
-  CGAL::draw(m);
-  return 0;
-}
-
-\endcode
+\subsection subexcpp draw_surface_mesh.cpp
+\include Surface_mesh/draw_surface_mesh.cpp
 */
