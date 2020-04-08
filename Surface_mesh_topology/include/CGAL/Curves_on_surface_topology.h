@@ -128,11 +128,21 @@ public:
     return m_shortest_noncontractible_cycle->compute_cycle(dh, display_time);
   }
 
-  template <class WeightFunctor>
-  Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf, bool display_time=false) const
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle
+  (bool display_time=false) const
   {
     compute_shortest_noncontractible_cycle_representation(display_time);
-    return m_shortest_noncontractible_cycle->compute_edgewidth(NULL, wf, display_time);
+    return m_shortest_noncontractible_cycle->
+      compute_shortest_noncontractible_cycle(nullptr, display_time);
+  }
+
+  template <class WeightFunctor>
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle
+  (const WeightFunctor& wf, bool display_time=false) const
+  {
+    compute_shortest_noncontractible_cycle_representation(display_time);
+    return m_shortest_noncontractible_cycle->
+      compute_shortest_noncontractible_cycle(nullptr, wf, display_time);
   }
 
   Path_on_surface<Mesh> compute_edgewidth(bool display_time=false) const

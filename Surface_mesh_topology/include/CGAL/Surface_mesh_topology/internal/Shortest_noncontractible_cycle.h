@@ -157,9 +157,9 @@ public:
   { return compute_cycle(root_vertex, nullptr, display_time); }
 
   template <class WeightFunctor>
-  Path compute_edgewidth(typename WeightFunctor::Weight_t* length,
-                         const WeightFunctor& wf,
-                         bool display_time=false)
+  Path compute_shortest_noncontractible_cycle(typename WeightFunctor::Weight_t* length,
+                                              const WeightFunctor& wf,
+                                              bool display_time=false)
   {
     CGAL::Timer t;
     if (display_time)
@@ -192,20 +192,19 @@ public:
     if (display_time)
     {
       t.stop();
-      std::cout<<"[TIME] compute_edgewidth: "<<t.time()<<" seconds."<<std::endl;
+      std::cout<<"[TIME] compute_shortest_noncontractible_cycle: "<<t.time()<<" seconds."<<std::endl;
     }
 
     return m_cycle;
   }
 
   template <class WeightFunctor=Unit_weight_functor>
-  Path compute_edgewidth(typename WeightFunctor::Weight_t* length,
-                         bool display_time=false)
-  { return compute_edgewidth(length, WeightFunctor(), display_time); }
+  Path compute_shortest_noncontractible_cycle(typename WeightFunctor::Weight_t* length,
+                                              bool display_time=false)
+  { return compute_shortest_noncontractible_cycle(length, WeightFunctor(), display_time); }
 
-  template <class WeightFunctor=Unit_weight_functor>
   Path compute_edgewidth(bool display_time=false)
-  { return compute_edgewidth(nullptr, display_time); }
+  { return compute_shortest_noncontractible_cycle(nullptr, display_time); }
 
 protected:
   int vertex_info(Dart_handle dh) const

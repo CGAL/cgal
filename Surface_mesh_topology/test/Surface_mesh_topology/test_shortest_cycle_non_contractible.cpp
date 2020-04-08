@@ -116,7 +116,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   Marked_weight_functor<LCC_CM> wf(map, mark);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_CM> cst(map);
 
-  auto cycle2=cst.compute_edgewidth(wf);
+  auto cycle2=cst.compute_shortest_noncontractible_cycle(wf);
   if (cycle2.length()!=nbedges)
   {
     std::cout<<"[ERROR] in test_weighted for double-torus-2-d.off: the length"
@@ -164,7 +164,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
   }
 
   std::cout<<"."<<std::flush;
-  cycle=cst.compute_edgewidth(wf);
+  cycle=cst.compute_shortest_noncontractible_cycle(wf);
   double l=0.;
   for (int i=0; i<cycle.length(); ++i) { l+=wf(cycle[i]); }
   if (l>length)

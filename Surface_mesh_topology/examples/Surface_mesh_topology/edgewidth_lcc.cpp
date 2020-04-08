@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   Path_on_surface cycle1=cst.compute_edgewidth(true);
 
   CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<LCC_3> wf(lcc);
-  Path_on_surface cycle2=cst.compute_edgewidth(wf, true);
+  Path_on_surface cycle2=cst.compute_shortest_noncontractible_cycle(wf, true);
 
   std::cout<<"Cycle 1 (pink): "; display_cycle_info(lcc, cycle1);
   std::cout<<"Cycle 2 (green): "; display_cycle_info(lcc, cycle2);

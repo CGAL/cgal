@@ -221,9 +221,9 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_CMap_2> cst1(lcc_cm);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_GMap_2> cst2(lcc_gm);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<Surface_mesh> cst3(sm);
-  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_edgewidth(wf_cm);
-  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle2 = cst2.compute_edgewidth(wf_gm);
-  CGAL::Surface_mesh_topology::Path_on_surface<Surface_mesh> cycle3 = cst3.compute_edgewidth(wf_sm);
+  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_noncontractible_cycle(wf_cm);
+  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle2 = cst2.compute_shortest_noncontractible_cycle(wf_gm);
+  CGAL::Surface_mesh_topology::Path_on_surface<Surface_mesh> cycle3 = cst3.compute_shortest_noncontractible_cycle(wf_sm);
 
   if (cycle1.length()!=cycle2.length() || cycle1.length()!=cycle3.length())
   {
