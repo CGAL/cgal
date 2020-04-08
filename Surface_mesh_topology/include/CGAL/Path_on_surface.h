@@ -246,7 +246,7 @@ public:
   Dart_const_handle get_ith_real_dart(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
-    return (get_ith_flip(i)?get_map().template opposite2(get_ith_dart(i)):
+    return (get_ith_flip(i)?get_map().opposite2(get_ith_dart(i)):
                             get_ith_dart(i));
   }
 
@@ -256,7 +256,7 @@ public:
   {
     CGAL_assertion(i<m_path.size());
     return (get_ith_flip(i)?get_ith_dart(i):
-                            get_map().template opposite2(get_ith_dart(i)));
+                            get_map().opposite2(get_ith_dart(i)));
   }
 
   /// @return the first dart of the path, taking into account flip.
@@ -372,7 +372,7 @@ public:
     {
       if (m_flip[i] && !get_map().template is_free<2>(m_path[i]))
       {
-        m_path[i]=get_map().template opposite2(m_path[i]);
+        m_path[i]=get_map().opposite2(m_path[i]);
         m_flip[i]=!m_flip[i];
       }
       else if (show_flips_left)
@@ -562,7 +562,7 @@ public:
     while (!get_map().darts().is_used(index) ||
           (!get_map().template is_free<2>(get_map().dart_handle(index)) &&
            get_map().dart_handle(index)>get_map().
-           template opposite2(get_map().dart_handle(index))))
+           opposite2(get_map().dart_handle(index))))
     {
       ++index;
       if (index==get_map().darts().capacity()) index=0;
@@ -945,7 +945,7 @@ public:
       /* This assert is long if (!m_map.darts().owns(m_path[i]))
       { return false; } */
 
-      if (m_path[i]==m_map.null_dart_handle)
+      if (m_path[i]==Map::null_handle || m_path[i]==m_map.null_dart_handle)
       { return false; }
 
       last_vertex=m_flip[i-1]?m_path[i-1]:get_map().next(m_path[i-1]);

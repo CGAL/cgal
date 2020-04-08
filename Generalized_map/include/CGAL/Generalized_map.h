@@ -105,7 +105,7 @@ namespace CGAL {
 
     typedef typename Base::Null_handle_type Null_handle_type;
     using Base::null_handle;
-
+    using Base::null_dart_handle;
     using Base::mdarts;
     using Base::get_alpha;
     using Base::is_free;

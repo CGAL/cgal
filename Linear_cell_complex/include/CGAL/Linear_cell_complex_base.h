@@ -112,6 +112,7 @@ namespace CGAL {
     using Base::create_dart;
     using Base::attribute;
     using Base::null_handle;
+    using Base::null_dart_handle;
     using Base::point_of_vertex_attribute;
     using Base::other_extremity;
     using Base::darts;
