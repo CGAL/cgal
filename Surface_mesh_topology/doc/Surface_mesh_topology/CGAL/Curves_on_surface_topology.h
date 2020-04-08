@@ -39,28 +39,46 @@ namespace Surface_mesh_topology {
      */
     bool is_contractible(const Path_on_surface<Mesh>& p) const;
 
-    /*! returns the edgewidth of the unweighted mesh
+    /*!  returns a non-contractible cycle of type `Path_on_surface` with minimal number of edges. This edge number is the edgewidth of the mesh.
      */
     Path_on_surface<Mesh> compute_edgewidth() const;
 
-    /*! returns the edgewidth of the weighted mesh
+    /*! returns a non-contractible cycle of type `Path_on_surface` with minimal length, where the length of a cycle is the sum of the weights of its edges computed thanks to the WeightFunctor `wf`.
      */
     template <class WeightFunctor>
-    Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf) const;
+    Path_on_surface<Mesh> compute_shortest_noncontractible_cycle(const WeightFunctor& wf) const;
 
-    /*! returns the shortest non-contractible cycle going through the source vertex of `dh` of the unweighted mesh
-     */
-    Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(halfedge_descriptor dh) const;
-
-    /*! returns the shortest non-contractible cycle going through the source vertex of `dh` of the weighted mesh
+    /*! returns a non-contractible cycle of type `Path_on_surface` with minimal length going through the source vertex of `dh`, where the length of a cycle is the sum of the weights of its edges computed thanks to the WeightFunctor `wf`. When omitted, `wf` defaults to  'Unit_weight_functor'
      */
     template <class WeightFunctor>
     Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(halfedge_descriptor dh, const WeightFunctor& wf) const;
 
-    /*! returns a list of one dart per face of the facewidth
+    /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be decribed by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewes as subsets of darts.) The size of the returned vector is the 'facewidth' of the mesh. 
      */
     std::vector<halfedge_descriptor> compute_facewidth() const;
-  };
 
-}
+    /*! A model of WeightFunctor assigning unit weight to every edge.
+     */
+    struct Unit_weight_functor
+    {
+      using Weight_t=unsigned int;
+      
+      Weight_t operator() (halfedge_descriptor dh)
+	};
+
+     /*! A model of WeightFunctor assigning its Euclidean length to every edge.
+      *  @pre The vertices of `amesh` should have coordinates in their attributes.
+     */
+      struct Euclidean_length_weight_functor
+      {
+	using Weight_t=double;
+	
+	Euclidean_length_weight_functor(const Mesh& m)
+	{}
+	
+	Weight_t operator() (halfedge_descriptor hd) const
+	  };
+
+  };
+ }
 }
