@@ -305,7 +305,7 @@ public:
     }
   }
 
-  void convert_to_p2t2()
+  void convert_to_1_cover()
   {
     is_1_cover = true;
 

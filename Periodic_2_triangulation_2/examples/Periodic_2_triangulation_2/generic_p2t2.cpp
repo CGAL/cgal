@@ -76,11 +76,9 @@ int main()
     }
   }
 
-
-
   draw(T.dt2, "Post-Insertion");
 
-//  T.convert_to_p2t2();
+//  T.convert_to_1_cover();
 //  T.p2t2.insert(Point(0.3, 0.12));
 
   return EXIT_SUCCESS;
