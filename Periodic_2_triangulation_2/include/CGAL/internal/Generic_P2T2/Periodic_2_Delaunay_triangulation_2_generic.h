@@ -54,6 +54,7 @@ public:
   // Access
   const Basis& basis() const { return basis_; }
   const Voronoi_face_normals& Voronoi_vectors() const { return Vfn_; }
+  FT systole_sq_length() const { return systole_sq_length_; }
 
   // Initialization
   void initialize()
@@ -108,11 +109,16 @@ public:
 
   void construct_Voronoi_face_normals()
   {
-    // @tmp
+    // @tmp is this really needed or can things be done with predicates?
     Vector third = gt_.construct_opposite_vector_2_object()(
                      gt_.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
 
     Vfn_ = CGAL::make_array(basis_[0], basis_[1], third);
+
+    // @todo check the reduction algorithm, might not be needed to also check the third's length
+    systole_sq_length_ = (std::min)((std::min)(basis_[0].squared_length(),
+                                               basis_[1].squared_length()),
+                                    third.squared_length());
   }
 
   // Canonicalization
@@ -179,6 +185,7 @@ public:
   }
 
 private:
+  FT systole_sq_length_;
   CGAL::cpp11::array<Vector, 2> basis_;
   CGAL::cpp11::array<Vector, 3> Vfn_;
   const GT& gt_;
@@ -253,6 +260,7 @@ public:
                                               const GT& gt = GT())
     : lattice_(basis), is_1_cover(false), gt_(gt)
   {
+    sq_circumradius_threshold = 0.25 * lattice_.systole_sq_length();
     insert(first, beyond);
   }
 
@@ -481,6 +489,13 @@ public:
     return canonical_points;
   }
 
+  FT compute_squared_circumradius(const Face_handle fh) const
+  {
+    return geom_traits().compute_squared_radius_2_object()(dt2.point(fh, 0),
+                                                           dt2.point(fh, 1),
+                                                           dt2.point(fh, 2));
+  }
+
   /// Canonicity functions
   bool is_canonical(const Point& p) const
   {
@@ -576,6 +591,11 @@ public:
       fc->set_canonical_flag(is_canonical(fc));
     }
     while(++fc != done);
+  }
+
+  Face_handle get_canonical_face(const Face_handle& fh) const
+  {
+    return find_translated_face(fh, -compute_offset(fh));
   }
 
   /// Low level functions to mascarade the DT2 as a periodic triangulation
@@ -742,9 +762,31 @@ public:
 
   Vertex_handle insert(const Point& p)
   {
+    if(is_1_cover)
+      return insert_in_p2t2(p);
+    else
+      return insert_in_dt2(p);
+  }
+
+  Vertex_handle insert_in_dt2(const Point& p)
+  {
     const Point cp = lattice_.construct_canonical_point(p);
 
+    if(dt2.dimension() >= 2) // equivalent to !dt2.empty() since we insert duplicate vertices
+    {
+      // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
+      std::vector<Face_handle> faces_in_conflict;
+      dt2.get_conflicts(cp, std::back_inserter(faces_in_conflict));
+      for(Face_handle fh : faces_in_conflict)
+      {
+        // @fixme? is this safe? Are all faces returned by the get_conflicts
+        // faces of the periodic triangulation and not "boundary" faces
+        faces_with_too_big_circumradius.erase(get_canonical_face(fh));
+      }
+    }
+
     Vertex_handle vh = dt2.insert(cp);
+
     CGAL_assertion(vh != Vertex_handle());
     vh->set_offset(Offset(0, 0));
 
@@ -774,7 +816,26 @@ public:
       }
     }
 
+    // Update the current maximum circumradius value
+    Face_circulator fc = dt2.incident_faces(vh), done(fc);
+    do
+    {
+      const FT sq_cr = compute_squared_circumradius(fc);
+      if(sq_cr > sq_circumradius_threshold)
+        faces_with_too_big_circumradius.insert(get_canonical_face(fc));
+    }
+    while(++fc != done);
+
+    // if(faces_with_too_big_circumradius.empty())
+    //   convert_to_1_cover();
+
     return vh;
+  }
+
+  Vertex_handle insert_in_p2t2(const Point& p)
+  {
+    // @todo
+    return Vertex_handle();
   }
 
   // @todo should take two ForwardIterators
@@ -792,6 +853,9 @@ public:
     CGAL_postcondition(dt2.number_of_vertices() == 9 * np);
     CGAL_postcondition(dt2.is_valid());
   }
+
+  std::set<Face_handle> faces_with_too_big_circumradius;
+  FT sq_circumradius_threshold;
 
   DT2 dt2; // @tmp, shouldn't be exposed
   P2T2 p2t2;
