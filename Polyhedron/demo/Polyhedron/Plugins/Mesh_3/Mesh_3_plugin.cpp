@@ -302,7 +302,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       else if (auto image_item =
                    qobject_cast<Scene_image_item*>(scene->item(ind))) {
         if (!items)
-          items = Image_mesh_items{make_not_null(image_item)};
+          items = Image_mesh_items{make_not_null(image_item), nullptr};
         else
           return tr("An image items cannot be mixed with other items type");
       }
