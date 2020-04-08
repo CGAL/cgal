@@ -691,7 +691,7 @@ public:
     if(is_canonical(neighbor))
       return neighbor;
     else // if not, find the canonical translate.
-      return find_translated_face(neighbor, -compute_offset(neighbor));
+      return get_canonical_face(neighbor);
   }
 
   /// Iterators and Circulators
@@ -707,8 +707,8 @@ public:
     Face_circulator tds_fc = dt2.incident_faces(vh), done = tds_fc;
 
     do
-    {      
-      ifhs.insert(find_translated_face(tds_fc, -compute_offset(tds_fc)));
+    {
+      ifhs.insert(get_canonical_face(tds_fc));
 
       // @todo when proper periodic traits are used to construct dt2 (that is,
       // insert (p, off) instead of constructing the offsetted point,
