@@ -452,7 +452,7 @@ reduce_face_selection(
 
   \tparam NamedParameters a sequence of named parameters
 
-  \param fg the graph containing the selected faces.
+  \param mesh the mesh containing the selected faces.
 
   \param is_selected indicates if a face is part of the selection. It
   is updated by the function to accommodate faces added or removed
@@ -468,10 +468,10 @@ reduce_face_selection(
 
   \cgalNamedParamsBegin
     \cgalParamBegin{face_index_map}
-      the property map with the indices associated to the faces of `fg`
+      the property map with the indices associated to the faces of `mesh`
     \cgalParamEnd
     \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `fg`
+      the property map with the points associated to the vertices of `mesh`
     \cgalParamEnd
     \cgalParamBegin{prevent_unselection}
       if `true` only new faces can be selected, if `false` (default) some
