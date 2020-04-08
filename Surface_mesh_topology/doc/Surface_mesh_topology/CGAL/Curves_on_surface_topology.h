@@ -4,7 +4,7 @@ namespace Surface_mesh_topology {
   /*!
     \ingroup PkgSurfaceMeshTopologyClasses
 
-    The class `Curves_on_surface_topology` provides methods to test homotopy on paths. Each object of this class is constructed from an external mesh, either a \ref CombinatorialMap "2D combinatorial map" or a model of a FaceGraph. It maintains a correspondence between this mesh and an internal representation, computed the first time an homotopy test is called. The user must not modify the input surface as long as homotopy tests are performed with this `Curves_on_surface_topology`.
+    The class `Curves_on_surface_topology` provides methods to compute shortest non contracible cycles and to test homotopy on paths. Each object of this class is constructed from an external mesh, either a \ref CombinatorialMap "2D combinatorial map" or a model of a FaceGraph. It maintains a correspondence between this mesh and an internal representation, computed the first time an homotopy test is called. The user must not modify the input surface as long as homotopy tests are performed with this `Curves_on_surface_topology`.
 
     \tparam Mesh a model of `CombinatorialMap` or of `FaceGraph`
   */
@@ -53,7 +53,7 @@ namespace Surface_mesh_topology {
     template <class WeightFunctor=Unit_weight_functor>
     Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(halfedge_descriptor dh, const WeightFunctor& wf=WeightFunctor()) const;
 
-    /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be decribed by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewes as subsets of darts.) The size of the returned vector is the 'facewidth' of the mesh.
+    /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be decribed by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewed as subsets of darts.) The size of the returned vector is the 'facewidth' of the mesh.
      */
     std::vector<halfedge_descriptor> compute_facewidth() const;
   };
