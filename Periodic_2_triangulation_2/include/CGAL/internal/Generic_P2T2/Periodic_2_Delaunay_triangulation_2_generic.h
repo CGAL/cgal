@@ -271,122 +271,10 @@ public:
   const Geom_traits& geom_traits() const { return gt_; }
   const Triangulation_data_structure & tds() const { return tds_; }
 
+// @todo
 //  void copy_triangulation(const Periodic_2_Delaunay_triangulation_2_generic &tr) { }
 //  void swap(Periodic_2_Delaunay_triangulation_2_generic &tr) { }
 //  void clear() { }
-
-  void add_edge_to_incident_faces_map(const Face_handle fh, int i,
-                                      std::unordered_map<
-                                        std::set<Vertex_handle>,
-                                        std::vector< // @todo array
-                                          std::pair<Face_handle, int> > >& incident_faces_map)
-  {
-    typedef std::set<Vertex_handle>                                            Edge_vertices;
-    typedef std::pair<Face_handle, int>                                        Incident_face;
-    typedef std::unordered_map<Edge_vertices, std::vector<Incident_face> >   Incident_faces_map;
-
-    // the opposite vertex of f in c is i
-    Edge_vertices e;
-    e.insert(fh->vertex((i + 1) % 3));
-    e.insert(fh->vertex((i + 2) % 3));
-    CGAL_precondition(e.size() == 2);
-
-    Incident_face icf = std::make_pair(fh, i);
-    std::vector<Incident_face> vec;
-    vec.push_back(icf);
-
-    std::pair<typename Incident_faces_map::iterator, bool> is_insert_successful =
-        incident_faces_map.insert(std::make_pair(e, vec));
-    if(!is_insert_successful.second) // the entry already exists in the map
-    {
-      // a facet must have exactly two incident faces
-      CGAL_assertion(is_insert_successful.first->second.size() == 1);
-      is_insert_successful.first->second.push_back(icf);
-    }
-  }
-
-  void convert_to_1_cover()
-  {
-    is_1_cover = true;
-
-    p2t2.clear();
-    p2t2.tds().set_dimension(2);
-
-    cpp11::unordered_map<Vertex_handle /*dt2*/, Vertex_handle /*p2t2*/> vertex_correspondence_map;
-
-    typename DT2::Finite_vertices_iterator vit = dt2.finite_vertices_begin(),
-                                           vend = dt2.finite_vertices_end();
-    for(; vit!=vend; ++vit)
-    {
-      if(!is_canonical(vit))
-        continue;
-
-      Vertex_handle vh = p2t2.tds().create_vertex();
-      vh->set_point(vit->point());
-      vertex_correspondence_map[vit] = vh;
-    }
-
-    typedef std::unordered_map<
-              std::set<Vertex_handle>,
-                std::vector<std::pair<Face_handle, int> > > Incident_faces_map;
-    Incident_faces_map incident_faces_map;
-
-    size_type cfc = 0;
-    typename DT2::Finite_faces_iterator fit = dt2.finite_faces_begin(),
-                                        fend = dt2.finite_faces_end();
-    for(; fit!=fend; ++fit)
-    {
-      if(!is_canonical(fit))
-        continue;
-
-      ++cfc;
-
-      Vertex_handle p2t2_vh0 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(0)));
-      Vertex_handle p2t2_vh1 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(1)));
-      Vertex_handle p2t2_vh2 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(2)));
-
-      Face_handle fh = p2t2.tds().create_face(p2t2_vh0, p2t2_vh1, p2t2_vh2);
-      // @fixme: Store these as relative offsets (i.e. relative to vertex 0)?
-      fh->set_offsets(fit->vertex(0)->offset(),
-                      fit->vertex(1)->offset(),
-                      fit->vertex(2)->offset());
-
-      add_edge_to_incident_faces_map(fh, 0, incident_faces_map);
-      add_edge_to_incident_faces_map(fh, 1, incident_faces_map);
-      add_edge_to_incident_faces_map(fh, 2, incident_faces_map);
-
-      // Set up incident face information
-      for(int i=0; i<3; ++i)
-      {
-        if(fh->vertex(i)->face() == Face_handle())
-          fh->vertex(i)->set_face(fh);
-      }
-    }
-
-    // Set up adjacencies
-    typename Incident_faces_map::const_iterator ifit = incident_faces_map.begin();
-    for(; ifit!=incident_faces_map.end(); ++ifit)
-    {
-      const std::vector<std::pair<Face_handle, int> >& adjacent_faces = ifit->second;
-      CGAL_assertion(adjacent_faces.size() == 2);
-
-      Face_handle f0 = adjacent_faces[0].first;
-      int i0 = adjacent_faces[0].second;
-      Face_handle f1 = adjacent_faces[1].first;
-      int i1 = adjacent_faces[1].second;
-
-      p2t2.tds().set_adjacency(f0, i0, f1, i1);
-    }
-
-    std::cout << dt2.number_of_vertices() / 9 << " canonical vertices in dt2" << std::endl;
-    std::cout << p2t2.number_of_vertices() << " vertices in p2t2" << std::endl;
-
-    std::cout << cfc << " canonical faces in dt2" << std::endl;
-    std::cout << p2t2.number_of_faces() << " canonical faces in p2t2" << std::endl;
-
-    CGAL_postcondition(p2t2.tds().is_valid());
-    CGAL_postcondition(p2t2.is_valid());
-  }
 
   // number of canonical simplicies of each dimension
   size_type number_of_vertices() const
@@ -446,7 +334,7 @@ public:
     for(; vit!=vend; ++vit) {
       if (!is_canonical(vit))
         continue;
-    
+
       typename DT2::Vertex_circulator vc = dt2.incident_vertices(vit), done = vc;
       cpp11::unordered_set<Vertex_handle> neighbours;
       do
@@ -458,7 +346,6 @@ public:
       }
       while(++vc != done);
     }
-
 
     return true;
   }
@@ -584,8 +471,7 @@ public:
     if(dt2.dimension() != 2)
       return;
 
-    typename DT2::Face_circulator fc = dt2.incident_faces(vh),
-                                                       done = fc;
+    typename DT2::Face_circulator fc = dt2.incident_faces(vh), done = fc;
     do
     {
       fc->set_canonical_flag(is_canonical(fc));
@@ -645,7 +531,7 @@ public:
     {
       if(dt2.is_infinite(fc)) // shouldn't ever happen
         continue;
-      
+
       int cj = fc->index(cv);
       Vertex_handle cv_ccw = fc->vertex(dt2.ccw(cj));
       Vertex_handle cv_cw = fc->vertex(dt2.cw(cj));
@@ -754,12 +640,6 @@ public:
 //  }
 
   /// Insertion and removal
-//  P2T2_Vertex_handle insert_into_p2t2(const Point& p)
-//  {
-//    const Point cp = lattice_.construct_canonical_point(p);
-//    p2t2.insert(cp);
-//  }
-
   Vertex_handle insert(const Point& p)
   {
     if(is_1_cover)
@@ -834,11 +714,11 @@ public:
 
   Vertex_handle insert_in_p2t2(const Point& p)
   {
-    // @todo
+    // @todo (point must be canonicalized?)
+    // return p2t2.insert(p);
     return Vertex_handle();
   }
 
-  // @todo should take two ForwardIterators
   template <class InputIterator>
   void insert(InputIterator first, InputIterator beyond)
   {
@@ -854,9 +734,118 @@ public:
     CGAL_postcondition(dt2.is_valid());
   }
 
-  std::set<Face_handle> faces_with_too_big_circumradius;
-  FT sq_circumradius_threshold;
+  void add_edge_to_incident_faces_map(const Face_handle fh, int i,
+                                      std::map<std::set<Vertex_handle>,
+                                               std::vector<std::pair<Face_handle, int> > >& incident_faces_map)
+  {
+    typedef std::set<Vertex_handle>                                            Edge_vertices;
+    typedef std::pair<Face_handle, int>                                        Incident_face;
+    typedef std::map<Edge_vertices, std::vector<Incident_face> >               Incident_faces_map;
 
+    // the opposite vertex of f in c is i
+    Edge_vertices e;
+    e.insert(fh->vertex((i + 1) % 3));
+    e.insert(fh->vertex((i + 2) % 3));
+    CGAL_precondition(e.size() == 2);
+
+    Incident_face icf = std::make_pair(fh, i);
+    std::vector<Incident_face> vec;
+    vec.push_back(icf);
+
+    std::pair<typename Incident_faces_map::iterator, bool> is_insert_successful =
+        incident_faces_map.insert(std::make_pair(e, vec));
+    if(!is_insert_successful.second) // the entry already exists in the map
+    {
+      // a facet must have exactly two incident faces
+      CGAL_assertion(is_insert_successful.first->second.size() == 1);
+      is_insert_successful.first->second.push_back(icf);
+    }
+  }
+
+  void convert_to_1_cover()
+  {
+    is_1_cover = true;
+
+    p2t2.clear();
+    p2t2.tds().set_dimension(2);
+
+    cpp11::unordered_map<Vertex_handle /*dt2*/, Vertex_handle /*p2t2*/> vertex_correspondence_map;
+
+    typename DT2::Finite_vertices_iterator vit = dt2.finite_vertices_begin(),
+                                           vend = dt2.finite_vertices_end();
+    for(; vit!=vend; ++vit)
+    {
+      if(!is_canonical(vit))
+        continue;
+
+      Vertex_handle vh = p2t2.tds().create_vertex();
+      vh->set_point(vit->point());
+      vertex_correspondence_map[vit] = vh;
+    }
+
+    // @todo array instead of vector
+    typedef std::map<std::set<Vertex_handle>,
+                     std::vector<std::pair<Face_handle, int> > > Incident_faces_map;
+    Incident_faces_map incident_faces_map;
+
+    size_type cfc = 0;
+    typename DT2::Finite_faces_iterator fit = dt2.finite_faces_begin(),
+                                        fend = dt2.finite_faces_end();
+    for(; fit!=fend; ++fit)
+    {
+      if(!is_canonical(fit))
+        continue;
+
+      ++cfc;
+
+      Vertex_handle p2t2_vh0 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(0)));
+      Vertex_handle p2t2_vh1 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(1)));
+      Vertex_handle p2t2_vh2 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(2)));
+
+      Face_handle fh = p2t2.tds().create_face(p2t2_vh0, p2t2_vh1, p2t2_vh2);
+      // @fixme: Store these as relative offsets (i.e. relative to vertex 0)?
+      fh->set_offsets(fit->vertex(0)->offset(),
+                      fit->vertex(1)->offset(),
+                      fit->vertex(2)->offset());
+
+      add_edge_to_incident_faces_map(fh, 0, incident_faces_map);
+      add_edge_to_incident_faces_map(fh, 1, incident_faces_map);
+      add_edge_to_incident_faces_map(fh, 2, incident_faces_map);
+
+      // Set up incident face information
+      for(int i=0; i<3; ++i)
+      {
+        if(fh->vertex(i)->face() == Face_handle())
+          fh->vertex(i)->set_face(fh);
+      }
+    }
+
+    // Set up adjacencies
+    typename Incident_faces_map::const_iterator ifit = incident_faces_map.begin();
+    for(; ifit!=incident_faces_map.end(); ++ifit)
+    {
+      const std::vector<std::pair<Face_handle, int> >& adjacent_faces = ifit->second;
+      CGAL_assertion(adjacent_faces.size() == 2);
+
+      Face_handle f0 = adjacent_faces[0].first;
+      int i0 = adjacent_faces[0].second;
+      Face_handle f1 = adjacent_faces[1].first;
+      int i1 = adjacent_faces[1].second;
+
+      p2t2.tds().set_adjacency(f0, i0, f1, i1);
+    }
+
+    std::cout << dt2.number_of_vertices() / 9 << " canonical vertices in dt2" << std::endl;
+    std::cout << p2t2.number_of_vertices() << " vertices in p2t2" << std::endl;
+
+    std::cout << cfc << " canonical faces in dt2" << std::endl;
+    std::cout << p2t2.number_of_faces() << " canonical faces in p2t2" << std::endl;
+
+    CGAL_postcondition(p2t2.tds().is_valid());
+    CGAL_postcondition(p2t2.is_valid());
+  }
+
+public:
   DT2 dt2; // @tmp, shouldn't be exposed
   P2T2 p2t2;
 
@@ -868,6 +857,8 @@ private:
   cpp11::unordered_map<Vertex_handle /*periodic copy*/,
                        Vertex_handle /*canonical*/> canonical_vertices;
 
+  std::set<Face_handle> faces_with_too_big_circumradius;
+  FT sq_circumradius_threshold;
 
   Geom_traits gt_;
   Triangulation_data_structure tds_;
