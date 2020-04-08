@@ -34,7 +34,9 @@ int main(int argc, char** argv)
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
   CGAL::read_OFF(in, points, triangles);
   std::cout << "  Read soup: " << timer.time() << std::endl;
-  m.reserve(points.size(), 3*triangles.size()/2, triangles.size());
+  m.reserve(static_cast<unsigned int>(points.size()),
+            static_cast<unsigned int>(3*triangles.size()/2),
+            static_cast<unsigned int>(triangles.size()));
   for (const Kernel::Point_3& pt : points)
     m.add_vertex(pt);
   CGAL::Real_timer subtimer;
@@ -58,7 +60,9 @@ int main(int argc, char** argv)
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
   CGAL::read_OFF(in, points, triangles);
   std::cout << "  Read soup: " << timer.time() << std::endl;
-  m.reserve(points.size(), 3*triangles.size()/2, triangles.size());
+  m.reserve(static_cast<unsigned int>(points.size()),
+            static_cast<unsigned int>(3*triangles.size()/2),
+            static_cast<unsigned int>(triangles.size()));
   for (const Kernel::Point_3& pt : points)
     m.add_vertex(pt);
   CGAL::Real_timer subtimer;
