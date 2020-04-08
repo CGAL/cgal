@@ -26,6 +26,8 @@
 #include <CGAL/Tetrahedral_remeshing/internal/smooth_vertices.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
+#include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
+
 
 namespace CGAL
 {
@@ -37,17 +39,17 @@ namespace internal
   {
   public:
     template<typename Tr>
-    void before_split(const Tr& tr, const typename Tr::Edge& e) {}
+    void before_split(const Tr& /* tr */, const typename Tr::Edge& /* e */) {}
     template<typename Tr>
-    void after_split(const Tr& tr, const typename Tr::Vertex_handle new_v) {}
+    void after_split(const Tr& /* tr */, const typename Tr::Vertex_handle /* new_v */) {}
 
     template<typename CellHandleOld, typename CellHandleNew>
-    void after_add_cell(CellHandleOld co, CellHandleNew cn) const {}
+    void after_add_cell(CellHandleOld /* co */, CellHandleNew /* cn */) const {}
 
     template<typename CellHandle>
-    void before_flip(const CellHandle c) {}
+    void before_flip(const CellHandle /* c */) {}
     template<typename CellHandle>
-    void after_flip(CellHandle c) {}
+    void after_flip(CellHandle /* c */) {}
   };
 
   template<typename Tr>
@@ -100,7 +102,7 @@ namespace internal
     typedef typename C3t3::Subdomain_index     Subdomain_index;
     typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-    typedef typename Tetrahedral_remeshing_smoother<C3t3> Smoother;
+    typedef Tetrahedral_remeshing_smoother<C3t3> Smoother;
 
   private:
     C3t3 m_c3t3;
@@ -110,8 +112,8 @@ namespace internal
     Visitor& m_visitor;
     Smoother m_vertex_smoother;//initialized with initial surface
 
-    Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
     C3t3* m_c3t3_pbackup;
+    Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
 
   public:
     Adaptive_remesher(Triangulation& tr

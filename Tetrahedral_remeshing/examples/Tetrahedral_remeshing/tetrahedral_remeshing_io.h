@@ -27,7 +27,6 @@ bool load_binary_triangulation(std::istream& is, T3& t3)
 template<typename T3>
 bool save_binary_triangulation(std::ostream& os, const T3& t3)
 {
-  typedef T3::Geom_traits::FT FT;
   os << "binary CGAL c3t3\n";
   CGAL::set_binary_mode(os);
   return !!(os << t3);
@@ -46,7 +45,7 @@ void save_ascii_triangulation(const char* filename, const T3& t3)
 template<typename T3>
 int generate_input(int input_id, std::size_t nbv, T3& tr)
 {
-  char* filename;
+  std::string filename;
   CGAL::Random rng;
 
   if (input_id == 1) //sphere and only one subdomain
@@ -54,9 +53,9 @@ int generate_input(int input_id, std::size_t nbv, T3& tr)
     filename = "data/triangulation_one_subdomain.binary.cgal";
 
     while (tr.number_of_vertices() < nbv)
-      tr.insert(T3::Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+      tr.insert(typename T3::Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
 
-    for (T3::Finite_cells_iterator cit = tr.finite_cells_begin();
+    for (typename T3::Finite_cells_iterator cit = tr.finite_cells_begin();
       cit != tr.finite_cells_end(); ++cit)
     {
       cit->set_subdomain_index(1);
@@ -68,11 +67,11 @@ int generate_input(int input_id, std::size_t nbv, T3& tr)
 
     while (tr.number_of_vertices() < nbv)
       tr.insert(
-        T3::Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+        typename T3::Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
 
-    const K::Plane_3 plane(K::Point_3(0,0,0), K::Point_3(0,1,0), K::Point_3(0,0,1));
+    const typename T3::Plane_3 plane(typename T3::Point(0,0,0), typename T3::Point(0,1,0), typename T3::Point(0,0,1));
 
-    for (T3::Finite_cells_iterator cit = tr.finite_cells_begin();
+    for (typename T3::Finite_cells_iterator cit = tr.finite_cells_begin();
          cit != tr.finite_cells_end(); ++cit)
     {
       if(plane.has_on_positive_side(

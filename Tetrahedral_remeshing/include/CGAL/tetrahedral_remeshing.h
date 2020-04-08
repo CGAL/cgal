@@ -114,7 +114,7 @@ namespace CGAL
     typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
     tetrahedral_adaptive_remeshing(
       tr,
-      [target_edge_length](const Triangulation::Point& p)
+      [target_edge_length](const typename Triangulation::Point& /* p */)
                           {return target_edge_length;},
       np);
   }
@@ -129,7 +129,7 @@ namespace CGAL
     typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
     tetrahedral_adaptive_remeshing(
       tr,
-      [target_edge_length](const Triangulation::Point& p)
+      [target_edge_length](const typename Triangulation::Point& /* p */)
                           {return target_edge_length; },
       np);
   }

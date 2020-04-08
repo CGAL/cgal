@@ -32,7 +32,7 @@ bool load_binary_triangulation(std::istream& is, T3& t3)
 
 bool save_binary_triangulation(std::ostream& os, const T3& t3)
 {
-  typedef T3::Geom_traits::FT FT;
+//  typedef T3::Geom_traits::FT FT;
   os << "binary CGAL c3t3\n";
   CGAL::set_binary_mode(os);
   return !!(os << t3);

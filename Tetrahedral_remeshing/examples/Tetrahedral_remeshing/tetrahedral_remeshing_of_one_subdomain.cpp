@@ -26,7 +26,7 @@ public:
     : m_subdomain(subdomain)
   {}
 
-  const bool operator()(Remeshing_triangulation::Cell_handle c) const
+  bool operator()(Remeshing_triangulation::Cell_handle c) const
   {
     return m_subdomain == c->subdomain_index();
   }

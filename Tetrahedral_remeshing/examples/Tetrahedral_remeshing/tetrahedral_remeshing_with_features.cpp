@@ -56,7 +56,7 @@ public:
     else    map.m_set_ptr->erase(k);
   }
 
-  friend const value_type get(const Constrained_edges_property_map& map,
+  friend value_type get(const Constrained_edges_property_map& map,
                               const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != NULL);

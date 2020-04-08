@@ -142,8 +142,8 @@ namespace CGAL
       {
         typename Tr::Geom_traits::Construct_opposite_vector_3
           opp = c3t3.triangulation().geom_traits().construct_opposite_vector_3_object();
-        typename Tr::Geom_traits::Construct_scaled_vector_3
-          scale = c3t3.triangulation().geom_traits().construct_scaled_vector_3_object();
+//        typename Tr::Geom_traits::Construct_scaled_vector_3
+//          scale = c3t3.triangulation().geom_traits().construct_scaled_vector_3_object();
 
         const Tr& tr = c3t3.triangulation();
 
@@ -348,7 +348,7 @@ namespace CGAL
         const bool protect_boundaries,
         const CellSelector& cell_selector)
       {
-        typedef typename C3T3::Cell_handle            Cell_handle;
+//        typedef typename C3T3::Cell_handle            Cell_handle;
         typedef typename Gt::FT              FT;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

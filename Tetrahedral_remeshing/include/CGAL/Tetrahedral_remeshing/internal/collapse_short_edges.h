@@ -597,8 +597,8 @@ namespace internal
   }
 
   template<typename C3t3>
-  void merge_surface_patch_indices(typename C3t3::Facet& f1,
-                                   typename C3t3::Facet& f2,
+  void merge_surface_patch_indices(const typename C3t3::Facet& f1,
+                                   const typename C3t3::Facet& f2,
                                    C3t3& c3t3)
   {
     const bool in_cx_f1 = c3t3.is_in_complex(f1);
@@ -856,7 +856,7 @@ namespace internal
   typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
                      C3t3& c3t3,
                      const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
-                     const bool protect_boundaries,
+                     const bool /* protect_boundaries */,
                      CellSelector cell_selector,
                      Visitor& visitor)
   {
@@ -1044,10 +1044,10 @@ namespace internal
       //the edge with shortest length
       typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
       Edge_vv e = eit->second;
-      FT sqlen = eit->first;
       short_edges.right.erase(eit);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
+      FT sqlen = eit->first;
       std::cout << "\rCollapse... (" << short_edges.left.size() << " short edges, ";
       std::cout << std::sqrt(sqlen) << ", ";
       std::cout << nb_collapses << " collapses)";

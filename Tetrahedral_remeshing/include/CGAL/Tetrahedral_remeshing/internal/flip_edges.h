@@ -1008,8 +1008,8 @@ namespace internal
   {
     typedef typename C3t3::Triangulation        Tr;
     typedef typename C3t3::Vertex_handle        Vertex_handle;
-    typedef typename C3t3::Facet                Facet;
-    typedef typename C3t3::Surface_patch_index  Surface_patch_index;
+//    typedef typename C3t3::Facet                Facet;
+//    typedef typename C3t3::Surface_patch_index  Surface_patch_index;
     typedef typename Tr::Facet_circulator       Facet_circulator;
 
     Tr& tr = c3t3.triangulation();
@@ -1097,7 +1097,7 @@ namespace internal
                              Visitor& visitor)
   {
     typedef typename C3t3::Triangulation Tr;
-    typedef typename Tr::Vertex_handle Vertex_handle;
+//    typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle   Cell_handle;
     typedef typename Tr::Edge          Edge;
 

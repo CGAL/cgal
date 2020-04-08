@@ -77,6 +77,7 @@ namespace Tetrahedral_remeshing
     typedef CGAL::Triangulation_data_structure_3<
               Remeshing_Vb, Remeshing_Cb, Concurrency_tag>  Tds;
     typedef CGAL::Triangulation_3<Gt, Tds>                  Self;
+    typedef typename Gt::Plane_3 Plane_3;
   };
 
   namespace internal
@@ -147,7 +148,7 @@ namespace Tetrahedral_remeshing
                                      Remeshing_triangulation_3<Gt>& remeshing_tr)
   {
     typedef typename T3::Triangulation_data_structure Tds;
-    typedef Remeshing_triangulation_3<Gt>::Tds   RTds;
+    typedef typename Remeshing_triangulation_3<Gt>::Tds   RTds;
 
     remeshing_tr.clear();
 
@@ -165,7 +166,7 @@ namespace Tetrahedral_remeshing
     T3& tr)
   {
     typedef typename T3::Triangulation_data_structure Tds;
-    typedef Remeshing_triangulation_3<Gt>::Tds   RTds;
+    typedef typename Remeshing_triangulation_3<Gt>::Tds   RTds;
 
     tr.clear();
 

@@ -251,7 +251,9 @@ namespace CGAL
         void fastProjectionCPU(const float* pv, unsigned int pvSize,
           float* qv, unsigned int stride = 3) const
         {
+#ifdef _OPENMP
 #pragma omp parallel for
+#endif
           for (int i = 0; i < int(pvSize); i++) {
             Vec3Df p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
             Vec3Df q, n;
@@ -292,7 +294,9 @@ namespace CGAL
         void projectionCPU(const float* pv, unsigned int pvSize,
           float* qv, unsigned int stride = 3)
         {
+#ifdef _OPENMP
 #pragma omp parallel for
+#endif
           for (int i = 0; i < int(pvSize); i++) {
             Vec3Df p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
             Vec3Df q, n;

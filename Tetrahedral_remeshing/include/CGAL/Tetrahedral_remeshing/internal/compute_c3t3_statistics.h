@@ -19,6 +19,9 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
+#ifndef CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
+#define CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -205,3 +208,5 @@ namespace internal
 }//end namespace internal
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
+
+#endif // CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
