@@ -181,19 +181,12 @@ inline std::istream
   return is;
 }
 
-// @fixme: Either prove that a face with offset 0 is always non-degenerate,
-// or change the offset definition to be lexicographic instead of coordinate-wise,
-// which ensures that a face with 0 offset always has a vertex in the domain and
-// thus is non-degenerate. This alternative definition is commented out below.
-// Periodic_2_offset_2 min(const Periodic_2_offset_2 &off1, const Periodic_2_offset_2 &off2)
-// {
-//   if (off1 < off2) return off1;
-//   else return off2;
-// }
-
 Periodic_2_offset_2 min(const Periodic_2_offset_2 &off1, const Periodic_2_offset_2 &off2)
 {
-  return Periodic_2_offset_2(std::min(off1.x(), off2.x()), std::min(off1.y(), off2.y()));
+  if (off1 < off2)
+    return off1;
+  else
+    return off2;
 }
 
 Periodic_2_offset_2 min(const Periodic_2_offset_2 &off1, const Periodic_2_offset_2 &off2, const Periodic_2_offset_2 &off3)
