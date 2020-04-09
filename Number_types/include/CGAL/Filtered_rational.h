@@ -101,7 +101,7 @@ public:
                                  boost::is_same<T, NT1>,
                                  boost::is_same<T, int>,
                                  boost::is_same<T, double> > >::type* = 0)
-    : _n1(to_interval(_n2)), _n2(n2)
+    : _n1(to_interval(n2)), _n2(n2)
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     , eii(true)
 #endif
