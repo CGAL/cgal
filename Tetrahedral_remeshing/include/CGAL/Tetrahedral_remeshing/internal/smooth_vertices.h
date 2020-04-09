@@ -21,6 +21,7 @@
 
 #include <boost/unordered_map.hpp>
 #include <boost/optional.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <vector>
 #include <cmath>
@@ -321,6 +322,46 @@ namespace CGAL
         return Vector_3(result[0], result[1], result[2]);
       }
 
+      template<typename CellRange, typename Tr>
+      void check_inversion_and_move(const typename Tr::Vertex_handle v,
+                                    const typename Tr::Point& final_pos,
+                                    const CellRange& inc_cells,
+                                    const Tr& tr)
+      {
+        const typename Tr::Point backup = v->point(); //backup v's position
+        const typename Tr::Geom_traits::Point_3 pv = point(backup);
+
+        bool valid_orientation = false;
+        double frac = 1.0;
+        typename Tr::Geom_traits::Vector_3 move(pv, point(final_pos));
+        do
+        {
+          v->set_point(typename Tr::Point(pv + frac * move));
+
+          bool valid_try = true;
+          for (const typename Tr::Cell_handle ci : inc_cells)
+          {
+            if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
+                                                    point(ci->vertex(1)->point()),
+                                                    point(ci->vertex(2)->point()),
+                                                    point(ci->vertex(3)->point())))
+            {
+              frac = 0.9 * frac;
+              valid_try = false;
+              break;
+            }
+          }
+          valid_orientation = valid_try;
+
+//          std::cout << std::boolalpha << "valid orientation = " << valid_orientation
+//                    << "\tfrac = " << frac << std::endl;
+        }
+        while(!valid_orientation && frac > 0.1);
+
+        if (!valid_orientation) //move failed
+          v->set_point(backup);
+      }
+
       void collect_vertices_surface_indices(
         const C3t3& c3t3,
         boost::unordered_map<Vertex_handle,
@@ -348,7 +389,7 @@ namespace CGAL
         const bool protect_boundaries,
         const CellSelector& cell_selector)
       {
-//        typedef typename C3T3::Cell_handle            Cell_handle;
+        typedef typename C3T3::Cell_handle            Cell_handle;
         typedef typename Gt::FT              FT;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -386,6 +427,18 @@ namespace CGAL
         for (const Vertex_handle v : tr.finite_vertex_handles())
         {
           vertex_id[v] = id++;
+        }
+
+        //collect incident cells
+        std::vector<boost::container::small_vector<Cell_handle, 40> >
+          inc_cells(nbv, boost::container::small_vector<Cell_handle, 40>());
+        for (const Cell_handle c : tr.finite_cell_handles())
+        {
+          for (int i = 0; i < 4; ++i)
+          {
+            const std::size_t id = vertex_id[c->vertex(i)];
+            inc_cells[id].push_back(c);
+          }
         }
 
         if (!protect_boundaries)
@@ -566,8 +619,10 @@ namespace CGAL
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
               os_surf << "2 " << current_pos << " " << final_position << std::endl,
 #endif
-                v->set_point(typename Tr::Point(
-                  final_position.x(), final_position.y(), final_position.z()));
+              check_inversion_and_move(v, typename Tr::Point(
+                  final_position.x(), final_position.y(), final_position.z()),
+                  inc_cells[vid],
+                  tr);
             }
             else if (neighbors[vid] > 0)
             {
@@ -579,15 +634,16 @@ namespace CGAL
               if (boost::optional<Vector_3> mls_projection = project(si, current_pos))
               {
                 const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
-                v->set_point(new_pos);
+                check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-                os_surf0 << "2 " << current_pos << " " << current_pos << std::endl;
+                os_surf0 << "2 " << current_pos << " " << new_pos << std::endl;
 #endif
               }
             }
           }
         }
+        CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::debug_negative_volumes(tr));
         ////   end if(!protect_boundaries)
 
         smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
@@ -631,13 +687,14 @@ namespace CGAL
             os_vol << "2 " << point(v->point());
 #endif
             const Vector_3 p = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
-            v->set_point(typename Tr::Point(p.x(), p.y(), p.z()));
+            check_inversion_and_move(v, typename Tr::Point(p.x(), p.y(), p.z()), inc_cells[vid], tr);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
             os_vol << " " << point(v->point()) << std::endl;
 #endif
           }
         }
+        CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::debug_negative_volumes(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << " done (" << nb_done << " vertices smoothed)." << std::endl;
