@@ -40,10 +40,8 @@ public:
   }
   //! [init]
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
   {
-    //gets the reference to the message interface, to display text in the console widget
-    this->messageInterface = mi;
     //get the references
     this->scene = sc;
     this->mw = mw;
@@ -92,7 +90,6 @@ private Q_SLOTS:
   //! [closure]
 private:
   QList<QAction*> _actions;
-  Messages_interface* messageInterface;
   DockWidget* dock_widget;
 };
 

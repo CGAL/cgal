@@ -4,7 +4,6 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QInputDialog>
-#include "Messages_interface.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Scene_group_item.h>
 
@@ -46,10 +45,8 @@ public:
     }
   }
 
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*)
   {
-    //gets the reference to the message interface, to display text in the console widget
-    this->messageInterface = mi;
     init(mw, sc);
   }
 private Q_SLOTS:
@@ -76,7 +73,6 @@ private Q_SLOTS:
 
 private:
   QList<QAction*> _actions;
-  Messages_interface* messageInterface;
   //The reference to the scene
   CGAL::Three::Scene_interface* scene;
   //The reference to the main window

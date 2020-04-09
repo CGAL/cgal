@@ -54,10 +54,10 @@ As a plugin is a QObject, it uses automoc and therefore must contain the line:
 ~~~~~~~~~~~~~
 
 <b>Example : </b>
-\snippet Three/Example_plugin/Basic_plugin.cpp headers_plugin
-\snippet Three/Example_plugin/Basic_plugin.cpp opening_plugin
-\snippet Three/Example_plugin/Basic_plugin.cpp basic_plugin
-\snippet Three/Example_plugin/Basic_plugin.cpp ending_plugin
+\snippet Example_plugin/Basic_plugin.cpp headers_plugin
+\snippet Example_plugin/Basic_plugin.cpp opening_plugin
+\snippet Example_plugin/Basic_plugin.cpp basic_plugin
+\snippet Example_plugin/Basic_plugin.cpp ending_plugin
 
 Once you have written your plugin, you must add it to the project using the CMakeLists.txt file. \n
 If you created your plugin in an existing directory, the CMakeLists.txt file already exists. If you created a new directory, you must create it.
@@ -74,7 +74,7 @@ This section describes how to add a dialog when an action is triggered.
 
 For a minimalist dialog intended, for instance, to get a single parameter, you can create a `QInputDialog`:
 
-\snippet Three/Example_plugin/Basic_plugin.cpp basic_dialog_plugin
+\snippet Example_plugin/Basic_plugin.cpp basic_dialog_plugin
 
 
 For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt->).
@@ -101,16 +101,16 @@ You can then add a new class to your cpp file, inheriting from `QDialog` and you
 Add the macro `Q_OBJECT` and the line
     `setupUi(this)`
 in your constructor.
-\snippet Three/Example_plugin/Basic_plugin.cpp dialog_plugin
+\snippet Example_plugin/Basic_plugin.cpp dialog_plugin
 
 You can populate the dialog in the action, using `dialog.show()` or `dialog.exec()`.
 
-\snippet Three/Example_plugin/Basic_plugin.cpp complex_dialog_plugin
+\snippet Example_plugin/Basic_plugin.cpp complex_dialog_plugin
 
 \subsection WarningBoxDialog Adding a Warning/Error Box to Your Plugin
 
 It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it some arguments :
-\snippet Three/Example_plugin/Basic_plugin.cpp warningbox
+\snippet Example_plugin/Basic_plugin.cpp warningbox
 
 \subsection examplePluginDockWidget Adding a Dock Widget
 
@@ -129,7 +129,7 @@ Edit the ui file with the editor, then add the following line to your plugin fil
     #include "ui_Basic_dock_widget.h"
 ~~~~~~~~~~~~~
 As for the Dialog, create a new class for your widget
-\snippet Three/Example_plugin/Dock_widget_plugin.cpp dock
+\snippet Example_plugin/Dock_widget_plugin.cpp dock
 
 and add a reference to an object of this type as private members of your plugin:
 ~~~~~~~~~~~~~{.cpp}
@@ -138,16 +138,16 @@ private:
 ~~~~~~~~~~~~~
 and initialize it in the init function, where you will also use signal/slots to connect it to the plugin:
 
-\snippet Three/Example_plugin/Dock_widget_plugin.cpp init
+\snippet Example_plugin/Dock_widget_plugin.cpp init
 
 
 You can use the functions `show()`/`hide()` to make your
 dock widget visible or not.
-\snippet Three/Example_plugin/Dock_widget_plugin.cpp action
+\snippet Example_plugin/Dock_widget_plugin.cpp action
 
 By default, a dock widget will remain visible next time the demo is launched if it has not been closed. If you want to avoid that behavior, override the
 function `closure()` in you plugin, and simply call `hide()` on your dock widget in it.
-\snippet Three/Example_plugin/Dock_widget_plugin.cpp closure
+\snippet Example_plugin/Dock_widget_plugin.cpp closure
 
 \subsection exampleUsingAnItem Using a Scene_item
 \subsubsection exampleUsingASelectedItem Using an existing item
@@ -172,10 +172,10 @@ This Scene_interface will give you access to the following functions :
 that give you access to any item in the scene.
 
 Example of use :
-\snippet Three/Example_plugin/Basic_item_plugin.cpp use
+\snippet Example_plugin/Basic_item_plugin.cpp use
 
 Don't forget to adapt your [applicable()] function :
-\snippet Three/Example_plugin/Basic_item_plugin.cpp applicable
+\snippet Example_plugin/Basic_item_plugin.cpp applicable
 
 \subsubsection exampleCreatingAnItem Creating an item of an existing type
 
@@ -191,7 +191,7 @@ void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
 
 Simply create a new instance of the item you want and call the function CGAL::Three::Scene_interface#addItem :
 
-\snippet Three/Example_plugin/Basic_item_plugin.cpp additem
+\snippet Example_plugin/Basic_item_plugin.cpp additem
 
 
 
@@ -206,7 +206,7 @@ Once your code is written, you will need to link the item's library to your plug
 If you cannot use an existing type of item, like the Scene_polyhedron_item or the Scene_c3t3_item for your plugin, you will have to create one, by deriving CGAL::Three::Scene_item.\n
 An item is simply a graphic representation of a geometric data set. You need to compute this data, and to display it in CGAL::Three::Scene_item#draw.
 
-\snippet Three/Example_plugin/Example_plugin.cpp itemdeclaration
+\snippet Example_plugin/Example_plugin.cpp itemdeclaration
 
 The minimalist item above is designed to draw a simple triangle. There are several steps that need to be followed when creating an item :
 
@@ -214,7 +214,7 @@ The minimalist item above is designed to draw a simple triangle. There are sever
 
 One way to store the data you computed is to use member std::vector. It must be done every time a change occurs in the item's geometry (usually done in a function called invalidateOpenGLBuffers).
 
-\snippet Three/Example_plugin/Example_plugin.cpp computeelements
+\snippet Example_plugin/Example_plugin.cpp computeelements
 
 <b>  - Filling the OpenGL buffers </b>
 
@@ -223,7 +223,7 @@ In this exemple, we only need one VBO and one VAO, as we are only storing one ki
 several types of display, let's say multiple RenderingMode, we would need as much VAOs. (See OpenGL doc about VBOs/VAOs for more details).
 
 
-\snippet Three/Example_plugin/Example_plugin.cpp fillbuffers
+\snippet Example_plugin/Example_plugin.cpp fillbuffers
 
 The code above gets a ShaderProgram, that holds the characteristics of the display (here a basic lighting), binds its VAO and VBO and gives it the data.
 
@@ -235,7 +235,7 @@ The code above gets a ShaderProgram, that holds the characteristics of the displ
 Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw()],[drawEdges()] and [drawPoints()] functions individually.
 Therefore, this is in those functions that the display of the data must be handled :
 
-\snippet Three/Example_plugin/Example_plugin.cpp draw
+\snippet Example_plugin/Example_plugin.cpp draw
 
 To display, you need to call the same program that got configured previously, and to bind it before you call the OpenGL drawing function. \n
 If you created your item in a specific file and you need to use it outside your plugin (like in another plugin), it is recommended to put it in the demo's root directory, and you will have to define your item in the general Polyhedron_demo's CMakeLists.txt by using the macro add_item :
@@ -259,7 +259,7 @@ items are already in the scene.\n
 You also have the possibility to "lock" a child of a group with `CGAL::Three::Scene_group_item::lockChild()` to prevent it from being moved or erased.
 
 
-\snippet Three/Example_plugin/Basic_item_plugin.cpp group
+\snippet Example_plugin/Basic_item_plugin.cpp group
 
 \section exampleIOPlugin Creating an IO Plugin
 
@@ -381,18 +381,18 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 
 \section example Examples
-All the examples have been constructed as external plugins in CGAL/Three/demo/Three/Example_plugin. You will have to use "Load plugin" in the File menu or set the environment variable POLYHEDRON_DEMO_PLUGINS_PATH if you want to test it.
+All the examples have been constructed as external plugins in CGAL/Polyhedron/demo/Polyhedron/Plugins/Example_plugin. You will have to use "Load plugin" in the File menu or set the environment variable POLYHEDRON_DEMO_PLUGINS_PATH if you want to test it.
 \subsection example1 Creating a Basic Plugin
-\cgalExample{Three/Example_plugin/Basic_plugin.cpp}
+\cgalExample{Example_plugin/Basic_plugin.cpp}
 
 \subsection example2 Creating a DockWidget
-\cgalExample{Three/Example_plugin/Dock_widget_plugin.cpp}
+\cgalExample{Example_plugin/Dock_widget_plugin.cpp}
 
 \subsection example3 Using an Existing Item and Create a New Item of an Existing Type
-\cgalExample{Three/Example_plugin/Basic_item_plugin.cpp}
+\cgalExample{Example_plugin/Basic_item_plugin.cpp}
 
 \subsection example4 Creating a new Type of Item
-\cgalExample{Three/Example_plugin/Example_plugin.cpp}
+\cgalExample{Example_plugin/Example_plugin.cpp}
 
 */
 } /* namespace CGAL */
