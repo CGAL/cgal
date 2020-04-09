@@ -778,11 +778,12 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
 
   typedef typename RangeofVertexRange::const_iterator VTR_const_it;
   typedef typename std::iterator_traits<VTR_const_it>::value_type Vertex_range;
-#define SV
+
 #ifdef SV  
   typedef boost::container::small_vector<halfedge_descriptor,8> Halfedges;
-#else  
-  typedef Small_unordered_mapV2<vertex_descriptor, halfedge_descriptor, boost::hash<vertex_descriptor>,8,6> Halfedges;
+#else
+  //typedef boost::unordered_map<vertex_descriptor, halfedge_descriptor, boost::hash<vertex_descriptor> > Halfedges;
+  typedef Small_unordered_mapV2<vertex_descriptor, halfedge_descriptor, boost::hash<vertex_descriptor>,8,1> Halfedges;
 #endif  
 
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
@@ -825,7 +826,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
           outgoing_hedges[get(vid,v2)].push_back(opposite(halfedge(edge_and_bool.first, pm), pm));
 #else
           halfedge_descriptor hd = opposite(halfedge(edge_and_bool.first, pm), pm);
-          outgoing_hedges[get(vid,v2)].set(v1,hd);
+          outgoing_hedges[get(vid,v2)].insert(std::make_pair(v1,hd));
 #endif
           former_border_hedges.push_back(halfedge(edge_and_bool.first, pm));
         }
@@ -837,7 +838,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
 #ifdef SV  
         outgoing_hedges[get(vid,v1)].push_back(h);
 #else
-        outgoing_hedges[get(vid,v1)].set(v2,h);
+        outgoing_hedges[get(vid,v1)].insert(std::make_pair(v2,h));
 #endif
         if (is_border(h, pm))
           former_border_hedges.push_back(h);
@@ -846,7 +847,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
 #ifdef SV  
         outgoing_hedges[get(vid,v1)].push_back(add_new_edge(v1,v2));
 #else
-        outgoing_hedges[get(vid,v1)].set(v2,add_new_edge(v1,v2));
+        outgoing_hedges[get(vid,v1)].insert(std::make_pair(v2,add_new_edge(v1,v2)));
 #endif
 
       }
@@ -945,7 +946,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
     }
 
 #else
-    typename Halfedges::iterator it_find = v1_outgoing_hedges.find(v2);
+    typename Halfedges::const_iterator it_find = v1_outgoing_hedges.find(v2);
     if (it_find!=v1_outgoing_hedges.end() && target((*it_find).second, pm)==v2)
     {
       return return_opposite ? opposite((*it_find).second, pm) : (*it_find).second;

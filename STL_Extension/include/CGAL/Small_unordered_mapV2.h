@@ -25,24 +25,23 @@ class Small_unordered_mapV2 {
 #ifdef    CGAL_SMALL_UNORDERED_MAP_STATS
   std::array<int, 20> collisions = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 #endif
-  static constexpr int B = M * Factor; // the number of bins
-  int head = -2;
-  mutable std::array<int, B>    occupied;
-  std::array<int, B>            unfreelist;
+  static constexpr int B = M * Factor ; // the number of bins
+  int head = B;
+  mutable std::array<boost::int8_t, B> occupied {}; // all 0
+
   std::array<std::pair<K, T>, B> data;
   const H hash = {};
-  boost::unordered_map<K, T> big;
+  boost::unordered_map<K, T> * big = nullptr;
   std::size_t N = 0; // the number of stored elements
 public:
 
   Small_unordered_mapV2()
-  {
-    occupied.fill(-1);
-  }
+  {}
 
 #ifdef CGAL_SMALL_UNORDERED_MAP_STATS
   ~Small_unordered_mapV2()
   {
+    std::cout << "N = "<< N << std::endl;
     int total = 0;
     std::cout << "0 " << collisions[0] << std::endl;
     for (int i = 1; i < 20; i++) {
@@ -52,6 +51,13 @@ public:
       }
     }
     std::cout << "Total: " << total << " " << 100 * (double(total) / double(total + collisions[0])) << "%" << std::endl;
+  }
+#else
+  ~Small_unordered_mapV2()
+  {
+    if(big != nullptr){
+      delete big;
+    }
   }
 #endif
 
@@ -65,12 +71,13 @@ public:
       int collision = 0;
 #endif
       do {
-        if (occupied[i] == -1) {
+        if (occupied[i] == 0) {
           occupied[i] = 1;
           data[i].first = k;
           data[i].second = t;
-          unfreelist[i] = head;
-          head = i;
+          if(i < head){
+            head = i;
+          }
 #ifdef  CGAL_SMALL_UNORDERED_MAP_STATS
           if (collision > 19) {
             std::cerr << collision << " collisions" << std::endl;
@@ -90,21 +97,28 @@ public:
       CGAL_error();
     }
     else if (N == M) {
-      int pos = head;
-      while(pos != -2){
-        big.insert(data[pos]);
-        pos = unfreelist[pos];
+      big = new boost::unordered_map<K, T>(); 
+      for(int pos = head; pos < B; ++pos){
+        if(occupied[pos]){
+          big->insert(data[pos]);
+        }
       }
-      big[k] = t;
+      (*big)[k] = t;
     }
     else {
-      big[k] = t;
+      (*big)[k] = t;
     }
     ++N;
   }
 
+  
+  void insert(const std::pair<K,T>& p)
+  {
+    set(p.first,p.second);
+  }
+  
 
-  const T& get(const K& k) const
+  const T& at(const K& k) const
   {
     if (N < M) {
       unsigned int h = hash(k) % B;
@@ -122,9 +136,9 @@ public:
     }
   }
 
-  struct iterator;
+  struct const_iterator;
 
-  iterator find(const K& k) const
+  const_iterator find(const K& k) const
   {
      if (N < M) {
       unsigned int h = hash(k) % B;
@@ -135,14 +149,14 @@ public:
           return end();
         }
         if (data[i].first == k) {
-          return iterator(*this,i);
+          return const_iterator(*this,i);
         }
         i = (i + 1) % B;
       } while (i != h);
       CGAL_error();
     }
     else {
-      return iterator(*this, big.find(k));
+      return const_iterator(*this, big->find(k));
     }
   }
 
@@ -154,13 +168,16 @@ public:
 
   void clear()
   {
-    head = -2;
-    occupied.fill(-1);
-    big.clear();
+    head = B;
+    occupied.fill(0);
+    if(big != nullptr){
+      delete big;
+      big = nullptr;
+    }
     N = 0;
   }
 
-  struct iterator {
+  struct const_iterator {
     typedef std::pair<K, T>           value_type;
     typedef const std::pair<K, T>&    reference;
     typedef std::size_t               size_type;
@@ -174,19 +191,27 @@ public:
     Bigit bigit;
     bool big = false;
 
-    iterator(const Small_unordered_mapV2& map)
-      : map(map), pos(-2), bigit(map.big.end()), big(map.N > M)
-    {}
+    const_iterator(const Small_unordered_mapV2& map)
+      : map(map), pos(B), big(map.N > M)
+    {
+      if(big){
+        bigit = map.big->end();
+      }
+    }
 
-    iterator(const Small_unordered_mapV2& map, int pos)
-      : map(map), pos(pos), bigit(map.big.begin()), big(map.N > M)
-    {}
+    const_iterator(const Small_unordered_mapV2& map, int pos)
+      : map(map), pos(pos), big(map.N > M)
+    {
+      if(big){
+        bigit = map.big->begin();
+      }
+    }
 
-    iterator(const Small_unordered_mapV2& map, const Bigit& bigit)
-      : map(map), pos(-2), bigit(bigit), big(true)
+    const_iterator(const Small_unordered_mapV2& map, const Bigit& bigit)
+      : map(map), pos(B), bigit(bigit), big(true)
     {}
     
-    bool operator==(const iterator& other) const
+    bool operator==(const const_iterator& other) const
     {
       if(big){
         return bigit == other.bigit;
@@ -195,17 +220,20 @@ public:
       }
     }
 
-    bool operator!=(const iterator& other) const
+    bool operator!=(const const_iterator& other) const
     {
       return !((*this) == other);
     }
-    iterator operator++()
+    const_iterator operator++()
     {
       if (big) {
         ++bigit;
-      }
-      else {
-        pos = map.unfreelist[pos];
+      } else {
+        if(pos != B){
+          do {
+            ++pos;
+          }while((pos !=B) && (map.occupied[pos]==0));
+        }
       }
       return *this;
     }
@@ -222,22 +250,18 @@ public:
   };
 
 
-  iterator begin() const
+  const_iterator begin() const
   {
-    return iterator(*this, head);
+    return const_iterator(*this, head);
   }
 
-  iterator end() const
+  const_iterator end() const
   {
-    return iterator(*this);
+    return const_iterator(*this);
   }
 
-  void clear(const iterator it)
-  {
-    occupied[it.pos] = -1;
-  }
 
-  friend struct iterator;
+  friend struct const_iterator;
 };
 
 } // namespace CGAL
