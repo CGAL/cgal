@@ -17,7 +17,6 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
-#include <CGAL/Tetrahedral_remeshing/internal/Vec3D.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/optional.hpp>
@@ -47,7 +46,8 @@ namespace CGAL
         typedef typename Gt::Point_3               Point_3;
 
       private:
-        std::vector < CGAL::Tetrahedral_remeshing::internal::FMLS > subdomain_FMLS;
+        typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
+        std::vector<FMLS> subdomain_FMLS;
         boost::unordered_map<Surface_patch_index, unsigned int> subdomain_FMLS_indices;
 
       public:
@@ -293,12 +293,11 @@ namespace CGAL
         CGAL_assertion(subdomain_FMLS_indices.find(si) != subdomain_FMLS_indices.end());
         CGAL_assertion(!std::isnan(gi.x()) && !std::isnan(gi.y()) && !std::isnan(gi.z()));
 
-        Vec3Df point(gi.x(), gi.y(), gi.z());
-        Vec3Df res_normal;
-        Vec3Df result(point);
+        Vector_3 point(gi.x(), gi.y(), gi.z());
+        Vector_3 res_normal;
+        Vector_3 result(point);
 
-        const CGAL::Tetrahedral_remeshing::internal::FMLS&
-          fmls = subdomain_FMLS[subdomain_FMLS_indices.at(si)];
+        const FMLS& fmls = subdomain_FMLS[subdomain_FMLS_indices.at(si)];
 
         int it_nb = 0;
         const int max_it_nb = 5;
@@ -317,7 +316,7 @@ namespace CGAL
               << "\t(point = "      << point      << " )" << std::endl;
             return {};
           }
-        } while ((result - point).getSquaredLength() > sq_eps&& ++it_nb < max_it_nb);
+        } while ((result - point).squared_length() > sq_eps && ++it_nb < max_it_nb);
 
         return Vector_3(result[0], result[1], result[2]);
       }

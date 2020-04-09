@@ -22,6 +22,7 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_3.h>
+#include <CGAL/Vector_3.h>
 
 #include <cmath>
 #include <string>
@@ -29,7 +30,6 @@
 #include <unordered_set>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
-#include <CGAL/Tetrahedral_remeshing/internal/Vec3D.h>
 
 #include <boost/functional/hash.hpp>
 
@@ -77,24 +77,59 @@ namespace CGAL
         p[6 * i + 5] = nz;
       }
 
-      inline void weightedPointCombination(const Vec3Df& x, const Vec3Df& pi, const Vec3Df& ni,
+      template<typename Gt>
+      inline CGAL::Vector_3<Gt> projectOn(const CGAL::Vector_3<Gt>& x,
+                                          const CGAL::Vector_3<Gt>& N,
+                                          const CGAL::Vector_3<Gt>& P)
+      {
+        typename Gt::Compute_scalar_product_3 scalar_product
+          = Gt().compute_scalar_product_3_object();
+
+        typename Gt::FT w = scalar_product((x - P), N);
+        return x - (N * w);
+      }
+
+      template<typename Gt>
+      inline typename Gt::FT length(const CGAL::Vector_3<Gt>& v)
+      {
+        return CGAL::approximate_sqrt(v.squared_length());
+      }
+
+      template<typename Gt>
+      inline typename Gt::FT distance(const CGAL::Vector_3<Gt>& v1,
+                                      const CGAL::Vector_3<Gt>& v2)
+      {
+        CGAL::Vector_3<Gt> diff(v1.x() - v2.x(),
+                                v1.y() - v2.y(),
+                                v1.z() - v2.z());
+        return length(diff);
+      }
+
+      template<typename Gt>
+      inline void weightedPointCombination(const CGAL::Vector_3<Gt>& x,
+                                           const CGAL::Vector_3<Gt>& pi,
+                                           const CGAL::Vector_3<Gt>& ni,
                                            float sigma_s, bool bilateral, float sigma_r,
                                            bool hermite,
-                                           Vec3Df& c, Vec3Df& nc, float& sumW)
+                                           CGAL::Vector_3<Gt>& c, CGAL::Vector_3<Gt>& nc, float& sumW)
       {
-        float w = wendland(Vec3Df::distance(x, pi), sigma_s);
+        float w = wendland(distance(x, pi), sigma_s);
         if (bilateral)
-          w *= wendland((x - x.projectOn(ni, pi)).getLength(), sigma_r);
+          w *= wendland(length(x - projectOn(x, ni, pi)), sigma_r);
         if (hermite)
-          c += w * x.projectOn(ni, pi);
+          c += w * projectOn(x, ni, pi);
         else
           c += w * pi;
         nc += w * ni;
         sumW += w;
       }
 
+      template<typename Gt>
       class FMLS
       {
+        typedef typename Gt::Vector_3 Vector_3;
+        typedef typename Gt::FT       FT;
+
       public:
         // FMLS provide MLS projection and filtering from a point set.
         // The underlying data structure is a simple list of float in the PN format
@@ -192,30 +227,33 @@ namespace CGAL
 
         // Compute, according to the current point sampling stored in FMLS, the MLS projection
         // of p and store the resulting position in q and normal in n.
-        void fastProjectionCPU(const Vec3Df& p, Vec3Df& q, Vec3Df& n) const
+        void fastProjectionCPU(const Vector_3& p, Vector_3& q, Vector_3& n) const
         {
           float sigma_s = PNScale * MLSRadius;
           float sigma_r = bilateralRange;
-          Vec3Df g = (p - Vec3Df(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
+
+          Vector_3 g = (p - Vector_3(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
+          std::array<FT, 3> gxyz = { g.x(), g.y(), g.z() };
+
           for (unsigned int j = 0; j < 3; j++) {
-            g[j] = floor(g[j]);
-            if (g[j] < 0.f)
-              g[j] = 0.f;
-            if (g[j] >= grid.getRes()[j])
-              g[j] = grid.getRes()[j] - 1;
+            gxyz[j] = floor(gxyz[j]);
+            if (gxyz[j] < 0.f)
+              gxyz[j] = 0.f;
+            if (gxyz[j] >= grid.getRes()[j])
+              gxyz[j] = grid.getRes()[j] - 1;
           }
           unsigned int minIt[3], maxIt[3];
           for (unsigned int j = 0; j < 3; j++) {
-            if (((unsigned int)g[j]) == 0)
+            if (((unsigned int)gxyz[j]) == 0)
               minIt[j] = 0;
             else
-              minIt[j] = ((unsigned int)g[j]) - 1;
-            if (((unsigned int)g[j]) == (grid.getRes()[j] - 1))
+              minIt[j] = ((unsigned int)gxyz[j]) - 1;
+            if (((unsigned int)gxyz[j]) == (grid.getRes()[j] - 1))
               maxIt[j] = (grid.getRes()[j] - 1);
             else
-              maxIt[j] = ((unsigned int)g[j]) + 1;
+              maxIt[j] = ((unsigned int)gxyz[j]) + 1;
           }
-          Vec3Df c;
+          Vector_3 c;
           float sumW = 0.f;
           unsigned int it[3];
           for (it[0] = minIt[0]; it[0] <= maxIt[0]; it[0]++)
@@ -227,19 +265,19 @@ namespace CGAL
                 unsigned int neigh = grid.getCellIndicesSize(it[0], it[1], it[2]);
                 for (unsigned int j = 0; j < neigh; j++) {
                   unsigned int k = grid.getIndicesElement(it[0], it[1], it[2], j);
-                  Vec3Df pk(PN[6 * k], PN[6 * k + 1], PN[6 * k + 2]);
-                  Vec3Df nk(PN[6 * k + 3], PN[6 * k + 4], PN[6 * k + 5]);
+                  Vector_3 pk(PN[6 * k], PN[6 * k + 1], PN[6 * k + 2]);
+                  Vector_3 nk(PN[6 * k + 3], PN[6 * k + 4], PN[6 * k + 5]);
                   weightedPointCombination(p, pk, nk, sigma_s, bilateral, sigma_r, hermite, c, n, sumW);
                 }
               }
           if (sumW == 0.f) {
-            n = Vec3Df(1.f, 0.f, 0.f);
+            n = Vector_3(1.f, 0.f, 0.f);
             q = p;
           }
           else {
             c /= sumW;
-            n.normalize();
-            q = p.projectOn(n, c);
+            normalize(n, Gt());
+            q = projectOn(p, n, c);
           }
         }
 
@@ -255,11 +293,11 @@ namespace CGAL
 #pragma omp parallel for
 #endif
           for (int i = 0; i < int(pvSize); i++) {
-            Vec3Df p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
-            Vec3Df q, n;
+            Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
+            Vector_3 q, n;
             for (unsigned int j = 0; j < numIter; j++) {
-              q = Vec3Df();
-              n = Vec3Df();
+              q = Vector_3();
+              n = Vector_3();
               fastProjectionCPU(p, q, n);
               p = q;
             }
@@ -269,23 +307,23 @@ namespace CGAL
         }
 
         // Brute force version. O(PNSize) complexity. For comparison only.
-        void projectionCPU(const Vec3Df& x, Vec3Df& q, Vec3Df& n)
+        void projectionCPU(const Vector_3& x, Vector_3& q, Vector_3& n)
         {
           float sigma_s = MLSRadius * PNScale;
           float sigma_r = bilateralRange;
-          Vec3Df p(x);
+          Vector_3 p(x);
           for (unsigned int k = 0; k < numIter; k++) {
-            Vec3Df c;
-            n = Vec3Df();;
+            Vector_3 c;
+            n = Vector_3();;
             float sumW = 0.f;
             for (unsigned int j = 0; j < PNSize; j++) {
-              Vec3Df pj(PN[6 * j], PN[6 * j + 1], PN[6 * j + 2]);
-              Vec3Df nj(PN[6 * j + 3], PN[6 * j + 4], PN[6 * j + 5]);
+              Vector_3 pj(PN[6 * j], PN[6 * j + 1], PN[6 * j + 2]);
+              Vector_3 nj(PN[6 * j + 3], PN[6 * j + 4], PN[6 * j + 5]);
               weightedPointCombination(p, pj, nj, sigma_s, bilateral, sigma_r, hermite, c, n, sumW);
             }
             c /= sumW;
             n.normalize();
-            q = p.projectOn(n, c);
+            q = projectOn(p, n, c);
             p = q;
           }
 
@@ -298,11 +336,11 @@ namespace CGAL
 #pragma omp parallel for
 #endif
           for (int i = 0; i < int(pvSize); i++) {
-            Vec3Df p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
-            Vec3Df q, n;
+            Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
+            Vector_3 q, n;
             for (unsigned int j = 0; j < numIter; j++) {
-              q = Vec3Df();
-              n = Vec3Df();
+              q = Vector_3();
+              n = Vector_3();
               projectionCPU(p, q, n);
               p = q;
             }
@@ -376,13 +414,13 @@ namespace CGAL
 
         void computePNScale()
         {
-          Vec3Df c;
+          Vector_3 c;
           for (unsigned int i = 0; i < PNSize; i++)
-            c += Vec3Df(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
+            c += Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
           c /= PNSize;
           PNScale = 0.f;
           for (unsigned int i = 0; i < PNSize; i++) {
-            float r = Vec3Df::distance(c, Vec3Df(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
+            float r = distance(c, Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
             if (r > PNScale)
               PNScale = r;
           }
@@ -436,10 +474,10 @@ namespace CGAL
             LUT = (unsigned int*)malloc(gridLUTNumOfByte);
             memset(LUT, 0, gridLUTNumOfByte);
             unsigned int nonEmptyCells = 0;
-            Vec3Df gMin(minMax[0], minMax[1], minMax[2]);
-            Vec3Df gMax(minMax[3], minMax[4], minMax[5]);
+            Vector_3 gMin(minMax[0], minMax[1], minMax[2]);
+            Vector_3 gMax(minMax[3], minMax[4], minMax[5]);
             for (unsigned int i = 0; i < PNSize; i++) {
-              unsigned int index = getLUTIndex(Vec3Df(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
+              unsigned int index = getLUTIndex(Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
               if (LUT[index] == 0)
                 nonEmptyCells++;
               LUT[index]++;
@@ -461,7 +499,7 @@ namespace CGAL
                     LUT[index] = 2 * PNSize;
                 }
             for (unsigned int i = 0; i < PNSize; i++) {
-              Vec3Df p = Vec3Df(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
+              Vector_3 p = Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
               unsigned int indicesIndex = getLUTElement(p);
               unsigned int totalCount = indices[indicesIndex];
               unsigned int countIndex = indicesIndex + totalCount;
@@ -506,9 +544,10 @@ namespace CGAL
           {
             return LUT[getLUTIndex(i, j, k)];
           }
-          unsigned int getLUTIndex(const Vec3Df& x) const
+          unsigned int getLUTIndex(const Vector_3& x) const
           {
-            Vec3Df p = (x - Vec3Df(minMax[0], minMax[1], minMax[2])) / cellSize;
+            Vector_3 vp = (x - Vector_3(minMax[0], minMax[1], minMax[2])) / cellSize;
+            std::array<FT, 3> p = { vp.x(), vp.y(), vp.z() };
             for (unsigned int j = 0; j < 3; j++) {
               p[j] = floor(p[j]);
               if (p[j] < 0)
@@ -521,7 +560,7 @@ namespace CGAL
               + ((unsigned int)floor(p[0]));
             return index;
           }
-          inline unsigned int getLUTElement(const Vec3Df& x) const {
+          inline unsigned int getLUTElement(const Vector_3& x) const {
             return LUT[getLUTIndex(x)];
           }
           inline unsigned int* getIndices() { return indices; }
@@ -830,7 +869,7 @@ namespace CGAL
 
         average_point_spacing = average_point_spacing / nb_of_mls_to_create;
 
-        subdomain_FMLS.resize(nb_of_mls_to_create, FMLS());
+        subdomain_FMLS.resize(nb_of_mls_to_create, FMLS<Gt>());
 
         count = 0;
         //Creating the actual MLS surfaces
