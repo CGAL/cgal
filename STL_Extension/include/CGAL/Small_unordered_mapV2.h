@@ -122,6 +122,31 @@ public:
     }
   }
 
+  struct iterator;
+
+  iterator find(const K& k) const
+  {
+     if (N < M) {
+      unsigned int h = hash(k) % B;
+      unsigned int i = h;
+      do {
+        if(occupied[i] == 0){
+          // the element is not in the map
+          return end();
+        }
+        if (data[i].first == k) {
+          return iterator(*this,i);
+        }
+        i = (i + 1) % B;
+      } while (i != h);
+      CGAL_error();
+    }
+    else {
+      return iterator(*this, big.find(k));
+    }
+  }
+
+  
   std::size_t size() const
   {
     return N;
@@ -144,7 +169,9 @@ public:
 
     const Small_unordered_mapV2& map;
     int pos;
-    typename boost::unordered_map<K, T>::const_iterator bigit;
+    
+    typedef typename boost::unordered_map<K, T>::const_iterator Bigit;
+    Bigit bigit;
     bool big = false;
 
     iterator(const Small_unordered_mapV2& map)
@@ -155,6 +182,10 @@ public:
       : map(map), pos(pos), bigit(map.big.begin()), big(map.N > M)
     {}
 
+    iterator(const Small_unordered_mapV2& map, const Bigit& bigit)
+      : map(map), pos(-2), bigit(bigit), big(true)
+    {}
+    
     bool operator==(const iterator& other) const
     {
       if(big){
