@@ -335,13 +335,13 @@ protected:
   virtual void init()
   {
     Base::init();
-    setKeyDescription(::Qt::Key_C, "Toggles random face colors");
+    setKeyDescription(::Qt::Key_R, "Toggles random face colors");
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
+    if ((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
     {
       m_random_face_color=!m_random_face_color;
       displayMessage(QString("Random face color=%1.").arg(m_random_face_color?"true":"false"));
