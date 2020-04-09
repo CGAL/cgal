@@ -59,7 +59,7 @@ namespace internal {
       CGAL_assertion(&mmap==&(other.mmap));
       m_it=other.m_it;
     }
-    
+
     operator Dart_handle() const
     { return operator*(); }
 
@@ -93,7 +93,7 @@ namespace internal {
     Self operator--(int)
     { Self res=*this; operator --(); return res; }
 
-    
+
     Dart_handle operator*() const
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());

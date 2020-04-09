@@ -269,7 +269,7 @@ protected:
       if (m_current_dart==lcc.darts().end())
       { m_current_dart=lcc.darts().begin(); }
       else
-      { ++m_current_dart; } 
+      { ++m_current_dart; }
       if (m_current_dart==lcc.darts().end())
       { displayMessage(QString("Draw all darts.")); }
       else
@@ -279,7 +279,7 @@ protected:
     }
     else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ControlModifier))
     {
-      if (m_current_dart==lcc.darts().begin()) 
+      if (m_current_dart==lcc.darts().begin())
       { m_current_dart=lcc.darts().end(); }
       else
       { --m_current_dart; }
@@ -297,7 +297,7 @@ protected:
       compute_elements();
       redraw();
     }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))    
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
     {
       m_current_path=(m_current_path+1)%(m_paths->size()+2);
       if (m_current_path==m_paths->size())
@@ -311,7 +311,7 @@ protected:
       compute_elements();
       redraw();
     }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ControlModifier))    
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ControlModifier))
     {
       m_current_path=(m_current_path==0?m_paths->size()+1:m_current_path-1);
       if (m_current_path==m_paths->size())
@@ -325,7 +325,7 @@ protected:
       compute_elements();
       redraw();
     }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ShiftModifier))    
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ShiftModifier))
     {
       m_current_path=m_paths->size();
       displayMessage(QString("Draw all paths."));

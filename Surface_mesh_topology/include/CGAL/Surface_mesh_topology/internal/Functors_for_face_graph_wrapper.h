@@ -29,7 +29,7 @@
 namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////
 template<typename P>
-class Surface_mesh;  
+class Surface_mesh;
 ////////////////////////////////////////////////////////////////////////////////
 namespace internal {
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ struct Index_from_halfedge_descriptor<CGAL::Surface_mesh<P> >
 
   static size_type run(const Mesh& /*m*/, halfedge_descriptor h)
   { std::cout<<"V2"<<std::endl; return (size_type)(h); }
-};    
+};
 ////////////////////////////////////////////////////////////////////////////////
 template<typename Mesh>
 struct Halfedge_descriptor_from_index
@@ -102,7 +102,7 @@ struct Halfedge_descriptor_from_index
   typedef boost::uint32_t size_type;
   typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
-  
+
   static halfedge_descriptor run(const Mesh& m, size_type i)
   {
     for (typename boost::template graph_traits<Mesh>::halfedge_iterator
@@ -116,18 +116,18 @@ struct Halfedge_descriptor_from_index<CGAL::Surface_mesh<P> >
 {
   using Mesh=CGAL::Surface_mesh<P>;
   typedef boost::uint32_t size_type;
-  typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor 
+  typedef typename boost::template graph_traits<Mesh>::halfedge_descriptor
   halfedge_descriptor;
 
   static halfedge_descriptor run(const Mesh& /*m*/, size_type i)
   { std::cout<<"V2"<<std::endl; return halfedge_descriptor(i); }
-};    
+};
 ////////////////////////////////////////////////////////////////////////////////
 template<typename Mesh>
 struct Is_index_used
 {
   typedef boost::uint32_t size_type;
-  
+
   static bool run(const Mesh& m, size_type i)
   { return i<m.size_of_halfedges(); }
 };
@@ -140,7 +140,7 @@ struct Is_index_used<CGAL::Surface_mesh<P> >
   static bool run(const Mesh& m, size_type i)
   { return i<(m.number_of_halfedges()+m.number_of_removed_halfedges()) &&
              !m.is_removed(typename Mesh::Halfedge_index(i)); }
-};    
+};
 ////////////////////////////////////////////////////////////////////////////////
 } // namespace internal
 } // namespace CGAL
