@@ -134,7 +134,19 @@ public:
 
   bool is_valid() const
   {
-    NT1 n2i = to_interval(n2());
+    if(!is_valid(_n1))
+      return false;
+
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+    if(!eii)
+      return true; // _n2 is not yet built, so nothing more can be checked
+#endif
+
+    if(!is_valid(_n2))
+      return false;
+
+    // the exact number must be in the interval
+    const NT1 n2i = to_interval(n2());
     return (n2i.inf() >= n1().inf()) && (n2i.sup() <= n1().sup());
   }
 };
