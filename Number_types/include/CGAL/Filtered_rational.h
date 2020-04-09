@@ -1,9 +1,5 @@
-// Copyright (c) 2005-2007
-// Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland),
-// INRIA Sophia-Antipolis (France),
-// Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2019-2020 GeometryFactory (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -12,7 +8,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Andreas Fabri,
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_FILTERED_RATIONAL_H
 #define CGAL_FILTERED_RATIONAL_H
@@ -21,8 +18,12 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/number_type_basic.h>
 
+#include <boost/mpl/or.hpp>
+#include <boost/utility/enable_if.hpp>
+
 #include <iostream>
 #include <sstream>
+#include <type_traits>
 #include <utility>
 
 // #define CGAL_NT_CHECK_DEBUG(s) std::cerr << s << std::endl
@@ -65,8 +66,8 @@ public:
     CGAL_assertion(is_valid());
   }
 
-  Filtered_rational(const NT1& _n1, const NT2& _n2)
-    : _n1(_n1), _n2(_n2)
+  Filtered_rational(const NT1& n1, const NT2& n2)
+    : _n1(n1), _n2(n2)
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     , eii(true)
 #endif
@@ -83,12 +84,29 @@ public:
     CGAL_assertion(is_valid());
   }
 
-  Filtered_rational(const NT2& _n2)
-    : _n1(to_interval(_n2)), _n2(_n2)
+  Filtered_rational(const NT1& n1)
+    : _n1(n1)
+  {
+#ifndef CGAL_LAZY_FILTERED_RATIONAL_KERNEL // note that this is IF_NOT_DEF
+    CGAL_assertion(_n1.is_point());
+    _n2 = NT2(_n1.inf());
+#endif
+  }
+
+  // disabled if NT2 == NT1, int, or double
+  template <typename T> // the template is only for SFINAE, this must be NT2
+  Filtered_rational(const T& n2,
+                    typename boost::disable_if<
+                               boost::mpl::or_<
+                                 boost::is_same<T, NT1>,
+                                 boost::is_same<T, int>,
+                                 boost::is_same<T, double> > >::type* = 0)
+    : _n1(to_interval(_n2)), _n2(n2)
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     , eii(true)
 #endif
   {
+    CGAL_static_assertion((std::is_same<T, NT2>::value));
     CGAL_assertion(is_valid());
   }
 
