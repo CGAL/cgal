@@ -48,14 +48,6 @@ typedef CGAL::Filtered_rational_kernel<K1,K2>    Cls;
 
 int main()
 {
-    Cls frk;
-
-    Cls::Point_2 p;
-
-    Cls::Orientation o = frk.orientation_2_object()(p, p, p);
-
-#if 0
-
   std::cout << "Testing 2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_2( Cls() );
@@ -85,8 +77,6 @@ int main()
   std::cout << "Testing 3d-2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-
-#endif
 
   return 0;
 }

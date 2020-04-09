@@ -72,9 +72,7 @@ _test_2(const R& r)
  && _test_cls_circle_2( r )
 
  && _test_cls_iso_rectangle_2( r )
-#if 0
  && _test_cls_aff_transformation_2( r )
-#endif
  ;
 }
 #endif // CGAL__TEST_2_C
