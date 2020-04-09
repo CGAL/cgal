@@ -87,16 +87,18 @@
 //   which is runtime, and the other which can be constant-propagated by the
 //   compiler.  g++ 4.0 should be able to cprop the second part...
 
+namespace CGAL {
+namespace internal {
 
-namespace CGAL { namespace internal {
-
-// The K_base argument is supposed to provide exact primitives.
 template < typename K_base >
-class Static_filters : public K_base
+class Static_filters
+  : public K_base
 {
-  typedef Static_filters<K_base>                    Self;
+  typedef Static_filters<K_base>                                            Self;
 
 public:
+  enum { Has_static_filters = true };
+
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
   typedef Static_filters_predicates::Equal_2<K_base>                        Equal_2;
   typedef Static_filters_predicates::Equal_3<K_base>                        Equal_3;
@@ -110,21 +112,30 @@ public:
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Is_degenerate_3<K_base, Self>          Is_degenerate_3;
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
+
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
-#ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
 
   typedef Static_filters_predicates::Collinear_3<K_base>                    Collinear_3;
 
+#ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Angle_3<K_base>                        Angle_3;
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
+
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
-  typedef Static_filters_predicates::Coplanar_3<K_base,Self>                Coplanar_3;
+  typedef Static_filters_predicates::Coplanar_3<K_base, Self>               Coplanar_3;
 
   typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
-  typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
+  typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base> Power_side_of_oriented_power_sphere_3;
+
+#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
+  typedef Static_filters_predicates::Do_intersect_2<K_base, Self>           Do_intersect_2;
+  typedef Static_filters_predicates::Do_intersect_3<K_base, Self>           Do_intersect_3;
+#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
+
+  typedef Static_filters_predicates::Compare_y_at_x_2<K_base, Self>         Compare_y_at_x_2;
 
   Orientation_2
   orientation_2_object() const
@@ -165,6 +176,10 @@ public:
   { return Is_degenerate_3(); }
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
 
+  Coplanar_3
+  coplanar_3_object() const
+  { return Coplanar_3(); }
+
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
   Angle_3
   angle_3_object() const
@@ -183,10 +198,6 @@ public:
   compare_squared_radius_3_object() const
   { return Compare_squared_radius_3(); }
 
-  Coplanar_3
-  coplanar_3_object() const
-  { return Coplanar_3(); }
-
   Power_side_of_oriented_power_sphere_3
   power_side_of_oriented_power_sphere_3_object() const
   { return Power_side_of_oriented_power_sphere_3();}
@@ -195,11 +206,19 @@ public:
   compare_weighted_squared_radius_3_object() const
   { return Compare_weighted_squared_radius_3(); }
 
+#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
+  Do_intersect_3
+  do_intersect_3_object() const
+  { return Do_intersect_3(); }
 
-  enum { Has_static_filters = true };
+  Do_intersect_2
+  do_intersect_2_object() const
+  { return Do_intersect_2(); }
+#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
-
-  typedef Static_filters_predicates::Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
+  Compare_y_at_x_2
+  compare_y_at_x_2_object() const
+  { return Compare_y_at_x_2(); }
 
   // The following do not require filtering as they only do
   // comparisons.  We must be careful that *all* their function
@@ -225,11 +244,6 @@ public:
   typedef CartesianKernelFunctors::Compare_z_3<Self>   Compare_z_3;
   typedef CartesianKernelFunctors::Compare_xy_3<Self>  Compare_xy_3;
   typedef CartesianKernelFunctors::Compare_xyz_3<Self> Compare_xyz_3;
-
-#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
-  typedef Static_filters_predicates::Do_intersect_2<K_base,Self>            Do_intersect_2;
-  typedef Static_filters_predicates::Do_intersect_3<K_base,Self>            Do_intersect_3;
-#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
   Compare_xy_2
   compare_xy_2_object() const
@@ -295,21 +309,6 @@ public:
   less_xyz_3_object() const
   { return Less_xyz_3(); }
 
-  Compare_y_at_x_2
-  compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(); }
-
-#ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
-  Do_intersect_3
-  do_intersect_3_object() const
-  { return Do_intersect_3(); }
-
-  Do_intersect_2
-  do_intersect_2_object() const
-  { return Do_intersect_2(); }
-
-#endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
-
   // The two following are for degenerate cases, so I'll update them later.
   //
   // typedef Static_filters_predicates::Coplanar_orientation_3<Point_3, Orientation_2>
@@ -326,6 +325,7 @@ public:
   // { return Coplanar_side_of_bounded_circle_3(); }
 };
 
-} } // namespace CGAL::internal
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_STATIC_FILTERS_H
