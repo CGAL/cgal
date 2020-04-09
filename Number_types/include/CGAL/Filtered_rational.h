@@ -40,43 +40,37 @@ template <typename NT1 = Interval_nt<false>,
           typename NT2 = Gmpq>
 class Filtered_rational
 {
-  NT1 _n1;
-  mutable NT2 _n2;
-#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
-  bool eii = false; // eii means "exact is initialized"
-#endif
+  typedef Filtered_rational<NT1, NT2>                   Self;
+
 public:
-
-  typedef Filtered_rational<NT1, NT2> Self;
-
   Filtered_rational() {}
 
   Filtered_rational(int i) : _n1(i) { CGAL_assertion(is_valid()); }
   Filtered_rational(double d) : _n1(d) { CGAL_assertion(is_valid()); }
 
-  Filtered_rational(const NT1 &_n1, const NT2 &_n2)
+  Filtered_rational(const NT1& _n1, const NT2& _n2)
     : _n1(_n1), _n2(_n2)
-  #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     , eii(true)
-  #endif
+#endif
   {
     CGAL_assertion(is_valid());
   }
 
-  Filtered_rational(const std::pair<NT1, NT2> &np)
+  Filtered_rational(const std::pair<NT1, NT2>& np)
     : _n1(np.first), _n2(np.second)
-  #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     , eii(true)
-  #endif
+#endif
   {
     CGAL_assertion(is_valid());
   }
 
-  Filtered_rational(const NT2 &_n2)
+  Filtered_rational(const NT2& _n2)
     : _n1(to_interval(_n2)), _n2(_n2)
-  #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     , eii(true)
-  #endif
+#endif
   {
     CGAL_assertion(is_valid());
   }
@@ -100,39 +94,36 @@ public:
   Self& operator/=(const Self &a) { n2() /= a.n2(); n1() = to_interval(n2()); return *this; }
 
   // Accessors and setters.
+  const NT1& approx() const { return _n1; }
   const NT1& n1() const { return _n1; }
+  NT1& n1() { return _n1; }
 
+  const NT2& exact() const { return n2(); }
   const NT2& n2() const
   {
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     if(!eii)
     {
-      assert(_n1.is_point());
+      CGAL_assertion(_n1.is_point());
       _n2 = NT2(_n1.inf());
       eii = true;
     }
 #endif
     return _n2;
   }
-
-  NT1& n1() { return _n1; }
 
   NT2& n2()
   {
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
     if(!eii)
     {
-      assert(_n1.is_point());
+      CGAL_assertion(_n1.is_point());
       _n2 = NT2(_n1.inf());
       eii = true;
     }
 #endif
     return _n2;
   }
-
-  const NT1& approx() const { return _n1; }
-
-  // Validity checking: the exact number must be in the interval
 
   bool is_valid() const
   {
@@ -151,6 +142,13 @@ public:
     const NT1 n2i = to_interval(n2());
     return (n2i.inf() >= n1().inf()) && (n2i.sup() <= n1().sup());
   }
+
+private:
+  NT1 _n1;
+  mutable NT2 _n2;
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+  mutable bool eii = false; // eii means "exact is initialized"
+#endif
 };
 
 template <typename NT1, typename NT2>
