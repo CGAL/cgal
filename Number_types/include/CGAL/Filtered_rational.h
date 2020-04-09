@@ -34,13 +34,15 @@ namespace CGAL {
 // It runs all operations on parallel over NT1 and NT2.
 // It is also parameterized by a comparator which compares the values
 // of NT1 and NT2 after all arithmetic operations.
-//
-// NT1 must be CGAL::Interval_nt, but the protection (the template) is up to the user
 template <typename NT1 = Interval_nt<false>,
           typename NT2 = Gmpq>
 class Filtered_rational
 {
   typedef Filtered_rational<NT1, NT2>                   Self;
+
+  // NT1 must be CGAL::Interval_nt, but the protection (the template) is up to the user
+  CGAL_static_assertion((std::is_same<NT1, CGAL::Interval_nt<true> >::value) ||
+                        (std::is_same<NT1, CGAL::Interval_nt<false> >::value));
 
 public:
   Filtered_rational() {}
