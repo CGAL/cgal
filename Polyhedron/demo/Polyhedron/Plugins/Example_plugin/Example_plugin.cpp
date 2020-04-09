@@ -66,9 +66,12 @@ Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
                                          double bx,double by, double bz,
                                          double cx,double cy, double cz)
 {
+  //! [creation]
   //Prepare a single TriangleContainer, as we will only use one program.
   setTriangleContainer(0, new Tc(VI::PROGRAM_NO_SELECTION,
                                  false));
+  //! [creation]
+//! [computeelements]
   //Fills the position vector with data.
   nb_pos = 0;
   vertices.resize(9);
@@ -76,23 +79,23 @@ Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
   vertices[3] = bx; vertices[4] = by; vertices[5] = bz;
   vertices[6] = cx; vertices[7] = cy; vertices[8] = cz;
   nb_pos=vertices.size();
+//! [computeelements]
   //be sure the data will be computed next draw call
   invalidateOpenGLBuffers();
 }
 
-//! [computeelements]
 
 //prepare the TriangleContainer with the computed data.
 void Scene_triangle_item::computeElements()const
 {
-
+//! [allocateelements]
 getTriangleContainer(0)->allocate(Tc::Flat_vertices, vertices.data(),
                                   static_cast<int>(vertices.size()
                                                    * sizeof(float)));
 setBuffersFilled(true);
+//! [allocateelements]
 }
 
-//! [computeelements]
 //! [draw]
 
 void Scene_triangle_item::draw(CGAL::Three::Viewer_interface* viewer) const
