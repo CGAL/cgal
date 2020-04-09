@@ -120,7 +120,7 @@ public:
 
   const T& at(const K& k) const
   {
-    if (N < M) {
+    if (N <= M) {
       unsigned int h = hash(k) % B;
       unsigned int i = h;
       do {
@@ -140,8 +140,8 @@ public:
 
   const_iterator find(const K& k) const
   {
-     if (N < M) {
-      unsigned int h = hash(k) % B;
+     if (N <= M) {
+       unsigned int h = hash(k) % B;
       unsigned int i = h;
       do {
         if(occupied[i] == 0){
@@ -163,6 +163,9 @@ public:
   
   std::size_t size() const
   {
+    if(big != nullptr){
+      return big->size();
+    }
     return N;
   }
 
