@@ -75,7 +75,7 @@ public:
     CGAL_assertion(is_valid());
   }
 
-  Self& operator=(const std::pair<NT1, NT2> &np)
+  Self& operator=(const std::pair<NT1, NT2>& np)
   {
     _n1 = np.first;
     _n2 = np.second;
@@ -85,13 +85,13 @@ public:
   }
 
   // The following need to be dependant on NT1 != {NT2,int,double} ...
-  //Filtered_rational(const NT1 &n1) : _n1(n1), _n2(n1) {}
-  //Filtered_rational(const NT2 &n2) : _n1(n2), _n2(n2) {}
+  //Filtered_rational(const NT1& n1) : _n1(n1), _n2(n1) {}
+  //Filtered_rational(const NT2& n2) : _n1(n2), _n2(n2) {}
 
-  Self& operator+=(const Self &a) { n2() += a.n2(); n1() = to_interval(n2()); return *this; }
-  Self& operator-=(const Self &a) { n2() -= a.n2(); n1() = to_interval(n2()); return *this; }
-  Self& operator*=(const Self &a) { n2() *= a.n2(); n1() = to_interval(n2()); return *this; }
-  Self& operator/=(const Self &a) { n2() /= a.n2(); n1() = to_interval(n2()); return *this; }
+  Self& operator+=(const Self& a) { n2() += a.n2(); n1() = to_interval(n2()); return *this; }
+  Self& operator-=(const Self& a) { n2() -= a.n2(); n1() = to_interval(n2()); return *this; }
+  Self& operator*=(const Self& a) { n2() *= a.n2(); n1() = to_interval(n2()); return *this; }
+  Self& operator/=(const Self& a) { n2() /= a.n2(); n1() = to_interval(n2()); return *this; }
 
   // Accessors and setters.
   const NT1& approx() const { return _n1; }
@@ -153,7 +153,7 @@ private:
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator+(const Filtered_rational<NT1, NT2> &a)
+operator+(const Filtered_rational<NT1, NT2>& a)
 {
   CGAL_NT_CHECK_DEBUG("operator+");
   return Filtered_rational<NT1, NT2>(+ a.n1(), + a.n2() );
@@ -161,8 +161,8 @@ operator+(const Filtered_rational<NT1, NT2> &a)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator+(const Filtered_rational<NT1, NT2> &a,
-          const Filtered_rational<NT1, NT2> &b)
+operator+(const Filtered_rational<NT1, NT2>& a,
+          const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator+");
   return Filtered_rational<NT1, NT2>(a.n2() + b.n2());
@@ -170,7 +170,7 @@ operator+(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator+(int a, const Filtered_rational<NT1, NT2> &b)
+operator+(int a, const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator+");
   return Filtered_rational<NT1, NT2>(a + b.n2());
@@ -178,7 +178,7 @@ operator+(int a, const Filtered_rational<NT1, NT2> &b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator+(const Filtered_rational<NT1, NT2> &a, int b)
+operator+(const Filtered_rational<NT1, NT2>& a, int b)
 {
   CGAL_NT_CHECK_DEBUG("operator+");
   return Filtered_rational<NT1, NT2>(a.n2() + b);
@@ -186,8 +186,8 @@ operator+(const Filtered_rational<NT1, NT2> &a, int b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator-(const Filtered_rational<NT1, NT2> &a,
-          const Filtered_rational<NT1, NT2> &b)
+operator-(const Filtered_rational<NT1, NT2>& a,
+          const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator-");
   return Filtered_rational<NT1, NT2>(a.n2() - b.n2());
@@ -195,7 +195,7 @@ operator-(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator-(int a, const Filtered_rational<NT1, NT2> &b)
+operator-(int a, const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator-");
   return Filtered_rational<NT1, NT2>(a - b.n2());
@@ -203,7 +203,7 @@ operator-(int a, const Filtered_rational<NT1, NT2> &b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator-(const Filtered_rational<NT1, NT2> &a, int b)
+operator-(const Filtered_rational<NT1, NT2>& a, int b)
 {
   CGAL_NT_CHECK_DEBUG("operator-");
   return Filtered_rational<NT1, NT2>(a.n2() - b);
@@ -211,7 +211,7 @@ operator-(const Filtered_rational<NT1, NT2> &a, int b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator-(const Filtered_rational<NT1, NT2> &a)
+operator-(const Filtered_rational<NT1, NT2>& a)
 {
   CGAL_NT_CHECK_DEBUG("unary operator-");
   return Filtered_rational<NT1, NT2>(-a.n2());
@@ -219,8 +219,8 @@ operator-(const Filtered_rational<NT1, NT2> &a)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator*(const Filtered_rational<NT1, NT2> &a,
-          const Filtered_rational<NT1, NT2> &b)
+operator*(const Filtered_rational<NT1, NT2>& a,
+          const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator*");
   return Filtered_rational<NT1, NT2>(a.n2() * b.n2());
@@ -228,7 +228,7 @@ operator*(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator*(int a, const Filtered_rational<NT1, NT2> &b)
+operator*(int a, const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator*");
   return Filtered_rational<NT1, NT2>(a * b.n2());
@@ -236,7 +236,7 @@ operator*(int a, const Filtered_rational<NT1, NT2> &b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator*(const Filtered_rational<NT1, NT2> &a, int b)
+operator*(const Filtered_rational<NT1, NT2>& a, int b)
 {
   CGAL_NT_CHECK_DEBUG("operator*");
   return Filtered_rational<NT1, NT2>(a.n2() * b);
@@ -244,8 +244,8 @@ operator*(const Filtered_rational<NT1, NT2> &a, int b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator/(const Filtered_rational<NT1, NT2> &a,
-          const Filtered_rational<NT1, NT2> &b)
+operator/(const Filtered_rational<NT1, NT2>& a,
+          const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator/");
   return Filtered_rational<NT1, NT2>(a.n2() / b.n2());
@@ -253,7 +253,7 @@ operator/(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator/(int a, const Filtered_rational<NT1, NT2> &b)
+operator/(int a, const Filtered_rational<NT1, NT2>& b)
 {
   CGAL_NT_CHECK_DEBUG("operator/");
   return Filtered_rational<NT1, NT2>(a / b.n2());
@@ -261,7 +261,7 @@ operator/(int a, const Filtered_rational<NT1, NT2> &b)
 
 template <typename NT1, typename NT2>
 Filtered_rational<NT1, NT2>
-operator/(const Filtered_rational<NT1, NT2> &a, int b)
+operator/(const Filtered_rational<NT1, NT2>& a, int b)
 {
   CGAL_NT_CHECK_DEBUG("operator/");
   return Filtered_rational<NT1, NT2>(a.n2() / b);
@@ -272,8 +272,8 @@ operator/(const Filtered_rational<NT1, NT2> &a, int b)
 
 template <typename NT1, typename NT2>
 bool
-operator==(const Filtered_rational<NT1, NT2> &a,
-           const Filtered_rational<NT1, NT2> &b)
+operator==(const Filtered_rational<NT1, NT2>& a,
+           const Filtered_rational<NT1, NT2>& b)
 {
   if(a.n1().is_point() && (b.n1().is_point()))
     return a.n1().inf() == b.n1().inf();
@@ -286,16 +286,16 @@ operator==(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 bool
-operator!=(const Filtered_rational<NT1, NT2> &a,
-           const Filtered_rational<NT1, NT2> &b)
+operator!=(const Filtered_rational<NT1, NT2>& a,
+           const Filtered_rational<NT1, NT2>& b)
 {
   return ! (a == b);
 }
 
 template <typename NT1, typename NT2>
 bool
-operator<(const Filtered_rational<NT1, NT2> &a,
-          const Filtered_rational<NT1, NT2> &b)
+operator<(const Filtered_rational<NT1, NT2>& a,
+          const Filtered_rational<NT1, NT2>& b)
 {
   if(a.n1().sup() < b.n1().inf())
     return true;
@@ -308,16 +308,16 @@ operator<(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 bool
-operator>(const Filtered_rational<NT1, NT2> &a,
-          const Filtered_rational<NT1, NT2> &b)
+operator>(const Filtered_rational<NT1, NT2>& a,
+          const Filtered_rational<NT1, NT2>& b)
 {
   return b < a;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator<=(const Filtered_rational<NT1, NT2> &a,
-           const Filtered_rational<NT1, NT2> &b)
+operator<=(const Filtered_rational<NT1, NT2>& a,
+           const Filtered_rational<NT1, NT2>& b)
 {
   if(a.n1().sup() <= b.n1().inf())
     return true;
@@ -330,15 +330,15 @@ operator<=(const Filtered_rational<NT1, NT2> &a,
 
 template <typename NT1, typename NT2>
 bool
-operator>=(const Filtered_rational<NT1, NT2> &a,
-           const Filtered_rational<NT1, NT2> &b)
+operator>=(const Filtered_rational<NT1, NT2>& a,
+           const Filtered_rational<NT1, NT2>& b)
 {
   return b <= a;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator==(const Filtered_rational<NT1, NT2> &a, int i)
+operator==(const Filtered_rational<NT1, NT2>& a, int i)
 {
   bool b1 = a.n1() == i;
   CGAL_assertion(b1 == ( a.n2() == i ) );
@@ -347,7 +347,7 @@ operator==(const Filtered_rational<NT1, NT2> &a, int i)
 
 template <typename NT1, typename NT2>
 bool
-operator!=(const Filtered_rational<NT1, NT2> &a, int i)
+operator!=(const Filtered_rational<NT1, NT2>& a, int i)
 {
   Uncertain<bool> ub = a.n1() != i;
   if(is_certain(ub))
@@ -358,7 +358,7 @@ operator!=(const Filtered_rational<NT1, NT2> &a, int i)
 
 template <typename NT1, typename NT2>
 bool
-operator<(const Filtered_rational<NT1, NT2> &a, int i)
+operator<(const Filtered_rational<NT1, NT2>& a, int i)
 {
   Uncertain<bool> ub = a.n1() < i;
   if(is_certain(ub))
@@ -369,7 +369,7 @@ operator<(const Filtered_rational<NT1, NT2> &a, int i)
 
 template <typename NT1, typename NT2>
 bool
-operator>(const Filtered_rational<NT1, NT2> &a, int i)
+operator>(const Filtered_rational<NT1, NT2>& a, int i)
 {
   Uncertain<bool> ub = a.n1() > i;
   if(is_certain(ub))
@@ -380,7 +380,7 @@ operator>(const Filtered_rational<NT1, NT2> &a, int i)
 
 template <typename NT1, typename NT2>
 bool
-operator<=(const Filtered_rational<NT1, NT2> &a, int i)
+operator<=(const Filtered_rational<NT1, NT2>& a, int i)
 {
   Uncertain<bool> ub = a.n1() <= i;
   if(is_certain(ub))
@@ -391,7 +391,7 @@ operator<=(const Filtered_rational<NT1, NT2> &a, int i)
 
 template <typename NT1, typename NT2>
 bool
-operator>=(const Filtered_rational<NT1, NT2> &a, int i)
+operator>=(const Filtered_rational<NT1, NT2>& a, int i)
 {
   Uncertain<bool> ub = a.n1() >= i;
   if(is_certain(ub))
@@ -402,42 +402,42 @@ operator>=(const Filtered_rational<NT1, NT2> &a, int i)
 
 template <typename NT1, typename NT2>
 bool
-operator==(int i, const Filtered_rational<NT1, NT2> &b)
+operator==(int i, const Filtered_rational<NT1, NT2>& b)
 {
   return b == i;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator!=(int i, const Filtered_rational<NT1, NT2> &b)
+operator!=(int i, const Filtered_rational<NT1, NT2>& b)
 {
   return b != i;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator<(int i, const Filtered_rational<NT1, NT2> &b)
+operator<(int i, const Filtered_rational<NT1, NT2>& b)
 {
   return b > i;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator>(int i, const Filtered_rational<NT1, NT2> &b)
+operator>(int i, const Filtered_rational<NT1, NT2>& b)
 {
   return b < i;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator<=(int i, const Filtered_rational<NT1, NT2> &b)
+operator<=(int i, const Filtered_rational<NT1, NT2>& b)
 {
   return b >= i;
 }
 
 template <typename NT1, typename NT2>
 bool
-operator>=(int i, const Filtered_rational<NT1, NT2> &b)
+operator>=(int i, const Filtered_rational<NT1, NT2>& b)
 {
   return b <= i;
 }
@@ -998,15 +998,15 @@ struct Coercion_traits< double , Filtered_rational<NT1, NT2> >
 // - output/input pairs, and read both (=> problems with FP values).
 
 template <typename NT1, typename NT2>
-std::ostream &
-operator<< (std::ostream & os, const Filtered_rational<NT1, NT2> &b)
+std::ostream&
+operator<< (std::ostream& os, const Filtered_rational<NT1, NT2>& b)
 {
   return os << to_double(b.n1());
 }
 
 template <typename NT1, typename NT2>
-std::istream &
-operator>> (std::istream & is, Filtered_rational<NT1, NT2> &b)
+std::istream&
+operator>> (std::istream& is, Filtered_rational<NT1, NT2>& b)
 {
   is >> b.n2();
   b.n1() = to_interval(b.n2());
@@ -1014,7 +1014,7 @@ operator>> (std::istream & is, Filtered_rational<NT1, NT2> &b)
 }
 
 template <typename NT1, typename NT2>
-bool fit_in_double(const Filtered_rational<NT1, NT2> &a, double &r)
+bool fit_in_double(const Filtered_rational<NT1, NT2>& a, double& r)
 {
   return fit_in_double(a.n1(),r);
 }
