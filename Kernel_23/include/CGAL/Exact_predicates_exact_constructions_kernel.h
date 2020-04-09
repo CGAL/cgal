@@ -30,7 +30,7 @@ namespace CGAL {
 
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> >                    FRK_IA;
 typedef CGAL::Simple_cartesian<internal::Exact_field_selector<double>::Type> FRK_EA;
-typedef CGAL::Filtered_rational_kernel<FRK_IA,FRK_EA>                        Epeck;
+typedef CGAL::Filtered_rational_kernel<FRK_IA, FRK_EA>                       Epeck;
 
 typedef Epeck Exact_predicates_exact_constructions_kernel;
 
