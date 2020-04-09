@@ -90,7 +90,7 @@ struct Approximate_exact_pair
 
 private:
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
-  bool eii = false; // exact is initialized
+  mutable bool eii = false; // exact is initialized
 #endif
 };
 
