@@ -15,6 +15,7 @@
 #include <boost/unordered_map.hpp>
 #include <array>
 #include <iostream>
+#include <bitset>
 
 //#define CGAL_SMALL_UNORDERED_MAP_STATS
 namespace CGAL {
@@ -27,8 +28,8 @@ class Small_unordered_mapV2 {
 #endif
   static constexpr int B = M * Factor ; // the number of bins
   int head = B;
-  mutable std::array<boost::int8_t, B> occupied {}; // all 0
-
+  // mutable std::array<boost::int8_t, B> occupied {}; // all 0
+  mutable std::bitset<B> occupied;
   std::array<std::pair<K, T>, B> data;
   const H hash = {};
   boost::unordered_map<K, T> * big = nullptr;
@@ -71,8 +72,8 @@ public:
       int collision = 0;
 #endif
       do {
-        if (occupied[i] == 0) {
-          occupied[i] = 1;
+        if (occupied[i] == false) {
+          occupied[i] = true;
           data[i].first = k;
           data[i].second = t;
           if(i < head){
@@ -124,7 +125,7 @@ public:
       unsigned int h = hash(k) % B;
       unsigned int i = h;
       do {
-        if ((occupied[i] == 1) && (data[i].first == k)) {
+        if ((occupied[i]) && (data[i].first == k)) {
           return data[i].second;
         }
         i = (i + 1) % B;
@@ -144,7 +145,7 @@ public:
        unsigned int h = hash(k) % B;
       unsigned int i = h;
       do {
-        if(occupied[i] == 0){
+        if(! occupied[i]){
           // the element is not in the map
           return end();
         }
@@ -169,16 +170,18 @@ public:
     return N;
   }
 
+  /*
   void clear()
   {
     head = B;
-    occupied.fill(0);
+    // occupied.fill(0);
     if(big != nullptr){
       delete big;
       big = nullptr;
     }
     N = 0;
   }
+  */
 
   struct const_iterator {
     typedef std::pair<K, T>           value_type;
@@ -235,7 +238,7 @@ public:
         if(pos != B){
           do {
             ++pos;
-          }while((pos !=B) && (map.occupied[pos]==0));
+          }while((pos !=B) && (! map.occupied[pos]));
         }
       }
       return *this;
