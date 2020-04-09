@@ -45,8 +45,23 @@ class Filtered_rational
 public:
   Filtered_rational() {}
 
-  Filtered_rational(int i) : _n1(i) { CGAL_assertion(is_valid()); }
-  Filtered_rational(double d) : _n1(d) { CGAL_assertion(is_valid()); }
+  Filtered_rational(const int i)
+    : _n1(i)
+#ifndef CGAL_LAZY_FILTERED_RATIONAL_KERNEL // note that this is IF_NOT_DEF
+    , _n2(i)
+#endif
+  {
+    CGAL_assertion(is_valid());
+  }
+
+  Filtered_rational(const double d)
+    : _n1(d)
+#ifndef CGAL_LAZY_FILTERED_RATIONAL_KERNEL // note that this is IF_NOT_DEF
+    , _n2(d)
+#endif
+  {
+    CGAL_assertion(is_valid());
+  }
 
   Filtered_rational(const NT1& _n1, const NT2& _n2)
     : _n1(_n1), _n2(_n2)
@@ -83,10 +98,6 @@ public:
     eii = true;
 #endif
   }
-
-  // The following need to be dependant on NT1 != {NT2,int,double} ...
-  //Filtered_rational(const NT1& n1) : _n1(n1), _n2(n1) {}
-  //Filtered_rational(const NT2& n2) : _n1(n2), _n2(n2) {}
 
   Self& operator+=(const Self& a) { n2() += a.n2(); n1() = to_interval(n2()); return *this; }
   Self& operator-=(const Self& a) { n2() -= a.n2(); n1() = to_interval(n2()); return *this; }
