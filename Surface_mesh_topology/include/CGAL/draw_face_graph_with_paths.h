@@ -85,11 +85,11 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 template<class Mesh, class DrawingFunctorLCC>
 class Face_graph_with_path_viewer : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt Base;
-  typedef typename Get_map<Mesh, Mesh>::type LCC;
-  typedef typename LCC::Dart_const_handle Dart_const_handle;
+  typedef Basic_viewer_qt                         Base;
+  typedef typename Get_map<Mesh, Mesh>::type      LCC;
+  typedef typename LCC::Dart_const_handle         Dart_const_handle;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
-  typedef typename CGAL::Get_traits<Mesh>::Point Point;
+  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
 
 public:
@@ -114,13 +114,11 @@ public:
     m_drawing_functor(drawing_functor),
     m_paths(paths),
     m_current_path(m_paths->size()),
-    m_current_dart(0),
+    m_current_dart(lcc.darts().end()),
     m_draw_marked_darts(true),
     m_amark(amark==std::numeric_limits<std::size_t>::max()?
               LCC::INVALID_MARK:amark)
-  {
-    m_current_dart=lcc.number_of_darts(); compute_elements();
-  }
+  { compute_elements(); }
 
 protected:
 
@@ -135,18 +133,15 @@ protected:
     typename LCC::size_type markedges    = lcc.get_new_mark();
     typename LCC::size_type markvertices = lcc.get_new_mark();
 
-    if (m_current_dart!=lcc.number_of_darts())
+    if (m_current_dart!=lcc.darts().end())
     { // We want to draw only one dart
-      if (lcc.darts().is_used(m_current_dart))
-      {
-        Dart_const_handle selected_dart=lcc.dart_handle(m_current_dart);
-        compute_edge(selected_dart, CGAL::Color(255,0,0));
-        lcc.template mark_cell<1>(selected_dart, markedges);
-        compute_vertex(selected_dart);
+      Dart_const_handle selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
+      compute_edge(selected_dart, CGAL::Color(255,0,0));
+      lcc.template mark_cell<1>(selected_dart, markedges);
+      compute_vertex(selected_dart);
 
-        if ( !m_nofaces )
-        { compute_face(selected_dart); }
-      }
+      if ( !m_nofaces )
+      { compute_face(selected_dart); }
 
       for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend; ++it )
@@ -251,38 +246,58 @@ protected:
   void compute_vertex(Dart_const_handle dh)
   { add_point(get_point(dh)); }
 
+  virtual void init()
+  {
+    Base::init();
+    setKeyDescription(::Qt::Key_D, "Increase current dart drawing");
+    setKeyDescription(::Qt::Key_D+::Qt::ControlModifier, "Decrease current dart drawing");
+    setKeyDescription(::Qt::Key_D+::Qt::ShiftModifier, "Draw all darts");
+
+    setKeyDescription(::Qt::Key_X, "Toggles marked darts display");
+
+    setKeyDescription(::Qt::Key_P, "Increase current path drawing");
+    setKeyDescription(::Qt::Key_P+::Qt::ControlModifier, "Decrease current path drawing");
+    setKeyDescription(::Qt::Key_P+::Qt::ShiftModifier, "Draw all paths");
+  }
+
   virtual void keyPressEvent(QKeyEvent *e)
   {
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
 
     if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
     {
-      m_current_dart=(m_current_dart+1)%(lcc.number_of_darts()+1);
-      if (m_current_dart==lcc.number_of_darts())
-      {
-        displayMessage(QString("Draw all darts."));
-      }
+      if (m_current_dart==lcc.darts().end())
+      { m_current_dart=lcc.darts().begin(); }
       else
-      {
-        displayMessage(QString("Draw dart=%1.").arg((m_current_dart)));
-      }
+      { ++m_current_dart; } 
+      if (m_current_dart==lcc.darts().end())
+      { displayMessage(QString("Draw all darts.")); }
+      else
+      { displayMessage(QString("Draw dart=%1.").arg(lcc.darts().index(m_current_dart))); }
       compute_elements();
       redraw();
     }
-    else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ControlModifier))
     {
-      m_draw_marked_darts=!m_draw_marked_darts;
-
-      if (m_draw_marked_darts)
-      { displayMessage(QString("Draw marked darts in blue.")); }
+      if (m_current_dart==lcc.darts().begin()) 
+      { m_current_dart=lcc.darts().end(); }
       else
-      {
-        displayMessage(QString("Do not draw marked darts in different color."));
-      }
+      { --m_current_dart; }
+      if (m_current_dart==lcc.darts().end())
+      { displayMessage(QString("Draw all darts.")); }
+      else
+      { displayMessage(QString("Draw dart=%1.").arg(lcc.darts().index(m_current_dart))); }
       compute_elements();
       redraw();
     }
-    else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
+    {
+      m_current_dart=lcc.darts().end();
+      displayMessage(QString("Draw all darts."));
+      compute_elements();
+      redraw();
+    }
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))    
     {
       m_current_path=(m_current_path+1)%(m_paths->size()+2);
       if (m_current_path==m_paths->size())
@@ -296,17 +311,36 @@ protected:
       compute_elements();
       redraw();
     }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ControlModifier))    
     {
-      m_current_dart=(m_current_dart==0?lcc.number_of_darts():
-                      m_current_dart-1);
-      if (m_current_dart==lcc.number_of_darts())
-      {
-        displayMessage(QString("Draw all darts."));
-      }
+      m_current_path=(m_current_path==0?m_paths->size()+1:m_current_path-1);
+      if (m_current_path==m_paths->size())
+      { displayMessage(QString("Draw all paths.")); }
+      else if (m_current_path==m_paths->size()+1)
+      { displayMessage(QString("Do not draw paths.")); }
+      else
+      { displayMessage(QString("Draw path=%1, nb_darts=%2.").
+                       arg(m_current_path).
+                       arg((*m_paths)[m_current_path].length())); }
+      compute_elements();
+      redraw();
+    }
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ShiftModifier))    
+    {
+      m_current_path=m_paths->size();
+      displayMessage(QString("Draw all paths."));
+      compute_elements();
+      redraw();
+    }
+    else if ((e->key()==::Qt::Key_X) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_marked_darts=!m_draw_marked_darts;
+
+      if (m_draw_marked_darts)
+      { displayMessage(QString("Draw marked darts in blue.")); }
       else
       {
-        displayMessage(QString("Draw dart=%1.").arg((m_current_dart)));
+        displayMessage(QString("Do not draw marked darts in different color."));
       }
       compute_elements();
       redraw();
@@ -341,7 +375,7 @@ protected:
   const DrawingFunctorLCC& m_drawing_functor;
   const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;
   std::size_t m_current_path;
-  std::size_t m_current_dart;
+  typename LCC::Dart_range::const_iterator m_current_dart;
   bool m_draw_marked_darts;
   typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
 };

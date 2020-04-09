@@ -19,7 +19,7 @@ static unsigned int seed; // Use the same seed for all the tests
 
 ///////////////////////////////////////////////////////////////////////////////
 template<class FaceGraph>
-void test(const FaceGraph& mesh, bool draw)
+void test(const FaceGraph& mesh, bool draw, const char* title)
 {
   CGAL::Random random(seed);
   Curves_on_surface_topology<FaceGraph> cst(mesh);
@@ -30,14 +30,14 @@ void test(const FaceGraph& mesh, bool draw)
   Path_on_surface<FaceGraph> p2(mesh); // A second path
   p2.generate_random_closed_path(10, random);
 
-  bool res1=cst.is_contractible(p1);
+  bool res1=cst.is_contractible(p1, true);
   std::cout<<"Path p1 "<<(res1?"IS":"IS NOT")<<" contractible."<<std::endl;
 
-  bool res2=cst.are_freely_homotopic(p1, p2);
+  bool res2=cst.are_freely_homotopic(p1, p2, true);
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
   if (draw)
-  { CGAL::draw(mesh, {p1, p2}); }
+  { CGAL::draw(mesh, {p1, p2}, title); }
 }
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
       std::cout<<"ERROR reading file "<<file<<" for linear cell complex."<<std::endl;
       exit(EXIT_FAILURE);
     }
-    test(lcc, draw);
+    test(lcc, draw, "Linear cell complex for combinatorial map");
   }
 
   {
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
       std::cout<<"ERROR reading file "<<file<<" for polyhedron."<<std::endl;
       exit(EXIT_FAILURE);
     }
-    test(p, draw);
+    test(p, draw, "Polyhedron");
   }
 
   {
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
       std::cout<<"ERROR reading file "<<file<<" for surface mesh."<<std::endl;
       exit(EXIT_FAILURE);
     }
-    test(sm, draw);
+    test(sm, draw, "Surface mesh");
   }
 
   return EXIT_SUCCESS;

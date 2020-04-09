@@ -447,17 +447,14 @@ public:
     { return num_halfedges(mmap.get_fg()); }
 
     bool is_used(size_type i) const
-    {
-      for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
-           it=halfedges(mmap.get_fg()).begin(),
-           itend=halfedges(mmap.get_fg()).end(); it!=itend; ++it)
-      {
-        if (i==0) { return !is_border(*it, mmap.get_fg()); }
-        --i;
-      }
-      return false;
-    }
+    { return internal::Is_index_used<HEG>::run(mmap.get_fg(), i); }
 
+    std::size_t index(const_iterator it) const
+    {
+      return internal::Index_from_halfedge_descriptor<HEG>::
+        run(mmap.get_fg(), *it);
+    }
+    
   private:
     const Self & mmap;
     mutable typename Self::size_type msize;
@@ -496,28 +493,12 @@ public:
   Dart_handle dart_handle(size_type i)
   {
     CGAL_assertion(darts().is_used(i));
-    for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
-         it=halfedges(get_fg()).begin(),
-         itend=halfedges(get_fg()).end(); it!=itend; ++it)
-    {
-      if (i==0) { return *it; }
-      --i;
-    }
-    CGAL_assertion(false);
-    return Dart_handle();
+    return internal::Halfedge_descriptor_from_index<HEG>::run(get_fg(), i); 
   }
   Dart_const_handle dart_handle(size_type i) const
   {
     CGAL_assertion(darts().is_used(i));
-    for (typename boost::template graph_traits<typename Self::HEG>::halfedge_iterator
-         it=halfedges(get_fg()).begin(),
-         itend=halfedges(get_fg()).end(); it!=itend; ++it)
-    {
-      if (i==0) { return *it; }
-      --i;
-    }
-    CGAL_assertion(false);
-    return Dart_const_handle();
+    return internal::Halfedge_descriptor_from_index<HEG>::run(get_fg(), i); 
   }
 
   template <unsigned int i>

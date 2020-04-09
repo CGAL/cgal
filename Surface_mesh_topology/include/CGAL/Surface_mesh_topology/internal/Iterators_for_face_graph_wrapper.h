@@ -16,6 +16,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h>
 #include <stack>
 
 namespace CGAL {
@@ -40,11 +41,7 @@ namespace internal {
     FGW_dart_iterator_basic_of_all(const Map& amap):
       mmap(amap),
       m_it(halfedges(amap.get_fg()).begin())
-    {
-      /*if (m_it!=halfedges(amap.get_fg()).end() &&
-          is_border(*m_it, amap.get_fg()))
-      { operator++(0); } */
-    }
+    {}
 
     /// Constructor with a dart in parameter (for end iterator).
     FGW_dart_iterator_basic_of_all(const Map& amap, Dart_handle /*adart*/):
@@ -57,6 +54,12 @@ namespace internal {
       m_it(other.m_it)
     {}
 
+    Self& operator=(const Self& other)
+    {
+      CGAL_assertion(&mmap==&(other.mmap));
+      m_it=other.m_it;
+    }
+    
     operator Dart_handle() const
     { return operator*(); }
 
@@ -70,14 +73,7 @@ namespace internal {
     Self& operator++()
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
-
-      //do
-      {
-        ++m_it;
-      }
-      /*while(m_it!=halfedges(this->mmap.get_fg()).end() &&
-            is_border(*m_it, this->mmap.get_fg())); */
-
+      ++m_it;
       return *this;
     }
 
@@ -85,6 +81,19 @@ namespace internal {
     Self operator++(int)
     { Self res=*this; operator ++(); return res; }
 
+    /// Prefix -- operator.
+    Self& operator--()
+    {
+      CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).begin());
+      --m_it;
+      return *this;
+    }
+
+    /// Postfix -- operator.
+    Self operator--(int)
+    { Self res=*this; operator --(); return res; }
+
+    
     Dart_handle operator*() const
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
