@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
-#include "Messages_interface.h"
+#include <CGAL/Three/Three.h>
 
 //! [dock]
 class DockWidget :
@@ -80,7 +80,7 @@ private Q_SLOTS:
 
   void on_dock_button_clicked()
   {
-      messageInterface->information(QString("Here is your number :%1").arg(dock_widget->spinBox->value()));
+      CGAL::Three::Three::information(QString("Here is your number :%1").arg(dock_widget->spinBox->value()));
 
   }
   //! [action]

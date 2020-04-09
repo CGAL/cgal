@@ -10,12 +10,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 #Find CGAL
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5 ImageIO)
 # Find Qt5 itself
 find_package(Qt5
              QUIET
              COMPONENTS            OpenGL Script Svg Xml
-             OPTIONAL_COMPONENTS   ScriptTools)
+             OPTIONAL_COMPONENTS   ScriptTools WebSockets)
 
 if(Qt5_FOUND AND CGAL_FOUND)
   include(${CGAL_USE_FILE})
@@ -39,4 +39,6 @@ if(CGAL_polyhedron_demo_FOUND)
 
   #  links the library containing the scene_plane_item with the plugin
     target_link_libraries(basic_item_plugin PUBLIC Polyhedron_scene_basic_objects)
+  else()
+    message("NOTICE: These plugins need a built Polyhedron Demo to be configured, and won't be compiled.")
 endif()

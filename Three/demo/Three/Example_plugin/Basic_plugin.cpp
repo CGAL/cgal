@@ -14,7 +14,7 @@ Change the value of EXAMPLE_COMPLEXITY in the first line to change the behavior 
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QMessageBox>
-#include "Messages_interface.h"
+#include "CGAL/Three/Three.h"
 //! [headers_plugin]
 //! [dialog_plugin]
 class ComplexDialog :
@@ -79,7 +79,7 @@ private Q_SLOTS:
   //! [basic_plugin]
   void helloWorld()
   {
-    messageInterface->information(QString("Hello World!"));
+    CGAL::Three::Three::information(QString("Hello World!"));
   }
   //! [basic_plugin]
 #elif EXAMPLE_COMPLEXITY == 1

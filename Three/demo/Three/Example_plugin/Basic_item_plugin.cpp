@@ -4,7 +4,6 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QInputDialog>
-#include "Messages_interface.h"
 #include "CGAL/Three/Scene_group_item.h"
 #include "CGAL/Three/Three.h"
 #include "Scene_plane_item.h"
