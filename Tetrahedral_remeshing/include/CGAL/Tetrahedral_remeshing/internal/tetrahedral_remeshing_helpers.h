@@ -854,7 +854,7 @@ namespace Tetrahedral_remeshing
     void dump_cells(const CellRange& cells, const char* filename);
 
     template<typename Tr>
-    bool debug_negative_volumes(const Tr& tr)
+    bool debug_orientation(const Tr& tr)
     {
       typedef typename Tr::Geom_traits::Point_3 Point_3;
       typedef typename Tr::Facet                Facet;
@@ -867,8 +867,8 @@ namespace Tetrahedral_remeshing
         const Point_3& p2 = point(ch->vertex(2)->point());
         const Point_3& p3 = point(ch->vertex(3)->point());
 
-        const double vol = CGAL::volume(p0, p1, p2, p3);
-        if (vol < 0.)
+        const CGAL::Orientation o = CGAL::orientation(p0, p1, p2, p3);
+        if (o != CGAL::POSITIVE)
         {
           facets.insert(canonical_facet(Facet(ch, 0)));
           facets.insert(canonical_facet(Facet(ch, 1)));

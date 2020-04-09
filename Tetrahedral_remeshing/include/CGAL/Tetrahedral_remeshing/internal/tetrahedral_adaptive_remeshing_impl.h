@@ -183,7 +183,7 @@ namespace internal
                        m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().tds().is_valid(true));
-      CGAL_assertion(debug::debug_negative_volumes(tr()));
+      CGAL_assertion(debug::debug_orientation(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "1-split.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "1-split.binary.cgal");
@@ -201,7 +201,7 @@ namespace internal
                            m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().tds().is_valid(true));
-      CGAL_assertion(debug::debug_negative_volumes(tr()));
+      CGAL_assertion(debug::debug_orientation(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "2-collapse.mesh");
@@ -215,7 +215,7 @@ namespace internal
                  m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().tds().is_valid(true));
-      CGAL_assertion(debug::debug_negative_volumes(tr()));
+      CGAL_assertion(debug::debug_orientation(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "3-flip.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "3-flip.binary.cgal");
@@ -227,7 +227,7 @@ namespace internal
       m_vertex_smoother.smooth_vertices(m_c3t3, m_protect_boundaries, m_cell_selector);
 
       CGAL_assertion(tr().tds().is_valid(true));
-      CGAL_assertion(debug::debug_negative_volumes(tr()));
+      CGAL_assertion(debug::debug_orientation(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "4-smooth.mesh");
@@ -297,7 +297,7 @@ namespace internal
       }
 
       CGAL_assertion(tr().tds().is_valid(true));
-      CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::debug_negative_volumes(tr()));
+      CGAL_assertion(debug::debug_orientation(tr()));
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "99-postprocess.mesh");
