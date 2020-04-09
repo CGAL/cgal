@@ -52,10 +52,16 @@ int main(int argc, char** argv)
   bool b = CGAL::collinear(p,q,m);
 
 #else
+  if(argc < 2)
+  {
+    std::cerr << "usage: " << argv[0] << " data.xyz [parallel]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   CGAL::get_default_random() = CGAL::Random(0);
   std::cout << "seed:  " << CGAL::get_default_random().get_seed() << std::endl;
 
-  std::cout << typeid(K::FT).name() << std::endl;
+  std::cout << "FT: " << typeid(K::FT).name() << std::endl;
   int n;
   double x,y,z;
   std::vector<Point_3> points;
@@ -67,7 +73,7 @@ int main(int argc, char** argv)
   while(n--)
   {
     in >> x >> y >> z;
-    points.emplace_back(x,y,z));
+    points.emplace_back(x,y,z);
   }
 
   int V, C;
@@ -78,14 +84,18 @@ int main(int argc, char** argv)
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-  if(true)
+  bool use_parallel = false;
+  if(argc > 2)
   {
-    std::cout << "Sequential" << std::endl;
-    DT dt(points.begin(), points.end());
-    V = dt.number_of_vertices();
-    C = dt.number_of_cells();
+    std::stringstream ss(argv[2]);
+    if(!(ss >> std::boolalpha >> use_parallel))
+    {
+      std::cout << "second argument not a Boolean?" << std::endl;
+      return EXIT_FAILURE;
+    }
   }
-  else
+
+  if(use_parallel)
   {
     std::cout << "Parallel" << std::endl;
     CGAL::Bbox_3 bb  = CGAL::bounding_box(points.begin(), points.end()).bbox();
@@ -96,6 +106,14 @@ int main(int argc, char** argv)
     V = pdt.number_of_vertices();
     C = pdt.number_of_cells();
   }
+  else
+  {
+    std::cout << "Sequential" << std::endl;
+    DT dt(points.begin(), points.end());
+    V = dt.number_of_vertices();
+    C = dt.number_of_cells();
+  }
+
   timer.stop();
   rtimer.stop();
 
@@ -105,7 +123,9 @@ int main(int argc, char** argv)
           << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
           << "ms" << std::endl;
 
-  std::cerr << "|V| = " <<  V << " |C| = " << C  << std::endl << timer.time() << " sec"  << rtimer.time() << " sec" << std::endl;
+  std::cerr << "|V| = " <<  V << " |C| = " << C  << std::endl
+            << timer.time() << " sec" << std::endl
+            << rtimer.time() << " sec (r)" << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
