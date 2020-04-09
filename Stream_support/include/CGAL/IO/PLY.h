@@ -15,6 +15,7 @@
 #include <CGAL/IO/PLY/PLY_reader.h>
 #include <CGAL/IO/PLY/PLY_writer.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 
 #include <boost/utility/enable_if.hpp>
@@ -26,18 +27,21 @@ namespace CGAL {
 /// Read
 //HEdgesRange" = range of std::pair<unsigned int, unsigned int>
 //HUVRange = range of std::pair<float, float>
-template <class PointRange, class PolygonRange, class ColorRange, class HEdgesRange, class HUVRange>
+template <class PointRange, class PolygonRange, class ColorOutputIterator, class HEdgesOutputIterator, class HUVOutputIterator>
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              HEdgesRange& hedges,
-              ColorRange& fcolors,
-              ColorRange& vcolors,
-              HUVRange& huvs,
-              bool /* verbose */ = false)
+              HEdgesOutputIterator& hedges_out,
+              ColorOutputIterator& fc_out,
+              ColorOutputIterator& vc_out,
+              HUVOutputIterator& huvs_out,
+              bool /* verbose */ = false,
+              typename std::enable_if<
+                CGAL::is_iterator<ColorOutputIterator>::value
+              >::type* =0)
 {
   typedef typename PointRange::value_type Point_3;
-  typedef typename ColorRange::value_type Color_rgb;
+  typedef CGAL::Color                     Color_rgb;
   if(!is.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
@@ -95,7 +99,7 @@ bool read_PLY(std::istream& is,
                                             std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_vertex),
                                                            PLY_property<boost::uint8_t>(btag.c_str())));
 
-          vcolors.push_back(Color_rgb(get<1>(new_vertex), get<2>(new_vertex), get<3>(new_vertex)));
+          *vc_out++ = Color_rgb(get<1>(new_vertex), get<2>(new_vertex), get<3>(new_vertex));
         }
         else
           IO::internal::process_properties(element, new_vertex,
@@ -107,13 +111,13 @@ bool read_PLY(std::istream& is,
     else if(element.name() == "face" || element.name() == "faces")
     {
       if(element.has_property<std::vector<boost::int32_t> >("vertex_indices"))
-        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fcolors, "vertex_indices");
+        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fc_out, "vertex_indices");
       else if(element.has_property<std::vector<boost::uint32_t> >("vertex_indices"))
-        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fcolors, "vertex_indices");
+        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fc_out, "vertex_indices");
       else if(element.has_property<std::vector<boost::int32_t> >("vertex_index"))
-        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fcolors, "vertex_index");
+        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fc_out, "vertex_index");
       else if(element.has_property<std::vector<boost::uint32_t> >("vertex_index"))
-        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fcolors, "vertex_index");
+        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fc_out, "vertex_index");
       else
       {
         std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
@@ -155,8 +159,8 @@ bool read_PLY(std::istream& is,
                                                            PLY_property<float>(utag.c_str())),
                                             std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_hedge),
                                                            PLY_property<float>(vtag.c_str())));
-          hedges.push_back(std::make_pair(get<0>(new_hedge), get<1>(new_hedge)));
-          huvs.push_back(std::make_pair(get<2>(new_hedge), get<3>(new_hedge)));
+          *hedges_out++ = std::make_pair(get<0>(new_hedge), get<1>(new_hedge));
+          *huvs_out++ = std::make_pair(get<2>(new_hedge), get<3>(new_hedge));
         }
         else
         {
@@ -186,6 +190,18 @@ bool read_PLY(std::istream& is,
   return !is.fail();
 }
 
+template <class PointRange, class PolygonRange, class ColorRange, class HEdgesRange, class HUVRange>
+bool read_PLY(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              HEdgesRange& hedges,
+              ColorRange& fcolors,
+              ColorRange& vcolors,
+              HUVRange& huvs,
+              bool /* verbose */ = false)
+{
+  return read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs));
+}
 template <class PointRange, class PolygonRange, class ColorRange>
 bool read_PLY(std::istream& is,
               PointRange& points,
@@ -194,24 +210,11 @@ bool read_PLY(std::istream& is,
               ColorRange& vcolors,
               bool /* verbose */ = false)
 {
-
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
-
-  return read_PLY(is, points, polygons, dummy_pui, fcolors, vcolors, dummy_pf);
+  return read_PLY(is, points, polygons, dummy_pui, std::back_inserter(fcolors), std::back_inserter(vcolors), dummy_pf);
 }
 
-//todo
-template <typename PointRange, typename PolygonRange,
-          typename VertexColorOutputIterator,
-          typename FaceColorOutputIterator>
-bool read_OFF(std::istream& is,
-              PointRange& points,
-              PolygonRange& polygons,
-              VertexColorOutputIterator vc_out,
-              FaceColorOutputIterator fc_out)
-{
-}
 
 /*!
  * \ingroup IOstreamFunctions
@@ -308,6 +311,24 @@ read_PLY(std::istream& is,
   }
 
   return !is.fail();
+}
+
+
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+bool read_PLY(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              const NamedParameters& np)
+{
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  return read_PLY(is, points, polygons,
+                                choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
+                                                 CGAL::Emptyset_iterator()),
+                                choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
+                                                 CGAL::Emptyset_iterator()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

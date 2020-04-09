@@ -14,6 +14,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/property_map.h>
+#include <CGAL/is_iterator.h>
 
 #include <boost/cstdint.hpp>
 
@@ -673,15 +674,18 @@ void process_properties(PLY_element& element, OutputValueType& new_element,
                      std::forward<PropertyMapBinders>(properties)...);
 }
 
-template <typename Integer, class PolygonRange, class ColorRange>
+template <typename Integer, class PolygonRange, class ColorOutputIterator>
 bool read_PLY_faces(std::istream& in,
                     PLY_element& element,
                     PolygonRange& polygons,
-                    ColorRange& fcolors,
-                    const char* vertex_indices_tag)
+                    ColorOutputIterator fc_out,
+                    const char* vertex_indices_tag,
+                    typename std::enable_if<
+                      CGAL::is_iterator<ColorOutputIterator>::value
+                    >::type* =0)
 {
   typedef typename PolygonRange::value_type Polygon_3;
-  typedef typename ColorRange::value_type Color_rgb;
+  typedef CGAL::Color Color_rgb;
   bool has_colors = false;
   std::string rtag = "r", gtag = "g", btag = "b";
 
@@ -719,7 +723,7 @@ bool read_PLY_faces(std::istream& in,
                          std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_face),
                                         PLY_property<boost::uint8_t>(btag.c_str())));
 
-      fcolors.push_back(Color_rgb(get<1>(new_face), get<2>(new_face), get<3>(new_face)));
+      *fc_out++ = Color_rgb(get<1>(new_face), get<2>(new_face), get<3>(new_face));
     }
     else
     {
@@ -736,6 +740,15 @@ bool read_PLY_faces(std::istream& in,
   return true;
 }
 
+template <typename Integer, class PolygonRange, class ColorRange>
+bool read_PLY_faces(std::istream& in,
+                    PLY_element& element,
+                    PolygonRange& polygons,
+                    ColorRange& fcolors,
+                    const char* vertex_indices_tag)
+{
+  return read_PLY_faces<Integer>(in, element, polygons, std::back_inserter(fcolors), vertex_indices_tag);
+}
 } // namespace PLY
 } // namespace internal
 } // namespace CGAL
