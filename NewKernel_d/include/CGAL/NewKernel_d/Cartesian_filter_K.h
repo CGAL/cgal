@@ -50,6 +50,10 @@ template<> struct Functors_without_division<Dimension_tag<6> > {
   typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
 };
 
+// FIXME:
+// - Is_exact (which should be renamed to Uses_no_arithmetic) predicates should not be filtered
+// - Functors_without_division should be defined near/in the actual functors
+
 template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >
 struct Cartesian_filter_K : public Base_
 {

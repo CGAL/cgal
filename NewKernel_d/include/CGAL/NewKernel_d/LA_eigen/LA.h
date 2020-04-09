@@ -122,6 +122,9 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
                 return m.determinant();
         }
 
+	// TODO: https://gitlab.com/libeigen/eigen/-/issues/1782
+	// Implement a version of (sign_of_)determinant that works
+	// without (inexact) division in any dimension
         template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
           switch(m.rows()){
             //case 0:
