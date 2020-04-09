@@ -643,7 +643,7 @@ namespace CGAL
             }
           }
         }
-        CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::debug_orientation(tr));
+        CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
         ////   end if(!protect_boundaries)
 
         smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
@@ -694,7 +694,7 @@ namespace CGAL
 #endif
           }
         }
-        CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::debug_orientation(tr));
+        CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << " done (" << nb_done << " vertices smoothed)." << std::endl;

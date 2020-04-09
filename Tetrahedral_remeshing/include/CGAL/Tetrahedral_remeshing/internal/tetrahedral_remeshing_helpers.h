@@ -854,7 +854,7 @@ namespace Tetrahedral_remeshing
     void dump_cells(const CellRange& cells, const char* filename);
 
     template<typename Tr>
-    bool debug_orientation(const Tr& tr)
+    bool are_cell_orientations_valid(const Tr& tr)
     {
       typedef typename Tr::Geom_traits::Point_3 Point_3;
       typedef typename Tr::Facet                Facet;
