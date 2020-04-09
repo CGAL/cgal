@@ -127,7 +127,7 @@ public:
 
   bool is_valid() const
   {
-    if(!is_valid(_n1))
+    if(!CGAL::is_valid(_n1))
       return false;
 
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
@@ -135,7 +135,7 @@ public:
       return true; // _n2 is not yet built, so nothing more can be checked
 #endif
 
-    if(!is_valid(_n2))
+    if(!CGAL::is_valid(_n2))
       return false;
 
     // the exact number must be in the interval
