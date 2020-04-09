@@ -95,17 +95,6 @@ struct Filtered_kernel_base
 
 template < typename CK >
 struct Static_filters_base
-  : public internal::Static_filters< Filtered_kernel_base<CK> >
-{
-    template < typename Kernel2 >
-    struct Base {
-        typedef typename CK::template Base<Kernel2>::Type  CK2;
-        typedef Static_filters_base<CK2>                   Type;
-    };
-};
-
-template < typename CK >
-struct Static_filters_base_without_filtered_wrapping
   : public internal::Static_filters< CK >
 {
   template < typename Kernel2 >
@@ -124,14 +113,14 @@ template < typename CK, bool UseStaticFilters = true >
 struct Filtered_kernel_adaptor
   : public Filtered_kernel_base<CK>
 {
-        enum { Has_static_filters = false };
+  enum { Has_static_filters = false };
 };
 
 template < typename CK >
 struct Filtered_kernel_adaptor<CK, true>
-  : public Static_filters_base<CK>
+  : public Static_filters_base<Filtered_kernel_base<CK> >
 {
-        enum { Has_static_filters = true };
+  enum { Has_static_filters = true };
 };
 
 // UseStaticFilters has a default value, depending on
