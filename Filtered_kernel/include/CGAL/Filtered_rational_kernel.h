@@ -625,7 +625,6 @@ public:
     template <typename T1, typename T2>
     Bbox_2 operator()(const std::pair<T1, T2>& p) const
     {
-      // AF: Or do we want to construct the BBox from Gmpq ?
       return typename AK::Construct_bbox_2()(p.first);
     }
   };
@@ -638,7 +637,6 @@ public:
     template <typename T1, typename T2>
     Bbox_3 operator()(const std::pair<T1, T2>& p) const
     {
-      // AF: Or do we want to construct the BBox from Gmpq ?
       return typename AK::Construct_bbox_3()(p.first);
     }
   };
