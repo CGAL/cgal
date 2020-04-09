@@ -25,17 +25,19 @@
 #include <sstream>
 #include <utility>
 
-// A number type class, parameterized by 2 number types NT1 and NT2.
-// It runs all operations on parallel over NT1 and NT2.
-// It is also parameterized by a comparator which compares the values
-// of NT1 and NT2 after all arithmetic operations.
-
 // #define CGAL_NT_CHECK_DEBUG(s) std::cerr << s << std::endl
 #define CGAL_NT_CHECK_DEBUG(s)
 
 namespace CGAL {
 
-template <typename NT1 = Interval_nt<false>, typename NT2=Gmpq>
+// A number type class, parameterized by 2 number types NT1 and NT2.
+// It runs all operations on parallel over NT1 and NT2.
+// It is also parameterized by a comparator which compares the values
+// of NT1 and NT2 after all arithmetic operations.
+//
+// NT1 must be CGAL::Interval_nt, but the protection (the template) is up to the user
+template <typename NT1 = Interval_nt<false>,
+          typename NT2 = Gmpq>
 class Filtered_rational
 {
   NT1 _n1;
