@@ -16,11 +16,10 @@
 //
 // Author(s)     : Andreas Fabri
 
-
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Filtered_rational_kernel.h>
-#include <cassert>
 
-#define TEST_FILENAME "Test-Simple_cartesian-IO.out"
+#define TEST_FILENAME "Test-Filtered_rational-IO.out"
 #include "CGAL/_test_io.h"
 
 #include "CGAL/_test_2.h"
@@ -40,14 +39,39 @@
 
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
+#include <cassert>
 
-typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> > K1;
-typedef CGAL::Simple_cartesian<CGAL::Gmpq> K2;
-typedef CGAL::Filtered_rational_kernel<K1,K2>    Cls;
+#include <CGAL/gmpxx.h>
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 
+#include <CGAL/CORE_Expr.h>
+
+#if 1
+typedef CORE::Expr ET;
+#elif 0
+typedef CGAL::internal::Exact_field_selector<void*> ET;
+typedef leda_rational ET;
+typedef CGAL::Gmpq ET;
+#endif
+
+typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> > AK;
+typedef CGAL::Simple_cartesian<ET>                        EK;
+typedef CGAL::Filtered_rational_kernel<AK, EK>            Cls;
 
 int main()
 {
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
+  std::cout << typeid(ET).name() << std::endl;
+  std::cout << typeid(typename CGAL::Algebraic_structure_traits<ET>::Algebraic_category).name() << std::endl;
+  std::cin.get();
+
   std::cout << "Testing 2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_2( Cls() );
@@ -77,6 +101,8 @@ int main()
   std::cout << "Testing 3d-2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
+
+  std::cout << "Done!" << std::endl;
 
   return 0;
 }
