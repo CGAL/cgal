@@ -13,6 +13,8 @@
 #ifndef CGAL_INTERNAL_SMOOTH_VERTICES_H
 #define CGAL_INTERNAL_SMOOTH_VERTICES_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <CGAL/Vector_3.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>

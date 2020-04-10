@@ -10,9 +10,10 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj
 
-
 #ifndef CGAL_TETRAHEDRAL_REMESHING_TRIANGULATION_H
 #define CGAL_TETRAHEDRAL_REMESHING_TRIANGULATION_H
+
+#include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_3.h>

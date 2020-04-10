@@ -10,9 +10,10 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj
 
-
 #ifndef CGAL_TETRAHEDRAL_REMESHING_FMLS_H
 #define CGAL_TETRAHEDRAL_REMESHING_FMLS_H
+
+#include <CGAL/license/Tetrahedral_remeshing.h>
 
 // -------------------------------------------
 // FMLS

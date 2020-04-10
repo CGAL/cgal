@@ -13,6 +13,8 @@
 #ifndef TETRAHEDRAL_REMESHING_H
 #define TETRAHEDRAL_REMESHING_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 

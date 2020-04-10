@@ -10,6 +10,11 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj
 
+#ifndef CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
+#define CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
+
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <limits>
 #include <vector>
 #include <algorithm>
@@ -18,9 +23,6 @@
 #include <boost/unordered_set.hpp>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
-
-#ifndef CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
-#define CGAL_TR_INTERNAL_COMPUTE_C3T3_STATISTICS_H
 
 namespace CGAL
 {

@@ -13,6 +13,8 @@
 #ifndef CGAL_INTERNAL_SPLIT_LONG_EDGES_H
 #define CGAL_INTERNAL_SPLIT_LONG_EDGES_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>

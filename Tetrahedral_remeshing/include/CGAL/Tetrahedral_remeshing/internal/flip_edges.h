@@ -10,9 +10,10 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj
 
-
 #ifndef CGAL_INTERNAL_FLIP_EDGES_H
 #define CGAL_INTERNAL_FLIP_EDGES_H
+
+#include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/utility.h>

@@ -13,6 +13,8 @@
 #ifndef CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
 #define CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <CGAL/Mesh_vertex_base_3.h>
 
 namespace CGAL

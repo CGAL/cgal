@@ -13,6 +13,8 @@
 #ifndef CGAL_UNIFORM_SIZING_FIELD_H
 #define CGAL_UNIFORM_SIZING_FIELD_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 
 namespace CGAL

@@ -13,6 +13,8 @@
 #ifndef CGAL_INTERNAL_TET_REMESHING_HELPERS_H
 #define CGAL_INTERNAL_TET_REMESHING_HELPERS_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <utility>
 
 #include <CGAL/Point_3.h>

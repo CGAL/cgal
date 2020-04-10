@@ -13,6 +13,8 @@
 #ifndef CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_H
 #define CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <CGAL/Mesh_cell_base_3.h>
 
 namespace CGAL
