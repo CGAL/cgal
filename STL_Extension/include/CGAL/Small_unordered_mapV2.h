@@ -81,7 +81,7 @@ public:
   const_iterator find(const K& k) const
   {
     if (N <= M) {
-      for(int i =0; i < M; ++i){
+      for(int i =0; i < N; ++i){
         if (target(data[i],mesh) == k) {
           return const_iterator(*this,i);
         }
