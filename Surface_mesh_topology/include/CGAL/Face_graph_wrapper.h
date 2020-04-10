@@ -557,6 +557,37 @@ public:
     return res;
   }
 
+  template <unsigned int i>
+  size_type mark_oriented_cell(Dart_const_handle adart, size_type amark,
+                               size_type amark2=INVALID_MARK) const
+  {
+    size_type res=0;
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
+           itend=darts_of_cell<i>(adart).end(); it!=itend; ++it)
+    {
+      mark(*it, amark); ++res;
+      if (amark2!=INVALID_MARK) { mark(*it, amark2); }
+    }
+    return res;
+  }
+
+  template <unsigned int i>
+  size_type unmark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+  {
+    size_type res=0;
+    for (typename Dart_of_cell_range<i>::iterator it=darts_of_cell<i>(adart).begin(),
+           itend=darts_of_cell<i>(adart).end(); it!=itend; ++it)
+    {
+      unmark(*it, amark); ++res;
+      if (amark2!=INVALID_MARK) { unmark(*it, amark2); }
+    }
+    return res;
+  }
+
+  std::size_t orient(size_type amark) const
+  { negate_mark(amark); }
+
   std::vector<unsigned int>
   count_marked_cells(size_type amark, const std::vector<unsigned int>& acells) const
   {

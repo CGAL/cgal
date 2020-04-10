@@ -76,6 +76,7 @@ namespace CGAL {
    */
 
   struct Combinatorial_map_tag {};
+  struct Generalized_map_tag;
 
   /** Generic definition of combinatorial map in dD.
    * The Combinatorial_map class describes an dD combinatorial map. It allows
@@ -1211,6 +1212,19 @@ namespace CGAL {
     template <unsigned int i, unsigned int d=dimension>
     size_type unmark_cell(Dart_const_handle adart, size_type amark) const
     { return CGAL::unmark_cell<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type mark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+    { return CGAL::mark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type unmark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+    { return CGAL::unmark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
+
+    std::size_t orient(size_type amark) const
+    { negate_mark(amark); }
 
     /** Test if this map is without boundary for a given dimension.
      * @param i the dimension.

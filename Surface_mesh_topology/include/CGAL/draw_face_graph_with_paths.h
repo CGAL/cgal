@@ -110,6 +110,7 @@ public:
     Base(parent, title, true, true, true, false, true),
     mesh(amesh),
     lcc(amesh),
+    m_oriented_mark(lcc.get_new_mark()),
     m_nofaces(anofaces),
     m_drawing_functor(drawing_functor),
     m_paths(paths),
@@ -118,7 +119,15 @@ public:
     m_draw_marked_darts(true),
     m_amark(amark==std::numeric_limits<std::size_t>::max()?
               LCC::INVALID_MARK:amark)
-  { compute_elements(); }
+  {
+    lcc.orient(m_oriented_mark);
+    compute_elements();
+  }
+
+  ~Face_graph_with_path_viewer()
+  {
+    lcc.free_mark(m_oriented_mark);
+  }
 
 protected:
 
@@ -167,7 +176,7 @@ protected:
            itend=lcc.darts().end(); it!=itend; ++it )
       {
         if (!m_nofaces && !lcc.is_marked(it, markfaces) &&
-            !lcc.is_perforated(it))
+            !lcc.is_perforated(it) && lcc.is_marked(it, m_oriented_mark))
         {
           compute_face(it);
           lcc.template mark_cell<2>(it, markfaces);
@@ -371,6 +380,7 @@ protected:
 protected:
   const Mesh& mesh;
   const typename Get_map<Mesh, Mesh>::storage_type lcc;
+  typename LCC::size_type m_oriented_mark;
   bool m_nofaces;
   const DrawingFunctorLCC& m_drawing_functor;
   const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;

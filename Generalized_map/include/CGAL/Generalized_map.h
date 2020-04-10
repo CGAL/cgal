@@ -52,6 +52,7 @@ namespace CGAL {
    * Definition of generic dD Generalized map.
    */
 
+  struct Combinatorial_map_tag;
   struct Generalized_map_tag {};
 
   /** Generic definition of generalized map in dD.
@@ -1034,6 +1035,31 @@ namespace CGAL {
     template <unsigned int i, unsigned int d=dimension>
     size_type unmark_cell(Dart_const_handle adart, size_type amark) const
     { return CGAL::unmark_cell<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type mark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+    { return CGAL::mark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type unmark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+    { return CGAL::unmark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
+
+    std::size_t orient(size_type amark) const
+    {
+      size_type amark2=get_new_mark();
+      std::size_t res=0;
+      for (auto it=darts().begin(), itend=darts().end(); it!=itend; ++it)
+      {
+        if (!is_marked(it, amark2))
+        { res+=mark_oriented_cell<dimension+1>(it, amark, amark2); } // Mark the connected componend
+      }
+      CGAL_assertion(is_whole_map_marked(amark2));
+      free_mark(amark2);
+
+      return res;
+    }
 
     /** Test if this map is without boundary for a given dimension.
      * @param i the dimension.

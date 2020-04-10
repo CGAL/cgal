@@ -76,7 +76,7 @@ struct Index_from_halfedge_descriptor
   halfedge_descriptor;
 
   static size_type run(const Mesh& m, halfedge_descriptor h)
-  { std::cout<<"V1"<<std::endl;
+  {
     size_type res=0;
     for (typename boost::template graph_traits<Mesh>::halfedge_iterator
            it=halfedges(m).begin(), itend=halfedges(m).end(); it!=itend; ++it, ++res)
@@ -93,7 +93,7 @@ struct Index_from_halfedge_descriptor<CGAL::Surface_mesh<P> >
   halfedge_descriptor;
 
   static size_type run(const Mesh& /*m*/, halfedge_descriptor h)
-  { std::cout<<"V2"<<std::endl; return (size_type)(h); }
+  { return (size_type)(h); }
 };
 ////////////////////////////////////////////////////////////////////////////////
 template<typename Mesh>
@@ -120,7 +120,7 @@ struct Halfedge_descriptor_from_index<CGAL::Surface_mesh<P> >
   halfedge_descriptor;
 
   static halfedge_descriptor run(const Mesh& /*m*/, size_type i)
-  { std::cout<<"V2"<<std::endl; return halfedge_descriptor(i); }
+  { return halfedge_descriptor(i); }
 };
 ////////////////////////////////////////////////////////////////////////////////
 template<typename Mesh>
