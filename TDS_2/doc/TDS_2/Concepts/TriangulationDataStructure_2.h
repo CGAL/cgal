@@ -457,6 +457,9 @@ adds a vertex
 `v` splitting face
 `f` in three. %Face `f` is modified,
 two new faces are created. Return a handle to `v`
+
+\image html Three.png "Insertion"
+\image latex Three.png "Insertion"
 */
 Vertex_handle insert_in_face(Face_handle f);
 
@@ -478,9 +481,6 @@ the third one is modified.
 If parameter `f` is specified, it has to be a face incident to `v`
 and will be the modified face.
 \pre %Vertex `v` is a finite vertex with degree 3 and, if specified, face `f` is incident to `v`.
-
-\image html Three.png "Insertion"
-\image latex Three.png "Insertion"
 */
 void remove_degree_3(Vertex_handle v,  Face_handle f = Face_handle());
 
