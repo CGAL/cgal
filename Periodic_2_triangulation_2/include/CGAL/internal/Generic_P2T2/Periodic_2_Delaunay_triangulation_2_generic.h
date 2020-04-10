@@ -16,6 +16,7 @@
 #include <utility>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 namespace CGAL {
 namespace Periodic_2_triangulations_2 {
@@ -38,8 +39,8 @@ public:
 
   typedef typename CGAL::Periodic_2_offset_2             Offset;
 
-  typedef std::array<Vector, 2>                        Basis;
-  typedef std::array<Vector, 3>                        Voronoi_face_normals;
+  typedef std::array<Vector, 2>                          Basis;
+  typedef std::array<Vector, 3>                          Voronoi_face_normals;
 
   // Constructors
   Lattice_2(const Vector& v0, const Vector& v1, const GT& gt = GT())
@@ -940,9 +941,46 @@ public:
     CGAL_postcondition(p2t2.is_valid(true));
   }
 
-  void draw_p2t2() const
+public:
+  void draw_dt2(const std::string filename) const
   {
-    std::ofstream out("p2t2.off");
+    std::ofstream out(filename);
+    out << "OFF\n";
+
+    std::map<Point, int> ids;
+    std::vector<std::array<int, 3> > faces;
+
+    int pid = 0;
+    for(auto fit=dt2.finite_faces_begin(); fit!=dt2.finite_faces_end(); ++fit)
+    {
+      std::array<int, 3> face;
+      for(int i=0; i<3; ++i)
+      {
+        std::pair<typename std::map<Point, int>::iterator, bool> itb =
+            ids.insert(std::make_pair(dt2.point(fit, i), pid));
+        if(itb.second)
+          ++pid;
+        face[i] = itb.first->second;
+      }
+      faces.push_back(face);
+    }
+
+    CGAL_assertion(faces.size() == dt2.number_of_faces());
+
+    out << ids.size() << " " << dt2.number_of_faces() << " 0\n";
+
+    for(const auto& e : ids)
+      out << e.first << " 0" << std::endl;
+
+    for(const auto& face : faces)
+      out << "3 " << face[0] << " " << face[1] << " " << face[2] << std::endl;
+
+    out << std::endl;
+  }
+
+  void draw_p2t2(const std::string filename) const
+  {
+    std::ofstream out(filename);
     out << "OFF\n";
 
     std::map<Point, int> ids;
@@ -976,8 +1014,9 @@ public:
   }
 
 public:
+  // @tmp, shouldn't be exposed
   Geom_traits gt_;
-  DT2 dt2; // @tmp, shouldn't be exposed
+  DT2 dt2;
   P2T2_GT p2t2_gt_;
   P2T2 p2t2;
 

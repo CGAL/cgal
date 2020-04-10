@@ -93,12 +93,25 @@ int main()
     }
   }
 
-  draw(T.dt2, "Post-Insertion");
+//  draw(T.dt2, "Post-Insertion");
+  T.draw_dt2("dt2.off");
 
   T.convert_to_1_cover();
+  T.draw_p2t2("before.off");
+
+  std::cout << "T.p2t2.nv: " << T.p2t2.number_of_vertices() << std::endl;
+  std::cout << "T.p2t2.nf: " << T.p2t2.number_of_faces() << std::endl;
+
   T.insert(Point(0.3, 0.12));
 
-  T.draw_p2t2();
+  std::cout << "T.p2t2.nv: " << T.p2t2.number_of_vertices() << std::endl;
+  std::cout << "T.p2t2.nf: " << T.p2t2.number_of_faces() << std::endl;
+
+  CGAL_assertion(T.p2t2.tds().is_valid());
+  CGAL_assertion(T.p2t2.is_valid());
+  std::cout << "All good!" << std::endl;
+
+  T.draw_p2t2("after.off");
 
   return EXIT_SUCCESS;
 }
