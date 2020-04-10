@@ -17,7 +17,7 @@ int main(int argc, char** argv)
   Mesh m;
   CGAL::Real_timer timer;
   timer.start();
-  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  std::ifstream in((argc>1) ? argv[1] : "data/genus3.off");
   in >> m;
   timer.stop();
   std::cout << "  is_valid? " << CGAL::is_valid_polygon_mesh(m) << "\n";
