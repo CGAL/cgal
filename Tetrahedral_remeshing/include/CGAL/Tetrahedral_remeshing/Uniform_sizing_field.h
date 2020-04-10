@@ -17,26 +17,26 @@
 
 namespace CGAL
 {
-  template <class Kernel>
-  class Uniform_sizing_field : Sizing_field<Kernel>
+template <class Kernel>
+class Uniform_sizing_field : Sizing_field<Kernel>
+{
+private:
+  typedef Sizing_field<Kernel>        Base;
+public:
+  typedef typename Base::FT         FT;
+  typedef typename Base::Point_3    Point_3;
+
+  Uniform_sizing_field(const FT& size)
+    : m_size(size)
+  {}
+
+  FT operator()(const Point_3&) const
   {
-  private:
-    typedef Sizing_field<Kernel>        Base;
-  public:
-    typedef typename Base::FT         FT;
-    typedef typename Base::Point_3    Point_3;
-
-    Uniform_sizing_field(const FT& size)
-      : m_size(size)
-    {}
-
-    FT operator()(const Point_3&) const
-    {
-      return m_size;
-    }
-  private:
-    FT m_size;
-  };
+    return m_size;
+  }
+private:
+  FT m_size;
+};
 
 }//end namespace CGAL
 

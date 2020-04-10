@@ -19,52 +19,54 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-  namespace internal
-  {
-    struct Fake_MD_V
-    {
-      typedef int Subdomain_index;
-      typedef int Surface_patch_index;
-      typedef int Index;
-    };
-  }
+namespace internal
+{
 
-  /*!
-  \ingroup PkgTetrahedralRemeshingClasses
+struct Fake_MD_V
+{
+  typedef int Subdomain_index;
+  typedef int Surface_patch_index;
+  typedef int Index;
+};
 
-  The class `Remeshing_vertex_base` is a model of the concept `MeshVertexBase_3`.
-  It is designed to serve as vertex base class for the 3D triangulation
-  used in the tetrahedral remeshing process.
+} // internal
 
-  \tparam Gt is the geometric traits class.
-  It has to be a model of the concept `RemeshingTriangulationTraits_3`.
+/*!
+\ingroup PkgTetrahedralRemeshingClasses
 
-  \tparam Vb is a vertex base class from which `Remeshing_vertex_base` derives.
-  It must be a model of the `TriangulationVertexBase_3` concept.
-  It has the default value `Triangulation_vertex_base_3<Gt>`.
+The class `Remeshing_vertex_base` is a model of the concept `MeshVertexBase_3`.
+It is designed to serve as vertex base class for the 3D triangulation
+used in the tetrahedral remeshing process.
 
-  \cgalModels `MeshVertexBase_3`
-  \cgalRefines `Triangulation_vertex_base_3`
-  */
+\tparam Gt is the geometric traits class.
+It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 
-  template<typename GT,
-           typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
-  class Remeshing_vertex_base
+\tparam Vb is a vertex base class from which `Remeshing_vertex_base` derives.
+It must be a model of the `TriangulationVertexBase_3` concept.
+It has the default value `Triangulation_vertex_base_3<Gt>`.
+
+\cgalModels `MeshVertexBase_3`
+\cgalRefines `Triangulation_vertex_base_3`
+*/
+
+template<typename GT,
+         typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
+class Remeshing_vertex_base
 #ifndef DOXYGEN_RUNNING
-    : public CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>
+  : public CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>
 #endif
-  {
-    typedef CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb> Base;
+{
+  typedef CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb> Base;
 
-  public:
-    // To get correct vertex type in TDS
-    template < class TDS3 >
-    struct Rebind_TDS {
-      typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-      typedef Remeshing_vertex_base<GT, Vb3> Other;
-    };
-
+public:
+  // To get correct vertex type in TDS
+  template < class TDS3 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
+    typedef Remeshing_vertex_base<GT, Vb3> Other;
   };
+
+};
 
 }//end namespace Tetrahedral_remeshing
 

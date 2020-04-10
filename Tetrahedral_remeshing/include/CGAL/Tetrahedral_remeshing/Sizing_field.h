@@ -15,20 +15,20 @@
 
 namespace CGAL
 {
-  /*!
-  * Sizing field virtual class
-  */
-  template <class Kernel>
-  class Sizing_field
-  {
-  public:
-    typedef Kernel                      K;
-    typedef typename Kernel::FT         FT;
-    typedef typename Kernel::Point_3    Point_3;
+/*!
+* Sizing field virtual class
+*/
+template <class Kernel>
+class Sizing_field
+{
+public:
+  typedef Kernel                      K;
+  typedef typename Kernel::FT         FT;
+  typedef typename Kernel::Point_3    Point_3;
 
-  public:
-    virtual FT operator()(const Point_3& p) const = 0;
-  };
+public:
+  virtual FT operator()(const Point_3& p) const = 0;
+};
 
 }//end namespace CGAL
 

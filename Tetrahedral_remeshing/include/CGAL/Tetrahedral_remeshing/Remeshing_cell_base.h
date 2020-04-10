@@ -19,15 +19,15 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-  namespace internal
+namespace internal
+{
+  struct Fake_MD_C
   {
-    struct Fake_MD_C
-    {
-      typedef int Subdomain_index;
-      typedef int Surface_patch_index;
-      typedef int Index;
-    };
-  }
+    typedef int Subdomain_index;
+    typedef int Surface_patch_index;
+    typedef int Index;
+  };
+}
 
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
@@ -46,52 +46,52 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 \cgalModels `MeshCellBase_3`
 
 */
-  template<typename Gt,
-           typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
-  class Remeshing_cell_base
+template<typename Gt,
+         typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
+class Remeshing_cell_base
 #ifndef DOXYGEN_RUNNING
-    : public CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>
+  : public CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>
 #endif
+{
+  typedef CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb> Base;
+  typedef typename Base::Vertex_handle Vertex_handle;
+  typedef typename Base::Cell_handle   Cell_handle;
+
+public:
+  // To get correct cell type in TDS
+  template < class TDS2 >
+  struct Rebind_TDS
   {
-    typedef CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb> Base;
-    typedef typename Base::Vertex_handle Vertex_handle;
-    typedef typename Base::Cell_handle   Cell_handle;
+    typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
+    typedef Remeshing_cell_base<Gt, Cb2> Other;
+  };
 
-  public:
-    // To get correct cell type in TDS
-    template < class TDS2 >
-    struct Rebind_TDS
-    {
-      typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
-      typedef Remeshing_cell_base<Gt, Cb2> Other;
-    };
-
-    using Base::Base;
+  using Base::Base;
 
 #ifndef DOXYGEN_RUNNING
-    /// TODO : remove this function from here
-    /// Returns `true` if facet lies on a surface patch
-    bool is_facet_on_surface(const int facet) const
-    {
-      CGAL_precondition(facet >= 0 && facet<4);
-      return this->subdomain_index() != this->neighbor(facet)->subdomain_index();
-    }
+  /// TODO : remove this function from here
+  /// Returns `true` if facet lies on a surface patch
+  bool is_facet_on_surface(const int facet) const
+  {
+    CGAL_precondition(facet >= 0 && facet<4);
+    return this->subdomain_index() != this->neighbor(facet)->subdomain_index();
+  }
 #endif
  };
 
 
 
-  template < class Gt, class Cb >
-  std::istream&
-    operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
-  {
-    typename Remeshing_cell_base<Gt, Cb>::Subdomain_index index;
-    if (is_ascii(is))
-      is >> index;
-    else
-      read(is, index);
-    if (is) {
-      c.set_subdomain_index(index);
+template < class Gt, class Cb >
+std::istream&
+  operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
+{
+  typename Remeshing_cell_base<Gt, Cb>::Subdomain_index index;
+  if (is_ascii(is))
+    is >> index;
+  else
+    read(is, index);
+  if (is) {
+    c.set_subdomain_index(index);
 //      for (int i = 0; i < 4; ++i)
 //      {
 //        typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
@@ -103,27 +103,27 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 //        }
 //        c.set_surface_patch_index(i, i2);
 //      }
-    }
-    return is;
   }
+  return is;
+}
 
-  template < class Gt, class Cb >
-  std::ostream&
-    operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
-  {
-    if (is_ascii(os))
-      os << c.subdomain_index();
-    else
-      write(os, c.subdomain_index());
-    //for (int i = 0; i < 4; ++i)
-    //{
-    //  if (is_ascii(os))
-    //    os << ' ' << oformat(c.surface_patch_index(i));
-    //  else
-    //    write(os, c.surface_patch_index(i));
-    //}
-    return os;
-  }
+template < class Gt, class Cb >
+std::ostream&
+  operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
+{
+  if (is_ascii(os))
+    os << c.subdomain_index();
+  else
+    write(os, c.subdomain_index());
+  //for (int i = 0; i < 4; ++i)
+  //{
+  //  if (is_ascii(os))
+  //    os << ' ' << oformat(c.surface_patch_index(i));
+  //  else
+  //    write(os, c.surface_patch_index(i));
+  //}
+  return os;
+}
 
 
 }//end namespace Tetrahedral_remeshing
