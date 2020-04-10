@@ -347,11 +347,8 @@ private:
   {
   public:
     Grid()
-    {
-      cellSize = 1.f;
-      LUTSize = 0;
-      indicesSize = 0;
-    }
+      : cellSize(1.f)
+    {}
     ~Grid()
     {
       clear();
@@ -377,7 +374,7 @@ private:
       }
       for (unsigned int i = 0; i < 3; i++)
         res[i] = (unsigned int)ceil((minMax[3 + i] - minMax[i]) / cellSize);
-      LUTSize = res[0] * res[1] * res[2];
+      unsigned int LUTSize = res[0] * res[1] * res[2];
       LUT.resize(LUTSize);
       LUT.assign(LUTSize, 0);
 
@@ -390,7 +387,7 @@ private:
           nonEmptyCells++;
         LUT[index]++;
       }
-      indicesSize = PNSize + nonEmptyCells;
+      unsigned int indicesSize = PNSize + nonEmptyCells;
       indices.reserve(indicesSize);
       indices.assign(indicesSize, 0);
 
@@ -424,8 +421,6 @@ private:
     void clear()
     {
       cellSize = 1.f;
-      LUTSize = 0;
-      indicesSize = 0;
     }
 
     // Accessors
@@ -435,7 +430,6 @@ private:
     inline float getCellSize() const { return cellSize; }
     inline std::vector<unsigned int>& getLUT() { return LUT; }
     inline const std::vector<unsigned int>& getLUT() const { return LUT; }
-    inline unsigned int getLUTSize() const { return LUTSize; }
     inline unsigned int getLUTIndex(unsigned int i,
                                     unsigned int j,
                                     unsigned int k) const
@@ -469,7 +463,6 @@ private:
     }
     inline std::vector<unsigned int>& getIndices() { return indices; }
     inline const std::vector<unsigned int>& getIndices() const { return indices; }
-    inline unsigned int getIndicesSize() const { return indicesSize; }
     inline unsigned int getCellIndicesSize(unsigned int i,
                                            unsigned int j,
                                            unsigned int k) const {
@@ -486,9 +479,7 @@ private:
     std::array<float, 6> minMax;
     float cellSize;
     std::array<unsigned int, 3> res;
-    unsigned int LUTSize;
     std::vector<unsigned int> LUT; // 3D Index Look-Up Table
-    unsigned int indicesSize;
     std::vector<unsigned int> indices; // 3D Grid data
   };
 
