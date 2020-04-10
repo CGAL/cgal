@@ -77,15 +77,16 @@ bool test(const DT& dt, const Big_tuple& tuple)
   using std::get;
   const auto& p1 = get<0>(tuple);
   const auto& p2 = get<1>(tuple);
+#ifdef CGAL_T3_TEST_SIMPLEX_TRAVERSER
   const auto& expected_results = get<2>(tuple);
+  unsigned int nb_cells = 0, nb_collinear = 0;
+#endif
+  unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
 
   std::cout << "\n#\n# Query segment: ( " << p1 << " , "
             << p2 << " )\n#\n";
   Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
   Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();
-
-  unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-  unsigned int nb_collinear = 0;
 
   // Count the number of finite cells traversed.
   unsigned int inf = 0, fin = 0;

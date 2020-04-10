@@ -16,7 +16,7 @@ typedef CGAL::Delaunay_triangulation_3< Kernel >  DT;
 typedef DT::Cell_handle                           Cell_handle;
 typedef DT::Segment_cell_iterator                 Segment_cell_iterator;
 
-int main(int argc, char* argv[])
+int main()
 {
   const std::vector<Point_3> points = { { -2,  0,  0 },
                                         {  2,  0,  0 },
