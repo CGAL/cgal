@@ -192,6 +192,7 @@ void duplicate_terminal_vertices(Graph& graph,
 
 } // namespace internal
 
+#ifndef DOXYGEN_RUNNING
 template <typename Graph,
           typename Visitor,
           typename IsTerminal,
@@ -201,6 +202,7 @@ split_graph_into_polylines(const Graph& graph,
                            Visitor& polyline_visitor,
                            IsTerminal is_terminal,
                            LessForVertexDescriptors less);
+#endif
 
 /*!
 \ingroup PkgBGLRef

@@ -598,6 +598,10 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
           || item.renderingMode() == PointsPlusNormals
           || item.renderingMode() == GouraudPlusEdges)
        {
+         if(with_names) {
+           viewer->glClearDepthf(1.0);
+           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         }
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
        }
@@ -656,6 +660,10 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
          (item.renderingMode() == PointsPlusNormals)  ||
          (item.renderingMode() == ShadedPoints))
       {
+        if(with_names) {
+          viewer->glClearDepthf(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
         viewer->setGlPointSize(3.0f);
         item.drawPoints(viewer);
       }

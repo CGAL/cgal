@@ -31,6 +31,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_segment_simplex_traverser_3.cpp" )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
+  create_single_source_cgal_program( "test_io_triangulation_3.cpp" )
 
   if(TBB_FOUND)
     foreach(target
