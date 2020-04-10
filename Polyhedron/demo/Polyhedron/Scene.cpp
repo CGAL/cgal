@@ -598,6 +598,10 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
           || item.renderingMode() == PointsPlusNormals
           || item.renderingMode() == GouraudPlusEdges)
        {
+         if(with_names) {
+           viewer->glClearDepthf(1.0);
+           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         }
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
        }
@@ -656,6 +660,10 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
          (item.renderingMode() == PointsPlusNormals)  ||
          (item.renderingMode() == ShadedPoints))
       {
+        if(with_names) {
+          viewer->glClearDepthf(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
         viewer->setGlPointSize(3.0f);
         item.drawPoints(viewer);
       }
@@ -826,9 +834,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       //blending
       program.bind();
       vaos[viewer]->bind();
-      viewer->glClearColor(background.redF(),
-                           background.greenF(),
-                           background.blueF(),
+      viewer->glClearColor((GLclampf)background.redF(),
+                           (GLclampf)background.greenF(),
+                           (GLclampf)background.blueF(),
                            0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);

@@ -237,8 +237,12 @@ public:
     }
 
     // The property map must be either writable or well-initialized
-    if(!BGL::internal::is_index_map_valid(fids, num_faces(tm), faces(tm)))
+    if( CGAL::internal::Is_writable_property_map<FaceIdMap>::value &&
+        !BGL::internal::is_index_map_valid(fids, num_faces(tm), faces(tm)) )
+    {
       BGL::internal::initialize_face_index_map(fids, tm);
+    }
+    CGAL_assertion(BGL::internal::is_index_map_valid(fids, num_faces(tm), faces(tm)));
 
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm_coplanar_faces(num_faces(tm), 0);

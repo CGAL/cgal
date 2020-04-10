@@ -341,9 +341,7 @@ compare_signed_distance_to_line(const typename K::Point_2& p,
                                 const typename K::Point_2& s,
                                 const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(p, q, r, s)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(p, q, s, r)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(p, q, r, s);
 }
 
 template <class K>
@@ -354,9 +352,7 @@ compare_signed_distance_to_line(const typename K::Line_2& l,
                                 const typename K::Point_2& q,
                                 const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(l, p, q)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(l, q, p)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(l, p, q);
 }
 
 template < class K >
