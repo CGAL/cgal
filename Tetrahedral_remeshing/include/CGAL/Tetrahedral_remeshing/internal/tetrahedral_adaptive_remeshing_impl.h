@@ -82,14 +82,14 @@ public:
 };
 
 template<typename Triangulation
-       , typename SizingFunction
-       , typename EdgeIsConstrainedMap
-       , typename FacetIsConstrainedMap
-       , typename CellSelector
-       , typename Visitor
-       , typename CornerIndex = int
-       , typename CurveIndex = int
->
+         , typename SizingFunction
+         , typename EdgeIsConstrainedMap
+         , typename FacetIsConstrainedMap
+         , typename CellSelector
+         , typename Visitor
+         , typename CornerIndex = int
+         , typename CurveIndex = int
+         >
 class Adaptive_remesher
 {
   typedef Triangulation Tr;
@@ -117,13 +117,13 @@ private:
 
 public:
   Adaptive_remesher(Triangulation& tr
-    , const SizingFunction& sizing
-    , const bool protect_boundaries
-    , EdgeIsConstrainedMap ecmap
-    , FacetIsConstrainedMap fcmap
-    , CellSelector cell_selector
-    , Visitor& visitor
-    )
+                    , const SizingFunction& sizing
+                    , const bool protect_boundaries
+                    , EdgeIsConstrainedMap ecmap
+                    , FacetIsConstrainedMap fcmap
+                    , CellSelector cell_selector
+                    , Visitor& visitor
+                   )
     : m_c3t3()
     , m_sizing(sizing)
     , m_protect_boundaries(protect_boundaries)
@@ -143,13 +143,13 @@ public:
   }
 
   Adaptive_remesher(C3t3& c3t3
-    , const SizingFunction& sizing
-    , const bool protect_boundaries
-    , EdgeIsConstrainedMap ecmap
-    , FacetIsConstrainedMap fcmap
-    , CellSelector cell_selector
-    , Visitor& visitor
-    )
+                    , const SizingFunction& sizing
+                    , const bool protect_boundaries
+                    , EdgeIsConstrainedMap ecmap
+                    , FacetIsConstrainedMap fcmap
+                    , CellSelector cell_selector
+                    , Visitor& visitor
+                   )
     : m_c3t3()
     , m_sizing(sizing)
     , m_protect_boundaries(protect_boundaries)
@@ -204,7 +204,7 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
-      "2-collapse.mesh");
+        "2-collapse.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "2-collapse.binary.cgal");
 #endif
   }
@@ -230,7 +230,7 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
-      "4-smooth.mesh");
+        "4-smooth.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "4-smooth.binary.cgal");
 #endif
   }
@@ -255,7 +255,7 @@ public:
       if (m_protect_boundaries)
       {
         if(  m_c3t3.is_in_complex(e)
-          || is_boundary(m_c3t3, e, m_cell_selector))
+             || is_boundary(m_c3t3, e, m_cell_selector))
           continue;
       }
 
@@ -369,9 +369,9 @@ private:
       const Subdomain_index s1 = f.first->subdomain_index();
       const Subdomain_index s2 = mf.first->subdomain_index();
       if (s1 != s2
-        || get(fcmap, f)
-        || get(fcmap, mf)
-        || (m_c3t3_pbackup == NULL && f.first->is_facet_on_surface(f.second)))
+          || get(fcmap, f)
+          || get(fcmap, mf)
+          || (m_c3t3_pbackup == NULL && f.first->is_facet_on_surface(f.second)))
       {
         m_c3t3.add_to_complex(f, 1);
 
@@ -411,8 +411,8 @@ private:
       }
 
       if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
-        || nb_incident_subdomains(e, m_c3t3) > 2
-        || nb_incident_surface_patches(e, m_c3t3) > 1)
+          || nb_incident_subdomains(e, m_c3t3) > 2
+          || nb_incident_surface_patches(e, m_c3t3) > 1)
       {
         m_c3t3.add_to_complex(e, 1);
 
@@ -441,7 +441,7 @@ private:
          ++vit)
     {
       if ( vit->in_dimension() == 0
-        || nb_incident_complex_edges(vit, m_c3t3) > 2)
+           || nb_incident_complex_edges(vit, m_c3t3) > 2)
       {
         if(!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);
@@ -514,8 +514,8 @@ public:
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " done : "
-        << tr().number_of_vertices()
-        << " vertices #" << std::endl;
+                << tr().number_of_vertices()
+                << " vertices #" << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
       std::ostringstream ossi;
@@ -534,8 +534,8 @@ public:
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "
-        << tr().number_of_vertices()
-        << " vertices #" << std::endl;
+                << tr().number_of_vertices()
+                << " vertices #" << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
       std::ostringstream ossi;

@@ -150,12 +150,12 @@ void tetrahedral_adaptive_remeshing(
   using parameters::get_parameter;
 
   bool remesh_surfaces = choose_parameter(get_parameter(np, internal_np::remesh_boundaries),
-                                      true);
+                                          true);
   bool protect = !remesh_surfaces;
   // bool adaptive = choose_parameter(get_parameter(np, internal_np::adaptive_size),
   //                              false);
   std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations),
-                                    1);
+                                        1);
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::cell_selector_t,
@@ -164,7 +164,7 @@ void tetrahedral_adaptive_remeshing(
   > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                   Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge_vv> No_edge;
@@ -174,7 +174,7 @@ void tetrahedral_adaptive_remeshing(
     No_edge//default
   > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             No_edge());
+                                 No_edge());
 
   typedef typename Tr::Facet Facet;
   typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Facet> No_facet;
@@ -184,7 +184,7 @@ void tetrahedral_adaptive_remeshing(
     No_facet//default
   > ::type FCMap;
   FCMap fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                             No_facet());
+                                 No_facet());
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::remeshing_visitor_t,
@@ -193,13 +193,13 @@ void tetrahedral_adaptive_remeshing(
   > ::type Visitor;
   Visitor visitor
     = choose_parameter(get_parameter(np, internal_np::remeshing_visitor),
-                   Tetrahedral_remeshing::internal::Default_remeshing_visitor());
+                       Tetrahedral_remeshing::internal::Default_remeshing_visitor());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
-    << "nb_iter = " << max_it << ", "
-    << "protect = " << std::boolalpha << protect
-    << ")" << std::endl;
+            << "nb_iter = " << max_it << ", "
+            << "protect = " << std::boolalpha << protect
+            << ")" << std::endl;
 
   std::cout << "Init tetrahedral remeshing...";
   std::cout.flush();
@@ -239,7 +239,7 @@ void tetrahedral_adaptive_remeshing(
   const double& target_edge_length)
 {
   tetrahedral_adaptive_remeshing(tr, target_edge_length,
-    CGAL::parameters::all_default());
+                                 CGAL::parameters::all_default());
 }
 
 ///////////////////////////////////////////////////
@@ -250,9 +250,9 @@ template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
 void tetrahedral_adaptive_remeshing(
-    CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-    const double& target_edge_length,
-    const NamedParameters& np)
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
+  const double& target_edge_length,
+  const NamedParameters& np)
 {
   tetrahedral_adaptive_remeshing(
     c3t3,
@@ -265,9 +265,9 @@ template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
 void tetrahedral_adaptive_remeshing(
-    CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-    const float& target_edge_length,
-    const NamedParameters& np)
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
+  const float& target_edge_length,
+  const NamedParameters& np)
 {
   tetrahedral_adaptive_remeshing(
     c3t3,
@@ -280,8 +280,8 @@ template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
 void tetrahedral_adaptive_remeshing(
-    CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-    const double& target_edge_length)
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
+  const double& target_edge_length)
 {
   return tetrahedral_adaptive_remeshing(c3t3, target_edge_length,
                                         CGAL::parameters::all_default());
@@ -292,9 +292,9 @@ template<typename Tr,
          typename SizingFunction,
          typename NamedParameters>
 void tetrahedral_adaptive_remeshing(
-    CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-    const SizingFunction& sizing,
-    const NamedParameters& np)
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
+  const SizingFunction& sizing,
+  const NamedParameters& np)
 {
   CGAL_assertion(c3t3.triangulation().tds().is_valid(true));
 
@@ -302,67 +302,67 @@ void tetrahedral_adaptive_remeshing(
   using parameters::choose_parameter;
 
   bool remesh_surfaces = choose_parameter(get_parameter(np, internal_np::remesh_boundaries),
-                                      true);
+                                          true);
   bool protect = !remesh_surfaces;
   std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::cell_selector_t,
-    NamedParameters,
-    Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
-  > ::type SelectionFunctor;
+  internal_np::cell_selector_t,
+              NamedParameters,
+              Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
+              > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                   Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge_vv> No_edge;
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::edge_is_constrained_t,
-    NamedParameters,
-    No_edge//default
-  > ::type ECMap;
+  internal_np::edge_is_constrained_t,
+              NamedParameters,
+              No_edge//default
+              > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             No_edge());
+                                 No_edge());
 
   typedef typename Tr::Facet Facet;
   typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Facet> No_facet;
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::facet_is_constrained_t,
-    NamedParameters,
-    No_facet//default
-  > ::type FCMap;
+  internal_np::facet_is_constrained_t,
+              NamedParameters,
+              No_facet//default
+              > ::type FCMap;
   FCMap fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                             No_facet());
+                                 No_facet());
 
   typedef typename internal_np::Lookup_named_param_def <
-    internal_np::remeshing_visitor_t,
-    NamedParameters,
-    Tetrahedral_remeshing::internal::Default_remeshing_visitor
-  > ::type Visitor;
+  internal_np::remeshing_visitor_t,
+              NamedParameters,
+              Tetrahedral_remeshing::internal::Default_remeshing_visitor
+              > ::type Visitor;
   Visitor visitor
     = choose_parameter(get_parameter(np, internal_np::remeshing_visitor),
-                   Tetrahedral_remeshing::internal::Default_remeshing_visitor());
+                       Tetrahedral_remeshing::internal::Default_remeshing_visitor());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
-    << "nb_iter = " << max_it << ", "
-    << "protect = " << std::boolalpha << protect
-    << ")" << std::endl;
+            << "nb_iter = " << max_it << ", "
+            << "protect = " << std::boolalpha << protect
+            << ")" << std::endl;
 
   std::cout << "Init tetrahedral remeshing...";
   std::cout.flush();
 #endif
 
   typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
-    Tr, SizingFunction, ECMap, FCMap, SelectionFunctor,
-    Visitor,
-    CornerIndex, CurveIndex
+  Tr, SizingFunction, ECMap, FCMap, SelectionFunctor,
+  Visitor,
+  CornerIndex, CurveIndex
   > Remesher;
   Remesher remesher(c3t3, sizing, protect
-                  , ecmap, fcmap
-                  , cell_select
-                  , visitor);
+                    , ecmap, fcmap
+                    , cell_select
+                    , visitor);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "done." << std::endl;

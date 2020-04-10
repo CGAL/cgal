@@ -80,9 +80,9 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     Surface_patch_index patch = c3t3.surface_patch_index(circ, findex);
     Vertex_handle opp_vertex = circ->vertex(findex);
     facets_info.insert(std::make_pair(opp_facet1,
-        std::make_pair(opp_vertex, patch)));
+                                      std::make_pair(opp_vertex, patch)));
     facets_info.insert(std::make_pair(opp_facet2,
-        std::make_pair(opp_vertex, patch)));
+                                      std::make_pair(opp_vertex, patch)));
 
     if(c3t3.is_in_complex(circ, findex))
       c3t3.remove_from_complex(circ, findex);
@@ -94,7 +94,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   // insert midpoint
   Vertex_handle new_v = tr.tds().insert_in_edge(e);
   const Point m = tr.geom_traits().construct_midpoint_3_object()
-                         (point(v1->point()), point(v2->point()));
+                  (point(v1->point()), point(v2->point()));
   new_v->set_point(typename Tr::Point(m));
   new_v->set_dimension(dimension);
 
@@ -186,10 +186,10 @@ bool can_be_split(const typename C3T3::Edge& e,
 
 template<typename C3T3, typename CellSelector, typename Visitor>
 void split_long_edges(C3T3& c3t3,
-  const typename C3T3::Triangulation::Geom_traits::FT& high,
-  const bool protect_boundaries,
-  CellSelector cell_selector,
-  Visitor& visitor)
+                      const typename C3T3::Triangulation::Geom_traits::FT& high,
+                      const bool protect_boundaries,
+                      CellSelector cell_selector,
+                      Visitor& visitor)
 {
   typedef typename C3T3::Triangulation       T3;
   typedef typename T3::Cell_handle           Cell_handle;
@@ -201,8 +201,8 @@ void split_long_edges(C3T3& c3t3,
   typedef typename T3::Geom_traits     Gt;
   typedef typename T3::Geom_traits::FT FT;
   typedef boost::bimap<
-    boost::bimaps::set_of<Edge_vv>,
-    boost::bimaps::multiset_of<FT, std::greater<FT> > >  Boost_bimap;
+  boost::bimaps::set_of<Edge_vv>,
+        boost::bimaps::multiset_of<FT, std::greater<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type               long_edge;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -272,9 +272,9 @@ void split_long_edges(C3T3& c3t3,
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
       std::cout << "\rSplit (" << high << ")... ("
-        << long_edges.left.size() << " long edges, "
-        << "length  = " << std::sqrt(sqlen) << ", "
-        << nb_splits << " splits)";
+                << long_edges.left.size() << " long edges, "
+                << "length  = " << std::sqrt(sqlen) << ", "
+                << nb_splits << " splits)";
       std::cout.flush();
 #endif
     }

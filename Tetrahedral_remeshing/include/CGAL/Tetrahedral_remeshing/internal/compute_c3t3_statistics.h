@@ -30,8 +30,8 @@ namespace internal
 {
 template<typename Triangulation, typename CellSelector>
 void compute_statistics(const Triangulation& tr,
-  CellSelector cell_selector,
-  const char* filename = "statistics_c3t3.txt")
+                        CellSelector cell_selector,
+                        const char* filename = "statistics_c3t3.txt")
 {
   typedef Triangulation Tr;
   typedef typename Tr::Geom_traits Gt;
@@ -114,8 +114,8 @@ void compute_statistics(const Triangulation& tr,
       std::cout << p0 << "\n\t" << p1 << "\n\t" << p2 << "\n\t" << p3 << std::endl;
     }
     double circumradius = (v == 0.)
-      ? CGAL::sqrt(CGAL::squared_radius(p0, p1, p2))
-      : CGAL::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
+                          ? CGAL::sqrt(CGAL::squared_radius(p0, p1, p2))
+                          : CGAL::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
 
     //find shortest edge
     double edges[6];
@@ -134,9 +134,9 @@ void compute_statistics(const Triangulation& tr,
     }
 
     double sumar = CGAL::sqrt(CGAL::squared_area(p0, p1, p2))
-                + CGAL::sqrt(CGAL::squared_area(p1, p2, p3))
-                + CGAL::sqrt(CGAL::squared_area(p2, p3, p0))
-                + CGAL::sqrt(CGAL::squared_area(p3, p1, p0));
+                   + CGAL::sqrt(CGAL::squared_area(p1, p2, p3))
+                   + CGAL::sqrt(CGAL::squared_area(p2, p3, p0))
+                   + CGAL::sqrt(CGAL::squared_area(p3, p1, p0));
     double inradius = 3. * v / sumar;
     double smallest_edge_radius_ = min_edge / circumradius*CGAL::sqrt(6.) / 4.;//*sqrt(6)/4 so that the perfect tet ratio is 1
     double smallest_radius_radius_ = inradius / circumradius * 3.; //*3 so that the perfect tet ratio is 1 instead of 1/3

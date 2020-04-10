@@ -152,7 +152,7 @@ std::pair<Vh, Vh> make_vertex_pair(const Vh v1, const Vh v2)
 
 template<typename Tr>
 std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle>
-  make_vertex_pair(const typename Tr::Edge& e)
+make_vertex_pair(const typename Tr::Edge& e)
 {
   typedef typename Tr::Vertex_handle Vertex_handle;
   Vertex_handle v1 = e.first->vertex(e.second);
@@ -200,10 +200,10 @@ bool is_well_oriented(const Tr& tr,
                       const typename Tr::Vertex_handle v3)
 {
   return CGAL::POSITIVE == tr.geom_traits().orientation_3_object()(
-                                             point(v0->point()),
-                                             point(v1->point()),
-                                             point(v2->point()),
-                                             point(v3->point()));
+           point(v0->point()),
+           point(v1->point()),
+           point(v2->point()),
+           point(v3->point()));
 }
 
 template<typename C3T3, typename CellSelector>
@@ -212,13 +212,13 @@ bool is_boundary(const C3T3& c3t3,
                  const CellSelector& cell_selector)
 {
   return c3t3.is_in_complex(f)
-    || cell_selector(f.first) != cell_selector(f.first->neighbor(f.second));
+         || cell_selector(f.first) != cell_selector(f.first->neighbor(f.second));
 }
 
 template<typename C3T3, typename CellSelector>
 bool is_boundary(const C3T3& c3t3,
-  const typename C3T3::Triangulation::Edge& e,
-  CellSelector cell_selector)
+                 const typename C3T3::Triangulation::Edge& e,
+                 CellSelector cell_selector)
 {
   typedef typename C3T3::Triangulation   Tr;
   typedef typename Tr::Facet_circulator  Facet_circulator;
@@ -240,9 +240,9 @@ bool is_boundary(const C3T3& c3t3,
 
 template<typename C3t3, typename CellSelector>
 bool is_boundary_edge(const typename C3t3::Vertex_handle& v0,
-  const typename C3t3::Vertex_handle& v1,
-  const C3t3& c3t3,
-  const CellSelector& cell_selector)
+                      const typename C3t3::Vertex_handle& v1,
+                      const C3t3& c3t3,
+                      const CellSelector& cell_selector)
 {
   typedef typename C3t3::Edge        Edge;
   typedef typename C3t3::Cell_handle Cell_handle;
@@ -257,8 +257,8 @@ bool is_boundary_edge(const typename C3t3::Vertex_handle& v0,
 
 template<typename C3t3, typename CellSelector>
 bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
-  const C3t3& c3t3,
-  CellSelector cell_selector)
+                        const C3t3& c3t3,
+                        CellSelector cell_selector)
 {
   typedef typename C3t3::Facet Facet;
   std::vector<Facet> facets;
@@ -276,7 +276,7 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
 
 template<typename C3t3>
 typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vertex_handle v,
-                                                       const C3t3& c3t3)
+    const C3t3& c3t3)
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Facet Facet;
@@ -309,8 +309,8 @@ bool is_edge_in_complex(const typename C3t3::Vertex_handle& v0,
 
 template<typename C3t3, typename OutputIterator>
 OutputIterator incident_subdomains(const typename C3t3::Vertex_handle v,
-  const C3t3& c3t3,
-  OutputIterator oit)
+                                   const C3t3& c3t3,
+                                   OutputIterator oit)
 {
   typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
   std::vector<Cell_handle> cells;
@@ -324,8 +324,8 @@ OutputIterator incident_subdomains(const typename C3t3::Vertex_handle v,
 
 template<typename C3t3, typename OutputIterator>
 OutputIterator incident_subdomains(const typename C3t3::Edge& e,
-  const C3t3& c3t3,
-  OutputIterator oit)
+                                   const C3t3& c3t3,
+                                   OutputIterator oit)
 {
   typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
 
@@ -362,7 +362,7 @@ OutputIterator incident_surface_patches(const typename C3t3::Edge& e,
 
 template<typename C3t3>
 std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
-  const C3t3& c3t3)
+                                   const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
@@ -374,7 +374,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
 
 template<typename C3t3>
 std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
-  const C3t3& c3t3)
+                                   const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
@@ -398,7 +398,7 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
 
 template<typename C3t3>
 std::size_t nb_incident_complex_edges(const typename C3t3::Vertex_handle v,
-  const C3t3& c3t3)
+                                      const C3t3& c3t3)
 {
   typedef typename C3t3::Edge Edge;
   boost::unordered_set<Edge> edges;
@@ -416,8 +416,8 @@ std::size_t nb_incident_complex_edges(const typename C3t3::Vertex_handle v,
 
 template<typename C3t3>
 bool is_feature(const typename C3t3::Vertex_handle v,
-  const typename C3t3::Vertex_handle neighbor,
-  const C3t3& c3t3)
+                const typename C3t3::Vertex_handle neighbor,
+                const C3t3& c3t3)
 {
   typename C3t3::Cell_handle ch;
   int i0, i1;
@@ -463,7 +463,7 @@ bool is_feature(const typename C3t3::Vertex_handle v, const C3t3& c3t3)
 */
 template<typename C3t3>
 bool is_on_convex_hull(const typename C3t3::Vertex_handle v,
-                const C3t3& c3t3)
+                       const C3t3& c3t3)
 {
   if (v == c3t3.triangulation().infinite_vertex())
     return true;
@@ -488,7 +488,7 @@ bool is_on_convex_hull(const typename C3t3::Vertex_handle v,
 */
 template<typename C3t3>
 bool is_on_convex_hull(const typename C3t3::Edge & edge,
-  const C3t3& c3t3)
+                       const C3t3& c3t3)
 {
   typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
   Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
@@ -527,8 +527,8 @@ bool is_outside(const typename C3t3::Edge & edge,
 
 template<typename C3t3, typename CellSelector>
 bool is_selected(const typename C3t3::Vertex_handle v,
-  const C3t3& c3t3,
-  CellSelector cell_selector)
+                 const C3t3& c3t3,
+                 CellSelector cell_selector)
 {
   typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
 
@@ -545,8 +545,8 @@ bool is_selected(const typename C3t3::Vertex_handle v,
 
 template<typename C3t3, typename CellSelector>
 bool is_internal(const typename C3t3::Edge& edge,
-               const C3t3& c3t3,
-               CellSelector cell_selector)
+                 const C3t3& c3t3,
+                 CellSelector cell_selector)
 {
   const typename C3t3::Vertex_handle vs = edge.first->vertex(edge.second);
   const typename C3t3::Vertex_handle vt = edge.first->vertex(edge.third);
@@ -565,8 +565,8 @@ bool is_internal(const typename C3t3::Edge& edge,
     if (!cell_selector(circ))
       return false;
     if (c3t3.is_in_complex(
-        circ,
-        CGAL::Triangulation_utils_3::next_around_edge(circ->index(vs), circ->index(vt))))
+          circ,
+          CGAL::Triangulation_utils_3::next_around_edge(circ->index(vs), circ->index(vt))))
       return false;
   } while (++circ != done);
 
@@ -598,8 +598,8 @@ typename Gt::Vector_3 normal(const Facet& f, const Gt& gt)
     std::swap(p0, p1);
 
   Vector_3 n = gt.construct_cross_product_vector_3_object()(
-    gt.construct_vector_3_object()(p1, p2),
-    gt.construct_vector_3_object()(p1, p0));
+                 gt.construct_vector_3_object()(p1, p2),
+                 gt.construct_vector_3_object()(p1, p0));
 
   //cross-product(AB, AC)'s norm is the area of the parallelogram
   //formed by these 2 vectors.
@@ -609,13 +609,13 @@ typename Gt::Vector_3 normal(const Facet& f, const Gt& gt)
 
 template<typename C3t3, typename CellSelector, typename OutputIterator>
 OutputIterator get_internal_edges(const C3t3& c3t3,
-                                CellSelector cell_selector,
-                                OutputIterator oit)/*holds Edges*/
+                                  CellSelector cell_selector,
+                                  OutputIterator oit)/*holds Edges*/
 {
   for (typename C3t3::Triangulation::Finite_edges_iterator
-    eit = c3t3.triangulation().finite_edges_begin();
-    eit != c3t3.triangulation().finite_edges_end();
-    ++eit)
+       eit = c3t3.triangulation().finite_edges_begin();
+       eit != c3t3.triangulation().finite_edges_end();
+       ++eit)
   {
     const typename C3t3::Edge& e = *eit;
     if (is_internal(e, c3t3, cell_selector))
@@ -662,7 +662,7 @@ bool topology_test(const typename C3t3::Edge& edge,
         if (vi != v0 && vi != v1 && nb_incident_subdomains(vi, c3t3) > 1)
         {
           if (is_edge_in_complex(v0, vi, c3t3)
-            && is_edge_in_complex(v1, vi, c3t3))
+              && is_edge_in_complex(v1, vi, c3t3))
             return false;
         }
       }
@@ -672,8 +672,8 @@ bool topology_test(const typename C3t3::Edge& edge,
       const Cell_handle circ = f.first;
       const int i = f.second;
       if (is_boundary(c3t3, Edge(circ, (i + 1) % 4, (i + 2) % 4), cell_selector)
-        && is_boundary(c3t3, Edge(circ, (i + 2) % 4, (i + 3) % 4), cell_selector)
-        && is_boundary(c3t3, Edge(circ, (i + 3) % 4, (i + 1) % 4), cell_selector))
+          && is_boundary(c3t3, Edge(circ, (i + 2) % 4, (i + 3) % 4), cell_selector)
+          && is_boundary(c3t3, Edge(circ, (i + 3) % 4, (i + 1) % 4), cell_selector))
         return false;
     }
   } while (++fcirc != fdone);
@@ -738,7 +738,7 @@ void get_edge_info(const typename C3t3::Edge& edge,
 
       if (nb_si_v0 > nb_si_v1) {
         if (!c3t3.is_in_complex(v1))
-         update_v1 = true;
+          update_v1 = true;
       }
       else if (nb_si_v1 > nb_si_v0) {
         if (!c3t3.is_in_complex(v0))
@@ -828,15 +828,15 @@ Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
   else
   {
     std::vector<Subdomain_index>
-      intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+    intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
     typename std::vector<Subdomain_index>::iterator
-      end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
-        subdomains_v1.begin(), subdomains_v1.end(),
-        intersection.begin());
+    end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
+                                   subdomains_v1.begin(), subdomains_v1.end(),
+                                   intersection.begin());
     std::ptrdiff_t intersection_size = (end_it - intersection.begin());
 
     if (subdomains_v0.size() > subdomains_v1.size()
-      && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
+        && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
     {
       return INCLUDES;
     }
@@ -898,7 +898,7 @@ void dump_polylines(const CellRange& cells, const char* filename)
   if (!ofs) return;
 
   for (typename CellRange::const_iterator it = cells.begin();
-    it != cells.end(); ++it)
+       it != cells.end(); ++it)
   {
     for (int i = 0; i < 4; ++i)
       dump_facet(std::make_pair(*it, i), ofs);
@@ -932,7 +932,7 @@ bool are_cell_orientations_valid(const Tr& tr)
   if (!facets.empty())
   {
     std::cerr << "Warning : there are inverted cells!\n"
-      << "\tSee cells_with_negative_volume.polylines.txt" << std::endl;
+              << "\tSee cells_with_negative_volume.polylines.txt" << std::endl;
     dump_facets(facets, "cells_with_negative_volume.polylines.txt");
   }
   return facets.empty();
@@ -952,7 +952,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
   std::size_t nbf = 0;
   int index = 0;
   for (Finite_facets_iterator fit = tr.finite_facets_begin();
-    fit != tr.finite_facets_end(); ++fit)
+       fit != tr.finite_facets_end(); ++fit)
   {
     Cell_handle c = fit->first;
     int i = fit->second;
@@ -976,7 +976,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
 
   // write vertices
   for (typename Bimap_t::right_iterator vit = vertices.right.begin();
-    vit != vertices.right.end(); ++vit)
+       vit != vertices.right.end(); ++vit)
   {
     ofs << point(vit->second->point()) << std::endl;
   }
@@ -984,15 +984,15 @@ void dump_surface_off(const Tr& tr, const char* filename)
   //write facets
   std::size_t nbf_print = 0;
   for (Finite_facets_iterator fit = tr.finite_facets_begin();
-    fit != tr.finite_facets_end(); ++fit)
+       fit != tr.finite_facets_end(); ++fit)
   {
     Cell_handle c = fit->first;
     int i = fit->second;
     if (tr.is_infinite(c) || tr.is_infinite(c->neighbor(i)))
     {
       ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
-        << vertices.left.at(c->vertex((i + 2) % 4)) << " "
-        << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
+          << vertices.left.at(c->vertex((i + 2) % 4)) << " "
+          << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
       ++nbf_print;
     }
   }
@@ -1016,37 +1016,37 @@ void dump_cells_off(const Tr& tr, const char* filename)
   ofs.precision(17);
   ofs << "OFF" << std::endl;
   ofs << tr.number_of_vertices()
-    << " " << tr.number_of_finite_facets() << " 0" << std::endl << std::endl;
+      << " " << tr.number_of_finite_facets() << " 0" << std::endl << std::endl;
 
   //collect and write vertices
   Bimap_t vertices;
   int index = 0;
   for (Finite_vertices_iterator vit = tr.finite_vertices_begin();
-    vit != tr.finite_vertices_end(); ++vit)
+       vit != tr.finite_vertices_end(); ++vit)
   {
     vertices.left.insert(value_type(vit, index++));
     ofs << vit->point().x() << " "
-      << vit->point().y() << " "
-      << vit->point().z() << std::endl;
+        << vit->point().y() << " "
+        << vit->point().z() << std::endl;
   }
 
   //write facets
   for (Finite_facets_iterator fit = tr.finite_facets_begin();
-    fit != tr.finite_facets_end(); ++fit)
+       fit != tr.finite_facets_end(); ++fit)
   {
     Cell_handle c = fit->first;
     int i = fit->second;
     ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
-      << vertices.left.at(c->vertex((i + 2) % 4)) << " "
-      << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
+        << vertices.left.at(c->vertex((i + 2) % 4)) << " "
+        << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
   }
   ofs.close();
 }
 
 template<typename Tr, typename CellRange, typename IndexRange>
 void dump_cells(const CellRange& cells,
-  const IndexRange& indices,
-  const char* filename)
+                const IndexRange& indices,
+                const char* filename)
 {
   typedef typename Tr::Vertex_handle                         Vertex_handle;
   typedef typename Tr::Point                                 Point;
@@ -1059,8 +1059,8 @@ void dump_cells(const CellRange& cells,
   Bimap_t vertices;
   int index = 1;
   for (typename CellRange::const_iterator cit = cells.begin();
-    cit != cells.end();
-    ++cit)
+       cit != cells.end();
+       ++cit)
   {
     for (int i = 0; i < 4; ++i)
     {
@@ -1077,8 +1077,8 @@ void dump_cells(const CellRange& cells,
   ofs << "Dimension 3" << std::endl;
   ofs << "Vertices" << std::endl << vertices.size() << std::endl;
   for (typename Bimap_t::right_const_iterator vit = vertices.right.begin();
-    vit != vertices.right.end();
-    ++vit)
+       vit != vertices.right.end();
+       ++vit)
   {
     const Point& p = vit->second->point();
     ofs << p.x() << " " << p.y() << " " << p.z() << " 2" << std::endl;
@@ -1086,13 +1086,13 @@ void dump_cells(const CellRange& cells,
   ofs << "Tetrahedra " << std::endl << cells.size() << std::endl;
   typename IndexRange::const_iterator iit = indices.begin();
   for (typename CellRange::const_iterator cit = cells.begin();
-    cit != cells.end();
-    ++cit)
+       cit != cells.end();
+       ++cit)
   {
     ofs << vertices.left.at((*cit)->vertex(0))
-      << " " << vertices.left.at((*cit)->vertex(1))
-      << " " << vertices.left.at((*cit)->vertex(2))
-      << " " << vertices.left.at((*cit)->vertex(3));
+        << " " << vertices.left.at((*cit)->vertex(1))
+        << " " << vertices.left.at((*cit)->vertex(2))
+        << " " << vertices.left.at((*cit)->vertex(3));
 
     if (iit == indices.end())
       ofs << " 1" << std::endl;
@@ -1120,7 +1120,7 @@ void dump_cells_in_complex(const Tr& tr, const char* filename)
   std::vector<typename Tr::Cell::Subdomain_index> indices;
 
   for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-    cit != tr.finite_cells_end(); ++cit)
+       cit != tr.finite_cells_end(); ++cit)
   {
     if (cit->subdomain_index() > 0)
     {
@@ -1146,7 +1146,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
   std::size_t nbf = 0;
   int index = 0;
   for (Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
-    fit != c3t3.facets_in_complex_end(); ++fit)
+       fit != c3t3.facets_in_complex_end(); ++fit)
   {
     Cell_handle c = fit->first;
     int i = fit->second;
@@ -1168,7 +1168,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
 
   // write vertices
   for (typename Bimap_t::right_iterator vit = vertices.right.begin();
-    vit != vertices.right.end(); ++vit)
+       vit != vertices.right.end(); ++vit)
   {
     ofs << point(vit->second->point()) << std::endl;
   }
@@ -1176,13 +1176,13 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
   //write facets
   std::size_t nbf_print = 0;
   for (Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
-    fit != c3t3.facets_in_complex_end(); ++fit)
+       fit != c3t3.facets_in_complex_end(); ++fit)
   {
     Cell_handle c = fit->first;
     int i = fit->second;
     ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
-      << vertices.left.at(c->vertex((i + 2) % 4)) << " "
-      << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
+        << vertices.left.at(c->vertex((i + 2) % 4)) << " "
+        << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
     ++nbf_print;
   }
   CGAL_assertion(nbf == nbf_print);
@@ -1196,21 +1196,21 @@ void dump_edges_in_complex(const C3T3& c3t3, const char* filename)
   std::ofstream ofs(filename);
   ofs.precision(17);
   for (typename C3T3::Edges_in_complex_iterator eit = c3t3.edges_in_complex_begin();
-    eit != c3t3.edges_in_complex_end(); ++eit)
+       eit != c3t3.edges_in_complex_end(); ++eit)
   {
     const typename C3T3::Edge& e = *eit;
     ofs << "2 "
-      << point(e.first->vertex(e.second)->point()) << " "
-      << point(e.first->vertex(e.third)->point()) << "\n";
+        << point(e.first->vertex(e.second)->point()) << " "
+        << point(e.first->vertex(e.third)->point()) << "\n";
   }
   ofs.close();
 }
 
 template<typename Tr, typename CellSelector>
 void dump_cells_with_small_dihedral_angle(const Tr& tr,
-                                          const double angle_bound,
-                                          CellSelector cell_select,
-                                          const char* filename)
+    const double angle_bound,
+    CellSelector cell_select,
+    const char* filename)
 {
   typedef typename Tr::Cell_handle           Cell_handle;
   typedef typename Tr::Cell::Subdomain_index Subdomain_index;
@@ -1222,8 +1222,8 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
   {
     Cell_handle c = cit;
     if ( c->subdomain_index() != Subdomain_index()
-      && cell_select(c)
-      && min_dihedral_angle(tr, c) < angle_bound)
+         && cell_select(c)
+         && min_dihedral_angle(tr, c) < angle_bound)
     {
 
       cells.push_back(c);
@@ -1241,9 +1241,9 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
   std::vector< std::vector<Vertex_handle> > vertices_per_dimension(4);
 
   for (typename Tr::Finite_vertices_iterator
-    vit = tr.finite_vertices_begin();
-    vit != tr.finite_vertices_end();
-    ++vit)
+       vit = tr.finite_vertices_begin();
+       vit != tr.finite_vertices_end();
+       ++vit)
   {
     if (vit->in_dimension() == -1)
       continue;//far point
@@ -1283,7 +1283,7 @@ void dump_triangulation_cells(const Tr& tr, const char* filename)
   std::vector<typename Tr::Cell::Subdomain_index> indices(tr.number_of_finite_cells());
   int i = 0;
   for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-    cit != tr.finite_cells_end(); ++cit)
+       cit != tr.finite_cells_end(); ++cit)
   {
     cells[i] = cit;
     indices[i++] = cit->subdomain_index();

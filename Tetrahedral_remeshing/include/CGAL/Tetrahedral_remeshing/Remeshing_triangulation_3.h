@@ -82,63 +82,63 @@ public:
 
 namespace internal
 {
-  template<typename TDS_src, typename TDS_tgt>
-  struct Vertex_converter
+template<typename TDS_src, typename TDS_tgt>
+struct Vertex_converter
+{
+  //This operator is used to create the vertex from v_src.
+  typename TDS_tgt::Vertex operator()(const typename TDS_src::Vertex& v_src) const
   {
-    //This operator is used to create the vertex from v_src.
-    typename TDS_tgt::Vertex operator()(const typename TDS_src::Vertex& v_src) const
-    {
-      typedef typename CGAL::Kernel_traits<
-        typename TDS_src::Vertex::Point>::Kernel GT_src;
-      typedef typename CGAL::Kernel_traits<
-        typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
-      CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+    typedef typename CGAL::Kernel_traits<
+    typename TDS_src::Vertex::Point>::Kernel GT_src;
+    typedef typename CGAL::Kernel_traits<
+    typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
+    CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
 
-      typedef typename TDS_tgt::Vertex::Point Tgt_point;
+    typedef typename TDS_tgt::Vertex::Point Tgt_point;
 
-      typename TDS_tgt::Vertex v_tgt;
-      v_tgt.set_point(Tgt_point(conv(point(v_src.point()))));
-      v_tgt.set_time_stamp(-1);
-      v_tgt.set_dimension(3);//-1 if unset, 0,1,2, or 3 if set
-      return v_tgt;
-    }
-    //This operator is meant to be used in case heavy data should transferred to v_tgt.
-    void operator()(const typename TDS_src::Vertex& v_src,
-      typename TDS_tgt::Vertex& v_tgt) const
-    {
-      typedef typename CGAL::Kernel_traits<
-        typename TDS_src::Vertex::Point>::Kernel GT_src;
-      typedef typename CGAL::Kernel_traits<
-        typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
-      CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
-
-      typedef typename TDS_tgt::Vertex::Point Tgt_point;
-
-      v_tgt.set_point(Tgt_point(conv(point(v_src.point()))));
-      v_tgt.set_dimension(3);//v_src.info());
-    }
-  };
-
-  template<typename TDS_src, typename TDS_tgt>
-  struct Cell_converter
+    typename TDS_tgt::Vertex v_tgt;
+    v_tgt.set_point(Tgt_point(conv(point(v_src.point()))));
+    v_tgt.set_time_stamp(-1);
+    v_tgt.set_dimension(3);//-1 if unset, 0,1,2, or 3 if set
+    return v_tgt;
+  }
+  //This operator is meant to be used in case heavy data should transferred to v_tgt.
+  void operator()(const typename TDS_src::Vertex& v_src,
+                  typename TDS_tgt::Vertex& v_tgt) const
   {
-    //This operator is used to create the cell from c_src.
-    typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
-    {
-      typename TDS_tgt::Cell c_tgt;
-      c_tgt.set_subdomain_index(1);//c_src.subdomain_index());
+    typedef typename CGAL::Kernel_traits<
+    typename TDS_src::Vertex::Point>::Kernel GT_src;
+    typedef typename CGAL::Kernel_traits<
+    typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
+    CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+
+    typedef typename TDS_tgt::Vertex::Point Tgt_point;
+
+    v_tgt.set_point(Tgt_point(conv(point(v_src.point()))));
+    v_tgt.set_dimension(3);//v_src.info());
+  }
+};
+
+template<typename TDS_src, typename TDS_tgt>
+struct Cell_converter
+{
+  //This operator is used to create the cell from c_src.
+  typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
+  {
+    typename TDS_tgt::Cell c_tgt;
+    c_tgt.set_subdomain_index(1);//c_src.subdomain_index());
 //        c_tgt.info() = c_src.info();
-      c_tgt.set_time_stamp(-1);
-      return c_tgt;
-    }
-    //This operator is meant to be used in case heavy data should transferred to c_tgt.
-    void operator()(const typename TDS_src::Cell& c_src,
-                    typename TDS_tgt::Cell& c_tgt) const
-    {
+    c_tgt.set_time_stamp(-1);
+    return c_tgt;
+  }
+  //This operator is meant to be used in case heavy data should transferred to c_tgt.
+  void operator()(const typename TDS_src::Cell& c_src,
+                  typename TDS_tgt::Cell& c_tgt) const
+  {
 //        c_tgt.set_subdomain_index(c_src.subdomain_index());
-      //        c_tgt.info() = c_src.info();
-    }
-  };
+    //        c_tgt.info() = c_src.info();
+  }
+};
 
 }
 

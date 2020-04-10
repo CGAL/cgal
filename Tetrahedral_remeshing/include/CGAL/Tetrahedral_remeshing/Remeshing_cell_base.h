@@ -21,12 +21,12 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
-  struct Fake_MD_C
-  {
-    typedef int Subdomain_index;
-    typedef int Surface_patch_index;
-    typedef int Index;
-  };
+struct Fake_MD_C
+{
+  typedef int Subdomain_index;
+  typedef int Surface_patch_index;
+  typedef int Index;
+};
 }
 
 /*!
@@ -77,13 +77,13 @@ public:
     return this->subdomain_index() != this->neighbor(facet)->subdomain_index();
   }
 #endif
- };
+};
 
 
 
 template < class Gt, class Cb >
 std::istream&
-  operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
+operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
 {
   typename Remeshing_cell_base<Gt, Cb>::Subdomain_index index;
   if (is_ascii(is))
@@ -109,7 +109,7 @@ std::istream&
 
 template < class Gt, class Cb >
 std::ostream&
-  operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
+operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
 {
   if (is_ascii(os))
     os << c.subdomain_index();

@@ -226,7 +226,7 @@ public:
   // is compact: pv={x0,y0,z0,x1,y1,z1...}. If pv contains also normals for instance,
   // the stride should be set to 6.
   void fastProjectionCPU(const std::vector<float>& pv, unsigned int pvSize,
-    std::vector<float>& qv, unsigned int stride = 3) const
+                         std::vector<float>& qv, unsigned int stride = 3) const
   {
     for (int i = 0; i < int(pvSize); i++) {
       Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
@@ -266,9 +266,9 @@ public:
   }
   // Brute force version. O(pvSize*PNSize) complexity. For comparison only.
   void projectionCPU(const std::vector<float>& pv,
-    unsigned int pvSize,
-    std::vector<float>& qv,
-    unsigned int stride = 3)
+                     unsigned int pvSize,
+                     std::vector<float>& qv,
+                     unsigned int stride = 3)
   {
     for (int i = 0; i < int(pvSize); i++) {
       Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
@@ -459,8 +459,8 @@ private:
           p[j] = res[j] - 1;
       }
       unsigned index = ((unsigned int)floor(p[2])) * res[0] * res[1]
-        + ((unsigned int)floor(p[1])) * res[0]
-        + ((unsigned int)floor(p[0]));
+                       + ((unsigned int)floor(p[1])) * res[0]
+                       + ((unsigned int)floor(p[0]));
       return index;
     }
     inline unsigned int getLUTElement(const Vector_3& x) const {
@@ -470,14 +470,14 @@ private:
     inline const std::vector<unsigned int>& getIndices() const { return indices; }
     inline unsigned int getIndicesSize() const { return indicesSize; }
     inline unsigned int getCellIndicesSize(unsigned int i,
-      unsigned int j,
-      unsigned int k) const {
+                                           unsigned int j,
+                                           unsigned int k) const {
       return indices[getLUTElement(i, j, k)];
     }
     inline unsigned int getIndicesElement(unsigned int i,
-      unsigned int j,
-      unsigned int k,
-      unsigned int e) const {
+                                          unsigned int j,
+                                          unsigned int k,
+                                          unsigned int e) const {
       return indices[getLUTElement(i, j, k) + 1 + e];
     }
 
@@ -647,8 +647,8 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
           Vertex_handle vh1 = edge.first->vertex(edge.third);
           Edge_vv e = make_vertex_pair(vh0, vh1);
           if ( vertices_surface_indices.find(vh0) != vertices_surface_indices.end()
-            && vertices_surface_indices.find(vh1) != vertices_surface_indices.end()
-            && edgeMap.find(e) == edgeMap.end())
+               && vertices_surface_indices.find(vh1) != vertices_surface_indices.end()
+               && edgeMap.find(e) == edgeMap.end())
           {
             edgeMap.insert(e);
 
@@ -656,7 +656,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
             const int fmls_id = current_subdomain_FMLS_indices[surf_i];
 
             point_spacing[fmls_id] += CGAL::approximate_sqrt(
-              CGAL::squared_distance(point(vh0->point()), point(vh1->point())));
+                                        CGAL::squared_distance(point(vh0->point()), point(vh1->point())));
             point_spacing_count[fmls_id] ++;
           }
         }
