@@ -325,7 +325,7 @@ namespace CGAL
       void check_inversion_and_move(const typename Tr::Vertex_handle v,
                                     const typename Tr::Point& final_pos,
                                     const CellRange& inc_cells,
-                                    const Tr& tr)
+                                    const Tr& /* tr */)
       {
         const typename Tr::Point backup = v->point(); //backup v's position
         const typename Tr::Geom_traits::Point_3 pv = point(backup);

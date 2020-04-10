@@ -853,38 +853,6 @@ namespace Tetrahedral_remeshing
     template<typename Tr, typename CellRange>
     void dump_cells(const CellRange& cells, const char* filename);
 
-    template<typename Tr>
-    bool are_cell_orientations_valid(const Tr& tr)
-    {
-      typedef typename Tr::Geom_traits::Point_3 Point_3;
-      typedef typename Tr::Facet                Facet;
-
-      std::set<Facet> facets;
-      for (const typename Tr::Cell_handle ch : tr.finite_cell_handles())
-      {
-        const Point_3& p0 = point(ch->vertex(0)->point());
-        const Point_3& p1 = point(ch->vertex(1)->point());
-        const Point_3& p2 = point(ch->vertex(2)->point());
-        const Point_3& p3 = point(ch->vertex(3)->point());
-
-        const CGAL::Orientation o = CGAL::orientation(p0, p1, p2, p3);
-        if (o != CGAL::POSITIVE)
-        {
-          facets.insert(canonical_facet(Facet(ch, 0)));
-          facets.insert(canonical_facet(Facet(ch, 1)));
-          facets.insert(canonical_facet(Facet(ch, 2)));
-          facets.insert(canonical_facet(Facet(ch, 3)));
-        }
-      }
-      if (!facets.empty())
-      {
-        std::cerr << "Warning : there are inverted cells!\n"
-          << "\tSee cells_with_negative_volume.polylines.txt" << std::endl;
-        dump_facets(facets, "cells_with_negative_volume.polylines.txt");
-      }
-      return facets.empty();
-    }
-
     template <typename Bimap>
     void dump_edges(const Bimap& edges, const char* filename)
     {
@@ -934,6 +902,38 @@ namespace Tetrahedral_remeshing
           dump_facet(std::make_pair(*it, i), ofs);
       }
       ofs.close();
+    }
+
+    template<typename Tr>
+    bool are_cell_orientations_valid(const Tr& tr)
+    {
+      typedef typename Tr::Geom_traits::Point_3 Point_3;
+      typedef typename Tr::Facet                Facet;
+
+      std::set<Facet> facets;
+      for (const typename Tr::Cell_handle ch : tr.finite_cell_handles())
+      {
+        const Point_3& p0 = point(ch->vertex(0)->point());
+        const Point_3& p1 = point(ch->vertex(1)->point());
+        const Point_3& p2 = point(ch->vertex(2)->point());
+        const Point_3& p3 = point(ch->vertex(3)->point());
+
+        const CGAL::Orientation o = CGAL::orientation(p0, p1, p2, p3);
+        if (o != CGAL::POSITIVE)
+        {
+          facets.insert(canonical_facet(Facet(ch, 0)));
+          facets.insert(canonical_facet(Facet(ch, 1)));
+          facets.insert(canonical_facet(Facet(ch, 2)));
+          facets.insert(canonical_facet(Facet(ch, 3)));
+        }
+      }
+      if (!facets.empty())
+      {
+        std::cerr << "Warning : there are inverted cells!\n"
+          << "\tSee cells_with_negative_volume.polylines.txt" << std::endl;
+        dump_facets(facets, "cells_with_negative_volume.polylines.txt");
+      }
+      return facets.empty();
     }
 
     template<typename Tr>
