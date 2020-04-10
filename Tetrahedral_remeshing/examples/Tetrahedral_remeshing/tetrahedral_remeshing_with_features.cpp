@@ -76,16 +76,19 @@ void add_edge(Vertex_handle v1,
     constraints.insert(std::make_pair(v1, v2));
 }
 
-void generate_input(const std::size_t& n,
+void generate_input_cube(const std::size_t& n,
                     const char* filename,
                     boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
 {
-  Remeshing_triangulation tr;
   CGAL::Random rng;
+  std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
+
+  Remeshing_triangulation tr;
 
   // points in a sphere
   while (tr.number_of_vertices() < n)
     tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+
   // vertices of a larger cube
   Vertex_handle v0 = tr.insert(Point(-2., -2., -2.));
   Vertex_handle v1 = tr.insert(Point(-2., -2.,  2.));
@@ -119,6 +122,8 @@ void generate_input(const std::size_t& n,
   add_edge(v1, v5, tr, constraints);
   add_edge(v2, v6, tr, constraints);
   add_edge(v3, v7, tr, constraints);
+
+  CGAL_assertion(tr.is_valid(true));
 }
 
 void set_subdomain(Remeshing_triangulation& tr, const int index)
@@ -133,7 +138,7 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 int main(int argc, char* argv[])
 {
   boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
-  generate_input(1000, "data/sphere_in_cube.tr.cgal", constraints);
+  generate_input_cube(1000, "data/sphere_in_cube.tr.cgal", constraints);
 
   const char* filename     = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.02;

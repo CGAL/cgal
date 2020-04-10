@@ -5,47 +5,47 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include "tetrahedral_remeshing_io.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> T3;
+typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 
-bool load_binary_triangulation(std::istream& is, T3& t3)
+template<typename T3>
+bool generate_input_one_subdomain(const std::size_t nbv, T3& tr)
 {
-  std::string s;
-  if (!(is >> s)) return false;
-  bool binary = (s == "binary");
-  if (binary) {
-    if (!(is >> s)) return false;
-  }
-  if (s != "CGAL" || !(is >> s) || s != "c3t3")
-    return false;
+  CGAL::Random rng;
+  std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
 
-  std::getline(is, s);
-  if (binary) CGAL::set_binary_mode(is);
-  is >> t3;
-  return bool(is);
-}
+  typedef typename T3::Point Point;
+  while (tr.number_of_vertices() < nbv)
+    tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
 
-bool save_binary_triangulation(std::ostream& os, const T3& t3)
-{
-//  typedef T3::Geom_traits::FT FT;
-  os << "binary CGAL c3t3\n";
-  CGAL::set_binary_mode(os);
-  return !!(os << t3);
+  for (typename T3::Cell_handle c : tr.finite_cell_handles())
+    c->set_subdomain_index(1);
+
+  std::string filename("data/triangulation_one_subdomain.binary.cgal");
+  std::ofstream out(filename, std::ios_base::out | std::ios_base::binary);
+  save_binary_triangulation(out, tr);
+
+  return (!out.bad());
 }
 
 int main(int argc, char* argv[])
 {
+  Remeshing_triangulation tmp;
+  generate_input_one_subdomain(1000, tmp);
+
   const char* filename     = (argc > 1) ? argv[1] : "data/triangulation_one_subdomain.binary.cgal";
   float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
 
   std::ifstream input(filename, std::ios::in | std::ios::binary);
 
-  T3 t3;
+  Remeshing_triangulation t3;
   if (!input)
     return EXIT_FAILURE;
 
