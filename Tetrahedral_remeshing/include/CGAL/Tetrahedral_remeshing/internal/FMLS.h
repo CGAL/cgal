@@ -25,7 +25,6 @@
 #include <CGAL/Vector_3.h>
 
 #include <cmath>
-#include <string>
 #include <vector>
 #include <unordered_set>
 
@@ -41,18 +40,6 @@ namespace CGAL
     namespace internal
     {
       // --------------------------------------------------------------
-      //  CPU Memory Code
-      // --------------------------------------------------------------
-
-      template<typename T>
-      void freeCPUResource(T** res) {
-        if (*res != NULL) {
-          free(*res);
-          *res = NULL;
-        }
-      }
-
-      // --------------------------------------------------------------
       //  MLS Projection
       // --------------------------------------------------------------
 
@@ -65,7 +52,7 @@ namespace CGAL
           return 0.0;
       }
 
-      inline void setPNSample(float* p, unsigned int i,
+      inline void setPNSample(std::vector<float>& p, unsigned int i,
                               float x, float y, float z,
                               float nx, float ny, float nz)
       {
@@ -146,7 +133,6 @@ namespace CGAL
         // be copied if modified outside the class.
         FMLS()
         {
-          PN = NULL;
           PNSize = 0;
           PNScale = 1.0f;
           MLSRadius = 0.1f;
@@ -155,57 +141,19 @@ namespace CGAL
           hermite = false;
           numIter = 1;
         }
-        ~FMLS()
-        {
-          freeCPUMemory();
-        }
 
         // --------------------------------------------------------------
         //  Main Interface
         // --------------------------------------------------------------
 
-        float* createPN(unsigned int size)
+        std::vector<float> createPN(unsigned int size)
         {
-          return  (float*)malloc(size * SURFEL_SIZE);
+          return std::vector<float>(size * SURFEL_SIZE);
         }
 
-        float* clonePN()
-        {
-          float* clone = createPN(PNSize);
-          memcpy(clone, PN, PNSize * SURFEL_SIZE);
-          return clone;
-        }
-
-        void loadPN(const char* filename)
-        {
-          freeCPUMemory();
-          FILE* file = fopen(filename, "r");
-          if (!file)
-            throw Exception("Cannot read file" + std::string(filename));
-          fseek(file, 0, SEEK_END);
-          unsigned int numOfByte = ftell(file);
-          fseek(file, 0, SEEK_SET);
-          PNSize = numOfByte / SURFEL_SIZE;
-          PN = createPN(PNSize);
-          fread(PN, SURFEL_SIZE, PNSize, file);
-          fclose(file);
-
-          computePNScale();
-          grid.clear();
-          grid.init(PN, PNSize, MLSRadius * PNScale);
-        }
-
-        void setPN(float* newPN, unsigned int newPNSize)
-        {
-          freeCPUMemory();
-          PN = newPN;
-          PNSize = newPNSize;
-          computePNScale();
-          grid.clear();
-          grid.init(PN, PNSize, MLSRadius * PNScale);
-        }
-
-        void setPN(float* newPN, unsigned int newPNSize, float pointSpacing)
+        void setPN(const std::vector<float>& newPN,
+                   const unsigned int newPNSize,
+                   const float pointSpacing)
         {
           freeCPUMemory();
           PN = newPN;
@@ -214,15 +162,6 @@ namespace CGAL
           MLSRadius = 3 * pointSpacing / PNScale;
           grid.clear();
           grid.init(PN, PNSize, MLSRadius * PNScale);
-        }
-
-        static void savePN(float* pn, unsigned int size, const char* filename)
-        {
-          FILE* file = fopen(filename, "w");
-          if (!file)
-            throw Exception("Cannot write to file" + std::string(filename));
-          fwrite(pn, SURFEL_SIZE, size, file);
-          fclose(file);
         }
 
         // Compute, according to the current point sampling stored in FMLS, the MLS projection
@@ -286,12 +225,9 @@ namespace CGAL
         // The strid indicates the offsets in qv (the defautl value of 3 means that the qv
         // is compact: pv={x0,y0,z0,x1,y1,z1...}. If pv contains also normals for instance,
         // the stride should be set to 6.
-        void fastProjectionCPU(const float* pv, unsigned int pvSize,
-          float* qv, unsigned int stride = 3) const
+        void fastProjectionCPU(const std::vector<float>& pv, unsigned int pvSize,
+          std::vector<float>& qv, unsigned int stride = 3) const
         {
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
           for (int i = 0; i < int(pvSize); i++) {
             Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
             Vector_3 q, n;
@@ -329,12 +265,11 @@ namespace CGAL
 
         }
         // Brute force version. O(pvSize*PNSize) complexity. For comparison only.
-        void projectionCPU(const float* pv, unsigned int pvSize,
-          float* qv, unsigned int stride = 3)
+        void projectionCPU(const std::vector<float>& pv,
+          unsigned int pvSize,
+          std::vector<float>& qv,
+          unsigned int stride = 3)
         {
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
           for (int i = 0; i < int(pvSize); i++) {
             Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
             Vector_3 q, n;
@@ -348,31 +283,14 @@ namespace CGAL
           }
         }
 
-
-       // --------------------------------------------------------------------
-       // Filtering by applying MLS projection on the input point set itself.
-       // --------------------------------------------------------------------
-        // The 'filter*_*' methods apply the MLS projection to the PN samples themselves,
-        // providing a low pass (or feature preserving, dependeing on the options)
-        // version which can be gathered using 'getFilteredPN ()' afterwards.
-        void fastFilterCPU(float* fPN)
-        {
-          fastProjectionCPU(PN, PNSize, fPN, 6);
-        }
-
-        void filterCPU(float* fPN) // Brute force method. O(PNSize^2) complexity. For comparison only.
-        {
-          projectionCPU(PN, PNSize, fPN, 6);
-        }
-
         // --------------------------------------------------------------
         //  Accessors
         // --------------------------------------------------------------
 
         // Number of elements of the PN. One elemnt is a 6-float32 chunk.
         inline unsigned int getPNSize() const { return PNSize; }
-        inline float* getPN() { return PN; }
-        inline const float* getPN() const { return PN; }
+        inline std::vector<float>& getPN() { return PN; }
+        inline const std::vector<float>& getPN() const { return PN; }
 
         // Min/Max corners of PN's bounding volume
         inline const float* getMinMax() const { return grid.getMinMax(); }
@@ -400,15 +318,6 @@ namespace CGAL
 
         // Size of a point sample in bytes (6xfloat32: 3 for position and normal
         static const unsigned int SURFEL_SIZE = 24;
-
-        class Exception {
-        private:
-          std::string msg;
-        public:
-          inline Exception(const std::string& msg) : msg(msg) {}
-          virtual ~Exception() {}
-          inline const std::string getMessage() const { return std::string("[FMLS][Error]: ") + msg; }
-        };
 
       private:
 
@@ -440,16 +349,14 @@ namespace CGAL
           {
             cellSize = 1.f;
             LUTSize = 0;
-            LUT = NULL;
             indicesSize = 0;
-            indices = NULL;
           }
           ~Grid()
           {
             clear();
           }
 
-          void init(float* PN, unsigned int PNSize, float sigma_s)
+          void init(const std::vector<float>& PN, unsigned int PNSize, float sigma_s)
           {
             cellSize = sigma_s;
             for (unsigned int i = 0; i < 3; i++) {
@@ -470,9 +377,9 @@ namespace CGAL
             for (unsigned int i = 0; i < 3; i++)
               res[i] = (unsigned int)ceil((minMax[3 + i] - minMax[i]) / cellSize);
             LUTSize = res[0] * res[1] * res[2];
-            unsigned int gridLUTNumOfByte = LUTSize * sizeof(unsigned int);
-            LUT = (unsigned int*)malloc(gridLUTNumOfByte);
-            memset(LUT, 0, gridLUTNumOfByte);
+            LUT.resize(LUTSize);
+            LUT.assign(LUTSize, 0);
+
             unsigned int nonEmptyCells = 0;
             Vector_3 gMin(minMax[0], minMax[1], minMax[2]);
             Vector_3 gMax(minMax[3], minMax[4], minMax[5]);
@@ -483,7 +390,9 @@ namespace CGAL
               LUT[index]++;
             }
             indicesSize = PNSize + nonEmptyCells;
-            indices = (unsigned int*)malloc(indicesSize * sizeof(unsigned int));
+            indices.reserve(indicesSize);
+            indices.assign(indicesSize, 0);
+
             unsigned int cpt = 0;
             for (unsigned int i = 0; i < res[0]; i++)
               for (unsigned int j = 0; j < res[1]; j++)
@@ -513,24 +422,18 @@ namespace CGAL
 
           void clear()
           {
-            if (LUT != NULL)
-              free(LUT);
-            if (indices != NULL)
-              free(indices);
             cellSize = 1.f;
             LUTSize = 0;
-            LUT = NULL;
             indicesSize = 0;
-            indices = NULL;
           }
 
           // Accessors
 
-          inline const float* getMinMax() const { return minMax; }
-          inline const unsigned int* getRes() const { return res; }
+          inline const std::array<float, 6> getMinMax() const { return minMax; }
+          inline const std::array<unsigned int, 3> getRes() const { return res; }
           inline float getCellSize() const { return cellSize; }
-          inline unsigned int* getLUT() { return LUT; }
-          inline const unsigned int* getLUT() const { return LUT; }
+          inline std::vector<unsigned int>& getLUT() { return LUT; }
+          inline const std::vector<unsigned int>& getLUT() const { return LUT; }
           inline unsigned int getLUTSize() const { return LUTSize; }
           inline unsigned int getLUTIndex(unsigned int i,
                                           unsigned int j,
@@ -563,8 +466,8 @@ namespace CGAL
           inline unsigned int getLUTElement(const Vector_3& x) const {
             return LUT[getLUTIndex(x)];
           }
-          inline unsigned int* getIndices() { return indices; }
-          inline const unsigned int* getIndices() const { return indices; }
+          inline std::vector<unsigned int>& getIndices() { return indices; }
+          inline const std::vector<unsigned int>& getIndices() const { return indices; }
           inline unsigned int getIndicesSize() const { return indicesSize; }
           inline unsigned int getCellIndicesSize(unsigned int i,
             unsigned int j,
@@ -579,13 +482,13 @@ namespace CGAL
           }
 
         private:
-          float minMax[6];
+          std::array<float, 6> minMax;
           float cellSize;
-          unsigned int  res[3];
+          std::array<unsigned int, 3> res;
           unsigned int LUTSize;
-          unsigned int* LUT; // 3D Index Look-Up Table
+          std::vector<unsigned int> LUT; // 3D Index Look-Up Table
           unsigned int indicesSize;
-          unsigned int* indices; // 3D Grid data
+          std::vector<unsigned int> indices; // 3D Grid data
         };
 
 
@@ -595,8 +498,7 @@ namespace CGAL
 
         void freeCPUMemory()
         {
-          if (PN != NULL)
-            freeCPUResource(&PN);
+          PN.clear();
           PNSize = 0;
         }
 
@@ -604,7 +506,7 @@ namespace CGAL
         //  CPU Data
         // --------------------------------------------------------------
 
-        float* PN;
+        std::vector<float> PN;
         unsigned int PNSize;
         float PNScale; // size of the bounding sphere radius
         float MLSRadius;
@@ -681,7 +583,7 @@ namespace CGAL
           }
         }
 
-        std::vector< float* > pns;
+        std::vector< std::vector<float> > pns;
 
         int count = 0;
         //Memory allocation for the point plus normals of the point samples
@@ -689,7 +591,7 @@ namespace CGAL
              it != subdomain_sample_numbers.end(); ++it)
         {
           current_subdomain_FMLS_indices[it->first] = count;
-          pns.push_back(new float[it->second * 6]);
+          pns.push_back(std::vector<float>(it->second * 6, 0));
           count++;
         }
 
