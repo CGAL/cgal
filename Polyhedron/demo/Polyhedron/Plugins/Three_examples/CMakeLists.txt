@@ -53,7 +53,5 @@ endif()
 
     #  links the library containing the scene_plane_item with the plugin
       target_link_libraries(basic_item_plugin PUBLIC Polyhedron_scene_basic_objects)
-    else()
-      message("NOTICE: These plugins need a built Polyhedron Demo to be configured, and won't be compiled.")
   endif()
 endif()
