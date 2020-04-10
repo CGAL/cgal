@@ -783,7 +783,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   typedef boost::container::small_vector<halfedge_descriptor,8> Halfedges;
 #else
   //typedef boost::unordered_map<vertex_descriptor, halfedge_descriptor, boost::hash<vertex_descriptor> > Halfedges;
-  typedef Small_unordered_mapV2<vertex_descriptor, halfedge_descriptor, boost::hash<vertex_descriptor>,8,1> Halfedges;
+  typedef Small_unordered_mapV2<vertex_descriptor, halfedge_descriptor, 8> Halfedges;
 #endif  
 
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
