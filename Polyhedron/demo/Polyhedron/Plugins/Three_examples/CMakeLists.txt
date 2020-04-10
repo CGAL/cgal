@@ -17,7 +17,7 @@ find_package(Qt5
              COMPONENTS            OpenGL Script Svg Xml
              OPTIONAL_COMPONENTS   ScriptTools WebSockets)
 
-if(CGAL_TEST_SUITE)
+if(RUNNING_CGAL_AUTO_TEST)
   polyhedron_demo_plugin(example_plugin Example_plugin)
 
   qt5_wrap_ui( basicUI_FILES Basic_dialog.ui  )
