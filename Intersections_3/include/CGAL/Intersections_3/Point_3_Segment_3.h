@@ -28,9 +28,9 @@ inline
 bool
 do_intersect(const typename K::Point_3 &pt,
              const typename K::Segment_3 &seg,
-             const K&)
+             const K& k)
 {
-    return seg.has_on(pt);
+    return k.has_on_3_object()(seg, pt);
 }
 
 template <class K>
@@ -38,9 +38,9 @@ inline
 bool
 do_intersect(const typename K::Segment_3 &seg,
              const typename K::Point_3 &pt,
-             const K&)
+             const K& k)
 {
-    return seg.has_on(pt);
+    return k.has_on_3_object()(seg, pt);
 }
 
 

@@ -10,6 +10,7 @@ polyhedron_demo_plugin(mesh_3_plugin Mesh_3_plugin
   ${meshingUI_FILES} KEYWORDS Mesh_3)
 target_link_libraries(mesh_3_plugin PUBLIC scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
   scene_surface_mesh_item scene_c3t3_item ${OPENGL_gl_LIBRARY} )
+target_include_directories(mesh_3_plugin PRIVATE include)
 
 find_package(VTK QUIET COMPONENTS
   vtkImagingGeneral  vtkIOImage NO_MODULE)

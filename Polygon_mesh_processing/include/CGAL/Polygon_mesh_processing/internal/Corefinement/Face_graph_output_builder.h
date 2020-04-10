@@ -463,11 +463,19 @@ public:
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
 
     // The property map must be either writable or well-initialized
-    if(!BGL::internal::is_index_map_valid(fids1, num_faces(tm1), faces(tm1)))
+    if( CGAL::internal::Is_writable_property_map<FaceIdMap1>::value &&
+        !BGL::internal::is_index_map_valid(fids1, num_faces(tm1), faces(tm1)) )
+    {
       BGL::internal::initialize_face_index_map(fids1, tm1);
+    }
+    CGAL_assertion(BGL::internal::is_index_map_valid(fids1, num_faces(tm1), faces(tm1)));
 
-    if(!BGL::internal::is_index_map_valid(fids2, num_faces(tm2), faces(tm2)))
+    if( CGAL::internal::Is_writable_property_map<FaceIdMap2>::value &&
+        !BGL::internal::is_index_map_valid(fids2, num_faces(tm2), faces(tm2)) )
+    {
       BGL::internal::initialize_face_index_map(fids2, tm2);
+    }
+    CGAL_assertion(BGL::internal::is_index_map_valid(fids2, num_faces(tm2), faces(tm2)));
 
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);

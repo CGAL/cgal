@@ -1124,6 +1124,22 @@ through the edge.
 
 \cgalExample{Triangulation_2/polylines_triangulation.cpp}
 
+\subsection Triangulation_2ExampleBuildingFromSoup Example: Building a Triangulated Arrangement of Polylines from a Segment Soup
+
+The `Constrained_triangulation_plus_2` structure is initialized by a
+set of polylines. As users may only be able to provide a disconnected
+segment soup as input, a member function \link
+Constrained_triangulation_plus_2::split_subconstraint_graph_into_constraints()
+`split_subconstraint_graph_into_constraints()` \endlink is provided:
+this function identifies the polylines by connecting segments until a
+vertex whose degree is different from 2 is reached.
+
+The following code shows how a "blind" insertion of disconnected
+segments can be processed into a set of well-defined polyline
+constraints in a `Constrained_triangulation_plus_2`:
+
+\cgalExample{Triangulation_2/segment_soup_to_polylines.cpp}
+
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy
 
 The class `Triangulation_hierarchy_2<Tr>`
