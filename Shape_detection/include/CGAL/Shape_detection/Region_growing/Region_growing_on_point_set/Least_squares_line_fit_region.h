@@ -244,7 +244,6 @@ namespace Point_set {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and normal
-          
         CGAL_precondition(region[0] < m_input_range.size());
 
         // The best fit line will be a line through this point with
