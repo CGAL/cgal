@@ -332,10 +332,8 @@ private:
 #endif
 
     //tag cells
-    typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
-    for (Finite_cells_iterator cit = tr().finite_cells_begin();
-         cit != tr().finite_cells_end();
-         ++cit)
+    typedef typename Tr::Cell_handle Cell_handle;
+    for (Cell_handle cit : tr().finite_cell_handles())
     {
       if (m_cell_selector(cit))
       {
@@ -360,13 +358,9 @@ private:
     }
 
     //tag facets
-    typedef typename Tr::Facet                  Facet;
-    typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
-    for (Finite_facets_iterator fit = tr().finite_facets_begin();
-         fit != tr().finite_facets_end();
-         ++fit)
+    typedef typename Tr::Facet Facet;
+    for (const Facet& f : tr().finite_facets())
     {
-      const Facet f = *fit;
       const Facet mf = tr().mirror_facet(f);
       const Subdomain_index s1 = f.first->subdomain_index();
       const Subdomain_index s2 = mf.first->subdomain_index();
@@ -394,14 +388,9 @@ private:
 #endif
 
     //tag edges
-    typedef typename Tr::Edge                  Edge;
-    typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
-    for (Finite_edges_iterator eit = tr().finite_edges_begin();
-         eit != tr().finite_edges_end();
-         ++eit)
+    typedef typename Tr::Edge Edge;
+    for (const Edge& e : tr().finite_edges())
     {
-      const Edge& e = *eit;
-
       if (m_c3t3.is_in_complex(e))
       {
         CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.second)) <= 1);
@@ -436,11 +425,8 @@ private:
 #endif
 
     //tag vertices
-    typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
     unsigned int corner_id = 0;
-    for (Finite_vertices_iterator vit = tr().finite_vertices_begin();
-         vit != tr().finite_vertices_end();
-         ++vit)
+    for (Vertex_handle vit : tr().finite_vertex_handles())
     {
       if ( vit->in_dimension() == 0
            || nb_incident_complex_edges(vit, m_c3t3) > 2)
