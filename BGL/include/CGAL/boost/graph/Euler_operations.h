@@ -783,7 +783,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   typedef boost::container::small_vector<halfedge_descriptor,8> Halfedges;
 #else
   //typedef boost::unordered_map<vertex_descriptor, halfedge_descriptor, boost::hash<vertex_descriptor> > Halfedges;
-  typedef Small_unordered_mapV2<vertex_descriptor, halfedge_descriptor, 8> Halfedges;
+  typedef Small_unordered_mapV2<PolygonMesh,vertex_descriptor, halfedge_descriptor, 8> Halfedges;
 #endif  
 
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
@@ -808,8 +808,12 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   std::vector<halfedge_descriptor> former_border_hedges;
 
   //TODO: use vertex index map for v -> vector
+#ifdef SV
   std::vector<Halfedges> outgoing_hedges(num_vertices(pm));
-
+#else
+  std::vector<Halfedges> outgoing_hedges(num_vertices(pm),Halfedges(pm));
+#endif
+                                         
   for (const Vertex_range& vr : faces_to_add)
   {
     std::size_t nbh=vr.size();

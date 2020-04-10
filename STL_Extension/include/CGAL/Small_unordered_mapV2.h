@@ -21,16 +21,19 @@
 namespace CGAL {
 
 
-template <typename K, typename T, int M>
+template <typename Mesh, typename K, typename T, int M>
 class Small_unordered_mapV2 {
 
-  std::array<std::pair<K, T>, M> data;
+  const Mesh& mesh;
+  // std::array<std::pair<K, T>, M> data;
+  std::array<T, M> data;
 
   boost::unordered_map<K, T> * big = nullptr;
   int N = 0; // the number of stored elements
 public:
 
-  Small_unordered_mapV2()
+  Small_unordered_mapV2(const Mesh& mesh)
+    : mesh(mesh)
   {}
 
 
@@ -46,14 +49,16 @@ public:
   void set(const K& k, const T& t)
   {
     if (N < M) {
-      data[N].first = k;
-      data[N].second = t;
+      //data[N].first = k;
+      //data[N].second = t;
+      data[N] = t;
       ++N;
     }else{
       if (N == M) {
         big = new boost::unordered_map<K, T>(); 
         for(int pos = 0; pos < M; ++pos){
-          big->insert(data[pos]);
+          // big->insert(data[pos]);
+          big->insert(std::make_pair(target(data[pos],mesh),data[pos]));
         }
         (*big)[k] = t;
       }else{
@@ -77,7 +82,7 @@ public:
   {
     if (N <= M) {
       for(int i =0; i < M; ++i){
-        if (data[i].first == k) {
+        if (target(data[i],mesh) == k) {
           return const_iterator(*this,i);
         }
       }
@@ -163,7 +168,7 @@ public:
         return *bigit;
       }
       else {
-        return map.data[pos];
+        return std::make_pair(target(map.data[pos],map.mesh),map.data[pos]);
       }
     }
   };
