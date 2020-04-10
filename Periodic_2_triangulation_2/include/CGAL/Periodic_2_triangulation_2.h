@@ -671,16 +671,19 @@ public:
 
   /// \name Advanced modifiers
   //\{
+
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   /// Insert the first vertex in the triangulation and creates the 9-cover.
   Vertex_handle insert_first(const Point& p);
-
-  /// Inserts p in the face f and sets the offsets of the newly created faces
-  /// Insert periodic copies in all periodic copies of the domain
-  Vertex_handle insert_in_face(const Point& p, Face_handle f);
 
   /// Insert periodic copies in all periodic copies of the domain
   /// Inserts (p,o) in the edge (f,i) and sets the offsets of the newly created faces
   Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i);
+#endif
+
+  /// Inserts p in the face f and sets the offsets of the newly created faces
+  /// Insert periodic copies in all periodic copies of the domain
+  Vertex_handle insert_in_face(const Point& p, Face_handle f);
 
 #ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   /// Remove a degree 3 vertex from a 2D triangulation
@@ -945,11 +948,14 @@ private:
   Vertex_handle insert_in_face(const Point& p, const Offset &o,
                                Face_handle f,
                                Vertex_handle vh);
+
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   /// Inserts (p,o) in the edge (f,i) and sets the offsets of the newly created faces
   /// Doesn't insert periodic copies
   Vertex_handle insert_in_edge(const Point& p, const Offset &o,
                                Face_handle f, int i,
                                Vertex_handle vh);
+#endif
 
   /// Remove a vertex without removing it's possible periodic copies.
   /// Helper functions
@@ -988,8 +994,10 @@ protected:
 
   /// \name Insertion helpers
   //\{
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   /// Flips the edge, no periodic copies are flipped
   void flip_single_edge(Face_handle f, int i);
+#endif
 
   /// Remove a vertex from the virtual copies maps
   /// Used when a Delaunay vertex is removed
@@ -1120,7 +1128,6 @@ protected:
     }
     else
     {
-      int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
       // Special case for the periodic space.
       // Fetch vertices and respective offsets of c from _virtual_vertices
       const Point *pts[3];
@@ -1131,9 +1138,13 @@ protected:
         off[i] = get_offset(f, i);
       }
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+      int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
+
       // Main idea seems to just test all possibilities.
       for(int i=0; i<4; ++i)
       {
+        // Check if for each bit position: bit of i <= bit of cumm_off
         if(((cumm_off | (~i)) & 3) == 3)
         {
           if(bounded_side(*pts[0], *pts[1], *pts[2], p,
@@ -1144,6 +1155,33 @@ protected:
           }
         }
       }
+#else
+  int min_off_x = f->offset(2).x(),
+      max_off_x = f->offset(2).x(),
+      min_off_y = f->offset(2).y(),
+      max_off_y = f->offset(2).y();
+  for(int i=0; i<2; ++i)
+  {
+    min_off_x = (std::min)(min_off_x, f->offset(i).x());
+    max_off_x = (std::max)(max_off_x, f->offset(i).x());
+    min_off_y = (std::min)(min_off_y, f->offset(i).y());
+    max_off_y = (std::max)(max_off_y, f->offset(i).y());
+  }
+
+  for(int i=min_off_x; i<=max_off_x; ++i)
+  {
+    for(int j=min_off_y; j<=max_off_y; ++j)
+    {
+      const Offset oij(i, j);
+      if(bounded_side(*pts[0], *pts[1], *pts[2], p,
+                      off[0], off[1], off[2], combine_offsets(o, oij))
+         != ON_UNBOUNDED_SIDE)
+      {
+        return oij;
+      }
+    }
+  }
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
     }
 
     CGAL_assertion(false);
@@ -1155,6 +1193,7 @@ protected:
     f->set_offsets(o0, o1, o2);
   }
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
   void set_offsets(Face_handle f, int o0, int o1, int o2)
   {
@@ -1178,11 +1217,13 @@ protected:
     o2 = ((off2[0] & 1) << 1) + (off2[1] & 1);
     f->set_offsets(o0, o1, o2);
   }
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
   template<class Offset>
   void set_offsets(Face_handle f, const Offset &o0, const Offset &o1, const Offset &o2)
   {
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
     int off0[2] = { o0.x(), o0.y() };
     int off1[2] = { o1.x(), o1.y() };
     int off2[2] = { o2.x(), o2.y() };
@@ -1210,6 +1251,9 @@ protected:
     int o1i = ((off1[0] & 1) << 1) + (off1[1] & 1);
     int o2i = ((off2[0] & 1) << 1) + (off2[1] & 1);
     f->set_offsets(o0i, o1i, o2i);
+#else
+    f->set_offsets(o0, o1, o2);
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
   }
   //\}
 
@@ -1713,7 +1757,6 @@ flip_single_edge(Face_handle f, int i)
   set_offsets(nb, new_off[0], new_off[1], new_off[2]);
 }
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 template<class Gt, class Tds>
 void
 Periodic_2_triangulation_2<Gt, Tds>::
@@ -1728,7 +1771,6 @@ remove_from_virtual_copies(Vertex_handle v)
 
   _virtual_vertices_reverse.erase(rev_it);
 }
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
@@ -1816,7 +1858,6 @@ insert_first(const Point& p)
 
   return vir_vertices[0][0];
 }
-#endif // #ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
@@ -1852,6 +1893,7 @@ insert_in_edge(const Point& p, const Offset &o, Face_handle f, int i, Vertex_han
 
   return v;
 }
+#endif // #ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
@@ -1882,10 +1924,11 @@ insert_in_face(const Point& p, const Offset &o, Face_handle f, Vertex_handle vh)
 
   if(!simplicity_criterion)
   {
-    // Choose the periodic copy of tester.point() that is inside c.
+    // Choose the periodic copy of tester.point() that is inside f.
     current_off = get_location_offset(f, p, o);
 
-    CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
+// @tmp restore after oriented side has been converted to generic P2T2
+//    CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
 
     for(int i=0; i<3; ++i)
     {
@@ -1938,8 +1981,9 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::
 insert(const Point &p, Face_handle start)
 {
-  if(number_of_stored_vertices() == 0)
-    return insert_first(p);
+  // @tmp
+//  if(number_of_stored_vertices() == 0)
+//    return insert_first(p);
 
   if(start == Face_handle())
     start = faces_begin();
@@ -1959,8 +2003,9 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::
 insert(const Point& p, Locate_type lt, Face_handle loc, int li)
 {
-  if(number_of_stored_vertices() == 0)
-    return insert_first(p);
+  // @tmp
+//  if(number_of_stored_vertices() == 0)
+//    return insert_first(p);
 
   // vstart is a vertex incident to the Face_handle start that will be used as
   // for creating a start point for the virtual vertices.
@@ -2028,18 +2073,21 @@ insert(const Point& p, const Offset &o, Locate_type lt, Face_handle loc, int li,
     }
     case EDGE:
     {
-      result = insert_in_edge(p, o, loc, li, vh);
+      // @tmp
+//       result = insert_in_edge(p, o, loc, li, vh);
       break;
     }
     case VERTEX:
     {
       // The vertex is a special case, we can return immediately
-      CGAL_assertion(vh == Vertex_handle());
-      return loc->vertex(li);
+      // @tmp
+//      CGAL_assertion(vh == Vertex_handle());
+//      return loc->vertex(li);
     }
     case EMPTY:
     {
-      result = insert_first(p);
+      // @tmp
+//      result = insert_first(p);
       break;
     }
     default:
@@ -2353,14 +2401,14 @@ march_locate_2D(Face_handle f, const Point& query,
 
   // @tmp ignore the 'best possible' can we do that?
   // Give the point the best start-offset possible
-  if(is_1_cover() && !f->has_zero_offsets())
-  {
-    int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
-    if(((cumm_off & 2) == 2) && (FT(2) * query.x() < (domain().xmax() + domain().xmin())))
-      off_query += Offset(1, 0);
-    if(((cumm_off & 1) == 1) && (FT(2) * query.y() < (domain().ymax() + domain().ymin())))
-      off_query += Offset(0, 1);
-  }
+  // if(is_1_cover() && !f->has_zero_offsets())
+  // {
+  //   int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
+  //   if(((cumm_off & 2) == 2) && (FT(2) * query.x() < (domain().xmax() + domain().xmin())))
+  //     off_query += Offset(1, 0);
+  //   if(((cumm_off & 1) == 1) && (FT(2) * query.y() < (domain().ymax() + domain().ymin())))
+  //     off_query += Offset(0, 1);
+  // }
 
   Face_handle prev = Face_handle();
   int prev_index = 0;
@@ -3170,6 +3218,7 @@ side_of_face(const Point &q, const Offset &off, Face_handle f, Locate_type &lt, 
       offs[i] = get_offset(f, i);
     }
 
+// @todo same change as in get_location_offset()
     CGAL_triangulation_assertion(orientation(*p[0], *p[1], *p[2],
                                              offs[0], offs[1], offs[2]) == POSITIVE);
     bool found = false;
@@ -3232,9 +3281,9 @@ Oriented_side
 Periodic_2_triangulation_2<Gt, Tds>::
 oriented_side(Face_handle f, const Point& p, const Offset &o) const
 {
-  Point &p0 = f->vertex(0)->point();
-  Point &p1 = f->vertex(1)->point();
-  Point &p2 = f->vertex(2)->point();
+  Point& p0 = f->vertex(0)->point();
+  Point& p1 = f->vertex(1)->point();
+  Point& p2 = f->vertex(2)->point();
 
   int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
 
@@ -3268,8 +3317,9 @@ oriented_side(Face_handle f, const Point& p, const Offset &o) const
     // the orientation of the vertices is assumed to be counter clockwise
     CGAL_assertion(orientation(p0, p1, p2, off0, off1, off2) == LEFT_TURN);
 
+// @todo same change as in get_location_offset()
     Bounded_side bs;
-    for(int i = 0; (i <= 7); ++i)
+    for(int i = 0; i<4; ++i)
     {
       if((cumm_off | ((~i) & 3)) == 3)
       {
