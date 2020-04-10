@@ -28,7 +28,7 @@ bool test(const DT& dt, const Big_tuple& tuple);
 int main(int, char* [])
 {
   const std::vector<Point_3> points = { { -2,  0,  0 },
-                                        {  2,  0,  0 }, 
+                                        {  2,  0,  0 },
                                         {  0,  1,  -1 },
                                         {  0, -1,  -1 },
                                         {  0,  0,  1 },
@@ -83,7 +83,7 @@ bool test(const DT& dt, const Big_tuple& tuple)
             << p2 << " )\n#\n";
   Segment_simplex_iterator st = dt.segment_traverser_simplices_begin(p1, p2);
   Segment_simplex_iterator stend = dt.segment_traverser_simplices_end();
-  
+
   unsigned int nb_cells = 0, nb_facets = 0, nb_edges = 0, nb_vertex = 0;
   unsigned int nb_collinear = 0;
 

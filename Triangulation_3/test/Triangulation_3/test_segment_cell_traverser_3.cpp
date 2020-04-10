@@ -19,7 +19,7 @@ typedef DT::Segment_cell_iterator                 Segment_cell_iterator;
 int main(int argc, char* argv[])
 {
   const std::vector<Point_3> points = { { -2,  0,  0 },
-                                        {  2,  0,  0 }, 
+                                        {  2,  0,  0 },
                                         {  0,  1, -1 },
                                         {  0, -1, -1 },
                                         {  0,  0,  1 },
@@ -35,10 +35,10 @@ int main(int argc, char* argv[])
 
   std::vector<DT::Vertex_handle> vertices;
   vertices.reserve(points.size());
-  
+
   DT dt;
   for(auto p: points) vertices.push_back(dt.insert(p));
-  
+
   Cell_handle c;
   assert( dt.is_valid() );
   assert( dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));

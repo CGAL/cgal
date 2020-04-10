@@ -37,7 +37,7 @@ Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, Vertex_han
     _target = t->point();
     _s_vertex = s;
     _t_vertex = t;
-    
+
     Cell_handle c = s->cell();
     // If a vertex of an infinite cell, we start inside the convex hull.
     int inf;
@@ -246,7 +246,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next() {
     CGAL_triangulation_precondition( has_next() );
-    
+
     // Check if the target is in the current cell.
     int ti;
     if( cell()->has_vertex( _t_vertex, ti ) ) {
@@ -620,7 +620,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       CGAL_triangulation_assertion( pos == 6 );
       prev_after_walk = Simplex( std::get<0>(cur), Tr::CELL, -1, -1 );
       CGAL_triangulation_assertion( (! regular_case) || inside );
-      break; 
+      break;
 
     case 3:
       prev_after_walk = Simplex( std::get<0>(cur), Tr::FACET, 6-pos, -1 );
@@ -687,7 +687,7 @@ walk_to_next_3_inf( int inf )
             o[li] = COPLANAR;
             continue;
         }
-        
+
         // Skip the previous cell.
         Cell_handle next = cell()->neighbor(li);
         if( next == prev_cell() ) {
@@ -954,7 +954,7 @@ walk_to_next_2()
         }
         case Tr::FACET: {
           int li = 0;
-          
+
             Orientation o[3];
             bool calc[3] = { false, false, false };
 

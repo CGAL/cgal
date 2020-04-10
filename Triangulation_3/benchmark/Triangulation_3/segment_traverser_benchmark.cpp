@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
