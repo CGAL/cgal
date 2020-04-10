@@ -98,7 +98,7 @@ int main()
   T.convert_to_1_cover();
   T.insert(Point(0.3, 0.12));
 
-  draw(T.dt2, "Post-Insertion");
+  T.draw_p2t2();
 
   return EXIT_SUCCESS;
 }

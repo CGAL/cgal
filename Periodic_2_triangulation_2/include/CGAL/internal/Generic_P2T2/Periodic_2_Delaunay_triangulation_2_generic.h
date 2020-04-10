@@ -15,6 +15,7 @@
 
 #include <utility>
 #include <iostream>
+#include <fstream>
 
 namespace CGAL {
 namespace Periodic_2_triangulations_2 {
@@ -937,6 +938,41 @@ public:
 
     CGAL_postcondition(p2t2.tds().is_valid(true));
     CGAL_postcondition(p2t2.is_valid(true));
+  }
+
+  void draw_p2t2() const
+  {
+    std::ofstream out("p2t2.off");
+    out << "OFF\n";
+
+    std::map<Point, int> ids;
+    std::vector<std::array<int, 3> > faces;
+
+    int pid = 0;
+    for(auto fit=p2t2.faces_begin(); fit!=p2t2.faces_end(); ++fit)
+    {
+      std::array<int, 3> face;
+      for(int i=0; i<3; ++i)
+      {
+        auto itb = ids.insert(std::make_pair(p2t2.point(fit, i), pid));
+        if(itb.second)
+          ++pid;
+        face[i] = itb.first->second;
+      }
+      faces.push_back(face);
+    }
+
+    CGAL_assertion(faces.size() == p2t2.number_of_faces());
+
+    out << ids.size() << " " << p2t2.number_of_faces() << " 0\n";
+
+    for(const auto& e : ids)
+      out << e.first << " 0" << std::endl;
+
+    for(const auto& face : faces)
+      out << "3 " << face[0] << " " << face[1] << " " << face[2] << std::endl;
+
+    out << std::endl;
   }
 
 public:
