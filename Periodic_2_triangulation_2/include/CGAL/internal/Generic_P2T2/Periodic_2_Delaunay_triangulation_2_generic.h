@@ -949,6 +949,7 @@ public:
 
     std::map<Point, int> ids;
     std::vector<std::array<int, 3> > faces;
+    std::vector<Point> points;
 
     int pid = 0;
     for(auto fit=dt2.finite_faces_begin(); fit!=dt2.finite_faces_end(); ++fit)
@@ -959,7 +960,11 @@ public:
         std::pair<typename std::map<Point, int>::iterator, bool> itb =
             ids.insert(std::make_pair(dt2.point(fit, i), pid));
         if(itb.second)
+        {
+          points.push_back(dt2.point(fit, i));
           ++pid;
+        }
+
         face[i] = itb.first->second;
       }
       faces.push_back(face);
@@ -969,8 +974,8 @@ public:
 
     out << ids.size() << " " << dt2.number_of_faces() << " 0\n";
 
-    for(const auto& e : ids)
-      out << e.first << " 0" << std::endl;
+    for(const Point& pt : points)
+      out << pt << " 0" << std::endl;
 
     for(const auto& face : faces)
       out << "3 " << face[0] << " " << face[1] << " " << face[2] << std::endl;
@@ -985,6 +990,7 @@ public:
 
     std::map<Point, int> ids;
     std::vector<std::array<int, 3> > faces;
+    std::vector<Point> points;
 
     int pid = 0;
     for(auto fit=p2t2.faces_begin(); fit!=p2t2.faces_end(); ++fit)
@@ -994,7 +1000,11 @@ public:
       {
         auto itb = ids.insert(std::make_pair(p2t2.point(fit, i), pid));
         if(itb.second)
+        {
+          points.push_back(p2t2.point(fit, i));
           ++pid;
+        }
+
         face[i] = itb.first->second;
       }
       faces.push_back(face);
@@ -1004,8 +1014,8 @@ public:
 
     out << ids.size() << " " << p2t2.number_of_faces() << " 0\n";
 
-    for(const auto& e : ids)
-      out << e.first << " 0" << std::endl;
+    for(const Point& pt : points)
+      out << pt << " 0" << std::endl;
 
     for(const auto& face : faces)
       out << "3 " << face[0] << " " << face[1] << " " << face[2] << std::endl;
