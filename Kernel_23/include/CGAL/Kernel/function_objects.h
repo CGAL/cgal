@@ -694,6 +694,45 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
+  class Compare_weighted_squared_radius_2
+  {
+  public:
+    typedef typename K::Weighted_point_2                  Weighted_point_2;
+    typedef typename K::Comparison_result                 Comparison_result;
+    typedef typename K::FT                                FT;
+
+    typedef Comparison_result                             result_type;
+
+    result_type operator()(const Weighted_point_2 & p,
+                           const Weighted_point_2 & q,
+                           const Weighted_point_2 & r,
+                           const FT& w) const
+    {
+      return CGAL::compare(squared_radius_orthogonal_circleC2(
+                             p.x(),p.y(),p.weight(),
+                             q.x(),q.y(),q.weight(),
+                             r.x(),r.y(),r.weight()),
+                           w);
+    }
+
+    result_type operator()(const Weighted_point_2 & p,
+                           const Weighted_point_2 & q,
+                           const FT& w) const
+    {
+      return CGAL::compare(squared_radius_smallest_orthogonal_circleC2(
+                             p.x(),p.y(),p.weight(),
+                             q.x(),q.y(),q.weight()),
+                           w);
+    }
+
+    result_type operator()(const Weighted_point_2 & p,
+                           const FT& w) const
+    {
+      return CGAL::compare(-p.weight(), w);
+    }
+  };
+
+  template <typename K>
   class Compare_weighted_squared_radius_3
   {
   public:

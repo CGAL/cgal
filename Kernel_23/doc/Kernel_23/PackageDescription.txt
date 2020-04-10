@@ -284,7 +284,9 @@
 - `Kernel::CompareSignedDistanceToLine_2`
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
+- `Kernel::CompareSquaredRadius_2`
 - `Kernel::CompareSquaredRadius_3`
+- `Kernel::CompareWeightedSquaredRadius_2`
 - `Kernel::CompareWeightedSquaredRadius_3`
 - `Kernel::CompareXAtY_2`
 - `Kernel::CompareXYZ_3`

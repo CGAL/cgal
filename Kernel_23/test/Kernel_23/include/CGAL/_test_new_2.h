@@ -502,6 +502,12 @@ test_new_2(const R& rep)
   tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
   tmp34ab = CGAL::compare_distance(t2, l1, s1);
 
+  typename R::Compare_squared_radius_2 compare_sq_radius
+        = rep.compare_squared_radius_2_object();
+  tmp34ab = compare_sq_radius(p1, p2, p3, FT(0));
+  tmp34ab = compare_sq_radius(p1, p2, FT(0));
+  tmp34ab = compare_sq_radius(p1, FT(0));
+
   typename R::Compare_power_distance_2 compare_power_dist
         = rep.compare_power_distance_2_object();
   tmp34ab = compare_power_dist(p1, wp2, wp3);
@@ -538,6 +544,11 @@ test_new_2(const R& rep)
   Orientation tmp40 = orientation(p2,p3,p4);
   tmp40 = orientation(v2,v3);
 
+  typename R::Compare_weighted_squared_radius_2 compare_weighted_squared_radius
+        = rep.compare_weighted_squared_radius_2_object();
+  tmp34ac = compare_weighted_squared_radius(wp4, FT(1));
+  tmp34ac = compare_weighted_squared_radius(wp4, wp5, FT(1));
+  tmp34ac = compare_weighted_squared_radius(wp4, wp5, wp6, FT(1));
 
   typename R::Side_of_oriented_circle_2 side_of_oriented_circle
         = rep.side_of_oriented_circle_2_object();
