@@ -121,7 +121,7 @@ namespace internal
       // facet opposite to new_v (status wrt c3t3 is unchanged)
       new_cell->set_surface_patch_index(new_cell->index(new_v),
                                         mfi.first->surface_patch_index(mfi.second));
-      
+
       // new half-facet (added or not to c3t3 depending on the stored surface patch index)
       if (Surface_patch_index() == v_and_opp_patch.second)
         new_cell->set_surface_patch_index(new_cell->index(v_and_opp_patch.first),

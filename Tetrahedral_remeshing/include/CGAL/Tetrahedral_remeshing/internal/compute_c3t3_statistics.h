@@ -49,7 +49,7 @@ namespace internal
 
     double min_edges_length = (std::numeric_limits<double>::max)();
     double max_edges_length = 0.;
-    
+
     double smallest_edge_radius = (std::numeric_limits<double>::max)();
     double smallest_radius_radius = (std::numeric_limits<double>::max)();
     double biggest_v_sma_cube = 0.;
@@ -197,7 +197,7 @@ namespace internal
     ofs << std::endl;
     ofs << "Min dihedral angle : " << min_dihedral_angle << std::endl;
     ofs << "Max dihedral angle : " << max_dihedral_angle << std::endl;
-    ofs << std::endl; 
+    ofs << std::endl;
     ofs << "Shortest edge       : " << min_edges_length << std::endl;
     ofs << "Longest edge        : " << max_edges_length << std::endl;
     ofs << "Average edge length : " << mean_edges_length << std::endl;

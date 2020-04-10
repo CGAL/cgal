@@ -483,7 +483,7 @@ private:
       return true;
     }
 
-  
+
   public:
     Tr& tr()
     {

@@ -123,7 +123,7 @@ Construct_translated_point_3 construct_translated_point_3_object();
 
 /*!
 */
-Construct_midpoint_3 	construct_midpoint_3_object();
+Construct_midpoint_3         construct_midpoint_3_object();
 
 /*!
 */

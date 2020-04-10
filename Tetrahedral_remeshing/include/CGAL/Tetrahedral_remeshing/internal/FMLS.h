@@ -161,7 +161,7 @@ namespace CGAL
         }
 
         // --------------------------------------------------------------
-        //  Main Interface 
+        //  Main Interface
         // --------------------------------------------------------------
 
         float* createPN(unsigned int size)
@@ -395,7 +395,7 @@ namespace CGAL
         inline void setNumOfIter(unsigned int i) { numIter = i; }
 
         // --------------------------------------------------------------
-        //  Misc. 
+        //  Misc.
         // --------------------------------------------------------------
 
         // Size of a point sample in bytes (6xfloat32: 3 for position and normal
@@ -427,7 +427,7 @@ namespace CGAL
         }
 
         // --------------------------------------------------------------
-        //  3D Grid Structure 
+        //  3D Grid Structure
         // --------------------------------------------------------------
         // --------------------------------------------------------------
         //  Grid data structure for fast r-ball neighborhood query
@@ -666,7 +666,7 @@ namespace CGAL
             subdomain_sample_numbers[si]++;
           }
         }
- 
+
         if (upsample > 0)
         {
           std::cout << "Up sampling MLS " << upsample << std::endl;

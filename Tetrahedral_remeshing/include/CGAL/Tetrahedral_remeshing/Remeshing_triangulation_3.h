@@ -33,12 +33,12 @@ namespace Tetrahedral_remeshing
 {
   /*!
   \ingroup PkgTetrahedralRemeshingClasses
-  
+
   The class `Remeshing_triangulation_3`
   is a class template which provides a valid triangulation type
   that can be used as the 3D triangulation input for
   the tetrahedral remeshing process.
-  
+
   \tparam Gt is the geometric traits class.
   It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 
@@ -55,7 +55,7 @@ namespace Tetrahedral_remeshing
   It has the default value `Triangulation_vertex_base_3<Gt>`.
 
   \cgalRefines `Triangulation_3`
-  
+
   */
   template<typename Gt,
            typename Concurrency_tag = CGAL::Sequential_tag,
@@ -141,7 +141,7 @@ namespace Tetrahedral_remeshing
     };
 
   }
-  
+
 
   template<typename T3, typename Gt>
   void build_remeshing_triangulation(const T3& tr,

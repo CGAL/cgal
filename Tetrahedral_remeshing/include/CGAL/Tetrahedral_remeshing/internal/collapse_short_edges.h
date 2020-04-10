@@ -1076,7 +1076,7 @@ namespace internal
         }
 
         Vertex_handle vh = collapse_edge(edge, c3t3, sq_high,
-                                         protect_boundaries, cell_selector, 
+                                         protect_boundaries, cell_selector,
                                          visitor);
         if (vh != Vertex_handle())
         {

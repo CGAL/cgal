@@ -53,7 +53,7 @@ namespace Tetrahedral_remeshing
     return vec(point(wp));
   }
 
-  
+
   const int indices_table[4][3] = { { 3, 1, 2 },
                                     { 3, 2, 0 },
                                     { 3, 0, 1 },
@@ -355,7 +355,7 @@ namespace Tetrahedral_remeshing
         *oit++ = c3t3.surface_patch_index(f);
     }
     while (++circ != end);
-  
+
     return oit;
   }
 

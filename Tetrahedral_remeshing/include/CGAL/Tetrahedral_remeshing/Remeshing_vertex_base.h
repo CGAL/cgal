@@ -31,7 +31,7 @@ namespace Tetrahedral_remeshing
 
   /*!
   \ingroup PkgTetrahedralRemeshingClasses
-  
+
   The class `Remeshing_vertex_base` is a model of the concept `MeshVertexBase_3`.
   It is designed to serve as vertex base class for the 3D triangulation
   used in the tetrahedral remeshing process.
@@ -42,9 +42,9 @@ namespace Tetrahedral_remeshing
   \tparam Vb is a vertex base class from which `Remeshing_vertex_base` derives.
   It must be a model of the `TriangulationVertexBase_3` concept.
   It has the default value `Triangulation_vertex_base_3<Gt>`.
-  
+
   \cgalModels `MeshVertexBase_3`
-  \cgalRefines `Triangulation_vertex_base_3` 
+  \cgalRefines `Triangulation_vertex_base_3`
   */
 
   template<typename GT,

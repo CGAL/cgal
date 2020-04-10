@@ -384,7 +384,7 @@ namespace internal
 
     // std::cout << "find_best_flip_to_improve_dh boundary " << std::endl;
     Tr& tr = c3t3.triangulation();
-   
+
     Vertex_handle vh0 = edge.first->vertex(edge.second);
     Vertex_handle vh1 = edge.first->vertex(edge.third);
 

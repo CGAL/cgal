@@ -92,7 +92,7 @@ void generate_input(const std::size_t& n,
 
   Vertex_handle v2 = tr.insert(Point( 2., -2., -2.));
   Vertex_handle v3 = tr.insert(Point( 2., -2.,  2.));
-  
+
   Vertex_handle v4 = tr.insert(Point(-2.,  2.,  -2.));
   Vertex_handle v5 = tr.insert(Point(-2.,  2.,   2.));
 

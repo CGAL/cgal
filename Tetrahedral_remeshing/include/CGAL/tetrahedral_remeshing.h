@@ -118,7 +118,7 @@ namespace CGAL
                           {return target_edge_length;},
       np);
   }
-  
+
   template<typename Traits, typename TDS, typename SLDS,
            typename NamedParameters>
   void tetrahedral_adaptive_remeshing(
@@ -246,7 +246,7 @@ namespace CGAL
   /////// MESH_COMPLEX_3_IN_TRIANGULATION_3 /////////
   ///////////////////////////////////////////////////
 
-  template<typename Tr, 
+  template<typename Tr,
            typename CornerIndex, typename CurveIndex,
            typename NamedParameters>
   void tetrahedral_adaptive_remeshing(
