@@ -900,9 +900,13 @@ public:
 
       Face_handle fh = p2t2.tds().create_face(p2t2_vh0, p2t2_vh1, p2t2_vh2);
 
-      fh->set_offsets(fit->vertex(0)->offset()-fit->vertex(0)->offset(),
-                      fit->vertex(1)->offset()-fit->vertex(0)->offset(),
-                      fit->vertex(2)->offset()-fit->vertex(0)->offset());
+      Offset min_off = CGAL::min(fit->vertex(0)->offset(),
+                                 fit->vertex(1)->offset(),
+                                 fit->vertex(2)->offset());
+
+      fh->set_offsets(fit->vertex(0)->offset() - min_off,
+                      fit->vertex(1)->offset() - min_off,
+                      fit->vertex(2)->offset() - min_off);
 
       add_edge_to_incident_faces_map(fh, 0, incident_faces_map);
       add_edge_to_incident_faces_map(fh, 1, incident_faces_map);
