@@ -238,9 +238,9 @@ public:
 
   bool operator==(const Gmpq &q) const noexcept { return mpq_equal(this->mpq(), q.mpq()) != 0;}
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(const Gmpq&q) const noexcept { return mpq_cmp(this->mpq(), q.mpq()) <=> 0; }
+  std::strong_ordering operator<=>(const Gmpq&q) const { return mpq_cmp(this->mpq(), q.mpq()) <=> 0; }
 #else
-  bool operator< (const Gmpq &q) const noexcept { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
+  bool operator< (const Gmpq &q) const { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
 #endif
 
   double to_double() const noexcept;
@@ -264,7 +264,7 @@ public:
   Gmpq& operator*=(int z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(int z){return (*this)/= Gmpq(z);}
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(int z) const noexcept { return mpq_cmp_si(mpq(),z,1) <=> 0; }
+  std::strong_ordering operator<=>(int z) const { return mpq_cmp_si(mpq(),z,1) <=> 0; }
 #else
   bool  operator==(int z) const {return mpq_cmp_si(mpq(),z,1)==0;}
   bool  operator< (int z) const {return mpq_cmp_si(mpq(),z,1)<0;}
@@ -277,7 +277,7 @@ public:
   Gmpq& operator*=(long z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(long z){return (*this)/= Gmpq(z);}
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(long z) const noexcept { return mpq_cmp_si(mpq(),z,1) <=> 0; }
+  std::strong_ordering operator<=>(long z) const { return mpq_cmp_si(mpq(),z,1) <=> 0; }
 #else
   bool  operator==(long z) const {return mpq_cmp_si(mpq(),z,1)==0;}
   bool  operator< (long z) const {return mpq_cmp_si(mpq(),z,1)<0;}
@@ -290,7 +290,7 @@ public:
   Gmpq& operator*=(long long z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(long long z){return (*this)/= Gmpq(z);}
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(long long z) const noexcept { return *this <=> Gmpq(z); }
+  std::strong_ordering operator<=>(long long z) const { return *this <=> Gmpq(z); }
 #else
   bool  operator==(long long z) const {return (*this)== Gmpq(z);}
   bool  operator< (long long z) const {return (*this)<  Gmpq(z);}
@@ -303,7 +303,7 @@ public:
   Gmpq& operator*=(double d){return (*this)*= Gmpq(d);}
   Gmpq& operator/=(double d){return (*this)/= Gmpq(d);}
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(double d) const noexcept { return *this <=> Gmpq(d); }
+  std::strong_ordering operator<=>(double d) const { return *this <=> Gmpq(d); }
 #else
   bool  operator==(double d) const {return (*this)== Gmpq(d);}
   bool  operator< (double d) const {return (*this)<  Gmpq(d);}
@@ -316,7 +316,7 @@ public:
   Gmpq& operator*=(const Gmpz&);
   Gmpq& operator/=(const Gmpz&);
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(const Gmpz& z) const noexcept { return *this <=> Gmpq(z); }
+  std::strong_ordering operator<=>(const Gmpz& z) const { return *this <=> Gmpq(z); }
 #else
   bool  operator==(const Gmpz &z) const {return (*this)== Gmpq(z);}
   bool  operator< (const Gmpz &z) const {return (*this)<  Gmpq(z);}
@@ -329,7 +329,7 @@ public:
   Gmpq& operator*=(const Gmpfr &f){return (*this)*= Gmpq(f);}
   Gmpq& operator/=(const Gmpfr &f){return (*this)/= Gmpq(f);}
 #if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(const Gmpfr& f) const noexcept { return 0 <=> mpfr_cmp_q(f.fr(),mpq()); }
+  std::strong_ordering operator<=>(const Gmpfr& f) const { return 0 <=> mpfr_cmp_q(f.fr(),mpq()); }
 #else
   bool  operator==(const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())==0;}
   bool  operator< (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())>0;}
