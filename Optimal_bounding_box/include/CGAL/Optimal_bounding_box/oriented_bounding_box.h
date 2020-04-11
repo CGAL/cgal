@@ -199,8 +199,18 @@ void construct_oriented_bounding_box(const PointRange& points,
   if(use_ch) // construct the convex hull to reduce the number of points
   {
     std::vector<Point> ch_points;
+
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
+  CGAL::Real_timer timer;
+  timer.start();
+#endif
+
     CGAL::Convex_hull_traits_3<Traits> CH_traits;
     extreme_points_3(points, std::back_inserter(ch_points), CH_traits);
+
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
+    std::cout << "CH time: " << timer.time() << std::endl;
+#endif
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     std::cout << ch_points.size() << " points on the convex hull" << std::endl;
@@ -241,6 +251,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 ///   The order of the points in the array is the same as in the function
 ///   \link PkgBGLHelperFct `CGAL::make_hexahedron()` \endlink,
 ///   which can be used to construct a mesh from these points.
+/// - a model of `MutableFaceGraph`
 ///
 /// Note that when returning an array of points, these points are constructed from the axis-aligned
 /// bounding box and some precision loss should therefore be expected if a kernel not providing
