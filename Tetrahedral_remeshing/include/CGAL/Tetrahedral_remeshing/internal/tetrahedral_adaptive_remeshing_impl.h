@@ -140,6 +140,7 @@ public:
     m_vertex_smoother.init(m_c3t3, m_cell_selector);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "00-init.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
 #endif
   }
@@ -166,6 +167,7 @@ public:
     m_vertex_smoother.init(m_c3t3, m_cell_selector);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "00-init.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
 #endif
   }
@@ -187,7 +189,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-    CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "1-split.mesh");
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "1-split.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "1-split.binary.cgal");
 #endif
   }
@@ -205,8 +207,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-    CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
-        "2-collapse.mesh");
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "2-collapse.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "2-collapse.binary.cgal");
 #endif
   }
@@ -219,7 +220,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-    CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "3-flip.mesh");
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "3-flip.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "3-flip.binary.cgal");
 #endif
   }
@@ -231,8 +232,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-    CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
-        "4-smooth.mesh");
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "4-smooth.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "4-smooth.binary.cgal");
 #endif
   }
@@ -302,7 +302,7 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
-    CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "99-postprocess.mesh");
+    CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "99-postprocess.mesh");
     CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "99-postprocess.binary.cgal");
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

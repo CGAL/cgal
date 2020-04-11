@@ -1301,17 +1301,13 @@ void dump_binary(const C3t3& c3t3, const char* filename)
   os.close();
 }
 
-//template<typename VertexPairsSet>
-//void dump_edges(const VertexPairsSet& edges, const char* filename)
-//{
-//  std::ofstream ofs(filename);
-//  BOOST_FOREACH(typename VertexPairsSet::key_type vp, edges)
-//  {
-//    ofs << "2 " << vp.first->point()
-//      << " " << vp.second->point() << std::endl;
-//  }
-//  ofs.close();
-//}
+template<typename C3t3>
+void dump_medit(const C3t3& c3t3, const char* filename)
+{
+  std::ofstream os(filename, std::ios::out);
+  c3t3.output_to_medit(os, true, true);
+  os.close();
+}
 
 } //namespace debug
 } //namespace Tetrahedral_remeshing
