@@ -24,3 +24,6 @@ EXPAND_AS_DEFINED      = CGAL_BGL_NP_TEMPLATE_PARAMETERS \
 EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Optimal_bounding_box/internal
 EXCLUDE_SYMBOLS += experimental
 
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/aabb_vs_obb.jpg \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/obb_chess.png
+
