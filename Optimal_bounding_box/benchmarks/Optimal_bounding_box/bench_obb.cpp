@@ -1,13 +1,15 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Optimal_bounding_box/oriented_bounding_box.h>
 
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/subdivision_method_3.h>
 #include <CGAL/Timer.h>
+
+#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/STL_reader.h>
+#include <CGAL/IO/OBJ_reader.h>
 
 #include <iostream>
 #include <fstream>
@@ -22,50 +24,98 @@ typedef K::Point_3                                                     Point_3;
 typedef CGAL::Surface_mesh<Point_3>                                    Surface_mesh;
 typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor  vertex_descriptor;
 
-void bench_finding_obb(const std::string fname)
+template <typename Point>
+bool read_mesh(const std::string filename,
+               std::vector<Point>& points)
 {
-  std::ifstream input(fname);
-
-  // import a mesh
-  Surface_mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty())
+  std::ifstream in(filename.c_str());
+  if(!in.good())
   {
-    std::cerr << fname << " is not a valid off file." << std::endl;
-    std::exit(1);
+//    std::cerr << "Error: can't read file at " << filename << std::endl;
+    return false;
   }
 
+  std::vector<std::vector<std::size_t> > unused_faces;
+
+  std::string fn(filename);
+  if(fn.substr(fn.find_last_of(".") + 1) == "stl")
+  {
+    if(!CGAL::read_STL(in, points, unused_faces))
+      return false;
+  }
+  else if(fn.substr(fn.find_last_of(".") + 1) == "obj")
+  {
+    if(!CGAL::read_OBJ(in, points, unused_faces))
+      return false;
+  }
+  else if(fn.substr(fn.find_last_of(".") + 1) == "off")
+  {
+    if(!CGAL::read_OFF(in, points, unused_faces))
+      return false;
+  }
+  else
+  {
+//    std::cerr << "Error: unsupported file format: " << filename << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+void bench_finding_obb(const std::string filename,
+                       const int iter)
+{
   CGAL::Timer timer;
 
-  std::size_t measurements = 4;
-  for(std::size_t t=0; t<measurements; ++t)
+  std::vector<Point_3> points;
+  read_mesh(filename, points);
+
+  std::vector<Point_3> ch_points;
+  std::array<Point_3, 8> obb_points1;
+  std::array<Point_3, 8> obb_points2;
+
+  double ch_time = 0.;
+  double obb_time = 0.;
+  double total_time_ch = 0.;
+  double total_time_no_ch = 0.;
+
+  for(int i=0; i<iter; ++i)
   {
-    std::cout << "Iteration: " << t << std::endl;
-    std::cout << num_vertices(mesh) << " nv and " << num_faces(mesh) << " nf" << std::endl;
+//    std::cout << "Iter #" << i << std::endl;
+//    std::cout << points.size() << std::endl;
 
     // 1) measure convex hull calculation
+    timer.reset();
+    ch_points.clear();
+
     timer.start();
-    CGAL::Polyhedron_3<K> poly;
-    convex_hull_3(mesh, poly);
+    extreme_points_3(points, std::back_inserter(ch_points));
     timer.stop();
-    std::cout << "takes : " << timer.time() << " seconds to find the convex hull\n";
-    std::cout << num_vertices(poly) << " vertices on the convex hull" << std::endl;
+    ch_time += timer.time();
 
     // 2) using convex hull
     timer.reset();
+
     timer.start();
-    std::array<Point_3, 8> obb_points1;
-    CGAL::oriented_bounding_box(mesh, obb_points1, CGAL::parameters::use_convex_hull(true));
+    CGAL::oriented_bounding_box(ch_points, obb_points1, CGAL::parameters::use_convex_hull(false));
     timer.stop();
-    std::cout << "found obb using convex hull: " << timer.time() << " seconds\n";
+    obb_time += timer.time();
+
+    // 2bis) using convex hull in one go
+    timer.reset();
+
+    timer.start();
+    CGAL::oriented_bounding_box(points, obb_points1, CGAL::parameters::use_convex_hull(true));
+    timer.stop();
+    total_time_ch += timer.time();
 
     // 3) without convex hull
     timer.reset();
+
     timer.start();
-    std::array<Point_3, 8> obb_points2;
-    CGAL::oriented_bounding_box(mesh, obb_points2, CGAL::parameters::use_convex_hull(false));
+    CGAL::oriented_bounding_box(points, obb_points2, CGAL::parameters::use_convex_hull(false));
     timer.stop();
-    std::cout << "found obb without convex hull: " <<  timer.time() << " seconds\n";
-    timer.reset();
+    total_time_no_ch += timer.time();
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_BENCHMARK
     Surface_mesh result_mesh1;
@@ -79,25 +129,40 @@ void bench_finding_obb(const std::string fname)
                           result_mesh2);
 
     std::stringstream oss1;
-    oss1 << "data/obb_result1_iter_" << t << std::ends;
+    oss1 << "data/obb_result1_iter_" << i << std::ends;
     std::ofstream out1(oss1.str().c_str());
     out1 << result_mesh1;
 
     std::stringstream oss2;
-    oss2 << "data/obb_result2_iter_" << t << std::ends;
+    oss2 << "data/obb_result2_iter_" << i << std::ends;
     std::ofstream out2(oss2.str().c_str());
     out2 << result_mesh2;
-
-    CGAL::Subdivision_method_3::CatmullClark_subdivision(mesh, CGAL::parameters::number_of_iterations(1));
 #endif
   }
+
+#if 1 // only outputs the core stuff
+  std::cout << points.size() << " "
+            << ch_points.size() << " "
+            << ch_time / iter << " "
+            << obb_time / iter << " "
+            << total_time_ch / iter << " "
+            << total_time_no_ch / iter << std::endl;
+#else
+  std::cout << "Average of " << iter << " iterations" << std::endl;
+  std::cout << points.size() << " vertices in the mesh" << std::endl;
+  std::cout << ch_points.size() << " vertices on the convex hull" << std::endl;
+  std::cout << ch_time / iter << " seconds to find the convex hull" << std::endl;
+  std::cout << obb_time / iter << " seconds to find the best rotation" << std::endl;
+  std::cout << total_time_ch / iter << " seconds to compute and find. "
+            << "Should be about equal to: " << (ch_time + obb_time) / iter << std::endl;
+  std::cout << total_time_no_ch / iter << " seconds to find the best rotation (NO CH)" << std::endl;
+#endif
 }
 
 int main(int argc, char** argv)
 {
-  bench_finding_obb((argc > 1) ? argv[1] : "data/elephant.off");
-
-  std::cout << "Done!" << std::endl;
+  const int iter = (argc > 2) ? std::atoi(argv[2]) : 5;
+  bench_finding_obb((argc > 1) ? argv[1] : "data/elephant.off", iter);
 
   return EXIT_SUCCESS;
 }
