@@ -616,20 +616,34 @@ bool clip(TriangleMesh& tm,
   * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
-  *                            that is used to track the creation of new faces.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `iso_cuboid` will be
-  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
-  *   \cgalParamEnd
-  *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
-  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e., `tm` will be kept closed).
-  *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `is_cuboid`
-  *                                        will not be part of the output.
+  *   \cgalParamNBegin{visitor}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{clip_volume}
+  *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `tm`
+  *                           rather than on its surface (i.e., `tm` will be kept closed).}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{use_compact_clipper}
+  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `iso_cuboid` will not be part of the output}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`true`}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -862,7 +876,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_compact_clipper}
-  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `plane` will not be part of the output}
+  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `iso_cuboid` will not be part of the output}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd

@@ -1131,11 +1131,6 @@ void split_connected_components_impl(FIMap fim,
  *   \cgalParamNBegin{vertex_index_map}
  *     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
- *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
-     faces of `pm`. Instance of a class model of `ReadPropertyMap`.
-     If not provided, an internal map will be filled with a call to
-    `connected_components()` with `edge_is_constrained_map()` (if provided).
-*  \cgalParamEnd
  *                    as key type and `std::size_t` as value type}
  *     \cgalParamDefault{an automatically indexed internal map}
  *   \cgalParamNEnd
@@ -1152,6 +1147,17 @@ void split_connected_components_impl(FIMap fim,
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                    as key type and `std::size_t` as value type}
  *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_patch_map}
+ *     \cgalParamDescription{a property map with the patch id's associated to the faces of `pmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and the desired property, model of `CopyConstructible` as value type.}
+ *     \cgalParamDefault{a default property map where each face is associated with the ID of
+ *                       the connected component it belongs to. Connected components are
+ *                       computed with respect to the constrained edges listed in the property map
+ *                       `edge_is_constrained_map`}
+ *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
