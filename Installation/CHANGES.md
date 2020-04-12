@@ -8,6 +8,12 @@ Release History
    the signed distance of two points to a line, or the line passing through two given points.
    Corresponding functors in the model (`Compare_signed_distance_to_line_2`) are also added.
 
+### 2D Triangulations
+ - Add function `split_subconstraint_graph_into_constraints()` to
+   `Constrained_triangulation_plus_2` to initialize the constraints
+   from a soup of disconnected segments that should first be split
+   into polylines.
+
 
 Release 5.0
 -----------
@@ -89,6 +95,16 @@ Release date: June 2020
     and does not require any new construction). The former tag, `CGAL::No_constraint_intersection_tag`,
     does not allow any intersection, except for the configuration of two constraints having a single
     common endpoints, for convience.
+
+### 3D Triangulations
+-   The free function `CGAL::file_input()` and the member function `CGAL::Triangulation_3::file_input()` 
+    have been added. The first allows to load a `Triangulation_3` from an input stream, using functors to create vertices and cells.
+    The second is simply the member function version of the first one.
+
+### 3D Triangulation Data Structure
+-   The free function `CGAL::file_input()` and the member function `CGAL::TDS_3::file_input()` 
+    have been added. The first allows to load a `TDS_3` from an input stream, using functors to create vertices and cells.
+    The second is simply the member function version of the first one. 
 
 ### dD Spatial Searching
 

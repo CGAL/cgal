@@ -324,7 +324,8 @@ template <typename PolygonMesh,
 std::size_t number_of_connected_components(const PolygonMesh& pmesh,
                                            const CGAL_PMP_NP_CLASS& np)
 {
-  typedef CGAL::dynamic_face_property_t<std::size_t>                                Face_property_tag;
+  typedef typename boost::graph_traits<PolygonMesh>::faces_size_type                faces_size_type;
+  typedef CGAL::dynamic_face_property_t<faces_size_type>                             Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag >::const_type Patch_ids_map;
 
   Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);
@@ -1050,23 +1051,49 @@ struct No_mark
 
 template < class PolygonMesh, class PolygonMeshRange,
            class FIMap, class VIMap,
-           class HIMap, class Ecm >
+           class HIMap, class Ecm, class NamedParameters >
 void split_connected_components_impl(FIMap fim,
                                      HIMap him,
                                      VIMap vim,
                                      Ecm ecm,
                                      PolygonMeshRange& range,
-                                     const PolygonMesh& tm)
+                                     const PolygonMesh& tm,
+                                     const NamedParameters& np)
 {
-  typename boost::template property_map<
-      PolygonMesh, CGAL::dynamic_face_property_t<int > >::const_type
-      pidmap = get(CGAL::dynamic_face_property_t<int>(), tm);
+  typedef typename boost::graph_traits<PolygonMesh>::faces_size_type  faces_size_type;
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::face_patch_t,
+      NamedParameters,
+      typename boost::template property_map<
+      PolygonMesh, CGAL::dynamic_face_property_t<faces_size_type > >::const_type> ::type
+      Fpm;
 
-  int nb_patches = CGAL::Polygon_mesh_processing::connected_components(
-                     tm, pidmap, CGAL::parameters::face_index_map(fim)
-                                                  .edge_is_constrained_map(ecm));
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
-  for(int i=0; i<nb_patches; ++i)
+  Fpm pidmap = choose_parameter(get_parameter(np, internal_np::face_patch),
+                                get(CGAL::dynamic_face_property_t<faces_size_type>(), tm));
+
+  faces_size_type nb_patches = 0;
+  if(is_default_parameter(get_parameter(np, internal_np::face_patch)))
+  {
+    nb_patches = CGAL::Polygon_mesh_processing::connected_components(
+          tm, pidmap, CGAL::parameters::face_index_map(fim)
+          .edge_is_constrained_map(ecm));
+  }
+  else
+  {
+    for(const auto& f : faces(tm))
+    {
+      faces_size_type patch_id = get(pidmap, f);
+      if(patch_id > nb_patches)
+        nb_patches = patch_id;
+    }
+    nb_patches+=1;
+  }
+
+  for(faces_size_type i=0; i<nb_patches; ++i)
   {
     CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>
         filter_graph(tm, i, pidmap, CGAL::parameters::face_index_map(fim)
@@ -1104,6 +1131,11 @@ void split_connected_components_impl(FIMap fim,
  *   \cgalParamNBegin{vertex_index_map}
  *     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
+     faces of `pm`. Instance of a class model of `ReadPropertyMap`.
+     If not provided, an internal map will be filled with a call to
+    `connected_components()` with `edge_is_constrained_map()` (if provided).
+*  \cgalParamEnd
  *                    as key type and `std::size_t` as value type}
  *     \cgalParamDefault{an automatically indexed internal map}
  *   \cgalParamNEnd
@@ -1144,7 +1176,7 @@ void split_connected_components(const PolygonMesh& pmesh,
   internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pmesh, np),
                                             CGAL::get_initialized_halfedge_index_map(pmesh, np),
                                             CGAL::get_initialized_vertex_index_map(pmesh, np),
-                                            ecm, cc_meshes, pm);
+                                            ecm, cc_meshes, pm, np);
 }
 
 template <class PolygonMesh, class PolygonMeshRange>

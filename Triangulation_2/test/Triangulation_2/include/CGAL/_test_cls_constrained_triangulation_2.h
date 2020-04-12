@@ -280,7 +280,8 @@ _test_cls_constrained_triangulation(const Triang &)
   vha = fh->vertex(li);
   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Triang::VERTEX );
   vhb =  fh->vertex(li);
-  assert(T1_2.is_edge(vha,vhb, fh, ih));
+  bool check = T1_2.is_edge(vha,vhb, fh, ih);
+  assert(check);
   assert(fh->is_constrained(ih));
   T1_2.remove_constrained_edge(fh,ih);
   assert(!fh->is_constrained(ih));
@@ -313,7 +314,7 @@ _test_cls_constrained_triangulation(const Triang &)
   vha = fh->vertex(li);
   fh  =  T2_2.locate(lpt[m+1],lt,li); assert( lt == Triang::VERTEX );
   vhb =  fh->vertex(li);
-  bool check = T2_2.is_edge(vha,vhb, fh, ih);
+  check = T2_2.is_edge(vha,vhb, fh, ih);
   assert(check);
   assert(fh->is_constrained(ih));
   T2_2.remove_constrained_edge(fh,ih);
