@@ -487,7 +487,7 @@ public :
   }
 };
 
-namespace FR_INTERN{
+namespace internal {
 // -----------------------------
 
 // fwd
@@ -765,12 +765,12 @@ public:
   };
 };
 
-} // namespace FR_INTERN
+} // namespace internal
 
 template <typename NT1, typename NT2>
 class Algebraic_structure_traits <Filtered_rational<NT1, NT2> >
-  : public FR_INTERN::FR_AST_base<Filtered_rational<NT1, NT2> ,
-                                  typename Algebraic_structure_traits<NT2>::Algebraic_category >
+  : public internal::FR_AST_base<Filtered_rational<NT1, NT2> ,
+                                 typename Algebraic_structure_traits<NT2>::Algebraic_category >
 {
   typedef Algebraic_structure_traits<NT2> AST1;
 
@@ -780,7 +780,7 @@ public:
   typedef typename AST1::Is_exact Is_exact;
 };
 
-namespace FR_INTERN {
+namespace internal {
 
 template < typename Filtered_rational, typename Is_real_embeddable >
 class FR_RET_base;
@@ -936,12 +936,12 @@ public:
   };
 };
 
-} // namespace FR_INTERN
+} // namespace internal
 
 template <typename NT1, typename NT2>
 class Real_embeddable_traits< Filtered_rational<NT1, NT2> >
-  : public FR_INTERN::FR_RET_base<Filtered_rational<NT1, NT2>,
-                                  typename Real_embeddable_traits<NT1>::Is_real_embeddable >
+  : public internal::FR_RET_base<Filtered_rational<NT1, NT2>,
+                                 typename Real_embeddable_traits<NT1>::Is_real_embeddable >
 {
   typedef Real_embeddable_traits<NT1> RET1;
 
@@ -984,7 +984,7 @@ struct Coercion_traits< int , Filtered_rational<NT1, NT2> >
   : public Coercion_traits< Filtered_rational<NT1, NT2> , int >
 { };
 
-namespace FR_INTERN {
+namespace internal {
 
 template < typename NT_checker, typename Tag = Tag_false >
 struct Coercion_traits_double
@@ -1011,12 +1011,12 @@ struct Coercion_traits_double< Filtered_rational<NT1, NT2> , Tag_true >
   };
 };
 
-} // namespace FR_INTERN
+} // namespace internal
 
 template <typename NT1, typename NT2>
 struct Coercion_traits< Filtered_rational<NT1, NT2>, double >
-  : public FR_INTERN::Coercion_traits_double<Filtered_rational<NT1, NT2>,
-                                             typename Coercion_traits<NT1, double>::Are_implicit_interoperable>
+  : public internal::Coercion_traits_double<Filtered_rational<NT1, NT2>,
+                                            typename Coercion_traits<NT1, double>::Are_implicit_interoperable>
 { };
 
 template <typename NT1, typename NT2>

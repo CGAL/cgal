@@ -113,7 +113,7 @@ struct is_pair_
 
 } // mpl namespace
 
-namespace frk {
+namespace internal {
 
 // Small utility to manipulate pairs for kernel objects, and
 // simple things for bool, Sign...  Object is yet another case...
@@ -193,7 +193,7 @@ struct Pairify<const Interval_nt<false>&, const typename CGAL::internal::Exact_f
   }
 };
 
-} // namespace frk
+} // namespace internal
 
 #define SPEC_NT_GETTER(X)                                                                          \
   template <>                                                                                      \
@@ -354,7 +354,7 @@ public:
   {
     typedef typename cpp11::result_of<AP(typename Getter<A>::first_type...)>::type R1;
     typedef typename cpp11::result_of<EP(typename Getter<A>::second_type...)>::type R2;
-    typedef typename frk::Pairify<R1,R2,EK,FRK>::result_type type;
+    typedef typename internal::Pairify<R1,R2,EK,FRK>::result_type type;
   };
 
   // In case the exact result type is a reference
@@ -385,16 +385,16 @@ public:
 
   // TODO: I think the result_of is simply using AP::result_type because arguments are not valid (pairs...)
   template <class ... A>
-  typename frk::Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
-                        typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type,
-                        EK, FRK>::result_type
+  typename internal::Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
+                             typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type,
+                             EK, FRK>::result_type
   operator()(const A&... a) const
   {
     typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
     result_type_2 res2 = ep(exact(a)...);
 
-    return frk::Pairify<result_type_1, result_type_2, EK, FRK>()(
+    return internal::Pairify<result_type_1, result_type_2, EK, FRK>()(
              Approx<result_type_1>(e2a, ap)(res2, approx(a)...), res2);
   }
 };
