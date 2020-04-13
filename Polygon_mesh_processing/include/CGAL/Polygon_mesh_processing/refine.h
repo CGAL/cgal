@@ -51,11 +51,11 @@ namespace Polygon_mesh_processing {
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      must be available in `TriangleMesh`}
+                      must be available in `TriangleMesh`.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{a factor to control density of the output mesh, where larger values lead to denser refinements.}
+      \cgalParamDescription{a factor to control density of the output mesh, where larger values lead to denser refinements}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
       \cgalParamExtra{The density of vertices of `faces_out` is this factor times higher than the vertices of `faces`.}

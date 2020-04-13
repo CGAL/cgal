@@ -178,7 +178,6 @@ public:
         \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
         \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                        of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
       \cgalParamNEnd
 
       \cgalParamNBegin{plane_index_map}
@@ -1526,7 +1525,6 @@ private:
         \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
         \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                        of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
       \cgalParamNEnd
 
       \cgalParamNBegin{plane_index_map}

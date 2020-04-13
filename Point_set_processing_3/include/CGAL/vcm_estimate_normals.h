@@ -421,7 +421,6 @@ vcm_estimate_normals_internal (PointRange& points,
        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
        \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{diagonalize_traits}
@@ -497,7 +496,6 @@ vcm_estimate_normals (PointRange& points,
        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
        \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{diagonalize_traits}

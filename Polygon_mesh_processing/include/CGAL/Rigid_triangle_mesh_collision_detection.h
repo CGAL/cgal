@@ -198,9 +198,10 @@ public:
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
-  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
-  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available for the vertices of `tm`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     should be available for the vertices of `tm`.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}
@@ -210,7 +211,7 @@ public:
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{apply_per_connected_component}
-  *     \cgalParamDescription{If `false`, `tm` is assumed to have only one connected component, avoiding the extraction of connected components}
+  *     \cgalParamDescription{If `false`, `tm` is assumed to have only one connected component, avoiding the extraction of connected components.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
@@ -262,7 +263,8 @@ public:
   *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
-  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available for the vertices of `tm`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     should be available for the vertices of `tm`.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}
@@ -508,7 +510,8 @@ public:
   *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
-  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available for the vertices of `tm`}
+  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+  *                     should be available for the vertices of `tm`.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}

@@ -418,12 +418,11 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{output_iterator}
-///     \cgalParamDescription{An output iterator to collect the duplicated vertices. The first vertex
-///                           of each vector is a non-manifold vertex of the input mesh,
-///                           followed by the new vertices that were created to fix this precise
-///                           non-manifold configuration.}
+///     \cgalParamDescription{an output iterator to collect the duplicated vertices}
 ///     \cgalParamType{a model of `OutputIterator` with value type `std::vector<vertex_descriptor>`}
-///     \cgalParamDefault{`false`}
+///     \cgalParamDefault{unused}
+///     \cgalParamExtra{The first vertex of each vector is a non-manifold vertex of the input mesh,
+///                     followed by the new vertices that were created to fix the given non-manifold configuration.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///

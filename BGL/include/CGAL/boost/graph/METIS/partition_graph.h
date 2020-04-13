@@ -198,7 +198,7 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 ///     \cgalParamDescription{a property map that contains (after the function has been run)
 ///                           the ID of the subpart for each vertex of `tm`}
 ///     \cgalParamType{a class model of `ReadWritePropertyMap` with
-///                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+///                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 ///                    `int` as value type}
 ///     \cgalParamDefault{unused}
 ///   \cgalParamNEnd
@@ -207,7 +207,7 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 ///     \cgalParamDescription{a property map that contains (after the function has been run)
 ///                           the ID of the subpart for each face of `tm`}
 ///     \cgalParamType{a class model of `ReadWritePropertyMap` with
-///                    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+///                    `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and
 ///                    `int` as value type}
 ///     \cgalParamDefault{unused}
 ///   \cgalParamNEnd

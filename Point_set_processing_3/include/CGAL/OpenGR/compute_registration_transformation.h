@@ -183,7 +183,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
        \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_1`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange1` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+       \cgalParamDefault{Normals are computed and stored internally.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}
@@ -278,7 +278,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
        \cgalParamDescription{a property map associating normals to the elements of the poing set `point_set_2`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange2` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+       \cgalParamDefault{Normals are computed and stored internally.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 

@@ -559,9 +559,8 @@ create_mst_graph(
 
      \cgalParamNBegin{normal_map}
        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+       \cgalParamType{a model of `WritablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{neighbor_radius}
@@ -571,8 +570,7 @@ create_mst_graph(
        \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
                        radius instead of a fixed number of neighbors. In that case, the parameter
                        `k` is used as a limit on the number of points returned by each spherical
-                       query (to avoid overly large number of points in high density areas). If no
-                       limit is wanted, use `k=0`.}
+                       query (to avoid overly large number of points in high density areas).}
      \cgalParamNEnd
 
      \cgalParamNBegin{point_is_constrained_map}
@@ -580,7 +578,7 @@ create_mst_graph(
        \cgalParamType{a class model of `ReadablePropertyMap` with `PointRange::iterator::value_type`
                       as key type and `bool` as value type}
        \cgalParamDefault{If this parameter is omitted, the highest point (highest Z coordinate)
-                         will be used as the unique seed with an upward oriented}
+                         will be used as the unique seed with an upward oriented.}
        \cgalParamExtra{Points with a `true` value will be used as seed points: their normal
                        will be considered as already oriented, it won't be altered
                        and it will be propagated to its neighbors.}

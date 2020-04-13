@@ -364,7 +364,7 @@ struct Throw_at_first_output {
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `tm1` (`tm2`)}
- *     \cgalParamExtra{Both vertex point map must have the same value type}
+ *     \cgalParamExtra{Both vertex point maps must have the same value type}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -496,10 +496,10 @@ compute_face_face_intersection(const FaceRange& face_range1,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `tm`}
+ *                     should be available for the vertices of `tm`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -629,7 +629,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `tm`}
+ *                     should be available for the vertices of `tm`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -1011,7 +1011,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `tm`}
+ *                     should be available for the vertices of `tm`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -1230,7 +1230,7 @@ bool do_intersect(const Polyline& polyline1,
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `tm1` (`tm2`)}
- *     \cgalParamExtra{Both vertex point map must have the same value type}
+ *     \cgalParamExtra{Both vertex point maps must have the same value type}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -1330,7 +1330,7 @@ bool do_intersect(const TriangleMesh& tm1,
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `tm`}
+ *                     should be available for the vertices of `tm`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -1395,7 +1395,7 @@ bool do_intersect(const TriangleMesh& tm,
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `tm`}
+ *                     should be available for the vertices of `tm`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -1619,7 +1619,7 @@ struct Mesh_callback
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{do_overlap_test_of_bounded_sides}
- *     \cgalParamDescription{If set to `true` reports also overlap of bounded sides of meshes.
+ *     \cgalParamDescription{If `true`, reports also overlap of bounded sides of meshes.
  *                           If `false`, only the intersection of surface triangles are tested.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
@@ -1635,7 +1635,7 @@ struct Mesh_callback
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `tm`}
+ *                     should be available for the vertices of `tm`.}
  *     \cgalParamExtra{All vertex point maps must have the same value type}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -1730,7 +1730,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `tm1` (`tm2`)}
- *     \cgalParamExtra{Both vertex point map must have the same value type}
+ *     \cgalParamExtra{Both vertex point maps must have the same value type}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}

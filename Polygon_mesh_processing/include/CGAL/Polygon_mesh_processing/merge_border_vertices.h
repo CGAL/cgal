@@ -271,11 +271,12 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
+///
 template <class PolygonMesh, class NamedParameter>
 void merge_duplicated_vertices_in_boundary_cycle(
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
@@ -325,7 +326,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
 ///   \cgalParamNEnd

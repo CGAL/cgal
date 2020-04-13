@@ -194,12 +194,8 @@ public:
                        algorithm is running: the current advancement (between 0. and
                        1.) is passed as parameter. If it returns `true`, then the
                        algorithm continues its execution normally; if it returns
-                       `false`, the algorithm is stopped, all points are left unchanged
-                       and the function return `NaN`.}
+                       `false`, the algorithm is stopped and simplification stops with no guarantee on the output. }
        \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
-       \cgalParamExtra{When a callback is run on a parallelized algorithm with `CGAL::Parallel_tag`,
-                       it is called asynchronously on a separate thread and shouldn't access
-                       or modify the variables that are parameters of the algorithm.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

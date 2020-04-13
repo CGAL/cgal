@@ -244,7 +244,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`boost::get(CGAL::vertex_point, out)`}
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-*                     must be available in `PolygonMesh`}
+*                     must be available in `PolygonMesh`.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *

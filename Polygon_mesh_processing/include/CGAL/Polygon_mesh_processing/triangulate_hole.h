@@ -296,7 +296,7 @@ namespace Polygon_mesh_processing {
                             and C<sup>2</sup> continuity.}
       \cgalParamType{unsigned int}
       \cgalParamDefault{`1`}
-      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required}
+      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required.}
     \cgalParamNEnd
 
     \cgalParamNBegin{sparse_linear_solver}

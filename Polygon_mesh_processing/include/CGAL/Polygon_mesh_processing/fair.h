@@ -91,7 +91,7 @@ namespace internal {
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      should be available for the vertices of `input`.}
+                      should be available for the vertices of `tmesh`.}
     \cgalParamNEnd
 
     \cgalParamNBegin{fairing_continuity}
@@ -100,7 +100,7 @@ namespace internal {
                             and C<sup>2</sup> continuity.}
       \cgalParamType{unsigned int}
       \cgalParamDefault{`1`}
-      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required}
+      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required.}
     \cgalParamNEnd
 
     \cgalParamNBegin{sparse_linear_solver}

@@ -114,8 +114,7 @@ compute_avg_knn_sq_distance_3(
        \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
                        radius instead of a fixed number of neighbors. In that case, the parameter
                        `k` is used as a limit on the number of points returned by each spherical
-                       query (to avoid overly large number of points in high density areas). If no
-                       limit is wanted, use `k=0`.}
+                       query (to avoid overly large number of points in high density areas).}
      \cgalParamNEnd
 
      \cgalParamNBegin{threshold_percent}
@@ -143,9 +142,6 @@ compute_avg_knn_sq_distance_3(
                        `false`, the algorithm is stopped, all points are left unchanged
                        and the function return `points.size()`.}
        \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
-       \cgalParamExtra{When a callback is run on a parallelized algorithm with `CGAL::Parallel_tag`,
-                       it is called asynchronously on a separate thread and shouldn't access
-                       or modify the variables that are parameters of the algorithm.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

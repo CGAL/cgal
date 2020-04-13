@@ -86,11 +86,11 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `TriangleMesh`}
+///                     must be available in `TriangleMesh`.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{geom_traits}
@@ -122,14 +122,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///     \cgalParamExtra{The mesh must be closed.}
 ///   \cgalParamNEnd
 ///
-///   \cgalParamNBegin{volume_threshold}
-///     \cgalParamDescription{a fixed value such that only connected components whose volume is
-///                           larger than this value are kept (only applies to closed connected components)}
-///     \cgalParamType{`geom_traits::FT`}
-///     \cgalParamDefault{1\% of the length of the diagonal of the axis-aligned bounding box of the mesh, cubed}
-///     \cgalParamExtra{The mesh must be closed.}
-///   \cgalParamNEnd
-///
 ///   \cgalParamNBegin{edge_is_constrained_map}
 ///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`}
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
@@ -139,7 +131,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{dry_run}
-///     \cgalParamDescription{If set to `true`, the mesh will not be altered, but the number of components
+///     \cgalParamDescription{If `true`, the mesh will not be altered, but the number of components
 ///                           that would be removed is returned.}
 ///     \cgalParamType{Boolean}
 ///     \cgalParamDefault{`false`}
@@ -149,7 +141,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
 ///                           when using the "dry run" mode (see parameter `dry_run`)}
 ///     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
-///     \cgalParamDefault{`false`}
+///     \cgalParamDefault{unused}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///

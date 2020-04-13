@@ -305,9 +305,8 @@ update_new_point(
 
      \cgalParamNBegin{normal_map}
        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{sharpness_angle}
@@ -340,8 +339,7 @@ update_new_point(
        \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
                        radius instead of a fixed number of neighbors. In that case, the parameter
                        `k` is used as a limit on the number of points returned by each spherical
-                       query (to avoid overly large number of points in high density areas). If no
-                       limit is wanted, use `k=0`.}
+                       query (to avoid overly large number of points in high density areas).}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

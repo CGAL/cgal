@@ -406,13 +406,13 @@ namespace internal
  *   \cgalParamNBegin{first_index}
  *     \cgalParamDescription{the index of the first surface patch of `pmesh`}
  *     \cgalParamType{`std::size_t`}
- *     \cgalParamExtra{the patches will be numbered on `[first_index; first_index + num_patches]`,
- *                     where `num_patches` is the number of surface patches}
+ *     \cgalParamExtra{The patches will be numbered on `[first_index; first_index + num_patches]`,
+ *                     where `num_patches` is the number of surface patches.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{face_index_map}
  *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                    as key type and `std::size_t` as value type}
  *     \cgalParamDefault{an automatically indexed internal map}
  *   \cgalParamNEnd

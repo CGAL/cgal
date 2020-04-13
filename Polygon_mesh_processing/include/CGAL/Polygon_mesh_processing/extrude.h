@@ -259,7 +259,7 @@ void extrude_mesh(const InputMesh& input,
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, input)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `input`}
+ *                     should be available for the vertices of `input`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -272,7 +272,7 @@ void extrude_mesh(const InputMesh& input,
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, ouput)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `ouput`}
+ *                     should be available for the vertices of `ouput`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */

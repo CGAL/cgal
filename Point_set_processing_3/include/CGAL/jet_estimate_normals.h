@@ -118,9 +118,8 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
 
      \cgalParamNBegin{normal_map}
        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+       \cgalParamType{a model of `WritablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{neighbor_radius}
@@ -130,8 +129,7 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
        \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
                        radius instead of a fixed number of neighbors. In that case, the parameter
                        `k` is used as a limit on the number of points returned by each spherical
-                       query (to avoid overly large number of points in high density areas). If no
-                       limit is wanted, use `k=0`.}
+                       query (to avoid overly large number of points in high density areas).}
      \cgalParamNEnd
 
      \cgalParamNBegin{degree_fitting}
@@ -157,12 +155,10 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
                        algorithm is running: the current advancement (between 0. and
                        1.) is passed as parameter. If it returns `true`, then the
                        algorithm continues its execution normally; if it returns
-                       `false`, the algorithm is stopped, all points are left unchanged
-                       and the function return `NaN`.}
+                       `false`, the algorithm is stopped and the remaining normals are left unchanged.}
        \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
-       \cgalParamExtra{When a callback is run on a parallelized algorithm with `CGAL::Parallel_tag`,
-                       it is called asynchronously on a separate thread and shouldn't access
-                       or modify the variables that are parameters of the algorithm.}
+       \cgalParamExtra{When `CGAL::Parallel_tag` is used, the `callback` mechanism is called asynchronously
+                       on a separate thread and shouldn't access or modify the variables that are parameters of the algorithm.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

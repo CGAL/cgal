@@ -18,11 +18,11 @@ the number of edges effectively removed.
 \cgalNamedParamsBegin
   \cgalParamNBegin{vertex_point_map}
     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
-    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
                    as key type and `%Point_3` as value type}
     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                    should be available for the vertices of `tmesh`}
+                    should be available for the vertices of `tmesh`.}
   \cgalParamNEnd
 
   \cgalParamNBegin{geom_traits}
@@ -72,7 +72,7 @@ the number of edges effectively removed.
 
    \cgalParamNBegin{vertex_index_map}
      \cgalParamDescription{a property map associating to each vertex of `tmesh` a unique index between `0` and `num_vertices(tmesh) - 1`}
-     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
                     as key type and `std::size_t` as value type}
      \cgalParamDefault{an automatically indexed internal map}
      \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize

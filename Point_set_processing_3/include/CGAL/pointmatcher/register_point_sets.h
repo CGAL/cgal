@@ -63,7 +63,6 @@ namespace pointmatcher {
        \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_1`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange1` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{point_set_filters}
@@ -176,6 +175,7 @@ namespace pointmatcher {
    \cgalNamedParamsEnd
 
    \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
        \cgalParamDescription{a property map associating points to the elements of the point set `point_set_2`}
@@ -188,7 +188,6 @@ namespace pointmatcher {
        \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_2`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange2` and whose value type is `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
      \cgalParamNBegin{point_set_filters}

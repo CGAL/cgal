@@ -395,10 +395,10 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{output_iterator}
- *     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
+ *     \cgalParamDescription{an output iterator to collect the faces that would be removed by the algorithm,
  *                           when using the "dry run" mode (see parameter `dry_run`)}
  *     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
- *     \cgalParamDefault{`false`}
+ *     \cgalParamDefault{unused}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -547,10 +547,10 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{output_iterator}
- *     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
+ *     \cgalParamDescription{an output iterator to collect the faces that would be removed by the algorithm,
  *                           when using the "dry run" mode (see parameter `dry_run`)}
  *     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
- *     \cgalParamDefault{`false`}
+ *     \cgalParamDefault{unused}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

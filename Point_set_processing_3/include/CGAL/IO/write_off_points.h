@@ -52,7 +52,7 @@ namespace CGAL {
      \cgalParamNBegin{normal_map}
        \cgalParamDescription{a property map associating normals to the elements of the poing range}
        \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

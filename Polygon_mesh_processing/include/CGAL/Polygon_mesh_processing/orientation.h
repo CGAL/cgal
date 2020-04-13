@@ -720,7 +720,7 @@ void set_cc_intersecting_pairs(
  *
  *   \cgalParamNBegin{face_connected_component_map}
  *     \cgalParamDescription{a property map filled by this function and that will contain for each face the id
- *                           of its surface component in the range `[0, number of surface components - 1[`}
+ *                           of its surface component in the range `[0, number of surface components - 1]`}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
  *                    as key type and `std::size_t` as value type}
  *     \cgalParamDefault{an automatically indexed internal map}
@@ -1431,7 +1431,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `pm`}
+ *                     should be available for the vertices of `pm`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{face_index_map}
