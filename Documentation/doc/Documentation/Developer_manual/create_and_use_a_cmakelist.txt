@@ -1,10 +1,10 @@
 /*!
-\page devman_create_and_use_a_cmakelist How to use %CGAL with CMake
+\page devman_create_and_use_a_cmakelist How to use \cgal with CMake
 
-This page will explain how to manually create a CMakeLists.txt file to link a custom program with CGAL.
+This page will explain how to manually create a CMakeLists.txt file to link a custom program with \cgal.
 A base can be created using the script `cgal_create_CMakeLists`. Its usage is detailed in Section \ref devman_create_cgal_CMakeLists.
-\section seclink Linking with CGAL
-To link with the CGAL library, use the following :
+\section seclink Linking with \cgal
+To link with the \cgal library, use the following :
 \code
 find_package(CGAL)
 add_executable(my_executable my_source_file.cpp)
@@ -18,7 +18,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 target_link_libraries(my_executable CGAL::CGAL CGAL::CGAL_Core)
 \endcode
 
-There are also some cmake macros to link with CGAL dependenciesthat can be found in
+There are also some cmake macros to link with \cgal dependencies that can be found in
 the section \subpage thirdparty.
 
 \note The CGAL targets define the following compiler flags :
@@ -26,7 +26,7 @@ the section \subpage thirdparty.
   - `/fp:strict /fp:except-` with MSVC
 
 \section secexample Minimal Example Using Qt5
-This section describes a minimal example of a program that uses %CGAL and Qt5 for some GUI features.
+This section describes a minimal example of a program that uses \cgal and Qt5 for some GUI features.
 
 \subsection subcmake CMakeLists.txt
 \dontinclude Surface_mesh/CMakeLists.txt
