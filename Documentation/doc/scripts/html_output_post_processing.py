@@ -59,7 +59,15 @@ def conceptify(d):
 def conceptify_ns(d):
     conceptify_nested_classes(d)
 
+def make_id_unique(i, prefix):
+  link = pq(this)
+  link.attr('id',prefix+str(i))
+
 def write_out_html(d, fn):
+    # make id unique (needed most probably because of our poor jquery knowledge)
+    d('a#member-group').each( lambda i: make_id_unique(i, "member-group-") )
+    d('a#details').each( lambda i: make_id_unique(i, "details-") )
+
     f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
