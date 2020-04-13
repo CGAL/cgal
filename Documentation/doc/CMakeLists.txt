@@ -339,6 +339,12 @@ else()
   endforeach()
 endif()
 
+option(CGAL_BUILD_THREE_DOC "Build the documentation of the Three package" OFF)
+
+if (NOT CGAL_BUILD_THREE_DOC)
+  list(REMOVE_ITEM CGAL_DOC_PACKAGES "Three")
+endif()
+
 foreach(package ${CGAL_DOC_PACKAGES})
   configure_doxygen_package(${package})
 endforeach()
