@@ -14,34 +14,34 @@ to do whatever they want with the software. Using the software means to accept
 the license, which has the status of a contract between the user and the owner
 of the \cgal software.
 
-\section licensesGPL GPL
+\section licensesGPL GNU GPL
 
-The \sc{Gpl} is an Open Source license that, if you distribute your software
-based on \sc{Gpl}ed \cgal data structures, obliges you to distribute the
-source code of your software under the \sc{Gpl}.
+The GNU GPL is an Open Source license that, if you distribute your software
+based on GPLed \cgal data structures, obliges you to distribute the
+source code of your software under the GPL.
 
 The exact license terms can be found at the  Free Software Foundation
 web site: http://www.gnu.org/copyleft/gpl.html.
 
-\section licensesLGPL LGPL
+\section licensesLGPL GNU LGPL
 
-The \sc{Lgpl} is an Open Source license that obliges you to distribute
+The GNU LGPL is an Open Source license that obliges you to distribute
 modifications you make on \cgal software accessible to the users.
-In contrast to the \sc{Gpl}, there is no obligation to make the source
-code of software you build on top of \sc{Lgpl}ed \cgal data structures.
+In contrast to the GPL, there is no obligation to make the source
+code of software you build on top of LGPLed \cgal data structures.
 
 The exact license terms can be found at the Free Software Foundation web site:
 http://www.gnu.org/copyleft/lesser.html.
 
 \section licensesRationale Rationale of the License Choice
 
-We have chosen the \sc{Gpl} and the \sc{Lgpl} as they are well-known
+We have chosen the GPL and the LGPL as they are well-known
 and well-understood open source licenses. The former restricts
 commercial use, and the latter allows to promote software as de facto standard
 so that people can build new higher level data structures on top.
 
 Therefore, the packages forming a foundation layer are distributed under
-the \sc{Lgpl}, and the higher level packages under the \sc{Gpl}.
+the LGPL, and the higher level packages under the GPL.
 The package overview states for each package under which license it is distributed.
 
 \section licensesCommercial Commercial Licenses
@@ -57,7 +57,7 @@ as well as in evolutive maintenance.
 Users who have a commercial license for specific packages can check that
 they do not accidentally use packages for which they do not have a commercial
 license. The same holds for users who want to be sure that they only
-use packages of \cgal released under the \sc{Lgpl}.
+use packages of \cgal released under the LGPL.
 
 To enable checking, users have to define one of the following macros:
 
