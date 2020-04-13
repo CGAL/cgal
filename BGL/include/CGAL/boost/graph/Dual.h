@@ -211,6 +211,7 @@ get(Property p, const Dual<P>& dual, const Key& k) \
 
 CGAL_GET_OVERLOADS(boost::edge_index_t)
 CGAL_GET_OVERLOADS(boost::halfedge_index_t)
+CGAL_GET_OVERLOADS(boost::vertex_point_t)
 
 #undef CGAL_GET_OVERLOADS
 
