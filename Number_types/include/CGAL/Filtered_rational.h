@@ -106,7 +106,7 @@ public:
     , eii(true)
 #endif
   {
-    CGAL_static_assertion((std::is_same<T, NT2>::value));
+    CGAL_static_assertion((std::is_convertible<T, NT2>::value));
     CGAL_assertion(is_valid());
   }
 
