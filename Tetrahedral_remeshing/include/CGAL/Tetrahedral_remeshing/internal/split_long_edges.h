@@ -295,8 +295,6 @@ void split_long_edges(C3T3& c3t3,
       if(vh != Vertex_handle())
         visitor.after_split(tr, vh);
 
-      CGAL_assertion(debug::are_cell_orientations_valid(tr));
-
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       if (vh != Vertex_handle())
         ofs << vh->point() << std::endl;
