@@ -94,8 +94,8 @@ namespace CGAL {
         Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
         return
-             (std::max)( node->lower()->depth(current_max_depth + 1),
-                         node->upper()->depth(current_max_depth + 1));
+          (std::max)( node->lower()->depth(current_max_depth + 1),
+                      node->upper()->depth(current_max_depth + 1));
       }
     }
 
@@ -109,17 +109,17 @@ namespace CGAL {
     OutputIterator
     tree_items(OutputIterator it) const {
       if (is_leaf()) {
-         Leaf_node_const_handle node =
+        Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-         if (node->size()>0)
-            for (iterator i=node->begin(); i != node->end(); i++)
-              {*it=*i; ++it;}
-        }
+        if (node->size()>0)
+          for (iterator i=node->begin(); i != node->end(); i++)
+          {*it=*i; ++it;}
+      }
       else {
-         Internal_node_const_handle node =
+        Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-          it=node->lower()->tree_items(it);
-          it=node->upper()->tree_items(it);
+        it=node->lower()->tree_items(it);
+        it=node->upper()->tree_items(it);
       }
       return it;
     }
@@ -203,20 +203,20 @@ namespace CGAL {
       else {
          Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-        // after splitting b denotes the lower part of b
-        Kd_tree_rectangle<FT,D> b_upper(b);
-        node->split_bbox(b, b_upper);
+         // after splitting b denotes the lower part of b
+         Kd_tree_rectangle<FT,D> b_upper(b);
+         node->split_bbox(b, b_upper);
 
-        if (q.outer_range_contains(b))
-          it=node->lower()->tree_items(it);
-        else
-          if (q.inner_range_intersects(b))
-            it=node->lower()->search(it,q,b,tree_points_begin,cache_begin,dim);
-        if  (q.outer_range_contains(b_upper))
-          it=node->upper()->tree_items(it);
-        else
-          if (q.inner_range_intersects(b_upper))
-            it=node->upper()->search(it,q,b_upper,tree_points_begin,cache_begin,dim);
+         if (q.outer_range_contains(b))
+           it=node->lower()->tree_items(it);
+         else
+           if (q.inner_range_intersects(b))
+             it=node->lower()->search(it,q,b,tree_points_begin,cache_begin,dim);
+         if  (q.outer_range_contains(b_upper))
+           it=node->upper()->tree_items(it);
+         else
+           if (q.inner_range_intersects(b_upper))
+             it=node->upper()->search(it,q,b_upper,tree_points_begin,cache_begin,dim);
       };
       return it;
     }
