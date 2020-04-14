@@ -1,5 +1,3 @@
-#define CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 

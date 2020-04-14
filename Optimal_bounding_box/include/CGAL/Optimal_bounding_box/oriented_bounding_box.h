@@ -239,7 +239,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 ///
 /// \cgalHeading{Input}
 ///
-/// The input can be either a range of points, or a polygon mesh.
+/// The input can be either a range of 3D points, or a polygon mesh.
 ///
 /// \cgalHeading{Output}
 ///
