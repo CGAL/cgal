@@ -120,7 +120,7 @@ Segment_3 isocontour_in_face (TIN::Face_handle fh, double isovalue)
     // Compute position of segment vertex
     double ratio = (isovalue - zbottom) / (ztop - zbottom);
     Point_3 p = CGAL::barycenter (p0, (1 - ratio), p1,ratio);
-    
+
     if (source_found)
       target = p;
     else
@@ -151,17 +151,17 @@ public:
 
   Polylines_visitor (Graph& graph, std::vector<std::vector<Point_3> >& polylines)
     : polylines (polylines), graph(graph) { }
-  
+
   void start_new_polyline()
   {
     polylines.push_back (std::vector<Point_3>());
   }
-  
+
   void add_node (typename Graph::vertex_descriptor vd)
   {
     polylines.back().push_back (graph[vd]);
   }
-  
+
   void end_polyline()
   {
     // filter small polylines
@@ -213,7 +213,7 @@ int main (int argc, char** argv)
   //! [Save DSM]
 
   using Mesh = CGAL::Surface_mesh<Point_3>;
-  
+
   Mesh dsm_mesh;
   CGAL::copy_face_graph (dsm, dsm_mesh);
   std::ofstream dsm_ofile ("dsm.ply", std::ios_base::binary);
@@ -236,7 +236,7 @@ int main (int argc, char** argv)
   TIN_with_info tin_with_info
     (boost::make_transform_iterator (points.begin(), idx_to_point_with_info),
      boost::make_transform_iterator (points.end(), idx_to_point_with_info));
-     
+
   //! [TIN_with_info]
   ///////////////////////////////////////////////////////////////////
 
@@ -282,7 +282,7 @@ int main (int argc, char** argv)
         continue;
       current->info() = component_size.size();
       ++ size;
-      
+
       for (int i = 0; i < 3; ++ i)
         todo.push (current->neighbor(i));
     }
@@ -299,10 +299,10 @@ int main (int argc, char** argv)
   //! [Save TIN with info]
 
   Mesh tin_colored_mesh;
-  
+
   Mesh::Property_map<Mesh::Face_index, CGAL::Color>
     color_map = tin_colored_mesh.add_property_map<Mesh::Face_index, CGAL::Color>("f:color").first;
-  
+
   CGAL::copy_face_graph (tin_with_info, tin_colored_mesh,
                          CGAL::parameters::face_to_face_output_iterator
                          (boost::make_function_output_iterator
@@ -320,7 +320,7 @@ int main (int argc, char** argv)
                                                                    r.get_int(64, 192));
                              }
                            })));
-                               
+
   std::ofstream tin_colored_ofile ("colored_tin.ply", std::ios_base::binary);
   CGAL::set_binary_mode (tin_colored_ofile);
   CGAL::write_ply (tin_colored_ofile, tin_colored_mesh);
@@ -332,7 +332,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Filtering]
 
-  int min_size = 100000;
+  int min_size = points.size() / 2;
 
   std::vector<TIN_with_info::Vertex_handle> to_remove;
   for (TIN_with_info::Vertex_handle vh : tin_with_info.finite_vertex_handles())
@@ -359,7 +359,7 @@ int main (int argc, char** argv)
   std::cerr << to_remove.size() << " vertices(s) will be removed after filtering" << std::endl;
   for (TIN_with_info::Vertex_handle vh : to_remove)
     tin_with_info.remove (vh);
-  
+
   //! [Filtering]
   ///////////////////////////////////////////////////////////////////
 
@@ -368,7 +368,7 @@ int main (int argc, char** argv)
 
   // Copy and keep track of overly large faces
   Mesh dtm_mesh;
-  
+
   std::vector<Mesh::Face_index> face_selection;
   Mesh::Property_map<Mesh::Face_index, bool> face_selection_map
    = dtm_mesh.add_property_map<Mesh::Face_index, bool>("is_selected", false).first;
@@ -429,7 +429,7 @@ int main (int argc, char** argv)
       face_selection.push_back(fi);
 
   std::cerr << face_selection.size() << " face(s) are selected for removal after expansion" << std::endl;
-  
+
   for (Mesh::Face_index fi : face_selection)
     CGAL::Euler::remove_face (halfedge(fi, dtm_mesh), dtm_mesh);
   dtm_mesh.collect_garbage();
@@ -474,7 +474,7 @@ int main (int argc, char** argv)
     if (hi != outer_hull)
       CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
         (dtm_mesh, hi, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator());
-  
+
   // Save DTM with holes filled
   std::ofstream dtm_filled_ofile ("dtm_filled.ply", std::ios_base::binary);
   CGAL::set_binary_mode (dtm_filled_ofile);
@@ -493,7 +493,7 @@ int main (int argc, char** argv)
   CGAL::set_binary_mode (dtm_remeshed_ofile);
   CGAL::write_ply (dtm_remeshed_ofile, dtm_mesh);
   dtm_remeshed_ofile.close();
-  
+
   //! [Remeshing]
   ///////////////////////////////////////////////////////////////////
 
@@ -503,7 +503,7 @@ int main (int argc, char** argv)
   //! [Rastering]
 
   CGAL::Bbox_3 bbox = CGAL::bbox_3 (points.points().begin(), points.points().end());
-  
+
   // Generate raster image 1920-pixels large
   std::size_t width = 1920;
   std::size_t height = std::size_t((bbox.ymax() - bbox.ymin()) * 1920 / (bbox.xmax() - bbox.xmin()));
@@ -532,7 +532,7 @@ int main (int argc, char** argv)
       Point_3 query (bbox.xmin() + x * (bbox.xmax() - bbox.xmin()) / double(width),
                      bbox.ymin() + (height-y) * (bbox.ymax() - bbox.ymin()) / double(height),
                      0); // not relevant for location in 2D
-      
+
       location = dtm_clean.locate (query, location);
 
       // Points outside the convex hull will be colored black
@@ -560,7 +560,7 @@ int main (int argc, char** argv)
     }
 
   raster_ofile.close();
-  
+
   //! [Rastering]
   ///////////////////////////////////////////////////////////////////
 
@@ -591,7 +591,7 @@ int main (int argc, char** argv)
 
     vh->point() = Point_3 (vh->point().x(), vh->point().y(), z);
   }
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Contouring extraction]
 
@@ -647,7 +647,7 @@ int main (int argc, char** argv)
 
   //! [Contouring split]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Contouring simplify]
 
@@ -676,7 +676,7 @@ int main (int argc, char** argv)
   std::cerr << nb_vertices
             << " vertices remaining after simplification ("
             << 100. * (nb_vertices / double(map_p2v.size())) << "%)" << std::endl;
-  
+
   // Output to WKT file
   std::ofstream simplified_ofile ("simplified.wkt");
   simplified_ofile.precision(18);
@@ -693,11 +693,11 @@ int main (int argc, char** argv)
   Point_set::Property_map<int> training_map;
   bool training_found;
   std::tie (training_map, training_found) = points.property_map<int>("training");
-  
+
   if (training_found)
   {
     std::cerr << "Classifying ground/vegetation/building" << std::endl;
-    
+
     // Create labels
     Classification::Label_set labels ({ "ground", "vegetation", "building" });
 
@@ -705,7 +705,7 @@ int main (int argc, char** argv)
     Classification::Feature_set features;
     Classification::Point_set_feature_generator<Kernel, Point_set, Point_set::Point_map>
       generator (points, points.point_map(), 5); // 5 scales
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     // If TBB is used, features can be computed in parallel
     features.begin_parallel_additions();
@@ -740,11 +740,10 @@ int main (int argc, char** argv)
     classified_ofile << points;
     classified_ofile.close();
   }
-  
+
   //! [Classification]
   ///////////////////////////////////////////////////////////////////
-  
+
 
   return EXIT_SUCCESS;
 }
-  
