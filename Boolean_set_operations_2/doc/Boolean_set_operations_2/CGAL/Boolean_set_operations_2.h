@@ -75,7 +75,7 @@ The signature of the function is
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `difference()` function are any of the following combinations.
+The types of the parameters of the `difference()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -194,7 +194,7 @@ The signature of the function is
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `do_intersect()` function are any of the following combinations.
+The types of the parameters of the `do_intersect()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -324,7 +324,7 @@ The signature of the function is
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `intersection()` function are any of the following combinations.
+The types of the parameters of the `intersection()` function are any of the following combinations.
 
 
 <div align="left">
@@ -483,7 +483,7 @@ The signature of the function is
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `join()` function are any of the following combinations.
+The types of the parameters of the `join()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -637,7 +637,7 @@ The signature of the function is
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `oriented_side()` function are any of the following combinations.
+The types of the parameters of the `oriented_side()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
@@ -723,7 +723,7 @@ The signature of the function is
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `symmetric_difference()` function are any of the following combinations.
+The types of the parameters of the `symmetric_difference()` function are any of the following combinations.
 
 <div align="left">
 <table cellpadding=3 border="1">
