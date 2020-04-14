@@ -188,13 +188,6 @@ bool is_on_feature(const VertexHandle v)
 }
 
 template<typename Tr>
-bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
-{
-  return is_well_oriented(tr, ch->vertex(0), ch->vertex(1),
-                          ch->vertex(2), ch->vertex(3));
-}
-
-template<typename Tr>
 bool is_well_oriented(const Tr& tr,
                       const typename Tr::Vertex_handle v0,
                       const typename Tr::Vertex_handle v1,
@@ -206,6 +199,13 @@ bool is_well_oriented(const Tr& tr,
            point(v1->point()),
            point(v2->point()),
            point(v3->point()));
+}
+
+template<typename Tr>
+bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
+{
+  return is_well_oriented(tr, ch->vertex(0), ch->vertex(1),
+                          ch->vertex(2), ch->vertex(3));
 }
 
 template<typename C3T3, typename CellSelector>
@@ -683,6 +683,50 @@ bool topology_test(const typename C3t3::Edge& edge,
   return true;
 }
 
+template<typename C3t3>
+Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
+                                      const typename C3t3::Vertex_handle v1,
+                                      const C3t3& c3t3)
+{
+  typedef typename C3t3::Subdomain_index Subdomain_index;
+
+  std::vector<Subdomain_index> subdomains_v0;
+  incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
+  std::sort(subdomains_v0.begin(), subdomains_v0.end());
+
+  std::vector<Subdomain_index> subdomains_v1;
+  incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
+  std::sort(subdomains_v1.begin(), subdomains_v1.end());
+
+  if (subdomains_v0.size() == subdomains_v1.size())
+  {
+    for (unsigned int i = 0; i < subdomains_v0.size(); i++)
+      if (subdomains_v0[i] != subdomains_v1[i])
+        return DIFFERENT;
+    return EQUAL;
+  }
+  else
+  {
+    std::vector<Subdomain_index>
+    intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+    typename std::vector<Subdomain_index>::iterator
+    end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
+                                   subdomains_v1.begin(), subdomains_v1.end(),
+                                   intersection.begin());
+    std::ptrdiff_t intersection_size = (end_it - intersection.begin());
+
+    if (subdomains_v0.size() > subdomains_v1.size()
+        && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
+    {
+      return INCLUDES;
+    }
+    else if (intersection_size == std::ptrdiff_t(subdomains_v0.size())) {
+      return INCLUDED;
+    }
+  }
+  return DIFFERENT;
+}
+
 template<typename C3t3, typename CellSelector>
 void get_edge_info(const typename C3t3::Edge& edge,
                    bool& update_v0,
@@ -804,51 +848,6 @@ void get_edge_info(const typename C3t3::Edge& edge,
     }
   }
 }
-
-template<typename C3t3>
-Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
-                                      const typename C3t3::Vertex_handle v1,
-                                      const C3t3& c3t3)
-{
-  typedef typename C3t3::Subdomain_index Subdomain_index;
-
-  std::vector<Subdomain_index> subdomains_v0;
-  incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
-  std::sort(subdomains_v0.begin(), subdomains_v0.end());
-
-  std::vector<Subdomain_index> subdomains_v1;
-  incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
-  std::sort(subdomains_v1.begin(), subdomains_v1.end());
-
-  if (subdomains_v0.size() == subdomains_v1.size())
-  {
-    for (unsigned int i = 0; i < subdomains_v0.size(); i++)
-      if (subdomains_v0[i] != subdomains_v1[i])
-        return DIFFERENT;
-    return EQUAL;
-  }
-  else
-  {
-    std::vector<Subdomain_index>
-    intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
-    typename std::vector<Subdomain_index>::iterator
-    end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
-                                   subdomains_v1.begin(), subdomains_v1.end(),
-                                   intersection.begin());
-    std::ptrdiff_t intersection_size = (end_it - intersection.begin());
-
-    if (subdomains_v0.size() > subdomains_v1.size()
-        && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
-    {
-      return INCLUDES;
-    }
-    else if (intersection_size == std::ptrdiff_t(subdomains_v0.size())) {
-      return INCLUDED;
-    }
-  }
-  return DIFFERENT;
-}
-
 
 namespace debug
 {
