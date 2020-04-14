@@ -14,7 +14,6 @@
 //
 // Author(s)     : Andreas Fabri
 
-#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Filtered_rational_kernel.h>
 
 #define TEST_FILENAME "Test-Filtered_rational-IO.out"
@@ -37,27 +36,12 @@
 
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
+#include <CGAL/internal/Exact_type_selector.h>
+
 #include <cassert>
 
-#include <CGAL/gmpxx.h>
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-
-#include <CGAL/CORE_Expr.h>
-
-#if 1
-typedef CORE::Expr ET;
-#elif 0
-typedef CGAL::internal::Exact_field_selector<void*> ET;
-typedef leda_rational ET;
-typedef CGAL::Gmpq ET;
-#endif
-
 typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> > AK;
+typedef CGAL::internal::Exact_field_selector<void*>::Type ET;
 typedef CGAL::Simple_cartesian<ET>                        EK;
 typedef CGAL::Filtered_rational_kernel<AK, EK>            Cls;
 

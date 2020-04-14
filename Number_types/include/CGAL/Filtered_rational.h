@@ -14,8 +14,8 @@
 #ifndef CGAL_FILTERED_RATIONAL_H
 #define CGAL_FILTERED_RATIONAL_H
 
-#include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/number_type_basic.h>
 
 #include <boost/mpl/or.hpp>
@@ -36,7 +36,7 @@ namespace CGAL {
 // It is also parameterized by a comparator which compares the values
 // of NT1 and NT2 after all arithmetic operations.
 template <typename NT1 = Interval_nt<false>,
-          typename NT2 = Gmpq>
+          typename NT2 = internal::Exact_field_selector<void*>::Type>
 class Filtered_rational
 {
   typedef Filtered_rational<NT1, NT2>                   Self;
