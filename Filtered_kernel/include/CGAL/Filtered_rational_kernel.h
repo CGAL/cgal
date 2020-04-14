@@ -450,6 +450,12 @@ public:
   typedef CGAL::Bounded_side                                  Bounded_side;
   typedef CGAL::Angle                                         Angle;
 
+  // TODO : Object_[23] are subtil : should probably be Object(pair<...>).
+  // Or should Assign_[23] be used, and that's it ?
+  // In any case, Assign will have to be treated separately because it
+  // takes its first argument by non-const reference.
+  // Maybe Primitive_checker should provide a variant with non-const ref...
+
   typedef CGAL::Object                                        Object_2;
   typedef CGAL::Object                                        Object_3;
 
@@ -483,41 +489,7 @@ public:
   typedef CGAL::Aff_transformationC3<Kernel_>                 Aff_transformation_3;
 
   // Kernel objects are defined as pairs, with primitives run in parallel.
-#define CGAL_frk_pair(X) typedef Approximate_exact_pair<typename AK::X, typename EK::X> X;
-
-  // TODO : Object_[23] are subtil : should probably be Object(pair<...>).
-  // Or should Assign_[23] be used, and that's it ?
-  // In any case, Assign will have to be treated separately because it
-  // takes its first argument by non-const reference.
-  // Maybe Primitive_checker should provide a variant with non-const ref...
-
-  CGAL_frk_pair(Point_2)
-  CGAL_frk_pair(Weighted_point_2)
-  CGAL_frk_pair(Vector_2)
-  CGAL_frk_pair(Direction_2)
-  CGAL_frk_pair(Line_2)
-  CGAL_frk_pair(Ray_2)
-  CGAL_frk_pair(Segment_2)
-  CGAL_frk_pair(Triangle_2)
-  CGAL_frk_pair(Iso_rectangle_2)
-  CGAL_frk_pair(Circle_2)
-  CGAL_frk_pair(Conic_2)
-
-  CGAL_frk_pair(Point_3)
-  CGAL_frk_pair(Weighted_point_3)
-  CGAL_frk_pair(Plane_3)
-  CGAL_frk_pair(Vector_3)
-  CGAL_frk_pair(Direction_3)
-  CGAL_frk_pair(Line_3)
-  CGAL_frk_pair(Ray_3)
-  CGAL_frk_pair(Segment_3)
-  CGAL_frk_pair(Triangle_3)
-  CGAL_frk_pair(Tetrahedron_3)
-  CGAL_frk_pair(Iso_cuboid_3)
-  CGAL_frk_pair(Circle_3)
-  CGAL_frk_pair(Sphere_3)
-
-#undef CGAL_frk_pair
+#define CGAL_Kernel_obj(X) typedef Approximate_exact_pair<typename AK::X, typename EK::X> X;
 
 #define CGAL_Kernel_pred(P, Pf)                                                                    \
   typedef Static_filtered_predicate<                                                               \
