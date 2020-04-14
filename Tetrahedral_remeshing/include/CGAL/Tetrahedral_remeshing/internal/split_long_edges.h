@@ -19,6 +19,7 @@
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
@@ -48,14 +49,49 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   const Vertex_handle v1 = e.first->vertex(e.second);
   const Vertex_handle v2 = e.first->vertex(e.third);
 
+  const Point m = tr.geom_traits().construct_midpoint_3_object()
+    (point(v1->point()), point(v2->point()));
+
   //backup subdomain info of incident cells before making changes
   short dimension = (c3t3.is_in_complex(e)) ? 1 : 3;
   boost::unordered_map<Facet, Subdomain_index> cells_info;
   boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
 
+  // check orientation and collect incident cells to avoid circulating twice
+  boost::container::small_vector<Cell_handle, 30> inc_cells;
   Cell_circulator circ = tr.incident_cells(e);
   Cell_circulator end = circ;
   do
+  {
+    inc_cells.push_back(circ);
+    if (tr.is_infinite(circ))
+    {
+      ++circ;
+      continue;
+    }
+
+    //1st half-cell
+    std::array<Point, 4> pts = { point(circ->vertex(0)->point()),
+                                 point(circ->vertex(1)->point()),
+                                 point(circ->vertex(2)->point()),
+                                 point(circ->vertex(3)->point()) };
+    const int i1 = circ->index(v1);
+    const Point p1 = pts[i1];
+    pts[i1] = m;
+    if(CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+      return Vertex_handle();
+
+    //2nd half-cell
+    pts[i1] = p1;
+    pts[circ->index(v2)] = m;
+    if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+      return Vertex_handle();
+
+    ++circ;
+  }
+  while (circ != end);
+
+  for(Cell_handle circ : inc_cells)
   {
     const int index_v1 = circ->index(v1);
     const int index_v2 = circ->index(v2);
@@ -88,15 +124,10 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
     if(c3t3.is_in_complex(circ, findex))
       c3t3.remove_from_complex(circ, findex);
-
-    ++circ;
-
-  } while (circ != end);
+  }
 
   // insert midpoint
   Vertex_handle new_v = tr.tds().insert_in_edge(e);
-  const Point m = tr.geom_traits().construct_midpoint_3_object()
-                  (point(v1->point()), point(v2->point()));
   new_v->set_point(typename Tr::Point(m));
   new_v->set_dimension(dimension);
 
@@ -260,10 +291,15 @@ void split_long_edges(C3T3& c3t3,
 
       visitor.before_split(tr, edge);
       Vertex_handle vh = split_edge(edge, c3t3);
-      visitor.after_split(tr, vh);
+
+      if(vh != Vertex_handle())
+        visitor.after_split(tr, vh);
+
+      CGAL_assertion(debug::are_cell_orientations_valid(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      ofs << vh->point() << std::endl;
+      if (vh != Vertex_handle())
+        ofs << vh->point() << std::endl;
 #endif
 
 #if  defined(CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS) \
