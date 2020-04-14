@@ -521,6 +521,41 @@ public:
   using typename Filtered_rational_kernel_generic_base<AK, EK, Kernel_>::Cartesian_const_iterator_2;
   using typename Filtered_rational_kernel_generic_base<AK, EK, Kernel_>::Cartesian_const_iterator_3;
 
+  class Construct_point_2
+    : public Base::Construct_point_2
+  {
+  public:
+    typedef typename Base::Point_2    Point_2_rep;
+    typedef typename Kernel_::Point_2 Point_2;
+
+    template<typename>
+    struct result {
+      typedef Point_2 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_2)> {
+      typedef const Point_2& type;
+    };
+
+    using Base::Construct_point_2::operator();
+
+    const Point_2& operator()(const Point_2& p) const
+    {
+      return p;
+    }
+
+    Point_2 operator()(Return_base_tag tag, double x, double y) const
+    {
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+      return Point_2(typename AK::Point_2(AK().construct_point_2_object()(tag,x,y)));
+#else
+      return Point_2(Point_2_rep(AK().construct_point_2_object()(tag, x,y),
+                                 EK().construct_point_2_object()(tag, x,y)));
+#endif
+    }
+  };
+
   class Construct_point_3
     : public Base::Construct_point_3
   {
@@ -758,6 +793,9 @@ public:
       return Cartesian_const_iterator_3(&pv, i);
     }
   };
+
+  Construct_point_2 construct_point_2_object() const
+  { return Construct_point_2(); }
 
   Construct_point_3 construct_point_3_object() const
   { return Construct_point_3(); }
