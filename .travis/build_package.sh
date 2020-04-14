@@ -11,7 +11,7 @@ function mytime {
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" ..
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" -DCGAL_BUILD_THREE_DOC=TRUE ..
   mytime make -j2 VERBOSE=1
 }
 
@@ -96,7 +96,7 @@ cd $ROOT
     cd $ROOT
     mkdir build_test
     cd build_test
-    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ ..
+    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ -DCGAL_BUILD_THREE_DOC=TRUE ..
     mytime make install
     # test install with minimal downstream example
     mkdir installtest
@@ -110,7 +110,7 @@ cd $ROOT
     echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
     echo '#include "CGAL/remove_outliers.h"' >> main.cpp
     cd build
-    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install -DCGAL_BUILD_THREE_DOC=TRUE ..
     cd ..
     exit 0
   fi
