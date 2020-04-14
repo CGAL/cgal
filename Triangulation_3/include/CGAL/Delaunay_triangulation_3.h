@@ -1404,8 +1404,7 @@ side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
 
   typename Gt::Side_of_oriented_sphere_3 soos = geom_traits().side_of_oriented_sphere_3_object();
 
-  Oriented_side os =
-      soos(p0, p1, p2, p3, p);
+  Oriented_side os = soos(p0, p1, p2, p3, p);
 
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;

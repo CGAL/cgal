@@ -40,18 +40,6 @@ typedef CGAL::Real_timer                                        Real_timer;
 
 int main(int argc, char** argv)
 {
-#if 1
-  std::cout.precision(17);
-  Point_3 p(0.4324235, 0.3256236, 0.6532346), q(45634.3564, 3256.34577, 43633.34678);
-
-  Point_3 m = CGAL::midpoint(p,q);
-
-  std::cout << m.approx() << std::endl;
-  std::cout << m.approx().x().is_point() << std::endl;
-
-  bool b = CGAL::collinear(p,q,m);
-
-#else
   if(argc < 2)
   {
     std::cerr << "usage: " << argv[0] << " data.xyz [parallel]" << std::endl;
@@ -126,6 +114,6 @@ int main(int argc, char** argv)
   std::cerr << "|V| = " <<  V << " |C| = " << C  << std::endl
             << timer.time() << " sec" << std::endl
             << rtimer.time() << " sec (r)" << std::endl;
-#endif
+
   return EXIT_SUCCESS;
 }

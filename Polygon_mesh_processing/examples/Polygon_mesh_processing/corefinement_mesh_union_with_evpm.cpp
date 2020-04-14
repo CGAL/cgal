@@ -1,6 +1,3 @@
-#define CGAL_PROFILE
-#define CGAL_USE_FILTERED_RATIONAL_KERNEL
-#define MSC_USE_DLL 1
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -24,10 +21,7 @@ struct Exact_vertex_point_map
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
-  Exact_vertex_point_map()
-    : tm_ptr(nullptr)
-  {}
-
+  Exact_vertex_point_map() : tm_ptr(nullptr) {}
 
   Exact_vertex_point_map(Mesh& tm)
     : tm_ptr(&tm)

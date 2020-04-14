@@ -1,5 +1,3 @@
-#define CGAL_PROFILE
-
 // Copyright (c) 2001,2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
