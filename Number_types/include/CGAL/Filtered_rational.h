@@ -170,8 +170,7 @@ public:
       return false;
 
     // the exact number must be in the interval
-    const NT1 n2i = to_interval(n2());
-    return (n2i.inf() >= n1().inf()) && (n2i.sup() <= n1().sup());
+    return (n1().inf() <= n2() && n2() <= n1().sup());
   }
 
 private:
