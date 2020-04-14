@@ -392,7 +392,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 
 \section example Examples
-All the examples have been constructed as external plugins in CGAL/Polyhedron/demo/Polyhedron/Plugins/Example_plugin. You will have to use "Load plugin" in the File menu or set the environment variable POLYHEDRON_DEMO_PLUGINS_PATH if you want to test it.
+All the examples are de-activated in the cmake list outside of our testsuite. To tesr them, one must add `-DRUNNING_CGAL_AUTO_TEST=ON` to the cmake call.
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three_examples/Basic_plugin.cpp}
 
