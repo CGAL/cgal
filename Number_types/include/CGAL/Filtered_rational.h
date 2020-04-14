@@ -835,11 +835,10 @@ public:
     bool operator()(const Type& a) const
     {
       CGAL_NT_CHECK_DEBUG("RET::Is_finite");
-      bool r1 =  typename RET1::Is_finite()(a.n1());
-      // CGAL_assertion( r1 == typename RET2::Is_finite()(a.n2()) );
-      // AF: what to do??
-      // See what Gmpq does
-      return r1;
+
+      // The interval is just an approximation of n2: if n2 is exact
+      // and is not representable with a pair of (finite) double, it still is a finite number.
+      return RET2::Is_finite()(a.n2());
     }
   };
 
@@ -851,7 +850,7 @@ public:
     bool operator()(const Type& a) const
     {
       CGAL_NT_CHECK_DEBUG("RET::Is_positive");
-      Uncertain<bool> ub =  typename RET1::Is_positive()(a.n1());
+      Uncertain<bool> ub = typename RET1::Is_positive()(a.n1());
       if(is_certain(ub))
         return get_certain(ub);
 
