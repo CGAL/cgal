@@ -488,10 +488,10 @@ public:
       if (!resolution_reached())
       {
         split();
-//        collapse();
+        collapse();
       }
-//      flip();
-//      smooth();
+      flip();
+      smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " done : "
