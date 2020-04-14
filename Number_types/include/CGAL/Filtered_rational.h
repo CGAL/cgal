@@ -768,15 +768,26 @@ public:
 
 template <typename NT1, typename NT2>
 class Algebraic_structure_traits <Filtered_rational<NT1, NT2> >
-  : public internal::FR_AST_base<Filtered_rational<NT1, NT2> ,
-                                 typename Algebraic_structure_traits<NT2>::Algebraic_category >
+  : public internal::FR_AST_base<
+             Filtered_rational<NT1, NT2> ,
+             typename std::conditional<
+               std::is_base_of<
+                 Field_with_sqrt_tag,
+                 typename Algebraic_structure_traits<NT2>::Algebraic_category>::value,
+               Field_with_sqrt_tag,
+               typename Algebraic_structure_traits<NT2>::Algebraic_category>::type>
 {
-  typedef Algebraic_structure_traits<NT2> AST1;
+  typedef Algebraic_structure_traits<NT2> AST;
 
 public:
+  // Interval_nt is a model of FieldWithSqrt, so the category is FieldWithSqrt at best
+  typedef typename std::conditional<std::is_base_of<Field_with_sqrt_tag,
+                                                    typename AST::Algebraic_category>::value,
+                                    Field_with_sqrt_tag,
+                                    typename AST::Algebraic_category>::type Algebraic_category;
+
   typedef Filtered_rational<NT1, NT2> Type;
-  typedef typename AST1::Algebraic_category Algebraic_category;
-  typedef typename AST1::Is_exact Is_exact;
+  typedef typename AST::Is_exact Is_exact;
 };
 
 namespace internal {

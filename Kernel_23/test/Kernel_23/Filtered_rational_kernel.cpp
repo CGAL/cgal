@@ -68,9 +68,10 @@ int main()
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  std::cout << typeid(ET).name() << std::endl;
-  std::cout << typeid(typename CGAL::Algebraic_structure_traits<ET>::Algebraic_category).name() << std::endl;
-  std::cin.get();
+  std::cout << "ET: " << typeid(ET).name() << std::endl;
+  std::cout << "Category: " << typeid(typename CGAL::Algebraic_structure_traits<ET>::Algebraic_category).name() << std::endl;
+  std::cout << "FT: " << typeid(Cls::FT).name() << std::endl;
+  std::cout << "Category: " << typeid(typename CGAL::Algebraic_structure_traits<Cls::FT>::Algebraic_category).name() << std::endl;
 
   std::cout << "Testing 2d with Filtered_rational_kernel :";
   std::cout << std::endl;
