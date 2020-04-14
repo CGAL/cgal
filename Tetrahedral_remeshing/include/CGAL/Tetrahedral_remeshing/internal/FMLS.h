@@ -193,7 +193,7 @@ public:
       else
         maxIt[j] = ((unsigned int)gxyz[j]) + 1;
     }
-    Vector_3 c;
+    Vector_3 c = CGAL::NULL_VECTOR;
     float sumW = 0.f;
     unsigned int it[3];
     for (it[0] = minIt[0]; it[0] <= maxIt[0]; it[0]++)
