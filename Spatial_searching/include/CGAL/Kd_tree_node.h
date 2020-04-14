@@ -472,6 +472,10 @@ namespace CGAL {
 
     // default constructor
     Kd_tree_internal_node()
+      : cut_dim(-1), cut_val(0)
+      , lower_ch (nullptr), upper_ch (nullptr)
+      , upper_low_val(0), upper_high_val(0)
+      , lower_low_val(0), lower_high_val(0)
     {}
 
     virtual ~Kd_tree_internal_node() { }
