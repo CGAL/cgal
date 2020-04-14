@@ -10,6 +10,17 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
+void convert_to_vertex_triples(
+  const std::vector<std::array<std::size_t, 3> >& faces_ids,
+        std::vector<std::array<Mesh::Vertex_index, 3> >& triangles)
+{
+  triangles.reserve(faces_ids.size());
+  for (const std::array<std::size_t, 3>& a : faces_ids)
+    triangles.push_back(
+      CGAL::make_array( Mesh::Vertex_index(a[0]),
+                        Mesh::Vertex_index(a[1]),
+                        Mesh::Vertex_index(a[2]) ) );
+}
 int main(int argc, char** argv)
 {
   {
@@ -31,8 +42,10 @@ int main(int argc, char** argv)
   timer.start();
   std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
   std::vector<Kernel::Point_3> points;
+  std::vector<std::array<std::size_t, 3> > faces_ids;
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
-  CGAL::read_OFF(in, points, triangles);
+  CGAL::read_OFF(in, points, faces_ids);
+  convert_to_vertex_triples(faces_ids, triangles);
   std::cout << "  Read soup: " << timer.time() << std::endl;
   m.reserve(static_cast<unsigned int>(points.size()),
             static_cast<unsigned int>(3*triangles.size()/2),
@@ -57,8 +70,10 @@ int main(int argc, char** argv)
   timer.start();
   std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
   std::vector<Kernel::Point_3> points;
+  std::vector<std::array<std::size_t, 3> > faces_ids;
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
-  CGAL::read_OFF(in, points, triangles);
+  CGAL::read_OFF(in, points, faces_ids);
+  convert_to_vertex_triples(faces_ids, triangles);
   std::cout << "  Read soup: " << timer.time() << std::endl;
   m.reserve(static_cast<unsigned int>(points.size()),
             static_cast<unsigned int>(3*triangles.size()/2),
