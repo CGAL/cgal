@@ -18,9 +18,9 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/array.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <CGAL/Triangulation_incremental_builder_3.h>
 
@@ -609,24 +609,20 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   if (in_cx_f1 && !in_cx_f2)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f1);
-    c3t3.remove_from_complex(f1);
-    c3t3.add_to_complex(f1, patch);
-    c3t3.add_to_complex(f2, patch);
+    f2.first->set_surface_patch_index(f2.second, patch);
   }
   else if (in_cx_f2 && !in_cx_f1)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
-    c3t3.remove_from_complex(f2);
-    c3t3.add_to_complex(f1, patch);
-    c3t3.add_to_complex(f2, patch);
+    f1.first->set_surface_patch_index(f1.second, patch);
   }
-  else
+  else if(in_cx_f1 && in_cx_f2)
   {
-    CGAL_assertion(
-      //f1 and f2 are not both in complex
-      !(in_cx_f1 && in_cx_f2)
-      // unless they are on the same surface
-      || c3t3.surface_patch_index(f1) == c3t3.surface_patch_index(f2));
+    CGAL_assertion(c3t3.surface_patch_index(f1) == c3t3.surface_patch_index(f2));
+
+    typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
+    c3t3.remove_from_complex(f2);
+    f2.first->set_surface_patch_index(f2.second, patch);
   }
 }
 
@@ -647,7 +643,6 @@ collapse(const typename C3t3::Cell_handle ch,
   Vertex_handle vh0 = ch->vertex(to);
   Vertex_handle vh1 = ch->vertex(from);
 
-  std::vector<Cell_handle> cells_to_remove;
 
   //Update the vertex before removing it
   std::vector<Cell_handle> find_incident;
@@ -656,14 +651,30 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> cells_to_update;
   tr.incident_cells(vh1, std::back_inserter(cells_to_update));
 
-//    if (vh1->in_dimension() == 2 && c3t3.is_in_complex(vh1))
-//      std::cout << "Collapsing a feature vertex!!!!!!" << std::endl;
-
-  boost::unordered_set<Cell_handle> invalid_cells;
-  bool valid = true;
+  boost::container::small_vector<Cell_handle, 30> inc_cells;
   Cell_circulator circ = tr.incident_cells(ch, to, from);
   Cell_circulator done = circ;
   do
+  {
+    for (int i = 0; i < 4; ++i)
+    {
+      const Vertex_handle vi = circ->vertex(i);
+      if (vi != vh0 && vi != vh1)
+      {
+        const Facet fi(circ, i);
+        if (c3t3.is_in_complex(fi))
+          c3t3.remove_from_complex(fi);
+      }
+    }
+    inc_cells.push_back(circ);
+  }
+  while (++circ != done);
+
+  bool valid = true;
+  std::vector<Cell_handle> cells_to_remove;
+  boost::unordered_set<Cell_handle> invalid_cells;
+
+  for(const Cell_handle circ : inc_cells)
   {
     const int v0_id = circ->index(vh0);
     const int v1_id = circ->index(vh1);
@@ -684,34 +695,27 @@ collapse(const typename C3t3::Cell_handle ch,
     n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
 
     //Update vertices cell pointer
-    //if( !triangulation.is_infinite( n0_ch ) )
-    int nb_on_boundary_n0 = 0;
     for (int i = 0; i < 3; i++)
     {
       int vid = Tr::vertex_triple_index(ch_id_in_n0, i);
       n0_ch->vertex(vid)->set_cell(n0_ch);
-      if (c3t3.in_dimension(n0_ch->vertex(vid)))
-        nb_on_boundary_n0++;
     }
-    //else
-    int nb_on_boundary_n1 = 0;
     for (int i = 0; i < 3; i++)
     {
       int vid = Tr::vertex_triple_index(ch_id_in_n1, i);
       n1_ch->vertex(vid)->set_cell(n1_ch);
-      if (c3t3.in_dimension(n1_ch->vertex(vid)))
-        nb_on_boundary_n1++;
     }
 
-    if ( tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
-         && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
+    if (tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
+      && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
+    {
+      std::cout << "Collapse infinite issue!" << std::endl;
       return Vertex_handle();
-
+    }
     cells_to_remove.push_back(circ);
 
     invalid_cells.insert(circ);
-
-  } while (++circ != done);
+  }
 
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
 
@@ -759,6 +763,8 @@ collapse(const typename C3t3::Cell_handle ch,
     }
   }
 
+  // update complex facets
+
   //Update the vertex before removing it
   for (const Cell_handle ch : cells_to_update)
   {
@@ -787,9 +793,8 @@ collapse(const typename C3t3::Cell_handle ch,
   for (Cell_handle cell_to_remove : cells_to_remove)
   {
     // remove cell
-    if (cell_to_remove->subdomain_index() > 0)
+    if (c3t3.is_in_complex(cell_to_remove))
       c3t3.remove_from_complex(cell_to_remove);
-
     c3t3.triangulation().tds().delete_cell(cell_to_remove);
   }
 
