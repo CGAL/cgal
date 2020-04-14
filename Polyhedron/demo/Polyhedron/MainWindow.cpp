@@ -1554,7 +1554,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             }
             else if(action->text() == QString("Line Width"))
             {
-              menu_actions["line width"] = action->menu()->actions().last();
+              menu_actions["Line width"] = action->menu()->actions().last();
             }
           }
 
@@ -1699,7 +1699,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             slider->setValue(
                   qobject_cast<QSlider*>(
                     qobject_cast<QWidgetAction*>
-                    (menu_actions["line width"])->defaultWidget()
+                    (menu_actions["Line width"])->defaultWidget()
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
