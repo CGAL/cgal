@@ -36,12 +36,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_concept_check_tags.h>
 
 // includes for the default parameters of the filtered traits
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpq.h>
-#else
-#include <CGAL/Quotient.h>
-#include <CGAL/MP_Float.h>
-#endif
+#include <CGAL/internal/Exact_type_selector.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Interval_arithmetic.h>
@@ -65,11 +60,7 @@ namespace CGAL {
 // this traits class does support intersecting segments
 template<class CK,
          class CK_MTag = Field_with_sqrt_tag,
-#ifdef CGAL_USE_GMP
-         class EK      = Simple_cartesian< Gmpq >,
-#else
-         class EK      = Simple_cartesian< Quotient<MP_Float> >,
-#endif
+         class EK      = Simple_cartesian< internal::Exact_field_selector<double>::Type >,
          class EK_MTag = Field_tag,
          class FK      = Simple_cartesian< Interval_nt<false> >,
          class FK_MTag = Field_with_sqrt_tag,
