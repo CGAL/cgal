@@ -1309,6 +1309,19 @@ void dump_medit(const C3t3& c3t3, const char* filename)
   os.close();
 }
 
+template<typename C3t3>
+void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
+{
+  std::string filename_medit(filename_no_extension);
+  filename_medit.append(".mesh");
+  dump_medit(c3t3, filename_medit.c_str());
+
+  std::string filename_binary(filename_no_extension);
+  filename_binary.append(".binary.cgal");
+  dump_binary(c3t3, filename_binary.c_str());
+}
+
+
 } //namespace debug
 } //namespace Tetrahedral_remeshing
 } //namespace CGAL
