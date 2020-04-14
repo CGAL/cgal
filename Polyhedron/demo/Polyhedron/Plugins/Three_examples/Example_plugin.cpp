@@ -13,19 +13,12 @@
 //! [itemdeclaration]
 // The special Scene_item only for triangles
 
-//this is used by the Qt's MOC system to manage the metadata.
-#ifdef scene_triangle_item_EXPORTS
-#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_EXPORT
-#else
-#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_IMPORT
-#endif
-
 using namespace CGAL::Three;
 typedef Triangle_container Tc;
 typedef Viewer_interface VI;
 
 
-class SCENE_TRIANGLE_ITEM_EXPORT Scene_triangle_item
+class Scene_triangle_item
     : public CGAL::Three::Scene_item_rendering_helper
 {
 
@@ -57,7 +50,7 @@ public :
 private:
   //contains the data
   mutable std::vector<float> vertices;
-  mutable int nb_pos;
+  mutable std::size_t nb_pos;
   //Fills the buffers with data. The buffers allow us to give data to the shaders.
   void initializeBuffers(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
 }; //end of class Scene_triangle_item
