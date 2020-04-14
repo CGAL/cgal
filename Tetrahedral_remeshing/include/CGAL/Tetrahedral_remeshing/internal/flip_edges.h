@@ -22,6 +22,7 @@
 
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <limits>
 #include <queue>
@@ -52,6 +53,7 @@ void update_c3t3_facets(C3t3& c3t3,
 {
   typedef typename C3t3::Facet       Facet;
   typedef typename C3t3::Cell_handle Cell_handle;
+  typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
   for (Cell_handle c : cells_to_update)
   {
@@ -61,23 +63,23 @@ void update_c3t3_facets(C3t3& c3t3,
     {
       const Facet f(c, i);
       const Facet mf = c3t3.triangulation().mirror_facet(f);
-      if (outer_mirror_facets.find(mf) == outer_mirror_facets.end())
-      {
-        //we are inside the modified zone, c3t3 info is not valid anymore
-        if (c3t3.is_in_complex(f))
-          c3t3.remove_from_complex(f);
-        if (c3t3.is_in_complex(mf))
-          c3t3.remove_from_complex(mf);
-      }
-      else
+      if (outer_mirror_facets.find(mf) != outer_mirror_facets.end())
       {
         //we are on the border of the modified zone, c3t3 info is valid outside,
         //on mirror facet
         const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
         if (c3t3.is_in_complex(mf))
+          f.first->set_surface_patch_index(f.second, patch);
+        else
+          f.first->set_surface_patch_index(f.second, Surface_patch_index());
+      }
+      else
+      {
+        //we are inside the modified zone, c3t3 info is not valid anymore
+        if (c3t3.is_in_complex(f) || c3t3.is_in_complex(mf))
         {
-          c3t3.remove_from_complex(mf);
-          c3t3.add_to_complex(mf, patch);
+          f.first->set_surface_patch_index(f.second, Surface_patch_index());
+          mf.first->set_surface_patch_index(mf.second, Surface_patch_index());
         }
       }
     }
@@ -314,10 +316,10 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   }
 
   // Update c3t3
+  update_c3t3_facets(c3t3, cells_to_update, outer_mirror_facets);
+
   c3t3.remove_from_complex(cell_to_remove);
   tr.tds().delete_cell(cell_to_remove);
-
-  update_c3t3_facets(c3t3, cells_to_update, outer_mirror_facets);
 
   /********************VALIDITY CHECK***************************/
   //if (check_validity)
@@ -715,7 +717,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
 
   std::vector<Cell_handle> cells_around_edge;
-  std::vector<Cell_handle> to_remove;
+  boost::container::small_vector<Cell_handle, 20> to_remove;
 
   //Neighbors that will need to be updated after flip
   boost::unordered_set<Facet> neighbor_facets;
@@ -880,16 +882,15 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
     }
   }
 
+  // Update c3t3
+  update_c3t3_facets(c3t3, cells_to_update, neighbor_facets);
+
   //Remove cells
   for (Cell_handle ch : to_remove)
   {
     c3t3.remove_from_complex(ch);
     tr.tds().delete_cell(ch);
   }
-
-  // Update c3t3
-  update_c3t3_facets(c3t3, cells_to_update, neighbor_facets);
-
 
   ///********************VALIDITY CHECK***************************/
   //if (check_validity){
@@ -1009,8 +1010,6 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
 {
   typedef typename C3t3::Triangulation        Tr;
   typedef typename C3t3::Vertex_handle        Vertex_handle;
-//    typedef typename C3t3::Facet                Facet;
-//    typedef typename C3t3::Surface_patch_index  Surface_patch_index;
   typedef typename Tr::Facet_circulator       Facet_circulator;
 
   Tr& tr = c3t3.triangulation();
@@ -1027,7 +1026,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   bool hull_edge = false;
 
   boost::unordered_set<Vertex_handle> boundary_vertices;
-  boost::unordered_set<Vertex_handle> hull_vertices;
+//  boost::unordered_set<Vertex_handle> hull_vertices;
   do
   {
     //Get the ids of the opposite vertices
@@ -1049,7 +1048,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
              != tr.is_infinite(circ->first->neighbor(circ->second)))
         {
           hull_edge = true;
-          hull_vertices.insert(vi);
+          //hull_vertices.insert(vi);
         }
       }
     }
@@ -1092,7 +1091,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
 
 
 template<typename VertexPair, typename C3t3, typename Visitor>
-std::size_t flip_all_edges(std::vector<VertexPair>& edges,
+std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
                            C3t3& c3t3,
                            const Flip_Criterion& criterion,
                            Visitor& visitor)
