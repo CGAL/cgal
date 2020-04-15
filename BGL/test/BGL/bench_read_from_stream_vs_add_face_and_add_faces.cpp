@@ -17,9 +17,9 @@ void convert_to_vertex_triples(
   triangles.reserve(faces_ids.size());
   for (const std::array<std::size_t, 3>& a : faces_ids)
     triangles.push_back(
-      CGAL::make_array( Mesh::Vertex_index(a[0]),
-                        Mesh::Vertex_index(a[1]),
-                        Mesh::Vertex_index(a[2]) ) );
+      CGAL::make_array( Mesh::Vertex_index(static_cast<unsigned int>(a[0])),
+                        Mesh::Vertex_index(static_cast<unsigned int>(a[1])),
+                        Mesh::Vertex_index(static_cast<unsigned int>(a[2])) ) );
 }
 int main(int argc, char** argv)
 {
