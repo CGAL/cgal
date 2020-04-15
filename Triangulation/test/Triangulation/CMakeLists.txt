@@ -15,7 +15,8 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.0)
-  if (EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (TARGET CGAL::Eigen_support)
     include_directories (BEFORE "include")
 
     create_single_source_cgal_program( "test_triangulation.cpp" )
@@ -31,7 +32,7 @@ if ( CGAL_FOUND )
         test_tds
         test_torture
         test_insert_if_in_star)
-      CGAL_target_use_Eigen(${target})
+      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
     endforeach()
 
   else()
@@ -41,4 +42,3 @@ if ( CGAL_FOUND )
 else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 endif()
-

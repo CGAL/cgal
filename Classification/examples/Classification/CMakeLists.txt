@@ -24,32 +24,39 @@ endif()
 set(Classification_dependencies_met TRUE)
 
 find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
-if (NOT Boost_SERIALIZATION_FOUND)
+include(CGAL_Boost_serialization_support)
+include(CGAL_Boost_iostreams_support)
+
+if (NOT TARGET CGAL::Boost_serialization_support)
   message(STATUS "NOTICE: This project requires Boost Serialization, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
-if (NOT Boost_IOSTREAMS_FOUND)
+if (NOT TARGET CGAL::Boost_iostreams_support)
   message(STATUS "NOTICE: This project requires Boost IO Streams, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
 find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
-if (NOT OpenCV_FOUND)
+include(CGAL_OpenCV_support)
+if (NOT TARGET CGAL::OpenCV_support)
   message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
 
 find_package(TensorFlow QUIET)
-if (NOT TensorFlow_FOUND)
+include(CGAL_TensorFlow_support)
+if (NOT TARGET CGAL::TensorFlow_support)
   message(STATUS "NOTICE: TensorFlow was not found. TensorFlow neural network predicate for classification won't be available.")
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
 find_package(TBB QUIET)
+include(CGAL_TBB_support)
 
 if (NOT Classification_dependencies_met)
   return()
@@ -62,14 +69,14 @@ create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
 create_single_source_cgal_program( "example_cluster_classification.cpp" )
 
-if (OpenCV_FOUND)
+if (TARGET CGAL::OpenCV_support)
   create_single_source_cgal_program( "example_opencv_random_forest.cpp" )
-  CGAL_target_use_OpenCV(example_opencv_random_forest)
+  target_link_libraries(example_opencv_random_forest PUBLIC CGAL::OpenCV_support)
 endif()
 
-if (TensorFlow_FOUND)
+if (TARGET CGAL::TensorFlow_support)
   create_single_source_cgal_program( "example_tensorflow_neural_network.cpp" )
-  CGAL_target_use_TensorFlow(example_tensorflow_neural_network)
+  target_link_libraries(example_opencv_random_forest PUBLIC CGAL::TensorFlow_support)
 endif()
 
 foreach(target
@@ -82,12 +89,12 @@ foreach(target
     example_opencv_random_forest
     example_tensorflow_neural_network)
   if(TARGET ${target})
-    CGAL_target_use_Eigen(${target})
-    CGAL_target_use_Boost_IOStreams(${target})
-    CGAL_target_use_Boost_Serialization(${target})
-    if(TBB_FOUND)
-      CGAL_target_use_TBB(${target})
+    target_link_libraries(${target} PUBLIC
+      CGAL::Eigen_support
+      CGAL::Boost_iostreams_support
+      CGAL::Boost_serialization_support)
+    if(TARGET CGAL::TBB_support)
+      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
     endif()
   endif()
 endforeach()
-

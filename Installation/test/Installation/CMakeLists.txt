@@ -48,9 +48,10 @@ if ( CGAL_FOUND )
   endif()
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
   create_single_source_cgal_program( "test_TBB.cpp" )
-  if(TBB_FOUND)
-    CGAL_target_use_TBB(test_TBB)
+  if(TARGET CGAl::TBB_support)
+    target_link_libraries(test_TBB PUBLIC CGAL::TBB_support)
   endif()
 
   create_link_to_program(CGAL)

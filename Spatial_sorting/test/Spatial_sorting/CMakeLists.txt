@@ -13,14 +13,13 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_multiscale.cpp" )
 
   find_package (TBB QUIET)
-  if( TBB_FOUND )
-    include( CGAL_target_use_TBB )
-    CGAL_target_use_TBB( test_hilbert )
-  endif( TBB_FOUND )
+  include(CGAL_TBB_support)
+  if( TARGET CGAL::TBB_support )
+    target_link_libraries( test_hilbert PUBLIC CGAL::TBB_support )
+  endif()
 
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

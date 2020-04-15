@@ -1,4 +1,4 @@
-if(Eigen_FOUND AND NOT TARGET CGAL::Eigen_support)
+if(EIGEN3_FOUND AND NOT TARGET CGAL::Eigen_support)
   if(NOT TARGET Threads::Threads)
     find_package(Threads REQUIRED)
   endif()
