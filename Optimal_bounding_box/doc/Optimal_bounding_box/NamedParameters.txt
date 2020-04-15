@@ -2,7 +2,7 @@
 \defgroup obb_namedparameters Named Parameters for the package Optimal Bounding Box
 \ingroup PkgOptimalBoundingBoxRef
 
-In this package, all functions optional parameters are implemented as BGL optional
+In this package, all functions' optional parameters are implemented as BGL optional
 named parameters (see \ref BGLNamedParameters for more information on how to use them).
 Since the parameters of the various functions defined in this package are redundant,
 their long descriptions are centralized below.
