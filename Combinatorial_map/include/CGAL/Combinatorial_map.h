@@ -1224,7 +1224,7 @@ namespace CGAL {
     { return CGAL::unmark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
 
     std::size_t orient(size_type amark) const
-    { negate_mark(amark); }
+    { negate_mark(amark); return number_of_darts(); }
 
     /** Test if this map is without boundary for a given dimension.
      * @param i the dimension.
