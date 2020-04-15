@@ -31,10 +31,10 @@ template <class PointRange, class PolygonRange, class ColorOutputIterator, class
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              HEdgesOutputIterator& hedges_out,
-              ColorOutputIterator& fc_out,
-              ColorOutputIterator& vc_out,
-              HUVOutputIterator& huvs_out,
+              HEdgesOutputIterator hedges_out,
+              ColorOutputIterator fc_out,
+              ColorOutputIterator vc_out,
+              HUVOutputIterator huvs_out,
               bool /* verbose */ = false,
               typename std::enable_if<
                 CGAL::is_iterator<ColorOutputIterator>::value
@@ -198,7 +198,10 @@ bool read_PLY(std::istream& is,
               ColorRange& fcolors,
               ColorRange& vcolors,
               HUVRange& huvs,
-              bool /* verbose */ = false)
+              bool /* verbose */ = false,
+              typename std::enable_if<
+                !CGAL::is_iterator<ColorRange>::value
+              >::type* =0)
 {
   return read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs));
 }
@@ -323,12 +326,15 @@ bool read_PLY(std::istream& is,
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
+  std::vector<std::pair<float, float> > dummy_pf;
 
-  return read_PLY(is, points, polygons,
-                                choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()));
+  return read_PLY(is, points, polygons,std::back_inserter(dummy_pui),
+                  choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
+                                   CGAL::Emptyset_iterator()),
+                  choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
+                                   CGAL::Emptyset_iterator()),
+                  std::back_inserter(dummy_pf));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

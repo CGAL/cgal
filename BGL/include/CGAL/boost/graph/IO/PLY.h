@@ -50,9 +50,9 @@ public:
   bool read(std::istream& input,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters&)
+            const NamedParameters& np)
   {
-    return read_PLY(input, points, faces);
+    return read_PLY(input, points, faces, np);
   }
 };
 
@@ -99,6 +99,7 @@ bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return IO::internal::read_PLY_BGL(in, g, np);
 }
+
 /*!
  Inserts the graph in an output stream in PLY format.
 
@@ -132,9 +133,25 @@ bool write_PLY(std::ostream& os,
   typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type VIMap;
   typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type Vpm;
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  typedef CGAL::Color                                                                Color;
+  typedef typename internal_np::Lookup_named_param_def<
+    internal_np::vertex_color_map_t, NamedParameters,
+    Constant_property_map<vertex_descriptor, Color> >::type                          VCM;
+  typedef typename internal_np::Lookup_named_param_def<
+    internal_np::face_color_map_t, NamedParameters,
+    Constant_property_map<face_descriptor, Color> >::type                            FCM;
 
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+
+  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
+  FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+
+  bool has_vcolor = !is_default_parameter(get_parameter(np, internal_np::vertex_color_map));
+  bool has_fcolor = !is_default_parameter(get_parameter(np, internal_np::face_color_map));
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
-  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                          get_const_property_map(boost::vertex_point, g));
 
   if(!os.good())
@@ -161,18 +178,45 @@ bool write_PLY(std::ostream& os,
 
   os << "element vertex " << num_vertices(g) << std::endl;
   IO::internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+  //if vcm is not default add v:color property
+  if(has_vcolor)
+  {
+    os << "property uchar red" << std::endl
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
+  }
 
   os << "element face " << num_faces(g) << std::endl;
   IO::internal::output_property_header(
         os, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                             PLY_property<std::vector<int> >("vertex_indices")));
-
+  //if fcm is not default add f:color property
+  if(has_fcolor)
+  {
+    os << "property uchar red" << std::endl
+       << "property uchar green" << std::endl
+       << "property uchar blue" << std::endl
+       << "property uchar alpha" << std::endl;
+  }
   os << "end_header" << std::endl;
 
   for(vertex_descriptor vd : vertices(g))
   {
     Point_3 p = get(vpm, vd);
     IO::internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+    if(has_vcolor)
+    {
+      CGAL::Color c = get(vcm, vd);
+      if(get_mode(os) == CGAL::IO::ASCII)
+      {
+        os << c << std::endl;
+      }
+      else
+      {
+        os.write(reinterpret_cast<char*>(&c), sizeof(c));
+      }
+    }
   }
 
   std::vector<std::size_t> polygon;
@@ -184,6 +228,16 @@ bool write_PLY(std::ostream& os,
     IO::internal::output_properties(os, &polygon,
                                     std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                                                    PLY_property<std::vector<int> >("vertex_indices")));
+    if(has_fcolor)
+    {
+      CGAL::Color c = get(fcm, fd);
+      if(get_mode(os) == CGAL::IO::ASCII)
+        os << c << std::endl;
+      else
+      {
+        os.write(reinterpret_cast<char*>(&c), sizeof(c));
+      }
+    }
   }
 
   return os.good();

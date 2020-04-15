@@ -745,7 +745,10 @@ bool read_PLY_faces(std::istream& in,
                     PLY_element& element,
                     PolygonRange& polygons,
                     ColorRange& fcolors,
-                    const char* vertex_indices_tag)
+                    const char* vertex_indices_tag,
+                    typename boost::enable_if<
+                    typename boost::has_range_const_iterator<ColorRange>::type
+                    >::type* =0)
 {
   return read_PLY_faces<Integer>(in, element, polygons, std::back_inserter(fcolors), vertex_indices_tag);
 }

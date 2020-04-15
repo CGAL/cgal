@@ -200,29 +200,67 @@ bool test_STL()
 
 
 template<class FaceGraph>
-bool test_PLY()
+bool test_PLY(bool binary = false)
 {
+  //! TODO add tests for face colors
   FaceGraph fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
+  typedef typename boost::property_map<FaceGraph, CGAL::dynamic_vertex_property_t<CGAL::Color> >::type VertexColorMap;
+  typedef typename boost::property_map<FaceGraph, CGAL::dynamic_face_property_t<CGAL::Color> >::type FaceColorMap;
+  FaceColorMap fcm  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
+  VertexColorMap vcm  = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
+
+  auto fit = faces(fg).begin();
+  put(fcm,*fit++,CGAL::Color(155,0,0));
+  put(fcm,*fit++,CGAL::Color(0,155,0));
+  put(fcm,*fit++,CGAL::Color(0,0,155));
+  put(fcm,*fit++,CGAL::Color(155,0,155));
+
+  auto vit = vertices(fg).begin();
+  put(vcm,*vit++,CGAL::Color(255,0,0));
+  put(vcm,*vit++,CGAL::Color(0,255,0));
+  put(vcm,*vit++,CGAL::Color(0,0,255));
+  put(vcm,*vit++,CGAL::Color(255,0,255));
   std::ostringstream out;
-  CGAL::write_PLY(out, fg, "hello");
+
+  if(binary)
+    CGAL::set_mode(out, CGAL::IO::BINARY);
+
+  CGAL::write_PLY(out, fg, "hello", CGAL::parameters::vertex_color_map(vcm)
+                  .face_color_map(fcm));
   if(out.fail())
   {
     std::cerr<<"Tetrahedron writing failed."<<std::endl;
     return false;
   }
   std::istringstream in(out.str());
-  std::vector<Point> points;
-  std::vector<std::vector<std::size_t> > polygons;
+
+  if(binary)
+    CGAL::set_mode(in, CGAL::IO::BINARY);
+
   fg.clear();
-  if(!CGAL::read_PLY(in,fg, CGAL::parameters::all_default())){
+
+  VertexColorMap vcm2  = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
+  FaceColorMap fcm2  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
+  if(!CGAL::read_PLY(in,fg, CGAL::parameters::vertex_color_map(vcm2).face_color_map(fcm2))){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
-
   CGAL_assertion(num_vertices(fg) == 4);
   CGAL_assertion(num_faces(fg) == 4);
+  vit = vertices(fg).begin();
+  CGAL_assertion(get(vcm2, *vit++) == CGAL::Color(255,0,0));
+  CGAL_assertion(get(vcm2, *vit++) == CGAL::Color(0,255,0));
+  CGAL_assertion(get(vcm2, *vit++) == CGAL::Color(0,0,255));
+  CGAL_assertion(get(vcm2, *vit++) == CGAL::Color(255,0,255));
+
+  fit = faces(fg).begin();
+  CGAL_assertion(get(fcm2,*fit++)==CGAL::Color(155,0,0));
+  CGAL_assertion(get(fcm2,*fit++)==CGAL::Color(0,155,0));
+  CGAL_assertion(get(fcm2,*fit++)==CGAL::Color(0,0,155));
+  CGAL_assertion(get(fcm2,*fit++)==CGAL::Color(155,0,155));
+
 
   return true;
 }
@@ -233,8 +271,14 @@ int main(int argc, char** argv)
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
 
   //PLY
-  test_PLY<Polyhedron>();
-  test_PLY<SM>();
+  if(!test_PLY<Polyhedron>())
+    return 1;
+  if(!test_PLY<Polyhedron>(true))
+    return 1;
+  if(!test_PLY<SM>())
+    return 1;
+  if(!test_PLY<SM>(true))
+    return 1;
   // OFF
   test_bgl_read_write<Polyhedron>(filename);
   test_bgl_read_write<SM>(filename);
