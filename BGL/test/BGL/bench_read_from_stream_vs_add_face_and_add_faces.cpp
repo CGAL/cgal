@@ -17,9 +17,9 @@ void convert_to_vertex_triples(
   triangles.reserve(faces_ids.size());
   for (const std::array<std::size_t, 3>& a : faces_ids)
     triangles.push_back(
-      CGAL::make_array( Mesh::Vertex_index(static_cast<unsigned int>(a[0])),
-                        Mesh::Vertex_index(static_cast<unsigned int>(a[1])),
-                        Mesh::Vertex_index(static_cast<unsigned int>(a[2])) ) );
+      CGAL::make_array( Mesh::Vertex_index(static_cast<Mesh::size_type>(a[0])),
+                        Mesh::Vertex_index(static_cast<Mesh::size_type>(a[1])),
+                        Mesh::Vertex_index(static_cast<Mesh::size_type>(a[2])) ) );
 }
 int main(int argc, char** argv)
 {
@@ -47,9 +47,9 @@ int main(int argc, char** argv)
   CGAL::read_OFF(in, points, faces_ids);
   convert_to_vertex_triples(faces_ids, triangles);
   std::cout << "  Read soup: " << timer.time() << std::endl;
-  m.reserve(static_cast<unsigned int>(points.size()),
-            static_cast<unsigned int>(3*triangles.size()/2),
-            static_cast<unsigned int>(triangles.size()));
+  m.reserve(static_cast<Mesh::size_type>(points.size()),
+            static_cast<Mesh::size_type>(3*triangles.size()/2),
+            static_cast<Mesh::size_type>(triangles.size()));
   for (const Kernel::Point_3& pt : points)
     m.add_vertex(pt);
   CGAL::Real_timer subtimer;
@@ -75,9 +75,9 @@ int main(int argc, char** argv)
   CGAL::read_OFF(in, points, faces_ids);
   convert_to_vertex_triples(faces_ids, triangles);
   std::cout << "  Read soup: " << timer.time() << std::endl;
-  m.reserve(static_cast<unsigned int>(points.size()),
-            static_cast<unsigned int>(3*triangles.size()/2),
-            static_cast<unsigned int>(triangles.size()));
+  m.reserve(static_cast<Mesh::size_type>(points.size()),
+            static_cast<Mesh::size_type>(3*triangles.size()/2),
+            static_cast<Mesh::size_type>(triangles.size()));
   for (const Kernel::Point_3& pt : points)
     m.add_vertex(pt);
   CGAL::Real_timer subtimer;
