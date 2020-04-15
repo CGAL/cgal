@@ -44,7 +44,7 @@ else( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
     ON)
   if( LINK_WITH_TBB )
     find_package( TBB )
-    find_package( TBB REQUIRED )
+    include(CGAL_TBB_support)
   endif( LINK_WITH_TBB )
 endif()
 
