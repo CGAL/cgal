@@ -63,7 +63,7 @@ void test_linear_intersections()
     Point_2(-1,1)
   };
 
-  Iso_rectangle_2 iso_rectangle_2(points_2D[0], points_2D[1]);
+  Iso_rectangle_2 iso_rectangle_2(points_2D[0], points_2D[2]);
   Line_2 line_2(points_2D[0], points_2D[1]);
   Ray_2 ray_2(points_2D[0], points_2D[1]);
   Segment_2 segment_2(points_2D[0], points_2D[1]);

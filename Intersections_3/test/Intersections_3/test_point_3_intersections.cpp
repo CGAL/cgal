@@ -73,8 +73,8 @@ void test_P_Pl()
 {
   typedef CGAL::Point_3<K> P;
   typedef CGAL::Plane_3<K> Pl;
-  P p(0.99,0.99,0.99);
-  Pl pl(P(-1.0,-1.0,-1.0), P(1.0,1.0,1.0), P(0.0,0.0,0.0));
+  P p(22,33,0);
+  Pl pl(P(0.0,0.0,0.0), P(1.0,0.0,0.0), P(0.0,1.0,0.0));
   assert(CGAL::do_intersect(p, pl));
   CGAL::Object o = CGAL::intersection(p,pl);
   P res;
