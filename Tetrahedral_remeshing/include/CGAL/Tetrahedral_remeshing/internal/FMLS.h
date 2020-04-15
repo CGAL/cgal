@@ -233,8 +233,8 @@ public:
       Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
       Vector_3 q, n;
       for (unsigned int j = 0; j < numIter; j++) {
-        q = Vector_3();
-        n = Vector_3();
+        q = CGAL::NULL_VECTOR;
+        n = CGAL::NULL_VECTOR;
         fastProjectionCPU(p, q, n);
         p = q;
       }
@@ -250,8 +250,8 @@ public:
     float sigma_r = bilateralRange;
     Vector_3 p(x);
     for (unsigned int k = 0; k < numIter; k++) {
-      Vector_3 c;
-      n = Vector_3();;
+      Vector_3 c = CGAL::NULL_VECTOR;
+      n = CGAL::NULL_VECTOR;
       float sumW = 0.f;
       for (unsigned int j = 0; j < PNSize; j++) {
         Vector_3 pj(PN[6 * j], PN[6 * j + 1], PN[6 * j + 2]);
@@ -275,8 +275,8 @@ public:
       Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
       Vector_3 q, n;
       for (unsigned int j = 0; j < numIter; j++) {
-        q = Vector_3();
-        n = Vector_3();
+        q = CGAL::NULL_VECTOR;
+        n = CGAL::NULL_VECTOR;
         projectionCPU(p, q, n);
         p = q;
       }
