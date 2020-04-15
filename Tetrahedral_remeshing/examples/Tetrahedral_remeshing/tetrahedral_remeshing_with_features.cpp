@@ -76,36 +76,32 @@ void add_edge(Vertex_handle v1,
     constraints.insert(std::make_pair(v1, v2));
 }
 
-void generate_input_cube(const std::size_t& n,
-                    const char* filename,
-                    boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
+void make_constraints_from_cube_edges(
+              Remeshing_triangulation& tr,
+              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
 {
-  CGAL::Random rng;
-  std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
+  Remeshing_triangulation::Locate_type lt;
+  int li, lj;
 
-  Remeshing_triangulation tr;
+  Cell_handle c = tr.locate(Point(-2., -2., -2.), lt, li, lj);
+  Vertex_handle v0 = c->vertex(li);
+  c = tr.locate(Point(-2., -2.,  2.));
+  Vertex_handle v1 = c->vertex(li);
 
-  // points in a sphere
-  while (tr.number_of_vertices() < n)
-    tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+  c = tr.locate(Point( 2., -2., -2.));
+  Vertex_handle v2 = c->vertex(li);
+  c = tr.locate(Point( 2., -2.,  2.));
+  Vertex_handle v3 = c->vertex(li);
 
-  // vertices of a larger cube
-  Vertex_handle v0 = tr.insert(Point(-2., -2., -2.));
-  Vertex_handle v1 = tr.insert(Point(-2., -2.,  2.));
+  c = tr.locate(Point(-2.,  2.,  -2.));
+  Vertex_handle v4 = c->vertex(li);
+  c = tr.locate(Point(-2.,  2.,   2.));
+  Vertex_handle v5 = c->vertex(li);
 
-  Vertex_handle v2 = tr.insert(Point( 2., -2., -2.));
-  Vertex_handle v3 = tr.insert(Point( 2., -2.,  2.));
-
-  Vertex_handle v4 = tr.insert(Point(-2.,  2.,  -2.));
-  Vertex_handle v5 = tr.insert(Point(-2.,  2.,   2.));
-
-  Vertex_handle v6 = tr.insert(Point( 2.,  2., -2.));
-  Vertex_handle v7 = tr.insert(Point( 2.,  2.,  2.));
-
-  // writing file output
-  std::ofstream oFileT(filename, std::ios::out);
-  oFileT << tr;
-  oFileT.close();
+  c = tr.locate(Point( 2.,  2., -2.));
+  Vertex_handle v6 = c->vertex(li);
+  c = tr.locate(Point( 2.,  2.,  2.));
+  Vertex_handle v7 = c->vertex(li);
 
   // constrain cube edges
   add_edge(v0, v1, tr, constraints);
@@ -122,8 +118,6 @@ void generate_input_cube(const std::size_t& n,
   add_edge(v1, v5, tr, constraints);
   add_edge(v2, v6, tr, constraints);
   add_edge(v3, v7, tr, constraints);
-
-  CGAL_assertion(tr.is_valid(true));
 }
 
 void set_subdomain(Remeshing_triangulation& tr, const int index)
@@ -137,9 +131,6 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
-  generate_input_cube(1000, "data/sphere_in_cube.tr.cgal", constraints);
-
   const char* filename     = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.02;
   int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
@@ -154,9 +145,10 @@ int main(int argc, char* argv[])
   Remeshing_triangulation t3;
   input >> t3;
   set_subdomain(t3, 1);
-  CGAL_assertion(t3.is_valid());
+  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
+  make_constraints_from_cube_edges(t3, constraints);
 
-  save_ascii_triangulation("tet_remeshing_with_features_before.mesh", t3);
+  CGAL_assertion(t3.is_valid());
 
   CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
