@@ -324,7 +324,7 @@ private:
 
   void computePNScale()
   {
-    Vector_3 c;
+    Vector_3 c = CGAL::NULL_VECTOR;
     for (unsigned int i = 0; i < PNSize; i++)
       c += Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
     c /= PNSize;
