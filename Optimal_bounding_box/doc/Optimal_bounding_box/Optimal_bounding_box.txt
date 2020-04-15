@@ -72,12 +72,12 @@ and to find not only a local minimum, but a global optimum.
 \subsection OBBOptimality Missing the Optimality
 
 In theory, the genetic algorithms used by Chang et al. enable - given enough time - the algorithm
-to explore the complete search space. In practice, a practical algorithm does not have
+to explore the complete search space. In practice, an algorithm does not have
 infinite time at its disposal. In addition, there is no simple way
-to check if the current-best solution is optimal. Thus, a practical
-implementation of the algorithm cannot offer the same guarantees
-that the theoretical algorithm offers. However, we observe that in practice
-the algorithm constructs a close approximation of the optimal bounding box most of the time.
+to check if the current-best solution is optimal. Thus, an implementation
+of the algorithm cannot provide the same guarantees that the theoretical algorithm offers.
+However, we observe that in practice the algorithm constructs a close approximation
+of the optimal bounding box most of the time.
 
 \subsection OBBConvexHull Convex Hull Computation as Preprocessing
 
@@ -99,9 +99,9 @@ enabling using further custom inputs.
 
 The result of the algorithm can be retrieved as:
 - the best affine transformation \f${\mathcal R}_b\f$ that the algorithm has found;
-- an array of eight points, representing the best oriented bounding box (\f${\mathcal B}_b\f$)
-that the algorithm has constructed, which is related to \f$ {\mathcal R}_b\f$ as it is
-the inverse transformation of the axis-aligned bounding box of the transformed point set.
+- an array of eight points, representing the best oriented bounding box that
+the algorithm has constructed, which is related to \f$ {\mathcal R}_b\f$ as it is
+the inverse transformation of the axis-aligned bounding box of the transformed input object.
 The order of the points in the array is the same as in the function
 \link PkgBGLHelperFct `CGAL::make_hexahedron()` \endlink,
 which can be used to construct a mesh from these points.
@@ -139,8 +139,8 @@ Computing the convex hull as a preliminary step provides a significant speed adv
 <img src="ch_speedup.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{ch_speed_up}
-Comparison of the runtime of the complete algorithm depending on whether the convex hull is computed
-and used afterwards, or not.
+Computation of the speedup achieved on the total runtime of the algorithm when the convex hull is computed
+and used afterwards. Note that the total runtime includes the construction of the convex hull (when it is used).
 The color and size of the dots represent the number of vertices in the input data (larger, bluer points
 having more input vertices than greener, smaller points).
 Computing the convex hull is beneficial for all but a handful of cases.
@@ -169,11 +169,11 @@ are excluded from this graph, but consistent results are observed.
 
 \subsection OBBBasicExample Basic Example
 
-\cgalExample{Optimal_bounding_box/obb_example.cpp}
-
 The following example illustrates a basic usage of the algorithm: an input mesh is read,
 its oriented bounding box is computed using an array as output, and a mesh is constructed
 from the eight points.
+
+\cgalExample{Optimal_bounding_box/obb_example.cpp}
 
 \subsection OBBExampleNP Using Named Parameters
 
@@ -186,7 +186,7 @@ modified on the fly.
 \subsection OBBRotatedTree Rotated AABB Tree
 
 The following example uses the affine transformation, which is the affine transformation such
-that the axis-aligned bounding box of the transformed vertices of the mesh has minimum volume),
+that the axis-aligned bounding box of the transformed vertices of the mesh has minimum volume,
 returned by the algorithm to build a custom vertex point property map. An AABB tree of the (on the fly)
 rotated faces of the mesh is then constructed.
 
