@@ -38,7 +38,5 @@ void save_ascii_triangulation(const char* filename, const T3& t3)
   if (!t3.is_valid(true))
     std::cerr << "Invalid triangulation!" << std::endl;
 
-  CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(
-        t3, filename);
+  CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(t3, filename);
 }
-

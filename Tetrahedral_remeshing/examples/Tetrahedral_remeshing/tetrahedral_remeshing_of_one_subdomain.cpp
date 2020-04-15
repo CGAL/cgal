@@ -35,9 +35,15 @@ public:
 
 int main(int argc, char* argv[])
 {
-  const float target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1f;
+  const char* filename = (argc > 1) ? argv[1] : "data/triangulation_two_subdomains.binary.cgal";
+  const float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
+
+  std::ifstream input(filename, std::ios_base::in | std::ios_base::binary);
+  if(!input)
+    return EXIT_FAILURE;
 
   Remeshing_triangulation tr;
+  load_binary_triangulation(input, tr);
 
   CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length,
       CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
