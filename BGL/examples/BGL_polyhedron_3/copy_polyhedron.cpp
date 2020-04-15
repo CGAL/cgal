@@ -79,7 +79,6 @@ int main(int argc, char* argv[])
     boost::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
     boost::unordered_map<source_face_descriptor, tm_face_descriptor> f2f;
-    CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("reverse.off");
     out << S;
     CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_map(boost::make_assoc_property_map(v2v))
