@@ -4,6 +4,7 @@
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/tetrahedral_remeshing_io.h>
 
 #include <iostream>
 #include <fstream>

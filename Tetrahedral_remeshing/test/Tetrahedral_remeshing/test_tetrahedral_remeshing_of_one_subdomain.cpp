@@ -1,12 +1,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/tetrahedral_remeshing_io.h>
 
 #include <CGAL/Random.h>
+
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

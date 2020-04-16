@@ -1,13 +1,21 @@
+// Copyright (c) 2020 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Jane Tournois, Noura Faraj
 
-#include <CGAL/Random.h>
-#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <iostream>
 #include <fstream>
 
-
 template<typename T3>
-bool load_binary_triangulation(std::istream& is, T3& t3)
+bool load_triangulation(std::istream& is, T3& t3)
 {
   std::string s;
   if (!(is >> s)) return false;
@@ -20,6 +28,7 @@ bool load_binary_triangulation(std::istream& is, T3& t3)
 
   std::getline(is, s);
   if (binary) CGAL::set_binary_mode(is);
+  else        CGAL::set_ascii_mode(is);
   is >> t3;
   return bool(is);
 }
@@ -33,10 +42,9 @@ bool save_binary_triangulation(std::ostream& os, const T3& t3)
 }
 
 template<typename T3>
-void save_ascii_triangulation(const char* filename, const T3& t3)
+void save_ascii_triangulation(std::ostream& os, const T3& t3)
 {
-  if (!t3.is_valid(true))
-    std::cerr << "Invalid triangulation!" << std::endl;
-
-  CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(t3, filename);
+  os << "CGAL c3t3\n";
+  CGAL::set_ascii_mode(os);
+  return !!(os << t3);
 }

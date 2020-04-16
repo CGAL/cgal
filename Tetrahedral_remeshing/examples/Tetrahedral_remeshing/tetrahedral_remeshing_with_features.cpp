@@ -15,7 +15,7 @@
 #include <fstream>
 #include <utility>
 
-#include "tetrahedral_remeshing_io.h"
+#include <CGAL/Tetrahedral_remeshing/tetrahedral_remeshing_io.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
