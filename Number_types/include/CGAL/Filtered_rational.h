@@ -120,6 +120,41 @@ public:
 #endif
   }
 
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+  // Rule of five in case there's a mutex
+  ~Filtered_rational() { }
+
+  Filtered_rational(const Filtered_rational& other)
+    : _n1(other._n1), eii(other.eii)
+  {
+    if(eii)
+      _n2 = other._n2;
+  }
+
+  Self& operator=(const Self& other)
+  {
+    this->_n1 = other._n1;
+    if(eii)
+      this->_n2 = other._n2;
+    return *this;
+  }
+
+  Filtered_rational(Filtered_rational&& other)
+    : _n1(std::move(other._n1))
+  {
+    if(eii)
+      _n2 = std::move(other._n2);
+  }
+
+  Self& operator=(Self&& other)
+  {
+    this->_n1 = std::move(other._n1);
+    if(eii)
+      this->_n2 = std::move(other._n2);
+    return *this;
+  }
+#endif
+
   Self& operator+=(const Self& a) { n2() += a.n2(); n1() = to_interval(n2()); return *this; }
   Self& operator-=(const Self& a) { n2() -= a.n2(); n1() = to_interval(n2()); return *this; }
   Self& operator*=(const Self& a) { n2() *= a.n2(); n1() = to_interval(n2()); return *this; }

@@ -71,6 +71,32 @@ struct Approximate_exact_pair
 #endif
   { }
 
+#ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+  // Rule of 5 if there's a mutex
+  // Rule of five in case there's a mutex
+  ~Approximate_exact_pair() { }
+
+  Approximate_exact_pair(const Approximate_exact_pair& other)
+    : Base(static_cast<const Base&>(other))
+  { }
+
+  Self& operator=(const Self& other)
+  {
+    static_cast<Base&>(*this) = static_cast<const Base&>(other);
+    return *this;
+  }
+
+  Approximate_exact_pair(Approximate_exact_pair&& other)
+    : Base(static_cast<Base&&>(other))
+  { }
+
+  Self& operator=(Self&& other)
+  {
+    static_cast<Base&>(*this) = static_cast<Base&&>(other);
+    return *this;
+  }
+#endif
+
   const T1& approx() const
   {
     return this->first;
