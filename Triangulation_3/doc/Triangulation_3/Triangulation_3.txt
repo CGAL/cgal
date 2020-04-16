@@ -1132,6 +1132,7 @@ Delaunay and regular triangulations.
 In 2014, Thijs van Lankveld implemented the segment cell traverser iterator.
 In 2018, Jane Tournois introduced the segment simplex traverser iterator
 and finalized both iterators that were integrated in release 5.1.
+Olivier Devillers contributed to boost the performances of the cell traverser.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
 the design of \cgal. Jean-Daniel Boissonnat is also acknowledged
