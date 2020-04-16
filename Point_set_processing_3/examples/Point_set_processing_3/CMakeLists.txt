@@ -47,7 +47,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   create_single_source_cgal_program( "structuring_example.cpp" )
-  create_single_source_cgal_program( "clustering_example.cpp" )
 
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
   create_single_source_cgal_program( "write_ply_points_example.cpp" )
@@ -70,7 +69,11 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "normal_estimation.cpp" )
     CGAL_target_use_Eigen(normal_estimation)
 
+    create_single_source_cgal_program( "clustering_example.cpp" )
+    CGAL_target_use_Eigen(clustering_example)
+
     create_single_source_cgal_program( "edges_example.cpp" )
+    CGAL_target_use_Eigen(edges_example)
 
     # Executables that require libpointmatcher
     find_package(libpointmatcher QUIET)
@@ -101,8 +104,6 @@ if ( CGAL_FOUND )
     else()
       message(STATUS "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
     endif()
-
-    CGAL_target_use_Eigen(edges_example)
 
     create_single_source_cgal_program( "callback_example.cpp" )
     CGAL_target_use_Eigen(callback_example)
