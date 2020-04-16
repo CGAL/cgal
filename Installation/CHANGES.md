@@ -3,6 +3,11 @@ Release History
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 
+### Optimal Bounding Box (new package)
+- This package implements an optimization algorithm that aims to construct a close approximation
+  of the *optimal bounding box* of a mesh or a point set, which is defined as the smallest
+  (in terms of volume) bounding box that contains a given mesh or point set.
+
 ### 2D and 3D Linear Geometry Kernel
  - Add `CompareSignedDistanceToLine_2` in the 2D/3D Kernel concept to compare
    the signed distance of two points to a line, or the line passing through two given points.
