@@ -47,6 +47,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   create_single_source_cgal_program( "structuring_example.cpp" )
+  create_single_source_cgal_program( "clustering_example.cpp" )
 
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
   create_single_source_cgal_program( "write_ply_points_example.cpp" )
@@ -132,7 +133,8 @@ if ( CGAL_FOUND )
         normals_example
         jet_smoothing_example
         normal_estimation
-        callback_example)
+        callback_example
+        clustering_example)
       if(TARGET ${target})
         CGAL_target_use_TBB(${target})
       endif()
