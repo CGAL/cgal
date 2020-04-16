@@ -144,8 +144,8 @@ template <typename Graph>
 class Polylines_visitor
 {
 private:
-  Graph& graph;
   std::vector<std::vector<Point_3> >& polylines;
+  Graph& graph;
 
 public:
 
