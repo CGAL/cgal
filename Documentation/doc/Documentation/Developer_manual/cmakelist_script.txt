@@ -35,8 +35,6 @@ This options should suffice to create `CMakeLists.txt` script
 for most directories containing programs. However, in some special
 cases, it might still be required to create the script manually, for
 instance, if some source files/executables need a different linking than
-other source files.
-
-The section \subpage devman_create_and_use_a_cmakelist explains further how to do so.
+other source files. The Section \subpage devman_create_and_use_a_cmakelist provides more details.
 
 */
