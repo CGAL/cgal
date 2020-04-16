@@ -1183,7 +1183,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     # Build the doc
     set(DOC_DIR "${CMAKE_BINARY_DIR}/build_doc")
     file(MAKE_DIRECTORY "${DOC_DIR}")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
+    execute_process(COMMAND "${CMAKE_COMMAND}" -DCGAL_BUILD_THREE_DOC=TRUE -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
         WORKING_DIRECTORY "${DOC_DIR}"
         )
     execute_process(COMMAND "${CMAKE_COMMAND}" --build . --target "doc"
