@@ -214,6 +214,7 @@ private:
     Scene_polylines_item* polylines_item;
   };
   struct Image_mesh_items {
+    Image_mesh_items(gsl::not_null<Scene_image_item*> ptr) : image_item(ptr) {}
     gsl::not_null<Scene_image_item*> image_item;
     Scene_polylines_item* polylines_item = nullptr;
   };
@@ -302,7 +303,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       else if (auto image_item =
                    qobject_cast<Scene_image_item*>(scene->item(ind))) {
         if (!items)
-          items = Image_mesh_items{make_not_null(image_item), nullptr};
+          items = Image_mesh_items{make_not_null(image_item)};
         else
           return tr("An image items cannot be mixed with other items type");
       }
