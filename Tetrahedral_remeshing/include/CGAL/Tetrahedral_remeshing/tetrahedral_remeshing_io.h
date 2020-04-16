@@ -42,7 +42,7 @@ bool save_binary_triangulation(std::ostream& os, const T3& t3)
 }
 
 template<typename T3>
-void save_ascii_triangulation(std::ostream& os, const T3& t3)
+bool save_ascii_triangulation(std::ostream& os, const T3& t3)
 {
   os << "CGAL c3t3\n";
   CGAL::set_ascii_mode(os);
