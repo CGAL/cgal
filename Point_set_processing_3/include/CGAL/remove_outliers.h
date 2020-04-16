@@ -17,6 +17,8 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
@@ -24,9 +26,15 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <boost/iterator/zip_iterator.hpp>
+
 #include <iterator>
 #include <algorithm>
 #include <map>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_sort.h>
+#endif
 
 namespace CGAL {
 
@@ -132,7 +140,8 @@ compute_avg_knn_sq_distance_3(
    account; if `threshold_distance=0` only `threshold_percent` is
    taken into account.
 */
-template <typename PointRange,
+template <typename ConcurrencyTag,
+          typename PointRange,
           typename NamedParameters
 >
 typename PointRange::iterator
@@ -178,53 +187,100 @@ remove_outliers(
 
   CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
+  CGAL::Real_timer t;
+  t.start();
+
   Neighbor_query neighbor_query (points, point_map);
 
+  t.stop();
+  std::cerr << "Building kd-tree = " << t.time() << std::endl;
+  t.reset();
+
+  t.start();
   std::size_t nb_points = points.size();
 
   // iterate over input points and add them to multimap sorted by distance to k
-  std::multimap<FT,Enriched_point> sorted_points;
-  std::size_t nb = 0;
-  for(const value_type& vt : points)
-  {
-    FT sq_distance = internal::compute_avg_knn_sq_distance_3(
-      get(point_map, vt),
-      neighbor_query, k, neighbor_radius);
-    sorted_points.insert( std::make_pair(sq_distance, vt) );
-    if (callback && !callback ((nb+1) / double(nb_points)))
-      return points.end();
-    ++ nb;
-  }
+  std::vector<std::pair<FT, iterator> > sorted_points;
+  sorted_points.reserve (nb_points);
+  for (iterator it = points.begin(); it != points.end(); ++ it)
+    sorted_points.push_back(std::make_pair (0, it));
+
+  t.stop();
+  std::cerr << "Copies = " << t.time() << std::endl;
+  t.reset();
+
+  Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+    callback_wrapper (callback, nb_points);
+
+  t.start();
+
+  CGAL::for_each<ConcurrencyTag>
+    (sorted_points,
+     [&](std::pair<FT, iterator>& p) -> bool
+     {
+       if (callback_wrapper.interrupted())
+         return false;
+
+       p.first = internal::compute_avg_knn_sq_distance_3(
+         get(point_map, *(p.second)),
+         neighbor_query, k, neighbor_radius);
+
+       ++ callback_wrapper.advancement();
+       return true;
+     });
+
+  t.stop();
+  std::cerr << "Queries = " << t.time() << std::endl;
+  t.reset();
+
+  t.start();
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
+    tbb::parallel_sort (sorted_points.begin(), sorted_points.end());
+  else
+#endif
+    std::sort (sorted_points.begin(), sorted_points.end());
+
+  t.stop();
+  std::cerr << "Sort = " << t.time() << std::endl;
+  t.reset();
+
+  t.start();
 
   // Replaces [points.begin(), points.end()) range by the multimap content.
   // Returns the iterator after the (100-threshold_percent) % best points.
   typename PointRange::iterator first_point_to_remove = points.begin();
   typename PointRange::iterator dst = points.begin();
   int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
-  typename std::multimap<FT,Enriched_point>::iterator src;
+  typename std::vector<std::pair<FT, iterator> >::iterator src;
   int index;
   for (src = sorted_points.begin(), index = 0;
        src != sorted_points.end();
        ++src, ++index)
   {
-    *dst++ = src->second;
+    *dst++ = *src->second;
     if (index <= first_index_to_remove ||
         src->first < threshold_distance * threshold_distance)
       first_point_to_remove = dst;
   }
+
+  t.stop();
+  std::cerr << "Copies = " << t.time() << std::endl;
+  t.reset();
 
   return first_point_to_remove;
 }
 
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
-template <typename PointRange>
+template <typename ConcurrencyTag, typename PointRange>
 typename PointRange::iterator
 remove_outliers(
   PointRange& points,
   unsigned int k) ///< number of neighbors.
 {
-  return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return remove_outliers<ConcurrencyTag> (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 /// \endcond
 
