@@ -9,6 +9,8 @@ The following pages describe how to use \cgal on different environments
 
 - \subpage thirdparty gives information (supported versions, download links) of the required and optional third party libraries.
 
+- \subpage devman_create_and_use_a_cmakelist explains how to use CMake to link a program with \cgal.
+
 The following pages cover advanced installation options
 
 - \subpage configurationvariables gives information about which CMake variables can be used to help
