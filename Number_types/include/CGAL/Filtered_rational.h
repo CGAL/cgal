@@ -219,7 +219,7 @@ private:
   NT1 _n1;
   mutable NT2 _n2;
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
-  CGAL_MUTEX mutex;
+  mutable CGAL_MUTEX mutex;
   mutable bool eii = false; // eii means "exact is initialized"
 #endif
 };
