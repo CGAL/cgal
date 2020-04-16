@@ -99,6 +99,8 @@ create_single_source_cgal_program( "test_Properties.cpp" )
 
 create_single_source_cgal_program( "test_wrl.cpp" )
 
+create_single_source_cgal_program( "bench_read_from_stream_vs_add_face_and_add_faces.cpp" )
+
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
