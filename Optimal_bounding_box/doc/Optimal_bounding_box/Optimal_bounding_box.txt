@@ -122,23 +122,38 @@ with speeds being averaged over 100 runs for each model. The machine used is a l
 
 \subsection OBBConvexHullComplexity Cost and Gain of Convex Hull Computations
 
-Computing the convex hull as a preliminary step provides a significant speed advantage,
-and never worsens the result in our tests.
+Computing the convex hull as a preliminary step provides a significant speed advantage.
 
-\cgalFigureBegin{ch_speed_up, ch_speedup.png}
-Speed-up obtained by computing the oriented bounding box of the convex hull of the data.
-It is always beneficial to construct and use the convex hull.
-\cgalFigureEnd
+\cgalFigureAnchor{ch_speed_up}
+<center>
+<img src="ch_speedup.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{ch_speed_up}
+Comparison of the runtime of the compelte algorithm depending on whether the convex hull is computed
+and used afterwards, or not.
+The color and size of the dots represent the number of vertices in the input data (larger, bluer points
+having more input vertices than greener, smaller points).
+Computing the convex hull is beneficial for all but a handful of cases.
+\cgalFigureCaptionEnd
 
 \subsection OBBOrientedBoundingBoxComplexity Performance of the Oriented Bounding Box Algorithm
 
 We analyze in this section the computation time of the algorithm based on the number of vertices
 on the convex hull.
 
-\cgalFigureBegin{obb_timings, obb_time.jpg}
+\cgalFigureAnchor{obb_timings}
+<center>
+<img src="obb_time.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{obb_timings}
 Running times for the oriented bounding box construction of the convex hull of models
 of the <a href="https://ten-thousand-models.appspot.com/">Thingi10k</a> data set.
-\cgalFigureEnd
+The color and size of the dots represent the number of vertices in the input data (larger, bluer points
+having more input vertices than greener, smaller points).
+The algorithm exhibits linear complexity in practice.
+For visibility reasons, the few models whose convex hull has more than 10000 vertices
+are excluded from this graph, but consistent results are observed.
+\cgalFigureCaptionEnd
 
 \section OBBexamples Examples
 
