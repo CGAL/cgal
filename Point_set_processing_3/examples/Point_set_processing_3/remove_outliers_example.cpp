@@ -55,7 +55,7 @@ int main(int argc, char*argv[])
   // I know the ratio of outliers present in the point set
   const double removed_percentage = 5.0; // percentage of points to remove
 
-  points.erase(CGAL::remove_outliers
+  points.erase(CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
                (points,
                 nb_neighbors,
                 CGAL::parameters::threshold_percent(removed_percentage). // Minimum percentage to remove

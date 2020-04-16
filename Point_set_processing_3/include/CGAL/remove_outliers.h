@@ -171,9 +171,6 @@ remove_outliers(
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
 
-  // actual type of input points
-  typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
-
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
@@ -192,23 +189,23 @@ remove_outliers(
   std::size_t nb_points = points.size();
 
   // iterate over input points and add them to multimap sorted by distance to k
-  std::vector<std::pair<FT, iterator> > sorted_points;
+  std::vector<std::pair<FT, value_type> > sorted_points;
   sorted_points.reserve (nb_points);
-  for (iterator it = points.begin(); it != points.end(); ++ it)
-    sorted_points.push_back(std::make_pair (FT(0), it));
+  for (const value_type& p : points)
+    sorted_points.push_back(std::make_pair (FT(0), p));
 
   Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
     callback_wrapper (callback, nb_points);
 
   CGAL::for_each<ConcurrencyTag>
     (sorted_points,
-     [&](std::pair<FT, iterator>& p) -> bool
+     [&](std::pair<FT, value_type>& p) -> bool
      {
        if (callback_wrapper.interrupted())
          return false;
 
        p.first = internal::compute_avg_knn_sq_distance_3(
-         get(point_map, *(p.second)),
+         get(point_map, p.second),
          neighbor_query, k, neighbor_radius);
 
        ++ callback_wrapper.advancement();
@@ -217,12 +214,12 @@ remove_outliers(
 
   std::size_t first_index_to_remove = std::size_t(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
 
-  typename std::vector<std::pair<FT, iterator> >::iterator f2r
+  typename std::vector<std::pair<FT, value_type> >::iterator f2r
     = sorted_points.begin();
 
   if (threshold_distance != FT(0))
     f2r = std::partition (sorted_points.begin(), sorted_points.end(),
-                          [&threshold_distance](const std::pair<FT, iterator>& p) -> bool
+                          [&threshold_distance](const std::pair<FT, value_type>& p) -> bool
                           {
                             return p.first < threshold_distance * threshold_distance;
                           });
@@ -236,12 +233,21 @@ remove_outliers(
   }
 
   // Replaces [points.begin(), points.end()) range by the sorted content.
-  iterator it = points.begin();
-  for (const auto& p : sorted_points)
-    *it++ = *p.second;
+  iterator pit = points.begin();
+  iterator out = points.begin();
+
+  for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+  {
+    *pit = sit->second;
+    if (sit == f2r)
+      out = pit;
+    ++ pit;
+  }
+
+  callback_wrapper.join();
 
   // Returns the iterator on the first point to remove
-  return f2r->second;
+  return out;
 }
 
 /// \cond SKIP_IN_MANUAL
