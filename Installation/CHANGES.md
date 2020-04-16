@@ -19,6 +19,9 @@ Release History
    from a soup of disconnected segments that should first be split
    into polylines.
 
+### 3D Convex Hulls
+ -   The long-deprecated function `CGAL::convex_hull_3_to_polyhedron_3()` has been removed.
+     The function `CGAL::convex_hull_3_to_face_graph()` should be used instead.
 
 Release 5.0
 -----------
