@@ -81,53 +81,6 @@ public:
 #endif
 };
 
-
-
-template < class Gt, class Cb >
-std::istream&
-operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
-{
-  typename Remeshing_cell_base<Gt, Cb>::Subdomain_index index;
-  if (is_ascii(is))
-    is >> index;
-  else
-    read(is, index);
-  if (is) {
-    c.set_subdomain_index(index);
-//      for (int i = 0; i < 4; ++i)
-//      {
-//        typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
-//        if (is_ascii(is))
-//          is >> iformat(i2);
-//        else
-//        {
-//          read(is, i2);
-//        }
-//        c.set_surface_patch_index(i, i2);
-//      }
-  }
-  return is;
-}
-
-template < class Gt, class Cb >
-std::ostream&
-operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
-{
-  if (is_ascii(os))
-    os << c.subdomain_index();
-  else
-    write(os, c.subdomain_index());
-  //for (int i = 0; i < 4; ++i)
-  //{
-  //  if (is_ascii(os))
-  //    os << ' ' << oformat(c.surface_patch_index(i));
-  //  else
-  //    write(os, c.surface_patch_index(i));
-  //}
-  return os;
-}
-
-
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
 
