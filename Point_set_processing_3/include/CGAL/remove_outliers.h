@@ -88,7 +88,9 @@ compute_avg_knn_sq_distance_3(
    \ingroup PkgPointSetProcessing3Algorithms
    Removes outliers:
    - computes average squared distance to the nearest neighbors,
-   - and sorts the points in increasing order of average distance.
+   - and partitions the points either using a threshold on the of
+     average distance or selecting a fixed percentage of points with
+     the highest average distances
 
    This method modifies the order of input points so as to pack all remaining points first,
    and returns an iterator over the first point to remove (see erase-remove idiom).
@@ -96,6 +98,8 @@ compute_avg_knn_sq_distance_3(
 
    \pre `k >= 2`
 
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
