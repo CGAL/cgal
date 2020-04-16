@@ -3,7 +3,7 @@
 \cgalAutoToc
 
 \cgal is distributed under a dual license scheme, that is under the
-\sc{Gpl}/\sc{Lgpl} open source license, as well as under commercial licenses.
+GNU GPL/LGPL open source license, as well as under commercial licenses.
 
 \cgal consists of different parts covered by different open source licenses.
 In this section we explain the essence of the different licenses, as well as
