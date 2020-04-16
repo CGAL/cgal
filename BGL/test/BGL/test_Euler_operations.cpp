@@ -2,6 +2,35 @@
 #include "test_Prefix.h"
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+
+template <typename T>
+void
+test_copy_face_graph_nm_umbrella()
+{
+  CGAL_GRAPH_TRAITS_MEMBERS(T);
+
+  T g;
+  Kernel::Point_3 p;
+
+  CGAL::make_tetrahedron(p, p, p, p, g);
+  CGAL::make_tetrahedron(p, p, p, p, g);
+
+  std::vector<vertex_descriptor> verts(vertices(g).begin(), vertices(g).end());
+
+  //merge verts[0] and verts[4]
+  for (halfedge_descriptor h : CGAL::halfedges_around_target(verts[4], g))
+    set_target(h, verts[0], g);
+  remove_vertex(verts[4], g);
+
+  T g_copy;
+  CGAL::copy_face_graph(g, g_copy);
+
+  for (halfedge_descriptor h : halfedges(g_copy))
+  {
+    assert( target(h, g_copy) != Traits::null_vertex() );
+  }
+}
 
 template <typename T>
 void
@@ -444,6 +473,7 @@ template <typename Graph>
 void
 test_Euler_operations()
 {
+  test_copy_face_graph_nm_umbrella<Graph>();
   join_face_test<Graph>();
   add_vertex_and_face_to_border_test<Graph>();
   add_face_to_border_test<Graph>();

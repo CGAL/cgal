@@ -32,17 +32,15 @@ namespace CGAL {
 namespace internal {
 
 template <typename SourceMesh, typename TargetMesh,
-          typename Hmap,
           typename V2V, typename H2H, typename F2F,
           typename Src_vpm, typename Tgt_vpm>
 void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
-                          Hmap hmap,
                           V2V v2v, H2H h2h, F2F f2f,
                           Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::vertex_iterator   tm_vertex_iterator;
+  typedef typename boost::graph_traits<TargetMesh>::halfedge_iterator tm_halfedge_iterator;
 
   typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
@@ -57,10 +55,14 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
                       typename Kernel_traits<typename boost::property_traits<Tgt_vpm>::value_type>::type >
     conv;
 
+  typedef CGAL::dynamic_halfedge_property_t<tm_halfedge_descriptor> Dyn_h_tag;
+  typename boost::property_map<SourceMesh, Dyn_h_tag >::const_type hs_to_ht = get(Dyn_h_tag(), sm);
+
   std::vector<tm_halfedge_descriptor> tm_border_halfedges;
   std::vector<sm_halfedge_descriptor> sm_border_halfedges;
 
-  tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
+  const tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
+  const tm_vertex_descriptor tm_null_vertex = boost::graph_traits<TargetMesh>::null_vertex();
 
   reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(sm).size()),
               static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(sm).size()),
@@ -77,8 +79,8 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     set_next( tm_h, tm_h, tm );
     set_next( tm_h_opp, tm_h_opp, tm );
 
-    put(hmap, sm_h, tm_h);
-    put(hmap, sm_h_opp, tm_h_opp);
+    put(hs_to_ht, sm_h, tm_h);
+    put(hs_to_ht, sm_h_opp, tm_h_opp);
     *h2h++=std::make_pair(sm_h, tm_h);
     *h2h++=std::make_pair(sm_h_opp, tm_h_opp);
 
@@ -106,6 +108,8 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       set_target(tm_h, tm_h_tgt, tm);
       put(tm_vpm, tm_h_tgt, conv(get(sm_vpm, sm_h_tgt)));
     }
+    else
+      set_target(tm_h, tm_null_vertex, tm);
     if ( halfedge(sm_h_src,sm)==sm_h_opp )
     {
       tm_vertex_descriptor tm_h_src = add_vertex(tm);
@@ -114,6 +118,8 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       set_target(tm_h_opp, tm_h_src, tm);
       put(tm_vpm, tm_h_src, conv(get(sm_vpm, sm_h_src)));
     }
+    else
+      set_target(tm_h_opp, tm_null_vertex, tm);
   }
   //create faces and connect halfedges
   for(sm_face_descriptor sm_f : faces(sm))
@@ -122,13 +128,13 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     *f2f++=std::make_pair(sm_f, tm_f);
 
     sm_halfedge_descriptor sm_h_i=halfedge(sm_f, sm);
-    tm_halfedge_descriptor tm_h_prev = get(hmap, prev(sm_h_i, sm));
+    tm_halfedge_descriptor tm_h_prev = get(hs_to_ht, prev(sm_h_i, sm));
     set_halfedge(tm_f, tm_h_prev, tm);
 
     CGAL_precondition(*halfedges_around_face(sm_h_i, sm).first == sm_h_i);
     for(sm_halfedge_descriptor sm_h : halfedges_around_face(sm_h_i, sm))
     {
-      tm_halfedge_descriptor tm_h = get(hmap, sm_h);
+      tm_halfedge_descriptor tm_h = get(hs_to_ht, sm_h);
       set_next(tm_h_prev, tm_h, tm);
       set_face(tm_h, tm_f, tm);
       tm_h_prev=tm_h;
@@ -150,16 +156,14 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
                   halfedges_around_face(next(sm_border_halfedges[i], sm), sm))
     {
       CGAL_assertion(next(tm_h_prev, tm) == tm_h_prev);
-      tm_h = get(hmap, sm_h);
+      tm_h = get(hs_to_ht, sm_h);
       set_next(tm_h_prev, tm_h, tm);
       tm_h_prev=tm_h;
     }
   }
   // update halfedge vertex of all but the vertex halfedge
-  for(tm_vertex_iterator vit = vertices(tm).first;
-      vit != vertices(tm).second; ++vit)
+  for(tm_vertex_descriptor v : vertices(tm))
   {
-    tm_vertex_descriptor v = *vit;
     tm_halfedge_descriptor h = halfedge(v, tm);
     tm_halfedge_descriptor next_around_vertex=h;
     do{
@@ -167,51 +171,35 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       set_target(next_around_vertex, v, tm);
     }while(h != next_around_vertex);
   }
+
+  // detect if there are some non-manifold umbrellas and fix missing halfedge target pointers
+  for (tm_halfedge_iterator it=halfedges(tm).first; it!=halfedges(tm).second; ++it)
+  {
+    if (target(*it, tm) == tm_null_vertex)
+    {
+      // create and fill a map from target halfedge to source halfedge
+      typedef CGAL::dynamic_halfedge_property_t<sm_halfedge_descriptor> Dyn_th_tag;
+      typename boost::property_map<TargetMesh, Dyn_th_tag >::type ht_to_hs = get(Dyn_th_tag(), tm);
+      for (sm_halfedge_descriptor hs : halfedges(sm))
+        put(ht_to_hs, get(hs_to_ht, hs), hs);
+
+      for(; it!=halfedges(tm).second; ++it)
+      {
+        if (target(*it, tm) == tm_null_vertex)
+        {
+          // we recover tm_v using the halfedge associated to the target vertex of
+          // the halfedge in sm corresponding to *it. This is working because we
+          // set the vertex halfedge pointer to the "same" halfedges.
+          tm_vertex_descriptor tm_v =
+            target( get(hs_to_ht, halfedge(target(get(ht_to_hs, *it), sm), sm)), tm);
+          for(tm_halfedge_descriptor ht : halfedges_around_target(*it, tm))
+            set_target(ht, tm_v, tm);
+        }
+      }
+      break;
+    }
+  }
 }
-
-template <typename SourceMesh, typename TargetMesh,
-          typename V2V, typename H2H, typename F2F,
-          typename Src_vpm, typename Tgt_vpm>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     Tag_false,
-                     V2V v2v, H2H h2h, F2F f2f,
-                     Src_vpm sm_vpm, Tgt_vpm tm_vpm )
-{
-  typedef typename boost::graph_traits<SourceMesh>::halfedge_descriptor sm_halfedge_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
-
-  boost::unordered_map<sm_halfedge_descriptor,
-                       tm_halfedge_descriptor> hash_map(num_halfedges(sm));
-  copy_face_graph_impl(sm, tm,
-                       boost::make_assoc_property_map(hash_map),
-                       v2v, h2h, f2f,
-                       sm_vpm, tm_vpm);
-}
-
-template <typename SourceMesh, typename TargetMesh,
-          typename V2V, typename H2H, typename F2F,
-          typename Src_vpm, typename Tgt_vpm>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     Tag_true,
-                     V2V v2v, H2H h2h, F2F f2f,
-                     Src_vpm sm_vpm, Tgt_vpm tm_vpm )
-{
-  typedef typename boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
-  std::vector<tm_halfedge_descriptor> hedges(num_halfedges(sm));
-
-  // init halfedge index map
-  /// \TODO shall we keep that?
-  helpers::init_halfedge_indices(const_cast<SourceMesh&>(sm),
-                                 get(boost::halfedge_index, sm));
-
-  copy_face_graph_impl(sm, tm,
-                       bind_property_maps(get(boost::halfedge_index, sm),
-                                          make_property_map(hedges)),
-                       v2v, h2h, f2f,
-                       sm_vpm, tm_vpm);
-}
-
-
 
 } // end of namespace internal
 namespace impl
@@ -333,18 +321,20 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  internal::copy_face_graph(sm, tm,
-                            CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
-                            choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
-                            choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
-                            choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
-                            choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                         get(vertex_point, sm)),
-                            choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                         get(vertex_point, tm)));
+
+  internal::copy_face_graph_impl(
+    sm,
+    tm,
+    choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
+                 impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
+    choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
+                 impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
+    choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
+                 impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
+    choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                 get(vertex_point, sm)),
+    choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                 get(vertex_point, tm)));
 }
 
 template <typename SourceMesh, typename TargetMesh>
@@ -361,7 +351,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   copy_face_graph(sm, tm, np, parameters::all_default());
 }
 
-#if !defined(DOXYGEN_RUNNING)
+#if !defined(DOXYGEN_RUNNING) && !defined(CGAL_NO_DEPRECATED_CODE)
 template <typename SourceMesh, typename TargetMesh,
           typename V2V, typename H2H, typename F2F,
           typename Src_vpm, typename Tgt_vpm>
@@ -369,10 +359,9 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      V2V v2v, H2H h2h, F2F f2f,
                      Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 {
-  internal::copy_face_graph(sm, tm,
-                            CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
-                            v2v, h2h, f2f,
-                            sm_vpm, tm_vpm);
+  internal::copy_face_graph_impl(sm, tm,
+                                 v2v, h2h, f2f,
+                                 sm_vpm, tm_vpm);
 }
 
 
