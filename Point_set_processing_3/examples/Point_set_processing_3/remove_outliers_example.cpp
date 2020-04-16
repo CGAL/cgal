@@ -39,7 +39,7 @@ int main(int argc, char*argv[])
   // FIRST OPTION //
   // I don't know the ratio of outliers present in the point set
   std::vector<Point>::iterator first_to_remove
-    = CGAL::remove_outliers
+    = CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
     (points,
      nb_neighbors,
      CGAL::parameters::threshold_percent (100.). // No limit on the number of outliers to remove
