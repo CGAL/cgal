@@ -758,10 +758,13 @@ walk_to_next_2()
                   &(cell()->vertex(1)->point()),
                   &(cell()->vertex(2)->point()) };
 
+    typename Gt::Coplanar_orientation_3 coplanar_orientation
+      = _tr->geom_traits().coplanar_orientation_3_object();
+
     switch( lt() ) {
         case Tr::VERTEX: {
             // First we try the incident edges.
-            Orientation ocw = typename Gt::Coplanar_orientation_3()( *vert[li()], *vert[_tr->cw(li())], *vert[_tr->ccw(li())], _target );
+            Orientation ocw = coplanar_orientation( *vert[li()], *vert[_tr->cw(li())], *vert[_tr->ccw(li())], _target );
             if( cell()->neighbor( _tr->ccw(li()) ) != prev_cell() && ocw == NEGATIVE) {
                 Cell_handle tmp = cell()->neighbor( _tr->ccw(li()) );
                 _prev = _cur;
@@ -769,7 +772,7 @@ walk_to_next_2()
                 li() = cell()->index( prev_cell()->vertex(li()) );
                 return;
             }
-            Orientation occw = typename Gt::Coplanar_orientation_3()( *vert[li()], *vert[_tr->ccw(li())], *vert[_tr->cw(li())], _target );
+            Orientation occw = coplanar_orientation( *vert[li()], *vert[_tr->ccw(li())], *vert[_tr->cw(li())], _target );
             if( cell()->neighbor( _tr->cw(li()) ) != prev_cell() && occw == NEGATIVE) {
                 Cell_handle tmp = cell()->neighbor( _tr->cw(li()) );
                 _prev = _cur;
@@ -779,7 +782,7 @@ walk_to_next_2()
             }
 
             // Then we try the opposite edge.
-            Orientation op = typename Gt::Coplanar_orientation_3()( *vert[_tr->ccw(li())], *vert[_tr->cw(li())], *vert[li()], _target );
+            Orientation op = coplanar_orientation( *vert[_tr->ccw(li())], *vert[_tr->cw(li())], *vert[li()], _target );
             if( op == NEGATIVE) {
                 Cell_handle tmp = cell()->neighbor(li());
                 prev_cell() = cell();
@@ -842,7 +845,7 @@ walk_to_next_2()
 
             if( cell()->neighbor(lk) != prev_cell() ) {
                 // Check the edge itself
-                switch( typename Gt::Coplanar_orientation_3()( *vert[li()], *vert[lj()], *vert[lk], _target ) ) {
+                switch(coplanar_orientation( *vert[li()], *vert[lj()], *vert[lk], _target ) ) {
                     //_prev = _cur; //code not reached
                     case COLLINEAR:
                         // The target lies in this cell.
@@ -861,18 +864,20 @@ walk_to_next_2()
                 }
             }
 
-            Orientation o = typename Gt::Coplanar_orientation_3()( _source, *vert[lk], *vert[li()], _target );
+            typename Gt::Collinear_3 collinear
+              = _tr->geom_traits().collinear_3_object();
+            Orientation o = coplanar_orientation( _source, *vert[lk], *vert[li()], _target );
             Orientation op;
             switch( o ) {
                 case POSITIVE: {
                     // The ray passes through the edge ik.
-                    op = typename Gt::Coplanar_orientation_3()( *vert[lk], *vert[li()], _source, _target );
+                    op = coplanar_orientation( *vert[lk], *vert[li()], _source, _target );
                     if( op == NEGATIVE ) {
                         Cell_handle tmp = cell()->neighbor(lj());
                         prev_cell() = cell();
                         cell() = tmp;
 
-                        if( typename Gt::Collinear_3()( _source, *vert[li()], _target ) ) {
+                        if( collinear( _source, *vert[li()], _target ) ) {
                             prev_lt() = Tr::VERTEX;
                             prev_li() = li();
                             lt() = Tr::VERTEX;
@@ -892,13 +897,13 @@ walk_to_next_2()
                 }
                 default: {
                     // The ray passes through the edge jk.
-                    op = typename Gt::Coplanar_orientation_3()( *vert[lk], *vert[lj()], _source, _target );
+                    op = coplanar_orientation( *vert[lk], *vert[lj()], _source, _target );
                     if( op == NEGATIVE ) {
                         Cell_handle tmp = cell()->neighbor(li());
                         prev_cell() = cell();
                         cell() = tmp;
 
-                        if( typename Gt::Collinear_3()( _source, *vert[lj()], _target ) ) {
+                        if( collinear( _source, *vert[lj()], _target ) ) {
                             prev_lt() = Tr::VERTEX;
                             prev_li() = lj();
                             lt() = Tr::VERTEX;
@@ -956,13 +961,13 @@ walk_to_next_2()
                     continue;
 
                 // The target should lie on the other side of the edge.
-                Orientation op = typename Gt::Coplanar_orientation_3()( *vert[_tr->ccw(li)], *vert[_tr->cw(li)], *vert[li], _target );
+                Orientation op = coplanar_orientation( *vert[_tr->ccw(li)], *vert[_tr->cw(li)], *vert[li], _target );
                 if( op == POSITIVE )
                     continue;
 
                 // The target should lie inside the wedge.
                 if( !calc[_tr->ccw(li)] ) {
-                    o[_tr->ccw(li)] = typename Gt::Coplanar_orientation_3()( _source, *vert[_tr->ccw(li)], *vert[_tr->cw(li)], _target );
+                    o[_tr->ccw(li)] = coplanar_orientation( _source, *vert[_tr->ccw(li)], *vert[_tr->cw(li)], _target );
                     calc[_tr->ccw(li)] = true;
                 }
                 if( o[_tr->ccw(li)] == NEGATIVE )
@@ -974,7 +979,7 @@ walk_to_next_2()
                 }
 
                 if( !calc[_tr->cw(li)] ) {
-                    o[_tr->cw(li)] = typename Gt::Coplanar_orientation_3()( _source, *vert[_tr->cw(li)], *vert[li], _target );
+                    o[_tr->cw(li)] = coplanar_orientation( _source, *vert[_tr->cw(li)], *vert[li], _target );
                     calc[_tr->cw(li)] = true;
                 }
                 if( o[_tr->cw(li)] == POSITIVE )
@@ -1035,8 +1040,11 @@ walk_to_next_2_inf( int inf )
         return;
     }
 
+    typename Gt::Coplanar_orientation_3 coplanar_orientation
+      = _tr->geom_traits().coplanar_orientation_3_object();
+
     // Check the neighboring cells.
-    Orientation occw = typename Gt::Coplanar_orientation_3()( _source,
+    Orientation occw = coplanar_orientation( _source,
       cell()->vertex( _tr->ccw(inf))->point(),
       cell()->vertex(_tr->cw(inf))->point(),
       _target );
@@ -1046,7 +1054,7 @@ walk_to_next_2_inf( int inf )
         _cur = Simplex( tmp, Tr::EDGE, tmp->index( prev_cell()->vertex( prev_li() ) ), tmp->index( prev_cell()->vertex( prev_lj() ) ) );
         return;
     }
-    Orientation ocw = typename Gt::Coplanar_orientation_3()( _source,
+    Orientation ocw = coplanar_orientation( _source,
       cell()->vertex( _tr->cw(inf))->point(),
       cell()->vertex(_tr->ccw(inf))->point(),
       _target );
@@ -1056,7 +1064,7 @@ walk_to_next_2_inf( int inf )
         _cur = Simplex( tmp, Tr::EDGE, tmp->index( prev_cell()->vertex( prev_li() ) ), tmp->index( prev_cell()->vertex( prev_lj() ) ) );
         return;
     }
-    Orientation op = typename Gt::Coplanar_orientation_3()(
+    Orientation op = coplanar_orientation(
       cell()->vertex( _tr->ccw(inf) )->point(),
       cell()->vertex( _tr->cw(inf) )->point(),
       _source, _target );
