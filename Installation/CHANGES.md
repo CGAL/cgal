@@ -14,6 +14,9 @@ Release History
    from a soup of disconnected segments that should first be split
    into polylines.
 
+### 3D Triangulations
+- Add `Segment_cell_iterator` to iterate over cells intersected by a line segment.
+- Add `Segment_simplex_iterator` to iterate over simplices intersected by a line segment.
 
 Release 5.0
 -----------
