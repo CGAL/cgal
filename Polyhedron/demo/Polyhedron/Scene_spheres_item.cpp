@@ -10,6 +10,14 @@ typedef Viewer_interface Vi;
 typedef Triangle_container Tc;
 typedef Edge_container Ec;
 
+QVector4D cgal_plane_to_vector4d(CGAL::Epick::Plane_3 plane) {
+  return {
+    static_cast<float>(-plane.a()),
+    static_cast<float>(-plane.b()),
+    static_cast<float>(-plane.c()),
+    static_cast<float>(-plane.d()) };
+}
+
 struct Scene_spheres_item_priv
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -183,7 +191,7 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
   int deviceHeight = viewer->camera()->screenHeight();
     if(d->has_plane)
     {
-      QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
+      QVector4D cp = cgal_plane_to_vector4d(d->plane);
       getTriangleContainer(0)->setPlane(cp);
       if(d->pickable)
         getTriangleContainer(1)->setPlane(cp);
@@ -233,7 +241,7 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 
   if(d->has_plane)
   {
-    QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
+    QVector4D cp = cgal_plane_to_vector4d(d->plane);
     getEdgeContainer(0)->setPlane(cp);
   }
   getEdgeContainer(0)->draw(viewer, false);
