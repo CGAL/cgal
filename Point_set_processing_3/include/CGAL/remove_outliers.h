@@ -32,10 +32,6 @@
 #include <algorithm>
 #include <map>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/parallel_sort.h>
-#endif
-
 namespace CGAL {
 
 
@@ -187,32 +183,18 @@ remove_outliers(
 
   CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
-  CGAL::Real_timer t;
-  t.start();
-
   Neighbor_query neighbor_query (points, point_map);
 
-  t.stop();
-  std::cerr << "Building kd-tree = " << t.time() << std::endl;
-  t.reset();
-
-  t.start();
   std::size_t nb_points = points.size();
 
   // iterate over input points and add them to multimap sorted by distance to k
   std::vector<std::pair<FT, iterator> > sorted_points;
   sorted_points.reserve (nb_points);
   for (iterator it = points.begin(); it != points.end(); ++ it)
-    sorted_points.push_back(std::make_pair (0, it));
-
-  t.stop();
-  std::cerr << "Copies = " << t.time() << std::endl;
-  t.reset();
+    sorted_points.push_back(std::make_pair (FT(0), it));
 
   Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
     callback_wrapper (callback, nb_points);
-
-  t.start();
 
   CGAL::for_each<ConcurrencyTag>
     (sorted_points,
@@ -229,47 +211,33 @@ remove_outliers(
        return true;
      });
 
-  t.stop();
-  std::cerr << "Queries = " << t.time() << std::endl;
-  t.reset();
+  std::size_t first_index_to_remove = std::size_t(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
 
-  t.start();
+  typename std::vector<std::pair<FT, iterator> >::iterator f2r
+    = sorted_points.begin();
 
-#ifdef CGAL_LINKED_WITH_TBB
-  if (std::is_same<ConcurrencyTag, Parallel_tag>::value)
-    tbb::parallel_sort (sorted_points.begin(), sorted_points.end());
-  else
-#endif
-    std::sort (sorted_points.begin(), sorted_points.end());
+  if (threshold_distance != FT(0))
+    f2r = std::partition (sorted_points.begin(), sorted_points.end(),
+                          [&threshold_distance](const std::pair<FT, iterator>& p) -> bool
+                          {
+                            return p.first < threshold_distance * threshold_distance;
+                          });
 
-  t.stop();
-  std::cerr << "Sort = " << t.time() << std::endl;
-  t.reset();
-
-  t.start();
-
-  // Replaces [points.begin(), points.end()) range by the multimap content.
-  // Returns the iterator after the (100-threshold_percent) % best points.
-  typename PointRange::iterator first_point_to_remove = points.begin();
-  typename PointRange::iterator dst = points.begin();
-  int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
-  typename std::vector<std::pair<FT, iterator> >::iterator src;
-  int index;
-  for (src = sorted_points.begin(), index = 0;
-       src != sorted_points.end();
-       ++src, ++index)
+  if (std::distance (sorted_points.begin(), f2r) < first_index_to_remove)
   {
-    *dst++ = *src->second;
-    if (index <= first_index_to_remove ||
-        src->first < threshold_distance * threshold_distance)
-      first_point_to_remove = dst;
+    std::nth_element (f2r,
+                      sorted_points.begin() + first_index_to_remove,
+                      sorted_points.end());
+    f2r = sorted_points.begin() + first_index_to_remove;
   }
 
-  t.stop();
-  std::cerr << "Copies = " << t.time() << std::endl;
-  t.reset();
+  // Replaces [points.begin(), points.end()) range by the sorted content.
+  iterator it = points.begin();
+  for (const auto& p : sorted_points)
+    *it++ = *p.second;
 
-  return first_point_to_remove;
+  // Returns the iterator on the first point to remove
+  return f2r->second;
 }
 
 /// \cond SKIP_IN_MANUAL
