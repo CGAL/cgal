@@ -48,9 +48,13 @@ struct Approximate_exact_pair
 
   typedef T1                                      Approximate_type;
 
-  Approximate_exact_pair() { }
+  Approximate_exact_pair()
+  { }
+  
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
-  Approximate_exact_pair(const T1& t1) : Base(t1, T2()) { }
+  Approximate_exact_pair(const T1& t1)
+    : Base(t1, T2())
+  { }
 #endif
 
   Approximate_exact_pair(const T1& t1, const T2& t2)
@@ -75,6 +79,9 @@ struct Approximate_exact_pair
   const T2& exact() const
   {
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+#ifdef CGAL_HAS_THREADS
+    CGAL_SCOPED_LOCK(mutex);
+ #endif
     if(!eii)
     {
       typedef typename Kernel_traits<T1>::Kernel K1;
@@ -90,6 +97,7 @@ struct Approximate_exact_pair
 
 private:
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+  CGAL_MUTEX mutex;
   mutable bool eii = false; // exact is initialized
 #endif
 };

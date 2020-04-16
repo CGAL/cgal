@@ -28,14 +28,16 @@ create_single_source_cgal_program( "incident_edges.cpp" )
 create_single_source_cgal_program( "create_star.cpp" )
 create_single_source_cgal_program( "Triangulation_benchmark_3.cpp" )
 
+find_package(TBB REQUIRED)
+include( CGAL_target_use_TBB )
+
+create_single_source_cgal_program( "DT3_benchmark_with_external_data.cpp" )
+CGAL_target_use_TBB(DT3_benchmark_with_external_data)
+
+
 find_package(benchmark)
 
 if(TARGET benchmark::benchmark)
-  find_package(TBB REQUIRED)
-  include( CGAL_target_use_TBB )
-
-  create_single_source_cgal_program( "DT3_benchmark_with_external_data.cpp" )
-  CGAL_target_use_TBB(DT3_benchmark_with_external_data)
 
   create_single_source_cgal_program( "DT3_benchmark_with_gbench.cpp" )
   CGAL_target_use_TBB(DT3_benchmark_with_gbench)

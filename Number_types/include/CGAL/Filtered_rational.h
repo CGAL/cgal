@@ -17,6 +17,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/mutex.h>
 
 #include <boost/mpl/or.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -133,6 +134,9 @@ public:
   const NT2& n2() const
   {
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+#ifdef CGAL_HAS_THREADS
+    CGAL_SCOPED_LOCK(mutex);
+#endif
     if(!eii)
     {
       CGAL_assertion(_n1.is_point());
@@ -146,6 +150,9 @@ public:
   NT2& n2()
   {
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+#ifdef CGAL_HAS_THREADS
+    CGAL_SCOPED_LOCK(mutex);
+#endif
     if(!eii)
     {
       CGAL_assertion(_n1.is_point());
@@ -177,6 +184,7 @@ private:
   NT1 _n1;
   mutable NT2 _n2;
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
+  CGAL_MUTEX mutex;
   mutable bool eii = false; // eii means "exact is initialized"
 #endif
 };
