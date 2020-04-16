@@ -18,6 +18,9 @@ find_package(Qt5
              OPTIONAL_COMPONENTS   ScriptTools WebSockets)
 
 if(RUNNING_CGAL_AUTO_TEST)
+  if(Qt5_FOUND AND CGAL_FOUND)
+    include(${CGAL_USE_FILE})
+  endif()
   polyhedron_demo_plugin(example_plugin Example_plugin)
 
   qt5_wrap_ui( basicUI_FILES Basic_dialog.ui  )
@@ -30,8 +33,4 @@ if(RUNNING_CGAL_AUTO_TEST)
 
 #  links the library containing the scene_plane_item with the plugin
   target_link_libraries(basic_item_plugin PUBLIC scene_basic_objects)
-endif()
-if(Qt5_FOUND AND CGAL_FOUND)
-  include(${CGAL_USE_FILE})
-  find_package(CGAL_polyhedron_demo)
 endif()
