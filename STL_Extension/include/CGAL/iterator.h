@@ -24,6 +24,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/property_map.h>
 #include <CGAL/result_of.h>
 #include <CGAL/tuple.h>
 #include <CGAL/use.h>
