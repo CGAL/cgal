@@ -34,6 +34,9 @@ Release date: June 2020
      edge, and face indices of a triangulation meant to be used with BGL algorithms.
  -   Added function `alpha_expansion_graphcut()` which regularizes a
      multi-label partition over a user-defined graph.
+ -   Added function `regularize_face_selection_borders()` which uses
+     this alpha expansion graphcut to regularize the borders of a
+     selected faces on a triangle mesh.
 
 ### Polygon Mesh Processing
 
