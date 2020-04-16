@@ -1,0 +1,1 @@
+set(CGAL_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../..)
