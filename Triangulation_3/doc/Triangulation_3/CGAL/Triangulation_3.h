@@ -221,20 +221,16 @@ circulator over all facets incident to a given edge
 typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
 /*!
-\cgalModifBegin
 iterator over cells intersected by a line segment.
 `Segment_cell_iterator` implements the concept `ForwardIterator` and is non-mutable.
 Its value type is `Cell_handle`.
-\cgalModifEnd
 */
 typedef unspecified_type Segment_cell_iterator;
 
 /*!
-\cgalModifBegin
 iterator over simplices intersected by a line segment.
 `Segment_simplex_iterator` implements the concept `ForwardIterator` and is non-mutable.
 Its value type is `Triangulation_simplex_3 `.
-\cgalModifEnd
 */
 typedef unspecified_type Segment_simplex_iterator;
 
@@ -1322,7 +1318,6 @@ Segment_traverser_simplices segment_traverser_simplices() const;
 
 
 /*!\name Segment Cell Iterator
-\cgalModifBegin
 The triangulation defines an iterator that visits cells intersected by a line segment.
 Segment Cell Iterator iterates over a sequence of cells which union contains the segment `[s,t]`.
 The sequence of cells is "minimal" (removing any cell would make the union of the
@@ -1367,11 +1362,9 @@ The remaining incident cells visited make a facet-connected sequence connecting 
 It is invalidated by any modification of one of the cells traversed.
 
 Its `value_type` is `Cell_handle`.
-\cgalModifEnd
 */
 /// @{
 /*!
-\cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `[vs,vt]`.
 
 The initial value of the iterator is the cell containing `vs` and intersected by the
@@ -1382,12 +1375,10 @@ It is followed by `segment_traverser_cells_end()`.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
 \pre `triangulation.dimension() >= 2`
-\cgalModifEnd
 */
 Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle vs, Vertex_handle vt) const;
 
 /*!
-\cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `[ps, pt]`.
 
 If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly one infinite cell.
@@ -1409,26 +1400,22 @@ if it is geometrically close to `ps`.
 
 \pre `ps` and `pt` must be different points.
 \pre  `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
-\cgalModifEnd
 */
 Segment_cell_iterator segment_traverser_cells_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
 
 /*!
-\cgalModifBegin
 returns the past-the-end iterator over the intersected cells.
 
 This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
 passed the target.
 
 \pre `triangulation.dimension() >= 2`
-\cgalModifEnd
 */
 Segment_cell_iterator segment_traverser_cells_end() const;
 
 /// @}
 
 /*!\name Segment Simplex Iterator
-\cgalModifBegin
 The triangulation defines an iterator that visits all the triangulation simplices
 (vertices, edges, facets and cells) intersected by a line segment.
 The iterator traverses a connected sequence of simplices - possibly of all dimensions -
@@ -1454,11 +1441,9 @@ the source of `[s,t]` and the vertex of `c` opposite of `f`.
 It is invalidated by any modification of one of the cells traversed.
 
 Its `value_type` is `Triangulation_simplex_3`.
-\cgalModifEnd
 */
 /// @{
 /*!
-\cgalModifBegin
 returns the iterator that allows to visit the simplices intersected by the line segment `[vs,vt]`.
 
 The initial value of the iterator is `vs`.
@@ -1466,12 +1451,10 @@ The iterator remains valid until `vt` is passed.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
 \pre `triangulation.dimension() >= 2`
-\cgalModifEnd
 */
 Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs, Vertex_handle vt) const;
 
 /*!
-\cgalModifBegin
 returns the iterator that allows to visit the simplices intersected by the line segment `[ps,pt]`.
 
 If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly one infinite cell.
@@ -1484,19 +1467,16 @@ The optional argument `hint` can reduce the time to construct the iterator if it
 
 \pre `ps` and `pt` must be different points.
 \pre `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
-\cgalModifEnd
 */
 Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
 
 /*!
-\cgalModifBegin
 returns the past-the-end iterator over the intersected simplices.
 
 This iterator cannot be dereferenced. It indicates when the `Segment_simplex_iterator` has
 passed the target.
 
 \pre `triangulation.dimension() >= 2`
-\cgalModifEnd
 */
 Segment_simplex_iterator segment_traverser_simplices_end() const;
 
