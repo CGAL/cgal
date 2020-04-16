@@ -77,8 +77,9 @@ public:
 
   typedef CGAL::Triangulation_data_structure_3<
             Remeshing_Vb, Remeshing_Cb, Concurrency_tag>  Tds;
-  typedef CGAL::Triangulation_3<Gt, Tds>                  Self;
-  typedef typename Gt::Plane_3 Plane_3;
+  typedef CGAL::Triangulation_3<Gt, Tds>                  Base;
+
+  using Base::Base;
 };
 
 namespace internal
