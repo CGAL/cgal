@@ -22,6 +22,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
