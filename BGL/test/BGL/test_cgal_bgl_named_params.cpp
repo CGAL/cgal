@@ -86,21 +86,24 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_parameter(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
   assert(get_parameter(np, CGAL::internal_np::face_size_map).v == 52);
-  assert(get_parameter(np, CGAL::internal_np::snapping_tolerance).v == 57);
   assert(get_parameter(np, CGAL::internal_np::use_angle_smoothing).v == 53);
   assert(get_parameter(np, CGAL::internal_np::use_area_smoothing).v == 54);
   assert(get_parameter(np, CGAL::internal_np::use_Delaunay_flips).v == 55);
   assert(get_parameter(np, CGAL::internal_np::use_safety_constraints).v == 56);
   assert(get_parameter(np, CGAL::internal_np::area_threshold).v == 57);
   assert(get_parameter(np, CGAL::internal_np::volume_threshold).v == 58);
-  assert(get_parameter(np, CGAL::internal_np::dry_run).v == 59);
-  assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 60);
-  assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 61);
+  assert(get_parameter(np, CGAL::internal_np::snapping_tolerance).v == 59);
+  assert(get_parameter(np, CGAL::internal_np::dry_run).v == 60);
+  assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 61);
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
+  assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 62);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
   assert(get_parameter(np, CGAL::internal_np::get_placement_policy).v == 35);
+
+  // Named parameters that we use in the package 'Optimal_bounding_box'
+  assert(get_parameter(np, CGAL::internal_np::use_convex_hull).v == 63);
 
     // To-be-documented named parameters
   assert(get_parameter(np, CGAL::internal_np::face_normal).v == 36);
@@ -176,7 +179,6 @@ void test(const NamedParameters& np)
   check_same_type<49>(get_parameter(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_parameter(np, CGAL::internal_np::use_bool_op_to_clip_surface));
   check_same_type<52>(get_parameter(np, CGAL::internal_np::face_size_map));
-  check_same_type<57>(get_parameter(np, CGAL::internal_np::snapping_tolerance));
   check_same_type<53>(get_parameter(np, CGAL::internal_np::use_angle_smoothing));
   check_same_type<54>(get_parameter(np, CGAL::internal_np::use_area_smoothing));
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
@@ -196,14 +198,18 @@ void test(const NamedParameters& np)
 
   check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
   check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
-  check_same_type<59>(get_parameter(np, CGAL::internal_np::dry_run));
-  check_same_type<60>(get_parameter(np, CGAL::internal_np::do_lock_mesh));
-  check_same_type<61>(get_parameter(np, CGAL::internal_np::do_simplify_border));
+  check_same_type<59>(get_parameter(np, CGAL::internal_np::snapping_tolerance));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::dry_run));
+  check_same_type<61>(get_parameter(np, CGAL::internal_np::do_lock_mesh));
+  check_same_type<62>(get_parameter(np, CGAL::internal_np::do_simplify_border));
   check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
   check_same_type<35>(get_parameter(np, CGAL::internal_np::get_placement_policy));
+
+  // Named parameters that we use in the package 'Optimal_bounding_box'
+  check_same_type<63>(get_parameter(np, CGAL::internal_np::use_convex_hull));
 
     // To-be-documented named parameters
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
@@ -322,7 +328,6 @@ int main()
                          .use_bool_op_to_clip_surface(A<50>(50))
                          .use_binary_mode(A<51>(51))
                          .face_size_map(A<52>(52))
-                         .snapping_tolerance(A<57>(57))
                          .use_angle_smoothing(A<53>(53))
                          .use_area_smoothing(A<54>(54))
                          .use_Delaunay_flips(A<55>(55))
@@ -340,9 +345,11 @@ int main()
                          .i_used_for_volume_orientation(A<12350>(12350))
                          .area_threshold(A<57>(57))
                          .volume_threshold(A<58>(58))
-                         .dry_run(A<59>(59))
-                         .do_lock_mesh(A<60>(60))
-                         .do_simplify_border(A<61>(61))
+                         .snapping_tolerance(A<59>(59))
+                         .dry_run(A<60>(60))
+                         .do_lock_mesh(A<61>(61))
+                         .do_simplify_border(A<62>(62))
+                         .use_convex_hull(A<63>(63))
                          .point_map(A<9000>(9000))
                          .query_point_map(A<9001>(9001))
                          .normal_map(A<9002>(9002))
