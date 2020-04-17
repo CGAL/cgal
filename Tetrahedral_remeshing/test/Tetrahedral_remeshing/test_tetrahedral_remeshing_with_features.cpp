@@ -106,7 +106,7 @@ void generate_input_cube(const std::size_t& n,
   // writing file output
 #ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
   std::ofstream outfile("data/sphere_in_cube.tr.cgal",
-                       std::ios_base::out | std::ios_base::binary);
+                        std::ios_base::out | std::ios_base::binary);
   CGAL::save_binary_triangulation(outfile, tr);
   outfile.close();
 #endif

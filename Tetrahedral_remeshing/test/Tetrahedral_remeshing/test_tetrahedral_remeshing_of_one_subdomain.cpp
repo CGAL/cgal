@@ -40,10 +40,9 @@ void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulatio
   CGAL_assertion(tr.is_valid(true));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
-  std::string filename("data/triangulation_two_subdomains.binary.cgal");
-  std::ofstream os(filename, std::ios_base::out | std::ios_base::binary);
-  os << "binary CGAL c3t3\n";
-  CGAL::set_binary_mode(os);
+  std::ofstream os("data/triangulation_two_subdomains.binary.cgal",
+                   std::ios_base::out | std::ios_base::binary);
+  CGAL::save_binary_triangulation(os, tr);
   os.close();
 #endif
 }
