@@ -4,8 +4,13 @@ namespace CGAL {
 \mainpage User Manual
 \anchor Chapter_Tetrahedral_Remeshing
 \anchor userchaptertetrahedralremeshing
-\authors Jane Tournois, Noura Faraj
+
 \cgalAutoToc
+\authors Jane Tournois, Noura Faraj
+
+\image html bimba_back.png
+\image latex bimba_back.png
+<BR>
 
 \section secTetRemeshing Multi-Material Tetrahedral Remeshing
 
@@ -41,7 +46,7 @@ dihedral angles are the interval [12,7; 157.7].
 \cgalFigureEnd
 
 Experimental evidence show that a higher number of remeshing iterations
-lead to a mesh with a better fitted sizing criterion, and higher quality dihedral angles.
+leads to a mesh with a better fitted sizing criterion, and higher quality dihedral angles.
 
 \section secTetRemeshingAPI API
 
