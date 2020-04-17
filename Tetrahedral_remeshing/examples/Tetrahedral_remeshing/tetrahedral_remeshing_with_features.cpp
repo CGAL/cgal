@@ -131,9 +131,9 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  const char* filename      = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
-  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.02;
-  int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
+  const char* filename = "data/sphere_in_cube.tr.cgal";
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
+  cosnt int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
 
   std::ifstream input(filename, std::ios_base::in | std::ios_base::binary);
   if (!input)
