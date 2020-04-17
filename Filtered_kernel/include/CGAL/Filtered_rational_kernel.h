@@ -30,6 +30,22 @@
 
 namespace CGAL {
 
+namespace mpl {
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(second_type)
+
+template <class T>
+struct is_pair_
+{
+  enum { value = has_first_type<T>::value && has_second_type<T>::value };
+};
+
+} // mpl namespace
+
+namespace Frk {
+namespace internal {
+
 struct Infimum_to_double
   : public CGAL::cpp98::unary_function< Interval_nt<false>, double >
 {
@@ -128,27 +144,6 @@ private:
 #endif
 };
 
-template <typename T1, typename T2>
-const T2& exact(const Approximate_exact_pair <T1, T2>& p)
-{
-  return p.exact();
-}
-
-namespace mpl {
-
-BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(second_type)
-
-template <class T>
-struct is_pair_
-{
-  enum { value = has_first_type<T>::value && has_second_type<T>::value };
-};
-
-} // mpl namespace
-
-namespace internal {
-
 // Small utility to manipulate pairs for kernel objects, and
 // simple things for bool, Sign...  Object is yet another case...
 template < typename T1, typename T2, typename EK, typename FRK >
@@ -227,8 +222,6 @@ struct Pairify<const Interval_nt<false>&, const typename CGAL::internal::Exact_f
   }
 };
 
-} // namespace internal
-
 #define SPEC_NT_GETTER(X)                                                                          \
   template <>                                                                                      \
   struct Getter<X>                                                                                 \
@@ -292,18 +285,14 @@ struct Getter<Filtered_rational<A_FT,E_FT>>
   typedef E_FT second_type;
 };
 
-template <class A1, class A2>
-const A1&
-approx(const Approximate_exact_pair<A1,A2>& p)
-{
-  return p.first;
-}
+} // namespace internal
+} // namespace Frk
 
 template <class A1, class A2>
 const A1&
-approx(const Filtered_rational<A1,A2>& p)
+approx(const Frk::internal::Approximate_exact_pair<A1, A2>& p)
 {
-  return p.n1();
+  return p.approx();
 }
 
 template <class A>
@@ -315,16 +304,9 @@ approx(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullp
 
 template <class A1, class A2>
 const A2&
-exact(const std::pair<A1,A2>& p)
+exact(const Frk::internal::Approximate_exact_pair<A1, A2>& p)
 {
-  return p.second;
-}
-
-template <class A1, class A2>
-const A2&
-exact(const Filtered_rational<A1,A2>& p)
-{
-  return p.n2();
+  return p.exact();
 }
 
 template <class A>
@@ -333,6 +315,9 @@ exact(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullpt
 {
   return exact(a.rep());
 }
+
+namespace Frk {
+namespace internal {
 
 template <class AP, class EP>
 class Filtered_rational_predicate
@@ -388,7 +373,7 @@ public:
   {
     typedef typename cpp11::result_of<AP(typename Getter<A>::first_type...)>::type R1;
     typedef typename cpp11::result_of<EP(typename Getter<A>::second_type...)>::type R2;
-    typedef typename internal::Pairify<R1,R2,EK,FRK>::result_type type;
+    typedef typename Pairify<R1,R2,EK,FRK>::result_type type;
   };
 
   // In case the exact result type is a reference
@@ -419,21 +404,19 @@ public:
 
   // TODO: I think the result_of is simply using AP::result_type because arguments are not valid (pairs...)
   template <class ... A>
-  typename internal::Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
-                             typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type,
-                             EK, FRK>::result_type
+  typename Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
+                   typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type,
+                   EK, FRK>::result_type
   operator()(const A&... a) const
   {
     typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
     result_type_2 res2 = ep(exact(a)...);
 
-    return internal::Pairify<result_type_1, result_type_2, EK, FRK>()(
+    return Pairify<result_type_1, result_type_2, EK, FRK>()(
              Approx<result_type_1>(e2a, ap)(res2, approx(a)...), res2);
   }
 };
-
-namespace FRK {
 
 template < typename K1, typename K2 >
 struct Approx_converter
@@ -465,7 +448,8 @@ struct Exact_converter
   const Bbox_3& operator()(const Bbox_3& b) const { return b; }
 };
 
-} // namespace FRK
+} // namespace internal
+} // namespace Frk
 
 template < class AK, class EK, class Kernel_ >
 class Filtered_rational_kernel_generic_base
@@ -475,7 +459,6 @@ protected:
   EK ek;
 
 public:
-
   typedef bool                                                Boolean;
   typedef CGAL::Sign                                          Sign;
   typedef CGAL::Comparison_result                             Comparison_result;
@@ -497,8 +480,8 @@ public:
   typedef AK                                                  Approximate_kernel;
   typedef EK                                                  Exact_kernel;
 
-  typedef FRK::Approx_converter<Kernel, Approximate_kernel>   C2F;
-  typedef FRK::Exact_converter<Kernel, Exact_kernel>          C2E;
+  typedef Approx_converter<Kernel, Approximate_kernel>        C2F;
+  typedef Exact_converter<Kernel, Exact_kernel>               C2E;
 
   template < typename T >
   struct Ambient_dimension {
@@ -523,21 +506,23 @@ public:
   typedef CGAL::Aff_transformationC3<Kernel_>                 Aff_transformation_3;
 
   // Kernel objects are defined as pairs, with primitives run in parallel.
-#define CGAL_Kernel_obj(X) typedef Approximate_exact_pair<typename AK::X, typename EK::X> X;
+#define CGAL_Kernel_obj(X) typedef Frk::internal::Approximate_exact_pair<typename AK::X, typename EK::X> X;
 
 #define CGAL_Kernel_pred(P, Pf)                                                                    \
   typedef Static_filtered_predicate<                                                               \
             Approximate_kernel,                                                                    \
-            Filtered_rational_predicate<typename AK::P, typename EK::P>,                           \
+            Frk::internal::Filtered_rational_predicate<typename AK::P, typename EK::P>,            \
             Exact_predicates_inexact_constructions_kernel::P> P;                                   \
   P Pf() const                                                                                     \
   {                                                                                                \
-    typedef Filtered_rational_predicate<typename AK::P, typename EK::P> FRP;                       \
+    typedef Frk::internal::Filtered_rational_predicate<typename AK::P, typename EK::P> FRP;        \
     return P(FRP(ak.Pf(), ek.Pf()));                                                               \
   }
 
 #define CGAL_Kernel_cons(C, Cf)                                                                    \
-  typedef Filtered_rational_construction<typename AK::C, typename EK::C, AK, EK, Kernel_> C;       \
+  typedef Frk::internal::Filtered_rational_construction<typename AK::C,                            \
+                                                        typename EK::C,                            \
+                                                        AK, EK, Kernel_> C;                        \
   C Cf() const { return C(ak.Cf(), ek.Cf()); }
 
 public:

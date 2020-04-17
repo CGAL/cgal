@@ -1102,6 +1102,20 @@ bool fit_in_double(const Filtered_rational<NT1, NT2>& a, double& r)
   return fit_in_double(a.n1(),r);
 }
 
+template <class A1, class A2>
+const A1&
+approx(const Filtered_rational<A1,A2>& p)
+{
+  return p.n1();
+}
+
+template <class A1, class A2>
+const A2&
+exact(const Filtered_rational<A1,A2>& p)
+{
+  return p.n2();
+}
+
 } // namespace CGAL
 
 #endif // CGAL_FILTERED_RATIONAL_H
