@@ -47,21 +47,21 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 triangulation data structure.
 Possible values are `Sequential_tag` (the default) and `Parallel_tag`.
 
-\tparam Cb is a cell base class from which `Remeshing_cell_base_3` derives.
-It must be a model of the `TriangulationCellBase_3` concept.
-It has the default value `Triangulation_cell_base_3<Gt>`.
-
 \tparam Vb is a vertex base class from which `Remeshing_vertex_base_3` derives.
 It must be a model of the `TriangulationVertexBase_3` concept.
 It has the default value `Triangulation_vertex_base_3<Gt>`.
+
+\tparam Cb is a cell base class from which `Remeshing_cell_base_3` derives.
+It must be a model of the `TriangulationCellBase_3` concept.
+It has the default value `Triangulation_cell_base_3<Gt>`.
 
 \cgalRefines `Triangulation_3`
 
 */
 template<typename Gt,
          typename Concurrency_tag = CGAL::Sequential_tag,
-         typename Cb = CGAL::Triangulation_cell_base_3<Gt>,
-         typename Vb = CGAL::Triangulation_vertex_base_3<Gt>
+         typename Vb = CGAL::Triangulation_vertex_base_3<Gt>,
+         typename Cb = CGAL::Triangulation_cell_base_3<Gt>
 >
 class Remeshing_triangulation_3
   : public CGAL::Triangulation_3<Gt,
