@@ -69,16 +69,6 @@ public:
   };
 
   using Base::Base;
-
-#ifndef DOXYGEN_RUNNING
-  /// TODO : remove this function from here
-  /// Returns `true` if facet lies on a surface patch
-  bool is_facet_on_surface(const int facet) const
-  {
-    CGAL_precondition(facet >= 0 && facet<4);
-    return this->subdomain_index() != this->neighbor(facet)->subdomain_index();
-  }
-#endif
 };
 
 }//end namespace Tetrahedral_remeshing
