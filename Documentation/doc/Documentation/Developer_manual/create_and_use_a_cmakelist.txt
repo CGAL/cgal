@@ -1,5 +1,5 @@
 /*!
-\page devman_create_and_use_a_cmakelist How to use CGAL with CMake
+\page devman_create_and_use_a_cmakelist How to use %CGAL with CMake
 
 This page will explain how to manually create a `CMakeLists.txt` file to link a custom program with \cgal.
 A base can be created using the script `cgal_create_CMakeLists`. Its usage is detailed in Section \ref devman_create_cgal_CMakeLists.
