@@ -810,7 +810,7 @@ write_LAS(
   }
 
   bool okay
-      = write_LAS
+      = write_LAS_with_properties
       (stream, point_set,
        make_las_point_writer (point_set.point_map()),
        std::make_pair (intensity, LAS_property::Intensity()),
@@ -929,7 +929,7 @@ std::istream& operator>>(std::istream& is,
     CGAL::read_PLY (is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if (line.find("LASF") == 0)
-    CGAL::read_las_point_set (is, ps);
+    CGAL::read_las_points(is, ps);
 #endif // LAS
   else
     CGAL::read_XYZ (is, ps);
@@ -1048,7 +1048,7 @@ write_las_point_set(
     std::ostream& stream, ///< output stream.
     CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
-  return write_LAS(stram, point_set);
+  return write_LAS(stream, point_set);
 }
 #endif
 /*!

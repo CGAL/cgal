@@ -25,6 +25,7 @@
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/is_iterator.h>
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
@@ -499,7 +500,10 @@ template <typename OutputIterator>
 bool
 read_LAS(
     std::istream& stream, ///< input stream.
-    OutputIterator output)
+    OutputIterator output,
+    typename boost::enable_if<
+    typename CGAL::is_iterator<OutputIterator>
+    >::type* =0)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>
       (stream, output, CGAL::parameters::all_default());

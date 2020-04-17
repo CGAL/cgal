@@ -116,7 +116,13 @@ bool read_OFF(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& n
 }
 
 template <typename FaceGraph>
-bool read_OFF(std::istream& is, FaceGraph& g) { return read_OFF(is, g, parameters::all_default()); }
+bool read_OFF(std::istream& is, FaceGraph& g,
+              typename boost::disable_if<
+              typename boost::has_range_const_iterator<FaceGraph>::type
+              >::type* =0)
+{
+  return read_OFF(is, g, parameters::all_default());
+}
 template <typename FaceGraph>
 bool read_OFF(const char* fname, FaceGraph& g) { return read_OFF(fname, g, parameters::all_default()); }
 template <typename FaceGraph>
@@ -178,7 +184,13 @@ bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_C
 }
 
 template <typename FaceGraph>
-bool write_OFF(std::ostream& os, const FaceGraph& g) { return write_OFF(os, g, parameters::all_default()); }
+bool write_OFF(std::ostream& os, const FaceGraph& g
+               ,typename boost::disable_if<
+               typename boost::has_range_const_iterator<FaceGraph>::type
+               >::type* =0)
+{
+  return write_OFF(os, g, parameters::all_default());
+}
 template <typename FaceGraph>
 bool write_OFF(const char* fname, const FaceGraph& g) { return write_OFF(fname, g, parameters::all_default()); }
 template <typename FaceGraph>

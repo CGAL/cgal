@@ -17,6 +17,7 @@
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/property_map.h>
+#include <CGAL/iterator.h>
 
 #include <boost/utility/enable_if.hpp>
 
@@ -237,7 +238,13 @@ bool
 read_PLY(std::istream& is,
          PointRange& points,
          PolygonRange& polygons,
-         bool /* verbose */ = false)
+         bool /* verbose */ = false
+#ifndef DOXYGEN_RUNNING
+    ,typename std::enable_if<
+         boost::has_value_type<PointRange>::value
+         >::type* =0
+    #endif
+         )
 {
   typedef typename PointRange::value_type Point_3;
   if(!is.good())
@@ -337,6 +344,7 @@ bool read_PLY(std::istream& is,
                   std::back_inserter(dummy_pf));
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
@@ -360,6 +368,9 @@ bool write_PLY(std::ostream& out,
                #ifndef DOXYGEN_RUNNING
                ,typename boost::enable_if<
                  typename boost::has_range_const_iterator<PointRange>::type
+               >::type* =0,
+               typename std::enable_if<
+               boost::has_value_type<PointRange>::value
                >::type* =0
                #endif
                )

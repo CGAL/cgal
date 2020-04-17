@@ -123,7 +123,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
     item->setName(fileinfo.completeBaseName());
     if (scanner.size_of_vertices()==0) return item;
-    if(!item->read_OFF(in))
+    if(!item->read_off_point_set(in))
     {
       delete item;
       return 0;

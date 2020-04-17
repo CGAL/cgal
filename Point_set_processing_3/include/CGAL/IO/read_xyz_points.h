@@ -204,7 +204,10 @@ template <typename OutputIterator>
 bool
 read_XYZ(
   std::istream& stream, ///< input stream.
-  OutputIterator output)
+  OutputIterator output,
+    typename boost::enable_if<
+    CGAL::is_iterator<OutputIterator>
+    >::type* =0)
 {
   return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output, CGAL::parameters::all_default());

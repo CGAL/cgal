@@ -21,9 +21,12 @@
 #include <CGAL/Origin.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/utility/enable_if.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -201,7 +204,10 @@ bool
 read_OFF(
   std::istream& stream, ///< input stream.
   OutputIterator output,
-  const CGAL_BGL_NP_CLASS& np)
+  const CGAL_BGL_NP_CLASS& np,
+    typename boost::enable_if<
+    CGAL::is_iterator<OutputIterator>
+    >::type* =0)
 {
   return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output, np);
@@ -211,8 +217,11 @@ read_OFF(
 template <typename OutputIterator>
 bool
 read_OFF(
-  std::istream& stream, ///< input stream.
-  OutputIterator output)
+    std::istream& stream, ///< input stream.
+    OutputIterator output,
+    typename std::enable_if<
+    CGAL::is_iterator<OutputIterator>::value
+    >::type* =0)
 {
   return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output, CGAL::parameters::all_default());

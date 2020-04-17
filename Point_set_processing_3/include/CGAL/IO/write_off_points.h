@@ -109,17 +109,21 @@ write_OFF(
 }
 
 /// \cond SKIP_IN_MANUAL
+namespace internal{
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Point_set)
+}
 // variant with default NP
 template <typename PointRange>
 bool
 write_OFF(
     std::ostream& stream, ///< output stream.
     const PointRange& points
-    #ifndef DOXYGEN_RUNNING
     ,typename boost::enable_if<
     typename boost::has_range_const_iterator<PointRange>::type
+    >::type* =0,
+    typename std::enable_if<
+    !internal::has_Point_set<PointRange>::value
     >::type* =0
-    #endif
     )
 {
   return write_OFF

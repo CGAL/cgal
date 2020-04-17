@@ -627,7 +627,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
   if (binary)
     CGAL::set_binary_mode (stream);
 
-  CGAL::write_ply_point_set (stream, *(d->m_points), d->m_comments);
+  CGAL::write_PLY (stream, *(d->m_points), d->m_comments);
 
   return true;
 }
@@ -680,7 +680,7 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
   d->m_points->reset_indices();
 
   return stream &&
-    CGAL::write_xyz_point_set (stream, *(d->m_points));
+    CGAL::write_XYZ (stream, *(d->m_points));
 }
 
 QString
