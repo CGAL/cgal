@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj
 
-#ifndef CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
-#define CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
+#ifndef CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_3_H
+#define CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_3_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
@@ -36,14 +36,14 @@ struct Fake_MD_V
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
 
-The class `Remeshing_vertex_base` is a model of the concept `MeshVertexBase_3`.
+The class `Remeshing_vertex_base_3` is a model of the concept `MeshVertexBase_3`.
 It is designed to serve as vertex base class for the 3D triangulation
 used in the tetrahedral remeshing process.
 
 \tparam Gt is the geometric traits class.
 It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 
-\tparam Vb is a vertex base class from which `Remeshing_vertex_base` derives.
+\tparam Vb is a vertex base class from which `Remeshing_vertex_base_3` derives.
 It must be a model of the `TriangulationVertexBase_3` concept.
 It has the default value `Triangulation_vertex_base_3<Gt>`.
 
@@ -53,7 +53,7 @@ It has the default value `Triangulation_vertex_base_3<Gt>`.
 
 template<typename GT,
          typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
-class Remeshing_vertex_base
+class Remeshing_vertex_base_3
 #ifndef DOXYGEN_RUNNING
   : public CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>
 #endif
@@ -65,7 +65,7 @@ public:
   template < class TDS3 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Remeshing_vertex_base<GT, Vb3> Other;
+    typedef Remeshing_vertex_base_3<GT, Vb3> Other;
   };
 
 };
@@ -74,4 +74,4 @@ public:
 
 }//end namespace CGAL
 
-#endif //CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
+#endif //CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_3_H

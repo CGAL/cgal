@@ -47,8 +47,8 @@ targetting high quality meshes with respect to dihedral angles.}
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base`
-- `CGAL::Tetrahedral_remeshing::Remeshing_cell_base`
+- `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`
+- `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
 - `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 
 \cgalCRPSection{Function Templates}
