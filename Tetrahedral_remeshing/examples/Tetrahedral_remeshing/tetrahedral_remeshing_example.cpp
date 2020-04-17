@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   if( !CGAL::load_triangulation(input, t3))
     return EXIT_FAILURE;
 
-  CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length);
+  CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length);
 
   // save output
   const std::string file_in(filename);

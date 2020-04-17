@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
   set_subdomain(tr, 1);
   assert(tr.is_valid());
 
-  CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
       Constrained_edges_property_map(&constraints))
     .number_of_iterations(nb_iter));

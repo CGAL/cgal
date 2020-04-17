@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
   const float target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1f;
 
-  CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length);
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
 
   return EXIT_SUCCESS;
 }

@@ -108,13 +108,13 @@ namespace CGAL
 */
 template<typename Traits, typename TDS, typename SLDS,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const double& target_edge_length,
   const NamedParameters& np)
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
-  tetrahedral_adaptive_remeshing(
+  tetrahedral_isotropic_remeshing(
     tr,
     [target_edge_length](const typename Triangulation::Point& /* p */)
                         {return target_edge_length;},
@@ -123,13 +123,13 @@ void tetrahedral_adaptive_remeshing(
 
 template<typename Traits, typename TDS, typename SLDS,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const float& target_edge_length,
   const NamedParameters& np)
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
-  tetrahedral_adaptive_remeshing(
+  tetrahedral_isotropic_remeshing(
     tr,
     [target_edge_length](const typename Triangulation::Point& /* p */)
                         {return target_edge_length; },
@@ -139,7 +139,7 @@ void tetrahedral_adaptive_remeshing(
 template<typename Traits, typename TDS, typename SLDS,
          typename SizingFunction,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const SizingFunction& sizing,
   const NamedParameters& np)
@@ -236,11 +236,11 @@ void tetrahedral_adaptive_remeshing(
 }
 
 template<typename Traits, typename TDS, typename SLDS>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const double& target_edge_length)
 {
-  tetrahedral_adaptive_remeshing(tr, target_edge_length,
+  tetrahedral_isotropic_remeshing(tr, target_edge_length,
                                  CGAL::parameters::all_default());
 }
 
@@ -251,12 +251,12 @@ void tetrahedral_adaptive_remeshing(
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length,
   const NamedParameters& np)
 {
-  tetrahedral_adaptive_remeshing(
+  tetrahedral_isotropic_remeshing(
     c3t3,
     [target_edge_length](const typename Tr::Point& /* p */)
                         {return target_edge_length; },
@@ -266,12 +266,12 @@ void tetrahedral_adaptive_remeshing(
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const float& target_edge_length,
   const NamedParameters& np)
 {
-  tetrahedral_adaptive_remeshing(
+  tetrahedral_isotropic_remeshing(
     c3t3,
     [target_edge_length](const typename Tr::Point& p)
                         {return target_edge_length; },
@@ -281,11 +281,11 @@ void tetrahedral_adaptive_remeshing(
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length)
 {
-  return tetrahedral_adaptive_remeshing(c3t3, target_edge_length,
+  return tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
                                         CGAL::parameters::all_default());
 }
 
@@ -293,7 +293,7 @@ template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename SizingFunction,
          typename NamedParameters>
-void tetrahedral_adaptive_remeshing(
+void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const SizingFunction& sizing,
   const NamedParameters& np)

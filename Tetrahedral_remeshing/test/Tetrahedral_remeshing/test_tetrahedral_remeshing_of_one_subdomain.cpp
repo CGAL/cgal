@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   Remeshing_triangulation tr;
   generate_input_two_subdomains(1000, tr);
 
-  CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
       CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
 
   return EXIT_SUCCESS;

@@ -1,5 +1,5 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_DUMP_REMESHING_STEPS
+//#define CGAL_DUMP_REMESHING_STEPS
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 //#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
 //#define CGAL_TETRAHEDRAL_REMESHING_PROFILE
@@ -106,7 +106,7 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-      CGAL::tetrahedral_adaptive_remeshing(
+      CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
           target_length,
           CGAL::parameters::remesh_boundaries(!protect)

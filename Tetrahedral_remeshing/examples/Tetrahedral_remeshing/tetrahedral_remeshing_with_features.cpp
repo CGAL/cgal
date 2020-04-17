@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
   CGAL_assertion(t3.is_valid());
 
-  CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
       Constrained_edges_property_map(&constraints))
     .number_of_iterations(nb_iter));

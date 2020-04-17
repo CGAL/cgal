@@ -12,7 +12,7 @@ namespace CGAL {
 \image latex bimba_back.png
 <BR>
 
-\section secTetRemeshing Multi-Material Tetrahedral Remeshing
+\section secTetRemeshing Multi-Material Isotropic Tetrahedral Remeshing
 
 This package implements an algorithm for quality tetrahedral remeshing,
 introduced by N.Faraj et al in \cgalCite{faraj2016mvr}.
@@ -50,7 +50,8 @@ leads to a mesh with a better fitted sizing criterion, and higher quality dihedr
 
 \section secTetRemeshingAPI API
 
-The tetrahedral remeshing algorithm is implemented as a single free function that
+The tetrahedral remeshing algorithm is implemented as a single free function
+`CGAL::tetrahedral_isotropic_remeshing()` that
 takes only two parameters : the input triangulation, and the desired edge length,
 which drives the remeshing process.
 
