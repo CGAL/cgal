@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
   std::ofstream out1("remeshing_triangulation.ascii.cgal",
                      std::ios_base::out);
   bool ok = CGAL::save_ascii_triangulation(out1, tr);
+  out1.close();
   assert(ok);
   std::cout << "done." << std::endl;
 
@@ -60,6 +61,7 @@ int main(int argc, char* argv[])
   std::ofstream out2("remeshing_triangulation.binary.cgal",
                     std::ios_base::out | std::ios_base::binary);
   ok = CGAL::save_binary_triangulation(out2, tr);
+  out2.close();
   assert(ok);
   std::cout << "done." << std::endl;
 
