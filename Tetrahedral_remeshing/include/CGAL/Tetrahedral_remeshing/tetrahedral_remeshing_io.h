@@ -14,6 +14,8 @@
 #include <iostream>
 #include <fstream>
 
+namespace CGAL
+{
 template<typename T3>
 bool load_triangulation(std::istream& is, T3& t3)
 {
@@ -47,4 +49,6 @@ bool save_ascii_triangulation(std::ostream& os, const T3& t3)
   os << "CGAL c3t3\n";
   CGAL::set_ascii_mode(os);
   return !!(os << t3);
+}
+
 }

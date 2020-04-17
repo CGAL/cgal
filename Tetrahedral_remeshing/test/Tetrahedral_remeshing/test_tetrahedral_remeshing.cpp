@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -20,8 +21,13 @@ bool generate_input_one_subdomain(const std::size_t nbv, T3& tr)
   CGAL::Random rng;
 
   typedef typename T3::Point Point;
-  while (tr.number_of_vertices() < nbv)
-    tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+  std::vector<Point> pts;
+  while (pts.size() < nbv)
+  {
+    const Point p(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.));
+    pts.push_back(p);
+  }
+  tr.insert(pts.begin(), pts.end());
 
   for (typename T3::Cell_handle c : tr.finite_cell_handles())
     c->set_subdomain_index(1);

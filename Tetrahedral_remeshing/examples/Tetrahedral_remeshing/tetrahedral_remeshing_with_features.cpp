@@ -131,11 +131,11 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  const char* filename     = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
+  const char* filename      = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.02;
   int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
 
-  std::ifstream input(filename, std::ios::in);
+  std::ifstream input(filename, std::ios_base::in | std::ios_base::binary);
   if (!input)
   {
     std::cerr << "File " << filename << " could not be found" << std::endl;
@@ -143,8 +143,8 @@ int main(int argc, char* argv[])
   }
 
   Remeshing_triangulation t3;
-  input >> t3;
-  set_subdomain(t3, 1);
+  CGAL::load_triangulation(input, t3);
+
   boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
   make_constraints_from_cube_edges(t3, constraints);
 
@@ -155,7 +155,8 @@ int main(int argc, char* argv[])
       Constrained_edges_property_map(&constraints))
     .number_of_iterations(nb_iter));
 
-  save_ascii_triangulation("tet_remeshing_with_features_after.mesh", t3);
+  std::ofstream out("tet_remeshing_with_features_after.mesh", std::ios_base::out);
+  CGAL::save_ascii_triangulation(out, t3);
 
   return EXIT_SUCCESS;
 }

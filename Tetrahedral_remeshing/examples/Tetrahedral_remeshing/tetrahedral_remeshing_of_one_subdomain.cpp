@@ -39,13 +39,13 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
 
   Remeshing_triangulation tr;
-  load_binary_triangulation(input, tr);
+  CGAL::load_triangulation(input, tr);
 
   CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length,
       CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
 
-  std::ofstream ofile("output.binary.cgal", std::ios::out);
-  save_binary_triangulation(ofile, tr);
+  std::ofstream ofile("output.binary.cgal", std::ios_base::out | std::ios_base::binary);
+  CGAL::save_binary_triangulation(ofile, tr);
 
   return EXIT_SUCCESS;
 }

@@ -27,19 +27,17 @@ int main(int argc, char* argv[])
   if (!input)
     return EXIT_FAILURE;
 
-  if( !load_binary_triangulation(input, t3))
+  if( !CGAL::load_triangulation(input, t3))
     return EXIT_FAILURE;
 
   CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length);
 
   // save output
   const std::string file_in(filename);
-
-  // binary
   std::string file_out = file_in.substr(0, file_in.find_first_of("."));
   file_out.append("_out.binary.cgal");
   std::ofstream out(file_out.c_str(), std::ios_base::out | std::ios_base::binary);
-  save_binary_triangulation(out, t3);
+  CGAL::save_binary_triangulation(out, t3);
 
   return EXIT_SUCCESS;
 }

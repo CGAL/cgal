@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
     points.push_back(p);
   }
 
+
   Remeshing_triangulation tr(points.begin(), points.end());
 
   for (Cell_handle c : tr.finite_cell_handles())
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
   std::cout.flush();
   std::ofstream out1("remeshing_triangulation.ascii.cgal",
                      std::ios_base::out);
-  bool ok = save_ascii_triangulation(out1, tr);
+  bool ok = CGAL::save_ascii_triangulation(out1, tr);
   assert(ok);
   std::cout << "done." << std::endl;
 
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
   std::cout.flush();
   std::ifstream in1("remeshing_triangulation.ascii.cgal",
                     std::ios_base::in);
-  ok = load_triangulation(in1, tr1);
+  ok = CGAL::load_triangulation(in1, tr1);
   assert(ok);
   std::cout << "done." << std::endl;
 
@@ -58,7 +59,7 @@ int main(int argc, char* argv[])
   std::cout.flush();
   std::ofstream out2("remeshing_triangulation.binary.cgal",
                     std::ios_base::out | std::ios_base::binary);
-  ok = save_binary_triangulation(out2, tr);
+  ok = CGAL::save_binary_triangulation(out2, tr);
   assert(ok);
   std::cout << "done." << std::endl;
 
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
   std::cout.flush();
   std::ifstream in2("remeshing_triangulation.binary.cgal",
                     std::ios_base::in | std::ios_base::binary);
-  ok = load_triangulation(in2, tr2);
+  ok = CGAL::load_triangulation(in2, tr2);
   assert(ok);
   std::cout << "done." << std::endl;
 
