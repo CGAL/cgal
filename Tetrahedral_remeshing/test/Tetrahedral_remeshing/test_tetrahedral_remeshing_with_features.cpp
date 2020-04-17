@@ -1,5 +1,5 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <utility>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -82,8 +83,10 @@ void generate_input_cube(const std::size_t& n,
   CGAL::Random rng;
 
   // points in a sphere
-  while (tr.number_of_vertices() < n)
-    tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+  std::vector<Point> pts;
+  while (pts.size() < n)
+    pts.push_back(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+  tr.insert(pts.begin(), pts.end());
 
   // vertices of a larger cube
   Vertex_handle v0 = tr.insert(Point(-2., -2., -2.));
@@ -98,11 +101,15 @@ void generate_input_cube(const std::size_t& n,
   Vertex_handle v6 = tr.insert(Point( 2.,  2., -2.));
   Vertex_handle v7 = tr.insert(Point( 2.,  2.,  2.));
 
+  CGAL_assertion(tr.is_valid(true));
+
   // writing file output
-  std::ofstream oFileT("data/sphere_in_cube.tr.cgal",
+#ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
+  std::ofstream outfile("data/sphere_in_cube.tr.cgal",
                        std::ios_base::out | std::ios_base::binary);
-  oFileT << tr;
-  oFileT.close();
+  CGAL::save_binary_triangulation(outfile, tr);
+  outfile.close();
+#endif
 
   // constrain cube edges
   add_edge(v0, v1, tr, constraints);

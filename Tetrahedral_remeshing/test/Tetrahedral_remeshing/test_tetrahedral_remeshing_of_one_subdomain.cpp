@@ -1,3 +1,5 @@
+#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
@@ -13,7 +15,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 
-bool generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulation& tr)
+void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulation& tr)
 {
   CGAL::Random rng;
 
@@ -37,12 +39,13 @@ bool generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulatio
   }
   CGAL_assertion(tr.is_valid(true));
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
   std::string filename("data/triangulation_two_subdomains.binary.cgal");
   std::ofstream os(filename, std::ios_base::out | std::ios_base::binary);
   os << "binary CGAL c3t3\n";
   CGAL::set_binary_mode(os);
-
-  return !!(os << tr);
+  os.close();
+#endif
 }
 
 struct Cells_of_subdomain
