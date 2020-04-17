@@ -325,12 +325,14 @@ private:
 #endif
      
     //tag cells
-    typedef typename Tr::Cell_handle Cell_handle;
     for (Cell_handle cit : tr().finite_cell_handles())
     {
       if (m_cell_selector(cit))
       {
-        m_c3t3.add_to_complex(cit, cit->subdomain_index());
+        const Subdomain_index index = cit->subdomain_index();
+        if(!input_is_c3t3())
+          m_c3t3.remove_from_complex(cit);
+        m_c3t3.add_to_complex(cit, index);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbc;
