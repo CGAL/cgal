@@ -29,9 +29,9 @@ struct Clustering_functor
   Point_set* points;
   Point_set::Property_map<std::size_t> cluster_map;
   const double neighbor_radius;
-  boost::shared_ptr<std::size_t> result; 
+  boost::shared_ptr<std::size_t> result;
 
-  Clustering_functor (Point_set* points, 
+  Clustering_functor (Point_set* points,
                       const double neighbor_radius,
                       Point_set::Property_map<std::size_t> cluster_map)
     : points (points), cluster_map (cluster_map),
@@ -81,7 +81,7 @@ public:
 public Q_SLOTS:
   void on_actionCluster_triggered();
 
-}; // end 
+}; // end
 
 void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
 {
@@ -107,16 +107,16 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
 
     QCheckBox* add_property = dialog.add<QCheckBox> ("Add a \"cluster\" property to the input item");
     add_property->setChecked (true);
-    
+
     QCheckBox* gen_color = dialog.add<QCheckBox> ("Generate one colored point set");
     gen_color->setChecked (true);
-    
+
     QCheckBox* gen_sub = dialog.add<QCheckBox> ("Generate N point subsets");
     gen_sub->setChecked (false);
-    
+
     if (!dialog.exec())
       return;
-    
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
     CGAL::Real_timer task_timer; task_timer.start();
@@ -135,11 +135,11 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
       neighbor_radius->setRange (-1, 10000000);
       neighbor_radius->setValue(-1);
     }
-    
+
     // Computes average spacing
     Clustering_functor functor (points, neighbor_radius->value(), cluster_map);
     run_with_qprogressdialog (functor, "Clustering...", mw);
-    
+
     std::size_t nb_clusters = *functor.result;
 
     Scene_group_item* group;
@@ -177,17 +177,17 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     {
       Scene_points_with_normal_item* colored;
       Point_set::Property_map<unsigned char> red, green, blue;
-      
+
       colored = new Scene_points_with_normal_item;
       colored->setName (QString("%1 (clustering)").arg(item->name()));
-      
+
       red = colored->point_set()->add_property_map<unsigned char>("red", 0).first;
       green = colored->point_set()->add_property_map<unsigned char>("green", 0).first;
       blue = colored->point_set()->add_property_map<unsigned char>("blue", 0).first;
       colored->point_set()->check_colors();
-      
+
       colored->point_set()->reserve (points->size());
-      
+
       for (Point_set::Index idx : *points)
       {
         Point_set::Index iidx = *(colored->point_set()->insert (points->point(idx)));
@@ -205,7 +205,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
       }
       scene->addItem(colored);
     }
-    
+
     if (gen_sub->isChecked())
     {
       for (Scene_points_with_normal_item* new_item : new_items)
@@ -219,10 +219,10 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
           delete new_item;
       }
     }
-    
+
     if (!add_property->isChecked())
       points->remove_property_map (cluster_map);
-    
+
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Number of clusters = " << nb_clusters << " ("
               << task_timer.time() << " seconds, "

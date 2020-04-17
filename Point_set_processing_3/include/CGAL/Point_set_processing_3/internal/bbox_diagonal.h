@@ -26,7 +26,7 @@ double bbox_diagonal (const PointRange& points, PointMap point_map, const typena
 {
   CGAL::Bbox_2 bbox = CGAL::bbox_2 (CGAL::make_transform_iterator_from_property_map (points.begin(), point_map),
                                     CGAL::make_transform_iterator_from_property_map (points.end(), point_map));
-    
+
   return CGAL::approximate_sqrt
     ((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
      + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()));
@@ -37,10 +37,10 @@ double bbox_diagonal (const PointRange& points, PointMap point_map, const typena
 {
   CGAL::Bbox_3 bbox = CGAL::bbox_3 (CGAL::make_transform_iterator_from_property_map (points.begin(), point_map),
                                     CGAL::make_transform_iterator_from_property_map (points.end(), point_map));
-    
+
   return CGAL::approximate_sqrt
     ((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
-     + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
+     + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
      + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 }
 
