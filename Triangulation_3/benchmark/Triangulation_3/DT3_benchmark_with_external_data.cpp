@@ -50,19 +50,14 @@ int main(int argc, char** argv)
   std::cout << "seed:  " << CGAL::get_default_random().get_seed() << std::endl;
 
   std::cout << "FT: " << typeid(K::FT).name() << std::endl;
-  int n;
+
   double x,y,z;
   std::vector<Point_3> points;
   Point_3 p;
 
   std::ifstream in(argv[1]);
-  in >> n;
-  points.reserve(n);
-  while(n--)
-  {
-    in >> x >> y >> z;
+  while(in >> x >> y >> z)
     points.emplace_back(x,y,z);
-  }
 
   int V, C;
   Timer timer;
