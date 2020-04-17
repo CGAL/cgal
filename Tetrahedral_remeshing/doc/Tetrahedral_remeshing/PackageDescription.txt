@@ -15,11 +15,9 @@
 
 /*!
 \addtogroup PkgTetrahedralRemeshingRef
-\todo check generated documentation
-\todo add pkg-small.png
 
 \cgalPkgDescriptionBegin{Tetrahedral Remeshing,PkgTetrahedralRemeshing}
-\todo cgalPkgPicture{pkg-small.png}
+\cgalPkgPicture{bimba_back_small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Jane Tournois, Noura Faraj}
