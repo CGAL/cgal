@@ -241,12 +241,9 @@ public:
     FT sqmax = emax * emax;
     FT sqmin = emin * emin;
 
-    typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
-    for (Finite_edges_iterator eit = tr().finite_edges_begin();
-         eit != tr().finite_edges_end();
-         ++eit)
+    typedef typename Tr::Edge Edge;
+    for (Edge e : tr().finite_edges())
     {
-      typename Tr::Edge e = *eit;
       // skip protected edges
       if (m_protect_boundaries)
       {
@@ -275,9 +272,7 @@ public:
 #endif
 
     std::size_t nb_slivers_peel = 0;
-    typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
-    for (Finite_cells_iterator cit = tr().finite_cells_begin();
-         cit != tr().finite_cells_end(); ++cit)
+    for (Cell_handle cit : tr().finite_cell_handles())
     {
       if(m_c3t3.is_in_complex(cit) && min_dihedral_angle(tr(), cit) < sliver_angle)
       {
@@ -454,9 +449,7 @@ private:
 
   bool check_vertex_dimensions()
   {
-    typename Tr::Finite_vertices_iterator vit;
-    for (vit = tr().finite_vertices_begin();
-         vit != tr().finite_vertices_end(); ++vit)
+    for (Vertex_handle vit : tr().finite_vertex_handles())
     {
       // dimension is -1 for Mesh_3 "far points"
       // for other vertices, it is in [0; 3]
