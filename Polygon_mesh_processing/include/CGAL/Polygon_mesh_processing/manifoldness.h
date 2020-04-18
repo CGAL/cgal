@@ -396,7 +396,7 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param pm the surface mesh to be repaired
-/// @param np optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

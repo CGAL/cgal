@@ -276,7 +276,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 ///
 /// \param points the input range
 /// \param out the resulting array of points or affine transformation
-/// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{point_map}
@@ -367,7 +367,7 @@ void oriented_bounding_box(const PointRange& points,
 ///
 /// \param pmesh the input mesh
 /// \param out the resulting array of points or affine transformation
-/// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{vertex_point_map}

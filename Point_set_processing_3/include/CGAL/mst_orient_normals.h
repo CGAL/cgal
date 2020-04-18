@@ -547,7 +547,7 @@ create_mst_graph(
 
    \param points input point range.
    \param k number of neighbors.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

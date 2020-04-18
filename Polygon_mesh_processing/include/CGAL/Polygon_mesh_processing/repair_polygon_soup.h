@@ -174,7 +174,7 @@ bool simplify_polygon(PointRange& points,
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
-// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamNBegin{geom_traits}
@@ -228,7 +228,7 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
-// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamNBegin{geom_traits}
@@ -495,7 +495,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{geom_traits}
@@ -885,7 +885,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{geom_traits}
@@ -1049,7 +1049,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{geom_traits}

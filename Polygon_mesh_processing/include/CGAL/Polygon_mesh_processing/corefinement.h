@@ -146,7 +146,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @param nps_out a tuple of optional sequences of \ref bgl_namedparameters "Named Parameters" each among the ones listed below
+  * @param nps_out an optional tuple of sequences of \ref bgl_namedparameters "Named Parameters" each among the ones listed below
   *        (`tm_out` being used to refer to the output surface mesh in `output` corresponding to a given named parameter sequence)
   *
   * \cgalNamedParamsBegin
@@ -530,7 +530,7 @@ corefine_and_compute_boolean_operations(
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @param np_out optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}

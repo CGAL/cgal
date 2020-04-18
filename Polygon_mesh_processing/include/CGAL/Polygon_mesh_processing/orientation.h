@@ -156,7 +156,7 @@ namespace internal{
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tm the closed triangle mesh free from self-intersections to be tested
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -372,7 +372,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 *
 * @param tm a closed triangulated surface mesh
-* @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \pre `CGAL::is_closed(tm)`
 *
@@ -1314,7 +1314,7 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm a closed triangulated surface mesh
- * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
@@ -1424,7 +1424,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param pm a surface mesh
- * @param np optional sequence of \ref bgl_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

@@ -116,7 +116,7 @@ struct Face_filtered_graph
    * \param graph the underlying graph
    * \param face_patch_index_map the property_map that assigns a patch index to each face
    * \param selected_face_patch_indices a range of the face patch indices to select
-   * \param np an optional sequence of named parameters among the ones listed below
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{vertex_index_map}
@@ -198,7 +198,7 @@ struct Face_filtered_graph
    * \param graph the underlying graph.
    * \param face_patch_index_map the property_map that assigns a patch index to each face
    * \param selected_face_patch_index the index of the face patch selected
-   * \param np an optional sequence of named parameters among the ones listed below
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{vertex_index_map}
@@ -268,7 +268,7 @@ struct Face_filtered_graph
    *
    * \param graph the graph containing the wanted patch
    * \param selected_faces the set of selected faces
-   * \param np an optional sequence of named parameters among the ones listed below
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{vertex_index_map}

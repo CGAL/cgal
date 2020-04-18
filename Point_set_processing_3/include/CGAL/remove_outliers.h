@@ -97,7 +97,7 @@ compute_avg_knn_sq_distance_3(
 
    \param points input point range.
    \param k number of neighbors
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

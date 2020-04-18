@@ -164,7 +164,7 @@ public:
     \param points input point range.
     \param planes input plane range.
     \param epsilon size parameter.
-    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{point_map}
@@ -1511,7 +1511,7 @@ private:
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
       \cgalParamNBegin{point_map}
@@ -1603,4 +1603,3 @@ structure_point_set (const PointRange& points, ///< range of points.
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRUCTURE_POINT_SET_3_H
-

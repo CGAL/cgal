@@ -81,7 +81,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param tmesh the triangulated polygon mesh
-/// \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

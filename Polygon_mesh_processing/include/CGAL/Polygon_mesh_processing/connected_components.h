@@ -106,7 +106,7 @@ namespace internal {
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+ *  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -187,7 +187,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
- * \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -298,7 +298,7 @@ namespace internal {
 //  *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //  *
 //  *  \param pmesh the polygon mesh
-//  *  \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+//  *  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //  *
 //  * \cgalNamedParamsBegin
 //  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -356,7 +356,7 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * \param pmesh the polygon mesh
  * \param nb_components_to_keep the number of components to be kept. If this number is larger than
  *                              the number of components in the mesh, all components are kept.
- * \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -508,7 +508,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *
  * \param pmesh the polygon mesh
  * \param threshold_value any connected component with a size (strictly) smaller than this value will be discarded
- * \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
@@ -794,7 +794,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_index_map}
@@ -838,7 +838,7 @@ void keep_connected_components(PolygonMesh& pmesh
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np an optional \ref bgl_namedparameters "Named Parameters" described below
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_index_map}
@@ -878,7 +878,7 @@ void remove_connected_components(PolygonMesh& pmesh
 *
 * \param components_to_remove a face range, including one face or more on each component to be removed
 * \param pmesh the polygon mesh
-* \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_is_constrained_map}
@@ -948,7 +948,7 @@ void remove_connected_components(PolygonMesh& pmesh
 *
 * \param pmesh the polygon mesh
 * \param components_to_keep a face range, including one face or more on each component to be kept
-* \param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_is_constrained_map}
@@ -1118,7 +1118,7 @@ void split_connected_components_impl(FIMap fim,
  *
  * \param pmesh the polygon mesh
  * \param cc_meshes container that is filled with the extracted connected components.
- * \param np an optional sequence of Named Parameters among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}

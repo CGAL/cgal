@@ -56,7 +56,7 @@ namespace Polygon_mesh_processing {
 *
 * @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}

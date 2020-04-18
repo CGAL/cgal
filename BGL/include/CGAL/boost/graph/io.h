@@ -33,6 +33,8 @@ namespace CGAL {
 
   writes the graph `g` in the wrl format (VRML 2.0).
 
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
@@ -124,6 +126,8 @@ bool write_wrl(std::ostream& os,
  \ingroup PkgBGLIOFct
 
   writes the graph `g` in the OFF format.
+
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
@@ -251,6 +255,8 @@ inline std::string next_non_comment(std::istream& is)
  \ingroup PkgBGLIOFct
 
  reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash, and lines with whitespace.
+
+ \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
  \cgalNamedParamsBegin
    \cgalParamNBegin{vertex_point_map}
@@ -637,8 +643,7 @@ write_polys_points(std::ostream& os,
  *
  * \param os the stream used for writing.
  * \param mesh the triangle mesh to be written.
- * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the
- * ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}

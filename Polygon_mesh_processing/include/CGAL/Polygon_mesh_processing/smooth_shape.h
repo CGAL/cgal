@@ -55,7 +55,7 @@ namespace Polygon_mesh_processing {
 * @param time a time step that corresponds to the speed by which the surface is smoothed.
 *        A larger time step results in faster convergence but details may be distorted to have a larger extent
 *        compared to more iterations with a smaller step. Typical values scale in the interval (1e-6, 1].
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}

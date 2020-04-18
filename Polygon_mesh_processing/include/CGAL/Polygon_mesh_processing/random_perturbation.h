@@ -244,4 +244,3 @@ void random_perturbation(TriangleMesh& tmesh
 #include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_RANDOM_PERTURBATION_H
-

@@ -254,7 +254,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 
    \param stream output stream.
    \param points input point range.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

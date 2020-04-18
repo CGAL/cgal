@@ -297,7 +297,7 @@ public:
    * Parameters out of range are ignored.
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 
-   * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    * @return number of proxies initialized
 
    * \cgalNamedParamsBegin{Seeding Named Parameters}
@@ -785,7 +785,7 @@ public:
    * @brief extracts the output mesh in the form of an indexed triangle set.
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters
    *
-   * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    * @return `true` if the extracted surface mesh is manifold, and `false` otherwise.
    *
    * \cgalNamedParamsBegin{Meshing Named Parameters}
@@ -868,7 +868,7 @@ public:
    * @brief outputs approximation results.
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 
-   * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    * \cgalNamedParamsBegin{Output Named Parameters}
    *   \cgalParamNBegin{face_proxy_map}

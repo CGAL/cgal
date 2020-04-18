@@ -353,8 +353,8 @@ struct Throw_at_first_output {
  * \param tm2 the second triangulated surface mesh.
  * \param out output iterator to be filled with all pairs of faces that intersect.
  *  First and second element in the pairs correspond to faces of `tm1` and `tm2` respectively
- * \param np1 an optional sequence of \ref bgl_namedparameters for `tm1`, among the ones listed below
- * \param np2 an optional sequence of \ref bgl_namedparameters for `tm2`, among the ones listed below
+ * \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -491,7 +491,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
  * \param polyline the polyline to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np an optional sequence of \ref bgl_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -620,7 +620,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  * \param polyline_range the range of polylines to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np an optional sequence of \ref bgl_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -940,8 +940,8 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  * \param tm1 the first triangulated surface mesh to check for intersections
  * \param tm2 the second triangulated surface mesh to check for intersections
  * \param out output iterator to be filled with all pairs of faces that intersect
- * \param np1 an optional sequence of \ref bgl_namedparameters for `tm1`, among the ones listed below
- * \param np2 an optional sequence of \ref bgl_namedparameters for `tm2`, among the ones listed below
+ * \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1003,7 +1003,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  * \param tm the triangulated surface mesh to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np an optional sequence of \ref bgl_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1219,8 +1219,8 @@ bool do_intersect(const Polyline& polyline1,
  *
  * @param tm1 the first triangulated surface mesh to check for intersections
  * @param tm2 the second triangulated surface mesh to check for intersections
- * @param np1 an optional sequence of \ref bgl_namedparameters for `tm1`, among the ones listed below
- * @param np2 an optional sequence of \ref bgl_namedparameters for `tm2`, among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1322,7 +1322,7 @@ bool do_intersect(const TriangleMesh& tm1,
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polylines the range of polylines to check for intersections.
- * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1387,7 +1387,7 @@ bool do_intersect(const TriangleMesh& tm,
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polyline the polyline to check for intersections.
- * @param np an optional sequence of \ref bgl_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1608,7 +1608,7 @@ struct Mesh_callback
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
  * \param out output iterator used to collect pairs of intersecting meshes.
- * \param np an optional sequence named parameters among the one listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{geom_traits}
@@ -1626,7 +1626,7 @@ struct Mesh_callback
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \param nps an optional range of named parameters among the one listed below
+ * \param nps an optional range of sequences of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

@@ -291,7 +291,7 @@ update_new_point(
 
    \param points input point range.
    \param output iterator where output points and normals are put.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

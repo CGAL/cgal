@@ -224,7 +224,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @param points points of the soup of polygons
 * @param polygons each element in the vector describes a polygon using the indices of the points in `points`
 * @param out the polygon mesh to be built
-* @param np_ps optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np_ps an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{point_map}
@@ -235,7 +235,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* @param np_pm optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np_pm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}

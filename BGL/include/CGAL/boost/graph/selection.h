@@ -464,8 +464,7 @@ reduce_face_selection(
   unselects everything so that the length of the border of the
   selection is 0)
 
-  \param np optional sequence of named parameters among the ones listed below
-
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}

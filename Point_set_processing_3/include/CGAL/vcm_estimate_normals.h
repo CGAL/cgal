@@ -235,7 +235,7 @@ vcm_convolve (ForwardIterator first,
    \param ccov output range of covariance matrices.
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
@@ -407,7 +407,7 @@ vcm_estimate_normals_internal (PointRange& points,
    \param points input point range.
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
@@ -482,7 +482,7 @@ vcm_estimate_normals (PointRange& points,
    \param points input point range.
    \param offset_radius offset_radius.
    \param k number of neighbor points used for convolution.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

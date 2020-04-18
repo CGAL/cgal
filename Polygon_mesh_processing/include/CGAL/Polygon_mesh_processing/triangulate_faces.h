@@ -406,7 +406,6 @@ public:
 * @param pmesh the polygon mesh to which the face to be triangulated belongs
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
-*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}

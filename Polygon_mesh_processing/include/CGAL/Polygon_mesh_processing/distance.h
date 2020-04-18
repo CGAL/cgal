@@ -1075,10 +1075,9 @@ double approximate_Hausdorff_distance(
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`,
- *            forwarded to `sample_triangle_mesh()`.
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" forwarded to `sample_triangle_mesh()`
  *
- * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" for `tm2` among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

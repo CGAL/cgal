@@ -936,8 +936,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 // \param halfedge_range_B a range of vertices of the second mesh defining a set of vertices (as targets of the halfeges)
 // \param tolerance_map_B a tolerance map associating to each vertex of the second range a tolerance value
 // \param tm_B the target mesh to which the vertices in `halfedge_range_B` belong
-// \param np_A optional \ref bgl_namedparameters "Named Parameters" related to the source mesh,
-//             amongst those described below:
+// \param np_A an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamBegin{vertex_point_map}
@@ -950,8 +949,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
-// \param np_B optional \ref bgl_namedparameters "Named Parameters" related to the target mesh,
-//             amongst those described below:
+// \param np_B an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamBegin{vertex_point_map}

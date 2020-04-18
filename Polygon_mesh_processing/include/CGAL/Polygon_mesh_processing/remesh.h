@@ -347,7 +347,7 @@ void isotropic_remeshing(
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
-* @param np an optional \ref bgl_namedparameters "Named Parameters", amongst those described below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}

@@ -44,7 +44,7 @@ namespace Polygon_mesh_processing {
 ///
 /// @param e an edge of `pm`
 /// @param pm polygon mesh containing `e`
-/// @param np an optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -101,7 +101,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 /// @param edges a subset of edges of `tm`
 /// @param tm a triangle mesh
 /// @param out an output iterator in which the degenerate edges are written
-/// @param np optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -182,7 +182,7 @@ OutputIterator degenerate_edges(const TriangleMesh& tm, OutputIterator out)
 ///
 /// @param f a triangle face of `tm`
 /// @param tm a triangle mesh containing `f`
-/// @param np an optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -245,7 +245,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 /// @param faces a subset of faces of `tm`
 /// @param tm a triangle mesh
 /// @param out an output iterator in which the degenerate faces are put
-/// @param np optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -329,7 +329,7 @@ OutputIterator degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 /// @param f a triangle face of `tm`
 /// @param tm triangle mesh containing `f`
 /// @param threshold a bound on the ratio of the longest edge length and the shortest edge length
-/// @param np an optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -434,7 +434,7 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 /// @param threshold the cosine of a minimum angle such that if `f` has an angle greater than this bound,
 ///                  it is a cap. The threshold is in range `[-1 0]` and corresponds to an angle
 ///                  between `90` and `180` degrees.
-/// @param np an optional \ref bgl_namedparameters "Named Parameters" described below
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}

@@ -30,7 +30,7 @@ namespace Polygon_mesh_processing{
  *
  * @param transformation the transformation functor to apply to  the points of `mesh`.
  * @param mesh the `PolygonMesh` to transform.
- * @param np an optional sequence of \ref bgl_namedparameters for `mesh`, among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}

@@ -421,8 +421,8 @@ void split_along_edges(TriangleMesh& tm,
   *
   * @param tm input triangulated surface mesh
   * @param clipper triangulated surface mesh used to clip `tm`
-  * @param np_tm optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-  * @param np_c optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_tm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_c an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   *
   * \cgalNamedParamsBegin
@@ -613,7 +613,7 @@ bool clip(TriangleMesh& tm,
   *
   * @param tm input triangulated surface mesh
   * @param iso_cuboid iso-cuboid used to clip `tm`.
-  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{visitor}
@@ -684,8 +684,8 @@ bool clip(TriangleMesh& tm,
   *
   * @param tm input triangulated surface mesh
   * @param splitter triangulated surface mesh used to split `tm`
-  * @param np_tm optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-  * @param np_s optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_tm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np_s an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}

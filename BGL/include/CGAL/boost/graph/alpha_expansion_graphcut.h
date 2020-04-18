@@ -505,7 +505,7 @@ class Alpha_expansion_MaxFlow_impl;
    vd)[label_idx]` returns the cost of vertex `vd` to belong to the
    label `label_idx`.
 
-   \param np optional sequence of named parameters among the ones listed below
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{vertex_index_map}

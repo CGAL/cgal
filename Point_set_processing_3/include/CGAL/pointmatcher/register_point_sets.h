@@ -49,7 +49,7 @@ namespace pointmatcher {
 
    \param point_set_1 input point range used as reference.
    \param point_set_2 input point range whose registration w.r.t. `point_set_1` will be computed.
-   \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
@@ -174,7 +174,7 @@ namespace pointmatcher {
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

@@ -194,7 +194,7 @@ compute_max_spacing(
    \param points input point range.
    \param k size of the neighborhood for the implicit surface patch fitting.
    The larger the value is, the smoother the result will be.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

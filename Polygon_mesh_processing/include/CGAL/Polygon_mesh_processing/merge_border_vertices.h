@@ -266,7 +266,7 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 ///
 /// @param h a halfedge that belongs to a boundary cycle.
 /// @param pm the polygon mesh which contains the boundary cycle.
-/// @param np an optional parameter of \ref bgl_namedparameters "Named Parameters" listed below.
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
@@ -321,7 +321,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// @tparam NamedParameter a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param pm the polygon mesh which contains the cycles.
-/// @param np an optional parameter of \ref bgl_namedparameters "Named Parameters" listed below.
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
