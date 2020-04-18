@@ -1086,8 +1086,8 @@ Triangulation<TT, TDS>
     // of one |orientation| predicate
     Full_cell_handle previous = Full_cell_handle();
     bool full_cell_not_found = true;
-    // A full_cell has at most 1 + maximal_dimension() facets:
-    boost::container::small_vector<signed char, 8> orientations_ (1 + maximal_dimension());
+    // A full_cell has at most dimension + 1 facets:
+    boost::container::small_vector<signed char, 8> orientations_ (cur_dim + 1);
     while(full_cell_not_found) // we walk until we locate the query point |p|
     {
     #ifdef CGAL_TRIANGULATION_STATISTICS
