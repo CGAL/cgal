@@ -141,28 +141,29 @@ namespace internal{
 
 /**
  * \ingroup PMP_orientation_grp
- * tests whether a closed polygon mesh has a positive orientation.
- * A closed polygon mesh is considered to have a positive orientation if the normal vectors
- * to all its faces point outside the domain bounded by the polygon mesh.
+ * tests whether a closed triangle mesh has a positive orientation.
+ * A closed triangle mesh is considered to have a positive orientation if the normal vectors
+ * to all its faces point outside the domain bounded by the triangle mesh.
  * The normal vector to each face is chosen pointing on the side of the face
  * where its sequence of vertices is seen counterclockwise.
- * @pre `CGAL::is_closed(pmesh)`
- * @pre If `pmesh` contains several connected components, they are oriented consistently.
+ * @pre `CGAL::is_closed(tm)`
+ * @pre `CGAL::is_triangle_mesh(tm)`
+ * @pre If `tm` contains several connected components, they are oriented consistently.
  *      In other words, the answer to this predicate would be the same for each
  *      isolated connected component.
  *
- * @tparam PolygonMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * @param pmesh the closed polygon mesh to be tested
- * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param tm the closed triangle mesh free from self-intersections to be tested
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -173,26 +174,27 @@ namespace internal{
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \note This function is only doing an orientation test for one connected component of `pmesh`.
+ * \note This function is only doing an orientation test for one connected component of `tm`.
  *       For performance reasons, it is left to the user to call the function `does_bound_a_volume()`
- *       on a triangulated version of `pmesh` to ensure the result returned is relevant.
+ *       on a triangulated version of `tm` to ensure the result returned is relevant.
  *       For advanced usages, the function `volume_connected_components()` should be used instead.
  *
  * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
-template<typename PolygonMesh, typename NamedParameters>
-bool is_outward_oriented(const PolygonMesh& pmesh,
+template<typename TriangleMesh, typename NamedParameters>
+bool is_outward_oriented(const TriangleMesh& tm,
                          const NamedParameters& np)
 {
-  CGAL_warning(CGAL::is_closed(pmesh));
-  CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
+  CGAL_warning(CGAL::is_closed(tm));
+  CGAL_warning(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(CGAL::is_valid_polygon_mesh(tm));
 
 #ifdef CGAL_PMP_DEBUG_CODE
-  //check for empty pmesh
-  CGAL_warning(faces(pmesh).first != faces(pmesh).second);
+  //check for empty tm
+  CGAL_warning(faces(tm).first != faces(tm).second);
 #endif
 
-  if (faces(pmesh).first == faces(pmesh).second)
+  if (faces(tm).first == faces(tm).second)
     return true;
 
 
@@ -200,40 +202,40 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   using parameters::get_parameter;
 
   //VertexPointMap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                 get_const_property_map(vertex_point, pmesh));
+                                 get_const_property_map(vertex_point, tm));
   //Kernel
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   //find the vertex with maximal z coordinate
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
-  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *(vertices(pmesh).first);
-  for (typename boost::graph_traits<PolygonMesh>::vertex_iterator
-          vit=std::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
+  typename boost::graph_traits<TriangleMesh>::vertex_descriptor v_max = *(vertices(tm).first);
+  for (typename boost::graph_traits<TriangleMesh>::vertex_iterator
+          vit=std::next(vertices(tm).first), vit_end = vertices(tm).second;
           vit!=vit_end; ++vit)
   {
     // skip isolated vertices
-    if (halfedge(*vit, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+    if (halfedge(*vit, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
       continue;
     if( less_z(v_max, *vit) )
       v_max=*vit;
   }
 
   // only isolated vertices
-  if (halfedge(v_max, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+  if (halfedge(v_max, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
     return true;
 
-  return internal::is_outward_oriented(v_max, pmesh, np);
+  return internal::is_outward_oriented(v_max, tm, np);
 }
 
 ///\cond SKIP_IN_MANUAL
 
-template<typename PolygonMesh>
-bool is_outward_oriented(const PolygonMesh& pmesh)
+template<typename TriangleMesh>
+bool is_outward_oriented(const TriangleMesh& tm)
 {
-  return is_outward_oriented(pmesh,
+  return is_outward_oriented(tm,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 

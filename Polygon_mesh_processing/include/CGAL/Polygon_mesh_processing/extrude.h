@@ -193,9 +193,10 @@ void extrude_mesh(const InputMesh& input,
 
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > bottom_h2h;
-  copy_face_graph(input, output, std::back_inserter(bottom_v2v),
-                  std::back_inserter(bottom_h2h), Emptyset_iterator(),
-                  input_vpm, output_vpm);
+  copy_face_graph(input, output, parameters::vertex_point_map(input_vpm)
+                                            .vertex_to_vertex_output_iterator(std::back_inserter(bottom_v2v))
+                                            .halfedge_to_halfedge_output_iterator(std::back_inserter(bottom_h2h)),
+                                 parameters::vertex_point_map(output_vpm));
 
   // create the offset for the other side
   for(std::size_t i = 0; i< bottom_v2v.size(); ++i)
@@ -207,9 +208,11 @@ void extrude_mesh(const InputMesh& input,
   // collect border halfedges for the creation of the triangle strip
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > top_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > top_h2h;
-  copy_face_graph(input, output, std::inserter(top_v2v, top_v2v.end()),
-                  std::inserter(top_h2h, top_h2h.end()), Emptyset_iterator(),
-                  input_vpm, output_vpm);
+  copy_face_graph(input, output, parameters::vertex_point_map(input_vpm)
+                                            .vertex_to_vertex_output_iterator(std::inserter(top_v2v, top_v2v.end()))
+                                            .halfedge_to_halfedge_output_iterator(std::inserter(top_h2h, top_h2h.end())),
+                                 parameters::vertex_point_map(output_vpm));
+
   for(std::size_t i = 0; i< top_v2v.size(); ++i)
   {
     top(top_v2v[i].first, top_v2v[i].second);

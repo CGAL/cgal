@@ -178,8 +178,6 @@ namespace Point_set {
 
         points.clear();
         for (std::size_t j = 0; j < neighbors.size(); ++j) {
-
-          CGAL_precondition(neighbors[j] >= 0);
           CGAL_precondition(neighbors[j] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + neighbors[j]);

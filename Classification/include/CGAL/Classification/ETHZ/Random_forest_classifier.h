@@ -38,10 +38,12 @@
 
 #include <CGAL/tags.h>
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#endif
 
 #ifdef BOOST_MSVC
 #  pragma warning(pop)
@@ -98,6 +100,9 @@ public:
     than the ones used by `other`, and in the same order.
 
   */
+#if defined(DOXYGEN_RUNNING) || \
+  (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
+   defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION))
   Random_forest_classifier (const Random_forest_classifier& other,
                             const Feature_set& features)
     : m_labels (other.m_labels), m_features (features), m_rfc (nullptr)
@@ -106,6 +111,7 @@ public:
     other.save_configuration(stream);
     this->load_configuration(stream);
   }
+#endif
 
   /// \cond SKIP_IN_MANUAL
   ~Random_forest_classifier ()
@@ -280,6 +286,9 @@ public:
     The output file is written in an GZIP container that is readable
     by the `load_configuration()` method.
   */
+#if defined(DOXYGEN_RUNNING) || \
+  (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
+   defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION))
   void save_configuration (std::ostream& output) const
   {
     boost::iostreams::filtering_ostream outs;
@@ -288,6 +297,7 @@ public:
     boost::archive::text_oarchive oas(outs);
     oas << BOOST_SERIALIZATION_NVP(*m_rfc);
   }
+#endif
 
   /*!
     \brief Loads a configuration from the stream `input`.
@@ -298,6 +308,9 @@ public:
     the ones present when the file was generated using
     `save_configuration()`.
   */
+#if defined(DOXYGEN_RUNNING) || \
+  (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
+   defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION))
   void load_configuration (std::istream& input)
   {
     CGAL::internal::liblearning::RandomForest::ForestParams params;
@@ -311,6 +324,7 @@ public:
     boost::archive::text_iarchive ias(ins);
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
+#endif
 
 /// @}
 

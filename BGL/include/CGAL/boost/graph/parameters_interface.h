@@ -37,6 +37,7 @@ CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to
 CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
 CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
 CGAL_add_named_parameter(implementation_tag_t, implementation_tag, implementation_tag)
+CGAL_add_named_parameter(prevent_unselection_t, prevent_unselection, prevent_unselection)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
@@ -153,6 +154,9 @@ CGAL_add_named_parameter(seeding_method_t, seeding_method, seeding_method)
 CGAL_add_named_parameter(max_number_of_proxies_t, max_number_of_proxies, max_number_of_proxies)
 CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
 CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_of_relaxations)
+
+// List of named parameters used in Optimal_bounding_box package
+CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
 
 // meshing parameters
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)

@@ -702,6 +702,7 @@ user might encounter.
 - `CGAL::reduce_vertex_selection()`
 - `CGAL::select_incident_faces()`
 - `CGAL::expand_face_selection_for_removal()`
+- `CGAL::regularize_face_selection_borders()`
 
 \cgalCRPSection{Conversion Functions}
 - `CGAL::split_graph_into_polylines()`

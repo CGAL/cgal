@@ -822,8 +822,7 @@ locate(const Point_d& x) const
     lifted_kernel().lift_to_paraboloid_d_object();;
   Lifted_point_d lp = lift(x);
   if ( is_dimension_jump(lp) ) {
-    Simplex_iterator s;
-    for (s = const_cast<Self*>(this)->simplices_begin(NEAREST);
+    for (Simplex_iterator s = const_cast<Self*>(this)->simplices_begin(NEAREST);
          s != const_cast<Self*>(this)->simplices_end(); ++s)
       if ( contains(s,x) ) return s;
     return Simplex_handle();

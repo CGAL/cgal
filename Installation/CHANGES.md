@@ -3,6 +3,11 @@ Release History
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 
+### Optimal Bounding Box (new package)
+- This package implements an optimization algorithm that aims to construct a close approximation
+  of the *optimal bounding box* of a mesh or a point set, which is defined as the smallest
+  (in terms of volume) bounding box that contains a given mesh or point set.
+
 ### 2D and 3D Linear Geometry Kernel
  - Add `CompareSignedDistanceToLine_2` in the 2D/3D Kernel concept to compare
    the signed distance of two points to a line, or the line passing through two given points.
@@ -14,6 +19,9 @@ Release History
    from a soup of disconnected segments that should first be split
    into polylines.
 
+### 3D Convex Hulls
+ -   The long-deprecated function `CGAL::convex_hull_3_to_polyhedron_3()` has been removed.
+     The function `CGAL::convex_hull_3_to_face_graph()` should be used instead.
 
 Release 5.0
 -----------
@@ -40,6 +48,9 @@ Release date: June 2020
      edge, and face indices of a triangulation meant to be used with BGL algorithms.
  -   Added function `alpha_expansion_graphcut()` which regularizes a
      multi-label partition over a user-defined graph.
+ -   Added function `regularize_face_selection_borders()` which uses
+     this alpha expansion graphcut to regularize the borders of a
+     selected faces on a triangle mesh.
 
 ### Polygon Mesh Processing
 
