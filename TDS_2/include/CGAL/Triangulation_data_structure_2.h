@@ -456,33 +456,39 @@ public:
     return newv;
   }
 
-
   template< class FaceIt >
   void insert_in_hole(Vertex_handle v, FaceIt face_begin, FaceIt face_end)
   {
-
     CGAL_triangulation_precondition(dimension() == 2);
-
-    std::vector<Face_handle>  new_faces;
-    std::vector<Edge>         bdry_edges;
 
     Face_handle fh = *face_begin;
     int ii = 0;
     bool found_boundary = false;
     do {
       if (std::find(face_begin, face_end, fh->neighbor(ii)) == face_end) {
-        bdry_edges.push_back(Edge(fh, ii));
-        found_boundary = true;
+        return insert_in_hole(v, Edge(fh, ii), face_begin, face_end); // found_boundary
       } else {
         int newi = fh->neighbor(ii)->index(fh->vertex(ccw(ii)));
         fh = fh->neighbor(ii);
         ii = newi;
       }
     } while(!found_boundary);
-    // Now we have found ONE edge on the boundary.
-    // From that one edge we must walk on the boundary
-    // of the hole until we've covered the whole thing.
 
+    CGAL_assertion(false);
+  }
+
+  template< class FaceIt >
+  void insert_in_hole(Vertex_handle v, const Edge& bedge, FaceIt face_begin, FaceIt face_end)
+  {
+    CGAL_triangulation_precondition(dimension() == 2);
+
+    std::vector<Face_handle>  new_faces;
+    std::vector<Edge>         bdry_edges;
+
+    // From that one boundary edge we must walk on the boundary
+    // of the hole until we've covered the whole thing.
+    Face_handle fh = bedge.first;
+    int ii = bedge.second;
     bool complete_walk = false;
     do {
       Face_handle nh = fh->neighbor(ccw(ii));
@@ -490,7 +496,7 @@ public:
         ii = ccw(ii);
         Edge new_edge(fh, ii);
         if (std::find(bdry_edges.begin(), bdry_edges.end(), new_edge) == bdry_edges.end()) {
-          bdry_edges.push_back(Edge(fh, ii));
+          bdry_edges.emplace_back(fh, ii);
         } else {
           complete_walk = true;
         }
@@ -500,6 +506,7 @@ public:
         ii = newi;
       }
     } while (!complete_walk);
+
     // At this point, bdry_edges contains the edges that define
     // the boundary of the hole with a specific ordering: for any
     // two consecutive edges in the vector e1 = (f1, i1),
@@ -532,6 +539,7 @@ public:
     // Now we have also set adjacency relationships between the new faces.
 
     for (FaceIt it = face_begin; it != face_end; it++) {
+      (*it)->tds_data().clear(); // @tmp
       delete_face(*it);
     }
     // The old faces that were in conflict are now deleted.
@@ -1978,7 +1986,7 @@ copy_tds(const TDS_src& tds_src,
   size_type n = tds_src.number_of_vertices();
   set_dimension(tds_src.dimension());
 
-  // Number of pointers to cell/vertex to copy per cell.
+  // Number of pointers to Face/vertex to copy per Face.
   int dim = (std::max)(1, dimension() + 1);
 
   if(n == 0) {return Vertex_handle();}
@@ -2003,7 +2011,7 @@ copy_tds(const TDS_src& tds_src,
     convert_face(*fit1, *fh);
   }
 
-  //link vertices to a cell
+  //link vertices to a Face
   vit1 = tds_src.vertices_begin();
   for ( ; vit1 != tds_src.vertices_end(); vit1++) {
     vmap[vit1]->set_face(fmap[vit1->face()]);
