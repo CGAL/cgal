@@ -109,7 +109,7 @@ struct Facet_plane_3 {
     CGAL_NEF_TRACEN( *point_cir);
     CGAL_NEF_TRACEN(internal::Plane_constructor<Plane>::get_type_plane(*point_cir, Vector( plane_orthogonal_vector)));
     if(plane_orthogonal_vector == Vector(0,0,0))
-      std::cerr << "Error !!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+      std::cerr << "Error: Normal vector cannot be (0,0,0)" << std::endl;
     return(internal::Plane_constructor<Plane>::get_type_plane( *point_cir, Vector( plane_orthogonal_vector)));
   }
 };
