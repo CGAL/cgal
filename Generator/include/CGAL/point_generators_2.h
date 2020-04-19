@@ -110,8 +110,8 @@ public:
     Random_points_in_square_2( double a = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed in the half-open square with side length a,
-        // centered around the origin, i.e. \forall p = `*g': -\frac{a}{2}
-        // <= p.x() < \frac{a}{2} and -\frac{a}{2} <= p.y() < \frac{a}{2}
+        // centered around the origin, i.e.
+        // \forall p = `*g': -a <= p.x() < a and a <= p.y() < a
         // . Two random numbers are needed from `rnd' for each point.
     : Random_generator_base<P>( a, rnd) { generate_point(); }
     This& operator++()    {
