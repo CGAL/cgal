@@ -3939,7 +3939,7 @@ Periodic_3_triangulation_3<GT,TDS>::neighbor_offset(
   Vertex_handle vertex_ch;
   int index_ch, index_nb;
   // ensure that vertex_ch \in nb and vertex_nb \in ch
-  index_ch = (i==0? 1 : 0);
+  index_ch = (i==0? 1 : 0); // get a random vertex of the face common to both ch and nb
   vertex_ch = ch->vertex(index_ch);
   index_nb = nb->index(vertex_ch);
 
