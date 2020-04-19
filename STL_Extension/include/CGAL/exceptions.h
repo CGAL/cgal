@@ -2,20 +2,11 @@
 // Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner, Sylvain Pion
@@ -73,7 +64,6 @@ namespace CGAL {
          \c CGAL_error_msg for an unconditional error message that cannot
          be disabled with macros.
 */
-//@{
 
 // Failure types and exceptions
 // ============================
@@ -195,7 +185,19 @@ public:
                              "warning condition failed") {}
 };
 
+namespace internal {
 
+// The following classes are useful to create output iterators (with the help
+// of boost::function_output_iterator) that will throw as soon as something is being written.
+class Throw_at_output_exception : public std::exception { };
+
+struct Throw_at_output
+{
+  template<class T>
+  void operator()(const T& /* t */) const { throw Throw_at_output_exception(); }
+};
+
+} // namespace internal
 } //namespace CGAL
 
 #endif // CGAL_EXCEPTIONS_H

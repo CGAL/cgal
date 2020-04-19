@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Laurent Saboret and Andreas Fabri
 
@@ -25,10 +16,8 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/trace.h>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_vertex_handle_3.h>
+#include <CGAL/IO/trace.h>
+#include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
@@ -304,22 +293,22 @@ mst_find_source(
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return the Riemannian graph
-template <typename ForwardIterator,
+template <typename PointRange,
           typename PointMap,
           typename NormalMap,
           typename IndexMap,
           typename ConstrainedMap,
           typename Kernel
 >
-Riemannian_graph<ForwardIterator>
+Riemannian_graph<typename PointRange::iterator>
 create_riemannian_graph(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
+    PointRange& points, ///< input points
     PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
     NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3
     IndexMap index_map, ///< property map ForwardIterator -> index
     ConstrainedMap constrained_map, ///< property map ForwardIterator -> bool
     unsigned int k, ///< number of neighbors
+    typename Kernel::FT neighbor_radius,
     const Kernel& /*kernel*/) ///< geometric traits.
 {
     // Input points types
@@ -327,44 +316,23 @@ create_riemannian_graph(
     typedef typename boost::property_traits<NormalMap>::reference Vector_ref;
 
     // Types for K nearest neighbors search structure
-    typedef Point_vertex_handle_3<ForwardIterator> Point_vertex_handle_3;
-    typedef Search_traits_vertex_handle_3<ForwardIterator> Traits;
-    typedef Euclidean_distance_vertex_handle_3<ForwardIterator> KDistance;
-    typedef Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
-    typedef typename Neighbor_search::Tree Tree;
-    typedef typename Neighbor_search::iterator Search_iterator;
+    typedef typename PointRange::iterator ForwardIterator;
+    typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
     // Riemannian_graph types
     typedef internal::Riemannian_graph<ForwardIterator> Riemannian_graph;
     typedef typename boost::property_map<Riemannian_graph, boost::edge_weight_t>::type Riemannian_graph_weight_map;
 
-    // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(first != beyond);
-
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
 
     // Number of input points
-    const std::size_t num_input_points = distance(first, beyond);
+    const std::size_t num_input_points = points.size();
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates KD-tree\n");
 
-    // Instanciate a KD-tree search.
-    // Notes: We have to wrap each input point by a Point_vertex_handle_3.
-    //        The KD-tree is allocated dynamically to recover RAM as soon as possible.
-    std::vector<Point_vertex_handle_3> kd_tree_points; kd_tree_points.reserve(num_input_points);
-    for (ForwardIterator it = first; it != beyond; it++)
-    {
-
-        Point_ref point = get(point_map, *it);
-        Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
-        kd_tree_points.push_back(point_wrapper);
-    }
-    boost::shared_ptr<Tree> tree( new Tree(kd_tree_points.begin(), kd_tree_points.end()) );
-
-    // Recover RAM
-    kd_tree_points.clear();
+    Neighbor_query neighbor_query (points, point_map);
 
     memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates Riemannian Graph\n");
@@ -377,7 +345,7 @@ create_riemannian_graph(
     Riemannian_graph riemannian_graph;
     //
     // add vertices
-    for (ForwardIterator it = first; it != beyond; it++)
+    for (ForwardIterator it = points.begin(); it != points.end(); it++)
     {
         typename Riemannian_graph::vertex_descriptor v = add_vertex(riemannian_graph);
         CGAL_point_set_processing_assertion(v == get(index_map,it));
@@ -391,26 +359,18 @@ create_riemannian_graph(
     //
     // add edges
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
-    for (ForwardIterator it = first; it != beyond; it++)
+    for (ForwardIterator it = points.begin(); it != points.end(); it++)
     {
         std::size_t it_index = get(index_map,it);
         Vector_ref it_normal_vector = get(normal_map,*it);
 
-        // Gather set of (k+1) neighboring points.
-        // Perform k+1 queries (as in point set, the query point is
-        // output first). Search may be aborted if k is greater
-        // than number of input points.
-
         Point_ref point = get(point_map, *it);
-        Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
-        Neighbor_search search(*tree, point_wrapper, k+1);
-        Search_iterator search_iterator = search.begin();
-        for(std::size_t i=0;i<(k+1);i++)
-        {
-            if(search_iterator == search.end())
-                break; // premature ending
+        std::vector<ForwardIterator> neighbor_points;
+        neighbor_query.get_iterators (point, k, neighbor_radius, std::back_inserter(neighbor_points));
 
-            ForwardIterator neighbor = search_iterator->first;
+        for (std::size_t i = 0; i < neighbor_points.size(); ++ i)
+        {
+            ForwardIterator neighbor = neighbor_points[i];
             std::size_t neighbor_index = get(index_map,neighbor);
             if (neighbor_index > it_index) // undirected graph
             {
@@ -432,8 +392,6 @@ create_riemannian_graph(
                     weight = 0; // safety check
                 riemannian_graph_weight_map[e] = (float)weight;
             }
-
-            search_iterator++;
         }
 
         // Check if point is source
@@ -596,6 +554,12 @@ create_mst_graph(
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{point_is_constrained_map} a model of `ReadablePropertyMap` with value type
      `bool`. Points with a `true` value will be used as seed points: their normal will be considered as already
      oriented, it won't be altered and it will be propagated to its neighbors. If this parameter is omitted,
@@ -620,7 +584,7 @@ mst_orient_normals(
 
     CGAL_TRACE("Calls mst_orient_normals()\n");
 
-    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
     typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
     typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
     typedef typename Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::type ConstrainedMap;
@@ -629,9 +593,11 @@ mst_orient_normals(
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-    ConstrainedMap constrained_map = choose_parameter(get_parameter(np, internal_np::point_is_constrained), ConstrainedMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
+                                                           typename Kernel::FT(0));
+    ConstrainedMap constrained_map = choose_parameter<ConstrainedMap>(get_parameter(np, internal_np::point_is_constrained));
     Kernel kernel;
 
   // Bring private stuff to scope
@@ -673,19 +639,21 @@ mst_orient_normals(
 
     if (boost::is_same<ConstrainedMap,
         typename CGAL::Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::NoMap>::value)
-      riemannian_graph = create_riemannian_graph(points.begin(), points.end(),
+      riemannian_graph = create_riemannian_graph(points,
                                                  point_map, normal_map, index_map,
                                                  Default_constrained_map<typename PointRange::iterator>
                                                  (mst_find_source(points.begin(), points.end(),
                                                                   point_map, normal_map,
                                                                   kernel)),
                                                  k,
+                                                 neighbor_radius,
                                                  kernel);
     else
-      riemannian_graph = create_riemannian_graph(points.begin(), points.end(),
+      riemannian_graph = create_riemannian_graph(points,
                                                  point_map, normal_map, index_map,
                                                  constrained_map,
                                                  k,
+                                                 neighbor_radius,
                                                  kernel);
 
     // Creates a Minimum Spanning Tree starting at source_point
@@ -745,74 +713,6 @@ mst_orient_normals(
 {
   return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k, ///< number of neighbors
-    const Kernel& kernel) ///< geometric traits.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return mst_orient_normals
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     geom_traits(kernel));
-}
-
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k) ///< number of neighbors
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return mst_orient_normals
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
-}
-
-// deprecated API
-template <typename ForwardIterator,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k) ///< number of neighbors
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return mst_orient_normals
-    (points,
-     k,
-     CGAL::parameters::normal_map (normal_map));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

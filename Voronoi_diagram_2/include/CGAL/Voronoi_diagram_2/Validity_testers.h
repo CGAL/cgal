@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -54,7 +45,7 @@ class Edge_validity_tester
   typedef typename VDA::Delaunay_graph::Vertex_handle  Delaunay_vertex_handle;
 
  public:
-  Edge_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Edge_validity_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Edges_iterator_base& eit) const {
     CGAL_assertion( !vda_->edge_rejector()(vda_->dual(), eit->dual()) );
@@ -96,7 +87,7 @@ class Vertex_validity_tester
   Delaunay_faces_iterator;
 
  public:
-  Vertex_validity_tester(const VDA* vda = NULL) : vda_(vda) {}
+  Vertex_validity_tester(const VDA* vda = nullptr) : vda_(vda) {}
 
   bool operator()(const Delaunay_faces_iterator& fit) const {
     Delaunay_face_handle f(fit);

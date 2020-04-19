@@ -233,6 +233,9 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "protocgal=\sc{C++gal}" \
                          "plageo=\sc{Plageo}" \
                          "stl=\sc{STL}" \
+                         "gmp=\sc{GMP}" \
+                         "mpir=\sc{MPIR}" \
+                         "mpfr=\sc{MPFR}" \
                          "leda=\sc{LEDA}" \
                          "gcc=\sc{GCC}" \
                          "cpp=\sc{C++}" \
@@ -1592,7 +1595,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath \
 # example see the documentation.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_CODEFILE       =
+MATHJAX_CODEFILE       = ${CGAL_DOC_RESOURCE_DIR}/CGAL_mathjax.js
 
 # When the SEARCHENGINE tag is enabled doxygen will generate a search box for
 # the HTML output. The underlying search engine uses javascript and DHTML and

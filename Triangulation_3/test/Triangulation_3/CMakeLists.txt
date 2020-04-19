@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_3_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
@@ -28,6 +28,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_simplex_3.cpp" )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
+  create_single_source_cgal_program( "test_io_triangulation_3.cpp" )
 
   if(TBB_FOUND)
     foreach(target

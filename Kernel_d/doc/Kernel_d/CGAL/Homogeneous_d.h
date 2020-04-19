@@ -23,7 +23,5 @@ template< typename RingNumberType >
 class Homogeneous_d {
 public:
 
-/// @}
-
 }; /* end Homogeneous */
 } /* end namespace CGAL */

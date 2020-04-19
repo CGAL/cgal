@@ -14,7 +14,5 @@ Concept for points on circles, circular arcs or line arcs.
 class CircularKernel::CircularArcPoint_2 {
 public:
 
-/// @}
-
 }; /* end CircularKernel::CircularArcPoint_2 */
 

@@ -4,7 +4,6 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/foreach.hpp>
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -109,10 +108,10 @@ int main(int argc, char* argv[])
   std::cerr << "- The graph has " << num << " connected components (face connectivity)" << std::endl;
   typedef std::map<std::size_t/*index of CC*/, unsigned int/*nb*/> Components_size;
   Components_size nb_per_cc;
-  BOOST_FOREACH(face_descriptor f , faces(mesh)){
+  for(face_descriptor f : faces(mesh)){
     nb_per_cc[ fccmap[f] ]++;
   }
-  BOOST_FOREACH(const Components_size::value_type& cc, nb_per_cc){
+  for(const Components_size::value_type& cc : nb_per_cc){
     std::cout << "\t CC #" << cc.first
               << " is made of " << cc.second << " faces" << std::endl;
   }

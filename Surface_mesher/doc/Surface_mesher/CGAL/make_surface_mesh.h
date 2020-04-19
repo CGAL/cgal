@@ -156,8 +156,6 @@ without boundary.
 
 struct Manifold_tag {
 
-/// @}
-
 }; /* end Manifold_tag */
 } /* end namespace CGAL */
 
@@ -180,8 +178,6 @@ but it may have boundaries.
 */
 
 struct Manifold_with_boundary_tag {
-
-/// @}
 
 }; /* end Manifold_with_boundary_tag */
 } /* end namespace CGAL */
@@ -207,8 +203,6 @@ appropriate meshing criteria.
 */
 
 struct Non_manifold_tag {
-
-/// @}
 
 }; /* end Non_manifold_tag */
 } /* end namespace CGAL */

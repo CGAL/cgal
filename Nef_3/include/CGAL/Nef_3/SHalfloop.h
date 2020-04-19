@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
@@ -115,11 +106,11 @@ class SHalfloop_base {
       verr << "begin CGAL::SNC_items<...>::SHalfloop_base::is_valid( verb=true, "
         "level = " << level << "):" << std::endl;
 
-      bool valid = (twin_  != SHalfloop_handle() && twin_  != NULL);
+      bool valid = (twin_  != SHalfloop_handle() && twin_  != nullptr);
       valid = valid && (incident_sface_ != SFace_handle() &&
-                        incident_sface_ != NULL);
+                        incident_sface_ != nullptr);
       valid = valid && (facet_ != Halffacet_handle() &&
-                        facet_ != NULL);
+                        facet_ != nullptr);
       valid = valid && (circle_.d() == 0);
       valid = valid && (circle_.a() != 0 || circle_.b() != 0 || circle_.c() !=0);
 

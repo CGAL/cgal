@@ -18,8 +18,6 @@ arrangement.
 
 struct Arr_oblivious_side_tag {
 
-/// @}
-
 }; /* end Arr_oblivious_side_tag */
 } /* end namespace CGAL */
 
@@ -44,8 +42,6 @@ functions based on type of curves that induce the arrangement.
 */
 
 struct Arr_open_side_tag {
-
-/// @}
 
 }; /* end Arr_open_side_tag */
 } /* end namespace CGAL */

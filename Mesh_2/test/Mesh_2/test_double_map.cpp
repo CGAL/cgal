@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Double_map.h>
 #include <utility>
 #include <CGAL/Random.h>

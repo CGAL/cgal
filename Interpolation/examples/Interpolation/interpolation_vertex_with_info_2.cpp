@@ -90,7 +90,7 @@ int main()
   double r_d = 3;
   CGAL::Random rng(1513114263);
   CGAL::Random_points_in_disc_2<Point> g(r_d, rng);
-  CGAL::cpp11::copy_n( g, n+m, std::back_inserter(points));
+  std::copy_n( g, n+m, std::back_inserter(points));
 
   Delaunay_triangulation T;
 

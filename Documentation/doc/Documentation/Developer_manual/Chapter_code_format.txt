@@ -315,21 +315,21 @@ identification of the file.  The file header contains:
 <UL>
 <LI>a copyright notice, specifying all the years during which the file has
 been written or modified, as well as the owner(s) (typically the institutions
-employing the authors) of this work,
-<LI>the corresponding license (at the moment, only LGPLv3+ and GPLv3+
-are allowed in \cgal), and a pointer to the file containing its text in the
+employing the authors) of this work, a pointer to the file containing its text in the
 \cgal distribution,
-<LI>a disclaimer notice,
 <LI>then, there are 2 keywords, which are automatically expanded at the creation of a new release:
 <UL>
 <LI>\$URL\$ : canonical path to the file on github,
 <LI>\$Id\$ : the release version the file is from.
 </UL>
-<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0+`,
-and  `SPDX-License-Identifier: LGPL-3.0+` for LGPL-3+.
+<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial`,
+and  `SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial` for LGPL-3+.
 <LI>Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.
 </UL>
+
+Note that since \cgal 5.0 the license text is not present in headers anymore,
+only SPDX tags are present.
 
 For example and demo programs, the inclusion of the copyright notice is not
 necessary as this will get in the way if the program is included in the
@@ -351,19 +351,10 @@ Here follows what this gives for a file under the GPL :
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -380,20 +371,11 @@ Here follows what this gives for a file under the LGPL :
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 \endcode

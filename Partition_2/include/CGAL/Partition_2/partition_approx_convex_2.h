@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -145,7 +136,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
    typedef typename Constrained_tri_2::Vertex_handle   Vertex_handle;
    typedef typename Gt::Segment_2                      Segment_2;
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond,traits);
 
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
@@ -162,8 +153,6 @@ OutputIterator partition_approx_convex_2(InputIterator first,
        next = c; next++;
        triangles.insert(c, next);
    } while (++c != first_c);
-
-   Segment_2 edge;
 
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
    std::cout << "Inserting diagonals: " << std::endl;
@@ -189,8 +178,8 @@ OutputIterator partition_approx_convex_2(InputIterator first,
        {
           if ((*e_circ).first->is_constrained((*e_circ).second))
           {
-             edge = triangles.segment((*e_circ).first, (*e_circ).second);
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
+             Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
              std::cout << "edge " <<  *edge.source() << " " << *edge.target()
                        << " is constrained " << std::endl;
 #endif
@@ -199,11 +188,11 @@ OutputIterator partition_approx_convex_2(InputIterator first,
           {
              if (!triangles.is_infinite(*e_circ))
              {
-                edge = triangles.segment((*e_circ).first, (*e_circ).second);
+                Segment_2 edge = triangles.segment((*e_circ).first, (*e_circ).second);
                 Circulator source = edge.source();
                 Circulator target = edge.target();
-                Circulator before_s = source; before_s--;
-                Circulator after_s = source; after_s++;
+                Circulator before_s = edge.source(); before_s--;
+                Circulator after_s = edge.source(); after_s++;
 #ifdef CGAL_PARTITION_APPROX_CONVEX_DEBUG
                 std::cout << "considering " << *source << " " << *target
                           << "...";

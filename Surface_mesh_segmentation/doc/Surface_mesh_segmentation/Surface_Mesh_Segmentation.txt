@@ -206,8 +206,8 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 
 \cgalExample{Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp}
 
-\subsection Surface_mesh_segmentationIndependantmeshpersegment Independant TriangleMesh per Segment
- It is possible to consider each segment as an independant triangle mesh, like in the following example, where the area of each segment is computed.
+\subsection Surface_mesh_segmentationIndependentmeshpersegment Independent TriangleMesh per Segment
+ It is possible to consider each segment as an independent triangle mesh, like in the following example, where the area of each segment is computed.
 
 \cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
 
@@ -280,7 +280,7 @@ A comparison with biased and uniform sampling of points can be seen in \cgalFigu
 The mesh segmentation problem being ill-posed, the mesh segmentation community have proposed some benchmarks to evaluate the
 quality of a given algorithm. A benchmark is composed of a set of models and a software responsible for scoring
 the results. On a particular benchmark \cite Chen2009SegmentationBenchmark, the current implementation obtains the
-score of XXX. The code used in the benchmark is provided as an exemple XXX.
+score of XXX. The code used in the benchmark is provided as an example XXX.
 \todo Add the score and the source code used for the benchmark
 -->
 

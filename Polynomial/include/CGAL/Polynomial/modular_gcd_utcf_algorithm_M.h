@@ -1,19 +1,10 @@
 // Copyright (c) 2002-2008 Max-Planck-Institute Saarbruecken (Germany)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Dominik Huelse <dominik.huelse@gmx.de>
@@ -118,7 +109,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     MScalar mg_;
     MPoly   mF1,mF2,mG_;
 
-    typename CRT::Scalar_type p,q,pq,s,t;
+    typename CRT::Scalar_type p(0),q(0),pq,s,t;
     Poly Gs,H1s,H2s, Gs_old; // s =^ star
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_init.stop();

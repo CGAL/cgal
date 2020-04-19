@@ -6,7 +6,7 @@ namespace CGAL {
 
 \cgalAutoToc
 
-\authors Fernando Cacciola
+\authors Fernando Cacciola, Mael Rouxel-Labbé, and Baskın Şenbaşlar
 
 \image html Illustration-Simplification-ALL.jpg
 \image latex Illustration-Simplification-ALL.jpg
@@ -69,17 +69,20 @@ of triangles while retaining the overall look of the surface mesh as much as pos
 it is necessary to measure such a deviation. Some methods attempt to measure the
 total deviation from the initial surface mesh to the completely simplified surface mesh,
 for example, by tracking an accumulated error while keeping a history of the simplification
-changes. Other methods, like the one implemented in this package, attempt to measure only
+changes. Other methods, like the ones implemented in this package, attempt to measure only
 the <I>cost</I> of each individual edge collapse (the local deviation introduced by
 a single simplification step) and plan the entire process as a sequence of steps
 of increasing cost.
 
 Global error tracking methods produce highly accurate simplifications but take up a lot
-of additional space. Cost-driven methods, like the one in this package, produce slightly
+of additional space. Cost-driven methods, like the ones in this package, produce slightly
 less accurate simplifications but take up much less additional space, even none in some cases.
 
-The cost-driven method implemented in this package is mainly based on \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99}, with contributions from \cgalCite{hddms-mo-93}, \cgalCite{gh-ssqem-97}
-and \cgalCite{degn-tpec-98}.
+This package provides two cost-driven methods. The first cost-driven method implemented in this package,
+namely Lindstrom&Turk, is mainly based on \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99},
+with contributions from \cgalCite{hddms-mo-93}, \cgalCite{gh-ssqem-97} and \cgalCite{degn-tpec-98}.
+The second cost-driven method implemented in this package, namely Garland&Heckbert, is mainly based on
+\cgalCite{gh-ssqem-97}.
 
 The algorithm proceeds in two stages. In the first stage, called <I>collection stage</I>,
 an initial <I>collapse cost</I> is assigned to each and every edge in the surface mesh.
@@ -93,10 +96,16 @@ Not all edges selected for processing are collapsed. A processed edge can be dis
 right away, without being collapsed, if it does not satisfy certain topological
 and geometric conditions.
 
-The algorithm presented in \cgalCite{gh-ssqem-97} contracts (collapses) arbitrary vertex pairs and not
-only edges by considering certain vertex pairs as forming a pseudo-edge and proceeding to collapse
-both edges and pseudo-edges in the same way as in \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} (
-which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface mesh, but the current state of this package can only deal with manifold surface meshes, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
+The algorithm presented in \cgalCite{gh-ssqem-97} contracts (collapses) arbitrary
+vertex pairs and not only edges by considering certain vertex pairs as forming
+a pseudo-edge and proceeding to collapse both edges and pseudo-edges in the
+same way as in \cgalCite{cgal:lt-fmeps-98},
+\cgalCite{cgal:lt-ems-99}. However, contracting an arbitrary
+vertex-pair may result in a
+non-manifold surface mesh, but the current state of this package can only deal
+with manifold surface meshes, thus, it can only collapse edges.
+That is, this package cannot be used as a framework for vertex contraction.
+Therefore, our implementation of \cgalCite{gh-ssqem-97} only collapses edges.
 
 \section Surface_mesh_simplificationCost Cost Strategy
 
@@ -106,7 +115,8 @@ different strategies in the form of policies and related parameters,
 passed to the algorithm.
 
 The current version of the package provides a set of policies implementing
-two strategies: the Lindstrom-Turk strategy, which is the default, and
+three strategies: the Lindstrom-Turk strategy, which is the default,
+the Garland-Heckbert strategy, and
 a strategy consisting of an edge-length cost with an optional
 midpoint placement (much faster but less accurate).
 
@@ -121,7 +131,6 @@ the name <I>memoryless</I> simplification.
 
 At each step, all remaining edges are potential candidates for
 collapsing and the one with the lowest cost is selected.
-
 The cost of collapsing an edge is given by the position chosen for the
 vertex that replaces it.
 
@@ -129,13 +138,10 @@ The replacement vertex position is computed as
 the solution to a system of 3 linearly-independent linear equality constraints.
 Each constraint is obtained by minimizing a quadratic objective function
 subject to the previously computed constraints.
-
 There are several possible candidate constraints and each is considered in order of importance.
 A candidate constraint might be <I>incompatible</I> with the previously accepted constraints,
 in which case it is rejected and the next constraint is considered.
-
 Once 3 constraints have been accepted, the system is solved for the vertex position.
-
 The first constraints considered preserves the shape of the surface mesh boundaries
 (in case the edge profile has boundary edges).
 The next constraints preserve the total volume of the surface mesh.
@@ -151,6 +157,32 @@ is about to be collapsed, that is, after all previous collapses.
 Thus, the transitive path of minimal local changes yields at
 the end a global change reasonably close to the absolute minimum.
 
+\subsection SurfaceMeshSimplificationGarlandHeckbertStrategy Garland-Heckbert Cost and Placement Strategy
+
+As in the case of the Lindstrom-Turk strategy, the Garland-Heckbert strategy presented in \cgalCite{gh-ssqem-97}
+does not compare the resulting mesh with the original mesh and does not depend on
+history of local changes. Instead, it encodes approximate distance to the original
+mesh by using quadric matrices that it assigns to each vertex.
+
+In the beginning, a quadric matrix \f$ Q \f$ is assigned to each vertex \f$ v \f$ and encodes the total
+squared distance that any point \f$ p \f$ has to \f$ v \f$'s neighboring faces, which is given by the matrix
+product \f$ p'Qp \f$.
+At each step, the edge which minimizes the cost of collapsing is selected for
+the collapse operation. The cost of collapsing an edge is calculated by
+minimizing the error function \f$ p'Qp \f$ where \f$ Q \f$ is the combined quadric
+matrices of the edge's endpoints
+and \f$ p \f$ is the point that minimizes the cost (i.e., decision variables). The point
+\f$ p \f$ that minimizes the objective function is picked as the new placement point.
+Since the error function is quadratic, finding its minimum can be done by simply calculating
+the gradient and equating it to zero. If this fails due to a singularity, the optimal point
+and the cost are found on the edge.
+After placing the new vertex, a new quadric matrix is assigned to it by simply summing the
+quadric matrices of the two extremities of the edge that has been collapsed.
+
+Additional pseudo-faces that are perpendicular to neighboring faces
+are added to quadric matrices of border vertices in order to preserve sharp borders of
+the mesh as much as possible.
+
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
 The cost strategy used by the algorithm is selected by means of two policies:
@@ -158,8 +190,7 @@ The cost strategy used by the algorithm is selected by means of two policies:
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns
-an optional value, which can be absent, in which case the
-remaining vertex is kept in its place.
+an optional value, which can be absent if the edge should not be collapsed.
 
 The `GetCost` policy is called to compute the cost
 of collapsing an edge. This policy uses the placement to compute
@@ -180,7 +211,6 @@ is called for each and every edge, `GetPlacement` must also be called to obtain
 the placement parameter to the cost function.
 But that placement, which is a 3D Point, is not attached to each and every edge since
 that would easily <I>triple</I> the additional storage requirement.
-
 On the one hand, this dramatically saves on memory but on the other hand is
 a processing waste because when an edge is effectively collapsed, `GetPlacement`
 must be called <I>again</I> to know were to move the remaining vertex.
@@ -241,15 +271,13 @@ get_placement(pf)             : function object computing the placement for the 
 visitor(vis)                  : function object tracking the simplification process
 */
 
-int r = edge_collapse(surface_mesh
-                     ,stop_predicate
-                     ,vertex_index_map(vimap)
-                       .edge_index_map(eimap)
-                       .edge_is_border_map(ebmap)
-                       .get_cost(cf)
-                       .get_placement(pf)
-                       .visitor(vis)
-                     );
+int r = edge_collapse(surface_mesh, stop_predicate,
+                      CGAL::parameters::vertex_index_map(vimap)
+                                       .edge_index_map(eimap)
+                                       .edge_is_border_map(ebmap)
+                                       .get_cost(cf)
+                                       .get_placement(pf)
+                                       .visitor(vis));
 
 \endcode
 
@@ -261,7 +289,6 @@ The following example illustrates the simplification of a `Surface_mesh`.
 The unspecified cost strategy defaults to Lindstrom-Turk.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_surface_mesh.cpp}
-
 
 \subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
 
@@ -289,7 +316,6 @@ What is particular in this example is the property map that allows to associate
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_OpenMesh.cpp}
 
-
 \subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
 The following example shows how to use the optional named parameter `edge_is_constrained_map` to prevent
@@ -305,7 +331,6 @@ The wrapper `CGAL::Surface_mesh_simplification::Constrained_placement` guarantee
 The surface mesh simplification does not guarantee that the resulting surface
 has no self intersections. Even the rather trivial mesh shown in \cgalFigureRef{SMS-selfintersection}
 results in a self intersection when one edge is collapsed using the Lindstrom-Turk method.
-
 
 \cgalFigureBegin{SMS-selfintersection, SMS-selfintersection.png}
 Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1` and `f2` are almost equal, they are opposed after the edge collapse.
@@ -325,6 +350,29 @@ steps of the simplification algorithm.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp}
 
+\subsection Surface_mesh_simplificationExampleWithGarlandHeckbertUsingAPolyhedron Example Using Garland-Heckbert Policies
+
+Garland-Heckbert simplification policies are implemented with a single class,
+`Surface_mesh_simplification::GarlandHeckbert_policies`, that regroups both a cost and
+a placement policy class: this is because either of these policies requires the other one to function properly.
+Note that it is still possible to wrap either policy: for example, it is possible to use
+behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`
+with the Garland-Heckbert placement policy.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
+
+Note that these policies depend on the third party \ref thirdpartyEigen library.
+
+\section SimplificationDesign Design and Implementation History
+
+The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,
+betwen 2006 and 2009.
+
+Andreas Fabri added the `Bounded_normal_change_placement` functionality in \cgal 4.11.
+
+The implementation of the Garland-Heckbert simplification policies is the result of the work
+of Baskın Şenbaşlar during the 2019 season of the Google Summer of Code.
+He was mentored by Mael Rouxel-Labbé, who also contributed to the code and to the documentation.
+
 */
 } /* namespace CGAL */
-

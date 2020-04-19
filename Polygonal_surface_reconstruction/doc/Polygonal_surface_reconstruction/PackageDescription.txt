@@ -1,0 +1,36 @@
+// Polygonal Surface Reconstruction should equal the project title in Doxyfile.in
+
+/// \defgroup PkgPolygonalSurfaceReconstructionRef Polygonal Surface Reconstruction Reference
+
+/*!
+\addtogroup PkgPolygonalSurfaceReconstructionRef
+
+\cgalPkgDescriptionBegin{Polygonal Surface Reconstruction, PkgPolygonalSurfaceReconstruction}
+\cgalPkgPicture{polyfit.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Liangliang Nan}
+\cgalPkgDesc{This package provides a method for piecewise planar object reconstruction from point clouds.
+The method takes as input an unordered point set (and optionally planar segments) of a piecewise planar
+object and outputs a lightweight and watertight surface mesh interpolating the input point set. The
+method can handle arbitrary piecewise planar objects and is capable of recovering sharp features and is
+robust to noise and outliers.}
+\cgalPkgManuals{Chapter_PolygonalSurfaceReconstruction, PkgPolygonalSurfaceReconstructionRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.14}
+\cgalPkgDependsOn{\ref PkgAlphaShapes2 and \ref PkgSolverInterface}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Polygonal_surface_reconstruction<Gt>`
+
+*/

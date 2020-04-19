@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <cassert>
 #include <fstream>
 #include <vector>

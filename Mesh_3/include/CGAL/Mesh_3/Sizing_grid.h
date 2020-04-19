@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb, Jane Tournois, Camille Wormser, Pierre Alliez
@@ -60,7 +51,7 @@ public:
   {
     m_done = false;
     m_size = CGAL_MESH_3_INFINITE_SIZE;
-    m_pRef_node = NULL;
+    m_pRef_node = nullptr;
     m_indices[0] = m_indices[1] = m_indices[2] = 0;
   }
 
@@ -192,7 +183,7 @@ public:
   {
     m_k = 1.0;
     m_ds = m_dv = 0;
-    m_pppNodes = NULL;
+    m_pppNodes = nullptr;
     m_nx = m_ny = m_nz = 0;
     m_xrange[0] = m_xrange[1] = m_xrange[2] = 0;
     m_yrange[0] = m_yrange[1] = m_yrange[2] = 0;
@@ -254,7 +245,7 @@ private:
       delete [] m_pppNodes[i];
     }
     delete [] m_pppNodes;
-    m_pppNodes = NULL;
+    m_pppNodes = nullptr;
     m_nx = m_ny = m_nz = 0;
     m_updated = false;
   }
@@ -268,7 +259,7 @@ private:
 
     // alloc
     m_pppNodes = new Node**[nx];
-    if(m_pppNodes == NULL)
+    if(m_pppNodes == nullptr)
     {
       cleanup();
       return false;
@@ -277,7 +268,7 @@ private:
     for(i=0; i<nx; i++)
     {
       m_pppNodes[i] = new Node*[ny];
-      if(m_pppNodes[i] == NULL)
+      if(m_pppNodes[i] == nullptr)
       {
         cleanup();
         return false;
@@ -285,7 +276,7 @@ private:
       for(j=0; j<ny; j++)
       {
         m_pppNodes[i][j] = new Node[nz];
-        if(m_pppNodes[i][j] == NULL)
+        if(m_pppNodes[i][j] == nullptr)
         {
           cleanup();
           return false;
@@ -364,15 +355,15 @@ private:
       int k = (int)((z-m_zrange[0])/m_zrange[2]*(FT)m_nz);
       return node(i,j,k);
     }
-    return NULL;
+    return nullptr;
   }
 
   Node* node(const int i,
              const int j,
              const int k) const
   {
-    if(m_pppNodes == NULL)
-      return NULL;
+    if(m_pppNodes == nullptr)
+      return nullptr;
 
     if(i < 0 ||
        j < 0 ||
@@ -380,7 +371,7 @@ private:
        i >= (int)m_nx ||
        j >= (int)m_ny ||
        k >= (int)m_nz)
-      return NULL;
+      return nullptr;
 
     return &m_pppNodes[i][j][k];
   }
@@ -388,8 +379,8 @@ private:
   Node* neighbor(Node* n,
                  unsigned int index)
   {
-    if(n == NULL)
-      return NULL;
+    if(n == nullptr)
+      return nullptr;
 
     switch(index)
     {
@@ -406,7 +397,7 @@ private:
       case 5:
         return node(n->i(),n->j(),n->k()+1);
       default:
-        return NULL;
+        return nullptr;
     }
   }
 
@@ -461,7 +452,7 @@ private:
       {
         // TODO: change size of seeds
         Node *pNeighbor = neighbor(pNode,index_neighbor);
-        if(pNeighbor != NULL &&
+        if(pNeighbor != nullptr &&
            pNeighbor->done() == false)
           priority_queue.push(Candidate_size(pNeighbor,pNode->ref_node(),m_k));
       }
@@ -481,7 +472,7 @@ private:
 
       // get node at position p
       Node *pNode = node(p);
-      if(pNode != NULL && pNode->done() == false) // specific
+      if(pNode != nullptr && pNode->done() == false) // specific
       {
         pNode->point() = p;
         pNode->init_size() = init_size;
@@ -495,7 +486,7 @@ private:
             index_neighbor++)
         {
           Node *pNeighbor = neighbor(pNode,index_neighbor);
-          if(pNeighbor != NULL &&
+          if(pNeighbor != nullptr &&
              pNeighbor->done() == false)
           {
             Candidate_size candidate(pNeighbor,pNode->ref_node(),m_k);

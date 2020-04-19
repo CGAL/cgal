@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
@@ -125,9 +116,9 @@ class SFace_base {
       verr << "begin CGAL::SNC_items<...>::SFace_base::is_valid( verb=true, "
         "level = " << level << "):" << std::endl;
 
-      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != NULL);
+      bool valid =(center_vertex_ != Vertex_handle() && center_vertex_ != nullptr);
       valid = valid && (volume_ != Volume_handle() &&
-                        volume_ != NULL);
+                        volume_ != nullptr);
 
       if(boundary_entry_objects_.empty()) {
         valid = valid &&

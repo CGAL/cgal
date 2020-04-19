@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sven Schoenherr, Herve Bronnimann, Sylvain Pion
@@ -64,7 +55,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   CGAL_kernel_assertion ( ! CGAL_NTS is_zero(den) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }
@@ -277,6 +268,13 @@ line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
   return (-a*x-c) / b;
 }
 
+// Silence a warning for MSVC 2017
+// > include\cgal\constructions\kernel_ftc2.h(287) :
+// >   warning C4723: potential divide by 0
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4723)
+#endif
 template < class FT >
 inline
 void
@@ -285,14 +283,6 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      // Laurent Rineau, 2018/12/07: I add this CGAL_assume to calm
-      // down a warning from MSVC 2017:
-      // > include\cgal\constructions\kernel_ftc2.h(287) :
-      // >   warning C4723: potential divide by 0
-      // The test `!boost::is_integral<FT>::value` is there to avoid
-      // that `a != 0` is tested on anything but integral types, for
-      // performance reasons.
-      CGAL_assume(!boost::is_integral<FT>::value || a != FT(0));
 
       x = -c/a;
       y = 1 - i * a;
@@ -303,6 +293,9 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
       y = -(a+c)/b - i * a;
     }
 }
+#if defined(BOOST_MSVC)
+#pragma warning(pop)
+#endif
 
 template < class FT >
 inline
@@ -440,7 +433,7 @@ weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
   CGAL_assertion ( den != RT(0) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }

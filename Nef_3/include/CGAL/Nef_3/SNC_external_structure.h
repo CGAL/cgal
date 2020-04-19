@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de>
@@ -319,7 +310,7 @@ public:
     }
   };
 
-  SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = NULL)
+  SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = nullptr)
     : SNC_decorator(W), pl(spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
@@ -843,7 +834,7 @@ public:
         Closed[ShellF[hf->twin()]] = true;
       }
 
-    CGAL_assertion( pl != NULL);
+    CGAL_assertion( pl != nullptr);
 
 #ifdef CGAL_NEF3_TIMER_INITIALIZE_KDTREE
     CGAL::Timer timer_initialize_kdtree;
@@ -1080,7 +1071,7 @@ class SNC_external_structure : public SNC_external_structure_base<Items_, SNC_st
   typedef CGAL::SNC_point_locator<SNC_decorator>             SNC_point_locator;
 public:
 
-  SNC_external_structure( SNC_structure_& W, SNC_point_locator* spl = NULL)
+  SNC_external_structure( SNC_structure_& W, SNC_point_locator* spl = nullptr)
     : SNC_external_structure_base<Items_, SNC_structure_>(W, spl)
   {}
 };
@@ -1124,7 +1115,7 @@ public:
   using Base::link_as_inner_shell;
 
 
-  SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = NULL)
+  SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = nullptr)
     : Base(W, spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 

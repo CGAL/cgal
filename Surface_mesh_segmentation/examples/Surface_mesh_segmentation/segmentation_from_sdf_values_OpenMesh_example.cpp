@@ -18,7 +18,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Mesh;
 
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 
 int main(int argc, char** argv )
 {
@@ -55,11 +54,10 @@ int main(int argc, char** argv )
 
   std::cout << "Number of segments: " << number_of_segments << std::endl;
   // print segment-ids
-  face_iterator facet_it, fend;
-  for(boost::tie(facet_it,fend) = faces(mesh);
-      facet_it != fend; ++facet_it) {
+
+  for(face_descriptor f : faces(mesh)) {
       // ids are between [0, number_of_segments -1]
-      std::cout << segment_property_map[*facet_it] << " ";
+      std::cout << segment_property_map[f] << " ";
   }
   std::cout << std::endl;
 

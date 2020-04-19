@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
@@ -34,10 +25,9 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <CGAL/internal/boost/function_property_map.hpp>
-
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -56,11 +46,11 @@ const int   Triangulation_hierarchy_2__minsize  = 20;
 const int   Triangulation_hierarchy_2__maxlevel = 5;
 // maximal number of points is 30^5 = 24 millions !
 
-template < class Tr_>
+template <class Tr_>
 class Triangulation_hierarchy_2
   : public Tr_
 {
- public:
+public:
   typedef Tr_                                  Tr_Base;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Tr_Base::size_type          size_type;
@@ -86,6 +76,8 @@ class Triangulation_hierarchy_2
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::geom_traits;
+  using Tr_Base::number_of_vertices;
+  using Tr_Base::is_infinite;
 #endif
 
  private:
@@ -130,19 +122,19 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
   {
-    std::ptrdiff_t n = this->number_of_vertices();
+    std::ptrdiff_t n = number_of_vertices();
 
       std::vector<Point> points (first, last);
 
       // Spatial sort can only be used with Gt::Point_2: we need an adapter
       typedef typename Geom_traits::Construct_point_2 Construct_point_2;
       typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
-      typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Point, Ret> fpmap;
+      typedef boost::function_property_map<Construct_point_2, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
 
       spatial_sort(points.begin(), points.end(),
                    Search_traits_2(
-                     CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_2>(
+                     boost::make_function_property_map<Point, Ret, Construct_point_2>(
                        geom_traits().construct_point_2_object()), geom_traits()));
 
       // hints[i] is the face of the previously inserted point in level i.
@@ -168,7 +160,7 @@ public:
               prev = v;
           }
       }
-      std::ptrdiff_t m = this->number_of_vertices();
+      std::ptrdiff_t m = number_of_vertices();
       return m - n;
   }
 
@@ -271,8 +263,8 @@ private:
 
 
 
-template <class Tr >
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+Triangulation_hierarchy_2<Tr_>::
 Triangulation_hierarchy_2(const Geom_traits& traits)
   : Tr_Base(traits)
 {
@@ -283,9 +275,9 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
 
 
 // copy constructor duplicates vertices and faces
-template <class Tr>
-Triangulation_hierarchy_2<Tr>::
-Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr> &tr)
+template <class Tr_>
+Triangulation_hierarchy_2<Tr_>::
+Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr_> &tr)
     : Tr_Base()
 {
   // create an empty triangulation to be able to delete it !
@@ -297,20 +289,20 @@ Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr> &tr)
 
 
 //Assignement
-template <class Tr>
-Triangulation_hierarchy_2<Tr> &
-Triangulation_hierarchy_2<Tr>::
-operator=(const Triangulation_hierarchy_2<Tr> &tr)
+template <class Tr_>
+Triangulation_hierarchy_2<Tr_> &
+Triangulation_hierarchy_2<Tr_>::
+operator=(const Triangulation_hierarchy_2<Tr_> &tr)
 {
   copy_triangulation(tr);
   return *this;
 }
 
 
-template <class Tr>
+template <class Tr_>
 void
-Triangulation_hierarchy_2<Tr>::
-copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
+Triangulation_hierarchy_2<Tr_>::
+copy_triangulation(const Triangulation_hierarchy_2<Tr_> &tr)
 {
   {
     for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
@@ -346,18 +338,18 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
   }
 }
 
-/* template <class Tr> */
+/* template <class Tr_> */
 /* void */
-/* Triangulation_hierarchy_2<Tr>::  */
+/* Triangulation_hierarchy_2<Tr_>::  */
 /* add_hidden_vertices_into_map(Tag_false, */
 /*                              std::map<Vertex_handle,Vertex_handle >& V) { */
 /*   return; */
 /* } */
 
 
-/* template <class Tr> */
+/* template <class Tr_> */
 /* void */
-/* Triangulation_hierarchy_2<Tr>::  */
+/* Triangulation_hierarchy_2<Tr_>::  */
 /* add_hidden_vertices_into_map(Tag_true, */
 /*                              std::map<Vertex_handle,Vertex_handle >& V)  */
 /* { */
@@ -369,10 +361,10 @@ copy_triangulation(const Triangulation_hierarchy_2<Tr> &tr)
 /* } */
 
 
-template <class Tr>
+template <class Tr_>
 void
-Triangulation_hierarchy_2<Tr>::
-swap(Triangulation_hierarchy_2<Tr> &tr)
+Triangulation_hierarchy_2<Tr_>::
+swap(Triangulation_hierarchy_2<Tr_> &tr)
 {
   Tr_Base* temp;
   Tr_Base::swap(tr);
@@ -383,8 +375,8 @@ swap(Triangulation_hierarchy_2<Tr> &tr)
   }
 }
 
-template <class Tr>
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+Triangulation_hierarchy_2<Tr_>::
 ~Triangulation_hierarchy_2()
 {
   clear();
@@ -393,9 +385,9 @@ Triangulation_hierarchy_2<Tr>::
   }
 }
 
-template <class Tr>
+template <class Tr_>
 void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 clear()
 {
         for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
@@ -403,9 +395,9 @@ clear()
 }
 
 
-template <class Tr>
+template <class Tr_>
 bool
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 is_valid(bool verbose, int level) const
 {
   bool result = true;
@@ -438,9 +430,9 @@ is_valid(bool verbose, int level) const
 }
 
 
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 insert(const Point &p, Face_handle loc)
 {
   int vertex_level = random_level();
@@ -464,9 +456,9 @@ insert(const Point &p, Face_handle loc)
   return first;
 }
 
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 insert(const Point& p,
        Locate_type lt,
        Face_handle loc,
@@ -497,18 +489,18 @@ insert(const Point& p,
   return first;
 }
 
-template <class Tr>
+template <class Tr_>
 inline
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 push_back(const Point &p)
 {
   return insert(p);
 }
 
-template <class Tr>
+template <class Tr_>
 void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 remove(Vertex_handle v )
 {
   Vertex_handle u=v->up();
@@ -521,10 +513,10 @@ remove(Vertex_handle v )
   }
 }
 
-template <class Tr>
+template <class Tr_>
 template <class OutputItFaces>
 void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
 {
   Vertex_handle u=v->up();
@@ -539,33 +531,33 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
 }
 
 
-template <class Tr>
+template <class Tr_>
 inline void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 remove_degree_3(Vertex_handle v )
 {
   remove(v);
 }
 
-template <class Tr>
+template <class Tr_>
 inline void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 remove_first(Vertex_handle v )
 {
   remove(v);
 }
 
-template <class Tr>
+template <class Tr_>
 inline void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 remove_second(Vertex_handle v )
 {
   remove(v);
 }
 
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 move_if_no_collision(Vertex_handle v, const Point &p) {
   Vertex_handle u=v->up(), norm = v;
   int l = 0 ;
@@ -579,11 +571,11 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   return norm;
 }
 
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 move(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_triangulation_precondition(!is_infinite(v));
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
     remove(v);
@@ -592,10 +584,10 @@ move(Vertex_handle v, const Point &p) {
   return v;
 }
 
-template <class Tr>
+template <class Tr_>
 template <class OutputItFaces>
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 move_if_no_collision_and_give_new_faces(Vertex_handle v, const Point &p,
                                         OutputItFaces oif)
 {
@@ -617,11 +609,11 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v, const Point &p,
   return norm;
 }
 
-template < class Tr >
+template <class Tr_>
 template < class OutputItFaces >
 inline
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::insert_and_give_new_faces(const Point  &p,
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::insert_and_give_new_faces(const Point  &p,
                                                          OutputItFaces oif,
                                                          Face_handle loc)
 {
@@ -647,11 +639,11 @@ Triangulation_hierarchy_2<Tr>::insert_and_give_new_faces(const Point  &p,
   return first;
 }
 
-template < class Tr >
+template <class Tr_>
 template < class OutputItFaces >
 inline
-typename Triangulation_hierarchy_2<Tr>::Vertex_handle
-Triangulation_hierarchy_2<Tr>::
+typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
+Triangulation_hierarchy_2<Tr_>::
 insert_and_give_new_faces(const Point  &p,
                           Locate_type lt,
                           Face_handle loc,
@@ -683,9 +675,9 @@ insert_and_give_new_faces(const Point  &p,
   return first;
 }
 
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Face_handle
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+typename Triangulation_hierarchy_2<Tr_>::Face_handle
+Triangulation_hierarchy_2<Tr_>::
 locate(const Point& p, Locate_type& lt, int& li, Face_handle loc) const
 {
   Face_handle positions[Triangulation_hierarchy_2__maxlevel];
@@ -693,9 +685,9 @@ locate(const Point& p, Locate_type& lt, int& li, Face_handle loc) const
   return positions[0];
 }
 
-template <class Tr>
-typename Triangulation_hierarchy_2<Tr>::Face_handle
-Triangulation_hierarchy_2<Tr>::
+template <class Tr_>
+typename Triangulation_hierarchy_2<Tr_>::Face_handle
+Triangulation_hierarchy_2<Tr_>::
 locate(const Point& p, Face_handle loc ) const
 {
   Locate_type lt;
@@ -703,9 +695,9 @@ locate(const Point& p, Face_handle loc ) const
   return locate(p, lt, li, loc);
 }
 
-template <class Tr>
+template <class Tr_>
 void
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 locate_in_all(const Point& p,
               Locate_type& lt,
               int& li,
@@ -716,10 +708,10 @@ locate_in_all(const Point& p,
   Vertex_handle nearest;
   int level  = Triangulation_hierarchy_2__maxlevel;
   typename Geom_traits::Compare_distance_2
-    closer = this->geom_traits().compare_distance_2_object();
+    closer = geom_traits().compare_distance_2_object();
 
   typename Geom_traits::Construct_point_2
-    construct_point = this->geom_traits().construct_point_2_object();
+    construct_point = geom_traits().construct_point_2_object();
 
   // find the highest level with enough vertices that is at the same time 2D
   while ( (hierarchy[--level]->number_of_vertices()
@@ -751,7 +743,7 @@ locate_in_all(const Point& p,
     else{
       nearest = position->vertex(1);
 }
-    // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  NULL
+    // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  nullptr
     if ( (hierarchy[level]->dimension()==2) && (!  hierarchy[level]->is_infinite(position->vertex(2)))){
       if ( closer( construct_point(p),
                    construct_point(position->vertex(2)->point()),
@@ -767,9 +759,9 @@ locate_in_all(const Point& p,
   pos[0]=hierarchy[0]->locate(p,lt,li,loc == Face_handle() ? position : loc);  // at level 0
 }
 
-template <class Tr>
+template <class Tr_>
 int
-Triangulation_hierarchy_2<Tr>::
+Triangulation_hierarchy_2<Tr_>::
 random_level()
 {
   boost::geometric_distribution<> proba(1.0/Triangulation_hierarchy_2__ratio);

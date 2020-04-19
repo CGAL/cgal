@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
@@ -36,13 +27,13 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <cstdlib>
@@ -229,7 +220,7 @@ public:
   };
 
 public:
-  /** @name Creation */ //@{
+  /** @name Creation */
   Periodic_3_regular_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
                                      const Geometric_traits& gt = Geometric_traits())
     : Tr_Base(domain, gt)
@@ -414,7 +405,7 @@ public:
       insert(*wpv_it++);
   }
 
-  /** @name Insertion */ //@{
+  /** @name Insertion */
   Vertex_handle insert(const Weighted_point& point,
                        Cell_handle start = Cell_handle())
   {
@@ -507,12 +498,12 @@ public:
     // Spatial sorting can only be applied to bare points, so we need an adaptor
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
     typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+    typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
     spatial_sort(pbegin, points.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                        geom_traits().construct_point_3_object()), geom_traits()));
 
     Cell_handle hint;
@@ -543,7 +534,6 @@ public:
 
     return number_of_vertices() - n;
   }
-//@}
 
   void remove(Vertex_handle v)
   {
@@ -607,7 +597,7 @@ public:
   }
 
 public:
-   /** @name Wrapping the traits */ //@{
+   /** @name Wrapping the traits */
   bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
   {
     return geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
@@ -787,7 +777,6 @@ public:
 
 public:
   /** @name Geometric access functions */
-  /// @{
   // The following functions change the position of a vertex.
   // They do not check the validity of the mesh.
   void set_point(const Vertex_handle v,
@@ -972,7 +961,6 @@ public:
   }
 
   // end of geometric functions
-  /// @}
 
 #define CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #include <CGAL/internal/Periodic_3_regular_triangulation_dummy_288.h>
@@ -1315,7 +1303,7 @@ public:
                       geom_traits().construct_weighted_circumcenter_3_object());
   }
 
-  /** @name Voronoi diagram */ //@{
+  /** @name Voronoi diagram */
   // cell dual
   Bare_point dual(Cell_handle c) const {
     return Tr_Base::construct_point(periodic_weighted_circumcenter(c).first);
@@ -1377,7 +1365,6 @@ public:
     return Tr_Base::dual_centroid(
              v, geom_traits().construct_weighted_circumcenter_3_object());
   }
-//@}
 
   template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>

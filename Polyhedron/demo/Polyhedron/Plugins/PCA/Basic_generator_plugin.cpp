@@ -113,7 +113,7 @@ public :
     {
       menu->addAction(action);
     }
-    dock_widget = new GeneratorWidget("Basic Objets", mw);
+    dock_widget = new GeneratorWidget("Basic Objects", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
     connect(dock_widget->generateButton, &QAbstractButton::clicked,
@@ -553,7 +553,7 @@ void Basic_generator_plugin::generateSphere()
                                                   params::number_of_iterations(precision));
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
-  BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
+  for(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd : vertices(sphere))
   {
     Kernel::Vector_3 vec(center, get(vpmap, vd));
     vec = radius*vec/CGAL::sqrt(vec.squared_length());
@@ -687,10 +687,17 @@ void Basic_generator_plugin::generateLines()
   double coord[3];
   bool ok = true;
   if (list.isEmpty()) return;
-  if (list.size()%3!=0){
+  if(!dock_widget->polygon_checkBox->isChecked() && list.size()%3!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
     msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->exec();
+    return;
+  }
+  else if(dock_widget->polygon_checkBox->isChecked()&& list.size()%2!=0){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of pairs.");
     msgBox->exec();
     return;
   }
@@ -713,18 +720,29 @@ void Basic_generator_plugin::generateLines()
             counter++;
           }
       }
-      if(counter == 3)
+      if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
       {
           Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
           polyline.push_back(p);
           counter =0;
       }
+      else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
+      {
+          Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
+          polyline.push_back(p);
+          counter = 0;
+      }
+  }
+  if(dock_widget->polygon_checkBox->isChecked())
+  {
+    polyline.push_back(polyline.front()); //polygon_2 are not closed.
   }
     if(ok)
     {
         dock_widget->line_textEdit->clear();
-        Scene_polylines_item* item = new Scene_polylines_item;
+        Scene_polylines_item* item = new Scene_polylines_item();
         item->polylines = polylines;
+        item->invalidateOpenGLBuffers();
         item->setName(dock_widget->name_lineEdit->text());
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);
@@ -748,7 +766,7 @@ struct Point_generator
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 0);
+                 bl.z() + j*(ur.z()-bl.z())/(h-1));
   }
 };
 template<class Facegraph_item>
@@ -759,7 +777,8 @@ void Basic_generator_plugin::generateGrid()
 
   QString points_text;
   Point extrema[2];
-  typename boost::graph_traits<Face_graph>::vertices_size_type nb_cells[2];
+  using size_type = typename boost::graph_traits<Face_graph>::vertices_size_type;
+  size_type nb_cells[2];
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
 
@@ -788,8 +807,8 @@ void Basic_generator_plugin::generateGrid()
   }
   extrema[0] = Point(coords[0], coords[1], coords[2]);
   extrema[1] = Point(coords[3], coords[4], coords[5]);
-  nb_cells[0] = static_cast<std::size_t>(dock_widget->gridX_spinBox->value());
-  nb_cells[1] = static_cast<std::size_t>(dock_widget->gridY_spinBox->value());
+  nb_cells[0] = static_cast<size_type>(dock_widget->gridX_spinBox->value());
+  nb_cells[1] = static_cast<size_type>(dock_widget->gridY_spinBox->value());
 
   //nb_points = nb_cells+1
   Point_generator point_gen(nb_cells[0]+1, nb_cells[1]+1, extrema[0], extrema[1]);

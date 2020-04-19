@@ -34,7 +34,5 @@ template< typename Kernel >
 class Snap_rounding_traits_2 {
 public:
 
-/// @}
-
 }; /* end Snap_rounding_traits_2 */
 } /* end namespace CGAL */

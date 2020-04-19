@@ -31,15 +31,21 @@ int main()
   }
 
   {
-  typedef CGAL::Polyhedron_3<Epic> P;
-  std::map<boost::graph_traits<P>::face_descriptor, std::size_t> fim;
-  P p;
-  std::ifstream in("data/elephant.off");
-  in >> p;
-  PMP::isotropic_remeshing(faces(p),
+    typedef CGAL::Polyhedron_3<Epic> P;
+
+    std::ifstream in("data/elephant.off");
+    P p;
+    in >> p;
+
+    std::map<boost::graph_traits<P>::face_descriptor, std::size_t> fim;
+    std::size_t fid = 0;
+    for(const boost::graph_traits<P>::face_descriptor f : faces(p))
+      fim[f] = fid++;
+
+    PMP::isotropic_remeshing(faces(p),
                              0.02,
-                           p,
-                           PMP::parameters::face_index_map(boost::make_assoc_property_map(fim)));
+                             p,
+                             PMP::parameters::face_index_map(boost::make_assoc_property_map(fim)));
     std::ofstream out("p.off");
     out << p << std::endl;
   }

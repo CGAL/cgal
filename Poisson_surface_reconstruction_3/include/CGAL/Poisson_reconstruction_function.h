@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
 
@@ -37,7 +28,7 @@
 #include <cmath>
 #include <iterator>
 
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #ifdef CGAL_EIGEN3_ENABLED
@@ -56,6 +47,7 @@
 #include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/iterator/indirect_iterator.hpp>
 
 /*!
   \file Poisson_reconstruction_function.h
@@ -111,18 +103,6 @@ invert(
 struct Poisson_visitor {
   void before_insertion() const
   {}
-};
-
-struct Poisson_skip_vertices {
-  double ratio;
-  Random& m_random;
-  Poisson_skip_vertices(const double ratio, Random& random)
-    : ratio(ratio), m_random(random) {}
-
-  template <typename Iterator>
-  bool operator()(Iterator) const {
-    return m_random.get_double() < ratio;
-  }
 };
 
 // Given f1 and f2, two sizing fields, that functor wrapper returns
@@ -424,11 +404,15 @@ public:
       // then the cell is considered as small enough, and the first sizing
       // field, more costly, is not evaluated.
 
-      typedef Filter_iterator<typename Triangulation::Input_point_iterator,
-                              Poisson_skip_vertices> Some_points_iterator;
       //make it deterministic
       Random random(0);
-      Poisson_skip_vertices skip(1.-approximation_ratio,random);
+      double ratio = 1.-approximation_ratio;
+
+      std::vector<typename Triangulation::Input_point_iterator> some_points;
+      for (typename Triangulation::Input_point_iterator
+             it = m_tr->input_points_begin(); it != m_tr->input_points_end(); ++ it)
+        if (random.get_double() >= ratio)
+          some_points.push_back (it);
 
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
@@ -436,11 +420,8 @@ public:
 
       CGAL::Timer sizing_field_timer; sizing_field_timer.start();
       Poisson_reconstruction_function<Geom_traits>
-        coarse_poisson_function(Some_points_iterator(m_tr->input_points_end(),
-                                                     skip,
-                                                     m_tr->input_points_begin()),
-                                Some_points_iterator(m_tr->input_points_end(),
-                                                     skip),
+        coarse_poisson_function(boost::make_indirect_iterator (some_points.begin()),
+                                boost::make_indirect_iterator (some_points.end()),
                                 Normal_of_point_with_normal_map<Geom_traits>() );
       coarse_poisson_function.compute_implicit_function(solver, Poisson_visitor(),
                                                         0.);

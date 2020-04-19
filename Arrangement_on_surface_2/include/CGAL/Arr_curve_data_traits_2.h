@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efifogel@gmail.com>
@@ -137,13 +128,13 @@ public:
              base_objects.begin(); it != base_objects.end(); ++it)
       {
         base_x_curve = object_cast<Base_x_monotone_curve_2>(&(*it));
-        if (base_x_curve != NULL) {
+        if (base_x_curve != nullptr) {
           // Current object is an x-monotone curve: Attach data to it.
           *oi++ = make_object(X_monotone_curve_2(*base_x_curve, xdata));
         }
         else {
           // Current object is an isolated point: Leave it as is.
-          CGAL_assertion(object_cast<Point_2>(&(*it)) != NULL);
+          CGAL_assertion(object_cast<Point_2>(&(*it)) != nullptr);
           *oi++ = *it;
         }
       }
@@ -219,7 +210,7 @@ public:
       for (typename std::list<CGAL::Object>::const_iterator it =
              base_objects.begin(); it != base_objects.end(); ++it)
       {
-        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*it))) != NULL) {
+        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*it))) != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.

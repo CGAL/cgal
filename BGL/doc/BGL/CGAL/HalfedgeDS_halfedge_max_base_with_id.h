@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup BGLGraphExternalIndices
 
 The class `HalfedgeDS_halfedge_max_base_with_id` is a model of the `HalfedgeDSHalfedge`
 concept.

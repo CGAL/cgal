@@ -1,26 +1,11 @@
 // Copyright (c) 2014 Stefan Walk
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in
-// the Software without restriction, including without limitation the rights to
-// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-// of the Software, and to permit persons to whom the Software is furnished to do
-// so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: LicenseRef-RFL
+// License notice in Installation/LICENSE.RFL
 //
 // Author(s)     : Stefan Walk
 
@@ -46,7 +31,6 @@
 #include <list>
 #include <boost/version.hpp>
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #if BOOST_VERSION >= 104700
@@ -56,7 +40,9 @@
 #endif
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/normal_distribution.hpp>
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/vector.hpp>
+#endif
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
@@ -109,6 +95,7 @@ struct ForestParams {
         min_samples_per_node(5),
         sample_reduction(0.368f)
     {}
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -121,6 +108,7 @@ struct ForestParams {
         ar & BOOST_SERIALIZATION_NVP(min_samples_per_node);
         ar & BOOST_SERIALIZATION_NVP(sample_reduction);
     }
+#endif
 };
 
 struct QuadraticSplitter {
@@ -165,6 +153,7 @@ struct QuadraticSplitter {
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
@@ -172,6 +161,7 @@ struct QuadraticSplitter {
         ar & BOOST_SERIALIZATION_NVP(w);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct LinearSplitter {
@@ -203,12 +193,14 @@ struct LinearSplitter {
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(w);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct AxisAlignedSplitter {
@@ -248,12 +240,14 @@ struct AxisAlignedSplitter {
         data_points.push_back(std::make_pair(sample_fval, sample_class));
       }
     }
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(feature);
         ar & BOOST_SERIALIZATION_NVP(threshold);
     }
+#endif
 };
 
 struct AxisAlignedRandomSplitGenerator {

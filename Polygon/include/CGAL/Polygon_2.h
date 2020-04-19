@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
@@ -53,7 +44,8 @@ namespace CGAL {
 /// The class Polygon_2 implements polygons. The Polygon_2 is
 /// parameterized by a traits class and a container class.  The latter
 /// can be any class that fulfills the requirements for an STL
-/// container. It defaults to the std::vector class.
+/// container, and has a function `resize()` that takes an std::size_t as argument
+///  . It defaults to the std::vector class.
 ///
 /// \cgalHeading{Implementation}
 ///
@@ -147,13 +139,16 @@ class Polygon_2 {
     /// @{
 
     /// Creates an empty polygon.
-    Polygon_2(const Traits & p_traits = Traits()) : traits(p_traits) {}
+    Polygon_2() : traits() {}
+
+    /// Creates an empty polygon.
+    Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
     /// Copy constructor.
     Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon)
       : d_container(polygon.d_container), traits(polygon.traits) {}
 
-    /// Introduces a polygon with vertices from the sequence
+    /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
     /// The value type of \c InputIterator must be \c Point_2.
     template <class InputIterator>
@@ -165,10 +160,8 @@ class Polygon_2 {
       std::copy(first, last, std::back_inserter(d_container));
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
 #ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;
-#endif
 #endif
 
     /// @}
@@ -440,7 +433,7 @@ class Polygon_2 {
     const Point_2& vertex(std::size_t i) const
       {
         CGAL_precondition( i < d_container.size() );
-        return *(cpp11::next(d_container.begin(), i));
+        return *(std::next(d_container.begin(), i));
       }
 
 
@@ -448,9 +441,19 @@ class Polygon_2 {
     const Point_2& operator[](std::size_t i) const
       { return vertex(i); }
 
+    /// Returns a reference to the `i`-th vertex.
+    Point_2& vertex(std::size_t i)
+      {
+        CGAL_precondition( i < d_container.size() );
+        return *(std::next(d_container.begin(), i));
+      }
+    /// Returns a reference to the `i`-th vertex.
+    Point_2& operator[](std::size_t i)
+      { return vertex(i); }
+
     /// Returns the `i`-th edge.
     Segment_2 edge(std::size_t i) const
-      { return *(cpp11::next(edges_begin(), i)); }
+      { return *(std::next(edges_begin(), i)); }
 
     /// @}
 
@@ -469,6 +472,39 @@ class Polygon_2 {
     const Container_P& container() const
       { return d_container; }
 
+    /// Returns a reference to the sequence of vertices of the polygon.
+    Container_P& container()
+      { return d_container; }
+
+    /// Returns an iterator to the first vertex of the polygon.
+    typename Container_P::iterator begin()
+    {
+       return container().begin();
+    }
+    /// Returns an iterator to the element after the last vertex of the polygon.
+    typename Container_P::iterator end()
+    {
+       return container().end();
+    }
+
+    /// Returns a const iterator to the first vertex of the polygon.
+    const typename Container_P::const_iterator begin() const
+    {
+       return container().begin();
+    }
+
+    /// Returns a const iterator to the element after the last vertex of the polygon.
+    const typename Container_P::const_iterator end() const
+    {
+       return container().end();
+    }
+
+    /// Resizes the container. Calls `container().resize(s)`.
+    void resize(std::size_t s)
+    {
+     container().resize(s);
+    }
+
     /// @}
 
     bool identical(const Polygon_2<Traits_P,Container_P> &q) const
@@ -481,7 +517,6 @@ class Polygon_2 {
     Traits_P traits;
 };
 
-/// @} // polygon_2
 
 /// \name Global Operators
 /// @{

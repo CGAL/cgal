@@ -97,6 +97,7 @@
 \package_listing{Poisson_surface_reconstruction_3}
 \package_listing{Scale_space_reconstruction_3}
 \package_listing{Advancing_front_surface_reconstruction}
+\package_listing{Polygonal_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
 \cgalPackageSection{PartGeometryProcessing,Geometry Processing}
@@ -114,10 +115,11 @@
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_3}
 \package_listing{Point_set_processing_3}
-\package_listing{Point_set_shape_detection_3}
+\package_listing{Shape_detection}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
 \package_listing{Heat_method_3}
+\package_listing{Surface_mesh_topology}
 
 \cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 
@@ -128,6 +130,7 @@
 \package_listing{Box_intersection_d}
 \package_listing{AABB_tree}
 \package_listing{Spatial_sorting}
+\package_listing{Optimal_bounding_box}
 
 \cgalPackageSection{PartGeometricOptimization,Geometric Optimization}
 

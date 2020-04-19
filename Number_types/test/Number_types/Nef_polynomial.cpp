@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_rational.h>
 #include <CGAL/Nef_polynomial.h>

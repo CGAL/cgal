@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -30,7 +21,8 @@
 
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
-#include <boost/type_traits.hpp>
+#include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
+#include <type_traits>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -55,24 +47,22 @@ namespace internal {
     virtual Sizing_field_interface* clone() const = 0;
   };
 
-  template < typename Sizing_field >
+  template < typename Sizing_field,
+             typename FT,
+             typename Point_3,
+             typename Index>
   struct Sizing_field_container
-    : public Sizing_field_interface < typename Sizing_field::FT,
-                                      typename Sizing_field::Point_3,
-                                      typename Sizing_field::Index >
+    : public Sizing_field_interface < FT,
+                                      Point_3,
+                                      Index >
   {
-    typedef Sizing_field_interface <
-              typename Sizing_field::FT,
-              typename Sizing_field::Point_3,
-              typename Sizing_field::Index > Base;
+    typedef Sizing_field_interface < FT,
+                                     Point_3,
+                                     Index > Base;
 
-    typedef Sizing_field_container<Sizing_field> Self;
+    typedef Sizing_field_container<Sizing_field, FT, Point_3, Index> Self;
 
   public:
-    typedef typename Base::FT       FT;
-    typedef typename Base::Point_3  Point_3;
-    typedef typename Base::Index    Index;
-
     Sizing_field_container(const Sizing_field& s) : s_(s) {}
     virtual ~Sizing_field_container() {}
 
@@ -109,23 +99,25 @@ public:
   /// Constructors
   Mesh_edge_criteria_3(const FT& value)
     : p_size_(new Mesh_3::internal::Sizing_field_container<
-                Mesh_constant_domain_field_3<Gt,Index> >(value))
+                Mesh_constant_domain_field_3<Gt,Index> ,
+                FT,
+                Point_3,
+                Index>(value))
   {}
 
-  // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
+  // Nb: SFINAE to avoid wrong matches with built-in numerical types
   // as int.
   template < typename Sizing_field >
-  Mesh_edge_criteria_3(const Sizing_field& size,
-                       typename Sizing_field::FT /*dummy*/ = 0 )
+  Mesh_edge_criteria_3
+  (
+   const Sizing_field& size,
+   typename std::enable_if<Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>::value>::type* = 0
+   )
   {
-    CGAL_static_assertion((boost::is_same<typename Sizing_field::FT,
-                                          FT>::value));
-    CGAL_static_assertion((boost::is_same<typename Sizing_field::Point_3,
-                                          Point_3>::value));
-    CGAL_static_assertion((boost::is_same<typename Sizing_field::Index,
-                                          Index>::value));
-
-    p_size_ = new Mesh_3::internal::Sizing_field_container<Sizing_field>(size);
+    p_size_ = new Mesh_3::internal::Sizing_field_container<Sizing_field,
+                                                           FT,
+                                                           Point_3,
+                                                           Index>(size);
   }
 
   Mesh_edge_criteria_3(const Self& rhs)

@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -89,17 +80,16 @@ namespace CGAL {
 
     struct Iterator_and_last {
       template<typename Iter,typename T>
-        result_type operator()(int d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
+        result_type operator()(int d,Iter const& f,Iter const& e,T&& t) const {
           check_dim(d);
           CGAL_assertion(d==std::distance(f,e)+1);
           result_type a(d);
           std::copy(f,e,&a[0]);
-          a[d-1]=CGAL_FORWARD(T,t);
+          a[d-1]=std::forward<T>(t);
           return a;
         }
     };
 
-#ifdef CGAL_CXX11
     struct Initializer_list {
       // Fix T==NT?
       template<class T>
@@ -107,52 +97,22 @@ namespace CGAL {
           return Iterator()(l.size(),l.begin(),l.end());
         }
     };
-#endif
 
     struct Values {
-#ifdef CGAL_CXX11
       // TODO avoid going through Initializer_list which may cause extra copies. Possibly use forward_as_tuple.
       template<class...U>
         result_type operator()(U&&...u) const {
           check_dim(sizeof...(U)); // TODO: use static_assert
           return Initializer_list()({forward_safe<NT,U>(u)...});
         }
-#else
-
-#define CGAL_CODE(Z,N,_) result_type operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
-  check_dim(N); \
-  result_type a(N); \
-  a << BOOST_PP_ENUM_PARAMS(N,t); \
-  return a; \
-}
-BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-
-#endif
     };
 
     struct Values_divide {
-#ifdef CGAL_CXX11
       template<class H,class...U>
         result_type operator()(H const&h,U&&...u) const {
           check_dim(sizeof...(U)); // TODO: use static_assert
           return Initializer_list()({Rational_traits<NT>().make_rational(std::forward<U>(u),h)...});
         }
-#else
-
-#define CGAL_VAR(Z,N,_) ( Rational_traits<NT>().make_rational( t##N ,h) )
-#define CGAL_CODE(Z,N,_) template <class H> result_type \
-  operator()(H const&h, BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
-    check_dim(N); \
-    result_type a(N); \
-    a << BOOST_PP_ENUM(N,CGAL_VAR,); \
-    return a; \
-  }
-  BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
-#undef CGAL_CODE
-#undef CGAL_VAR
-
-#endif
     };
   };
 }

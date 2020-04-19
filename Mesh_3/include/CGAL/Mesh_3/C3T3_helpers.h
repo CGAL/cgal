@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -35,7 +26,7 @@
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
@@ -45,7 +36,6 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
@@ -57,7 +47,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
-# include <tbb/mutex.h>
+# include <mutex>
 #endif
 
 #include <functional>
@@ -605,7 +595,7 @@ public:
 protected:
   Lock_data_structure *m_lock_ds;
 
-  typedef tbb::mutex  Mutex_type;
+  typedef std::mutex  Mutex_type;
   mutable Mutex_type  m_mut_outdated_cells;
   mutable Mutex_type  m_mut_moving_vertices;
   mutable Mutex_type  m_mut_vertex_to_proj;
@@ -715,7 +705,7 @@ public:
    * Constructor
    */
   C3T3_helpers(C3T3& c3t3, const MeshDomain& domain,
-               Lock_data_structure *lock_ds = NULL)
+               Lock_data_structure *lock_ds = nullptr)
     : Base(lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
@@ -744,7 +734,7 @@ public:
               const Weighted_point& new_position,
               const SliverCriterion& criterion,
               OutputIterator modified_vertices,
-              bool *could_lock_zone = NULL);
+              bool *could_lock_zone = nullptr);
 
   /** @brief tries to move \c old_vertex to \c new_position in the mesh
    *
@@ -758,7 +748,7 @@ public:
                           const Weighted_point& new_position,
                           const SliverCriterion& criterion,
                           OutputIterator modified_vertices,
-                          bool *could_lock_zone = NULL);
+                          bool *could_lock_zone = nullptr);
 
   /**
    * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
@@ -1234,9 +1224,9 @@ private:
 
       Intersection intersection = construct_intersection(dual);
       Surface_patch surface =
-        (CGAL::cpp0x::get<2>(intersection) == 0) ? Surface_patch() :
+        (std::get<2>(intersection) == 0) ? Surface_patch() :
         Surface_patch(
-          domain_.surface_patch_index(CGAL::cpp0x::get<1>(intersection)));
+          domain_.surface_patch_index(std::get<1>(intersection)));
 
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
@@ -1260,7 +1250,7 @@ private:
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
           // Update facet surface center
-          Bare_point surface_center = CGAL::cpp0x::get<0>(intersection);
+          Bare_point surface_center = std::get<0>(intersection);
           facet.first->set_facet_surface_center(facet.second, surface_center);
           facet_m.first->set_facet_surface_center(facet_m.second, surface_center);
         }
@@ -1383,7 +1373,6 @@ private:
 
     std::size_t vertex_id(const std::size_t& i) const
     {
-      CGAL_precondition(i >= 0);
       CGAL_precondition((infinite_ && i < 3) || i < 4);
       return vertices_[i];
     }
@@ -1497,7 +1486,7 @@ private:
     }
 
   private:
-    typedef CGAL::cpp11::array<std::size_t, 4> IndexMap;
+    typedef std::array<std::size_t, 4> IndexMap;
 
     void restore(Cell_handle c,
                  const IndexMap& index_map,//new_to_old_indices
@@ -1565,9 +1554,9 @@ private:
     Cell_from_ids cell_ids_;
     FT sliver_value_;
     Subdomain_index subdomain_index_;
-    CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
-    CGAL::cpp11::array<Bare_point, 4> facet_surface_center_;
-    CGAL::cpp11::array<Index, 4> surface_center_index_table_;
+    std::array<Surface_patch_index, 4> surface_index_table_;
+    std::array<Bare_point, 4> facet_surface_center_;
+    std::array<Index, 4> surface_center_index_table_;
   };
 
 private:
@@ -1667,7 +1656,7 @@ private:
   move_point_topo_change(const Vertex_handle& old_vertex,
                          const Weighted_point& new_position,
                          Outdated_cell_set& outdated_cells_set,
-                         bool *could_lock_zone = NULL) const;
+                         bool *could_lock_zone = nullptr) const;
 
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
@@ -1800,7 +1789,7 @@ private:
                                 CellsOutputIterator insertion_conflict_cells,
                                 FacetsOutputIterator insertion_conflict_boundary,
                                 CellsOutputIterator removal_conflict_cells,
-                                bool *could_lock_zone = NULL) const;
+                                bool *could_lock_zone = nullptr) const;
 
 
   template < typename ConflictCellsInputIterator,
@@ -3035,7 +3024,7 @@ move_point(const Vertex_handle& old_vertex,
            Moving_vertices_set& moving_vertices,
            bool *could_lock_zone) const
 {
-  CGAL_assertion(could_lock_zone != NULL);
+  CGAL_assertion(could_lock_zone != nullptr);
   *could_lock_zone = true;
 
   if (!try_lock_vertex(old_vertex)) // LOCK
@@ -3393,7 +3382,7 @@ project_on_surface_aux(const Bare_point& p,
     domain_.do_intersect_surface_object();
 
   if ( do_intersect(proj_segment) )
-    return CGAL::cpp0x::get<0>(construct_intersection(proj_segment));
+    return std::get<0>(construct_intersection(proj_segment));
   else
     return ref_point;
 
@@ -3401,8 +3390,8 @@ project_on_surface_aux(const Bare_point& p,
 
   typedef typename MD::Intersection Intersection;
   Intersection intersection = construct_intersection(proj_segment);
-  if(CGAL::cpp0x::get<2>(intersection) == 2)
-    return CGAL::cpp0x::get<0>(intersection);
+  if(std::get<2>(intersection) == 2)
+    return std::get<0>(intersection);
   else
     return ref_point;
 
@@ -3624,8 +3613,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 
         if (!try_lock_element(next)) // LOCK
         {
-          BOOST_FOREACH(Cell_handle& ch,
-            std::make_pair(cells.begin(), cells.end()))
+          for(Cell_handle ch : cells)
           {
             ch->tds_data().clear();
           }
@@ -3641,7 +3629,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
       }
       ++head;
     } while(head != tail);
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    for(Cell_handle ch : cells)
     {
       ch->tds_data().clear();
     }
@@ -3661,8 +3649,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
   bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
-    BOOST_FOREACH(Cell_handle& ch,
-                  std::make_pair(tmp_cells.begin(), tmp_cells.end()))
+    for(Cell_handle ch : tmp_cells)
     {
       if (filter(ch))
         cells.push_back(ch);

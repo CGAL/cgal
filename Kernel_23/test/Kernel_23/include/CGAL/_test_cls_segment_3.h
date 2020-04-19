@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     : Stefan Schirra
@@ -33,9 +27,6 @@ _test_cls_segment_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Segment_3 is;
- CGAL::Segment_3<R>  s1(is);
-
  RT  n1 =  7;
  RT  n2 = 21;
  RT  n3 = 14;
@@ -48,10 +39,18 @@ _test_cls_segment_3(const R& )
  CGAL::Point_3<R> p2( n4, n5, n6, n5);
  CGAL::Point_3<R> p3( n2, n8, n2, n8);
 
+ typename R::Segment_3 is ( p2, p1 );
+
+ CGAL::Segment_3<R> s1( is );
  CGAL::Segment_3<R> s2( p1, p2 );
  CGAL::Segment_3<R> s3( p2, p1 );
  CGAL::Segment_3<R> s4( s2 );
+
  s1 = s4;
+
+ typename R::Segment_3 is2 ( s4 );
+ is = s1;
+ s4 = is2;
 
  assert( CGAL::parallel(s2, s3) );
 

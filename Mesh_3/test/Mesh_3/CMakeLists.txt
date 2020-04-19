@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Mesh_3_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
@@ -22,8 +22,6 @@ if ( CGAL_FOUND )
   if (NOT EIGEN3_FOUND)
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
-  else()
-    include( ${EIGEN3_USE_FILE} )
   endif()
 
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
@@ -62,17 +60,54 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 
   foreach(target
+      test_boost_has_xxx
+      test_c3t3
+      test_mesh_capsule_var_distance_bound
+      test_implicit_multi_domain_to_labeling_function_wrapper
+      test_c3t3_io
+      test_c3t3_with_features
+      test_criteria
+      test_domain_with_polyline_features
+      test_labeled_mesh_domain_3
+      test_mesh_criteria_creation
+      test_c3t3_into_facegraph
+      test_without_detect_features
+      test_meshing_3D_image
+      test_meshing_3D_image_deprecated
+      test_meshing_3D_gray_image
+      test_meshing_3D_gray_image_deprecated
+      test_meshing_implicit_function
+      test_meshing_implicit_function_deprecated
+      test_meshing_polyhedral_complex
+      test_meshing_polyhedron
+      test_meshing_polylines_only
+      test_meshing_polyhedron_with_features
+      test_meshing_verbose
+      test_meshing_unit_tetrahedron
+      test_meshing_with_default_edge_size
+      test_meshing_determinism
+      test_c3t3_extract_subdomains_boundaries
+      test_mesh_3_issue_1554
+      test_mesh_polyhedral_domain_with_features_deprecated
+      test_meshing_with_one_step.cpp)
+    if(TARGET ${target})
+      CGAL_target_use_Eigen(${target})
+    endif()
+  endforeach()
+
+  foreach(target
       test_meshing_verbose
       test_meshing_polyhedron_with_features
       test_meshing_utilities.h
-      test_mesh_implicit_domains
       test_meshing_implicit_function
       test_meshing_3D_image
       test_meshing_3D_gray_image
       test_meshing_unit_tetrahedron
-      test_backward_compatibility
       test_meshing_polyhedron
       test_meshing_polyhedral_complex
+      test_mesh_capsule_var_distance_bound
+      test_mesh_3_issue_1554
+      test_mesh_polyhedral_domain_with_features_deprecated
       )
     if(TBB_FOUND AND TARGET ${target})
       CGAL_target_use_TBB(${target})

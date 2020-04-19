@@ -30,10 +30,11 @@ Multiscale_sort (const Sort &sort = Sort(), std::ptrdiff_t threshold = 1, double
 /// @{
 
 /*!
-It sorts the range `[begin, end)`.
-`Sort::operator()(RandomAccessIterator begin, RandomAccessIterator end)` must be defined.
+sorts the range `[begin, end)`.
+`Sort::operator()(InputIterator begin, InputIterator end)` must be defined.
 */
-template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const;
+template <class InputIterator>
+void operator() (InputIterator begin, InputIterator end) const;
 
 /// @}
 

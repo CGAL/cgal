@@ -1,19 +1,10 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Fernando Cacciola
@@ -112,7 +103,7 @@ public:
     mWriter          (out)
    ,mDefaultDxfColor (255)
    ,mDxfColor        (255)
-   ,mCgalColor       (WHITE)
+    ,mCgalColor       (white())
    ,mLayer           ("0")
   {
     setup_initial_color_table();
@@ -146,6 +137,8 @@ public:
    * Get the current DXF color.
    */
   int default_dxf_color () const { return mDefaultDxfColor ; }
+
+  // @}
 
   /// \name Set the drawing properties.
   //@{
@@ -255,6 +248,7 @@ public:
     mWriter.add_polyline_2( pgn.begin(), pgn.end(), true, mLayer, mDxfColor ) ;
   }
 
+  //@}
 
   /// \name Setting the draw properties via the << operator.
   //@{
@@ -277,6 +271,7 @@ public:
     return (*this);
   }
 
+  //@}
 
   /// \name Drawing objects via the << operator.
   //@{
@@ -305,15 +300,15 @@ protected:
 
   void setup_initial_color_table()
   {
-    define_color(BLACK,0);
-    define_color(RED,1);
-    define_color(YELLOW,2);
-    define_color(GREEN,3);
-    define_color(PURPLE,4);
-    define_color(BLUE,5);
-    define_color(VIOLET,6);
-    define_color(WHITE,7);
-    define_color(GRAY,8);
+    define_color(black(),0);
+    define_color(red(),1);
+    define_color(yellow(),2);
+    define_color(green(),3);
+    define_color(purple(),4);
+    define_color(blue(),5);
+    define_color(violet(),6);
+    define_color(white(),7);
+    define_color(gray(),8);
   }
 
 };

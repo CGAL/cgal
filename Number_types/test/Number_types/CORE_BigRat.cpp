@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #ifdef CGAL_USE_CORE
 

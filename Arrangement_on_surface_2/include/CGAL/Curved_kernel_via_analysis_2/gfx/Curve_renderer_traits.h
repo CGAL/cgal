@@ -1,20 +1,11 @@
 // Copyright (c) 2004-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -223,8 +214,8 @@ struct Curve_renderer_traits_base
         typedef Coeff result_type;
 
         Coeff operator()(const Coeff& x,
-            bool *error_bounds = NULL) const {
-            if(error_bounds != NULL)
+            bool *error_bounds = nullptr) const {
+            if(error_bounds != nullptr)
                  *error_bounds = false;
             return x;
         }
@@ -309,13 +300,13 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
         typedef Float result_type;
 
         Float operator()(const Coeff& x,
-                    bool *error_bounds = NULL) const {
+                    bool *error_bounds = nullptr) const {
             bool err_bnd;
 //             err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
 //                 ((l <= 0 && u >= 0));
             Float l = x.inf(), u = x.sup(), mid = (l+u)/2;
             err_bnd = ((l < 0 && u > 0)||(l == 0 && u == 0));
-            if(error_bounds != NULL)
+            if(error_bounds != nullptr)
                 *error_bounds = err_bnd;
 //! ATTENTION!!! if smth is screwed up try to uncomment the line below
 //! this is very crucial for performance & stability
@@ -456,13 +447,13 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, leda::rational > :
         typedef Float result_type;
 
         Float operator()(const Coeff& x,
-                    bool *error_bounds = NULL) const {
+                    bool *error_bounds = nullptr) const {
             bool err_bnd;
 //             err_bnd = (CGAL_ABS(l) < 1E-15 || CGAL_ABS(u) < 1E-15) ||
 //                 ((l <= 0 && u >= 0));
             Float l = x.inf(), u = x.sup(), mid = (l+u)/2;
             err_bnd = ((l < 0 && u > 0)||(l == 0 && u == 0));
-            if(error_bounds != NULL)
+            if(error_bounds != nullptr)
                 *error_bounds = err_bnd;
 //! ATTENTION!!! if smth is screwed up try to uncomment the line below
 //! this is very crucial for performance & stability

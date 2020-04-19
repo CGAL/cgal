@@ -21,7 +21,5 @@ template< typename Kernel >
 class Polygon_offset_builder_traits_2 {
 public:
 
-/// @}
-
 }; /* end Polygon_offset_builder_traits_2 */
 } /* end namespace CGAL */

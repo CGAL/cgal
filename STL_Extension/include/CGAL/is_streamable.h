@@ -1,15 +1,6 @@
 // Copyright (c) 2012  GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
 // $URL$
 // $Id$
 // SPDX-License-Identifier: BSL-1.0

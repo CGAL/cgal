@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stephen Kiazyk
 
@@ -76,7 +67,7 @@ Refer to those respective papers for the details of the implementation.
 If index property maps are not provided through the constructor of the class, internal property maps must
 be available and initialized.
 
-\sa \link PkgBGLHelper `CGAL::set_halfedgeds_items_id()`\endlink
+\sa \link BGLGraphExternalIndices `CGAL::set_halfedgeds_items_id()`\endlink
 */
 
 template<class Traits,
@@ -594,9 +585,9 @@ private:
     d2 = v2Distance.second;
     d3 = v3Distance.second;
 
-    const bool hasD1 = v1Distance.first != NULL && v1Distance.first != cone->parent();
-    const bool hasD2 = v2Distance.first != NULL && v2Distance.first != cone->parent();
-    const bool hasD3 = v3Distance.first != NULL && v3Distance.first != cone->parent();
+    const bool hasD1 = v1Distance.first != nullptr && v1Distance.first != cone->parent();
+    const bool hasD2 = v2Distance.first != nullptr && v2Distance.first != cone->parent();
+    const bool hasD3 = v3Distance.first != nullptr && v3Distance.first != cone->parent();
 
     if (hasD1 && (d + CGAL::approximate_sqrt(csd2(I, B)) > d1 + CGAL::approximate_sqrt(csd2(v1, B))))
     {
@@ -667,9 +658,9 @@ private:
       std::cout << std::endl << " >>>>>>>>>>>>>>>>>>> Expanding LEFT CHILD <<<<<<<<<<<<<<<<<<<" <<std::endl;
     }
 
-    CGAL_assertion(cone->m_pendingLeftSubtree != NULL);
+    CGAL_assertion(cone->m_pendingLeftSubtree != nullptr);
 
-    cone->m_pendingLeftSubtree = NULL;
+    cone->m_pendingLeftSubtree = nullptr;
 
     if (window_distance_filter(cone, windowSegment, false))
     {
@@ -698,14 +689,14 @@ private:
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
-    CGAL_assertion(cone->m_pendingRightSubtree != NULL);
+    CGAL_assertion(cone->m_pendingRightSubtree != nullptr);
+    cone->m_pendingRightSubtree = nullptr;
 
     if (m_debugOutput)
     {
       std::cout << std::endl << " >>>>>>>>>>>>>>>>>>> Expanding RIGHT CHILD <<<<<<<<<<<<<<<<<<<" <<std::endl;
     }
 
-    cone->m_pendingRightSubtree = NULL;
 
     if (window_distance_filter(cone, windowSegment, true))
     {
@@ -909,7 +900,7 @@ private:
     typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
 
-    parent->m_pendingMiddleSubtree = NULL;
+    parent->m_pendingMiddleSubtree = nullptr;
 
     vertex_descriptor expansionVertex = parent->target_vertex();
 
@@ -926,7 +917,7 @@ private:
 
     // A potential optimization could be made by only expanding in the 'necessary' range (i.e. the range outside of geodesic visibility), but the
     // benefits may be small, since the node filter would prevent more than one-level propagation.
-    // It would also be neccessary to distinguish expanding a root vertex node from a pseudo-source node
+    // It would also be necessary to distinguish expanding a root vertex node from a pseudo-source node
 
     do
     {
@@ -1206,14 +1197,14 @@ private:
       if (m_debugOutput)
       {
         std::cout << "\t Distance to target: " << currentNodeDistance << std::endl;
-        std::cout << "\t Is there a current occupier? " << (currentOccupier.first != NULL) << std::endl;
+        std::cout << "\t Is there a current occupier? " << (currentOccupier.first != nullptr) << std::endl;
       }
 
       // the relative position of the ray between node.source() and node.target_vertex() and the ray
       // from occupier.source() (-1 left, 0 collinear, 1 right)
       CGAL::Comparison_result c = CGAL::EQUAL; // initializing to please weak compilers
 
-      if (currentOccupier.first != NULL)
+      if (currentOccupier.first != nullptr)
       {
         CGAL_assertion(node->entry_edge() == currentOccupier.first->entry_edge());
         CGAL_assertion(node->target_vertex() == currentOccupier.first->target_vertex());
@@ -1252,7 +1243,7 @@ private:
       }
 
       bool is_node_new_occupier = false;
-      if (currentOccupier.first == NULL)
+      if (currentOccupier.first == nullptr)
       {
         m_vertexOccupiers[entryHalfEdgeIndex] = std::make_pair(node, currentNodeDistance);
         is_node_new_occupier = true;
@@ -1296,7 +1287,7 @@ private:
         }
 
         // Some branches from the old occupier that has been superseded can now be pruned
-        if (currentOccupier.first != NULL)
+        if (currentOccupier.first != nullptr)
         {
           if (c == CGAL::SMALLER) // node's ray is left of occupier's ray
           {
@@ -1304,10 +1295,10 @@ private:
             {
               delete_node(currentOccupier.first->remove_left_child());
             }
-            else if (currentOccupier.first->m_pendingLeftSubtree != NULL)
+            else if (currentOccupier.first->m_pendingLeftSubtree != nullptr)
             {
               currentOccupier.first->m_pendingLeftSubtree->m_cancelled = true;
-              currentOccupier.first->m_pendingLeftSubtree = NULL;
+              currentOccupier.first->m_pendingLeftSubtree = nullptr;
             }
           }
           else if (c == CGAL::LARGER) // node's ray is right of occupier's ray
@@ -1316,10 +1307,10 @@ private:
             {
               delete_node(currentOccupier.first->remove_right_child());
             }
-            else if (currentOccupier.first->m_pendingRightSubtree != NULL)
+            else if (currentOccupier.first->m_pendingRightSubtree != nullptr)
             {
               currentOccupier.first->m_pendingRightSubtree->m_cancelled = true;
-              currentOccupier.first->m_pendingRightSubtree = NULL;
+              currentOccupier.first->m_pendingRightSubtree = nullptr;
             }
           }
         }
@@ -1328,13 +1319,13 @@ private:
         std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
         Node_distance_pair currentClosest = m_closestToVertices[targetVertexIndex];
 
-        if (m_debugOutput && currentClosest.first != NULL)
+        if (m_debugOutput && currentClosest.first != nullptr)
         {
           std::cout << "\t Current Closest Distance = " << currentClosest.second << std::endl;
         }
 
         // If equal times, give priority to vertex sources since it's cleaner and simpler to handle than interval windows
-        if (currentClosest.first == NULL ||
+        if (currentClosest.first == nullptr ||
            currentClosest.second > currentNodeDistance ||
            (currentClosest.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
         {
@@ -1352,17 +1343,17 @@ private:
               std::cout << "\t Vertex " << targetVertexIndex << " is a pseudo-source" << std::endl;
             }
 
-            if (currentClosest.first != NULL)
+            if (currentClosest.first != nullptr)
             {
               if (m_debugOutput)
               {
                 std::cout << "\tEvicting old pseudo-source: " << currentClosest.first << std::endl;
               }
 
-              if (currentClosest.first->m_pendingMiddleSubtree != NULL)
+              if (currentClosest.first->m_pendingMiddleSubtree != nullptr)
               {
                 currentClosest.first->m_pendingMiddleSubtree->m_cancelled = true;
-                currentClosest.first->m_pendingMiddleSubtree = NULL;
+                currentClosest.first->m_pendingMiddleSubtree = nullptr;
               }
 
               while (currentClosest.first->has_middle_children())
@@ -1533,20 +1524,20 @@ private:
   void delete_node(Cone_tree_node* node,
                    const bool destruction = false)
   {
-    if (node != NULL)
+    if (node != nullptr)
     {
       if (m_debugOutput)
       {
         std::cout << "Deleting node " << node << std::endl;
       }
 
-      if (node->m_pendingLeftSubtree != NULL)
+      if (node->m_pendingLeftSubtree != nullptr)
       {
         node->m_pendingLeftSubtree->m_cancelled = true;
-        node->m_pendingLeftSubtree = NULL;
+        node->m_pendingLeftSubtree = nullptr;
       }
 
-      if (node->get_left_child() != NULL)
+      if (node->get_left_child() != nullptr)
       {
         if (m_debugOutput)
         {
@@ -1556,13 +1547,13 @@ private:
         delete_node(node->remove_left_child(), destruction);
       }
 
-      if (node->m_pendingRightSubtree != NULL)
+      if (node->m_pendingRightSubtree != nullptr)
       {
         node->m_pendingRightSubtree->m_cancelled = true;
-        node->m_pendingRightSubtree = NULL;
+        node->m_pendingRightSubtree = nullptr;
       }
 
-      if (node->get_right_child() != NULL)
+      if (node->get_right_child() != nullptr)
       {
         if (m_debugOutput)
         {
@@ -1572,10 +1563,10 @@ private:
         delete_node(node->remove_right_child(), destruction);
       }
 
-      if (node->m_pendingMiddleSubtree != NULL)
+      if (node->m_pendingMiddleSubtree != nullptr)
       {
         node->m_pendingMiddleSubtree->m_cancelled = true;
-        node->m_pendingMiddleSubtree = NULL;
+        node->m_pendingMiddleSubtree = nullptr;
       }
 
       if (node->has_middle_children() && m_debugOutput)
@@ -1597,13 +1588,13 @@ private:
 
         if (m_vertexOccupiers[entryHalfEdgeIndex].first == node)
         {
-          m_vertexOccupiers[entryHalfEdgeIndex].first = NULL;
+          m_vertexOccupiers[entryHalfEdgeIndex].first = nullptr;
 
           std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
 
           if (m_closestToVertices[targetVertexIndex].first == node)
           {
-            m_closestToVertices[targetVertexIndex].first = NULL;
+            m_closestToVertices[targetVertexIndex].first = nullptr;
           }
         }
       }
@@ -1659,7 +1650,7 @@ private:
 
   void reset_algorithm(const bool clearFaceLocations = true)
   {
-    Cone_tree_node* null_value=NULL;
+    Cone_tree_node* null_value=nullptr;
     m_closestToVertices.resize(num_vertices(m_graph));
     std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(null_value, FT(0)));
     m_vertexOccupiers.resize(num_halfedges(m_graph));
@@ -1787,12 +1778,12 @@ private:
       m_faceOccupiers[faceIndex].push_back(node);
     }
 
-    if (node->get_left_child() != NULL)
+    if (node->get_left_child() != nullptr)
     {
       add_to_face_list(node->get_left_child());
     }
 
-    if (node->get_right_child() != NULL)
+    if (node->get_right_child() != nullptr)
     {
       add_to_face_list(node->get_right_child());
     }
@@ -1830,7 +1821,7 @@ private:
 
     const std::size_t faceIndex = get(m_faceIndexMap, f);
 
-    Cone_tree_node* closest = NULL;
+    Cone_tree_node* closest = nullptr;
     FT closestDistance = 0;
 
     const std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[faceIndex];
@@ -1839,7 +1830,7 @@ private:
     {
       Cone_tree_node* current = currentFaceList[i];
 
-      if (closest != NULL && current->distance_from_source_to_root() >= closestDistance)
+      if (closest != nullptr && current->distance_from_source_to_root() >= closestDistance)
       {
         continue;
       }
@@ -1850,7 +1841,7 @@ private:
       {
         FT currentDistance = current->distance_to_root(locationInContext);
 
-        if (closest == NULL || currentDistance < closestDistance)
+        if (closest == nullptr || currentDistance < closestDistance)
         {
           closest = current;
           closestDistance = currentDistance;
@@ -1864,7 +1855,7 @@ private:
     }
     else
     {
-      return std::make_pair(Node_distance_pair((Cone_tree_node*)NULL, FT(0)), cbc(FT(0), FT(0), FT(0)));
+      return std::make_pair(Node_distance_pair((Cone_tree_node*)nullptr, FT(0)), cbc(FT(0), FT(0), FT(0)));
     }
   }
 
@@ -1904,11 +1895,11 @@ private:
               Barycentric_coordinates oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
               std::pair<Node_distance_pair,Barycentric_coordinates> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
 
-              if (mainFace.first.first == NULL)
+              if (mainFace.first.first == nullptr)
               {
                 return otherFace;
               }
-              else if (otherFace.first.first == NULL)
+              else if (otherFace.first.first == nullptr)
               {
                 return mainFace;
               }
@@ -2001,7 +1992,8 @@ private:
 
       for (boost::tie(current,end) = vertices(m_graph); current != end; ++current)
       {
-        std::cout << "Vertex#" << numVertices << ": p = " << get(m_vertexPointMap,*current)
+        std::cout << "Vertex#" << numVertices
+                  << ": p = " << get(m_vertexPointMap,*current)
                   << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no")
                   << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
         ++numVertices;
@@ -2075,7 +2067,7 @@ private:
 
         std::cout << "Prio Queue size = " << m_expansionPriqueue.size() << std::endl;
         std::cout << "Queue:" << std::endl;
-        Expansion_priqueue duplicate_queue = m_expansionPriqueue;
+        auto duplicate_queue = m_expansionPriqueue;
         while(duplicate_queue.size() > 0)
         {
           Cone_expansion_event* event = duplicate_queue.top();
@@ -2114,7 +2106,8 @@ private:
             {
               std::cout << "PseudoSource Expansion: Parent = " << parent
                         << " , Vertex = " << get(m_vertexIndexMap, event->m_parent->target_vertex())
-                        << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << " , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_pseudo_source(parent);
@@ -2125,7 +2118,8 @@ private:
               std::cout << "Left Expansion: Parent = " << parent
                         << " Edge = (" << get(m_vertexIndexMap, source(event->m_parent->left_child_edge(), m_graph))
                         << "," << get(m_vertexIndexMap, target(event->m_parent->left_child_edge(), m_graph))
-                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << ") , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_left_child(parent, event->m_windowSegment);
@@ -2136,7 +2130,8 @@ private:
               std::cout << "Right Expansion: Parent = " << parent
                         << " , Edge = (" << get(m_vertexIndexMap, source(event->m_parent->right_child_edge(), m_graph))
                         << "," << get(m_vertexIndexMap, target(event->m_parent->right_child_edge(), m_graph))
-                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << ") , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_right_child(parent, event->m_windowSegment);
@@ -2204,7 +2199,7 @@ public:
 
   Internal property maps must be available and initialized.
 
-  \sa \link PkgBGLHelper `CGAL::set_halfedgeds_items_id()`\endlink
+  \sa \link BGLGraphExternalIndices `CGAL::set_halfedgeds_items_id()`\endlink
   */
   Surface_mesh_shortest_path(const Triangle_mesh& tm,
                              const Traits& traits = Traits())
@@ -2236,7 +2231,7 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm,
+  Surface_mesh_shortest_path(const Triangle_mesh& tm,
                              Vertex_index_map vertexIndexMap,
                              Halfedge_index_map halfedgeIndexMap,
                              Face_index_map faceIndexMap,
@@ -2842,8 +2837,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Point_3& p, const Triangle_mesh& tm,
-                                   Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const %Point_3& p, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2874,8 +2868,7 @@ public:
   \brief Returns the face location nearest to the given point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
-                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const %Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2916,7 +2909,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const %Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define an `AABB_tree`.
 
@@ -2948,8 +2941,7 @@ public:
     its source point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
-                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const %Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -3022,9 +3014,7 @@ public:
 
   /// \endcond
 
-  /// @}
-
-  /*
+  /*!
   \brief Creates an `AABB_tree` suitable for use with `locate`.
 
   \details The following static overload is also available:
@@ -3040,14 +3030,14 @@ public:
     build_aabb_tree(m_graph, outTree, m_vertexPointMap);
   }
 
+  /// \cond
+
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree,
                        Vertex_point_map vertexPointMap) const
   {
     build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
-
-  /// \cond
 
   template <class AABBTraits>
   static void build_aabb_tree(const Triangle_mesh& tm,
@@ -3061,6 +3051,7 @@ public:
   }
   /// \endcond
 
+  /// @}
 };
 
 } // namespace CGAL

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -72,13 +63,13 @@ namespace Qt {
   GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
-    if(v == NULL) {
+    if(v == nullptr) {
       QWidget* viewport = qobject_cast<QWidget*>(obj);
-      if(viewport == NULL) {
+      if(viewport == nullptr) {
         return false;
       }
       v = qobject_cast<QGraphicsView*>(viewport->parent());
-      if(v == NULL) {
+      if(v == nullptr) {
         return false;
       }
     }
@@ -302,7 +293,7 @@ namespace Qt {
       v->centerOn(new_center);
 
       // QGraphicsView::centerOn makes rounding errors.
-      // The following two "if" make them unnoticable when dx==0 or dy==0.
+      // The following two "if" make them unnoticeable when dx==0 or dy==0.
       if(dx == 0) {
         v->horizontalScrollBar()->setValue(horizontalScrollBarValue);
       }

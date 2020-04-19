@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+
 #include "test_configuration.h"
 #include <iostream>
 

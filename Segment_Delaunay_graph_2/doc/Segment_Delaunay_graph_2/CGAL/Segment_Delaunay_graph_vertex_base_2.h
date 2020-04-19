@@ -34,7 +34,5 @@ template< typename Gt, typename SSTag >
 class Segment_Delaunay_graph_vertex_base_2 {
 public:
 
-/// @}
-
 }; /* end Segment_Delaunay_graph_vertex_base_2 */
 } /* end namespace CGAL */

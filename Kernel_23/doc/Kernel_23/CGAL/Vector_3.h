@@ -13,6 +13,7 @@ will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros.
 
 \cgalModels `Kernel::Vector_3`
+\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
 
 \sa `cross_product_grp`
 \sa `determinant_grp`
@@ -67,12 +68,12 @@ introduces a vector `v` initialized to `(x, y, z)`.
 Vector_3(int x, int y, int z);
 
 /*!
-introduces a vector `v` initialized to `(x, y, z).
+introduces a vector `v` initialized to `(x, y, z)`.
 */
 Vector_3(double x, double y, double z);
 
 /*!
-introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw).
+introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw)`.
 */
 Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));
 
@@ -87,7 +88,7 @@ Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 /// There are two sets of coordinate access functions, namely to the
 /// homogeneous and to the %Cartesian coordinates. They can be used
 /// independently from the chosen kernel model. Note that you do not
-/// loose information with the homogeneous representation, because the
+/// lose information with the homogeneous representation, because the
 /// `FieldNumberType` is a quotient.
 /// @{
 

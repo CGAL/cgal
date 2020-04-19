@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -31,17 +22,10 @@
 
 #include <CGAL/basic.h>
 
-#include <set>
-
-#include <boost/bind.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/identity.hpp>
-#include <boost/utility/result_of.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <tbb/task_scheduler_init.h>
+# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -50,7 +34,6 @@
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -71,6 +54,20 @@
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 #include <CGAL/point_generators_3.h>
 #endif
+
+#include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/property_map/function_property_map.hpp>
+#include <boost/utility/result_of.hpp>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <set>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -188,7 +185,7 @@ public:
   using Tr_Base::tds;
   using Tr_Base::vertex_triple_index;
 
-  Regular_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
+  Regular_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
   { }
 
@@ -223,7 +220,7 @@ public:
   //insertion
   template < typename InputIterator >
   Regular_triangulation_3(InputIterator first, InputIterator last,
-                          const Gt& gt = Gt(), Lock_data_structure *lock_ds = NULL)
+                          const Gt& gt = Gt(), Lock_data_structure *lock_ds = nullptr)
     : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
   {
     insert(first, last);
@@ -267,7 +264,7 @@ private:
                                          bbox.zmin() + 0.5*zdelta);
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-                                                 tbb::task_scheduler_init::default_num_threads() * 3.5);
+                                                 std::thread::hardware_concurrency() * 3.5);
       typename Gt::Construct_weighted_point_3 cwp =
           geom_traits().construct_weighted_point_3_object();
 
@@ -278,12 +275,12 @@ private:
       // Spatial sorting can only be applied to bare points, so we need an adaptor
       typedef typename Geom_traits::Construct_point_3 Construct_point_3;
       typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-      typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+      typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
       spatial_sort(points_on_far_sphere.begin(), points_on_far_sphere.end(),
                    Search_traits_3(
-                     CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                     boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                        geom_traits().construct_point_3_object()), geom_traits()));
 
       typename std::vector<Weighted_point>::const_iterator it_p =
@@ -326,7 +323,7 @@ public:
                         typename boost::enable_if<
                           boost::is_convertible<
                           typename std::iterator_traits<InputIterator>::value_type,
-                          Weighted_point> >::type* = NULL)
+                          Weighted_point> >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -350,12 +347,12 @@ public:
     // kernel creates temporaries and prevent it.
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
     typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
+    typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 
     spatial_sort(points.begin(), points.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_3>(
                      geom_traits().construct_point_3_object()), geom_traits()));
 
     // Parallel
@@ -421,6 +418,7 @@ public:
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
+
   //top stands for tuple-or-pair
   template <class Info>
   const Weighted_point& top_get_first(const std::pair<Weighted_point,Info>& pair) const { return pair.first; }
@@ -474,14 +472,14 @@ private:
     typedef Index_to_Bare_point<Construct_point_3,
         std::vector<Weighted_point> > Access_bare_point;
     typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Gt, fpmap> Search_traits_3;
 
     Access_bare_point accessor(points, geom_traits().construct_point_3_object());
     spatial_sort(indices.begin(), indices.end(),
                  Search_traits_3(
-                   CGAL::internal::boost_::make_function_property_map<
-                   std::size_t, Ret, Access_bare_point>(accessor),
+                   boost::make_function_property_map<
+                     std::size_t, Ret, Access_bare_point>(accessor),
                    geom_traits()));
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -566,7 +564,7 @@ public:
                         typename std::iterator_traits<InputIterator>::value_type,
                         std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
                         >
-                        >::type* = NULL)
+                        >::type* = nullptr)
   {
     return insert_with_info<
              std::pair<Weighted_point,
@@ -583,7 +581,7 @@ public:
            boost::mpl::and_<
            typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
            typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-         > >::type* =NULL)
+         > >::type* =nullptr)
   {
     return insert_with_info<
              boost::tuple<Weighted_point,
@@ -595,7 +593,7 @@ public:
 
 
   Vertex_handle insert(const Weighted_point& p, Vertex_handle hint,
-                       bool *could_lock_zone = NULL)
+                       bool *could_lock_zone = nullptr)
   {
     return insert(p,
                   hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
@@ -603,10 +601,10 @@ public:
   }
 
   Vertex_handle insert(const Weighted_point& p,
-                       Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL);
+                       Cell_handle start = Cell_handle(), bool *could_lock_zone = nullptr);
 
   Vertex_handle insert(const Weighted_point& p, Locate_type lt,
-                       Cell_handle c, int li, int, bool *could_lock_zone = NULL);
+                       Cell_handle c, int li, int, bool *could_lock_zone = nullptr);
 
   template <class CellIt>
   Vertex_handle insert_in_hole(const Weighted_point& p,
@@ -628,9 +626,9 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool *could_lock_zone = NULL,
-                 const Facet *this_facet_must_be_in_the_cz = NULL,
-                 bool *the_facet_is_in_its_cz = NULL) const
+                 bool *could_lock_zone = nullptr,
+                 const Facet *this_facet_must_be_in_the_cz = nullptr,
+                 bool *the_facet_is_in_its_cz = nullptr) const
   {
     CGAL_triangulation_precondition(dimension() >= 2);
 
@@ -691,7 +689,7 @@ public:
   find_conflicts(const Weighted_point& p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool *could_lock_zone = NULL) const
+                 bool *could_lock_zone = nullptr) const
   {
     Triple<OutputIteratorBoundaryFacets,
            OutputIteratorCells,
@@ -2496,15 +2494,15 @@ class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_inserter
   typedef RegularTriangulation_3              Regular;
 
 public:
-  typedef Nullptr_t                           Hidden_points_iterator;
+  typedef std::nullptr_t                           Hidden_points_iterator;
 
   Vertex_inserter(Regular &tmp_) : tmp(tmp_) {}
 
   Regular& tmp;
 
   void add_hidden_points(Cell_handle) {}
-  Hidden_points_iterator hidden_points_begin() { return NULL; }
-  Hidden_points_iterator hidden_points_end() { return NULL; }
+  Hidden_points_iterator hidden_points_begin() { return nullptr; }
+  Hidden_points_iterator hidden_points_end() { return nullptr; }
 
   Vertex_handle insert(const Weighted_point& p,
                        Locate_type lt, Cell_handle c, int li, int lj)

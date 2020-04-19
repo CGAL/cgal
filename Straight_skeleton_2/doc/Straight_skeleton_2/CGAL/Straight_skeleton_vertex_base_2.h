@@ -28,7 +28,5 @@ template< typename Refs, typename Point, typename FT >
 class Straight_skeleton_vertex_base_2 {
 public:
 
-/// @}
-
 }; /* end Straight_skeleton_vertex_base_2 */
 } /* end namespace CGAL */

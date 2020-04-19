@@ -54,7 +54,7 @@ struct Myitems_4b
     typedef MonInfo Dart_info;
 
     typedef Myattrib<LCC> myattrib;
-    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
+    typedef std::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
     Attributes;
   };
 };
@@ -65,7 +65,7 @@ struct Myitems_4c
   struct Dart_wrapper
   {
     typedef Myattrib<LCC> myattrib;
-    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
+    typedef std::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
     Attributes;
   };
 };

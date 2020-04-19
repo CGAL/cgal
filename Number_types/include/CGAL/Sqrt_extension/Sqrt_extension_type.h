@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -651,6 +642,37 @@ CGAL::Comparison_result
 
   return (EQUAL);
 }
+
+  private:
+  template <class A,class B,class C> static bool
+  is_equal (const Sqrt_extension<A,B,Tag_false,C>& p1, const Sqrt_extension<A,B,Tag_false,C>& p2)
+  { return (p1-p2).is_zero(); }
+  template <class A,class B,class C> static bool
+  is_equal (const Sqrt_extension<A,B,Tag_true,C>& p1, const Sqrt_extension<A,B,Tag_true,C>& p2)
+  { return ( p1.compare(p2) == CGAL::ZERO ); }
+
+  public:
+  // BINARY operators
+  friend bool operator == (const Sqrt_extension& p1, const Sqrt_extension& p2)
+    { return Sqrt_extension::is_equal(p1, p2); } // if constexpr (ACDE_TAG::value) ...
+  friend bool operator <  (const Sqrt_extension& p1, const Sqrt_extension& p2)
+    { return ( p1.compare(p2) == CGAL::SMALLER ); }
+
+  // NT
+  friend bool operator == (const Sqrt_extension& p, const NT& num)
+    { return (p-num).is_zero();}
+  friend bool operator <  (const Sqrt_extension& p, const NT& num)
+    { return ( p.compare(num) == CGAL::SMALLER ); }
+  friend bool operator >  (const Sqrt_extension& p, const NT& num)
+    { return ( p.compare(num) == CGAL::LARGER ); }
+
+  //CGAL_int(NT)
+  friend bool operator == (const Sqrt_extension& p, CGAL_int(NT) num)
+    { return (p-num).is_zero();}
+  friend bool operator <  (const Sqrt_extension& p, CGAL_int(NT) num)
+    { return ( p.compare(num) == CGAL::SMALLER ); }
+  friend bool operator >  (const Sqrt_extension& p, CGAL_int(NT) num)
+    { return ( p.compare(num) == CGAL::LARGER ); }
 };
 
 /*!
@@ -727,61 +749,6 @@ operator - (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p){
 
 
 // BINARY
-template <class NT,class ROOT,class FP_TAG> bool
-operator == (const Sqrt_extension<NT,ROOT,Tag_false,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,Tag_false,FP_TAG>& p2)
-{ return (p1-p2).is_zero(); }
-template <class NT,class ROOT,class FP_TAG> bool
-operator == (const Sqrt_extension<NT,ROOT,Tag_true,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,Tag_true,FP_TAG>& p2)
-{ return ( p1.compare(p2) == CGAL::ZERO ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool
-operator < (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p2)
-{ return ( p1.compare(p2) == CGAL::SMALLER ); }
-
-
-// NT
-// righthand side
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>   bool operator ==
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, const NT& num)
-{ return (p-num).is_zero();}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator <
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, const NT& num)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator >
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, const NT& num)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-
-// lefthand side
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool operator ==
-(const NT& num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return  ( p == num );}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator <
-(const NT& num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator >
-(const NT& num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-
-
-//CGAL_int(NT)
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator ==
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, CGAL_int(NT) num)
-{ return (p-num).is_zero();}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator <
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, CGAL_int(NT) num)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>    bool operator >
-(const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p, CGAL_int(NT) num)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool operator ==
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return  ( p == num );}
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator <
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::LARGER ); }
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG>  bool operator >
-(CGAL_int(NT) num, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p)
-{ return ( p.compare(num) == CGAL::SMALLER ); }
 
 template<class NT, class ROOT,class ACDE_TAG,class FP_TAG> inline
 Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> min BOOST_PREVENT_MACRO_SUBSTITUTION(

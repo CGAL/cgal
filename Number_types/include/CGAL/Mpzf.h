@@ -2,20 +2,11 @@
 // INRIA Saclay - Ile de France (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)        :  Marc Glisse
 
@@ -86,10 +77,11 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4146 4244 4267 4800)
+#  pragma warning(disable:4146 4244 4267 4702 4800)
      // warning on - applied on unsigned number
      // conversion with loss of data
      // conversion with loss of data
+     // unreachable code
      // int to bool performance
 #endif
 
@@ -145,7 +137,7 @@ template <class T, class = void> struct pool1 {
 template <class T, class D> std::vector<T> pool1<T,D>::data;
 
 // Use an intrusive single-linked list instead (allocate one more limb and use
-// it to store the pointer to next), the difference isn't that noticable (still
+// it to store the pointer to next), the difference isn't that noticeable (still
 // the list wins).  Neither is thread-safe (both can be with threadlocal, and
 // the list can be with an atomic compare-exchange (never tried)).  With gcc,
 // TLS has a large effect on classes with constructor/destructor, but is free
@@ -228,15 +220,7 @@ inline int clz (boost::uint64_t x) {
 // In C++11, std::fill_n returns a pointer to the end, but in C++03,
 // it returns void.
 inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
-#if CGAL_CXX11
   return std::fill_n (p, n, c);
-#else
-  mp_limb_t* q = p + n;
-  std::fill (p, q, c);
-  //std::fill_n (p, n, c);
-  //memset (p, sizeof(mp_limb_t)*n, c);
-  return q;
-#endif
 }
 } // namespace Mpzf_impl
 
@@ -356,8 +340,7 @@ struct Mpzf {
     exp=x.exp;
     if(size!=0) mpn_copyi(data(),x.data(),asize);
   }
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
-    && !defined(CGAL_MPZF_USE_CACHE)
+#if !defined(CGAL_MPZF_USE_CACHE)
   Mpzf(Mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
@@ -944,9 +927,7 @@ struct Mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
   operator mpq_class () const {
     mpq_class q;
     export_to_mpq_t(q.get_mpq_t());
@@ -954,9 +935,7 @@ struct Mpzf {
   }
 #endif
 
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
   operator Gmpq () const {
     Gmpq q;
     export_to_mpq_t(q.mpq());
@@ -983,9 +962,7 @@ struct Mpzf {
     }
   }
 #if 0
-#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
-#endif
 // This makes Mpzf==int ambiguous
   operator Gmpzf () const {
     mpz_t z;

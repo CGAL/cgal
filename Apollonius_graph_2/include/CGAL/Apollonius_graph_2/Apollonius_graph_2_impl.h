@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -689,7 +680,7 @@ insert(const Site_2& p, Vertex_handle vnear)
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
-  expand_conflict_region(start_f, p, l, fm, vm, NULL);
+  expand_conflict_region(start_f, p, l, fm, vm, nullptr);
 
   //  retriangulate_conflict_region(v, l, fm, vm);
   Vertex_handle v = retriangulate_conflict_region(p, l, fm, vm);
@@ -882,7 +873,7 @@ expand_conflict_region(const Face_handle& in_f,
 
       l.remove(e);
 
-      if ( fe != NULL )
+      if ( fe != nullptr )
       {
         Vh_triple* vhq = new Vh_triple[1];
 

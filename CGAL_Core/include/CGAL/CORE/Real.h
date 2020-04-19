@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Real.h
  *
@@ -34,7 +23,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 #ifndef _CORE_REAL_H_
 #define _CORE_REAL_H_
@@ -46,11 +35,11 @@ typedef RCImpl<RealRep> RCReal;
 class Real : public RCReal {
 public:
   Real(int i=0) : RCReal(new RealLong(i)) {}
-  Real(unsigned int ui) : RCReal(NULL) {
+  Real(unsigned int ui) : RCReal(nullptr) {
     (ui<=INT_MAX) ? (rep=new RealLong(static_cast<int>(ui))) : (rep=new RealBigInt(ui));
   }
   Real(long l) : RCReal(new RealLong(l)) {}
-  Real(unsigned long ul) : RCReal(NULL) {
+  Real(unsigned long ul) : RCReal(nullptr) {
     (ul<=LONG_MAX) ? (rep=new RealLong(static_cast<long>(ul))) : (rep=new RealBigInt(ul));
   }
   Real(float f) : RCReal(new RealDouble(f)) {}
@@ -58,10 +47,10 @@ public:
   Real(const BigInt& I) : RCReal(new RealBigInt(I)) {}
   Real(const BigRat& R) : RCReal(new RealBigRat(R)) {}
   Real(const BigFloat& F) : RCReal(new RealBigFloat(F)) {}
-  Real(const char* s, const extLong& prec=get_static_defInputDigits()) : RCReal(NULL) {
+  Real(const char* s, const extLong& prec=get_static_defInputDigits()) : RCReal(nullptr) {
     constructFromString(s, prec);
   }
-  Real(const std::string& s, const extLong& prec=get_static_defInputDigits()) : RCReal(NULL){
+  Real(const std::string& s, const extLong& prec=get_static_defInputDigits()) : RCReal(nullptr){
     constructFromString(s.c_str(), prec);
   }
 

@@ -168,7 +168,7 @@ void get_triangles(Polyhedron& polyhedron,
   typedef typename CGAL::Kernel_traits<Point>::Kernel::Triangle_3 Triangle;
 
   VPmap vpmap = get(CGAL::vertex_point,polyhedron);
-  BOOST_FOREACH(face_descriptor fd, faces(polyhedron)){
+  for(face_descriptor fd : faces(polyhedron)){
     halfedge_descriptor h=halfedge(fd, polyhedron);
     *out++ = Triangle(get(vpmap, target(h, polyhedron)),
                       get(vpmap, target(next(h, polyhedron), polyhedron)),

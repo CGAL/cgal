@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman
@@ -197,7 +188,108 @@ namespace internal {
   typename K::FT
   squared_distance(const typename K::Segment_2 &seg1,
                    const typename K::Segment_2 &seg2,
-                   const K& k)
+                   const K& k,
+                   const Cartesian_tag&)
+  {
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    bool crossing1, crossing2;
+    RT c1s, c1e, c2s, c2e;
+    if (seg1.source() == seg1.target())
+      return internal::squared_distance(seg1.source(), seg2, k);
+    if (seg2.source() == seg2.target())
+      return internal::squared_distance(seg2.source(), seg1, k);
+
+    Orientation o1s = orientation(seg2.source(), seg2.target(), seg1.source());
+    Orientation o1e = orientation(seg2.source(), seg2.target(), seg1.target());
+    if (o1s == RIGHT_TURN) {
+      crossing1 = (o1e != RIGHT_TURN);
+    } else {
+      if (o1e != LEFT_TURN) {
+        if (o1s == COLLINEAR && o1e == COLLINEAR)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        crossing1 = true;
+      } else {
+        crossing1 = (o1s == COLLINEAR);
+      }
+    }
+
+    Orientation o2s = orientation(seg1.source(), seg1.target(), seg2.source());
+    Orientation o2e = orientation(seg1.source(), seg1.target(), seg2.target());
+    if (o2s == RIGHT_TURN) {
+      crossing2 = (o2e != RIGHT_TURN);
+    } else {
+      if (o2e != LEFT_TURN) {
+        if (o2s == COLLINEAR && o2e == COLLINEAR)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        crossing2 = true;
+      } else {
+        crossing2 = (o2s == COLLINEAR);
+      }
+    }
+
+    if (crossing1) {
+      if (crossing2)
+        return (FT)0;
+
+      c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
+      c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
+      Comparison_result dm = compare(c2s,c2e);
+
+      if (dm == SMALLER) {
+        return internal::squared_distance(seg2.source(), seg1, k);
+      } else {
+        if (dm == LARGER) {
+          return internal::squared_distance(seg2.target(), seg1, k);
+        } else {
+          // parallel, should not happen (no crossing)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        }
+      }
+    } else {
+      c1s = CGAL::abs(wcross(seg2.source(), seg2.target(), seg1.source(), k));
+      c1e = CGAL::abs(wcross(seg2.source(), seg2.target(), seg1.target(), k));
+      Comparison_result dm = compare(c1s,c1e);
+      if (crossing2) {
+        if (dm == SMALLER) {
+          return internal::squared_distance(seg1.source(), seg2, k);
+        } else {
+          if (dm == LARGER) {
+            return internal::squared_distance(seg1.target(), seg2, k);
+          } else {
+            // parallel, should not happen (no crossing)
+            return internal::squared_distance_parallel(seg1, seg2, k);
+          }
+        }
+      } else {
+        FT min1, min2;
+
+        if (dm == EQUAL)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        min1 = (dm == SMALLER) ?
+                 internal::squared_distance(seg1.source(), seg2, k):
+                 internal::squared_distance(seg1.target(), seg2, k);
+
+        c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
+        c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
+        dm = compare(c2s,c2e);
+
+        if (dm == EQUAL)  // should not happen.
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        min2 = (dm == SMALLER) ?
+                 internal::squared_distance(seg2.source(), seg1, k):
+                 internal::squared_distance(seg2.target(), seg1, k);
+        return (min1 < min2) ? min1 : min2;
+      }
+    }
+  }
+
+  template <class K>
+  typename K::FT
+  squared_distance(const typename K::Segment_2 &seg1,
+                   const typename K::Segment_2 &seg2,
+                   const K& k,
+                   const Homogeneous_tag&)
   {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
@@ -285,6 +377,7 @@ namespace internal {
       }
     }
   }
+
 
   template <class K>
   inline typename K::RT
@@ -699,7 +792,8 @@ template <class K>
 inline typename K::FT
 squared_distance(const Segment_2<K> &seg1, const Segment_2<K> &seg2)
 {
-  return internal::squared_distance(seg1, seg2, K());
+  typedef typename K::Kernel_tag Tag;
+  return internal::squared_distance(seg1, seg2, K(), Tag());
 }
 
 template <class K>

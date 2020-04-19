@@ -287,7 +287,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
          * Second pass is a BFS initialized with all voxel of the border.
          * The last voxel of that BFS is used as the seed.
          */
-        int pass = 1; // pass will be equal to 2 in second pass
+        Marker pass = 1; // pass will be equal to 2 in second pass
 
         Indices bbox_min = indices;
         Indices bbox_max = indices;

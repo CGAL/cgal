@@ -36,7 +36,7 @@ int main()
 {
   std::vector< EPIC::Point_3> points;
   CGAL::Random_points_in_sphere_3<EPIC::Point_3,Creator> g(1.0);
-  CGAL::cpp11::copy_n( g, 600, std::back_inserter(points) );
+  std::copy_n( g, 600, std::back_inserter(points) );
 
   DT3_epic dt3_epic(points.begin(), points.end());
   DT3_epec dt3_epec;

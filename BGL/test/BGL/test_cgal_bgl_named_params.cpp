@@ -50,7 +50,6 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_map).v == 800000008);
   assert(get_parameter(np, CGAL::internal_np::face_to_face_map).v == 800000009);
 
-
     // Named parameters that we use in the package 'Mesh_3'
   assert(get_parameter(np, CGAL::internal_np::vertex_feature_degree).v == 9);
 
@@ -86,10 +85,25 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::erase_all_duplicates).v == 48);
   assert(get_parameter(np, CGAL::internal_np::require_same_orientation).v == 49);
   assert(get_parameter(np, CGAL::internal_np::use_bool_op_to_clip_surface).v == 50);
+  assert(get_parameter(np, CGAL::internal_np::face_size_map).v == 52);
+  assert(get_parameter(np, CGAL::internal_np::use_angle_smoothing).v == 53);
+  assert(get_parameter(np, CGAL::internal_np::use_area_smoothing).v == 54);
+  assert(get_parameter(np, CGAL::internal_np::use_Delaunay_flips).v == 55);
+  assert(get_parameter(np, CGAL::internal_np::use_safety_constraints).v == 56);
+  assert(get_parameter(np, CGAL::internal_np::area_threshold).v == 57);
+  assert(get_parameter(np, CGAL::internal_np::volume_threshold).v == 58);
+  assert(get_parameter(np, CGAL::internal_np::snapping_tolerance).v == 59);
+  assert(get_parameter(np, CGAL::internal_np::dry_run).v == 60);
+  assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 61);
+  assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
+  assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 62);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
   assert(get_parameter(np, CGAL::internal_np::get_placement_policy).v == 35);
+
+  // Named parameters that we use in the package 'Optimal_bounding_box'
+  assert(get_parameter(np, CGAL::internal_np::use_convex_hull).v == 63);
 
     // To-be-documented named parameters
   assert(get_parameter(np, CGAL::internal_np::face_normal).v == 36);
@@ -104,7 +118,6 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::projection_functor).v == 42);
   assert(get_parameter(np, CGAL::internal_np::apply_per_connected_component).v == 46);
   assert(get_parameter(np, CGAL::internal_np::output_iterator).v == 47);
-
 
   // Test types
 
@@ -165,10 +178,38 @@ void test(const NamedParameters& np)
   check_same_type<48>(get_parameter(np, CGAL::internal_np::erase_all_duplicates));
   check_same_type<49>(get_parameter(np, CGAL::internal_np::require_same_orientation));
   check_same_type<50>(get_parameter(np, CGAL::internal_np::use_bool_op_to_clip_surface));
+  check_same_type<52>(get_parameter(np, CGAL::internal_np::face_size_map));
+  check_same_type<53>(get_parameter(np, CGAL::internal_np::use_angle_smoothing));
+  check_same_type<54>(get_parameter(np, CGAL::internal_np::use_area_smoothing));
+  check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
+  check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
+
+  check_same_type<12340>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
+  check_same_type<12341>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
+  check_same_type<12342>(get_parameter(np, CGAL::internal_np::error_codes));
+  check_same_type<12343>(get_parameter(np, CGAL::internal_np::volume_inclusions));
+  check_same_type<12344>(get_parameter(np, CGAL::internal_np::face_connected_component_map));
+  check_same_type<12345>(get_parameter(np, CGAL::internal_np::connected_component_id_to_volume_id));
+  check_same_type<12346>(get_parameter(np, CGAL::internal_np::is_cc_outward_oriented));
+  check_same_type<12347>(get_parameter(np, CGAL::internal_np::intersecting_volume_pairs_output_iterator));
+  check_same_type<12348>(get_parameter(np, CGAL::internal_np::i_used_as_a_predicate));
+  check_same_type<12349>(get_parameter(np, CGAL::internal_np::nesting_levels));
+  check_same_type<12350>(get_parameter(np, CGAL::internal_np::i_used_for_volume_orientation));
+
+  check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
+  check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
+  check_same_type<59>(get_parameter(np, CGAL::internal_np::snapping_tolerance));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::dry_run));
+  check_same_type<61>(get_parameter(np, CGAL::internal_np::do_lock_mesh));
+  check_same_type<62>(get_parameter(np, CGAL::internal_np::do_simplify_border));
+  check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
   check_same_type<35>(get_parameter(np, CGAL::internal_np::get_placement_policy));
+
+  // Named parameters that we use in the package 'Optimal_bounding_box'
+  check_same_type<63>(get_parameter(np, CGAL::internal_np::use_convex_hull));
 
     // To-be-documented named parameters
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
@@ -183,6 +224,43 @@ void test(const NamedParameters& np)
   check_same_type<42>(get_parameter(np, CGAL::internal_np::projection_functor));
   check_same_type<46>(get_parameter(np, CGAL::internal_np::apply_per_connected_component));
   check_same_type<47>(get_parameter(np, CGAL::internal_np::output_iterator));
+
+  // Named parameters used in the package 'Point Set Processing'
+  check_same_type<9000>(get_parameter(np, CGAL::internal_np::point_map));
+  check_same_type<9001>(get_parameter(np, CGAL::internal_np::query_point_map));
+  check_same_type<9002>(get_parameter(np, CGAL::internal_np::normal_map));
+  check_same_type<9003>(get_parameter(np, CGAL::internal_np::diagonalize_traits));
+  check_same_type<9004>(get_parameter(np, CGAL::internal_np::svd_traits));
+  check_same_type<9005>(get_parameter(np, CGAL::internal_np::callback));
+  check_same_type<9006>(get_parameter(np, CGAL::internal_np::sharpness_angle));
+  check_same_type<9007>(get_parameter(np, CGAL::internal_np::edge_sensitivity));
+  check_same_type<9008>(get_parameter(np, CGAL::internal_np::neighbor_radius));
+  check_same_type<9009>(get_parameter(np, CGAL::internal_np::number_of_output_points));
+  check_same_type<9010>(get_parameter(np, CGAL::internal_np::size));
+  check_same_type<9011>(get_parameter(np, CGAL::internal_np::maximum_variation));
+  check_same_type<9012>(get_parameter(np, CGAL::internal_np::degree_fitting));
+  check_same_type<9013>(get_parameter(np, CGAL::internal_np::degree_monge));
+  check_same_type<9014>(get_parameter(np, CGAL::internal_np::threshold_percent));
+  check_same_type<9015>(get_parameter(np, CGAL::internal_np::threshold_distance));
+  check_same_type<9016>(get_parameter(np, CGAL::internal_np::attraction_factor));
+  check_same_type<9017>(get_parameter(np, CGAL::internal_np::plane_map));
+  check_same_type<9018>(get_parameter(np, CGAL::internal_np::plane_index_map));
+  check_same_type<9019>(get_parameter(np, CGAL::internal_np::select_percentage));
+  check_same_type<9020>(get_parameter(np, CGAL::internal_np::require_uniform_sampling));
+  check_same_type<9021>(get_parameter(np, CGAL::internal_np::point_is_constrained));
+  check_same_type<9022>(get_parameter(np, CGAL::internal_np::number_of_samples));
+  check_same_type<9023>(get_parameter(np, CGAL::internal_np::accuracy));
+  check_same_type<9024>(get_parameter(np, CGAL::internal_np::maximum_running_time));
+  check_same_type<9025>(get_parameter(np, CGAL::internal_np::overlap));
+  check_same_type<9026>(get_parameter(np, CGAL::internal_np::transformation));
+  check_same_type<9027>(get_parameter(np, CGAL::internal_np::point_set_filters));
+  check_same_type<9028>(get_parameter(np, CGAL::internal_np::matcher));
+  check_same_type<9029>(get_parameter(np, CGAL::internal_np::outlier_filters));
+  check_same_type<9030>(get_parameter(np, CGAL::internal_np::error_minimizer));
+  check_same_type<9031>(get_parameter(np, CGAL::internal_np::transformation_checkers));
+  check_same_type<9032>(get_parameter(np, CGAL::internal_np::inspector));
+  check_same_type<9033>(get_parameter(np, CGAL::internal_np::logger));
+  check_same_type<9034>(get_parameter(np, CGAL::internal_np::maximum_normal_deviation));
 }
 
 int main()
@@ -239,17 +317,75 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
-                         .use_binary_mode(A<51>(51))
                          .projection_functor(A<42>(42))
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
-                         .use_bool_op_to_clip_surface(A<50>(50))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))
                          .require_same_orientation(A<49>(49))
+                         .use_bool_op_to_clip_surface(A<50>(50))
+                         .use_binary_mode(A<51>(51))
+                         .face_size_map(A<52>(52))
+                         .use_angle_smoothing(A<53>(53))
+                         .use_area_smoothing(A<54>(54))
+                         .use_Delaunay_flips(A<55>(55))
+                         .use_safety_constraints(A<56>(56))
+                         .do_self_intersection_tests(A<12340>(12340))
+                         .do_orientation_tests(A<12341>(12341))
+                         .error_codes(A<12342>(12342))
+                         .volume_inclusions(A<12343>(12343))
+                         .face_connected_component_map(A<12344>(12344))
+                         .connected_component_id_to_volume_id(A<12345>(12345))
+                         .is_cc_outward_oriented(A<12346>(12346))
+                         .intersecting_volume_pairs_output_iterator(A<12347>(12347))
+                         .i_used_as_a_predicate(A<12348>(12348))
+                         .nesting_levels(A<12349>(12349))
+                         .i_used_for_volume_orientation(A<12350>(12350))
+                         .area_threshold(A<57>(57))
+                         .volume_threshold(A<58>(58))
+                         .snapping_tolerance(A<59>(59))
+                         .dry_run(A<60>(60))
+                         .do_lock_mesh(A<61>(61))
+                         .do_simplify_border(A<62>(62))
+                         .use_convex_hull(A<63>(63))
+                         .point_map(A<9000>(9000))
+                         .query_point_map(A<9001>(9001))
+                         .normal_map(A<9002>(9002))
+                         .diagonalize_traits(A<9003>(9003))
+                         .svd_traits(A<9004>(9004))
+                         .callback(A<9005>(9005))
+                         .sharpness_angle(A<9006>(9006))
+                         .edge_sensitivity(A<9007>(9007))
+                         .neighbor_radius(A<9008>(9008))
+                         .number_of_output_points(A<9009>(9009))
+                         .size(A<9010>(9010))
+                         .maximum_variation(A<9011>(9011))
+                         .degree_fitting(A<9012>(9012))
+                         .degree_monge(A<9013>(9013))
+                         .threshold_percent(A<9014>(9014))
+                         .threshold_distance(A<9015>(9015))
+                         .attraction_factor(A<9016>(9016))
+                         .plane_map(A<9017>(9017))
+                         .plane_index_map(A<9018>(9018))
+                         .select_percentage(A<9019>(9019))
+                         .require_uniform_sampling(A<9020>(9020))
+                         .point_is_constrained_map(A<9021>(9021))
+                         .number_of_samples(A<9022>(9022))
+                         .accuracy(A<9023>(9023))
+                         .maximum_running_time(A<9024>(9024))
+                         .overlap(A<9025>(9025))
+                         .transformation(A<9026>(9026))
+                         .point_set_filters(A<9027>(9027))
+                         .matcher(A<9028>(9028))
+                         .outlier_filters(A<9029>(9029))
+                         .error_minimizer(A<9030>(9030))
+                         .transformation_checkers(A<9031>(9031))
+                         .inspector(A<9032>(9032))
+                         .logger(A<9033>(9033))
+                         .maximum_normal_deviation(A<9034>(9034))
+                         .maximum_number_of_faces(A<78910>(78910))
        );
-
   return EXIT_SUCCESS;
 }

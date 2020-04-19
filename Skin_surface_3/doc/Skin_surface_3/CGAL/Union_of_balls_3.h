@@ -21,7 +21,5 @@ template< typename SkinSurfaceTraits_3 >
 class Union_of_balls_3 {
 public:
 
-/// @}
-
 }; /* end Union_of_balls_3 */
 } /* end namespace CGAL */

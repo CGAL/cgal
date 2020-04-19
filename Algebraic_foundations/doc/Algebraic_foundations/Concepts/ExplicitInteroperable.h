@@ -26,7 +26,5 @@ This is also the case for the respective global functions.
 class ExplicitInteroperable {
 public:
 
-/// @}
-
 }; /* end ExplicitInteroperable */
 

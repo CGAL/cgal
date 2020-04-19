@@ -49,7 +49,7 @@ struct MyItem
 
     typedef CGAL::Cell_attribute<Refs, Info_for_volume, CGAL::Tag_true> Vol_attribute;
 
-    typedef CGAL::cpp0x::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
+    typedef std::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
   };
 };
 
@@ -68,7 +68,7 @@ struct MyItem
 
     typedef CGAL::Cell_attribute_for_index<Refs, Info_for_volume, CGAL::Tag_true> Vol_attribute;
 
-    typedef CGAL::cpp0x::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
+    typedef std::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
   };
 };
 

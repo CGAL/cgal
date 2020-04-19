@@ -96,12 +96,16 @@ function(CGAL_setup_CGAL_dependencies target)
     use_CGAL_LEDA_support(${target} ${keyword})
   endif()
   
-  if (CGAL_HEADER_ONLY)
-    target_compile_definitions(${target} ${keyword} CGAL_HEADER_ONLY=1)
+  if (NOT CGAL_HEADER_ONLY)
+    target_compile_definitions(${target} ${keyword} CGAL_NOT_HEADER_ONLY=1)
   endif()
   if (RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     target_compile_definitions(${target} ${keyword} CGAL_TEST_SUITE=1)
   endif()
+
+  # CGAL now requires C++14. `decltype(auto)` is used as a marker of
+  # C++14.
+  target_compile_features(${target} ${keyword} cxx_decltype_auto)
 
   use_CGAL_Boost_support(${target} ${keyword})
 
@@ -115,12 +119,23 @@ function(CGAL_setup_CGAL_dependencies target)
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} ${keyword}
-      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS"
-      "/fp:strict"
-      "/fp:except-"
-      "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
-      "/bigobj"  # Use /bigobj by default
-      )
+      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
+    if(CMAKE_VERSION VERSION_LESS 3.11)
+      target_compile_options(${target} ${keyword}
+        /fp:strict
+        /fp:except-
+        /wd4503  # Suppress warnings C4503 about "decorated name length exceeded"
+        /bigobj  # Use /bigobj by default
+        )
+    else()
+      # The MSVC generator supports `$<COMPILE_LANGUAGE: >` since CMake 3.11.
+      target_compile_options(${target} ${keyword}
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
+        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
+        $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
+        )
+    endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     message( STATUS "Using Intel Compiler. Adding -fp-model strict" )
     if(WIN32)

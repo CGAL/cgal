@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -122,8 +113,8 @@ CGAL_REGISTER_OBJECT_WRAPPER(Weighted_point);
 template < typename Base_ , typename Derived_ = Default >
 struct Cartesian_wrap : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_wrap(){}
-    CGAL_CONSTEXPR Cartesian_wrap(int d):Base_(d){}
+    constexpr Cartesian_wrap(){}
+    constexpr Cartesian_wrap(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
     // TODO: pass the 2 types Self and Derived to the wrappers, they can use Self for most purposes and Derived only for Kernel_traits' typedef R.
@@ -145,30 +136,9 @@ struct Cartesian_wrap : public Base_
                     B b;
                     type(){}
                     type(Self const&k):b(k){}
-                    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX11
-                    template<class...U> result_type operator()(U&&...u)const{
+                    template<class...U> decltype(auto) operator()(U&&...u)const{
                             return b(internal::Forward_rep()(u)...);
                     }
-#else
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-                    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-                            return b(BOOST_PP_ENUM(N,CGAL_VAR,)); \
-                    }
-                    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-// In case the last argument needs to be non-const. Fragile...
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U),class V> result_type \
-                    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u),V&v)const{ \
-                            return b(BOOST_PP_ENUM(N,CGAL_VAR,),internal::Forward_rep()(v)); \
-                    }
-                    BOOST_PP_REPEAT_FROM_TO(1,8,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
             };
     };
 
@@ -188,20 +158,9 @@ struct Cartesian_wrap : public Base_
                     typedef typename map_result_tag<T>::type result_tag;
                     // FIXME: Self or Derived?
                     typedef typename Get_type<Self,result_tag>::type result_type;
-#ifdef CGAL_CXX11
                     template<class...U> result_type operator()(U&&...u)const{
                             return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
                     }
-#else
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-                    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-                            return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,CGAL_VAR,)); \
-                    }
-                    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
             };
     };
 
@@ -210,8 +169,8 @@ struct Cartesian_wrap : public Base_
 template < typename Base_ >
 struct Cartesian_refcount : public Base_
 {
-    CGAL_CONSTEXPR Cartesian_refcount(){}
-    CGAL_CONSTEXPR Cartesian_refcount(int d):Base_(d){}
+    constexpr Cartesian_refcount(){}
+    constexpr Cartesian_refcount(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_refcount Self;
 
@@ -242,23 +201,9 @@ struct Cartesian_refcount : public Base_
                     type(){}
                     type(Self const&k):b(k){}
                     typedef typename B::result_type result_type;
-#ifdef CGAL_CXX11
                     template<class...U> result_type operator()(U&&...u)const{
                             return b(internal::Forward_rep()(u)...);
                     }
-#else
-                    result_type operator()()const{
-                            return b();
-                    }
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-                    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-                            return b(BOOST_PP_ENUM(N,CGAL_VAR,)); \
-                    }
-                    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
             };
     };
 
@@ -275,23 +220,9 @@ struct Cartesian_refcount : public Base_
                     type(Self const&k):b(k){}
                     typedef typename map_result_tag<T>::type result_tag;
                     typedef typename Get_type<Self,result_tag>::type result_type;
-#ifdef CGAL_CXX11
                     template<class...U> result_type operator()(U&&...u)const{
                             return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
                     }
-#else
-                    result_type operator()()const{
-                             return result_type(Eval_functor(),b);
-                    }
-#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-                    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-                            return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,CGAL_VAR,)); \
-                    }
-                    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-#undef CGAL_VAR
-#endif
             };
     };
 

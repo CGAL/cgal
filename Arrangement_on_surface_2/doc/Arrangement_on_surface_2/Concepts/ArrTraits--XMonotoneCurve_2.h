@@ -16,8 +16,6 @@ Represents a planar (weakly) \f$ x\f$-monotone curve.
 class XMonotoneCurve_2 {
 public:
 
-/// @}
-
 }; /* end ArrTraits::XMonotoneCurve_2 */
 
 }

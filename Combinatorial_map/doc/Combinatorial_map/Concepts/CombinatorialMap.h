@@ -73,12 +73,12 @@ template<int i, int j>
 Dart_const_handle beta(Dart_const_handle dh) const;
 
 /*!
-Returns a handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex. `NULL` if such a dart does not exist.
+Returns a handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex. `nullptr` if such a dart does not exist.
 */
 Dart_handle opposite(Dart_handle dh);
 
 /*!
-Returns a const handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex, when the dart is const. `NULL` if such a dart does not exist.
+Returns a const handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex, when the dart is const. `nullptr` if such a dart does not exist.
 */
 Dart_const_handle opposite(Dart_const_handle dh) const;
 
@@ -146,7 +146,7 @@ template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_hand
 
 Links by \f$ \beta_i \f$ two by two all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`*dh1`) and <I>D2</I>=\f$ \langle{}\f$\f$ \beta_0\f$,\f$ \beta_2\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`*dh2`) such that <I>d2</I>=<I>f</I>(<I>d1</I>), where <I>f</I> is the bijection between <I>D1</I> and <I>D2</I> satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I> \f$ \in \f$ <I>D1</I>, for all <I>j</I> \f$ \in \f$ {1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)).
 
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generic map: for each <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are considered. If one attribute is NULL and the other not, the non NULL attribute is associated to all the darts of the resulting cell. When the two attributes are non NULL, functor \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute <I>attr1</I> is associated to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the generic map.
+If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generic map: for each <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are considered. If one attribute is `nullptr` and the other not, the non `nullptr` attribute is associated to all the darts of the resulting cell. When the two attributes are non `nullptr`, functor \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute <I>attr1</I> is associated to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the generic map.
 \pre \link CombinatorialMap::is_sewable `is_sewable<i>(dh1,dh2)`\endlink.
 
 \cgalAdvancedBegin

@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Periodic_4_hyperbolic_triangulation_2_Benchmarks )
 
-cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET COMPONENTS Core )
 

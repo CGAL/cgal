@@ -1,4 +1,5 @@
 struct Distance {
+  typedef Point Point_d;
   typedef Point Query_item;
   typedef double FT;
 

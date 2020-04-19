@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
@@ -40,27 +31,19 @@ namespace Intersections {
 // But it must be a template function since the original kernel must be
 // taken into account. (Michael.Hemmer@sophia.inria.fr)
 template <class K>
-#if CGAL_INTERSECTION_VERSION < 2
-CGAL::Object
-#else
 typename boost::optional< boost::variant<
                             typename K::Segment_3,
                             typename K::Point_3 > >
-#endif
 intersection_bl(const Bbox_3 &box,
         double lpx, double lpy, double lpz,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
   typedef
-#if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-#else
     typename
     boost::optional<
       boost::variant< typename K::Segment_3,
                       typename K::Point_3 > >
-#endif
     result_type;
 
   double seg_min = 0.0, seg_max = 1.0;
@@ -175,19 +158,10 @@ intersection_bl(const Bbox_3 &box,
   Vector_3 dir = Vector_3( FT(ldx), FT(ldy), FT(ldz));
 
   if (seg_max == seg_min) {
-#if CGAL_INTERSECTION_VERSION < 2
-    return make_object(ref_point + dir * FT(seg_max));
-#else
     return result_type(ref_point + dir * FT(seg_max));
-#endif
   }
-#if CGAL_INTERSECTION_VERSION < 2
-  return make_object(
-      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));
-#else
   return result_type(
       Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));
-#endif
 }
 
 } // namespace internal

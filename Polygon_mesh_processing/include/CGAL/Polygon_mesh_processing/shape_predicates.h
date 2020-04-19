@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Konstantinos Katrioplas,
@@ -32,7 +23,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <boost/foreach.hpp>
+#include <boost/range/has_range_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #include <limits>
@@ -80,10 +71,10 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, pm));
+                                          get_const_property_map(vertex_point, pm));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   return traits.equal_3_object()(get(vpmap, source(e, pm)), get(vpmap, target(e, pm)));
 }
@@ -93,6 +84,81 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
                         const PolygonMesh& pm)
 {
   return is_degenerate_edge(e, pm, parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// collects the degenerate edges within a given range of edges.
+///
+/// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+/// @tparam TriangleMesh a model of `HalfedgeGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param edges a subset of edges of `tm`
+/// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate edges are written
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                The traits class must provide the nested type `Point_3`,
+///                                and the nested functor `Equal_3` to check whether two points are identical.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+template <typename EdgeRange, typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_edges(const EdgeRange& edges,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+
+  for(edge_descriptor ed : edges)
+    if(is_degenerate_edge(ed, tm, np))
+      *out++ = ed;
+
+  return out;
+}
+
+template <typename EdgeRange, typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_edges(const EdgeRange& edges,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                typename boost::enable_if<
+                                  typename boost::has_range_iterator<EdgeRange>
+                                >::type* = 0)
+{
+  return degenerate_edges(edges, tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_edges()` with the range: `edges(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
+template <typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_edges(const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                ,
+                                typename boost::disable_if<
+                                  boost::has_range_iterator<TriangleMesh>
+                                >::type* = 0
+#endif
+                               )
+{
+  return degenerate_edges(edges(tm), tm, out, np);
+}
+
+template <typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_edges(const TriangleMesh& tm, OutputIterator out)
+{
+  return degenerate_edges(edges(tm), tm, out, CGAL::parameters::all_default());
 }
 
 /// \ingroup PMP_repairing_grp
@@ -133,10 +199,10 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
 
@@ -150,6 +216,83 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                  const TriangleMesh& tm)
 {
   return CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, tm, parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// collects the degenerate faces within a given range of faces.
+///
+/// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
+/// @tparam TriangleMesh a model of `FaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param faces a subset of faces of `tm`
+/// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate faces are put
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                 The traits class must provide the nested functor `Collinear_3`
+///                                 to check whether three points are collinear.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+template <typename FaceRange, typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_faces(const FaceRange& faces,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+  for(face_descriptor fd : faces)
+  {
+    if(is_degenerate_triangle_face(fd, tm, np))
+      *out++ = fd;
+  }
+  return out;
+}
+
+template <typename FaceRange, typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_faces(const FaceRange& faces,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                typename boost::enable_if<
+                                boost::has_range_iterator<FaceRange>
+                                >::type* = 0)
+{
+  return degenerate_faces(faces, tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_faces()` with the range: `faces(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
+template <typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_faces(const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                ,
+                                typename boost::disable_if<
+                                  boost::has_range_iterator<TriangleMesh>
+                                >::type* = 0
+#endif
+                                )
+{
+  return degenerate_faces(faces(tm), tm, out, np);
+}
+
+template <typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_faces(const TriangleMesh& tm, OutputIterator out)
+{
+  return degenerate_faces(faces(tm), tm, out, CGAL::parameters::all_default());
 }
 
 /// \ingroup PMP_repairing_grp
@@ -194,10 +337,10 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::FT                                               FT;
 
@@ -297,10 +440,10 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::FT                                               FT;
   typedef typename Traits::Vector_3                                         Vector_3;
@@ -308,9 +451,9 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   const FT sq_threshold = threshold * threshold;
   const halfedge_descriptor h0 = halfedge(f, tm);
 
-  cpp11::array<FT, 3> sq_lengths;
+  std::array<FT, 3> sq_lengths;
   int pos = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
+  for(halfedge_descriptor h : halfedges_around_face(h0, tm))
   {
     const FT sq_d = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
                                                                get(vpmap, target(h, tm)));
@@ -323,7 +466,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   }
 
   pos = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
+  for(halfedge_descriptor h : halfedges_around_face(h0, tm))
   {
     const vertex_descriptor v0 = source(h, tm);
     const vertex_descriptor v1 = target(h, tm);

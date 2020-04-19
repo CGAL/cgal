@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez
 //
@@ -44,8 +35,8 @@ public:
   typedef typename Cdt::Geom_traits::Ray_2        Ray;
   typedef typename Cdt::Geom_traits::Point_2      Point;
   typedef CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<Segment, Ray>,
-    CGAL::cpp11::tuple<std::back_insert_iterator<std::vector<Segment> >,
+    std::tuple<Segment, Ray>,
+    std::tuple<std::back_insert_iterator<std::vector<Segment> >,
                        std::back_insert_iterator<std::vector<Ray> > >
     > Construction_dispatcher;
 

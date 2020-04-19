@@ -29,7 +29,5 @@ Such a recursion anchor class is provided by the class class.
 class Sublayer {
 public:
 
-/// @}
-
 }; /* end Sublayer */
 

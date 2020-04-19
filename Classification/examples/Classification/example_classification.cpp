@@ -11,16 +11,12 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/bounding_box.h>
-
+#include <CGAL/tags.h>
 #include <CGAL/IO/read_ply_points.h>
 
 #include <CGAL/Real_timer.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;

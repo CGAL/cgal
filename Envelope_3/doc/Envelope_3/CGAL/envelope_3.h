@@ -158,8 +158,6 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// @}
   };
 
-/// @}
-
 }; /* end  */
 } /* end namespace CGAL */
 namespace CGAL {

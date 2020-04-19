@@ -30,8 +30,6 @@ template< typename Arrangement >
 class Arr_extended_dcel_text_formatter {
 public:
 
-/// @}
-
 }; /* end Arr_extended_dcel_text_formatter */
 } /* end namespace CGAL */
 
@@ -64,8 +62,6 @@ template< typename Arrangement >
 class Arr_face_extended_text_formatter {
 public:
 
-/// @}
-
 }; /* end Arr_face_extended_text_formatter */
 } /* end namespace CGAL */
 
@@ -95,8 +91,6 @@ operator.
 template< typename Arrangement >
 class Arr_text_formatter {
 public:
-
-/// @}
 
 }; /* end Arr_text_formatter */
 } /* end namespace CGAL */

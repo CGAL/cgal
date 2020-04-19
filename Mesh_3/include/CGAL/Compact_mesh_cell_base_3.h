@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Andreas Fabri
 
@@ -43,8 +34,63 @@
 
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
 #endif
+
+namespace internal_tbb
+{
+//classic pointer{
+//normal
+template<typename T>
+void set_weighted_circumcenter(T* &t, T* value)
+{
+  t = value;
+}
+
+//overload for nullptr
+template<typename T>
+void set_weighted_circumcenter(T* &t, std::nullptr_t)
+{
+  t = nullptr;
+}
+template<typename T>
+bool compare_weighted_circumcenter(T* t)
+{
+  return t == nullptr;
+}
+
+template<typename T>
+void delete_circumcenter(T* &t )
+{
+  delete t;
+}
+//} atomic {
+//normal
+template<typename T>
+void set_weighted_circumcenter(std::atomic<T*>& t, T* value)
+{
+  t.load() = value;
+}
+
+//nullptr
+template<typename T>
+void set_weighted_circumcenter(std::atomic<T*>& t, std::nullptr_t)
+{
+  t = nullptr;
+}
+
+template<typename T>
+bool compare_weighted_circumcenter(std::atomic<T*>& t)
+{
+  return t.load() == nullptr;
+}
+template<typename T>
+void delete_circumcenter(std::atomic<T*>& t)
+{
+  delete t.load();
+}
+//}
+} //end internal_tbb
 
 namespace CGAL {
 
@@ -61,8 +107,9 @@ class Compact_mesh_cell_base_3_base
 protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0)
-    , weighted_circumcenter_(NULL)
-  {}
+  {
+    internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
+  }
 
 public:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -104,10 +151,10 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
-  /// Precondition weighted_circumcenter_ == NULL
+  /// Precondition weighted_circumcenter_ == nullptr
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    CGAL_precondition(weighted_circumcenter_ == NULL);
+    CGAL_precondition(weighted_circumcenter_ == nullptr);
     weighted_circumcenter_ = cc;
   }
 
@@ -138,7 +185,7 @@ protected:
   Compact_mesh_cell_base_3_base()
   {
     bits_ = 0;
-    weighted_circumcenter_ = NULL;
+    weighted_circumcenter_ = nullptr;
   }
 
 public:
@@ -161,7 +208,8 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits | char(1 << facet), current_bits) != current_bits)
+
+    while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)))
     {
       current_bits = bits_;
     }
@@ -174,7 +222,7 @@ public:
     char current_bits = bits_;
     char mask = char(15 & ~(1 << facet));
     char wanted_value = current_bits & mask;
-    while (bits_.compare_and_swap(wanted_value, current_bits) != current_bits)
+    while (!bits_.compare_exchange_weak(current_bits, wanted_value))
     {
       current_bits = bits_;
     }
@@ -187,22 +235,23 @@ public:
     return ( (bits_ & char(1 << facet)) != 0 );
   }
 
-  /// If the circumcenter is already set (weighted_circumcenter_ != NULL),
+  /// If the circumcenter is already set (weighted_circumcenter_ != nullptr),
   /// this function "deletes" cc
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    if (weighted_circumcenter_.compare_and_swap(cc, NULL) != NULL)
+    Point_3* base_test = nullptr;
+    if (!weighted_circumcenter_.compare_exchange_strong(base_test, cc))
       delete cc;
   }
 
 private:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
-  tbb::atomic<char> bits_;
+  std::atomic<char> bits_;
 
 protected:
-  mutable tbb::atomic<Point_3*> weighted_circumcenter_;
+  mutable std::atomic<Point_3*> weighted_circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB
@@ -253,9 +302,9 @@ public:
 public:
   void invalidate_weighted_circumcenter_cache() const
   {
-    if (weighted_circumcenter_) {
-      delete weighted_circumcenter_;
-      weighted_circumcenter_ = NULL;
+    if (!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)) {
+      internal_tbb::delete_circumcenter(weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
   }
 
@@ -337,8 +386,9 @@ public:
 
   ~Compact_mesh_cell_base_3()
   {
-    if(weighted_circumcenter_ != NULL){
-      delete weighted_circumcenter_;
+    if(!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)){
+      internal_tbb::delete_circumcenter(weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
   }
 
@@ -449,7 +499,7 @@ public:
 
 
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
-  Point_iterator hidden_points_end() const { return NULL; }
+  Point_iterator hidden_points_end() const { return nullptr; }
   void hide_point (const Point&) const { }
 
   // We must override the functions that modify the vertices.
@@ -483,7 +533,7 @@ public:
   {
     CGAL_static_assertion((boost::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
-    if (weighted_circumcenter_ == NULL) {
+    if (weighted_circumcenter_ == nullptr) {
       this->try_to_set_circumcenter(
         new Point_3(gt.construct_weighted_circumcenter_3_object()
                         (this->vertex(0)->point(),
@@ -633,20 +683,20 @@ private:
 
 
   /// Stores surface_index for each facet of the cell
-  CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
+  std::array<Surface_patch_index, 4> surface_index_table_;
   /// Stores surface center of each facet of the cell
-  CGAL::cpp11::array<Point_3, 4> surface_center_table_;
+  std::array<Point_3, 4> surface_center_table_;
   /// Stores surface center index of each facet of the cell
 
-  CGAL::cpp11::array<Cell_handle, 4> N;
-  CGAL::cpp11::array<Vertex_handle, 4> V;
+  std::array<Cell_handle, 4> N;
+  std::array<Vertex_handle, 4> V;
 
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
   std::size_t time_stamp_;
 
-  CGAL::cpp11::array<Index, 4> surface_center_index_table_;
+  std::array<Index, 4> surface_center_index_table_;
   /// Stores visited facets (4 first bits)
 
   //  Point_container _hidden;

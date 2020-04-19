@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -26,6 +17,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -156,8 +148,8 @@ protected:
     do
     {
       internal::newell_single_step_3
-        (internal::Geom_utils<Kernel>::get_local_point(he->vertex()->point()),
-         internal::Geom_utils<Kernel>::get_local_point(he->next()->vertex()->point()),
+        (this->get_local_point(he->vertex()->point()),
+         this->get_local_point(he->next()->vertex()->point()),
          normal);
       ++nb;
       he=he->next();
@@ -195,16 +187,23 @@ protected:
   const ColorFunctor& m_fcolor;
 };
 
-template<class Polyhedron, class ColorFunctor>
-void draw(const Polyhedron& apoly,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
+// Specialization of draw function.
+#define CGAL_POLY_TYPE CGAL::Polyhedron_3 \
+  <PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>
+
+template<class PolyhedronTraits_3,
+         class PolyhedronItems_3,
+         template < class T, class I, class A>
+         class T_HDS,
+         class Alloc>
+void draw(const CGAL_POLY_TYPE& apoly,
+          const char* title="Polyhedron Basic Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -212,27 +211,15 @@ void draw(const Polyhedron& apoly,
     int argc=1;
     const char* argv[2]={"polyhedron_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimplePolyhedronViewerQt<Polyhedron, ColorFunctor>
+    DefaultColorFunctorPolyhedron fcolor;
+    SimplePolyhedronViewerQt<CGAL_POLY_TYPE, DefaultColorFunctorPolyhedron>
       mainwindow(app.activeWindow(), apoly, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template<class Polyhedron>
-void draw(const Polyhedron& apoly, const char* title, bool nofill)
-{
-  DefaultColorFunctorPolyhedron c;
-  draw(apoly, title, nofill, c);
-}
-
-template<class Polyhedron>
-void draw(const Polyhedron& apoly, const char* title)
-{ draw(apoly, title, false); }
-
-template<class Polyhedron>
-void draw(const Polyhedron& apoly)
-{ draw(apoly, "Basic Polyhedron Viewer"); }
+#undef CGAL_POLY_TYPE
 
 } // End namespace CGAL
 

@@ -1,6 +1,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/IO/OFF_reader.h>
 
 
 #include <CGAL/boost/graph/property_maps.h>
@@ -258,6 +259,11 @@ void general_tests(const TriangleMesh& m1,
   std::cout << "Max distance to triangle mesh (sequential) "
             << PMP::max_distance_to_triangle_mesh<CGAL::Sequential_tag>(points,m1)
             << "\n";
+
+  std::vector<typename GeomTraits::Point_3> samples;
+  PMP::sample_triangle_mesh(m1, std::back_inserter(samples));
+  std::cout << samples.size()<<" points sampled on mesh."<<std::endl;
+
 }
 
 void test_concept()
@@ -267,16 +273,21 @@ void test_concept()
   general_tests<CK>(m1,m2);
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
+  if(argc != 3)
+  {
+    std::cerr << "Missing input meshes" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Mesh m1,m2;
   std::ifstream input(argv[1]);
   input >> m1;
   input.close();
-
   input.open(argv[2]);
   input >> m2;
-
+  input.close();
   std::cout << "First mesh has " << num_faces(m1) << " faces\n";
   std::cout << "Second mesh has " << num_faces(m2) << " faces\n";
 
@@ -303,6 +314,17 @@ int main(int, char** argv)
   general_tests<K>(m1,m2);
 
   test_concept();
+
+  std::vector<std::vector<std::size_t> > faces;
+  std::vector<K::Point_3> points;
+  input.open(argv[1]);
+  CGAL::read_OFF(input, points, faces);
+  input.close();
+
+  std::vector<K::Point_3> samples;
+  PMP::sample_triangle_soup(points, faces, std::back_inserter(samples));
+  std::cout<<samples.size()<<" points sampled on soup."<<std::endl;
+
 
   return 0;
 }

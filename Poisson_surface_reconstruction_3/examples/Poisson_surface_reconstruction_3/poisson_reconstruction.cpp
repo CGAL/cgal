@@ -14,7 +14,6 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
-#include <CGAL/trace.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -29,7 +28,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <math.h>
-#include <boost/foreach.hpp>
 
 // ----------------------------------------------------------------------------
 // Types
@@ -175,7 +173,7 @@ int main(int argc, char * argv[])
 
       // Converts Polyhedron vertices to point set.
       // Computes vertices normal from connectivity.
-      BOOST_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor v,
+      for(boost::graph_traits<Polyhedron>::vertex_descriptor v :
                     vertices(input_mesh)){
         const Point& p = v->point();
         Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v,input_mesh);
@@ -323,7 +321,7 @@ int main(int argc, char * argv[])
                                                         sm_radius*average_spacing,  // Max triangle size
                                                         sm_distance*average_spacing); // Approximation error
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
+    std::cerr         << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius<<",\n"
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
@@ -362,7 +360,6 @@ int main(int argc, char * argv[])
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     AABB_tree tree(faces(output_mesh).first, faces(output_mesh).second, output_mesh);
-    tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh
     double max_distance = DBL_MIN;

@@ -162,14 +162,14 @@ QString Values_list::name(const int i) const
 bool Values_list::enabled(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
-    return 0.;
+    return false;
   else
-    return treeWidget->topLevelItem(i)->data(Value, Qt::CheckStateRole).toDouble();
+    return treeWidget->topLevelItem(i)->data(Value, Qt::CheckStateRole).toInt() > 0;
 }
 
 bool Values_list::enabled(const QTreeWidgetItem* item) const
 {
-    return item->data(Value, Qt::CheckStateRole).toDouble();
+    return item->data(Value, Qt::CheckStateRole).toInt() > 0;
 }
 
 const QTreeWidgetItem* Values_list::item(const int i) const

@@ -71,7 +71,7 @@ int load_and_remesh_poly(TM &mesh) {
 template <typename K, typename TM>
 void run_approximation(const TM &mesh) {
   std::vector<typename K::Point_3> points;
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
+  std::vector<std::array<std::size_t, 3> > triangles;
 
   CGAL::Surface_mesh_approximation::approximate_triangle_mesh(mesh,
     CGAL::parameters::max_number_of_proxies(6).

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Clement Jamin
@@ -59,7 +50,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#  include <tbb/task_scheduler_init.h>
+#  include <thread>
 #endif
 
 #include <boost/format.hpp>
@@ -230,7 +221,7 @@ public:
   ~Mesher_3()
   {
     // The lock data structure is going to be destroyed
-    r_c3t3_.triangulation().set_lock_data_structure(NULL);
+    r_c3t3_.triangulation().set_lock_data_structure(nullptr);
   }
 
   /// Launch mesh refinement
@@ -668,7 +659,7 @@ initialize()
 #  endif
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-        float(tbb::task_scheduler_init::default_num_threads())
+        float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()

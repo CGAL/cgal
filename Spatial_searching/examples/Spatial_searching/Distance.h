@@ -1,5 +1,6 @@
 struct Distance {
   typedef Point Query_item;
+  typedef Point Point_d;
   typedef double FT;
   typedef CGAL::Dimension_tag<3> D;
 

@@ -34,10 +34,10 @@ void display_distribution(Distribution_displayer* display,
       const double height = ( distribution[k]+0. ) * echelle;
       display->fill_rectangle(k    * width, 0,
                               (k+1)* width, height,
-                              CGAL::BLACK);
+                              CGAL::black());
     }
     else
       display->segment(k     * width, 0.,
                        (k+1) * width, 0.,
-                       CGAL::RED);
+                       CGAL::red());
 }

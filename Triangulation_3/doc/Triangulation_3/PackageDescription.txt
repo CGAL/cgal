@@ -13,12 +13,15 @@
 /// \defgroup PkgTriangulation3VertexCellClasses Vertex and Cell Classes
 /// \ingroup PkgTriangulation3Ref
 
-/*! Draw.
+/*!
   \code
    #include <CGAL/draw_triangulation_3.h>
   \endcode
 */
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
+/// \ingroup PkgTriangulation3Ref
+
+/// \defgroup PkgIOTriangulation3 I/O for a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
 
 /*!
@@ -118,7 +121,11 @@ is opposite to the vertex with the same index. See
 - `CGAL::Triangulation_3::Locate_type`
 
 \cgalCRPSection{Draw a Triangulation 3}
-- `CGAL::draw<T3>`
 
+- \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
+
+\cgalCRPSection{I/O}
+ - \link PkgIOTriangulation3 CGAL:Triangulation_3::file_input<Tr_src, ConvertVertex, ConvertCell>()\endlink
+ - \link PkgIOTriangulation3 CGAL::file_input<Tr_src, Tr_tgt, ConvertVertex, ConvertCell>()\endlink
 */
 

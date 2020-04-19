@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein         <wein@post.tau.ac.il>
@@ -113,11 +104,7 @@ assign(const Self& arr)
     dup_c = m_curves_alloc.allocate (1);
 
     p_cv = &(*ocit);
-#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
-#else
-    m_curves_alloc.construct(dup_c, *p_cv);
-#endif
     m_curves.push_back (*dup_c);
 
     // Assign a map entry.
@@ -185,11 +172,7 @@ void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::clear ()
     ++cit;
 
     m_curves.erase (p_cv);
-#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc,p_cv);
-#else
-    m_curves_alloc.destroy (p_cv);
-#endif
     m_curves_alloc.deallocate (p_cv, 1);
   }
   m_curves.destroy();

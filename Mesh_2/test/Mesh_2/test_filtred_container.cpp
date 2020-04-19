@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>
 #include <CGAL/Random.h>
 

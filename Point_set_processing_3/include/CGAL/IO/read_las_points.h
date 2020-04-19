@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
@@ -24,9 +15,6 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-#error CGAL LAS reader requires a C++11 compiler
-#endif
 
 #include <tuple>
 
@@ -344,7 +332,7 @@ namespace internal {
    LAS_property::Tag...>` if the user wants to use one or several
    %LAS properties to construct a complex object (for example,
    storing 4 `unsigned short` %LAS properties into a %Color object
-   that can for example be a `CGAL::cpp11::array<unsigned short,
+   that can for example be a `std::array<unsigned short,
    4>`). In that case, the second element of the tuple should be a
    functor that constructs the value type of `PropertyMap` from N
    objects of of type `LAS_property::Tag::type`.
@@ -473,8 +461,8 @@ bool read_las_points(std::istream& stream,
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
 
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   return read_las_points_with_properties (stream, output,
                                           make_las_point_reader (point_map));

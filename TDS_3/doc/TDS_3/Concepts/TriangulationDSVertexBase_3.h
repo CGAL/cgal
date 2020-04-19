@@ -3,13 +3,17 @@
 \ingroup PkgTDS3Concepts
 \cgalConcept
 
+\cgalRefines TriangulationDataStructure_3::Vertex
+
+The concept TriangulationDSVertexBase_3 describes the requirements for the vertex base class
+of a CGAL::Triangulation_data_structure_3<Vb,Cb>.
+
+Note that if the `CGAL::Triangulation_data_structure_3` is plugged into a triangulation class,
+the vertex base class may have additional geometric requirements depending on the triangulation class.
+
 At the bottom level of 3D-triangulations
 (see Sections \ref Triangulation3secdesign and \ref TDS3secdesign),
 a vertex provides access to one of its incident cells through a handle.
-
-Note that when you use the triangulation data structure as parameter of a
-geometric triangulation, the vertex base class has additional geometric
-requirements : it has to match the `TriangulationVertexBase_3` concept.
 
 Since the Triangulation data structure is the class which defines the handle
 types, the vertex base class has to be somehow parameterized by the
@@ -24,31 +28,29 @@ cell classes. The <I>rebound</I> base classes so obtained are the classes which
 are used as base classes for the final vertex and cell classes.
 More information can be found in Section \ref TDS3secdesign.
 
-\cgalHasModel CGAL::Triangulation_ds_vertex_base_3
-\cgalHasModel CGAL::Triangulation_vertex_base_3
-\cgalHasModel CGAL::Triangulation_vertex_base_with_info_3
+\cgalHasModel `CGAL::Triangulation_ds_vertex_base_3<TDS>`
 
-\sa `TriangulationVertexBase_3`
-\sa `TriangulationHierarchyVertexBase_3`
 \sa `TriangulationDSCellBase_3`
-\sa `TriangulationCellBase_3`
+\sa `CGAL::Triangulation_data_structure_3<Vb,Cb>`
 
 */
 
-class TriangulationDSVertexBase_3 {
+class TriangulationDSVertexBase_3
+{
 public:
 
 /// \name Types
 /// @{
 
 /*!
-This template class has to define a type `Rebind_TDS<TDS2>::%Other` which is the
+This template class has to define a type `Rebind_TDS<TDS3>::%Other` which is the
 <I>rebound</I> vertex, that is, the one whose `Triangulation_data_structure`
-will be the actually used one. `Rebind_TDS<TDS2>::%Other` will be the real base
+will be the actually used one. `Rebind_TDS<TDS3>::%Other` will be the real base
 class of `Triangulation_data_structure_3::Vertex`.
 \note It can be implemented using a nested template class.
+\sa Section \ref tds3cyclic
 */
-template <typename TDS2>
+template <typename TDS3>
 using Rebind_TDS = unspecified_type;
 
 /*!
@@ -74,32 +76,12 @@ typedef TriangulationDataStructure_3::Cell_handle Cell_handle;
 /*!
 Default constructor.
 */
-TriangulationVertexBase_3();
+TriangulationDSVertexBase_3();
 
 /*!
 Constructs a vertex pointing to cell `c`.
 */
-TriangulationVertexBase_3(Cell_handle c);
-
-/// @}
-
-/// \name Access Functions
-/// @{
-
-/*!
-Returns the pointer to an incident cell
-*/
-Cell_handle cell() const;
-
-/// @}
-
-/// \name Setting
-/// @{
-
-/*!
-Sets the incident cell.
-*/
-void set_cell(Cell_handle c);
+TriangulationDSVertexBase_3(Cell_handle c);
 
 /// @}
 

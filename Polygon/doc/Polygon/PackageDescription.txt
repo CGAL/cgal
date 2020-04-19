@@ -7,6 +7,22 @@
 /// \ingroup PkgPolygon2Ref
 
 /*!
+  \code
+   #include <CGAL/draw_polygon_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawPolygon2 Draw a 2D Polygon
+/// \ingroup PkgPolygon2Ref
+
+/*!
+  \code
+  #include <CGAL/draw_polygon_with_holes_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawPolygonWithHoles2 Draw a 2D Polygon with Holes
+/// \ingroup PkgPolygon2Ref
+
+/*!
 \addtogroup PkgPolygon2Ref
 
 \cgalPkgDescriptionBegin{2D Polygons,PkgPolygon2}
@@ -52,6 +68,12 @@ The assertion flags for the polygons and polygon operations use
 - `CGAL::polygon_area_2()`
 - `CGAL::right_vertex_2()`
 - `CGAL::top_vertex_2()`
+
+\cgalCRPSection{Draw a Polygon_2}
+- \link  PkgDrawPolygon2 CGAL::draw<P>() \endlink
+
+\cgalCRPSection{Draw a Polygon_with_holes_2}
+- \link  PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink
 
 */
 

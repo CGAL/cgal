@@ -13,7 +13,6 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 #include <map>
 #include <boost/unordered_map.hpp>
-#include <boost/foreach.hpp>
 #include <CGAL/boost/graph/helpers.h>
 
 
@@ -42,7 +41,8 @@ fct(const P& )
 {
   std::map<Descriptor,int> M;
   Descriptor d;
-  M.find(d);
+  typename std::map<Descriptor,int>::const_iterator it = M.find(d);
+  CGAL_USE(it);
 
   boost::unordered_map<Descriptor, int> U;
   U[d] = 12;
@@ -57,7 +57,9 @@ void fct2()
   { // For dart handle
   std::map<dh, int> M;
   dh e;
-  M.find(e);
+  typename std::map<dh, int>::const_iterator it = M.find(e);
+  CGAL_USE(it);
+
   boost::unordered_map<dh, int> U;
   U[e] = 12;
   }
@@ -65,7 +67,9 @@ void fct2()
   { // For vertex attribute handle
   std::map<vh, int> M;
   vh e;
-  M.find(e);
+  typename std::map<vh, int>::const_iterator it = M.find(e);
+  CGAL_USE(it);
+
   boost::unordered_map<vh, int> U;
   U[e] = 12;
   }
@@ -93,7 +97,7 @@ void test_edge_hash_and_null(const P& p)
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(p))
+  for(halfedge_descriptor h : halfedges(p))
   {
     assert(
       hash_value( edge(h,p) ) ==
@@ -146,8 +150,9 @@ int main()
 
 #ifdef CGAL_LINKED_WITH_TBB
   Triangulation_3 T3;
-fct3(T3);
+  fct3(T3);
 #endif
+
   return 0;
 }
 

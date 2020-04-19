@@ -129,11 +129,11 @@ void go(const int N)
   CGAL_assertion(D == 2 || D == 3);
 
   // Generate points (in a common "array" format)
-  std::vector<CGAL::cpp11::array<double, D> > coords;
+  std::vector<std::array<double, D> > coords;
   coords.reserve(N);
   for (int i = 0; i < N; ++i)
   {
-    CGAL::cpp11::array<double, D> pt;
+    std::array<double, D> pt;
     for (int j = 0; j < D; ++j)
       pt[j] = CGAL::default_random.get_double(-1., 1.);
     coords.push_back(pt);

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
@@ -49,8 +40,11 @@ private:
   typedef Vertex_iterator                               T_Vertex_iterator;
   typedef Cell_iterator                                 T_Cell_iterator;
   typedef typename T_Cell_iterator::value_type          T_Cell;
-  typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
   typedef typename T_Vertex_iterator::value_type        T_Vertex;
+
+  typedef typename T_Vertex::Cell_handle                T_Cell_handle;
+  typedef typename T_Cell::Vertex_handle                T_Vertex_handle;
+
   typedef typename T_Vertex_iterator::value_type *      T_Vertex_pointer;
   typedef typename T_Cell_iterator::value_type *        T_Cell_pointer;
 
@@ -138,7 +132,7 @@ public:
 
 
   bool is_inside(T_Cell_iterator ch, int i) {
-    CGAL_assertion(&*ch != NULL);
+    CGAL_assertion(ch.operator->() != nullptr);
     //return (traits.sign(ch,i) == POSITIVE);
     T_vertex_map_it it = triang_vertex_signs.find((ch->vertex(i)));
 
@@ -146,7 +140,7 @@ public:
       bool side = (traits.sign(ch,i) == POSITIVE);
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) ==
                      triang_vertex_signs.end());
-      CGAL_assertion(&*ch != NULL);
+      CGAL_assertion(ch.operator->() != nullptr);
       triang_vertex_signs[(ch->vertex(i))] = side;
       CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) !=
                      triang_vertex_signs.end());

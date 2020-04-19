@@ -132,7 +132,7 @@ window queries, enclosing queries, and inverse range queries on
 the keys. Clearly, an inverse range query makes only sense in the
 segment tree.
 In order to perform an inverse range query, a range query of
-\f$ \epsilon\f$ width has to be performed. We prefered not to offer an
+\f$ \epsilon\f$ width has to be performed. We preferred not to offer an
 extra function for this sort of query, since the inverse range
 query is a special case of the range query. Furthermore, offering
 an inverse range query in the segment tree class implies offering this

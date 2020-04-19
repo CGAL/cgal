@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
@@ -133,7 +124,7 @@ public:
 
   typedef typename GT::Periodic_3_offset_3     Offset;
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
-  typedef CGAL::cpp11::array<int, 3>           Covering_sheets;
+  typedef std::array<int, 3>           Covering_sheets;
 
   // point types
   typedef typename TDS::Vertex::Point          Point;
@@ -145,13 +136,13 @@ public:
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
 
-  typedef CGAL::cpp11::array<Periodic_point, 2> Periodic_segment;
-  typedef CGAL::cpp11::array<Periodic_point, 3> Periodic_triangle;
-  typedef CGAL::cpp11::array<Periodic_point, 4> Periodic_tetrahedron;
+  typedef std::array<Periodic_point, 2> Periodic_segment;
+  typedef std::array<Periodic_point, 3> Periodic_triangle;
+  typedef std::array<Periodic_point, 4> Periodic_tetrahedron;
 
-  typedef CGAL::cpp11::array<Periodic_point_3, 2> Periodic_segment_3;
-  typedef CGAL::cpp11::array<Periodic_point_3, 3> Periodic_triangle_3;
-  typedef CGAL::cpp11::array<Periodic_point_3, 4> Periodic_tetrahedron_3;
+  typedef std::array<Periodic_point_3, 2> Periodic_segment_3;
+  typedef std::array<Periodic_point_3, 3> Periodic_triangle_3;
+  typedef std::array<Periodic_point_3, 4> Periodic_tetrahedron_3;
 
   typedef typename TDS::Vertex                 Vertex;
   typedef typename TDS::Cell                   Cell;
@@ -264,7 +255,7 @@ protected:
   Covering_sheets _cover;
 
 public:
-  /** @name Creation */ //@{
+  /** @name Creation */
   Periodic_3_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0, 1,1,1),
                              const Geometric_traits& gt = Geometric_traits())
     : _gt(gt), _tds()
@@ -353,7 +344,7 @@ public:
       vit->clear_offset();
   }
 
-  /** @name Assignment */ //@{
+  /** @name Assignment */
   Periodic_3_triangulation_3& operator=(Periodic_3_triangulation_3 tr)
   {
     swap(tr);
@@ -383,7 +374,6 @@ public:
     _cover = CGAL::make_array(3,3,3);
     init_tds();
   }
-  //@}
 
 private:
   /// Initializes the triangulation data structure
@@ -394,7 +384,7 @@ private:
   }
 
 public:
-  /** @name Access functions */ //@{
+  /** @name Access functions */
   const Geometric_traits& geom_traits() const { return _gt; }
   const TDS& tds() const { return _tds; }
   TDS& tds() { return _tds; }
@@ -651,7 +641,6 @@ public:
 
 public:
   /** @name Geometric access functions */
-  /// @{
 
   // *************************************************************************
   // -*-*-*-*-*-*-*-*-*-*-*-*-*-* POINT -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -984,10 +973,9 @@ public:
   }
 
   // end of geometric functions
-  /// @}
 
 public:
-  /** @name Queries */ //@{
+  /** @name Queries */
   bool is_vertex(const Point& p, Vertex_handle& v) const;
 
   bool is_vertex(Vertex_handle v) const {
@@ -1116,7 +1104,6 @@ public:
   bool are_equal(const Facet& f, Cell_handle n, int j) const {
     return _tds.are_equal(f.first, f.second, n, j);
   }
-  //@}
 
 #ifdef CGAL_NO_STRUCTURAL_FILTERING
   Cell_handle
@@ -1225,16 +1212,15 @@ public:
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
 protected:
-  /** @name Location helpers */ //@{
+  /** @name Location helpers */
 //  Cell_handle periodic_locate(const Point& p, const Offset& o_p,
 //    Locate_type& lt, int& li, int& lj, Cell_handle start) const;
 
   Bounded_side side_of_cell(const Point& p, const Offset& off, Cell_handle c,
                             Locate_type& lt, int& i, int& j) const;
-  //@}
 
 public:
-  /** @name Point Location */ //@{
+  /** @name Point Location */
   /** Wrapper function for locate if only the request point is given.
     */
   Cell_handle locate(const Point& p, Cell_handle start = Cell_handle()) const
@@ -1283,10 +1269,9 @@ public:
     }
     return side_of_cell(p,Offset(),c,lt,i,j);
   }
-  //@}
 
 private:
-  /** @name Insertion helpers */ //@{
+  /** @name Insertion helpers */
   template < class Conflict_tester, class Point_hider, class CoverManager >
   Vertex_handle periodic_insert(const Point& p, const Offset& o, Locate_type lt,
                                 Cell_handle c, const Conflict_tester& tester,
@@ -1331,7 +1316,6 @@ protected:
                  Triple<OutputIteratorBoundaryFacets,
                         OutputIteratorCells,
                         OutputIteratorInternalFacets> it) const;
-  //@}
 
 protected:
 
@@ -1392,10 +1376,9 @@ protected:
     }
     return double_vertices;
   }
-  //@}
 
 private:
-  /** @name Removal helpers */ //@{
+  /** @name Removal helpers */
   Vertex_triple make_vertex_triple(const Facet& f) const
   {
     Cell_handle ch = f.first;
@@ -1409,17 +1392,15 @@ private:
 
   void make_hole(Vertex_handle v, std::map<Vertex_triple,Facet>& outer_map,
                  std::vector<Cell_handle>& hole);
-  //@}
 
 protected:
-  /** @name Removal */ //@{
+  /** @name Removal */
   template < class PointRemover, class CoverManager >
   bool periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_manager,
                        const bool abort_if_cover_change = false);
 
   template < class PointRemover, class CT, class CoverManager >
   void remove(Vertex_handle v, PointRemover& remover, CT& ct, CoverManager& cover_manager);
-  //@}
 
   void delete_vertex(Vertex_handle vertex_handle)
   {
@@ -1449,7 +1430,7 @@ protected:
   }
 
 public:
-  /** @name Traversal */ //@{
+  /** @name Traversal */
   Cell_iterator cells_begin() const {
     return _tds.cells_begin();
   }
@@ -1659,10 +1640,9 @@ public:
   Facet mirror_facet(Facet f) const {
     return _tds.mirror_facet(f);
   }
-  //@}
 
 private:
-  /** @name Checking helpers */ //@{
+  /** @name Checking helpers */
   /// calls has_self_edges for every cell of the triangulation
   bool has_self_edges() const
   {
@@ -1673,10 +1653,9 @@ private:
   }
 
   bool has_self_edges(Cell_handle c) const;
-  //@}
 
 public:
-  /** @name Checking */ //@{
+  /** @name Checking */
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
 
@@ -1684,7 +1663,6 @@ protected:
   template <class ConflictTester>
   bool is_valid_conflict(ConflictTester& tester, bool verbose = false,
                          int level = 0) const;
-  //@}
 
 public:
   /** @name Functors */
@@ -1772,12 +1750,11 @@ public:
   }
 
 protected:
-  /** @name Friends */ //@{
+  /** @name Friends */
   friend std::istream& operator>> <>
       (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr);
   friend std::ostream& operator<< <>
       (std::ostream& os, const Periodic_3_triangulation_3<GT,TDS>& tr);
-  //@}
 
 protected:
   template <class ConstructCircumcenter>
@@ -3643,10 +3620,10 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   }
 
   // Store neighboring offsets in a separate data structure
-  std::list<CGAL::cpp11::array<Offset,4> > off_nb;
+  std::list<std::array<Offset,4> > off_nb;
   for(typename std::list<Cell_handle>::iterator cit = original_cells.begin();
        cit != original_cells.end(); ++cit) {
-    CGAL::cpp11::array<Offset,4> off_nb_c;
+    std::array<Offset,4> off_nb_c;
     for(int i=0; i<4; i++) {
       Cell_handle ccc = *cit;
       Cell_handle nnn = ccc->neighbor(i);
@@ -3706,7 +3683,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   }
 
   // Set neighboring relations of cell copies
-  typename std::list<CGAL::cpp11::array<Offset,4> >::iterator oit = off_nb.begin();
+  typename std::list<std::array<Offset,4> >::iterator oit = off_nb.begin();
   for(typename std::list<Cell_handle>::iterator cit = original_cells.begin();
        cit != original_cells.end(); ++cit, ++oit) {
     CGAL_triangulation_assertion( oit != off_nb.end() );
