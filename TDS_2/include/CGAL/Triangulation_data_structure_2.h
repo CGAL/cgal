@@ -58,6 +58,22 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
 
 public:
+  class Face_data {
+    unsigned char conflict_state;
+  public:
+    Face_data() : conflict_state(0) {}
+
+    void clear()            { conflict_state = 0; }
+    void mark_in_conflict() { conflict_state = 1; }
+    void mark_on_boundary() { conflict_state = 2; }
+    void mark_processed()   { conflict_state = 1; }
+
+    bool is_clear()       const { return conflict_state == 0; }
+    bool is_in_conflict() const { return conflict_state == 1; }
+    bool is_on_boundary() const { return conflict_state == 2; }
+    bool processed() const { return conflict_state == 1; }
+  };
+
   // Tools to change the Vertex and Face types of the TDS.
   template < typename Vb2 >
   struct Rebind_vertex {
