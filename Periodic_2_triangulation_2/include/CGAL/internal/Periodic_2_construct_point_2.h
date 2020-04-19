@@ -15,9 +15,14 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
+#include <CGAL/Periodic_2_offset_2.h>
+
 namespace CGAL {
 
-template < typename K_, typename Construct_point_2_base_>
+// the domain is necessarily an iso rectangle
+template <typename K_,
+          typename Offset_ = CGAL::Periodic_2_offset_2,
+          typename Construct_point_2_base_ = typename K_::Construct_point_2>
 class Periodic_2_construct_point_2
   : public Construct_point_2_base_
 {
@@ -25,7 +30,7 @@ class Periodic_2_construct_point_2
   typedef K_                                 Kernel;
 
   typedef typename Kernel::Point_2           Point;
-  typedef typename Kernel::Offset            Offset;
+  typedef Offset_                            Offset;
   typedef typename Kernel::Iso_rectangle_2   Iso_rectangle_2;
 
 public:

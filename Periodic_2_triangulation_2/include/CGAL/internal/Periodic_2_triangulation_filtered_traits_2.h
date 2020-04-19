@@ -15,6 +15,10 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+
+#include <CGAL/Periodic_2_triangulation_traits_2.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
 #include <CGAL/Filtered_predicate.h>
@@ -22,12 +26,8 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
 
-#include <CGAL/Periodic_2_triangulation_traits_2.h>
+namespace CGAL {
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
-
-namespace CGAL
-{
 // The Offset_converter is parametrized by a usual kernel converter,
 // and adds the conversions for Offsets.
 template <typename Converter_>
@@ -51,22 +51,42 @@ struct Offset_converter_2
 };
 
 // The argument is supposed to be a Filtered_kernel like kernel.
-template <class K_, typename Off_>
+template <class Kernel_,
+          class Offset_ = CGAL::Periodic_2_offset_2,
+          class Domain_ = typename Kernel_::Iso_rectangle_2,
+          class Construct_point_2_ = Default>
 class Periodic_2_triangulation_filtered_traits_base_2
-  : public Periodic_2_triangulation_traits_base_2<K_, Off_>
+  : public Periodic_2_triangulation_traits_base_2<
+             Kernel_, Offset_, Domain_,
+             typename Default::Get<Construct_point_2_,
+                                   Periodic_2_construct_point_2<Kernel_> >::type>
 {
-  typedef Periodic_2_triangulation_traits_base_2<K_, Off_> Base;
-  typedef K_                                               Kernel;
+  typedef Kernel_                                                      Kernel;
+  typedef Offset_                                                      Offset;
+  typedef Domain_                                                      Domain;
 
-  typedef typename Kernel::Exact_kernel                    EKernel;
-  typedef typename Kernel::Approximate_kernel              AKernel;
-  typedef typename Kernel::C2E                             C2E;
-  typedef typename Kernel::C2F                             C2F;
+  typedef Periodic_2_construct_point_2<Kernel>                         Construct_point_2_def;
+  typedef typename Default::Get<Construct_point_2_,
+                                Construct_point_2_def>::type          Construct_point_2;
+
+  typedef Periodic_2_triangulation_traits_base_2<
+            Kernel, Offset, Domain, Construct_point_2>                 Base;
+
+  typedef typename Kernel::Exact_kernel                                EKernel;
+  typedef typename Kernel::Approximate_kernel                          AKernel;
+  typedef typename Kernel::C2E                                         C2E;
+  typedef typename Kernel::C2F                                         C2F;
+
+  // @fixme below need to be templated by exact domain and exact CP2... so... maybe: ?
+  // struct Get_exact_domain<domain> with a partial spec
+  // Get_exact_domain<CGAL::Iso_rectangle_2<K> > := K::Exact_kernel::Iso_rectangle_2
+  // and Get_exact_domain<CGAL::Lattice<K> > := Lattice<K::Exact_kernel> ?
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_2_triangulation_traits_2<EKernel, Off_> Exact_traits;
+  typedef Periodic_2_triangulation_traits_2<EKernel, Off_>             Exact_traits;
+
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_2_triangulation_traits_2<AKernel, Off_> Filtering_traits;
+  typedef Periodic_2_triangulation_traits_2<AKernel, Off_>             Filtering_traits;
 
 public:
   typedef typename Kernel::Iso_rectangle_2 Iso_rectangle_2;

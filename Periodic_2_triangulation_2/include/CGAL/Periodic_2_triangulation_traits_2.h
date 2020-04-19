@@ -24,34 +24,38 @@
 
 namespace CGAL {
 
-template <class K_,
-          class Off_, // = CGAL::Periodic_2_offset_2,
-          class Domain_, // = Default,
-          class PeriodicConstructPoint_2_> // = Default>
+template <class Kernel_,
+          class Offset_ = CGAL::Periodic_2_offset_2,
+          class Domain_ = typename Kernel_::Iso_rectangle_2,
+          class Construct_point_2_ = Default>
 class Periodic_2_triangulation_traits_base_2
-  : public K_
+  : public Kernel_ // @todo really shouldn't have to do that actually
 {
+public:
+  typedef Kernel_                                                 Kernel;
+  typedef Offset_                                                 Offset;
+  typedef Offset                                                  Periodic_2_offset_2;
+
+  typedef Domain_                                                 Domain;
+
+  typedef typename Kernel::FT                                     FT;
+  typedef typename Kernel::RT                                     RT;
+  typedef typename Kernel::Point_2                                Point_2;
+  typedef typename Kernel::Segment_2                              Segment_2;
+  typedef typename Kernel::Triangle_2                             Triangle_2;
+  typedef typename Kernel::Iso_rectangle_2                        Iso_rectangle_2;
+
+  typedef Periodic_2_construct_point_2<Kernel, Offset>            Construct_point_2_def;
+  typedef typename Default::Get<Construct_point_2_,
+                                Construct_point_2_def>::type      Construct_point_2;
+
+private:
+  // Not truly "Self" since we grab the default value from CGAL::Default
   typedef Periodic_2_triangulation_traits_base_2<
-            K_, Off_, Domain_, PeriodicConstructPoint_2_> Self;
-  typedef K_                                                       Base;
+            Kernel_, Offset_, Domain_, Construct_point_2>         Self;
+  typedef Kernel_                                                 Base;
 
 public:
-  typedef K_                                    Kernel;
-  typedef Off_                                  Offset;
-
-  typedef typename Kernel::FT                   FT;
-  typedef typename Kernel::RT                   RT;
-  typedef typename Kernel::Point_2              Point_2;
-  typedef typename Kernel::Segment_2            Segment_2;
-  typedef typename Kernel::Triangle_2           Triangle_2;
-  typedef typename Kernel::Iso_rectangle_2      Iso_rectangle_2;
-
-  typedef Domain_                               Domain;
-
-  typedef Offset                                Periodic_2_offset_2;
-
-  typedef PeriodicConstructPoint_2_             Construct_point_2; // @fixme Default::Get...
-
   // Triangulation predicates
   typedef Functor_with_offset_points_adaptor_2<Self, typename Kernel::Less_x_2>
       Less_x_2;
@@ -71,20 +75,22 @@ public:
       Construct_triangle_2;
 
   // Constructor
-  virtual ~Periodic_2_triangulation_traits_base_2() { }
+  Periodic_2_triangulation_traits_base_2(const Domain& d = Domain(),
+                                         const Kernel& k = Kernel())
+    : Base(k), domain(d)
+  { }
 
-  Periodic_2_triangulation_traits_base_2() { } // @tmp
-  Periodic_2_triangulation_traits_base_2(const Domain& domain,
-                                         const Kernel& k)
-    : Base(k), _domain(domain)
+  Periodic_2_triangulation_traits_base_2(const Periodic_2_triangulation_traits_base_2& other)
+    : Base(static_cast<const Base&>(other)), domain(other.get_domain())
   { }
 
   // Access
-  const Domain& get_domain() const { return _domain; }
+  void set_domain(const Domain& d) { domain = d; }
+  const Domain& get_domain() const { return domain; }
 
   // Operations
   Construct_point_2 construct_point_2_object() const {
-    return Construct_point_2(&_domain, this->Kernel::construct_point_2_object());
+    return Construct_point_2(&domain, this->Kernel::construct_point_2_object());
   }
 
     // Predicates
@@ -113,59 +119,65 @@ public:
   }
 
 protected:
-  const Domain& _domain;
+  Domain domain;
 };
 
-
 // Forward declaration for the filtered traits
-template <class K_,
-          class Off_ = CGAL::Periodic_2_offset_2,
-          bool Has_filtered_predicates = internal::Has_filtered_predicates<K_>::value >
-class Periodic_2_triangulation_traits_2;
+template <class K,
+          class O = CGAL::Periodic_2_offset_2,
+          class D = typename K::Iso_rectangle_2,
+          class CP = Default,
+          bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
+class Periodic_2_triangulation_traits_2
+  : public Periodic_2_triangulation_traits_base_2<K, O, D, CP> // @tmp (this is just a forward declaration normally)
+{
+public:
+  typedef Periodic_2_triangulation_traits_base_2<K, O, D, CP> Base;
+  Periodic_2_triangulation_traits_2(const D& d = D(), const K& k = K()) : Base(d, k) { }
+};
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 } // namespace CGAL
 
 // Partial specialization for Filtered_kernel<CK>.
 #include <CGAL/internal/Periodic_2_triangulation_filtered_traits_2.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
-#if 0
-template <class K_, class Off_>
-class Periodic_2_triangulation_traits_2<K_, Off_, false>
-  : public Periodic_2_triangulation_traits_base_2<K_, Off_>
+template <class K, class O, class D, class CP>
+class Periodic_2_triangulation_traits_2<K, O, D, CP, false>
+  : public Periodic_2_triangulation_traits_base_2<K, O, D, CP>
 {
-  typedef Periodic_2_triangulation_traits_base_2<K_, Off_>        Base;
+  typedef Periodic_2_triangulation_traits_base_2<K, O, D, CP>     Base;
 
 public:
-  typedef K_                                                      Kernel;
-  typedef typename Kernel::Iso_rectangle_2                        Iso_rectangle_2;
+  typedef K                                                       Kernel;
+  typedef typename Kernel::Domain                                 Domain;
 
-  Periodic_2_triangulation_traits_2(const Iso_rectangle_2& domain = Iso_rectangle_2(0,0,1,1),
-                                    const Kernel& k = Kernel())
+  // @todo restore default construction of traits with a unit iso rectangle
+  Periodic_2_triangulation_traits_2(const Domain& domain, const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 };
 
-template <class K_, class Off_>
-class Periodic_2_triangulation_traits_2<K_, Off_, true>
+template <class K, class O, class D, class CP>
+class Periodic_2_triangulation_traits_2<K, O, D, CP, true>
   : public Periodic_2_triangulation_filtered_traits_2<
-             K_, Off_, internal::Has_static_filters<K_>::value>
+             K, O, D, CP, internal::Has_static_filters<K>::value>
 {
   typedef Periodic_2_triangulation_filtered_traits_2<
-            K_, Off_, internal::Has_static_filters<K_>::value>  Base;
+            K, O, D, CP, internal::Has_static_filters<K>::value>  Base;
 
 public:
-  typedef K_                                                   Kernel;
-  typedef typename Kernel::Iso_rectangle_2                     Iso_rectangle_2;
+  typedef K                                                       Kernel;
+  typedef typename Kernel::Domain                                 Domain;
 
-  Periodic_2_triangulation_traits_2(const Iso_rectangle_2& domain = Iso_rectangle_2(0,0,1,1),
-                                    const Kernel& k = Kernel())
+  Periodic_2_triangulation_traits_2(const Domain& domain, const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 };
-#endif
+
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 } //namespace CGAL
 

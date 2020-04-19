@@ -50,7 +50,7 @@ public:
   };
 
 public:
-  Periodic_2_triangulation_vertex_base_2() : Base() {}
+  Periodic_2_triangulation_vertex_base_2() : Base(), _offset_flag(false) {}
   Periodic_2_triangulation_vertex_base_2(const Point & p)
     : Base(p), _off(), _offset_flag(false) {}
   Periodic_2_triangulation_vertex_base_2(const Point & p, Face_handle f)

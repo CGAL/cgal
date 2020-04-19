@@ -23,6 +23,7 @@ class Functor_with_offset_points_adaptor_2
   typedef K_                                    Kernel;
   typedef Functor_                              Functor;
 
+  typedef typename Kernel::FT                   FT;
   typedef typename Kernel::Point_2              Point;
   typedef typename Kernel::Offset               Offset;
 
@@ -58,6 +59,13 @@ public:
                          const Offset& o0, const Offset& o1, const Offset& o2,
                          const Offset& o3, const Offset& o4) const {
     return operator()(cp(p0,o0), cp(p1,o1), cp(p2,o2), cp(p3,o3), cp(p4,o4));
+  }
+
+  // for compare_squared_radius_2, for example
+  result_type operator()(const Point& p0, const Point& p1, const Point& p2,
+                         const Offset& o0, const Offset& o1, const Offset& o2,
+                         const FT& c) const {
+    return operator()(cp(p0,o0), cp(p1,o1), cp(p2,o2), c);
   }
 
   const Construct_point_2 cp;

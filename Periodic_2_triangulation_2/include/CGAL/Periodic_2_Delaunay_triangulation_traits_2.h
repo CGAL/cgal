@@ -13,11 +13,8 @@
 #ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 #define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
-
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-#include <CGAL/internal/Periodic_2_construct_point_2.h>
 #include <CGAL/internal/Functor_with_offset_points_adaptor_2.h>
 
 #include <CGAL/Periodic_2_offset_2.h>
@@ -27,38 +24,57 @@
 
 namespace CGAL {
 
-template <class K_,
-          class Off_ = typename CGAL::Periodic_2_offset_2>
+template <class Kernel_,
+          class Offset_ = CGAL::Periodic_2_offset_2,
+          class Domain_ = typename Kernel_::Iso_rectangle_2,
+          class Construct_point_2_ = Default>
 class Periodic_2_Delaunay_triangulation_traits_base_2
-  : public Periodic_2_triangulation_traits_2<K_, Off_>
+  : public Periodic_2_triangulation_traits_2<
+             Kernel_, Offset_, Domain_,
+             typename Default::Get<Construct_point_2_,
+                                   Periodic_2_construct_point_2<Kernel_, Offset_> >::type>
 {
-  typedef Periodic_2_Delaunay_triangulation_traits_base_2<K_, Off_>  Self;
-  typedef Periodic_2_triangulation_traits_2<K_, Off_>                Base;
+public:
+  typedef Kernel_                                                 Kernel;
+  typedef Offset_                                                 Offset;
+  typedef Domain_                                                 Domain;
+
+  typedef Periodic_2_construct_point_2<Kernel, Offset>            Construct_point_2_def;
+  typedef typename Default::Get<Construct_point_2_,
+                                Construct_point_2_def>::type      Construct_point_2;
+
+private:
+  typedef Periodic_2_Delaunay_triangulation_traits_base_2<
+            Kernel, Offset, Domain, Construct_point_2>            Self;
+  typedef Periodic_2_triangulation_traits_2<
+            Kernel, Offset, Domain, Construct_point_2>            Base;
 
 public:
-  typedef K_                                  Kernel;
-  typedef Off_                                Offset;
-
-  typedef typename Base::RT                   RT;
-  typedef typename Base::FT                   FT;
-  typedef typename Base::Point_2              Point_2;
-  typedef typename Base::Periodic_2_offset_2  Periodic_2_offset_2;
-  typedef typename Base::Iso_rectangle_2      Iso_rectangle_2;
+  typedef typename Base::RT                                       RT;
+  typedef typename Base::FT                                       FT;
+  typedef typename Base::Point_2                                  Point_2;
+  typedef typename Base::Periodic_2_offset_2                      Periodic_2_offset_2;
+  typedef typename Base::Iso_rectangle_2                          Iso_rectangle_2;
 
 public:
-  Periodic_2_Delaunay_triangulation_traits_base_2(const Iso_rectangle_2& domain,
-                                                  const Kernel& k)
+  Periodic_2_Delaunay_triangulation_traits_base_2(const Domain& domain = Domain(),
+                                                  const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 
+  // Predicates
   typedef Functor_with_offset_points_adaptor_2<Self, typename Kernel::Compare_distance_2>
       Compare_distance_2;
   typedef Functor_with_offset_points_adaptor_2<Self, typename Kernel::Side_of_oriented_circle_2>
       Side_of_oriented_circle_2;
+  typedef Functor_with_offset_points_adaptor_2<Self, typename Kernel::Compare_squared_radius_2>
+      Compare_squared_radius_2;
 
+  // Constructions
   typedef Functor_with_offset_points_adaptor_2<Self, typename Kernel::Construct_circumcenter_2>
       Construct_circumcenter_2;
 
+  // Predicates
   Compare_distance_2 compare_distance_2_object() const {
     return Compare_distance_2(this->Base::compare_distance_2_object(),
                               this->construct_point_2_object());
@@ -67,17 +83,31 @@ public:
     return Side_of_oriented_circle_2(this->Base::side_of_oriented_circle_2_object(),
                                      this->construct_point_2_object());
   }
+  Compare_squared_radius_2 compare_squared_radius_2_object() const {
+     return Compare_squared_radius_2(this->Base::compare_squared_radius_2_object(),
+                                     this->construct_point_2_object());
+  }
 
+  // Constructions
   Construct_circumcenter_2 construct_circumcenter_2_object() const {
     return Construct_circumcenter_2(this->Base::construct_circumcenter_2_object(),
                                     this->construct_point_2_object());
   }
 };
 
-template <class K_,
-          class Off_ = CGAL::Periodic_2_offset_2,
-          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K_>::value >
-class Periodic_2_Delaunay_triangulation_traits_2;
+template <class K,
+          class O = CGAL::Periodic_2_offset_2,
+          class D = typename K::Iso_rectangle_2,
+          class CP = Default,
+          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K>::value >
+class Periodic_2_Delaunay_triangulation_traits_2
+   : public Periodic_2_Delaunay_triangulation_traits_base_2<K, O, D, CP> // @tmp this is just a forward declaration normally
+{
+public:
+  typedef Periodic_2_Delaunay_triangulation_traits_base_2<K, O, D, CP> Base;
+  Periodic_2_Delaunay_triangulation_traits_2(const D& d = D(), const K& k = K()) : Base(d, k) { }
+};
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 } //namespace CGAL
 
@@ -86,42 +116,40 @@ class Periodic_2_Delaunay_triangulation_traits_2;
 
 namespace CGAL {
 
-template <class K_, class Off_>
-class Periodic_2_Delaunay_triangulation_traits_2<K_, Off_, false>
-  : public Periodic_2_Delaunay_triangulation_traits_base_2<K_, Off_>
+template <class K, class O, class D, class CP>
+class Periodic_2_Delaunay_triangulation_traits_2<K, O, D, CP, false>
+  : public Periodic_2_Delaunay_triangulation_traits_base_2<K, O, D, CP>
 {
-  typedef Periodic_2_Delaunay_triangulation_traits_base_2<K_, Off_> Base;
+  typedef Periodic_2_Delaunay_triangulation_traits_base_2<K, O, D, CP> Base;
 
 public:
-  typedef K_                                                        Kernel;
-  typedef typename Kernel::Iso_rectangle_2                          Iso_rectangle_2;
+  typedef K_                                                           Kernel;
+  typedef typename Kernel::Domain                                      Domain;
 
-  Periodic_2_Delaunay_triangulation_traits_2(const Iso_rectangle_2& domain = Iso_rectangle_2(0,0,1,1),
-                                             const Kernel& k = Kernel())
+  Periodic_2_Delaunay_triangulation_traits_2(const Domain& domain, const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 };
 
-template <typename K_, typename Off_>
-class Periodic_2_Delaunay_triangulation_traits_2<K_, Off_, true>
+template <class K, class O, class D, class CP>
+class Periodic_2_Delaunay_triangulation_traits_2<K, O, D, CP, true>
     : public Periodic_2_Delaunay_triangulation_filtered_traits_2<
-               K_, Off_, internal::Has_static_filters<K_>::value>
+               K, O, D, CP, internal::Has_static_filters<K>::value>
 {
   typedef Periodic_2_Delaunay_triangulation_filtered_traits_2<
-            K_, Off_, internal::Has_static_filters<K_>::value>      Base;
+            K, O, D, CP, internal::Has_static_filters<K>::value>    Base;
 
 public:
-  typedef K_                                                        Kernel;
-  typedef typename Kernel::Iso_rectangle_2                          Iso_rectangle_2;
+  typedef K                                                         Kernel;
+  typedef typename Kernel::Domain                                   Domain;
 
-  Periodic_2_Delaunay_triangulation_traits_2(const Iso_rectangle_2& domain = Iso_rectangle_2(0,0,1,1),
-                                             const Kernel& k = Kernel())
+  Periodic_2_Delaunay_triangulation_traits_2(const Domain& domain, const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 };
 
-} //namespace CGAL
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
-#endif
+} // namespace CGAL
 
 #endif // CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H

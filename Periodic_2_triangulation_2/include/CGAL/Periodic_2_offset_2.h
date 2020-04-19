@@ -19,8 +19,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Cartesian.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
 /// The class Periodic_2_offset_2 is a model of the concept Periodic_2Offset_2.
 class Periodic_2_offset_2
@@ -185,6 +184,6 @@ Periodic_2_offset_2 min(const Periodic_2_offset_2 &off1, const Periodic_2_offset
   return min(off1, min(off2, off3));
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_PERIODIC_2_OFFSET_H

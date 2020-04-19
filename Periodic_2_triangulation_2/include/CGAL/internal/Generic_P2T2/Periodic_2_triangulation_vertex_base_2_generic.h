@@ -38,7 +38,7 @@ public:
   };
 
 public:
-  Periodic_2_triangulation_vertex_base_2_generic() : Base() {}
+  Periodic_2_triangulation_vertex_base_2_generic() : Base(), _offset_flag(false) {}
   Periodic_2_triangulation_vertex_base_2_generic(const Point & p)
     : Base(p), _off(), _offset_flag(false) {}
   Periodic_2_triangulation_vertex_base_2_generic(const Point & p, Face_handle f)

@@ -1,19 +1,31 @@
+// Copyright (c) 2020 XXXXX
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Mael Rouxel-Labbé
+//                 Georg Osang
+
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_GENERIC_H
 #define CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_GENERIC_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-
-#include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Dummy_tds_2.h>
 
 #include <CGAL/Periodic_2_offset_2.h>
 
-namespace CGAL
-{
+#include <array>
+#include <fstream>
+
+namespace CGAL {
 
 template < typename Gt,
            typename Fb = Triangulation_face_base_2<Gt> >
@@ -38,12 +50,12 @@ public:
   };
 
 public:
-  Periodic_2_triangulation_face_base_2_generic() : Fb(), is_canonical(false), has_color(false) { }
+  Periodic_2_triangulation_face_base_2_generic() : Fb(), is_canonical(false) { }
 
   Periodic_2_triangulation_face_base_2_generic(Vertex_handle v0,
                                                Vertex_handle v1,
                                                Vertex_handle v2)
-    : Fb(v0, v1, v2), is_canonical(false), has_color(false)
+    : Fb(v0, v1, v2), is_canonical(false)
   { }
 
   Periodic_2_triangulation_face_base_2_generic(Vertex_handle v0,
@@ -52,7 +64,7 @@ public:
                                                Face_handle n0,
                                                Face_handle n1,
                                                Face_handle n2)
-    : Fb(v0, v1, v2, n0, n1, n2), is_canonical(false), has_color(false)
+    : Fb(v0, v1, v2, n0, n1, n2), is_canonical(false)
   { }
 
   /// Periodic functions
@@ -81,12 +93,7 @@ public:
 
 private:
   bool is_canonical;
-  cpp11::array<Offset, 3> _off;
-
-public:
-  // @tmp: For testing, remove this later.
-  bool has_color;
-  CGAL::Color color;
+  std::array<Offset, 3> _off;
 };
 
 template < class Tds >
