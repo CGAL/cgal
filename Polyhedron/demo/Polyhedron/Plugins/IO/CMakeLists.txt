@@ -19,6 +19,9 @@ target_link_libraries(off_to_nef_plugin PUBLIC scene_nef_polyhedron_item)
 polyhedron_demo_plugin(polylines_io_plugin Polylines_io_plugin KEYWORDS IO Mesh_3)
 target_link_libraries(polylines_io_plugin PUBLIC scene_polylines_item)
 
+polyhedron_demo_plugin(wkt_plugin WKT_io_plugin KEYWORDS IO PointSetProcessing Mesh_3)
+target_link_libraries(wkt_plugin PUBLIC scene_polylines_item)
+
 polyhedron_demo_plugin(stl_plugin STL_io_plugin KEYWORDS IO PMP)
 target_link_libraries(stl_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 

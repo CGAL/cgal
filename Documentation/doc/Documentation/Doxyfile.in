@@ -13,7 +13,8 @@ GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
 EXAMPLE_PATH        = ${CGAL_Convex_hull_2_EXAMPLE_DIR} \
                       ${CGAL_Kernel_23_EXAMPLE_DIR} \
                       ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR} \
-                      ${CGAL_Surface_mesh_EXAMPLE_DIR}
+                      ${CGAL_Surface_mesh_EXAMPLE_DIR} \
+                      ${CMAKE_SOURCE_DIR}/Classification/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCE_DIR}/hacks.js \
