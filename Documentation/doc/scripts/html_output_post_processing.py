@@ -355,7 +355,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     class_and_struct_files=list(package_glob('./*/class*.html'))
     class_and_struct_files.extend(package_glob('./*/struct*.html'))
     for fn in class_and_struct_files:
-        re_replace_first_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
+        re_replace_first_in_file(r'<p>Inherits\s*(.*)</p>', r'<h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
 
     # remove class name in Definition section if there is no default template
     # parameter documented

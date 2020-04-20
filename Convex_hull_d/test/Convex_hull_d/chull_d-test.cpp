@@ -79,9 +79,15 @@ int main()
     Convex_hull_d::Point_const_iterator   pit;
     Convex_hull_d::Vertex_iterator  vit;
     Convex_hull_d::Simplex_iterator sit;
-    for (pit = T1.points_begin(); pit != T1.points_end(); pit++) *pit;
-    for (vit = T1.vertices_begin(); vit != T1.vertices_end(); vit++) *vit;
-    for (sit = T1.simplices_begin(); sit != T1.simplices_end(); sit++) *sit;
+    for (pit = T1.points_begin(); pit != T1.points_end(); pit++) {
+      const Point& p = *pit;
+      CGAL_USE(p);
+    }
+    for (vit = T1.vertices_begin(); vit != T1.vertices_end(); vit++)
+      *vit;
+    for (sit = T1.simplices_begin(); sit != T1.simplices_end(); sit++)
+      *sit;
+
     T1.is_valid();
     T1.clear(2);
     CGAL_TEST(T1.number_of_vertices()==0);

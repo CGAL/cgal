@@ -199,6 +199,20 @@ tag used to select the implementation to be used among an algorithm-specific lis
 <b>Default:</b> algorithm-specific.
 \cgalNPEnd
 
+\cgalNPBegin{prevent_unselection} \anchor BGL_prevent_unselection
+Boolean used to indicate if selection can be only extended or if it can also be shrinked.\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `false`.
+\cgalNPEnd
+
+\cgalNPBegin{geom_traits} \anchor BGL_geom_traits
+is the geometric traits instance used.\n
+<b>Type:</b> a Geometric traits class.\n
+<b>Default</b>:
+\code typename CGAL::Kernel_traits<
+        typename boost::property_traits<
+          typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
+\cgalNPEnd
 
 \cgalNPTableEnd
 

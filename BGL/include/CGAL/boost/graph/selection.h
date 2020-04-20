@@ -16,6 +16,12 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_set.hpp>
 
+#include <CGAL/boost/graph/Dual.h>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/iterator/filter_iterator.hpp>
+
+#include <CGAL/boost/graph/alpha_expansion_graphcut.h>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
@@ -56,6 +62,225 @@ extract_selection_boundary(
   }
   return out;
 }
+
+template <typename GeomTraits,
+          typename FaceGraph,
+          typename IsSelectedMap,
+          typename FaceIndexMap,
+          typename VertexPointMap>
+struct Regularization_graph
+{
+  typedef boost::graph_traits<FaceGraph> GT;
+  typedef typename GT::face_descriptor fg_face_descriptor;
+  typedef typename GT::face_iterator fg_face_iterator;
+  typedef typename GT::halfedge_descriptor fg_halfedge_descriptor;
+  typedef typename GT::edge_descriptor fg_edge_descriptor;
+  typedef typename GT::edge_iterator fg_edge_iterator;
+  typedef typename GT::vertex_descriptor fg_vertex_descriptor;
+
+  typedef fg_face_descriptor vertex_descriptor;
+  typedef fg_face_iterator vertex_iterator;
+  typedef fg_edge_descriptor edge_descriptor;
+  typedef boost::undirected_tag directed_category;
+  typedef boost::disallow_parallel_edge_tag edge_parallel_category;
+  typedef boost::edge_list_graph_tag traversal_category;
+
+  struct Filter_border_edges
+  {
+    FaceGraph* fg;
+    Filter_border_edges (FaceGraph& fg) : fg (&fg) { }
+    bool operator() (const fg_edge_descriptor ed) const
+    {
+      return !is_border (ed, *fg);
+    }
+  };
+
+  typedef boost::filter_iterator<Filter_border_edges, fg_edge_iterator> edge_iterator;
+
+  struct Vertex_label_map
+  {
+    typedef vertex_descriptor key_type;
+    typedef std::size_t value_type;
+    typedef std::size_t& reference;
+    typedef boost::lvalue_property_map_tag category;
+
+    Regularization_graph* rg;
+
+    Vertex_label_map (Regularization_graph* rg)
+      : rg (rg) { }
+
+    friend reference get (const Vertex_label_map& map, key_type k)
+    {
+      return (map.rg->labels)[get(map.rg->face_index_map,k)];
+    }
+    friend void put (const Vertex_label_map& map, key_type k, const value_type& v)
+    {
+      (map.rg->labels)[get(map.rg->face_index_map,k)] = v;
+    }
+  };
+
+  struct Vertex_label_probability_map
+  {
+    typedef vertex_descriptor key_type;
+    typedef std::vector<double> value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+
+    const Regularization_graph* rg;
+
+    Vertex_label_probability_map (const Regularization_graph* rg)
+      : rg (rg)
+    { }
+
+    friend reference get (const Vertex_label_probability_map& pmap, key_type fd)
+    {
+      double value = (1. - pmap.rg->weight) * pmap.rg->area (fd) / pmap.rg->total_area;
+
+      std::vector<double> out(2);
+      if (get(pmap.rg->is_selected_map, fd))
+      {
+        if (pmap.rg->prevent_unselection)
+          out[0] = std::numeric_limits<double>::max();
+        else
+          out[0] = value;
+        out[1] = 0.;
+      }
+      else
+      {
+        out[0] = 0.;
+        out[1] = value;
+      }
+
+      return out;
+    }
+  };
+
+  struct Edge_cost_map
+  {
+    typedef edge_descriptor key_type;
+    typedef double value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+
+    const Regularization_graph* rg;
+
+    Edge_cost_map (const Regularization_graph* rg)
+      : rg (rg) { }
+
+    friend reference get (const Edge_cost_map& pmap, key_type ed)
+    {
+      fg_vertex_descriptor esource = source(ed, pmap.rg->fg);
+      fg_vertex_descriptor etarget = target(ed, pmap.rg->fg);
+
+      // Cost
+      double edge_length = std::sqrt(CGAL::squared_distance (get (pmap.rg->vertex_point_map, esource),
+                                                             get (pmap.rg->vertex_point_map, etarget)));
+      return pmap.rg->weight * edge_length / pmap.rg->total_length;
+    }
+  };
+
+  FaceGraph& fg;
+  IsSelectedMap is_selected_map;
+  FaceIndexMap face_index_map;
+  VertexPointMap vertex_point_map;
+  double total_length;
+  double total_area;
+  double weight;
+  bool prevent_unselection;
+  std::vector<std::size_t> labels;
+
+  Regularization_graph (FaceGraph& fg,
+                        IsSelectedMap is_selected_map,
+                        FaceIndexMap face_index_map,
+                        VertexPointMap vertex_point_map,
+                        double weight,
+                        bool prevent_unselection)
+    : fg (fg),
+      is_selected_map (is_selected_map),
+      face_index_map (face_index_map),
+      vertex_point_map (vertex_point_map),
+      total_length(0),
+      total_area(0),
+      weight (weight),
+      prevent_unselection (prevent_unselection)
+  {
+    labels.reserve(num_faces(fg));
+    std::size_t nb_selected = 0;
+    for (fg_face_descriptor fd : faces(fg))
+    {
+      if (get(is_selected_map,fd))
+      {
+        labels.push_back(1);
+        ++ nb_selected;
+      }
+      else
+        labels.push_back(0);
+    }
+
+    // Compute normalization factors
+    for (fg_edge_descriptor ed : edges(fg))
+      total_length += length (ed);
+    for (fg_face_descriptor fd : faces(fg))
+      total_area += area (fd);
+  }
+
+  double length (fg_edge_descriptor ed) const
+  {
+    fg_vertex_descriptor esource = source(ed, fg);
+    fg_vertex_descriptor etarget = target(ed, fg);
+    return approximate_sqrt (typename GeomTraits::Compute_squared_distance_3()
+                             (get (vertex_point_map, esource),
+                              get (vertex_point_map, etarget)));
+  }
+
+  double area (fg_face_descriptor fd) const
+  {
+    fg_halfedge_descriptor hd = halfedge (fd, fg);
+    fg_halfedge_descriptor nhd = next (hd, fg);
+
+    return approximate_sqrt (typename GeomTraits::Compute_squared_area_3()
+                             (get (vertex_point_map, source (hd, fg)),
+                              get (vertex_point_map, target (hd, fg)),
+                              get (vertex_point_map, target (nhd, fg))));
+  }
+
+  friend CGAL::Iterator_range<vertex_iterator>
+  vertices (const Regularization_graph& graph)
+  {
+    return faces (graph.fg);
+  }
+
+  friend std::size_t num_vertices (const Regularization_graph& graph) { return num_faces(graph.fg); }
+
+  friend CGAL::Iterator_range<edge_iterator>
+  edges (const Regularization_graph& graph)
+  {
+    return CGAL::make_range (boost::make_filter_iterator
+                             (Filter_border_edges(graph.fg),
+                              begin(edges(graph.fg)), end(edges(graph.fg))),
+                             boost::make_filter_iterator
+                             (Filter_border_edges(graph.fg),
+                              end(edges(graph.fg)), end(edges(graph.fg))));
+  }
+
+  friend vertex_descriptor source (edge_descriptor ed, const Regularization_graph& graph)
+  {
+    return face (halfedge (ed, graph.fg), graph.fg);
+  }
+
+  friend vertex_descriptor target (edge_descriptor ed, const Regularization_graph& graph)
+  {
+    return face (opposite(halfedge (ed, graph.fg), graph.fg), graph.fg);
+  }
+
+  Vertex_label_map vertex_label_map() { return Vertex_label_map(this); }
+  Vertex_label_probability_map vertex_label_probability_map() const
+  { return Vertex_label_probability_map(this); }
+  Edge_cost_map edge_cost_map() const
+  { return Edge_cost_map(this); }
+};
+
+
 } //end of namespace internal
 
 
@@ -202,6 +427,265 @@ reduce_face_selection(
   }
   return out;
 }
+
+/*!
+  \ingroup PkgBGLSelectionFct
+
+  regularizes a selection in order to minimize the length of the
+  border of the selection.
+
+  The alpha expansion algorithm is used (see
+  `CGAL::alpha_expansion_graphcut()`) using the length of the edge
+  between two faces as the edge cost and the initial
+  selected/unselected property of a face as the face cost.
+
+  If `prevent_unselection` is set to `true`, the cost of unselecting a
+  face is set to infinity, which forces the regularization to only
+  select new faces and ensures that the regularization keeps all
+  selected faces.
+
+  \tparam TriangleMesh a model of `FaceGraph`
+
+  \tparam IsSelectedMap a model of `ReadWritePropertyMap` with
+  `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and
+  `bool` as value type
+
+  \tparam NamedParameters a sequence of named parameters
+
+  \param mesh the mesh containing the selected faces.
+
+  \param is_selected indicates if a face is part of the selection. It
+  is updated by the function to accommodate faces added or removed
+  from the selection.
+
+  \param weight sets the tradeoff between data fidelity and
+  regularity, ranging from 0 (no regularization at all, selection is
+  left unaltered) to 1 (maximum regularization, usually selects or
+  unselects everything so that the length of the border of the
+  selection is 0)
+
+  \param np optional sequence of named parameters among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{face_index_map}
+      the property map with the indices associated to the faces of `mesh`
+    \cgalParamEnd
+    \cgalParamBegin{vertex_point_map}
+      the property map with the points associated to the vertices of `mesh`
+    \cgalParamEnd
+    \cgalParamBegin{prevent_unselection}
+      if `true` only new faces can be selected, if `false` (default) some
+      faces can be unselected
+    \cgalParamEnd
+    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  \cgalNamedParamsEnd
+*/
+template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters>
+void
+regularize_face_selection_borders(
+  TriangleMesh& mesh,
+  IsSelectedMap is_selected,
+  double weight,
+  const NamedParameters& np)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  CGAL_precondition (0.0 <= weight && weight < 1.0);
+
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor mesh_face_descriptor;
+
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap face_index_map = CGAL::get_initialized_face_index_map(mesh, np);
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+  VertexPointMap vertex_point_map
+    = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                       get_const_property_map(vertex_point, mesh));
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Kernel;
+
+  bool prevent_unselection = choose_parameter(get_parameter(np, internal_np::prevent_unselection),
+                                              false);
+
+  internal::Regularization_graph<Kernel, TriangleMesh, IsSelectedMap, FaceIndexMap,
+                                 VertexPointMap>
+    graph (mesh, is_selected,
+           face_index_map,
+           vertex_point_map,
+           weight,
+           prevent_unselection);
+
+  alpha_expansion_graphcut (graph,
+                            graph.edge_cost_map(),
+                            graph.vertex_label_probability_map(),
+                            graph.vertex_label_map(),
+                            CGAL::parameters::vertex_index_map
+                            (face_index_map));
+
+  for (mesh_face_descriptor fd : faces(mesh))
+    put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
+}
+
+/// \cond SKIP_IN_MANUAL
+// variant with default np
+template <typename TriangleMesh, typename IsSelectedMap>
+void
+regularize_face_selection_borders(
+  TriangleMesh& fg,
+  IsSelectedMap is_selected,
+  double weight)
+{
+  regularize_face_selection_borders (fg, is_selected, weight,
+                                     CGAL::parameters::all_default());
+}
+/// \endcond
+
+/// \cond SKIP_IN_MANUAL
+// TODO: improve and document if useful
+//
+// Variant of regularization without graphcut but with brut-force
+// local expansions. Can be interesting in some cases but too
+// experimental/messy so far to be officially integrated.
+template <class FaceGraph, class IsSelectedMap, class VertexPointMap>
+void
+regularize_face_selection_borders(
+  FaceGraph& fg,
+  IsSelectedMap is_selected,
+  VertexPointMap vertex_point_map)
+{
+  typedef boost::graph_traits<FaceGraph> GT;
+  typedef typename GT::face_descriptor fg_face_descriptor;
+  typedef typename GT::halfedge_descriptor fg_halfedge_descriptor;
+  typedef typename GT::edge_descriptor fg_edge_descriptor;
+  typedef typename GT::vertex_descriptor fg_vertex_descriptor;
+
+  // TODO: this is a quick and dirty version, the complexity is
+  // crazy and it should be easy to do better (with priority queues,
+  // for example)
+
+  auto border_length =
+    [&]() -> double
+    {
+      double out = 0.;
+      for(fg_edge_descriptor ed : edges(fg))
+      {
+        fg_face_descriptor f0 = face (halfedge (ed, fg), fg);
+        fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
+        if (get(is_selected,f0) == get(is_selected,f1))
+          continue;
+
+        fg_vertex_descriptor esource = source(ed, fg);
+        fg_vertex_descriptor etarget = target(ed, fg);
+
+        out += std::sqrt(CGAL::squared_distance (get (vertex_point_map, esource),
+                                                 get (vertex_point_map, etarget)));
+      }
+      return out;
+    };
+
+  // First: try edges
+  while (true)
+  {
+    fg_edge_descriptor chosen;
+    double length_before = border_length();
+    double shortest_length = length_before;
+
+    for (fg_edge_descriptor ed : edges(fg))
+    {
+      fg_face_descriptor selected = face (halfedge (ed, fg), fg);
+      fg_face_descriptor unselected = face (opposite(halfedge (ed, fg), fg), fg);
+      if (get(is_selected,selected) == get(is_selected,unselected))
+        continue;
+
+      if (get(is_selected, unselected))
+        std::swap (selected, unselected);
+
+      put(is_selected, unselected, true);
+      double length_after = border_length();
+
+      if (length_after < shortest_length)
+      {
+        chosen = ed;
+        shortest_length = length_after;
+      }
+
+      // Cancel
+      put(is_selected, unselected, false);
+    }
+
+    if (shortest_length == length_before)
+      break;
+
+    fg_face_descriptor selected = face (halfedge (chosen, fg), fg);
+    fg_face_descriptor unselected = face (opposite(halfedge (chosen, fg), fg), fg);
+    if (get(is_selected,selected) == get(is_selected,unselected))
+      continue;
+
+    if (get(is_selected, unselected))
+      std::swap (selected, unselected);
+
+    put(is_selected, unselected, true);
+  }
+
+  // Second: try 1-ring of vertices
+  while (true)
+  {
+    fg_vertex_descriptor chosen;
+    double length_before = border_length();
+    double shortest_length = length_before;
+
+    for (fg_vertex_descriptor vd : vertices(fg))
+    {
+      fg_halfedge_descriptor hd = halfedge(vd, fg);
+      bool adjacent_to_selected = false, adjacent_to_nonselected = false;
+      for (fg_face_descriptor fd : faces_around_target (hd, fg))
+      {
+        if (get(is_selected, fd))
+          adjacent_to_selected = true;
+        else
+          adjacent_to_nonselected = true;
+
+        if (adjacent_to_selected && adjacent_to_nonselected)
+          break;
+      }
+
+      if (!(adjacent_to_selected && adjacent_to_nonselected))
+        continue;
+
+      std::vector<fg_face_descriptor> newly_selected;
+      for (fg_face_descriptor fd : faces_around_target (hd, fg))
+      {
+        if (!get(is_selected, fd))
+        {
+          newly_selected.push_back (fd);
+          put(is_selected, fd, true);
+        }
+      }
+      double length_after = border_length();
+
+      if (length_after < shortest_length)
+      {
+        chosen = vd;
+        shortest_length = length_after;
+      }
+
+      // Cancel
+      for (fg_face_descriptor fd : newly_selected)
+        put(is_selected, fd, false);
+    }
+
+    if (shortest_length == length_before)
+      break;
+
+    fg_halfedge_descriptor hd = halfedge (chosen, fg);
+
+    for (fg_face_descriptor fd : faces_around_target (hd, fg))
+      put(is_selected, fd, true);
+  }
+}
+/// \endcond
 
 
 /*!

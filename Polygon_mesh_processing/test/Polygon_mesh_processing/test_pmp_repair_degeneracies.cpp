@@ -137,7 +137,7 @@ void remove_degeneracies(const char* filename,
   Mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << filename << " is not a valid off file.\n";
+    std::cerr << filename << " is not a valid off file." << std::endl;
     exit(1);
   }
 
@@ -211,7 +211,7 @@ void remove_negligible_connected_components(const char* filename)
   Mesh mesh, mesh_cpy;
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << filename << " is not a valid off file.\n";
+    std::cerr << filename << " is not a valid off file." << std::endl;
     exit(1);
   }
 
