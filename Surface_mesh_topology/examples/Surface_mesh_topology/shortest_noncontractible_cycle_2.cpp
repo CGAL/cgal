@@ -101,9 +101,9 @@ int main(int argc, char* argv[])
   std::cout<<"Finding the shortest noncontractible cycle..."<<std::endl;
   Path_on_surface cycle(lcc);
   if (dist)
-  { cycle=cst.compute_shortest_non_contractible_cycle_with_basepoint(root, wf, time); }
+  { cycle=cst.compute_shortest_non_contractible_cycle_with_base_point(root, wf, time); }
   else
-  { cycle=cst.compute_shortest_non_contractible_cycle_with_basepoint(root, time); }
+  { cycle=cst.compute_shortest_non_contractible_cycle_with_base_point(root, time); }
 
   if (cycle.length()==0)
   { std::cout<<"  Cannot find such cycle. Stop."<<std::endl; }

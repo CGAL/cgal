@@ -95,7 +95,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_CMap_2> cst1(lcc);
   LCC_for_CMap_2::Dart_handle root1 = lcc.darts().begin();
   Point R = lcc.point_of_vertex_attribute(lcc.vertex_attribute(root1));
-  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle_with_basepoint(root1);
+  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle_with_base_point(root1);
   for (int i = 0; i < cycle1.length(); ++i) {
     auto e = cycle1[i];
     if (e == NULL) {
@@ -117,7 +117,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
     std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: Cannot find CMap's root in the Polyhedron\n";
     return false;
   }
-  CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_non_contractible_cycle_with_basepoint(*root2);
+  CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_non_contractible_cycle_with_base_point(*root2);
   for (int i = 0; i < cycle2.length(); ++i) {
     auto e = cycle2[i];
     if (e == NULL) {
@@ -180,7 +180,7 @@ bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
   Weight_functor_for_GM wf (gm, smallest_edge);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<GMap_2> cst(gm);
 
-  CGAL::Surface_mesh_topology::Path_on_surface<GMap_2> cycle = cst.compute_shortest_non_contractible_cycle_with_basepoint(faces[0]);
+  CGAL::Surface_mesh_topology::Path_on_surface<GMap_2> cycle = cst.compute_shortest_non_contractible_cycle_with_base_point(faces[0]);
 
   gm.mark_cell<1>(gm.alpha<1>(faces[1]), chosen_cycle); // 1-6
   gm.mark_cell<1>(gm.alpha<1,0,1>(faces[1]), chosen_cycle); // 6-9

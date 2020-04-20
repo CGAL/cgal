@@ -114,14 +114,14 @@ public:
   }
 
   template <class WeightFunctor>
-  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_basepoint
+  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point
   (Dart_const_handle dh, const WeightFunctor& wf, bool display_time=false) const
   {
     compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf, display_time);
   }
 
-  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_basepoint
+  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point
   (Dart_const_handle dh, bool display_time=false) const
   {
     compute_shortest_non_contractible_cycle_representation(display_time);
