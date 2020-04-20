@@ -6,7 +6,7 @@ Release History
 
 ### Surface Mesh Topology
 
-- Added new functionalities to compute shortest non contractible cycles on a surface, with or without weights on edges.
+- Added new functionalities to compute shortest non-contractible cycles on a surface, with or without weights on edges.
 
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)

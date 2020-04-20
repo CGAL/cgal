@@ -169,7 +169,7 @@ public:
     bool first_check = true;
     typename WeightFunctor::Weight_t min_length=0;
     for (auto it=get_local_map().template attributes<0>().begin(),
-           itend=get_local_map().template attributes<0>().end(); it!=itend; ++it)
+         itend=get_local_map().template attributes<0>().end(); it!=itend; ++it)
     {
       Dart_handle dh=get_local_map().template dart_of_attribute<0>(it);
       typename WeightFunctor::Weight_t temp_length;
@@ -215,7 +215,7 @@ protected:
   void create_vertex_info()
   {
     for (auto it=get_local_map().darts().begin(),
-           itend=get_local_map().darts().end(); it!=itend; ++it)
+         itend=get_local_map().darts().end(); it!=itend; ++it)
     {
       if (get_local_map().template attribute<0>(it)==nullptr)
       { get_local_map().template set_attribute<0>
@@ -226,7 +226,7 @@ protected:
   void initialize_vertex_info()
   {
     for (auto it=get_local_map().template attributes<0>().begin(),
-           itend = get_local_map().template attributes<0>().end(); it != itend; ++it)
+         itend = get_local_map().template attributes<0>().end(); it != itend; ++it)
     { get_local_map().template info_of_attribute<0>(it)=-1; }
   }
 
@@ -265,16 +265,7 @@ protected:
     Dijkstra_comparator<Distance_> dc(distance_from_root);
     std::priority_queue<int, std::vector<int>, Dijkstra_comparator<Distance_> > pq(dc);
     int vertex_index=0;
-    size_type vertex_visited;
-    try
-    {
-      vertex_visited=get_local_map().get_new_mark();
-    }
-    catch (typename Local_map::Exception_no_more_available_mark)
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
+    size_type vertex_visited=get_local_map().get_new_mark();
     // Begin Dijkstra
     pq.push(0);
     vertex_info(root)=vertex_index;
@@ -332,14 +323,7 @@ protected:
     // Preparation
     std::queue<int> q;
     int vertex_index=0;
-    size_type vertex_visited;
-    try
-    { vertex_visited=get_local_map().get_new_mark(); }
-    catch (typename Local_map::Exception_no_more_available_mark)
-    {
-      std::cerr << "No more free mark, exit." << std::endl;
-      exit(-1);
-    }
+    size_type vertex_visited=get_local_map().get_new_mark();
     // Begin BFS
     q.push(0);
     vertex_info(root)=vertex_index;
@@ -400,18 +384,9 @@ protected:
                             Dart_container& noncon_edges)
   {
     noncon_edges.clear();
-    size_type face_deleted, edge_deleted, tested;
-    try
-    {
-      face_deleted=get_local_map().get_new_mark();
-      edge_deleted=get_local_map().get_new_mark();
-      tested=get_local_map().get_new_mark();
-    }
-    catch (typename Local_map::Exception_no_more_available_mark)
-    {
-      std::cerr << "No more free mark, exit." << std::endl;
-      exit(-1);
-    }
+    size_type face_deleted=get_local_map().get_new_mark();
+    size_type edge_deleted=get_local_map().get_new_mark();
+    size_type tested=get_local_map().get_new_mark();
     for (auto dh : spanning_tree)
     {
       if (!get_local_map().is_marked(dh, edge_deleted))
@@ -477,7 +452,7 @@ protected:
       }
     }
     for (auto it=get_local_map().darts().begin(),
-           itend=get_local_map().darts().end(); it!=itend; ++it)
+         itend=get_local_map().darts().end(); it!=itend; ++it)
     {
       if (it<get_local_map().opposite2(it) && vertex_info(it)>=0 &&
           !get_local_map().is_marked(it, edge_deleted))

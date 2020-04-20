@@ -21,7 +21,7 @@
 \cgalPkgPicture{surface-mesh-topology-logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}
-\cgalPkgDesc{This package provides methods for testing if two (closed) paths on a combinatorial surface are homotopic and for computing edge-width and face-width of the mesh. The user can choose between free homotopy and homotopy with fixed endpoints. A contractibility test is also provided; it amounts to test homotopy with the constant path. After an initialization step that takes linear time in the size of the input surface, the homotopy tests are performed in linear time in the size of the input curves. While computing edge-width or face-width, the user can opt to take geometric distances between vertices into consideration, or disregard them so as to make the mesh unweighted.}
+\cgalPkgDesc{This package provides a toolbox for manipulating curves on a combinatorial surface from the topological viewpoint. Two main functionalities are proposed. One is concerned with the computation of shortest curves that cannot be continuously deformed to a point. This includes the computation of the so-called edge-width and face-width of the vertex-edge graph of a combinatorial surface. The other functionality is concerned with the homotopy test for deciding if two given curves on a combinatorial surface can be continuously deformed one into the other.}
 \cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

@@ -13,7 +13,7 @@ namespace Surface_mesh_topology {
   {
   public:
     /*!
-      %halfedge_descriptor type. A handle to Dart for combinatorial/generalized maps, or a halfedge descriptor for models of FaceGraph.
+      %halfedge_descriptor type. A handle to `Dart` for combinatorial/generalized maps, or a halfedge descriptor for models of the `FaceGraph` concept.
     */
     typedef unspecified_type halfedge_descriptor;
 
@@ -42,7 +42,7 @@ namespace Surface_mesh_topology {
     /// returns `true` iff `hd` can be added at the end of this path. If `flip` is true, `hd`'s direction is reversed before checking
     bool can_be_pushed(halfedge_descriptor hd, bool flip=false) const;
 
-    /// adds `hd` at the end of this path. If `flip` is true, the reverse of `hd` is considered.
+    /// adds `hd` at the end of this path. If `flip` is true, the opposite of `hd` is considered.
     /// @pre `can_be_pushed(hd)`
     void push_back(halfedge_descriptor hd, bool flip=false);
 
