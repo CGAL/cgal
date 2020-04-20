@@ -62,13 +62,14 @@ int main(int, char**)
   {
     for(double skew : skews)
     {
-      double bx = 0.0 / (2*bl);
-      std::cout << bl << " " << skew << std::endl;
-      agg << bl << " " << skew << std::endl;
-      res << "Length: " << bl << ", Skew: " << skew << std::endl;
-      log << "Length: " << bl << ", Skew: " << skew << std::endl;
+      double bx = (skew / 2) * bl;
       CGAL::cpp11::array<Vector, 2> basis;
       basis = CGAL::make_array(Vector(bl, 0), Vector(bx, 1));
+      Lattice lat = Lattice(basis[0], basis[1]);
+      std::cout << bl << " " << skew << std::endl;
+      agg << bl << " " << skew << " " << lat.systole_sq_length() << std::endl;
+      res << "Length: " << bl << ", Skew: " << skew << ", Systole: " << lat.systole_sq_length() << std::endl;
+      log << "Length: " << bl << ", Skew: " << skew << ", Systole: " << lat.systole_sq_length() << std::endl;
 
       std::vector<int> v_until_criterion;
       std::vector<int> v_until_simplicial;

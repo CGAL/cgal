@@ -842,6 +842,7 @@ private:
 
   // A list of those offsets such that the domain translated along the offset
   // overlaps the scaled domain.
+  // @todo: factor this into the lattice.
   const std::vector<std::vector<int> > overlapping_offsets =
   {
     // entirely contained in scaled domains
