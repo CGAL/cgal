@@ -148,7 +148,6 @@ public:
   using Base::adjacent_vertices;
   using Base::combine_offsets;
   using Base::construct_point;
-  using Base::convert_to_27_sheeted_covering;
   using Base::draw_dual;
   using Base::incident_edges;
   using Base::incident_facets;
@@ -265,8 +264,10 @@ public:
 
   virtual void update_cover_data_after_setting_domain ()
   {
+#ifndef CGAL_GENERIC_P3T3
     edge_length_threshold = FT(0.166) * (domain().xmax()-domain().xmin())
                                       * (domain().xmax()-domain().xmin());
+#endif
   }
 
   virtual void update_cover_data_after_converting_to_27_sheeted_covering()
@@ -419,6 +420,7 @@ public:
                                            const std::vector<Cell_handle>& new_cells,
                                            const bool abort_if_cover_change)
   {
+#ifndef CGAL_GENERIC_P3T3 // @tmp
     for(int i=0; i < 4; i++)
     {
       for(int j=0; j < 4; j++)
@@ -446,7 +448,7 @@ public:
               return true;
 
             tds().delete_cells(new_cells.begin(), new_cells.end());
-            convert_to_27_sheeted_covering();
+            Base::convert_to_27_sheeted_covering();
             return true;
           }
           else if(find(too_long_edges[v_no].begin(),
@@ -459,6 +461,8 @@ public:
         }
       }
     }
+#endif
+
     return false;
   }
 
