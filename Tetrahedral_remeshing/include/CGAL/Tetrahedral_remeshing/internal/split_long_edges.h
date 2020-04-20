@@ -91,39 +91,39 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   }
   while (circ != end);
 
-  for(Cell_handle circ : inc_cells)
+  for(Cell_handle c : inc_cells)
   {
-    const int index_v1 = circ->index(v1);
-    const int index_v2 = circ->index(v2);
+    const int index_v1 = c->index(v1);
+    const int index_v2 = c->index(v2);
 
     //keys are the opposite facets to the ones not containing e,
     //because they will not be modified
-    const Subdomain_index subdomain = c3t3.subdomain_index(circ);
-    const Facet opp_facet1 = tr.mirror_facet(Facet(circ, index_v1));
-    const Facet opp_facet2 = tr.mirror_facet(Facet(circ, index_v2));
+    const Subdomain_index subdomain = c3t3.subdomain_index(c);
+    const Facet opp_facet1 = tr.mirror_facet(Facet(c, index_v1));
+    const Facet opp_facet2 = tr.mirror_facet(Facet(c, index_v2));
 
     // volume data
     cells_info.insert(std::make_pair(opp_facet1, subdomain));
     cells_info.insert(std::make_pair(opp_facet2, subdomain));
-    if (c3t3.is_in_complex(circ))
-      c3t3.remove_from_complex(circ);
+    if (c3t3.is_in_complex(c))
+      c3t3.remove_from_complex(c);
 
     // surface data for facets of the cells to be split
     const int findex = CGAL::Triangulation_utils_3::next_around_edge(index_v1, index_v2);
-    if (c3t3.is_in_complex(circ, findex))
+    if (c3t3.is_in_complex(c, findex))
     {
       if (dimension == 3)
         dimension = 2;
     }
-    Surface_patch_index patch = c3t3.surface_patch_index(circ, findex);
-    Vertex_handle opp_vertex = circ->vertex(findex);
+    Surface_patch_index patch = c3t3.surface_patch_index(c, findex);
+    Vertex_handle opp_vertex = c->vertex(findex);
     facets_info.insert(std::make_pair(opp_facet1,
                                       std::make_pair(opp_vertex, patch)));
     facets_info.insert(std::make_pair(opp_facet2,
                                       std::make_pair(opp_vertex, patch)));
 
-    if(c3t3.is_in_complex(circ, findex))
-      c3t3.remove_from_complex(circ, findex);
+    if(c3t3.is_in_complex(c, findex))
+      c3t3.remove_from_complex(c, findex);
   }
 
   // insert midpoint

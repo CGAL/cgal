@@ -420,15 +420,15 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
         do
         {
           //Get the ids of the opposite vertices
-          for (int i = 0; i < 3; ++i)
+          for (int j = 0; j < 3; ++j)
           {
-            Vertex_handle curr_vertex = facet_circulator->first->vertex(
-                                          indices(facet_circulator->second, i));
-            if (curr_vertex != vh0  && curr_vertex != vh1)
+            Vertex_handle curr = facet_circulator->first->vertex(
+                                          indices(facet_circulator->second, j));
+            if (curr != vh0  && curr != vh1)
             {
               Cell_handle ch;
               int i0, i1;
-              if (tr.is_edge(curr_vertex, vh, ch, i0, i1))
+              if (tr.is_edge(curr, vh, ch, i0, i1))
                 is_edge = true;
             }
           }
@@ -475,9 +475,8 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
 
 
     FT min_flip_dihedral_angle = (std::numeric_limits<FT>::max)();
-    for (std::size_t i = 0; i < facets.size(); ++i)
+    for (const Facet& fi : facets)
     {
-      const Facet& fi = facets[i];
       if (!tr.is_infinite(fi.first))
       {
         if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
@@ -614,9 +613,8 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     while (++cell_circulator != done);
 
     FT min_flip_dihedral_angle = (std::numeric_limits<FT>::max)();
-    for (std::size_t i = 0; i < facets.size(); ++i)
+    for (const Facet& fi : facets)
     {
-      const Facet& fi = facets[i];
       if (!tr.is_infinite(fi.first))
       {
         if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),

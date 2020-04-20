@@ -518,10 +518,9 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
                        Subdomain__FMLS_indices& subdomain_FMLS_indices,
                        const VerticesNormalsMap& vertices_normals,
                        const VerticesSurfaceIndices& vertices_surface_indices,
-                       const C3t3& c3t3)
+                       const C3t3& c3t3,
+                       const int upsample = 2) // can be 0, 1 or 2
 {
-  const int upsample = 2; // can be 0, 1 or 2
-
   typedef typename C3t3::Surface_patch_index Surface_index;
   typedef typename C3t3::Triangulation       Tr;
   typedef typename Tr::Edge                  Edge;

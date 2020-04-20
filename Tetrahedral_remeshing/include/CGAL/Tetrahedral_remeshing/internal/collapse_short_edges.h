@@ -661,16 +661,16 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> cells_to_remove;
   boost::unordered_set<Cell_handle> invalid_cells;
 
-  for(const Cell_handle circ : inc_cells)
+  for(const Cell_handle c : inc_cells)
   {
-    const int v0_id = circ->index(vh0);
-    const int v1_id = circ->index(vh1);
+    const int v0_id = c->index(vh0);
+    const int v1_id = c->index(vh1);
 
-    Cell_handle n0_ch = circ->neighbor(v0_id);
-    Cell_handle n1_ch = circ->neighbor(v1_id);
+    Cell_handle n0_ch = c->neighbor(v0_id);
+    Cell_handle n1_ch = c->neighbor(v1_id);
 
-    const int ch_id_in_n0 = n0_ch->index(circ);
-    const int ch_id_in_n1 = n1_ch->index(circ);
+    const int ch_id_in_n0 = n0_ch->index(c);
+    const int ch_id_in_n1 = n1_ch->index(c);
 
     //Merge surface patch indices
     merge_surface_patch_indices(Facet(n0_ch, ch_id_in_n0),
@@ -699,22 +699,22 @@ collapse(const typename C3t3::Cell_handle ch,
       std::cout << "Collapse infinite issue!" << std::endl;
       return Vertex_handle();
     }
-    cells_to_remove.push_back(circ);
+    cells_to_remove.push_back(c);
 
-    invalid_cells.insert(circ);
+    invalid_cells.insert(c);
   }
 
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
 
   bool v0_updated = false;
-  for (const Cell_handle ch : find_incident)
+  for (const Cell_handle c : find_incident)
   {
-    if (invalid_cells.find(ch) == invalid_cells.end())//valid cell
+    if (invalid_cells.find(c) == invalid_cells.end())//valid cell
     {
-      if (tr.is_infinite(ch))
-        infinite_vertex->set_cell(ch);
+      if (tr.is_infinite(c))
+        infinite_vertex->set_cell(c);
       //else {
-      vh0->set_cell(ch);
+      vh0->set_cell(c);
       v0_updated = true;
       //}
     }
@@ -725,12 +725,12 @@ collapse(const typename C3t3::Cell_handle ch,
     = { { 0,1, 0,2, 0,3, 1,2, 1,3, 2,3 } }; //vertex indices in cells
   const Vertex_handle vkept = vh0;
   const Vertex_handle vdeleted = vh1;
-  for (const Cell_handle ch : cells_to_update)
+  for (const Cell_handle c : cells_to_update)
   {
     for (const std::array<int, 2>& ei : edges)
     {
-      Vertex_handle eiv0 = ch->vertex(ei[0]);
-      Vertex_handle eiv1 = ch->vertex(ei[1]);
+      Vertex_handle eiv0 = c->vertex(ei[0]);
+      Vertex_handle eiv1 = c->vertex(ei[1]);
       if (eiv1 == vdeleted && eiv0 != vkept) //replace eiv1 by vkept
       {
         if (c3t3.is_in_complex(eiv0, eiv1))
@@ -753,17 +753,17 @@ collapse(const typename C3t3::Cell_handle ch,
   // update complex facets
 
   //Update the vertex before removing it
-  for (const Cell_handle ch : cells_to_update)
+  for (const Cell_handle c : cells_to_update)
   {
-    if (invalid_cells.find(ch) == invalid_cells.end()) //valid cell
+    if (invalid_cells.find(c) == invalid_cells.end()) //valid cell
     {
-      ch->set_vertex(ch->index(vh1), vh0);
+      c->set_vertex(c->index(vh1), vh0);
 
-      if (tr.is_infinite(ch))
-        infinite_vertex->set_cell(ch);
+      if (tr.is_infinite(c))
+        infinite_vertex->set_cell(c);
       //else {
       if (!v0_updated) {
-        vh0->set_cell(ch);
+        vh0->set_cell(c);
         v0_updated = true;
       }
       //}

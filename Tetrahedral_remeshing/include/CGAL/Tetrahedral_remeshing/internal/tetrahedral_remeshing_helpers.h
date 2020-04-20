@@ -62,11 +62,13 @@ const int indices_table[4][3] = { { 3, 1, 2 },
                                   { 3, 0, 1 },
                                   { 2, 1, 0 } };
 
-int indices(const int& i, const int& j)
+int indices(const unsigned int& i, const unsigned int& j)
 {
-  CGAL_assertion(i >= 0 && i < 4);
-  CGAL_assertion(j >= 0 && j < 3);
-  return indices_table[i][j];
+  CGAL_assertion(i < 4 && j < 3);
+  if(i < 4 && j < 3)
+    return indices_table[i][j];
+  else
+    return -1;
 }
 
 template<typename Gt, typename Point>

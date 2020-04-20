@@ -180,14 +180,14 @@ private:
       facets.push_back(f);
       while (!facets.empty())
       {
-        const Facet f = facets.front();
+        const Facet ff = facets.front();
         facets.pop_front();
 
         const typename C3t3::Cell_handle ch = f.first;
         const std::array<std::array<int, 2>, 3> edges
-        = { (f.second + 1) % 4, (f.second + 2) % 4, //edge 1-2
-            (f.second + 2) % 4, (f.second + 3) % 4, //edge 2-3
-            (f.second + 3) % 4, (f.second + 1) % 4  //edge 3-1
+        = { (ff.second + 1) % 4, (ff.second + 2) % 4, //edge 1-2
+            (ff.second + 2) % 4, (ff.second + 3) % 4, //edge 2-3
+            (ff.second + 3) % 4, (ff.second + 1) % 4  //edge 3-1
           }; //vertex indices in cells
 
         const Vector_3& ref = fnormals[f];
@@ -303,7 +303,7 @@ private:
 
     int it_nb = 0;
     const int max_it_nb = 5;
-    const float epsilon = fmls.getPNScale() / 1000.;
+    const float epsilon = fmls.getPNScale() / 1000.f;
     const float sq_eps = CGAL::square(epsilon);
 
     do
@@ -437,8 +437,8 @@ public:
     {
       for (int i = 0; i < 4; ++i)
       {
-        const std::size_t id = vertex_id[c->vertex(i)];
-        inc_cells[id].push_back(c);
+        const std::size_t idi = vertex_id[c->vertex(i)];
+        inc_cells[idi].push_back(c);
       }
     }
 

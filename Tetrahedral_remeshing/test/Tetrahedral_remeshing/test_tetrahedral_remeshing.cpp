@@ -1,5 +1,7 @@
-//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
+//#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -25,8 +27,11 @@ void generate_input_one_subdomain(const std::size_t nbv, T3& tr)
   std::vector<Point> pts;
   while (pts.size() < nbv)
   {
-    const Point p(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.));
-    pts.push_back(p);
+    const float x = rng.uniform_real(-1.f, 1.f);
+    const float y = rng.uniform_real(-1.f, 1.f);
+    const float z = rng.uniform_real(-1.f, 1.f);
+
+    pts.push_back(Point(x, y, z));
   }
   tr.insert(pts.begin(), pts.end());
 
