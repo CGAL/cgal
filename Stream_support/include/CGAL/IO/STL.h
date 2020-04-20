@@ -120,6 +120,7 @@ bool read_STL(std::istream& is,
   }
 }
 
+//todo doc this too
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname,
               PointRange& points,

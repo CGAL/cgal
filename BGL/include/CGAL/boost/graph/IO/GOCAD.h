@@ -125,7 +125,8 @@ public:
   \ingroup PkgBGLIOFct
 
   reads the graph `g` from data in the TS format.
-  `name` and `color` will be filled according to the values contained in the file.
+  `name_and_color` is an optionnal argument, containing the
+ values specified in the file.
 
   \pre The data must represent a 2-manifold
 
@@ -135,8 +136,7 @@ public:
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& in,
-                std::string& name,
-                std::string& color,
+                std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
                 const CGAL_BGL_NP_CLASS& np)
 {
@@ -147,19 +147,28 @@ bool read_GOCAD(std::istream& in,
   if(!builder(g, np))
     return false;
 
-  name = builder.name;
-  color = builder.color;
+  name_and_color.first = builder.name;
+  name_and_color.second = builder.color;
 
   return is_valid(g); // @fixme keep validity check?
 }
 
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(std::istream& in,
+                FaceGraph& g,
+                const CGAL_BGL_NP_CLASS& np)
+{
+  std::pair<std::string, std::string> dummy;
+  return read_GOCAD(in, dummy,g, np);
+}
+
 template <typename FaceGraph>
 bool read_GOCAD(std::istream& in,
-                std::string& name,
-                std::string& color,
+                std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g)
 {
-  return read_GOCAD(in, name, color, g, parameters::all_default());
+
+  return read_GOCAD(in, name_and_color, g, parameters::all_default());
 }
 
 /*!
@@ -205,6 +214,13 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 
   writes the graph `g` in the TS format into `os`. `fname` is the
   mandatory name that will be assigned to `g`in the file.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+  \cgalNamedParamsEnd
 
   \see \ref IOStreamGocad
 */

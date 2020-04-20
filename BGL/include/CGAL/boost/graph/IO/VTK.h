@@ -24,6 +24,7 @@
 #include <vtkCell.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPointSet.h>
+#include <vtkPolyData.h>
 
 namespace CGAL {
 
@@ -50,7 +51,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
   using parameters::choose_parameter;
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, g));
+                             get_property_map(CGAL::vertex_point, g));
 
   vtkIdType nb_points = poly_data->GetNumberOfPoints();
   vtkIdType nb_cells = poly_data->GetNumberOfCells();
@@ -122,7 +123,7 @@ bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
   vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
     vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
 
-  data = IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput();
+  data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
 
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
@@ -178,8 +179,8 @@ void write_polys(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor           face_descriptor;
 
-  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh, NamedParameters>::const_type Vimap;
-  Vimap V = CGAL::get_initialized_vertex_index_map(mesh, np);
+  typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type Vimap;
+  Vimap V = CGAL::get_initialized_vertex_index_map(g, np);
 
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
@@ -211,8 +212,8 @@ void write_polys_tag(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor           face_descriptor;
 
-  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh, NamedParameters>::const_type Vimap;
-  Vimap V = CGAL::get_initialized_vertex_index_map(mesh, np);
+  typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type Vimap;
+  Vimap V = CGAL::get_initialized_vertex_index_map(g, np);
 
   std::string formatattribute = binary ? " format=\"appended\"" : " format=\"ascii\"";
 
@@ -452,3 +453,4 @@ void write_VTP(std::ostream& os, const FaceGraph& g)
 #endif // CGAL_USE_VTK
 
 #endif // CGAL_BGL_IO_VTK_H
+

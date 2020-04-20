@@ -134,13 +134,13 @@ bool test_gocad()
   }
   FaceGraph fg2;
   std::istringstream in( out.str());
-  std::string name, color;
-  CGAL::read_GOCAD(in, name, color, fg2);
-  if(name != "tetrahedron"){
-    std::cerr<<"reading error: tetrahedron != "<<name<<std::endl;
+  std::pair<std::string, std::string> cnn;
+  CGAL::read_GOCAD(in, cnn, fg2);
+  if(cnn.first != "tetrahedron"){
+    std::cerr<<"reading error: tetrahedron != "<<cnn.first<<std::endl;
     return 1;
   }
-  if( !color.empty()){
+  if( !cnn.second.empty()){
     std::cerr<<"reading error: there should be no color."<<std::endl;
     return 1;
   }
