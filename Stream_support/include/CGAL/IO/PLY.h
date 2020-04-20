@@ -26,6 +26,9 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
+
+namespace IO {
+namespace internal {
 //HEdgesRange" = range of std::pair<unsigned int, unsigned int>
 //HUVRange = range of std::pair<float, float>
 template <class PointRange, class PolygonRange, class ColorOutputIterator, class HEdgesOutputIterator, class HUVOutputIterator>
@@ -190,7 +193,8 @@ bool read_PLY(std::istream& is,
   }
   return !is.fail();
 }
-
+}// End of internal
+}// End of IO
 template <class PointRange, class PolygonRange, class ColorRange, class HEdgesRange, class HUVRange>
 bool read_PLY(std::istream& is,
               PointRange& points,
@@ -204,7 +208,7 @@ bool read_PLY(std::istream& is,
                 !CGAL::is_iterator<ColorRange>::value
               >::type* =0)
 {
-  return read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs));
+  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs));
 }
 template <class PointRange, class PolygonRange, class ColorRange>
 bool read_PLY(std::istream& is,
@@ -216,7 +220,7 @@ bool read_PLY(std::istream& is,
 {
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
-  return read_PLY(is, points, polygons, dummy_pui, std::back_inserter(fcolors), std::back_inserter(vcolors), dummy_pf);
+  return IO::internal::read_PLY(is, points, polygons, dummy_pui, std::back_inserter(fcolors), std::back_inserter(vcolors), dummy_pf);
 }
 
 
@@ -336,7 +340,7 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return read_PLY(is, points, polygons,std::back_inserter(dummy_pui),
+  return IO::internal::read_PLY(is, points, polygons,std::back_inserter(dummy_pui),
                   choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
                                    CGAL::Emptyset_iterator()),
                   choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),

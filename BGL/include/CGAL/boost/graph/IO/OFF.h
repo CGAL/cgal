@@ -101,7 +101,24 @@ bool read_OFF(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
   return IO::internal::read_OFF_BGL(in, g, np);
 }
 
-// document that too
+/*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from `fname`, a file in the OFF format. Ignores comment lines which start with a hash,
+  and lines with whitespace.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalNamedParamsEnd
+
+  \pre The data must represent a 2-manifold
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+
+  \see \ref IOStreamOFF
+*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {

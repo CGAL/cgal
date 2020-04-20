@@ -100,6 +100,21 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 } // namespace internal
 } // namespace IO
 
+/*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from data in the VTP format.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalNamedParamsEnd
+
+  \pre The data must represent a 2-manifold
+
+  \see \ref IOStreamOFF
+*/
 template<typename FaceGraph, typename NamedParameters>
 bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
 {
@@ -112,6 +127,21 @@ bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 
+/*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from `fname`, a file in the VTP format.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalNamedParamsEnd
+
+  \pre The data must represent a 2-manifold
+
+  \see \ref IOStreamOFF
+*/
 template<typename FaceGraph>
 bool read_VTP(const char* fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
 

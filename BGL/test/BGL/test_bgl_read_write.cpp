@@ -202,7 +202,6 @@ bool test_STL()
 template<class FaceGraph>
 bool test_PLY(bool binary = false)
 {
-  //! TODO add tests for face colors
   FaceGraph fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
