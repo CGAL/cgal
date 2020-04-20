@@ -27,18 +27,32 @@
 
 namespace CGAL {
 
-template <class K_,
-          class Off_ = typename CGAL::Periodic_3_offset_3 >
+template <class Kernel_,
+          class Offset_ = CGAL::Periodic_3_offset_3,
+          class Domain_ = typename Kernel_::Iso_cuboid_3,
+          class Construct_point_3_ = Default>
 class Periodic_3_Delaunay_triangulation_traits_base_3
-  : public Periodic_3_triangulation_traits_3<K_, Off_>
+    : public Periodic_3_triangulation_traits_3<
+               Kernel_, Offset_, Domain_,
+               typename Default::Get<Construct_point_3_,
+                                     Periodic_3_construct_point_3<Kernel_, Offset_> >::type>
 {
-  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K_, Off_>  Self;
-  typedef Periodic_3_triangulation_traits_3<K_, Off_>                Base;
+public:
+  typedef Kernel_                                                 Kernel;
+  typedef Offset_                                                 Offset;
+  typedef Domain_                                                 Domain;
+
+  typedef Periodic_3_construct_point_3<Kernel, Offset>            Construct_point_3_def;
+  typedef typename Default::Get<Construct_point_3_,
+                                Construct_point_3_def>::type      Construct_point_3;
+
+private:
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<
+            Kernel, Offset, Domain, Construct_point_3>            Self;
+  typedef Periodic_3_triangulation_traits_3<
+            Kernel, Offset, Domain, Construct_point_3>            Base;
 
 public:
-  typedef K_                                  Kernel;
-  typedef Off_                                Offset;
-
   typedef typename Base::RT                   RT;
   typedef typename Base::FT                   FT;
   typedef typename Base::Point_3              Point_3;
@@ -55,8 +69,8 @@ public:
   typedef typename Base::Tetrahedron_3        Tetrahedron_3;
 
 public:
-  Periodic_3_Delaunay_triangulation_traits_base_3(const Iso_cuboid_3& domain,
-                                                  const Kernel& k)
+  Periodic_3_Delaunay_triangulation_traits_base_3(const Domain& domain = Domain(),
+                                                  const Kernel& k = Kernel())
     : Base(domain, k)
   { }
 
@@ -107,12 +121,20 @@ public:
   }
 };
 
-template <typename K_,
-          typename Off_ = CGAL::Periodic_3_offset_3,
-          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K_>::value >
-class Periodic_3_Delaunay_triangulation_traits_3;
+template <class K,
+          class O = CGAL::Periodic_3_offset_3,
+          class D = typename K::Iso_cuboid_3,
+          class CP = Default,
+          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K>::value >
+class Periodic_3_Delaunay_triangulation_traits_3
+  : public Periodic_3_Delaunay_triangulation_traits_base_3<K, O, D, CP>
+{
+public:
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, O, D, CP> Base;
+  Periodic_3_Delaunay_triangulation_traits_3(const D& d = D(), const K& k = K()) : Base(d, k) { }
+};
 
-} //namespace CGAL
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK // @tmp this is just a forward declaration normally
 
 // Partial specialization for kernels with filtered predicates
 #include <CGAL/internal/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
@@ -152,6 +174,8 @@ public:
     : Base(domain, k)
   { }
 };
+
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 } //namespace CGAL
 

@@ -16,9 +16,9 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/internal/Generic_P2T2/Periodic_3_triangulation_vertex_base_3_generic.h>
-#include <CGAL/internal/Generic_P2T2/Periodic_3_triangulation_face_base_3_generic.h>
-// #include <CGAL/internal/Generic_P2T2/Periodic_3_triangulation_iterators_3_generic.h>
+#include <CGAL/internal/Generic_P3T3/Periodic_3_triangulation_vertex_base_3_generic.h>
+#include <CGAL/internal/Generic_P3T3/Periodic_3_triangulation_cell_base_3_generic.h>
+// #include <CGAL/internal/Generic_P3T3/Periodic_3_triangulation_iterators_3_generic.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
@@ -103,7 +103,7 @@ public:
   Periodic_3_Delaunay_triangulation_3_generic(const GT& gt)
     : is_1_cover_(false), gt_(gt), dt3(gt_), p3dt3(gt_)
   {
-    sq_circumradius_threshold = 0.0625 * gt.get_domain().systole_sq_length();
+    sq_circumradius_threshold = 0.0625 * gt.get_domain().systole_sq_length(); // @fixme ?
   }
 
   Periodic_3_Delaunay_triangulation_3_generic(const Lattice& lattice)
@@ -437,12 +437,10 @@ public:
     if(dt3.dimension() != 3)
       return;
 
-    typename DT3::Cell_circulator fc = dt3.incident_cells(vh), done = fc;
-    do
-    {
-      fc->set_canonical_flag(is_canonical(fc));
-    }
-    while(++fc != done);
+    std::vector<Cell_handle> incident_chs;
+    dt3.incident_cells(vh, std::back_inserter(incident_chs));
+    for(Cell_handle ch : incident_chs)
+      ch->set_canonical_flag(is_canonical(ch));
   }
 
   void reset_all_canonicity()
@@ -513,13 +511,15 @@ public:
 
     // Scan through the incident cells and find the one that is
     // equivalent to fh.
-    typename DT3::Cell_circulator fc = dt3.incident_cells(cv), done = fc;
-    do
+    std::vector<Cell_handle> incident_chs;
+    dt3.incident_cells(cv, std::back_inserter(incident_chs));
+
+    for(Cell_handle ch : incident_chs)
     {
-      if(dt3.is_infinite(fc)) // shouldn't ever happen
+      if(dt3.is_infinite(ch)) // shouldn't ever happen
         continue;
 
-      int cj = fc->index(cv);
+      int cj = ch->index(cv);
       Vertex_handle cv2 = fh->vertex((cj+1) % 4);
       Vertex_handle cv3 = fh->vertex((cj+2) % 4);
       Vertex_handle cv4 = fh->vertex((cj+3) % 4);
@@ -532,10 +532,9 @@ public:
          canonical_vertices.at(cv4) == canonical_vertices.at(v4) &&
          cv4->offset() == v4->offset() + o)
       {
-        return Cell_handle(fc);
+        return Cell_handle(ch);
       }
     }
-    while(++fc != done);
 
     // provided cell is not a periodic cell and doesn't have a copy with a vertex in the domain.
     return Cell_handle();
@@ -646,24 +645,26 @@ public:
     const Point cp = gt_.get_domain().construct_canonical_point(p);
     std::cout << "Insert (DT3): " << p << " canonical: " << cp << std::endl;
 
-    std::cout << dt3.number_of_vertices() << " vertices" << std::endl;
+    std::cout << dt3.number_of_vertices() << " vertices (before insertion)" << std::endl;
     if(dt3.dimension() >= 3) // equivalent to !dt3.empty() since we insert duplicate vertices
     {
       // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
+      Cell_handle c = dt3.locate(p);
+
       std::vector<Cell_handle> cells_in_conflict;
-      dt3.get_conflicts(cp, std::back_inserter(cells_in_conflict));
+      dt3.find_conflicts(cp, c, CGAL::Emptyset_iterator(), std::back_inserter(cells_in_conflict));
       std::cout << cells_in_conflict.size() << " cells in conflict" << std::endl;
 
       size_t erased_cells = 0;  // @tmp
-      for(Cell_handle fh : cells_in_conflict)
+      for(Cell_handle ch : cells_in_conflict)
       {
-        Cell_handle cfh = get_canonical_cell(fh);
+        Cell_handle cch = get_canonical_cell(ch);
 
         // We might get non-periodic "boundary" cells that don't have a canonical version
-        if(cfh != Cell_handle())
+        if(cch != Cell_handle())
         {
           // Some cells might appear multiple times in the conflict zone, but this is fine.
-          erased_cells += cells_with_too_big_circumradius.erase(cfh);
+          erased_cells += cells_with_too_big_circumradius.erase(cch);
         }
       }
       std::cout << "Cells with too big radius in conflict zone:" << erased_cells << std::endl;
@@ -701,12 +702,14 @@ public:
 
     // Update the current maximum circumradius value
     std::cout << "Gather cells w/ too big circumradius" << std::endl;
-    typename DT3::Cell_circulator fc = dt3.incident_cells(vh), done(fc);
-    do
-    {
-      CGAL_assertion(!dt3.is_infinite(fc));
+    std::vector<Cell_handle> incident_chs;
+    dt3.incident_cells(vh, std::back_inserter(incident_chs));
 
-      Cell_handle cfh = get_canonical_cell(fc);
+    for(Cell_handle ch : incident_chs)
+    {
+      CGAL_assertion(!dt3.is_infinite(ch));
+
+      Cell_handle cfh = get_canonical_cell(ch);
       CGAL_assertion(cfh != Cell_handle());
 
       const FT sq_cr = compute_squared_circumradius(cfh);
@@ -714,7 +717,6 @@ public:
       if(sq_cr > sq_circumradius_threshold)
         cells_with_too_big_circumradius.insert(cfh);
     }
-    while(++fc != done);
 
     std::cout << cells_with_too_big_circumradius.size() << " cells with too big sq_cr" << std::endl;
 
@@ -753,21 +755,21 @@ public:
   {
     typedef std::set<Vertex_handle>                                            Facet_vertices;
     typedef std::pair<Cell_handle, int>                                        Incident_cell;
-    typedef std::map<Facet_vertices, std::vector<Incident_cell> >               Incident_cells_map;
+    typedef std::map<Facet_vertices, std::vector<Incident_cell> >              Incident_cells_map;
 
     // the opposite vertex of f in c is i
-    Facet_vertices e;
-    e.insert(fh->vertex((i + 1) % 4));
-    e.insert(fh->vertex((i + 2) % 4));
-    e.insert(fh->vertex((i + 3) % 4));
-    CGAL_precondition(e.size() == 3);
+    Facet_vertices f;
+    f.insert(fh->vertex((i + 1) % 4));
+    f.insert(fh->vertex((i + 2) % 4));
+    f.insert(fh->vertex((i + 3) % 4));
+    CGAL_precondition(f.size() == 3);
 
     Incident_cell icf = std::make_pair(fh, i);
     std::vector<Incident_cell> vec;
     vec.push_back(icf);
 
     std::pair<typename Incident_cells_map::iterator, bool> is_insert_successful =
-        incident_cells_map.insert(std::make_pair(e, vec));
+        incident_cells_map.insert(std::make_pair(f, vec));
     if(!is_insert_successful.second) // the entry already exists in the map
     {
       // a facet must have exactly two incident cells

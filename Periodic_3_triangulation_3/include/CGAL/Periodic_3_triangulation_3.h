@@ -122,6 +122,8 @@ public:
   typedef GT                                   Geometric_traits;
   typedef TDS                                  Triangulation_data_structure;
 
+  typedef typename GT::Domain                  Domain;
+
   typedef typename GT::Periodic_3_offset_3     Offset;
   typedef typename GT::Iso_cuboid_3            Iso_cuboid;
   typedef std::array<int, 3>           Covering_sheets;
@@ -256,25 +258,26 @@ protected:
 
 public:
   /** @name Creation */
-  Periodic_3_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0, 1,1,1),
-                             const Geometric_traits& gt = Geometric_traits())
-    : _gt(gt), _tds()
-  {
-    typedef typename internal::Exact_field_selector<FT>::Type EFT;
-    typedef NT_converter<FT,EFT> NTC;
-    CGAL_USE_TYPE(NTC);
-    CGAL_triangulation_precondition_code( NTC ntc; )
-    CGAL_triangulation_precondition(ntc(domain.xmax())-ntc(domain.xmin())
-                                    == ntc(domain.ymax())-ntc(domain.ymin()));
-    CGAL_triangulation_precondition(ntc(domain.ymax())-ntc(domain.ymin())
-                                    == ntc(domain.zmax())-ntc(domain.zmin()));
-    CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin())
-                                    == ntc(domain.xmax())-ntc(domain.xmin()));
+  Periodic_3_triangulation_3(const GT& gt) : _gt(gt), _tds(), _cover(make_array(1, 1, 1)) { }
+  Periodic_3_triangulation_3(const Domain& domain) : Periodic_3_triangulation_3(GT(domain)) { }
 
-    _gt.set_domain(domain);
-    _cover = CGAL::make_array(3,3,3);
-    init_tds();
-  }
+  // @tmp
+//  Periodic_3_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0, 1,1,1),
+//                             const Geometric_traits& gt = Geometric_traits())
+//    : _gt(gt), _tds()
+//  {
+//    typedef typename internal::Exact_field_selector<FT>::Type EFT;
+//    typedef NT_converter<FT,EFT> NTC;
+//    CGAL_USE_TYPE(NTC);
+//    CGAL_triangulation_precondition_code( NTC ntc; )
+//    CGAL_triangulation_precondition(ntc(domain.xmax())-ntc(domain.xmin()) == ntc(domain.ymax())-ntc(domain.ymin()));
+//    CGAL_triangulation_precondition(ntc(domain.ymax())-ntc(domain.ymin()) == ntc(domain.zmax())-ntc(domain.zmin()));
+//    CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin()) == ntc(domain.xmax())-ntc(domain.xmin()));
+
+//    _gt.set_domain(domain);
+//    _cover = CGAL::make_array(3,3,3);
+//    init_tds();
+//  }
 
 protected:
   // Copy constructor helpers
@@ -424,10 +427,10 @@ public:
 
 #ifndef CGAL_GENERIC_P3T3
   void convert_to_1_sheeted_covering();
-  void convert_to_27_sheeted_covering();
+  void convert_to_37_sheeted_covering();
 #endif
 
-  virtual void update_cover_data_after_converting_to_27_sheeted_covering() { }
+  virtual void update_cover_data_after_converting_to_37_sheeted_covering() { }
 
   size_type number_of_cells() const {
     if(is_1_cover()) return _tds.number_of_cells();
@@ -3035,13 +3038,13 @@ is_valid(bool verbose, int level) const
          iter != end_iter;
          ++iter)
     {
-      for(typename Virtual_vertex_reverse_map::mapped_type::const_iterator iter_2 = iter->second.begin(),
-           end_iter_2 = iter->second.end();
-           iter_2 != end_iter_2;
-           ++iter_2)
+      for(typename Virtual_vertex_reverse_map::mapped_type::const_iterator iter_3 = iter->second.begin(),
+           end_iter_3 = iter->second.end();
+           iter_3 != end_iter_3;
+           ++iter_3)
       {
-        CGAL_triangulation_assertion(virtual_vertices.find(*iter_2) != virtual_vertices.end());
-        CGAL_triangulation_assertion(virtual_vertices.at(*iter_2).first == iter->first);
+        CGAL_triangulation_assertion(virtual_vertices.find(*iter_3) != virtual_vertices.end());
+        CGAL_triangulation_assertion(virtual_vertices.at(*iter_3).first == iter->first);
       }
     }
   }
@@ -3644,7 +3647,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering()
 
 template < class GT, class TDS >
 inline void
-Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
+Periodic_3_triangulation_3<GT,TDS>::convert_to_37_sheeted_covering()
 {
   if(_cover == CGAL::make_array(3,3,3))
     return;
@@ -3887,7 +3890,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering()
   _cover = CGAL::make_array(3,3,3);
   CGAL_triangulation_expensive_assertion(is_valid());
 
-  update_cover_data_after_converting_to_27_sheeted_covering();
+  update_cover_data_after_converting_to_37_sheeted_covering();
 }
 #endif // CGAL_GENERIC_P3T3
 

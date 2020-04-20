@@ -81,7 +81,7 @@ public:
       // lattice is reduced if all pair-wise scalar products are non-positive
       reduced = true;
       for (const std::array<int, 4>& pp : pair_partitions) {
-        const FT sp = gt_.compute_scalar_product_3_object()(ext_basis[pp[0]], ext_basis[pp[1]]);
+        const FT sp = k.compute_scalar_product_3_object()(ext_basis[pp[0]], ext_basis[pp[1]]);
         if (sp > 0) {
           reduced = false;
           ext_basis[pp[2]] = k.construct_sum_of_vectors_3_object()(ext_basis[pp[2]], ext_basis[pp[0]]);
@@ -111,11 +111,11 @@ public:
   void construct_Voronoi_face_normals()
   {
     Vector ext = construct_extended_basis_vector();
-    Vector fn1 = k.construct_sum_of_vectors_3_object()(basis_[0] + basis_[1]);
-    Vector fn2 = k.construct_sum_of_vectors_3_object()(basis_[0] + basis_[2]);
-    Vector fn3 = k.construct_sum_of_vectors_3_object()(basis_[1] + basis_[2]);
+    Vector fn1 = k.construct_sum_of_vectors_3_object()(basis_[0], basis_[1]);
+    Vector fn2 = k.construct_sum_of_vectors_3_object()(basis_[0], basis_[2]);
+    Vector fn3 = k.construct_sum_of_vectors_3_object()(basis_[1], basis_[2]);
 
-    Vfn_ = CGAL::make_array(basis_[0], basis_[1], basis_[2], extb, fn1, fn2, fn3);
+    Vfn_ = CGAL::make_array(basis_[0], basis_[1], basis_[2], ext, fn1, fn2, fn3);
 
     systole_sq_length_ = basis_[0].squared_length();
     for (int i = 1; i < 7; ++i) {
@@ -182,6 +182,7 @@ public:
   {
 //    std::cout << "Reduced basis b[0] = " << basis_[0] << std::endl;
 //    std::cout << "Reduced basis b[1] = " << basis_[1] << std::endl;
+//    std::cout << "Reduced basis b[2] = " << basis_[2] << std::endl;
 
 //    std::cout << "translate_by_offset(" << p << " Off: " << o << ") = ";
 

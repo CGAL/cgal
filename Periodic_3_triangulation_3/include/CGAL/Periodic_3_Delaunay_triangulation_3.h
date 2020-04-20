@@ -60,6 +60,7 @@ public:
   typedef Gt                                    Geometric_traits;
   typedef Tds                                   Triangulation_data_structure;
 
+  typedef typename Gt::Domain                            Domain;
 
   ///Compatibility typedef:
   typedef Geometric_traits                      Geom_traits;
@@ -113,7 +114,7 @@ public:
   // Tag to distinguish periodic triangulations from others
   typedef Tag_true                              Periodic_tag;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_3
   using Base::cw;
   using Base::ccw;
   using Base::domain;
@@ -211,22 +212,21 @@ private:
 
 public:
   /** @name Creation */
-  Periodic_3_Delaunay_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-                                      const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt), too_long_edge_counter(0)
+  Periodic_3_Delaunay_triangulation_3(const Gt& gt)
+    : Base(gt), too_long_edge_counter(0)
   {
-    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
-                                      * (domain.xmax()-domain.xmin());
+    update_cover_data_after_setting_domain();
   }
+
+  Periodic_3_Delaunay_triangulation_3(const Domain& domain = Domain())
+    : Periodic_3_Delaunay_triangulation_3(Gt(domain))
+  { }
 
   template < typename InputIterator >
   Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                                      const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
-                                      const Geometric_traits& gt = Geometric_traits())
-    : Base(domain, gt), too_long_edge_counter(0)
+                                      const Domain& domain = Domain())
+    : Periodic_3_Delaunay_triangulation_3(domain), too_long_edge_counter(0)
   {
-    edge_length_threshold = FT(0.166) * (domain.xmax()-domain.xmin())
-                                      * (domain.xmax()-domain.xmin());
     insert(first, last);
   }
 
@@ -270,7 +270,7 @@ public:
 #endif
   }
 
-  virtual void update_cover_data_after_converting_to_27_sheeted_covering()
+  virtual void update_cover_data_after_converting_to_37_sheeted_covering()
   {
     compute_too_long_edges();
   }
@@ -448,7 +448,7 @@ public:
               return true;
 
             tds().delete_cells(new_cells.begin(), new_cells.end());
-            Base::convert_to_27_sheeted_covering();
+            Base::convert_to_37_sheeted_covering();
             return true;
           }
           else if(find(too_long_edges[v_no].begin(),
@@ -524,6 +524,7 @@ public:
       points.begin(), points.end(), hint, tester, hider, cover_manager);
 
     if(is_large_point_set) {
+#ifdef WIP // @fixme
       typedef CGAL::Periodic_3_Delaunay_triangulation_remove_traits_3<Gt> P3removeT;
       typedef CGAL::Delaunay_triangulation_3< P3removeT > DT;
       typedef Vertex_remover< DT > Remover;
@@ -536,6 +537,7 @@ public:
                       dummy_points[i]) == double_vertices.end())
           Base::remove(dummy_points[i],remover,t, cover_manager);
       }
+#endif
     }
 
     return number_of_vertices() - n;

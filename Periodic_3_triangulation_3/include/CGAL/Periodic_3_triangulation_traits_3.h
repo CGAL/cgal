@@ -26,16 +26,18 @@
 
 namespace CGAL {
 
-template <class K_,
-          class Off_ = typename CGAL::Periodic_3_offset_3>
+template <class Kernel_,
+          class Offset_ = CGAL::Periodic_3_offset_3,
+          class Domain_ = typename Kernel_::Iso_cuboid_3,
+          class Construct_point_3_ = Default>
 class Periodic_3_triangulation_traits_base_3
-  : public K_
+  : public Kernel_
 {
-  typedef Periodic_3_triangulation_traits_base_3<K_, Off_>  Self;
-
 public:
-  typedef K_                                 Kernel;
-  typedef Off_                               Offset;
+  typedef Kernel_                                                 Kernel;
+  typedef Offset_                                                 Offset;
+
+  typedef Domain_                                                 Domain;
 
   typedef typename Kernel::RT                RT;
   typedef typename Kernel::FT                FT;
@@ -53,30 +55,30 @@ public:
   typedef typename Kernel::Triangle_3        Triangle_3;
   typedef typename Kernel::Tetrahedron_3     Tetrahedron_3;
 
+  typedef Periodic_3_construct_point_3<Kernel, Offset>            Construct_point_3_def;
+  typedef typename Default::Get<Construct_point_3_,
+                                Construct_point_3_def>::type      Construct_point_3;
+
+private:
+  // Not truly "Self" since we grab the default value from CGAL::Default
+  typedef Periodic_3_triangulation_traits_base_3<
+            Kernel_, Offset_, Domain_, Construct_point_3>         Self;
+  typedef Kernel_                                                 Base;
+
 public:
   virtual ~Periodic_3_triangulation_traits_base_3() { }
 
-  Periodic_3_triangulation_traits_base_3(const Iso_cuboid_3& domain,
-                                         const Kernel& k)
-    : Kernel(k)
-  {
-    set_domain(domain);
-  }
+  Periodic_3_triangulation_traits_base_3(const Domain& d = Domain(),
+                                         const Kernel& k = Kernel())
+    : Base(k), domain(d)
+  { }
 
   // will be overwritten by filtered classes to create exact and approximate
   // versions of the domain
-  virtual void set_domain(const Iso_cuboid_3& domain) {
-    _domain = domain;
-  }
+  virtual void set_domain(const Domain& d) { domain = d; }
 
   // Access
-  const Iso_cuboid_3& get_domain() const {
-    return _domain;
-  }
-
-  // Construct_point_3 with offset
-  typedef Periodic_3_construct_point_3<Self, typename Kernel::Construct_point_3>
-      Construct_point_3;
+  const Domain& get_domain() const { return domain; }
 
   // Triangulation predicates
   typedef Functor_with_offset_points_adaptor_3<Self, typename Kernel::Compare_xyz_3>
@@ -94,7 +96,7 @@ public:
 
   // Operations
   Construct_point_3 construct_point_3_object() const {
-    return Construct_point_3(&_domain, this->Kernel::construct_point_3_object());
+    return Construct_point_3(&domain, this->Kernel::construct_point_3_object());
   }
 
   Compare_xyz_3 compare_xyz_3_object() const {
@@ -114,13 +116,24 @@ public:
   }
 
 protected:
-  Iso_cuboid_3 _domain;
+  Domain domain;
 };
 
-template <class K_,
-          class Off_ = CGAL::Periodic_3_offset_3,
-          bool Has_filtered_predicates_ = internal::Has_filtered_predicates<K_>::value>
-class Periodic_3_triangulation_traits_3;
+template <class K,
+          class O = CGAL::Periodic_3_offset_3,
+          class D = typename K::Iso_cuboid_3,
+          class CP = Default,
+          bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
+class Periodic_3_triangulation_traits_3
+  : public Periodic_3_triangulation_traits_base_3<K, O, D, CP> // @tmp (this is just a forward declaration normally)
+{
+public:
+  typedef Periodic_3_triangulation_traits_base_3<K, O, D, CP> Base;
+  Periodic_3_triangulation_traits_3(const D& d = D(), const K& k = K()) : Base(d, k) { }
+};
+
+
+#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK // @tmp to remove filtering
 
 } //namespace CGAL
 
@@ -161,6 +174,8 @@ public:
     : Base(domain, k)
   { }
 };
+
+#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
 
 } //namespace CGAL
 
