@@ -24,17 +24,21 @@ endif()
 set(Classification_dependencies_met TRUE)
 
 find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
-if (NOT Boost_SERIALIZATION_FOUND)
+include(CGAL_Boost_serialization_support)
+include(CGAL_Boost_iostreams_support)
+
+if (NOT TARGET CGAL::Boost_serialization_support)
   message(STATUS "NOTICE: This project requires Boost Serialization, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
-if (NOT Boost_IOSTREAMS_FOUND)
+if (NOT TARGET CGAL::Boost_iostreams_support)
   message(STATUS "NOTICE: This project requires Boost IO Streams, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
@@ -49,11 +53,11 @@ create_single_source_cgal_program( "test_classification_point_set.cpp" )
 create_single_source_cgal_program( "test_classification_io.cpp" )
 
 foreach(target test_classification_point_set test_classification_io)
-  CGAL_target_use_Eigen(${target})
-  CGAL_target_use_Boost_IOStreams(${target})
-  CGAL_target_use_Boost_Serialization(${target})
-  if(TBB_FOUND)
-    CGAL_target_use_TBB(${target})
+  target_link_libraries(${target} PUBLIC
+    CGAL::Eigen_support
+    CGAL::Boost_iostreams_support
+    CGAL::Boost_serialization_support)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endif()
 endforeach()
-

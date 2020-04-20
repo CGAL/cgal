@@ -26,6 +26,7 @@ if ( NOT Boost_FOUND )
 endif()
 
 find_package(Eigen3 3.1.0)
+include(CGAL_Eigen_support)
 
 # include for local directory
 include_directories( BEFORE include )
@@ -36,8 +37,6 @@ include_directories( BEFORE include )
 # ##########################################################
 
 create_single_source_cgal_program( "points_to_RT_to_off.cpp" )
-CGAL_target_use_Eigen(points_to_RT_to_off)
+target_link_libraries(points_to_RT_to_off PUBLIC CGAL::Eigen_support)
 create_single_source_cgal_program( "points_to_DT_to_off.cpp" )
-CGAL_target_use_Eigen(points_to_DT_to_off)
-
-
+target_link_libraries(points_to_DT_to_off PUBLIC CGAL::Eigen_support)
