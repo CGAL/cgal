@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 
       lcccopy.mark_cell<0>(cycle[0], is_root_copy);
       double cycle_length=0;
-      for (int i=0; i<cycle.length(); ++i)
+      for (std::size_t i=0; i<cycle.length(); ++i)
       {
         cycle_length+=wf(cycle[i]);
         if (!lcccopy.is_marked(cycle[i], belong_to_cycle_copy))

@@ -237,7 +237,7 @@ protected:
                              const WeightFunctor& wf)
   {
     if (std::is_same<WeightFunctor, Unit_weight_functor>::value)
-    { compute_BFS_tree(root, spanning_tree, distance_from_root, trace_index, wf); }
+    { compute_BFS_tree(root, spanning_tree, distance_from_root, trace_index); }
     else
     { compute_Dijkstra_tree(root, spanning_tree, distance_from_root, trace_index, wf); }
   }
@@ -295,7 +295,7 @@ protected:
         if (!get_local_map().is_marked(v, vertex_visited))
         {
           int v_index=++vertex_index;
-          CGAL_assertion(v_index==distance_from_root.size());
+          CGAL_assertion(v_index==static_cast<int>(distance_from_root.size()));
           distance_from_root.push_back(distance_from_root[u_index]+w);
           spanning_tree.push_back(it);
           trace_index.push_back(u_index-1);
@@ -324,11 +324,10 @@ protected:
   }
 
   /// Create a spanning tree using BFS
-  template <class WeightFunctor, class Distance_>
+  template <class Distance_>
   void compute_BFS_tree(Dart_handle root, Dart_container& spanning_tree,
                         std::vector<Distance_>& distance_from_root,
-                        std::vector<int>& trace_index,
-                        const WeightFunctor& wf)
+                        std::vector<int>& trace_index)
   {
     // Preparation
     std::queue<int> q;

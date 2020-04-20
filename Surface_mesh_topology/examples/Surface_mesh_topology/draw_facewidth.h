@@ -20,7 +20,7 @@ struct Facewidth_draw_functor : public CGAL::DefaultDrawingFunctorLCC
   { return CGAL::Color(0, 255, 0); }
 
   template<typename LCC>
-  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_handle dh) const
+  bool colored_edge(const LCC& /*alcc*/, typename LCC::Dart_const_handle /*dh*/) const
   { return false; }
 
   template<typename LCC>
@@ -53,7 +53,7 @@ void draw_facewidth(const LCC& lcc,
   int nbv=0, nbf=0;
   typename LCC::size_type vertex_mark = lcc.get_new_mark();
   typename LCC::size_type face_mark = lcc.get_new_mark();
-  for (int i=0; i<cycle.size(); ++i)
+  for (std::size_t i=0; i<cycle.size(); ++i)
   {
     // Color the vertex
     if (!lcc.is_marked(cycle[i], vertex_mark))

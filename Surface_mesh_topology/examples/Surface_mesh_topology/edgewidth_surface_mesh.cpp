@@ -12,7 +12,7 @@ using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
 double cycle_length(const Mesh& mesh, const Path_on_surface& cycle)
 { // Compute the length of the given cycle.
   double res=0;
-  for (int i=0; i<cycle.length(); ++i)
+  for (std::size_t i=0; i<cycle.length(); ++i)
   { res+=std::sqrt
         (CGAL::squared_distance(mesh.point(mesh.vertex(mesh.edge(cycle[i]), 0)),
                                 mesh.point(mesh.vertex(mesh.edge(cycle[i]), 1)))); }

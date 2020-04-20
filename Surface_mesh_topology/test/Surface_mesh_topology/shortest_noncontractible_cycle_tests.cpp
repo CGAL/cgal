@@ -96,7 +96,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
   LCC_for_CMap_2::Dart_handle root1 = lcc.darts().begin();
   Point R = lcc.point_of_vertex_attribute(lcc.vertex_attribute(root1));
   CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle_with_base_point(root1);
-  for (int i = 0; i < cycle1.length(); ++i) {
+  for (std::size_t i = 0; i < cycle1.length(); ++i) {
     auto e = cycle1[i];
     if (e == NULL) {
       std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: NULL dart handle found in cycle1\n";
@@ -118,7 +118,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
     return false;
   }
   CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_non_contractible_cycle_with_base_point(*root2);
-  for (int i = 0; i < cycle2.length(); ++i) {
+  for (std::size_t i = 0; i < cycle2.length(); ++i) {
     auto e = cycle2[i];
     if (e == NULL) {
       std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: NULL dart handle found in cycle\n";
@@ -140,7 +140,7 @@ bool edge_width_in_unweighted_polyhedron() {
   }
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<Polyhedron> cst(p);
   CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle = cst.compute_edge_width();
-  for (int i = 0; i < cycle.length(); ++i) {
+  for (std::size_t i = 0; i < cycle.length(); ++i) {
     auto e = cycle[i];
     if (e == NULL) {
       std::cerr << "Fail edge_width_in_unweighted_polyhedron: NULL dart handle found in cycle\n";
@@ -189,7 +189,7 @@ bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
   gm.mark_cell<1>(gm.alpha<0>(faces[2]), chosen_cycle); // 5-1
 
   unsigned int cycle_length = 0;
-  for (int i = 0; i < cycle.length(); ++i) {
+  for (std::size_t i = 0; i < cycle.length(); ++i) {
     cycle_length += wf(cycle[i]);
     auto dh = cycle[i];
     if (!gm.is_marked(dh, chosen_cycle)) {
@@ -251,7 +251,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   double cycle_length1, cycle_length2, cycle_length3;
   std::vector<Point> v1, v2, v3;
 
-  for (int i=0; i<cycle1.length(); ++i)
+  for (std::size_t i=0; i<cycle1.length(); ++i)
   {
     auto e=cycle1.get_ith_real_dart(i);
     cycle_length1+=wf_cm(e);
@@ -259,7 +259,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   }
   v1.push_back(lcc_cm.point(cycle1.get_ith_real_dart(0)));
 
-  int i=0;
+  std::size_t i=0;
   while (lcc_gm.point(cycle2.get_ith_real_dart(i))!=v1[0])
   {
     if (i==cycle2.length())
@@ -269,7 +269,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     }
     ++i;
   }
-  for (int j=0; j<cycle2.length(); ++j, i=cycle2.next_index(i))
+  for (std::size_t j=0; j<cycle2.length(); ++j, i=cycle2.next_index(i))
   {
     auto e=cycle2.get_ith_real_dart(i);
     cycle_length2 += wf_gm(e);
@@ -287,7 +287,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     }
     ++i;
   }
-  for (int j=0; j<cycle3.length(); ++j, i=cycle3.next_index(i))
+  for (std::size_t j=0; j<cycle3.length(); ++j, i=cycle3.next_index(i))
   {
     auto e=cycle3.get_ith_real_dart(i);
     cycle_length3+=wf_sm(e);
@@ -297,13 +297,13 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
 
   int v2orientation=0, v3orientation=0;
   bool same=true;
-  for (int i=0; i<v1.size(); ++i)
+  for (std::size_t i=0; i<v1.size(); ++i)
   {
-    int j=v1.size()-i-1;
+    std::size_t j=v1.size()-i-1;
     if (v2orientation==0)
     {
-      if (v1[i]==v2[i] && v1[i]!=v2[j])      { v2orientation==1; }
-      else if (v1[i]!=v2[i] && v1[i]==v2[j]) { v2orientation==2; }
+      if (v1[i]==v2[i] && v1[i]!=v2[j])      { v2orientation=1; }
+      else if (v1[i]!=v2[i] && v1[i]==v2[j]) { v2orientation=2; }
       else if (v1[i]!=v2[i] && v1[i]!=v2[j]) { same=false; }
     }
     else if (v2orientation==1)
@@ -313,8 +313,8 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
 
     if (v3orientation==0)
     {
-      if (v1[i]==v3[i] && v1[i]!=v3[j]) { v3orientation==1; }
-      else if (v1[i]!=v3[i] && v1[i]==v3[j]) { v3orientation==2; }
+      if (v1[i]==v3[i] && v1[i]!=v3[j]) { v3orientation=1; }
+      else if (v1[i]!=v3[i] && v1[i]==v3[j]) { v3orientation=2; }
       else if (v1[i]!=v3[i] && v1[i]!=v3[j]) { same=false; }
     }
     else if (v3orientation==1)
@@ -325,11 +325,11 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     if (!same)
     {
       std::cerr << "Fail edge_width_in_weighted_cmap_gmap_mesh: Inconsistency in the vertex ordering.\n";
-      for (int i=0; i<v1.size(); ++i) std::cerr<<v1[i]<<", ";
+      for (std::size_t i=0; i<v1.size(); ++i) std::cerr<<v1[i]<<", ";
       std::cerr<<'\n';
-      for (int i=0; i<v2.size(); ++i) std::cerr<<v2[i]<<", ";
+      for (std::size_t i=0; i<v2.size(); ++i) std::cerr<<v2[i]<<", ";
       std::cerr<<'\n';
-      for (int i=0; i<v3.size(); ++i) std::cerr<<v3[i]<<", ";
+      for (std::size_t i=0; i<v3.size(); ++i) std::cerr<<v3[i]<<", ";
       std::cerr<<'\n';
       return false;
     }
@@ -362,7 +362,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle = cst.compute_edge_width();
     length = cycle.length();
     LCC_for_GMap_2::size_type belong_to_cycle = lcc_gm.get_new_mark();
-    for (int i = 0; i < cycle.length(); ++i) {
+    for (std::size_t i = 0; i < cycle.length(); ++i) {
       auto e = cycle[i];
       if (e == NULL) {
         std::cerr << "Fail unsew_edge_width_repeatedly_in_unweighted_gmap: NULL dart handle found in cycle\n";
@@ -377,7 +377,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     cycle_lengths.push_back(length);
     lcc_gm.free_mark(belong_to_cycle);
   } while (length != 0);
-  for (int i = 1; i < cycle_lengths.size(); ++i)
+  for (std::size_t i = 1; i < cycle_lengths.size(); ++i)
     if (cycle_lengths[i] > cycle_lengths[i-1]) {
       std::cerr << "Fail unsew_edge_width_repeatedly_in_unweighted_gmap: Edge width length decreases instead of increases\n";
       return false;

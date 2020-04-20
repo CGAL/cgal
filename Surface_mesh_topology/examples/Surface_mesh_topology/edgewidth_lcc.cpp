@@ -12,7 +12,7 @@ using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 double cycle_length(const LCC_3& lcc, const Path_on_surface& cycle)
 { // Compute the length of the given cycle.
   double res=0;
-  for (int i=0; i<cycle.length(); ++i)
+  for (std::size_t i=0; i<cycle.length(); ++i)
   { res+=std::sqrt
         (CGAL::squared_distance(lcc.point(cycle.get_next_dart(i)), lcc.point(cycle[i]))); }
   return res;

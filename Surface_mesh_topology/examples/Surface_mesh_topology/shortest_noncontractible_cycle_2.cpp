@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
   else
   {
     double cycle_length=0;
-    for (int i=0; i<cycle.length(); ++i)
+    for (std::size_t i=0; i<cycle.length(); ++i)
     { cycle_length+=wf(cycle[i]); }
 
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;

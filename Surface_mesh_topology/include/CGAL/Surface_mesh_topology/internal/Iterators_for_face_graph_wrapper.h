@@ -58,6 +58,7 @@ namespace internal {
     {
       CGAL_assertion(&mmap==&(other.mmap));
       m_it=other.m_it;
+      return *this;
     }
 
     operator Dart_handle() const

@@ -586,7 +586,7 @@ public:
   }
 
   std::size_t orient(size_type amark) const
-  { negate_mark(amark); }
+  { negate_mark(amark); return number_of_darts(); }
 
   std::vector<unsigned int>
   count_marked_cells(size_type amark, const std::vector<unsigned int>& acells) const
