@@ -8,7 +8,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Guillaume Damiand and Francis Lazarus
 
-This package provides a toolbox for manipulating curves on a combinatorial surface from the topological viewpoint. Two main functionalities are proposed. One is concerned with the computation of shortest curves that cannot be continuously deformed to a point. This includes the computation of the so-called edge-width and face-width of the vertex-edge graph of a combinatorial surface. The other functionality is concerned with the homotopy test for deciding if two given curves on a combinatorial surface can be continuously deformed one into the other.
+This package provides a toolbox for manipulating curves on a combinatorial surface from the topological viewpoint. Two main functionalities are proposed. One is the computation of shortest curves that cannot be continuously deformed to a point. This includes the computation of the so-called edge-width and face-width of the vertex-edge graph of a combinatorial surface. The other functionality is the homotopy test for deciding if two given curves on a combinatorial surface can be continuously deformed one into the other.
 
 
 \section SMTopology Introduction
