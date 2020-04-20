@@ -191,7 +191,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
       for (Point_set::Index idx : *points)
       {
         Point_set::Index iidx = *(colored->point_set()->insert (points->point(idx)));
-        if (cluster_size[cluster_map[idx]] >= min_nb->value())
+        if (cluster_size[cluster_map[idx]] >= std::size_t(min_nb->value()))
         {
           CGAL::Random rand(cluster_map[idx] + 1);
           unsigned char r, g, b;
@@ -210,7 +210,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     {
       for (Scene_points_with_normal_item* new_item : new_items)
       {
-        if (new_item->point_set()->size() >= min_nb->value())
+        if (new_item->point_set()->size() >= std::size_t(min_nb->value()))
         {
           scene->addItem(new_item);
           scene->changeGroup (new_item, group);

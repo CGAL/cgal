@@ -273,7 +273,6 @@ is an output iterator used to store adjacencies.\n
 \b Type: a class model of `OutputIterator` that accepts objects of
 type `std::pair<std::size_t, std::size_t>`. \n
 <b>Default value</b>: `CGAL::Emptyset_iterator`.
-
 \cgalNPEnd
 
 \cgalNPTableEnd

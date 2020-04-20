@@ -165,7 +165,7 @@ std::size_t cluster_point_set (PointRange& points,
   {
     const value_type& p = *it;
 
-    if (get (cluster_map, p) != -1)
+    if (int(get (cluster_map, p)) != -1)
       continue;
 
     todo.push (it);
@@ -175,7 +175,7 @@ std::size_t cluster_point_set (PointRange& points,
       iterator current = todo.front();
       todo.pop();
 
-      if (get (cluster_map, *current) != -1)
+      if (int(get (cluster_map, *current)) != -1)
         continue;
 
       put (cluster_map, *current, nb_clusters);
