@@ -227,9 +227,8 @@ public:
       Vertex_handle infinite_vertex = triangulation.infinite_vertex();
 
       bool v0_updated = false;
-      for (unsigned int i = 0; i < find_incident.size(); i++)
+      for (const Cell_handle ch : find_incident)
       {
-        const Cell_handle ch = find_incident[i];
         if (invalid_cells.find(ch) == invalid_cells.end()) //valid cell
         {
           if (triangulation.is_infinite(ch))
@@ -242,10 +241,8 @@ public:
       }
 
       //Update the vertex before removing it
-      for (unsigned int i = 0; i < cells_to_update.size(); i++)
+      for (Cell_handle ch : cells_to_update)
       {
-        Cell_handle & ch = cells_to_update[i];
-
         if (invalid_cells.find(ch) == invalid_cells.end()) //valid cell
         {
           ch->set_vertex(ch->index(vh1), vh0);
@@ -268,29 +265,19 @@ public:
       triangulation.tds().delete_vertex(vh1);
 
       //Removing cells
-      for (unsigned int i = 0; i < cells_to_remove.size(); i++){
-        triangulation.tds().delete_cell(cells_to_remove[i]);
+      for (Cell_handle ch : cells_to_remove){
+        triangulation.tds().delete_cell(ch);
       }
 
-      typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
-      for (Finite_cells_iterator cit = triangulation.finite_cells_begin();
-           cit != triangulation.finite_cells_end(); ++cit)
+      for (Cell_handle cit : triangulation.finite_cell_handles())
       {
         if (!is_well_oriented(triangulation, cit))
           return ORIENTATION_PROBLEM;
-      }
-
-      typedef typename Tr::Cell_iterator Cell_iterator;
-      for (Cell_iterator cit = triangulation.cells_begin();
-           cit != triangulation.cells_end(); ++cit)
-      {
         if (!triangulation.tds().is_valid(cit, true))
           return C_PROBLEM;
       }
 
-      typedef typename Tr::Vertex_iterator Vertex_iterator;
-      for (Vertex_iterator vit = triangulation.vertices_begin();
-           vit != triangulation.vertices_end(); ++vit)
+      for (Vertex_handle vit : triangulation.finite_vertex_handles())
       {
         if (!triangulation.tds().is_valid(vit, true))
           return V_PROBLEM;
@@ -735,7 +722,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
   // update complex edges
   const std::array<std::array<int, 2>, 6> edges
-    = { 0,1, 0,2, 0,3, 1,2, 1,3, 2,3 }; //vertex indices in cells
+    = { { 0,1, 0,2, 0,3, 1,2, 1,3, 2,3 } }; //vertex indices in cells
   const Vertex_handle vkept = vh0;
   const Vertex_handle vdeleted = vh1;
   for (const Cell_handle ch : cells_to_update)
