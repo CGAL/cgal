@@ -132,6 +132,25 @@ inline std::istream
   return is;
 }
 
+Periodic_3_offset_3 min(const Periodic_3_offset_3 &off1, const Periodic_3_offset_3 &off2)
+{
+  if (off1 < off2)
+    return off1;
+  else
+    return off2;
+}
+
+Periodic_3_offset_3 min(const Periodic_3_offset_3 &off1, const Periodic_3_offset_3 &off2, const Periodic_3_offset_3 &off3)
+{
+  return min(off1, min(off2, off3));
+}
+
+Periodic_3_offset_3 min(const Periodic_3_offset_3 &off1, const Periodic_3_offset_3 &off2, const Periodic_3_offset_3 &off3, const Periodic_3_offset_3 &off4)
+{
+  return min(off1, min(off2, off3, off4));
+}
+
+
 } //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_OFFSET_H
