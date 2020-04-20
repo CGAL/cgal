@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
     std::cout<<"Finding #"<<loop++<<" edge-width:"<<std::endl;
     {
       CST cst(lcccopy);
-      cycle=cst.compute_shortest_noncontractible_cycle(wf);
+      cycle=cst.compute_shortest_non_contractible_cycle(wf);
     }
     if (cycle.length()==0)
     { std::cout << "  Cannot find edge-width. Stop.\n"; cycle_exist=false; }

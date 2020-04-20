@@ -40,10 +40,10 @@ int main(int argc, char* argv[])
 
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3> cst(lcc, true);
 
-  Path_on_surface cycle1=cst.compute_edgewidth(true);
+  Path_on_surface cycle1=cst.compute_edge_width(true);
 
   CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<LCC_3> wf(lcc);
-  Path_on_surface cycle2=cst.compute_shortest_noncontractible_cycle(wf, true);
+  Path_on_surface cycle2=cst.compute_shortest_non_contractible_cycle(wf, true);
 
   std::cout<<"Cycle 1 (pink): "; display_cycle_info(lcc, cycle1);
   std::cout<<"Cycle 2 (green): "; display_cycle_info(lcc, cycle2);

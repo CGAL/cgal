@@ -116,7 +116,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   Marked_weight_functor<LCC_CM> wf(map, mark);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_CM> cst(map);
 
-  auto cycle2=cst.compute_shortest_noncontractible_cycle(wf);
+  auto cycle2=cst.compute_shortest_non_contractible_cycle(wf);
   if (cycle2.length()!=nbedges)
   {
     std::cout<<"[ERROR] in test_weighted for double-torus-2-d.off: the length"
@@ -149,7 +149,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>      cst(mesh);
 
   std::cout<<"."<<std::flush;
-  CGAL::Surface_mesh_topology::Path_on_surface<Mesh> cycle=cst.compute_edgewidth();
+  CGAL::Surface_mesh_topology::Path_on_surface<Mesh> cycle=cst.compute_edge_width();
   if (cycle.length()!=nbedges)
   {
     std::cout<<"[ERROR]: number of edges for the cycle is not correct ("
@@ -164,7 +164,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
   }
 
   std::cout<<"."<<std::flush;
-  cycle=cst.compute_shortest_noncontractible_cycle(wf);
+  cycle=cst.compute_shortest_non_contractible_cycle(wf);
   double l=0.;
   for (int i=0; i<cycle.length(); ++i) { l+=wf(cycle[i]); }
   if (l>length)
@@ -174,7 +174,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
     res=false;
   }
 
-  auto facewidth=cst.compute_facewidth();
+  auto facewidth=cst.compute_face_width();
   if (facewidth.size()!=nbfaces)
   {
     std::cout<<"[ERROR] number of faces for the face width is not correct ("

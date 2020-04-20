@@ -104,7 +104,7 @@ public:
   bool is_shortest_noncontractible_cycle_representation_computed() const
   { return m_shortest_noncontractible_cycle!=nullptr; }
 
-  void compute_shortest_noncontractible_cycle_representation(bool display_time=false) const
+  void compute_shortest_non_contractible_cycle_representation(bool display_time=false) const
   {
     if (m_shortest_noncontractible_cycle==nullptr)
     {
@@ -114,56 +114,56 @@ public:
   }
 
   template <class WeightFunctor>
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint
+  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_basepoint
   (Dart_const_handle dh, const WeightFunctor& wf, bool display_time=false) const
   {
-    compute_shortest_noncontractible_cycle_representation(display_time);
+    compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf, display_time);
   }
 
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint
+  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_basepoint
   (Dart_const_handle dh, bool display_time=false) const
   {
-    compute_shortest_noncontractible_cycle_representation(display_time);
+    compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, display_time);
   }
 
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle
+  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle
   (bool display_time=false) const
   {
-    compute_shortest_noncontractible_cycle_representation(display_time);
+    compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->
-      compute_shortest_noncontractible_cycle(nullptr, display_time);
+      compute_shortest_non_contractible_cycle(nullptr, display_time);
   }
 
   template <class WeightFunctor>
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle
+  Path_on_surface<Mesh> compute_shortest_non_contractible_cycle
   (const WeightFunctor& wf, bool display_time=false) const
   {
-    compute_shortest_noncontractible_cycle_representation(display_time);
+    compute_shortest_non_contractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->
-      compute_shortest_noncontractible_cycle(nullptr, wf, display_time);
+      compute_shortest_non_contractible_cycle(nullptr, wf, display_time);
   }
 
-  Path_on_surface<Mesh> compute_edgewidth(bool display_time=false) const
+  Path_on_surface<Mesh> compute_edge_width(bool display_time=false) const
   {
-    compute_shortest_noncontractible_cycle_representation(display_time);
-    return m_shortest_noncontractible_cycle->compute_edgewidth(display_time);
+    compute_shortest_non_contractible_cycle_representation(display_time);
+    return m_shortest_noncontractible_cycle->compute_edge_width(display_time);
   }
 
   bool is_facewidth_representation_computed() const
   { return m_facewidth!=nullptr; }
 
-  void compute_facewidth_representation(bool display_time=false) const
+  void compute_face_width_representation(bool display_time=false) const
   {
     if (m_facewidth==nullptr)
     { m_facewidth=std::make_unique<Facewidth>(m_original_mesh, display_time); }
   }
 
-  std::vector<Dart_const_handle> compute_facewidth(bool display_time=false) const
+  std::vector<Dart_const_handle> compute_face_width(bool display_time=false) const
   {
-    compute_facewidth_representation(display_time);
-    return m_facewidth->compute_facewidth(display_time);
+    compute_face_width_representation(display_time);
+    return m_facewidth->compute_face_width(display_time);
   }
 
 protected:

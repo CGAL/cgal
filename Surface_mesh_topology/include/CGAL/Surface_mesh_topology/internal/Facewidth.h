@@ -112,7 +112,7 @@ public:
     }
   }
 
-  std::vector<Original_dart_const_handle> compute_facewidth(bool display_time=false)
+  std::vector<Original_dart_const_handle> compute_face_width(bool display_time=false)
   {
     CGAL::Timer t;
     if (display_time)
@@ -120,7 +120,7 @@ public:
 
     // Find edgewidth of the radial map
     Path_on_surface<Local_map> edgewidth_of_radial_map=
-        m_snc_to_find_facewidth->compute_edgewidth();
+        m_snc_to_find_facewidth->compute_edge_width();
 
     std::vector<Original_dart_const_handle> cycle;
     cycle.reserve(edgewidth_of_radial_map.length());
@@ -135,7 +135,7 @@ public:
     if (display_time)
     {
       t.stop();
-      std::cout<<"[TIME] compute_facewidth: "<<t.time()<<" seconds."<<std::endl;
+      std::cout<<"[TIME] compute_face_width: "<<t.time()<<" seconds."<<std::endl;
     }
 
     return cycle;

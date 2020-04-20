@@ -91,9 +91,9 @@ Since the data structures to represent a surface are edge-centralized, in order 
 
 The class \link Surface_mesh_topology::Curves_on_surface_topology `Curves_on_surface_topology` \endlink provides the following three functions:
 
-- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint(dh, weight_functor)` \endlink: Compute a shortest non-contractible cycle going through the source vertex of `dh`,
-- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle `compute_shortest_noncontractible_cycle(weight_functor)` \endlink:  Very similar to the previous function, except that one does not specify a vertex. It computes a shortest non-contractible cycle through every vertex and returns the shortest cycle among them,
-- \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth()` \endlink: Compute the edge-width of the mesh, equivalent to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle `compute_shortest_noncontractible_cycle(`\endlink \link CGAL::Surface_mesh_topology::Unit_weight_functor `Unit_weight_functor())`\endlink.
+- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle_with_basepoint `compute_shortest_non_contractible_cycle_with_basepoint(dh, weight_functor)` \endlink: Compute a shortest non-contractible cycle going through the source vertex of `dh`,
+- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle `compute_shortest_non_contractible_cycle(weight_functor)` \endlink:  Very similar to the previous function, except that one does not specify a vertex. It computes a shortest non-contractible cycle through every vertex and returns the shortest cycle among them,
+- \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edge_width `compute_edge_width()` \endlink: Compute the edge-width of the mesh, equivalent to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle `compute_shortest_non_contractible_cycle(`\endlink \link CGAL::Surface_mesh_topology::Unit_weight_functor `Unit_weight_functor())`\endlink.
 
 The above functions return an instance of \link Surface_mesh_topology::Path_on_surface `Path_on_surface` \endlink. The optional argument `weight_functor` is used to calculate the length of the edges. If not given, all the edge lengths are set to 1, i.e. the mesh is unweighted.
 
@@ -102,7 +102,7 @@ The above functions return an instance of \link Surface_mesh_topology::Path_on_s
 Facewidth returns a shortest non-contractible topological curve described as a circular sequence of traversed faces alternating with the vertices it passes through. Each face or vertex in this sequence is identified by one of its dart handles.
 In practice, we choose the same dart handle for a face as for the next vertex it passes through. This way, we only need to return one dart handle for a face and its following vertex in the sequence.
 
-The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_facewidth `compute_facewidth()` \endlink computes the sequence of dart handles as described above and returns an `std::vector` of dart handles, where each dart represents a traversed face followed by an incident  vertex.
+The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_face_width `compute_face_width()` \endlink computes the sequence of dart handles as described above and returns an `std::vector` of dart handles, where each dart represents a traversed face followed by an incident  vertex.
 
 \subsection SMTopology_Queries Testing Homotopy
 
@@ -126,11 +126,11 @@ Each time a `Surface_mesh_topology::Path_on_surface` is provided for a homotopy 
 
 In the next two examples, we present various ways to compute shortest non-contractible cycles.
 
-One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case (first call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint  `compute_shortest_noncontractible_cycle_with_basepoint`\endlink). Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart (second call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle_with_basepoint `compute_shortest_noncontractible_cycle_with_basepoint`\endlink). Note that the time complexity is raised by a logarithmic factor.
+One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case (first call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle_with_basepoint  `compute_shortest_non_contractible_cycle_with_basepoint`\endlink). Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart (second call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle_with_basepoint `compute_shortest_non_contractible_cycle_with_basepoint`\endlink). Note that the time complexity is raised by a logarithmic factor.
 
 \cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle.cpp}
 
-In order to find the edge-width of the surface, one can make use of the routine \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edgewidth `compute_edgewidth`\endlink as in the following example. The weighted shortest non contractible cycle is also computed (calling \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_noncontractible_cycle `compute_shortest_noncontractible_cycle`\endlink). In this example, a `Surface_mesh` is used to store the mesh.
+In order to find the edge-width of the surface, one can make use of the routine \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edge_width `compute_edge_width`\endlink as in the following example. The weighted shortest non contractible cycle is also computed (calling \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle `compute_shortest_non_contractible_cycle`\endlink). In this example, a `Surface_mesh` is used to store the mesh.
 
 \cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
 

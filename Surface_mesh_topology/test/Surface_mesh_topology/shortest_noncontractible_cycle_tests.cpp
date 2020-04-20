@@ -95,7 +95,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_CMap_2> cst1(lcc);
   LCC_for_CMap_2::Dart_handle root1 = lcc.darts().begin();
   Point R = lcc.point_of_vertex_attribute(lcc.vertex_attribute(root1));
-  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_noncontractible_cycle_with_basepoint(root1);
+  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle_with_basepoint(root1);
   for (int i = 0; i < cycle1.length(); ++i) {
     auto e = cycle1[i];
     if (e == NULL) {
@@ -117,7 +117,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
     std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: Cannot find CMap's root in the Polyhedron\n";
     return false;
   }
-  CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_noncontractible_cycle_with_basepoint(*root2);
+  CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_non_contractible_cycle_with_basepoint(*root2);
   for (int i = 0; i < cycle2.length(); ++i) {
     auto e = cycle2[i];
     if (e == NULL) {
@@ -139,7 +139,7 @@ bool edge_width_in_unweighted_polyhedron() {
     return false;
   }
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<Polyhedron> cst(p);
-  CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle = cst.compute_edgewidth();
+  CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle = cst.compute_edge_width();
   for (int i = 0; i < cycle.length(); ++i) {
     auto e = cycle[i];
     if (e == NULL) {
@@ -180,7 +180,7 @@ bool find_cycle_in_nonorientable_gmap() { // Make a non-oriented case here
   Weight_functor_for_GM wf (gm, smallest_edge);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<GMap_2> cst(gm);
 
-  CGAL::Surface_mesh_topology::Path_on_surface<GMap_2> cycle = cst.compute_shortest_noncontractible_cycle_with_basepoint(faces[0]);
+  CGAL::Surface_mesh_topology::Path_on_surface<GMap_2> cycle = cst.compute_shortest_non_contractible_cycle_with_basepoint(faces[0]);
 
   gm.mark_cell<1>(gm.alpha<1>(faces[1]), chosen_cycle); // 1-6
   gm.mark_cell<1>(gm.alpha<1,0,1>(faces[1]), chosen_cycle); // 6-9
@@ -221,9 +221,9 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_CMap_2> cst1(lcc_cm);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_GMap_2> cst2(lcc_gm);
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<Surface_mesh> cst3(sm);
-  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_noncontractible_cycle(wf_cm);
-  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle2 = cst2.compute_shortest_noncontractible_cycle(wf_gm);
-  CGAL::Surface_mesh_topology::Path_on_surface<Surface_mesh> cycle3 = cst3.compute_shortest_noncontractible_cycle(wf_sm);
+  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle(wf_cm);
+  CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle2 = cst2.compute_shortest_non_contractible_cycle(wf_gm);
+  CGAL::Surface_mesh_topology::Path_on_surface<Surface_mesh> cycle3 = cst3.compute_shortest_non_contractible_cycle(wf_sm);
 
   if (cycle1.length()!=cycle2.length() || cycle1.length()!=cycle3.length())
   {
@@ -359,7 +359,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
   unsigned int length;
   do {
     CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_GMap_2> cst(lcc_gm);
-    CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle = cst.compute_edgewidth();
+    CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle = cst.compute_edge_width();
     length = cycle.length();
     LCC_for_GMap_2::size_type belong_to_cycle = lcc_gm.get_new_mark();
     for (int i = 0; i < cycle.length(); ++i) {

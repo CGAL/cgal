@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Finding the facewidth..."<<std::endl;
 
   CST cst(lcc, true);
-  std::vector<Dart_const_handle> cycle=cst.compute_facewidth(true);
+  std::vector<Dart_const_handle> cycle=cst.compute_face_width(true);
 
   if (cycle.size()==0)
   { std::cout<<"  Cannot find such cycle."<<std::endl; }

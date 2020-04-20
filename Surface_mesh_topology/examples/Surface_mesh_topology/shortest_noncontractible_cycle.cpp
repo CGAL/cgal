@@ -45,11 +45,11 @@ int main(int argc, char* argv[])
       (CGAL::get_default_random().get_int(0, lcc.number_of_darts())); // One dart of the mesh
 
   Path_on_surface cycle1=
-      cst.compute_shortest_noncontractible_cycle_with_basepoint(root);
+      cst.compute_shortest_non_contractible_cycle_with_basepoint(root);
 
   CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<LCC_3> wf(lcc);
   Path_on_surface cycle2=
-      cst.compute_shortest_noncontractible_cycle_with_basepoint(root, wf);
+      cst.compute_shortest_non_contractible_cycle_with_basepoint(root, wf);
 
   std::cout<<"Cycle 1 (pink): "; display_cycle_info(lcc, cycle1);
   std::cout<<"Cycle 2 (green): "; display_cycle_info(lcc, cycle2);
