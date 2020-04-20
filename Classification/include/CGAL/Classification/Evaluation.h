@@ -89,8 +89,8 @@ public:
                                              boost::make_zip_iterator
                                              (boost::make_tuple(ground_truth.end(), result.end()))))
     {
-      int gt = static_cast<int>(get<0>(zip));
-      int res = static_cast<int>(get<1>(zip));
+      int gt = static_cast<int>(boost::get<0>(zip));
+      int res = static_cast<int>(boost::get<1>(zip));
       if (gt == -1 || res == -1)
         continue;
       ++ total;
