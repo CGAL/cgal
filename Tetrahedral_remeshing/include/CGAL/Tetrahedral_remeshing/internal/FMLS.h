@@ -329,11 +329,11 @@ private:
   void computePNScale()
   {
     Vector_3 c = CGAL::NULL_VECTOR;
-    for (unsigned int i = 0; i < PNSize; i++)
+    for (std::size_t i = 0; i < PNSize; i++)
       c += Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
     c /= PNSize;
     PNScale = 0.f;
-    for (unsigned int i = 0; i < PNSize; i++) {
+    for (std::size_t i = 0; i < PNSize; i++) {
       float r = distance(c, Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
       if (r > PNScale)
         PNScale = r;
