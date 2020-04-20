@@ -601,9 +601,13 @@ As a consequence, the normal computed for each face (see Section
 - The function `CGAL::Polygon_mesh_processing::volume_connected_components()` provides information about
 the 3D arrangement of the surface connected components in a given triangle mesh. It comes with many
 named parameter options making it also a more general version of `is_outward_oriented()`.
-
-
-\subsection PolygonSoupExample Orientation Example
+- The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
+duplicates points and edges to make a soup orientable, without changing the orientation of the faces.
+- The function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
+takes an input mesh as a reference and orients the triangles of a soup according to it.
+- The function `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
+merges the connected components of a polygon mesh if possible.
+\subsection PolygonSoupExample Orientation Examples
 
 This example shows how to generate a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -613,6 +617,11 @@ polygon mesh to illustrate
 Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
+
+This example shows how to correctly repair and orient a soup to get a mesh from a reference :
+
+\cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
+
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing

@@ -6,6 +6,8 @@
 /// \defgroup PkgTDS3Classes Classes
 /// \ingroup PkgTDS3Ref
 
+/// \defgroup PkgIOTDS3 I/O for a Triangulation_data_structure_3
+/// \ingroup PkgTDS3Ref
 /*!
 \addtogroup PkgTDS3Ref
 \todo check generated documentation

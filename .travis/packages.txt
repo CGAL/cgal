@@ -71,6 +71,7 @@ Nef_S2
 NewKernel_d
 Number_types
 OpenNL
+Optimal_bounding_box
 Optimal_transportation_reconstruction_2
 Optimisation_basic
 Partition_2

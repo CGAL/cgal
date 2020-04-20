@@ -189,6 +189,7 @@ public:
 
       return hf ^ 419 * hs;
     }
+
   };
 
   static const int maximal_nb_of_facets_of_small_hole = 128;
@@ -1521,6 +1522,73 @@ public:
     return s <= maximal_nb_of_facets_of_small_hole;
   }
 
+  //IO
+  template <typename TDS_src,
+            typename ConvertVertex,
+            typename ConvertCell>
+  std::istream& file_input(std::istream& is,
+                           ConvertVertex convert_vertex = ConvertVertex(),
+                           ConvertCell convert_cell = ConvertCell())
+  {
+    // reads
+    // the dimension
+    // the number of finite vertices
+    // the non combinatorial information on vertices (point, etc)
+    // the number of cells
+    // the cells by the indices of their vertices in the preceding list
+    // of vertices, plus the non combinatorial information on each cell
+    // the neighbors of each cell by their index in the preceding list of cells
+    // when dimension < 3 : the same with faces of maximal dimension
+
+    // If this is used for a TDS, the vertices are processed from 0 to n.
+    // Else, we make V[0] the infinite vertex and work from 1 to n+1.
+
+    typedef typename Tds::Vertex_handle  Vertex_handle;
+    typedef typename Tds::Cell_handle    Cell_handle;
+
+    typedef typename TDS_src::Vertex Vertex1;
+    typedef typename TDS_src::Cell Cell1;
+    clear();
+    cells().clear();
+
+    std::size_t n;
+    int d;
+    if(is_ascii(is))
+      is >> d >> n;
+    else {
+      read(is, d);
+      read(is, n);
+    }
+    if(!is) return is;
+    set_dimension(d);
+
+    std::size_t V_size = n;
+    std::vector< Vertex_handle > V(V_size);
+
+    // the infinite vertex is numbered 0
+    for (std::size_t i=0 ; i < V_size; ++i) {
+      Vertex1 v;
+      if(!(is >> v)) return is;
+      Vertex_handle vh=create_vertex( convert_vertex(v) );
+      V[i] = vh;
+      convert_vertex(v, *V[i]);
+    }
+
+    std::vector< Cell_handle > C;
+
+    std::size_t m;
+    read_cells(is, V, m, C);
+
+    for (std::size_t j=0 ; j < m; j++) {
+      Cell1 c;
+      if(!(is >> c)) return is;
+      convert_cell(c, *C[j]);
+    }
+
+    CGAL_triangulation_assertion(is_valid(false));
+    return is;
+  }
+
 private:
 
   // Change the orientation of the cell by swapping indices 0 and 1.
@@ -1550,6 +1618,7 @@ private:
   // counts but does not check
   bool count_cells(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
+
 };
 
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3

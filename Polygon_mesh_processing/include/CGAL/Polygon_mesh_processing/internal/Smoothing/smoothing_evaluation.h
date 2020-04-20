@@ -61,7 +61,7 @@ public:
       angles_.push_back(traits_.compute_approximate_angle_3_object()(a, b, c));
     }
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "angles_ size = " << angles_.size() << std::endl;
 #endif
   }
@@ -79,7 +79,7 @@ public:
     for(face_descriptor f : faces(mesh_))
       areas_.push_back(face_area(f, mesh_));
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "areas_ size = " << areas_.size() << std::endl;
 #endif
   }
@@ -97,7 +97,7 @@ public:
     for(face_descriptor f : faces(mesh_))
       aspect_ratios_.push_back(CGAL::Polygon_mesh_processing::face_aspect_ratio(f, mesh_));
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "aspect_ratios_ size = " << aspect_ratios_.size() << std::endl;
 #endif
   }

@@ -540,8 +540,13 @@ public:
     Mark m[2];
     Object_handle o_supp[2];
     SHalfedge_handle e_below;
+
     vertex_info()
-    { o_supp[0]=o_supp[1]=Object_handle(); }
+    {
+      m[0]=m[1]=Mark();
+      o_supp[0]=o_supp[1]=Object_handle();
+    }
+
     LEDA_MEMORY(vertex_info)
   }; // vertex_info
 
