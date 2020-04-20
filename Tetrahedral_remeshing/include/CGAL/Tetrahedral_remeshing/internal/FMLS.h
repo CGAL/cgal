@@ -53,9 +53,10 @@ inline float wendland(float x, float h)
     return 0.0;
 }
 
-inline void setPNSample(std::vector<float>& p, unsigned int i,
-                        float x, float y, float z,
-                        float nx, float ny, float nz)
+inline void setPNSample(std::vector<float>& p,
+                        const std::size_t& i,
+                        const float x, const float y, const float z,
+                        const float nx, const float ny, const float nz)
 {
   p[6 * i] = x;
   p[6 * i + 1] = y;
@@ -226,13 +227,17 @@ public:
   // The strid indicates the offsets in qv (the defautl value of 3 means that the qv
   // is compact: pv={x0,y0,z0,x1,y1,z1...}. If pv contains also normals for instance,
   // the stride should be set to 6.
-  void fastProjectionCPU(const std::vector<float>& pv, unsigned int pvSize,
-                         std::vector<float>& qv, unsigned int stride = 3) const
+  void fastProjectionCPU(const std::vector<float>& pv,
+                         const std::size_t pvSize,
+                         std::vector<float>& qv,
+                         std::size_t stride = 3) const
   {
-    for (int i = 0; i < int(pvSize); i++) {
+    for (std::size_t i = 0; i < pvSize; i++)
+    {
       Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
       Vector_3 q, n;
-      for (unsigned int j = 0; j < numIter; j++) {
+      for (unsigned int j = 0; j < numIter; j++)
+      {
         q = CGAL::NULL_VECTOR;
         n = CGAL::NULL_VECTOR;
         fastProjectionCPU(p, q, n);
@@ -240,7 +245,6 @@ public:
       }
       setPNSample(qv, i, q[0], q[1], q[2], n[0], n[1], n[2]);
     }
-
   }
 
   // Brute force version. O(PNSize) complexity. For comparison only.
@@ -528,6 +532,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   typedef typename Tr::Geom_traits           Gt;
   typedef typename Gt::Point_3               Point_3;
   typedef typename Gt::Vector_3              Vector_3;
+  typedef typename Gt::FT                    FT;
 
   typedef typename VerticesSurfaceIndices::mapped_type    VertexSurfaces;
   typedef typename VerticesSurfaceIndices::const_iterator VerticesSurfaceIterator;
@@ -582,12 +587,12 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
        it != subdomain_sample_numbers.end(); ++it)
   {
     current_subdomain_FMLS_indices[it->first] = count;
-    pns.push_back(std::vector<float>(it->second * 6, 0));
+    pns.push_back(std::vector<float>(it->second * 6, 0.f));
     count++;
   }
 
   std::vector<int> current_v_count(count, 0);
-  std::vector<double> point_spacing(count, 0);
+  std::vector<float> point_spacing(count, 0.f);
   std::vector<int> point_spacing_count(count, 0);
 
   //Allocation of the PN
@@ -692,7 +697,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
         {
           Vector_3 space_1 = barycenter - points[i];
 
-          point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
+          point_spacing[fmls_id] += CGAL::sqrt(space_1 * space_1);
           point_spacing_count[fmls_id] ++;
         }
       }
@@ -715,9 +720,9 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
           Vector_3 space_2 = p - points[i1];
           Vector_3 space_3 = p - points[i2];
 
-          point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
-          point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_2 * space_2));
-          point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_3 * space_3));
+          point_spacing[fmls_id] += CGAL::sqrt(space_1 * space_1);
+          point_spacing[fmls_id] += CGAL::sqrt(space_2 * space_2);
+          point_spacing[fmls_id] += CGAL::sqrt(space_3 * space_3);
 
           point_spacing_count[fmls_id] += 3;
         }
@@ -753,7 +758,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
     {
       nb_of_mls_to_create++;
 
-      double current_point_spacing = point_spacing[it->second] / point_spacing_count[it->second];
+      float current_point_spacing = point_spacing[it->second] / point_spacing_count[it->second];
       point_spacing[it->second] = current_point_spacing;
 
       average_point_spacing += current_point_spacing;
@@ -771,10 +776,12 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   {
     if (current_v_count[it->second] > 3)
     {
-      double current_point_spacing = point_spacing[it->second];
+      float current_point_spacing = point_spacing[it->second];
 
       //subdomain_FMLS[count].toggleHermite(true);
-      subdomain_FMLS[count].setPN(pns[it->second], current_v_count[it->second], current_point_spacing);
+      subdomain_FMLS[count].setPN(pns[it->second],
+                                  current_v_count[it->second],
+                                  current_point_spacing);
       //  subdomain_FMLS[count].toggleHermite(true);
       subdomain_FMLS_indices[it->first] = count;
 
