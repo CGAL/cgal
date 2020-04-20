@@ -78,7 +78,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   typename LCC_CM::Dart_const_handle dh=nullptr;
 
   // We iterate through the cycle until a junction
-  for (int i=0; dh==nullptr && i<cycle.length(); ++i)
+  for (std::size_t i=0; dh==nullptr && i<cycle.length(); ++i)
   {
     if (map.opposite(map.next(map.opposite(map.next(cycle.get_ith_real_dart(i)))))!=
         cycle.get_ith_real_dart(i))
@@ -166,7 +166,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
   std::cout<<"."<<std::flush;
   cycle=cst.compute_shortest_non_contractible_cycle(wf);
   double l=0.;
-  for (int i=0; i<cycle.length(); ++i) { l+=wf(cycle[i]); }
+  for (std::size_t i=0; i<cycle.length(); ++i) { l+=wf(cycle[i]); }
   if (l>length)
   {
     std::cout<<"[ERROR] length of the cycle is not minimal ("
