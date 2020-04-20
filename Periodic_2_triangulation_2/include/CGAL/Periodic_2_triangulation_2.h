@@ -418,7 +418,7 @@ public:
   }
 
   /// Converts an offset to a bit pattern where bit1==offx and bit0==offy.
-#ifdef CGAL_P2T2_USE_COMPACT_OFFSET
+#ifndef CGAL_GENERIC_P2T2
   int off_to_int(const Offset& off) const
   {
     CGAL_triangulation_assertion(off.x() == 0 || off.x() == 1);
@@ -450,7 +450,7 @@ public:
   /// Returns the face containing the three vertices defined by vh[0], vh1[1] and vh[2].
   inline Face_handle get_face(const Vertex_handle* vh) const;
 
-#ifdef CGAL_P2T2_USE_COMPACT_OFFSET
+#ifndef CGAL_GENERIC_P2T2
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
   void set_offsets(Face_handle f, int o0, int o1, int o2)
   {
@@ -503,7 +503,7 @@ public:
     CGAL_triangulation_assertion((0 <= off1[1]) && (off1[1] < 2));
     CGAL_triangulation_assertion((0 <= off2[1]) && (off2[1] < 2));
 
-#ifdef CGAL_P2T2_USE_COMPACT_OFFSET
+#ifndef CGAL_GENERIC_P2T2
     int o0i = ((off0[0] & 1) << 1) + (off0[1] & 1);
     int o1i = ((off1[0] & 1) << 1) + (off1[1] & 1);
     int o2i = ((off2[0] & 1) << 1) + (off2[1] & 1);
@@ -875,16 +875,16 @@ public:
   {
     CGAL_triangulation_precondition(number_of_vertices() != 0);
 
-#ifdef CGAL_P2T2_USE_COMPACT_OFFSET
-    int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
-    if(cumm_off == 0 && tester(f, Offset()))
+    if(f->has_zero_offsets() && tester(f, Offset()))
     {
       found = true;
       return Offset();
     }
     else
     {
+#ifndef CGAL_GENERIC_P2T2
       // Main idea seems to just test all possibilities.
+      int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
       for(int i=0; i<4; ++i)
       {
         // Check if for each bit position: bit of i <= bit of cumm_off
@@ -898,42 +898,42 @@ public:
           }
         }
       }
-    }
 #else // CGAL_P2T2_USE_COMPACT_OFFSET
-    int min_off_x = f->offset(2).x(),
-        max_off_x = f->offset(2).x(),
-        min_off_y = f->offset(2).y(),
-        max_off_y = f->offset(2).y();
-    for(int i=0; i<2; ++i)
-    {
-      min_off_x = (std::min)(min_off_x, f->offset(i).x());
-      max_off_x = (std::max)(max_off_x, f->offset(i).x());
-      min_off_y = (std::min)(min_off_y, f->offset(i).y());
-      max_off_y = (std::max)(max_off_y, f->offset(i).y());
-    }
-
-    if(min_off_x == max_off_x && min_off_y == max_off_y)
-    {
-      CGAL_triangulation_assertion(tester(f, Offset(min_off_x, min_off_y)));
-      found = true;
-      return Offset(min_off_x, min_off_y);
-    }
-    else
-    {
-      for(int i=min_off_x; i<=max_off_x; ++i)
+      int min_off_x = f->offset(2).x(),
+          max_off_x = f->offset(2).x(),
+          min_off_y = f->offset(2).y(),
+          max_off_y = f->offset(2).y();
+      for(int i=0; i<2; ++i)
       {
-        for(int j=min_off_y; j<=max_off_y; ++j)
+        min_off_x = (std::min)(min_off_x, f->offset(i).x());
+        max_off_x = (std::max)(max_off_x, f->offset(i).x());
+        min_off_y = (std::min)(min_off_y, f->offset(i).y());
+        max_off_y = (std::max)(max_off_y, f->offset(i).y());
+      }
+
+      if(min_off_x == max_off_x && min_off_y == max_off_y)
+      {
+        CGAL_triangulation_assertion(tester(f, Offset(min_off_x, min_off_y)));
+        found = true;
+        return Offset(min_off_x, min_off_y);
+      }
+      else
+      {
+        for(int i=min_off_x; i<=max_off_x; ++i)
         {
-          const Offset oij(i, j);
-          if(tester(f, oij))
+          for(int j=min_off_y; j<=max_off_y; ++j)
           {
-            found = true;
-            return oij;
+            const Offset oij(i, j);
+            if(tester(f, oij))
+            {
+              found = true;
+              return oij;
+            }
           }
         }
       }
-    }
 #endif // CGAL_P2T2_USE_COMPACT_OFFSET
+    }
 
     CGAL_triangulation_assertion(false);
     return Offset();
@@ -943,8 +943,8 @@ public:
   template<class Conflict_tester>
   Offset get_location_offset(const Conflict_tester& tester, Face_handle f, const Point& p) const
   {
-    bool found;
-    Offset o = get_location_offset(tester, f, p, found);
+    bool found = false;
+    Offset o = get_location_offset(tester, f, found);
     CGAL_triangulation_assertion(found);
     return o;
   }
@@ -1816,7 +1816,7 @@ side_of_face(const Point& q, const Offset& off, Face_handle f, Locate_type& lt, 
 
     bool found = false;
 
-#ifdef CGAL_P2T2_USE_COMPACT_OFFSET
+#ifndef CGAL_GENERIC_P2T2
     int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
     for(int i = 0; (i < 4) && (!found); ++i)
     {
@@ -1944,7 +1944,7 @@ oriented_side(Face_handle f, const Point& p, const Offset& o) const
 
     Bounded_side bs;
 
-#ifdef CGAL_P2T2_USE_COMPACT_OFFSET
+#ifndef CGAL_GENERIC_P2T2
     int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
     for(int i=0; i<4; ++i)
     {
@@ -2248,7 +2248,7 @@ insert_in_face(const Point& p, const Offset& o, Face_handle f, Vertex_handle vh)
   if(!simplicity_criterion)
   {
     // Choose the periodic copy of tester.point() that is inside f.
-    current_off = get_location_offset(f, p, o);
+    current_off = get_location_offset(f, p, o); // @fixme
 
 // @tmp restore after oriented side has been converted to generic P2T2
 //    CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
