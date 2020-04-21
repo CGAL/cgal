@@ -301,12 +301,6 @@ namespace CGAL {
                    const boost::variant< Arc1, Arc2 > &c2,
                    OutputIterator oi) const
       {
-        typedef CircularKernel                          CK;
-        typedef unsigned int                            Multiplicity;
-        typedef std::pair<Circular_arc_point_2, Multiplicity>
-                                                        Intersection_point;
-        typedef boost::variant<Arc1, Arc2>              X_monotone_curve_2;
-
         if ( const Arc1* arc1 = boost::get<Arc1>( &c1 ) ){
           if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
             return CircularKernel().intersect_2_object()(*arc1, *arc2, oi);

@@ -844,7 +844,6 @@ public:
                            Intersection_map& inter_map,
                            OutputIterator oi) const
   {
-    typedef unsigned int                              Multiplicity;
     typedef boost::variant<Intersection_point, Self>  Intersection_result;
 
     if (_has_same_supporting_conic(arc)) {

@@ -182,7 +182,7 @@ public:
         const Base_x_monotone_curve_2* overlap_cv =
           boost::get<Base_x_monotone_curve_2>(&xection);
 
-        CGAL_assertion_code(overlap_cv != nullptr);
+        CGAL_assertion(overlap_cv != nullptr);
         unsigned int ov_bc;
         unsigned int ov_twin_bc;
         if (base_cmp_endpoints(cv1) == base_cmp_endpoints(cv2)) {
