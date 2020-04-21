@@ -454,11 +454,6 @@ public:
   // Returns Cell_handle() if the provided cell is not a periodic cell
   Cell_handle get_canonical_cell(Cell_handle fh) const
   {
-    std::cout << "Getting canonical cell of: " << dt3.point(fh, 0) << " "
-                                               << dt3.point(fh, 1) << " "
-                                               << dt3.point(fh, 2) << " "
-                                               << dt3.point(fh, 3) << std::endl;
-
     return find_translated_cell(fh, -compute_offset(fh));
   }
 
@@ -640,25 +635,28 @@ public:
   /// Insertion and removal
   Vertex_handle insert(const Point& p)
   {
+    const Point cp = gt_.get_domain().construct_canonical_point(p);
+    std::cout << "Insert (DT3): " << p << " canonical: " << cp << std::endl;
+
     if(is_1_cover_)
-      return insert_in_p3dt3(p);
+      return insert_in_p3dt3(cp);
     else
-      return insert_in_dt3(p);
+      return insert_in_dt3(cp);
   }
 
   Vertex_handle insert_in_dt3(const Point& p)
   {
-    const Point cp = gt_.get_domain().construct_canonical_point(p);
-    std::cout << "Insert (DT3): " << p << " canonical: " << cp << std::endl;
+    CGAL_assertion(gt_.get_domain().is_in_scaled_domain(p));
 
-    std::cout << dt3.number_of_vertices() << " vertices (before insertion)" << std::endl;
+    const std::size_t old_nv = dt3.number_of_vertices();
+    std::cout << old_nv  << " vertices (before insertion)" << std::endl;
     if(dt3.dimension() >= 3) // equivalent to !dt3.empty() since we insert duplicate vertices
     {
       // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
       Cell_handle c = dt3.locate(p);
 
       std::vector<Cell_handle> cells_in_conflict;
-      dt3.find_conflicts(cp, c, CGAL::Emptyset_iterator(), std::back_inserter(cells_in_conflict));
+      dt3.find_conflicts(p, c, CGAL::Emptyset_iterator(), std::back_inserter(cells_in_conflict));
       std::cout << cells_in_conflict.size() << " cells in conflict" << std::endl;
 
       size_t erased_cells = 0;  // @tmp
@@ -676,7 +674,7 @@ public:
       std::cout << "Cells with too big radius in conflict zone:" << erased_cells << std::endl;
     }
 
-    Vertex_handle vh = dt3.insert(cp);
+    Vertex_handle vh = dt3.insert(p);
 
     CGAL_assertion(vh != Vertex_handle());
     vh->set_offset(Offset(0, 0, 0));
@@ -693,7 +691,7 @@ public:
                                gt_.construct_scaled_vector_3_object()(gt_.get_domain().basis()[1], off[1]),
                                gt_.construct_scaled_vector_3_object()(gt_.get_domain().basis()[2], off[2])));
 
-      const Point off_p = cp + off_v;
+      const Point off_p = p + off_v;
       if(gt_.get_domain().is_in_scaled_domain(off_p, 3))
       {
         Vertex_handle vh_copy = dt3.insert(off_p);
@@ -705,6 +703,8 @@ public:
         mark_canonical_cells(vh_copy);
       }
     }
+
+    CGAL_assertion(old_nv + 27 == dt3.number_of_vertices());
 
     // Update the current maximum circumradius value
     std::cout << "Gather cells w/ too big circumradius" << std::endl;
@@ -719,7 +719,7 @@ public:
       CGAL_assertion(cfh != Cell_handle());
 
       const FT sq_cr = compute_squared_circumradius(cfh);
-      std::cout << " sq_cr: " << sq_cr << " sys:" << sq_circumradius_threshold << std::endl;
+//      std::cout << " sq_cr: " << sq_cr << " sys:" << sq_circumradius_threshold << std::endl;
       if(sq_cr > sq_circumradius_threshold)
         cells_with_too_big_circumradius.insert(cfh);
     }
@@ -734,9 +734,6 @@ public:
 
   Vertex_handle insert_in_p3dt3(const Point& p)
   {
-    const Point cp = gt_.get_domain().construct_canonical_point(p);
-    std::cout << "Insert (P3DT3): " << p << " canonical: " << cp << std::endl;
-
     return p3dt3.insert(p);
   }
 
@@ -832,6 +829,7 @@ public:
 
       Cell_handle fh = p3dt3.tds().create_cell(p3dt3_vh0, p3dt3_vh1, p3dt3_vh2, p3dt3_vh3);
 
+#if 0
       Offset min_off = CGAL::min(fit->vertex(0)->offset(),
                                  fit->vertex(1)->offset(),
                                  fit->vertex(2)->offset(),
@@ -841,6 +839,33 @@ public:
                       fit->vertex(1)->offset() - min_off,
                       fit->vertex(2)->offset() - min_off,
                       fit->vertex(3)->offset() - min_off);
+#else
+      const Offset& o0 = fit->vertex(0)->offset();
+      const Offset& o1 = fit->vertex(1)->offset();
+      const Offset& o2 = fit->vertex(2)->offset();
+      const Offset& o3 = fit->vertex(3)->offset();
+
+      int off0[3] = {o0.x(), o0.y(), o0.z()};
+      int off1[3] = {o1.x(), o1.y(), o1.z()};
+      int off2[3] = {o2.x(), o2.y(), o2.z()};
+      int off3[3] = {o3.x(), o3.y(), o3.z()};
+      for(int i=0; i<3; i++)
+      {
+        int min_off = (std::min)((std::min)(off0[i],off1[i]),
+                                 (std::min)(off2[i],off3[i]));
+        if(min_off != 0) {
+          off0[i] -= min_off;
+          off1[i] -= min_off;
+          off2[i] -= min_off;
+          off3[i] -= min_off;
+        }
+      }
+
+      fh->set_offsets(Offset(off0[0], off0[1], off0[2]),
+                      Offset(off1[0], off1[1], off1[2]),
+                      Offset(off2[0], off2[1], off2[2]),
+                      Offset(off3[0], off3[1], off3[2]));
+#endif
 
       add_facet_to_incident_cells_map(fh, 0, incident_cells_map);
       add_facet_to_incident_cells_map(fh, 1, incident_cells_map);
@@ -855,10 +880,7 @@ public:
       }
     }
 
-    std::cout << dt3.number_of_vertices() / 27 << " canonical vertices in dt3" << std::endl;
-    std::cout << cfc << " canonical cells in dt3" << std::endl;
-
-    // Set up adjacencies
+   // Set up adjacencies
     typename Incident_cells_map::const_iterator ifit = incident_cells_map.begin();
     for(; ifit!=incident_cells_map.end(); ++ifit)
     {
@@ -873,7 +895,9 @@ public:
       p3dt3.tds().set_adjacency(f0, i0, f1, i1);
     }
 
+    std::cout << dt3.number_of_vertices() / 27 << " canonical vertices in dt3" << std::endl;
     std::cout << p3dt3.number_of_vertices() << " vertices in p3dt3" << std::endl;
+    std::cout << cfc << " canonical cells in dt3" << std::endl;
     std::cout << p3dt3.number_of_cells() << " canonical cells in p3dt3" << std::endl;
 
     // std::ofstream out_dt3("dt3_post_convert.off");

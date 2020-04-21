@@ -31,23 +31,12 @@ Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   size_type number_of_cells = t.tds().number_of_cells();
 
   out << "OFF "
-      << "\n" << 4*number_of_cells /*+ 8*/ // @tmp don't output the domain
-      << " "  << 4*number_of_cells /*+ 6*/
+      << "\n" << 4*number_of_cells
+      << " "  << 4*number_of_cells
       << " "  << 0
       << std::endl;
 
-//  const Domain& cb = t.domain();
-
-//  out << cb.xmin() << " " << cb.ymin() << " " << cb.zmax() << std::endl;
-//  out << cb.xmax() << " " << cb.ymin() << " " << cb.zmax() << std::endl;
-//  out << cb.xmin() << " " << cb.ymax() << " " << cb.zmax() << std::endl;
-//  out << cb.xmax() << " " << cb.ymax() << " " << cb.zmax() << std::endl;
-//  out << cb.xmin() << " " << cb.ymax() << " " << cb.zmin() << std::endl;
-//  out << cb.xmax() << " " << cb.ymax() << " " << cb.zmin() << std::endl;
-//  out << cb.xmin() << " " << cb.ymin() << " " << cb.zmin() << std::endl;
-//  out << cb.xmax() << " " << cb.ymin() << " " << cb.zmin() << std::endl;
-
-  if (t.number_of_sheets() == CGAL::make_array(1,1,1)) {
+  if (t.is_1_cover()) {
     for (typename Triangulation::Cell_iterator it = t.cells_begin();
          it != t.cells_end(); it++) {
       for (int i=0; i<4; i++) {
@@ -72,18 +61,12 @@ Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
       }
     }
   }
-  out << "4 0 1 3 2" << std::endl;
-  out << "4 2 3 5 4" << std::endl;
-  out << "4 4 5 7 6" << std::endl;
-  out << "4 6 7 1 0" << std::endl;
-  out << "4 1 7 5 3" << std::endl;
-  out << "4 6 0 2 4" << std::endl;
 
   for (size_type i=0; i<number_of_cells; i++) {
-    out << "3 " << i*4  +8 << " " << i*4+1+8 << " " << i*4+2+8 << std::endl;
-    out << "3 " << i*4  +8 << " " << i*4+1+8 << " " << i*4+3+8 << std::endl;
-    out << "3 " << i*4  +8 << " " << i*4+2+8 << " " << i*4+3+8 << std::endl;
-    out << "3 " << i*4+1+8 << " " << i*4+2+8 << " " << i*4+3+8 << std::endl;
+    out << "3 " << i*4   << " " << i*4+1 << " " << i*4+2 << std::endl;
+    out << "3 " << i*4   << " " << i*4+1 << " " << i*4+3 << std::endl;
+    out << "3 " << i*4   << " " << i*4+2 << " " << i*4+3 << std::endl;
+    out << "3 " << i*4+1 << " " << i*4+2 << " " << i*4+3 << std::endl;
   }
 
   return out;

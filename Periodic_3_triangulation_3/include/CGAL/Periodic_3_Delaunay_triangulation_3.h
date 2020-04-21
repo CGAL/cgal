@@ -225,7 +225,7 @@ public:
   template < typename InputIterator >
   Periodic_3_Delaunay_triangulation_3(InputIterator first, InputIterator last,
                                       const Domain& domain = Domain())
-    : Periodic_3_Delaunay_triangulation_3(domain), too_long_edge_counter(0)
+    : Periodic_3_Delaunay_triangulation_3(domain)
   {
     insert(first, last);
   }

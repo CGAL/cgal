@@ -2,8 +2,8 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #define CGAL_GENERIC_P3T3 // @todo still needed but to remove eventually
-
-// #define CGAL_DEBUG_P3T3
+#define CGAL_DEBUG_P3T3
+#define CGAL_NO_STRUCTURAL_FILTERING
 
 #include <CGAL/internal/Generic_P3T3/Periodic_3_Delaunay_triangulation_3_generic.h>
 
@@ -40,7 +40,7 @@ std::vector<Point> generate_random_points(const std::size_t n, CGAL::Random& rnd
   std::vector<Point> pts;
   pts.reserve(n);
 
-  std::copy_n(Point_generator(1, rnd), n, back_inserter(pts)); // square centered on 0, side 2
+  std::copy_n(Point_generator(3, rnd), n, back_inserter(pts)); // square centered on 0, side 2
 
   return pts;
 }
@@ -55,15 +55,12 @@ int main(int argc, char** argv)
   CGAL::Random rnd(random_seed);
   const std::vector<Point> pts = generate_random_points(number_of_points, rnd);
 
-  const std::array<Vector, 3> basis = CGAL::make_array(Vector(4, 1, 0), Vector(-2.5, -1, 2), Vector(-4.5, 0.75, 1.1));
+  const std::array<Vector, 3> basis = CGAL::make_array(Vector(0, -0.4, 3.95), Vector(-0.3, 0.6, -0.3), Vector(0.4, 0.1, 1.21));
   const CGAL::Lattice_3<K> lattice(basis);
 
   GPDT Tr(lattice);
   for(const Point& pt : pts)
-  {
-    if(lattice.is_in_scaled_domain(pt))
-      Tr.insert(pt);
-  }
+    Tr.insert(pt);
 
   std::cout << "1 cover? " << Tr.is_1_cover() << std::endl;
   std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
