@@ -39,7 +39,7 @@ namespace Surface_mesh_topology {
      */
     bool is_contractible(const Path_on_surface<Mesh>& p) const;
 
-    /*!  returns a non-contractible cycle of type `Path_on_surface` with minimal number of edges. This edge number is the edgewidth of the mesh.
+    /*!  returns a non-contractible cycle of type `Path_on_surface` with minimal number of edges. This number of edges is the edge width of the mesh.
      */
     Path_on_surface<Mesh> compute_edge_width() const;
 
@@ -53,7 +53,7 @@ namespace Surface_mesh_topology {
     template <class WeightFunctor=Unit_weight_functor>
     Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point(halfedge_descriptor dh, const WeightFunctor& wf=WeightFunctor()) const;
 
-    /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be decribed by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewed as subsets of darts.) The size of the returned vector is the 'facewidth' of the mesh.
+    /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be decribed by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewed as subsets of darts.) The size of the returned vector is the face width of the mesh.
      */
     std::vector<halfedge_descriptor> compute_face_width() const;
   };
