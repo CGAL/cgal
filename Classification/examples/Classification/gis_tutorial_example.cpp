@@ -280,7 +280,7 @@ int main (int argc, char** argv)
 
       if (current->info() != -1)
         continue;
-      current->info() = component_size.size();
+      current->info() = int(component_size.size());
       ++ size;
 
       for (int i = 0; i < 3; ++ i)
@@ -332,7 +332,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Filtering]
 
-  int min_size = points.size() / 2;
+  int min_size = int(points.size() / 2);
 
   std::vector<TIN_with_info::Vertex_handle> to_remove;
   for (TIN_with_info::Vertex_handle vh : tin_with_info.finite_vertex_handles())
