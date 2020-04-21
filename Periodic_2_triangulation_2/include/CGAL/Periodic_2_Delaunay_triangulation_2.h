@@ -282,7 +282,9 @@ public:
     Conflict_tester tester(p, this);
     Point_hider hider;
     Cover_manager cover_manager(*this);
-    return Base::insert_in_conflict(p, start, tester, hider, cover_manager);
+    Vertex_handle vh = Base::insert_in_conflict(p, start, tester, hider, cover_manager);
+    CGAL_assertion(vh != Vertex_handle());
+    return vh;
   }
 
   Vertex_handle insert(const Point& p,
@@ -293,7 +295,9 @@ public:
     Conflict_tester tester(p, this);
     Point_hider hider;
     Cover_manager cover_manager(*this);
-    return Base::insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
+    Vertex_handle vh = Base::insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
+    CGAL_assertion(vh != Vertex_handle());
+    return vh;
   }
 
   Vertex_handle push_back(const Point& p) { return insert(p); }
@@ -364,6 +368,9 @@ public:
     // Actual insertion
     std::vector<Vertex_handle> double_vertices =
       Base::insert_in_conflict(points.begin(), points.end(), hint, tester, hider, cover_manager);
+
+    CGAL_assertion_code(for(Vertex_handle vh : double_vertices))
+    CGAL_assertion(vh != Vertex_handle());
 
     if(is_large_point_set)
     {

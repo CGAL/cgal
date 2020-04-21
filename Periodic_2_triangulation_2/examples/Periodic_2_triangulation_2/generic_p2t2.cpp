@@ -170,11 +170,9 @@ int main(int argc, char** argv)
 
   GPDT Tr(lattice);
   for(const Point& pt : pts)
-  {
-    if(lattice.is_in_scaled_domain(pt))
-      Tr.insert(pt);
-  }
+    Tr.insert(pt);
 
+  std::cout << "is 1 cover: " << Tr.is_1_cover() << std::endl;
   std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
   std::cout << "Number of edges: " << Tr.number_of_edges() << std::endl;
   std::cout << "Number of faces: " << Tr.number_of_faces() << std::endl;

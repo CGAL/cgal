@@ -590,23 +590,25 @@ public:
   /// Insertion and removal
   Vertex_handle insert(const Point& p)
   {
+    const Point cp = gt_.get_domain().construct_canonical_point(p);
+    std::cout << "Insert (DT2): " << p << " canonical: " << cp << std::endl;
+
     if(is_1_cover_)
-      return insert_in_p2dt2(p);
+      return insert_in_p2dt2(cp);
     else
-      return insert_in_dt2(p);
+      return insert_in_dt2(cp);
   }
 
   Vertex_handle insert_in_dt2(const Point& p)
   {
-    const Point cp = gt_.get_domain().construct_canonical_point(p);
-    std::cout << "Insert (DT2): " << p << " canonical: " << cp << std::endl;
+    CGAL_assertion(gt_.get_domain().is_in_scaled_domain(p));
 
     std::cout << dt2.number_of_vertices() << " vertices" << std::endl;
     if(dt2.dimension() >= 2) // equivalent to !dt2.empty() since we insert duplicate vertices
     {
       // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
       std::vector<Face_handle> faces_in_conflict;
-      dt2.get_conflicts(cp, std::back_inserter(faces_in_conflict));
+      dt2.get_conflicts(p, std::back_inserter(faces_in_conflict));
       std::cout << faces_in_conflict.size() << " faces in conflict" << std::endl;
 
       size_t erased_faces = 0;
@@ -624,7 +626,7 @@ public:
       std::cout << "Faces with too big radius in conflict zone:" << erased_faces << std::endl;
     }
 
-    Vertex_handle vh = dt2.insert(cp);
+    Vertex_handle vh = dt2.insert(p);
 
     CGAL_assertion(vh != Vertex_handle());
     vh->set_offset(Offset(0, 0));
@@ -639,7 +641,7 @@ public:
                              gt_.construct_scaled_vector_2_object()(gt_.get_domain().basis()[0], off[0]),
                              gt_.construct_scaled_vector_2_object()(gt_.get_domain().basis()[1], off[1]));
 
-      const Point off_p = cp + off_v;
+      const Point off_p = p + off_v;
       if(gt_.get_domain().is_in_scaled_domain(off_p, 3))
       {
         Vertex_handle vh_copy = dt2.insert(off_p);
@@ -679,9 +681,6 @@ public:
 
   Vertex_handle insert_in_p2dt2(const Point& p)
   {
-    const Point cp = gt_.get_domain().construct_canonical_point(p);
-    std::cout << "Insert (P2DT2): " << p << " canonical: " << cp << std::endl;
-
     return p2dt2.insert(p);
   }
 

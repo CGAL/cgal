@@ -941,7 +941,7 @@ public:
 
   // In this overload, we know we must find the offset
   template<class Conflict_tester>
-  Offset get_location_offset(const Conflict_tester& tester, Face_handle f, const Point& p) const
+  Offset get_location_offset(const Conflict_tester& tester, Face_handle f) const
   {
     bool found = false;
     Offset o = get_location_offset(tester, f, found);
@@ -1036,7 +1036,7 @@ public:
                                 Vertex_handle vh = Vertex_handle())
   {
 #ifdef CGAL_DEBUG_P2T2
-    std::cout << "Periodic insert, Offset: " << o << std::endl;
+    std::cout << "Periodic insert: " << p << " Offset: " << o << " (" << number_of_vertices() << ")" << std::endl;
 #endif
 
     CGAL_triangulation_precondition(number_of_vertices() != 0);
@@ -1054,8 +1054,7 @@ public:
 #endif
 
     CGAL_triangulation_assertion(side_of_face(tester.point(), combine_offsets(o, current_off),
-                                              f, lt_assert, i_assert)
-                                 != ON_UNBOUNDED_SIDE);
+                                              f, lt_assert, i_assert) != ON_UNBOUNDED_SIDE);
 
     // If the new point is not in conflict with its face, it is hidden.
     if(!found || !tester.test_initial_face(f, current_off))
