@@ -8,6 +8,8 @@
 #include <CGAL/internal/Generic_P3T3/Periodic_3_Delaunay_triangulation_3_generic.h>
 
 #include <CGAL/point_generators_3.h>
+#include <CGAL/periodic_3_triangulation_3_io.h>
+#include <CGAL/IO/Triangulation_off_ostream_3.h>
 
 #include <iostream>
 
@@ -63,6 +65,7 @@ int main(int argc, char** argv)
       Tr.insert(pt);
   }
 
+  std::cout << "1 cover? " << Tr.is_1_cover() << std::endl;
   std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
 //  std::cout << "Number of edges: " << Tr.number_of_edges() << std::endl;
   std::cout << "Number of cells: " << Tr.number_of_cells() << std::endl;
@@ -70,12 +73,12 @@ int main(int argc, char** argv)
   if(Tr.is_1_cover())
   {
     std::ofstream out("final.off");
-//    CGAL::write_P2T2_to_OFF(out, Tr.p2dt2);
+    CGAL::write_triangulation_to_off(out, Tr.p3dt3);
   }
   else
   {
     std::ofstream out("final.off");
-//    CGAL::draw_t2(out, Tr.dt2);
+    CGAL::export_triangulation_3_to_off(out, Tr.dt3);
   }
 
   return EXIT_SUCCESS;

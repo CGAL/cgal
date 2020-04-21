@@ -25,27 +25,27 @@ namespace CGAL {
 template <class Stream, class Triangulation>
 Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   typedef typename Triangulation::Point Point;
-  typedef typename Triangulation::Iso_cuboid Iso_cuboid;
+  typedef typename Triangulation::Domain Domain;
   typedef typename Triangulation::Triangulation_data_structure::size_type size_type;
 
   size_type number_of_cells = t.tds().number_of_cells();
 
   out << "OFF "
-      << "\n" << 4*number_of_cells + 8
-      << " "  << 4*number_of_cells + 6
+      << "\n" << 4*number_of_cells /*+ 8*/ // @tmp don't output the domain
+      << " "  << 4*number_of_cells /*+ 6*/
       << " "  << 0
       << std::endl;
 
-  Iso_cuboid cb = t.domain();
+//  const Domain& cb = t.domain();
 
-  out << cb.xmin() << " " << cb.ymin() << " " << cb.zmax() << std::endl;
-  out << cb.xmax() << " " << cb.ymin() << " " << cb.zmax() << std::endl;
-  out << cb.xmin() << " " << cb.ymax() << " " << cb.zmax() << std::endl;
-  out << cb.xmax() << " " << cb.ymax() << " " << cb.zmax() << std::endl;
-  out << cb.xmin() << " " << cb.ymax() << " " << cb.zmin() << std::endl;
-  out << cb.xmax() << " " << cb.ymax() << " " << cb.zmin() << std::endl;
-  out << cb.xmin() << " " << cb.ymin() << " " << cb.zmin() << std::endl;
-  out << cb.xmax() << " " << cb.ymin() << " " << cb.zmin() << std::endl;
+//  out << cb.xmin() << " " << cb.ymin() << " " << cb.zmax() << std::endl;
+//  out << cb.xmax() << " " << cb.ymin() << " " << cb.zmax() << std::endl;
+//  out << cb.xmin() << " " << cb.ymax() << " " << cb.zmax() << std::endl;
+//  out << cb.xmax() << " " << cb.ymax() << " " << cb.zmax() << std::endl;
+//  out << cb.xmin() << " " << cb.ymax() << " " << cb.zmin() << std::endl;
+//  out << cb.xmax() << " " << cb.ymax() << " " << cb.zmin() << std::endl;
+//  out << cb.xmin() << " " << cb.ymin() << " " << cb.zmin() << std::endl;
+//  out << cb.xmax() << " " << cb.ymin() << " " << cb.zmin() << std::endl;
 
   if (t.number_of_sheets() == CGAL::make_array(1,1,1)) {
     for (typename Triangulation::Cell_iterator it = t.cells_begin();
