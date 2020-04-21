@@ -140,23 +140,20 @@ public:
      * \param seg The segment.
      * \pre The segment is not degenerate.
      */
-    _Linear_object_cached_2(const Segment_2& seg)
+    _Linear_object_cached_2(const Segment_2& seg) :
+      has_source(true),
+      has_target(true)
     {
       Kernel kernel;
 
       CGAL_assertion_msg(! kernel.is_degenerate_2_object()(seg),
                          "Cannot construct a degenerate segment.");
 
-      typename Kernel_::Construct_vertex_2
-        construct_vertex = kernel.construct_vertex_2_object();
-
+      auto construct_vertex = kernel.construct_vertex_2_object();
       ps = construct_vertex(seg, 0);
-      has_source = true;
       pt = construct_vertex(seg, 1);
-      has_target = true;
 
       Comparison_result res = kernel.compare_xy_2_object()(ps, pt);
-
       CGAL_assertion(res != EQUAL);
       is_degen = false;
       is_right = (res == SMALLER);
@@ -171,20 +168,18 @@ public:
      * \param ray The ray.
      * \pre The ray is not degenerate.
      */
-    _Linear_object_cached_2(const Ray_2& ray)
+    _Linear_object_cached_2(const Ray_2& ray) :
+      has_source(true),
+      has_target(false)
     {
       Kernel kernel;
 
       CGAL_assertion_msg(! kernel.is_degenerate_2_object()(ray),
                          "Cannot construct a degenerate ray.");
 
-      typename Kernel_::Construct_point_on_2
-        construct_vertex = kernel.construct_point_on_2_object();
-
+      auto construct_vertex = kernel.construct_point_on_2_object();
       ps = construct_vertex(ray, 0);         // The source point.
-      has_source = true;
       pt = construct_vertex(ray, 1);         // Some point on the ray.
-      has_target = false;
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
       CGAL_assertion(res != EQUAL);
@@ -211,13 +206,9 @@ public:
       CGAL_assertion_msg(! kernel.is_degenerate_2_object()(ln),
                          "Cannot construct a degenerate line.");
 
-      typename Kernel_::Construct_point_on_2
-        construct_vertex = kernel.construct_point_on_2_object();
-
+      auto construct_vertex = kernel.construct_point_on_2_object();
       ps = construct_vertex(ln, 0);         // Some point on the line.
-      has_source = false;
       pt = construct_vertex(ln, 1);         // Some point further on the line.
-      has_target = false;
 
       Comparison_result res = kernel.compare_xy_2_object()(ps, pt);
       CGAL_assertion(res != EQUAL);
