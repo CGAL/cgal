@@ -52,7 +52,7 @@ namespace internal {
                      Copy_to_origin_map& copy_to_origin,
                      typename Generic_map::size_type mark_perforated)
     {
-      target.copy(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
+      target.copy_from_const(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
     }
   };
 
@@ -71,7 +71,7 @@ namespace internal {
                      Origin_to_copy_map& origin_to_copy, Copy_to_origin_map& copy_to_origin,
                      typename Generic_map::size_type mark_perforated)
     {
-      target.copy(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
+      target.copy_from_const(source, &origin_to_copy, &copy_to_origin, true, mark_perforated);
     }
   };
 
