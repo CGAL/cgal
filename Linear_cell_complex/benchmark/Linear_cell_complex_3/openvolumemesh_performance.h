@@ -129,7 +129,7 @@ private:
   // Find the mesh's shortest edge
   EdgeHandle getShortestEdge()
   {
-    double max_weight = (std::numeric_limits<double>::max)();
+    double max_weight = std::numeric_limits<double>::max();
     EdgeHandle eh = Mesh::InvalidEdgeHandle;
     bool boundary=false;
 

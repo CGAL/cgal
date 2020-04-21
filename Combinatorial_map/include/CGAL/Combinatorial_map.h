@@ -2631,7 +2631,7 @@ namespace CGAL {
       while (beta<1>(dd1)!=d2)
       {
         if (this->template is_free<2>(beta<1>(dd1)))
-        { return (std::numeric_limits<std::size_t>::max)(); }
+        { return std::numeric_limits<std::size_t>::max(); }
 
         ++res;
         dd1=beta<1, 2>(dd1);
@@ -2653,7 +2653,7 @@ namespace CGAL {
       if (d2==beta<2>(d1)) { return 0; }
 
       if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
-      { return (std::numeric_limits<std::size_t>::max)(); }
+      { return std::numeric_limits<std::size_t>::max(); }
 
       d1=beta<2>(d1);
       d2=beta<2>(d2);
@@ -2662,7 +2662,7 @@ namespace CGAL {
       while (beta<0>(dd1)!=d2)
       {
         if (this->template is_free<2>(beta<0>(dd1)))
-        { return (std::numeric_limits<std::size_t>::max)(); }
+        { return std::numeric_limits<std::size_t>::max(); }
 
         ++res;
         dd1=beta<0, 2>(dd1);

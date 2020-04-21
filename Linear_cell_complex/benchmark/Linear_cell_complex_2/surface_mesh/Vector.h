@@ -210,7 +210,7 @@ public:
     Vector<Scalar,N>& normalize()
     {
         Scalar n = norm(*this);
-        if (n > (std::numeric_limits<Scalar>::min)())
+        if (n > std::numeric_limits<Scalar>::min())
             *this *= 1.0/n;
         return *this;
     }
@@ -500,7 +500,7 @@ public:
     Vector<Scalar,3>& normalize()
     {
         Scalar n = norm(*this);
-        n = (n > (std::numeric_limits<Scalar>::min)()) ? 1.0/n : 0.0;
+        n = (n > std::numeric_limits<Scalar>::min()) ? 1.0/n : 0.0;
         x *= n;
         y *= n;
         z *= n;

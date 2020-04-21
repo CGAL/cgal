@@ -1107,7 +1107,7 @@ public:
 
     if ((get_ith_flip(i) && get_map().template is_free<2>(get_ith_dart(i))) ||
         (get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i))))
-    { return (std::numeric_limits<std::size_t>::max)(); }
+    { return std::numeric_limits<std::size_t>::max(); }
 
     return m_map.positive_turn(get_ith_real_dart(i),
                                get_ith_real_dart(next_index(i)));
@@ -1123,7 +1123,7 @@ public:
 
     if ((!get_ith_flip(i) && get_map().template is_free<2>(get_ith_dart(i))) ||
         (!get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i))))
-    { return (std::numeric_limits<std::size_t>::max)(); }
+    { return std::numeric_limits<std::size_t>::max(); }
 
     return m_map.positive_turn(get_opposite_ith_real_dart(next_index(i)),
                                get_opposite_ith_real_dart(i));

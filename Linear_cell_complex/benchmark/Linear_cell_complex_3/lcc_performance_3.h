@@ -319,7 +319,7 @@ private:
 
   Dart_handle getShortestEdge()
   {
-    double weight = (std::numeric_limits<double>::max)();
+    double weight = std::numeric_limits<double>::max();
     Dart_handle dart = lcc.null_dart_handle;
 
     int m=lcc.get_new_mark();

@@ -408,7 +408,7 @@ public:
     { return 0; }
 
     if (get_reduced_map().is_marked(dh1, m_mark_hole))
-    { return (std::numeric_limits<std::size_t>::max)(); }
+    { return std::numeric_limits<std::size_t>::max(); }
 
     Dart_const_handle ddh1=dh1;
     std::size_t res=1;
@@ -420,7 +420,7 @@ public:
       ++res;
       ddh1=get_reduced_map().template beta<1, 2>(ddh1);
       if (get_reduced_map().is_marked(ddh1, m_mark_hole))
-      { return (std::numeric_limits<std::size_t>::max)(); }
+      { return std::numeric_limits<std::size_t>::max(); }
 
       CGAL_assertion(!get_reduced_map().template is_free<1>(ddh1));
       CGAL_assertion(get_reduced_map().template beta<1>(ddh1)==dh2 || ddh1!=dh1);
@@ -449,7 +449,7 @@ public:
 
     if (get_reduced_map().is_marked
         (get_reduced_map().template beta <2>(dh1), m_mark_hole))
-    { return (std::numeric_limits<std::size_t>::max)(); }
+    { return std::numeric_limits<std::size_t>::max(); }
 
     dh1=get_reduced_map().template beta<2>(dh1);
     dh2=get_reduced_map().template beta<2>(dh2);
@@ -463,7 +463,7 @@ public:
       ++res;
       ddh1=get_reduced_map().template beta<0, 2>(ddh1);
       if (get_reduced_map().is_marked(ddh1, m_mark_hole))
-      { return (std::numeric_limits<std::size_t>::max)(); }
+      { return std::numeric_limits<std::size_t>::max(); }
 
       CGAL_assertion(!get_reduced_map().template is_free<0>(ddh1));
       CGAL_assertion(get_reduced_map().template beta<0>(ddh1)==dh2 || ddh1!=dh1);
@@ -1183,7 +1183,7 @@ protected:
     return get_reduced_map().info(dh);
 #endif // CGAL_PWRLE_TURN_V2
     std::cerr<<"Error: impossible to get dart id without method V2 or V3."<<std::endl;
-    return (std::numeric_limits<std::size_t>::max)();
+    return std::numeric_limits<std::size_t>::max();
   }
 
   /// @return the positive turn given two darts using their ids (unsed for CGAL_PWRLE_TURN_V2 and V3)
@@ -1204,7 +1204,7 @@ protected:
         get_dart_id(dh2)-get_dart_id(dh1)>
         static_cast<std::size_t>(get_reduced_map().template info<0>(dh1))) // the gap is more than the degree, so we crossed a hole
     {// so we return an "infinite" value
-      return (std::numeric_limits<std::size_t>::max)();
+      return std::numeric_limits<std::size_t>::max();
     }
     return get_dart_id(dh2)-get_dart_id(dh1);
   }
@@ -1227,7 +1227,7 @@ protected:
         get_dart_id(dh1)-get_dart_id(dh2)>
         static_cast<std::size_t>(get_reduced_map().template info<0>(dh1))) // the gap is more than the degree, so we crossed a hole
     {// so we return an "infinite" value
-      return (std::numeric_limits<std::size_t>::max)();
+      return std::numeric_limits<std::size_t>::max();
     }
     return get_dart_id(dh1)-get_dart_id(dh2);
   }

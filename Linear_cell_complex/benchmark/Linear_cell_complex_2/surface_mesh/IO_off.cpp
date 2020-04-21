@@ -58,7 +58,7 @@ bool read_off_ascii(Surface_mesh& mesh,
     // #Vertice, #Faces, #Edges
     items = fscanf(in, "%d %d %d\n", (int*)&nV, (int*)&nF, (int*)&nE);
     mesh.clear();
-    mesh.reserve(nV, (std::max)(3*nV, nE), nF);
+    mesh.reserve(nV, std::max(3*nV, nE), nF);
 
 
     // read vertices: pos [normal] [color] [texcoord]
@@ -173,7 +173,7 @@ bool read_off_binary(Surface_mesh& mesh,
     read(in, nF);
     read(in, nE);
     mesh.clear();
-    mesh.reserve(nV, (std::max)(3*nV, nE), nF);
+    mesh.reserve(nV, std::max(3*nV, nE), nF);
 
 
     // read vertices: pos [normal] [color] [texcoord]
