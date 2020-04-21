@@ -397,7 +397,7 @@ public:
   virtual void gather_cell_hidden_points(const Cell_handle /*cit*/, std::vector<Point>& /* hidden_points*/) { }
   virtual void reinsert_hidden_points_after_converting_to_1_sheeted(const std::vector<Point>& /* hidden_points*/) { }
 
-  const Iso_cuboid& domain() const { return _gt.get_domain(); }
+  const Domain& domain() const { return _gt.get_domain(); }
 
   virtual void update_cover_data_after_setting_domain() {}
 
@@ -2007,7 +2007,7 @@ protected:
     y /= ( 4 * vol );
     z /= ( 4 * vol );
 
-    Iso_cuboid d = domain();
+    const Domain& d = domain();
     x = (x < d.xmin() ? x+d.xmax()-d.xmin()
   : (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
     y = (y < d.ymin() ? y+d.ymax()-d.ymin()
@@ -4084,12 +4084,12 @@ inline void Periodic_3_triangulation_3<GT, TDS>::get_vertex(
     // otherwise it has to be looked up as well as its offset.
     vh = it->second.first;
     off += it->second.second;
-    CGAL_triangulation_assertion(vh->point().x() < domain().xmax());
-    CGAL_triangulation_assertion(vh->point().y() < domain().ymax());
-    CGAL_triangulation_assertion(vh->point().z() < domain().zmax());
-    CGAL_triangulation_assertion(vh->point().x() >= domain().xmin());
-    CGAL_triangulation_assertion(vh->point().y() >= domain().ymin());
-    CGAL_triangulation_assertion(vh->point().z() >= domain().zmin());
+//    CGAL_triangulation_assertion(vh->point().x() < domain().xmax());
+//    CGAL_triangulation_assertion(vh->point().y() < domain().ymax());
+//    CGAL_triangulation_assertion(vh->point().z() < domain().zmax());
+//    CGAL_triangulation_assertion(vh->point().x() >= domain().xmin());
+//    CGAL_triangulation_assertion(vh->point().y() >= domain().ymin());
+//    CGAL_triangulation_assertion(vh->point().z() >= domain().zmin());
   }
 }
 
