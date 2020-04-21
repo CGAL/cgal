@@ -93,6 +93,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::istringstream iss;
   std::size_t nb_vertices(0);
   std::vector<material> materials;
+  std::streampos vertices_pos=0;
   //ignore header
   int material_id = 0;
   while(std::getline(input, line))
@@ -113,11 +114,18 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       }
       break;
     }
+    if (line_starts_with(line, "Vertices"))
+    {
+      vertices_pos = input.tellg();
+      break;
+    }
   }
 
   //get grid box
   while (std::getline(input, line))
   {
+    if(vertices_pos != 0 )
+      break;
     if (line_starts_with(line, "GridBox"))
     {
       iss.clear();
@@ -128,17 +136,29 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       grid_box = CGAL::Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
       break;
     }
+    if (line_starts_with(line, "Vertices"))
+    {
+      vertices_pos = input.tellg();
+      break;
+    }
   }
 
   //get grid size
   while (std::getline(input, line))
   {
+    if(vertices_pos != 0 )
+      break;
     if (line_starts_with(line, "GridSize"))
     {
       iss.clear();
       iss.str(line);
       std::string dump;
       iss >> dump >> grid_size[0] >> grid_size[1] >> grid_size[2];
+      break;
+    }
+    if (line_starts_with(line, "Vertices"))
+    {
+      vertices_pos = input.tellg();
       break;
     }
   }
@@ -148,6 +168,11 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   {
     if (line_starts_with(line, "Vertices"))
     {
+      vertices_pos = input.tellg();
+    }
+    if(vertices_pos !=0)
+    {
+      input.seekg(vertices_pos);
       iss.clear();
       iss.str(line);
       std::string dump;
