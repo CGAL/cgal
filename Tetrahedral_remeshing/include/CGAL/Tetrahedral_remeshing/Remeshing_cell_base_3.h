@@ -50,26 +50,7 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 */
 template<typename Gt,
          typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
-class Remeshing_cell_base_3
-#ifndef DOXYGEN_RUNNING
-  : public CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>
-#endif
-{
-  typedef CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb> Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Cell_handle   Cell_handle;
-
-public:
-  // To get correct cell type in TDS
-  template < class TDS2 >
-  struct Rebind_TDS
-  {
-    typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
-    typedef Remeshing_cell_base_3<Gt, Cb2> Other;
-  };
-
-  using Base::Base;
-};
+using Remeshing_cell_base_3 = CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>;
 
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL

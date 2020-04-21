@@ -53,22 +53,7 @@ It has the default value `Triangulation_vertex_base_3<Gt>`.
 
 template<typename GT,
          typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
-class Remeshing_vertex_base_3
-#ifndef DOXYGEN_RUNNING
-  : public CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>
-#endif
-{
-  typedef CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb> Base;
-
-public:
-  // To get correct vertex type in TDS
-  template < class TDS3 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Remeshing_vertex_base_3<GT, Vb3> Other;
-  };
-
-};
+using Remeshing_vertex_base_3 = CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>;
 
 }//end namespace Tetrahedral_remeshing
 
