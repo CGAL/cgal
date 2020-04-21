@@ -103,7 +103,7 @@ public:
   Periodic_3_Delaunay_triangulation_3_generic(const GT& gt)
     : is_1_cover_(false), gt_(gt), dt3(gt_), p3dt3(gt_)
   {
-    sq_circumradius_threshold = 0.0625 * gt.get_domain().systole_sq_length(); // @fixme ?
+    sq_circumradius_threshold = 0.0625 * gt.get_domain().systole_sq_length();
   }
 
   Periodic_3_Delaunay_triangulation_3_generic(const Lattice& lattice)
@@ -471,8 +471,8 @@ public:
     Vector v3 = Vector(CGAL::ORIGIN, fh->vertex(3)->point());
 
     Vector bcv = gt_.construct_scaled_vector_3_object()(
-                   gt_.construct_sum_of_vectors_3_object()(v0, 
-                     gt_.construct_sum_of_vectors_3_object()(v1, 
+                   gt_.construct_sum_of_vectors_3_object()(v0,
+                     gt_.construct_sum_of_vectors_3_object()(v1,
                        gt_.construct_sum_of_vectors_3_object()(v2,v3))), FT(1)/3);
 
     return Point(bcv.x(), bcv.y(), bcv.z());
@@ -483,7 +483,7 @@ public:
   // return the handle of the translated cell.
   //
   // Returns Cell_handle() if the provided cell is not a periodic cell
-  Cell_handle find_translated_cell(Cell_handle fh, const Offset& o) const
+  Cell_handle find_translated_cell(Cell_handle ch, const Offset& o) const
   {
     // The code commented out below does the same and is simpler,
     // but uses a construction and point location.
@@ -496,7 +496,7 @@ public:
     int j=0;
     for(; j<4; ++j)
     {
-      if(fh->vertex(j)->offset() == -o)
+      if(ch->vertex(j)->offset() == -o)
       {
         vertex_found = true;
         break;
@@ -504,36 +504,42 @@ public:
     }
 
     CGAL_assertion_msg(vertex_found, "Invalid offset for translation of cell.");
-    Vertex_handle cv = canonical_vertices.at(fh->vertex(j));
-    Vertex_handle v2 = fh->vertex((j+1) % 4);
-    Vertex_handle v3 = fh->vertex((j+2) % 4);
-    Vertex_handle v4 = fh->vertex((j+3) % 4);
+    Vertex_handle cv = canonical_vertices.at(ch->vertex(j));
 
     // Scan through the incident cells and find the one that is
     // equivalent to fh.
     std::vector<Cell_handle> incident_chs;
     dt3.incident_cells(cv, std::back_inserter(incident_chs));
+    CGAL_assertion(!incident_chs.empty());
 
-    for(Cell_handle ch : incident_chs)
+    for(Cell_handle cch : incident_chs)
     {
-      if(dt3.is_infinite(ch)) // shouldn't ever happen
+      CGAL_assertion(!dt3.is_infinite(cch));
+
+      int cj = cch->index(cv);
+
+      bool found = false;
+      for(int i=1; i<4; ++i)
+      {
+        found = false;
+        Vertex_handle vi = ch->vertex((j+i) % 4);
+        for(int ci=1; ci<4; ++ci)
+        {
+            Vertex_handle cvi = cch->vertex((cj+ci) % 4);
+            if(canonical_vertices.at(vi) == canonical_vertices.at(cvi) && cvi->offset() == vi->offset() + o)
+            {
+              found = true;
+              break;
+            }
+        }
+        if(!found)
+          break;
+      }
+
+      if(!found)
         continue;
 
-      int cj = ch->index(cv);
-      Vertex_handle cv2 = fh->vertex((cj+1) % 4);
-      Vertex_handle cv3 = fh->vertex((cj+2) % 4);
-      Vertex_handle cv4 = fh->vertex((cj+3) % 4);
-
-      // @check: does the notion of 'orientation' guarantee
-      if(canonical_vertices.at(cv2) == canonical_vertices.at(v2) &&
-         cv2->offset() == v2->offset() + o &&
-         canonical_vertices.at(cv3) == canonical_vertices.at(v3) &&
-         cv3->offset() == v3->offset() + o &&
-         canonical_vertices.at(cv4) == canonical_vertices.at(v4) &&
-         cv4->offset() == v4->offset() + o)
-      {
-        return Cell_handle(ch);
-      }
+      return cch;
     }
 
     // provided cell is not a periodic cell and doesn't have a copy with a vertex in the domain.
@@ -902,19 +908,19 @@ private:
   const std::vector<std::vector<int> > overlapping_offsets =
   {
     // offsets that are entirely contained within the scaled domain
-    {-1, -1, -1}, {0, 0, 1}, {0, 1, 0}, {1, 0, 0}, {1, 1, 0}, {1, 0, 1}, {0, -1, -1}, 
+    {-1, -1, -1}, {0, 0, 1}, {0, 1, 0}, {1, 0, 0}, {1, 1, 0}, {1, 0, 1}, {0, -1, -1},
     {0, 1, 1}, {-1, 0, -1}, {-1, -1, 0}, {1, 1, 1}, {0, 0, -1}, {0, -1, 0}, {-1, 0, 0},
     // offsets that have a guaranteed intersection with the scaled domain
-    {1, 2, 0}, {1, 0, 2}, {-1, -2, -2}, {2, 1, 0}, {2, 0, 1}, {1, -1, -1}, {0, 1, 2}, 
-    {-2, -1, -2}, {0, 2, 1}, {-1, 1, -1}, {-2, -2, -1}, {-1, -1, 1}, {1, 1, 2}, 
-    {-1, -1, -2}, {1, 2, 1}, {0, 1, -1}, {-1, -2, -1}, {0, -1, 1}, {2, 1, 1}, 
-    {1, 0, -1}, {1, -1, 0}, {-2, -1, -1}, {-1, 0, 1}, {-1, 1, 0}, {1, 2, 2}, 
-    {-1, 0, -2}, {-1, -2, 0}, {2, 1, 2}, {0, -1, -2}, {2, 2, 1}, {1, 1, -1}, 
+    {1, 2, 0}, {1, 0, 2}, {-1, -2, -2}, {2, 1, 0}, {2, 0, 1}, {1, -1, -1}, {0, 1, 2},
+    {-2, -1, -2}, {0, 2, 1}, {-1, 1, -1}, {-2, -2, -1}, {-1, -1, 1}, {1, 1, 2},
+    {-1, -1, -2}, {1, 2, 1}, {0, 1, -1}, {-1, -2, -1}, {0, -1, 1}, {2, 1, 1},
+    {1, 0, -1}, {1, -1, 0}, {-2, -1, -1}, {-1, 0, 1}, {-1, 1, 0}, {1, 2, 2},
+    {-1, 0, -2}, {-1, -2, 0}, {2, 1, 2}, {0, -1, -2}, {2, 2, 1}, {1, 1, -1},
     {0, -2, -1}, {1, -1, 1}, {-2, -1, 0}, {-2, 0, -1}, {-1, 1, 1},
     // offsets that might have an intersection with the scaled domain (6 of them will)
-    {3, 2, 1}, {2, 1, -1}, {3, 1, 2}, {2, -1, 1}, {1, -1, -2}, {1, -2, -1}, 
-    {2, 3, 1}, {1, 2, -1}, {1, 3, 2}, {-1, 2, 1}, {-1, 1, -2}, {-2, 1, -1}, 
-    {2, 1, 3}, {1, -1, 2}, {1, 2, 3}, {-1, 1, 2}, {-1, -2, 1}, {-2, -1, 1}, 
+    {3, 2, 1}, {2, 1, -1}, {3, 1, 2}, {2, -1, 1}, {1, -1, -2}, {1, -2, -1},
+    {2, 3, 1}, {1, 2, -1}, {1, 3, 2}, {-1, 2, 1}, {-1, 1, -2}, {-2, 1, -1},
+    {2, 1, 3}, {1, -1, 2}, {1, 2, 3}, {-1, 1, 2}, {-1, -2, 1}, {-2, -1, 1},
     {-1, -2, -3}, {-1, -3, -2}, {-2, -1, -3}, {-3, -1, -2}, {-2, -3, -1}, {-3, -2, -1}
   };
 };
