@@ -54,7 +54,7 @@
 #include <iostream>
 #endif
 
-#define CGAL_VSA_INVALID_TAG std::numeric_limits<std::size_t>::max()
+#define CGAL_VSA_INVALID_TAG (std::numeric_limits<std::size_t>::max)()
 
 namespace CGAL {
 

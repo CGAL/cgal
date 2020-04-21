@@ -110,7 +110,7 @@ public:
     m_current_path(m_paths->size()),
     m_current_dart(0),
     m_draw_marked_darts(true),
-    m_amark(amark==std::numeric_limits<std::size_t>::max()?
+    m_amark(amark==(std::numeric_limits<std::size_t>::max)()?
               LCC::INVALID_MARK:amark)
   {
     m_current_dart=lcc.number_of_darts(); compute_elements();
@@ -343,7 +343,7 @@ template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="Mesh Viewer",
-          std::size_t amark=std::numeric_limits<std::size_t>::max(),
+          std::size_t amark=(std::numeric_limits<std::size_t>::max)(),
           bool nofill=false,
           const DrawingFunctor& drawing_functor=DrawingFunctor())
 {
@@ -371,7 +371,7 @@ template<class Mesh>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="LCC Viewer",
-          std::size_t amark=std::numeric_limits<std::size_t>::max(),
+          std::size_t amark=(std::numeric_limits<std::size_t>::max)(),
           bool nofill=false)
 {
   DefaultDrawingFunctorLCC f;

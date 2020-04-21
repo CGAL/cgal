@@ -1734,7 +1734,7 @@ namespace CGAL {
       while (next(dd1)!=d2)
       {
         if (this->template is_free<2>(next(dd1)))
-        { return std::numeric_limits<std::size_t>::max(); }
+        { return (std::numeric_limits<std::size_t>::max)(); }
 
         ++res;
         dd1=opposite2(next(dd1));
@@ -1755,7 +1755,7 @@ namespace CGAL {
       if (d2==opposite2(d1)) { return 0; }
 
       if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
-      { return std::numeric_limits<std::size_t>::max(); }
+      { return (std::numeric_limits<std::size_t>::max)(); }
 
       d1=opposite2(d1);
       d2=opposite2(d2);
@@ -1764,7 +1764,7 @@ namespace CGAL {
       while (previous(dd1)!=d2)
       {
         if (this->template is_free<2>(previous(dd1)))
-        { return std::numeric_limits<std::size_t>::max(); }
+        { return (std::numeric_limits<std::size_t>::max)(); }
 
         ++res;
         dd1=opposite2(previous(dd1));
