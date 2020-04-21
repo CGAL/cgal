@@ -532,7 +532,6 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   typedef typename Tr::Geom_traits           Gt;
   typedef typename Gt::Point_3               Point_3;
   typedef typename Gt::Vector_3              Vector_3;
-  typedef typename Gt::FT                    FT;
 
   typedef typename VerticesSurfaceIndices::mapped_type    VertexSurfaces;
   typedef typename VerticesSurfaceIndices::const_iterator VerticesSurfaceIterator;
