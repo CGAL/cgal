@@ -40,7 +40,7 @@ typedef CGAL::Random_points_in_cube_3<Point, Creator>                           
 typedef CGAL::Random_points_on_sphere_3<Point, Creator>                                Point_on_sphere_generator;
 
 // Lattice and Volume / cubed systole
-std::pair<Lattice, FT> generate_random_lattice(CGAL::Random& rnd)
+Lattice generate_random_lattice(CGAL::Random& rnd)
 {
   // generate 3 random basis vectors
   std::vector<Point> pts;
@@ -59,15 +59,7 @@ std::pair<Lattice, FT> generate_random_lattice(CGAL::Random& rnd)
             << dirs[1] << std::endl
             << dirs[2] << std::endl;
 
-  Lattice l(dirs[0], dirs[1], dirs[2]);
-
-  // vol
-  const FT vol = CGAL::determinant(dirs[0][0], dirs[0][0], dirs[0][0],
-                                   dirs[1][0], dirs[1][1], dirs[1][2],
-                                   dirs[2][0], dirs[2][1], dirs[2][2]);
-  const FT cubed_sys = l.systole_sq_length() * l.systole_sq_length() * l.systole_sq_length();
-
-  return std::make_pair(l, vol / cubed_sys);
+  return Lattice(dirs[0], dirs[1], dirs[2]);
 }
 
 std::vector<Point> generate_random_points(const std::size_t n, CGAL::Random& rnd)
@@ -82,7 +74,7 @@ std::vector<Point> generate_random_points(const std::size_t n, CGAL::Random& rnd
 
 int main(int argc, char** argv)
 {
-  const std::size_t number_of_points = (argc > 1) ? std::atoi(argv[1]) : 800;
+  const std::size_t number_of_points = (argc > 1) ? std::atoi(argv[1]) : 1000000;
 //  std::cout << number_of_points << " random points" << std::endl;
 
   const int random_seed = (argc > 2) ? std::atoi(argv[2]) : CGAL::get_default_random().get_int(0, (1 << 30));
@@ -94,28 +86,43 @@ int main(int argc, char** argv)
 
   for(;;)
   {
-    std::pair<Lattice, FT> lattice_with_lambda = generate_random_lattice(rnd);
-    out << lattice_with_lambda.second << " ";
+    Lattice l = generate_random_lattice(rnd);
 
-    const std::vector<Point> pts = generate_random_points(number_of_points, rnd);
+    const FT vol = CGAL::determinant(l.basis()[0][0], l.basis()[0][0], l.basis()[0][0],
+                                     l.basis()[1][0], l.basis()[1][1], l.basis()[1][2],
+                                     l.basis()[2][0], l.basis()[2][1], l.basis()[2][2]);
+    const FT cubed_sys = l.systole_sq_length() * l.systole_sq_length() * l.systole_sq_length();
 
-    int number_of_runs = 5;
+    out << l.basis()[0] << " ";
+    out << l.basis()[1] << " ";
+    out << l.basis()[2] << " ";
+
+    out << CGAL::abs(vol / cubed_sys) << " ";
+
+    int number_of_runs = 10;
 //    std::cout << "number_of_runs: " << number_of_runs << std::endl;
 
-    std::cout << "vol/sys3: " << CGAL::abs(lattice_with_lambda.second) << std::endl;
+    std::cout << "vol/sys3: " << vol/cubed_sys << std::endl;
 
+    int switch_nv = 0;
     double time = 0.;
     for(int i=0; i<number_of_runs; ++i)
     {
+      const std::vector<Point> pts = generate_random_points(number_of_points, rnd);
+
       CGAL::Real_timer timer;
       timer.start();
 
-      GPDT Tr(lattice_with_lambda.first);
+      GPDT Tr(l);
       for(const Point& pt : pts)
+      {
         Tr.insert(pt);
+        if(Tr.is_1_cover())
+          break;
+      }
 
-      if(i == 0)
-        out << Tr.switch_nv << " ";
+      switch_nv += Tr.switch_nv;
+      std::cout << "Switch NV: " << switch_nv << std::endl;
 
 //      std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
 //      std::cout << "Number of cells: " << Tr.number_of_cells() << std::endl;
@@ -125,7 +132,10 @@ int main(int argc, char** argv)
       time += timer.time();
     }
 
+    switch_nv /= number_of_runs;
     time /= number_of_runs;
+
+    out << switch_nv << " ";
 
     std::cout << "Computed in: " << time << " s" << std::endl;
     out << time << std::endl;
