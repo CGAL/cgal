@@ -1044,7 +1044,7 @@ std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
     border_halfedges(pm2, std::back_inserter(border_vertices2));
 
   Tolerance_map tol_pmap = get(Vertex_property_tag(), pm1);
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   internal::assign_tolerance_with_local_edge_length_bound(border_vertices1, tol_pmap, tol_mx, pm1);
 
   return snap_vertex_range_onto_vertex_range_non_conforming(border_vertices1, pm1,

@@ -25,7 +25,7 @@ namespace CGAL {
 #ifdef CGAL_EIGEN3_ENABLED
 const int UNKNOWN_DIMENSION=Eigen::Dynamic;
 #else
-const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
+const int UNKNOWN_DIMENSION=(std::numeric_limits<int>::max)();
 #endif
 
 // Check that dimension d1 is fine for a kernel of dimension d2.
