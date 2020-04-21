@@ -636,7 +636,6 @@ public:
   Vertex_handle insert(const Point& p)
   {
     const Point cp = gt_.get_domain().construct_canonical_point(p);
-    std::cout << "Insert (DT3): " << p << " canonical: " << cp << std::endl;
 
     if(is_1_cover_)
       return insert_in_p3dt3(cp);
@@ -649,7 +648,7 @@ public:
     CGAL_assertion(gt_.get_domain().is_in_scaled_domain(p));
 
     const std::size_t old_nv = dt3.number_of_vertices();
-    std::cout << old_nv  << " vertices (before insertion)" << std::endl;
+//    std::cout << old_nv  << " vertices (before insertion)" << std::endl;
     if(dt3.dimension() >= 3) // equivalent to !dt3.empty() since we insert duplicate vertices
     {
       // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
@@ -657,7 +656,7 @@ public:
 
       std::vector<Cell_handle> cells_in_conflict;
       dt3.find_conflicts(p, c, CGAL::Emptyset_iterator(), std::back_inserter(cells_in_conflict));
-      std::cout << cells_in_conflict.size() << " cells in conflict" << std::endl;
+//      std::cout << cells_in_conflict.size() << " cells in conflict" << std::endl;
 
       size_t erased_cells = 0;  // @tmp
       for(Cell_handle ch : cells_in_conflict)
@@ -671,7 +670,7 @@ public:
           erased_cells += cells_with_too_big_circumradius.erase(cch);
         }
       }
-      std::cout << "Cells with too big radius in conflict zone:" << erased_cells << std::endl;
+//      std::cout << "Cells with too big radius in conflict zone:" << erased_cells << std::endl;
     }
 
     Vertex_handle vh = dt3.insert(p);
@@ -707,7 +706,7 @@ public:
     CGAL_assertion(old_nv + 27 == dt3.number_of_vertices());
 
     // Update the current maximum circumradius value
-    std::cout << "Gather cells w/ too big circumradius" << std::endl;
+//    std::cout << "Gather cells w/ too big circumradius" << std::endl;
     std::vector<Cell_handle> incident_chs;
     dt3.incident_cells(vh, std::back_inserter(incident_chs));
 
@@ -724,7 +723,7 @@ public:
         cells_with_too_big_circumradius.insert(cfh);
     }
 
-    std::cout << cells_with_too_big_circumradius.size() << " cells with too big sq_cr" << std::endl;
+//    std::cout << cells_with_too_big_circumradius.size() << " cells with too big sq_cr" << std::endl;
 
     if(cells_with_too_big_circumradius.empty())
        convert_to_1_cover();
@@ -786,7 +785,8 @@ public:
     if(is_1_cover_)
       return;
 
-    std::cout << "Converting..." << std::endl;
+    std::cout << "Conversion at " << number_of_vertices() << std::endl;
+    switch_nv = number_of_vertices();
 
     is_1_cover_ = true;
 
@@ -915,6 +915,7 @@ public: // @tmp, shouldn't be exposed
 
   DT3 dt3;
   P3DT3 p3dt3;
+  std::size_t switch_nv;
 
 private:
   bool is_1_cover_;

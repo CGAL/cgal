@@ -1433,7 +1433,7 @@ protected:
     }
     CGAL_triangulation_expensive_assertion(is_valid());
 
-  #ifndef CGAL_GENERIC_P3T3 // @tmp because convert_1 has additional flag shenanigans
+#ifndef CGAL_GENERIC_P3T3 // @tmp because convert_1 has additional flag shenanigans
     // Fall back to 1-cover if the criterion that the longest edge is shorter
     // than sqrt(0.166) is fulfilled.
     if( cover_manager.can_be_converted_to_1_sheet() ) {
@@ -1441,7 +1441,7 @@ protected:
       convert_to_1_sheeted_covering();
       CGAL_triangulation_expensive_assertion( is_valid() );
     }
-  #endif
+#endif
 
     return vh;
   }
@@ -2216,8 +2216,6 @@ exact_periodic_locate
 {
   Offset off_query = o_p;
 
-  std::cout << "LOCATE: " << p << " start off: " << off_query << std::endl;
-
   if(number_of_vertices() == 0) {
     lo = Offset();
     lt = EMPTY;
@@ -2268,6 +2266,7 @@ exact_periodic_locate
   // Now treat the cell c.
 try_next_cell:
 
+#ifdef CGAL_DEBUG_P3T3
   std::cout << "------" << std::endl;
   std::cout << "current cell: " << c->vertex(0)->point() << " "
                                 << c->vertex(1)->point() << " "
@@ -2284,6 +2283,7 @@ try_next_cell:
   std::cout << "off_query: " << off_query << std::endl;
   std::cout << "point: " << p << std::endl;
   std::cout << "point(p, off):" << construct_point(p, off_query) << std::endl;
+#endif
 
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
@@ -2347,11 +2347,13 @@ try_next_cell:
       o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3],
                          off[0], off[1], off[2], off[3]);
 
+#ifdef CGAL_DEBUG_P3T3
       std::cout << "Orientation check" << std::endl;
       std::cout << *pts[0] << " " << off[0] << std::endl;
       std::cout << *pts[1] << " " << off[1] << std::endl;
       std::cout << *pts[2] << " " << off[2] << std::endl;
       std::cout << *pts[3] << " " << off[3] << std::endl;
+#endif
 
       if( o[i] != NEGATIVE ) {
         pts[i] = backup;
@@ -2367,8 +2369,6 @@ try_next_cell:
     c = next;
     goto try_next_cell;
   }
-
-  std::cout << "within..." << std::endl;
 
   // Ok, now we have found the cell. It remains to find the dimension of the
   // intersected simplex.
@@ -2546,8 +2546,8 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
 {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-  std::cout << "side_of_cell(" << q << ")" << std::endl;
-  std::cout << "has zero off: " << c->has_zero_offsets() << std::endl;
+//  std::cout << "side_of_cell(" << q << ")" << std::endl;
+//  std::cout << "has zero off: " << c->has_zero_offsets() << std::endl;
 
   Orientation o0,o1,o2,o3;
   o0 = o1 = o2 = o3 = ZERO;
@@ -2619,9 +2619,9 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
       max_off_z = (std::max)(max_off_z, c->offset(i).z());
     }
 
-    std::cout << "min/max x: " << min_off_x << " " << max_off_x << std::endl;
-    std::cout << "min/max y: " << min_off_y << " " << max_off_y << std::endl;
-    std::cout << "min/max z: " << min_off_z << " " << max_off_z << std::endl;
+//    std::cout << "min/max x: " << min_off_x << " " << max_off_x << std::endl;
+//    std::cout << "min/max y: " << min_off_y << " " << max_off_y << std::endl;
+//    std::cout << "min/max z: " << min_off_z << " " << max_off_z << std::endl;
 
     for(int i=min_off_x; i<=max_off_x && (!found); ++i)
     {
@@ -2645,8 +2645,6 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
     }
 #endif
 
-    std::cout << "didn't find ..." << std::endl;
-
     if(!found)
       return ON_UNBOUNDED_SIDE;
   }
@@ -2657,7 +2655,6 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
             + ( (o1 == ZERO) ? 1 : 0 )
             + ( (o2 == ZERO) ? 1 : 0 )
             + ( (o3 == ZERO) ? 1 : 0 );
-  std::cout << "sum: " << sum << std::endl;
 
   switch(sum) {
   case 0:
