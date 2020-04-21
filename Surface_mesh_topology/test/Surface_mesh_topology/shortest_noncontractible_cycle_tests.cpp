@@ -248,7 +248,7 @@ bool edge_width_in_weighted_cmap_gmap_mesh() {
     return false;
   }
 
-  double cycle_length1, cycle_length2, cycle_length3;
+  double cycle_length1=0, cycle_length2=0, cycle_length3=0;
   std::vector<Point> v1, v2, v3;
 
   for (std::size_t i=0; i<cycle1.length(); ++i)
@@ -356,7 +356,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     return false;
   }
   std::vector<unsigned int> cycle_lengths;
-  unsigned int length;
+  std::size_t length;
   do {
     CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_GMap_2> cst(lcc_gm);
     CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_GMap_2> cycle = cst.compute_edge_width();

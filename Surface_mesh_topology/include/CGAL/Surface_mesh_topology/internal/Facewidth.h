@@ -124,7 +124,7 @@ public:
 
     std::vector<Original_dart_const_handle> cycle;
     cycle.reserve(edgewidth_of_radial_map.length());
-    for (int i=0, n=edgewidth_of_radial_map.length(); i<n; i++)
+    for (std::size_t i=0, n=edgewidth_of_radial_map.length(); i<n; i++)
     {
       Dart_handle dh=m_radial_map.dart_handle
           (const_cast<typename Local_map::Dart&>(*edgewidth_of_radial_map.get_ith_real_dart(i)));
