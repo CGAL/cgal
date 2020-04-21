@@ -99,8 +99,8 @@ public:
     }
     else
     {
-      m_minimum = std::min(m_minimum, sample);
-      m_maximum = std::max(m_maximum, sample);
+      m_minimum = (std::min)(m_minimum, sample);
+      m_maximum = (std::max)(m_maximum, sample);
     }
     m_sum += sample;
     ++m_numSamples;
@@ -227,7 +227,7 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
     outData.constructionTime.add_sample(elapsed.wall);
 
 #if !defined(NDEBUG)
-    outData.peakMemoryUsage.add_sample(std::max(shortestPaths.peak_memory_usage(), shortestPaths.current_memory_usage()));
+    outData.peakMemoryUsage.add_sample((std::max)(shortestPaths.peak_memory_usage(), shortestPaths.current_memory_usage()));
 #endif
 
     for (size_t j = 0; j < numQueries; ++j)

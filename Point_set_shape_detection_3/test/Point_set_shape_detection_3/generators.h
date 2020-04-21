@@ -10,8 +10,8 @@
 
 
 template <typename fl_t>
-fl_t random_float(fl_t min, fl_t max) {
-  return fl_t(CGAL::get_default_random().get_double(min, max));
+fl_t random_float(fl_t fmin, fl_t fmax) {
+  return fl_t(CGAL::get_default_random().get_double(fmin, fmax));
 }
 
 template <typename K>

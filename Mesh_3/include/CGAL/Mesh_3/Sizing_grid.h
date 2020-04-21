@@ -452,7 +452,7 @@ private:
       pNode->ref_node(candidate.ref_node());
       pNode->size() = candidate.size();
       pNode->done() = true;
-      m_max_size = std::max(m_max_size,pNode->size());
+      m_max_size = (std::max)(m_max_size,pNode->size());
 
       // explore neighbors
       for(unsigned int index_neighbor = 0;

@@ -97,7 +97,7 @@ public:
     Image_float dem(grid.width(),grid.height());
 
     z_max = 0.f;
-    z_min = std::numeric_limits<float>::max();
+    z_min = (std::numeric_limits<float>::max)();
 
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
@@ -109,8 +109,8 @@ public:
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_min = (std::min(z_min, z));
-            z_max = (std::max(z_max, z));
+            z_min = ((std::min)(z_min, z));
+            z_max = ((std::max)(z_max, z));
             mean += z;
             ++ nb;
           }

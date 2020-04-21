@@ -438,10 +438,10 @@ struct Scene_c3t3_item_priv {
 
   void invalidate_stats()
   {
-    min_edges_length = std::numeric_limits<float>::max();
+    min_edges_length = (std::numeric_limits<float>::max)();
     max_edges_length = 0;
     mean_edges_length = 0;
-    min_dihedral_angle = std::numeric_limits<float>::max();
+    min_dihedral_angle = (std::numeric_limits<float>::max)();
     max_dihedral_angle = 0;
     mean_dihedral_angle = 0;
     nb_subdomains = 0;
@@ -449,8 +449,8 @@ struct Scene_c3t3_item_priv {
     nb_cnc = 0;
     nb_vertices = 0;
     nb_tets = 0;
-    smallest_radius_radius = std::numeric_limits<float>::max();
-    smallest_edge_radius = std::numeric_limits<float>::max();
+    smallest_radius_radius = (std::numeric_limits<float>::max)();
+    smallest_edge_radius = (std::numeric_limits<float>::max)();
     biggest_v_sma_cube = 0;
     computed_stats = false;
   }

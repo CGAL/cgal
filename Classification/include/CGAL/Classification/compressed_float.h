@@ -49,15 +49,15 @@ typedef unsigned short compressed_float;
 typedef unsigned char compressed_float;
 #  endif
 
-inline compressed_float compress_float (const float& f, const float& min = 0.f, const float& max = 1.f)
+inline compressed_float compress_float (const float& f, const float& fmin = 0.f, const float& fmax = 1.f)
 {
   return static_cast<compressed_float>
-    (float(std::numeric_limits<compressed_float>::max()) * (f - min) / (max - min));
+    (float((std::numeric_limits<compressed_float>::max)()) * (f - fmin) / (fmax - fmin));
 }
 
-inline float decompress_float (const compressed_float& t, const float& min = 0.f, const float& max = 1.f)
+inline float decompress_float (const compressed_float& t, const float& fmin = 0.f, const float& fmax = 1.f)
 {
-  return ((max - min) * (t / float(std::numeric_limits<compressed_float>::max())) + min);
+  return ((fmax - fmin) * (t / float((std::numeric_limits<compressed_float>::max)())) + fmin);
 }
 
 #endif

@@ -965,7 +965,6 @@ void MainWindow::updateViewerBBox(bool recenter = true)
       for(int i=0; i<3; ++i)
       {
         offset[i] = -bbox_center[i];
-
       }
     if(offset != viewer->offset())
     {

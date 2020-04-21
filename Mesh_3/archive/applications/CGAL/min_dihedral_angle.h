@@ -41,15 +41,15 @@ class Compute_min_angle
     operator()(const Cell_handle ch) const
     {
       double min_quotient = compute_quotient(ch, 0, 1, 2, 3);
-      min_quotient = std::min(min_quotient,
+      min_quotient = (std::min)(min_quotient,
                               compute_quotient(ch, 0, 2, 1, 3));
-      min_quotient = std::min(min_quotient,
+      min_quotient = (std::min)(min_quotient,
                               compute_quotient(ch, 0, 3, 1, 2));
-      min_quotient = std::min(min_quotient,
+      min_quotient = (std::min)(min_quotient,
                               compute_quotient(ch, 1, 2, 0, 3));
-      min_quotient = std::min(min_quotient,
+      min_quotient = (std::min)(min_quotient,
                               compute_quotient(ch, 1, 3, 0, 2));
-      min_quotient = std::min(min_quotient,
+      min_quotient = (std::min)(min_quotient,
                               compute_quotient(ch, 2, 3, 0, 1));
 
       const double volume = CGAL::to_double(tr.tetrahedron(ch).volume());
@@ -128,19 +128,19 @@ namespace CGAL {
       min_dihedral_angle_aux_compute_quotient(p0, p1, p2, p3, k);
 
     min_quotient =
-      std::min(min_quotient,
+      (std::min)(min_quotient,
                min_dihedral_angle_aux_compute_quotient(p0, p2, p1, p3, k));
     min_quotient =
-      std::min(min_quotient,
+      (std::min)(min_quotient,
                min_dihedral_angle_aux_compute_quotient(p0, p3, p1, p2, k));
     min_quotient =
-      std::min(min_quotient,
+      (std::min)(min_quotient,
                min_dihedral_angle_aux_compute_quotient(p1, p2, p0, p3, k));
     min_quotient =
-      std::min(min_quotient,
+      (std::min)(min_quotient,
                min_dihedral_angle_aux_compute_quotient(p1, p3, p0, p2, k));
     min_quotient =
-      std::min(min_quotient,
+      (std::min)(min_quotient,
                min_dihedral_angle_aux_compute_quotient(p2, p3, p0, p1, k));
 
 //     std::cerr << CGAL::sqrt(min_quotient) << " - "

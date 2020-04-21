@@ -118,8 +118,8 @@ hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f,
             B[i-sub-1][j-1] = s;
         }
     }
-    for (i = std::max(m+1, 1+sub); i <= n; i++) {
-        for (j = i-m; j <= std::min(i, n-sub); j++) {
+    for (i = (std::max)(m+1, 1+sub); i <= n; i++) {
+        for (j = i-m; j <= (std::min)(i, n-sub); j++) {
             B[i-sub-1][j-1] = coeff(g,i-j);
         }
     }
