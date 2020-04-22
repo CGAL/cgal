@@ -752,7 +752,7 @@ public:
     if(m_p_search_tree != nullptr)
     {
 #ifdef CGAL_HAS_THREADS
-      m_atomic_search_tree_constructed.store(false, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
+      m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
       m_search_tree_constructed = true;
 #endif
