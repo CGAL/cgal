@@ -209,9 +209,9 @@ namespace CGAL {
       set_primitive_data_impl(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),std::forward<T>(t)...);
     }
 
-    bool build_kd_tree() const;
+    bool build_kd_tree();
     template<typename ConstPointIterator>
-    bool build_kd_tree(ConstPointIterator first, ConstPointIterator beyond) const;
+    bool build_kd_tree(ConstPointIterator first, ConstPointIterator beyond);
 public:
 
     /// \name Intersection Tests
@@ -441,10 +441,6 @@ public:
     template<typename ConstPointIterator>
     bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond)
     {
-      #ifdef CGAL_HAS_THREADS
-      //this ensures that this is done once at a time
-      CGAL_SCOPED_LOCK(kd_tree_mutex);
-      #endif
       clear_search_tree();
       m_use_search_tree = false; // not a default kd-tree
       return build_kd_tree(first,beyond);
@@ -492,7 +488,7 @@ public:
         delete m_p_search_tree;
         m_p_search_tree = nullptr;
         m_search_tree_constructed = false;
-                        }
+      }
     }
 
   public:
@@ -531,9 +527,7 @@ public:
     Point_and_primitive_id best_hint(const Point& query) const
     {
       if(m_search_tree_constructed)
-                        {
         return m_p_search_tree->closest_point(query);
-                        }
       else
         return this->any_reference_point_and_id();
     }
@@ -558,19 +552,23 @@ public:
     // single root node
     Node* m_p_root_node;
     #ifdef CGAL_HAS_THREADS
-    mutable CGAL_MUTEX internal_tree_mutex;//mutex used to protect const calls inducing build()
-    mutable CGAL_MUTEX kd_tree_mutex;//mutex used to protect calls to accelerate_distance_queries
+    mutable CGAL_MUTEX build_mutex; // mutex used to protect const calls inducing build() and build_kd_tree()
     #endif
 
     const Node* root_node() const {
       CGAL_assertion(size() > 1);
+
+#ifdef CGAL_HAS_THREADS
+      bool m_need_build = m_atomic_need_build.load(std::memory_order_acquire);
+#endif
       if(m_need_build){
-        #ifdef CGAL_HAS_THREADS
+#ifdef CGAL_HAS_THREADS
         //this ensures that build() will be called once
-        CGAL_SCOPED_LOCK(internal_tree_mutex);
+        CGAL_SCOPED_LOCK(build_mutex);
+        m_need_build = m_atomic_need_build.load(std::memory_order_relaxed);
         if(m_need_build)
-        #endif
-          const_cast< AABB_tree<AABBTraits>* >(this)->build();
+#endif
+        const_cast< AABB_tree<AABBTraits>* >(this)->build();
       }
       return m_p_root_node;
     }
@@ -583,8 +581,12 @@ public:
     // search KD-tree
     mutable const Search_tree* m_p_search_tree;
     mutable bool m_search_tree_constructed;
-    mutable bool m_use_search_tree; // indicates whether the internal kd-tree should be built
+    bool m_use_search_tree; // indicates whether the internal kd-tree should be built
+#ifdef CGAL_HAS_THREADS
+    std::atomic<bool> m_atomic_need_build;
+#else
     bool m_need_build;
+#endif
 
   private:
     // Disabled copy constructor & assignment operator
@@ -604,7 +606,11 @@ public:
     , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
     , m_use_search_tree(true)
+#ifdef CGAL_HAS_THREADS
+    , m_atomic_need_build(false)
+#else
     , m_need_build(false)
+#endif
   {}
 
    template<typename Tr>
@@ -618,7 +624,11 @@ public:
     , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
     , m_use_search_tree(true)
+#ifdef CGAL_HAS_THREADS
+    , m_atomic_need_build(false)
+#else
     , m_need_build(false)
+#endif
   {
     // Insert each primitive into tree
     insert(first, beyond,std::forward<T>(t)...);
@@ -636,7 +646,11 @@ public:
       m_primitives.push_back(Primitive(first,std::forward<T>(t)...));
       ++first;
     }
+#ifdef CGAL_HAS_THREADS
+    m_atomic_need_build.store(true);
+#else
     m_need_build = true;
+#endif
   }
 
   // Clears tree and insert a set of primitives
@@ -655,56 +669,69 @@ public:
     build();
   }
 
-        template<typename Tr>
-        template<typename ... T>
-        void AABB_tree<Tr>::build(T&& ... t)
-        {
-          set_shared_data(std::forward<T>(t)...);
-          build();
-        }
+  template<typename Tr>
+  template<typename ... T>
+  void AABB_tree<Tr>::build(T&& ... t)
+  {
+    set_shared_data(std::forward<T>(t)...);
+    build();
+  }
 
   template<typename Tr>
   void AABB_tree<Tr>::insert(const Primitive& p)
   {
     m_primitives.push_back(p);
+#ifdef CGAL_HAS_THREADS
+    m_atomic_need_build.store(true);
+#else
     m_need_build = true;
+#endif
   }
 
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
   void AABB_tree<Tr>::build()
   {
-    clear_nodes();
-    if(m_primitives.size() > 1) {
+#ifdef CGAL_HAS_THREADS
+    if (m_atomic_need_build.load())
+#else
+    if (m_need_build)
+#endif
+    {
+      clear_nodes();
+      if(m_primitives.size() > 1) {
 
-      // allocates tree nodes
-      m_p_root_node = new Node[m_primitives.size()-1]();
-      if(m_p_root_node == nullptr)
-      {
-        std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-        CGAL_assertion(m_p_root_node != nullptr);
-        m_primitives.clear();
-        clear();
+        // allocates tree nodes
+        m_p_root_node = new Node[m_primitives.size()-1]();
+        if(m_p_root_node == nullptr)
+        {
+          std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
+          CGAL_assertion(m_p_root_node != nullptr);
+          m_primitives.clear();
+          clear();
+        }
+
+        // constructs the tree
+        m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
+                  m_primitives.size(), m_traits);
       }
-
-      // constructs the tree
-      m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-                m_primitives.size(), m_traits);
+#ifdef CGAL_HAS_THREADS
+      m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
+#else
+      m_need_build = false;
+#endif
     }
-
 
     // In case the users has switched on the accelerated distance query
     // data structure with the default arguments, then it has to be
     // /built/rebuilt.
-    if(m_use_search_tree && !empty()){
+    if(!empty() && m_use_search_tree && !m_search_tree_constructed)
       build_kd_tree();
-    }
-    m_need_build = false;
   }
   // constructs the search KD tree from given points
   // to accelerate the distance queries
   template<typename Tr>
-  bool AABB_tree<Tr>::build_kd_tree() const
+  bool AABB_tree<Tr>::build_kd_tree()
   {
     // iterate over primitives to get reference points on them
     std::vector<Point_and_primitive_id> points;
@@ -727,10 +754,10 @@ public:
   template<typename Tr>
   template<typename ConstPointIterator>
   bool AABB_tree<Tr>::build_kd_tree(ConstPointIterator first,
-    ConstPointIterator beyond) const
+                                    ConstPointIterator beyond)
   {
     m_p_search_tree = new Search_tree(first, beyond);
-                m_use_search_tree = true;
+
     if(m_p_search_tree != nullptr)
     {
       m_search_tree_constructed = true;
@@ -753,31 +780,24 @@ public:
 
   // constructs the search KD tree from internal primitives
   template<typename Tr>
-  bool AABB_tree<Tr>::accelerate_distance_queries() const
+  bool AABB_tree<Tr>::accelerate_distance_queries()
   {
     if(m_primitives.empty()) return true;
+
+#ifdef CGAL_HAS_THREADS
+    bool m_need_build = m_atomic_need_build.load();;
+#endif
+
     if (m_use_search_tree)
     {
       if (!m_need_build) return m_search_tree_constructed;
       return true; // default return type, no tree built
     }
+    else
+      m_use_search_tree = true;
 
-    if(!m_need_build) // the tree was already built, build the kd-tree
-    {
-      #ifdef CGAL_HAS_THREADS
-      //this ensures that this function will be done once
-      CGAL_SCOPED_LOCK(kd_tree_mutex);
-      #endif
-      if (!m_need_build)
-      {
-        // clears current KD tree
-        clear_search_tree();
-        bool res = build_kd_tree();
-        m_use_search_tree = true;
-        return res;
-      };
-    }
-    m_use_search_tree = true;
+    build_kd_tree();
+
     return m_search_tree_constructed;
   }
 
