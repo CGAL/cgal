@@ -429,9 +429,9 @@ public:
     /// Constructs internal search tree from
     /// a point set taken on the internal primitives
     /// returns `true` iff successful memory allocation
-    bool accelerate_distance_queries() const;
+    bool accelerate_distance_queries();
     ///Turns off the lazy construction of the internal search tree.
-    void do_not_accelerate_distance_queries() const;
+    void do_not_accelerate_distance_queries();
 
     /// Constructs an internal KD-tree containing the specified point
     /// set, to be used as the set of potential hints for accelerating
@@ -439,7 +439,7 @@ public:
     /// \tparam ConstPointIterator is an iterator with
     /// value type `Point_and_primitive_id`.
     template<typename ConstPointIterator>
-    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond) const
+    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond)
     {
       #ifdef CGAL_HAS_THREADS
       //this ensures that this is done once at a time
@@ -744,7 +744,7 @@ public:
   }
 
   template<typename Tr>
-  void AABB_tree<Tr>::do_not_accelerate_distance_queries()const
+  void AABB_tree<Tr>::do_not_accelerate_distance_queries()
   {
     clear_search_tree();
     m_use_search_tree = false;
