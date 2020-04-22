@@ -135,8 +135,8 @@ void diagrammeIpelet::protected_run(int fn)
 
   Kernel::FT incr_len=(fn<2)?50:75;
   //slightly increase the size of the Bbox
-  bbox=Iso_rectangle_2(bbox.min()+Kernel::Vector_2(-incr_len,-incr_len),
-                       bbox.max()+Kernel::Vector_2(incr_len,incr_len));
+  bbox=Iso_rectangle_2((bbox.min)()+Kernel::Vector_2(-incr_len,-incr_len),
+                       (bbox.max)()+Kernel::Vector_2(incr_len,incr_len));
 
 
 
