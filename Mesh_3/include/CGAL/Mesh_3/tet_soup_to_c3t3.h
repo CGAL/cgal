@@ -174,10 +174,9 @@ void build_finite_cells(Tr& tr,
 
 template<class Tr>
 void add_infinite_facets_to_incident_cells_map(typename Tr::Cell_handle c,
-                                               int inf_vert_pos,
-                                               std::map<std::set<typename Tr::Vertex_handle>,
-                                               std::vector<std::pair<typename Tr::Cell_handle,
-                                               int> > >& incident_cells_map)
+     int inf_vert_pos,
+     boost::unordered_map<std::set<typename Tr::Vertex_handle>,
+                          std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map)
 {
   int l = (inf_vert_pos + 1) % 4;
   add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map);
@@ -199,6 +198,8 @@ void build_infinite_cells(Tr& tr,
   typedef std::pair<Cell_handle, int>                              Incident_cell;
   typedef boost::unordered_map<Facet, std::vector<Incident_cell> > Incident_cells_map;
 
+  std::vector<Cell_handle> infinite_cells;
+
   // check the incident cells map for facets who only have one incident cell
   // and build the infinite cell on the opposite side
   typename Incident_cells_map::iterator it = incident_cells_map.begin();
@@ -214,28 +215,31 @@ void build_infinite_cells(Tr& tr,
 
     Cell_handle opp_c;
     // the infinite cell that we are creating needs to be well oriented...
-    int inf_vert_position_in_opp_c = 0;
     if(i == 0 || i == 2)
       opp_c = tr.tds().create_cell(tr.infinite_vertex(),
-                                   c->vertex((i+1)%4),
-                                   c->vertex((i+2)%4),
-                                   c->vertex((i+3)%4));
+                                   c->vertex((i + 2) % 4),
+                                   c->vertex((i + 1) % 4),
+                                   c->vertex((i + 3) % 4));
     else
       opp_c = tr.tds().create_cell(tr.infinite_vertex(),
-                                   c->vertex((i+1)%4),
-                                   c->vertex((i+3)%4),
-                                   c->vertex((i+2)%4));
+                                   c->vertex((i + 3) % 4),
+                                   c->vertex((i + 1) % 4),
+                                   c->vertex((i + 2) % 4));
+
+    infinite_cells.push_back(opp_c);
 
     // set the infinite_vertex's incident cell
     if(tr.infinite_vertex()->cell() == Cell_handle())
       tr.infinite_vertex()->set_cell(opp_c);
 
-    // add the facets to the incident cells map
-
     // the only finite facet
-    it->second.push_back(std::make_pair(opp_c, inf_vert_position_in_opp_c));
+    it->second.push_back(std::make_pair(opp_c, 0));
     CGAL_assertion(it->second.size() == 2);
   }
+
+  // add the facets to the incident cells map
+  for (const Cell_handle c : infinite_cells)
+    add_infinite_facets_to_incident_cells_map<Tr>(c, 0, incident_cells_map);
 }
 
 template<class Tr>
