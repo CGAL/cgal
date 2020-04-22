@@ -574,7 +574,7 @@ public:
     // set of input primitives
     Primitives m_primitives;
     // single root node
-    Node* m_p_root_node;
+    Node* m_p_root_node = nullptr;
     #ifdef CGAL_HAS_THREADS
     mutable CGAL_MUTEX build_mutex; // mutex used to protect const calls inducing build() and build_kd_tree()
     #endif
@@ -603,14 +603,14 @@ public:
     }
 
     // search KD-tree
-    const Search_tree* m_p_search_tree;
-    bool m_use_default_search_tree; // indicates whether the internal kd-tree should be built
+    const Search_tree* m_p_search_tree = nullptr;
+    bool m_use_default_search_tree = true; // indicates whether the internal kd-tree should be built
 #ifdef CGAL_HAS_THREADS
     std::atomic<bool> m_atomic_need_build;
     std::atomic<bool> m_atomic_search_tree_constructed;
 #else
-    bool m_need_build;
-    bool m_search_tree_constructed;
+    bool m_need_build = false;
+    bool m_search_tree_constructed = false;
 #endif
 
   private:
@@ -626,16 +626,9 @@ public:
   template<typename Tr>
   AABB_tree<Tr>::AABB_tree(const Tr& traits)
     : m_traits(traits)
-    , m_primitives()
-    , m_p_root_node(nullptr)
-    , m_p_search_tree(nullptr)
-    , m_use_default_search_tree(true)
 #ifdef CGAL_HAS_THREADS
     , m_atomic_need_build(false)
     , m_atomic_search_tree_constructed(false)
-#else
-    , m_need_build(false)
-    , m_search_tree_constructed(false)
 #endif
   {}
 
@@ -644,17 +637,9 @@ public:
   AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
                            ConstPrimitiveIterator beyond,
                            T&& ... t)
-    : m_traits()
-    , m_primitives()
-    , m_p_root_node(nullptr)
-    , m_p_search_tree(nullptr)
-    , m_use_default_search_tree(true)
 #ifdef CGAL_HAS_THREADS
-    , m_atomic_need_build(false)
+    : m_atomic_need_build(false)
     , m_atomic_search_tree_constructed(false)
-#else
-    , m_need_build(false)
-    , m_search_tree_constructed(false)
 #endif
   {
     // Insert each primitive into tree
