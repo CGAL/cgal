@@ -386,13 +386,16 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
 }
 
 int main() {
-  if (find_cycle_in_unweighted_cmap_and_polyhedron() &&
+  bool res=find_cycle_in_unweighted_cmap_and_polyhedron() &&
       edge_width_in_unweighted_polyhedron() &&
-      // TODO find_cycle_in_nonorientable_gmap() &&
+      // find_cycle_in_nonorientable_gmap() &&
       edge_width_in_weighted_cmap_gmap_mesh() &&
-      unsew_edge_width_repeatedly_in_unweighted_gmap())
+      unsew_edge_width_repeatedly_in_unweighted_gmap();
+
+  if (res)
   {
     std::cout << "All tests passed\n";
     return EXIT_SUCCESS;
-  } else return EXIT_FAILURE;
+  }
+  return EXIT_FAILURE;
 }

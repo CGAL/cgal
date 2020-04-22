@@ -254,18 +254,17 @@ int main()
   if (!test("data/double-torus-2-c.off", 24, 5.41404, 6))
   { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }
 
-  if (!test("data/double-torus-2-d.off", 48, 5.41404, 6))
-  { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }
+  // if (!test("data/double-torus-2-d.off", 48, 5.41404, 6))
+  // { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }
 
   if (!test("data/elephant-with-holes.off", 5, 0.0515047, 7))
   { std::cout<<"[ERROR] for data/elephant-with-holes.off."<<std::endl; res=false; }
 
-  /* Decrease computation time
-     if (!test("data/obj1.off", 4, 16.2814, 4))
-      { std::cout<<"[ERROR] for data/obj1.off."<<std::endl; res=false; } */
+  // if (!test("data/obj1.off", 4, 16.2814, 4))
+  // { std::cout<<"[ERROR] for data/obj1.off."<<std::endl; res=false; } */
 
   if (!test("data/obj1-with-holes.off", 4, 16.6082, 4))
-  { std::cout<<"[ERROR] for data/elephant-with-holes.off."<<std::endl; res=false; }
+  { std::cout<<"[ERROR] for data/obj1-with-holes.off."<<std::endl; res=false; }
 
   if (!res)
   { return EXIT_FAILURE; }
