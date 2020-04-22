@@ -103,9 +103,9 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
               this, &DoTreesIntersectplugin::cleanup);
 
-      CGAL::qglviewer::Vec pos((item->bbox().min(0) + item->bbox().max(0))/2.0,
-                               (item->bbox().min(1) + item->bbox().max(1))/2.0,
-                               (item->bbox().min(2) + item->bbox().max(2))/2.0);
+      CGAL::qglviewer::Vec pos(((item->bbox().min)(0) + (item->bbox().max)(0))/2.0,
+                               ((item->bbox().min)(1) + (item->bbox().max)(1))/2.0,
+                               ((item->bbox().min)(2) + (item->bbox().max)(2))/2.0);
 
       Scene_movable_sm_item* mov_item = new Scene_movable_sm_item(pos,item->face_graph(),"");
       connect(mov_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
