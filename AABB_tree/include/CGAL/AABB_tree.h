@@ -603,7 +603,7 @@ public:
     std::atomic<bool> m_atomic_search_tree_constructed;
 #else
     bool m_need_build = false;
-    bool m_search_tree_constructed = false;
+    mutable bool m_search_tree_constructed = false;
 #endif
 
   private:

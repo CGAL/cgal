@@ -187,7 +187,7 @@ public:
 #ifdef CGAL_HAS_THREADS
       delete atomic_tree_ptr.load();
 #else
-      delete tree_ptr.get();
+      delete tree_ptr;
 #endif
   }
 
