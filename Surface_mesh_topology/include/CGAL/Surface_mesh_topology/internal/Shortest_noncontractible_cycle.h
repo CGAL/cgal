@@ -22,6 +22,7 @@
 #include <queue>
 #include <tuple>
 #include <unordered_map>
+#include <boost/heap/fibonacci_heap.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -263,19 +264,29 @@ protected:
   {
     // Preparation
     Dijkstra_comparator<Distance_> dc(distance_from_root);
-    std::priority_queue<int, std::vector<int>, Dijkstra_comparator<Distance_> > pq(dc);
+    //std::priority_queue<int, std::vector<int>, Dijkstra_comparator<Distance_> > pq(dc);
+    typedef boost::heap::fibonacci_heap<int, boost::heap::compare<Dijkstra_comparator<Distance_>>> Heap;
+    typedef typename Heap::handle_type heap_handle;
+
+    Heap pq(dc);
+    std::unordered_map<int, heap_handle> inqueue;
+
     int vertex_index=0;
     size_type vertex_visited=get_local_map().get_new_mark();
     // Begin Dijkstra
-    pq.push(0);
+    distance_from_root.reserve(get_local_map().template attributes<0>().size());
+    distance_from_root.push_back(0);
+    inqueue[0]=pq.push(0);
     vertex_info(root)=vertex_index;
     get_local_map().template mark_cell<0>(root, vertex_visited);
-    distance_from_root.push_back(0);
 
     while (!pq.empty())
     {
       int u_index=pq.top();
       pq.pop();
+
+      inqueue.erase(u_index);
+
       Dart_handle u=(u_index==0)?root:get_local_map().next(spanning_tree[u_index-1]);
       CGAL_assertion(u_index==vertex_info(u));
       Dart_handle it=u;
@@ -287,12 +298,13 @@ protected:
         {
           int v_index=++vertex_index;
           CGAL_assertion(v_index==static_cast<int>(distance_from_root.size()));
+          CGAL_assertion(inqueue.count(v_index)==0);
           distance_from_root.push_back(distance_from_root[u_index]+w);
           spanning_tree.push_back(it);
           trace_index.push_back(u_index-1);
           vertex_info(v)=v_index;
           get_local_map().template mark_cell<0>(v, vertex_visited);
-          pq.push(v_index);
+          inqueue[v_index]=pq.push(v_index);
         }
         else
         {
@@ -303,7 +315,12 @@ protected:
             distance_from_root[v_index]=distance_from_root[u_index]+w;
             spanning_tree[v_index-1]=it;
             trace_index[v_index-1]=u_index-1;
-            pq.push(v_index);
+
+            auto it_inqueue=inqueue.find(v_index);
+            if (it_inqueue==inqueue.end())
+            { inqueue[v_index]=pq.push(v_index); }
+            else
+            { pq.decrease(it_inqueue->second, v_index); }
           }
         }
         it=get_local_map().next(get_local_map().opposite2(it));
@@ -328,6 +345,7 @@ protected:
     q.push(0);
     vertex_info(root)=vertex_index;
     get_local_map().template mark_cell<0>(root, vertex_visited);
+    distance_from_root.reserve(get_local_map().template attributes<0>().size());
     distance_from_root.push_back(0);
     while (!q.empty())
     {
@@ -342,6 +360,7 @@ protected:
         if (!get_local_map().is_marked(v, vertex_visited))
         {
           int v_index=++vertex_index;
+          CGAL_assertion(v_index==static_cast<int>(distance_from_root.size()));
           distance_from_root.push_back(1+distance_from_root[u_index]);
           spanning_tree.push_back(it);
           // `it` will lead to v
