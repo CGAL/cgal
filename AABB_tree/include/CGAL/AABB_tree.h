@@ -704,35 +704,28 @@ public:
   template<typename Tr>
   void AABB_tree<Tr>::build()
   {
-#ifdef CGAL_HAS_THREADS
-    if (m_atomic_need_build.load())
-#else
-    if (m_need_build)
-#endif
-    {
-      clear_nodes();
-      if(m_primitives.size() > 1) {
+    clear_nodes();
+    if(m_primitives.size() > 1) {
 
-        // allocates tree nodes
-        m_p_root_node = new Node[m_primitives.size()-1]();
-        if(m_p_root_node == nullptr)
-        {
-          std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-          CGAL_assertion(m_p_root_node != nullptr);
-          m_primitives.clear();
-          clear();
-        }
-
-        // constructs the tree
-        m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-                  m_primitives.size(), m_traits);
+      // allocates tree nodes
+      m_p_root_node = new Node[m_primitives.size()-1]();
+      if(m_p_root_node == nullptr)
+      {
+        std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
+        CGAL_assertion(m_p_root_node != nullptr);
+        m_primitives.clear();
+        clear();
       }
-#ifdef CGAL_HAS_THREADS
-      m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
-#else
-      m_need_build = false;
-#endif
+
+      // constructs the tree
+      m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
+                m_primitives.size(), m_traits);
     }
+#ifdef CGAL_HAS_THREADS
+    m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
+#else
+    m_need_build = false;
+#endif
   }
   // constructs the search KD tree from given points
   // to accelerate the distance queries
