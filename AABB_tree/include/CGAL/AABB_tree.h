@@ -172,7 +172,7 @@ namespace CGAL {
     }
 
     /// Clears the tree and the search tree if it was constructed,
-    /// and switches on the usage of the search tree to find the hints for the distance queries
+    /// and switches on the usage of the search tree to find the hint for the distance queries
     void clear()
     {
       // clear AABB tree
@@ -344,30 +344,21 @@ public:
     ///@{
 
     /// Returns the minimum squared distance between the query point
-    /// and all input primitives. Method
-    /// `accelerate_distance_queries()` should be called before the
-    /// first distance query, so that an internal secondary search
-    /// structure is build, for improving performance.
+    /// and all input primitives.
     /// \pre `!empty()`
     FT squared_distance(const Point& query) const;
 
     /// Returns the point in the union of all input primitives which
     /// is closest to the query. In case there are several closest
     /// points, one arbitrarily chosen closest point is
-    /// returned. Method `accelerate_distance_queries()` should be
-    /// called before the first distance query, so that an internal
-    /// secondary search structure is build, for improving
-    /// performance.
+    /// returned.
     /// \pre `!empty()`
     Point closest_point(const Point& query) const;
 
 
     /// Returns a `Point_and_primitive_id` which realizes the
     /// smallest distance between the query point and all input
-    /// primitives. Method `accelerate_distance_queries()` should be
-    /// called before the first distance query, so that an internal
-    /// secondary search structure is build, for improving
-    /// performance.
+    /// primitives.
     /// \pre `!empty()`
     Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
 
@@ -407,19 +398,18 @@ public:
     /// one may want to provide a much better hint than a vertex of
     /// the triangle soup could be. It could be, for example, the
     /// barycenter of one of the triangles. But, except with the use
-    /// of an exact constructions kernel, one cannot easily construct
+    /// of a kernel with exact constructions, one cannot easily construct
     /// points other than the vertices, that lie exactly on a triangle
     /// soup. Hence, providing a good hint sometimes means not being
     /// able to provide it exactly on the primitives. In rare
     /// occasions, this hint can be returned as the closest point.
     /// In order to accelerate distance queries significantly, the
     /// AABB tree builds an internal KD-tree containing a set of
-    /// potential hints, when the method
-    /// `accelerate_distance_queries()` is called. This KD-tree
-    /// provides very good hints that allow the algorithms to run much
-    /// faster than with a default hint (such as the
-    /// `reference_point` of the first primitive). The set of
-    /// potential hints is a sampling of the union of the primitives,
+    /// potential hints. This KD-tree provides very good hints
+    /// that allow the algorithms to run much faster than
+    /// when `do_not_accelerate_distance_queries()` that makes the
+    /// hint to always be the  `reference_point` of the first primitive.
+    /// The set of potential hints is a sampling of the union of the primitives,
     /// which is obtained, by default, by calling the method
     /// `reference_point` of each of the primitives. However, such
     /// a sampling with one point per primitive may not be the most
@@ -427,18 +417,24 @@ public:
     /// inserting more than one sample on them. Conversely, a sparser
     /// sampling with less than one point per input primitive is
     /// relevant in some cases.
+    /// The internal KD-tree is always used if no call to `do_not_accelerate_distance_queries()`
+    /// was made since object creation or the last call to `clear()`. It will be built by
+    /// the first distance query or by a call to `accelerate_distance_queries()`.
     ///@{
 
     /// Constructs internal search tree from
     /// a point set taken on the internal primitives
     /// returns `true` iff successful memory allocation
     bool accelerate_distance_queries();
-    ///Turns off the lazy construction of the internal search tree.
+    /// Turns off the usage of the internal search tree and clears it if it was already constructed.
     void do_not_accelerate_distance_queries();
 
     /// Constructs an internal KD-tree containing the specified point
     /// set, to be used as the set of potential hints for accelerating
-    /// the distance queries.
+    /// the distance queries. Note that the search tree built in
+    /// this function will not be invalidated by the insertion of a new
+    /// primitive, and an explicit call to `accelerate_distance_queries()`
+    /// is needed to update the search tree.
     /// \tparam ConstPointIterator is an iterator with
     /// value type `Point_and_primitive_id`.
     template<typename ConstPointIterator>
