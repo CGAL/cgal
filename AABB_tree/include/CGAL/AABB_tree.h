@@ -61,6 +61,8 @@ namespace CGAL {
     // type of the primitives container
     typedef std::vector<typename AABBTraits::Primitive> Primitives;
 
+    typedef internal::Primitive_helper<AABBTraits> Helper;
+
   public:
     typedef AABBTraits AABB_traits;
 
@@ -169,14 +171,15 @@ namespace CGAL {
       return m_traits;
     }
 
-    /// Clears the tree.
+    /// Clears the tree and the search tree if it was constructed,
+    /// and switches on the usage of the search tree to find the hints for the distance queries
     void clear()
     {
       // clear AABB tree
       clear_nodes();
       m_primitives.clear();
       clear_search_tree();
-      m_use_search_tree = true;
+      m_use_default_search_tree = true;
     }
 
     /// Returns the axis-aligned bounding box of the whole tree.
@@ -441,8 +444,7 @@ public:
     template<typename ConstPointIterator>
     bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond)
     {
-      clear_search_tree();
-      m_use_search_tree = false; // not a default kd-tree
+      m_use_default_search_tree = false;
       return build_kd_tree(first,beyond);
     }
 
@@ -480,14 +482,22 @@ public:
     }
 
     // clears internal KD tree
-    void clear_search_tree() const
+    void clear_search_tree()
     {
+#ifdef CGAL_HAS_THREADS
+      if ( m_atomic_search_tree_constructed.load() )
+#else
       if ( m_search_tree_constructed )
+#endif
       {
         CGAL_assertion( m_p_search_tree!=nullptr );
         delete m_p_search_tree;
         m_p_search_tree = nullptr;
+#ifdef CGAL_HAS_THREADS
+        m_atomic_search_tree_constructed.store(false);
+#else
         m_search_tree_constructed = false;
+#endif
       }
     }
 
@@ -519,13 +529,28 @@ public:
     {
       CGAL_assertion(!empty());
       return Point_and_primitive_id(
-        internal::Primitive_helper<AABB_traits>::get_reference_point(m_primitives[0],m_traits), m_primitives[0].id()
+        Helper::get_reference_point(m_primitives[0],m_traits), m_primitives[0].id()
       );
     }
 
   public:
     Point_and_primitive_id best_hint(const Point& query) const
     {
+#ifdef CGAL_HAS_THREADS
+      bool m_search_tree_constructed = m_atomic_search_tree_constructed.load(std::memory_order_acquire);
+#endif
+
+      // lazily build the search tree in case the default should be used
+      if (m_use_default_search_tree && !m_search_tree_constructed)
+      {
+#ifdef CGAL_HAS_THREADS
+        CGAL_SCOPED_LOCK(build_mutex);
+        m_search_tree_constructed = m_atomic_search_tree_constructed.load(std::memory_order_relaxed);
+        if (!m_search_tree_constructed)
+#endif
+        m_search_tree_constructed = const_cast<AABB_tree*>(this)->build_kd_tree();
+      }
+
       if(m_search_tree_constructed)
         return m_p_search_tree->closest_point(query);
       else
@@ -534,14 +559,13 @@ public:
 
     //! Returns the datum (geometric object) represented `p`.
 #ifndef DOXYGEN_RUNNING
-    typename internal::Primitive_helper<AABBTraits>::Datum_type
+    typename Helper::Datum_type
 #else
     typename AABBTraits::Primitive::Datum_reference
 #endif
     datum(Primitive& p)const
     {
-      return internal::Primitive_helper<AABBTraits>::
-          get_datum(p, this->traits());
+      return Helper::get_datum(p, this->traits());
     }
 
   private:
@@ -579,13 +603,14 @@ public:
     }
 
     // search KD-tree
-    mutable const Search_tree* m_p_search_tree;
-    mutable bool m_search_tree_constructed;
-    bool m_use_search_tree; // indicates whether the internal kd-tree should be built
+    const Search_tree* m_p_search_tree;
+    bool m_use_default_search_tree; // indicates whether the internal kd-tree should be built
 #ifdef CGAL_HAS_THREADS
     std::atomic<bool> m_atomic_need_build;
+    std::atomic<bool> m_atomic_search_tree_constructed;
 #else
     bool m_need_build;
+    bool m_search_tree_constructed;
 #endif
 
   private:
@@ -604,12 +629,13 @@ public:
     , m_primitives()
     , m_p_root_node(nullptr)
     , m_p_search_tree(nullptr)
-    , m_search_tree_constructed(false)
-    , m_use_search_tree(true)
+    , m_use_default_search_tree(true)
 #ifdef CGAL_HAS_THREADS
     , m_atomic_need_build(false)
+    , m_atomic_search_tree_constructed(false)
 #else
     , m_need_build(false)
+    , m_search_tree_constructed(false)
 #endif
   {}
 
@@ -622,12 +648,13 @@ public:
     , m_primitives()
     , m_p_root_node(nullptr)
     , m_p_search_tree(nullptr)
-    , m_search_tree_constructed(false)
-    , m_use_search_tree(true)
+    , m_use_default_search_tree(true)
 #ifdef CGAL_HAS_THREADS
     , m_atomic_need_build(false)
+    , m_atomic_search_tree_constructed(false)
 #else
     , m_need_build(false)
+    , m_search_tree_constructed(false)
 #endif
   {
     // Insert each primitive into tree
@@ -640,6 +667,8 @@ public:
                              ConstPrimitiveIterator beyond,
                              T&& ... t)
   {
+    if (m_use_default_search_tree && first!=beyond)
+      clear_search_tree();
     set_shared_data(std::forward<T>(t)...);
     while(first != beyond)
     {
@@ -680,6 +709,8 @@ public:
   template<typename Tr>
   void AABB_tree<Tr>::insert(const Primitive& p)
   {
+    if (m_use_default_search_tree)
+      clear_search_tree();
     m_primitives.push_back(p);
 #ifdef CGAL_HAS_THREADS
     m_atomic_need_build.store(true);
@@ -721,12 +752,6 @@ public:
       m_need_build = false;
 #endif
     }
-
-    // In case the users has switched on the accelerated distance query
-    // data structure with the default arguments, then it has to be
-    // /built/rebuilt.
-    if(!empty() && m_use_search_tree && !m_search_tree_constructed)
-      build_kd_tree();
   }
   // constructs the search KD tree from given points
   // to accelerate the distance queries
@@ -736,17 +761,11 @@ public:
     // iterate over primitives to get reference points on them
     std::vector<Point_and_primitive_id> points;
     points.reserve(m_primitives.size());
-    typename Primitives::const_iterator it;
-    for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
-      points.push_back( Point_and_primitive_id(
-        internal::Primitive_helper<AABB_traits>::get_reference_point(
-          *it,m_traits), it->id() ) );
+    for(const Primitive& p : m_primitives)
+      points.push_back( Point_and_primitive_id( Helper::get_reference_point(p, m_traits), p.id() ) );
 
     // clears current KD tree
-    clear_search_tree();
-    bool res = build_kd_tree(points.begin(), points.end());
-    m_use_search_tree = true;
-    return res;
+    return build_kd_tree(points.begin(), points.end());
   }
 
   // constructs the search KD tree from given points
@@ -756,11 +775,16 @@ public:
   bool AABB_tree<Tr>::build_kd_tree(ConstPointIterator first,
                                     ConstPointIterator beyond)
   {
+    clear_search_tree();
     m_p_search_tree = new Search_tree(first, beyond);
 
     if(m_p_search_tree != nullptr)
     {
+#ifdef CGAL_HAS_THREADS
+      m_atomic_search_tree_constructed.store(false, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
+#else
       m_search_tree_constructed = true;
+#endif
       return true;
     }
     else
@@ -774,7 +798,7 @@ public:
   void AABB_tree<Tr>::do_not_accelerate_distance_queries()
   {
     clear_search_tree();
-    m_use_search_tree = false;
+    m_use_default_search_tree = false;
   }
 
 
@@ -782,23 +806,9 @@ public:
   template<typename Tr>
   bool AABB_tree<Tr>::accelerate_distance_queries()
   {
+    m_use_default_search_tree = true;
     if(m_primitives.empty()) return true;
-
-#ifdef CGAL_HAS_THREADS
-    bool m_need_build = m_atomic_need_build.load();;
-#endif
-
-    if (m_use_search_tree)
-    {
-      if (!m_need_build) return m_search_tree_constructed;
-      return true; // default return type, no tree built
-    }
-    else
-      m_use_search_tree = true;
-
-    build_kd_tree();
-
-    return m_search_tree_constructed;
+    return build_kd_tree();
   }
 
   template<typename Tr>
