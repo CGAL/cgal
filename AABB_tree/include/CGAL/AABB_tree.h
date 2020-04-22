@@ -39,7 +39,7 @@ namespace CGAL {
 /// @{
 
   /**
-   * Class AABB_tree is a static data structure for efficient
+   * Static data structure for efficient
    * intersection and distance computations in 3D. It builds a
    * hierarchy of axis-aligned bounding boxes (an AABB tree) from a set
    * of 3D geometric objects, and can receive intersection and distance
@@ -109,7 +109,7 @@ namespace CGAL {
     /// \name Creation
     ///@{
 
-    /// Constructs an empty tree, and initializes the internally stored traits
+    /// constructs an empty tree, and initializes the internally stored traits
     /// class using `traits`.
     AABB_tree(const AABBTraits& traits = AABBTraits());
 
@@ -118,22 +118,21 @@ namespace CGAL {
      * @param first iterator over first primitive to insert
      * @param beyond past-the-end iterator
      *
-     * It is equivalent to constructing an empty tree and calling `insert(first,last,t...)`.
+     * constructs an empty tree followed by a call to `insert(first,last,t...)`.
      * The tree stays empty if the memory allocation is not successful.
      */
     template<typename InputIterator,typename ... T>
     AABB_tree(InputIterator first, InputIterator beyond,T&& ...);
 
-    /// After one or more calls to `insert()` the internal data
-    /// structure of the tree must be reconstructed. This procedure
-    /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
-    /// primitives of the tree.  This procedure is called implicitly
-    /// at the first call to a query member function. You can call
-    /// `build()` explicitly to ensure that the next call to
-    /// query functions will not trigger the reconstruction of the
-    /// data structure.
-    /// A call to `AABBTraits::set_shared_data(t...)`
-    /// is made using the internally stored traits.
+    /// triggers the (re)construction of the internal tree structure.
+    /// The internal tree structure is automatically invalidated by the insertion of any primitives
+    /// after one or more calls to `insert()`.
+    /// This procedure is called implicitly at the first call to a query member function.
+    /// An explicit call to `build()` must be made to ensure that the next call to
+    /// a query function will not trigger the construction of the data structure.
+    /// A call to `AABBTraits::set_shared_data(t...)` is made using the internally stored traits.
+    /// This procedure has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// primitives of the tree.
     template<typename ... T>
     void build(T&& ...);
 #ifndef DOXYGEN_RUNNING
@@ -144,13 +143,13 @@ namespace CGAL {
     /// \name Operations
     ///@{
 
-    /// Equivalent to calling `clear()` and then `insert(first,last,t...)`.
+    /// is equivalent to calling `clear()`, `insert(first,last,t...)`, and `build()`
     template<typename ConstPrimitiveIterator,typename ... T>
     void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T&& ...);
 
 
-    /// Add a sequence of primitives to the set of primitives of the AABB tree.
-    /// `%InputIterator` is any iterator and the parameter pack `T` are any types
+    /// adds a sequence of primitives to the set of primitives of the AABB tree.
+    /// `%InputIterator` is any iterator and the parameter pack `T` contains any types
     /// such that `Primitive` has a constructor with the following signature:
     /// `Primitive(%InputIterator, T...)`. If `Primitive` is a model of the concept
     /// `AABBPrimitiveWithSharedData`, a call to `AABBTraits::set_shared_data(t...)`
@@ -158,20 +157,20 @@ namespace CGAL {
     template<typename InputIterator,typename ... T>
     void insert(InputIterator first, InputIterator beyond,T&& ...);
 
-    /// Adds a primitive to the set of primitives of the tree.
+    /// adds a primitive to the set of primitives of the tree.
     inline void insert(const Primitive& p);
 
-    /// Clears and destroys the tree.
+    /// clears and destroys the tree.
     ~AABB_tree()
     {
       clear();
     }
-    /// Returns a const reference to the internally stored traits class.
+    /// returns a const reference to the internally stored traits class.
     const AABBTraits& traits() const{
       return m_traits;
     }
 
-    /// Clears the tree and the search tree if it was constructed,
+    /// clears the tree and the search tree if it was constructed,
     /// and switches on the usage of the search tree to find the hint for the distance queries
     void clear()
     {
@@ -182,7 +181,7 @@ namespace CGAL {
       m_use_default_search_tree = true;
     }
 
-    /// Returns the axis-aligned bounding box of the whole tree.
+    /// returns the axis-aligned bounding box of the whole tree.
     /// \pre `!empty()`
     const Bounding_box bbox() const {
       CGAL_precondition(!empty());
@@ -193,10 +192,10 @@ namespace CGAL {
                       m_primitives.end());
     }
 
-    /// Returns the number of primitives in the tree.
+    /// returns the number of primitives in the tree.
     size_type size() const { return m_primitives.size(); }
 
-    /// Returns \c true, iff the tree contains no primitive.
+    /// returns \c true, iff the tree contains no primitive.
     bool empty() const { return m_primitives.empty(); }
     ///@}
 
@@ -220,39 +219,38 @@ public:
     /// \name Intersection Tests
     ///@{
 
-    /// Returns `true`, iff the query intersects at least one of
-    /// the input primitives. \tparam Query must be a type for
-    /// which `do_intersect` predicates are
-    /// defined in the traits class `AABBTraits`.
+    /// returns `true`, iff the query intersects at least one of
+    /// the input primitives.
+    /// \tparam Query must be a type for which `Do_intersect` operators are
+    ///               defined in the traits class `AABBTraits`.
     template<typename Query>
     bool do_intersect(const Query& query) const;
 
-    /// Returns the number of primitives intersected by the
-    /// query. \tparam Query must be a type for which
-    /// `do_intersect` predicates are defined
-    /// in the traits class `AABBTraits`.
+    /// returns the number of primitives intersected by the
+    /// query.
+    /// \tparam Query must be a type for which `Do_intersect` operators are
+    ///               defined in the traits class `AABBTraits`.
     template<typename Query>
     size_type number_of_intersected_primitives(const Query& query) const;
 
-    /// Outputs to the iterator the list of all intersected primitives
-    /// ids. This function does not compute the intersection points
+    /// puts in `out` the ids of all intersected primitives.
+    /// This function does not compute the intersection points
     /// and is hence faster than the function `all_intersections()`
-    /// function below. \tparam Query must be a type for which
-    /// `do_intersect` predicates are defined
-    /// in the traits class `AABBTraits`.
+    /// function below.
+    /// \tparam Query must be a type for which `Do_intersect` operators are
+    ///               defined in the traits class `AABBTraits`.
     template<typename Query, typename OutputIterator>
     OutputIterator all_intersected_primitives(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the intersected primitive id that is encountered first
+    /// returns the id of the intersected primitive that is encountered first
     /// in the tree traversal, iff
     /// the query intersects at least one of the input primitives. No
     /// particular order is guaranteed over the tree traversal, such
     /// that, e.g, the primitive returned is not necessarily the
-    /// closest from the source point of a ray query. \tparam Query
-    /// must be a type for which
-    /// `do_intersect` predicates are defined
-    /// in the traits class `AABBTraits`.
+    /// closest from the source point of a ray query.
+    /// \tparam Query must be a type for which `Do_intersect` operators are
+    ///               defined in the traits class `AABBTraits`.
     template <typename Query>
     boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
     ///@}
@@ -260,30 +258,29 @@ public:
     /// \name Intersections
     ///@{
 
-    /// Outputs the list of all intersections, as objects of
+    /// puts in `out` all intersections, as objects of
     /// `Intersection_and_primitive_id<Query>::%Type`,
     /// between the query and the input data to
-    /// the iterator. `do_intersect()`
-    /// predicates and intersections must be defined for `Query`
-    /// in the `AABBTraits` class.
+    /// the iterator.
+    /// \tparam Query must be a type for which `Do_intersect` and `Intersection` operators are
+    ///               defined in the traits class `AABBTraits`.
     template<typename Query, typename OutputIterator>
     OutputIterator all_intersections(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the intersection that is encountered first
+    /// returns if any the intersection that is encountered first
     /// in the tree traversal. No particular
     /// order is guaranteed over the tree traversal, e.g, the
-    /// primitive returned is not necessarily the closest from the
-    /// source point of a ray query. Type `Query` must be a type
-    /// for which `do_intersect` predicates
-    /// and intersections are defined in the traits class AABBTraits.
+    /// primitive returned is not necessarily the closest from the query.
+    /// \tparam Query must be a type for which `Do_intersect` and `Intersection` operators are
+    ///               defined in the traits class `AABBTraits`.
     template <typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     any_intersection(const Query& query) const;
 
 
 
-    /// Returns the intersection and  primitive id closest to the source point of the ray
+    /// returns the intersection and  primitive id closest to the source point of the ray
     /// query.
     /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
     /// `do_intersect` predicates and intersections for it must be
@@ -314,7 +311,7 @@ public:
     }
     /// \endcond
 
-    /// Returns the primitive id closest to the source point of the ray
+    /// returns the primitive id closest to the source point of the ray
     /// query.
     /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
     /// `do_intersect` predicates and intersections for it must be
@@ -343,12 +340,12 @@ public:
     /// \name Distance Queries
     ///@{
 
-    /// Returns the minimum squared distance between the query point
+    /// returns the minimum squared distance between the query point
     /// and all input primitives.
     /// \pre `!empty()`
     FT squared_distance(const Point& query) const;
 
-    /// Returns the point in the union of all input primitives which
+    /// returns the point in the union of all input primitives which
     /// is closest to the query. In case there are several closest
     /// points, one arbitrarily chosen closest point is
     /// returned.
@@ -356,7 +353,7 @@ public:
     Point closest_point(const Point& query) const;
 
 
-    /// Returns a `Point_and_primitive_id` which realizes the
+    /// returns a `Point_and_primitive_id` which realizes the
     /// smallest distance between the query point and all input
     /// primitives.
     /// \pre `!empty()`
@@ -422,14 +419,14 @@ public:
     /// the first distance query or by a call to `accelerate_distance_queries()`.
     ///@{
 
-    /// Constructs internal search tree from
+    /// constructs the internal search tree from
     /// a point set taken on the internal primitives
     /// returns `true` iff successful memory allocation
     bool accelerate_distance_queries();
-    /// Turns off the usage of the internal search tree and clears it if it was already constructed.
+    /// turns off the usage of the internal search tree and clears it if it was already constructed.
     void do_not_accelerate_distance_queries();
 
-    /// Constructs an internal KD-tree containing the specified point
+    /// constructs an internal KD-tree containing the specified point
     /// set, to be used as the set of potential hints for accelerating
     /// the distance queries. Note that the search tree built in
     /// this function will not be invalidated by the insertion of a new
@@ -444,19 +441,19 @@ public:
       return build_kd_tree(first,beyond);
     }
 
-    /// Returns the minimum squared distance between the query point
+    /// returns the minimum squared distance between the query point
     /// and all input primitives. The internal KD-tree is not used.
     /// \pre `!empty()`
     FT squared_distance(const Point& query, const Point& hint) const;
 
-    /// Returns the point in the union of all input primitives which
+    /// returns the point in the union of all input primitives which
     /// is closest to the query. In case there are several closest
     /// points, one arbitrarily chosen closest point is returned. The
     /// internal KD-tree is not used.
     /// \pre `!empty()`
     Point closest_point(const Point& query, const Point& hint) const;
 
-    /// Returns a `Point_and_primitive_id` which realizes the
+    /// returns a `Point_and_primitive_id` which realizes the
     /// smallest distance between the query point and all input
     /// primitives. The internal KD-tree is not used.
     /// \pre `!empty()`
