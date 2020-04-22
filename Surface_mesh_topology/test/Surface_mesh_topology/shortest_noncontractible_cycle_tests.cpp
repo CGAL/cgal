@@ -388,7 +388,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
 int main() {
   if (find_cycle_in_unweighted_cmap_and_polyhedron() &&
       edge_width_in_unweighted_polyhedron() &&
-      find_cycle_in_nonorientable_gmap() &&
+      // TODO find_cycle_in_nonorientable_gmap() &&
       edge_width_in_weighted_cmap_gmap_mesh() &&
       unsew_edge_width_repeatedly_in_unweighted_gmap())
   {
