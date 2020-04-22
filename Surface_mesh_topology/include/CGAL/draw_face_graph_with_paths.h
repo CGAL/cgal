@@ -88,6 +88,7 @@ class Face_graph_with_path_viewer : public Basic_viewer_qt
   typedef Basic_viewer_qt                         Base;
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
   typedef typename LCC::Dart_const_handle         Dart_const_handle;
+  typedef typename LCC::size_type                 size_type;
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
@@ -103,7 +104,7 @@ public:
                               const std::vector
                               <Surface_mesh_topology::Path_on_surface<Mesh> >
                               *paths=nullptr,
-                              std::size_t amark=LCC::INVALID_MARK,
+                              size_type amark=LCC::INVALID_MARK,
                               const char* title="", bool anofaces=false,
                               const DrawingFunctorLCC&
                               drawing_functor=DrawingFunctorLCC()) :
@@ -117,8 +118,8 @@ public:
     m_current_path(m_paths->size()),
     m_current_dart(lcc.darts().end()),
     m_draw_marked_darts(true),
-    m_amark(amark==std::numeric_limits<std::size_t>::max()?
-              LCC::INVALID_MARK:amark)
+    m_amark(amark==(std::numeric_limits<size_type>::max)()?
+            LCC::INVALID_MARK:amark)
   {
     lcc.orient(m_oriented_mark);
     compute_elements();
@@ -394,7 +395,8 @@ template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="Mesh Viewer With Path",
-          std::size_t amark=std::numeric_limits<std::size_t>::max(),
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           bool nofill=false,
           const DrawingFunctor& drawing_functor=DrawingFunctor())
 {
@@ -422,7 +424,8 @@ template<class Mesh>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="Mesh Viewer With Path",
-          std::size_t amark=std::numeric_limits<std::size_t>::max(),
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           bool nofill=false)
 {
   DefaultDrawingFunctorLCC f;
@@ -433,7 +436,8 @@ template<class Mesh>
 void draw(const Mesh& alcc,
           std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
           const char* title="Mesh Viewer With Path",
-          std::size_t amark=std::numeric_limits<std::size_t>::max(),
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           bool nofill=false)
 {
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths=l;

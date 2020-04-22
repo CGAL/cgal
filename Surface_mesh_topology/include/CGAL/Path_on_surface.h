@@ -302,16 +302,16 @@ public:
   }
 
   /// @return true iff the ith dart can be added at the end of the path.
-  bool can_be_pushed_by_index(std::size_t i, bool flip=false,
+  bool can_be_pushed_by_index(typename Map::size_type i, bool flip=false,
                               bool update_isclosed=true) const
   { return can_be_pushed(get_map().dart_handle(i), flip, update_isclosed); }
 
   /// Add the given ith dart at the end of this path.
-  void push_back_by_index(std::size_t i, bool flip=false,
+  void push_back_by_index(typename Map::size_type i, bool flip=false,
                           bool update_isclosed=true)
   { push_back(get_map().dart_handle(i), flip, update_isclosed); }
 
-  void push_back_by_index(std::initializer_list<std::size_t> l,
+  void push_back_by_index(std::initializer_list<typename Map::size_type> l,
                           bool update_isclosed=true)
   {
     for (std::size_t i : l)

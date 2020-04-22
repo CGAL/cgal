@@ -437,7 +437,7 @@ public:
     size_type size() const
     {
       if (msize==0)
-      { msize=halfedges(mmap.get_fg()).size(); }
+      { msize=static_cast<typename Self::size_type>(halfedges(mmap.get_fg()).size()); }
       return msize;
     }
     bool empty() const
@@ -449,7 +449,7 @@ public:
     bool is_used(size_type i) const
     { return internal::Is_index_used<HEG>::run(mmap.get_fg(), i); }
 
-    std::size_t index(const_iterator it) const
+    size_type index(const_iterator it) const
     {
       return internal::Index_from_halfedge_descriptor<HEG>::
         run(mmap.get_fg(), *it);
@@ -702,7 +702,7 @@ public:
 protected:
   const HEG& m_fg;
   Dart_range mdarts;
-  std::size_t m_nb_darts;
+  size_type m_nb_darts;
   mutable bool m_marks_initialized; /// True iff marks are initialized (we use lazy initialization)
 
   /// Number of times each mark is reserved. 0 if the mark is free.
