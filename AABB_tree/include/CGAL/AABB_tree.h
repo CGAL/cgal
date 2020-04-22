@@ -176,7 +176,7 @@ namespace CGAL {
       clear_nodes();
       m_primitives.clear();
       clear_search_tree();
-      m_default_search_tree_constructed = true;
+      m_use_search_tree = true;
     }
 
     /// Returns the axis-aligned bounding box of the whole tree.
@@ -446,7 +446,7 @@ public:
       CGAL_SCOPED_LOCK(kd_tree_mutex);
       #endif
       clear_search_tree();
-      m_default_search_tree_constructed = false; // not a default kd-tree
+      m_use_search_tree = false; // not a default kd-tree
       return build_kd_tree(first,beyond);
     }
 
@@ -583,7 +583,7 @@ public:
     // search KD-tree
     mutable const Search_tree* m_p_search_tree;
     mutable bool m_search_tree_constructed;
-    mutable bool m_default_search_tree_constructed; // indicates whether the internal kd-tree should be built
+    mutable bool m_use_search_tree; // indicates whether the internal kd-tree should be built
     bool m_need_build;
 
   private:
@@ -603,7 +603,7 @@ public:
     , m_p_root_node(nullptr)
     , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(true)
+    , m_use_search_tree(true)
     , m_need_build(false)
   {}
 
@@ -617,7 +617,7 @@ public:
     , m_p_root_node(nullptr)
     , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(true)
+    , m_use_search_tree(true)
     , m_need_build(false)
   {
     // Insert each primitive into tree
@@ -696,7 +696,7 @@ public:
     // In case the users has switched on the accelerated distance query
     // data structure with the default arguments, then it has to be
     // /built/rebuilt.
-    if(m_default_search_tree_constructed && !empty()){
+    if(m_use_search_tree && !empty()){
       build_kd_tree();
     }
     m_need_build = false;
@@ -718,7 +718,7 @@ public:
     // clears current KD tree
     clear_search_tree();
     bool res = build_kd_tree(points.begin(), points.end());
-    m_default_search_tree_constructed = true;
+    m_use_search_tree = true;
     return res;
   }
 
@@ -730,7 +730,7 @@ public:
     ConstPointIterator beyond) const
   {
     m_p_search_tree = new Search_tree(first, beyond);
-                m_default_search_tree_constructed = true;
+                m_use_search_tree = true;
     if(m_p_search_tree != nullptr)
     {
       m_search_tree_constructed = true;
@@ -747,7 +747,7 @@ public:
   void AABB_tree<Tr>::do_not_accelerate_distance_queries()const
   {
     clear_search_tree();
-    m_default_search_tree_constructed = false;
+    m_use_search_tree = false;
   }
 
 
@@ -756,7 +756,7 @@ public:
   bool AABB_tree<Tr>::accelerate_distance_queries() const
   {
     if(m_primitives.empty()) return true;
-    if (m_default_search_tree_constructed)
+    if (m_use_search_tree)
     {
       if (!m_need_build) return m_search_tree_constructed;
       return true; // default return type, no tree built
@@ -773,11 +773,11 @@ public:
         // clears current KD tree
         clear_search_tree();
         bool res = build_kd_tree();
-        m_default_search_tree_constructed = true;
+        m_use_search_tree = true;
         return res;
       };
     }
-    m_default_search_tree_constructed = true;
+    m_use_search_tree = true;
     return m_search_tree_constructed;
   }
 
