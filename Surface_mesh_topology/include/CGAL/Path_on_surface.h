@@ -83,7 +83,7 @@ public:
   {
     if (this==&p2) { return; }
 
-    CGAL_assertion(&m_map==&(p2.m_map));
+    CGAL_assertion(&get_mesh()==&(p2.get_mesh()));
     m_path.swap(p2.m_path);
     std::swap(m_is_closed, p2.m_is_closed);
     m_flip.swap(p2.m_flip);
@@ -91,7 +91,7 @@ public:
 
   Self& operator=(const Self& other)
   {
-    CGAL_assertion(&m_map==&(other.m_map));
+    CGAL_assertion(&get_mesh()==&(other.get_mesh()));
     if (this!=&other)
     {
       m_path=other.m_path;
