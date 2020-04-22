@@ -98,13 +98,15 @@ class Side_of_triangle_mesh
   //members
   typename GeomTraits::Construct_ray_3     ray_functor;
   typename GeomTraits::Construct_vector_3  vector_functor;
-  mutable const AABB_tree_* tree_ptr;
   const TriangleMesh* tm_ptr;
   boost::optional<VertexPointMap> opt_vpm;
   bool own_tree;
   CGAL::Bbox_3 box;
 #ifdef CGAL_HAS_THREADS
   mutable CGAL_MUTEX tree_mutex;
+  mutable std::atomic<const AABB_tree_*> atomic_tree_ptr;
+#else
+  mutable const AABB_tree_* tree_ptr;
 #endif
 
 public:
@@ -129,10 +131,14 @@ public:
                         const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
-  , tree_ptr(nullptr)
   , tm_ptr(&tmesh)
   , opt_vpm(vpmap)
   , own_tree(true)
+#ifdef CGAL_HAS_THREADS
+  , atomic_tree_ptr(nullptr)
+#else
+  , tree_ptr(nullptr)
+#endif
   {
     CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
     CGAL_assertion(CGAL::is_closed(tmesh));
@@ -165,16 +171,24 @@ public:
                         const GeomTraits& gt = GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
-  , tree_ptr(&tree)
   , own_tree(false)
+#ifdef CGAL_HAS_THREADS
+  , atomic_tree_ptr(&tree)
+#else
+  , tree_ptr(&tree)
+#endif
   {
     box = tree.bbox();
   }
 
   ~Side_of_triangle_mesh()
   {
-    if (own_tree && tree_ptr!=nullptr)
-      delete tree_ptr;
+    if (own_tree)
+#ifdef CGAL_HAS_THREADS
+      delete atomic_tree_ptr.load();
+#else
+      delete tree_ptr.get();
+#endif
   }
 
 public:
@@ -200,11 +214,16 @@ public:
     }
     else
     {
+#ifdef CGAL_HAS_THREADS
+      AABB_tree_* tree_ptr =
+        const_cast<AABB_tree_*>(atomic_tree_ptr.load(std::memory_order_acquire));
+#endif
       // Lazily build the tree only when needed
       if (tree_ptr==nullptr)
       {
 #ifdef CGAL_HAS_THREADS
         CGAL_SCOPED_LOCK(tree_mutex);
+        tree_ptr = const_cast<AABB_tree_*>(atomic_tree_ptr.load(std::memory_order_relaxed));
 #endif
         CGAL_assertion(tm_ptr != nullptr && opt_vpm!=boost::none);
         if (tree_ptr==nullptr)
@@ -213,11 +232,19 @@ public:
                                    faces(*tm_ptr).second,
                                    *tm_ptr, *opt_vpm);
           const_cast<AABB_tree_*>(tree_ptr)->build();
+#ifdef CGAL_HAS_THREADS
+        CGAL_SCOPED_LOCK(tree_mutex);
+        atomic_tree_ptr.store(tree_ptr, std::memory_order_release);
+#endif
         }
       }
-
+#ifdef CGAL_HAS_THREADS
+      return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
+            point, *atomic_tree_ptr.load(), ray_functor, vector_functor);
+#else
       return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
             point, *tree_ptr, ray_functor, vector_functor);
+#endif
     }
   }
 
