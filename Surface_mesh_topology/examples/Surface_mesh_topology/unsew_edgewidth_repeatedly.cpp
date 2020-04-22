@@ -153,14 +153,14 @@ int main(int argc, char* argv[])
   while(cycle_exist);
 
 #ifdef CGAL_USE_BASIC_VIEWER
-  
+
   if (draw)
   {
     Draw_functor df(is_root, belong_to_cycle);
     CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
   }
 #endif // CGAL_USE_BASIC_VIEWER
-  
+
   lccoriginal.free_mark(belong_to_cycle);
   lccoriginal.free_mark(is_root);
 

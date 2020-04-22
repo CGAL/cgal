@@ -138,7 +138,7 @@ In these two examples, the mesh and the cycles can be visualized if \cgal_Qt5 is
 
 \subsection SMTopology_Example_IV Compute face width
 
-The following example computes the face width, and visualizes it if \cgal_Qt5 is enabled. 
+The following example computes the face width, and visualizes it if \cgal_Qt5 is enabled.
 
 \cgalExample{Surface_mesh_topology/facewidth.cpp}
 
