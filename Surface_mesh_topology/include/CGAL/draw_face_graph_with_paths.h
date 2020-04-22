@@ -17,11 +17,11 @@
 #include <iostream>
 #include <initializer_list>
 #include <CGAL/draw_linear_cell_complex.h>
+#include <CGAL/Path_on_surface.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Random.h>
-#include <CGAL/Path_on_surface.h>
 
 namespace CGAL {
 
