@@ -1,6 +1,10 @@
 #ifndef DRAW_FACEWIDTH_H
 #define DRAW_FACEWIDTH_H
 
+#include <iostream>
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
 #include <CGAL/draw_linear_cell_complex.h>
 
 template<typename ALCC>
@@ -69,5 +73,16 @@ void draw_facewidth(const LCC& lcc,
   lcc.free_mark(vertex_mark);
   lcc.free_mark(face_mark);
 }
+
+#else  // CGAL_USE_BASIC_VIEWER
+
+template<typename LCC>
+void draw_facewidth(const LCC&,
+                    const std::vector<typename LCC::Dart_const_handle>&)
+{
+  std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
+}
+
+#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // DRAW_FACEWIDTH_H

@@ -32,6 +32,8 @@ private:
   const LCC_3& m_lcc;
 };
 
+#ifdef CGAL_USE_BASIC_VIEWER
+
 struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
 {
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),
@@ -73,6 +75,8 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   LCC_3::size_type belong_to_cycle;
 };
 
+#endif // CGAL_USE_BASIC_VIEWER
+
 int main(int argc, char* argv[])
 {
   std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
@@ -95,7 +99,6 @@ int main(int argc, char* argv[])
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();
   LCC_3::size_type belong_to_cycle=lccoriginal.get_new_mark();
-  Draw_functor df(is_root, belong_to_cycle);
 
   int loop=1;
   bool cycle_exist=true;
@@ -149,9 +152,15 @@ int main(int argc, char* argv[])
   }
   while(cycle_exist);
 
+#ifdef CGAL_USE_BASIC_VIEWER
+  
   if (draw)
-  { CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df); }
-
+  {
+    Draw_functor df(is_root, belong_to_cycle);
+    CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
+  }
+#endif // CGAL_USE_BASIC_VIEWER
+  
   lccoriginal.free_mark(belong_to_cycle);
   lccoriginal.free_mark(is_root);
 

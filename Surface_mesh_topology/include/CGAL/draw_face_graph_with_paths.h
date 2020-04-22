@@ -14,13 +14,14 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
+#include <iostream>
+#include <initializer_list>
 #include <CGAL/draw_linear_cell_complex.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
-#include <initializer_list>
 
 namespace CGAL {
 
@@ -443,6 +444,35 @@ void draw(const Mesh& alcc,
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths=l;
   draw(alcc, paths, title, amark, nofill);
 }
+
+} // End namespace CGAL
+
+#else  // CGAL_USE_BASIC_VIEWER
+
+namespace CGAL
+{
+
+  template<class Mesh>
+  void draw(const Mesh&,
+            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& ,
+            const char* ="",
+            typename Get_map<Mesh, Mesh>::type::size_type=
+            (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
+            bool=false)
+  {
+    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
+  }
+
+  template<class Mesh>
+  void draw(const Mesh&,
+            std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>>,
+            const char* ="",
+            typename Get_map<Mesh, Mesh>::type::size_type=
+            (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
+            bool=false)
+  {
+    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
+  }
 
 } // End namespace CGAL
 
