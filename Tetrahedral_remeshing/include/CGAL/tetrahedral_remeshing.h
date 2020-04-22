@@ -279,8 +279,7 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Tr,
-         typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename CornerIndex, typename CurveIndex>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length)
