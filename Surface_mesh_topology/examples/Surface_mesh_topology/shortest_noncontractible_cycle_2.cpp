@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   CST            cst(lcc, time);
 
   /// Change the value of `root` to test the algorithm at another vertex
-  Dart_const_handle root=lcc.dart_handle(random.get_int(0, lcc.number_of_darts()));
+  Dart_const_handle root=lcc.dart_handle(random.get_int(0,  static_cast<int>(lcc.number_of_darts())));
   std::cout<<"Finding the shortest noncontractible cycle..."<<std::endl;
   Path_on_surface cycle(lcc);
   if (dist)

@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3> cst(lcc);
   LCC_3::Dart_const_handle root=lcc.dart_handle
-      (CGAL::get_default_random().get_int(0, lcc.number_of_darts())); // One dart of the mesh
+    (CGAL::get_default_random().get_int(0, static_cast<int>(lcc.number_of_darts()))); // One dart of the mesh
 
   Path_on_surface cycle1=
       cst.compute_shortest_non_contractible_cycle_with_base_point(root);

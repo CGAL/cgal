@@ -58,7 +58,8 @@ public:
 
   typedef typename Get_map<Mesh, Mesh>::type       Original_map; // Mesh seen as a 2-map
   typedef typename Original_map::Dart_const_handle Original_dart_const_handle;
-
+  typedef typename Original_map::size_type         Original_size_type;
+  
   typedef CGAL::Combinatorial_map<2, Minimal_quadrangulation_local_map_items> Local_map;
   typedef typename Local_map::Dart_handle             Dart_handle;
   typedef typename Local_map::Dart_const_handle       Dart_const_handle;
@@ -738,8 +739,7 @@ protected:
   /// dual spanning tree L (spanning tree of the dual 2-map).
 
   /// Marks all darts belonging to L using a BFS
-  void compute_L(typename Local_map::size_type toremove,
-                 Copy_to_origin& copy_to_origin)
+  void compute_L(size_type toremove, Copy_to_origin& copy_to_origin)
   {
     Dart_handle dh;
     Dart_handle ddh;
@@ -790,8 +790,8 @@ protected:
   /// removed are marked with toremove mark. Dart mark as perforated are not
   /// updates, since they are associated only with their corresponding dart
   /// in the original map (and thus with only one dart and not two).
-  void update_length_two_paths_before_edge_removals
-  (typename Original_map::size_type toremove, Copy_to_origin& copy_to_origin)
+  void update_length_two_paths_before_edge_removals(size_type toremove,
+                                                    Copy_to_origin& copy_to_origin)
   {
     // std::cout<<"************************************************"<<std::endl;
     Dart_handle initdart, curdart;
@@ -890,7 +890,7 @@ protected:
   {
     get_local_map().set_automatic_attributes_management(false);
 
-    typename Local_map::size_type toremove=get_local_map().get_new_mark();
+    size_type toremove=get_local_map().get_new_mark();
     compute_L(toremove, copy_to_origin);
 
     if (get_local_map().number_of_marked_darts(toremove)==
@@ -938,12 +938,12 @@ protected:
   {
     // Here the map has only one vertex and one face if we have a closed surface,
     // and maybe several faces if the surface has boundaries
-    typename Local_map::size_type oldedges=get_local_map().get_new_mark();
+    size_type oldedges=get_local_map().get_new_mark();
     get_local_map().negate_mark(oldedges); // now all edges are marked
 
     // 1) We insert a vertex in each face which is not perforated.
     //    New edges created by the operation are not marked oldedges.
-    typename Local_map::size_type treated=get_local_map().get_new_mark();
+    size_type treated=get_local_map().get_new_mark();
 
     for (typename Local_map::Dart_range::iterator
          it=get_local_map().darts().begin();
@@ -1581,8 +1581,8 @@ protected:
   Local_map m_local_map; /// the reduced map
   TPaths m_paths; /// Pair of edges associated with each edge of get_original_map()
                   /// (except the edges that belong to the spanning tree T).
-  size_type m_mark_T;    /// mark each edge of get_original_map() that belong to the spanning tree T
-  size_type m_mark_L;    /// mark each edge of get_original_map() that belong to the dual spanning tree L
+  Origin_size_type m_mark_T;   /// mark each edge of get_original_map() that belong to the spanning tree T
+  Origin_size_type m_mark_L;   /// mark each edge of get_original_map() that belong to the dual spanning tree L
   size_type m_mark_perforated; /// mark each edge of m_local_map that bounds a hole
 
 #ifdef CGAL_PWRLE_TURN_V2

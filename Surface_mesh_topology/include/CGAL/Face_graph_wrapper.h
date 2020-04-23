@@ -437,14 +437,14 @@ public:
     size_type size() const
     {
       if (msize==0)
-      { msize=static_cast<typename Self::size_type>(halfedges(mmap.get_fg()).size()); }
+      { msize=static_cast<size_type>(halfedges(mmap.get_fg()).size()); }
       return msize;
     }
     bool empty() const
     { return mmap.is_empty(); }
 
     size_type capacity() const
-    { return num_halfedges(mmap.get_fg()); }
+    { return static_cast<size_type>(num_halfedges(mmap.get_fg())); }
 
     bool is_used(size_type i) const
     { return internal::Is_index_used<HEG>::run(mmap.get_fg(), i); }
