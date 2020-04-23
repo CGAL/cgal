@@ -359,7 +359,10 @@ private:
           || get(fcmap, mf)
           || (m_c3t3_pbackup == NULL && f.first->is_facet_on_surface(f.second)))
       {
-        m_c3t3.add_to_complex(f, 1);
+        Surface_patch_index patch = f.first->surface_patch_index(f.second);
+        if(patch == Surface_patch_index())
+          set_surface_patch_index_to_default(s1, s2, patch);
+        m_c3t3.add_to_complex(f, patch);
 
         const int i = f.second;
         for (int j = 0; j < 3; ++j)
@@ -446,7 +449,6 @@ private:
   }
 
 private:
-
   bool check_vertex_dimensions()
   {
     for (Vertex_handle vit : tr().finite_vertex_handles())
@@ -459,6 +461,23 @@ private:
     return true;
   }
 
+  template<typename PatchIndex>
+  void set_surface_patch_index_to_default(const Subdomain_index&,
+                                          const Subdomain_index&,
+                                          PatchIndex& patch)
+  {
+    if(m_c3t3.number_of_facets() == 0)
+      patch = 1;
+    else
+      patch = m_c3t3.surface_patch_index(*m_c3t3.facets_begin());
+  }
+
+  void set_surface_patch_index_to_default(const Subdomain_index& s1,
+                                          const Subdomain_index& s2,
+                                          std::pair<Subdomain_index, Subdomain_index>& patch)
+  {
+    patch = (s1 < s2) ? std::make_pair(s1, s2) : std::make_pair(s2, s1);
+  }
 
 public:
   Tr& tr()
