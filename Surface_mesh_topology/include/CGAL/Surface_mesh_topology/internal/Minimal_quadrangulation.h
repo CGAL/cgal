@@ -59,7 +59,7 @@ public:
   typedef typename Get_map<Mesh, Mesh>::type       Original_map; // Mesh seen as a 2-map
   typedef typename Original_map::Dart_const_handle Original_dart_const_handle;
   typedef typename Original_map::size_type         Original_size_type;
-  
+
   typedef CGAL::Combinatorial_map<2, Minimal_quadrangulation_local_map_items> Local_map;
   typedef typename Local_map::Dart_handle             Dart_handle;
   typedef typename Local_map::Dart_const_handle       Dart_const_handle;
