@@ -137,6 +137,13 @@ namespace CGAL {
     void build(T&& ...);
 #ifndef DOXYGEN_RUNNING
     void build();
+
+    /// triggers the (re)construction of the tree similarly to a call to `build()`
+    /// but the traits functors `Compute_bbox` and `Split_primitives` are ignored
+    /// and `compute_bbox` and `split_primitives` are used instead.
+    template <class ComputeBbox, class SplitPrimitives>
+    void custom_build(const ComputeBbox& compute_bbox,
+                      const SplitPrimitives& split_primitives);
 #endif
     ///@}
 
@@ -697,9 +704,19 @@ public:
 #endif
   }
 
-  // Build the data structure, after calls to insert(..)
   template<typename Tr>
   void AABB_tree<Tr>::build()
+  {
+    custom_build(m_traits.compute_bbox_object(),
+                 m_traits.split_primitives_object());
+  }
+
+  // Build the data structure, after calls to insert(..)
+  template<typename Tr>
+  template <class ComputeBbox, class SplitPrimitives>
+  void AABB_tree<Tr>::custom_build(
+    const ComputeBbox& compute_bbox,
+    const SplitPrimitives& split_primitives)
   {
     clear_nodes();
     if(m_primitives.size() > 1) {
@@ -716,7 +733,10 @@ public:
 
       // constructs the tree
       m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
-                m_primitives.size(), m_traits);
+                            m_primitives.size(),
+                            compute_bbox,
+                            split_primitives,
+                            m_traits);
     }
 #ifdef CGAL_HAS_THREADS
     m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
