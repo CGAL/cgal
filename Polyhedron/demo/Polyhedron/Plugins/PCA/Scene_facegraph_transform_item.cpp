@@ -150,10 +150,10 @@ Scene_facegraph_transform_item::compute_bbox() const {
         ++it) {
       bbox = bbox + get(vpmap, *it).bbox();
     }
-    CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
-    CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
-    _bbox = Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z);
+    CGAL::qglviewer::Vec vmin(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    CGAL::qglviewer::Vec vmax(bbox.xmax(),bbox.ymax(),bbox.zmax());
+    _bbox = Bbox(vmin.x,vmin.y,vmin.z,
+                 vmax.x,vmax.y,vmax.z);
 }
 
 
