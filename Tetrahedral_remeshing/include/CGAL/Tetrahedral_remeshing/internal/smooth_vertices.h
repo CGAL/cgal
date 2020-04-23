@@ -313,7 +313,7 @@ private:
       fmls.fastProjectionCPU(point, result, res_normal);
 
       if (std::isnan(result[0]) || std::isnan(result[1]) || std::isnan(result[2])) {
-        std::cout << "MLS error detected si " << si
+        std::cout << "MLS error detected si " //<< si
                   << "\t(size : "       << fmls.getPNSize() << ")"
                   << "\t(point = "      << point      << " )" << std::endl;
         return {};
