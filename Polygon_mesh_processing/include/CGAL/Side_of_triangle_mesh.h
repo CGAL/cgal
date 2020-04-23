@@ -233,7 +233,6 @@ public:
                                    *tm_ptr, *opt_vpm);
           const_cast<AABB_tree_*>(tree_ptr)->build();
 #ifdef CGAL_HAS_THREADS
-        CGAL_SCOPED_LOCK(tree_mutex);
         atomic_tree_ptr.store(tree_ptr, std::memory_order_release);
 #endif
         }
