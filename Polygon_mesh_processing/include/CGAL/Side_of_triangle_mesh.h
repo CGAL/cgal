@@ -238,13 +238,8 @@ public:
 #endif
         }
       }
-#ifdef CGAL_HAS_THREADS
-      return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
-            point, *atomic_tree_ptr.load(), ray_functor, vector_functor);
-#else
       return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
             point, *tree_ptr, ray_functor, vector_functor);
-#endif
     }
   }
 
