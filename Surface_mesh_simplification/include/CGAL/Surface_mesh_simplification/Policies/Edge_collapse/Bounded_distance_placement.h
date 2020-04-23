@@ -108,8 +108,7 @@ public:
 
       const Point& p = *op;
 
-      m_tree_ptr->accelerate_distance_queries();
-      const Point& cp = m_tree_ptr->best_hint(p).first; // requires accelerate distance query to be called.
+      const Point& cp = m_tree_ptr->best_hint(p).first;
 
       // We could do better by having access to the internal kd-tree
       // and call search_any_point with a fuzzy_sphere.
@@ -166,8 +165,7 @@ public:
 
       const Point& p = *op;
 
-      m_tree_ptr->accelerate_distance_queries();
-      const Point& cp = m_tree_ptr->best_hint(p).first; // requires accelerate distance query to be called.
+      const Point& cp = m_tree_ptr->best_hint(p).first;
 
       if(CGAL::compare_squared_distance(p, cp, m_sq_threshold_dist) != LARGER ||
          m_tree_ptr->do_intersect(CGAL::Sphere_3<Geom_traits>(p, m_sq_threshold_dist)))
