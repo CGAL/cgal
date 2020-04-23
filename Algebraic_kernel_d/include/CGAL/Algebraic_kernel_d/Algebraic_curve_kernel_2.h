@@ -427,7 +427,11 @@ public:
 
       Curve_analysis_2 operator()
         (const Polynomial_2& f) const {
-        return _m_kernel->curve_cache_2()(f);
+        if (_m_kernel->is_square_free_2_object()(f)) {
+          return _m_kernel->curve_cache_2()(f);
+        } else {
+          return _m_kernel->curve_cache_2()(_m_kernel->make_square_free_2_object()(f));
+        }
       }
 
     protected:
