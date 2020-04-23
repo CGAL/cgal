@@ -429,7 +429,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
           for (Point_set::const_iterator it = m_points->point_set()->begin();
                it != m_points->point_set()->first_selected(); ++ it)
           {
-            float v = std::max (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][*it]));
+            float v = (std::max)(0.f, (std::min)(1.f, m_label_probabilities[corrected_index][*it]));
             m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
           }
         }
