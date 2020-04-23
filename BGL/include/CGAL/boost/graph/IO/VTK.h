@@ -396,10 +396,10 @@ void write_polys_points(std::ostream& os,
  * \cgalNamedParamsEnd
  * \see \ref IOStreamVTK
  */
-template<typename FaceGraph, typename NamedParameters>
+template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void write_VTP(std::ostream& os,
                const FaceGraph& g,
-               const NamedParameters& np)
+               const CGAL_BGL_NP_CLASS& np)
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;

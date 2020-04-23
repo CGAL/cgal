@@ -22,6 +22,8 @@
 
 #include <CGAL/boost/graph/io.h>
 
+#include <CGAL/IO/VTK.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -77,9 +79,9 @@ bool test_bgl_vtp()
      || num_faces(fg) != num_faces(fg2))
   {
     std::cerr<<"Coherence problem. Wrong number of vertices or faces."<<std::endl;
-    std::cerr<<num_faces(fg)<<" != "<<num_faces(fg2)<<std::endl;
     return false;
   }
+
   return true;
 }
 
@@ -117,6 +119,58 @@ bool test_bgl_vtp<Polyhedron>()
   }
   return true;
 }
+
+//todo binary tests
+bool test_soup_vtp()
+{
+  //generate a test file
+  std::vector<Point> points(4);
+  std::vector<std::vector<std::size_t> > polys(4);
+  points[0] = Point(0, 0, 0);
+  points[1] = Point(1, 1, 0);
+  points[2] = Point(2, 0, 1);
+  points[3] = Point(3, 0, 0);
+  std::vector<std::size_t> poly(3);
+  poly[0] = 0;
+  poly[1] = 1;
+  poly[2] = 2;
+  polys[0] = poly;
+  poly[0] = 3;
+  poly[1] = 1;
+  poly[2] = 0;
+  polys[1] = poly;
+  poly[0] = 3;
+  poly[1] = 2;
+  poly[2] = 1;
+  polys[2] = poly;
+  poly[0] = 3;
+  poly[1] = 0;
+  poly[2] = 2;
+  polys[3] = poly;
+
+  std::ofstream os("tetrahedron_soup.vtp");
+  CGAL::write_VTP(os, points, polys);
+  if(!os)
+  {
+    std::cerr<<"vtp writing failed."<<std::endl;
+    return false;
+  }
+  os.close();
+
+
+  std::vector<Point> soup_points;
+  std::vector<std::vector<std::size_t> > soup_polygons;
+  CGAL::read_VTP("tetrahedron_soup.vtp", soup_points, soup_polygons);
+  if(4 != soup_points.size()
+     || 4 != soup_polygons.size())
+  {
+    std::cerr<<"Coherence problem. Wrong number of vertices or faces."<<std::endl;
+    return false;
+  }
+
+  return true;
+}
+
 #endif
 
 template<class FaceGraph>
@@ -268,7 +322,7 @@ bool test_PLY(bool binary = false)
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
-
+/*
   //PLY
   if(!test_PLY<Polyhedron>())
     return 1;
@@ -301,7 +355,7 @@ int main(int argc, char** argv)
     return 1;
   if(!test_STL<LCC>())
     return 1;
-
+*/
   // VTP
 #ifdef CGAL_USE_VTK
   if(!test_bgl_vtp<Polyhedron>())
@@ -309,6 +363,8 @@ int main(int argc, char** argv)
   if(!test_bgl_vtp<SM>())
     return 1;
   if(!test_bgl_vtp<LCC>())
+    return 1;
+  if(!test_soup_vtp())
     return 1;
 #endif
 
