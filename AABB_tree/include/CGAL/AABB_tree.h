@@ -485,7 +485,7 @@ public:
     void clear_search_tree()
     {
 #ifdef CGAL_HAS_THREADS
-      if ( m_atomic_search_tree_constructed.load() )
+      if ( m_atomic_search_tree_constructed.load(std::memory_order_relaxed) )
 #else
       if ( m_search_tree_constructed )
 #endif
@@ -494,7 +494,7 @@ public:
         delete m_p_search_tree;
         m_p_search_tree = nullptr;
 #ifdef CGAL_HAS_THREADS
-        m_atomic_search_tree_constructed.store(false);
+        m_atomic_search_tree_constructed.store(false, std::memory_order_relaxed);
 #else
         m_search_tree_constructed = false;
 #endif
@@ -661,7 +661,7 @@ public:
       ++first;
     }
 #ifdef CGAL_HAS_THREADS
-    m_atomic_need_build.store(true);
+    m_atomic_need_build.store(true, std::memory_order_relaxed);
 #else
     m_need_build = true;
 #endif
@@ -698,7 +698,7 @@ public:
       clear_search_tree();
     m_primitives.push_back(p);
 #ifdef CGAL_HAS_THREADS
-    m_atomic_need_build.store(true);
+    m_atomic_need_build.store(true, std::memory_order_relaxed);
 #else
     m_need_build = true;
 #endif
