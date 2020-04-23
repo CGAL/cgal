@@ -1581,8 +1581,8 @@ protected:
   Local_map m_local_map; /// the reduced map
   TPaths m_paths; /// Pair of edges associated with each edge of get_original_map()
                   /// (except the edges that belong to the spanning tree T).
-  Origin_size_type m_mark_T;   /// mark each edge of get_original_map() that belong to the spanning tree T
-  Origin_size_type m_mark_L;   /// mark each edge of get_original_map() that belong to the dual spanning tree L
+  Original_size_type m_mark_T;   /// mark each edge of get_original_map() that belong to the spanning tree T
+  Original_size_type m_mark_L;   /// mark each edge of get_original_map() that belong to the dual spanning tree L
   size_type m_mark_perforated; /// mark each edge of m_local_map that bounds a hole
 
 #ifdef CGAL_PWRLE_TURN_V2
