@@ -318,7 +318,6 @@ private:
     std::size_t nbe = 0;
     std::size_t nbv = 0;
 #endif
-     
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
