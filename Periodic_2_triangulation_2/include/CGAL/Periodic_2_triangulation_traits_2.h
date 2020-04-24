@@ -135,7 +135,7 @@ public:
   typedef Periodic_2_triangulation_traits_base_2<K, O, D, CP> Base;
   Periodic_2_triangulation_traits_2(const D& d = D(), const K& k = K()) : Base(d, k) { }
 };
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#if 0
 
 } // namespace CGAL
 
@@ -177,7 +177,7 @@ public:
   { }
 };
 
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#endif // 
 
 } //namespace CGAL
 

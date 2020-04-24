@@ -1,11 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #define CGAL_GENERIC_P3T3 // @todo still needed but to remove eventually
-// #define CGAL_DEBUG_P3T3
-// #define CGAL_NO_STRUCTURAL_FILTERING
 
-#include <CGAL/internal/Generic_P3T3/Periodic_3_Delaunay_triangulation_3_generic.h>
+#include <CGAL/Generic_P3T3/Periodic_3_Delaunay_triangulation_3_generic.h>
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/periodic_3_triangulation_3_io.h>
@@ -39,7 +36,6 @@ typedef CGAL::Creator_uniform_3<FT, Point>                                      
 typedef CGAL::Random_points_in_cube_3<Point, Creator>                                  Point_in_cube_generator;
 typedef CGAL::Random_points_on_sphere_3<Point, Creator>                                Point_on_sphere_generator;
 
-// Lattice and Volume / cubed systole
 Lattice generate_random_lattice(CGAL::Random& rnd)
 {
   // generate 3 random basis vectors
@@ -88,99 +84,43 @@ std::vector<Point> generate_random_points_in_lattice(const std::size_t n, CGAL::
   return pts;
 }
 
-
 int main(int argc, char** argv)
 {
-  const std::size_t number_of_points = (argc > 1) ? std::atoi(argv[1]) : 1000000;
-//  std::cout << number_of_points << " random points" << std::endl;
+  const std::size_t number_of_points = (argc > 1) ? std::atoi(argv[1]) : 10000;
 
   const int random_seed = (argc > 2) ? std::atoi(argv[2]) : CGAL::get_default_random().get_int(0, (1 << 30));
-//  std::cout << "random seed: " << random_seed << std::endl;
+  std::cout << "random seed: " << random_seed << std::endl;
   CGAL::Random rnd(random_seed);
 
-  std::ofstream out("/home/mrouxell/log_200_runs_1000.txt");
-  out.precision(17);
+  const Lattice l = generate_random_lattice(rnd);
+  const std::vector<Point> pts = generate_random_points_in_lattice(number_of_points, rnd, l);
 
-  for(;;)
+  std::cout << "Inserting " << number_of_points << " random points..." << std::endl;
+
+  CGAL::Real_timer timer;
+  timer.start();
+
+  GPDT Tr(l);
+  for(const Point& pt : pts)
+    Tr.insert(pt);
+
+  std::cout << "Done!" << std::endl;
+  std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
+  std::cout << "Number of cells: " << Tr.number_of_cells() << std::endl;
+  std::cout << "Is the triangulation 1-cover? " << std::boolalpha << Tr.is_1_cover() << std::endl;
+
+  timer.stop();
+  std::cout << "Time: " << timer.time() << " s" << std::endl;
+
+  if(Tr.is_1_cover())
   {
-    Lattice l = generate_random_lattice(rnd);
-
-    const FT vol = CGAL::determinant(l.basis()[0][0], l.basis()[0][1], l.basis()[0][2],
-                                     l.basis()[1][0], l.basis()[1][1], l.basis()[1][2],
-                                     l.basis()[2][0], l.basis()[2][1], l.basis()[2][2]);
-    const FT cubed_sys = l.systole_sq_length() * l.systole_sq_length() * l.systole_sq_length();
-
-    int number_of_runs = 200;
-//    std::cout << "number_of_runs: " << number_of_runs << std::endl;
-
-    std::cout << "vol/sys3: " << vol/cubed_sys << std::endl;
-
-    bool all_good = true;
-
-    int switch_nv = 0;
-    double time = 0.;
-    for(int i=0; i<number_of_runs; ++i)
-    {
-      const std::vector<Point> pts = generate_random_points_in_lattice(number_of_points, rnd, l);
-
-      CGAL::Real_timer timer;
-      timer.start();
-
-      GPDT Tr(l);
-      for(const Point& pt : pts)
-      {
-        Tr.insert(pt);
-        if(Tr.is_1_cover())
-          break;
-      }
-
-//      std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
-//      std::cout << "Number of cells: " << Tr.number_of_cells() << std::endl;
-      std::cout << "1 cover? " << Tr.is_1_cover() << std::endl;
-
-      if(!Tr.is_1_cover())
-      {
-        all_good = false;
-        break; // break or --number_of_runs?
-      }
-
-      timer.stop();
-      time += timer.time();
-      switch_nv += Tr.switch_nv;
-
-      std::cout << "Switch NV: " << Tr.switch_nv << std::endl;
-      std::cout << "Time: " << timer.time() << std::endl;
-    }
-
-    std::cout << "Computed in: " << time << " s" << std::endl;
-
-    if(!all_good)
-      continue;
-
-    switch_nv /= number_of_runs;
-    time /= number_of_runs;
-
-    // only print if we managed to convert to 1 cover within the allowed amount of vertices (i.e. time)
-
-    out << l.basis()[0] << " ";
-    out << l.basis()[1] << " ";
-    out << l.basis()[2] << " ";
-
-    out << CGAL::abs(vol / cubed_sys) << " ";
-    out << switch_nv << " ";
-
-    out << time << std::endl;
-
-    //    if(Tr.is_1_cover())
-    //    {
-    //      std::ofstream out("final.off");
-//      CGAL::write_triangulation_to_off(out, Tr.p3dt3);
-//    }
-//    else
-//    {
-//      std::ofstream out("final.off");
-//      CGAL::export_triangulation_3_to_off(out, Tr.dt3);
-//    }
+    std::ofstream out("final.off");
+    CGAL::write_triangulation_to_off(out, Tr.p3dt3);
+  }
+  else
+  {
+    std::ofstream out("final.off");
+    CGAL::export_triangulation_3_to_off(out, Tr.dt3);
   }
 
   return EXIT_SUCCESS;

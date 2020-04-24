@@ -132,8 +132,6 @@ public:
     systole_sq_length_ = (std::min)((std::min)(basis_[0].squared_length(),
                                                basis_[1].squared_length()),
                                     third.squared_length());
-
-    std::cout << "Vectors:" << basis_[0] << "|" << basis_[1] << "|" << third << "|" << systole_sq_length_ << std::endl;
   }
 
   // Canonicalization

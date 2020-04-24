@@ -8,7 +8,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
-//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_H
@@ -304,6 +303,8 @@ public:
 
   /// Insertion with info
 
+#if 0 // @todo need to introduce Periodic_2_Delaunay_triangulation_remove_traits_2, see 3D version
+
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template <class InputIterator>
   std::ptrdiff_t
@@ -374,7 +375,6 @@ public:
 
     if(is_large_point_set)
     {
-#ifdef WIP // @fixme, need to introduce Periodic_2_Delaunay_triangulation_remove_traits_2, see 3D version
       typedef CGAL::Periodic_2_Delaunay_triangulation_remove_traits_2<Gt> P2removeT;
       typedef CGAL::Delaunay_triangulation_2<P2removeT> DT;
       typedef Vertex_remover<DT> Remover;
@@ -389,12 +389,13 @@ public:
         if(std::find(double_vertices.begin(), double_vertices.end(), dummy_vh) == double_vertices.end())
           Base::remove(dummy_vh, remover, t, cover_manager);
       }
-#endif
     }
 
     return number_of_vertices() - n;
   }
+#endif
 
+#if 0
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
   //top stands for tuple-or-pair
@@ -506,7 +507,6 @@ private:
 
     if(is_large_point_set)
     {
-#ifdef WIP
       typedef CGAL::Periodic_2_Delaunay_triangulation_remove_traits_2<Gt> P2removeT;
       typedef CGAL::Delaunay_triangulation_2<P2removeT> DT;
       typedef Vertex_remover<DT> Remover;
@@ -521,7 +521,6 @@ private:
         if(std::find(double_vertices.begin(), double_vertices.end(), dummy_vh) == double_vertices.end())
           Base::remove(dummy_vh, remover, t, cover_manager);
       }
-#endif
     }
 
     return number_of_vertices() - n;
@@ -556,6 +555,7 @@ public:
     return insert_with_info<boost::tuple<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
   }
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#endif
 
   void remove(Vertex_handle v);
 

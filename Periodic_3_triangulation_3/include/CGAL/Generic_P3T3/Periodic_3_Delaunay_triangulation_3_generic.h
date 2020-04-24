@@ -1,28 +1,28 @@
-// Copyright (c) 2019-2020 XXXXX
-// All rights reserved.
+// DO NOT REDISTRIBUTE
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is not yet part of CGAL (www.cgal.org), but will be.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier:
 //
-//
-// Author(s)     :
+// Author(s)     : GPT-Authors
 
 #ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_3_GENERIC_H
 #define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_3_GENERIC_H
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/internal/Generic_P3T3/Periodic_3_triangulation_vertex_base_3_generic.h>
-#include <CGAL/internal/Generic_P3T3/Periodic_3_triangulation_cell_base_3_generic.h>
-// #include <CGAL/internal/Generic_P3T3/Periodic_3_triangulation_iterators_3_generic.h>
+#include <CGAL/Generic_P3T3/Periodic_3_triangulation_vertex_base_3_generic.h>
+#include <CGAL/Generic_P3T3/Periodic_3_triangulation_cell_base_3_generic.h>
+// #include <CGAL/Generic_P3T3/Periodic_3_triangulation_iterators_3_generic.h>
+#include <CGAL/Generic_P3T3/Lattice_3.h>
+
+#define GENERIC_P3T3 // @todo still needed for a few very specific spots not updated yet (e.g. P3T3::remove)
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
-#include <CGAL/Lattice_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
 #include <CGAL/utility.h>
@@ -31,8 +31,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
-// @todo steal the get_vertex(Cell_handle, int, Vertex& /*canonical*/, Offset) from P2T2_GT
 
 namespace CGAL {
 
@@ -615,21 +613,24 @@ public:
   //                     Cell_handle start = Cell_handle()) const
   //  { }
 
-  //  Cell_handle locate(const Point& p,
-  //                     Locate_type& lt, int& li,
-  //                     Cell_handle start = Cell_handle()) const
-  //  {
-  //    Offset lo;
-  //    return locate(p, lo, lt, li, start);
-  //  }
+    Cell_handle locate(const Point& p,
+                       Locate_type& lt, int& li, int& lj,
+                       Cell_handle start = Cell_handle()) const
+    {
+      if(is_1_cover_)
+        return p3dt3.locate(p);
+      else
+        return dt3.locate(p);
+    }
 
-  //  Cell_handle locate(const Point& p,
-  //                     Cell_handle start = Cell_handle()) const
-  //  {
-  //    Locate_type lt;
-  //    int li;
-  //    return locate(p, lt, li, start);
-  //  }
+    Cell_handle locate(const Point& p,
+                       Cell_handle start = Cell_handle()) const
+    {
+      if(is_1_cover_)
+        return p3dt3.locate(p, start);
+      else
+        return dt3.locate(p, start);
+    }
 
   /// Insertion and removal
   Vertex_handle insert(const Point& p)
@@ -784,7 +785,7 @@ public:
     if(is_1_cover_)
       return;
 
-    std::cout << "Conversion at " << number_of_vertices() << std::endl;
+    std::cout << "Transition to Phase 2 after " << number_of_vertices() << " vertices" << std::endl;
     switch_nv = number_of_vertices();
 
     is_1_cover_ = true;
@@ -893,18 +894,6 @@ public:
 
       p3dt3.tds().set_adjacency(f0, i0, f1, i1);
     }
-
-    std::cout << dt3.number_of_vertices() / 27 << " canonical vertices in dt3" << std::endl;
-    std::cout << p3dt3.number_of_vertices() << " vertices in p3dt3" << std::endl;
-    std::cout << cfc << " canonical cells in dt3" << std::endl;
-    std::cout << p3dt3.number_of_cells() << " canonical cells in p3dt3" << std::endl;
-
-    // std::ofstream out_dt3("dt3_post_convert.off");
-    // CGAL::draw_t2(out_dt3, p3dt3);
-    // out_dt3.close();
-    // std::ofstream out_pc("p3dt3_post_convert.off");
-    // CGAL::write_P2T2_to_OFF(out_pc, p3dt3);
-    // out_pc.close();
 
     CGAL_postcondition(p3dt3.is_valid(true));
   }

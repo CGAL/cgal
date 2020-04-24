@@ -1,29 +1,28 @@
-// Copyright (c) 2019-2020 XXXXX
-// All rights reserved.
+// DO NOT REDISTRIBUTE
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is not yet part of CGAL (www.cgal.org), but will be.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier:
 //
-//
-// Author(s)     : Mael Rouxel-Labbé
-//                 Georg Osang
+// Author(s)     : GPT-Authors
 
 #ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_GENERIC_H
 #define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_2_GENERIC_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-#include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_vertex_base_2_generic.h>
-#include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_face_base_2_generic.h>
-#include <CGAL/internal/Generic_P2T2/Periodic_2_triangulation_iterators_2_generic.h>
+#define CGAL_GENERIC_P2T2
+
+#include <CGAL/Generic_P2T2/Periodic_2_triangulation_vertex_base_2_generic.h>
+#include <CGAL/Generic_P2T2/Periodic_2_triangulation_face_base_2_generic.h>
+#include <CGAL/Generic_P2T2/Periodic_2_triangulation_iterators_2_generic.h>
+#include <CGAL/Generic_P2T2/Lattice_2.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
-#include <CGAL/Lattice_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/draw_triangulation_2.h>
 
@@ -33,8 +32,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
-// @todo steal the get_vertex(Face_handle, int, Vertex& /*canonical*/, Offset) from P2T2_GT
 
 namespace CGAL {
 
@@ -419,10 +416,6 @@ public:
   // Returns Face_handle() if the provided face is not a periodic face
   Face_handle get_canonical_face(Face_handle fh) const
   {
-    std::cout << "Getting canonical face of: " << dt2.point(fh, 0) << " "
-                                               << dt2.point(fh, 1) << " "
-                                               << dt2.point(fh, 2) << std::endl;
-
     return find_translated_face(fh, -compute_offset(fh));
   }
 
@@ -566,32 +559,34 @@ public:
   }
 
   /// Locate functions
-  //  Face_handle locate(const Point& p, Offset& lo,
-  //                     Locate_type& lt, int& li,
-  //                     Face_handle start = Face_handle()) const
-  //  { }
+//  Face_handle locate(const Point& p, Offset& lo,
+//                     Locate_type& lt, int& li,
+//                     Face_handle start = Face_handle()) const
+//  { }
 
-  //  Face_handle locate(const Point& p,
-  //                     Locate_type& lt, int& li,
-  //                     Face_handle start = Face_handle()) const
-  //  {
-  //    Offset lo;
-  //    return locate(p, lo, lt, li, start);
-  //  }
+  Face_handle locate(const Point& p,
+                     Locate_type& lt, int& li,
+                     Face_handle start = Face_handle()) const
+  {
+    if(is_1_cover_)
+      return p2dt2.locate(p, lt, li, start);
+    else
+      return dt2.locate(p, lt, li, start);
+  }
 
-  //  Face_handle locate(const Point& p,
-  //                     Face_handle start = Face_handle()) const
-  //  {
-  //    Locate_type lt;
-  //    int li;
-  //    return locate(p, lt, li, start);
-  //  }
+  Face_handle locate(const Point& p,
+                     Face_handle start = Face_handle()) const
+  {
+    if(is_1_cover_)
+      return p2dt2.locate(p, start);
+    else
+      return dt2.locate(p, start);
+  }
 
   /// Insertion and removal
   Vertex_handle insert(const Point& p)
   {
     const Point cp = gt_.get_domain().construct_canonical_point(p);
-    std::cout << "Insert (DT2): " << p << " canonical: " << cp << std::endl;
 
     if(is_1_cover_)
       return insert_in_p2dt2(cp);
@@ -603,13 +598,12 @@ public:
   {
     CGAL_assertion(gt_.get_domain().is_in_scaled_domain(p));
 
-    std::cout << dt2.number_of_vertices() << " vertices" << std::endl;
     if(dt2.dimension() >= 2) // equivalent to !dt2.empty() since we insert duplicate vertices
     {
       // @todo avoid recomputing the conflict zone if possible (done also 'insert', sort of)
       std::vector<Face_handle> faces_in_conflict;
       dt2.get_conflicts(p, std::back_inserter(faces_in_conflict));
-      std::cout << faces_in_conflict.size() << " faces in conflict" << std::endl;
+//      std::cout << faces_in_conflict.size() << " faces in conflict" << std::endl;
 
       size_t erased_faces = 0;
       for(Face_handle fh : faces_in_conflict)
@@ -623,7 +617,7 @@ public:
           erased_faces += faces_with_too_big_circumradius.erase(cfh);
         }
       }
-      std::cout << "Faces with too big radius in conflict zone:" << erased_faces << std::endl;
+//      std::cout << "Faces with too big radius in conflict zone:" << erased_faces << std::endl;
     }
 
     Vertex_handle vh = dt2.insert(p);
@@ -655,7 +649,6 @@ public:
     }
 
     // Update the current maximum circumradius value
-    std::cout << "Gather faces w/ too big circumradius" << std::endl;
     typename DT2::Face_circulator fc = dt2.incident_faces(vh), done(fc);
     do
     {
@@ -665,13 +658,10 @@ public:
       CGAL_assertion(cfh != Face_handle());
 
       const FT sq_cr = compute_squared_circumradius(cfh);
-      std::cout << " sq_cr: " << sq_cr << " sys:" << sq_circumradius_threshold << std::endl;
       if(sq_cr > sq_circumradius_threshold)
         faces_with_too_big_circumradius.insert(cfh);
     }
     while(++fc != done);
-
-    std::cout << faces_with_too_big_circumradius.size() << " faces with too big sq_cr" << std::endl;
 
     if(faces_with_too_big_circumradius.empty())
        convert_to_1_cover();
@@ -732,7 +722,7 @@ public:
     if(is_1_cover_)
       return;
 
-    std::cout << "Converting..." << std::endl;
+    std::cout << "Transition to Phase 2 after " << number_of_vertices() << " vertices" << std::endl;
 
     is_1_cover_ = true;
 
@@ -794,9 +784,6 @@ public:
       }
     }
 
-    std::cout << dt2.number_of_vertices() / 9 << " canonical vertices in dt2" << std::endl;
-    std::cout << cfc << " canonical faces in dt2" << std::endl;
-
     // Set up adjacencies
     typename Incident_faces_map::const_iterator ifit = incident_faces_map.begin();
     for(; ifit!=incident_faces_map.end(); ++ifit)
@@ -811,16 +798,6 @@ public:
 
       p2dt2.tds().set_adjacency(f0, i0, f1, i1);
     }
-
-    std::cout << p2dt2.number_of_vertices() << " vertices in p2dt2" << std::endl;
-    std::cout << p2dt2.number_of_faces() << " canonical faces in p2dt2" << std::endl;
-
-    std::ofstream out_dt2("dt2_post_convert.off");
-    CGAL::draw_t2(out_dt2, p2dt2);
-    out_dt2.close();
-    std::ofstream out_pc("p2dt2_post_convert.off");
-    CGAL::write_P2T2_to_OFF(out_pc, p2dt2);
-    out_pc.close();
 
     CGAL_postcondition(p2dt2.is_valid(true));
   }

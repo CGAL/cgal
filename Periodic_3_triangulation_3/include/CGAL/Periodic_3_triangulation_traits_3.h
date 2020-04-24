@@ -133,7 +133,7 @@ public:
 };
 
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK // @tmp to remove filtering
+#if 0 // @tmp to remove filtering
 
 } //namespace CGAL
 
@@ -175,7 +175,7 @@ public:
   { }
 };
 
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#endif // 
 
 } //namespace CGAL
 

@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2020 INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
-//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_2_H
@@ -1029,7 +1028,8 @@ public:
 
   template < class Conflict_tester, class Point_hider, class CoverManager >
   Vertex_handle periodic_insert(const Point& p, const Offset& o,
-                                Locate_type lt, Face_handle f,
+                                Locate_type lt, const Offset& current_off,
+                                Face_handle f,
                                 const Conflict_tester& tester,
                                 Point_hider& hider,
                                 CoverManager& cover_manager,
@@ -1047,21 +1047,12 @@ public:
     tester.set_offset(o);
 
     // Choose the periodic copy of tester.point() that is in conflict with c.
-    bool found = false;
-    Offset current_off = get_location_offset(tester, f, found);
 #ifdef CGAL_DEBUG_P2T2
     std::cout << "get_location_offset: " << current_off << std::endl;
 #endif
 
     CGAL_triangulation_assertion(side_of_face(tester.point(), combine_offsets(o, current_off),
                                               f, lt_assert, i_assert) != ON_UNBOUNDED_SIDE);
-
-    // If the new point is not in conflict with its face, it is hidden.
-    if(!found || !tester.test_initial_face(f, current_off))
-    {
-      hider.hide_point(f, p);
-      return Vertex_handle();
-    }
 
     // Ok, we really insert the point now.
     // First, find the conflict region.
@@ -1147,6 +1138,7 @@ public:
   template <class Conflict_tester, class Point_hider, class CoverManager>
   Vertex_handle insert_in_conflict(const Point& p,
                                    Locate_type lt,
+                                   const Offset& lo,
                                    Face_handle f, int li,
                                    const Conflict_tester& tester,
                                    Point_hider& hider,
@@ -1189,13 +1181,12 @@ public:
     CGAL_triangulation_assertion(number_of_vertices() != 0);
     CGAL_triangulation_expensive_assertion(is_valid());
 
-    Vertex_handle vh = periodic_insert(p, Offset(), lt, f, tester, hider, cover_manager);
+    Vertex_handle vh = periodic_insert(p, Offset(), lt, lo, f, tester, hider, cover_manager);
 
     if(is_1_cover())
       return vh;
 
     virtual_vertices_reverse[vh] = std::vector<Vertex_handle>();
-    Offset lo;
 
     // insert copies
     for(int i=0; i<_cover[0]; ++i)
@@ -1204,8 +1195,9 @@ public:
       {
         if((i != 0) || (j != 0))
         {
-          f = locate(p, Offset(i,j), lo, lt, li, Face_handle());
-          periodic_insert(p, Offset(i,j), lt, f, tester, hider, cover_manager, vh);
+          Offset plo;
+          f = locate(p, Offset(i,j), plo, lt, li, Face_handle());
+          periodic_insert(p, Offset(i,j), lt, plo, f, tester, hider, cover_manager, vh);
         }
       }
     }
@@ -1240,7 +1232,7 @@ public:
     int li = 0;
     Offset lo;
     Face_handle f = locate(p, Offset(), lo, lt, li, start);
-    return insert_in_conflict(p, lt, f, li, tester, hider, cover_manager);
+    return insert_in_conflict(p, lt, lo, f, li, tester, hider, cover_manager);
   }
 
   template <class InputIterator, class Conflict_tester, class Point_hider, class CoverManager>
@@ -1525,7 +1517,7 @@ public:
             (fh->vertex(1) == fh->vertex(2)));
   }
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#if 0
   /// Serialize the triangulation to an output stream
   std::ostream& save(std::ostream& os) const;
 
@@ -2247,10 +2239,10 @@ insert_in_face(const Point& p, const Offset& o, Face_handle f, Vertex_handle vh)
   if(!simplicity_criterion)
   {
     // Choose the periodic copy of tester.point() that is inside f.
-    current_off = get_location_offset(f, p, o); // @fixme
+    current_off = get_location_offset(f, p, o);
 
-// @tmp restore after oriented side has been converted to generic P2T2
-//    CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
+    // @todo restore after oriented side has been converted to generic P2T2
+    CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o, current_off)) != ON_NEGATIVE_SIDE);
 
     for(int i=0; i<3; ++i)
     {
@@ -2532,10 +2524,8 @@ march_locate_2D(Face_handle f, const Point& query, const Offset& o_p, Offset& of
     // Now we flip a coin in order to decide if we start checking the
     // edge before or the edge after the edge leading to prev
     int left_first = coin() % 2;
-    std::cout << "left_first: " << left_first << std::endl;
 
     bool simplicity_criterion = f->has_zero_offsets() && off_query.is_null() && is_1_cover();
-    std::cout << "simplicity_criterion: " << simplicity_criterion << std::endl;
 
     const Point *p[3] =
     {
@@ -2576,8 +2566,6 @@ march_locate_2D(Face_handle f, const Point& query, const Offset& o_p, Offset& of
                                          off[ccw(prev_index)], off[cw(prev_index)], off_query);
       }
 
-      std::cout << "First; right turn? " << std::boolalpha << (o[ccw(prev_index)] == RIGHT_TURN) << std::endl;
-      std::cout << "side of " << point(f, ccw(prev_index)) << " 0 " << point(f, cw(prev_index)) << " 0" << std::endl;
       if(o[ccw(prev_index)] == RIGHT_TURN)
       {
         // This assignment is already done: prev = f
@@ -2599,7 +2587,6 @@ march_locate_2D(Face_handle f, const Point& query, const Offset& o_p, Offset& of
     {
       if(simplicity_criterion)
       {
-        std::cout << "simple orientation: " << *p[prev_index] << " " << *p[ccw(prev_index)] << " " << query << std::endl;
         o[prev_index] = orientation(*p[prev_index], *p[ccw(prev_index)], query);
       }
       else
@@ -2608,8 +2595,6 @@ march_locate_2D(Face_handle f, const Point& query, const Offset& o_p, Offset& of
                                     off[prev_index], off[ccw(prev_index)], off_query);
       }
 
-      std::cout << "left first; right turn? " << std::boolalpha << (o[prev_index] == RIGHT_TURN) << std::endl;
-      std::cout << "side of " << point(f, prev_index) << " 0 " << point(f, ccw(prev_index)) << " 0" << std::endl;
       if(o[prev_index] == RIGHT_TURN)
       {
         prev = f;
@@ -2635,8 +2620,6 @@ march_locate_2D(Face_handle f, const Point& query, const Offset& o_p, Offset& of
                                         off[cw(prev_index)], off[prev_index], off_query);
       }
 
-      std::cout << "right; right turn? " << std::boolalpha << (o[cw(prev_index)] == RIGHT_TURN) << std::endl;
-      std::cout << "side of " << point(f, cw(prev_index)) << " 0 " << point(f, prev_index) << " 0" << std::endl;
       if(o[cw(prev_index)] == RIGHT_TURN)
       {
         prev = f;
@@ -2662,8 +2645,6 @@ march_locate_2D(Face_handle f, const Point& query, const Offset& o_p, Offset& of
                                     off[prev_index], off[ccw(prev_index)], off_query);
       }
 
-      std::cout << "left second; right turn? " << std::boolalpha << (o[prev_index] == RIGHT_TURN) << std::endl;
-      std::cout << "side of " << point(f, ccw(prev_index)) << " 0 " << point(f, cw(prev_index)) << " 0" << std::endl;
       if(o[prev_index] == RIGHT_TURN)
       {
         prev = f;
@@ -3371,7 +3352,7 @@ is_valid(bool verbose, int level) const
   return result;
 }
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#if 0
 template<class Gt, class Tds>
 std::ostream&
 Periodic_2_triangulation_2<Gt, Tds>::
@@ -3920,7 +3901,7 @@ operator!=(const Periodic_2_triangulation_2<GT, Tds1>& t1,
 {
   return ! (t1 == t2);
 }
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#endif //
 
 #define CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 #include <CGAL/Periodic_2_triangulation_dummy_12.h>

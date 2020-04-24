@@ -1,8 +1,18 @@
+// Copyright (c) 2019-2020 XXXXX
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     :
+
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_GENERIC_H
 #define CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_GENERIC_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
-
 
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>

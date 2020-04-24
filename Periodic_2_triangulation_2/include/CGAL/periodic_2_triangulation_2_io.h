@@ -1,14 +1,12 @@
-// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// DO NOT REDISTRIBUTE
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is not yet part of CGAL (www.cgal.org), but will be.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-2.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier:
 //
-//
-// Author(s)     : Mael Rouxel-Labbé
+// Author(s)     : GPT-Authors
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_2_IO_H
 #define CGAL_PERIODIC_2_TRIANGULATION_2_IO_H
@@ -23,7 +21,7 @@
 namespace CGAL {
 
 template <class Stream, class T2>
-bool draw_t2(Stream& os, const T2& t2)
+bool write_DT2_to_OFF(Stream& os, const T2& t2)
 {
   typedef typename T2::Point    Point;
 
@@ -68,7 +66,7 @@ bool draw_t2(Stream& os, const T2& t2)
 }
 
 template <class Stream, class P2T2>
-bool write_P2T2_to_OFF(Stream &os, P2T2& p2t2)
+bool write_PD2T2_to_OFF(Stream &os, P2T2& p2t2)
 {
   typedef typename P2T2::Point    Point;
 
@@ -107,6 +105,15 @@ bool write_P2T2_to_OFF(Stream &os, P2T2& p2t2)
   os << std::endl;
 
   return true;
+}
+
+template <class Stream, class GPT>
+bool write_GP2T2_to_OFF(Stream &os, GPT& gp2t2)
+{
+  if(gp2t2.is_1_cover())
+    return write_PD2T2_to_OFF(os, gp2t2.p2dt2);
+  else
+    return write_DT2_to_OFF(os, gp2t2.dt2);
 }
 
 } // namespace CGAL

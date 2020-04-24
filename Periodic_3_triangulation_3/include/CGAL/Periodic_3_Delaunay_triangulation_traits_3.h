@@ -134,7 +134,7 @@ public:
   Periodic_3_Delaunay_triangulation_traits_3(const D& d = D(), const K& k = K()) : Base(d, k) { }
 };
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK // @tmp this is just a forward declaration normally
+#if 0 // @tmp this is just a forward declaration normally
 
 // Partial specialization for kernels with filtered predicates
 #include <CGAL/internal/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
@@ -175,7 +175,7 @@ public:
   { }
 };
 
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#endif // 
 
 } //namespace CGAL
 

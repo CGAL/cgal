@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
-#ifdef MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#if 0
 
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 
@@ -228,6 +228,6 @@ public:
 
 } //namespace CGAL
 
-#endif // MACRO_THAT_DOESNT_EXIT_TO_MAKE_GP2T2_WORK
+#endif // 
 
 #endif // CGAL_PERIODIC_2_TRIANGULATION_FILTERED_TRAITS_2_H
