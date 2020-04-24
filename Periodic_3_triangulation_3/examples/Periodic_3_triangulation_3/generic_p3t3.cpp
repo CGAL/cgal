@@ -72,6 +72,23 @@ std::vector<Point> generate_random_points(const std::size_t n, CGAL::Random& rnd
   return pts;
 }
 
+std::vector<Point> generate_random_points_in_lattice(const std::size_t n, CGAL::Random& rnd, const Lattice& l)
+{
+  std::vector<Point> pts;
+  pts.reserve(n);
+
+  for(std::size_t i=0; i<n; ++i)
+  {
+    const double l0 = rnd.get_double();
+    const double l1 = rnd.get_double();
+    const double l2 = rnd.get_double();
+    pts.push_back(CGAL::ORIGIN + l0 * l.basis()[0] + l1 * l.basis()[1] + l2 * l.basis()[2]);
+  }
+
+  return pts;
+}
+
+
 int main(int argc, char** argv)
 {
   const std::size_t number_of_points = (argc > 1) ? std::atoi(argv[1]) : 1000000;
@@ -81,34 +98,30 @@ int main(int argc, char** argv)
 //  std::cout << "random seed: " << random_seed << std::endl;
   CGAL::Random rnd(random_seed);
 
-  std::ofstream out("/home/mrouxell/log.txt");
+  std::ofstream out("/home/mrouxell/log_200_runs_1000.txt");
   out.precision(17);
 
   for(;;)
   {
     Lattice l = generate_random_lattice(rnd);
 
-    const FT vol = CGAL::determinant(l.basis()[0][0], l.basis()[0][0], l.basis()[0][0],
+    const FT vol = CGAL::determinant(l.basis()[0][0], l.basis()[0][1], l.basis()[0][2],
                                      l.basis()[1][0], l.basis()[1][1], l.basis()[1][2],
                                      l.basis()[2][0], l.basis()[2][1], l.basis()[2][2]);
     const FT cubed_sys = l.systole_sq_length() * l.systole_sq_length() * l.systole_sq_length();
 
-    out << l.basis()[0] << " ";
-    out << l.basis()[1] << " ";
-    out << l.basis()[2] << " ";
-
-    out << CGAL::abs(vol / cubed_sys) << " ";
-
-    int number_of_runs = 10;
+    int number_of_runs = 200;
 //    std::cout << "number_of_runs: " << number_of_runs << std::endl;
 
     std::cout << "vol/sys3: " << vol/cubed_sys << std::endl;
+
+    bool all_good = true;
 
     int switch_nv = 0;
     double time = 0.;
     for(int i=0; i<number_of_runs; ++i)
     {
-      const std::vector<Point> pts = generate_random_points(number_of_points, rnd);
+      const std::vector<Point> pts = generate_random_points_in_lattice(number_of_points, rnd, l);
 
       CGAL::Real_timer timer;
       timer.start();
@@ -121,28 +134,46 @@ int main(int argc, char** argv)
           break;
       }
 
-      switch_nv += Tr.switch_nv;
-      std::cout << "Switch NV: " << switch_nv << std::endl;
-
 //      std::cout << "Number of vertices: " << Tr.number_of_vertices() << std::endl;
 //      std::cout << "Number of cells: " << Tr.number_of_cells() << std::endl;
-//      std::cout << "1 cover? " << Tr.is_1_cover() << std::endl;
+      std::cout << "1 cover? " << Tr.is_1_cover() << std::endl;
+
+      if(!Tr.is_1_cover())
+      {
+        all_good = false;
+        break; // break or --number_of_runs?
+      }
 
       timer.stop();
       time += timer.time();
+      switch_nv += Tr.switch_nv;
+
+      std::cout << "Switch NV: " << Tr.switch_nv << std::endl;
+      std::cout << "Time: " << timer.time() << std::endl;
     }
+
+    std::cout << "Computed in: " << time << " s" << std::endl;
+
+    if(!all_good)
+      continue;
 
     switch_nv /= number_of_runs;
     time /= number_of_runs;
 
+    // only print if we managed to convert to 1 cover within the allowed amount of vertices (i.e. time)
+
+    out << l.basis()[0] << " ";
+    out << l.basis()[1] << " ";
+    out << l.basis()[2] << " ";
+
+    out << CGAL::abs(vol / cubed_sys) << " ";
     out << switch_nv << " ";
 
-    std::cout << "Computed in: " << time << " s" << std::endl;
     out << time << std::endl;
 
-//    if(Tr.is_1_cover())
-//    {
-//      std::ofstream out("final.off");
+    //    if(Tr.is_1_cover())
+    //    {
+    //      std::ofstream out("final.off");
 //      CGAL::write_triangulation_to_off(out, Tr.p3dt3);
 //    }
 //    else
