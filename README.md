@@ -26,13 +26,13 @@ mkdir -p build/debug
 cd build/debug
 cmake -DCMAKE_BUILD_TYPE=Debug -DCGAL_DIR=/path/to/cgal ../..
 make generic_p2t2
-./generic_p2t2 [number_of_vertices]
 ```
 
 See also https://github.com/CGAL/cgal/blob/master/INSTALL.md and CGAL's documentation for further installation instructions, if necessary.
 
 A typical output will be:
 ```
+./generic_p2t2 [number_of_vertices]
 random seed: 5588160 // the seed used to initialize the random number generator
 Basis vectors:
 24.7802 -0.222676 -50.4873
@@ -47,7 +47,7 @@ Is the triangulation 1-cover? true // whether we transitioned to Phase 2 at some
 Time: 0.650457 s
 ```
 
-As well as creating a file called `final.off`
+As well as creating a file called `final.off`, which can be opened with a large number of mesh visualization softwares such as the CGAL Polyhedron Demo, Meshlab, etc.
 
 A specific lattice can easily be specified through a set of 2 (3 in 3D) independent vectors and recompiling the program.
 
