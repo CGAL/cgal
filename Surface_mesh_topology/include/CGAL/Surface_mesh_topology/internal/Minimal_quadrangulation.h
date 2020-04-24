@@ -573,7 +573,7 @@ protected:
 
   /// Mark the edge containing adart in the original map.
   void mark_original_edge(Original_dart_const_handle adart,
-                          std::size_t amark)
+                          Original_size_type amark)
   {
     get_original_map().mark(adart, amark);
     if (!get_original_map().template is_free<2>(adart))
@@ -582,7 +582,7 @@ protected:
   }
 
   /// Mark the edge containing adart in the reduced map (which is 2-closed)
-  void mark_reduced_edge(Dart_const_handle adart, std::size_t amark)
+  void mark_reduced_edge(Dart_const_handle adart, size_type amark)
   {
     get_local_map().mark(adart, amark);
     get_local_map().mark(get_local_map().template beta<2>(adart), amark);

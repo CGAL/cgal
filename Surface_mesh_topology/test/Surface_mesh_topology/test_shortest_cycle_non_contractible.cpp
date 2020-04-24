@@ -72,8 +72,8 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
 {
   bool res=true;
 
-  // Cycle is the smallest non contractible cycle with unary weight on double-torus-2-d.off.
-  // Its length is 48.
+  // Cycle is the smallest non contractible cycle with unary weight on double-torus-2-b.off.
+  // Its length is 12.
   // 1) We create a cycle parallel to this first one.
   typename LCC_CM::Dart_const_handle dh=nullptr;
 
@@ -91,7 +91,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
 
   dh=map.next(dh);
   // 2) Here dh is  on the parallel of the first cycle. We mark darts of the cycle parallel
-  //    to the first one. Its lenght is 96.
+  //    to the first one. Its lenght is 24.
   auto mark=map.get_new_mark();
   std::size_t nbedges=0;
   typename LCC_CM::Dart_const_handle dh2=dh;
@@ -106,10 +106,10 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   }
   while(dh2!=dh);
 
-  if (nbedges!=96)
+  if (nbedges!=24)
   {
     std::cout<<"[ERROR] in test_weighted: the length of the second cycle is wrong: "
-             <<nbedges<<"!=96"<<std::endl;
+             <<nbedges<<"!=24"<<std::endl;
     res=false;
   }
 
@@ -141,7 +141,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
 
 template<typename Mesh>
 bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double length,
-                             std::size_t nbfaces, bool is_double_torus_2_d)
+                             std::size_t nbfaces, bool is_double_torus_2_b)
 {
   bool res=true;
 
@@ -157,7 +157,7 @@ bool test_one_data_structure(const Mesh& mesh, std::size_t nbedges, double lengt
     res=false;
   }
 
-  if (is_double_torus_2_d)
+  if (is_double_torus_2_b)
   {
     if (!test_weighted(mesh, cycle))
     { res=false; }
@@ -197,7 +197,7 @@ bool test(const char* filename, std::size_t nbedges, double length, std::size_t 
   LCC_CM lcc_cm;
   load_lcc(lcc_cm, filename);
   if (!test_one_data_structure(lcc_cm, nbedges, length, nbfaces,
-                               std::string(filename)=="data/double-torus-2-d.off"))
+                               std::string(filename)=="data/double-torus-2-b.off"))
   {
     std::cout<<"[ERROR] for Linear_cell_complex_for_combinatorial_map."<<std::endl;
     res=false;
@@ -208,7 +208,7 @@ bool test(const char* filename, std::size_t nbedges, double length, std::size_t 
   LCC_GM lcc_gm;
   load_lcc(lcc_gm, filename);
   if (!test_one_data_structure(lcc_gm, nbedges, length, nbfaces,
-                               std::string(filename)=="data/double-torus-2-d.off"))
+                               std::string(filename)=="data/double-torus-2-b.off"))
   {
     std::cout<<"[ERROR] for Linear_cell_complex_for_generalized_map."<<std::endl;
     res=false;
@@ -219,7 +219,7 @@ bool test(const char* filename, std::size_t nbedges, double length, std::size_t 
   SM sm;
   load_sm(sm, filename);
   if (!test_one_data_structure(sm, nbedges, length, nbfaces,
-                               std::string(filename)=="data/double-torus-2-d.off"))
+                               std::string(filename)=="data/double-torus-2-b.off"))
   {
     std::cout<<"[ERROR] for Surface_mesh."<<std::endl;
     res=false;
@@ -230,7 +230,7 @@ bool test(const char* filename, std::size_t nbedges, double length, std::size_t 
   Poly poly;
   load_sm(poly, filename);
   if (!test_one_data_structure(poly, nbedges, length, nbfaces,
-                               std::string(filename)=="data/double-torus-2-d.off"))
+                               std::string(filename)=="data/double-torus-2-b.off"))
   {
     std::cout<<"[ERROR] for Polyhedron_3."<<std::endl;
     res=false;
@@ -251,8 +251,8 @@ int main()
   if (!test("data/double-torus-2-b.off", 12, 5.41404, 6))
   { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }
 
-  if (!test("data/double-torus-2-c.off", 24, 5.41404, 6))
-  { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }
+  // if (!test("data/double-torus-2-c.off", 24, 5.41404, 6))
+  // { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }
 
   // if (!test("data/double-torus-2-d.off", 48, 5.41404, 6))
   // { std::cout<<"[ERROR] for data/double-torus-2.off."<<std::endl; res=false; }

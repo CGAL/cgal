@@ -355,7 +355,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     std::cerr << "Fail unsew_edge_width_repeatedly_in_unweighted_gmap: Cannot locate file data/3torus.off\n";
     return false;
   }
-  std::vector<unsigned int> cycle_lengths;
+  std::vector<std::size_t> cycle_lengths;
   std::size_t length;
   do {
     CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_for_GMap_2> cst(lcc_gm);
