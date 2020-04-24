@@ -922,7 +922,7 @@ private:
   std::unordered_map<Vertex_handle, Vertex_handle> canonical_vertices;
 
   FT sq_circumradius_threshold;
-  std::set<Cell_handle> cells_with_too_big_circumradius;
+  std::unordered_set<Cell_handle> cells_with_too_big_circumradius;
 
   // A list of those offsets such that the domain translated along the offset
   // overlaps the scaled domain.
