@@ -19,7 +19,7 @@ class Polyhedron_demo_wkt_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "wkt_io_plugin.json")
 
 public:
-  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const
   { 
     if(qobject_cast<const Scene_polylines_item*>(item)) 
       return true; 
