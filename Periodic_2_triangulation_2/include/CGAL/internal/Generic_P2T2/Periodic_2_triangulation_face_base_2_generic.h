@@ -8,8 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Mael Rouxel-Labbé
-//                 Georg Osang
+// Author(s)     :
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_GENERIC_H
 #define CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_GENERIC_H

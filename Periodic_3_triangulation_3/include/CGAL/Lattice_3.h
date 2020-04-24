@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2019-2020 XXXX
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,8 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Mael Rouxel-Labbé
-//                 Georg Osang
+// Author(s)     :
 
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_3_LATTICE_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_3_LATTICE_3_H

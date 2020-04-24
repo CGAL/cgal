@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 XXX
+// Copyright (c) 2019-2020 XXXXX
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Georg Osang
+// Author(s)     :
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_GENERIC_H
 #define CGAL_PERIODIC_2_TRIANGULATION_ITERATORS_2_GENERIC_H
