@@ -11,6 +11,7 @@
 #include <CGAL/boost/graph/helpers.h>
 
 #include <CGAL/boost/graph/IO/PLY.h>
+#include <CGAL/boost/graph/IO/GOCAD.h>
 
 #if defined(CGAL_USE_OPENMESH)
 
@@ -120,7 +121,6 @@ bool test_bgl_vtp<Polyhedron>(bool binary)
   return true;
 }
 
-//todo binary tests
 bool test_soup_vtp(bool binary = false)
 {
   //generate a test file
@@ -212,6 +212,56 @@ bool test_gocad()
    if(num_faces(fg2) != 4)
   {
     std::cerr<<"Wrong number of faces: 4 != "<<num_faces(fg2)<<std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+bool test_soup_gocad()
+{
+  //generate a test file
+  std::vector<Point> points(4);
+  std::vector<std::vector<std::size_t> > polys(4);
+  points[0] = Point(0, 0, 0);
+  points[1] = Point(1, 1, 0);
+  points[2] = Point(2, 0, 1);
+  points[3] = Point(3, 0, 0);
+  std::vector<std::size_t> poly(3);
+  poly[0] = 0;
+  poly[1] = 1;
+  poly[2] = 2;
+  polys[0] = poly;
+  poly[0] = 3;
+  poly[1] = 1;
+  poly[2] = 0;
+  polys[1] = poly;
+  poly[0] = 3;
+  poly[1] = 2;
+  poly[2] = 1;
+  polys[2] = poly;
+  poly[0] = 3;
+  poly[1] = 0;
+  poly[2] = 2;
+  polys[3] = poly;
+
+  std::ofstream os("tetrahedron.TS");
+  CGAL::write_GOCAD(os, points, polys);
+  if(!os)
+  {
+    std::cerr<<"gocad writing failed."<<std::endl;
+    return false;
+  }
+  os.close();
+
+
+  std::vector<Point> soup_points;
+  std::vector<std::vector<std::size_t> > soup_polygons;
+  CGAL::read_GOCAD("tetrahedron.TS", soup_points, soup_polygons);
+  if(4 != soup_points.size()
+     || 4 != soup_polygons.size())
+  {
+    std::cerr<<"Coherence problem. Wrong number of vertices or faces."<<std::endl;
     return false;
   }
 
@@ -321,8 +371,8 @@ bool test_PLY(bool binary = false)
 
 int main(int argc, char** argv)
 {
-  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
 
+  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
   //PLY
   if(!test_PLY<Polyhedron>())
     return 1;
@@ -346,6 +396,8 @@ int main(int argc, char** argv)
   if(!test_gocad<SM>())
     return 1;
   if(!test_gocad<LCC>())
+    return 1;
+  if(!test_soup_gocad())
     return 1;
 
   // STL

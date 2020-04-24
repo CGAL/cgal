@@ -12,6 +12,7 @@
 #ifndef CGAL_BGL_IO_GOCAD_H
 #define CGAL_BGL_IO_GOCAD_H
 
+#include <CGAL/IO/GOCAD.h>
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 
 #include <CGAL/assertions.h>
@@ -53,64 +54,14 @@ public:
             Face_container& faces,
             const NamedParameters& np)
   {
-    int offset = 0;
-    char c;
-    std::string s, tface("TFACE");
-    int i,j,k;
-    Point p;
-    bool vertices_read = false;
-
-    while(input >> s)
+    std::pair<std::string, std::string> name_and_color;
+    bool res = read_GOCAD(input, name_and_color, points, faces, np);
+    if(res)
     {
-      if(s == tface)
-        break;
-
-      std::string::size_type idx;
-      if((idx = s.find("name")) != std::string::npos)
-      {
-        std::istringstream str(s.substr(idx + 5));
-        str >> name;
-      }
-
-      if((idx = s.find("color")) != std::string::npos)
-      {
-        std::istringstream str(s.substr(idx + 6));
-        str >> color;
-      }
+      name = name_and_color.first;
+      color = name_and_color.second;
     }
-    std::getline(input, s);
-
-    while(input.get(c))
-    {
-      if((c == 'V') || (c == 'P'))
-      {
-        input >> s >> i >> p; // @fixme check for failure
-        if(!vertices_read)
-        {
-          vertices_read = true;
-          offset -= i; // Some files start with index 0 others with 1
-        }
-
-        points.push_back(p);
-      }
-      else if(vertices_read && (c == 'T'))
-      {
-        input >> c >> c >> c >>  i >> j >> k;
-        typename Base::Face new_face(3);
-        new_face[0] = offset+i;
-        new_face[1] = offset+j;
-        new_face[2] = offset+k;
-        faces.push_back(new_face);
-      }
-      else if(c == 'E')
-      {
-        break;
-      }
-
-      std::getline(input, s);
-    }
-
-    return !input.fail();
+    return res;
   }
 
 public:
@@ -315,7 +266,7 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
 }
 
 template <typename FaceGraph>
-bool write_GOCAD(std::ostream& os, const FaceGraph& g) { return write_OBJ(os, g, parameters::all_default()); }
+bool write_GOCAD(std::ostream& os, const FaceGraph& g) { return write_GOCAD(os,"anonymous", g, parameters::all_default()); }
 template <typename FaceGraph>
 bool write_GOCAD(const char* fname, const FaceGraph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
 template <typename FaceGraph>
