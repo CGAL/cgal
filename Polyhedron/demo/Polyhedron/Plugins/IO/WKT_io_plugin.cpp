@@ -20,12 +20,12 @@ class Polyhedron_demo_wkt_plugin :
 
 public:
   bool isDefaultLoader(const CGAL::Three::Scene_item *item) const
-  { 
-    if(qobject_cast<const Scene_polylines_item*>(item)) 
-      return true; 
+  {
+    if(qobject_cast<const Scene_polylines_item*>(item))
+      return true;
     return false;
   }
-  
+
   QString name() const { return "wkt_plugin"; }
 
   // To change if we end up supporting other objects in the plugin
@@ -71,7 +71,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   ok = true;
   if(add_to_scene)
     CGAL::Three::Three::scene()->addItem(item);
-  
+
   QApplication::restoreOverrideCursor();
 
   return QList<Scene_item*>() << item;
@@ -95,7 +95,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 
   std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
   out.precision (std::numeric_limits<double>::digits10 + 2);
-  
+
   // This plugin supports point sets
   Scene_polylines_item* polylines_item =
     qobject_cast<Scene_polylines_item*>(item);
@@ -105,7 +105,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
     items.pop_front();
     return true;
   }
-  
+
   return false;
 }
 
