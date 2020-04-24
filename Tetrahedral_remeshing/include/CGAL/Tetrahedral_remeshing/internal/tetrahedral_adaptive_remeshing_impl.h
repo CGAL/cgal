@@ -469,7 +469,7 @@ private:
     if(m_c3t3.number_of_facets() == 0)
       patch = 1;
     else
-      patch = m_c3t3.surface_patch_index(*m_c3t3.facets_begin());
+      patch = m_c3t3.surface_patch_index(*m_c3t3.facets_in_complex_begin());
   }
 
   void set_surface_patch_index_to_default(const Subdomain_index& s1,

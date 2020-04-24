@@ -566,9 +566,12 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
 
   if (upsample > 0)
   {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Up sampling MLS " << upsample << std::endl;
-    for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
-         fit != c3t3.facets_end(); ++fit)
+#endif
+    for (typename C3t3::Facets_in_complex_iterator
+      fit = c3t3.facets_in_complex_begin();
+      fit != c3t3.facets_in_complex_end(); ++fit)
     {
       const Surface_index surf_i = c3t3.surface_patch_index(*fit);
       if (upsample == 1)
@@ -629,8 +632,9 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   {
     std::unordered_set<Edge_vv, boost::hash<Edge_vv> > edgeMap;
 
-    for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
-         fit != c3t3.facets_end(); ++fit)
+    for (typename C3t3::Facets_in_complex_iterator
+         fit = c3t3.facets_in_complex_begin();
+         fit != c3t3.facets_in_complex_end(); ++fit)
     {
       for (int i = 0; i < 2; i++)
       {
@@ -661,8 +665,9 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
 
   if (upsample > 0)
   {
-    for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
-         fit != c3t3.facets_end(); ++fit)
+    for (typename C3t3::Facets_in_complex_iterator
+         fit = c3t3.facets_in_complex_begin();
+         fit != c3t3.facets_in_complex_end(); ++fit)
     {
       const Surface_index surf_i = c3t3.surface_patch_index(*fit);
 
