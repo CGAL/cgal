@@ -10,6 +10,7 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj
 
+#include <CGAL/IO/io.h>
 
 #include <iostream>
 #include <fstream>
