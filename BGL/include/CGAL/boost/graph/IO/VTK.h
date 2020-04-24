@@ -239,7 +239,7 @@ void write_polys_tag(std::ostream& os,
   }
   else
   {
-    os << "\">\n";
+    os << ">\n";
 
     for(face_descriptor f : faces(g))
     {
@@ -260,7 +260,7 @@ void write_polys_tag(std::ostream& os,
   }
   else
   {
-    os << "\">\n";
+    os << ">\n";
     std::size_t polys_offset = 0;
 
     for(face_descriptor f : faces(g))
@@ -283,7 +283,7 @@ void write_polys_tag(std::ostream& os,
   }
   else
   {
-    os << "\">\n";
+    os << ">\n";
     for(std::size_t i = 0; i< num_faces(g); ++i)
       os << "5 ";
     os << "      </DataArray>\n";

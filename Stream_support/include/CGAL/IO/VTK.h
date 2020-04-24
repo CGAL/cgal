@@ -152,17 +152,20 @@ void write_soup_polys(std::ostream& os,
 {
 
   std::vector<std::size_t> connectivity_table;
-
   std::size_t off = 0;
+  std::vector<std::size_t> cumul_offsets(offsets);
 
-  for(const auto& poly : polygons)
+  for(size_t i = 0; i < polygons.size(); ++i)
   {
+    const auto& poly = polygons[i];
+    off+=offsets[i];
+    cumul_offsets[i]=off;
     for(const std::size_t& i : poly)
       connectivity_table.push_back(i);
   }
 
   write_vector<std::size_t>(os, connectivity_table);
-  write_vector<std::size_t>(os, offsets);
+  write_vector<std::size_t>(os, cumul_offsets);
   write_vector<unsigned char>(os, cell_type);
 }
 
@@ -230,8 +233,8 @@ void write_soup_polys_tag(std::ostream& os,
   for(std::size_t i = 0; i < polygons.size(); ++i)
   {
     size_map[i] = polygons[i].size();
-    CGAL_assertion(size_map.back()>=3);
-    total_size +=size_map.back();
+    CGAL_assertion(size_map[i]>=3);
+    total_size +=size_map[i];
   }
 
   // if binary output, just write the xml tag
@@ -243,7 +246,7 @@ void write_soup_polys_tag(std::ostream& os,
   }
   else
   {
-    os << "\">\n";
+    os << ">\n";
 
     for(const auto& poly : polygons)
     {
@@ -264,7 +267,7 @@ void write_soup_polys_tag(std::ostream& os,
   }
   else
   {
-    os << "\">\n";
+    os << ">\n";
     std::size_t polys_offset = 0;
 
     for(std::size_t i = 0; i < polygons.size(); ++i)
@@ -287,7 +290,7 @@ void write_soup_polys_tag(std::ostream& os,
   }
   else
   {
-    os << "\">\n";
+    os << ">\n";
     for(std::size_t i = 0; i< polygons.size(); ++i)
     {
       switch(size_map[i]){

@@ -55,14 +55,14 @@ void test_bgl_read_write(const char* filename)
 
 #ifdef CGAL_USE_VTK
 template<typename Mesh>
-bool test_bgl_vtp()
+bool test_bgl_vtp(bool binary = false)
 {
   Mesh fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
 
   std::ofstream os("tetrahedron.vtp");
-  CGAL::write_VTP(os, fg);
+  CGAL::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
   if(!os)
   {
     std::cerr<<"vtp writing failed."<<std::endl;
@@ -86,7 +86,7 @@ bool test_bgl_vtp()
 }
 
 template<>
-bool test_bgl_vtp<Polyhedron>()
+bool test_bgl_vtp<Polyhedron>(bool binary)
 {
   Polyhedron fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
@@ -98,7 +98,7 @@ bool test_bgl_vtp<Polyhedron>()
    for(auto v : vertices(fg))
      put(vid,v, id++);
   std::ofstream os("tetrahedron.vtp");
-  CGAL::write_VTP(os, fg, CGAL::parameters::vertex_index_map(vid));
+  CGAL::write_VTP(os, fg, CGAL::parameters::vertex_index_map(vid).use_binary_mode(binary));
   if(!os)
   {
     std::cerr<<"vtp writing failed."<<std::endl;
@@ -121,7 +121,7 @@ bool test_bgl_vtp<Polyhedron>()
 }
 
 //todo binary tests
-bool test_soup_vtp()
+bool test_soup_vtp(bool binary = false)
 {
   //generate a test file
   std::vector<Point> points(4);
@@ -149,7 +149,7 @@ bool test_soup_vtp()
   polys[3] = poly;
 
   std::ofstream os("tetrahedron_soup.vtp");
-  CGAL::write_VTP(os, points, polys);
+  CGAL::write_VTP(os, points, polys, CGAL::parameters::use_binary_mode(binary));
   if(!os)
   {
     std::cerr<<"vtp writing failed."<<std::endl;
@@ -322,7 +322,7 @@ bool test_PLY(bool binary = false)
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
-/*
+
   //PLY
   if(!test_PLY<Polyhedron>())
     return 1;
@@ -355,16 +355,25 @@ int main(int argc, char** argv)
     return 1;
   if(!test_STL<LCC>())
     return 1;
-*/
+
   // VTP
 #ifdef CGAL_USE_VTK
-  if(!test_bgl_vtp<Polyhedron>())
+  if(!test_bgl_vtp<Polyhedron>(false))
     return 1;
-  if(!test_bgl_vtp<SM>())
+  if(!test_bgl_vtp<SM>(false))
     return 1;
-  if(!test_bgl_vtp<LCC>())
+  if(!test_bgl_vtp<LCC>(false))
     return 1;
-  if(!test_soup_vtp())
+  if(!test_soup_vtp(false))
+    return 1;
+
+  if(!test_bgl_vtp<Polyhedron>(true))
+    return 1;
+  if(!test_bgl_vtp<SM>(true))
+    return 1;
+  if(!test_bgl_vtp<LCC>(true))
+    return 1;
+  if(!test_soup_vtp(true))
     return 1;
 #endif
 
