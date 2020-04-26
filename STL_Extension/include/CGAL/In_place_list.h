@@ -134,7 +134,7 @@ namespace internal {
     typedef std::bidirectional_iterator_tag   iterator_category;
 
     In_place_list_const_iterator() : node(0) {}
-    In_place_list_const_iterator( Iterator i) : node(&*i) {}
+    In_place_list_const_iterator(Iterator i) : node(i.operator->()) {}
     In_place_list_const_iterator(const T* x) : node(x) {}
 
     bool     operator==( const Self& x) const { return node == x.node; }
