@@ -224,6 +224,7 @@ bool read_PLY(std::istream& is,
 }
 
 
+
 /*!
  * \ingroup IOstreamFunctions
  *
@@ -237,6 +238,26 @@ bool read_PLY(std::istream& is,
  *
  * \see \ref IOStreamPLY
  */
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+bool read_PLY(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              const NamedParameters& np)
+{
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
+  std::vector<std::pair<float, float> > dummy_pf;
+
+  return IO::internal::read_PLY(is, points, polygons,std::back_inserter(dummy_pui),
+                  choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
+                                   CGAL::Emptyset_iterator()),
+                  choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
+                                   CGAL::Emptyset_iterator()),
+                  std::back_inserter(dummy_pf));
+}
+
 template <class PointRange, class PolygonRange>
 bool
 read_PLY(std::istream& is,
@@ -327,27 +348,53 @@ read_PLY(std::istream& is,
   return !is.fail();
 }
 
-
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
-bool read_PLY(std::istream& is,
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `fname` into `points` and `polygons`, in the PLY format.
+ *
+ * `PointRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ *
+ * `PolygonRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ *
+ * \see \ref IOStreamPLY
+ */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const char* fname,
               PointRange& points,
               PolygonRange& polygons,
-              const NamedParameters& np)
+              const CGAL_BGL_NP_CLASS& np)
 {
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-  std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
-  std::vector<std::pair<float, float> > dummy_pf;
-
-  return IO::internal::read_PLY(is, points, polygons,std::back_inserter(dummy_pui),
-                  choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                   CGAL::Emptyset_iterator()),
-                  choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                   CGAL::Emptyset_iterator()),
-                  std::back_inserter(dummy_pf));
+  std::ofstream os(fname);
+  return read_PLY(os, points, polygons, np);
 }
 
+template <typename PointRange, typename PolygonRange>
+bool read_PLY(const char* fname,
+              PointRange& points,
+              PolygonRange& polygons)
+{
+  return read_PLY(fname, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              PointRange& points,
+              PolygonRange& polygons,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  return read_PLY(fname.c_str(), points, polygons, np);
+}
+
+template <typename PointRange, typename PolygonRange>
+bool read_PLY(const std::string fname,
+              PointRange& points,
+              PolygonRange& polygons)
+{
+  return read_PLY(fname, points, polygons, parameters::all_default());
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,10 +412,11 @@ bool read_PLY(std::istream& is,
  * and `BackInsertionSequence` whose `value type` is `std::size_t`.
  * \see \ref IOStreamOFF
  */
-template <class PointRange, class PolygonRange>
+template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
 bool write_PLY(std::ostream& out,
                const PointRange& points,
-               const PolygonRange& polygons
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS&
                #ifndef DOXYGEN_RUNNING
                ,typename boost::enable_if<
                  typename boost::has_range_const_iterator<PointRange>::type
@@ -379,7 +427,6 @@ bool write_PLY(std::ostream& out,
                #endif
                )
 {
-
   typedef typename PointRange::value_type Point_3;
   typedef typename PolygonRange::value_type Polygon_3;
   if(!out.good())
@@ -415,6 +462,70 @@ bool write_PLY(std::ostream& out,
   return out.good();
 }
 
+
+template <class PointRange, class PolygonRange>
+bool write_PLY(std::ostream& out,
+               const PointRange& points,
+               const PolygonRange& polygons
+               #ifndef DOXYGEN_RUNNING
+               ,typename boost::enable_if<
+                 typename boost::has_range_const_iterator<PointRange>::type
+               >::type* =0,
+               typename std::enable_if<
+               boost::has_value_type<PointRange>::value
+               >::type* =0
+               #endif
+               )
+{
+  return write_PLY(out, points, polygons, parameters::all_default());
+}
+
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in the file `fname`, in the OFF format.
+ *
+ * `PointRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ *
+ * `PolygonRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ * \see \ref IOStreamOFF
+ */
+template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
+bool write_PLY(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  return write_PLY(os, points, polygons, np);
+}
+
+template <class PointRange, class PolygonRange>
+bool write_PLY(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_PLY(fname, points, polygons, parameters::all_default());
+}
+
+template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
+bool write_PLY(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_PLY(fname.c_str(), points, polygons, np);
+}
+
+template <class PointRange, class PolygonRange>
+bool write_PLY(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_PLY(fname, points, polygons, parameters::all_default());
+}
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_H

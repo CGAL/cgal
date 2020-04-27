@@ -266,6 +266,94 @@ bool write_PLY(std::ostream& os,
   return write_PLY(os, g, "", parameters::all_default());
 }
 
+
+/*!
+ Inserts the graph in the output file `fname` in PLY format.
+
+ If provided, the `comments` string is included line by line in
+ the header of the PLY stream (each line will be precedeed by
+ "comment ").
+
+ The `np` is an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map}
+      the property map with the points associated to the vertices of `g` .
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+    \cgalParamBegin{vertex_index_map}
+      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
+    \cgalParamEnd
+  \cgalNamedParamsEnd
+ */
+template <class FaceGraph, class NamedParameters>
+bool write_PLY(const char* fname,
+               const FaceGraph& g,
+               const std::string& comments,
+               const NamedParameters& np
+               )
+{
+  std::ofstream os(fname);
+  return write_PLY(os, g, comments, np);
+}
+
+template <class FaceGraph>
+bool write_PLY(const char* fname,
+               const FaceGraph& g,
+               const std::string comments)
+{
+  return write_PLY(fname, g, comments, parameters::all_default());
+}
+
+template <class FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const char* fname,
+               const FaceGraph& g,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_PLY(fname, g, "", np);
+}
+
+template <class FaceGraph>
+bool write_PLY(const char* fname,
+               const FaceGraph& g)
+{
+  return write_PLY(fname, g, "", parameters::all_default());
+}
+
+
+template <class FaceGraph, class NamedParameters>
+bool write_PLY(const std::string& fname,
+               const FaceGraph& g,
+               const std::string& comments,
+               const NamedParameters& np
+               )
+{
+  return write_PLY(fname.c_str(), g, comments, np);
+}
+
+template <class FaceGraph>
+bool write_PLY(const std::string& fname,
+               const FaceGraph& g,
+               const std::string comments)
+{
+  return write_PLY(fname, g, comments, parameters::all_default());
+}
+
+template <class FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& fname,
+               const FaceGraph& g,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_PLY(fname, g, "", np);
+}
+
+template <class FaceGraph>
+bool write_PLY(const std::string& fname,
+               const FaceGraph& g)
+{
+  return write_PLY(fname, g, "", parameters::all_default());
+}
 } // namespace CGAL
 
 #endif // CGAL_BGL_IO_PLY_H
