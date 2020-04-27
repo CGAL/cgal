@@ -119,7 +119,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   auto cycle2=cst.compute_shortest_non_contractible_cycle(wf);
   if (cycle2.length()!=nbedges)
   {
-    std::cout<<"[ERROR] in test_weighted for double-torus-2-d.off: the length"
+    std::cout<<"[ERROR] in test_weighted for double-torus-2-b.off: the length"
              <<" of the weighted smallest non contractible cycle is wrong: "
              <<cycle2.length()<<"!="<<nbedges<<std::endl;
     res=false;
@@ -130,7 +130,7 @@ bool test_weighted<LCC_CM>(const LCC_CM& map,
   if (!cst.are_freely_homotopic(cycle, cycle2) &&
       !cst.are_freely_homotopic(cycle, cycle3))
   {
-    std::cout<<"[ERROR] in test_weighted for double-torus-2-d.off: "
+    std::cout<<"[ERROR] in test_weighted for double-torus-2-b.off: "
              <<"cycle and cycle2 are not homotopic."<<std::endl;
     res=false;
   }
