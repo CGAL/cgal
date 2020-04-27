@@ -60,6 +60,17 @@ public:
 } // namespace internal
 } // namespace IO
 
+/*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from data in the STL format.
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+
+  \pre The data must represent a 2-manifold
+
+  \see \ref IOStreamSTL
+*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& in,
               FaceGraph& g,
@@ -75,7 +86,7 @@ bool read_STL(std::istream& in,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the STL format.
+  reads the graph `g` from the file `fname` in the STL format.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 

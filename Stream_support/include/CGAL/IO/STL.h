@@ -120,7 +120,13 @@ bool read_STL(std::istream& is,
   }
 }
 
-//todo doc this too
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of a file named `fname` into `points` and `facets`, in the STL format.
+ *
+ * \see \ref IOStreamSTL
+ */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname,
               PointRange& points,
@@ -222,6 +228,13 @@ std::ostream& write_STL(std::ostream& out,
   return out;
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `facets` in a file named `fname`, in the STL format.
+ *
+ * \see \ref IOStreamSTL
+ */
 template <typename PointRange, typename TriangleRange>
 bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets)
 {
