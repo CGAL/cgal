@@ -1,14 +1,6 @@
 Release History
 ===============
 
-[Release 5.2] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
------------
-
-### Surface Mesh Topology
-
-- Added new functionalities to compute shortest non-contractible cycles on a surface, with or without weights on edges.
-
-
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
@@ -17,10 +9,10 @@ Release date: June 2020
 ### Surface Mesh Topology (new package)
 
  -   This package allows to compute some topological invariants of
-     surfaces. For now, it is possible to test if two (closed) curves
-     on a combinatorial surface are homotopic. The user can choose
-     between free homotopy and homotopy with fixed endpoints. 
-     A contractibility test is also provided.
+     surfaces:
+     -  test if two (closed) curves on a combinatorial surface are homotopic. The user can choose between free homotopy and homotopy with fixed endpoints.
+     - test is a curve is contractible.
+     - compute shortest non-contractible cycles on a surface, with or without weights on edges.
 
 ### 3D Fast Intersection and Distance Computation
 -   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
