@@ -176,6 +176,13 @@ bool read_OFF(std::istream& is,
                                                  CGAL::Emptyset_iterator()));
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of the file `fname` into `points` and `polygons`, in the OFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname,
               PointRange& points,
@@ -185,7 +192,7 @@ bool read_OFF(const char* fname,
   std::ifstream in(fname);
   return read_OFF(in, points, polygons, np);
 }
-//todo doc this too
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
 {
@@ -238,6 +245,50 @@ bool write_OFF(std::ostream& os,
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }
+
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in  the file `fname`, in the OFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  Generic_writer<std::ostream, File_writer_OFF> writer(os);
+  return writer(points, polygons, np);
+}
+
+template <typename PointRange, typename PolygonRange>
+bool write_OFF(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_OFF(fname, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_OFF(fname.c_str(), points, polygons, np);
+}
+
+template <typename PointRange, typename PolygonRange>
+bool write_OFF(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_OFF(fname, points, polygons, parameters::all_default());
+}
+
 
 } // namespace CGAL
 
