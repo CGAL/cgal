@@ -62,15 +62,16 @@ int main(int argc, char** argv)
   Filtered_placement_with_tree placement_small(0.00005*diag, tree, placement_ref);
   SMS::edge_collapse(small_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_small));
 
-  Filtered_placement placement_big(50*diag, placement_ref); // lazily builds the AABB tree
+  Filtered_placement placement_big(0.005*diag, placement_ref); // lazily builds the AABB tree
   SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_big));
 
   std::cout << "no filtering: " << vertices(ref_mesh).size() << " vertices left" << std::endl;
   std::cout << "large filtering distance: " << vertices(big_mesh).size() << " vertices left" << std::endl;
   std::cout << "small filtering distance: " << vertices(small_mesh).size() << " vertices left" << std::endl;
 
-  assert(vertices(small_mesh).size() != vertices(ref_mesh).size());
-  assert(vertices(big_mesh).size() == vertices(ref_mesh).size());
+  assert(vertices(ref_mesh).size() < vertices(small_mesh).size());
+  assert(vertices(big_mesh).size() < vertices(small_mesh).size());
+  assert(vertices(ref_mesh).size() < vertices(big_mesh).size());
 
   return EXIT_SUCCESS;
 }

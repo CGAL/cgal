@@ -59,21 +59,22 @@ private:
 
     const Triangle_mesh& tm = profile.surface_mesh();
     const Geom_traits& gt = profile.geom_traits();
-    std::vector<Triangle> input_triangles;
 
+    m_input_triangles.reserve(faces(tm).size());
     for(face_descriptor f : faces(profile.surface_mesh()))
     {
       halfedge_descriptor h = halfedge(f, tm);
       CGAL_assertion(!is_border(h, tm));
 
-      input_triangles.push_back(gt.construct_triangle_3_object()(
-                                  get(profile.vertex_point_map(), source(h, tm)),
-                                  get(profile.vertex_point_map(), target(h, tm)),
-                                  get(profile.vertex_point_map(), target(next(h, tm), tm))));
+      m_input_triangles.emplace_back(gt.construct_triangle_3_object()(
+                                       get(profile.vertex_point_map(), source(h, tm)),
+                                       get(profile.vertex_point_map(), target(h, tm)),
+                                       get(profile.vertex_point_map(), target(next(h, tm), tm))));
     }
 
-    m_tree_ptr = new AABB_tree(input_triangles.begin(), input_triangles.end());
+    m_tree_ptr = new AABB_tree(m_input_triangles.begin(), m_input_triangles.end());
     const_cast<AABB_tree*>(m_tree_ptr)->build();
+    const_cast<AABB_tree*>(m_tree_ptr)->accelerate_distance_queries();
   }
 
 public:
@@ -129,6 +130,7 @@ public:
 private:
   const FT m_sq_threshold_dist;
   mutable const AABB_tree* m_tree_ptr;
+  mutable std::vector<Triangle> m_input_triangles;
 
   const BasePlacement m_base_placement;
 };
