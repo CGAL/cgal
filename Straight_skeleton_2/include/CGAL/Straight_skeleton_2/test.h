@@ -137,8 +137,8 @@ inline bool is_time_clearly_not_within_possibly_inexact_bisector_time_interval( 
 {
   FT lSrcT = aBisector->opposite()->vertex()->time() ;
   FT lTgtT = aBisector->vertex()->time() ;
-  FT lLoT  = std::min(lSrcT,lTgtT);
-  FT lHiT  = std::max(lSrcT,lTgtT);
+  FT lLoT  = (std::min)(lSrcT,lTgtT);
+  FT lHiT  = (std::max)(lSrcT,lTgtT);
 
   return    ( aT < lLoT || aT > lHiT )
          && is_possibly_inexact_time_clearly_not_equal_to(aT,lLoT)
@@ -150,8 +150,8 @@ inline bool is_time_clearly_within_possibly_inexact_bisector_time_interval( FT c
 {
   FT lSrcT = aBisector->opposite()->vertex()->time() ;
   FT lTgtT = aBisector->vertex()->time() ;
-  FT lLoT  = std::min(lSrcT,lTgtT);
-  FT lHiT  = std::max(lSrcT,lTgtT);
+  FT lLoT  = (std::min)(lSrcT,lTgtT);
+  FT lHiT  = (std::max)(lSrcT,lTgtT);
 
   return    ( lLoT < aT && aT < lHiT )
          && is_possibly_inexact_time_clearly_not_equal_to(aT,lLoT)

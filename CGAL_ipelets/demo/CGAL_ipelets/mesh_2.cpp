@@ -90,8 +90,8 @@ void IpeletMesh2::protected_run(int fn)
 
   double alpha=0;
 
-  int x=static_cast<int>( floor(bbox.max().x()-bbox.min().x()) );
-  int y=static_cast<int>( floor(bbox.max().y()-bbox.min().y()) );
+  int x=static_cast<int>( floor((bbox.max)().x()-(bbox.min)().x()) );
+  int y=static_cast<int>( floor((bbox.max)().y()-(bbox.min)().y()) );
 
   int ret_val;
   boost::tie(ret_val,alpha)=request_value_from_user<double>((boost::format("Max edge length (BBox %1%x%2%)") % x % y).str() );

@@ -81,13 +81,13 @@ public:
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
         {
-          float z_min = std::numeric_limits<float>::max();
+          float z_min = (std::numeric_limits<float>::max)();
 
           typename Grid::iterator end = grid.indices_end(i,j);
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_min = (std::min(z_min, z));
+            z_min = ((std::min)(z_min, z));
           }
 
           dtm(i,j) = z_min;

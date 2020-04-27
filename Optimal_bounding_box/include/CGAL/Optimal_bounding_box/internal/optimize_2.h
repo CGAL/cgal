@@ -123,7 +123,7 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
   rotated_points.reserve(points.size());
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
-  xmin = ymin = zmin = FT{std::numeric_limits<double>::max()};
+  xmin = ymin = zmin = FT{(std::numeric_limits<double>::max)()};
   xmax = ymax = zmax = FT{std::numeric_limits<double>::lowest()};
 
   for(const Point& pt : points)

@@ -64,17 +64,17 @@ namespace CGAL {
     typedef boost::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
-        /// <tt>std::numeric_limits<size_type>::max()</tt></a>
+        /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
         /// as `size_type` is an unsigned type.
         explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
 
-        /// reset index to be invalid (index=std::numeric_limits<size_type>::max())
+        /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
 
-        /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
+        /// return whether the index is valid, i.e., the index is not equal to `%(std::numeric_limits<size_type>::max)()`.
         bool is_valid() const {
           size_type inf = (std::numeric_limits<size_type>::max)();
           return idx_ != inf;
@@ -253,10 +253,10 @@ namespace CGAL {
         // compatibility with OpenMesh handles
         size_type idx() const { return (size_type)halfedge_ / 2; }
 
-        // resets index to be invalid (index=std::numeric_limits<size_type>::max())
+        // resets index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { halfedge_.reset(); }
 
-        // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
+        // returns whether the index is valid, i.e., the index is not equal to (std::numeric_limits<size_type>::max)().
         bool is_valid() const { return halfedge_.is_valid(); }
 
 

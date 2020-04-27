@@ -436,9 +436,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   }
   else if(soup_item == 0)
     return;
-  double X=box.max(0)-box.min(0),
-      Y = box.max(1)-box.min(1),
-      Z = box.max(2)-box.min(2);
+  double X=(box.max)(0)-(box.min)(0),
+      Y = (box.max)(1)-(box.min)(1),
+      Z = (box.max)(2)-(box.min)(2);
   diag = CGAL::sqrt(X*X+Y*Y+Z*Z);
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Offset Value"),

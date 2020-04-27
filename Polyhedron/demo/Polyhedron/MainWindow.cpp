@@ -1006,7 +1006,7 @@ void MainWindow::updateViewersBboxes(bool recenter)
 
 }
 
-void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::Vec& max)
+void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::Vec& vmax)
 {
   const Scene::Bbox bbox = scene->bbox();
   const double xmin = bbox.xmin();
@@ -1018,8 +1018,8 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
 
 
 
-  min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
-  max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
+  vmin = CGAL::qglviewer::Vec(xmin, ymin, zmin);
+  vmax= CGAL::qglviewer::Vec(xmax, ymax, zmax);
 
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
 
