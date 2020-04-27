@@ -102,19 +102,23 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 } // namespace IO
 
 /*!
-  \ingroup PkgBGLIOFct
-
-  reads the graph `g` from data in the VTP format.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
-
-  \see \ref IOStreamOFF
+ * \ingroup PkgBGLIOFct
+ *
+ * \brief reads a PolyData in the VTP format into a triangulated surface mesh.
+ *
+ * \tparam FaceGraph a model of `FaceListGraph`.
+ *
+ * \param fname the path to the file that will be read.
+ * \param g the output mesh.
+ *
+ * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
+ * \cgalNamedParamsBegin
+ *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+ *    If this parameter is omitted, an internal property map for
+ *    `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+ * \cgalNamedParamsEnd
+ * \pre The data must represent a 2-manifold
+ * \see \ref IOStreamOFF
 */
 template<typename FaceGraph, typename NamedParameters>
 bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
@@ -128,40 +132,12 @@ bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 
-/*!
-  \ingroup PkgBGLIOFct
 
-  reads the graph `g` from `fname`, a file in the VTP format.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
-
-  \see \ref IOStreamOFF
-*/
 template<typename FaceGraph>
 bool read_VTP(const char* fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
 
 #endif // CGAL_USE_VTK
 
-#ifdef DOXYGEN_RUNNING
-/*! \ingroup PkgBGLIOFct
- * \brief reads a PolyData in the VTP format into a triangulated surface mesh.
- *
- * \tparam FaceGraph a model of `FaceListGraph`.
- *
- * \param fname the path to the file that will be read.
- * \param g the output mesh.
- *
- * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
- */
-template<typename FaceGraph, typename NamedParameters>
-bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np);
-#endif // DOXYGEN_RUNNING
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -448,6 +424,63 @@ void write_VTP(std::ostream& os, const FaceGraph& g)
   write_VTP(os, g, CGAL::parameters::all_default());
 }
 
+
+/*! \ingroup PkgBGLIOFct
+ *
+ * \brief  writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
+ *
+ * \tparam FaceGraph a model of `FaceListGraph` with only triangle faces.
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * \param os the stream used for writing.
+ * \param g the triangle mesh to be written.
+ * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
+ * ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+ *    data should be written in binary (`true`, the default) or in ASCII (`false`).
+ *     \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to
+ * the vertices of `g`. If this parameter is omitted, an internal property map for
+ *       `CGAL::vertex_Point` must be available in `FaceGraph`.
+ *     \cgalParamEnd
+ *    \cgalParamBegin{vertex_index_map} the property map with the indices associated to
+ * the vertices of `g`.
+ *     \cgalParamEnd
+ * \cgalNamedParamsEnd
+ * \see \ref IOStreamVTK
+ */
+template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+void write_VTP(const char* fname,
+               const FaceGraph& g,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  return write_VTP(os, g, np);
+}
+
+template<typename FaceGraph>
+void write_VTP(const char* fname,
+               const FaceGraph& g)
+{
+  return write_VTP(fname, g, parameters::all_default());
+}
+
+template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+void write_VTP(const std::string& fname,
+               const FaceGraph& g,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_VTP(fname.c_str(), g, np);
+}
+
+template<typename FaceGraph>
+void write_VTP(const std::string& fname,
+               const FaceGraph& g)
+{
+  return write_VTP(fname, g, parameters::all_default());
+}
 } // namespace CGAL
 
 #endif // CGAL_USE_VTK

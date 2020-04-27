@@ -17,6 +17,7 @@
 
 #include <CGAL/IO/VTK/VTK_reader.h>
 #include <CGAL/IO/VTK/VTK_writer.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
 #include <vtkCommand.h>
@@ -403,6 +404,41 @@ bool write_VTP(std::ostream& os,
                const PolygonRange& polygons)
 {
   return write_VTP(os, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream out(fname);
+  return write_VTP(out, points, polygons, np);
+}
+
+template <typename PointRange, typename PolygonRange>
+bool write_VTP(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_VTP(fname, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_VTP(fname.c_str(), points, polygons, np);
+}
+
+template <typename PointRange, typename PolygonRange>
+bool write_VTP(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_VTP(fname, points, polygons, parameters::all_default());
 }
 
 }//end CGAL
