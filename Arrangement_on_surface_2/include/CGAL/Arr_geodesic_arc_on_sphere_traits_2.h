@@ -110,7 +110,7 @@ protected:
 
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -8, 6);
-    
+
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -11, 7);
 #else
@@ -2872,14 +2872,14 @@ public:
   /*! Copy constructor
    * \param other the other arc
    */
-#ifdef DOXYGEN_RUNNING  
+#ifdef DOXYGEN_RUNNING
   Arr_geodesic_arc_on_sphere_3
   (const Arr_geodesic_arc_on_sphere_3& other) : Base(other)
   {
     m_is_x_monotone = other.m_is_x_monotone;
   }
 #endif
-  
+
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc

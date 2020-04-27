@@ -807,11 +807,11 @@ template <class T>
 class Domain_tester
 {
     const T *t;
-    
+
   public:
     Domain_tester() {}
     Domain_tester(const T *tr) : t(tr) {}
-    
+
     bool operator()(const typename T::Vertex_iterator & v) const
     {
         return (t->get_offset(v) != typename T::Offset(0, 0));

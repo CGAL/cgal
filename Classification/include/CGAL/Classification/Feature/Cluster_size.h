@@ -33,7 +33,7 @@ namespace Feature {
 class Cluster_size : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
-    
+
 public:
 
   /*!

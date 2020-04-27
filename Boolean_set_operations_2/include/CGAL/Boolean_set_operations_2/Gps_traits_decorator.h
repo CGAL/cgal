@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -57,31 +57,31 @@ public:
 
   // a side is either oblivious or open (unbounded)
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Left_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Bottom_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Top_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Right_side_category, Arr_open_side_tag > >
       )
   );
 
-  class Ex_point_2 
+  class Ex_point_2
   {
   protected:
     Base_Point_2 m_base;
@@ -138,7 +138,7 @@ public:
   protected:
     Base_X_monotone_curve_2    m_base;
     Curve_data                 m_data;
-    
+
     public:
     Ex_x_monotone_curve_2(): m_base(),
                              m_data()
@@ -148,7 +148,7 @@ public:
                                                                m_data()
     {}
 
-    Ex_x_monotone_curve_2(const Base_X_monotone_curve_2& pt, 
+    Ex_x_monotone_curve_2(const Base_X_monotone_curve_2& pt,
                           const Curve_data& data): m_base(pt),
                                                    m_data(data)
     {}
@@ -206,7 +206,7 @@ public:
   bool m_traits_owner;
 
 public:
-  
+
   Gps_traits_decorator() :
     m_base_tr(new Base()),
     m_traits_owner(true)
@@ -469,7 +469,7 @@ public:
         oi_end = m_base(cv2.base(), cv1.base(), oi);
 
       // convert objects that are associated with Base_X_monotone_curve_2 to
-      // the extenede X_monotone_curve_2 
+      // the extenede X_monotone_curve_2
       for(; oi != oi_end; ++oi)
       {
         base_pt = object_cast<std::pair<Base_Point_2, Multiplicity> >(&(*oi));
@@ -477,7 +477,7 @@ public:
         if (base_pt != nullptr)
         {
           Point_2 point_plus (base_pt->first); // the extended point
-          *oi = CGAL::make_object(std::make_pair(point_plus, 
+          *oi = CGAL::make_object(std::make_pair(point_plus,
                                                  base_pt->second));
         }
         else
@@ -489,7 +489,7 @@ public:
       }
       //return past-end iterator
       return oi_end;
-    }    
+    }
   };
 
   /*! Get a Intersect_2 functor object. */

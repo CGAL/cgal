@@ -250,9 +250,9 @@ public:
       CGAL_precondition (i == 0 || i == 1);
 
       if (i == 0)
-	return (CGAL::to_double(p.x()));
+        return (CGAL::to_double(p.x()));
       else
-	return (CGAL::to_double(p.y()));
+        return (CGAL::to_double(p.y()));
     }
   };
 

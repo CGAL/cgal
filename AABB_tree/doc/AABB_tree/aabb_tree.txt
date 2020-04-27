@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
 \cgalAutoToc
 
@@ -25,7 +25,7 @@ closest point from a point query to a set of triangles.
 
 Note that this component is not suited to the problem of finding all
 intersecting pairs of objects. We refer to the component
-\ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes" 
+\ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes"
 which can find all intersecting pairs of iso-oriented boxes.
 
 The AABB tree data structure takes as input an iterator range of
@@ -59,7 +59,7 @@ intersection *tests* which do not construct any intersection
 objects, from *intersections* which construct the intersection
 objects.
 
-Tests: 
+Tests:
 
 - Function `AABB_tree::do_intersect()` tests if the input primitives are
 intersected by the query. This function is fast as it involves only
@@ -79,7 +79,7 @@ the intersections with respect to the query.
 the intersecting primitive id (if any) of the corresponding
 intersection object that is closest to the source of the ray.
 
-Constructions: 
+Constructions:
 
 - Function  `AABB_tree::all_intersections()` detects and constructs all
 intersection objects with the input primitives.
@@ -216,7 +216,7 @@ option which maximizes speed.
 \subsection aabb_tree_perf_cons Construction
 
 The surface triangle mesh chosen for benchmarking the tree
-construction is the knot model (14,400 triangles) depicted by 
+construction is the knot model (14,400 triangles) depicted by
 \cgalFigureRef{figAABB-tree-bench}. We measure the tree construction time (both
 AABB tree alone and AABB tree with internal KD-tree) for this model as
 well as for three denser versions subdivided through the Loop
@@ -254,7 +254,7 @@ the function `AABB_tree::accelerate_distance_queries()` which
 takes an iterator range as input.
 
 |  Number of triangles | AABB tree (in MBytes) | AABB tree with internal KD-tree (in MBytes)|
-| ----: | ----: | ----: |  
+| ----: | ----: | ----: |
    18,400 |   1.10 |    2.76 |
   102,400 |   6.33 |   14.73 |
 1,022,400 |  59.56 |  151.31 |

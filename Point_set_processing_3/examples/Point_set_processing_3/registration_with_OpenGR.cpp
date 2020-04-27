@@ -46,7 +46,7 @@ int main(int argc, const char** argv)
     return EXIT_FAILURE;
   }
   input.close();
-  
+
   // EITHER call the registration method Super4PCS from OpenGR to get the transformation to apply to pwns2
   // std::pair<K::Aff_transformation_3, double> res =
     CGAL::OpenGR::compute_registration_transformation(pwns1, pwns2,

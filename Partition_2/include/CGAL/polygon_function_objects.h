@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -21,7 +21,7 @@
 namespace CGAL {
 
 template <class Traits>
-class Is_vacuously_valid 
+class Is_vacuously_valid
 {
   public:
 
@@ -39,7 +39,7 @@ class Is_convex_2
 {
   public:
      Is_convex_2(const Traits& t): traits(t) {}
-  
+
      template <class ForwardIterator>
      bool operator()(ForwardIterator first, ForwardIterator last)
      {  return is_convex_2(first, last, traits); }
@@ -53,7 +53,7 @@ class Is_y_monotone_2
 {
   public:
      Is_y_monotone_2(const Traits& t): traits(t) {}
-  
+
      template <class ForwardIterator>
      bool operator()(ForwardIterator first, ForwardIterator last)
      {  return is_y_monotone_2(first, last, traits); }

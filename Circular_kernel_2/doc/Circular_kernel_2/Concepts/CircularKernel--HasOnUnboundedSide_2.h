@@ -19,11 +19,11 @@ public:
 
 /*!
 
-*/ 
-bool 
-operator() 
-(const CircularKernel::Circle_2& s, 
-const CircularKernel::Circular_arc_point_2& p); 
+*/
+bool
+operator()
+(const CircularKernel::Circle_2& s,
+const CircularKernel::Circular_arc_point_2& p);
 
 /// @}
 

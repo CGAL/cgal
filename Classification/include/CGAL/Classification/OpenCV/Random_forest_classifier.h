@@ -58,7 +58,7 @@ class Random_forest_classifier
   int m_max_categories;
   int m_max_number_of_trees_in_the_forest;
   float m_forest_accuracy;
-  
+
 #if (CV_MAJOR_VERSION < 3)
   CvRTrees* rtree;
 #else
@@ -66,10 +66,10 @@ class Random_forest_classifier
 #endif
 
 public:
-  
+
   /// \name Constructor
   /// @{
-  
+
 /*!
   \brief Instantiates the classifier using the sets of `labels` and `features`.
 
@@ -109,25 +109,25 @@ public:
 #endif
   }
   /// \endcond
-  
+
   /// @}
 
   /// \name Parameters
   /// @{
-  
+
   void set_max_depth (int max_depth) { m_max_depth = max_depth; }
   void set_min_sample_count (int min_sample_count) { m_min_sample_count = min_sample_count; }
   void set_max_categories (int max_categories) { m_max_categories = max_categories; }
   void set_max_number_of_trees_in_the_forest (int max_number_of_trees_in_the_forest)
   { m_max_number_of_trees_in_the_forest = max_number_of_trees_in_the_forest; }
   void set_forest_accuracy (float forest_accuracy) { m_forest_accuracy = forest_accuracy; }
-  
-  
+
+
   /// @}
 
   /// \name Training
   /// @{
-  
+
   /*!
     \brief Runs the training algorithm.
 
@@ -158,7 +158,7 @@ public:
               << CV_MAJOR_VERSION << "."
               << CV_MINOR_VERSION << ")" << std::endl;
 #endif
-    
+
     std::size_t nb_samples = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
       if (int(ground_truth[i]) != -1)
@@ -206,7 +206,7 @@ public:
     rtree->setUseSurrogates(false);
     rtree->setPriors(cv::Mat());
     rtree->setCalculateVarImportance(false);
-    
+
     cv::TermCriteria criteria (cv::TermCriteria::EPS + cv::TermCriteria::COUNT, m_max_number_of_trees_in_the_forest, 0.01f);
     rtree->setTermCriteria (criteria);
 
@@ -225,7 +225,7 @@ public:
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
     out.resize (m_labels.size(), 0.);
-    
+
     cv::Mat feature (1, int(m_features.size()), CV_32FC1);
     for (std::size_t f = 0; f < m_features.size(); ++ f)
       feature.at<float>(0, int(f)) = m_features[f]->value(item_index);
@@ -244,9 +244,9 @@ public:
 #else
 
     std::vector<float> result (1, 0);
-    
+
     rtree->predict (feature, result);
-    
+
     for (std::size_t i = 0; i < out.size(); ++ i)
       if (i == std::size_t(result[0]))
         out[i] = 1.f;

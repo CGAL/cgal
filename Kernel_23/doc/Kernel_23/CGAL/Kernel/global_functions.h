@@ -110,7 +110,7 @@ Kernel::FT approximate_angle(const CGAL::Vector_3<Kernel>& u,
 
 /// \defgroup approximate_dihedral_angle_grp CGAL::approximate_dihedral_angle()
 /// \ingroup kernel_global_function
-/// @{  
+/// @{
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
 The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.

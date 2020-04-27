@@ -9,7 +9,7 @@ int main() {
 #include <cassert>
 #include <windows.h>
 
-bool get_version_info(const char* fileName, 
+bool get_version_info(const char* fileName,
                       int& major,
                       int& minor,
                       int& patch,

@@ -635,7 +635,7 @@ public:
    PolylinePMap polyline_pmap,
    IncidentPatchesIndicesPMap incident_paches_indices_pmap,
    IndicesOutputIterator out /* = CGAL::Emptyset_iterator() */);
-  
+
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_features_with_context(InputIterator first, InputIterator end,
@@ -644,7 +644,7 @@ public:
   /// @}
   /// \endcond
   /*!
-    Add 1-dimensional features in the domain. `InputIterator` value type must 
+    Add 1-dimensional features in the domain. `InputIterator` value type must
     be a model of the concept `MeshPolyline_3`.
   */
   template <typename InputIterator>
@@ -664,9 +664,9 @@ public:
   /*!
     Add 1-dimensional features (curves) from the range `[first, end)` in the domain with their incidences
     with 2-dimensional features (patches) of the domain.
- 
+
     \tparam InputIterator input iterator over curves
-    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type 
+    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type
       `std::iterator_traits<InputIterator>::%reference` and a value type
       that is a model of `MeshPolyline_3`.
     \tparam IncidentPatchesIndicesPMap is a model of `ReadablePropertyMap`
@@ -681,7 +681,7 @@ public:
     \param incident_patches_indices_pmap the property map that provides
       access to the set of indices of the surface patches that are incident to
       a given 1D-feature (curve)
-  */ 
+  */
   template <typename InputIterator,
             typename PolylinePMap,
             typename IncidentPatchesIndicesPMap>
@@ -696,7 +696,7 @@ public:
                                 CGAL::Emptyset_iterator());
   }
 /// @}
-  
+
 /// \name Implementation of the concept MeshDomainWithFeatures_3
 /// The following methods implement the requirement of the concept
 /// `MeshDomainWithFeatures_3`.

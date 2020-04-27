@@ -54,7 +54,7 @@ public:
     typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
     typedef Cell_with_volume_index<GT, Cb3> Other;
   };
-    
+
   // Constructors
   Cell_with_volume_index() : Cb(), volume(0)
   {
@@ -74,7 +74,7 @@ public:
                           Cell_handle n1,
                           Cell_handle n2,
                           Cell_handle n3)
-    : Cb (v0, v1, v2, v3, n0, n1, n2, n3), volume(0) 
+    : Cb (v0, v1, v2, v3, n0, n1, n2, n3), volume(0)
   {
   }
 
@@ -83,7 +83,7 @@ public:
   {
     return volume;
   }
-      
+
   void set_volume_index(const int i)
   {
     volume = i;
@@ -140,7 +140,7 @@ int main(int , char**)
   double r1, r2, r3, r4, r5;
   std::vector<double> size_bounds(5);
   std::vector<double> radii(5);
-  
+
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
   std::cout << "Input the corresponding 5 size bounds:" << std::endl;
@@ -163,7 +163,7 @@ int main(int , char**)
   std::ofstream ofs_maillage((file_prefix + ".maillage").c_str());
 
   // output five surface meshes files
-  std::vector<std::ofstream*> ofs_surfaces(6); 
+  std::vector<std::ofstream*> ofs_surfaces(6);
   // ofs_surfaces[0] will not be used.
 
   for(int i = 1; i <= 5; ++i)
@@ -198,10 +198,10 @@ int main(int , char**)
         ++cit)
       if(cit->is_in_domain())
       {
-        const double sq_r = 
+        const double sq_r =
           squared_distance(K::Point_3(0, 0, 0),
                            static_cast<K::Point_3>(tr.dual(cit)));
-        
+
         if( sq_r < r1*r1 )
           cit->set_volume_index(1); // brain
         else if( sq_r < r2*r2 )
@@ -233,10 +233,10 @@ int main(int , char**)
     // precision
     ofs_maillage << std::setprecision(20);
     for(int i = 1; i <= 5; ++i)
-    {        
+    {
       *ofs_surfaces[i] << std::setprecision(20);
     }
- 
+
     // Vertices
 
     std::map<Vertex_handle, int> V; // vertices are counter from 1
@@ -258,19 +258,19 @@ int main(int , char**)
 
     // Tetrahedra
 
-    for( Finite_cells_iterator cit = tr.finite_cells_begin(); 
+    for( Finite_cells_iterator cit = tr.finite_cells_begin();
        cit != tr.finite_cells_end(); ++cit)
       if( cit->is_in_domain() )
       {
         for (int i=0; i<4; i++)
           ofs_maillage << V[cit->vertex(i)] << " ";
-        
-        ofs_maillage << cit->volume_index() 
+
+        ofs_maillage << cit->volume_index()
                      << std::endl;
       }
-  
+
     // Facets
-    for( Finite_facets_iterator fit = tr.finite_facets_begin(); 
+    for( Finite_facets_iterator fit = tr.finite_facets_begin();
          fit != tr.finite_facets_end(); ++fit)
     {
       int surface_index = 0;
@@ -299,14 +299,14 @@ int main(int , char**)
     for(int i = 1; i <= 5; ++i)
       if( ofs_surfaces[i]->bad() )
         return EXIT_FAILURE;
-    
+
     if( ofs_maillage.good() )
     {
       for(int i = 1; i <= 5; ++i)
         delete ofs_surfaces[i];
       return EXIT_SUCCESS;
     }
-    else 
+    else
       return EXIT_FAILURE;
   }
   else

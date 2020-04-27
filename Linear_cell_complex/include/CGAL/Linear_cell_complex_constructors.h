@@ -342,7 +342,7 @@ namespace CGAL {
     std::ofstream output(filename);
     if (!output.is_open())
     { return false; }
-    
+
     return write_off(alcc, output);
   }
 

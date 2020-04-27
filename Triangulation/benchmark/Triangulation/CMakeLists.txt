@@ -13,8 +13,8 @@ if ( CGAL_FOUND )
 
   include(${CGAL_USE_FILE})
 
-  find_package(Eigen3 3.1.0) 
-  if (EIGEN3_FOUND) 
+  find_package(Eigen3 3.1.0)
+  if (EIGEN3_FOUND)
     include_directories (BEFORE "include")
     create_single_source_cgal_program( "delaunay.cpp" )
     CGAL_target_use_Eigen(delaunay)

@@ -65,7 +65,7 @@ public:
   // Associate each dart of the original map, not removed, a pair of darts in
   // the reduced map.
   typedef std::unordered_map<Original_dart_const_handle,
-                             std::pair<Dart_handle, Dart_handle> > TPaths;
+  std::pair<Dart_handle, Dart_handle> > TPaths;
 
   // Associations between original darts and their copy.
   // Use only locally during the construction of the minimal quadrangulation.
@@ -963,7 +963,7 @@ protected:
     CGAL_assertion(get_reduced_map().is_whole_map_marked(treated));
     get_reduced_map().free_mark(treated);
 
-#ifdef NDEBUG    
+#ifdef NDEBUG
     for (typename Reduced_map::Dart_range::iterator
          it=get_reduced_map().darts().begin();
          it!=get_reduced_map().darts().end(); ++it)
@@ -1021,7 +1021,7 @@ protected:
       }
     }
 
-#ifdef NDEBUG 
+#ifdef NDEBUG
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       if (it->second.second==nullptr)
@@ -1061,7 +1061,7 @@ protected:
     CGAL_assertion(get_reduced_map().is_whole_map_unmarked(oldedges));
     get_reduced_map().free_mark(oldedges);
 
-#ifdef NDEBUG 
+#ifdef NDEBUG
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       CGAL_assertion(get_reduced_map().is_dart_used(it->second.first));

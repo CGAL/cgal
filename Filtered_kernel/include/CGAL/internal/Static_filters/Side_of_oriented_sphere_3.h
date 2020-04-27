@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -46,28 +46,28 @@ public:
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
           fit_in_double(t.z(), tz))
       {
-	  CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+          CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
           double ptx = px - tx;
           double pty = py - ty;
           double ptz = pz - tz;
           double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
-	             + CGAL_NTS square(ptz);
+                     + CGAL_NTS square(ptz);
           double qtx = qx - tx;
           double qty = qy - ty;
           double qtz = qz - tz;
           double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
-	             + CGAL_NTS square(qtz);
+                     + CGAL_NTS square(qtz);
           double rtx = rx - tx;
           double rty = ry - ty;
           double rtz = rz - tz;
          double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
-	             + CGAL_NTS square(rtz);
+                     + CGAL_NTS square(rtz);
           double stx = sx - tx;
           double sty = sy - ty;
           double stz = sz - tz;
           double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
-	             + CGAL_NTS square(stz);
+                     + CGAL_NTS square(stz);
 
           // Compute the semi-static bound.
           double maxx = CGAL::abs(ptx);
@@ -87,7 +87,7 @@ public:
           double astz = CGAL::abs(stz);
 
 #ifdef CGAL_USE_SSE2_MAX
-          CGAL::Max<double> mmax; 
+          CGAL::Max<double> mmax;
           maxx = mmax(maxx, aqtx, artx, astx);
           maxy = mmax(maxy, aqty, arty, asty);
           maxz = mmax(maxz, aqtz, artz, astz);
@@ -106,17 +106,17 @@ public:
 #endif
 
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
-  
+
 #ifdef CGAL_USE_SSE2_MAX
           /*
-          CGAL::Min<double> mmin; 
+          CGAL::Min<double> mmin;
           double tmp = mmin(maxx, maxy, maxz);
           maxz = mmax(maxx, maxy, maxz);
           maxx = tmp;
           */
           sse2minmax(maxx,maxy,maxz);
           // maxy can contain ANY element
-          
+
 #else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
@@ -143,7 +143,7 @@ public:
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }
 
-	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
       return Base::operator()(p, q, r, s, t);
   }

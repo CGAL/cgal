@@ -20,7 +20,7 @@ int main(int , char** argv)
     std::cerr << "Usage:\n"
               << "  " << argv[0] << " FILE\n"
               << "\n"
-	      << "  FILE must be " << format_cgal_description
+              << "  FILE must be " << format_cgal_description
               << "\n";
     return EXIT_FAILURE;
   }
@@ -49,14 +49,14 @@ int main(int , char** argv)
 
     double min = 180;
     for(Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-	cit != tr.finite_cells_end();
-	++cit)
+        cit != tr.finite_cells_end();
+        ++cit)
       if(cit->is_in_domain())
       {
-	const double angle = min_angle(cit);
-	if( angle < min ) min = angle;
+        const double angle = min_angle(cit);
+        if( angle < min ) min = angle;
       }
-	
+
     std::cout << "\nmin angle: " << min << "\n";
 
     return EXIT_SUCCESS;

@@ -24,7 +24,7 @@ struct Angles_test_with_set
   const Set& set;
   typedef typename Set::value_type value_type;
   Angles_test_with_set(const Set& set):set(set) {}
-  
+
   bool operator()(const value_type& f)
   {
     return (set.find(f) == set.end());

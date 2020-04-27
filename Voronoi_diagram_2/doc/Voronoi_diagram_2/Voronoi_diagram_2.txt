@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Voronoi_Diagram_Adaptor
 \anchor chaptervda
 \cgalAutoToc
@@ -19,14 +19,14 @@ discuss the traits required for performing the adaptation, and finally
 in Section \ref secvda2examples we present a few examples using
 this adaptor.
 
-\section secvda2intro Introduction 
+\section secvda2intro Introduction
 
 A Voronoi diagram is typically defined for a set of objects, also
 called sites in the sequel, that lie in some space \f$ \Sigma\f$ and a
 distance function that measures the distance of a point \f$ x\f$ in
 \f$ \Sigma\f$ from an object in the object set. In this package we are
 interested in planar Voronoi diagrams, so in the sequel the space
-\f$ \Sigma\f$ will be the space \f$ \mathbb{R}^2\f$. 
+\f$ \Sigma\f$ will be the space \f$ \mathbb{R}^2\f$.
 Let \f$ \mathcal{S}=\{S_1,S_2,\ldots,S_n\}\f$ be our set of sites and let
 \f$ \delta(x,S_i)\f$ denote the distance of a point \f$ x\in\mathbb{R}^2\f$ from
 the site \f$ S_i\f$. Given two sites \f$ S_i\f$ and \f$ S_j\f$, the set \f$ V_{ij}\f$
@@ -36,7 +36,7 @@ distance function \f$ \delta(x,\cdot)\f$ is simply the set:
 We can then define the set \f$ V_i\f$ of points on the plane that are closer to
 \f$ S_i\f$ than to any other object in \f$ \mathcal{S}\f$ as:
 \f[ V_i = \bigcap_{i\neq j} V_{ij}. \f]
-The set \f$ V_i\f$ is said to be the <I>Voronoi cell</I> or <I>Voronoi face</I> 
+The set \f$ V_i\f$ is said to be the <I>Voronoi cell</I> or <I>Voronoi face</I>
 of the site \f$ S_i\f$. The locus of points on the plane that are
 equidistant from exactly two sites \f$ S_i\f$ and \f$ S_j\f$ is called a
 <I>Voronoi bisector</I>. A point that is equidistant to three or
@@ -61,7 +61,7 @@ Even nice Voronoi diagrams can end up being not so nice. The cell of a
 site can in general consist of several disconnected components. Such a
 case can happen, for example, when we consider weighted points
 \f$ Q_i=(p_i,\lambda_i)\f$, where \f$ p_i\in\mathbb{R}^2\f$,
-\f$ \lambda_i\in\mathbb{R}\f$, and the distance function is 
+\f$ \lambda_i\in\mathbb{R}\f$, and the distance function is
 the Euclidean distance multiplied by the weight of each site, i.e.,
 \f$ \delta_M(x,Q_i)=\lambda_i\,\|x-p_i\|\f$, where \f$ \|\cdot\|\f$ denotes the
 Euclidean norm. In this package we are going to restrict ourselves to
@@ -73,7 +73,7 @@ points, the Euclidean Voronoi diagram of a set of disks on the plane
 (i.e., the Apollonius diagram), the Euclidean Voronoi diagram of a set
 of disjoint convex objects on the plane, or the power or (Laguerre)
 diagram for a set of circles on the plane. In fact every instance of
-an <I>abstract Voronoi diagram</I> in the sense of Klein \cgalCite{k-cavd-89} 
+an <I>abstract Voronoi diagram</I> in the sense of Klein \cgalCite{k-cavd-89}
 is a simple Voronoi diagram in our setting. In the sequel when we
 refer to Voronoi diagrams we will refer to simple Voronoi diagrams.
 
@@ -82,7 +82,7 @@ Voronoi diagram itself, but rather its dual graph, called the
 <I>Delaunay graph</I>. In general the Delaunay graph is a planar
 graph, each face of which consists of at least three edges.
 Under the non-degeneracy assumption that no point on the plane is
-equidistant, under the distance function, to more than three sites, 
+equidistant, under the distance function, to more than three sites,
 the Delaunay graph is a planar graph with triangular faces.
 In certain cases this graph can actually be embedded with straight
 line segments in which case we talk about a triangulation. This is the
@@ -165,14 +165,14 @@ our caching degeneracy removal policies: some of them result in
 mutable adaptors others result in non-mutable ones. In
 Section \ref secvda2ap we discuss the issue in more detail.
 
-\section secvda2design Software Design 
+\section secvda2design Software Design
 
 The `Voronoi_diagram_2<DG,AT,AP>` class is parameterized by
 three template parameters. The first one must be a model of the
 `DelaunayGraph_2` concept. It corresponds to the API required by
 an object representing a Delaunay graph. All classes of \cgal that
 represent Delaunay diagrams are models of this concept, namely,
-Delaunay triangulations, regular triangulations, Apollonius 
+Delaunay triangulations, regular triangulations, Apollonius
 graphs and segment Delaunay graphs.
 The second template parameter must be a model of the
 `AdaptationTraits_2` concept. We discuss this concept in detail in
@@ -226,7 +226,7 @@ adaptor, we can perform point location queries, namely given a point
 \f$ p\f$ we can determine the feature of the Voronoi diagram (vertex, edge,
 face) on which \f$ p\f$ lies.
 
-\section secvda2traits The Adaptation Traits 
+\section secvda2traits The Adaptation Traits
 
 The `AdaptationTraits_2` concept defines the types and
 functors required by the adaptor in order to access geometric
@@ -239,7 +239,7 @@ Finally, it defines a tag that indicates whether nearest site queries
 are to be supported by the Voronoi diagram adaptor. If such queries
 are to be supported, a functor is required.
 
-Given a query point, the nearest site functor should return information 
+Given a query point, the nearest site functor should return information
 related to how many and which sites of the Voronoi diagram are at
 equal and minimal distance from the query point. In particular, if the
 query point is closest to a single site, the vertex handle of the
@@ -270,7 +270,7 @@ provides the adaptation traits for regular triangulations.
 provides the adaptation traits for segment Delaunay graphs.
 </UL>
 
-\section secvda2ap The Adaptation Policy 
+\section secvda2ap The Adaptation Policy
 
 As mentioned above, when we perform the adaptation of a triangulated
 Delaunay graph to a Voronoi diagram, a question that arises is whether
@@ -340,7 +340,7 @@ provides an adaptation policy for removing degeneracies when
 adapting a Delaunay triangulation to a point Voronoi diagram.
 <LI>The `Regular_triangulation_degeneracy_removal_policy_2<RT2>` class: it
 provides an adaptation policy for removing degeneracies when
-adapting a regular triangulation to a power diagram 
+adapting a regular triangulation to a power diagram
 
 <LI>The `Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>` class: it
 provides an adaptation policy for removing degeneracies when
@@ -446,7 +446,7 @@ policies. The caching degeneracy removal policy for segment Delaunay
 graphs does not support on-line insertions, whereas the remaining
 three caching degeneracy removal policies support on-line insertions.
 
-\subsection subsecvda2efficiency Efficiency Considerations 
+\subsection subsecvda2efficiency Efficiency Considerations
 
 One last item that merits some discussion are the different choices
 from the point of view of time- and space-efficiency.
@@ -481,7 +481,7 @@ degeneracy removal policy. This strategy avoids the updates of the
 cached results after each individual insertion, due to the features of
 the Voronoi diagram destroyed because of the site inserted.
 
-\section secvda2examples Examples 
+\section secvda2examples Examples
 
 In this section we present an example that shows how to perform point
 location queries.
@@ -498,10 +498,10 @@ This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASI
 \cgalExample{Voronoi_diagram_2/draw_voronoi_diagram_2.cpp}
 
 \cgalFigureBegin{draw_voronoi_diagram, draw_voronoi_diagram.png}
-Result of the draw_voronoi_diagram_2 program. A window shows the Voronoi vertices and edges. 
+Result of the draw_voronoi_diagram_2 program. A window shows the Voronoi vertices and edges.
 The window allows navigation through the 2D scene.
 \cgalFigureEnd
 
-*/ 
+*/
 } /* namespace CGAL */
 

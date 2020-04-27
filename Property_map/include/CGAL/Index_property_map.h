@@ -21,7 +21,7 @@
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
-  
+
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
@@ -46,11 +46,11 @@ struct Compare_iterator_address
 // ----------------------------------------------------------------------------
 
 
-/// Template class "index" property map, which associates a 0-based index (unsigned int) 
+/// Template class "index" property map, which associates a 0-based index (unsigned int)
 /// to the `[first, beyond)` range of elements.
-/// 
+///
 /// 2 specializations exist:
-/// - if Iter is a random access iterator (typically vector and deque), 
+/// - if Iter is a random access iterator (typically vector and deque),
 /// get() just calls std::distance() and is very efficient;
 /// - else, the property map allocates a std::map to store indices
 /// and get() requires a lookup in the map.
@@ -65,7 +65,7 @@ struct Compare_iterator_address
 // This is the default variant that creates a temporary std::map<Iter,unsigned int>.
 template <class Iter,
           typename iterator_tag=typename std::iterator_traits<Iter>::iterator_category>
-class Index_property_map 
+class Index_property_map
   : public boost::associative_property_map< std::map<Iter,
                                                      unsigned int,
                                                      internal::Compare_iterator_address<Iter> > >
@@ -82,7 +82,7 @@ public:
   Index_property_map(
     Iter first,  ///< iterator over the first element (index 0)
     Iter beyond) ///< past-the-end iterator over the elements
-    
+
   : m_index_map(new Index_map)  // Allocate std::map
   {
     // Index elements in std::map
@@ -90,7 +90,7 @@ public:
     unsigned int index;
     for (it = first, index = 0; it != beyond; it++, index++)
       (*m_index_map)[it] = index;
-      
+
     // Wrap std::map in property map
     (Base&)(*this) = *m_index_map;
   }
@@ -102,7 +102,7 @@ private:
 
 /// @cond SKIP_IN_MANUAL
 // This variant is optimized for a random access container.
-template <class Iter> 
+template <class Iter>
 class Index_property_map<Iter,
                          std::random_access_iterator_tag>
 {
@@ -136,7 +136,7 @@ private:
 ///
 /// @tparam Iter iterator over input elements.
 ///
-/// @return an "index" property map, which associates a 0-based index (unsigned int) 
+/// @return an "index" property map, which associates a 0-based index (unsigned int)
 /// to the `[first, beyond)` range of elements.
 template <class Iter>
 Index_property_map<Iter>

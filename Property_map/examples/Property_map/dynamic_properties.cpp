@@ -16,13 +16,13 @@ int main()
   typedef boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<std::string> >::type VertexNameMap;
   VertexNameMap vnm  = get(CGAL::dynamic_vertex_property_t<std::string>(), mesh);
   put(vnm, *(vertices(mesh).first), "Paris");
-  
+
   std::cout << get(vnm, *(vertices(mesh).first)) << std::endl;
-  
+
   typedef boost::property_map<Mesh, CGAL::dynamic_halfedge_property_t<double> >::type TrafficDensityMap;
   TrafficDensityMap tdm = get(CGAL::dynamic_halfedge_property_t<double>(), mesh);
   put(tdm, *(halfedges(mesh).first), 0.7);
-  
+
   std::cout << get(tdm, *(halfedges(mesh).first)) << std::endl;
 
   return 0;

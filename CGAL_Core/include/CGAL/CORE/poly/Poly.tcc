@@ -6,27 +6,27 @@
  * This file is part of CGAL (www.cgal.org).
  *
  * File: Poly.tcc
- * Purpose: 
- *	Template implementations of the functions
- *	of the Polynomial<NT> class (found in Poly.h)
- * 
- * OVERVIEW:  
- *	Each polynomial has a nominal "degree" (this
- *		is an upper bound on the true degree, which
- *		is determined by the first non-zero coefficient).
- *	Coefficients are parametrized by some number type "NT".
- *	Coefficients are stored in the "coeff" array of
- *		length "degree + 1".  
- *	IMPORTANT CONVENTION: the zero polynomial has degree -1
- *		while nonzero constant polynomials have degree 0.
- *	
+ * Purpose:
+ *        Template implementations of the functions
+ *        of the Polynomial<NT> class (found in Poly.h)
+ *
+ * OVERVIEW:
+ *        Each polynomial has a nominal "degree" (this
+ *                is an upper bound on the true degree, which
+ *                is determined by the first non-zero coefficient).
+ *        Coefficients are parametrized by some number type "NT".
+ *        Coefficients are stored in the "coeff" array of
+ *                length "degree + 1".
+ *        IMPORTANT CONVENTION: the zero polynomial has degree -1
+ *                while nonzero constant polynomials have degree 0.
+ *
  * Bugs:
- *	Currently, coefficient number type NT only accept
- *			NT=BigInt and NT=int
- * 
- *	To see where NT=Expr will give trouble,
- *			look for NOTE_EXPR below.
- * 
+ *        Currently, coefficient number type NT only accept
+ *                        NT=BigInt and NT=int
+ *
+ *        To see where NT=Expr will give trouble,
+ *                        look for NOTE_EXPR below.
+ *
  * Author: Chee Yap, Sylvain Pion and Vikram Sharma
  * Date:   May 28, 2002
  *
@@ -48,7 +48,7 @@ const char Polynomial<NT>::INDENT_SPACE[3] = { ' ', ' ', ' ' };  // pretty print
 
 template <class NT>
 Polynomial<NT>::Polynomial(void) {
-  degree = -1; 	// this is the zero polynomial!
+  degree = -1;         // this is the zero polynomial!
   coeff = NULL;
 }
 
@@ -58,10 +58,10 @@ Polynomial<NT>::Polynomial(int n) {
   CGAL_assertion(n>= -1);
   degree = n;
   if (n == -1)
-    return;	// return the zero polynomial!
+    return;        // return the zero polynomial!
   if (n>=0)
     coeff = new NT[n+1];
-  coeff[0]=1;			// otherwise, return the unity polynomial
+  coeff[0]=1;                        // otherwise, return the unity polynomial
   for (int i=1; i<=n; i++)
     coeff[i]=0;
 }
@@ -91,10 +91,10 @@ Polynomial<NT>::Polynomial(const VecNT & vN) {
 }
 
 template <class NT>
-Polynomial<NT>::Polynomial(const Polynomial<NT> & p):degree(-1) { 
+Polynomial<NT>::Polynomial(const Polynomial<NT> & p):degree(-1) {
   //degree must be initialized to -1 otherwise delete is called on coeff in operator=
   coeff = NULL;//WHY?
-  *this = p;	// reduce to assignment operator=
+  *this = p;        // reduce to assignment operator=
 }
 
 // Constructor from a Character string of coefficients
@@ -112,11 +112,11 @@ Polynomial<NT>::Polynomial(int n, const char * s[]) {
 
 //The BNF syntax is the following:-
 //    [poly] -> [term]| [term] '+/-' [poly] |
-//    		'-' [term] | '-' [term] '+/-' [poly]
+//                    '-' [term] | '-' [term] '+/-' [poly]
 //    [term] -> [basic term] | [basic term] [term] | [basic term]*[term]
 //    [basic term] -> [number] | 'x' | [basic term] '^' [number]
-//                    | '(' [poly] ')' 
-//COMMENT: 
+//                    | '(' [poly] ')'
+//COMMENT:
 //  [number] is assumed to be a BigInt; in the future, we probably
 //  want to generalize this to BigFloat, etc.
 //
@@ -168,7 +168,7 @@ void Polynomial<NT>::constructX(int n, Polynomial<NT>& P){
 //Returns in P the coeffecient starting from start
 template <class NT>
 int Polynomial<NT>::getnumber(const char* c, int start, unsigned int len,
-			  Polynomial<NT> & P){
+                          Polynomial<NT> & P){
   int j=0;
   char *temp = new char[len];
   while(isint(c[j+start])){
@@ -196,7 +196,7 @@ bool Polynomial<NT>::isint(char c){
 //Returns as integer the number starting from start in c
 template <class NT>
 int Polynomial<NT>::getint(const char* c, int start, unsigned int len,
-			  int & n){
+                          int & n){
   int j=0;
   char *temp = new char[len];
   while(isint(c[j+start])){
@@ -215,7 +215,7 @@ template <class NT>
 int Polynomial<NT>::matchparen(const char* cstr, int start){
   int count = 0;
   int j=start;
-  
+
   do{
     if(cstr[j] == '('){
       count++;
@@ -223,9 +223,9 @@ int Polynomial<NT>::matchparen(const char* cstr, int start){
     if(cstr[j] == ')'){
       count--;
     }
-    j++;      
+    j++;
   }while(count != 0 );//j is one more than the matching ')'
-  
+
   return j-1;
 }
 
@@ -341,12 +341,12 @@ Polynomial<NT> Polynomial<NT>::getpoly(std::string & s){
       oind = ind;
       ind = oind + 2 + getterm(t, R);
       if(cstr[oind + 1] == '+')
-		P += R;
+                P += R;
       else if(cstr[oind + 1] == '-')
-		P -= R;
+                P -= R;
       else{
 #ifdef CGAL_CORE_TRACE
-	std::cout << "ERROR IN PARSING POLY! " << std::endl;
+        std::cout << "ERROR IN PARSING POLY! " << std::endl;
 #endif
       }
     }
@@ -362,7 +362,7 @@ Polynomial<NT> Polynomial<NT>::getpoly(std::string & s){
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::operator=(const Polynomial<NT>& p) {
   if (this == &p)
-    return *this;	// self-assignment
+    return *this;        // self-assignment
   if (degree >=0)  delete[] coeff;
   degree = p.getDegree();
   if (degree < 0) return *this;
@@ -379,7 +379,7 @@ int Polynomial<NT>::getTrueDegree() const {
     if (sign(coeff[i]) != 0)
       return i;
   }
-  return -1;	// Zero polynomial
+  return -1;        // Zero polynomial
 }
 
 //get i'th Coeff. We check whether i is not greater than the
@@ -397,8 +397,8 @@ NT Polynomial<NT>::getCoeffi(int i) const {
 // ==================================================
 
 // Expands the nominal degree to n;
-//	Returns n if nominal degree is changed to n
-//	Else returns -2
+//        Returns n if nominal degree is changed to n
+//        Else returns -2
 template <class NT>
 int Polynomial<NT>::expand(int n) {
   if ((n <= degree)||(n < 0))
@@ -416,8 +416,8 @@ int Polynomial<NT>::expand(int n) {
 }
 
 // contract() gets rid of leading zero coefficients
-//	and returns the new (true) degree;
-//	It returns -2 if this is a no-op
+//        and returns the new (true) degree;
+//        It returns -2 if this is a no-op
 template <class NT>
 int Polynomial<NT>::contract() {
   int d = getTrueDegree();
@@ -522,28 +522,28 @@ Polynomial<NT> & Polynomial<NT>::mulXpower(int s) {
 
 // REDUCE STEP (helper for PSEUDO-REMAINDER function)
 // Let THIS=(*this) be the current polynomial, and P be the input
-//	argument for reduceStep.  Let R be returned polynomial.
-//	R has the special form as a binomial,
-//		R = C + X*M
-//	where C is a constant and M a monomial (= coeff * some power of X).
-//	Moreover, THIS is transformed to a new polynomial, THAT, which
-//	is given by
-// 		(C * THIS) = M * P  + THAT
-//	MOREOVER: deg(THAT) < deg(THIS) unless deg(P)>deg(Q).
-//	Basically, C is a power of the leading coefficient of P.
-//	REMARK: R is NOT defined as C+M, because in case M is
-//	a constant, then we cannot separate C from M.
-//	Furthermore, R.mulScalar(-1) gives us M.
+//        argument for reduceStep.  Let R be returned polynomial.
+//        R has the special form as a binomial,
+//                R = C + X*M
+//        where C is a constant and M a monomial (= coeff * some power of X).
+//        Moreover, THIS is transformed to a new polynomial, THAT, which
+//        is given by
+//                 (C * THIS) = M * P  + THAT
+//        MOREOVER: deg(THAT) < deg(THIS) unless deg(P)>deg(Q).
+//        Basically, C is a power of the leading coefficient of P.
+//        REMARK: R is NOT defined as C+M, because in case M is
+//        a constant, then we cannot separate C from M.
+//        Furthermore, R.mulScalar(-1) gives us M.
 template <class NT>
 Polynomial<NT> Polynomial<NT>::reduceStep (
   const Polynomial<NT>& p) {
-  // 	Chee: Omit the next 2 contractions as unnecessary
-  // 	since reduceStep() is only called by pseudoRemainder().
-  // 	Also, reduceStep() already does a contraction before returning.
-  // p.contract();	
-  // contract();	// first contract both polynomials
-  Polynomial<NT> q(p);		// q is initially a copy of p
-  //	but is eventually M*P
+  //         Chee: Omit the next 2 contractions as unnecessary
+  //         since reduceStep() is only called by pseudoRemainder().
+  //         Also, reduceStep() already does a contraction before returning.
+  // p.contract();
+  // contract();        // first contract both polynomials
+  Polynomial<NT> q(p);                // q is initially a copy of p
+  //        but is eventually M*P
   int pDeg  = q.degree;
   int myDeg = degree;
   if (pDeg == -1)
@@ -554,9 +554,9 @@ Polynomial<NT> Polynomial<NT>::reduceStep (
   // i.e., C=1, M=0.
   // Now (myDeg >= pDeg).  Start to form the Return Polynomial R=C+X*M
   Polynomial<NT> R(myDeg - pDeg + 1);  // deg(M)= myDeg - pDeg
-  q.mulXpower(myDeg - pDeg);  	 // q is going to become M*P
+  q.mulXpower(myDeg - pDeg);           // q is going to become M*P
 
-  NT myLC = coeff[myDeg];	  // LC means "leading coefficient"
+  NT myLC = coeff[myDeg];          // LC means "leading coefficient"
   NT qLC = q.coeff[myDeg];  // p also has degree "myDeg" (qLC non-zero)
   NT LC;
 
@@ -564,60 +564,60 @@ Polynomial<NT> Polynomial<NT>::reduceStep (
   //  isDivisible(x,y), gcd(x,y), div_exact(x,y) in the following:
   //  ============================================================
   if (isDivisible(myLC, qLC)) { // myLC is divisible by qLC
-    LC = div_exact(myLC, qLC);	 
-    R.setCoeff(0, 1);  		 //  C = 1,
+    LC = div_exact(myLC, qLC);
+    R.setCoeff(0, 1);                   //  C = 1,
 
     R.setCoeff(R.degree, LC); //  M = LC * X^(myDeg-pDeg)
-    q.mulScalar(LC); 	  //  q = M*P. 
+    q.mulScalar(LC);           //  q = M*P.
   }
   else if (isDivisible(qLC, myLC)) { // qLC is divisible by myLC
-    LC = div_exact(qLC, myLC);	 //
+    LC = div_exact(qLC, myLC);         //
     if ((LC != 1) && (LC != -1)) { // IMPORTANT: unlike the previous
       // case, we need an additional condition
       // that LC != -1.  THis is because
       // if (LC = -1), then we have qLC and
       // myLC are mutually divisible, and
       // we would be updating R twice!
-      R.setCoeff(0, LC); 	   // C = LC, 
+      R.setCoeff(0, LC);            // C = LC,
       R.setCoeff(R.degree, 1);     // M = X^(myDeg-pDeg)(THIS WAS NOT DONE)
-      mulScalar(LC); 	   	   // THIS => THIS * LC
+      mulScalar(LC);                       // THIS => THIS * LC
 
     }
-  } else {  			// myLC and qLC are not mutually divisible
-    NT g = gcd(qLC, myLC); 	// This ASSUMES gcd is defined in NT !!
-    //NT g = 1;  			// In case no gcd is available
+  } else {                          // myLC and qLC are not mutually divisible
+    NT g = gcd(qLC, myLC);         // This ASSUMES gcd is defined in NT !!
+    //NT g = 1;                          // In case no gcd is available
     if (g == 1) {
-      R.setCoeff(0, qLC);	  	// C = qLC
-      R.setCoeff(R.degree, myLC);	 // M = (myLC) * X^{myDeg-pDeg}
-      mulScalar(qLC);	 		// forming  C * THIS
-      q.mulScalar(myLC);		// forming  M * P
+      R.setCoeff(0, qLC);                  // C = qLC
+      R.setCoeff(R.degree, myLC);         // M = (myLC) * X^{myDeg-pDeg}
+      mulScalar(qLC);                         // forming  C * THIS
+      q.mulScalar(myLC);                // forming  M * P
     } else {
       NT qLC1= div_exact(qLC,g);
       NT myLC1= div_exact(myLC,g);
-      R.setCoeff(0, qLC1);	  	// C = qLC/g
-      R.setCoeff(R.degree, myLC1);	// M = (myLC/g) * X^{myDeg-pDeg}
-      mulScalar(qLC1);	 	// forming  C * THIS
-      q.mulScalar(myLC1);		// forming  M * P
+      R.setCoeff(0, qLC1);                  // C = qLC/g
+      R.setCoeff(R.degree, myLC1);        // M = (myLC/g) * X^{myDeg-pDeg}
+      mulScalar(qLC1);                 // forming  C * THIS
+      q.mulScalar(myLC1);                // forming  M * P
     }
   }
-  (*this) -= q;		// THAT = (C * THIS) - (M * P)
+  (*this) -= q;                // THAT = (C * THIS) - (M * P)
 
   contract();
 
-  return R;		// Returns R = C + X*M
+  return R;                // Returns R = C + X*M
 }// reduceStep
 
 // For internal use only:
-// Checks that c*A = B*m + AA 
-// 	where A=(*oldthis) and AA=(*newthis)
+// Checks that c*A = B*m + AA
+//         where A=(*oldthis) and AA=(*newthis)
 template <class NT>
-Polynomial<NT> Polynomial<NT>::testReduceStep(const Polynomial<NT>& A, 
-	const Polynomial<NT>& B) {
+Polynomial<NT> Polynomial<NT>::testReduceStep(const Polynomial<NT>& A,
+        const Polynomial<NT>& B) {
 std::cout << "+++++++++++++++++++++TEST REDUCE STEP+++++++++++++++++++++\n";
   Polynomial<NT> cA(A);
   Polynomial<NT> AA(A);
   Polynomial<NT> quo;
-  quo = AA.reduceStep(B);	        // quo = c + X*m  (m is monomial, c const)
+  quo = AA.reduceStep(B);                // quo = c + X*m  (m is monomial, c const)
                                 // where c*A = B*m + (*newthis)
 std::cout << "A = " << A << std::endl;
 std::cout << "B = " << B << std::endl;
@@ -631,42 +631,42 @@ std::cout << "AA = " << AA << std::endl;
 std::cout << "B*m = " << B*m << std::endl;
 std::cout << "B*m + AA = " << B*m + AA << std::endl;
   if (cA == (B*m + AA))
-	  std::cout << "CORRECT inside testReduceStep" << std::endl;
+          std::cout << "CORRECT inside testReduceStep" << std::endl;
   else
-	  std::cout << "ERROR inside testReduceStep" << std::endl;
+          std::cout << "ERROR inside testReduceStep" << std::endl;
 std::cout << "+++++++++++++++++END TEST REDUCE STEP+++++++++++++++++++++\n";
   return quo;
 }
 
 // PSEUDO-REMAINDER and PSEUDO-QUOTIENT:
 // Let A = (*this) and B be the argument polynomial.
-// Let Quo be the returned polynomial, 
+// Let Quo be the returned polynomial,
 // and let the final value of (*this) be Rem.
 // Also, C is the constant that we maintain.
-// We are computing A divided by B.  The relation we guarantee is 
-// 		(C * A) = (Quo * B)  + Rem
+// We are computing A divided by B.  The relation we guarantee is
+//                 (C * A) = (Quo * B)  + Rem
 // where deg(Rem) < deg(B).  So Rem is the Pseudo-Remainder
 // and Quo is the Pseudo-Quotient.
 // Moreover, C is uniquely determined (we won't spell it out)
 // except to note that
-//	C divides D = (LC)^{deg(A)-deg(B)+1}
-//	where LC is the leading coefficient of B.
+//        C divides D = (LC)^{deg(A)-deg(B)+1}
+//        where LC is the leading coefficient of B.
 // NOTE: 1. Normally, Pseudo-Remainder is defined so that C = D
-// 	 So be careful when using our algorithm.
-// 	 2. We provide a version of pseudoRemainder which does not
-// 	 require C as argument.  [For efficiency, we should provide this
-//	 version directly, instead of calling the other version!]
+//          So be careful when using our algorithm.
+//          2. We provide a version of pseudoRemainder which does not
+//          require C as argument.  [For efficiency, we should provide this
+//         version directly, instead of calling the other version!]
 
 template <class NT>
 Polynomial<NT> Polynomial<NT>::pseudoRemainder (
   const Polynomial<NT>& B) {
-	NT temp;	// dummy argument to be discarded
-	return pseudoRemainder(B, temp);
+        NT temp;        // dummy argument to be discarded
+        return pseudoRemainder(B, temp);
 }//pseudoRemainder
 
 template <class NT>
 Polynomial<NT> Polynomial<NT>::pseudoRemainder (
-  const Polynomial<NT>& B, NT & C) { 
+  const Polynomial<NT>& B, NT & C) {
   contract();         // Let A = (*this).  Contract A.
   Polynomial<NT> tmpB(B);
   tmpB.contract();    // local copy of B
@@ -684,7 +684,7 @@ Polynomial<NT> Polynomial<NT>::pseudoRemainder (
   Polynomial<NT> tmpQuo;
   while (degree >= B.degree) {  // INVARIANT: C*A = B*Quo + (*this)
     tmpQuo = reduceStep(tmpB);  // Let (*this) be (*oldthis), which
-			        // is transformed into (*newthis). Then,
+                                // is transformed into (*newthis). Then,
                                 //     c*(*oldthis) = B*m + (*newthis)
                                 // where tmpQuo = c + X*m
     // Hence,   C*A =   B*Quo +   (*oldthis)      -- the old invariant
@@ -692,34 +692,34 @@ Polynomial<NT> Polynomial<NT>::pseudoRemainder (
     //              = c*B*Quo + (B*m + (*newthis))
     //              = B*(c*Quo + m)  + (*newthis)
     // i.e, to update invariant, we do C->c*C,  Quo --> c*Quo + m.
-    C *= tmpQuo.coeff[0];	    // C = c*C
+    C *= tmpQuo.coeff[0];            // C = c*C
     Quo.mulScalar(tmpQuo.coeff[0]); // Quo -> c*Quo
     tmpQuo.mulXpower(-1);           // tmpQuo is now equal to m
-    Quo += tmpQuo;                  // Quo -> Quo + m 
+    Quo += tmpQuo;                  // Quo -> Quo + m
   }
 
-  return Quo;	// Quo is the pseudo-quotient
+  return Quo;        // Quo is the pseudo-quotient
 }//pseudoRemainder
 
 // Returns the negative of the pseudo-remainder
-// 	(self-modification)
+//         (self-modification)
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::negPseudoRemainder (
   const Polynomial<NT>& B) {
-	NT temp;	// dummy argument to be discarded
-	pseudoRemainder(B, temp);
-	if (temp < 0) return (*this);
-	return negate();
+        NT temp;        // dummy argument to be discarded
+        pseudoRemainder(B, temp);
+        if (temp < 0) return (*this);
+        return negate();
 }
 
 template <class NT>
-Polynomial<NT> & Polynomial<NT>::operator-() {	// unary minus
+Polynomial<NT> & Polynomial<NT>::operator-() {        // unary minus
   for (int i=0; i<=degree; i++)
     coeff[i] *= -1;
   return *this;
 }
 template <class NT>
-Polynomial<NT> & Polynomial<NT>::power(unsigned int n) {	// self-power
+Polynomial<NT> & Polynomial<NT>::power(unsigned int n) {        // self-power
   if (n == 0) {
     degree = 0;
     delete [] coeff;
@@ -728,7 +728,7 @@ Polynomial<NT> & Polynomial<NT>::power(unsigned int n) {	// self-power
   } else {
     Polynomial<NT> p = *this;
     for (unsigned int i=1; i<n; i++)
-      *this *= p;		// Would a binary power algorithm be better?
+      *this *= p;                // Would a binary power algorithm be better?
   }
   return *this;
 }
@@ -740,10 +740,10 @@ Polynomial<NT> & Polynomial<NT>::power(unsigned int n) {	// self-power
 //      This is because we would have to convert these coefficients into
 //      BigFloats, and this conversion precision is controlled by the
 //      global variables defRelPrec and defAbsPrec.
-//   
+//
 /*
 template <class NT>
-BigFloat Polynomial<NT>::eval(const BigFloat& f) const {	// evaluation
+BigFloat Polynomial<NT>::eval(const BigFloat& f) const {        // evaluation
   if (degree == -1)
     return BigFloat(0);
   if (degree == 0)
@@ -751,7 +751,7 @@ BigFloat Polynomial<NT>::eval(const BigFloat& f) const {	// evaluation
   BigFloat val(0);
   for (int i=degree; i>=0; i--) {
     val *= f;
-    val += BigFloat(coeff[i]);	
+    val += BigFloat(coeff[i]);
   }
   return val;
 }//eval
@@ -764,13 +764,13 @@ BigFloat Polynomial<NT>::eval(const BigFloat& f) const {	// evaluation
 ///
 /// User must be aware that the return type of eval is Max of Types NT and T.
 ///
-/// E.g., If NT is BigRat, and T is Expr then Max(NT,T)=Expr. 
-/// 	
-/// REMARK: If NT is BigFloat, it is assumed that the BigFloat is error-free.  
+/// E.g., If NT is BigRat, and T is Expr then Max(NT,T)=Expr.
+///
+/// REMARK: If NT is BigFloat, it is assumed that the BigFloat is error-free.
 
 template <class NT>
 template <class T>
-MAX_TYPE(NT, T) Polynomial<NT>::eval(const T& f) const {	// evaluation
+MAX_TYPE(NT, T) Polynomial<NT>::eval(const T& f) const {        // evaluation
   typedef MAX_TYPE(NT, T) ResultT;
   if (degree == -1)
     return ResultT(0);
@@ -779,26 +779,26 @@ MAX_TYPE(NT, T) Polynomial<NT>::eval(const T& f) const {	// evaluation
   ResultT val(0);
   for (int i=degree; i>=0; i--) {
     val *= ResultT(f);
-    val += ResultT(coeff[i]);	
+    val += ResultT(coeff[i]);
   }
   return val;
 }//eval
 
 
 /// Approximate Evaluation of Polynomials
-/// 	the coefficients of the polynomial are approximated to some
-///	specified composite precision (r,a).
-/// @param  f evaluation point 
+///         the coefficients of the polynomial are approximated to some
+///        specified composite precision (r,a).
+/// @param  f evaluation point
 /// @param  r relative precision to which the coefficients are evaluated
 /// @param  a absolute precision to which the coefficients are evaluated
 /// @return a BigFloat with error containing value of the polynomial.
 ///     If zero is in this BigFloat interval, then we don't know the sign.
 //
-// 	ASSERT: NT = BigRat or Expr
+//         ASSERT: NT = BigRat or Expr
 //
 template <class NT>
-BigFloat Polynomial<NT>::evalApprox(const BigFloat& f, 
-	const extLong& r, const extLong& a) const {	// evaluation
+BigFloat Polynomial<NT>::evalApprox(const BigFloat& f,
+        const extLong& r, const extLong& a) const {        // evaluation
   if (degree == -1)
     return BigFloat(0);
   if (degree == 0)
@@ -806,8 +806,8 @@ BigFloat Polynomial<NT>::evalApprox(const BigFloat& f,
 
   BigFloat val(0), c;
   for (int i=degree; i>=0; i--) {
-    c = BigFloat(coeff[i], r, a);	
-    val *= f; 
+    c = BigFloat(coeff[i], r, a);
+    val *= f;
     val += c;
   }
   return val;
@@ -817,7 +817,7 @@ BigFloat Polynomial<NT>::evalApprox(const BigFloat& f,
 template <>
 CORE_INLINE
 BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& /*f*/,
-	const extLong& /*r*/, const extLong& /*a*/) const {	// evaluation
+        const extLong& /*r*/, const extLong& /*a*/) const {        // evaluation
   CGAL_assertion(0);
   return BigFloat(0);
 }
@@ -836,9 +836,9 @@ BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& /*f*/,
  *
    We use the following heuristic estimates of precision for coefficients:
 
-      r = 1 + lg(|P|_\infty) + lg(d+1)  		if f <= 1
-      r = 1 + lg(|P|_\infty) + lg(d+1) + d*lg|f| 	if f > 1
-      
+      r = 1 + lg(|P|_\infty) + lg(d+1)                  if f <= 1
+      r = 1 + lg(|P|_\infty) + lg(d+1) + d*lg|f|         if f > 1
+
    if the filter fails, then we use Expr to do evaluation.
 
    This function is mainly called by Newton iteration (which
@@ -852,31 +852,31 @@ BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& /*f*/,
  ***************************************************/
 template <class NT>
 BigFloat Polynomial<NT>::evalExactSign(const BigFloat& val,
-	 const extLong& oldMSB) const {
+         const extLong& oldMSB) const {
     CGAL_assertion(val.isExact());
     if (getTrueDegree() == -1)
       return BigFloat(0);
-  
+
     extLong r;
     r = 1 + BigFloat(height()).uMSB() + clLg(long(getTrueDegree()+1));
     if (val > 1)
       r += getTrueDegree() * val.uMSB();
     r += core_max(extLong(0), -oldMSB);
-  
+
     if (hasExactDivision<NT>::check()) { // currently, only to detect NT=Expr and NT=BigRat
         BigFloat rVal = evalApprox(val, r);
         if (rVal.isZeroIn()) {
-	  Expr eVal = eval(Expr(val));	// eval gives exact value
-	  eVal.approx(54,CORE_INFTY);  // if value is 0, we get exact 0
-	  return eVal.BigFloatValue();
-	} else 
+          Expr eVal = eval(Expr(val));        // eval gives exact value
+          eVal.approx(54,CORE_INFTY);  // if value is 0, we get exact 0
+          return eVal.BigFloatValue();
+        } else
           return rVal;
     } else
-	return BigFloat(eval(val));
+        return BigFloat(eval(val));
 
    //return 0; // unreachable
   }//evalExactSign
-  
+
 
 //============================================================
 // Bounds
@@ -943,12 +943,12 @@ BigInt Polynomial<NT>::UpperBound() const {
     lhsPos = lhsNeg = 0;
     for (int i=deg-1; i>=0; i--) {
       if (coeff[i]>0) {
-      	lhsPos = lhsPos * B + coeff[i];
-      	lhsNeg = lhsNeg * B;
+              lhsPos = lhsPos * B + coeff[i];
+              lhsNeg = lhsNeg * B;
       } else {
-      	lhsNeg = lhsNeg * B - coeff[i];
-      	lhsPos = lhsPos * B;
-      } 
+              lhsNeg = lhsNeg * B - coeff[i];
+              lhsPos = lhsPos * B;
+      }
     }
     lhsNeg /= abs(coeff[deg]);
     lhsPos /= abs(coeff[deg]);
@@ -1040,7 +1040,7 @@ BigFloat Polynomial<NT>::length() const {
 //============================================================
 
 template <class NT>
-Polynomial<NT> & Polynomial<NT>::differentiate() {	// self-differentiation
+Polynomial<NT> & Polynomial<NT>::differentiate() {        // self-differentiation
   if (degree >= 0) {
     NT * c = new NT[degree];
     for (int i=1; i<=degree; i++)
@@ -1111,11 +1111,11 @@ NT content(const Polynomial<NT>& p) {
 }//content
 
 // Primitive Part:  (*this) is transformed to primPart and returned
-//	-- primPart(P) is just P/content(P)
-//	-- Should we return content(P) instead? [SHOULD IMPLEMENT THIS]
+//        -- primPart(P) is just P/content(P)
+//        -- Should we return content(P) instead? [SHOULD IMPLEMENT THIS]
 // IMPORTANT: we require that content(P)>0, hence
-// 	the coefficients of primPart(P) does 
-// 	not change sign; this is vital for use in Sturm sequences
+//         the coefficients of primPart(P) does
+//         not change sign; this is vital for use in Sturm sequences
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::primPart() {
   // ASSERT: GCD must be provided by NT
@@ -1129,7 +1129,7 @@ Polynomial<NT> & Polynomial<NT>::primPart() {
 
   NT g = content(*this);
   if (g == 1 && coeff[d] > 0)
-     return (*this);  
+     return (*this);
   for (int i=0; i<=d; i++) {
      coeff[i] =  div_exact(coeff[i], g);
   }
@@ -1158,7 +1158,7 @@ Polynomial<NT> gcd(const Polynomial<NT>& p, const Polynomial<NT>& q) {
        if(p.getCoeffi(p.getTrueDegree()) < 0){
          return Polynomial<NT>(p).negate();
        }else
-         return p;	// If q<>0, then we know p<>0
+         return p;        // If q<>0, then we know p<>0
    }
   }
   Polynomial<NT> temp0(p);
@@ -1167,7 +1167,7 @@ Polynomial<NT> gcd(const Polynomial<NT>& p, const Polynomial<NT>& q) {
   // We want to compute:
   // gcd(p,q) = gcd(content(p),content(q)) * gcd(primPart(p), primPart(q))
 
-  NT cont0 = content(p);	// why is this temporary needed?
+  NT cont0 = content(p);        // why is this temporary needed?
   NT cont1 = content(q);
   NT cont = gcd(cont0,cont1);
   temp0.primPart();
@@ -1178,9 +1178,9 @@ Polynomial<NT> gcd(const Polynomial<NT>& p, const Polynomial<NT>& q) {
 }//gcd
 
 // sqFreePart()
-// 	-- this is a self-modifying operator!
-// 	-- Let P =(*this) and Q=square-free part of P.
-// 	-- (*this) is transformed into P, and gcd(P,P') is returned
+//         -- this is a self-modifying operator!
+//         -- Let P =(*this) and Q=square-free part of P.
+//         -- (*this) is transformed into P, and gcd(P,P') is returned
 // NOTE: The square-free part of P is defined to be P/gcd(P, P')
 template <class NT>
 Polynomial<NT>  Polynomial<NT>::sqFreePart() {
@@ -1207,7 +1207,7 @@ Polynomial<NT>  Polynomial<NT>::sqFreePart() {
 // ==================================================
 
 // reverse:
-// 	reverses the list of coefficients
+//         reverses the list of coefficients
 template <class NT>
 void Polynomial<NT>::reverse() {
   NT tmp;
@@ -1218,20 +1218,20 @@ void Polynomial<NT>::reverse() {
   }
 }//reverse
 
-// negate: 
-// 	multiplies the polynomial by -1
-// 	Chee: 4/29/04 -- added negate() to support negPseudoRemainder(B)
+// negate:
+//         multiplies the polynomial by -1
+//         Chee: 4/29/04 -- added negate() to support negPseudoRemainder(B)
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::negate() {
-  for (int i=0; i<= degree; i++) 
-    coeff[i] *= -1;  	// every NT must be able to construct from -1
+  for (int i=0; i<= degree; i++)
+    coeff[i] *= -1;          // every NT must be able to construct from -1
   return *this;
 }//negate
 
 // makeTailCoeffNonzero
-// 	Divide (*this) by X^k, so that the tail coeff becomes non-zero.
-//	The value k is returned.  In case (*this) is 0, return k=-1.
-//	Otherwise, if (*this) is unchanged, return k=0.
+//         Divide (*this) by X^k, so that the tail coeff becomes non-zero.
+//        The value k is returned.  In case (*this) is 0, return k=-1.
+//        Otherwise, if (*this) is unchanged, return k=0.
 template <class NT>
 int Polynomial<NT>::makeTailCoeffNonzero() {
   int k=-1;
@@ -1242,8 +1242,8 @@ int Polynomial<NT>::makeTailCoeffNonzero() {
     }
   }
   if (k <= 0)
-    return k;	// return either 0 or -1
-  degree -=k;		// new (lowered) degree
+    return k;        // return either 0 or -1
+  degree -=k;                // new (lowered) degree
   NT * c = new NT[1+degree];
   for (int i=0; i<=degree; i++)
     c[i] = coeff[i+k];
@@ -1255,12 +1255,12 @@ int Polynomial<NT>::makeTailCoeffNonzero() {
 // filedump(string msg, ostream os, string com, string com2):
 //      Dumps polynomial to output stream os
 //      msg is any message
-//      NOTE: Default is com="#", which is placed at start of each 
-//            output line. 
+//      NOTE: Default is com="#", which is placed at start of each
+//            output line.
 template <class NT>
 void Polynomial<NT>::filedump(std::ostream & os,
                           std::string msg,
-			  std::string commentString,
+                          std::string commentString,
                           std::string commentString2) const {
   int d= getTrueDegree();
   if (msg != "") os << commentString << msg << std::endl;
@@ -1269,67 +1269,67 @@ void Polynomial<NT>::filedump(std::ostream & os,
     os << commentString << "0";
     return;
   }
-  for (; i<=d;  ++i)	// get to the first non-zero coeff
+  for (; i<=d;  ++i)        // get to the first non-zero coeff
     if (coeff[i] != 0)
       break;
   int termsInLine = 1;
 
   // OUTPUT the first nonzero term
   os << commentString;
-  if (coeff[i] == 1) {			// special cases when coeff[i] is
-    if (i>1) os << "x^" << i;	// either 1 or -1 
+  if (coeff[i] == 1) {                        // special cases when coeff[i] is
+    if (i>1) os << "x^" << i;        // either 1 or -1
     else if (i==1) os << "x" ;
     else os << "1";
   } else if (coeff[i] == -1) {
     if (i>1) os << "-x^" << i;
     else if (i==1) os << "-x" ;
     else os << "-1";
-  } else {				// non-zero coeff
+  } else {                                // non-zero coeff
     os << coeff[i];
     if (i>1) os << "*x^" << i;
     else if (i==1) os << "x" ;
-  } 
+  }
   // OUTPUT the remaining nonzero terms
   for (i++ ; i<= getTrueDegree(); ++i) {
-    if (coeff[i] == 0) 
+    if (coeff[i] == 0)
       continue;
     termsInLine++;
     if (termsInLine % Polynomial<NT>::COEFF_PER_LINE == 0) {
       os << std::endl;
       os << commentString2;
     }
-    if (coeff[i] == 1) {		// special when coeff[i] = 1
+    if (coeff[i] == 1) {                // special when coeff[i] = 1
       if (i==1) os << " + x";
       else os << " + x^" << i;
-    } else if (coeff[i] == -1) {	// special when coeff[i] = -1
+    } else if (coeff[i] == -1) {        // special when coeff[i] = -1
       if (i==1) os << " - x";
       else os << " -x^" << i;
-    } else {				// general case
-      if(coeff[i] > 0){	
-	os << " + ";
+    } else {                                // general case
+      if(coeff[i] > 0){
+        os << " + ";
         os << coeff[i];
       }else
         os << coeff[i];
 
       if (i==1) os << "*x";
       else os << "*x^" << i;
-    } 
+    }
   }
 }//filedump
 
 // dump(message, ofstream, commentString) -- dump to file
 template <class NT>
 void Polynomial<NT>::dump(std::ofstream & ofs,
-		std::string msg,
-		std::string commentString,
+                std::string msg,
+                std::string commentString,
                 std::string commentString2) const {
   filedump(ofs, msg, commentString, commentString2);
 }
 
-// dump(message) 	-- to std output
+// dump(message)         -- to std output
 template <class NT>
 void Polynomial<NT>::dump(std::string msg, std::string com,
-		std::string com2) const {
+                std::string com2) const {
   filedump(std::cout, msg, com, com2);
 }
 
@@ -1354,7 +1354,7 @@ void Polynomial<NT>::mapleDump() const {
 
 // friend differentiation
 template <class NT>
-Polynomial<NT> differentiate(const Polynomial<NT> & p) {	  // differentiate
+Polynomial<NT> differentiate(const Polynomial<NT> & p) {          // differentiate
   Polynomial<NT> q(p);
   return q.differentiate();
 }
@@ -1371,7 +1371,7 @@ Polynomial<NT> differentiate(const Polynomial<NT> & p, int n) {//multi-different
 
 // friend equality comparison
 template <class NT>
-bool operator==(const Polynomial<NT>& p, const Polynomial<NT>& q) {	// ==
+bool operator==(const Polynomial<NT>& p, const Polynomial<NT>& q) {        // ==
   int d, D;
   Polynomial<NT> P(p);
   P.contract();
@@ -1382,23 +1382,23 @@ bool operator==(const Polynomial<NT>& p, const Polynomial<NT>& q) {	// ==
     D = Q.degree;
     for (int i = d+1; i<=D; i++)
       if (Q.coeff[i] != 0)
-        return false;	// return false
+        return false;        // return false
   } else {
     D = P.degree;
     d = Q.degree;
     for (int i = d+1; i<=D; i++)
       if (P.coeff[i] != 0)
-        return false;	// return false
+        return false;        // return false
   }
   for (int i = 0; i <= d; i++)
     if (P.coeff[i] != Q.coeff[i])
-      return false;	// return false
-  return true; 	// return true
+      return false;        // return false
+  return true;         // return true
 }
 
 // friend non-equality comparison
 template <class NT>
-bool operator!=(const Polynomial<NT>& p, const Polynomial<NT>& q) {	// !=
+bool operator!=(const Polynomial<NT>& p, const Polynomial<NT>& q) {        // !=
   return (!(p == q));
 }
 
@@ -1472,7 +1472,7 @@ NT res(Polynomial<NT> p, Polynomial<NT> q) {
   p.pseudoRemainder(q, C);
 
   if(zeroP(p) && n ==0)
-     return (pow(q.coeff[0], m));	
+     return (pow(q.coeff[0], m));
 
   int l = p.getTrueDegree();
 
@@ -1500,7 +1500,7 @@ NT psc(int i,Polynomial<NT> p, Polynomial<NT> q) {
      return 0;
 
   NT b = q.coeff[n];//Leading coefficient of Q
-  NT lc = p.coeff[m], C;	
+  NT lc = p.coeff[m], C;
 
 
   p.pseudoRemainder(q, C);
@@ -1536,14 +1536,14 @@ Polynomial<NT> factorI(Polynomial<NT> p, int m){
   Polynomial<NT> *u = new Polynomial<NT>[d+1];
   u[d] = w[d-1];
   for(int i = d-1; i >=m; i--){
-	temp = power(u[i+1],2);
+        temp = power(u[i+1],2);
      for(int j=i+2; j <=d; j++){
         temp *= power(u[j],j-i+1);
      }
      u[i] = w[i-1].pseudoRemainder(temp);//i-1 since the array starts at 0
-  } 
-	
-	delete[] w;
+  }
+
+        delete[] w;
   return u[m];
 }
 

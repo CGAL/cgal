@@ -48,7 +48,7 @@ void fit_point_set(std::list<Point>& points,
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),kernel,
-					   CGAL::Default_diagonalize_traits<FT,3>());
+                                           CGAL::Default_diagonalize_traits<FT,3>());
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
@@ -56,7 +56,7 @@ void fit_point_set(std::list<Point>& points,
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>(),kernel,
-					   CGAL::Default_diagonalize_traits<FT,3>());
+                                           CGAL::Default_diagonalize_traits<FT,3>());
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
 }

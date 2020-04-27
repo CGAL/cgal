@@ -74,7 +74,7 @@ void Scene_plane_item::computeElements() const
     positions_quad.push_back(0.0  );
 
     getTriangleContainer(0)->allocate(Tc::Flat_vertices, positions_quad.data(),
-                                      static_cast<int>(positions_quad.size() 
+                                      static_cast<int>(positions_quad.size()
                                                        * sizeof(float)));
     }
     //The grid
@@ -104,7 +104,7 @@ void Scene_plane_item::computeElements() const
             positions_lines.push_back(0.0          );
         }
         getEdgeContainer(0)->allocate(Ec::Vertices, positions_lines.data(),
-                                          static_cast<int>(positions_lines.size() 
+                                          static_cast<int>(positions_lines.size()
                                                            * sizeof(float)));
     }
     nb_quads = positions_quad.size();
@@ -128,11 +128,11 @@ void Scene_plane_item::draw(Viewer_interface* viewer)const
     computeElements();
     initializeBuffers(viewer);
   }
-  
+
   QMatrix4x4 f_matrix;
   for(int i=0; i<16; i++)
     f_matrix.data()[i] = (float)frame->matrix()[i];
-  
+
   getTriangleContainer(0)->setFrameMatrix(f_matrix);
   getTriangleContainer(0)->setColor(this->color());
   getTriangleContainer(0)->draw(viewer, true);
@@ -198,9 +198,9 @@ Scene_plane_item* Scene_plane_item::clone() const {
 }
 
 QString Scene_plane_item::toolTip() const {
-  
+
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  
+
   const CGAL::qglviewer::Vec& pos = frame->position() - offset;
   const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   return
@@ -286,10 +286,10 @@ void Scene_plane_item::setManipulatable(bool b) {
 QMenu* Scene_plane_item::contextMenu()
 {
   QMenu* menu = Scene_item::contextMenu();
-  
+
   const char* prop_name = "Menu modified by Scene_plane_item.";
   bool menuChanged = menu->property(prop_name).toBool();
-  
+
   if(!menuChanged) {
     menu->addSeparator();
     QAction* actionOrientPlane=
@@ -316,7 +316,7 @@ void Scene_plane_item::setPlaneOrientation()
   const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   do{
     bool ok;
-    
+
     QString placeHolder = tr("%1*x + %2*y + %3*z + %4 = 0")
         .arg(n[0]).arg(n[1]).arg(n[2]).arg( - (pos -offset)* n);
     QString eq = QInputDialog::getText(CGAL::Three::Three::mainWindow(),
@@ -334,7 +334,7 @@ void Scene_plane_item::setPlaneOrientation()
     }
   }while(!does_match);
   double a(rx.cap(1).toDouble()), b(rx.cap(2).toDouble()), c(rx.cap(3).toDouble()), d(rx.cap(4).toDouble());
-  
+
   Kernel_epic::Point_3 sure_point(0,0,0);
   if(c != 0)
     sure_point = Kernel_epic::Point_3(offset.x, offset.y, offset.z-d/c);
@@ -342,9 +342,9 @@ void Scene_plane_item::setPlaneOrientation()
     sure_point = Kernel_epic::Point_3(offset.x, offset.y-d/b, offset.z);
   else if (a !=0)
     sure_point = Kernel_epic::Point_3(offset.x-d/a, offset.y, offset.z);
-  
+
   Kernel_epic::Plane_3 pl(sure_point, Kernel_epic::Vector_3(a,b,c));
-  
+
   QVector3D normal(a,b,c);
   normal.normalize();
   setNormal(normal.x(), normal.y(), normal.z());
@@ -353,7 +353,7 @@ void Scene_plane_item::setPlaneOrientation()
         (scene->bbox().ymin() + scene->bbox().ymax()) /2.0   +offset.y,
       (scene->bbox().zmin() + scene->bbox().zmax()) /2.0   +offset.z );
   bbox_center = pl.projection(bbox_center);
-  QVector3D new_pos = 
+  QVector3D new_pos =
       QVector3D(bbox_center.x(), bbox_center.y(), bbox_center.z());
   setPosition(new_pos.x(), new_pos.y(), new_pos.z());
   invalidateOpenGLBuffers();

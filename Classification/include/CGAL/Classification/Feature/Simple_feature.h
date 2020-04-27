@@ -39,7 +39,7 @@ class Simple_feature : public Feature_base
 {
   const InputRange& m_input;
   PropertyMap m_pmap;
-  
+
 public:
   /*!
     \brief Constructs the feature using an input range and a property map.

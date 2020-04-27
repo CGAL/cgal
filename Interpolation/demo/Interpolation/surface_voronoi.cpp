@@ -80,10 +80,10 @@ void visu_points(CGAL::Geomview_stream & os, const Point_vector & points)
 //point generation:
 // on a sphere:
 void generate_sphere_points(const int& n,
-			    const double& r,
-			    Point_vector& points,
-			    //the test point + normal
-			    Point &p, Vector &normal){
+                            const double& r,
+                            Point_vector& points,
+                            //the test point + normal
+                            Point &p, Vector &normal){
   CGAL::Random_points_on_sphere_3<Point> g(r);
   std::copy_n( g, n, std::back_inserter(points));
   p = Point(0,0, r);
@@ -92,11 +92,11 @@ void generate_sphere_points(const int& n,
 
 // on a cylinder
 void generate_cylinder_points(const int& n,
-			      const double& r,
-			      const double& height,
-			      Point_vector& points,
-			      //the test point + normal
-			      Point &p, Vector &normal){
+                              const double& r,
+                              const double& height,
+                              Point_vector& points,
+                              //the test point + normal
+                              Point &p, Vector &normal){
 
   Point_2_vector points_2;
   points_2.reserve(n);
@@ -116,16 +116,16 @@ void generate_cylinder_points(const int& n,
 
 // on a cube
 void generate_cube_points(const int& n,
-			  const double& r,
-			  Point_vector& points,
-			  //the test point + normal
-			  Point &p, Vector &normal){
+                          const double& r,
+                          Point_vector& points,
+                          //the test point + normal
+                          Point &p, Vector &normal){
 
   Point_2_vector points_2;
   int m=n/6;
   points_2.reserve(m);
   CGAL::points_on_square_grid_2(r,m,std::back_inserter(points_2),
-				CGAL::Creator_uniform_2<Coord_type,Point_2>());
+                                CGAL::Creator_uniform_2<Coord_type,Point_2>());
   //take the tangent plane to the sphere:
   for(int i=0; i < m; i++){
     points.push_back(Point(points_2[i].x(), points_2[i].y(), -r));
@@ -155,7 +155,7 @@ int main()
   // Create test point set. Prepare a vector for 100 points.
   int d;
   std::cout<<"Choose type of surface: 0 -- sphere, 1 -- cylinder,"
-	   << "2 -- cube "<< std::endl;
+           << "2 -- cube "<< std::endl;
   std::cin>> d;
   Point_vector points;
   points.reserve(n);
@@ -177,11 +177,11 @@ int main()
     break;
   case 1:
     transform = Transformation(Coord_type(1),Coord_type(0),Coord_type(0),
-			       Coord_type(0),
-			       Coord_type(0),Coord_type(0.9063),
-			       Coord_type(-0.42261826),Coord_type(0),
-			       Coord_type(0),Coord_type(0.42261826),
-			       Coord_type(0.9063),Coord_type(0));
+                               Coord_type(0),
+                               Coord_type(0),Coord_type(0.9063),
+                               Coord_type(-0.42261826),Coord_type(0),
+                               Coord_type(0),Coord_type(0.42261826),
+                               Coord_type(0.9063),Coord_type(0));
     break;
   case 2:
     transform = Transformation(CGAL::TRANSLATION, Vector(2,3,-1));
@@ -190,7 +190,7 @@ int main()
   //apply affine transformation to points
   Point_vector pts;
   std::transform( points.begin(),points.end(), std::back_inserter(pts),
-		  transform);
+                  transform);
   points=pts;
   p= transform(p);
   normal =transform(normal);
@@ -215,8 +215,8 @@ int main()
   gv << CGAL::orange() <<p;
 
   std::cout << "Visualizing the intersection of "
-	    << "3D Voronoi diagram with tangent plane at "
-	    << p << "." << std::endl;
+            << "3D Voronoi diagram with tangent plane at "
+            << p << "." << std::endl;
   gv << CGAL::blue();
   T.draw_dual(gv);
   Face_iterator fit = T.finite_faces_begin(),

@@ -304,7 +304,7 @@ public:
     }
 
     if ( abcq==COPLANAR &&
-         is_edge_target_incident_to_face(opposite(eh, tm), fh) ) 
+         is_edge_target_incident_to_face(opposite(eh, tm), fh) )
     {
       return; // no intersection (incident edge)
     }

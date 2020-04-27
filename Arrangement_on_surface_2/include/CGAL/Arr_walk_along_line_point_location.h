@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on old version by Oren Nechushtan and Iddo Hanniel)
@@ -67,7 +67,7 @@ protected:
     Isolated_vertex_const_iterator;
 
   // Data members:
-  const Arrangement_2*    p_arr;        // The associated arrangement.  
+  const Arrangement_2*    p_arr;        // The associated arrangement.
   const Traits_adaptor_2* geom_traits;  // Its associated geometry traits.
   const Topology_traits*  top_traits;   // Its associated topology traits.
 
@@ -77,12 +77,12 @@ protected:
 
 public:
   /*! Default constructor. */
-  Arr_walk_along_line_point_location() : 
+  Arr_walk_along_line_point_location() :
     p_arr(nullptr),
     geom_traits(nullptr),
     top_traits(nullptr)
   {}
-        
+
   /*! Constructor given an arrangement. */
   Arr_walk_along_line_point_location(const Arrangement_2& arr) :
     p_arr(&arr)
@@ -93,7 +93,7 @@ public:
   }
 
   /*! Attach an arrangement object. */
-  void attach(const Arrangement_2& arr) 
+  void attach(const Arrangement_2& arr)
   {
     p_arr = &arr;
     geom_traits =
@@ -108,7 +108,7 @@ public:
     geom_traits = nullptr;
     top_traits = nullptr;
   }
- 
+
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -168,7 +168,7 @@ protected:
    * \param is_on_edge Output: Is the query point located on closest_he.
    * \param closest_to_target Output: Whether the closest point to p in
    *                                  closest_he to p is its target (in case
-   *                                  p is not located on closest_he). 
+   *                                  p is not located on closest_he).
    * \return (true) if p is contained in the connected component;
    *         (false) otherwise.
    */

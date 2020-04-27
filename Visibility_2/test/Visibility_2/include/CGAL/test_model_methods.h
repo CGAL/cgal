@@ -81,7 +81,7 @@ void test_model_methods_for_arr(
   arr_out.clear();
   typename Arrangement_2::Halfedge_const_iterator hit;
   VFH face_check_he;
-  for (hit = arr.halfedges_begin(); 
+  for (hit = arr.halfedges_begin();
     hit != arr.halfedges_end(); ++hit) {
 
     if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
@@ -100,7 +100,7 @@ void test_model_methods_for_arr(
   arr_out_check.clear();
   visibility.compute_visibility(query_pt2, hit, arr_out_check);
   assert((true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
-          (arr_out, arr_out_check)));  
+          (arr_out, arr_out_check)));
 
   // Now consider the query point as the target of a halfedge
   typename Arrangement_2::Halfedge_const_iterator hit_snd;
@@ -120,7 +120,7 @@ void test_model_methods_for_arr(
         assert(false);
       }
     }
-  }   
+  }
 }
 
 template <class Visibility_2, class Visibility_arrangement_2>

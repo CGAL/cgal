@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -78,18 +78,18 @@ struct Predicate_traits_d : public BoxTraits {
     static bool hi_greater(NT hi, NT val, Bool_t<true> ) { return hi >= val;}
     static bool hi_greater(NT hi, NT val, Bool_t<false> ){ return hi >  val;}
     static bool hi_greater (NT hi, NT val) {
-        return hi_greater(hi,val, Bool_t<closed>()); 
+        return hi_greater(hi,val, Bool_t<closed>());
     }
 
     // compare dim a b = islolesslo a b dim
-    class Compare : 
+    class Compare :
         public CGAL::cpp98::binary_function<Box_parameter,Box_parameter,bool>
     {
         int dim;
     public:
         Compare(int dim) : dim(dim) {}
-        bool operator()(Box_parameter a, Box_parameter b) const { 
-            return is_lo_less_lo(a,b,dim); 
+        bool operator()(Box_parameter a, Box_parameter b) const {
+            return is_lo_less_lo(a,b,dim);
         }
     };
 
@@ -99,7 +99,7 @@ struct Predicate_traits_d : public BoxTraits {
         int dim;
     public:
         Lo_less(NT value, int dim) : value(value), dim(dim) {}
-        bool operator() (Box_parameter box) const { 
+        bool operator() (Box_parameter box) const {
             return BoxTraits::min_coord(box, dim) < value;
         }
     };
@@ -122,7 +122,7 @@ struct Predicate_traits_d : public BoxTraits {
         Spanning(NT lo, NT hi, int dim) : lo(lo), hi(hi), dim(dim) {}
         // returns true <=> box spans [lo,hi) in dimension dim
         bool operator() (Box_parameter box) const {
-            return BoxTraits::min_coord(box,dim) < lo 
+            return BoxTraits::min_coord(box,dim) < lo
                 && BoxTraits::max_coord(box,dim) > hi;
         }
     };
@@ -140,12 +140,12 @@ struct Predicate_traits_d : public BoxTraits {
     }
     static bool is_lo_less_lo(Box_parameter a, Box_parameter b, int dim) {
         return BoxTraits::min_coord(a,dim)  < BoxTraits::min_coord(b,dim) ||
-               ( BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) && 
+               ( BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) &&
                  BoxTraits::id(a) < BoxTraits::id(b) );
     }
 
     static bool is_lo_less_hi(Box_parameter a, Box_parameter b, int dim) {
-        return hi_greater( BoxTraits::max_coord(b,dim), 
+        return hi_greater( BoxTraits::max_coord(b,dim),
                            BoxTraits::min_coord(a,dim));
     }
     static bool does_intersect (Box_parameter a, Box_parameter b, int dim) {

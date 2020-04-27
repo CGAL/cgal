@@ -11,7 +11,7 @@
  *
  *      Here is an example of how to use it:
  *
- *		Timer timer;
+ *                Timer timer;
  *
  *              timer.start();
  *              .. do some tasks for timing ..
@@ -20,7 +20,7 @@
  *              long clock = timer.getClocks();     // get CPU clocks
  *              long seconds = time.getSeconds();   // get seconds
  *
- * Written by 
+ * Written by
  *       Zilin Du <zilin@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
@@ -37,7 +37,7 @@
 #include <CGAL/CORE/Impl.h>
 #include <ctime>
 
-namespace CORE { 
+namespace CORE {
 
 class Timer {
 private:

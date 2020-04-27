@@ -12,7 +12,7 @@ typedef Kernel::Construct_iso_box_d Construct_iso_box_d;
 int main() {
 
   const int dim=4;
-  
+
   // define box b1==*b2==b3, b4
   // define degenerate box b5 of dimension dim+1
 
@@ -20,7 +20,7 @@ int main() {
   double q1[dim];
   double m1[dim];
   for (int i1=0; i1<dim; i1++) {
-  	p1[i1]=  0.1*(i1+1);
+          p1[i1]=  0.1*(i1+1);
         q1[i1]=  0.2*(i1+1);
         m1[i1]= 0.15*(i1+1);
   }
@@ -33,7 +33,7 @@ int main() {
   double p2[dim];
   double q2[dim];
   for (int i2=0; i2<dim; i2++) {
-  	p2[i2]=  0.1*(i2+1);
+          p2[i2]=  0.1*(i2+1);
         q2[i2]=  0.2*(i2+1);
   }
   Point pp2(dim,p2,p2+dim);
@@ -47,7 +47,7 @@ int main() {
   double p4[dim];
   double q4[dim];
   for (int i4=0; i4<dim; i4++) {
-  	p4[i4]=  1.0 + 0.1*(i4+1);
+          p4[i4]=  1.0 + 0.1*(i4+1);
         q4[i4]=  1.0 + 0.2*(i4+1);
   }
   Point pp4(dim,p4,p4+dim);
@@ -57,7 +57,7 @@ int main() {
   double p5[dim+1];
   double q5[dim+1];
   for (int i5=0; i5<dim; i5++) {
-  	p5[i5]=  1.0 + 0.1*(i5+1);
+          p5[i5]=  1.0 + 0.1*(i5+1);
         q5[i5]=  1.0 + 0.2*(i5+1);
   }
   p5[dim]=1.0;
@@ -96,6 +96,6 @@ int main() {
   std::cout << "volume of b1=" << b1.volume() << std::endl;
   std::cout << "volume of b4=" << b4.volume() << std::endl;
   std::cout << "volume of b5=" << b5.volume() << std::endl;
-  return 0; 
+  return 0;
 }
 

@@ -25,7 +25,7 @@ typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
 typedef K::Iso_rectangle_2 Rectangle_2;
 
-/// Global variables 
+/// Global variables
 typedef std::map<std::string, std::string> String_options;
 typedef std::map<std::string, double> Double_options;
 
@@ -36,10 +36,10 @@ bool use_angle;
 template <typename K>
 typename K::FT
 criterion(const typename K::Point_3& p0,
-	  const typename K::Point_3& p1,
-	  const typename K::Point_3& p2,
-	  const typename K::Point_3& p3,
-	  K k = K())
+          const typename K::Point_3& p1,
+          const typename K::Point_3& p2,
+          const typename K::Point_3& p3,
+          K k = K())
 {
   if(use_angle)
     return CGAL::minimum_dihedral_angle(p0, p1, p2, p3, k);
@@ -61,30 +61,30 @@ void usage(char *argv0, std::string error = "")
 {
   if( error != "" )
     std:: cerr << "Error: " << error << std::endl;
-  std::cerr << "Usage:\n  " 
+  std::cerr << "Usage:\n  "
             << argv0
             << " [--scale x] (--tets|--noboite|--mesh) FILE\n"
-	    << "Options:\n"
-	    << "  --scale SCALE                 "
-	    << "SCALE is a real number, which will be the\n"
-	    << "                                "
-	    << "the vertical scaling of the histogram.\n"
-	    << "  --criterion ANGLE\n"
-	    << "  --criterion RATIO             "
-	    << "Choose between an min dihedral angle distribution\n"
-	    << "                                "
-	    << "or an aspect ratio distribution.\n"
-	    << "                                "
-	    << "Default: RATIO.\n"
-	    << "  --tets FILE\n"
-	    << "  --noboite FILE\n"
-	    << "  --mesh FILE\n"
-	    << "  --cgal FILE\n"
-	    << "                                "
-	    << "Read input file FILE.\n"
-	    << "                                "
-	    << "FILE must a .tets file, or a .noboite file,\n"
-	    << "                                a cgal file, or a .mesh file."
+            << "Options:\n"
+            << "  --scale SCALE                 "
+            << "SCALE is a real number, which will be the\n"
+            << "                                "
+            << "the vertical scaling of the histogram.\n"
+            << "  --criterion ANGLE\n"
+            << "  --criterion RATIO             "
+            << "Choose between an min dihedral angle distribution\n"
+            << "                                "
+            << "or an aspect ratio distribution.\n"
+            << "                                "
+            << "Default: RATIO.\n"
+            << "  --tets FILE\n"
+            << "  --noboite FILE\n"
+            << "  --mesh FILE\n"
+            << "  --cgal FILE\n"
+            << "                                "
+            << "Read input file FILE.\n"
+            << "                                "
+            << "FILE must a .tets file, or a .noboite file,\n"
+            << "                                a cgal file, or a .mesh file."
             << std::endl;
   exit(1);
 }
@@ -95,26 +95,26 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
     {
       std::string arg = argv[1+extra_args];
       if( arg.substr(0, 2) == "--" )
-	{
-	  Double_options::iterator opt_it = 
-	    double_options.find(arg.substr(2, arg.length()-2));
-	  if( opt_it != double_options.end() )
-	    {
-	      if( argc < (3 + extra_args) )
-		usage(argv[0],
-		      (arg + " must be followed by a double!").c_str());
-	      std::stringstream s;
-	      double val;
-	      s << argv[extra_args + 2];
-	      s >> val;
-	      if( !s )
-		usage(argv[0], ("Bad double after " + arg + "!").c_str());
-	      opt_it->second = val;
-	      parse_argv(argc, argv, extra_args + 2);
-	    }
-	  else
+        {
+          Double_options::iterator opt_it =
+            double_options.find(arg.substr(2, arg.length()-2));
+          if( opt_it != double_options.end() )
+            {
+              if( argc < (3 + extra_args) )
+                usage(argv[0],
+                      (arg + " must be followed by a double!").c_str());
+              std::stringstream s;
+              double val;
+              s << argv[extra_args + 2];
+              s >> val;
+              if( !s )
+                usage(argv[0], ("Bad double after " + arg + "!").c_str());
+              opt_it->second = val;
+              parse_argv(argc, argv, extra_args + 2);
+            }
+          else
           {
-            String_options::iterator opt_it = 
+            String_options::iterator opt_it =
                 string_options.find(arg.substr(2, arg.length()-2));
             if( opt_it != string_options.end() )
             {
@@ -128,7 +128,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
             else
               usage(argv[0], ("Invalid option: " + arg + "!").c_str());
           }
-	}
+        }
     }
 } // end parse_argv
 
@@ -140,22 +140,22 @@ void output_distribution_to_png(std::vector<double>& elements,
   const int number_of_cells = elements.size();
 
   std::vector<int> distribution(number_of_classes);
-  
+
   for(int j=0;j<number_of_cells;j++)
     { // This block is (c) Pierre Alliez 2005
       int index = number_of_classes-1;
       // saturate highest value to last bin
 
       if(elements[j] < max)
-	{
-	  double dratio = elements[j]/max;
-	  index = static_cast<int>(dratio*(double)number_of_classes);
-	}
+        {
+          double dratio = elements[j]/max;
+          index = static_cast<int>(dratio*(double)number_of_classes);
+        }
       distribution[index]++;
     }
 
-//   const int max_occurrence = *std::max_element(distribution.begin(), 
-// 					       distribution.end());
+//   const int max_occurrence = *std::max_element(distribution.begin(),
+//                                                distribution.end());
 
   CGAL::Qt_widget *widget = new CGAL::Qt_widget();
   qApp->setMainWidget(widget);
@@ -163,12 +163,12 @@ void output_distribution_to_png(std::vector<double>& elements,
   widget->set_window(0, 1, 0, 1, true); // x_min, x_max,
                                         // y_min, y_max.
   widget->show();
-  
+
   widget->lock();
   *widget << CGAL::FillColor(CGAL::Color(200, 200, 200))
-	  << CGAL::Color(200, 200, 200)
-	  << Rectangle_2(Point_2(0, 0), Point_2(1,1));
-  
+          << CGAL::Color(200, 200, 200)
+          << Rectangle_2(Point_2(0, 0), Point_2(1,1));
+
   if( number_of_classes == 0 ) return;
   const double width = 1.0 / number_of_classes;
 
@@ -179,28 +179,28 @@ void output_distribution_to_png(std::vector<double>& elements,
   for(int k=0;k<number_of_classes;k++)
     if(distribution[k]>0)
       {
-	double height;
-	if(scale>0)
-	  height = ( (distribution[k]+0.)/number_of_cells ) * scale;
-	else
-	  height = ( std::log(distribution[k]+0.)/std::log(number_of_cells) ) * (-scale);
-	*widget << CGAL::black() 
-		<< Rectangle_2(Point_2(k*width, 0),
-			       Point_2((k+1)*width, height));
+        double height;
+        if(scale>0)
+          height = ( (distribution[k]+0.)/number_of_cells ) * scale;
+        else
+          height = ( std::log(distribution[k]+0.)/std::log(number_of_cells) ) * (-scale);
+        *widget << CGAL::black()
+                << Rectangle_2(Point_2(k*width, 0),
+                               Point_2((k+1)*width, height));
       }
     else
       *widget << CGAL::red() << Segment_2(Point_2(k*width, 0),
-					Point_2((k+1)*width, 0));
-  
+                                        Point_2((k+1)*width, 0));
+
   widget->unlock();
   if( widget->get_pixmap().save( QString(filename.c_str()),
-				 "PNG") )
+                                 "PNG") )
     std::cerr << "Distribution saved to file " << filename
-	      << std::endl;
+              << std::endl;
   else
     {
       std::cerr << "Error: cannot save distribution to file "
-		<< filename << std::endl; 
+                << filename << std::endl;
       exit(1);
     }
   qApp->exec();
@@ -236,7 +236,7 @@ bool read_tets(std::vector<double>& elements, std::istream& in)
       float x,y,z;
       in >> x >> y >> z;
       if( !in )
-	return false;
+        return false;
       points.push_back(Point_3(x,y,z));
     }
 
@@ -246,12 +246,12 @@ bool read_tets(std::vector<double>& elements, std::istream& in)
       int dummy, i0,i1,i2,i3;
       in >> dummy >> i0 >> i1 >> i2 >> i3;
       if( dummy != 4 || !in )
-	return false;
+        return false;
       elements.push_back(criterion(points[i0],
-				   points[i1],
-				   points[i2],
-				   points[i3],
-				   K()));
+                                   points[i1],
+                                   points[i2],
+                                   points[i3],
+                                   K()));
     }
   return true;
 }
@@ -266,7 +266,7 @@ bool read_mesh(std::vector<double>& elements, std::istream& in)
       version != 1 ||
       ! in)
     return failed("read_mesh: bad version");
-  
+
   int dimension;
   in >> head >> dimension;
   if( head != "Dimension" ||
@@ -299,7 +299,7 @@ bool read_mesh(std::vector<double>& elements, std::istream& in)
     double dummy;
     in >> dummy;
   }
-  
+
   // Tetrahedra
   int number_of_cells;
   in >> head >> number_of_cells;
@@ -312,15 +312,15 @@ bool read_mesh(std::vector<double>& elements, std::istream& in)
     if( !in )
       return failed("read_mesh: bad file (reading of cells)");
     elements.push_back(criterion(points[i0-1],
-				 points[i1-1],
-				 points[i2-1],
-				 points[i3-1],
-				 K()));
+                                 points[i1-1],
+                                 points[i2-1],
+                                 points[i3-1],
+                                 K()));
   }
   in >> head;
   if ( !in || head != "End")
     return failed("read_mesh: bad file (missing End)");
-  else 
+  else
     return true;
 }
 
@@ -330,8 +330,8 @@ bool read_noboite(std::vector<double>& elements, std::istream& in)
   int nb_tets = 0;
   int nb_input_points;
   int dummy;
-  
-  in >> nb_tets >> nb_vertices >> nb_input_points 
+
+  in >> nb_tets >> nb_vertices >> nb_input_points
      >> dummy
      >> dummy
      >> dummy
@@ -347,15 +347,15 @@ bool read_noboite(std::vector<double>& elements, std::istream& in)
      >> dummy
      >> dummy;
 
-  if( !in ) 
+  if( !in )
     return false;
-  
+
   std::vector<Point_3> points;
   points.reserve(nb_vertices);
-  
+
   elements.clear();
   elements.reserve(nb_tets);
-  
+
   // read tets
   std::vector<int> tets;
   tets.reserve(4 * nb_tets);
@@ -371,25 +371,25 @@ bool read_noboite(std::vector<double>& elements, std::istream& in)
     tets.push_back(i3-1);
   }
 
-    
+
   // read points
   for(int i=0;i<nb_vertices;i++)
   {
     double x,y,z;
     in >> x >> y >> z;
-    if( !in ) 
+    if( !in )
       return false;
     points.push_back(Point_3(x,y,z));
   }
-  
+
   // compute elements
   for(int i = 0; i < 4 * nb_tets; i += 4)
   {
     elements.push_back(criterion(points[tets[i]],
-				 points[tets[i+1]],
-				 points[tets[i+2]],
-				 points[tets[i+3]],
-				 K()));
+                                 points[tets[i+1]],
+                                 points[tets[i+2]],
+                                 points[tets[i+3]],
+                                 K()));
   }
   return true;
 }
@@ -417,7 +417,7 @@ int main(int argc, char** argv)
   std::string tets_filename = string_options["tets"];
   std::string mesh_filename = string_options["mesh"];
   std::string cgal_filename = string_options["cgal"];
-  
+
   if(ghs_filename != "")
   {
     ghs = true;
@@ -438,7 +438,7 @@ int main(int argc, char** argv)
     tets = true;
     filename = tets_filename;
   }
-  
+
   std::vector<double> elements;
   std::ifstream in_file(filename.c_str());
   if(tets)
@@ -458,8 +458,8 @@ int main(int argc, char** argv)
   png_name << ".png";
 
   std::cout << "min: " << *std::min_element(elements.begin(), elements.end())
-	    << "\nmax: " << *std::max_element(elements.begin(), elements.end())
-	    << "\n";
+            << "\nmax: " << *std::max_element(elements.begin(), elements.end())
+            << "\n";
 
   if(tets || mesh || ghs)
   {

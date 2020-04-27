@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -72,7 +72,7 @@ public:
 
   typename cpp11::result_of<typename R::Construct_source_2( Segment_2)>::type
   source() const
-  { 
+  {
     return R_().construct_source_2_object()(*this);
   }
 
@@ -94,10 +94,10 @@ public:
     return target();
   }
 
-  
+
   typename cpp11::result_of<typename R_::Construct_min_vertex_2(Segment_2)>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION() const;
-  
+
   typename cpp11::result_of<typename R_::Construct_max_vertex_2( Segment_2)>::type
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
@@ -112,7 +112,7 @@ public:
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
-  bool        has_on(const Point_2 &p) const;  
+  bool        has_on(const Point_2 &p) const;
   bool        collinear_has_on(const Point_2 &p) const;
   FT          squared_length() const;
 
@@ -153,7 +153,7 @@ public:
   Line_2
   supporting_line() const
   {
-    typename R::Construct_line_2 construct_line;  
+    typename R::Construct_line_2 construct_line;
     return construct_line(*this);
   }
 
@@ -175,7 +175,7 @@ CGAL_KERNEL_INLINE
 typename cpp11::result_of<typename R_::Construct_min_vertex_2( Segment_2<R_> )>::type
 Segment_2<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
-  typename R_::Less_xy_2 less_xy; 
+  typename R_::Less_xy_2 less_xy;
   return less_xy(source(),target()) ? source() : target();
 }
 
@@ -184,7 +184,7 @@ CGAL_KERNEL_INLINE
 typename cpp11::result_of<typename R_::Construct_max_vertex_2( Segment_2<R_> )>::type
 Segment_2<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
-  typename R_::Less_xy_2 less_xy; 
+  typename R_::Less_xy_2 less_xy;
   return less_xy(source(),target()) ? target() : source();
 }
 
@@ -236,9 +236,9 @@ bool
 Segment_2<R_>::
 has_on(const typename R_::Point_2 &p) const
 {
-  return R_().are_ordered_along_line_2_object()(source(), 
-					       p, 
-					       target());
+  return R_().are_ordered_along_line_2_object()(source(),
+                                               p,
+                                               target());
 }
 
 

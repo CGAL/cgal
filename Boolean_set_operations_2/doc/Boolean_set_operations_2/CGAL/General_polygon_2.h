@@ -4,21 +4,21 @@ namespace CGAL {
 /*!
 \ingroup PkgBooleanSetOperations2Ref
 
-The class `General_polygon_2` models the concept `GeneralPolygon_2`. 
-It represents a simple general-polygon. It is parameterized with the type 
-`ArrTraits` that models the concept 
-`ArrangementDirectionalXMonotoneTraits_2`. The latter is a refinement 
-of the concept `ArrangementXMonotoneTraits_2`. In addition to the 
-requirements of the concept `ArrangementXMonotoneTraits_2`, a 
-model of the concept `ArrangementDirectionalXMonotoneTraits_2` must 
-support the following functions: 
-<UL> 
-<LI>Given an \f$ x\f$-monotone curve, construct its opposite curve. 
-<LI>Given an \f$ x\f$-monotone curve, compare its two endpoints lexicographically. 
-</UL> 
+The class `General_polygon_2` models the concept `GeneralPolygon_2`.
+It represents a simple general-polygon. It is parameterized with the type
+`ArrTraits` that models the concept
+`ArrangementDirectionalXMonotoneTraits_2`. The latter is a refinement
+of the concept `ArrangementXMonotoneTraits_2`. In addition to the
+requirements of the concept `ArrangementXMonotoneTraits_2`, a
+model of the concept `ArrangementDirectionalXMonotoneTraits_2` must
+support the following functions:
+<UL>
+<LI>Given an \f$ x\f$-monotone curve, construct its opposite curve.
+<LI>Given an \f$ x\f$-monotone curve, compare its two endpoints lexicographically.
+</UL>
 
-This class supports a few convenient operations in addition to the 
-requirements that the concept `GeneralPolygon_2` lists. 
+This class supports a few convenient operations in addition to the
+requirements that the concept `GeneralPolygon_2` lists.
 
 \cgalModels `GeneralPolygon_2`
 
@@ -27,55 +27,55 @@ template< typename ArrTraits >
 class General_polygon_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-number of edges size type. 
-*/ 
-typedef unspecified_type Size; 
+number of edges size type.
+*/
+typedef unspecified_type Size;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-returns the number of edges of the general polygon. 
-*/ 
-Size size(); 
+returns the number of edges of the general polygon.
+*/
+Size size();
 
-/// @} 
+/// @}
 
-/// \name Modifiers 
+/// \name Modifiers
 /// @{
 
 /*!
-clears the polygon. 
-*/ 
-void clear(); 
+clears the polygon.
+*/
+void clear();
 
 /*!
-reverses the orientation of the polygon. 
-\pre `is_simple()`. 
-*/ 
-void reverse_orientation(); 
+reverses the orientation of the polygon.
+\pre `is_simple()`.
+*/
+void reverse_orientation();
 
-/// @} 
+/// @}
 
-/// \name Predicates 
+/// \name Predicates
 /// @{
 
 /*!
-returns `true` if the polygon is empty, and `false` otherwise. 
-*/ 
-bool is_empty(); 
+returns `true` if the polygon is empty, and `false` otherwise.
+*/
+bool is_empty();
 
 /*!
-returns the orientation of the polygon. 
-\pre `is_simple()`. 
-*/ 
-Orientation orientation(); 
+returns the orientation of the polygon.
+\pre `is_simple()`.
+*/
+Orientation orientation();
 
 /// @}
 
@@ -87,9 +87,9 @@ This operator imports a general polygon from the input stream `in`.
 An ASCII and a binary format exist. The stream detects the format
 automatically and can read both.
 
-The format consists of the number of points of the outer boundary followed 
+The format consists of the number of points of the outer boundary followed
 by the points themselves in counterclockwise order, followed by the number of holes,
-and for each hole, the number of points of the outer boundary is followed 
+and for each hole, the number of points of the outer boundary is followed
 by the points themselves in clockwise order.
 
 \relates General_polygon_2

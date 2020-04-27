@@ -232,7 +232,7 @@ void test(const Cont &)
   c11.reserve(v1.size());
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c11.insert(*it);
-  
+
   assert(c11.size() == v1.size());
   assert(c10 == c11);
 

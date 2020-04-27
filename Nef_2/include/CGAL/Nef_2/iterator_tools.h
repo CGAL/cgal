@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_ITERATORTOOLS_H
@@ -20,7 +20,7 @@
 
 namespace CGAL {
 
-template <typename Iter, typename Move> 
+template <typename Iter, typename Move>
 class CircFromIt : public Iter {
     // Ptr  node;    // The internal node ptr inherited from It.
     typedef CircFromIt<Iter,Move> Self;
@@ -76,7 +76,7 @@ public:
 
 };
 
-template <typename Iter, typename Pnt> 
+template <typename Iter, typename Pnt>
 class PntItFromVertIt : public Iter {
 public:
   typedef PntItFromVertIt<Iter,Pnt> Self;
@@ -89,9 +89,9 @@ public:
   PntItFromVertIt(Iter it) : Base(it) {}
   PntItFromVertIt(const Self& it) : Base(it) {}
 
-  reference operator*() const 
+  reference operator*() const
   { return Base::operator*().point(); }
-  pointer operator->() const 
+  pointer operator->() const
   { return &(operator*()); }
   Self& operator++() { return (Self&)Base::operator++(); }
   Self operator++(int) { Self tmp=*this; ++*this; return tmp; }

@@ -6,7 +6,7 @@ BOOST_AUTO_TEST_CASE( edges_test )
 {
   edge_iterator eb, ee;
   vertex_iterator vb, ve;
-  
+
   Surface_fixture f;
   boost::tie(eb, ee) = edges(f.m);
   boost::tie(vb, ve) = vertices(f.m);
@@ -70,12 +70,12 @@ BOOST_AUTO_TEST_CASE( in_out_equality )
 BOOST_AUTO_TEST_CASE( face_test )
 {
   Surface_fixture f;
-  std::pair<enclosure_iterator, enclosure_iterator> 
+  std::pair<enclosure_iterator, enclosure_iterator>
     enc = enclosure(f.f1, f.m);
   BOOST_CHECK(enc.first != enc.second);
   BOOST_CHECK(std::distance(enc.first, enc.second) == 3);
   enclosure_iterator begin = enc.first;
-  while(begin != enc.second) 
+  while(begin != enc.second)
   {
     BOOST_CHECK(face(*begin, f.m) == f.f1);
     ++begin;
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE( weight_map_test )
 {
   Surface_fixture f;
   Cube_fixture c;
-  
+
   CGAL::SM_edge_weight_pmap<K> wm1 = boost::get(boost::edge_weight, c.m);
   edge_iterator eb, ee;
   boost::test_tools::check_is_close_t check_close;

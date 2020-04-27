@@ -27,7 +27,7 @@ if ( CGAL_FOUND )
   CGAL_target_use_Eigen(test_implicit_shapes_with_features)
   create_single_source_cgal_program( "test_triply_periodic_minimal_surfaces.cpp" )
   CGAL_target_use_Eigen(test_triply_periodic_minimal_surfaces)
-  
+
 else()
 
   message(STATUS "This program requires the CGAL library, and will not be compiled.")

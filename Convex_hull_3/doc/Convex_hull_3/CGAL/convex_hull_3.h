@@ -42,11 +42,11 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  * the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
  * that is `pm` will contain only triangular faces.
  * if the convex hull is a point or a segment, endpoints will be added in `pm` as isolated vertices.
- * 
+ *
  * \tparam VertexListGraph a model of `VertexListGraph`.
  * \tparam PolygonMesh must be a model of `MutableFaceGraph`.
  * \tparam NamedParameters a sequence of named parameters
- * 
+ *
  * \param g the graph
  * \param pm the `PolygonMesh` that will contain the convex hull
  * \param np optional sequence of named parameters among the ones listed below

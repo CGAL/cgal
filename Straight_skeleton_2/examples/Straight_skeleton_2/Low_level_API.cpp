@@ -103,7 +103,7 @@ int main()
     if ( ss )
     {
       print_straight_skeleton(*ss);
-      
+
       // Instantiate the container of offset contours
       ContourSequence offset_contours ;
 
@@ -130,7 +130,7 @@ int main()
 
       // Remove the offset contour that corresponds to the frame.
       offset_contours.erase(f);
-      
+
       print_polygons(offset_contours);
     }
   }

@@ -39,7 +39,7 @@ using ICP = typename PointMatcher<Scalar>::ICP;
 
 /*!
    \ingroup PkgPointSetProcessing3Algorithms
-   
+
    \brief The class `ICP_config` is designed to handle preparing and passing configurations
    to the registration methods `CGAL::pointmatcher::compute_registration_transformation()`
    and `CGAL::pointmatcher::register_point_sets()`.
@@ -48,7 +48,7 @@ using ICP = typename PointMatcher<Scalar>::ICP;
    of \ref thirdpartylibpointmatcher library. The name and the parameters of any
    configuration for the corresponding registration methods are directly passed
    to \ref thirdpartylibpointmatcher library to be parsed and registered at the
-   \ref thirdpartylibpointmatcher side. 
+   \ref thirdpartylibpointmatcher side.
    */
 struct ICP_config {
   /// The name of the configuration component
@@ -62,7 +62,7 @@ namespace internal {
 
 void dump_invalid_point_matcher_config_exception_msg(const PointMatcherSupport::InvalidElement& err) {
   std::cerr << "ERROR Invalid configuration for PM::ICP, omitting configuration: " << std::endl;
-	std::cerr << "   " << err.what() << std::endl;
+        std::cerr << "   " << err.what() << std::endl;
 }
 
 template<typename Scalar, typename NamedParameters1, typename NamedParameters2>
@@ -73,7 +73,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   ICP<Scalar> icp;
 
   icp.setDefault();
@@ -89,7 +89,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
     icp.loadFromYaml(*pointmatcher_config);
     return icp;
   }
-  
+
   // In CGAL, point_set_1 is the reference while point_set_2 is the data
   // However, in pointmatcher, the order is reverse: point_set_1 is the data while point_set_2 is the reference
   // Therefore, filter params from np1 applies to reference data points while params from np2 applies to reading data points
@@ -102,7 +102,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   } else {
     // Some config chain is given: clear default values and use the provided configs
     icp.referenceDataPointsFilters.clear();
-    
+
     for(const auto& conf : reference_data_points_filter_configs)
     {
       try {
@@ -120,7 +120,7 @@ construct_icp(const NamedParameters1& np1, const NamedParameters2& np2)
   } else {
     // Some config chain is given: clear default values and use the provided configs
     icp.readingDataPointsFilters.clear();
-      
+
     for(const auto& conf : reading_data_points_filter_configs)
     {
       try {
@@ -234,13 +234,13 @@ copy_cgal_points_to_pm_matrix
     pm_points(1, idx) = pos.y();
     pm_points(2, idx) = pos.z();
     pm_points(3, idx) = Scalar(1.);
-    
+
     // normal
     const auto& normal = get (vector_map, p);
     pm_normals(0, idx) = normal.x();
     pm_normals(1, idx) = normal.y();
     pm_normals(2, idx) = normal.z();
-    
+
     ++idx;
   }
 }
@@ -260,17 +260,17 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
                                     ICP<typename Kernel::FT> icp)
 {
   using Scalar    = typename Kernel::FT;
-  
+
   using PM                  = PointMatcher<Scalar>;
   using PM_cloud            = typename PM::DataPoints;
   using PM_matrix           = typename PM::Matrix;
   using PM_transform        = typename PM::Transformation;
   using PM_transform_params = typename PM::TransformationParameters;
-  
+
   // ref_points: 1, points: 2
   std::size_t nb_ref_points = range1.size();
   std::size_t nb_points     = range2.size();
-  
+
   PM_matrix ref_points_pos_matrix    = PM_matrix (4, nb_ref_points);
   PM_matrix ref_points_normal_matrix = PM_matrix (3, nb_ref_points);
   PM_matrix points_pos_matrix    = PM_matrix (4, nb_points);
@@ -290,23 +290,23 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
                                                   vector_map2,
                                                   points_pos_matrix, // out
                                                   points_normal_matrix); // out
-                                        
+
   auto construct_PM_cloud = [](const PM_matrix& positions, const PM_matrix& normals) -> PM_cloud
   {
     PM_cloud cloud;
-    
+
     cloud.addFeature("x", positions.row(0));
     cloud.addFeature("y", positions.row(1));
     cloud.addFeature("z", positions.row(2));
     cloud.addFeature("pad", positions.row(3));
     cloud.addDescriptor("normals", normals);
-    
+
     return cloud;
   };
 
   PM_cloud ref_cloud = construct_PM_cloud(ref_points_pos_matrix, ref_points_normal_matrix);
   PM_cloud cloud     = construct_PM_cloud(points_pos_matrix,     points_normal_matrix);
-  
+
   PM_transform_params pm_transform_params = PM_transform_params::Identity(4,4);
 
   // Convert CGAL transform to pm transform
@@ -315,21 +315,21 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
       pm_transform_params(i,j) = initial_transform.m(i,j);
 
   bool converged = false;
-  try 
+  try
   {
-		const PM_transform_params prior = pm_transform_params;
-		pm_transform_params = icp(cloud, ref_cloud, prior);
+                const PM_transform_params prior = pm_transform_params;
+                pm_transform_params = icp(cloud, ref_cloud, prior);
     converged = true;
-	}
-	catch (typename PM::ConvergenceError& error)
-	{
-		std::cerr << "ERROR CGAL::pointmatcher registration (PM::ICP) failed to converge: " << std::endl;
-		std::cerr << "   " << error.what() << std::endl;
+        }
+        catch (typename PM::ConvergenceError& error)
+        {
+                std::cerr << "ERROR CGAL::pointmatcher registration (PM::ICP) failed to converge: " << std::endl;
+                std::cerr << "   " << error.what() << std::endl;
     converged = false;
-	}
+        }
 
-	// Rigid transformation
-	std::shared_ptr<PM_transform> transform = PM::get().REG(Transformation).create("RigidTransformation");
+        // Rigid transformation
+        std::shared_ptr<PM_transform> transform = PM::get().REG(Transformation).create("RigidTransformation");
   pm_transform_params = transform->correctParameters(pm_transform_params);
 
   typename Kernel::Aff_transformation_3 cgal_transform
@@ -355,7 +355,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 // point_set_1 is reference while point_set_2 is data
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   
+
    Computes the registration of `point_set_2` with respect to `point_set_1` and
    returns the corresponding affine transformation.
    Registration is computed using the Iterative Closest Point (ICP) algorithm.
@@ -376,26 +376,26 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
      type is the value type of the iterator of `PointRange1` and whose value
      type `geom_traits::Vector_3`.\cgalParamEnd
 
-     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of 
-     its iterator is `ICP_config`. 
-     
+     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of
+     its iterator is `ICP_config`.
+
      The chain of filters to be applied to the reference point cloud. The reference
      point cloud is processed into an intermediate point cloud with the given chain
      of filters to be used in the alignment procedure. The chain is organized with
      the forward traversal order of the point set filters range.
-     
+
      The chain of point set filters are applied only once at the beginning of the
      ICP procedure, i.e., before the first iteration of the ICP algorithm.
-     
+
      The filters can have several purposes, including but are not limited to
      i) removal of noisy points which render alignment of point clouds difficult,
-     ii) removal of redundant points so as to speed up alignment, iii) addition 
-     of descriptive information to the points such as a surface normal vector, 
+     ii) removal of redundant points so as to speed up alignment, iii) addition
+     of descriptive information to the points such as a surface normal vector,
      or the direction from the point to the sensor.
 
      Corresponds to `referenceDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `referenceDataPointsFilters` configuration module. 
+     the `referenceDataPointsFilters` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -403,12 +403,12 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
      \cgalParamEnd
 
      \cgalParamBegin{matcher} is a model of `ICP_config`.
-     The method used for matching (linking) the points from `point_set_2`, to the 
+     The method used for matching (linking) the points from `point_set_2`, to the
      points in the reference cloud, `point_set_1`.
-     
+
      Corresponds to `matcher` configuration module of \ref thirdpartylibpointmatcher
      library. The matcher should be chosen and set from possible components of
-     the `matcher` configuration module. 
+     the `matcher` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -416,7 +416,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
     \cgalParamEnd
 
 
-     \cgalParamBegin{outlier_filters} is a model of `Range`. The value type of 
+     \cgalParamBegin{outlier_filters} is a model of `Range`. The value type of
      its iterator is `ICP_config`.
      The chain of filters to be applied to the matched (linked) point clouds after
      each processing iteration of the ICP algorithm to remove the links which do not
@@ -427,7 +427,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 
      Corresponds to `outlierFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `outlierFilters` configuration module. 
+     the `outlierFilters` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -440,14 +440,14 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 
      Corresponds to `errorMinimizer` configuration module of \ref thirdpartylibpointmatcher
      library. The error minimizer should be chosen and set from possible components of
-     the `errorMinimizer` configuration module. 
+     the `errorMinimizer` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, `PointToPlaneErrorMinimizer` is used.
      \cgalParamEnd
 
-     \cgalParamBegin{transformation_checkers} is a model of `Range`. The value type of 
+     \cgalParamBegin{transformation_checkers} is a model of `Range`. The value type of
      its iterator is `ICP_config`.
      The chain of transformation checkers. A transformation checker can stop the
      iteration depending on the conditions it defines.
@@ -457,21 +457,21 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 
      Corresponds to `transformationCheckers` configuration module of \ref thirdpartylibpointmatcher
      library. The transformation checkers should be chosen and set from possible components of
-     the `transformationCheckers` configuration module. 
+     the `transformationCheckers` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, the chain of `CounterTransformationChecker` and
      `DifferentialTransformationChecker` is used.
      \cgalParamEnd
-     
+
      \cgalParamBegin{inspector} is a model of `ICP_config`.
      The inspector allows to log data at different steps for analysis. Inspectors
      typically provide deeper scrutiny than the logger.
 
      Corresponds to `inspector` configuration module of \ref thirdpartylibpointmatcher
      library. The inspector should be chosen and set from possible components of
-     the `inspector` configuration module. 
+     the `inspector` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
@@ -485,13 +485,13 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
 
      Corresponds to `logger` configuration module of \ref thirdpartylibpointmatcher
      library. The logger should be chosen and set from possible components of
-     the `logger` configuration module. 
+     the `logger` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, `NullLogger` is used.
      \cgalParamEnd
-     
+
      \cgalParamBegin{geom_traits} an instance of a geometric traits class,
      model of `Kernel`\cgalParamEnd
 
@@ -507,33 +507,33 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
      type is the value type of the iterator of `PointRange2` and whose value
      type `geom_traits::Vector_3`.\cgalParamEnd
 
-     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of 
+     \cgalParamBegin{point_set_filters} is a model of `Range`. The value type of
      its iterator is `ICP_config`.
 
      The chain of filters to be applied to the point cloud, `point_set_2`. The
      point cloud is processed into an intermediate point cloud with the given chain
      of filters to be used in the alignment procedure. The chain is organized with
      the forward traversal order of the point set filters range.
-     
+
      The chain of point set filters are applied only once at the beginning of the
      ICP procedure, i.e., before the first iteration of ICP algorithm.
-     
+
      The filters can have several purposes, including but are not limited to
      i) removal of noisy points which render alignment of point clouds difficult,
-     ii) removal of redundant points so as to speed up alignment, iii) addition 
-     of descriptive information to the points such as a surface normal vector, 
+     ii) removal of redundant points so as to speed up alignment, iii) addition
+     of descriptive information to the points such as a surface normal vector,
      or the direction from the point to the sensor.
 
      Corresponds to `readingDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
      library. The filters should be chosen and set from possible components of
-     the `readingDataPointsFilters` configuration module. 
+     the `readingDataPointsFilters` configuration module.
      See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
      for possible configurations.
 
      If this parameter is omitted, `SamplingSurfaceNormalDataPointsFilter` is used.
      \cgalParamEnd
 
-     \cgalParamBegin{transformation} The affine transformation that is used as the 
+     \cgalParamBegin{transformation} The affine transformation that is used as the
      initial transformation for `point_set_2`.
 
      If this parameter is omitted, identity transformation is used.
@@ -544,7 +544,7 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
    to `point_set_2` to make it registered w.r.t. `point_set_1` and the
    boolean value indicating if the registration converged. The second
    of the pair is `true` if converged, `false` otherwise. A log why it failed to
-   converge is written to `std::cerr` if the registration cannot converge. 
+   converge is written to `std::cerr` if the registration cannot converge.
 */
 template <class PointRange1, class PointRange2,
           class NamedParameters1, class NamedParameters2>

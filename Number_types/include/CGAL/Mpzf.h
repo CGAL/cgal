@@ -8,7 +8,7 @@
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)	:  Marc Glisse
+// Author(s)        :  Marc Glisse
 
 #ifndef CGAL_MPZF_H
 #define CGAL_MPZF_H
@@ -172,7 +172,7 @@ template <class T, class = void> struct pool3 {
       // Deallocate everything. As an alternative, we could store it in a
       // global location, for re-use by a later thread.
       while (!empty())
-	delete[] (pop() - (extra + 1));
+        delete[] (pop() - (extra + 1));
     }
   };
   static T& data () {
@@ -325,7 +325,7 @@ struct Mpzf {
 #ifdef CGAL_MPZF_USE_CACHE
       if (data() != cache)
 #endif
-	delete[] (data() - pool::extra);
+        delete[] (data() - pool::extra);
       init(asize);
     } else ++data();
     size=x.size;
@@ -405,8 +405,8 @@ struct Mpzf {
     if (dexp == 0) {
       if (d == 0) { size=0; exp=0; return; }
       else { // denormal number
-	m = u.s.man;
-	++dexp;
+        m = u.s.man;
+        ++dexp;
       }
     } else {
       m = (1LL<<52) | u.s.man;
@@ -426,10 +426,10 @@ struct Mpzf {
     }else{
       data()[0] = m << e2;
       if(e2>11){ // Wrong test for denormals
-	data()[1] = m >> (64-e2);
-	size = 2;
+        data()[1] = m >> (64-e2);
+        size = 2;
       } else {
-	size = 1;
+        size = 1;
       }
     }
 #else
@@ -445,11 +445,11 @@ struct Mpzf {
     else {
       data()[0] = d0;
       if (d1 == 0) {
-	size = 1;
+        size = 1;
       }
       else {
-	data()[1] = d1;
-	size = 2;
+        data()[1] = d1;
+        size = 2;
       }
     }
 #endif
@@ -569,53 +569,53 @@ struct Mpzf {
       res.size=0;
       // TODO: if aexp>0, swap a and b so we don't repeat the code.
       if(0<bexp){
-	if(absasize<=bexp){ // no overlap
-	  mpn_copyi(rdata, adata, absasize);
-	  rdata+=absasize;
-	  rdata=Mpzf_impl::fill_n_ptr(rdata,bexp-absasize,0);
-	  mpn_copyi(rdata, bdata, absbsize);
-	  res.size=absbsize+bexp;
-	  if(bsize<0) res.size=-res.size;
-	  return res;
-	} else {
-	  mpn_copyi(rdata, adata, bexp);
-	  adata+=bexp;
-	  absasize-=bexp;
-	  rdata+=bexp;
-	  res.size=bexp;
-	}
+        if(absasize<=bexp){ // no overlap
+          mpn_copyi(rdata, adata, absasize);
+          rdata+=absasize;
+          rdata=Mpzf_impl::fill_n_ptr(rdata,bexp-absasize,0);
+          mpn_copyi(rdata, bdata, absbsize);
+          res.size=absbsize+bexp;
+          if(bsize<0) res.size=-res.size;
+          return res;
+        } else {
+          mpn_copyi(rdata, adata, bexp);
+          adata+=bexp;
+          absasize-=bexp;
+          rdata+=bexp;
+          res.size=bexp;
+        }
       }
       else if(0<aexp){
-	if(absbsize<=aexp){ // no overlap
-	  mpn_copyi(rdata, bdata, absbsize);
-	  rdata+=absbsize;
-	  rdata=Mpzf_impl::fill_n_ptr(rdata,aexp-absbsize,0);
-	  mpn_copyi(rdata, adata, absasize);
-	  res.size=absasize+aexp;
-	  if(asize<0) res.size=-res.size;
-	  return res;
-	} else {
-	  mpn_copyi(rdata, bdata, aexp);
-	  bdata+=aexp;
-	  absbsize-=aexp;
-	  rdata+=aexp;
-	  res.size=aexp;
-	}
+        if(absbsize<=aexp){ // no overlap
+          mpn_copyi(rdata, bdata, absbsize);
+          rdata+=absbsize;
+          rdata=Mpzf_impl::fill_n_ptr(rdata,aexp-absbsize,0);
+          mpn_copyi(rdata, adata, absasize);
+          res.size=absasize+aexp;
+          if(asize<0) res.size=-res.size;
+          return res;
+        } else {
+          mpn_copyi(rdata, bdata, aexp);
+          bdata+=aexp;
+          absbsize-=aexp;
+          rdata+=aexp;
+          res.size=aexp;
+        }
       }
       if(absasize>=absbsize){
-	mp_limb_t carry=mpn_add(rdata,adata,absasize,bdata,absbsize);
-	res.size+=absasize;
-	if(carry!=0){
-	  res.size++;
-	  rdata[absasize]=carry;
-	}
+        mp_limb_t carry=mpn_add(rdata,adata,absasize,bdata,absbsize);
+        res.size+=absasize;
+        if(carry!=0){
+          res.size++;
+          rdata[absasize]=carry;
+        }
       } else {
-	mp_limb_t carry=mpn_add(rdata,bdata,absbsize,adata,absasize);
-	res.size+=absbsize;
-	if(carry!=0){
-	  res.size++;
-	  rdata[absbsize]=carry;
-	}
+        mp_limb_t carry=mpn_add(rdata,bdata,absbsize,adata,absasize);
+        res.size+=absbsize;
+        if(carry!=0){
+          res.size++;
+          rdata[absbsize]=carry;
+        }
       }
       // unnecessary if a.exp != b.exp
       while(/*res.size>0&&*/res.data()[0]==0){--res.size;++res.data();++res.exp;}
@@ -642,36 +642,36 @@ struct Mpzf {
       res.size=0;
       bool carry1=false;
       if(0<yexp){ // must have overlap since x is larger
-	mpn_copyi(rdata, xdata, yexp);
-	xdata+=yexp;
-	absxsize-=yexp;
-	rdata+=yexp;
-	res.size=yexp;
+        mpn_copyi(rdata, xdata, yexp);
+        xdata+=yexp;
+        absxsize-=yexp;
+        rdata+=yexp;
+        res.size=yexp;
       }
       else if(0<xexp){
-	if(absysize<=xexp){ // no overlap
-	  mpn_neg(rdata, ydata, absysize); // assert that it returns 1
-	  rdata+=absysize;
-	  rdata=Mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
-	  mpn_sub_1(rdata, xdata, absxsize, 1);
-	  res.size=absxsize+xexp;
-	  while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
-	  if(xsize<0) res.size=-res.size;
-	  return res;
-	} else {
-	  mpn_neg(rdata, ydata, xexp); // assert that it returns 1
-	  ydata+=xexp;
-	  absysize-=xexp;
-	  rdata+=xexp;
-	  res.size=xexp;
-	  carry1=true; // assumes no trailing zeros
-	}
+        if(absysize<=xexp){ // no overlap
+          mpn_neg(rdata, ydata, absysize); // assert that it returns 1
+          rdata+=absysize;
+          rdata=Mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
+          mpn_sub_1(rdata, xdata, absxsize, 1);
+          res.size=absxsize+xexp;
+          while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
+          if(xsize<0) res.size=-res.size;
+          return res;
+        } else {
+          mpn_neg(rdata, ydata, xexp); // assert that it returns 1
+          ydata+=xexp;
+          absysize-=xexp;
+          rdata+=xexp;
+          res.size=xexp;
+          carry1=true; // assumes no trailing zeros
+        }
       }
       CGAL_assertion_code( mp_limb_t carry= )
-	mpn_sub(rdata, xdata, absxsize, ydata, absysize);
+        mpn_sub(rdata, xdata, absxsize, ydata, absysize);
       if(carry1)
-	CGAL_assertion_code( carry+= )
-	  mpn_sub_1(rdata, rdata, absxsize, 1);
+        CGAL_assertion_code( carry+= )
+          mpn_sub_1(rdata, rdata, absxsize, 1);
       CGAL_assertion(carry==0);
       res.size+=absxsize;
       while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
@@ -740,16 +740,16 @@ struct Mpzf {
       --res.size;
       mpn_tdiv_qr(qp, rp, 0, adata, asize, bdata, bsize);
       CGAL_assertion_code(
-	  for (int i=0; i<bsize; ++i)
-	    if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
+          for (int i=0; i<bsize; ++i)
+            if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
       )
     }
     else if(adata[-1]==0){ // We are lucky
       --adata; ++asize; --res.exp;
       mpn_tdiv_qr(qp, rp, 0, adata, asize, bdata, bsize);
       CGAL_assertion_code(
-	  for (int i=0; i<bsize; ++i)
-	    if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
+          for (int i=0; i<bsize; ++i)
+            if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
       )
     }
     else{
@@ -762,8 +762,8 @@ struct Mpzf {
       //a2.exp = a.exp-1;
       mpn_tdiv_qr(qp, rp, 0, a2.data(), asize+1, bdata, bsize);
       CGAL_assertion_code(
-	  for (int i=0; i<bsize; ++i)
-	    if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
+          for (int i=0; i<bsize; ++i)
+            if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
       )
     }
     while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
@@ -895,8 +895,8 @@ struct Mpzf {
     int lz = Mpzf_impl::clz(x);
     if (lz <= 11) {
       if (lz != 11) {
-	e += (11 - lz);
-	x >>= (11 - lz);
+        e += (11 - lz);
+        x >>= (11 - lz);
       }
       dl = double(x);
       dh = double(x + 1);
@@ -946,19 +946,19 @@ struct Mpzf {
     CGAL_precondition(mpq_cmp_ui(q,0,1)==0);
     if (size != 0) {
       mpz_import (mpq_numref (q),
-		  std::abs(size),
-		  -1, // data()[0] is the least significant part
-		  sizeof(mp_limb_t),
-		  0, // native endianness inside mp_limb_t
-		  GMP_NAIL_BITS, // should be 0
-		  data());
+                  std::abs(size),
+                  -1, // data()[0] is the least significant part
+                  sizeof(mp_limb_t),
+                  0, // native endianness inside mp_limb_t
+                  GMP_NAIL_BITS, // should be 0
+                  data());
       if (exp > 0)
-	mpq_mul_2exp(q, q, (sizeof(mp_limb_t) * CHAR_BIT *  exp));
+        mpq_mul_2exp(q, q, (sizeof(mp_limb_t) * CHAR_BIT *  exp));
       else if (exp < 0)
-	mpq_div_2exp(q, q, (sizeof(mp_limb_t) * CHAR_BIT * -exp));
+        mpq_div_2exp(q, q, (sizeof(mp_limb_t) * CHAR_BIT * -exp));
 
       if (size < 0)
-	mpq_neg(q,q);
+        mpq_neg(q,q);
     }
   }
 #if 0
@@ -1007,96 +1007,96 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
       typedef Tag_false            Is_numerical_sensitive;
 
       struct Is_zero
-	: public CGAL::cpp98::unary_function< Type, bool > {
-	  bool operator()( const Type& x ) const {
-	    return x.is_zero();
-	  }
-	};
+        : public CGAL::cpp98::unary_function< Type, bool > {
+          bool operator()( const Type& x ) const {
+            return x.is_zero();
+          }
+        };
 
       struct Is_one
-	: public CGAL::cpp98::unary_function< Type, bool > {
-	  bool operator()( const Type& x ) const {
-	    return x.is_one();
-	  }
-	};
+        : public CGAL::cpp98::unary_function< Type, bool > {
+          bool operator()( const Type& x ) const {
+            return x.is_one();
+          }
+        };
 
       struct Gcd
-	: public CGAL::cpp98::binary_function< Type, Type, Type > {
-	  Type operator()(
-	      const Type& x,
-	      const Type& y ) const {
-	    return Mpzf_gcd(x, y);
-	  }
-	};
+        : public CGAL::cpp98::binary_function< Type, Type, Type > {
+          Type operator()(
+              const Type& x,
+              const Type& y ) const {
+            return Mpzf_gcd(x, y);
+          }
+        };
 
       struct Square
-	: public CGAL::cpp98::unary_function< Type, Type > {
-	  Type operator()( const Type& x ) const {
-	    return Mpzf_square(x);
-	  }
-	};
+        : public CGAL::cpp98::unary_function< Type, Type > {
+          Type operator()( const Type& x ) const {
+            return Mpzf_square(x);
+          }
+        };
 
       struct Integral_division
-	: public CGAL::cpp98::binary_function< Type, Type, Type > {
-	  Type operator()(
-	      const Type& x,
-	      const Type& y ) const {
-	    return x / y;
-	  }
-	};
+        : public CGAL::cpp98::binary_function< Type, Type, Type > {
+          Type operator()(
+              const Type& x,
+              const Type& y ) const {
+            return x / y;
+          }
+        };
 
       struct Sqrt
-	: public CGAL::cpp98::unary_function< Type, Type > {
-	  Type operator()( const Type& x) const {
-	    return Mpzf_sqrt(x);
-	  }
-	};
+        : public CGAL::cpp98::unary_function< Type, Type > {
+          Type operator()( const Type& x) const {
+            return Mpzf_sqrt(x);
+          }
+        };
 
       struct Is_square
-	: public CGAL::cpp98::binary_function< Type, Type&, bool > {
-	  bool operator()( const Type& x, Type& y ) const {
-	    // TODO: avoid doing 2 calls.
-	    if (!Mpzf_is_square(x)) return false;
-	    y = Mpzf_sqrt(x);
-	    return true;
-	  }
-	  bool operator()( const Type& x) const {
-	    return Mpzf_is_square(x);
-	  }
-	};
+        : public CGAL::cpp98::binary_function< Type, Type&, bool > {
+          bool operator()( const Type& x, Type& y ) const {
+            // TODO: avoid doing 2 calls.
+            if (!Mpzf_is_square(x)) return false;
+            y = Mpzf_sqrt(x);
+            return true;
+          }
+          bool operator()( const Type& x) const {
+            return Mpzf_is_square(x);
+          }
+        };
 
     };
   template <> struct Real_embeddable_traits< Mpzf >
     : public INTERN_RET::Real_embeddable_traits_base< Mpzf , CGAL::Tag_true > {
       struct Sgn
-	: public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
-	  ::CGAL::Sign operator()( const Type& x ) const {
-	    return x.sign();
-	  }
-	};
+        : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
+          ::CGAL::Sign operator()( const Type& x ) const {
+            return x.sign();
+          }
+        };
 
       struct To_double
-	: public CGAL::cpp98::unary_function< Type, double > {
-	    double operator()( const Type& x ) const {
-	      return x.to_double();
-	    }
-	};
+        : public CGAL::cpp98::unary_function< Type, double > {
+            double operator()( const Type& x ) const {
+              return x.to_double();
+            }
+        };
 
       struct Compare
-	: public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
-	    Comparison_result operator()(
-		const Type& x,
-		const Type& y ) const {
-	      return CGAL::sign(Mpzf_cmp(x,y));
-	    }
-	};
+        : public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
+            Comparison_result operator()(
+                const Type& x,
+                const Type& y ) const {
+              return CGAL::sign(Mpzf_cmp(x,y));
+            }
+        };
 
       struct To_interval
-	: public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
-	    std::pair<double, double> operator()( const Type& x ) const {
-	      return x.to_interval();
-	    }
-	};
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+            std::pair<double, double> operator()( const Type& x ) const {
+              return x.to_interval();
+            }
+        };
 
     };
 

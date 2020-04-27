@@ -17,7 +17,7 @@
 #include <CGAL/CORE/Impl.h>
 #include <gmp.h>
 
-namespace CORE { 
+namespace CORE {
 
 CGAL_CORE_EXPORT std::ostream& io_write (std::ostream &, mpz_srcptr);
 CGAL_CORE_EXPORT std::ostream& io_write (std::ostream &, mpq_srcptr);

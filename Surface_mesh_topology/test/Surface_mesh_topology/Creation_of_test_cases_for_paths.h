@@ -393,7 +393,7 @@ void generate_path(Path& p,
 {
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
-  
+
   std::vector<int> before(v1);
   for (auto it=before.begin(), itend=before.end(); it!=itend; )
   {
@@ -406,7 +406,7 @@ void generate_path(Path& p,
   }
 
   Surface_mesh_topology::internal::create_braket_positive(p, 6, false);
-  
+
   std::vector<int> after(v2);
   for (auto it=after.begin(), itend=after.end(); it!=itend; )
   {

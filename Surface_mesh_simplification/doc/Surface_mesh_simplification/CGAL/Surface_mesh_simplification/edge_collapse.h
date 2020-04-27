@@ -56,12 +56,12 @@ the number of edges effectively removed.
 
 \cgalHeading{Semantics}
 
-The simplification process continues until the `should_stop` policy returns `true` 
+The simplification process continues until the `should_stop` policy returns `true`
 or until the surface mesh cannot be simplified any further due to topological constraints.
 
-`get_cost` and `get_placement` are the policies which control 
-the <I>cost-strategy</I>, that is, the order in which edges are collapsed 
-and the remaining vertex is re-positioned. 
+`get_cost` and `get_placement` are the policies which control
+the <I>cost-strategy</I>, that is, the order in which edges are collapsed
+and the remaining vertex is re-positioned.
 
 `visitor` is used to keep track of the simplification process. It has several member functions which
 are called at certain points in the simplification code.

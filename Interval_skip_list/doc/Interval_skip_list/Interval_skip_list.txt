@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Interval_Skip_List
 \anchor ChapterIntervalskiplist
 \cgalAutoToc
@@ -10,11 +10,11 @@ namespace CGAL {
 
 \section Interval_skip_listDefinition Definition
 
-An interval skip list is a data structure for finding all intervals 
-that contain a point, and for stabbing queries, that is for answering 
-the question whether a given point is contained in an interval or not. 
+An interval skip list is a data structure for finding all intervals
+that contain a point, and for stabbing queries, that is for answering
+the question whether a given point is contained in an interval or not.
 The implementation we provide is dynamic, that is the user can freely
-mix calls to the methods `insert(..)`, `remove(..)`, 
+mix calls to the methods `insert(..)`, `remove(..)`,
 `find_intervals(..)`, and `is_contained(..)`
 
 The interval skip list class is parameterized with an interval class.
@@ -55,6 +55,6 @@ of the interval are smallest and largest \f$ z\f$-coordinate of the face.
 
 \cgalExample{Interval_skip_list/isl_terrain.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 
