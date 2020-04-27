@@ -72,19 +72,7 @@ public:
 } // namespace internal
 } // namespace IO
 
-/*!
-  \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the TS format.
-  `name_and_color` is an optionnal argument, containing the
- values specified in the file.
-
-  \pre The data must represent a 2-manifold
-
-  \attention The graph `g` is not cleared, and the data from the stream are added.
-
-  \see \ref IOStreamGocad
-*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& in,
                 std::pair<std::string, std::string>& name_and_color,
@@ -104,6 +92,24 @@ bool read_GOCAD(std::istream& in,
   return is_valid(g); // @fixme keep validity check?
 }
 
+/*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from data in the TS format.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+  \cgalNamedParamsEnd
+
+  \pre The data must represent a 2-manifold
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
+
+  \see \ref IOStreamGocad
+*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& in,
                 FaceGraph& g,
@@ -125,7 +131,14 @@ bool read_GOCAD(std::istream& in,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the TS format.
+  reads the graph `g` from the file `fname` in the TS format.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+  \cgalNamedParamsEnd
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
@@ -159,7 +172,6 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
-
 /*!
   \ingroup PkgBGLIOFct
 
@@ -246,6 +258,13 @@ bool write_GOCAD(std::ostream& os,
 
   writes the graph `g` in the TS format into a file named `fname`.
 
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+  \cgalNamedParamsEnd
+
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
   \see \ref IOStreamGOCAD
@@ -265,8 +284,27 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
   return write_GOCAD(fname.c_str(), g, np);
 }
 
+/*!
+  \ingroup PkgBGLIOFct
+
+  writes the graph `g` in the TS format into `os`. The name
+ that will be assigned to `g`in the file is `anonymous`.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+  \cgalNamedParamsEnd
+
+  \see \ref IOStreamGocad
+*/
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{ return write_GOCAD(os,"anonymous", g, np); }
 template <typename FaceGraph>
 bool write_GOCAD(std::ostream& os, const FaceGraph& g) { return write_GOCAD(os,"anonymous", g, parameters::all_default()); }
+
 template <typename FaceGraph>
 bool write_GOCAD(const char* fname, const FaceGraph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
 template <typename FaceGraph>
