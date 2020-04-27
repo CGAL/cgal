@@ -51,15 +51,12 @@ namespace CGAL {
     typedef typename Kdt::iterator iterator;
     typedef typename Kdt::D D;
 
-    bool leaf;
-
   public :
-    Kd_tree_node(bool leaf_)
-      :leaf(leaf_){}
+    Kd_tree_node() { }
 
-    bool is_leaf() const{
-      return leaf;
-    }
+    virtual ~Kd_tree_node() { }
+
+    virtual bool is_leaf() const = 0;
 
     std::size_t
     num_items() const
@@ -97,8 +94,8 @@ namespace CGAL {
         Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
         return
-             (std::max)( node->lower()->depth(current_max_depth + 1),
-                         node->upper()->depth(current_max_depth + 1));
+          (std::max)( node->lower()->depth(current_max_depth + 1),
+                      node->upper()->depth(current_max_depth + 1));
       }
     }
 
@@ -112,17 +109,17 @@ namespace CGAL {
     OutputIterator
     tree_items(OutputIterator it) const {
       if (is_leaf()) {
-         Leaf_node_const_handle node =
+        Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-         if (node->size()>0)
-            for (iterator i=node->begin(); i != node->end(); i++)
-              {*it=*i; ++it;}
-        }
+        if (node->size()>0)
+          for (iterator i=node->begin(); i != node->end(); i++)
+          {*it=*i; ++it;}
+      }
       else {
-         Internal_node_const_handle node =
+        Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-          it=node->lower()->tree_items(it);
-          it=node->upper()->tree_items(it);
+        it=node->lower()->tree_items(it);
+        it=node->upper()->tree_items(it);
       }
       return it;
     }
@@ -206,20 +203,20 @@ namespace CGAL {
       else {
          Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-        // after splitting b denotes the lower part of b
-        Kd_tree_rectangle<FT,D> b_upper(b);
-        node->split_bbox(b, b_upper);
+         // after splitting b denotes the lower part of b
+         Kd_tree_rectangle<FT,D> b_upper(b);
+         node->split_bbox(b, b_upper);
 
-        if (q.outer_range_contains(b))
-          it=node->lower()->tree_items(it);
-        else
-          if (q.inner_range_intersects(b))
-            it=node->lower()->search(it,q,b,tree_points_begin,cache_begin,dim);
-        if  (q.outer_range_contains(b_upper))
-          it=node->upper()->tree_items(it);
-        else
-          if (q.inner_range_intersects(b_upper))
-            it=node->upper()->search(it,q,b_upper,tree_points_begin,cache_begin,dim);
+         if (q.outer_range_contains(b))
+           it=node->lower()->tree_items(it);
+         else
+           if (q.inner_range_intersects(b))
+             it=node->lower()->search(it,q,b,tree_points_begin,cache_begin,dim);
+         if  (q.outer_range_contains(b_upper))
+           it=node->upper()->tree_items(it);
+         else
+           if (q.inner_range_intersects(b_upper))
+             it=node->upper()->search(it,q,b_upper,tree_points_begin,cache_begin,dim);
       };
       return it;
     }
@@ -398,13 +395,13 @@ namespace CGAL {
     Kd_tree_leaf_node()
     {}
 
-    Kd_tree_leaf_node(bool leaf_ )
-      : Base(leaf_)
+    Kd_tree_leaf_node(unsigned int n_ )
+      : n(n_)
     {}
 
-    Kd_tree_leaf_node(bool leaf_,unsigned int n_ )
-      : Base(leaf_), n(n_)
-    {}
+    virtual ~Kd_tree_leaf_node() { }
+
+    virtual bool is_leaf() const { return true; }
 
     // members for all nodes
 
@@ -475,12 +472,15 @@ namespace CGAL {
 
     // default constructor
     Kd_tree_internal_node()
+      : cut_dim(-1), cut_val(0)
+      , lower_ch (nullptr), upper_ch (nullptr)
+      , upper_low_val(0), upper_high_val(0)
+      , lower_low_val(0), lower_high_val(0)
     {}
 
-    Kd_tree_internal_node(bool leaf_)
-      : Base(leaf_)
-    {}
+    virtual ~Kd_tree_internal_node() { }
 
+    virtual bool is_leaf() const { return false; }
 
     // members for internal node and extended internal node
 
@@ -621,9 +621,7 @@ namespace CGAL {
     Kd_tree_internal_node()
     {}
 
-    Kd_tree_internal_node(bool leaf_)
-      : Base(leaf_)
-    {}
+    virtual bool is_leaf() const { return false; }
 
 
     // members for internal node and extended internal node
