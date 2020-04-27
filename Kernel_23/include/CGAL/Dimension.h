@@ -34,7 +34,7 @@ namespace CGAL {
 #ifdef CGAL_EIGEN3_ENABLED
 const int UNKNOWN_DIMENSION=Eigen::Dynamic;
 #elif defined CGAL_CXX11
-const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
+const int UNKNOWN_DIMENSION=(std::numeric_limits<int>::max)();
 #else
 const int UNKNOWN_DIMENSION=(unsigned)-1/2;
 #endif

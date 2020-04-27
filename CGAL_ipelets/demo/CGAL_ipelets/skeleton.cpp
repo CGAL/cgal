@@ -114,7 +114,7 @@ void SkeletonIpelet::protected_run(int fn)
   std::list<double> offsets;
     //~ "Interior skeleton", "Exterior skeleton","Interior offset","Exterior offset","Interior offsets","Exterior offsets", "Help"
   SkeletonPtr ss;
-  double max_edge=std::max((bbox.xmax()-bbox.xmin()),(bbox.ymax()-bbox.ymin()));
+  double max_edge=(std::max)((bbox.xmax()-bbox.xmin()),(bbox.ymax()-bbox.ymin()));
   double dist=0.;
   int ret_val=-1;
   switch(fn){

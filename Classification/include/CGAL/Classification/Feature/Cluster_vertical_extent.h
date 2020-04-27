@@ -67,8 +67,8 @@ public:
     m_values.reserve (clusters.size());
     for (std::size_t i = 0; i < clusters.size(); ++ i)
     {
-      float min_z = std::numeric_limits<float>::max();
-      float max_z = -std::numeric_limits<float>::min();
+      float min_z = (std::numeric_limits<float>::max)();
+      float max_z = -(std::numeric_limits<float>::min)();
 
       for (std::size_t j = 0; j < clusters[i].size(); ++ j)
       {

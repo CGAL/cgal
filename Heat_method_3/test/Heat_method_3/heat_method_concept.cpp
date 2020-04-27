@@ -43,19 +43,19 @@ int main()
 
   //Point_3 sp = sm.point(source);
 
-  vertex_descriptor far;
+  vertex_descriptor vfar;
   // double sdistance = 0;
 
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " from " << source << std::endl;
     /*
     if(squared_distance(sp,sm.point(vd)) > sdistance){
-      far = vd;
+      vfar = vd;
       sdistance = squared_distance(sp,sm.point(vd));
     }
     */
   }
-  hm.add_source(far);
+  hm.add_source(vfar);
   hm.estimate_geodesic_distances(heat_intensity);
 
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){

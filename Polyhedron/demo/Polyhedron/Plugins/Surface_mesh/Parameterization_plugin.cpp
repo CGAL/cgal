@@ -899,7 +899,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   } //end for each component
 
   QApplication::restoreOverrideCursor();
-  QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
+  QPointF pmin(FLT_MAX, FLT_MAX), pmax(-FLT_MAX, -FLT_MAX);
 
   SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
   uv = tMesh.add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
@@ -912,14 +912,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     FT u = uv_pm[target(hd, sMesh)].x();
     FT v = uv_pm[target(hd, sMesh)].y();
     put(uv, *it, std::make_pair(static_cast<float>(u),static_cast<float>(v)));
-    if(u<min.x())
-      min.setX(u);
-    if(u>max.x())
-      max.setX(u);
-    if(v<min.y())
-      min.setY(v);
-    if(v>max.y())
-      max.setY(v);
+    if(u<pmin.x())
+      pmin.setX(u);
+    if(u>pmax.x())
+      pmax.setX(u);
+    if(v<pmin.y())
+      pmin.setY(v);
+    if(v>pmax.y())
+      pmax.setY(v);
   }
 
   Components* components = new Components(0);
@@ -934,7 +934,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   Scene_textured_facegraph_item* new_item = new Scene_textured_facegraph_item(tMesh);
-  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(min, max));
+  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(pmin, pmax));
   projection->set_item_name(new_item_name);
 
   new_item->setName(new_item_name);

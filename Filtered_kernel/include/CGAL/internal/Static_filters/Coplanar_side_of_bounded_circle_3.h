@@ -135,7 +135,7 @@ public:
     if (maxz < arz) maxz = arz;
     if (maxz < atz) maxz = atz;
 
-    double d = std::max(maxx, std::max(maxy, maxz));
+    double d = (std::max)(maxx, (std::max)(maxy, maxz));
     double eps = 3.27418e-11 * d * d * d * d * d * d;
 
     if (det >  eps) return ON_BOUNDED_SIDE;

@@ -540,16 +540,15 @@ void Scene_edit_box_item::compute_bbox() const
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
 
-  QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
-  QVector3D max(d->pool[3], d->pool[4], d->pool[5]);
+  QVector3D vmin(d->pool[0], d->pool[1], d->pool[2]);
+  QVector3D vmax(d->pool[3], d->pool[4], d->pool[5]);
 
   for(int i=0; i< 3; ++i)
   {
-    min[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
-    max[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    vmin[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    vmax[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
   }
-
-  _bbox = Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z());
+  _bbox = Scene_item::Bbox(vmin.x(),vmin.y(),vmin.z(),vmax.x(),vmax.y(),vmax.z());
 }
 
 

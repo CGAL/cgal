@@ -52,9 +52,9 @@ canonicalize_triangle(const typename Triangulation::Periodic_triangle& pt)
   Offset o0 = pt[0].second;
   Offset o1 = pt[1].second;
   Offset o2 = pt[2].second;
-  int diffx = std::min(o0.x(), std::min(o1.x(), o2.x()));
-  int diffy = std::min(o0.y(), std::min(o1.y(), o2.y()));
-  int diffz = std::min(o0.z(), std::min(o1.z(), o2.z()));
+  int diffx = (std::min)(o0.x(), (std::min)(o1.x(), o2.x()));
+  int diffy = (std::min)(o0.y(), (std::min)(o1.y(), o2.y()));
+  int diffz = (std::min)(o0.z(), (std::min)(o1.z(), o2.z()));
   Offset diff_off(diffx, diffy, diffz);
 
   return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
@@ -73,9 +73,9 @@ canonicalize_tetrahedron(const typename Triangulation::Periodic_tetrahedron& pt)
   Offset o2 = pt[2].second;
   Offset o3 = pt[3].second;
 
-  int diffx = std::min(std::min(o0.x(), o1.x()), std::min(o2.x(), o3.x()));
-  int diffy = std::min(std::min(o0.y(), o1.y()), std::min(o2.y(), o3.y()));
-  int diffz = std::min(std::min(o0.z(), o1.z()), std::min(o2.z(), o3.z()));
+  int diffx = (std::min)((std::min)(o0.x(), o1.x()), (std::min)(o2.x(), o3.x()));
+  int diffy = (std::min)((std::min)(o0.y(), o1.y()), (std::min)(o2.y(), o3.y()));
+  int diffz = (std::min)((std::min)(o0.z(), o1.z()), (std::min)(o2.z(), o3.z()));
   Offset diff_off(diffx, diffy, diffz);
 
   return CGAL::make_array(std::make_pair(pt[0].first, o0 - diff_off),
