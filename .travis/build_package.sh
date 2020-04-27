@@ -11,7 +11,7 @@ function mytime {
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" -DCGAL_BUILD_THREE_DOC=TRUE ..
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS} -I/home/travis/build/CGAL/cgal/.travis/" -DCGAL_BUILD_THREE_DOC=TRUE ..
   mytime make -j2 VERBOSE=1
 }
 
