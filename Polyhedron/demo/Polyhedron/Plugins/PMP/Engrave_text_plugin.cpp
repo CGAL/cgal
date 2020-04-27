@@ -490,10 +490,10 @@ public Q_SLOTS:
       }
 
       std::cout << "Parameterized with ARAP (SM) computed." << std::endl;
-      xmin = std::numeric_limits<double>::max();
-      xmax = std::numeric_limits<double>::min();
-      ymin = std::numeric_limits<double>::max();
-      ymax = std::numeric_limits<double>::min();
+      xmin = (std::numeric_limits<double>::max)();
+      xmax = (std::numeric_limits<double>::min)();
+      ymin = (std::numeric_limits<double>::max)();
+      ymax = (std::numeric_limits<double>::min)();
       uv_map_3 =
           sm->add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
       for(SMesh::Vertex_index v : sm->vertices())

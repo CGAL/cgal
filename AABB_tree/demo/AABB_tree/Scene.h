@@ -192,7 +192,7 @@ public:
     void generate_boundary_points(const unsigned int nb_points);
     void generate_boundary_segments(const unsigned int nb_slices);
     void generate_points_in(const unsigned int nb_points,
-        const double min, const double max);
+        const double vmin, const double vmax);
 
     // algorithms/refine
     void refine_loop();

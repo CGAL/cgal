@@ -95,7 +95,7 @@ public:
                                             CGAL::Three::Polyhedron_demo_io_plugin_interface*,
                                             bool& ok,
                                             bool add_to_scene=true);
-  void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
+  void computeViewerBBox(CGAL::qglviewer::Vec &vmin, CGAL::qglviewer::Vec &vmax);
   void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min,
                         CGAL::qglviewer::Vec max);
 Q_SIGNALS:

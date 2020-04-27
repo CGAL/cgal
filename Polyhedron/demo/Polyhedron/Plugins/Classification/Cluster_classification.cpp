@@ -527,7 +527,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
             int cid = m_cluster_id[*it];
             if (cid != -1)
             {
-              float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][cid]));
+              float v = std::max (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][cid]));
               m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
             }
             else
@@ -546,8 +546,8 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
 
         Feature_handle feature = m_features[corrected_index];
 
-        float min = std::numeric_limits<float>::max();
-        float max = -std::numeric_limits<float>::max();
+        float min = (std::numeric_limits<float>::max)();
+        float max = -(std::numeric_limits<float>::max)();
 
         if (vmin != NULL && vmax != NULL
             && *vmin != std::numeric_limits<float>::infinity()

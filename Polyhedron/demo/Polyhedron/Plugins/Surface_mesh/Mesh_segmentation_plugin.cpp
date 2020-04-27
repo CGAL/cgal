@@ -306,7 +306,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
                   faces(*pair->first->face_graph()))
     {
       if(sdf_pmap[f] != -1
-         && sdf_pmap[f] != std::numeric_limits<double>::max())
+         && sdf_pmap[f] != (std::numeric_limits<double>::max)())
       {
         has_sdf_values = true;
         break;

@@ -142,7 +142,7 @@ class Quotient
   }
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
-  int tam() const { return std::max(num.tam(), den.tam()); }
+  int tam() const { return (std::max)(num.tam(), den.tam()); }
 #endif
 
  public:
