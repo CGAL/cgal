@@ -27,6 +27,13 @@ The second query asks if the curves are <em>freely homotopic</em> while the thir
 
 The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}. 
 
+In addition, this package offers the following functions:
+
+- Given a surface mesh \f$\cal{M}\f$ and a vertex \f$v\f$, find a shortest non-contractible cycle consisting of \f$v\f$.
+- Given a surface mesh \f$\cal{M}\f$, find a shortest non-contractible cycle on the whole surface (also known as the edge-width of the surface).
+
+The algorithm to find a shortest non-contractible cycle through a specified vertex is based on the paper by Cabello et al. \cgalCite{cvl-ew-12} The time complexity is linear, though in the weighted case it is raised by a logarithmic factor. Finding the edge-width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map.
+
 \section SMTopology_HowToUse API Description
 
 \subsection SMTopology_Input Specifying the Input Surface and Curves
@@ -67,6 +74,12 @@ the input surface. This is otherwise independent of the size of input surface,
 
 Each time a `Surface_mesh_topology::Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Curves_on_surface_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
 
+\subsubsection SMTopology_Close Preprocessing in finding Shortest Non-contractible Cycles
+
+The algorithm to find shortest non-contractible cycles discussed in \cgalCite{cvl-ew-12} is expected to run perfectly even when the surface contains boundaries. In the constructor of `Shortest_noncontractible_cycle`, the given mesh is copied to a `GenericMap` local map. Then, we `close()` the local map, i.e. add new faces (if necessary) so that the map is 2-boundary-less (the added faces are marked as "holes" of the surface). Also in this constructor, the weight of every edge is measured via the weight functor and is stored as a 1-attribute in the local map.
+
+The dart correspondence between the original mesh and the local map are supported by two `std::unordered_map`. Thus the user can query the cycle with their dart, then the algorithm is performed on the local map, and finally the darts of the original mesh are returned to the user.
+
 \subsection SMTopology_Queries Testing Homotopy
 
 Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_topology::Curves_on_surface_topology` provides the following three functions:
@@ -77,6 +90,14 @@ Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the 
 
 - \ref Surface_mesh_topology::Curves_on_surface_topology::are_homotopic_with_fixed_endpoints "are_homotopic_with_fixed_endpoints"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
 
+\subsection SMTopology_Find Find Shortest Non-contractible Cycle
+
+Since the data structures to represent a surface are edge-centralized, in order to specify a vertex where the cycle is found, the user can use any dart belonging to this vertex.
+
+The class `Shortest_noncontractible_cycle` provides two functions:
+
+- \link Shortest_noncontractible_cycle::find_cycle `find_cycle(dh, cycle, &cycle_length)` \endlink : Find a shortest non-contractible cycle going through `dh`, while storing one dart per edge on the cycle to the variable `cycle`. The last argument is the total weight of the cycle and it is optional.
+- \link Shortest_noncontractible_cycle::edge_width `edge_width(cycle, &cycle_length)` \endlink : Very similar to the previous function, except that one does not have to specify the vertex. It calls `find_cycle` on every vertex and returns the shortest cycle together with its length.
 
 
 \section SMTopology_Examples Examples
@@ -96,6 +117,19 @@ In this second example, we build a genus two torus surface from a set of three s
 
 In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints. Here, a `Surface_mesh` is used as an alternative to a `CombinatorialMap`.
 \cgalExample{Surface_mesh_topology/open_path_homotopy.cpp}
+
+\subsection SMTopology_Example_IV_V_VI Find Shortest Non-contractible Cycle Examples
+
+In the next three examples, we present various way to use the class `Shortest_noncontractible_cycle`.
+
+One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case.
+\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_using_BFS.cpp}
+
+Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart. Note that the time complexity is raised by a logarithmic factor.
+\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle_through_a_vertex.cpp}
+
+In order to find the edge-width of the surface, one can make use of the routine `edge_width` as follows:
+\cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
 
 \section SMTopology_Benchmarks Benchmarks
 
@@ -182,6 +216,10 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 
 \subsection SMTopology_Homotopy_Test Homotopy Test 
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
+
+\subsection SMTopology_SNC Find Shortest Non-contractible Cycle
+
+Let \f$T\f$ be a spanning tree of the graph \f$G\f$ embedded in the surface \f$\Sigma\f$. Let \f$C^*\f$ be the subgraph of the dual graph \f$G^*\f$ of \f$G\f$ with the same vertex set as \f$G^*\f$ and the edge set be \f$E(G^*)\backslash E(T)^*\f$. Repeatedly remove from \f$C^*\f$ the edges with an incident vertex of degree one, the remaining set of edges is denoted as \f$E_{nc}(T)^*\f$. It has been proven that for any edge \f$ab\in E_{nc}(T)\f$, the path from a vertex \f$v\f$ following \f$T\f$ to \f$a\f$, the edge \f$ab\f$, and the path from \f$b\f$ following \f$T\f$ back to \f$v\f$ is a closed path (denoted as \f$\tau(T, v, ab)\f$) and is a non-contractible cycle. Furthermore, if \f$T\f$ is a BFS tree (or Dijkstra tree in the weighted case) rooted at \f$v\f$, the shortest cycle found among \f$\tau(T, v, e)\f$ for any \f$e\in E_{nc}(T)\f$ is the shortest non-contractible cycle through \f$v\f$.
 
 \section Implementation History
 
