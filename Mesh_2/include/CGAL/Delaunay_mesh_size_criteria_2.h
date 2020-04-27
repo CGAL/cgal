@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Laurent RINEAU
@@ -120,10 +111,8 @@ public:
       typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
 
-      Geom_traits traits; /** @warning traits with data!! */
-
       Compute_squared_distance_2 squared_distance = 
-	traits.compute_squared_distance_2_object();
+	this->traits.compute_squared_distance_2_object();
 
       const Point_2& pa = fh->vertex(0)->point();
       const Point_2& pb = fh->vertex(1)->point();
@@ -174,7 +163,7 @@ public:
 	    }
 	}
 
-      Compute_area_2 area_2 = traits.compute_area_2_object();
+      Compute_area_2 area_2 = this->traits.compute_area_2_object();
 
       double area = 2*CGAL::to_double(area_2(pa, pb, pc));
 

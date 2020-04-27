@@ -698,6 +698,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
 
 void Scene_polyhedron_selection_item::set_highlighting(bool b)
 {
+  setProperty("is_highlighting", b);
   k_ring_selector.setHighLighting(b);
 }
 void Scene_polyhedron_selection_item::set_operation_mode(int mode)
@@ -1016,6 +1017,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         d->manipulated_frame->setPosition(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
         viewer->setManipulatedFrame(d->manipulated_frame);
         connect(d->manipulated_frame, SIGNAL(modified()), this, SLOT(updateTick()));
+        if(property("is_highlighting").toBool())
+        {
+          setProperty("need_hl_restore", true);
+          set_highlighting(false);
+        }
         invalidateOpenGLBuffers();
         Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
       }
@@ -1025,6 +1031,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         temp_selected_vertices.insert(vh);
         const Point_3& p = get(vpm,vh);
         d->manipulated_frame->setPosition(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
+        if(property("is_highlighting").toBool())
+        {
+          setProperty("need_hl_restore", true);
+          set_highlighting(false);
+        }
         invalidateOpenGLBuffers();
       }
       break;
@@ -1163,7 +1174,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
         //check preconditions
       if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron())) == 3 
          && 
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3)
+         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3
+        && !CGAL::is_border(ed, *polyhedron()))
       {
         SMesh* mesh = polyhedron();
         halfedge_descriptor h = halfedge(ed, *mesh);
@@ -1826,6 +1838,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
+  poly_item->switchToGouraudPlusEdge(false);
   delete d;
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
@@ -1937,7 +1950,8 @@ void Scene_polyhedron_selection_item::moveVertex()
                          d->manipulated_frame->position().y-offset.y,
                          d->manipulated_frame->position().z-offset.z));
     invalidateOpenGLBuffers();
-    poly_item->invalidateOpenGLBuffers();
+    poly_item->updateVertex(vh);
+   // poly_item->invalidateOpenGLBuffers();
     d->ready_to_move = false;
   }
 }
@@ -1950,6 +1964,10 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   viewer->setManipulatedFrame(NULL);
   invalidateOpenGLBuffers();
   poly_item->itemChanged();
+  if(property("need_hl_restore").toBool()){
+    set_highlighting(true);
+    setProperty("need_hl_restore", false);
+  }
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
 
@@ -2479,7 +2497,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
       return QString("n/a");
     if(is_triangle_mesh(*d->poly)){
       bool self_intersect 
-          = CGAL::Polygon_mesh_processing::does_self_intersect(*(d->poly));
+        = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(*(d->poly));
       if (self_intersect)
         return QString("Yes");
       else

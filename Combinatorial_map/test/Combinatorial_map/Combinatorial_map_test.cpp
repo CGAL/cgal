@@ -214,8 +214,8 @@ bool test_face_graph_wrapper()
   
   CGAL::Face_graph_wrapper<SMesh> fgw1(m);
   std::vector<unsigned int> cells=fgw1.count_all_cells();
-  if (cells[0]!=1487 || cells[1]!=4406 || cells[2]!=2918 ||
-      fgw1.number_of_darts()!=8754)
+  if (cells[0]!=1487 || cells[1]!=4406 || cells[2]!=2921 ||
+      fgw1.number_of_darts()!=8812)
   {
     std::cout<<"Error: incorrect number of cells in test_face_graph_wrapper "
              <<"for Surface_mesh: "
@@ -235,8 +235,8 @@ bool test_face_graph_wrapper()
   in2>>p;
   CGAL::Face_graph_wrapper<Polyhedron> fgw2(p);
   cells=fgw2.count_all_cells();
-  if (cells[0]!=1487 || cells[1]!=4406 || cells[2]!=2918 ||
-      fgw2.number_of_darts()!=8754)
+  if (cells[0]!=1487 || cells[1]!=4406 || cells[2]!=2921 ||
+      fgw2.number_of_darts()!=8812)
   {
     std::cout<<"Error: incorrect number of cells in test_face_graph_wrapper "
              <<"for Polyhedron."

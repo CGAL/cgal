@@ -84,9 +84,12 @@ Scene::addItem(CGAL::Three::Scene_item* item)
         addGroup(group);
     //init the item for the mainViewer to avoid using unexisting 
     //VAOs if the mainViewer is not the first to be drawn.
+    QOpenGLFramebufferObject* fbo = CGAL::Three::Three::mainViewer()->depthPeelingFbo();
+    CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(nullptr);//to prevent crashing as the fbo is not initialized in this call.
     item->draw(CGAL::Three::Three::mainViewer());
     item->drawEdges(CGAL::Three::Three::mainViewer());
     item->drawPoints(CGAL::Three::Three::mainViewer());
+    CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(fbo);
     return id;
 }
 
@@ -140,6 +143,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 
     if(emit_item_about_to_be_destroyed) {
       Q_EMIT itemAboutToBeDestroyed(item);
+      item->aboutToBeDestroyed();
     }
 
     Q_EMIT updated();
@@ -543,7 +547,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
     }
     if(group ||item.visible())
     {
-      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
+      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud || item.renderingMode() == GouraudPlusEdges )
       {
         if(with_names) {
           viewer->glClearDepthf(1.0);
@@ -591,7 +595,8 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
      {
        if( group || (!with_names && item.renderingMode() == FlatPlusEdges )
           || item.renderingMode() == Wireframe
-          || item.renderingMode() == PointsPlusNormals)
+          || item.renderingMode() == PointsPlusNormals
+          || item.renderingMode() == GouraudPlusEdges)
        {
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
@@ -859,7 +864,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         QList<float> depths = picked_item_IDs.keys();
         if(!depths.isEmpty())
         {
-            qSort(depths);
+            std::sort(depths.begin(), depths.end());
             int id = picked_item_IDs[depths.first()];
             setSelectedItemIndex(id);
             viewer->setSelectedName(id);
@@ -1105,7 +1110,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
-            children.push_back(item_id(item));
+            addChild(item);
           }
         }
         redraw_model();
@@ -1922,4 +1927,9 @@ void Scene::callDraw(){
 void Scene::enableVisibilityRecentering(bool b)
 {
   visibility_recentering_enabled = b;
+}
+
+void Scene::addChild(Scene_item *item)
+{
+  children.push_back(item_id(item));
 }

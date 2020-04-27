@@ -14,8 +14,6 @@
 /// \defgroup PkgDrawFaceGraphWithPaths Draw a Mesh with Paths
 /// \ingroup PkgSurfaceMeshTopology
 
-/// \defgroup PkgSurfaceMeshTopologyConcepts Concepts
-/// \ingroup PkgSurfaceMeshTopology
 
 /*!
 \addtogroup PkgSurfaceMeshTopology
@@ -27,7 +25,7 @@
 \cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.XX}
+\cgalPkgSince{5.1}
 \cgalPkgBib{cgal:dl-smtopology}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -38,6 +36,7 @@
 \cgalCRPSection{Concepts}
 - `PolygonalSchema`
 - `PolygonalSchemaItems`
+- `WeightFunctor`
 
 \cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>`
@@ -45,12 +44,6 @@
 - `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`
 - `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`
 - `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`
-- `CGAL::Surface_mesh_topology::Combinatorial_map_2_incremental_builder<Mesh>`
-
-## Concepts ##
-- `PolygonalSchema`
-- `PolygonalSchemaItems`
-- `WeightFunctor`
 
 \cgalCRPSubsection{Draw a Mesh with Paths}
 - \link PkgDrawFaceGraphWithPaths CGAL::draw<Mesh>() \endlink

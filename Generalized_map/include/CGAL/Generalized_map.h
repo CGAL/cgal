@@ -1,20 +1,11 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -1734,7 +1725,6 @@ namespace CGAL {
     std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
-      CGAL_assertion((!this->template is_free<2>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
       
       if (d2==opposite2(d1)) { return 0; }
@@ -1743,7 +1733,8 @@ namespace CGAL {
       std::size_t res=1;
       while (next(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<2>(next(dd1)));
+        if (this->template is_free<2>(next(dd1)))
+        { return std::numeric_limits<std::size_t>::max(); }
         
         ++res;
         dd1=opposite2(next(dd1));
@@ -1759,10 +1750,12 @@ namespace CGAL {
     std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
-      CGAL_assertion((!this->template is_free<2>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
-      
+
       if (d2==opposite2(d1)) { return 0; }
+
+      if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
+      { return std::numeric_limits<std::size_t>::max(); }
 
       d1=opposite2(d1);
       d2=opposite2(d2);
@@ -1770,8 +1763,9 @@ namespace CGAL {
       std::size_t res=1;
       while (previous(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<2>(previous(dd1)));
-        
+        if (this->template is_free<2>(previous(dd1)))
+        { return std::numeric_limits<std::size_t>::max(); }
+
         ++res;
         dd1=opposite2(previous(dd1));
         
@@ -3154,7 +3148,7 @@ namespace CGAL {
       return alpha<0, 1>(adart);
     }
 
-    /** Insert a vertex in the given 2-cell which is splitted in triangles,
+    /** Insert a vertex in the given 2-cell which is split in triangles,
      * once for each inital edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.

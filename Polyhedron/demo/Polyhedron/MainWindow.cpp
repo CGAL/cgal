@@ -7,6 +7,7 @@
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
+#include <CGAL/double.h>
 
 #include <QJsonArray>
 #include <QtDebug>
@@ -38,7 +39,7 @@
 #include <QSpinBox>
 #include <stdexcept>
 #include <fstream>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QWidgetAction>
 #include <QJsonArray>
 #include <QSequentialIterable>
@@ -180,6 +181,18 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_R), this);
+    connect(shortcut, &QShortcut::activated,
+            this, &MainWindow::recenterScene);
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_T), this);
+    connect(shortcut, &QShortcut::activated,
+            this,
+            [](){
+      Viewer* viewer = qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer());
+      bool b = viewer->property("draw_two_sides").toBool();
+      viewer->setTwoSides(!b);
+    }
+            );
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -236,6 +249,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(sceneView->selectionModel(),
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
+  // setup menu filtering
+  connect(sceneView->selectionModel(),
+          QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
+          this, [=](){filterOperations(false);});
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -339,7 +356,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);  
   connect(&operationSearchBar, &QLineEdit::textChanged,
-          this, &MainWindow::filterOperations);
+          this, [=](){filterOperations(true);});
   loadPlugins();
   accepted_keywords.clear();
 
@@ -378,9 +395,6 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   }
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
-
-  // setup menu filtering
-  connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
 
 void addActionToMenu(QAction* action, QMenu* menu)
@@ -431,7 +445,6 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
           }
           else
           {
-            //menu->addAction(submenu->menuAction());
             addActionToMenu(submenu->menuAction(), menu);
           }
         }
@@ -439,7 +452,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
         action->setVisible(!(submenu->isEmpty()));
 
       }
-      else if(action->text().contains(filter, Qt::CaseInsensitive)){
+      else if(action->text().remove("&").contains(filter, Qt::CaseInsensitive)){
         //menu->addAction(action);
         addActionToMenu(action, menu);
       }
@@ -448,8 +461,18 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
   }
 }
 
-void MainWindow::filterOperations()
+#ifdef Q_OS_WIN
+void MainWindow::filterOperations(bool hide)
+#else
+void MainWindow::filterOperations(bool)
+#endif
 {
+  //on some platforms editing an open menu slows everything like hell,
+  //so we hide it for the time of the process.
+#ifdef Q_OS_WIN
+  if(hide)
+    ui->menuOperations->hide();
+#endif
   //return actions to their true menu
   Q_FOREACH(QMenu* menu, action_menu_map.values())
   {
@@ -459,7 +482,6 @@ void MainWindow::filterOperations()
         menu->removeAction(action);
     }
   }
-
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
@@ -470,14 +492,17 @@ void MainWindow::filterOperations()
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
       action->setVisible( p.first->applicable(action)
-                          && (action->text().contains(filter, Qt::CaseInsensitive)
+                          && (action->text().remove("&").contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
                               .toString().contains(filter, Qt::CaseInsensitive)));
     }
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations, filter, false);
-
+#ifdef Q_OS_WIN
+  if(hide)
+    ui->menuOperations->show();
+#endif
   operationSearchBar.setFocus();
 }
 
@@ -769,7 +794,7 @@ void MainWindow::updateMenus()
   }
   // sort the operations menu by name
   as = ui->menuOperations->actions();
-  qSort(as.begin(), as.end(), actionsByName);
+  std::sort(as.begin(), as.end(), actionsByName);
   ui->menuOperations->clear();
   ui->menuOperations->addAction(searchAction);
   ui->menuOperations->addActions(as);
@@ -983,13 +1008,17 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
   
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+  double bbox_diag = CGAL::approximate_sqrt(
+        CGAL::square(xmax - xmin)
+        + CGAL::square(ymax - ymin)
+        + CGAL::square(zmax - zmin));
   
   CGAL::qglviewer::Vec offset(0,0,0);
   
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist) > 13.0 )
+  if((std::log2)(l_dist/bbox_diag) > 13.0 )
     for(int i=0; i<3; ++i)
     {
       offset[i] = -bbox_center[i];
@@ -1036,7 +1065,23 @@ void MainWindow::reloadItem() {
     if(!ok)
       return;
     QVariant varian = item->property("load_mates");
+    if(!varian.isValid()) //typically when a soup is oriented, the soup_item is deleted and thus the varain points to an unexisting item.
+    {
+      Scene_item* new_item = new_items.front();
+      new_item->setName(item->name());
+      new_item->setColor(item->color());
+      new_item->setRenderingMode(item->renderingMode());
+      new_item->setVisible(item->visible());
+      Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+      scene->replaceItem(scene->item_id(item), new_item, true);
+      if(property_item)
+        property_item->copyProperties(item);
+      new_item->invalidateOpenGLBuffers();
+      item->deleteLater();
+      return;
+    }
     QSequentialIterable iterable = varian.value<QSequentialIterable>();
+
        // Can use foreach:
     int mate_id = 0;
     Q_FOREACH(const QVariant &v, iterable)
@@ -1156,6 +1201,10 @@ void MainWindow::open(QString filename)
         else
           selected_items << io_plugin->name();
       }
+    }
+    //if no plugin is correct, offer them all.
+    for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin : io_plugins) {
+        all_items << io_plugin->name();
     }
   }
   else
@@ -1437,11 +1486,11 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
-      saveas->setData(qVariantFromValue((void*)item));
+      saveas->setData(QVariant::fromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
       QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
-      showobject->setData(qVariantFromValue((void*)item));
+      showobject->setData(QVariant::fromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
 
@@ -1449,6 +1498,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
     }
   }
   menu->addMenu(ui->menuOperations);
+
   if(menu)
     menu->exec(global_pos);
 }
@@ -1711,6 +1761,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QAction* saveas = menu.addAction(tr("&Save as..."));
         connect(saveas,  SIGNAL(triggered()),
                 this, SLOT(on_actionSaveAs_triggered()));
+        menu.addMenu(ui->menuOperations);
         menu.exec(sender->mapToGlobal(p));
         return;
       }
@@ -1764,7 +1815,12 @@ void MainWindow::readSettings()
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
     scene->enableVisibilityRecentering(settings.value("offset_update", false).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
-    viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
+    int val  = settings.value("transparency_pass_number", 4).toInt();
+    if (val < 4 ) {
+      val = 4;
+      settings.setValue("transparency_pass_number", 4);
+    }
+    viewer->setTotalPass(val);
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
           settings.value("default_sm_rm", "flat+edges").toString());
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
@@ -2090,10 +2146,13 @@ void MainWindow::save(QString filename, QList<CGAL::Three::Scene_item*>& to_save
     }
   }
   if(!saved)
+  {
     QMessageBox::warning(this,
                          tr("Cannot save"),
                          tr("The selected object %1 was not saved. (Maybe a wrong extension ?)")
                          .arg(to_save.front()->name()));
+    to_save.pop_front();
+  }
 }
 
 void MainWindow::on_actionSaveSnapshot_triggered()
@@ -2137,7 +2196,7 @@ void MainWindow::on_actionShowHide_triggered()
     item->redraw();
   }
   scene->setUpdatesEnabled(true);
-  updateViewersBboxes(false);
+//  updateViewersBboxes(false); //Not usable :when the scene changes scale, smaller items disappear.
 }
 
 void MainWindow::on_actionSetPolyhedronA_triggered()
@@ -2235,6 +2294,11 @@ void MainWindow::on_actionPreferences_triggered()
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
   
+  connect(prefdiag.backFrontColor_pushButton, &QPushButton::clicked,
+          this, [](){
+    qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setBackFrontColors();
+  });
+
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -2397,7 +2461,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
   viewer->setAddKeyFrameKeyboardModifiers(m);
 }
 
-void MainWindow::on_actionRecenterScene_triggered()
+void MainWindow::recenterScene()
 {
   //force the recomputaion of the bbox
   bbox_need_update = true;
@@ -2427,9 +2491,9 @@ void MainWindow::on_actionLoadPlugin_triggered()
 void MainWindow::recurseExpand(QModelIndex index)
 {
   int row = index.row();
-  if(index.child(0,0).isValid())
+  if(scene->index(0,0,index).isValid())
   {
-    recurseExpand(index.child(0,0));
+    recurseExpand(scene->index(0,0,index));
   }
   CGAL::Three::Scene_group_item* group =
       qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
@@ -2609,10 +2673,17 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().horizontalAdvance("_#_"));
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().horizontalAdvance(QString("_View_")));
+#else
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+#endif
 }
 
 void MainWindow::reset_default_loaders()
@@ -2852,7 +2923,7 @@ void MainWindow::setDefaultSaveDir()
 void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
   // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString::null);
+  viewer->setStateFileName(QString());
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -2912,6 +2983,9 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setTotalPass(nb);
   });
+  action= subviewer->findChild<QAction*>("actionBackFrontShading");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setBackFrontShading(bool)));
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
   connect(viewer, SIGNAL(selected(int)),
@@ -3000,7 +3074,7 @@ QObject* MainWindow::getDirectChild(QObject* widget)
   return getDirectChild(widget->parent());
 }
 
-void MainWindow::on_action_Organize_Viewers_triggered()
+void MainWindow::on_action_Rearrange_Viewers_triggered()
 {
   if(ui->mdiArea->subWindowList().size() == 1)
     ui->mdiArea->subWindowList().first()->showMaximized();
@@ -3051,7 +3125,7 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionCopyCamera->setObjectName("actionCopyCamera");
   QAction* actionPasteCamera = new QAction("&Paste Camera",this);
   actionPasteCamera->setObjectName("actionPasteCamera");
-  QMenu* cameraMenu = new QMenu("Camera", mw);
+  QMenu* cameraMenu = new QMenu("Ca&mera", mw);
   cameraMenu->addAction(actionDumpCamera);
   cameraMenu->addAction(actionCopyCamera);
   cameraMenu->addAction(actionPasteCamera);
@@ -3067,12 +3141,12 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionDrawTwoSide->setCheckable(true);
   actionDrawTwoSide->setChecked(false);
   viewMenu->addAction(actionDrawTwoSide);
-  QAction* actionQuick = new QAction("Quick Camera Mode",this);
+  QAction* actionQuick = new QAction("&Quick Camera Mode",this);
   actionQuick->setObjectName("actionQuick");
   actionQuick->setCheckable(true);
   actionQuick->setChecked(true);
   viewMenu->addAction(actionQuick);
-  QAction* actionOrtho = new QAction("Orthographic Projection",this);
+  QAction* actionOrtho = new QAction("&Orthographic Projection",this);
   actionOrtho->setObjectName("actionOrtho");
   actionOrtho->setCheckable(true);
   actionOrtho->setChecked(false);
@@ -3080,6 +3154,11 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+  QAction* actionBackFrontShading = new QAction("Activate Back/Front shading.",this);
+  actionBackFrontShading->setObjectName("actionBackFrontShading");
+  actionBackFrontShading->setCheckable(true);
+  actionBackFrontShading->setChecked(false);
+  viewMenu->addAction(actionBackFrontShading);
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
@@ -3110,9 +3189,9 @@ void SubViewer::lookat()
     if (viewer->camera()->frame()->isSpinning())
       viewer->camera()->frame()->stopSpinning();
     mw->viewerShow(viewer,
-                   (float)dialog.get_x(),
-                   (float)dialog.get_y(),
-                   (float)dialog.get_z());
+                   (float)dialog.get_x() + viewer->offset().x,
+                   (float)dialog.get_y() + viewer->offset().y,
+                   (float)dialog.get_z() + viewer->offset().z);
   }
 }
 
@@ -3155,6 +3234,9 @@ void SubViewer::changeEvent(QEvent *event)
               //| Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
               );
+      QAction* action = mw->findChild<QAction*>("action_Rearrange_Viewers");
+      action->setVisible(false);
+      viewer->update();
     }
     else
     {
@@ -3170,6 +3252,10 @@ void SubViewer::changeEvent(QEvent *event)
               | Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
               );
+      QAction* action = mw->findChild<QAction*>("action_Rearrange_Viewers");
+      action->setVisible(true);
+      for(auto v : CGAL::QGLViewer::QGLViewerPool())
+        v->update();
     }
   }
 }

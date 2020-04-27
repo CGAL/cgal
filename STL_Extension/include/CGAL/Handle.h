@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -48,13 +39,15 @@ class Handle
     
     typedef std::ptrdiff_t Id_type ;
     
-    Handle()
+    Handle() noexcept
 	: PTR(static_cast<Rep*>(0)) {}
 
-    Handle(const Handle& x)
+    // FIXME: if the precondition throws in a noexcept function, the program terminates
+    Handle(const Handle& x) noexcept
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       PTR = x.PTR;
+      CGAL_assume (PTR->count > 0);
       PTR->count++;
     }
 
@@ -65,7 +58,7 @@ class Handle
     }
 
     Handle&
-    operator=(const Handle& x)
+    operator=(const Handle& x) noexcept
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       x.PTR->count++;
@@ -75,12 +68,24 @@ class Handle
       return *this;
     }
 
+    friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
+
+    void reset()
+    {
+      if (PTR)
+      {
+        if (--PTR->count==0)
+          delete PTR;
+        PTR=0;
+      }
+    }
+
     int
-    refs()  const { return PTR->count; }
+    refs()  const noexcept { return PTR->count; }
 
-    Id_type id() const { return PTR - static_cast<Rep*>(0); }
+    Id_type id() const noexcept { return PTR - static_cast<Rep*>(0); }
 
-    bool identical(const Handle& h) const { return PTR == h.PTR; }
+    bool identical(const Handle& h) const noexcept { return PTR == h.PTR; }
 
   protected:
     Rep* PTR;
@@ -88,7 +93,7 @@ class Handle
 
 //inline Handle::Id_type id(const Handle& x) { return x.id() ; }
 
-inline bool identical(const Handle &h1, const Handle &h2) { return h1.identical(h2); }
+inline bool identical(const Handle &h1, const Handle &h2) noexcept { return h1.identical(h2); }
 
 } //namespace CGAL
 

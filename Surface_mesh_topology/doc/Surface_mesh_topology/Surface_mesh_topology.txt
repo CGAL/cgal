@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor ChapterSurfaceMeshTopology
 
 \cgalAutoToc
-\author Guillaume Damiand, Francis Lazarus, and Thien Hoang
+\author Guillaume Damiand and Francis Lazarus
 
 This package provides several algorithms to test if a curve on a combinatorial surface can be continuously deformed into another curve and to compute some properties of the surface such as edge-width and face-width.
 
@@ -42,7 +42,7 @@ The algorithm to find a shortest non-contractible cycle through a specified vert
 \subsection SMTopology_Input Specifying the Input Surface and Curves
 
 The homotopy tests are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
-The input surface is supposed to be connected, orientable, and closed (without boundary).
+The input surface is supposed to be connected and orientable.
 The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
 
 Each curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object in this class behaves as a list. This list is initially empty and the halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides four ways for extending a nonempty path.
@@ -54,6 +54,7 @@ Each curve on this surface is contained in an instance of the class `Surface_mes
 In the first two cases, let A be the source vertex of the added dart or the target vertex if the added dart is flipped, let B be the target vertex of the last dart in the path or the source vertex if the last dart is flipped: A and B should coincide. The user is responsible for ensuring this condition. The member functions \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()", \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" and \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_label "can_be_pushed_by_label()" return `true` if and only if the condition is satisfied.
 
 \subsection SMTopology_Schema Polygonal Schema Helper
+\subsubsection SMTopology_PL Polygonal Schema
 Specifying a path on a combinatorial surface might be a tedious task. Indeed, knowing in advance the pointer, index or turn of each consecutive halfedge in a path is not always easy. In order to facilitate this task, we provide an intuitive model of `CombinatorialMap` called `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map`, a model of the `PolygonalSchema` concept. In this model, a surface is viewed as a collection of clockwise oriented polygonal facets with labeled boundary (oriented) edges. Boundary edges with the same label are glued together to form a surface. Each label should appear at most twice in the collection and a label that appears only once corresponds to a boundary edge. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. Since we are dealing with orientable surfaces only, each label that appears twice must appear once with a minus.
 The user can add facets to the surface one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words (any sequence of characters, except space) separated by blank spaces. In the next figure we see three examples of combinatorial maps described by a collection of facets with labeled edges.
 \cgalFigureBegin{fig_sm_incremental-builder, incremental-builder.svg}
@@ -63,9 +64,17 @@ The code for creating the above left and middle examples appear in the \ref SMTo
 The class provides the following functionalities.
 - \ref PolygonalSchema::add_facet "add_facet(s)" adds a polygon to the current collection of polygons. If the polygon has "n" sides, "s" is a sequence of "n" edge labels possibly preceded by a minus and separated by blanks.
 - alternatively, the user can add a facet by adding edge labels one at a time using the member functions \ref PolygonalSchema::init_facet "init_facet()", \ref PolygonalSchema::add_edges_to_facet "add_edges_to_facet()" and \ref PolygonalSchema::finish_facet "finish_facet()"
- 
-A `Surface_mesh_topology::Curves_on_surface_topology` can be constructed with a `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map` as input surface. In this case, every halfedge has a label (possibly preceded by a minus) and a path can be specified by the sequence of labels corresponding to its halfedge sequence. A repeated call to
-the function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()" allows the user to specify the path in this way.
+
+\subsubsection SMTopology_PL_with_Boundary Polygonal Schema with Boundary
+As noted in the previous section \ref SMTopology_PL "Polygonal Schema",  every label that appears only once in a polygonal schema corresponds to a boundary edge. The Polygonal Schema helper offers another mechanism to create surfaces with boundary. Each facet already added to a polygonal schema may be perforated to create a hole in the surface. The edges of a perforated facet thus becomes boundary edges. The reverse operation consists in filling the supposedly perforated facet. The class provides the following interface.
+- \ref PolygonalSchema::perforate_facet "perforate_facet (h)" perforates the facet identified by the halfedge `h`. If `s` is the label of the oriented edge corresponding to `h`, one may equivalently call perforate_facet (s). 
+- Similarly, \ref  PolygonalSchema::fill_facet "fill_facet (h or s)" turns a facet into a plain one.
+- The member functions \ref PolygonalSchema::get_dart_labeled "get_dart_labeled(s)" and \ref PolygonalSchema::get_label "get_label(h)" allow to easily pass from a halfedge to its label and vice versa. 
+
+As an example, one may perforate all the facets of a polygonal schema \f$\cal{M}\f$ to obtain a "skeleton" surface equivalent to a thickening of the graph composed of the edges of \f$\cal{M}\f$.
+
+\subsubsection SMTopology_Curves_on_PS Curves on Polygonal Schema
+A `Surface_mesh_topology::Curves_on_surface_topology` can be constructed with a `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map` as input surface. In this case, every halfedge has a label (possibly preceded by a minus) and a path can be specified by the sequence of labels corresponding to its halfedge sequence. A repeated call to the function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()" allows the user to specify the path in this way.
 
 \subsection SMTopology_DS Data Structure Presentation
 
@@ -149,7 +158,7 @@ The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU
 
 The first time an homotopy test is called, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
 
-For this benchmark, we computed 22 `Surface_mesh_topology::Curves_on_surface_topology` objects for different input surfaces with different number of darts (between 9,000 and 30,000,000) and show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
+For this benchmark, we computed 38 `Surface_mesh_topology::Curves_on_surface_topology` objects for different input surfaces with different number of darts (between 8,000 and 30,000,000). We show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface. 
 
 \cgalFigureBegin{fig_sm_topology_bench1, computation-time-reduce-surface.svg}
  Computation time of `Surface_mesh_topology::Curves_on_surface_topology` constructions, according to the number of darts or the input surface.
@@ -157,16 +166,16 @@ For this benchmark, we computed 22 `Surface_mesh_topology::Curves_on_surface_top
 
 \subsection SMTopology_bench2 Path Homotopy Tests
 
-In this second benchmark, we use a surface with 543,652 vertices, 1,631,574 edges (giving twice as many darts) and 1,087,716 faces as input, and generate 100 random pairs of closed paths. The first path is generated randomly, with a lower bound for its length given by a random number between 100 and 40,000: passed the lower bound, the path is randomly extended until it returns to its origin vertex. The second path is generated from a sequence of elementary deformations of the first path, so that the two paths are homotopic. The number of elementary deformations is a random number between 100 and 10,000.
+In this second benchmark, we use two surfaces as input (with respectively 543,652 vertices, 1,631,574 edges and 1,087,716 faces, and 55,498 vertices, 167,106 edges and 111,404 faces). We generate 100 random pairs of closed paths on each surface. The first path is generated randomly, with a lower bound for its length given by a random number between 100 and 10,000: passed the lower bound, the path is randomly extended until it returns to its origin vertex. The second path is generated from a sequence of elementary deformations of the first path, so that the two paths are homotopic. The number of elementary deformations is a random number between 100 and 10,000.
 
-The computation time of the 100 `are_freely_homotopic()` tests are given in \cgalFigureRef{fig_sm_topology_bench2}, according to the number of darts of the two input paths. 
+The computation time of the 200 `are_freely_homotopic()` tests are given in \cgalFigureRef{fig_sm_topology_bench2}, according to the number of darts of the two input paths. 
 
 \cgalFigureBegin{fig_sm_topology_bench2, computation-time-path-homotopy.svg}
  Computation time of `are_freely_homotopic()` tests, according to the number of darts or the input paths.
 \cgalFigureEnd
 
-The third benchmark is similar to the previous one, except that we use a genus 5 surface with one vertex, 10 edges and 1 face. The length of the paths to be tested is varied between 10 and 30,000,000. A log-log scale is used for the plot of the results in \cgalFigureRef{fig_sm_topology_bench3}. The free homotopy test takes 10 seconds for paths of length 10,000,000.
-\cgalFigureBegin{fig_sm_topology_bench3, computation-time-path-homotopy-2.svg}
+The third benchmark is similar to the previous one, except that we use a genus 5 surface with one vertex, 10 edges and 1 face. The length of the paths to be tested is varied between 10 and 30,000,000. The computation time of the  `are_freely_homotopic()` tests are given in \cgalFigureRef{fig_sm_topology_bench3}. The free homotopy test takes 17 seconds for paths of length 10,000,000.
+\cgalFigureBegin{fig_sm_topology_bench3, computation-time-polygonal-schema.svg}
  Computation time of `are_freely_homotopic()` tests, according to the number of darts or the input paths for random paths on the canonical reduced surface of genus five.
 \cgalFigureEnd
 
@@ -247,9 +256,7 @@ As a result, the face-width of \f$G\f$ is half the edge-width of \f$R(G)\f$, whe
 
 \section Implementation History
 
-The package was started and developed in 2018 by Guillaume Damiand and Francis Lazarus.
-
-The code to compute shortest non-contractible cycles and face-width was later added in 2019 by Thien Hoang as part of the program Google Summer of Code 2019.
+The code was developed in 2018 by Guillaume Damiand and Francis Lazarus. Felix Castillon contributed to the extension of the homotopy test to the case of surfaces with boundaries. Thien Hoang added methods to compute shortest  non-contractible cycles and face-width as part of the program Google Summer of Code 2019.
 
 */
 } /* namespace CGAL */

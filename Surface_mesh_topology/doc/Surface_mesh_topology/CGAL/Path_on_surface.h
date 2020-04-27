@@ -88,7 +88,6 @@ namespace Surface_mesh_topology {
 
     /// creates a random closed path with at least `length` darts/halfedges.
     void generate_random_closed_path(std::size_t length, Random& random=get_default_random());
-    
    };
 }
 }

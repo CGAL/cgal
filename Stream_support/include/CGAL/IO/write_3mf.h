@@ -1,20 +1,11 @@
 // Copyright (c) 2019  Geometry Factory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno
 
@@ -368,6 +359,8 @@ bool write_polyline_to_model(const PointRange& points,
  *  soups in `file_name`.
  * \param names will contains the name of each mesh in `file_name`.
  * \return `true` if the writing is successful, `false` otherwise.
+ * 
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
  */
 template<typename PointRanges, typename PolygonRanges>
 bool write_triangle_soups_to_3mf(const std::string& file_name,
@@ -375,8 +368,6 @@ bool write_triangle_soups_to_3mf(const std::string& file_name,
                         const PolygonRanges& all_polygons,
                         const std::vector<std::string>& names)
 {
-  DWORD nErrorMessage;
-  LPCSTR pszErrorMessage;
   HRESULT hResult;
 
     // Create Model Instance
@@ -417,6 +408,8 @@ bool write_triangle_soups_to_3mf(const std::string& file_name,
  * must be available for each mesh.
  * \param names will contains the name of each mesh in `file_name`.
  * \return `true` if the writing is successful, `false` otherwise.
+ *
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
  */
 template<typename TriangleMeshRange>
 bool write_triangle_meshes_to_3mf(const std::string& file_name,

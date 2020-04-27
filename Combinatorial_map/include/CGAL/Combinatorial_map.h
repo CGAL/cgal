@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -371,7 +362,7 @@ namespace CGAL {
       copy(amap, converters, dartinfoconverter, pointconverter,
            origin_to_copy, copy_to_origin);
     }
-    
+
     // Copy constructor from a map having exactly the same type.
     Combinatorial_map_base (const Self & amap)
     { copy(amap); }
@@ -2467,6 +2458,30 @@ namespace CGAL {
         run(*this, adart, amark);
     }
 
+    /// Keep the biggest connected component.
+    /// @return the size (in number of darts) of the biggest cc.
+    std::size_t keep_biggest_connected_component()
+    {
+      std::map<std::size_t, Dart_handle> ccs;
+
+      size_type treated=get_new_mark();
+      for (auto it=darts().begin(), itend=darts().end(); it!=itend; ++it)
+      {
+        if (!is_marked(it, treated))
+        { ccs[mark_cell<dimension+1>(it, treated)]=it; }
+      }
+
+      if (ccs.size()>1)
+      { // Here all darts are marked
+        this->template unmark_cell<dimension+1>(ccs.rbegin()->second, treated); // Unmark the biggest cc
+        erase_marked_darts(treated);
+      }
+
+      free_mark(treated);
+
+      return ccs.rbegin()->first;
+    }
+
     /** Count the marked cells (at least one marked dart).
      * @param amark the mark to consider.
      * @param avector containing the dimensions of the cells to count.
@@ -2606,7 +2621,6 @@ namespace CGAL {
     std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
-      CGAL_assertion((!this->template is_free<2>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->template beta<1>(d1),
                                                 d2))); */
       
@@ -2616,7 +2630,8 @@ namespace CGAL {
       std::size_t res=1;
       while (beta<1>(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<2>(beta<1>(dd1)));
+        if (this->template is_free<2>(beta<1>(dd1)))
+        { return std::numeric_limits<std::size_t>::max(); }
         
         ++res;
         dd1=beta<1, 2>(dd1);
@@ -2632,11 +2647,13 @@ namespace CGAL {
     std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
-      CGAL_assertion((!this->template is_free<2>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->template beta<1>(d1),
                                                 d2))); */
       
       if (d2==beta<2>(d1)) { return 0; }
+
+      if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
+      { return std::numeric_limits<std::size_t>::max(); }
 
       d1=beta<2>(d1);
       d2=beta<2>(d2);
@@ -2644,7 +2661,8 @@ namespace CGAL {
       std::size_t res=1;
       while (beta<0>(dd1)!=d2)
       {
-        CGAL_assertion(!this->template is_free<2>(beta<0>(dd1)));
+        if (this->template is_free<2>(beta<0>(dd1)))
+        { return std::numeric_limits<std::size_t>::max(); }
         
         ++res;
         dd1=beta<0, 2>(dd1);
@@ -4003,7 +4021,7 @@ namespace CGAL {
       return this->template beta<1>(adart);
     }
 
-    /** Insert a vertex in the given 2-cell which is splitted in triangles,
+    /** Insert a vertex in the given 2-cell which is split in triangles,
      *  once for each inital edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @param update_attributes a boolean to update the enabled attributes

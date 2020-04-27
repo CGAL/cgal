@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -37,137 +28,143 @@ template<typename Mesh>
 class Curves_on_surface_topology
 {
 public:
-
-  using CMap_for_minimal_quadrangulation = typename internal::CMap_for_minimal_quadrangulation;
+  typedef internal::Minimal_quadrangulation<Mesh> Minimal_quadrangulation;
+  typedef typename Minimal_quadrangulation::Original_map Original_map;
+  typedef typename Minimal_quadrangulation::Reduced_map Reduced_map;
+  //using Minimal_quadrangulation = internal::Minimal_quadrangulation<Mesh>;
+  //using Original_map = typename Minimal_quadrangulation::Original_map;
+  //using Reduced_map = typename Minimal_quadrangulation::Reduced_map;
   using Shortest_noncontractible_cycle   = typename internal::Shortest_noncontractible_cycle<Mesh>;
   using Facewidth                        = typename internal::Facewidth<Mesh>; 
-  using Gmap_wrapper                     = internal::Generic_map_selector<Mesh>;
-  using Gmap                             = typename Gmap_wrapper::Generic_map;
-  using Dart_handle                      = typename Gmap_wrapper::Dart_handle_original;
+  // BUG using Dart_handle                      = typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
 
-  
-  Curves_on_surface_topology(Mesh& amap, bool /* display_time */=false) :
-    m_original_map(amap),
+  Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
+    m_original_mesh(amesh),
     m_minimal_quadrangulation(nullptr),
     m_shortest_noncontractible_cycle(nullptr),
     m_facewidth(nullptr)
   {}
-    
-  ~Curves_on_surface_topology()
-  { delete m_minimal_quadrangulation; }
 
-  /// @return true iff 'path' is contractible.
-  bool is_contractible(const Path_on_surface<Mesh>& p,
-                       bool display_time=false) const
+//================================================================================
+// Homotopy test
+  
+  /// @return true iff the minimal quadrangulation is computed.
+  bool is_minimal_quadrangulation_computed() const
+  { return m_minimal_quadrangulation!=nullptr; }
+
+  /// Computes the minimal quadrangulation if it is not yet computed.
+  void compute_minimal_quadrangulation(bool display_time=true) const
   {
     if (m_minimal_quadrangulation==nullptr)
     {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
+      m_minimal_quadrangulation=std::make_unique<Minimal_quadrangulation>
+        (m_original_mesh, display_time);
     }
+  }
 
+  /// Return the original map.
+  const Original_map& get_original_map() const
+  { return m_minimal_quadrangulation->get_original_map(); }
+
+  /// Return the reduced map computed in the minimal quadrangulation.
+  /// @pre is_minimal_quadrangulation_computed()
+  const Reduced_map& get_minimal_quadrangulation() const
+  {
+    CGAL_assertion(is_minimal_quadrangulation_computed());
+    return m_minimal_quadrangulation->get_reduced_map();
+  }
+
+  /// @return true iff 'p' is contractible.
+  bool is_contractible(const Path_on_surface<Mesh>& p,
+                       bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->is_contractible(p, display_time);
   }
 
-  /// @return true iff 'path1' and 'path2' are freely homotopic.
+  /// @return true iff 'p1' and 'p2' are freely homotopic.
   bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
                             const Path_on_surface<Mesh>& p2,
                             bool display_time=false) const
   {
-    if (m_minimal_quadrangulation==nullptr)
-    {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
-    }
-
+    compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
                                                            display_time);
   }
   
-  /// @return true iff 'path1' and 'path2' are base point freely homotopic.
+  /// @return true iff 'p1' and 'p2' are base point freely homotopic.
   bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
                                 const Path_on_surface<Mesh>& p2,
                                 bool display_time=false) const
   {
-    if (m_minimal_quadrangulation==nullptr)
-    {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
-    }
-
+    compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->are_base_point_homotopic(p1, p2,
                                                                display_time);
   }
 
-  bool is_minimal_quadrangulation_computed() const
-  { return m_minimal_quadrangulation!=nullptr; }
+//================================================================================
+// Shortest noncontractible cycle; edge and face width
+
+  bool is_shortest_noncontractible_cycle_representation_computed() const
+  { return m_shortest_noncontractible_cycle!=nullptr; }
   
-  const CMap_for_minimal_quadrangulation& get_minimal_quadrangulation() const
+  void compute_shortest_noncontractible_cycle_representation(bool display_time=false) const
   {
-    CGAL_assertion(is_minimal_quadrangulation_computed());
-    return m_minimal_quadrangulation->get_map();
+    if (m_shortest_noncontractible_cycle==nullptr)
+    {
+      m_shortest_noncontractible_cycle=std::make_unique
+        <Shortest_noncontractible_cycle>(m_original_mesh, display_time);
+    }
   }
 
   template <class WeightFunctor>
-  Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf) const
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint
+  (Dart_handle dh, const WeightFunctor& wf, bool display_time=false) const
   {
-    if (m_shortest_noncontractible_cycle==nullptr) 
-    { update_shortest_noncontractible_cycle_pointer(); }
-
-    return m_shortest_noncontractible_cycle->compute_edgewidth(NULL, wf);
+    compute_shortest_noncontractible_cycle_representation(display_time);
+    return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf, display_time);
   }
 
-  Path_on_surface<Mesh> compute_edgewidth() const
+  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint
+  (Dart_handle dh, bool display_time=false) const
   {
-    if (m_shortest_noncontractible_cycle==nullptr) 
-    { update_shortest_noncontractible_cycle_pointer(); }
+    compute_shortest_noncontractible_cycle_representation(display_time);
+    return m_shortest_noncontractible_cycle->compute_cycle(dh, display_time);
+  }
 
-    return m_shortest_noncontractible_cycle->compute_edgewidth();
+  bool is_facewidth_representation_computed() const
+  { return m_facewidth!=nullptr; }
+  
+  void compute_facewidth_representation(bool display_time=false) const
+  {
+    if (m_facewidth==nullptr)
+    { m_facewidth=std::make_unique<Facewidth>(m_original_mesh, display_time); }
   }
 
   template <class WeightFunctor>
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh, const WeightFunctor& wf) const
+  Path_on_surface<Mesh> compute_edgewidth(const WeightFunctor& wf, bool display_time=false) const
   {
-    if (m_shortest_noncontractible_cycle==nullptr) 
-    { update_shortest_noncontractible_cycle_pointer(); }
-
-    return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf);
+    compute_shortest_noncontractible_cycle_representation(display_time);
+    return m_shortest_noncontractible_cycle->compute_edgewidth(NULL, wf, display_time);
   }
 
-  Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint(Dart_handle dh) const
+  Path_on_surface<Mesh> compute_edgewidth(bool display_time=false) const
   {
-    if (m_shortest_noncontractible_cycle==nullptr) 
-    { update_shortest_noncontractible_cycle_pointer(); }
-
-    return m_shortest_noncontractible_cycle->compute_cycle(dh);
+    compute_shortest_noncontractible_cycle_representation(display_time);
+    return m_shortest_noncontractible_cycle->compute_edgewidth(display_time);
   }
 
-  std::vector<Dart_handle> compute_facewidth() const
+  std::vector<Dart_handle> compute_facewidth(bool display_time=false) const
   {
-    if (m_facewidth==nullptr) 
-    { update_facewidth_pointer(); }
-
-    return m_facewidth->compute_facewidth();
-  }
-
-  void update_shortest_noncontractible_cycle_pointer() const
-  {
-    m_shortest_noncontractible_cycle = std::make_unique<Shortest_noncontractible_cycle>(m_original_map);
-  }
-
-  void update_facewidth_pointer() const
-  {
-    m_facewidth = std::make_unique<Facewidth>(m_original_map);
+    compute_facewidth_representation(display_time);
+    return m_facewidth->compute_facewidth(display_time);
   }
 
 protected:
-  Mesh& m_original_map;
-  mutable Gmap m_radial_map;
-  mutable internal::Minimal_quadrangulation<Mesh>* m_minimal_quadrangulation;
+  const Mesh&                                             m_original_mesh;
+  mutable std::unique_ptr<Minimal_quadrangulation>        m_minimal_quadrangulation;
   mutable std::unique_ptr<Shortest_noncontractible_cycle> m_shortest_noncontractible_cycle;
-  mutable std::unique_ptr<Facewidth> m_facewidth;
-  typename Gmap_wrapper::Origin_to_copy_map m_origin_to_copy;
-  typename Gmap_wrapper::Copy_to_origin_map m_copy_to_origin;
+  mutable std::unique_ptr<Facewidth>                      m_facewidth;
 };
 
 } // namespace Surface_mesh_topology

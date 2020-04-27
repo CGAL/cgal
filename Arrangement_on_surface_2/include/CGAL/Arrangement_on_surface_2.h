@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
@@ -1556,11 +1547,7 @@ protected:
   Point_2*_new_point(const Point_2& pt)
   {
     Point_2* p_pt = m_points_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Points_alloc>::construct(m_points_alloc, p_pt, pt);
-#else
-    m_points_alloc.construct(p_pt, pt);
-#endif
     return (p_pt);
   }
 
@@ -1568,11 +1555,7 @@ protected:
   void _delete_point(Point_2& pt)
   {
     Point_2* p_pt = &pt;
-#ifdef CGAL_CXX11
     std::allocator_traits<Points_alloc>::destroy(m_points_alloc, p_pt);
-#else
-    m_points_alloc.destroy(p_pt);
-#endif
     m_points_alloc.deallocate(p_pt, 1);
   }
 
@@ -1580,11 +1563,7 @@ protected:
   X_monotone_curve_2* _new_curve(const X_monotone_curve_2& cv)
   {
     X_monotone_curve_2* p_cv = m_curves_alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
-#else
-    m_curves_alloc.construct(p_cv, cv);
-#endif
     return (p_cv);
   }
 
@@ -1592,11 +1571,7 @@ protected:
   void _delete_curve(X_monotone_curve_2& cv)
   {
     X_monotone_curve_2* p_cv = &cv;
-#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc, p_cv);
-#else      
-    m_curves_alloc.destroy(p_cv);
-#endif
     m_curves_alloc.deallocate(p_cv, 1);
   }
   //@}

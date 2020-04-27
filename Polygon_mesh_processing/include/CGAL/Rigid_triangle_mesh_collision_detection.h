@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno and Sebastien Loriot
@@ -224,17 +215,16 @@ public:
   std::size_t add_mesh(const TriangleMesh& tm,
                        const NamedParameters& np)
   {
-  // handle vpm
-    using Polygon_mesh_processing::GetVertexPointMap;
-    typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::const_type Local_vpm;
+    // handle vpm
+    typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
+
     CGAL_assertion_code(
       static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
     CGAL_static_assertion(same_vpm);
 
     Vpm vpm =
-      boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                           get_const_property_map(boost::vertex_point, tm) );
   // now add the mesh
     std::size_t id = get_id_for_new_mesh();
@@ -526,15 +516,11 @@ public:
           std::vector<Point_3>& points,
     const NamedParameters& np)
   {
-    using Polygon_mesh_processing::GetVertexPointMap;
-    using Polygon_mesh_processing::GetFaceIndexMap;
-
     const bool maybe_several_cc =
-      boost::choose_param(
-        boost::get_param(np, internal_np::apply_per_connected_component), true);
+      parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
-    typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::const_type Local_vpm;
+    typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
 
     CGAL_assertion_code(
@@ -542,7 +528,7 @@ public:
     CGAL_static_assertion(same_vpm);
 
     Vpm vpm =
-      boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                           get_const_property_map(boost::vertex_point, tm) );
 
     if (maybe_several_cc)
@@ -551,11 +537,10 @@ public:
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // face index map
-      typedef typename GetFaceIndexMap<TriangleMesh,
-                                       NamedParameters>::type Fid_map;
+      typedef typename CGAL::GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fid_map;
 
       Fid_map fid_map =
-        boost::choose_param(boost::get_param(np, internal_np::face_index),
+        parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
                             get_const_property_map(boost::face_index, tm));
 
       std::size_t nb_cc =

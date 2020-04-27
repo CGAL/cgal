@@ -6,6 +6,8 @@
 #  OPENMESH_LIBRARIES - OpenMesh libraries
 #
 
+find_package(OpenMesh NO_MODULE QUIET)
+
 # Is it already configured?
 if (NOT OpenMesh_FOUND)
 
@@ -50,10 +52,28 @@ find_package_handle_standard_args(OpenMesh
   )
 
 if(OpenMesh_FOUND AND NOT TARGET OpenMesh::OpenMesh)
-  add_library(OpenMesh::OpenMesh INTERFACE IMPORTED)
+  add_library(OpenMesh::OpenMesh UNKNOWN IMPORTED)
+
+  if(TARGET OpenMeshCore)
+    target_link_libraries(OpenMesh::OpenMesh PUBLIC OpenMeshCore)
+    return()
+  endif()
+
   set_target_properties(OpenMesh::OpenMesh PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES  "${OPENMESH_INCLUDE_DIRS}"
-    INTERFACE_LINK_LIBRARIES "${OPENMESH_LIBRARIES}"
     INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_OPENMESH;NOMINMAX;_USE_MATH_DEFINES"
-    )
+    INTERFACE_INCLUDE_DIRECTORIES  "${OPENMESH_INCLUDE_DIR}")
+
+  if(OPENMESH_LIBRARY_RELEASE)
+    set_property(TARGET OpenMesh::OpenMesh APPEND PROPERTY
+      IMPORTED_CONFIGURATIONS RELEASE)
+    set_target_properties(OpenMesh::OpenMesh PROPERTIES
+      IMPORTED_LOCATION_RELEASE "${OPENMESH_LIBRARY_RELEASE}")
+  endif()
+
+  if(OPENMESH_LIBRARY_DEBUG)
+    set_property(TARGET OpenMesh::OpenMesh APPEND PROPERTY
+      IMPORTED_CONFIGURATIONS DEBUG)
+    set_target_properties(OpenMesh::OpenMesh PROPERTIES
+      IMPORTED_LOCATION_DEBUG "${OPENMESH_LIBRARY_DEBUG}")
+  endif()
 endif()

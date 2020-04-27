@@ -1,20 +1,11 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -394,6 +385,42 @@ void generate_g1_double_torus(Path& p, std::size_t i)
     default: assert(false);
   }
 }
+
+template<typename Path>
+void generate_path(Path& p,
+                   const std::initializer_list<int>& v1,
+                   const std::initializer_list<int>& v2)
+{
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  
+  std::vector<int> before(v1);
+  for (auto it=before.begin(), itend=before.end(); it!=itend; )
+  {
+    if (*it<0) { p.extend_negative_turn(-(*it), false); }
+    else { p.extend_positive_turn(*it, false); }
+    ++it;
+
+    p.extend_straight_positive(*it, false);
+    ++it;
+  }
+
+  Surface_mesh_topology::internal::create_braket_positive(p, 6, false);
+  
+  std::vector<int> after(v2);
+  for (auto it=after.begin(), itend=after.end(); it!=itend; )
+  {
+    if (*it<0) { p.extend_negative_turn(-(*it), false); }
+    else { p.extend_positive_turn(*it, false); }
+    ++it;
+
+    p.extend_straight_positive(*it, false);
+    ++it;
+  }
+
+  p.update_is_closed();
+}
+
 
 } // namespace CGAL
 

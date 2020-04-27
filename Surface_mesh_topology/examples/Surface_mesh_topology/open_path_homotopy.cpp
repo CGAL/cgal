@@ -39,10 +39,10 @@ void create_path_3(Path_on_surface<SM>& p)
 int main()
 {
   SM sm;
-  std::ifstream in("data/double-torus-example.off");
+  std::ifstream in("data/double-torus.off");
   if (!in.is_open())
   {
-    std::cout<<"ERROR reading file data/double-torus-example.off"<<std::endl;
+    std::cout<<"ERROR reading file data/double-torus.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
   in>>sm;

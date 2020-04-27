@@ -4,6 +4,7 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - CGAL and the Boost Graph Library"
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/iterator.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/generators.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/selection.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/split_graph_into_polylines.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/copy_face_graph.h \

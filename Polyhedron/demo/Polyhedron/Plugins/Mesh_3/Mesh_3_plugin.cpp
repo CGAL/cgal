@@ -293,6 +293,13 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
 
+  ui.facetAngle->setRange(0.0, 30.0);
+  ui.facetAngle->setValue(25.0);
+  ui.edgeSizing->setMinimum(0.0);
+  ui.sharpEdgesAngle->setMaximum(180);
+  ui.iso_value_spinBox->setRange(-65536.0, 65536.0);
+  ui.tetShape->setMinimum(1.0);
+
   ui.advanced->setVisible(false);
   connect(ui.facetTopologyLabel,
           &QLabel::linkActivated,
@@ -361,22 +368,16 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   int decimals = 0;
   double sizing_default = get_approximate(diag * 0.05, 2, decimals);
-  ui.facetSizing->setDecimals(-decimals+2);
-  ui.facetSizing->setSingleStep(std::pow(10.,decimals));
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(sizing_default); // default value
   ui.edgeSizing->setValue(sizing_default);
 
-  ui.tetSizing->setDecimals(-decimals+2);
-  ui.tetSizing->setSingleStep(std::pow(10.,decimals));
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag); // max
   ui.tetSizing->setValue(sizing_default); // default value
 
   double approx_default = get_approximate(diag * 0.005, 2, decimals);
-  ui.approx->setDecimals(-decimals+2);
-  ui.approx->setSingleStep(std::pow(10.,decimals));
   ui.approx->setRange(diag * 10e-7, // min
                       diag); // max
   ui.approx->setValue(approx_default);

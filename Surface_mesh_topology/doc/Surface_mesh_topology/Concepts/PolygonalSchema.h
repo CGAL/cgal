@@ -4,7 +4,7 @@
 
   The concept `PolygonalSchema` defines a 2D polygonal schema, i.e. a combinatorial surface with labeled edges. A PolygonalSchema is created incrementally by adding facets one at a time. A label is any word, that does not contain a space.
 
-  PolygonalSchema::Dart_info should be a class having a public data member char* m_label.
+  PolygonalSchema::Dart_info should be a class having a public data member std::string m_label.
   PolygonalSchema::dimension should be equal to 2.
   
   \cgalRefines GenericMap
@@ -16,8 +16,7 @@
 class PolygonalSchema
 {
 public:
-  /*! creates an empty `PolygonalSchema` object.
-   */
+  /// creates an empty `PolygonalSchema` object.
   PolygonalSchema();
     
   /// starts a new facet.
@@ -45,4 +44,22 @@ public:
 
   /// returns dart with label `s`, NULL if this label is not used.
   Dart_handle get_dart_labeled(const std::string & s) const;
+
+  /// returns true iff the facet containing `dh` is perforated.
+  bool is_perforated(Dart_const_handle dh) const;
+    
+  /// Shortcut for is_perforated(get_dart_labeled(s)).
+  bool is_perforated(const std::string & s) const;
+
+  /// perforates the facet containing `dh`. Returns the number of darts of the face; 0 if the facet was already perforated.
+  size_type perforate_facet(Dart_handle dh);
+
+  /// Shortcut for perforate_facet(get_dart_labeled(s)).
+  size_type perforate_facet(const std::string & s);
+
+  /// fills the facet containing `dh`. Returns the number of darts of the face; 0 if the facet was already filled.
+  size_type fill_facet(Dart_handle dh);
+    
+  /// Shortcut for fill_facet(get_dart_labeled(s)).
+  size_type fill_facet(const std::string & s);
 };

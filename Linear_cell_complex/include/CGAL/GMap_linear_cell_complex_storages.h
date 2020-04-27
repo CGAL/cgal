@@ -1,20 +1,11 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -71,12 +62,8 @@ namespace CGAL {
                                                            Darts_with_id;
     typedef CGAL::Dart<d_, Self, Dart_info, Darts_with_id> Dart;
 
-#ifdef CGAL_CXX11
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
-#else
-    typedef typename Alloc_::template rebind<Dart>::other  Dart_allocator;
-#endif
 
     typedef Compact_container<Dart, Dart_allocator>        Dart_container;
 
@@ -90,17 +77,10 @@ namespace CGAL {
     typedef Items_ Items;
     typedef Alloc_ Alloc;
 
-#ifdef CGAL_CXX11
     template <typename T>
     struct Container_for_attributes :
         public Compact_container<T, typename std::allocator_traits<Alloc_>::template rebind_alloc<T> >
     {};
-#else
-    template <typename T>
-    struct Container_for_attributes :
-        public Compact_container<T, typename Alloc_::template rebind<T>::other>
-    {};
-#endif
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
                                    Attributes;
@@ -162,6 +142,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return dh->mf[i]==dh;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,

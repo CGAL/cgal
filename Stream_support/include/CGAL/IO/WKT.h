@@ -4,17 +4,11 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -45,6 +39,28 @@
 
 namespace CGAL{
 
+namespace internal {
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_2<K>& poly)
+  {
+    typename CGAL::Polygon_2<K>::iterator it = poly.end();
+    --it;
+    if( (*poly.begin()) == *it){
+      poly.erase(it);
+    }
+  }
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
+  {
+    pop_back_if_equal_to_front(pwh.outer_boundary());
+    for(auto i = pwh.holes_begin(); i!= pwh.holes_end(); ++i){
+      pop_back_if_equal_to_front(*i);
+    }
+  }
+}
+  
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -183,7 +199,13 @@ read_polygon_WKT( std::istream& in,
     
     if(type.substr(0, 7).compare("POLYGON")==0)
     {
-      boost::geometry::read_wkt(line, polygon);
+      try {
+        boost::geometry::read_wkt(line, polygon);
+      } catch( ...){
+        in.setstate(std::ios::failbit);
+        return in;
+      };
+      internal::pop_back_if_equal_to_front(polygon);
       break;
     }
   }
@@ -211,7 +233,18 @@ read_multi_polygon_WKT( std::istream& in,
     
     if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try {
+              boost::geometry::read_wkt(line, gc);
+            } catch( ...){
+              in.setstate(std::ios::failbit);
+              return in;
+            };
+      for( typename
+           internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it
+          = gc.begin(); it != gc.end(); ++it)
+      {
+        internal::pop_back_if_equal_to_front(*it);
+      }
       break;
     }
   }

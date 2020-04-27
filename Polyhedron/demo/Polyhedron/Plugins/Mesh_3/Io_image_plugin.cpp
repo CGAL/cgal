@@ -292,7 +292,8 @@ public:
 
     point_image p_im = *im_item->image()->image();
     bool ok = _writeImage(&p_im, fileinfo.filePath().toUtf8()) == 0;
-    items.pop_front();
+    if(ok)
+      items.pop_front();
     return ok;
   }
   QString name() const override{ return "segmented images"; }
@@ -593,7 +594,11 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = x_cubeLabel->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+      x_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
+#else
       x_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
+#endif
       x_cubeLabel->setText("0");
       x_cubeLabel->setValidator(validator);
 
@@ -619,7 +624,11 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = y_cubeLabel->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+      y_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
+#else
       y_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
+#endif
       y_cubeLabel->setText("0");
       y_cubeLabel->setValidator(validator);
       y_slider = new QSlider(mw);
@@ -644,7 +653,11 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = z_cubeLabel->fontMetrics();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+      z_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
+#else
       z_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
+#endif
       z_cubeLabel->setText("0");
       z_cubeLabel->setValidator(validator);
       z_slider = new QSlider(mw);
@@ -695,9 +708,9 @@ private:
     Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
     Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
 
-    x_item->setProperty("img",qVariantFromValue((void*)seg_img));
-    y_item->setProperty("img",qVariantFromValue((void*)seg_img));
-    z_item->setProperty("img",qVariantFromValue((void*)seg_img));
+    x_item->setProperty("img",QVariant::fromValue((void*)seg_img));
+    y_item->setProperty("img",QVariant::fromValue((void*)seg_img));
+    z_item->setProperty("img",QVariant::fromValue((void*)seg_img));
 
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));

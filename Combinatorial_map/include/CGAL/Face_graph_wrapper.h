@@ -1,20 +1,11 @@
 // Copyright (c) 2019 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -26,6 +17,7 @@
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <bitset>
 
 namespace CGAL
 {
@@ -74,8 +66,9 @@ namespace CGAL
   }
   
 ////////////////////////////////////////////////////////////////////////////////
-/** Class Face_graph_wrapper: to wrap any model of FaceGraph into a Combinatorial map.
- *  For now, only for const models, i.e. does not support modification operators.
+/** Class Face_graph_wrapper: to wrap any model of FaceGraph into a
+ *  Combinatorial map. For now, only for const models, i.e. does not support
+ *  modification operators.
  */
 template<typename HEG_>
 class Face_graph_wrapper
@@ -124,8 +117,8 @@ public:
   
   Face_graph_wrapper(const HEG& f) : m_fg(f),
                                      mdarts(*this),
-                                     mnb_used_marks(0),
-                                     m_nb_darts(0)
+                                     m_nb_darts(0),
+                                     mnb_used_marks(0)
 
   {
     mmask_marks.reset();
@@ -136,27 +129,32 @@ public:
       mindex_marks[i]            =i;
       mnb_marked_darts[i]        =0;
       mnb_times_reserved_marks[i]=0;
-      // m_marks[i]                 =nullptr;
     }
 
-    m_nb_darts=darts().size(); // Store locally the number of darts: the HEG must not be modified
+    // Store locally the number of darts: the HEG must not be modified
+    m_nb_darts=darts().size();
+
+    m_all_marks=get(CGAL::dynamic_halfedge_property_t<std::bitset<NB_MARKS> >(), m_fg);
+    for (typename Dart_range::const_iterator it(darts().begin()),
+           itend(darts().end()); it!=itend; ++it)
+    { put(m_all_marks, it, std::bitset<NB_MARKS>()); }
   }
 
   const HEG& get_fg() const
   { return m_fg; }
   
   template<unsigned int i>
-  bool is_free(Dart_const_handle dh) const
-  { return Is_free<HEG, i>::value(m_fg, dh); }
-  bool is_free(Dart_const_handle dh, unsigned int i) const
-  {
-    if (i==2) { return Is_free<HEG, 2>::value(m_fg, dh); }
-    return false; // Not possible to have 0 or 1 free dart with an HEG.
-  }
+  bool is_free(Dart_const_handle /* dh */) const
+  { return false; } // Not possible to have a free dart with an HEG.
+  bool is_free(Dart_const_handle /*dh*/, unsigned int /*i*/) const
+  { return false; } // Not possible to have a free dart with an HEG.
+
+  bool is_perforated(Dart_const_handle dh) const
+  { return is_border(dh, m_fg); }
 
   Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
   {
-    CGAL_assertion(B1>=0 && B1<=(int)dimension);
+    CGAL_assertion(B1>=0 && B1<=static_cast<int>(dimension));
     if (B1==1) return Get_beta<HEG, 1>::value(m_fg, ADart);
     if (B1==2) return Get_beta<HEG, 2>::value(m_fg, ADart); 
     return Get_beta<HEG, 0>::value(m_fg, ADart);
@@ -164,7 +162,7 @@ public:
   template<int B1>
   Dart_const_handle get_beta(Dart_const_handle ADart) const
   {
-    CGAL_assertion(B1>=0 && B1<=(int)dimension);
+    CGAL_assertion(B1>=0 && B1<=static_cast<int>(dimension));
     return Get_beta<HEG, B1>::value(m_fg, ADart);
   }
 
@@ -174,8 +172,8 @@ public:
   /* ??  bool is_dart_used(Dart_const_handle dh) const
       { return true; ?? } */
   
-  int highest_nonfree_dimension(Dart_const_handle dh) const
-  { return (Is_free<HEG, 2>(m_fg, dh)?1:2); }
+  int highest_nonfree_dimension(Dart_const_handle /* dh */) const
+  { return 2; }
 
   Dart_const_handle previous(Dart_const_handle ADart) const
   { return get_beta<0>(ADart); }  
@@ -199,8 +197,8 @@ public:
   bool is_next_exist(Dart_const_handle) const
   { return true; }
   template<unsigned int dim>
-  bool is_opposite_exist(Dart_const_handle ADart) const
-  { return !this->template is_free<dim>(ADart); }
+  bool is_opposite_exist(Dart_const_handle /* ADart */) const
+  { return true; }
 
   template<typename ...Betas>
   Dart_handle beta(Dart_handle ADart, Betas... betas)
@@ -273,15 +271,6 @@ public:
     ++mnb_used_marks;
     CGAL_assertion(is_whole_map_unmarked(m));
 
-    // m_marks[m]=new std::vector<bool>(CGAL::num_halfedges(m_fg),  mmask_marks[m]); // TODO use property map
-    // CGAL::num_halfedges is an upper bound; depending on the removed halfedges
-
-    m_marks_new[m]=get(CGAL::dynamic_halfedge_property_t<bool>(),
-                       const_cast<HEG&>(m_fg)); // Strange...
-    for (typename Dart_range::const_iterator it(darts().begin()),
-         itend(darts().end()); it!=itend; ++it)
-    { set_dart_mark(*it, m, mmask_marks[m]); }
-
     return m;
   }
   
@@ -310,12 +299,11 @@ public:
   
   bool get_dart_mark(Dart_const_handle ADart, size_type amark) const
   {
-    // return (*(m_marks[amark]))[ADart];
-    return get(m_marks_new[amark], ADart);
+    return get(m_all_marks, ADart)[amark];
   }
   void set_dart_mark(Dart_const_handle ADart, size_type amark, bool avalue) const
-  { // (*(m_marks[amark]))[ADart]=avalue;
-    put(m_marks_new[amark], ADart, avalue);
+  {
+    const_cast<std::bitset<NB_MARKS>& >(get(m_all_marks, ADart)).set(amark, avalue);
   }
 
   void flip_dart_mark(Dart_const_handle ADart, size_type amark) const
@@ -403,10 +391,6 @@ public:
     mindex_marks[amark] = mnb_used_marks;
     
     mnb_times_reserved_marks[amark]=0;
-
-    // delete m_marks[amark]; m_marks[amark]=nullptr; // TODO use property map
-    m_marks_new[amark]=get(CGAL::dynamic_halfedge_property_t<bool>(),
-                           const_cast<HEG&>(m_fg)); // To erase the property map ??
   }
   
   bool is_without_boundary(unsigned int i) const
@@ -416,7 +400,7 @@ public:
     
     for ( typename Dart_range::const_iterator it(darts().begin()),
             itend(darts().end()); it!=itend; ++it)
-    { if (is_free<2>(it)) return false; }
+    { if (is_perforated(it)) return false; }
     return true;
   }
   
@@ -480,10 +464,7 @@ public:
     size_type size() const
     {
       if (msize==0)
-      {
-        for (const_iterator it=begin(), itend=end(); it!=itend; ++it)
-        { ++msize; }
-      }
+      { msize=halfedges(mmap.get_fg()).size(); }
       return msize;
     }
     bool empty() const
@@ -608,7 +589,8 @@ public:
   {
     if (i==0) { return mark_cell<0>(adart, amark); }
     else if (i==1) { return mark_cell<1>(adart, amark); }
-    return mark_cell<2>(adart, amark);
+    else if (i==2) { return mark_cell<2>(adart, amark); }
+    return mark_cell<3>(adart, amark);
   } 
 
   template <unsigned int i>
@@ -708,9 +690,9 @@ public:
 
   std::vector<unsigned int> count_all_cells() const
   {
-    std::vector<unsigned int> dim(dimension+1);
+    std::vector<unsigned int> dim(dimension+2);
     
-    for ( unsigned int i=0; i<=dimension; ++i)
+    for ( unsigned int i=0; i<=dimension+1; ++i)
     { dim[i]=i; }
     
     return count_cells(dim);
@@ -718,8 +700,8 @@ public:
 
   std::ostream& display_characteristics(std::ostream & os) const
   {
-    std::vector<unsigned int> cells(dimension+1);
-    for ( unsigned int i=0; i<=dimension; ++i)
+    std::vector<unsigned int> cells(dimension+2);
+    for ( unsigned int i=0; i<=dimension+1; ++i)
     { cells[i]=i; }
     
     std::vector<unsigned int> res=count_cells(cells);
@@ -727,7 +709,7 @@ public:
     os<<"#Darts="<<number_of_darts();
     for (unsigned int i=0; i<=dimension; ++i)
       os<<", #"<<i<<"-cells="<<res[i];
-    //  os<<", #ccs="<<res[dimension+1];
+    os<<", #ccs="<<res[dimension+1];
 
     return os;
   }
@@ -759,10 +741,9 @@ protected:
   mutable size_type mnb_marked_darts[NB_MARKS];
 
   /// Array of property maps; one for each reserved mark.
-  // mutable std::vector<bool>* m_marks[NB_MARKS];
   typedef typename boost::property_map
-              <HEG, CGAL::dynamic_halfedge_property_t<bool> >::type MarkPMap;
-  mutable MarkPMap m_marks_new[NB_MARKS];
+  <HEG, CGAL::dynamic_halfedge_property_t<std::bitset<NB_MARKS> > >::const_type MarkPMap;
+  mutable MarkPMap m_all_marks;
 };
 
   /// null_handle
@@ -784,9 +765,12 @@ protected:
   template<class Base, class HEG>
   struct Get_map
   {
-    typedef Face_graph_wrapper<HEG> type;
+    typedef Face_graph_wrapper<HEG>       type;
     typedef const Face_graph_wrapper<HEG> storage_type;
     Get_map(const HEG& heg): m_map(heg) {}
+    static const HEG& get_mesh(const storage_type& amap)
+    { return amap.get_fg(); }
+
     storage_type m_map;
   };
 
@@ -794,19 +778,23 @@ protected:
             typename Storage, class Map>
   struct Get_map<CGAL::Combinatorial_map_base<d, Refs, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    storage_type m_map;
+    static const Map& get_mesh(storage_type& amap)
+    { return amap; }
+   storage_type m_map;
   };
 
   template <unsigned int d, typename Refs, typename Items, typename Alloc,
             typename Storage, class Map>
   struct Get_map<CGAL::Generalized_map_base<d, Refs, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+    static const Map& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -814,11 +802,14 @@ protected:
             typename Alloc,
             template<unsigned int,class,class,class,class>
             class Map, typename Refs, typename Storage, class LCC>
-  struct Get_map<CGAL::Linear_cell_complex_base<d, d2, Traits, Items, Alloc, Map, Refs, Storage>, LCC>
+  struct Get_map<CGAL::Linear_cell_complex_base<d, d2, Traits, Items, Alloc,
+      Map, Refs, Storage>, LCC>
   {
-    typedef LCC type;
+    typedef LCC        type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
+     static const LCC& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -826,9 +817,11 @@ protected:
             typename Storage, class Map>
   struct Get_map<CGAL::Combinatorial_map<d, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+     static const Map& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -836,19 +829,23 @@ protected:
   struct Get_map<CGAL::Surface_mesh_topology::
                  Polygonal_schema_with_combinatorial_map<Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    storage_type m_map;
+     static const Map& get_mesh(storage_type& amap)
+    { return amap; }
+   storage_type m_map;
   };
 
   template <unsigned int d, typename Items, typename Alloc,
             typename Storage, class Map>
   struct Get_map<CGAL::Generalized_map<d, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+    static const Map& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -856,9 +853,11 @@ protected:
   struct Get_map<CGAL::Surface_mesh_topology::
                  Polygonal_schema_with_generalized_map<Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
+    static const Map& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -869,9 +868,11 @@ protected:
   struct Get_map<CGAL::Linear_cell_complex_for_combinatorial_map
       <d, d2, Traits, Items, Alloc, Map, Storage>, LCC>
   {
-    typedef LCC type;
+    typedef LCC        type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
+    static const LCC& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
@@ -882,18 +883,20 @@ protected:
   struct Get_map<CGAL::Linear_cell_complex_for_generalized_map
       <d, d2, Traits, Items, Alloc, Map, Storage>, LCC>
   {
-    typedef LCC type;
+    typedef LCC        type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
+    static const LCC& get_mesh(storage_type& amap)
+    { return amap; }
     storage_type m_map;
   };
 
   template<class Mesh_>
   struct Get_traits
   {
-    typedef Mesh_ Mesh;
+    typedef Mesh_                 Mesh;
     typedef typename Mesh::Traits Kernel;
-    typedef typename Mesh::Point Point;
+    typedef typename Mesh::Point  Point;
     typedef typename Mesh::Vector Vector;
 
     template<class Dart_handle>
@@ -904,10 +907,10 @@ protected:
   template<class P>
   struct Get_traits<CGAL::Surface_mesh<P> >
   {
-    typedef CGAL::Surface_mesh<P> Mesh;
+    typedef CGAL::Surface_mesh<P>                   Mesh;
     typedef typename CGAL::Kernel_traits<P>::Kernel Kernel;
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
+    typedef typename Kernel::Point_3                Point;
+    typedef typename Kernel::Vector_3               Vector;
 
     template<class Dart_handle>
     static const Point& get_point(const Mesh& m, Dart_handle dh)
@@ -921,9 +924,10 @@ protected:
   struct Get_traits<CGAL::Polyhedron_3<PolyhedronTraits_3,
       PolyhedronItems_3, T_HDS, Alloc> >
   {
-    typedef CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> Mesh;
-    typedef PolyhedronTraits_3 Kernel;
-    typedef typename Kernel::Point_3 Point;
+    typedef CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3,
+    T_HDS, Alloc>                    Mesh;
+    typedef PolyhedronTraits_3        Kernel;
+    typedef typename Kernel::Point_3  Point;
     typedef typename Kernel::Vector_3 Vector;
 
     template<class Dart_handle>

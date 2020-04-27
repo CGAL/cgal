@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -29,7 +20,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
@@ -248,7 +239,7 @@ boost::function_output_iterator<Output_iterator_functor<PMAP> > make_functor(PMA
   return boost::make_function_output_iterator(Output_iterator_functor<PMAP>(map));
 }
 
-inline Emptyset_iterator make_functor(const boost::param_not_found&)
+inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
 {
   return Emptyset_iterator();
 }
@@ -332,26 +323,27 @@ template <typename SourceMesh, typename TargetMesh,
           >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      #ifndef DOXYGEN_RUNNING
-                     const CGAL::cgal_bgl_named_params<T1,Tag1,Base1>& np1,
-                     const CGAL::cgal_bgl_named_params<T2,Tag2,Base2>& np2
+                     const CGAL::Named_function_parameters<T1,Tag1,Base1>& np1,
+                     const CGAL::Named_function_parameters<T2,Tag2,Base2>& np2
                      #else
                      const NamedParameters1& np1,
                      const NamedParameters2& np2
                      #endif
                      )
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
-                            choose_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator),
-                                         impl::make_functor(get_param(np1, internal_np::vertex_to_vertex_map))),
-                            choose_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator),
-                                         impl::make_functor(get_param(np1, internal_np::halfedge_to_halfedge_map))),
-                            choose_param(get_param(np1, internal_np::face_to_face_output_iterator),
-                                         impl::make_functor(get_param(np1, internal_np::face_to_face_map))),
-                            choose_param(get_param(np1, internal_np::vertex_point),
+                            choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
+                                         impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
+                            choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
+                                         impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
+                            choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
+                                         impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
+                            choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                          get(vertex_point, sm)),
-                            choose_param(get_param(np2, internal_np::vertex_point),
+                            choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                          get(vertex_point, tm)));
 }
 
@@ -364,7 +356,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
 template <typename SourceMesh, typename TargetMesh, 
           typename T, typename Tag, typename Base >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, 
-                     const CGAL::cgal_bgl_named_params<T,Tag,Base>& np)
+                     const CGAL::Named_function_parameters<T,Tag,Base>& np)
 {
   copy_face_graph(sm, tm, np, parameters::all_default());
 }

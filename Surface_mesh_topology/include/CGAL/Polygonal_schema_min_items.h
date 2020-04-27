@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -22,9 +13,8 @@
 #define CGAL_POLYGONAL_SCHEMA_MIN_ITEMS_H 1
 
 #include <CGAL/license/Surface_mesh_topology.h>
+#include <string>
 
-#include <cstring>
-  
 namespace CGAL {
 namespace Surface_mesh_topology {
 
@@ -34,7 +24,7 @@ namespace Surface_mesh_topology {
 
   /** Minimal items for polygonal schema.
    * Generic_map_min_items defines what is the minimal item class for a generic map.
-   * One struct associated with darts, having one char* named m_label..
+   * One struct associated with darts, having one std::string named m_label..
    */
   struct Polygonal_schema_min_items
   {
@@ -42,12 +32,7 @@ namespace Surface_mesh_topology {
     struct Dart_wrapper
     {
       struct Info_for_darts
-      {
-        char* m_label;
-
-        Info_for_darts() : m_label(nullptr)
-        {}
-      };
+      { std::string m_label; };
       
       typedef Info_for_darts Dart_info;
     };

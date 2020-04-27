@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>,
@@ -222,11 +213,7 @@ template <typename T, typename A>
 typename Union_find<T,A>::handle Union_find<T,A>::make_set(const T& x) {
     pointer tmp = m_first;
     m_first = alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator>::construct(alloc, m_first, tmp, x);
-#else
-    alloc.construct( m_first, Union_find_struct(tmp,x));
-#endif
     ++sets;
     ++values;
     return handle( m_first);
@@ -236,11 +223,7 @@ template <typename T, typename A>
 void Union_find<T,A>::clear() {
     while (m_first) { 
         pointer tmp = m_first->next;
-#ifdef CGAL_CXX11
         std::allocator_traits<allocator>::destroy(alloc, m_first);
-#else
-        alloc.destroy(m_first);
-#endif
         alloc.deallocate(m_first,1);
         m_first = tmp;
     }

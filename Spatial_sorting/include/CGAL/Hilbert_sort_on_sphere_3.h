@@ -1,20 +1,11 @@
 // Copyright (c) 2013  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Olivier Devillers
 //                 Pedro Machado Manhaes de Castro
@@ -51,7 +42,7 @@ class Hilbert_sort_on_sphere_3 {
 	typedef internal::Transform_coordinates_traits_3<K,-1,0,1,1> Face_5_traits_3;  // -z +x
 	typedef internal::Transform_coordinates_traits_3<K,1,1,0,0> Face_6_traits_3;  // +x +y
 	
-	Hilbert_sort_2<Face_1_traits_3, Hilbert_policy > _hs_1_object;
+        Hilbert_sort_2<Face_1_traits_3, Hilbert_policy > _hs_1_object;
 	Hilbert_sort_2<Face_2_traits_3, Hilbert_policy > _hs_2_object;
 	Hilbert_sort_2<Face_3_traits_3, Hilbert_policy > _hs_3_object;
 	Hilbert_sort_2<Face_4_traits_3, Hilbert_policy > _hs_4_object;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -49,7 +40,8 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
     do
     {
       const typename Get_traits<Mesh>::Point*
-          next=&Get_traits<Mesh>::get_point(mesh.get_fg(), mesh.other_extremity(adart));
+          next=&Get_traits<Mesh>::get_point(mesh.get_fg(),
+                                            mesh.other_extremity(adart));
       internal::newell_single_step_3_for_lcc(*curr, *next, normal);
       ++nb;
       curr=next;
@@ -98,14 +90,17 @@ public:
   /// Construct the viewer.
   /// @param alcc the lcc to view
   /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  /// @param anofaces if true, do not draw faces (faces are not computed;
+  ///     this can be usefull for very big object where this time could be long)
   Face_graph_with_path_viewer(QWidget* parent,
                               const Mesh& amesh,
-                              const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* paths=nullptr,
+                              const std::vector
+                              <Surface_mesh_topology::Path_on_surface<Mesh> >
+                              *paths=nullptr,
                               std::size_t amark=LCC::INVALID_MARK,
                               const char* title="", bool anofaces=false,
-                              const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
+                              const DrawingFunctorLCC&
+                              drawing_functor=DrawingFunctorLCC()) :
     Base(parent, title, true, true, true, false, true),
     mesh(amesh),
     lcc(amesh),
@@ -115,7 +110,8 @@ public:
     m_current_path(m_paths->size()),
     m_current_dart(0),
     m_draw_marked_darts(true),
-    m_amark(amark==-1?LCC::INVALID_MARK:amark)
+    m_amark(amark==std::numeric_limits<std::size_t>::max()?
+              LCC::INVALID_MARK:amark)
   {
     m_current_dart=lcc.number_of_darts(); compute_elements();
   }
@@ -129,9 +125,9 @@ protected:
   {
     clear();
 
-    unsigned int markfaces    = lcc.get_new_mark();
-    unsigned int markedges    = lcc.get_new_mark();
-    unsigned int markvertices = lcc.get_new_mark();
+    typename LCC::size_type markfaces    = lcc.get_new_mark();
+    typename LCC::size_type markedges    = lcc.get_new_mark();
+    typename LCC::size_type markvertices = lcc.get_new_mark();
 
     if (m_current_dart!=lcc.number_of_darts())
     { // We want to draw only one dart
@@ -160,7 +156,7 @@ protected:
     {
       if (m_current_path==m_paths->size())
       {
-        for (unsigned int i=0; i<m_paths->size(); ++i)
+        for (std::size_t i=0; i<m_paths->size(); ++i)
         { compute_path(i, markedges); }
       }
       else if (m_current_path!=m_paths->size()+1)
@@ -295,7 +291,8 @@ protected:
     }
     else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
     {
-      m_current_dart=(m_current_dart==0?lcc.number_of_darts():m_current_dart-1);
+      m_current_dart=(m_current_dart==0?lcc.number_of_darts():
+                      m_current_dart-1);
       if (m_current_dart==lcc.number_of_darts())
       {
         displayMessage(QString("Draw all darts."));
@@ -311,16 +308,16 @@ protected:
     { Base::keyPressEvent(e); }
   }
 
-  void compute_path(unsigned int i, unsigned int amark)
+  void compute_path(std::size_t i, typename LCC::size_type amark)
   {
     if ((*m_paths)[i].is_empty())
     { return; }
 
-    CGAL::Random random(i);
+    CGAL::Random random(static_cast<unsigned int>(i));
     CGAL::Color color=get_random_color(random);
     
     add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
-    for (unsigned int j=0; j<(*m_paths)[i].length(); ++j)
+    for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
     {
       if ( !lcc.is_marked( (*m_paths)[i].get_ith_dart(j), amark) )
       {
@@ -336,24 +333,24 @@ protected:
   bool m_nofaces;
   const DrawingFunctorLCC& m_drawing_functor;
   const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;
-  unsigned int m_current_path;
-  unsigned int m_current_dart;
+  std::size_t m_current_path;
+  std::size_t m_current_dart;
   bool m_draw_marked_darts;
-  std::size_t m_amark; // If !=INVALID_MARK, show darts marked with this mark
+  typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
 };
   
 template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="Mesh Viewer",
-          std::size_t amark=-1,
+          std::size_t amark=std::numeric_limits<std::size_t>::max(),
           bool nofill=false,
           const DrawingFunctor& drawing_functor=DrawingFunctor())
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -374,7 +371,7 @@ template<class Mesh>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="LCC Viewer",
-          std::size_t amark=-1,
+          std::size_t amark=std::numeric_limits<std::size_t>::max(),
           bool nofill=false)
 {
   DefaultDrawingFunctorLCC f;

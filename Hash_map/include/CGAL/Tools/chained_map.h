@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Courtesy of LEDA
@@ -64,12 +55,8 @@ class chained_map
    std::size_t old_table_size_1;  
 
    std::size_t old_index;
-#ifdef CGAL_CXX11
    typedef std::allocator_traits<Allocator> Allocator_traits;
    typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
-#else
-   typedef typename Allocator::template rebind<chained_map_elem<T> >::other allocator_type;
-#endif
 
    allocator_type alloc;
 
@@ -91,12 +78,8 @@ private:
 
    void destroy(chained_map_elem<T>* item)
    {
-#ifdef CGAL_CXX11
      typedef std::allocator_traits<allocator_type> Allocator_type_traits;
      Allocator_type_traits::destroy(alloc,item);
-#else
-     alloc.destroy(item);
-#endif
    }
 
 public:
@@ -161,11 +144,7 @@ void chained_map<T, Allocator>::init_table(std::size_t t)
   table_size_1 = t-1;
   table = alloc.allocate(t + t/2);
   for (std::size_t i = 0 ; i < t + t/2 ; ++i){
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(alloc,table + i);
-#else
-    alloc.construct(table + i, chained_map_elem<T>());
-#endif
   }
 
   free = table + t;

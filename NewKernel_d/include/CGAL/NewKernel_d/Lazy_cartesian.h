@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -39,7 +30,7 @@ struct Nth_iterator_element : private Store_kernel<K> {
   typedef typename Get_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
   template<class U> result_type operator()(U&& u, int i) const {
     typename Get_functor<K, Construct_ttag<T> >::type ci(this->kernel());
-    return *cpp0x::next(ci(std::forward<U>(u),Begin_tag()),i);
+    return *std::next(ci(std::forward<U>(u),Begin_tag()),i);
   }
 };
       //typedef typename Functor<typename iterator_tag_traits<T>::nth_element>::type nth_elem;
@@ -118,6 +109,12 @@ template<typename AT, typename ET, typename AC, typename EC, typename E2A, typen
 class Lazy_rep_XXX :
   public Lazy_rep< AT, ET, E2A >, private EC
 {
+  // `default_construct<T>()` is the same as `T{}`. But, this is a
+  // workaround to a MSVC-2015 bug (fixed in MSVC-2017): its parser
+  // seemed confused by `T{}` somewhere below.
+  template <typename T>
+  static T default_construct() { return T(); }
+
   // Lazy_rep_0 does not inherit from EC or take a parameter AC. It has different constructors.
   static_assert(sizeof...(L)>0, "Use Lazy_rep_0 instead");
   template <class Ei, class Ai, class E2Ai, class Ki> friend class Lazy_kernel_base;
@@ -147,7 +144,7 @@ class Lazy_rep_XXX :
   // Currently we construct the vectors, then move them into the tuple. It would be nicer to construct them in their final destination, because eventually we will also have arrays instead of vectors.
   template<class...T,class LLL,class...LL>
   Lazy_rep_XXX(Lazy_internal::typelist<T...>, const AC& ac, const EC& ec, LLL const&lll, LL const&...ll) :
-    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(Lazy_internal::do_extract(T{},lll)...)
+    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(Lazy_internal::do_extract(default_construct<T>(),lll)...)
   {
     //this->set_depth(std::max({ -1, (int)CGAL::depth(ll)...}) + 1);
     this->set_depth(1); // FIXME: now that we have ranges, we could actually compute the depth if we cared...

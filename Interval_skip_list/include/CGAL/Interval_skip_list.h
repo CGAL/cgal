@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -384,11 +375,7 @@ class Interval_for_container : public Interval_
       return it;
 #else
       IntervalListElt<Interval> *elt_ptr = alloc.allocate(1);
-#ifdef CGAL_CXX11
       std::allocator_traits<Alloc>::construct(alloc,elt_ptr, I);
-#else      
-      alloc.construct(elt_ptr, I);
-#endif
       return elt_ptr;
       //return new IntervalListElt<Interval>(I);
 #endif
@@ -400,11 +387,7 @@ class Interval_for_container : public Interval_
       compact_container.erase(I);
 #else
 
-#ifdef CGAL_CXX11
       std::allocator_traits<Alloc>::destroy(alloc,I);
-#else
-      alloc.destroy(I);
-#endif
       alloc.deallocate(I,1);
       //delete I;
 #endif

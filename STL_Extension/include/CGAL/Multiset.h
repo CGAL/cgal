@@ -1,19 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -236,13 +227,8 @@ protected:
   };
 
   // Rebind the allocator to the Node type:
-#ifdef CGAL_CXX11
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Node> Node_allocator;
-#else
-  typedef typename Allocator::template rebind <Node>  Node_alloc_rebind;
-  typedef typename Node_alloc_rebind::other           Node_allocator;
-#endif
 
 public:
 
@@ -739,7 +725,6 @@ public:
    */
   iterator insert_before (iterator position,
                           const Type& object);
-  //@}
 
   /// \name Erasing functions.
   //@{
@@ -1451,11 +1436,7 @@ protected:
 	      color != Node::DUMMY_END);
 
       Node* new_node = node_alloc.allocate(1);
-#ifdef CGAL_CXX11
       std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
-#else
-      node_alloc.construct(new_node, beginNode);
-#endif
       new_node->init(object, color);
       return (new_node);
   }
@@ -3983,11 +3964,7 @@ Multiset<Type, Compare, Allocator>::_allocate_node
                            color != Node::DUMMY_END);
 
   Node* new_node = node_alloc.allocate(1);
-#ifdef CGAL_CXX11
   std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
-#else
-  node_alloc.construct(new_node, beginNode);
-#endif
   new_node->init(object, color);
   return (new_node);
 }
@@ -3999,11 +3976,7 @@ Multiset<Type, Compare, Allocator>::_allocate_node
 template <class Type, class Compare, typename Allocator>
 void Multiset<Type, Compare, Allocator>::_deallocate_node (Node* nodeP)
 {
-#ifdef CGAL_CXX11
   std::allocator_traits<Node_allocator>::destroy(node_alloc, nodeP);
-#else  
-  node_alloc.destroy (nodeP);
-#endif
   node_alloc.deallocate (nodeP, 1);
 
   return;

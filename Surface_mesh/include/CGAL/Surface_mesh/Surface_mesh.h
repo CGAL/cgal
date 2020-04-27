@@ -1,22 +1,12 @@
-//=============================================================================
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 // Copyright (C) 2014 GeometryFactory
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
 
@@ -56,7 +46,7 @@
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 namespace CGAL {
 
@@ -90,21 +80,6 @@ namespace CGAL {
           return idx_ != inf;
         }
 
-        /// are two indices equal?
-        bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
-
-        /// are two indices different?
-        bool operator!=(const T& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
-
-        /// Comparison by index.
-        bool operator<(const T& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
         // Compatibility with OpenMesh handle
         size_type idx() const {
           return idx_;
@@ -130,7 +105,7 @@ namespace CGAL {
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
       
-    private:
+    protected:
         size_type idx_;
     };
 
@@ -141,8 +116,8 @@ namespace CGAL {
     return ret;
   }
 
-    // Implementation for Surface_mesh::Vertex_index
- 
+  
+    // Implementation for Surface_mesh::Vertex_index  
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
     {
@@ -151,6 +126,25 @@ namespace CGAL {
         SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
+
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+      
+        /// are two indices equal?
+        bool operator==(const SM_Vertex_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Vertex_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Vertex_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
 
         friend std::ostream& operator<<(std::ostream& os, SM_Vertex_index const& v)
@@ -177,6 +171,25 @@ namespace CGAL {
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
+        /// are two indices equal?
+        bool operator==(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Halfedge_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Halfedge_index const& h)
         {
@@ -193,7 +206,25 @@ namespace CGAL {
         SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
 
+        /// are two indices equal?
+        bool operator==(const SM_Face_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Face_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Face_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
         {
@@ -228,6 +259,11 @@ namespace CGAL {
         // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
         bool is_valid() const { return halfedge_.is_valid(); }
 
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
         // Are two indices equal?
         bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
 
@@ -257,8 +293,9 @@ namespace CGAL {
         // increment.
         SM_Edge_index operator++(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return tmp; }
 
+        SM_Edge_index operator+=(std::ptrdiff_t n) { halfedge_ = SM_Halfedge_index(size_type(std::ptrdiff_t(halfedge_) + 2*n)); return *this; }
 
-      // prints the index and a short identification string to an ostream.
+        // prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, SM_Edge_index const& e)
         {
           return (os << 'e' << (size_type)e << " on " << e.halfedge());
@@ -1757,6 +1794,8 @@ public:
     /// With `check_all_incident_halfedges == false` the function returns `true`, if the incident
     /// halfedge associated to vertex `v` is a border halfedge, or if the vertex is isolated.
     /// \cgalAdvancedEnd
+    /// \attention If the data contained in the `Surface_mesh` is not a 2-manifold, then
+    /// this operation is not guaranteed to return the right result.
   bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
         Halfedge_index h(halfedge(v));
@@ -2111,13 +2150,16 @@ private: //------------------------------------------------------- private data
     bool has_fcolors;
     boost::tie(fcolors, has_fcolors) = sm.template property_map<typename Mesh::Face_index, CGAL::Color >("f:color");
 
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     if(!has_fcolors && !has_vcolors)
       os << "OFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
-    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
@@ -2212,26 +2254,42 @@ private: //------------------------------------------------------- private data
     std::vector<internal::PLY::Abstract_property_printer<FIndex>*> fprinters;
     internal::PLY::fill_header (os, sm, fprinters);
 
+    
     std::vector<internal::PLY::Abstract_property_printer<EIndex>*> eprinters;
     if (sm.template properties<EIndex>().size() > 1)
     {
-      os << "element edge " << sm.number_of_edges() << std::endl;
-      os << "property int v0" << std::endl;
-      os << "property int v1" << std::endl;
-      internal::PLY::fill_header (os, sm, eprinters);
+      std::ostringstream oss;
+      internal::PLY::fill_header (oss, sm, eprinters);
+
+      if (!eprinters.empty())
+      {
+        os << "element edge " << sm.number_of_edges() << std::endl;
+        os << "property int v0" << std::endl;
+        os << "property int v1" << std::endl;
+        os << oss.str();
+      }
     }
 
     std::vector<internal::PLY::Abstract_property_printer<HIndex>*> hprinters;
     if (sm.template properties<HIndex>().size() > 1)
     {
-      os << "element halfedge " << sm.number_of_halfedges() << std::endl;
-      os << "property int source" << std::endl;
-      os << "property int target" << std::endl;
-      internal::PLY::fill_header (os, sm, hprinters);
+      std::ostringstream oss;
+      internal::PLY::fill_header (oss, sm, hprinters);
+
+      if (!hprinters.empty())
+      {
+        os << "element halfedge " << sm.number_of_halfedges() << std::endl;
+        os << "property int source" << std::endl;
+        os << "property int target" << std::endl;
+        os << oss.str();
+      }
     }
 
     os << "end_header" << std::endl;  
 
+    std::vector<int> reindex;
+    reindex.resize (sm.num_vertices());
+    int n = 0;
     for(VIndex vi : sm.vertices())
     {
       for (std::size_t i = 0; i < vprinters.size(); ++ i)
@@ -2242,22 +2300,23 @@ private: //------------------------------------------------------- private data
       }
       if (get_mode (os) == IO::ASCII)
         os << std::endl;
+      reindex[std::size_t(vi)] = n ++;
     }
 
-    std::vector<VIndex> polygon;
+    std::vector<int> polygon;
     
     for(FIndex fi : sm.faces())
     {
       // Get list of vertex indices
       polygon.clear();
-      for(HIndex hi : halfedges_around_face(halfedge(fi, sm), sm))
-        polygon.push_back (sm.target(hi));
+      for(VIndex vi : CGAL::vertices_around_face(sm.halfedge(fi),sm))
+        polygon.push_back (reindex[std::size_t(vi)]);
 
       if (get_mode (os) == IO::ASCII)
       {
         os << polygon.size() << " ";
         for (std::size_t i = 0; i < polygon.size(); ++ i)
-          os << int(polygon[i]) << " ";
+          os << polygon[i] << " ";
       }
       else
       {
@@ -2265,7 +2324,7 @@ private: //------------------------------------------------------- private data
         os.write (reinterpret_cast<char*>(&size), sizeof(size));
         for (std::size_t i = 0; i < polygon.size(); ++ i)
         {
-          int idx = int(polygon[i]);
+          int idx = polygon[i];
           os.write (reinterpret_cast<char*>(&idx), sizeof(idx));
         }
       }
@@ -2285,12 +2344,12 @@ private: //------------------------------------------------------- private data
     {
       for(EIndex ei : sm.edges())
       {
+        int v0 = reindex[std::size_t(sm.vertex(ei,0))];
+        int v1 = reindex[std::size_t(sm.vertex(ei,1))];
         if (get_mode (os) == IO::ASCII)
-          os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
+          os << v0 << " " << v1 << " ";
         else
         {
-          int v0 = int(sm.vertex(ei,0));
-          int v1 = int(sm.vertex(ei,1));
           os.write (reinterpret_cast<char*>(&v0), sizeof(v0));
           os.write (reinterpret_cast<char*>(&v1), sizeof(v1));
         }
@@ -2311,12 +2370,12 @@ private: //------------------------------------------------------- private data
     {
       for(HIndex hi : sm.halfedges())
       {
+        int source = reindex[std::size_t(sm.source(hi))];
+        int target = reindex[std::size_t(sm.target(hi))];
         if (get_mode (os) == IO::ASCII)
-          os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";
+          os << source << " " << target << " ";
         else
         {
-          int source = int(sm.source(hi));
-          int target = int(sm.target(hi));
           os.write (reinterpret_cast<char*>(&source), sizeof(source));
           os.write (reinterpret_cast<char*>(&target), sizeof(target));
         }
@@ -2384,8 +2443,11 @@ private: //------------------------------------------------------- private data
    typedef typename Mesh::Face_index Face_index;
    typedef typename Mesh::Vertex_index Vertex_index;
    typedef typename Mesh::size_type size_type;
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
-        vpm = choose_param(get_param(np, CGAL::internal_np::vertex_point),
+   using parameters::choose_parameter;
+   using parameters::get_parameter;
+
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+        vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                            get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
     std::string off;
@@ -2399,6 +2461,7 @@ private: //------------------------------------------------------- private data
       is.setstate(std::ios::failbit);
       return false;
     }
+    is >> sm_skip_comments;
     is >> n >> f >> e;
     if(!is){
       return false;
@@ -2416,12 +2479,14 @@ private: //------------------------------------------------------- private data
       boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
       v_has_normals = true;
     }
+    std::string line;
     char ci;
-
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
+      std::getline(is, line);
+      std::istringstream iss(line);
       double x, y, z;
-      is >> iformat(x) >> iformat(y) >> iformat(z);
+      iss >> iformat(x) >> iformat(y) >> iformat(z);
       
       Vertex_index vi = sm.add_vertex();
       put(vpm, vi, P(x, y, z));
@@ -2429,26 +2494,37 @@ private: //------------------------------------------------------- private data
       
       vertexmap[i] = vi;
       if(v_has_normals){
-        is >> v;
+        if(!(iss >> v))
+        {
+          std::cerr<<"This doesn't seem to be a correct NOFF file. Aborting."<<std::endl;
+          is.setstate(std::ios::failbit);          
+          return false;
+        }
         vnormal[vi] = v;
       }
 
 
       if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
         std::string col;
-        std::getline(is, col);
-        std::istringstream iss(col);
-        if(iss >> ci){
+        std::getline(iss, col);
+        std::istringstream iss2(col);
+        if(iss2 >> ci){
          bool created;
          boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
-         std::istringstream iss2(col);
-         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss2);
+         std::istringstream iss3(col);
+         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss3);
          vcolored = true;
+        }
+        else
+        {
+          std::cerr<<"This doesn't seem to be a correct COFF file. Aborting."<<std::endl;
+          is.setstate(std::ios::failbit);
+          return false;
         }
       }else{
          if(vcolored){
            //stores the RGB value
-           vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
+           vcolor[vi] = File_scanner_OFF::get_color_from_line(iss);
          }
        }
     }

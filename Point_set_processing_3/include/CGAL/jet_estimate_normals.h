@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret and Marc Pouget and Frederic Cazals
 
@@ -35,7 +26,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <functional>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -161,9 +152,8 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 
    \pre `k >= 2`
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   and `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
@@ -206,7 +196,8 @@ jet_estimate_normals(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 
@@ -224,12 +215,12 @@ jet_estimate_normals(
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
-  FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), FT(0));
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
+  FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;

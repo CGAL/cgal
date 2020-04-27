@@ -125,10 +125,6 @@ public:
     }
   }
 
-  ~Facewidth()
-  {
-  }
-  
   std::vector<Dart_handle_original> compute_facewidth()
   {
     m_cycle.clear();

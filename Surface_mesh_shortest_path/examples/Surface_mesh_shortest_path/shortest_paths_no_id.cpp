@@ -11,16 +11,16 @@
 
 #include <boost/lexical_cast.hpp>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Triangle_mesh;
-typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh> Traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel               Kernel;
+typedef CGAL::Polyhedron_3<Kernel>                                        Triangle_mesh;
+typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh>    Traits;
 // default property maps
 typedef boost::property_map<Triangle_mesh,
-                            boost::vertex_external_index_t>::type  Vertex_index_map;
+                            boost::vertex_external_index_t>::const_type   Vertex_index_map;
 typedef boost::property_map<Triangle_mesh,
-                            CGAL::halfedge_external_index_t>::type Halfedge_index_map;
+                            CGAL::halfedge_external_index_t>::const_type  Halfedge_index_map;
 typedef boost::property_map<Triangle_mesh,
-                            CGAL::face_external_index_t>::type     Face_index_map;
+                            CGAL::face_external_index_t>::const_type      Face_index_map;
 typedef CGAL::Surface_mesh_shortest_path<Traits,
                                          Vertex_index_map,
                                          Halfedge_index_map,

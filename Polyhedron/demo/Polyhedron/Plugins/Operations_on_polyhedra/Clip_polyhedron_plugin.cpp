@@ -91,7 +91,8 @@ public :
     //get the references
     this->scene = scene_interface;
     this->messages = mi;
-    plane = NULL;
+    plane = nullptr;
+    clipper_item = nullptr;
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra With Plane", mw);
     actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");

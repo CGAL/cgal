@@ -84,6 +84,7 @@ Point_set_processing_3
 Poisson_surface_reconstruction_3 
 Polygon 
 Polygon_mesh_processing 
+Polygonal_surface_reconstruction 
 Polyhedron 
 Polyhedron_IO 
 Polyline_simplification_2 

@@ -1,20 +1,11 @@
 // Copyright (c) 2019  Geometry Factory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno
 
@@ -598,6 +589,8 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
  * \param names will contain the name of each mesh in `file_name` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
  * \return the number of soups read.
+ * 
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
 int read_triangle_soups_from_3mf(const std::string& file_name, PointRanges& all_points,

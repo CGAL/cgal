@@ -273,7 +273,7 @@ public:
   
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const { 
-    return m == Gouraud; 
+    return m == GouraudPlusEdges;
   }
   void draw(CGAL::Three::Viewer_interface*) const;
   void drawEdges(CGAL::Three::Viewer_interface*) const;
