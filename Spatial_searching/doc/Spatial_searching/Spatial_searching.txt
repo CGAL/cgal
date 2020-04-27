@@ -432,7 +432,7 @@ We took the gargoyle data set (Surface) from aim\@shape, and generated the same 
 We then consider three scenarios as data/queries.
 The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20.
 
-The results were produced with the release 5.0 of \cgal, on an Intel i7 2.3 Ghz
+The results were produced with the release 5.1 of \cgal, on an Intel i7 2.3 Ghz
 laptop with 16 GB RAM, compiled with CLang++ 6 with the O3 option.
 
 The values are the average of ten tests each. We show timings in seconds for both the building of the tree and the queries.
@@ -558,4 +558,3 @@ in 2020.
 
 */
 } /* namespace CGAL */
-
