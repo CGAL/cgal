@@ -193,7 +193,7 @@ template <typename PointRange,
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS&)
+               const CGAL_BGL_NP_CLASS& np)
 {
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
   return writer(points, polygons);
@@ -214,10 +214,10 @@ template <typename PointRange,
 bool write_OBJ(const char* fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS&)
+               const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream out(fname);
-  return write_OBJ(out, points, polygons);
+  return write_OBJ(out, points, polygons, np);
 }
 
 template <typename PointRange,
@@ -229,10 +229,21 @@ bool write_OBJ(const char* fname,
   return write_OBJ(fname, points, polygons);
 }
 
+template <typename PointRange,
+          typename PolygonRange,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_OBJ(fname.c_str(), points, polygons,np);
+}
+
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
 {
-  return write_OBJ(fname.c_str(), points, polygons);
+  return write_OBJ(fname, points, polygons, parameters::all_default());
 }
 
 } // namespace CGAL
