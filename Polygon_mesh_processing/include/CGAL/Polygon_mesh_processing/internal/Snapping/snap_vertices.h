@@ -299,7 +299,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
   CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
 
-  GT gt = choose_parameter(get_parameter(np_A, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np_A, internal_np::geom_traits));
   VPM_A vpm_A = choose_parameter(get_parameter(np_A, internal_np::vertex_point),
                                  get_property_map(vertex_point, tm_A));
   VPM_B vpm_B = choose_parameter(get_parameter(np_B, internal_np::vertex_point),

@@ -119,12 +119,23 @@ function(CGAL_setup_CGAL_dependencies target)
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} ${keyword}
-      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS"
-      "/fp:strict"
-      "/fp:except-"
-      "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
-      "/bigobj"  # Use /bigobj by default
-      )
+      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
+    if(CMAKE_VERSION VERSION_LESS 3.11)
+      target_compile_options(${target} ${keyword}
+        /fp:strict
+        /fp:except-
+        /wd4503  # Suppress warnings C4503 about "decorated name length exceeded"
+        /bigobj  # Use /bigobj by default
+        )
+    else()
+      # The MSVC generator supports `$<COMPILE_LANGUAGE: >` since CMake 3.11.
+      target_compile_options(${target} ${keyword}
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
+        $<$<COMPILE_LANGUAGE:CXX>:/wd4503>  # Suppress warnings C4503 about "decorated name length exceeded"
+        $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
+        )
+    endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     message( STATUS "Using Intel Compiler. Adding -fp-model strict" )
     if(WIN32)

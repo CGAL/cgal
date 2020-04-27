@@ -15,6 +15,8 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/reader_helpers.h>
 
+#include <CGAL/Container_helper.h>
+
 #include <boost/cstdint.hpp> 
 
 #include <cctype>
@@ -43,7 +45,7 @@ bool read_ASCII_facet(std::istream& input,
   double x,y,z;
   Point p;
   Triangle ijk;
-  IO::internal::resize(ijk, 3);
+  CGAL::internal::resize(ijk, 3);
 
   while(input >> s)
   {
@@ -213,7 +215,7 @@ bool parse_binary_STL(std::istream& input,
     }
 
     Triangle ijk;
-    IO::internal::resize(ijk, 3);
+    CGAL::internal::resize(ijk, 3);
 
     for(int j=0; j<3; ++j)
     {

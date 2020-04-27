@@ -612,7 +612,6 @@ public Q_SLOTS:
         }
         if (fpmap_valid)
         {
-          PMP::connected_components(pmesh, fpmap, PMP::parameters::edge_is_constrained_map(eif));
           poly_item->setItemIsMulticolor(true);
           poly_item->show_feature_edges(true);
         }

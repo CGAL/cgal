@@ -290,10 +290,11 @@ public:
 
 
   QString nameFilters() const {
-    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
+    return "VTK XML UnstructuredGrid (*.vtu);;VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp)"; }
   QString name() const { return "vtk_plugin"; }
   bool canSave(const CGAL::Three::Scene_item* item)
   {
+
     return (qobject_cast<const Scene_facegraph_item*>(item)
             || qobject_cast<const Scene_c3t3_item*>(item));
   }

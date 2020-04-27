@@ -369,9 +369,9 @@ concept. The second template parameter is a tag that indicates what
 operations are allowed in the computations that take place within the
 traits class.
 The two possible values of the `Method_tag` parameter are
-`Ring_tag` and `Sqrt_field_tag`. When
-`Ring_tag` is used, only ring operations are used during the
-evaluation of the predicates, whereas if `Sqrt_field_tag` is
+`Integral_domain_without_division_tag` and `Field_with_sqrt_tag`. When
+`Integral_domain_without_division_tag` is used, only ring operations are used during the
+evaluation of the predicates, whereas if `Field_with_sqrt_tag` is
 chosen, all four field operations, as well as square roots, are used
 during the predicate evaluation.
 
@@ -379,32 +379,22 @@ The `Apollonius_graph_traits_2<K,Method_tag>` class provides exact
 predicates if the number type in the kernel `K` is an exact number
 type. This is to be associated with the type of operations allowed for
 the predicate evaluation. For example `MP_Float` as number
-type, with `Ring_tag` as tag will give exact predicates,
-whereas `MP_Float` with `Sqrt_field_tag` will give
+type, with `Integral_domain_without_division_tag` as tag will give exact predicates,
+whereas `MP_Float` with `Field_with_sqrt_tag` will give
 inexact predicates.
 
-Since using an exact number type may be too slow, the
-`Apollonius_graph_traits_2<K,Method_tag>` class is designed to
-support the dynamic filtering of \cgal through the
-`Filtered_exact<CT,ET>` mechanism. In particular if `CT`
-is an inexact number type that supports the operations denoted by the
-tag `Method_tag` and `ET` is an exact number type for these
-operations, then kernel with number type
-`Filtered_exact<CT,ET>` will yield exact predicates for the
-Apollonius graph traits. To give a concrete example,
-`CGAL::Filtered_exact<double,CGAL::MP_Float>` with 
-`Ring_tag` will produce exact predicates.
-
-Another possibility for fast and exact predicate evaluation is to use
-the
-`Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-class. This class is the analog of a filtered kernel. It takes a
+Although exact number types provide exact predicates and constructions,
+their use often results in unacceptably large runtimes.
+The class `Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+aims to paliate this shortcoming. Similar to a filtered kernel, it takes a
 constructions kernel `CK`, a filtering kernel `FK` and an
 exact kernel `EK`, as well as the corresponding tags
 (`CM`, `FM` and `EM`, respectively).
-It evaluates the predicates by first using the filtering kernel, and
-if this fails the evaluation is performed using the exact kernel. The
-constructions are done using the kernel `CK`, which means that
+Predicates are evaluated by first using the filtering kernel, and
+if this fails the evaluation is performed using the exact kernel,
+thus yielding exact predicates at a generally much cheaper cost
+than directly using an exact number type. The constructions
+are done using the kernel `CK`, which means that
 they are not necessarily exact. All template parameters except
 `CK` have default values, which are explained in the reference
 manual.

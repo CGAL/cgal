@@ -40,9 +40,10 @@ namespace Point_set {
     \brief Region type based on the quality of the least squares plane 
     fit applied to 3D points.
 
-    This class fits a plane to chunks of points in a 3D point set and controls 
-    the quality of this fit. If all quality conditions are satisfied, the chunk
-    is accepted as a valid region, otherwise rejected.
+    This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA", 
+    to chunks of points in a 3D point set and controls the quality of this fit. 
+    If all quality conditions are satisfied, the chunk is accepted as a valid region, 
+    otherwise rejected.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.

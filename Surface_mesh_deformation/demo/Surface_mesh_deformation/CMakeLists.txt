@@ -18,10 +18,8 @@ if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
     create_single_source_cgal_program( "deform_mesh_for_botsch08_format.cpp" )
-
+    CGAL_target_use_Eigen(deform_mesh_for_botsch08_format)
   else()
     message(STATUS "NOTICE: This program requires the Eigen library, version 3.2 or later and will not be compiled.")
   endif()
