@@ -95,7 +95,7 @@ bool read_OFF_BGL(std::istream& in,
     \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
 
     \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalNamedParamsEnd
+  \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
 

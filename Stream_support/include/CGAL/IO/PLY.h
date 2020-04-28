@@ -236,6 +236,10 @@ bool read_PLY(std::istream& is,
  * `PolygonRange` is a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose `value type` is `std::size_t`.
  *
+  \cgalNamedParamsBegin
+    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+  \cgalNamedParamsEnd
  * \see \ref IOStreamPLY
  */
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
@@ -358,7 +362,12 @@ read_PLY(std::istream& is,
  *
  * `PolygonRange` is a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose `value type` is `std::size_t`.
- *
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+  \cgalNamedParamsEnd
+
  * \see \ref IOStreamPLY
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

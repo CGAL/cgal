@@ -123,6 +123,11 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
 
   writes the graph `g` in the stream `out` in the STL format.
 
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+  \cgalNamedParamsEnd
   \pre The graph must contain only triangle faces.
 
   \see \ref IOStreamSTL
@@ -203,6 +208,12 @@ bool write_STL(std::ostream& out,
 \ingroup PkgBGLIOFct
 
  writes the graph `g` in the STL format into a file named `fname`.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+  \cgalNamedParamsEnd
 
  \sa Overloads of this function for specific models of the concept `FaceGraph`.
 

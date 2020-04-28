@@ -193,7 +193,7 @@ template <typename PointRange,
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& )
 {
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
   return writer(points, polygons);

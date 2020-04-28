@@ -377,7 +377,7 @@ bool test_PLY(bool binary = false)
   return true;
 }
 
-
+//todo tests OBJ + tests with all NPs and without NP for all tests
 int main(int argc, char** argv)
 {
 
@@ -409,6 +409,7 @@ int main(int argc, char** argv)
     return 1;
   if(!test_soup_gocad())
     return 1;
+
 
   // STL
   if(!test_STL<Polyhedron>())
