@@ -78,10 +78,10 @@ bool read_OBJ(std::istream& is,
           if(i-1 > maxi)
             maxi = i-1;
         }
-        iss.ignore(256, ' ');
+       // iss.ignore(256, ' ');
       }
 
-      if(iss.fail())
+      if(iss.bad())
         return false;
     }
     else if(line[0] == 'v' &&  line[1] == 'n' && line[2] == ' ')
@@ -105,8 +105,8 @@ bool read_OBJ(std::istream& is,
     std::cerr << "a face index is invalid " << std::endl;
     return false;
   }
-
-  return !is.fail();
+  bool res = is.bad();
+  return !res;
 }
 
 } // namespace internal

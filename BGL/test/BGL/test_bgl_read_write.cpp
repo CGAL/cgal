@@ -45,6 +45,34 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 
 #endif
 
+template<typename PointRange, typename PolygonRange>
+void fill_soup(PointRange& points, PolygonRange& polygons)
+{
+  points.resize(4);
+  polygons.resize(4);
+  points[0] = Point(0, 0, 0);
+  points[1] = Point(1, 1, 0);
+  points[2] = Point(2, 0, 1);
+  points[3] = Point(3, 0, 0);
+  std::vector<std::size_t> poly(3);
+  poly[0] = 0;
+  poly[1] = 1;
+  poly[2] = 2;
+  polygons[0] = poly;
+  poly[0] = 3;
+  poly[1] = 1;
+  poly[2] = 0;
+  polygons[1] = poly;
+  poly[0] = 3;
+  poly[1] = 2;
+  poly[2] = 1;
+  polygons[2] = poly;
+  poly[0] = 3;
+  poly[1] = 0;
+  poly[2] = 2;
+  polygons[3] = poly;
+}
+
 template<typename Mesh>
 void test_bgl_read_write(const char* filename)
 {
@@ -63,6 +91,39 @@ void test_bgl_soup_off(const char* filename)
   CGAL::write_OFF(std::cout, points, polygons);
 }
 
+template<typename Mesh>
+bool test_bgl_OBJ()
+{
+  Mesh fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  std::ostringstream out;
+  CGAL::write_OBJ(out, fg);
+  std::istringstream in( out.str());
+  fg.clear();
+  CGAL::read_OBJ(in, fg);
+  CGAL_assertion(num_vertices(fg) == 4);
+  CGAL_assertion(num_faces(fg) == 4);
+
+  return true;
+}
+
+void test_bgl_soup_obj()
+{
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > polygons;
+  std::ostringstream out;
+  fill_soup(points, polygons);
+
+  CGAL::write_OBJ(out, points, polygons);
+  points.clear();
+  polygons.clear();
+  std::istringstream in( out.str());
+  CGAL::read_OBJ(in,points, polygons);
+  CGAL_assertion(points.size() == 4);
+  CGAL_assertion(polygons.size() == 4);
+
+}
 #ifdef CGAL_USE_VTK
 template<typename Mesh>
 bool test_bgl_vtp(bool binary = false)
@@ -133,29 +194,9 @@ bool test_bgl_vtp<Polyhedron>(bool binary)
 bool test_soup_vtp(bool binary = false)
 {
   //generate a test file
-  std::vector<Point> points(4);
-  std::vector<std::vector<std::size_t> > polys(4);
-  points[0] = Point(0, 0, 0);
-  points[1] = Point(1, 1, 0);
-  points[2] = Point(2, 0, 1);
-  points[3] = Point(3, 0, 0);
-  std::vector<std::size_t> poly(3);
-  poly[0] = 0;
-  poly[1] = 1;
-  poly[2] = 2;
-  polys[0] = poly;
-  poly[0] = 3;
-  poly[1] = 1;
-  poly[2] = 0;
-  polys[1] = poly;
-  poly[0] = 3;
-  poly[1] = 2;
-  poly[2] = 1;
-  polys[2] = poly;
-  poly[0] = 3;
-  poly[1] = 0;
-  poly[2] = 2;
-  polys[3] = poly;
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > polys;
+  fill_soup(points, polys);
 
   std::ofstream os("tetrahedron_soup.vtp");
   CGAL::write_VTP(os, points, polys, CGAL::parameters::use_binary_mode(binary));
@@ -377,11 +418,30 @@ bool test_PLY(bool binary = false)
   return true;
 }
 
-//todo tests OBJ + tests with all NPs and without NP for all tests
+//todo tests with all NPs and without NP for all tests
 int main(int argc, char** argv)
 {
 
-  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
+/*  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
+  // OFF
+  test_bgl_read_write<Polyhedron>(filename);
+  test_bgl_read_write<SM>(filename);
+  test_bgl_read_write<LCC>(filename);
+  test_bgl_soup_off(filename);
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_read_write<OMesh>(filename);
+#endif
+*/
+  // OBJ
+  test_bgl_OBJ<Polyhedron>();
+  test_bgl_OBJ<SM>();
+  test_bgl_OBJ<LCC>();
+  test_bgl_soup_obj();
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_OBJ<OMesh>();
+#endif
+
+  /*
   //PLY
   if(!test_PLY<Polyhedron>())
     return 1;
@@ -391,15 +451,6 @@ int main(int argc, char** argv)
     return 1;
   if(!test_PLY<SM>(true))
     return 1;
-  // OFF
-  test_bgl_read_write<Polyhedron>(filename);
-  test_bgl_read_write<SM>(filename);
-  test_bgl_read_write<LCC>(filename);
-  test_bgl_soup_off(filename);
-#ifdef CGAL_USE_OPENMESH
-  test_bgl_read_write<OMesh>(filename);
-#endif
-
   // GOCAD
   if(!test_gocad<Polyhedron>())
     return 1;
@@ -439,6 +490,6 @@ int main(int argc, char** argv)
   if(!test_soup_vtp(true))
     return 1;
 #endif
-
+*/
   return EXIT_SUCCESS;
 }
