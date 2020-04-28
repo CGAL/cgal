@@ -208,6 +208,13 @@ bool write_OBJ(std::ostream& os,
   return write_OBJ(os, points, polygons, parameters::all_default());
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in a file named `fname`, in the OBJ format.
+ *
+ * \see \ref IOStreamOBJ
+ */
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

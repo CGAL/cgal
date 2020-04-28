@@ -44,8 +44,7 @@ class PLY_builder
 
 public:
   PLY_builder(std::istream& is_) : Base(is_) { }
-
-  //! TODO there must be a way to get at least the color maps from read_PLY with the nps.
+  //! TODO: use vertex_point_map
   template <typename NamedParameters>
   bool read(std::istream& input,
             Point_container& points,
@@ -94,6 +93,17 @@ bool read_PLY(const std::string& fname, FaceGraph& g) { return read_PLY(fname, g
 }//end internal
 }//end IO
 
+/*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from data in the PLY format.
+
+  \pre The data must represent a 2-manifold
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+
+  \see \ref IOStreamPLY
+*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
@@ -101,6 +111,51 @@ bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 }
 
 /*!
+  \ingroup PkgBGLIOFct
+
+  reads the graph `g` from a file named `fname`, in the PLY format.
+
+  \pre The data must represent a 2-manifold
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+
+  \see \ref IOStreamPLY
+*/
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream is(fname);
+  return IO::internal::read_PLY_BGL(is, g, np);
+}
+
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return IO::internal::read_PLY_BGL(fname.c_str(), g, np);
+}
+
+
+template <typename FaceGraph>
+bool read_PLY(std::istream& in, FaceGraph& g)
+{
+  return IO::internal::read_PLY_BGL(in, g, parameters::all_default());
+}
+
+template <typename FaceGraph>
+bool read_PLY(const char* fname, FaceGraph& g)
+{
+  std::ifstream is(fname);
+  return IO::internal::read_PLY_BGL(is, g, parameters::all_default());
+}
+
+template <typename FaceGraph>
+bool read_PLY(const std::string& fname, FaceGraph& g)
+{
+  return IO::internal::read_PLY_BGL(fname.c_str(), g, parameters::all_default());
+}
+/*!
+ \ingroup PkgBGLIOFct
+
  Inserts the graph in an output stream in PLY format.
 
  If provided, the `comments` string is included line by line in
@@ -119,6 +174,8 @@ bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
       is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
     \cgalParamEnd
   \cgalNamedParamsEnd
+
+  \see \ref IOStreamPLY
  */
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(std::ostream& os,
@@ -268,13 +325,15 @@ bool write_PLY(std::ostream& os,
 
 
 /*!
- Inserts the graph in the output file `fname` in PLY format.
+  \ingroup PkgBGLIOFct
 
- If provided, the `comments` string is included line by line in
- the header of the PLY stream (each line will be precedeed by
- "comment ").
+  Inserts the graph in the output file `fname` in PLY format.
 
- The `np` is an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  If provided, the `comments` string is included line by line in
+  the header of the PLY stream (each line will be precedeed by
+  "comment ").
+
+  The `np` is an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
@@ -286,6 +345,8 @@ bool write_PLY(std::ostream& os,
       is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
     \cgalParamEnd
   \cgalNamedParamsEnd
+
+  \see \ref IOStreamPLY
  */
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(const char* fname,
@@ -297,6 +358,7 @@ bool write_PLY(const char* fname,
   std::ofstream os(fname);
   return write_PLY(os, g, comments, np);
 }
+
 
 template <class FaceGraph>
 bool write_PLY(const char* fname,

@@ -100,7 +100,7 @@ bool read_OBJ(std::istream& in,
 
   \attention The graph `g` is not cleared, and the data from the stream are added.
 
-  \see \ref IOStreamOFF
+  \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const char* fname,
@@ -155,7 +155,7 @@ bool write_OBJ(std::ostream& os,
 
  \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
- \see \ref IOStreamOFF
+ \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const char* fname,

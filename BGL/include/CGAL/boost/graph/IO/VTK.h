@@ -37,12 +37,12 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename FaceGraph, typename NamedParameters>
+template <typename FaceGraph, typename NameddParameters>
 bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
                                  FaceGraph& g,
-                                 const NamedParameters& np)
+                                 const NameddParameters& np)
 {
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::type       VPM;
+  typedef typename CGAL::GetVertexPointMap<FaceGraph, NameddParameters>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point;
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor                 face_descriptor;
@@ -118,10 +118,10 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *    `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
  * \cgalNamedParamsEnd
  * \pre The data must represent a 2-manifold
- * \see \ref IOStreamOFF
+ * \see \ref IOStreamVTK
 */
-template<typename FaceGraph, typename NamedParameters>
-bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
+template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_VTP(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   vtkSmartPointer<vtkPointSet> data;
   vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
@@ -132,9 +132,17 @@ bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 
+template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_VTP(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_VTP(fname.c_str(), g, np);
+}
 
 template<typename FaceGraph>
 bool read_VTP(const char* fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
+
+template<typename FaceGraph>
+bool read_VTP(const std::string& fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
 
 #endif // CGAL_USE_VTK
 

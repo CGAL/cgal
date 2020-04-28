@@ -33,6 +33,8 @@ namespace CGAL {
 /// Read
 
 /*!
+ * \ingroup IOstreamFunctions
+ *
  * \brief extracts ranges of points and triangles from a 3mf file.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
@@ -416,6 +418,8 @@ int read_from_3mf(const std::string& file_name,
 /// Write
 
 /*!
+ * \ingroup IOstreamFunctions
+ *
  * \brief writes the triangle soups contained in `all_points` and
  *  `all_polygons` into the 3mf file `file_name`.
  *

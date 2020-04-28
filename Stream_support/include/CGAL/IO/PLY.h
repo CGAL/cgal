@@ -403,14 +403,14 @@ bool read_PLY(const std::string fname,
 /*!
  * \ingroup IOstreamFunctions
  *
- * writes the content of `points` and `polygons` in `out`, in the OFF format.
+ * writes the content of `points` and `polygons` in `out`, in the PLY format.
  *
  * `PointRange` is a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
  *
  * `PolygonRange` is a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose `value type` is `std::size_t`.
- * \see \ref IOStreamOFF
+ * \see \ref IOStreamPLY
  */
 template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
 bool write_PLY(std::ostream& out,
@@ -483,14 +483,14 @@ bool write_PLY(std::ostream& out,
 /*!
  * \ingroup IOstreamFunctions
  *
- * writes the content of `points` and `polygons` in the file `fname`, in the OFF format.
+ * writes the content of `points` and `polygons` in the file `fname`, in the PLY format.
  *
  * `PointRange` is a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
  *
  * `PolygonRange` is a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose `value type` is `std::size_t`.
- * \see \ref IOStreamOFF
+ * \see \ref IOStreamPLY
  */
 template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
 bool write_PLY(const char* fname,

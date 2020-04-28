@@ -20,6 +20,8 @@
 namespace CGAL {
 
 /*!
+  \ingroup PkgBGLIOFct
+
  * \brief writes the triangle meshes contained in `gs` into the 3mf file `file_name`.
  *
  * \tparam FaceGraphRange a model of the concepts `RandomAccessContainer`
