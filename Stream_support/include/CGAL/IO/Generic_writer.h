@@ -3,14 +3,14 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -53,7 +53,7 @@ public:
     m_writer.write_facet_header();
     for(std::size_t i=0, end=polygons.size(); i<end; ++i)
     {
-      Polygon_3& polygon = polygons[i];
+      const Polygon_3& polygon = polygons[i];
       const std::size_t size = polygon.size();
 
       m_writer.write_facet_begin(size);

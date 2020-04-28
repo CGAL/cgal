@@ -154,6 +154,16 @@ bool read_OFF(std::istream& is,
  *
  * reads the content of `is` into `points` and `polygons`, in the OFF format.
  *
+ * \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+    \cgalNamedParamsEnd
+ *
  * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
@@ -180,6 +190,16 @@ bool read_OFF(std::istream& is,
  * \ingroup IOstreamFunctions
  *
  * reads the content of the file `fname` into `points` and `polygons`, in the OFF format.
+ *
+ * * \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+    \cgalNamedParamsEnd
  *
  * \see \ref IOStreamOFF
  */
@@ -232,10 +252,10 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool write_OFF(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& )
 {
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
-  return writer(points, polygons, np);
+  return writer(points, polygons);
 }
 
 template <typename PointRange, typename PolygonRange>

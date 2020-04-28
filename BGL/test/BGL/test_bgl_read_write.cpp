@@ -54,6 +54,15 @@ void test_bgl_read_write(const char* filename)
   CGAL::write_OFF(std::cout, sm);
 }
 
+void test_bgl_soup_off(const char* filename)
+{
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > polygons;
+  std::ifstream in(filename);
+  CGAL::read_OFF(in,points, polygons);
+  CGAL::write_OFF(std::cout, points, polygons);
+}
+
 #ifdef CGAL_USE_VTK
 template<typename Mesh>
 bool test_bgl_vtp(bool binary = false)
@@ -386,6 +395,7 @@ int main(int argc, char** argv)
   test_bgl_read_write<Polyhedron>(filename);
   test_bgl_read_write<SM>(filename);
   test_bgl_read_write<LCC>(filename);
+  test_bgl_soup_off(filename);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_read_write<OMesh>(filename);
 #endif
