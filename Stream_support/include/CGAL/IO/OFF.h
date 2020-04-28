@@ -143,7 +143,8 @@ bool read_OFF(std::istream& is,
     }
   }
 
-  return !is.fail();
+  bool res = !is.fail();
+  return res;
 }
 
 } // namespace internal

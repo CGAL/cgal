@@ -3,14 +3,14 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -247,14 +247,79 @@ public:
 
   void scan_texture(float& x, float& y, float& w)
   {
-    // @ todo
-    CGAL_assertion(false);
+    if(has_textures())
+    {
+      if(binary())
+      {
+        float fx, fy;
+        I_Binary_read_big_endian_float32(m_in, fx);
+        I_Binary_read_big_endian_float32(m_in, fy);
+        if(is_homogeneous())
+        {
+          float fw;
+          I_Binary_read_big_endian_float32(m_in, fw);
+          x = fx / fw;
+          y = fy / fw;
+        } else
+        {
+          x = fx;
+          y = fy;
+        }
+      }
+      else
+      {
+        if(is_homogeneous())
+        {
+          float fx, fy, fw;
+          m_in >> iformat(fx) >> iformat(fy) >> iformat(fw);
+          x = fx / fw;
+          y = fy / fw;
+        }
+        else
+        {
+          m_in >> iformat(x) >> iformat(y);
+        }
+      }
+    }
   }
 
   void scan_texture(double& x, double& y, double& w)
   {
-    // @ todo
-    CGAL_assertion(false);
+    w=1;
+    if(has_textures())
+    {
+      if(binary())
+      {
+        float fx, fy;
+        I_Binary_read_big_endian_float32(m_in, fx);
+        I_Binary_read_big_endian_float32(m_in, fy);
+        if(is_homogeneous())
+        {
+          float fw;
+          I_Binary_read_big_endian_float32(m_in, fw);
+          x = fx / fw;
+          y = fy / fw;
+        } else
+        {
+          x = fx;
+          y = fy;
+        }
+      }
+      else
+      {
+        if(is_homogeneous())
+        {
+          float fx, fy, fw;
+          m_in >> iformat(fx) >> iformat(fy) >> iformat(fw);
+          x = fx / fw;
+          y = fy / fw;
+        }
+        else
+        {
+          m_in >> iformat(x) >> iformat(y);
+        }
+      }
+    }
   }
 
 
@@ -635,6 +700,7 @@ public:
 
     std::string col;
     //get the line content
+    std::streampos position = is.tellg();
     std::getline(is, col);
     //split it into strings
     std::istringstream iss(col);
@@ -663,6 +729,7 @@ public:
       else
         rgb[index] = static_cast<unsigned char>(atoi(color_info.c_str()));
 
+      position += (color_info.length()+ index)*sizeof(char); //index indicates the number of whitespaces read.
       ++index;
       if(index == 3)
         break;
@@ -675,7 +742,7 @@ public:
     //else create the coor with the 3 values;
     else
       color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
-
+    is.seekg(position);
     return color;
   }
 

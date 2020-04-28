@@ -74,7 +74,7 @@ void fill_soup(PointRange& points, PolygonRange& polygons)
 }
 
 template<typename Mesh>
-void test_bgl_read_write(const char* filename)
+void test_bgl_OFF(const char* filename)
 {
   Mesh sm;
   std::ifstream in(filename);
@@ -82,7 +82,39 @@ void test_bgl_read_write(const char* filename)
   CGAL::write_OFF(std::cout, sm);
 }
 
-void test_bgl_soup_off(const char* filename)
+//todo check the result.
+template<typename Mesh>
+void test_bgl_NCSTOFF()
+{
+  Mesh fg;
+  std::ifstream in("data/full.off");
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Kernel::Vector_3> >::type VertexNormalMap;
+  VertexNormalMap vnm  = get(CGAL::dynamic_vertex_property_t<Kernel::Vector_3>(), fg);
+
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::Color> >::type VertexColorMap;
+  VertexColorMap vcm  = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
+
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Kernel::Point_2> >::type VertexTextureMap;
+  VertexTextureMap vtm  = get(CGAL::dynamic_vertex_property_t<Kernel::Point_2>(), fg);
+
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<CGAL::Color> >::type FaceColorMap;
+  FaceColorMap fcm  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
+
+
+  bool ok = CGAL::read_OFF(in,fg, CGAL::parameters::vertex_normal_map(vnm)
+                 .vertex_color_map(vcm)
+                 .vertex_texture_map(vtm)
+                 .face_color_map(fcm));
+  CGAL_assertion(ok);
+
+  ok = CGAL::write_OFF(std::cout, fg, CGAL::parameters::vertex_normal_map(vnm)
+                  .vertex_color_map(vcm)
+                  .vertex_texture_map(vtm)
+                  .face_color_map(fcm));
+  CGAL_assertion(ok);
+}
+
+void test_soup_off(const char* filename)
 {
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > polygons;
@@ -421,17 +453,24 @@ bool test_PLY(bool binary = false)
 //todo tests with all NPs and without NP for all tests
 int main(int argc, char** argv)
 {
-
-/*  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
+/*
+  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
   // OFF
-  test_bgl_read_write<Polyhedron>(filename);
-  test_bgl_read_write<SM>(filename);
-  test_bgl_read_write<LCC>(filename);
-  test_bgl_soup_off(filename);
+  test_bgl_OFF<Polyhedron>(filename);
+  test_bgl_OFF<SM>(filename);
+  test_bgl_OFF<LCC>(filename);
 #ifdef CGAL_USE_OPENMESH
-  test_bgl_read_write<OMesh>(filename);
+  test_bgl_OFF<OMesh>(filename);
+#endif*/
+  //polyhedron's overload doesn't care for any np that is not vpm
+  //test_bgl_NCSTOFF<Polyhedron>();
+  test_bgl_NCSTOFF<SM>();
+  test_bgl_NCSTOFF<LCC>();
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_NCSTOFF<OMesh>();
 #endif
-*/
+ /* test_soup_off(filename);
+
   // OBJ
   test_bgl_OBJ<Polyhedron>();
   test_bgl_OBJ<SM>();
@@ -441,7 +480,6 @@ int main(int argc, char** argv)
   test_bgl_OBJ<OMesh>();
 #endif
 
-  /*
   //PLY
   if(!test_PLY<Polyhedron>())
     return 1;
