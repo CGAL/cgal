@@ -439,19 +439,14 @@ bool replace_faces_with_patch(const std::set<typename boost::graph_traits<Polygo
 
   CGAL_assertion(!face_range.empty());
 
-  std::vector<vertex_descriptor> border_vertices;
+  std::set<vertex_descriptor> border_vertices;
   std::set<vertex_descriptor> interior_vertices;
   std::vector<halfedge_descriptor> border_hedges;
   std::set<edge_descriptor> interior_edges;
 
   for(face_descriptor fh : face_range)
-  {
     for(halfedge_descriptor h : halfedges_around_face(halfedge(fh, pmesh), pmesh))
-    {
-      if(halfedge(target(h, pmesh), pmesh) == h) // limit the number of insertions
         interior_vertices.insert(target(h, pmesh));
-    }
-  }
 
   for(face_descriptor fh : face_range)
   {
