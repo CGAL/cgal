@@ -311,11 +311,12 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 
 // @todo something without heat method ? (SMSP)
 // @todo handle geodesic spheres that intersect
-// @todo make dig_hole() return the border of the hole, and then distinguish:
+// @todo make construct_work_zone() return the border of the hole, and then distinguish:
 //       - two borders + merge requested: ok if both closed or both open
 //       - merge otherwise
 
 // @todo can make maps of Points lighter with a vertex as key, and a custom equal comparing actual points
+// @todo small sets
 
 enum NM_TREATMENT
 {
@@ -1024,8 +1025,11 @@ bool merge_zones(const WorkZone& wz_1,
     return false;
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  dump_tentative_hole(point_patch, "results/tentative_patch.off");
   std::cout << point_patch.size() << " new faces" << std::endl;
+  static int merge_id = 0;
+  std::stringstream oss;
+  oss << "results/tentative_merge_patch_" << merge_id << ".off" << std::ends;
+  dump_tentative_hole(point_patch, oss.str().c_str());
 #endif
 
   if(!check_patch_sanity<PolygonMesh>(point_patch))
