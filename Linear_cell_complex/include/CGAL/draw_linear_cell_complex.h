@@ -170,17 +170,28 @@ public:
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, false, false),
     lcc(alcc),
+    m_oriented_mark(lcc->get_new_mark()),
     m_nofaces(anofaces),
     m_random_face_color(false),
     m_drawing_functor(drawing_functor)
   {
+    lcc->orient(m_oriented_mark);
     compute_elements();
   }
+
+  ~SimpleLCCViewerQt()
+  { lcc->free_mark(m_oriented_mark); }
 
 protected:
   void set_lcc(const LCC* alcc, bool doredraw=true)
   {
+    if (lcc!=nullptr)
+    { lcc->free_mark(m_oriented_mark); }
+
     lcc=alcc;
+    m_oriented_mark=lcc->get_new_mark();
+    lcc->orient(m_oriented_mark);
+
     compute_elements();
     if (doredraw) { redraw(); }
   }
@@ -279,6 +290,7 @@ protected:
         {
           lcc->mark(itv, markvolumes); // To be sure that all darts of the basic iterator will be marked
           if (!lcc->is_marked(itv, markfaces) &&
+              lcc->is_marked(itv, m_oriented_mark) &&
               m_drawing_functor.draw_face(*lcc, itv))
           {
             if (!m_drawing_functor.volume_wireframe(*lcc, itv) &&
@@ -335,13 +347,13 @@ protected:
   virtual void init()
   {
     Base::init();
-    setKeyDescription(::Qt::Key_C, "Toggles random face colors");
+    setKeyDescription(::Qt::Key_R, "Toggles random face colors");
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
+    if ((e->key()==::Qt::Key_R) && (modifiers==::Qt::NoButton))
     {
       m_random_face_color=!m_random_face_color;
       displayMessage(QString("Random face color=%1.").arg(m_random_face_color?"true":"false"));
@@ -360,6 +372,7 @@ protected:
 
 protected:
   const LCC* lcc;
+  typename LCC::size_type m_oriented_mark;
   bool m_nofaces;
   bool m_random_face_color;
   const DrawingFunctorLCC& m_drawing_functor;
@@ -376,10 +389,12 @@ template < unsigned int d_, unsigned int ambient_dim,
            template<unsigned int,class,class,class,class>
            class Map,
            class Refs,
-           class Storage_>
+           class Storage_,
+           class DrawingFunctorLCC=DefaultDrawingFunctorLCC>
 void draw(const CGAL_LCC_TYPE& alcc,
           const char* title="LCC for CMap Basic Viewer",
-          bool nofill=false)
+          bool nofill=false,
+          const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC())
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
@@ -392,9 +407,8 @@ void draw(const CGAL_LCC_TYPE& alcc,
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    DefaultDrawingFunctorLCC fcolor;
-    SimpleLCCViewerQt<CGAL_LCC_TYPE, DefaultDrawingFunctorLCC>
-      mainwindow(app.activeWindow(), &alcc, title, nofill, fcolor);
+    SimpleLCCViewerQt<CGAL_LCC_TYPE, DrawingFunctorLCC>
+      mainwindow(app.activeWindow(), &alcc, title, nofill, drawing_functor);
     mainwindow.show();
     app.exec();
   }
