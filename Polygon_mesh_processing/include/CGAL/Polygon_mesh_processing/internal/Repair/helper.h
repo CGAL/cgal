@@ -107,9 +107,42 @@ void dump_tentative_hole(std::vector<std::vector<Point> >& point_patch,
 
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
+template <typename TriangleMesh>
+bool order_border_halfedge_range(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& hrange,
+                                 const TriangleMesh& tmesh)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
+
+  CGAL_precondition(hrange.size() > 2);
+
+  for(std::size_t i=0; i<hrange.size()-2; ++i)
+  {
+    const vertex_descriptor tgt = target(hrange[i], tmesh);
+    for(std::size_t j=i+1; j<hrange.size(); ++j)
+    {
+      if(tgt == source(hrange[j], tmesh))
+      {
+        std::swap(hrange[i+1], hrange[j]);
+        break;
+      }
+
+      // something went wrong while ordering halfedge (e.g. hole has more than one boundary cycle)
+      if(j == hrange.size() - 1)
+        return false;
+    }
+  }
+
+  CGAL_postcondition(source(hrange.front(), tmesh) == target(hrange.back(), tmesh));
+  return true;
+}
+
+// -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
 // @todo these could be extracted to somewhere else, it's useful in itself
-template <typename PolygonMesh, typename VPM, typename Point, typename FaceOutputIterator>
-bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& border_vertices,
+template <typename BorderVerticesContainer,
+          typename PolygonMesh, typename VPM, typename Point,
+          typename FaceOutputIterator>
+bool replace_faces_with_patch(const BorderVerticesContainer& border_vertices,
                               const std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
                               const std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& border_hedges,
                               const std::set<typename boost::graph_traits<PolygonMesh>::edge_descriptor>& interior_edges,
@@ -133,6 +166,13 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
   std::vector<vertex_descriptor> vertex_stack(interior_vertices.begin(), interior_vertices.end());
   std::vector<edge_descriptor> edge_stack(interior_edges.begin(), interior_edges.end());
   std::vector<face_descriptor> face_stack(face_range.begin(), face_range.end());
+
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+  std::cout << vertex_stack.size() << " interior vertices" << std::endl;
+  std::cout << border_hedges.size() << " border halfedges" << std::endl;
+  std::cout << edge_stack.size() << " interior edges" << std::endl;
+  std::cout << face_stack.size() << " faces" << std::endl;
+#endif
 
   // Introduce new vertices, convert the patch in vertex patches
   std::vector<Vertex_face> patch_with_vertices;
@@ -160,6 +200,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
       if(vit == point_to_vs.end())
         break;
 
+      // @todo can avoid one find() since it's consecutive edges within the same face
       typename Point_face::const_iterator npit = (pit == last) ? pf.begin() : std::next(pit);
       const Point& np = *npit;
       typename std::map<Point, vertex_descriptor>::iterator nvit = point_to_vs.find(np);
@@ -199,7 +240,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
       std::tie(it, success) = point_to_vs.insert(std::make_pair(p, null_v));
       vertex_descriptor& v = it->second;
 
-      if(success) // first time we meet that point, means it`s an interior point and we need to make a new vertex
+      if(success) // first time we meet that point
       {
         if(vertex_stack.empty())
         {
@@ -226,15 +267,11 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
   Vertex_pair_halfedge_map halfedge_map;
 
   // register border halfedges
-  int i = 0;
   for(halfedge_descriptor h : border_hedges)
   {
     const vertex_descriptor vs = source(h, pmesh);
     const vertex_descriptor vt = target(h, pmesh);
     halfedge_map.insert(std::make_pair(std::make_pair(vs, vt), h));
-
-    set_halfedge(target(h, pmesh), h, pmesh); // update vertex halfedge pointer
-    ++i;
   }
 
   face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
@@ -271,7 +308,7 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
                                                   boost::graph_traits<PolygonMesh>::null_halfedge()));
       halfedge_descriptor& h = it->second;
 
-      if(success) // this halfedge is an interior halfedge
+      if(success) // this halfedge is an interior halfedge, not seen through its opposite before
       {
         if(edge_stack.empty())
         {
@@ -283,7 +320,10 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
           edge_stack.pop_back();
         }
 
+        CGAL_assertion(halfedge_map.count(std::make_pair(vj, vi)) == 0);
         halfedge_map[std::make_pair(vj, vi)] = opposite(h, pmesh);
+
+        set_face(opposite(h, pmesh), boost::graph_traits<PolygonMesh>::null_face(), pmesh);
       }
 
       hedges.push_back(h);
@@ -299,6 +339,8 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
 
       set_target(hedges[i], vf[(i+1)%n], pmesh);
       set_halfedge(vf[(i+1)%n], hedges[i], pmesh);
+      set_target(opposite(hedges[i], pmesh), vf[i], pmesh);
+      set_halfedge(vf[i], opposite(hedges[i], pmesh), pmesh);
     }
 
     set_halfedge(f, hedges[0], pmesh);
@@ -308,13 +350,60 @@ bool replace_faces_with_patch(const std::vector<typename boost::graph_traits<Pol
 #endif
   }
 
-  // now remove the remaining superfluous vertices, edges, faces
+  // Remove the remaining superfluous vertices, edges, faces
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+  std::cout << vertex_stack.size() << " vertices to remove" << std::endl;
+  std::cout << edge_stack.size() << " edges to remove" << std::endl;
+  std::cout << face_stack.size() << " faces to remove" << std::endl;
+#endif
+
   for(vertex_descriptor v : vertex_stack)
     remove_vertex(v, pmesh);
   for(edge_descriptor e : edge_stack)
     remove_edge(e, pmesh);
   for(face_descriptor f : face_stack)
     remove_face(f, pmesh);
+
+  // If 'border_hedges' describes a topological circle, which is possible if we don't want
+  // to conform on true border halfedges (in the sense of halfedges that are on the border
+  // of not only the patch, but also of the mesh), we must link these new true border halfedges
+  // by turning around the vertex in the interior of the mesh
+  const halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+  for(const auto& p : halfedge_map)
+  {
+    const halfedge_descriptor h = p.second;
+    if(is_border(h, pmesh))
+      set_next(h, null_h, pmesh);
+  }
+
+  for(const auto& p : halfedge_map)
+  {
+    halfedge_descriptor h = p.second;
+    if(!is_border(h, pmesh))
+      continue;
+
+    // forced to go both way because we need to fix the 'next' also for one halfedge
+    // which is not part of the patch
+    halfedge_descriptor prev_h = opposite(h, pmesh);
+    do
+    {
+      prev_h = opposite(next(prev_h, pmesh), pmesh);
+    }
+    while(!is_border(prev_h, pmesh));
+    set_next(prev_h, h, pmesh);
+
+    if(next(h, pmesh) != null_h) // already done the 'next' as part of some halfedge's 'prev'
+      continue;
+
+    prev_h = h;
+    h = opposite(prev_h, pmesh);
+    do
+    {
+      h = opposite(prev(h, pmesh), pmesh);
+    }
+    while(!is_border(h, pmesh));
+    set_next(prev_h, h, pmesh);
+  }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   std::ofstream res_out("results/last_patch_replacement.off");
@@ -374,12 +463,15 @@ bool replace_faces_with_patch(const std::set<typename boost::graph_traits<Polygo
       const halfedge_descriptor opp_h = opposite(h, pmesh);
       const face_descriptor opp_f = face(opp_h, pmesh);
 
-      if(is_border(opp_h, pmesh) || face_range.count(opp_f) == 0)
+      // The patch has to conform if there is a face on the opposite side, but not necessarily to the border
+      if(!is_border(opp_h, pmesh) && face_range.count(opp_f) == 0)
       {
-        vertex_descriptor v = target(h, pmesh);
-        interior_vertices.erase(v);
         border_hedges.push_back(h);
-        border_vertices.push_back(v);
+
+        interior_vertices.erase(source(h, pmesh));
+        border_vertices.insert(source(h, pmesh));
+        interior_vertices.erase(target(h, pmesh));
+        border_vertices.insert(target(h, pmesh));
       }
       else
       {
