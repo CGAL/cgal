@@ -710,7 +710,7 @@ public:
     custom_build(m_traits.compute_bbox_object(),
                  m_traits.split_primitives_object());
   }
-
+#ifndef DOXYGEN_RUNNING
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
   template <class ComputeBbox, class SplitPrimitives>
@@ -744,6 +744,7 @@ public:
     m_need_build = false;
 #endif
   }
+#endif
   // constructs the search KD tree from given points
   // to accelerate the distance queries
   template<typename Tr>
