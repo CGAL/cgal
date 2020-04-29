@@ -228,7 +228,7 @@ containing all isolevels:
 
 Once the graph is created, splitting it into polylines is easily
 performed using the function \link split_graph_into_polylines()
-CGAL::split_graph_into_polylines()` \endlink:
+`CGAL::split_graph_into_polylines()` \endlink:
 
 \snippet Classification/gis_tutorial_example.cpp Contouring split
 
