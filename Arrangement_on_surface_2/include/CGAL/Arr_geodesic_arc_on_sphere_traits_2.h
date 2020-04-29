@@ -2008,8 +2008,6 @@ public:
 
       // Down cast to pass to kernel member functions
       const Direction_3& xc1_right = xc1.right();
-      const Direction_3& xc2_right = xc2.right();
-      const Direction_3& xc1_left = xc1.left();
       const Direction_3& xc2_left = xc2.left();
 
       xc.set_is_degenerate(false);
@@ -2019,6 +2017,8 @@ public:
       bool eq1 = equal(xc1_right, xc2_left);
 
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
+      const Direction_3& xc1_left = xc1.left();
+      const Direction_3& xc2_right = xc2.right();
       bool eq2 = equal(xc1_left, xc2_right);
       if (eq1 && eq2) {
         const Point_2& p =
@@ -2028,8 +2028,10 @@ public:
         xc.set_normal(xc1.normal());
         xc.set_is_full(true);
       }
+#else
+      CGAL_assertion_code(const Direction_3& xc1_left = xc1.left();
+                          const Direction_3& xc2_right = xc2.right());
 #endif
-
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
         xc.set_normal(xc1.is_directed_right() ? xc1.normal() : xc2.normal());
         xc.set_is_directed_right(true);
@@ -2037,19 +2039,22 @@ public:
         if (eq1) {
           xc.set_source(xc1.left());
           xc.set_target(xc2.right());
-        } else {
+        }
+        else {
           CGAL_assertion(equal(xc1_left, xc2_right));
           xc.set_source(xc2.left());
           xc.set_target(xc1.right());
         }
-      } else {
+      }
+      else {
         xc.set_normal(xc1.normal());
         xc.set_is_directed_right(false);
 
         if (eq1) {
           xc.set_source(xc2.right());
           xc.set_target(xc1.left());
-        } else {
+        }
+        else {
           CGAL_assertion(equal(xc1_left, xc2_right));
           xc.set_source(xc1.right());
           xc.set_target(xc2.left());
