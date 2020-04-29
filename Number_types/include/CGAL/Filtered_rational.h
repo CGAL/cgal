@@ -982,8 +982,7 @@ public:
     std::pair<double, double> operator()(const Type& a) const
     {
       CGAL_NT_CHECK_DEBUG("RET::To_interval");
-      std::pair<double, double> r1 =  typename RET1::To_interval()(a.n1());
-      return r1;
+      return to_interval(a.n1());
     }
   };
 };
