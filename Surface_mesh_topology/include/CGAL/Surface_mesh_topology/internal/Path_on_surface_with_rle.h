@@ -75,14 +75,14 @@ template<class Map_>
 class Light_MQ  // MQ for minimal quadrangulation
 {
 public:
-  typedef Map_                              Reduced_map;
+  typedef Map_                              Local_map;
   typedef Map_                              Mesh;
   typedef typename Map_::Dart_const_handle  Dart_const_handle;
 
-  Light_MQ(const Reduced_map& m): m_map(m)
+  Light_MQ(const Local_map& m): m_map(m)
   {}
 
-  const Reduced_map& get_reduced_map() const
+  const Local_map& get_local_map() const
   { return m_map; }
 
   std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
@@ -92,7 +92,7 @@ public:
   { return m_map.negative_turn(d1, d2); }
 
 protected:
-  const Reduced_map& m_map;
+  const Local_map& m_map;
 };
 
 template<typename MQ> // MQ for minimal quadrangulation
@@ -100,7 +100,7 @@ class Path_on_surface_with_rle
 {
 public:
   typedef Path_on_surface_with_rle<MQ>                       Self;
-  typedef typename MQ::Reduced_map                           Map;
+  typedef typename MQ::Local_map                             Map;
   typedef typename MQ::Mesh                                  Mesh;
   typedef typename Map::Dart_handle                          Dart_handle;
   typedef typename Map::Dart_const_handle                    Dart_const_handle;
@@ -298,7 +298,7 @@ public:
 
   /// @return the underlying map.
   const Map& get_map() const
-  { return m_MQ.get_reduced_map(); }
+  { return m_MQ.get_local_map(); }
 
   /// clear the path.
   void clear()
@@ -1550,7 +1550,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Self& p)
   {
-    p.display();
+    const_cast<Self&>(p).display(); // Problem of const correctness: todo solve
     return os;
   }
 

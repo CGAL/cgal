@@ -3275,4 +3275,3 @@ namespace boost {
 #include <CGAL/enable_warnings.h>
 
 #endif /* CGAL_SURFACE_MESH_H */
-

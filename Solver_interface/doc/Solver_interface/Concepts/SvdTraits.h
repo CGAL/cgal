@@ -101,12 +101,12 @@ public:
 
   /*!
     Return the number of rows of the matrix.
-   */
+  */
   size_t number_of_rows();
 
   /*!
     Return the number of columns of the matrix.
-   */
+  */
   size_t number_of_columns();
 
   /*!
@@ -120,4 +120,3 @@ public:
   */
   void set(size_t i, size_t j, const FT value);
 };
-

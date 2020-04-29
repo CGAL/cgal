@@ -21,7 +21,6 @@ follows:
 
 \cgalHasModel `CGAL::Eigen_diagonalize_traits`
 */
-
 template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits
 {

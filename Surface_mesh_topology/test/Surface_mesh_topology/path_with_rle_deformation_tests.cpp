@@ -35,7 +35,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
 #define NB_TESTS 21 // 0 ... 20
 static unsigned int nbtests=0;
 
-static const unsigned int ALL_TESTS=std::numeric_limits<unsigned int>::max();
+static const unsigned int ALL_TESTS=(std::numeric_limits<unsigned int>::max)();
 
 enum Transformation // enum for the type of transformations
 {

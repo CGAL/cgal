@@ -5,19 +5,22 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H
 #define CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H 1
 
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h>
 #include <stack>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace internal {
 
   //****************************************************************************
   /* Class CMap_dart_iterator_basic_of_all: to iterate onto all the
@@ -38,11 +41,7 @@ namespace CGAL
     FGW_dart_iterator_basic_of_all(const Map& amap):
       mmap(amap),
       m_it(halfedges(amap.get_fg()).begin())
-    {
-      /*if (m_it!=halfedges(amap.get_fg()).end() &&
-          is_border(*m_it, amap.get_fg()))
-      { operator++(0); } */
-    }
+    {}
 
     /// Constructor with a dart in parameter (for end iterator).
     FGW_dart_iterator_basic_of_all(const Map& amap, Dart_handle /*adart*/):
@@ -54,6 +53,13 @@ namespace CGAL
       mmap(other.mmap),
       m_it(other.m_it)
     {}
+
+    Self& operator=(const Self& other)
+    {
+      CGAL_assertion(&mmap==&(other.mmap));
+      m_it=other.m_it;
+      return *this;
+    }
 
     operator Dart_handle() const
     { return operator*(); }
@@ -68,20 +74,26 @@ namespace CGAL
     Self& operator++()
     {
       CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).end());
-
-      //do
-      {
-        ++m_it;
-      }
-      /*while(m_it!=halfedges(this->mmap.get_fg()).end() &&
-            is_border(*m_it, this->mmap.get_fg())); */
-
+      ++m_it;
       return *this;
     }
 
     /// Postfix ++ operator.
     Self operator++(int)
     { Self res=*this; operator ++(); return res; }
+
+    /// Prefix -- operator.
+    Self& operator--()
+    {
+      CGAL_assertion(m_it!=halfedges(this->mmap.get_fg()).begin());
+      --m_it;
+      return *this;
+    }
+
+    /// Postfix -- operator.
+    Self operator--(int)
+    { Self res=*this; operator --(); return res; }
+
 
     Dart_handle operator*() const
     {
@@ -326,6 +338,7 @@ protected:
 };
 ////////////////////////////////////////////////////////////////////////////////
 
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_ITERATORS_FOR_FACE_GRAPH_WRAPPER_H //

@@ -142,7 +142,7 @@ public:
 
  private:
 
-  Trpz_parameter_space* ptr() const { return (Trpz_parameter_space*)(PTR);  }
+  Trpz_parameter_space* ptr() const { return (Trpz_parameter_space*)(PTR.p);  }
 
 
 #ifndef CGAL_TD_DEBUG
@@ -323,7 +323,7 @@ public:
   {
     //define the initial trapezoid: left, right, btm, top are at infinity.
     // its type is TD_TRAPEZOID ,it is on all boundaries, and has no neighbours
-    PTR = new Trpz_parameter_space
+    PTR.p = new Trpz_parameter_space
       (Traits::vtx_at_left_infinity(),
        Traits::vtx_at_right_infinity(),
        Traits::he_at_bottom_infinity(),
@@ -353,7 +353,7 @@ public:
     else //tp == TD_VERTEX
       type_flag |= CGAL_TD_VERTEX;
 
-    PTR = new Trpz_parameter_space
+    PTR.p = new Trpz_parameter_space
       (l, r, b, t, type_flag | boundness_flag, lb, lt, rb, rt);
     m_dag_node = node;
   }
@@ -370,7 +370,7 @@ public:
                   Self* rb = 0, Self* rt = 0,
                   Dag_node* node = 0)
   {
-    PTR = new Trpz_parameter_space
+    PTR.p = new Trpz_parameter_space
       (l ? *l : Traits::vtx_at_left_infinity(),
        r ? *r : Traits::vtx_at_right_infinity(),
        b ? *b : Traits::he_at_bottom_infinity(),
@@ -436,7 +436,7 @@ public:
   /*! Access the trapezoid id (PTR). */
   CGAL_TD_INLINE unsigned long id() const
     {
-      return (unsigned long) PTR;
+      return (unsigned long) PTR.p;
     }
 
   /*! Access trapezoid left. */
