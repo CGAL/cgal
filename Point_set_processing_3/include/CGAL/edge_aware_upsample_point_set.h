@@ -379,7 +379,7 @@ edge_aware_upsample_point_set(
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
-  CGAL::Bbox_3 bbox(0., 0., 0., 0., 0., 0.);
+  CGAL::Bbox_3 bbox;
 
   typename PointRange::const_iterator it = begin; // point iterator
   for(unsigned int i = 0; it != end; ++it, ++i)
