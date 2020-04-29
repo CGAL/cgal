@@ -127,7 +127,7 @@ public:
 
  private:
 
-  Data* ptr() const { return (Data*)(PTR);  }
+  Data* ptr() const { return (Data*)(PTR.p);  }
 
 
 #ifndef CGAL_TD_DEBUG
@@ -162,7 +162,7 @@ public:
   /*! Constructor given Vertex & Halfedge handles. */
   Td_inactive_vertex (Vertex_const_handle v_before_rem, Dag_node* node = nullptr)
   {
-    PTR = new Data(v_before_rem->point(), node);
+    PTR.p = new Data(v_before_rem->point(), node);
   }
 
 
@@ -217,7 +217,7 @@ public:
   /*! Access the trapezoid id (PTR). */
   inline unsigned long id() const
   {
-    return (unsigned long) PTR;
+    return (unsigned long) PTR.p;
   }
 
   inline Point& point() const
