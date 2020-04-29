@@ -11,4 +11,6 @@ function(CGAL_target_use_Boost_Serialization target)
     target_link_libraries(${target} PUBLIC ${Boost_SERIALIZATION_LIBRARY})
   endif()
 
+  target_compile_options( ${target} PUBLIC -DCGAL_LINKED_WITH_BOOST_SERIALIZATION)
+
 endfunction()

@@ -572,7 +572,7 @@ void draw(const Arc_2& arc,
         ref_bound = engine.pixel_h_r/CGAL_REFINE_X;
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+        ref_bound = (std::min)(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
         Gfx_OUT("computing y-coordinates\n");
 
@@ -912,7 +912,7 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     const Coordinate_1& x0 = pt.x();
     Rational ref_bound = engine.pixel_w_r / 2;
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+        ref_bound = (std::min)(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
 
     typename Curve_kernel_2::Algebraic_kernel_d_1::Approximate_relative_1
@@ -932,7 +932,7 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     ref_bound = engine.pixel_h_r / CGAL_REFINE_X;
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+    ref_bound = (std::min)(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
 
     Coordinate_2 xy(x0, pt.curve(), pt.arcno());

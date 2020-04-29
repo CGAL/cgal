@@ -6,7 +6,7 @@ set(CGAL_target_use_Boost_IOStreams_included TRUE)
 function(CGAL_target_use_Boost_IOStreams target)
 
   if( WIN32 )
-    # to avoid a warning with old cmake 
+    # to avoid a warning with old cmake
     set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
     set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
     find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
@@ -19,7 +19,7 @@ function(CGAL_target_use_Boost_IOStreams target)
   else()
     target_link_libraries(${target} PUBLIC ${Boost_IOSTREAMS_LIBRARY})
   endif()
-  
+
   if( WIN32 )
     if (Boost_ZLIB_FOUND AND Boost_BZIP2_FOUND)
       target_link_libraries(${target} PUBLIC ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
@@ -35,5 +35,7 @@ function(CGAL_target_use_Boost_IOStreams target)
       return()
     endif()
   endif()
+
+  target_compile_options( ${target} PUBLIC -DCGAL_LINKED_WITH_BOOST_IOSTREAMS)
 
 endfunction()

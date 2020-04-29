@@ -207,9 +207,6 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
-
-//  QObject::connect(thresholdSlider, SIGNAL(valueChanged(int)), this, SLOT(set_Threshold(int)));
-
 }
 
 

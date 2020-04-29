@@ -256,8 +256,8 @@ public:
         _page->DeselectAll();
 
       Iso_rectangle_2 bbox_cgal(
-        static_cast<double>(bbox_ipe.Min().iX),static_cast<double>(bbox_ipe.Min().iY),
-        static_cast<double>(bbox_ipe.Max().iX),static_cast<double>(bbox_ipe.Max().iY)
+        static_cast<double>((bbox_ipe.Min)().iX),static_cast<double>((bbox_ipe.Min)().iY),
+        static_cast<double>((bbox_ipe.Max)().iX),static_cast<double>((bbox_ipe.Max)().iY)
       );
 
         return bbox_cgal;

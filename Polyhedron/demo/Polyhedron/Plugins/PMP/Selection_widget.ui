@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>613</width>
-    <height>365</height>
+    <height>409</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -423,6 +423,13 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="Regularize_button">
+              <property name="text">
+               <string>Regularize</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="Clear_button">

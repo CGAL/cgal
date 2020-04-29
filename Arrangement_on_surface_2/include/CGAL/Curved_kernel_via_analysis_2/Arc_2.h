@@ -3024,8 +3024,8 @@ public:
         y_dapprox = y_interval_for_curve_end(*this, CGAL::ARR_MIN_END, prec);
 
         // adapt y-interval
-        ymin = CGAL::min(ymin, y_dapprox.first);
-        ymax = CGAL::max(ymax, y_dapprox.second);
+        ymin = (CGAL::min)(ymin, y_dapprox.first);
+        ymax = (CGAL::max)(ymax, y_dapprox.second);
 
         // right end
 
@@ -3105,9 +3105,9 @@ public:
                   (curr_xy, prec);
 
                 // adapt y-interval
-                ymin = CGAL::min(ymin,
+                ymin = (CGAL::min)(ymin,
                                  CGAL::to_double(xy_approx.first));
-                ymax = CGAL::max(ymax,
+                ymax = (CGAL::max)(ymax,
                                  CGAL::to_double(xy_approx.second));
               }
             }

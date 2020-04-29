@@ -18,7 +18,11 @@
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFOREST_TREE_H
 #include "../dataview.h"
 #include "common-libraries.hpp"
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
 #include <boost/serialization/scoped_ptr.hpp>
+#else
+#include <boost/scoped_ptr.hpp>
+#endif
 
 namespace CGAL { namespace internal {
 
@@ -115,12 +119,16 @@ public:
         return n_common/sqrt((n_common + n_1)*(n_common + n_2));
     }
 #endif
+
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
     {
         ar & BOOST_SERIALIZATION_NVP(params);
         ar & BOOST_SERIALIZATION_NVP(root_node);
     }
+#endif
+
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
       root_node->get_feature_usage(count);

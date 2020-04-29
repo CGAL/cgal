@@ -60,7 +60,7 @@ private:
 void Cone_spanners_ipelet::protected_run(int fn)
 {
   std::vector<Point_2> lst;
-  int number_of_cones;
+  int number_of_cones = 0;
   switch (fn){
     case 0:
     case 1:

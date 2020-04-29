@@ -56,7 +56,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.57 or later</b>
+<b>Version 1.58 or later</b>
 
 The \sc{Boost} libraries are a set of portable C++ source libraries.
 Most of \sc{Boost} libraries are header-only, but a few of them need to be compiled or

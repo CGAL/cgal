@@ -30,6 +30,7 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/Three/Triangle_container.h
   CGAL/Three/Viewer_config.h
   CGAL/Three/Viewer_interface.h
+  CGAL/Three/Three.h
 
 ]=])
 
