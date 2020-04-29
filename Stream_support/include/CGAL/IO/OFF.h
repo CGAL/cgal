@@ -150,23 +150,6 @@ bool read_OFF(std::istream& is,
 } // namespace internal
 } // namespace IO
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of `is` into `points` and `polygons`, in the OFF format.
- *
- * \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalNamedParamsEnd
- *
- * \see \ref IOStreamOFF
- */
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool read_OFF(std::istream& is,
               PointRange& points,
@@ -187,23 +170,6 @@ bool read_OFF(std::istream& is,
                                                  CGAL::Emptyset_iterator()));
 }
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of the file `fname` into `points` and `polygons`, in the OFF format.
- *
- * * \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalNamedParamsEnd
- *
- * \see \ref IOStreamOFF
- */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname,
               PointRange& points,
@@ -220,12 +186,28 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
   return read_OFF(fname.c_str(), points, polygons, np);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `is` into `points` and `polygons`, in the OFF format.
+ *
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange>
 bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
 {
   return read_OFF(is, points, polygons, parameters::all_default());
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of the file `fname` into `points` and `polygons`, in the OFF format.
+ *
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange>
 bool read_OFF(const char* fname, PointRange& points, PolygonRange& polygons)
 {
@@ -242,13 +224,7 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * writes the content of `points` and `polygons` in `out`, in the OFF format.
- *
- * \see \ref IOStreamOFF
- */
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
@@ -259,6 +235,13 @@ bool write_OFF(std::ostream& os,
   return writer(points, polygons);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in `out`, in the OFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
@@ -267,13 +250,6 @@ bool write_OFF(std::ostream& os,
   return write_OFF(os, points, polygons, parameters::all_default());
 }
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * writes the content of `points` and `polygons` in  the file `fname`, in the OFF format.
- *
- * \see \ref IOStreamOFF
- */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const char* fname,
                const PointRange& points,
@@ -285,6 +261,13 @@ bool write_OFF(const char* fname,
   return writer(points, polygons, np);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in  the file `fname`, in the OFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const char* fname,
                const PointRange& points,

@@ -90,10 +90,7 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
       Color c;
       file_scan_color(scanner, c);
     }
-    else
-    {
       scanner.skip_to_next_vertex(i);
-    }
   }
 
   if(!m_in || B.error())

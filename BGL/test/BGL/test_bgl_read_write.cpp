@@ -84,7 +84,7 @@ void test_bgl_OFF(const char* filename)
 
 //todo check the result.
 template<typename Mesh>
-void test_bgl_NCSTOFF()
+void test_bgl_OFF_with_np()
 {
   Mesh fg;
   std::ifstream in("data/full.off");
@@ -139,6 +139,40 @@ bool test_bgl_OBJ()
 
   return true;
 }
+
+template<typename Mesh>
+bool test_bgl_OBJ_with_np()
+{
+  Mesh fg, fg2;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Kernel::Vector_3> >::type VertexNormalMap;
+  VertexNormalMap vnm  = get(CGAL::dynamic_vertex_property_t<Kernel::Vector_3>(), fg);
+  VertexNormalMap vnm2  = get(CGAL::dynamic_vertex_property_t<Kernel::Vector_3>(), fg2);
+
+
+  for(const auto& v : vertices(fg))
+    put(vnm, v, Kernel::Vector_3(0.0,1.0,0.0));
+  std::ostringstream out;
+  CGAL::write_OBJ(out, fg, CGAL::parameters::vertex_normal_map(vnm));
+  std::istringstream in( out.str());
+
+  CGAL::read_OBJ(in, fg2, CGAL::parameters::vertex_normal_map(vnm2));
+
+  CGAL_assertion(num_vertices(fg2) == 4);
+  CGAL_assertion(num_faces(fg2) == 4);
+  typename boost::graph_traits<Mesh>::vertex_iterator vit, vit2;
+  for( vit = vertices(fg).begin(), vit2 = vertices(fg2).begin();
+       vit != vertices(fg).end(), vit2 != vertices(fg2).end();
+       ++vit, ++vit2)
+  {
+    CGAL_assertion(get(vnm, *vit) == get(vnm2, *vit2));
+  }
+
+  return true;
+}
+
+
 
 void test_bgl_soup_obj()
 {
@@ -386,7 +420,39 @@ bool test_STL()
 
 
 template<class FaceGraph>
-bool test_PLY(bool binary = false)
+bool test_bgl_PLY(bool binary = false)
+{
+  FaceGraph fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  std::ostringstream out;
+
+  if(binary)
+    CGAL::set_mode(out, CGAL::IO::BINARY);
+
+  CGAL::write_PLY(out, fg, "hello");
+  if(out.fail())
+  {
+    std::cerr<<"Tetrahedron writing failed."<<std::endl;
+    return false;
+  }
+  std::istringstream in(out.str());
+
+  if(binary)
+    CGAL::set_mode(in, CGAL::IO::BINARY);
+
+  fg.clear();
+  if(!CGAL::read_PLY(in,fg)){
+    std::cerr<<"Tetrahedron reading failed."<<std::endl;
+    return false;
+  }
+  CGAL_assertion(num_vertices(fg) == 4);
+  CGAL_assertion(num_faces(fg) == 4);
+  return true;
+}
+
+template<typename FaceGraph>
+bool test_bgl_PLY_with_np(bool binary)
 {
   FaceGraph fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
@@ -450,26 +516,28 @@ bool test_PLY(bool binary = false)
   return true;
 }
 
+
 //todo tests with all NPs and without NP for all tests
+//todo Polyhedron read_OFF NPs
 int main(int argc, char** argv)
 {
-/*
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
+  /*
   // OFF
   test_bgl_OFF<Polyhedron>(filename);
   test_bgl_OFF<SM>(filename);
   test_bgl_OFF<LCC>(filename);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh>(filename);
-#endif*/
-  //polyhedron's overload doesn't care for any np that is not vpm
-  //test_bgl_NCSTOFF<Polyhedron>();
-  test_bgl_NCSTOFF<SM>();
-  test_bgl_NCSTOFF<LCC>();
-#ifdef CGAL_USE_OPENMESH
-  test_bgl_NCSTOFF<OMesh>();
 #endif
- /* test_soup_off(filename);
+  //polyhedron's overload doesn't care for any np that is not vpm
+  test_bgl_OFF_with_np<Polyhedron>();
+  test_bgl_OFF_with_np<SM>();
+  test_bgl_OFF_with_np<LCC>();
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_OFF_with_np<OMesh>();
+#endif
+    test_soup_off(filename);
 
   // OBJ
   test_bgl_OBJ<Polyhedron>();
@@ -480,15 +548,34 @@ int main(int argc, char** argv)
   test_bgl_OBJ<OMesh>();
 #endif
 
+  test_bgl_OBJ_with_np<Polyhedron>();
+  test_bgl_OBJ_with_np<SM>();
+  test_bgl_OBJ_with_np<LCC>();
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_OBJ_with_np<OMesh>();
+#endif
+
+
   //PLY
-  if(!test_PLY<Polyhedron>())
+  if(!test_bgl_PLY<Polyhedron>())
     return 1;
-  if(!test_PLY<Polyhedron>(true))
+  if(!test_bgl_PLY<Polyhedron>(true))
     return 1;
-  if(!test_PLY<SM>())
+  if(!test_bgl_PLY<SM>())
     return 1;
-  if(!test_PLY<SM>(true))
+  if(!test_bgl_PLY<SM>(true))
     return 1;
+
+  if(!test_bgl_PLY_with_np<Polyhedron>(false))
+    return 1;
+  if(!test_bgl_PLY_with_np<Polyhedron>(true))
+    return 1;
+  if(!test_bgl_PLY_with_np<SM>(false))
+    return 1;
+  if(!test_bgl_PLY_with_np<SM>(true))
+    return 1;
+
+  */
   // GOCAD
   if(!test_gocad<Polyhedron>())
     return 1;
@@ -498,8 +585,7 @@ int main(int argc, char** argv)
     return 1;
   if(!test_soup_gocad())
     return 1;
-
-
+/*
   // STL
   if(!test_STL<Polyhedron>())
     return 1;

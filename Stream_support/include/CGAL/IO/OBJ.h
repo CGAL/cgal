@@ -86,7 +86,9 @@ bool read_OBJ(std::istream& is,
     }
     else if(line[0] == 'v' &&  line[1] == 'n' && line[2] == ' ')
     {
-      std::istringstream iss(line.substr(1));
+      std::istringstream iss(line);
+      std::string dummy;
+      iss >> dummy;
       double nx, ny, nz; // @fixme double?
       if(iss >> nx >> ny >> nz)
         *vn_out++ = Normal(nx, ny, nz); // @fixme check that every vertex has a normal?
