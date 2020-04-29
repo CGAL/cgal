@@ -66,7 +66,7 @@ struct Approximate_exact_pair
 
   Approximate_exact_pair()
   { }
-  
+
 #ifdef CGAL_LAZY_FILTERED_RATIONAL_KERNEL
   Approximate_exact_pair(const T1& t1)
     : Base(t1, T2())
