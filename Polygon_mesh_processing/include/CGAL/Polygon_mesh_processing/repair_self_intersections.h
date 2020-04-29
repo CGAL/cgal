@@ -24,7 +24,6 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -235,37 +234,6 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   else
     ++self_intersections_solved_by_unconstrained_smoothing;
 #endif
-  return true;
-}
-
-// -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-
-template <typename TriangleMesh>
-bool order_border_halfedge_range(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& hrange,
-                                 const TriangleMesh& tmesh)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
-
-  CGAL_precondition(hrange.size() > 2);
-
-  for(std::size_t i=0; i<hrange.size()-2; ++i)
-  {
-    const vertex_descriptor tgt = target(hrange[i], tmesh);
-    for(std::size_t j=i+1; j<hrange.size(); ++j)
-    {
-      if(tgt == source(hrange[j], tmesh))
-      {
-        std::swap(hrange[i+1], hrange[j]);
-        break;
-      }
-
-      // something went wrong while ordering halfedge (e.g. hole has more than one boundary cycle)
-      if(j == hrange.size() - 1)
-        return false;
-    }
-  }
-
-  CGAL_postcondition(source(hrange.front(), tmesh) == target(hrange.back(), tmesh));
   return true;
 }
 
