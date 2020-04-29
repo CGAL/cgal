@@ -8,7 +8,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
+#include <string>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Vb = CGAL::Triangulation_vertex_base_2<K>;
@@ -89,15 +91,18 @@ int main(int argc, char* argv[])
 
     std::cout << "Number of vertices after: " << cdt.number_of_vertices() << std::endl;
 
-    return cdt.number_of_vertices();
+    std::stringstream ss;
+    ss << cdt;
+    
+    return ss.str();
   };
 
-  const size_t ref_number_of_vertices = triangulate(0);
+  const std::string ref_cdts = triangulate(0);
 
   for (int i = 1; i < 20; ++i)
   {
-    const size_t number_of_vertices = triangulate(i);
-    if (ref_number_of_vertices != number_of_vertices)
+    const std::string cdts = triangulate(i);
+    if (ref_cdts != cdts)
       return 1;
   }
 
