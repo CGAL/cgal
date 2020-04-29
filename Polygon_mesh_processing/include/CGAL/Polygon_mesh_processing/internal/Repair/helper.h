@@ -851,7 +851,7 @@ bool construct_tentative_sub_hole_patch(std::vector<std::vector<typename boost::
 // This function is only called when the hole is NOT subdivided into smaller holes
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
-               std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
+               const std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
                TriangleMesh& tmesh,
                VertexPointMap vpm,
@@ -917,7 +917,7 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
 
 // Same function as above but border of the hole is not known
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-bool fill_hole(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
+bool fill_hole(const std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
                TriangleMesh& tmesh,
                VertexPointMap vpm,
@@ -947,7 +947,7 @@ bool fill_hole(std::set<typename boost::graph_traits<TriangleMesh>::face_descrip
 
 // Same as above, but we don't care about maintaining the working face range
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-bool fill_hole(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
+bool fill_hole(const std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                TriangleMesh& tmesh,
                VertexPointMap vpm,
                const GeomTraits& gt)
