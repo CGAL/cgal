@@ -931,7 +931,7 @@ public:
     Vertex_index add_vertex()
     {
       size_type inf = (std::numeric_limits<size_type>::max)();
-      if(vertices_freelist_ != inf){
+      if(recycle_ && (vertices_freelist_ != inf)){
         size_type idx = vertices_freelist_;
         vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
         --removed_vertices_;
@@ -963,7 +963,7 @@ public:
     {
       Halfedge_index h0, h1;
       size_type inf = (std::numeric_limits<size_type>::max)();
-      if(edges_freelist_ != inf){
+      if(recycle_ && (edges_freelist_ != inf)){
         size_type idx = edges_freelist_;
         edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
         --removed_edges_;
@@ -1002,7 +1002,7 @@ public:
     Face_index add_face()
     {
       size_type inf = (std::numeric_limits<size_type>::max)();
-      if(faces_freelist_ != inf){
+      if(recycle_ && (faces_freelist_ != inf)){
         size_type idx = faces_freelist_;
         faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
         --removed_faces_;
@@ -1268,7 +1268,8 @@ public:
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
     /// refering to the right elements.
-
+    /// When adding elements, by default elements that are marked as removed
+    /// are recycled.
 
     ///@{
 #ifndef DOXYGEN_RUNNING
@@ -1337,10 +1338,17 @@ public:
     /// refering to the right elements.
     void collect_garbage();
 
-    //undocumented convenience fucntion that allows to get old-index->new-index information
+    //undocumented convenience function that allows to get old-index->new-index information
     template <typename Visitor>
     void collect_garbage(Visitor& visitor);
 
+    /// when set to `true` functions like `add_vertex()` will first
+    /// see if they can recycle a previously element marked as removed.
+    /// When set to `false` new elements will be created.
+    void set_recycle_garbage(bool b);
+
+    /// Getter
+    bool does_recycle_garbage();
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// removes unused memory from vectors. This shrinks the storage
@@ -2103,7 +2111,8 @@ private: //------------------------------------------------------- private data
     size_type edges_freelist_;
     size_type faces_freelist_;
     bool garbage_;
-
+    bool recycle_;
+  
     size_type anonymous_property_;
 };
 
@@ -3150,6 +3159,7 @@ struct Dummy_visitor{
 };
 
 }
+
 template <typename P>
 void
 Surface_mesh<P>::
@@ -3159,6 +3169,23 @@ collect_garbage()
   collect_garbage(visitor);
 }
 
+  
+template <typename P>
+void
+Surface_mesh<P>::
+set_recycle_garbage(bool b)
+{
+  recycle_ = b;
+}
+
+template <typename P>
+bool
+Surface_mesh<P>::
+does_recycle_garbage()
+{
+  return recycle_;
+}
+  
 namespace internal{
   namespace handle {
     template <>
@@ -3198,6 +3225,7 @@ namespace internal{
     };
   }
 }
+
 
 } // CGAL
 
