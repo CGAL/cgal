@@ -342,7 +342,6 @@ private:
         //then go back to top of the stack
       }
     }
-    std::cout<< a << " edges were flipped: " << std::endl;
   }
 
 

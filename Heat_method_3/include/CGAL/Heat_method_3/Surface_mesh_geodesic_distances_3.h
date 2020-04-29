@@ -898,16 +898,6 @@ public:
   }
 
   /**
-   * get estimated distance from the current source set to a vertex `vd`.
-   * \warning The return type is `double` even when used with an exact kernel.
-   */
-  double
-  estimate_geodesic_distance(vertex_descriptor vd) const
-  {
-    return base().estimate_geodesic_distance(vd);
-  }
-
-  /**
    * returns the source set.
    */
   const Vertex_const_range&
@@ -915,7 +905,6 @@ public:
   {
     return base().sources();
   }
-
 
   /**
    * fills the distance property map with the estimated geodesic distance of each vertex to the closest source vertex.
