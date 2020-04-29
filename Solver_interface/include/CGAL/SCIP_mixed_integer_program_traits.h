@@ -20,7 +20,7 @@
 
 namespace CGAL {
 
-        /// \ingroup PkgSolver
+        /// \ingroup PkgSolverInterfaceRef
         ///
         /// This class provides an interface for formulating and solving
         /// mixed integer programs (constrained or unconstrained) using
@@ -35,7 +35,6 @@ namespace CGAL {
         /// \cgalModels `MixedIntegerProgramTraits`
         ///
         /// \sa `GLPK_mixed_integer_program_traits`
-
         template <typename FT>
         class SCIP_mixed_integer_program_traits : public Mixed_integer_program_traits<FT>
         {
