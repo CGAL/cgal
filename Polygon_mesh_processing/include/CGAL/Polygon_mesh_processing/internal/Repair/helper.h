@@ -515,29 +515,12 @@ void back_up_face_range_as_point_patch(std::vector<std::vector<Point> >& point_p
 
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
-// Hole filling can be influenced by setting a third point associated to an edge on the border of the hole.
-// This third point is supposed to represent how the mesh continues on the other side of the hole.
-// If that edge is a border edge, there is no third point (since the opposite face is the null face).
-// Similarly if the edge is an internal sharp edge, we don't really want to use the opposite face because
-// there is by definition a strong discontinuity and it might thus mislead the hole filling algorithm.
-//
-// Rather, we construct an artifical third point that is in the same plane as the face incident to `h`,
-// defined as the third point of the imaginary equilateral triangle incident to opp(h, tmesh)
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-typename boost::property_traits<VertexPointMap>::value_type
-construct_artificial_third_point(const typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
-                                 const TriangleMesh& tmesh,
-                                 const VertexPointMap vpm,
-                                 const GeomTraits& gt)
+template <typename Point, typename GeomTraits>
+Point construct_artificial_third_point(const Point& p1, const Point& p2, const Point& opp_p,
+                                       const GeomTraits& gt)
 {
   typedef typename GeomTraits::FT                                           FT;
-  typedef typename boost::property_traits<VertexPointMap>::value_type       Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference        Point_ref;
   typedef typename GeomTraits::Vector_3                                     Vector;
-
-  const Point_ref p1 = get(vpm, source(h, tmesh));
-  const Point_ref p2 = get(vpm, target(h, tmesh));
-  const Point_ref opp_p = get(vpm, target(next(h, tmesh), tmesh));
 
   // sqrt(3)/2 to have an equilateral triangle with p1, p2, and third_point
   const FT dist = 0.5 * CGAL::sqrt(3.) * CGAL::approximate_sqrt(gt.compute_squared_distance_3_object()(p1, p2));
@@ -556,6 +539,30 @@ construct_artificial_third_point(const typename boost::graph_traits<TriangleMesh
                           mid_p1p2, gt.construct_scaled_vector_3_object()(orthogonalized_ve2, -dist));
 
   return third_p;
+}
+
+// Hole filling can be influenced by setting a third point associated to an edge on the border of the hole.
+// This third point is supposed to represent how the mesh continues on the other side of the hole.
+// If that edge is a border edge, there is no third point (since the opposite face is the null face).
+// Similarly if the edge is an internal sharp edge, we don't really want to use the opposite face because
+// there is by definition a strong discontinuity and it might thus mislead the hole filling algorithm.
+//
+// Rather, we construct an artifical third point that is in the same plane as the face incident to `h`,
+// defined as the third point of the imaginary equilateral triangle incident to opp(h, pmesh)
+template <typename PolygonMesh, typename VertexPointMap, typename GeomTraits>
+typename boost::property_traits<VertexPointMap>::value_type
+construct_artificial_third_point(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                                 const PolygonMesh& pmesh,
+                                 const VertexPointMap vpm,
+                                 const GeomTraits& gt)
+{
+  typedef typename boost::property_traits<VertexPointMap>::reference        Point_ref;
+
+  const Point_ref p1 = get(vpm, source(h, pmesh));
+  const Point_ref p2 = get(vpm, target(h, pmesh));
+  const Point_ref opp_p = get(vpm, target(next(h, pmesh), pmesh));
+
+  return construct_artificial_third_point(p1, p2, opp_p, gt);
 }
 
 template <typename TriangleMesh, typename VertexPointMap, typename Point, typename GeomTraits>
