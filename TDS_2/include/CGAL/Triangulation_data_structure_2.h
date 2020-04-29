@@ -1039,7 +1039,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
                         f->neighbor(0),
                         f->neighbor(1),
                         f->neighbor(2));
-                        
+
         f->set_vertex(dim,v);
         g->set_vertex(dim,w);
         set_adjacency(f, dim, g, dim);

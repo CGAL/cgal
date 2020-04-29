@@ -69,8 +69,8 @@ public:
   inline
   void set_marked(const bool b) { in_domain=b; }
 
-  
-    typedef Tag_true Has_timestamp;
+
+  typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
     return time_stamp_;
@@ -79,7 +79,7 @@ public:
     time_stamp_ = ts;
   }
   std::size_t time_stamp_;
-  
+
 };
 
 } // namespace CGAL
