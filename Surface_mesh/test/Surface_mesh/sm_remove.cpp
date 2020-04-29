@@ -29,11 +29,11 @@ int main()
   m.add_vertex(Point_3(0,0,0));
   assert(m.num_vertices() == 2);
   assert(m.number_of_removed_vertices() == 1);
-  
+
   m.set_recycle_garbage(true);
   m.add_vertex(Point_3(0,0,0));
   assert(m.num_vertices() == 2);
   assert(m.number_of_removed_vertices() == 0);
-  
+
   return 0;
 }
