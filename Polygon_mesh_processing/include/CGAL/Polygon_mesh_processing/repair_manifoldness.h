@@ -311,10 +311,6 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 
 // @todo something without heat method ? (SMSP)
 // @todo handle geodesic spheres that intersect
-// @todo make construct_work_zone() return the border of the hole, and then distinguish:
-//       - two borders + merge requested: ok if both closed or both open
-//       - merge otherwise
-
 // @todo can make maps of Points lighter with a vertex as key, and a custom equal comparing actual points
 // @todo small sets
 
@@ -539,15 +535,28 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   // Corefine the mesh with a piecewise(face)-linear approximation of the geodesic circle
   std::set<face_descriptor> faces_to_consider;
+  std::vector<edge_descriptor> edges_to_split;
+
   std::stack<halfedge_descriptor> halfedges_to_consider;
   halfedges_to_consider.push(opposite(h, pmesh));
 
   Considered_edge_map considered_edges = get(Considered_tag(), pmesh);
+
+  std::cout << "spread 'em" << std::endl;
   while(!halfedges_to_consider.empty())
   {
     const halfedge_descriptor curr_h = halfedges_to_consider.top();
     halfedges_to_consider.pop();
-    put(considered_edges, edge(curr_h, pmesh), true);
+
+    std::cout << get(vpm, source(curr_h, pmesh)) << " " << get(vpm, target(curr_h, pmesh)) << std::endl;
+
+    edge_descriptor curr_e = edge(curr_h, pmesh);
+    put(considered_edges, curr_e, true);
+
+    const bool is_s_in = (get(wz.distances, source(curr_e, pmesh)) <= radius);
+    const bool is_t_in = (get(wz.distances, target(curr_e, pmesh)) <= radius);
+    if(is_s_in != is_t_in)
+      edges_to_split.push_back(curr_e);
 
     if(!is_border(curr_h, pmesh))
       faces_to_consider.insert(face(curr_h, pmesh));
@@ -563,17 +572,9 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
       if(get(considered_edges, edge(adj_h, pmesh))) // already visited
         continue;
 
-      halfedges_to_consider.push(adj_h);
+      // want the source of the new halfedges to be equal to 'source(curr_h, pmesh)'
+      halfedges_to_consider.push(opposite(adj_h, pmesh));
     }
-  }
-
-  std::vector<edge_descriptor> edges_to_split;
-  for(const edge_descriptor e : edges(pmesh))
-  {
-    const bool is_s_in = (get(wz.distances, source(e, pmesh)) <= radius);
-    const bool is_t_in = (get(wz.distances, target(e, pmesh)) <= radius);
-    if(is_s_in != is_t_in)
-      edges_to_split.push_back(e);
   }
 
   std::cout << edges_to_split.size() << " edges to split" << std::endl;
@@ -627,8 +628,15 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
     }
   }
 
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::cout << faces_to_consider.size() << " faces to consider" << std::endl;
-  dump_cc(faces_to_consider, pmesh, "results/faces_to_consider.off");
+
+  static int fi = 0;
+  std::stringstream oss;
+  oss << "results/faces_to_consider_" << fi++ << ".off" << std::ends;
+  dump_cc(faces_to_consider, pmesh, oss.str().c_str());
+#endif
 
   for(face_descriptor f : faces_to_consider)
   {
@@ -656,8 +664,6 @@ Work_zone<PolygonMesh> construct_work_zone(const typename boost::graph_traits<Po
 {
   std::cout << "Marking zone incident to halfedge: " << h << " ("
             << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
-
-  CGAL_precondition(!is_border(h, pmesh));
 
   // 'set' complexity should be fine, it's not supposed to be a large number of faces
   Work_zone<PolygonMesh> wz;
