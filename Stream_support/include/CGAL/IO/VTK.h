@@ -87,13 +87,6 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of `is` into `points` and `polygons`, in the VTPformat.
- *
- * \see \ref IOStreamVTK
- */
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool read_VTP(const char* fname,
               PointRange& points,
@@ -118,6 +111,13 @@ bool read_VTP(const std::string&  fname,
   return read_VTP(fname.c_str(), points, polygons, np);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `is` into `points` and `polygons`, in the VTPformat.
+ *
+ * \see \ref IOStreamVTK
+ */
 template <typename PointRange, typename PolygonRange>
 bool read_VTP(const char* fname,
               PointRange& points,
@@ -338,18 +338,7 @@ void write_soup_polys_points(std::ostream& os,
 }//end internal
 }//end IO
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * writes the content of `points` and `polygons` in `out`, in the VTP format.
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
- *    data should be written in binary (`true`, the default) or in ASCII (`false`).
- *    \cgalParamEnd
- * \cgalNamedParamsEnd
- * \see \ref IOStreamVTK
- */
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
                const PointRange& points,
@@ -398,12 +387,34 @@ bool write_VTP(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in `out`, in the VTP format.
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+ *    data should be written in binary (`true`, the default) or in ASCII (`false`).
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
+ * \see \ref IOStreamVTK
+ */
 template <typename PointRange, typename PolygonRange>
 bool write_VTP(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons)
 {
   return write_VTP(os, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream out(fname);
+  return write_VTP(out, points, polygons, np);
 }
 
 /*!
@@ -418,16 +429,6 @@ bool write_VTP(std::ostream& os,
  * \cgalNamedParamsEnd
  * \see \ref IOStreamVTK
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
-{
-  std::ofstream out(fname);
-  return write_VTP(out, points, polygons, np);
-}
-
 template <typename PointRange, typename PolygonRange>
 bool write_VTP(const char* fname,
                const PointRange& points,

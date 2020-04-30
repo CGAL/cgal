@@ -290,7 +290,7 @@ bool test_soup_vtp(bool binary = false)
 #endif
 
 template<class FaceGraph>
-bool test_gocad()
+bool test_bgl_gocad()
 {
   FaceGraph fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
@@ -306,6 +306,55 @@ bool test_gocad()
   std::istringstream in( out.str());
   std::pair<std::string, std::string> cnn;
   CGAL::read_GOCAD(in, cnn, fg2);
+  if(cnn.first != "tetrahedron"){
+    std::cerr<<"reading error: tetrahedron != "<<cnn.first<<std::endl;
+    return 1;
+  }
+  if( !cnn.second.empty()){
+    std::cerr<<"reading error: there should be no color."<<std::endl;
+    return 1;
+  }
+
+  if(in.fail()){
+    std::cerr<<"Tetrahedron reading failed."<<std::endl;
+    return false;
+  }
+
+  if(num_vertices(fg2) != 4){
+    std::cerr<<"Wrong number of vertices: 4 != "<<num_vertices(fg2)<<std::endl;
+    return false;
+  }
+
+   if(num_faces(fg2) != 4)
+  {
+    std::cerr<<"Wrong number of faces: 4 != "<<num_faces(fg2)<<std::endl;
+    return false;
+  }
+
+  return true;
+}
+template<class FaceGraph>
+bool test_bgl_gocad_with_np()
+{
+
+  typedef typename boost::property_map<FaceGraph,CGAL::vertex_point_t>::type VertexPointMap;
+  FaceGraph fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  VertexPointMap vpm  = get(CGAL::vertex_point, fg);
+
+  std::ostringstream out;
+  CGAL::write_GOCAD(out, "tetrahedron", fg, CGAL::parameters::vertex_point_map(vpm));
+  if(out.fail())
+  {
+    std::cerr<<"Tetrahedron writing failed."<<std::endl;
+    return false;
+  }
+  FaceGraph fg2;
+  VertexPointMap vpm2  = get(CGAL::vertex_point, fg2);
+  std::istringstream in( out.str());
+  std::pair<std::string, std::string> cnn;
+  CGAL::read_GOCAD(in, cnn, fg2, CGAL::parameters::vertex_point_map(vpm2));
   if(cnn.first != "tetrahedron"){
     std::cerr<<"reading error: tetrahedron != "<<cnn.first<<std::endl;
     return 1;
@@ -385,7 +434,7 @@ bool test_soup_gocad()
 }
 
 template<class FaceGraph>
-bool test_STL()
+bool test_bgl_stl()
 {
   FaceGraph fg;
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
@@ -417,7 +466,6 @@ bool test_STL()
 
   return true;
 }
-
 
 template<class FaceGraph>
 bool test_bgl_PLY(bool binary = false)
@@ -522,7 +570,6 @@ bool test_bgl_PLY_with_np(bool binary)
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
-  /*
   // OFF
   test_bgl_OFF<Polyhedron>(filename);
   test_bgl_OFF<SM>(filename);
@@ -575,23 +622,29 @@ int main(int argc, char** argv)
   if(!test_bgl_PLY_with_np<SM>(true))
     return 1;
 
-  */
+
   // GOCAD
-  if(!test_gocad<Polyhedron>())
+  if(!test_bgl_gocad<Polyhedron>())
     return 1;
-  if(!test_gocad<SM>())
+  if(!test_bgl_gocad<SM>())
     return 1;
-  if(!test_gocad<LCC>())
+  if(!test_bgl_gocad<LCC>())
+    return 1;
+  if(!test_bgl_gocad_with_np<Polyhedron>())
+    return 1;
+  if(!test_bgl_gocad_with_np<SM>())
+    return 1;
+  if(!test_bgl_gocad_with_np<LCC>())
     return 1;
   if(!test_soup_gocad())
     return 1;
-/*
+
   // STL
-  if(!test_STL<Polyhedron>())
+  if(!test_bgl_stl<Polyhedron>())
     return 1;
-  if(!test_STL<SM>())
+  if(!test_bgl_stl<SM>())
     return 1;
-  if(!test_STL<LCC>())
+  if(!test_bgl_stl<LCC>())
     return 1;
 
   // VTP
@@ -614,6 +667,6 @@ int main(int argc, char** argv)
   if(!test_soup_vtp(true))
     return 1;
 #endif
-*/
+
   return EXIT_SUCCESS;
 }

@@ -114,14 +114,7 @@ bool read_OBJ(std::istream& is,
 } // namespace internal
 } // namespace IO
 
-//! \ingroup IOstreamFunctions
-//!
-/// reads the content of `is` into `points` and `faces`, using the `OBJ` format.
-///
-/// \tparam PointRange a `RandomAccessContainer` of `Point_3,
-/// \tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
-///
-/// \see \ref IOStreamOBJ
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
@@ -136,14 +129,6 @@ bool read_OBJ(std::istream& is,
                                                  CGAL::Emptyset_iterator()));
 }
 
-//! \ingroup IOstreamFunctions
-//!
-/// reads the content of the file `fname` into `points` and `faces`, using the `OBJ` format.
-///
-/// \tparam PointRange a `RandomAccessContainer` of `Point_3,
-/// \tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
-///
-/// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const char* fname,
               PointRange& points,
@@ -160,12 +145,28 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
   return read_OBJ(fname.c_str(), points, polygons, np);
 }
 
+//! \ingroup IOstreamFunctions
+//!
+/// reads the content of `is` into `points` and `faces`, using the `OBJ` format.
+///
+/// \tparam PointRange a `RandomAccessContainer` of `Point_3,
+/// \tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
+///
+/// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons)
 {
   return read_OBJ(is, points, polygons, parameters::all_default());
 }
 
+//! \ingroup IOstreamFunctions
+//!
+/// reads the content of the file `fname` into `points` and `faces`, using the `OBJ` format.
+///
+/// \tparam PointRange a `RandomAccessContainer` of `Point_3,
+/// \tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
+///
+/// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons)
 {

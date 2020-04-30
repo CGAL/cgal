@@ -30,13 +30,6 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of `is` into `points` and `facets`, in the STL format.
- *
- * \see \ref IOStreamSTL
- */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               PointRange& points,
@@ -120,13 +113,6 @@ bool read_STL(std::istream& is,
   }
 }
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of a file named `fname` into `points` and `facets`, in the STL format.
- *
- * \see \ref IOStreamSTL
- */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname,
               PointRange& points,
@@ -143,12 +129,26 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
   return read_STL(fname.c_str(), points, facets, np);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `is` into `points` and `facets`, in the STL format.
+ *
+ * \see \ref IOStreamSTL
+ */
 template <typename PointRange, typename TriangleRange>
 bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets)
 {
   return read_STL(is, points, facets, parameters::all_default());
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of a file named `fname` into `points` and `facets`, in the STL format.
+ *
+ * \see \ref IOStreamSTL
+ */
 template <typename PointRange, typename TriangleRange>
 bool read_STL(const char* fname, PointRange& points, TriangleRange& facets)
 {

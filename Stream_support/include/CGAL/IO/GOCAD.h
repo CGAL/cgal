@@ -102,13 +102,7 @@ bool read_GOCAD(std::istream& input,
 
   return !input.fail();
 }
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of `is` into `points` and `polygons`, in the GOCAD format.
- *
- * \see \ref IOStreamGocad
- */
+
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool read_GOCAD(std::istream& is,
                 PointRange& points,
@@ -119,13 +113,7 @@ bool read_GOCAD(std::istream& is,
   return read_GOCAD(is, dummy, points, polygons, np);
 }
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * reads the content of the file `fname` into `points` and `polygons`, in the GOCAD format.
- *
- * \see \ref IOStreamGocad
- */
+
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool read_GOCAD(const char* fname,
                 PointRange& points,
@@ -137,8 +125,21 @@ bool read_GOCAD(const char* fname,
   return read_GOCAD(in, dummy, points, polygons, np);
 }
 
-
-
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+bool read_GOCAD(const std::string& fname,
+                PointRange& points,
+                PolygonRange& polygons,
+                const NamedParameters& np)
+{
+  return read_GOCAD(fname.c_str(), points, polygons, np);
+}
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `is` into `points` and `polygons`, in the GOCAD format.
+ *
+ * \see \ref IOStreamGocad
+ */
 template <typename PointRange, typename PolygonRange>
 bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons)
 {
@@ -146,12 +147,24 @@ bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons)
   return read_GOCAD(is, dummy, points, polygons, parameters::all_default());
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of the file `fname` into `points` and `polygons`, in the GOCAD format.
+ *
+ * \see \ref IOStreamGocad
+ */
 template <typename PointRange, typename PolygonRange>
 bool read_GOCAD(const char* fname, PointRange& points, PolygonRange& polygons)
 {
   return read_GOCAD(fname, points, polygons, parameters::all_default());
 }
 
+template <typename PointRange, typename PolygonRange>
+bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& polygons)
+{
+  return read_GOCAD(fname, points, polygons, parameters::all_default());
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,13 +221,7 @@ bool write_GOCAD(std::ostream& os,
 }
 } //end internal
 }//end IO
-/*!
-  \ingroup IOstreamFunctions
 
- * writes the content of `points` and `polygons` in `out`, in the TS format.
-
-  \see \ref IOStreamGocad
-*/
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -226,7 +233,13 @@ bool write_GOCAD(std::ostream& os,
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, np);
 
 }
+/*!
+  \ingroup IOstreamFunctions
 
+ * writes the content of `points` and `polygons` in `out`, in the TS format.
+
+  \see \ref IOStreamGocad
+*/
 template <typename PointRange,
           typename PolygonRange>
 bool write_GOCAD(std::ostream& os,
@@ -237,13 +250,6 @@ bool write_GOCAD(std::ostream& os,
 
 }
 
-/*!
-  \ingroup IOstreamFunctions
-
- * writes the content of `points` and `polygons` in a file named `fname`, in the TS format.
-
-  \see \ref IOStreamGocad
-*/
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -256,6 +262,14 @@ bool write_GOCAD(const char* fname,
   return IO::internal::write_GOCAD(os, fname, points, polygons, np);
 }
 
+
+/*!
+  \ingroup IOstreamFunctions
+
+ * writes the content of `points` and `polygons` in a file named `fname`, in the TS format.
+
+  \see \ref IOStreamGocad
+*/
 template <typename PointRange,
           typename PolygonRange>
 bool write_GOCAD(const char* fname,
