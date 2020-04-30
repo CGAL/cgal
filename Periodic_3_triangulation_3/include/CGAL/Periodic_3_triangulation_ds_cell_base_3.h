@@ -180,9 +180,9 @@ public:
     int bit_offset = 3 * vhi;
 
     // first reset the bit to 0 (AND), then assign the value given in input (OR)
-    off = off & ~(1 <<  bit_offset)      | (offo[0] <<  bit_offset);
-    off = off & ~(1 << (bit_offset + 1)) | (offo[1] << (bit_offset + 1));
-    off = off & ~(1 << (bit_offset + 2)) | (offo[2] << (bit_offset + 2));
+    off = (off & ~(1 <<  bit_offset))      | (offo[0] <<  bit_offset);
+    off = (off & ~(1 << (bit_offset + 1))) | (offo[1] << (bit_offset + 1));
+    off = (off & ~(1 << (bit_offset + 2))) | (offo[2] << (bit_offset + 2));
 
     CGAL_postcondition(offset(vhi) == o);
   }

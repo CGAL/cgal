@@ -5,13 +5,6 @@ namespace CGAL {
 \anchor Chapter_3D_Boolean_Operations_on_Nef_Polyhedra
 \anchor chapterNef3
 
-<span style="display:none">
-\f$
-  \newcommand{\pyr}{\operatorname{Pyr}}
-  \newcommand{\aff}{\operatorname{aff}}
-\f$
-</span>
-
 \cgalAutoToc
 \authors Peter Hachenberger and Lutz Kettner
 
@@ -290,7 +283,7 @@ polynomial), and runtime performance.
 
 Since manifolds are not closed under Boolean operations, Requicha
 proposes to use <I>regularized set operations</I> \cgalCite{cgal:km-st-76},
-cgal:r-rrstm-80. A set is <I>regular</I>, if it equals the closure
+\cgalCite{cgal:r-rrstm-80}. A set is <I>regular</I>, if it equals the closure
 of its interior. A regularized set operation is defined as the
 standard set operation followed by a regularization of the result.
 Regularized sets are closed under regularized set operations.

@@ -216,6 +216,22 @@ struct Identity_property_map
   /// @}
 };
 
+
+/// \cond SKIP_IN_MANUAL
+template <typename T>
+struct Identity_property_map_no_lvalue
+{
+  typedef T key_type; ///< typedef to `T`
+  typedef T value_type; ///< typedef to `T`
+  typedef T reference; ///< typedef to `T`
+  typedef boost::readable_property_map_tag category; ///< `boost::readable_property_map_tag`
+
+  typedef Identity_property_map_no_lvalue<T> Self;
+
+  friend reference get(const Self&, const key_type& k) {return k;}
+};
+/// \endcond
+
 /// Free function to create a `Identity_property_map` property map.
 ///
 /// \relates Identity_property_map 

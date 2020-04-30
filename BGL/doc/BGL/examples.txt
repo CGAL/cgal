@@ -3,6 +3,8 @@
 \example BGL_arrangement_2/arr_rational_nt.h
 \example BGL_arrangement_2/arrangement_dual.cpp
 \example BGL_arrangement_2/primal.cpp
+\example BGL_graphcut/alpha_expansion_example.cpp
+\example BGL_graphcut/face_selection_borders_regularization_example.cpp
 \example BGL_polyhedron_3/copy_polyhedron.cpp
 \example BGL_polyhedron_3/cube.off
 \example BGL_polyhedron_3/distance.cpp

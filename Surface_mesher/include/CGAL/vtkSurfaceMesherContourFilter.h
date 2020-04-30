@@ -130,8 +130,8 @@ int vtkCGALSurfaceMesherContourFilter::RequestData(
     return 0;
   Gray_level_image gray_level_image(image, Value);
 
-  GT::FT radius = std::max(image.xdim() * image.vx(),
-                           std::max(image.ydim() * image.vy(),
+  GT::FT radius = (std::max)(image.xdim() * image.vx(),
+                           (std::max)(image.ydim() * image.vy(),
                                     image.zdim() * image.vz())
                            );
   GT::Sphere_3 bounding_sphere(GT::Point_3(image.xdim() * image.vx()/2.,

@@ -22,7 +22,7 @@ digraph example {
   FaceGraph [ URL="\ref FaceGraph"];
   FaceListGraph [ URL="\ref FaceListGraph"];
   MutableFaceGraph [ URL="\ref MutableFaceGraph"];
-  
+
   MutableHalfedgeGraph -> HalfedgeGraph -> "boost Graph" [ arrowhead="open", label="refines" ];
   FaceListGraph -> FaceGraph -> HalfedgeGraph [ arrowhead="open", label="refines" ];
   MutableFaceGraph -> MutableHalfedgeGraph [ arrowhead="open", label="refines" ];
@@ -533,7 +533,8 @@ both in term of time and memory.
 \addtogroup PkgBGLPartition
 
 Methods to split a mesh into subdomains, using the library
-<a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a>.
+<a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a> or a graphcut
+implementation.
 */
 
 /*!
@@ -701,6 +702,7 @@ user might encounter.
 - `CGAL::reduce_vertex_selection()`
 - `CGAL::select_incident_faces()`
 - `CGAL::expand_face_selection_for_removal()`
+- `CGAL::regularize_face_selection_borders()`
 
 \cgalCRPSection{Conversion Functions}
 - `CGAL::split_graph_into_polylines()`
@@ -715,13 +717,13 @@ user might encounter.
 \cgalCRPSection{Partitioning Methods}
 - `CGAL::METIS::partition_graph()`
 - `CGAL::METIS::partition_dual_graph()`
+- `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::read_OFF()`
-- `CGAL::write_OFF()`
-- `CGAL::write_WRL()`
-- `CGAL::write_VTP()`
-
+- \link PkgBGLIOFct `CGAL::read_OFF()` \endlink
+- \link PkgBGLIOFct `CGAL::write_OFF()` \endlink
+- \link PkgBGLIOFct `CGAL::write_WRL()` \endlink
+- \link PkgBGLIOFct `CGAL::write_VTP()` \endlink
 */
 
 /*!

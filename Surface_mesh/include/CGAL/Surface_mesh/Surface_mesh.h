@@ -50,7 +50,7 @@
 namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
-    /// Base class for vertex, halfedge, edge, and face index. 
+    /// Base class for vertex, halfedge, edge, and face index.
     ///
     /// \attention Note that `Index` is not a model of the concept `Handle`,
     /// because it cannot be dereferenced.
@@ -62,18 +62,18 @@ namespace CGAL {
     typedef boost::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
-        /// <tt>std::numeric_limits<size_type>::max()</tt></a>
-        /// as `size_type` is an unsigned type. 
+        /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
+        /// as `size_type` is an unsigned type.
         explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
 
-        /// reset index to be invalid (index=std::numeric_limits<size_type>::max())
+        /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
 
         /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
-        bool is_valid() const { 
+        bool is_valid() const {
           size_type inf = (std::numeric_limits<size_type>::max)();
           return idx_ != inf;
         }
@@ -102,7 +102,7 @@ namespace CGAL {
         SM_Index operator--(int) { SM_Index tmp(*this); --idx_; return tmp; }
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
-      
+
     protected:
         size_type idx_;
     };
@@ -114,8 +114,8 @@ namespace CGAL {
     return ret;
   }
 
-  
-    // Implementation for Surface_mesh::Vertex_index  
+
+    // Implementation for Surface_mesh::Vertex_index
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
     {
@@ -128,7 +128,7 @@ namespace CGAL {
         template<class T> bool operator==(const T&) const = delete;
         template<class T> bool operator!=(const T&) const = delete;
         template<class T> bool operator<(const T&) const = delete;
-      
+
         /// are two indices equal?
         bool operator==(const SM_Vertex_index& _rhs) const {
             return this->idx_ == _rhs.idx_;
@@ -169,7 +169,7 @@ namespace CGAL {
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
-      
+
         template<class T> bool operator==(const T&) const = delete;
         template<class T> bool operator!=(const T&) const = delete;
         template<class T> bool operator<(const T&) const = delete;
@@ -204,7 +204,7 @@ namespace CGAL {
         SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
-      
+
         template<class T> bool operator==(const T&) const = delete;
         template<class T> bool operator!=(const T&) const = delete;
         template<class T> bool operator<(const T&) const = delete;
@@ -251,13 +251,13 @@ namespace CGAL {
         // compatibility with OpenMesh handles
         size_type idx() const { return (size_type)halfedge_ / 2; }
 
-        // resets index to be invalid (index=std::numeric_limits<size_type>::max())
+        // resets index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { halfedge_.reset(); }
 
-        // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
+        // returns whether the index is valid, i.e., the index is not equal to (std::numeric_limits<size_type>::max)().
         bool is_valid() const { return halfedge_.is_valid(); }
 
-      
+
         template<class T> bool operator==(const T&) const = delete;
         template<class T> bool operator!=(const T&) const = delete;
         template<class T> bool operator<(const T&) const = delete;
@@ -312,14 +312,14 @@ namespace CGAL {
   /// \ingroup PkgSurface_mesh
   /// This class is a data structure that can be used as halfedge data structure or polyhedral
   /// surface. It is an alternative to the classes `HalfedgeDS` and `Polyhedron_3`
-  /// defined in the packages  \ref PkgHalfedgeDS and \ref PkgPolyhedron. 
+  /// defined in the packages  \ref PkgHalfedgeDS and \ref PkgPolyhedron.
   /// The main difference is that it is indexed based and not pointer based,
   /// and that the mechanism for adding information to vertices, halfedges, edges,
   /// and faces is much simpler and done at runtime and not at compile time.
   /// When elements are removed, they are only marked as removed, and a garbage
-  /// collection function must be called to really remove them. 
+  /// collection function must be called to really remove them.
   /// @tparam P The type of the \em point property of a vertex. There is no requirement on `P`,
-  ///         besides being default constructible and assignable. 
+  ///         besides being default constructible and assignable.
   ///         In typical use cases it will be a 2D or 3D point type.
   /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
   ///
@@ -463,7 +463,7 @@ public:
   typedef SM_Edge_index Edge_index;
 #endif
 
- 
+
     ///@}
 private: //-------------------------------------------------- connectivity types
 
@@ -529,7 +529,7 @@ private: //------------------------------------------------------ iterator types
             if(mesh_->has_garbage())
               while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
         }
-  
+
         void decrement()
         {
             --hnd_;
@@ -541,7 +541,7 @@ private: //------------------------------------------------------ iterator types
         void advance(std::ptrdiff_t n)
         {
             CGAL_assertion(mesh_ != nullptr);
-            
+
             if (mesh_->has_garbage())
             {
               if (n > 0)
@@ -560,7 +560,7 @@ private: //------------------------------------------------------ iterator types
             if (mesh_->has_garbage())
             {
               bool forward = (other.hnd_ > hnd_);
-              
+
               std::ptrdiff_t out = 0;
               Index_iterator it = *this;
               while (!it.equal(other))
@@ -582,7 +582,7 @@ private: //------------------------------------------------------ iterator types
             // else
             return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
         }
-      
+
         bool equal(const Index_iterator& other) const
         {
             return this->hnd_ == other.hnd_;
@@ -597,7 +597,7 @@ private: //------------------------------------------------------ iterator types
 public:
     /// \name Range Types
     ///
-    /// Each range `R` in this section has a nested type `R::iterator`, 
+    /// Each range `R` in this section has a nested type `R::iterator`,
     /// is convertible to `std:pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
     /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based for-loop.
 
@@ -663,7 +663,7 @@ public:
    typedef Iterator_range<Face_iterator> Face_range;
 #endif
 
-#ifndef DOXYGEN_RUNNING 
+#ifndef DOXYGEN_RUNNING
 
   typedef CGAL::Vertex_around_target_iterator<Surface_mesh> Vertex_around_target_iterator;
   typedef Iterator_range<Vertex_around_target_iterator> Vertex_around_target_range;
@@ -809,19 +809,19 @@ public:
     ///@}
 
 
-public: 
+public:
 
 #ifndef DOXYGEN_RUNNING
     /// \name Circulator Types
     ///
     /// The following circulators enable to iterate through the elements around a face or vertex.
-    /// As explained in the \ref SurfaceMeshOrientation "User Manual", we can speak of a  
+    /// As explained in the \ref SurfaceMeshOrientation "User Manual", we can speak of a
     /// *clockwise* or *counterclockwise*
-    /// traversal, by looking at the surface from the right side.  
+    /// traversal, by looking at the surface from the right side.
     ///@{
 
-    /// \brief This class circulates clockwise through all 
-    /// one-ring neighbors of a vertex. 
+    /// \brief This class circulates clockwise through all
+    /// one-ring neighbors of a vertex.
     ///  A model of `BidirectionalCirculator` with value type `Vertex_index`.
     /// \sa `Halfedge_around_target_circulator`, `Face_around_target_circulator`
 
@@ -862,7 +862,7 @@ public:
 
    /// \brief This class circulates counterclockwise through all faces around a face.
    ///  A model of `BidirectionalCirculator` with value type `Face_index`.
-   ///  Note that the face index is the same after `operator++`, if the neighboring faces share 
+   ///  Note that the face index is the same after `operator++`, if the neighboring faces share
    ///  several halfedges.
 
   typedef  CGAL::Face_around_face_circulator<Surface_mesh> Face_around_face_circulator;
@@ -885,7 +885,7 @@ public:
   typedef CGAL::Out_edge_iterator<Self>     out_edge_iterator;
 
   typedef boost::undirected_tag             directed_category;
-  typedef boost::disallow_parallel_edge_tag edge_parallel_category; 
+  typedef boost::disallow_parallel_edge_tag edge_parallel_category;
 
   struct traversal_category : public virtual boost::bidirectional_graph_tag,
                               public virtual boost::vertex_list_graph_tag,
@@ -945,7 +945,7 @@ public:
     /// adds a new vertex, resizes vertex properties if necessary,
     /// and sets the \em point property to `p`.
     /// \note Several vertices may have the same point property.
-    Vertex_index add_vertex(const Point& p) 
+    Vertex_index add_vertex(const Point& p)
     {
         Vertex_index v = add_vertex();
         vpoint_[v] = p;
@@ -1015,7 +1015,7 @@ public:
 
     /// if possible, adds a new face with vertices from a range with value type `Vertex_index`.
     /// The function adds halfedges between successive vertices if they are not yet indicent to halfedges,
-    /// or updates the connectivity of halfedges already in place. 
+    /// or updates the connectivity of halfedges already in place.
     /// Resizes halfedge, edge, and face properties if necessary.
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     template <typename Range>
@@ -1026,7 +1026,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
-        boost::array<Vertex_index, 3> 
+        boost::array<Vertex_index, 3>
             v = {{v0, v1, v2}};
         return add_face(v);
     }
@@ -1035,7 +1035,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
     {
-        boost::array<Vertex_index, 4> 
+        boost::array<Vertex_index, 4>
             v = {{v0, v1, v2, v3}};
         return add_face(v);
     }
@@ -1043,8 +1043,8 @@ public:
     ///@}
 
 
- 
-    /// \name Low-Level Removal Functions 
+
+    /// \name Low-Level Removal Functions
     ///
     /// Although the elements are only marked as removed
     /// their connectivity and properties should not be used.
@@ -1052,7 +1052,7 @@ public:
     /// \warning Functions in this group do not adjust any of
     /// connected elements and usually leave the surface mesh in an
     /// invalid state.
-    /// 
+    ///
     ///
     /// @{
 
@@ -1099,7 +1099,7 @@ public:
   {
     return num_vertices() - number_of_removed_vertices();
   }
- 
+
   /// returns the number of halfedges in the mesh.
   size_type number_of_halfedges() const
   {
@@ -1129,7 +1129,7 @@ public:
     /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
     void clear();
 
- 
+
     /// reserves space for vertices, halfedges, edges, faces, and their currently
     /// associated properties.
     void reserve(size_type nvertices,
@@ -1151,7 +1151,7 @@ public:
         eprops_.resize(nedges);
         fprops_.resize(nfaces);
     }
-  
+
   bool join(const Surface_mesh& other)
   {
     // increase capacity
@@ -1211,7 +1211,7 @@ public:
       // append the vertex free linked list of `this` to the copy of `other`
       vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
       // update the begin of the vertex free linked list
-      vertices_freelist_ = nv + other.vertices_freelist_; 
+      vertices_freelist_ = nv + other.vertices_freelist_;
     }
     // merge face free list
     if(other.faces_freelist_ != inf_value){
@@ -1226,7 +1226,7 @@ public:
       // append the face free linked list of `this` to the copy of `other`
       fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
       // update the begin of the face free linked list
-      faces_freelist_ = nf + other.faces_freelist_; 
+      faces_freelist_ = nf + other.faces_freelist_;
     }
     // merge edge free list
     if(other.edges_freelist_ != inf_value){
@@ -1238,7 +1238,7 @@ public:
       // append the halfedge free linked list of `this` to the copy of `other`
       hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
       // update the begin of the halfedge free linked list
-      edges_freelist_ = nh + other.edges_freelist_; 
+      edges_freelist_ = nh + other.edges_freelist_;
     }
     // update garbage infos
     garbage_ = garbage_ || other.garbage_;
@@ -1250,22 +1250,22 @@ public:
 
     ///@}
 
-    
+
     /// \name Garbage Collection
     ///
     /// While removing elements only marks them as removed
     /// garbage collection really removes them.
-    /// The API in this section allows to check whether 
+    /// The API in this section allows to check whether
     /// an element is removed, to get the number of
     /// removed elements, and to collect garbage.
     /// The number of elements together with the number of  removed elements is
     /// an upperbound on the index, and is needed
-    /// by algorithms that temporarily store a 
+    /// by algorithms that temporarily store a
     /// property in a vector of the appropriate size.
     /// Note however that by garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
-    /// or in a property these indices are potentially no longer 
-    /// refering to the right elements. 
+    /// or in a property these indices are potentially no longer
+    /// refering to the right elements.
 
 
     ///@{
@@ -1331,10 +1331,10 @@ public:
     /// \sa `has_garbage()`
     /// \attention By garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
-    /// or in a property these indices are potentially no longer 
-    /// refering to the right elements. 
+    /// or in a property these indices are potentially no longer
+    /// refering to the right elements.
     void collect_garbage();
-    
+
     //undocumented convenience fucntion that allows to get old-index->new-index information
     template <typename Visitor>
     void collect_garbage(Visitor& visitor);
@@ -1369,7 +1369,7 @@ public:
     bool has_valid_index(Vertex_index v) const
     {
       return ((size_type)v < num_vertices());
-    } 
+    }
 
     /// returns whether the index of halfedge `h` is valid, that is within the current array bounds.
     bool has_valid_index(Halfedge_index h) const
@@ -1389,11 +1389,11 @@ public:
 
     /// @}
     /// @endcond
-    
+
     /// \name Validity Checks
     ///
     /// Functions in this group perform checks for structural
-    /// consistency of a complete surface mesh, or an individual element. 
+    /// consistency of a complete surface mesh, or an individual element.
     /// They are expensive and should only be used in debug configurations.
 
     ///@{
@@ -1404,7 +1404,7 @@ public:
     {
         bool valid = true;
         size_type vcount = 0, hcount = 0, fcount = 0;
-        for(Halfedge_iterator it = halfedges_begin(); it != halfedges_end(); ++it) { 
+        for(Halfedge_iterator it = halfedges_begin(); it != halfedges_end(); ++it) {
             ++hcount;
             valid = valid && next(*it).is_valid();
             valid = valid && opposite(*it).is_valid();
@@ -1466,7 +1466,7 @@ public:
         for(Face_iterator it = faces_begin(); it != faces_end(); ++it) {
           ++fcount;
         }
-        
+
         valid = valid && (vcount == number_of_vertices());
         if(!valid && verbose){
           std::cerr << "#vertices: iterated: " << vcount << " vs number_of_vertices(): " << number_of_vertices()<< std::endl;
@@ -1692,7 +1692,7 @@ public:
         return target(opposite(h));
     }
 
-    /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
+    /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation
     /// "clockwise" around the target vertex of `h`.
     Halfedge_index next_around_target(Halfedge_index h) const
     {
@@ -1706,7 +1706,7 @@ public:
         return prev(opposite(h));
     }
 
-    /// returns `next(opposite(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
+    /// returns `next(opposite(h))`, that is the next halfedge \ref SurfaceMeshOrientation
     /// "clockwise" around the source vertex of `h`.
     Halfedge_index next_around_source(Halfedge_index h) const
     {
@@ -1778,14 +1778,14 @@ public:
     /// if it is incident to a `null_face()`.  A vertex is on a border
     /// if it is isolated or incident to a border halfedge. While for a halfedge and
     /// edge this is a constant time operation, for a vertex it means
-    /// to look at all incident halfedges.  If algorithms operating on a 
+    /// to look at all incident halfedges.  If algorithms operating on a
     /// surface mesh maintain that the halfedge associated to a border vertex is
-    /// a border halfedge, this is a constant time operation too.  
-    /// This section provides functions to check if an element is on a 
+    /// a border halfedge, this is a constant time operation too.
+    /// This section provides functions to check if an element is on a
     /// border and to change the halfedge associated to a border vertex.
     ///@{
 
-    /// returns whether `v` is a border vertex. 
+    /// returns whether `v` is a border vertex.
     /// \cgalAdvancedBegin
     /// With the default value for
     /// `check_all_incident_halfedges` the function iteratates over the incident halfedges.
@@ -1819,7 +1819,7 @@ public:
     }
 
 
-    /// returns whether `e` is a border edge, i.e., if any 
+    /// returns whether `e` is a border edge, i.e., if any
     /// of its two halfedges is a border halfedge.
     bool is_border(Edge_index e) const
     {
@@ -1843,7 +1843,7 @@ public:
     return false;
   }
 
-  /// applies `set_vertex_halfedge_to_border_halfedge(Vertex_index)` on all vertices 
+  /// applies `set_vertex_halfedge_to_border_halfedge(Vertex_index)` on all vertices
   /// around the face associated to `h`.
   void set_vertex_halfedge_to_border_halfedge(Halfedge_index h)
   {
@@ -1860,7 +1860,7 @@ public:
     }
   }
 
-  /// applies `set_vertex_halfedge_to_border_halfedge(Vertex_index)` on all vertices 
+  /// applies `set_vertex_halfedge_to_border_halfedge(Vertex_index)` on all vertices
   /// of the surface mesh.
   void set_vertex_halfedge_to_border_halfedge()
   {
@@ -1923,13 +1923,13 @@ private: //--------------------------------------------------- property handling
   };
 
     public:
- 
+
 
  /*! \name Property Handling
 
  A `Properties::Property_map<I,T>` allows to associate properties of type `T` to a vertex, halfdge, edge, or face index type I.
  Properties can be added, and looked up with a string, and they can be removed at runtime.
- The \em point property of type `P` is associated to the string "v:point". 
+ The \em point property of type `P` is associated to the string "v:point".
 
     */
     ///@{
@@ -1946,11 +1946,11 @@ private: //--------------------------------------------------- property handling
 #endif
 
     /// adds a property map named `name` with value type `T` and default `t`
-    /// for index type `I`. Returns the property map together with a Boolean 
+    /// for index type `I`. Returns the property map together with a Boolean
     /// that is `true` if a new map was created. In case it already exists
     /// the existing map together with `false` is returned.
 
-  
+
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
@@ -1961,9 +1961,9 @@ private: //--------------------------------------------------- property handling
       }
       return Property_selector<I>(this)().template add<T>(name, t);
     }
- 
-    /// returns a property map named `name` with key type `I` and value type `T`, 
-    /// and a Boolean that is `true` if the property exists. 
+
+    /// returns a property map named `name` with key type `I` and value type `T`,
+    /// and a Boolean that is `true` if the property exists.
     /// In case it does not exist the Boolean is `false` and the behavior of
     /// the property map is undefined.
     template <class I, class T>
@@ -1986,7 +1986,7 @@ private: //--------------------------------------------------- property handling
     /// property identified by `name`.  `typeid(void)` if `name`
     /// does not identify any property.
     ///
-    /// @tparam I The key type of the property. 
+    /// @tparam I The key type of the property.
 
     template<class I>
     const std::type_info& property_type(const std::string& name)
@@ -2020,7 +2020,7 @@ private: //--------------------------------------------------- property handling
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// prints property statistics to the stream `out`. The output is human-readable but
-    /// not machine-friendly.  
+    /// not machine-friendly.
     ///
     void property_stats(std::ostream& out = std::cout) const;
     /// @endcond
@@ -2058,18 +2058,18 @@ private: //--------------------------------------------------- property handling
   {
     return Vertex_index(vertices_freelist_);
   }
-  
+
   Face_index face_freelist() const
   {
     return Face_index(faces_freelist_);
   }
-  
+
   Edge_index edge_freelist() const
   {
     return Edge_index(edges_freelist_>>1);
   }
 #endif
-  
+
 private: //--------------------------------------------------- helper functions
 
 
@@ -2111,12 +2111,12 @@ private: //------------------------------------------------------- private data
    */
 
   /// \relates Surface_mesh
-  /// Inserts `other` into `sm`. 
+  /// Inserts `other` into `sm`.
   /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
   /// and analoguously for halfedges, edges, and faces.
-  /// Copies entries of all property maps which have the same name in `sm` and `other`. 
+  /// Copies entries of all property maps which have the same name in `sm` and `other`.
   /// that is, property maps which are only in `other` are ignored.
-  /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`. 
+  /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`.
 
   template <typename P>
   Surface_mesh<P>& operator+=(Surface_mesh<P>& sm, const Surface_mesh<P>& other)
@@ -2126,7 +2126,7 @@ private: //------------------------------------------------------- private data
   }
 
   /// \relates Surface_mesh
-  /// 
+  ///
   /// This operator calls `write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
@@ -2635,7 +2635,7 @@ namespace std {
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
+#  pragma warning(disable:4099) // For VC10 it is class hash
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH
@@ -2661,7 +2661,7 @@ namespace std {
   };
 
   template <>
-  struct hash<CGAL::SM_Face_index > 
+  struct hash<CGAL::SM_Face_index >
     : public CGAL::cpp98::unary_function<CGAL::SM_Face_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Face_index& i) const
@@ -2703,4 +2703,3 @@ namespace boost {
 #include <CGAL/enable_warnings.h>
 
 #endif /* CGAL_SURFACE_MESH_H */
-

@@ -40,6 +40,7 @@ namespace CGAL {
   class Default_diagonalize_traits;
   class Eigen_svd;
   class Lapack_svd;
+  struct Alpha_expansion_boost_adjacency_list_tag;
   //
 
 
@@ -222,7 +223,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::const_type                 \
 get_initialized_##DTYPE##_index_map(const Graph& g,                                                \
-                                   const NamedParameters& np)                                      \
+                                    const NamedParameters& np)                                     \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -250,7 +251,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::type                       \
 get_initialized_##DTYPE##_index_map(Graph& g,                                                      \
-                                   const NamedParameters& np)                                      \
+                                    const NamedParameters& np)                                     \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -550,6 +551,16 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     > ::type type;
   };
 
+  template<typename NamedParameters>
+  class GetImplementationTag
+  {
+  public:
+    typedef typename internal_np::Lookup_named_param_def <
+    internal_np::implementation_tag_t,
+    NamedParameters,
+    Alpha_expansion_boost_adjacency_list_tag
+    >::type type;
+  };
 } //namespace CGAL
 
 

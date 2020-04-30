@@ -1471,6 +1471,17 @@ dispatch_or_drop_output(O... o)
   return Dispatch_or_drop_output_iterator<std::tuple<V...>, std::tuple<O...> >(o...);
 }
 
+
+// Trick to select iterator or const_iterator depending on the range constness
+template <typename RangeRef>
+struct Range_iterator_type;
+template <typename RangeRef>
+struct Range_iterator_type<RangeRef&>       { typedef typename RangeRef::iterator       type; };
+template <typename RangeRef>
+struct Range_iterator_type<const RangeRef&> { typedef typename RangeRef::const_iterator type; };
+
+
+
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>

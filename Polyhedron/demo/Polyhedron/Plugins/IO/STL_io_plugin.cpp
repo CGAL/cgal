@@ -11,13 +11,13 @@
 #include <CGAL/boost/graph/io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#include <CGAL/internal/boost/function_property_map.hpp>
-
 #include <QColor>
 #include <QString>
 #include <QStringList>
 #include <QMainWindow>
 #include <QInputDialog>
+
+#include <boost/property_map/function_property_map.hpp>
 
 #include <cstdint>
 #include <fstream>
@@ -90,7 +90,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     SMesh* SM = new SMesh();
     if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
     {
-      auto pmap = CGAL::internal::boost_::make_function_property_map<std::array<double, 3>, Point_3>(
+      auto pmap = boost::make_function_property_map<std::array<double, 3>, Point_3>(
                     [](const std::array<double, 3>& a) { return Point_3(a[0], a[1], a[2]); });
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM,
                                                                   CGAL::parameters::point_map(pmap),

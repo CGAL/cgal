@@ -976,6 +976,40 @@ public:
   /// @}
 }; /* end Kernel::ComparePowerDistance_3 */
 
+
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with four arguments)
+*/
+class CompareSignedDistanceToLine_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    compares the signed distance of `r` and `s` to the directed line through `p` and `q`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::Point_2& r,
+                               const Kernel::Point_2& s);
+
+  /*!
+    compares the signed distance of `r` and `s` to the directed line `l`.
+  */
+  Comparison_result operator()(const Kernel::Line_2& l,
+                               const Kernel::Point_2& r,
+                               const Kernel::Point_2& s);
+  /// @}
+}; /* end Kernel::CompareSignedDistanceToLine_2 */
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -8757,7 +8791,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor`` (with four arguments)
+  \cgalRefines `AdaptableFunctor` (with four arguments)
 
   \sa `has_smaller_signed_distance_to_line_grp`
 
