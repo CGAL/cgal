@@ -2112,7 +2112,7 @@ private: //------------------------------------------------------- private data
     size_type faces_freelist_;
     bool garbage_;
     bool recycle_;
-  
+
     size_type anonymous_property_;
 };
 
@@ -3169,7 +3169,7 @@ collect_garbage()
   collect_garbage(visitor);
 }
 
-  
+
 template <typename P>
 void
 Surface_mesh<P>::
@@ -3185,7 +3185,7 @@ does_recycle_garbage()
 {
   return recycle_;
 }
-  
+
 namespace internal{
   namespace handle {
     template <>
