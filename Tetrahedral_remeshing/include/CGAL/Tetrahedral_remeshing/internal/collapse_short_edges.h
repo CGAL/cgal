@@ -22,11 +22,14 @@
 #include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
 
-#include <CGAL/Triangulation_incremental_builder_3.h>
-
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <utility>
+#include <unordered_set>
 
+#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 
@@ -43,7 +46,7 @@ enum Result_type   { VALID,
                      V_PROBLEM, C_PROBLEM, E_PROBLEM,
                      TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
 
-template<typename C3t3, typename Visitor>
+template<typename C3t3>
 class CollapseTriangulation
 {
   typedef typename C3t3::Triangulation                        Tr;
@@ -54,96 +57,166 @@ class CollapseTriangulation
   typedef typename C3t3::Triangulation::Point                 Point_3;
   typedef typename C3t3::Triangulation::Geom_traits::Vector_3 Vector_3;
 
-  typedef CGAL::Triangulation_incremental_builder_3<Tr> Builder;
-
 public:
   CollapseTriangulation(C3t3& c3t3,
-                        const Edge& edge,
-                        Collapse_type _collapse_type,
-                        Visitor& visitor)
+                        const Edge& e,
+                        Collapse_type _collapse_type)
+    : v0_init(e.first->vertex(e.second))
+    , v1_init(e.first->vertex(e.third))
+    , collapse_type(_collapse_type)
   {
-    v0_init = edge.first->vertex(edge.second);
-    v1_init = edge.first->vertex(edge.third);
+    typedef std::array<int, 3> Facet; // 3 = id
+    typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+
+    std::vector<Tet_with_ref> finite_cells;
+    std::vector<Point_3> points;
+    std::map<Facet, int> border_facets;
 
     std::vector<Vertex_handle> vertices_to_insert;
     c3t3.triangulation().finite_incident_vertices(v0_init,
         std::back_inserter(vertices_to_insert));
     vertices_to_insert.push_back(v0_init);
     c3t3.triangulation().finite_incident_vertices(v1_init,
-        std::back_inserter(vertices_to_insert));
+      std::back_inserter(vertices_to_insert));
 
-    // create incremental builder
-    Builder builder(triangulation, true);
-    builder.begin_triangulation(3);
+    CGAL_assertion(vertices_to_insert.end()
+      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v1_init));
 
-    collapse_type = _collapse_type;
+    std::unordered_map<Vertex_handle, int> v2i;/*vertex of main tr - vertex of collapse tr*/
 
     //To add the vertices only once
+    int index = 0;
     for (Vertex_handle vh : vertices_to_insert)
     {
-      if (v2v.left.find(vh) == v2v.left.end())
+      if (v2i.find(vh) == v2i.end())
       {
-        Vertex_handle new_vh = builder.add_vertex();
-        new_vh->set_point(vh->point());
-        new_vh->set_dimension(vh->in_dimension());
-
-        v2v.left.insert(std::make_pair(vh, new_vh));
+        points.push_back(vh->point());
+        v2i.insert(std::make_pair(vh, index++));
       }
     }
 
-    std::vector<Cell_handle> cells_to_insert;
-    c3t3.triangulation().finite_incident_cells(v0_init, std::back_inserter(cells_to_insert));
-    c3t3.triangulation().finite_incident_cells(v1_init, std::back_inserter(cells_to_insert));
+    std::unordered_set<Cell_handle> cells_to_insert;
+    c3t3.triangulation().finite_incident_cells(v0_init,
+      std::inserter(cells_to_insert, cells_to_insert.end()));
+    c3t3.triangulation().finite_incident_cells(v1_init,
+      std::inserter(cells_to_insert, cells_to_insert.end()));
 
-    //To add the cells only once
     for (Cell_handle ch : cells_to_insert)
     {
-      if (c2c.left.find(ch) == c2c.left.end())
-      {
-        Cell_handle new_ch = builder.add_cell(v2v.left.at(ch->vertex(0)), v2v.left.at(ch->vertex(1)),
-                                              v2v.left.at(ch->vertex(2)), v2v.left.at(ch->vertex(3)));
-        new_ch->set_subdomain_index(ch->subdomain_index());
-        visitor.after_add_cell(ch, new_ch);
-
-        c2c.left.insert(std::make_pair(ch, new_ch));
-      }
+      Tet_with_ref t = { { v2i.at(ch->vertex(0)),
+                           v2i.at(ch->vertex(1)),
+                           v2i.at(ch->vertex(2)),
+                           v2i.at(ch->vertex(3)),
+                           ch->subdomain_index() } };
+      finite_cells.push_back(t);
     }
 
-    // finished
-    builder.end_triangulation();
-  }
+//    std::cout << "cells_to_insert : " << cells_to_insert.size() << std::endl;
+//    make_cells_set_manifold(c3t3, cells_to_insert);
+//    std::cout << "cells_to_insert : " << cells_to_insert.size() << std::endl;
+//
+//    std::cout << "Collapse : " << point(v0_init->point()) << " " << point(v1_init->point()) << std::endl;
+//    debug::dump_cells_polylines(cells_to_insert, "collapse_cells_to_insert.polylines.txt");
+//    debug::dump_cells<Tr>(cells_to_insert, "collapse_cells_to_insert.mesh");
 
-  void update()
-  {
-    vh0 = v2v.left.at(v0_init);
-    vh1 = v2v.left.at(v1_init);
+    // finished
+    std::vector<Vertex_handle> new_vertices;
+    CGAL_assertion_code(bool built = )
+    CGAL::build_triangulation<Tr, false>(triangulation,
+      points, finite_cells, border_facets,
+      new_vertices, false/*verbose*/);
+    CGAL_assertion(built);
+
+    if (!triangulation.tds().is_valid())
+    {
+      std::cout << point(v0_init->point()) << " " << point(v1_init->point()) << std::endl;
+      debug::dump_cells_off(triangulation, "collapse_triangulation_finite_cells.off");
+      CGAL_assertion(false);
+    }
+
+    // update()
+    vh0 = new_vertices[v2i.at(v0_init) + 1];
+    vh1 = new_vertices[v2i.at(v1_init) + 1];
 
     Cell_handle ch;
     int i0, i1;
     not_an_edge = true;
+    CGAL_assertion(triangulation.tds().is_vertex(vh0));
+    CGAL_assertion(triangulation.tds().is_vertex(vh1));
     if (triangulation.is_edge(vh0, vh1, ch, i0, i1))
     {
       edge = Edge(ch, i0, i1);
       not_an_edge = false;
     }
+    CGAL_assertion(!not_an_edge);
 
-    to_remove.clear();
-    sharing_neighbor.clear();
+    //std::unordered_map<Cell_handle, bool> to_remove; //default is false
+    //std::unordered_map<Cell_handle, bool> sharing_neighbor;//default is false
 
-    typedef typename Tr::Cell_circulator Cell_circulator;
-    Cell_circulator circ = triangulation.incident_cells(edge);
-    Cell_circulator done = circ;
-    do
+    //typedef typename Tr::Cell_circulator Cell_circulator;
+    //Cell_circulator circ = triangulation.incident_cells(edge);
+    //Cell_circulator done = circ;
+    //do
+    //{
+    //  to_remove[circ] = true;
+    //  if (circ->neighbor(circ->index(vh0))->has_neighbor(circ->neighbor(circ->index(vh1))))
+    //  {
+    //    sharing_neighbor[circ->neighbor(circ->index(vh0))] = true;
+    //    sharing_neighbor[circ->neighbor(circ->index(vh1))] = true;
+    //  }
+    //} while (++circ != done);
+  }
+
+  void make_cells_set_manifold(const C3t3& c3t3,
+                               std::unordered_set<Cell_handle>& cells)
+  {
+    typedef Vertex_handle Vh;
+    typedef std::array<Vh, 3> FV;
+    typedef std::pair<Vh, Vh> EV;
+
+    boost::unordered_map<FV, int> facets;
+    for (Cell_handle c : cells)
     {
-      to_remove[circ] = true;
-      if (circ->neighbor(circ->index(vh0))->has_neighbor(circ->neighbor(circ->index(vh1))))
+      for (int i = 0; i < 4; ++i)
       {
-        sharing_neighbor[circ->neighbor(circ->index(vh0))] = true;
-        sharing_neighbor[circ->neighbor(circ->index(vh1))] = true;
+        const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
+                                         c->vertex((i + 2) % 4),
+                                         c->vertex((i + 3) % 4));
+        typename boost::unordered_map<FV, int>::iterator fit = facets.find(fvi);
+        if(fit == facets.end())
+          facets.insert(std::make_pair(fvi, 1));
+        else
+          fit->second++;
       }
-    } while (++circ != done);
+    }
 
-    collapsed = false;
+    boost::unordered_map<EV, int> edges;
+    for (const std::pair<FV, int>& fvv : facets)
+    {
+      if(fvv.second != 1)
+        continue;
+
+      for (int i = 0; i < 3; ++i)
+      {
+        const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
+        typename boost::unordered_map<EV, int>::iterator eit = edges.find(evi);
+        if (eit == edges.end())
+          edges.insert(std::make_pair(evi, 1));
+        else
+          eit->second++;
+      }
+    }
+
+    for (const std::pair<EV, int>& evv : edges)
+    {
+      if (evv.second != 2)
+      {
+        c3t3.triangulation().finite_incident_cells(evv.first.first,
+          std::inserter(cells, cells.begin()));
+        c3t3.triangulation().finite_incident_cells(evv.first.second,
+          std::inserter(cells, cells.begin()));
+      }
+    }
   }
 
   Result_type collapse()
@@ -179,7 +252,7 @@ public:
       std::vector<Cell_handle> cells_to_update;
       triangulation.incident_cells(vh1, std::back_inserter(cells_to_update));
 
-//        Result_type r = VALID;
+       Result_type r = VALID;
       do
       {
         int v0_id = circ->index(vh0);
@@ -191,8 +264,8 @@ public:
         int ch_id_in_n0 = n0_ch->index(circ);
         int ch_id_in_n1 = n1_ch->index(circ);
 
-//          if (n0_ch->has_neighbor(n1_ch))
-//            r = SHARED_NEIGHBOR_PROBLEM;
+        if (n0_ch->has_neighbor(n1_ch))
+          r = SHARED_NEIGHBOR_PROBLEM;
 
         //Update neighbors before removing cell
         n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
@@ -297,23 +370,17 @@ public:
 
 protected:
   Tr triangulation;
-  boost::bimap<Vertex_handle, Vertex_handle> v2v;/*vertex of main tr - vertex of collapse tr*/
-  boost::bimap<Cell_handle, Cell_handle>     c2c;/*cell of main tr - cell of collapse tr*/
 
-  boost::unordered_map<Cell_handle, bool> to_remove; //default is false
-  boost::unordered_map<Cell_handle, bool> sharing_neighbor;//default is false
+  const Collapse_type collapse_type;
 
-  Collapse_type collapse_type;
-
-  Vertex_handle v0_init;
-  Vertex_handle v1_init;
+  const Vertex_handle v0_init;
+  const Vertex_handle v1_init;
 
   Vertex_handle vh0;
   Vertex_handle vh1;
 
   Edge edge;
 
-  bool collapsed;
   bool not_an_edge;
 };
 
@@ -852,7 +919,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
-    Visitor& visitor)
+    Visitor& )
 {
   typedef typename C3t3::Triangulation   Tr;
   typedef typename Tr::Point             Point;
@@ -922,8 +989,13 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
   if (are_edge_lengths_valid(edge, c3t3, new_pos, sqhigh, cell_selector/*, adaptive = false*/))
   {
-    CollapseTriangulation<C3t3, Visitor> local_tri(c3t3, edge, collapse_type, visitor);
-    local_tri.update();
+    CGAL_assertion_code(typename Tr::Cell_handle dc);
+    CGAL_assertion_code(int di);
+    CGAL_assertion_code(int dj);
+    CGAL_assertion(c3t3.triangulation().is_edge(edge.first->vertex(edge.second),
+                                                edge.first->vertex(edge.third), dc, di, dj));
+
+    CollapseTriangulation<C3t3> local_tri(c3t3, edge, collapse_type);
 
     Result_type res = local_tri.collapse();
     if (res == VALID)
@@ -1087,6 +1159,8 @@ void collapse_short_edges(C3T3& c3t3,
             short_edges.insert(short_edge(make_vertex_pair<T3>(eshort), sqlen));
         }
 
+        //debug::dump_c3t3(c3t3, "dump_after_collapse");
+        //CGAL_assertion(c3t3.triangulation().tds().is_valid());
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         ++nb_collapses;
 #endif

@@ -16,10 +16,12 @@
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <utility>
+#include <array>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
@@ -171,6 +173,16 @@ CGAL::Triple<Vh, Vh, Vh> make_vertex_triple(const Vh vh0, const Vh vh1, const Vh
   if (ft.template get<1>() < ft.template get<0>()) std::swap(ft.template get<0>(), ft.template get<1>());
   if (ft.template get<2>() < ft.template get<1>()) std::swap(ft.template get<1>(), ft.template get<2>());
   if (ft.template get<1>() < ft.template get<0>()) std::swap(ft.template get<0>(), ft.template get<1>());
+  return ft;
+}
+
+template<typename Vh>
+std::array<Vh, 3> make_vertex_array(const Vh vh0, const Vh vh1, const Vh vh2)
+{
+  std::array<Vh, 3> ft = { {vh0, vh1, vh2} };
+  if (ft[1] < ft[0]) std::swap(ft[0], ft[1]);
+  if (ft[2] < ft[1]) std::swap(ft[1], ft[2]);
+  if (ft[1] < ft[0]) std::swap(ft[0], ft[1]);
   return ft;
 }
 
@@ -1042,6 +1054,29 @@ void dump_cells_off(const Tr& tr, const char* filename)
     ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
         << vertices.left.at(c->vertex((i + 2) % 4)) << " "
         << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
+  }
+  ofs.close();
+}
+
+template<typename CellRange>
+void dump_cells_polylines(const CellRange& cells, const char* filename)
+{
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+  for (auto c : cells)
+  {
+    ofs << "2 " << point(c->vertex(0)->point()) << " "
+                << point(c->vertex(1)->point()) <<std::endl;
+    ofs << "2 " << point(c->vertex(0)->point()) << " "
+                << point(c->vertex(2)->point()) << std::endl;
+    ofs << "2 " << point(c->vertex(0)->point()) << " "
+                << point(c->vertex(3)->point()) << std::endl;
+    ofs << "2 " << point(c->vertex(1)->point()) << " "
+                << point(c->vertex(2)->point()) << std::endl;
+    ofs << "2 " << point(c->vertex(1)->point()) << " "
+                << point(c->vertex(3)->point()) << std::endl;
+    ofs << "2 " << point(c->vertex(2)->point()) << " "
+                << point(c->vertex(3)->point()) << std::endl;
   }
   ofs.close();
 }
