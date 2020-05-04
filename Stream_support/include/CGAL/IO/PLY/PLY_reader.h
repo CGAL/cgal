@@ -131,9 +131,6 @@ make_ply_normal_writer(VectorMap normal_map)
                          PLY_property<typename Get_FT_from_map<VectorMap>::type>("nz"));
 }
 
-/// \endcond
-
-
 namespace IO {
 namespace internal {
 
@@ -754,6 +751,7 @@ bool read_PLY_faces(std::istream& in,
 }
 } // namespace PLY
 } // namespace internal
+/// \endcond
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_PLY_READER_H

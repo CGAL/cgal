@@ -33,6 +33,7 @@ namespace CGAL {
 /// Read
 
 /// \relates Surface_mesh
+/// \ingroup PkgSurfaceMeshIOFunc
 ///
 /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF
 /// format and appends it to the surface mesh `sm`.
@@ -44,10 +45,22 @@ namespace CGAL {
 /// \pre The data in the stream must represent a two-manifold. If this is not the case
 ///      the `failbit` of `is` is set and the mesh cleared.
 ///
-template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point,
+          #ifndef DOXYGEN_RUNNING
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+          typename NamedParameters
+          #endif
+          >
 bool read_OFF(std::istream& is,
               Surface_mesh<Point>& sm,
-              const CGAL_BGL_NP_CLASS& np)
+              #ifndef DOXYGEN_RUNNING
+              const CGAL_BGL_NP_CLASS& np
+              #else
+              const NamedParameters& np
+              #endif
+
+              )
 {
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Vertex_index                                    Vertex_index;
@@ -178,6 +191,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 } // namespace IO
 
 /// \relates Surface_mesh
+/// \ingroup PkgSurfaceMeshIOFunc
 ///
 /// Inserts the surface mesh in an output stream.
 ///

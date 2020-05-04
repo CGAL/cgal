@@ -641,7 +641,7 @@ read_las_points(
   return read_LAS<typename value_type_traits<OutputIterator>::type>
       (stream, output, CGAL::parameters::all_default());
 }
-
+/// \endcond
 #endif // CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 

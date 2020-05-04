@@ -278,6 +278,7 @@ write_off_points(
   return write_OFF
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
+/// \endcond
 #endif // CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 

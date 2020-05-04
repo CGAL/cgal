@@ -724,6 +724,7 @@ user might encounter.
 - \link PkgBGLIOFct `CGAL::write_OFF()` \endlink
 - \link PkgBGLIOFct `CGAL::write_WRL()` \endlink
 - \link PkgBGLIOFct `CGAL::write_VTP()` \endlink
+- \link PkgBGLIOFct `CGAL::write_STL()` \endlink
 */
 
 /*!

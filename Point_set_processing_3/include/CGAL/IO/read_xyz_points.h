@@ -473,6 +473,7 @@ read_xyz_points(
   return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output, CGAL::parameters::all_default());
 }
+/// \endcond
 #endif //CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 

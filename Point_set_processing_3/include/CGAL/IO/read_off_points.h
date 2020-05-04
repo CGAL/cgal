@@ -436,6 +436,8 @@ template <typename OutputIteratorValueType,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
 #endif
 >
+
+/// \cond SKIP_IN_MANUAL
 CGAL_DEPRECATED bool
 read_off_points(
     std::istream& stream,
@@ -480,6 +482,7 @@ read_off_points(
 {
   return read_OFF(stream, output, CGAL::parameters::all_default());
 }
+/// \endcond
 #endif //CGAL_NO_DEPRECATED_CODE
 
 } //namespace CGAL
