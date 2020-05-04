@@ -153,7 +153,7 @@ public:
     return std::vector<float>(size * SURFEL_SIZE);
   }
 
-  void setPN(const std::vector<float>& newPN,
+  void setPN(const std::vector<double>& newPN,
              const unsigned int newPNSize,
              const float pointSpacing)
   {
@@ -294,8 +294,8 @@ public:
 
   // Number of elements of the PN. One elemnt is a 6-float32 chunk.
   inline unsigned int getPNSize() const { return PNSize; }
-  inline std::vector<float>& getPN() { return PN; }
-  inline const std::vector<float>& getPN() const { return PN; }
+  inline std::vector<double>& getPN() { return PN; }
+  inline const std::vector<double>& getPN() const { return PN; }
 
   // Min/Max corners of PN's bounding volume
   inline const float* getMinMax() const { return grid.getMinMax(); }
@@ -358,7 +358,7 @@ private:
       clear();
     }
 
-    void init(const std::vector<float>& PN, unsigned int PNSize, float sigma_s)
+    void init(const std::vector<double>& PN, unsigned int PNSize, float sigma_s)
     {
       cellSize = sigma_s;
       for (unsigned int i = 0; i < 3; i++) {
@@ -429,7 +429,7 @@ private:
 
     // Accessors
 
-    inline const std::array<float, 6> getMinMax() const { return minMax; }
+    inline const std::array<double, 6> getMinMax() const { return minMax; }
     inline const std::array<unsigned int, 3> getRes() const { return res; }
     inline float getCellSize() const { return cellSize; }
     inline std::vector<unsigned int>& getLUT() { return LUT; }
@@ -480,7 +480,7 @@ private:
     }
 
   private:
-    std::array<float, 6> minMax;
+    std::array<double, 6> minMax;
     float cellSize;
     std::array<unsigned int, 3> res;
     std::vector<unsigned int> LUT; // 3D Index Look-Up Table
@@ -502,7 +502,7 @@ private:
   //  CPU Data
   // --------------------------------------------------------------
 
-  std::vector<float> PN;
+  std::vector<double> PN;
   unsigned int PNSize;
   float PNScale; // size of the bounding sphere radius
   float MLSRadius;
@@ -581,7 +581,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
     }
   }
 
-  std::vector< std::vector<float> > pns;
+  std::vector< std::vector<double> > pns;
 
   int count = 0;
   //Memory allocation for the point plus normals of the point samples
@@ -589,7 +589,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
        it != subdomain_sample_numbers.end(); ++it)
   {
     current_subdomain_FMLS_indices[it->first] = count;
-    pns.push_back(std::vector<float>(it->second * 6, 0.f));
+    pns.push_back(std::vector<double>(it->second * 6, 0.));
     count++;
   }
 
@@ -654,8 +654,9 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
             const Surface_index surf_i = c3t3.surface_patch_index(*fit);
             const int fmls_id = current_subdomain_FMLS_indices[surf_i];
 
-            point_spacing[fmls_id] += CGAL::approximate_sqrt(
-                                        CGAL::squared_distance(point(vh0->point()), point(vh1->point())));
+            point_spacing[fmls_id] += static_cast<float>(
+              CGAL::approximate_sqrt(
+                CGAL::squared_distance(point(vh0->point()), point(vh1->point()))));
             point_spacing_count[fmls_id] ++;
           }
         }
@@ -690,7 +691,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
       Vector_3 barycenter = (points[0] + points[1] + points[2]) / 3.;
       Vector_3 n_barycenter = (normals[0] + normals[1] + normals[2]);
 
-      n_barycenter = n_barycenter / CGAL::sqrt((n_barycenter * n_barycenter));
+      n_barycenter = n_barycenter / CGAL::approximate_sqrt((n_barycenter * n_barycenter));
 
       points_to_add.push_back(barycenter);
       n_points_to_add.push_back(n_barycenter);
@@ -701,7 +702,8 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
         {
           Vector_3 space_1 = barycenter - points[i];
 
-          point_spacing[fmls_id] += CGAL::sqrt(space_1 * space_1);
+          point_spacing[fmls_id] += 
+            static_cast<float>(CGAL::approximate_sqrt(space_1 * space_1));
           point_spacing_count[fmls_id] ++;
         }
       }
