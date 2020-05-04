@@ -80,27 +80,35 @@ void make_constraints_from_cube_edges(
               Remeshing_triangulation& tr,
               boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
 {
+  const Point p0(-2., -2., -2.);
+  const Point p1(-2., -2., -2.);
+  const Point p2( 2., -2., -2.);
+  const Point p3( 2., -2.,  2.);
+  const Point p4(-2.,  2., -2.);
+  const Point p5(-2.,  2.,  2.);
+  const Point p6( 2.,  2., -2.);
+  const Point p7( 2.,  2.,  2.);
+
   Remeshing_triangulation::Locate_type lt;
   int li, lj;
-
-  Cell_handle c = tr.locate(Point(-2., -2., -2.), lt, li, lj);
+  Cell_handle c = tr.locate(p0, lt, li, lj);
   Vertex_handle v0 = c->vertex(li);
-  c = tr.locate(Point(-2., -2.,  2.));
+  c = tr.locate(p1, lt, li, lj);
   Vertex_handle v1 = c->vertex(li);
 
-  c = tr.locate(Point( 2., -2., -2.));
+  c = tr.locate(p2, lt, li, lj);
   Vertex_handle v2 = c->vertex(li);
-  c = tr.locate(Point( 2., -2.,  2.));
+  c = tr.locate(p3, lt, li, lj);
   Vertex_handle v3 = c->vertex(li);
 
-  c = tr.locate(Point(-2.,  2.,  -2.));
+  c = tr.locate(p4, lt, li, lj);
   Vertex_handle v4 = c->vertex(li);
-  c = tr.locate(Point(-2.,  2.,   2.));
+  c = tr.locate(p5, lt, li, lj);
   Vertex_handle v5 = c->vertex(li);
 
-  c = tr.locate(Point( 2.,  2., -2.));
+  c = tr.locate(p6, lt, li, lj);
   Vertex_handle v6 = c->vertex(li);
-  c = tr.locate(Point( 2.,  2.,  2.));
+  c = tr.locate(p7, lt, li, lj);
   Vertex_handle v7 = c->vertex(li);
 
   // constrain cube edges
