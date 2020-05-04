@@ -41,22 +41,24 @@ namespace CGAL
 *
 * This function takes as input a 3-dimensional triangulation
 * and performs a sequence of atomic operations
-* in order to generate as output a high quality mesh with a prescribed density.
-* These atomic operations are performed as follows :
+* in order to generate as output a high quality mesh with a prescribed
+* uniform density.
+* These atomic operations are performed as follows:
 *   - edge splits, until all edges satisfy a prescribed length criterion,
 *   - edge collapses, until all edges satisfy a prescribed length criterion,
-*   - edge flips, to locally improve dihedral angles, until they can't be improved by flipping,
+*   - edge flips, to locally improve dihedral angles, until they can
+*     no longer be improved by flipping,
 *   - global smoothing by vertex relocations,
 *   - re-projection of boundary vertices to the initial surface.
 *
-* This remeshing function can deal with multi-domains, multi-material boundaries and features.
+* This remeshing function can deal with multi-domains, boundaries, and features.
 * It preserves the geometry of
 * subdomains throughout the remeshing process.
 *
 * Subdomains are defined by indices that
 * are stored in the cells of the input triangulation, following the `MeshCellBase_3`
 * concept.
-* The surfacic interfaces between subdomains are formed by facets which two incident cells
+* The surfacic interfaces between subdomains are formed by facets whose two incident cells
 * have different subdomain indices.
 * The edges where three or more subdomains meet form feature polylines,
 * and are considered as constrained edges.
@@ -71,7 +73,7 @@ namespace CGAL
 *             specifies the type of the spatial lock data structure.
 * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
 *
-* @param tr the triangulation to the remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
+* @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
 *           `Remeshing_triangulation` is a helper class that satisfies all the requirements
 *           of its template parameters.
 * @param target_edge_length the uniform target edge length. This parameter provides a
@@ -83,7 +85,8 @@ namespace CGAL
 *     sequence of atomic operations
 *     performed (listed in the above description)
 *  \cgalParamEnd
-*  \cgalParamBegin{remesh_boundaries} If `false`, none of the volume boundaries can be modified.
+*  \cgalParamBegin{remesh_boundaries} If `false`, none of the input volume boundaries
+*     can be modified.
 *     Otherwise, the topology is preserved, but atomic operations can be performed on the
 *     surfaces, and along feature polylines, such that boundaries are remeshed.
 *  \cgalParamEnd
@@ -103,8 +106,7 @@ namespace CGAL
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 
-* @todo implement 1D smoothing for constrained edges
-* @todo implement sizing field instead of uniform target edge length
+* @todo implement non-uniform sizing field instead of uniform target edge length
 */
 template<typename Traits, typename TDS, typename SLDS,
          typename NamedParameters>

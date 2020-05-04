@@ -18,8 +18,8 @@ typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_tria
 
 int main(int argc, char* argv[])
 {
-  const char* filename     = (argc > 1) ? argv[1] : "data/triangulation_one_subdomain.binary.cgal";
-  float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
+  const char* filename = (argc > 1) ? argv[1] : "data/triangulation_one_subdomain.binary.cgal";
+  const float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
 
   std::ifstream input(filename, std::ios::in | std::ios::binary);
 
