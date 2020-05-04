@@ -412,7 +412,7 @@ bool replace_faces_with_patch(const BorderVerticesContainer& border_vertices,
 #endif
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::cout << "  DEBUG: Replacing range with patch: ";
+  std::cout << "Replacing range with patch: ";
   std::cout << face_range.size() << " triangles removed, " << new_faces.size() << " created\n";
   CGAL_assertion(new_faces.size() == patch.size());
 #endif
@@ -620,7 +620,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
   {
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
  #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: Failed to fill a hole using Delaunay search space.\n";
+    std::cout << "Failed to fill a hole using Delaunay search space.\n";
  #endif
 
     triangulate_hole_polyline(hole_points, third_points, std::back_inserter(hole_faces),
@@ -629,7 +629,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
     if(hole_faces.empty())
     {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-      std::cout << "  DEBUG: Failed to fill a hole using the whole search space.\n";
+      std::cout << "Failed to fill a hole using the whole search space.\n";
 #endif
       return false;
     }
@@ -687,7 +687,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
   if(non_manifold_edge_found)
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: Triangulation produced is non-manifold when plugged into the mesh.\n";
+    std::cout << "Triangulation produced is non-manifold when plugged into the mesh.\n";
 #endif
 
     return false;
@@ -702,7 +702,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
   }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::cout << "  DEBUG: Found acceptable hole-filling patch.\n";
+  std::cout << "Found acceptable hole-filling patch.\n";
 #endif
 
   return true;
@@ -803,7 +803,7 @@ bool construct_tentative_sub_hole_patch(std::vector<std::vector<typename boost::
   if(!order_border_halfedge_range(cc_border_hedges, tmesh))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: More than one border in sub-hole. Not currently handled." << std::endl;
+    std::cout << "More than one border in sub-hole. Not currently handled." << std::endl;
 #endif
 
     return false;
@@ -864,7 +864,7 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
   typedef typename boost::property_traits<VertexPointMap>::value_type       Point;
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::cout << "  DEBUG: Attempting hole-filling (no constraints), " << cc_faces.size() << " faces\n";
+  std::cout << "Attempting hole-filling (no constraints), " << cc_faces.size() << " faces\n";
 #endif
 
   if(!order_border_halfedge_range(cc_border_hedges, tmesh))
@@ -884,7 +884,7 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
                                      cc_border_hedges, cc_faces, patch, tmesh, vpm, gt))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: Failed to find acceptable hole patch\n";
+    std::cout << "Failed to find acceptable hole patch\n";
 #endif
 
     return false;

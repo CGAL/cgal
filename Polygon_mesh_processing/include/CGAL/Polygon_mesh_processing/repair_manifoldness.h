@@ -486,7 +486,7 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   Considered_edge_map considered_edges = get(Considered_tag(), pmesh);
 
-  std::cout << "spread 'em" << std::endl;
+  std::cout << "growing zone" << std::endl;
   while(!halfedges_to_consider.empty())
   {
     const halfedge_descriptor curr_h = halfedges_to_consider.top();
@@ -629,16 +629,20 @@ Work_zone<PolygonMesh> construct_work_zone(const typename boost::graph_traits<Po
   return wz;
 }
 
-template <typename FaceSelection, typename ZoneBoundary, typename PolygonMesh>
-void extract_border_of_selection(ZoneBoundary& border,
-                                 const FaceSelection& selection,
-                                 const PolygonMesh& pmesh)
+template <typename PolygonMesh, typename VPM, typename GeomTraits>
+void extract_border_of_work_zone(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                                 Work_zone<PolygonMesh>& wz,
+                                 const PolygonMesh& pmesh,
+                                 const VPM vpm,
+                                 const GeomTraits& /*gt*/) // @todo
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
-  border.reserve(selection.size());
+  typedef typename boost::property_traits<VPM>::reference                     Point_ref;
 
-  CGAL::Face_filtered_graph<PolygonMesh> ffg(pmesh, selection);
+  wz.border.reserve(wz.faces.size());
+
+  CGAL::Face_filtered_graph<PolygonMesh> ffg(pmesh, wz.faces);
 
   halfedge_descriptor bh = boost::graph_traits<PolygonMesh>::null_halfedge();
   for(halfedge_descriptor h : halfedges(ffg))
@@ -652,13 +656,98 @@ void extract_border_of_selection(ZoneBoundary& border,
 
   CGAL_assertion(bh != boost::graph_traits<PolygonMesh>::null_halfedge());
 
+  // Below walks the border of the filtered graph, with a twist: if the star is open, we don't
+  // care about the part of that border incident to the vertex:
+
+  /*
+      __________________               ______________
+     |                  |             |              |
+     |                  |             |              |
+     |     nm vertex    |  should be  |              |
+     |       /  \       |  -------->  |              |
+     |      /    \      |             |              |
+     |____b/      \c____|             |____b    c____|
+  */
+
+  // In other words, a sequence of border halfedges that are border halfedges for pmesh is only
+  // acceptable if the nm vertex is not part of it.
+
+  // start by trying to find a halfedge that is not on the border of pmesh to get full border sequences
+  const Point_ref nmp = get(vpm, target(h, pmesh));
+  halfedge_descriptor nmp_ih = boost::graph_traits<PolygonMesh>::null_halfedge();
+
   halfedge_descriptor done = bh;
   do
   {
-    border.push_back(opposite(bh, ffg));
-    bh = prev(bh, ffg); // want to have the opposite in the correct order
+    if(get(vpm, target(bh, pmesh)) == nmp)
+      nmp_ih = bh;
+
+    if(!is_border(bh, pmesh))
+      break;
+    bh = prev(bh, ffg);
   }
   while(bh != done);
+
+  if(is_border(bh, pmesh) && // couldn't find a non-border halfedge: 'ffg' is a full CC of 'pmesh'
+     nmp_ih != boost::graph_traits<PolygonMesh>::null_halfedge()) // nm vertex is on the border
+  {
+    // not really sure what to do here, so let's just remove the two halfedges
+    // incident to the vertex and keep the rest
+
+    halfedge_descriptor done = bh;
+    {
+      if(get(vpm, source(bh, pmesh)) != nmp && get(vpm, target(bh, pmesh)) != nmp)
+        wz.border.push_back(opposite(bh, pmesh));
+
+      bh = prev(bh, ffg); // walk backwards so that opposites are in the correct order
+    }
+    while(bh != done);
+  }
+  else // standard case now
+  {
+    halfedge_descriptor done = bh;
+    do
+    {
+      if(is_border(bh, pmesh))
+      {
+        // start of a sequence of border (for pmesh) halfedges
+        // we only want to add that to the complete border if it does not contain the nm vertex
+        std::vector<halfedge_descriptor> seq;
+        bool add_to_sequence = true;
+
+        do
+        {
+          if(!is_border(bh, pmesh)) // end of the sequence
+            break;
+
+          std::cout << "seq hd: " << get(vpm, source(bh, pmesh)) << " || " << get(vpm, target(bh, pmesh)) << std::endl;
+          std::cout << "nmp: " << nmp << std::endl;
+          std::cout << "get(vpm, source(bh, pmesh)) == nmp : " << (get(vpm, source(bh, pmesh)) == nmp) << std::endl;
+
+          if(get(vpm, source(bh, pmesh)) == nmp)
+            add_to_sequence = false;
+          else if(add_to_sequence)
+            seq.push_back(opposite(bh, pmesh));
+
+          bh = prev(bh, ffg); // walk backwards so that opposites are in the correct order
+        }
+        while(bh != done);
+
+        CGAL_assertion(!is_border(bh, pmesh) ||
+                       (bh == done && is_border(prev(bh, ffg), pmesh)));
+
+        std::cout << "add_to_sequence = " << add_to_sequence << std::endl;
+        if(add_to_sequence)
+          wz.border.insert(wz.border.end(), seq.begin(), seq.end()); // not worth move-ing pointers
+      }
+      else
+      {
+        wz.border.push_back(opposite(bh, ffg));
+        bh = prev(bh, ffg); // walk backwards so that opposites are in the correct order
+      }
+    }
+    while(bh != done);
+  }
 }
 
 // compute the faces to remove
@@ -677,11 +766,19 @@ construct_work_zones(UmbrellaContainer& umbrellas,
 
   for(const halfedge_descriptor h : umbrellas)
   {
+    std::cout << "### treating zone incident to: " << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << std::endl;
+
     Work_zone<PolygonMesh> wz = construct_work_zone(h, radius, pmesh, vpm, gt);
     if(!wz.faces.empty())
       wzs.push_back(wz);
 
-    extract_border_of_selection(wzs.back().border, wzs.back().faces, pmesh);
+    std::cout << "### extract border of zone incident to: " << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << std::endl;
+
+    extract_border_of_work_zone(h, wzs.back(), pmesh, vpm, gt);
+
+    std::cout << "border of zone " << wzs.size() - 1 << std::endl;
+    for(const halfedge_descriptor bh : wzs.back().border)
+      std::cout << get(vpm, source(bh, pmesh)) << " " << get(vpm, target(bh, pmesh)) << std::endl;
   }
 
   return wzs;
@@ -940,6 +1037,7 @@ bool fix_patch_orientation(Patch& point_patch,
 
   if(!ok_orientation_1)
   {
+    CGAL_assertion(false); // @tmp
     for(auto& face : point_patch)
       std::swap(face[0], face[1]);
   }
@@ -1009,137 +1107,31 @@ bool merge_zones(const WorkZone& wz_1,
   return replace_faces_with_patch(fs, point_patch, pmesh, vpm);
 }
 
-template <typename Point, typename ZoneBoundary, typename PolygonMesh, typename VPM, typename GeomTraits>
-typename ZoneBoundary::const_iterator
-is_nm_vertex_on_zone_boundary(const Point& nm_vertex_pos,
-                              const ZoneBoundary& border,
-                              const PolygonMesh& pmesh,
-                              const VPM vpm,
-                              const GeomTraits& gt)
-{
-  for(typename ZoneBoundary::const_iterator bcit=border.begin(), bcend=border.end(); bcit!=bcend; ++bcit)
-  {
-    if(gt.equal_3_object()(get(vpm, target(*bcit, pmesh)), nm_vertex_pos))
-      return bcit;
-  }
-
-  return border.cend();
-}
-
 /*
  The idea is to walk the polylines incident to the nm vertex that are on the border of the mesh,
  and modify the boundary so that it doesn't pass through that vertex anymore.
  for example:
 
-       nm vertex
-         /  \
-        /    \        -------->
-  ____b/      \c____              ____b____c____
 */
-template <typename BoundaryCIterator, typename PolygonMesh, typename VPM, typename GeomTraits>
-bool trim_border_and_fill_hole(const BoundaryCIterator bcit,
-                               const Work_zone<PolygonMesh>& wz,
-                               const typename GeomTraits::FT radius,
-                               PolygonMesh& pmesh,
-                               const VPM vpm,
-                               const GeomTraits& gt)
+template <typename PolygonMesh, typename VPM, typename GeomTraits>
+bool fill_zone_with_open_border(const Work_zone<PolygonMesh>& wz,
+                                PolygonMesh& pmesh,
+                                const VPM vpm,
+                                const GeomTraits& gt)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
 
   typedef typename boost::property_traits<VPM>::value_type                    Point;
   typedef typename boost::property_traits<VPM>::reference                     Point_ref;
 
   typedef CGAL::Triple<int, int, int>                                         Face_indices;
 
-  CGAL_assertion(get(wz.distances, target(*bcit, pmesh)) == 0.);
+  std::cout << "fill_zone_with_open_border" << std::endl;
 
-  std::cout << "gotta trim bro " << wz.border.size() << std::endl;
-
-  BoundaryCIterator last = wz.border.cend();
-  last = std::prev(last);
-
-  BoundaryCIterator lit, rit;
-  BoundaryCIterator wit = bcit;
-
-  // walk left to find what to trim
-  std::cout << "left trim..." << std::endl;
-  {
-    BoundaryCIterator done = wit;
-    do
-    {
-      // normally refinement should have introduced a vertex at exact "radius"
-      std::cout << "at " << get(vpm, source(*wit, pmesh))
-                << " " << get(wz.distances, source(*wit, pmesh)) << " radius: " << radius << std::endl;
-
-      if(get(wz.distances, source(*wit, pmesh)) >= radius)
-      {
-        lit = wit;
-        break;
-      }
-
-      wit = (wit == wz.border.cbegin()) ? last : std::prev(wit);
-    }
-    while(wit != done);
-
-    if(lit == BoundaryCIterator())
-    {
-      std::cerr << "Couldn't find a trim point (left) ?" << std::endl;
-      return false;
-    }
-  }
-
-  // walk right to find what to trim
-  bool remove_all_faces = false; // if something goes wrong, delete the zone and don't fill
-
-  std::cout << "right trim..." << std::endl;
-  wit = bcit;
-  {
-    wit = (wit == last) ? wz.border.cbegin() : std::next(wit);
-    BoundaryCIterator done = wit;
-    do
-    {
-      std::cout << "at " << get(vpm, source(*wit, pmesh))
-                << " " << get(wz.distances, source(*wit, pmesh)) << " radius: " << radius << std::endl;
-
-      if(wit == lit)
-      {
-        remove_all_faces = true;
-        break;
-      }
-
-      if(get(wz.distances, source(*wit, pmesh)) >= radius)
-      {
-        rit = wit;
-        break;
-      }
-
-      wit = (wit == last) ? wz.border.cbegin() : std::next(wit);
-    }
-    while(wit != done);
-  }
-
-  if(remove_all_faces)
-  {
-    for(face_descriptor f : wz.faces)
-      Euler::remove_face(halfedge(f, pmesh), pmesh);
-    return false;
-  }
-
-  if(rit == BoundaryCIterator())
-  {
-    std::cerr << "Couldn't find a trim point (right) ?" << std::endl;
-    return false;
-  }
-
-  // Now walk from right to left and grab points
-  std::cout << "Walking..." << std::endl;
   std::vector<Point> hole_points, third_points;
-
-  wit = rit;
-  for(;;)
+  for(const halfedge_descriptor bh : wz.border)
   {
-    const halfedge_descriptor bh = *wit, obh = opposite(*wit, pmesh);
+    const halfedge_descriptor obh = opposite(bh, pmesh);
 
     std::cout << "add " << get(vpm, source(bh, pmesh)) << std::endl;
     hole_points.push_back(get(vpm, source(bh, pmesh)));
@@ -1148,22 +1140,17 @@ bool trim_border_and_fill_hole(const BoundaryCIterator bcit,
       third_points.push_back(construct_artificial_third_point(bh, pmesh, vpm, gt));
     else
       third_points.push_back(get(vpm, target(next(obh, pmesh), pmesh)));
-
-    if(wit == lit)
-      break;
-
-    wit = (wit == last) ? wz.border.cbegin() : std::next(wit);
   }
 
   // last one
-//  const halfedge_descriptor lh = *lit;
-//  hole_points.push_back(get(vpm, target(lh, pmesh)));
+  const halfedge_descriptor lh = wz.border.back();
+  hole_points.push_back(get(vpm, target(lh, pmesh)));
 
-//  const halfedge_descriptor olh = opposite(lh, pmesh);
-//  if(is_border(olh, pmesh))
-//    third_points.push_back(construct_artificial_third_point(lh, pmesh, vpm, gt));
-//  else
-//    third_points.push_back(get(vpm, target(next(olh, pmesh), pmesh)));
+  const halfedge_descriptor olh = opposite(lh, pmesh);
+  if(is_border(olh, pmesh))
+    third_points.push_back(construct_artificial_third_point(lh, pmesh, vpm, gt));
+  else
+    third_points.push_back(get(vpm, target(next(olh, pmesh), pmesh)));
 
   // bridge the gap between 'lit' and 'rit'
 //  const halfedge_descriptor rh = *rit;
@@ -1202,26 +1189,30 @@ bool trim_border_and_fill_hole(const BoundaryCIterator bcit,
 
 template <typename WorkZoneContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
 bool fill_zones(const WorkZoneContainer& wzs,
-                const typename boost::property_traits<VPM>::value_type& nm_vertex_point, // not ::reference
-                const typename GeomTraits::FT radius,
                 PolygonMesh& pmesh,
                 VPM vpm,
                 const GeomTraits& gt)
 {
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor        halfedge_descriptor;
+
   for(std::size_t i=0, n=wzs.size(); i<n; ++i)
   {
+    CGAL_assertion(!wzs[i].faces.empty());
+    CGAL_assertion(!wzs[i].border.empty());
+
     if(wzs[i].faces.size() == 1)
     {
       Euler::remove_face(halfedge(*(wzs[i].faces.begin()), pmesh), pmesh);
       continue;
     }
 
-    // If the non manifold vertex is on the zone boundary, we want to trim and fill,
-    // otherwise we simply get the same geometry and nothing gets separated
-    const auto bcit = is_nm_vertex_on_zone_boundary(nm_vertex_point, wzs[i].border, pmesh, vpm, gt);
-    if(bcit != wzs[i].border.end())
+    const halfedge_descriptor f = wzs[i].border.front();
+    const halfedge_descriptor b = wzs[i].border.back();
+
+    const bool is_loop = source(f, pmesh) == target(b, pmesh);
+    if(!is_loop)
     {
-      trim_border_and_fill_hole(bcit, wzs[i], radius, pmesh, vpm, gt);
+      fill_zone_with_open_border(wzs[i], pmesh, vpm, gt);
     }
     else if(!fill_hole(wzs[i].faces, pmesh, vpm, gt))
     {
@@ -1241,11 +1232,6 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
                      VPM vpm,
                      const GeomTraits& gt)
 {
-  typedef typename boost::property_traits<VPM>::value_type                    Point;
-
-  // intentional point copy, because the mesh is modified
-  const Point nm_vertex_pos = get(vpm, target(umbrellas.front(), pmesh));
-
   // can't merge if there were any pinched stars
   const bool can_employ_merge_strategy = !treat_pinched_stars(umbrellas, treatment, pmesh);
 
@@ -1266,14 +1252,14 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 #endif
 
   if(treatment == SEPARATE)
-    return fill_zones(wzs, nm_vertex_pos, radius, pmesh, vpm, gt);
+    return fill_zones(wzs, pmesh, vpm, gt);
 
   if(!can_employ_merge_strategy || wzs.size() != 2)
   {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
     std::cout << "Merging treatment requested, but configuration makes it impossible" << std::endl;
 #endif
-    return fill_zones(wzs, nm_vertex_pos, radius, pmesh, vpm, gt);
+    return fill_zones(wzs, pmesh, vpm, gt);
   }
   else
   {
@@ -1283,7 +1269,7 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
       std::cout << "merging failed, falling back to separating strategy" << std::endl;
 #endif
-      return fill_zones(wzs, nm_vertex_pos, radius, pmesh, vpm, gt);
+      return fill_zones(wzs, pmesh, vpm, gt);
     }
 
     return true;
@@ -1397,7 +1383,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   typedef typename Geom_traits::FT                                            FT;
   typedef typename boost::property_traits<VertexPointMap>::value_type         Point;
 
-  const FT radius = 0.01; // @todo automatic or np
+  const FT radius = 0.3; // @todo automatic or np
 
   // Collect the non-manifold vertices
   typedef CGAL::dynamic_vertex_property_t<bool>                               Mark;
@@ -1415,14 +1401,8 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   std::cout << nm_points.size() << " cases to treat" << std::endl;
 #endif
 
-  // If the treatment is merging, there will be combinatorial change in the star incident to
-  // nm vertices, and the cone halfedges from some other stars might become invalid.
-  // To ensure that they do stay invalid, we must ensure that no two non-manifold vertices share an edge
-  if(treatment == MERGE)
-  {
-    internal::enforce_non_manifold_vertex_separation(nm_marks, pmesh, vpm, gt);
-    std::ofstream("results/enforced_separation.off") << std::setprecision(17) << pmesh;
-  }
+  internal::enforce_non_manifold_vertex_separation(nm_marks, pmesh, vpm, gt);
+  std::ofstream("results/enforced_separation.off") << std::setprecision(17) << pmesh;
 
   for(const auto& e : nm_points)
   {
