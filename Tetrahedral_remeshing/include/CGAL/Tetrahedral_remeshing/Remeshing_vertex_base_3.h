@@ -52,7 +52,12 @@ It has the default value `Triangulation_vertex_base_3<Gt>`.
 
 template<typename GT,
          typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
-using Remeshing_vertex_base_3 = CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>;
+using Remeshing_vertex_base_3
+#ifndef DOXYGEN_RUNNING
+  = CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>;
+#else
+  = unspecified_type;
+#endif
 
 }//end namespace Tetrahedral_remeshing
 

@@ -50,7 +50,12 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 */
 template<typename Gt,
          typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
-using Remeshing_cell_base_3 = CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>;
+using Remeshing_cell_base_3
+#ifndef DOXYGEN_RUNNING
+  = CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>;
+#else
+  = unspecified_type;
+#endif
 
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
