@@ -309,8 +309,11 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Geometrical treatment
 
+// main:
 // @todo something without heat method ? (SMSP)
 // @todo handle geodesic spheres that intersect
+//
+// optimization:
 // @todo can make maps of Points lighter with a vertex as key, and a custom equal comparing actual points
 // @todo small sets
 
@@ -339,49 +342,6 @@ struct Work_zone
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Merging treatment
 
-template <typename PointRangeContainer, typename PolygonMesh, typename PVM, typename VPM>
-bool add_faces(const PointRangeContainer& pr_range,
-               PolygonMesh& pmesh,
-               PVM& point_to_vs, // std::map<Point, vertex_descriptor>
-               const VPM vpm) // vertex to point
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
-
-  typedef typename boost::property_traits<VPM>::value_type                    Point;
-
-  const vertex_descriptor null_v = boost::graph_traits<PolygonMesh>::null_vertex();
-
-  for(const auto& pr : pr_range)
-  {
-    std::vector<vertex_descriptor> vf;
-    for(const Point& p : pr)
-    {
-      bool success;
-      typename std::map<Point, vertex_descriptor>::iterator it;
-      std::tie(it, success) = point_to_vs.insert(std::make_pair(p, null_v));
-      vertex_descriptor& v = it->second;
-
-      if(success) // first time we meet that point, means it`s an interior point and we need to make a new vertex
-      {
-        v = add_vertex(pmesh);
-        put(vpm, v, p);
-      }
-
-      vf.push_back(v);
-    }
-
-    face_descriptor f = Euler::add_face(vf, pmesh);
-    if(f == boost::graph_traits<PolygonMesh>::null_face())
-    {
-      CGAL_assertion(false);
-      return false;
-    }
-  }
-
-  return true;
-}
-
 template <typename PolygonMesh>
 typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
 split_edge_and_triangulate_incident_faces(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
@@ -399,6 +359,48 @@ split_edge_and_triangulate_incident_faces(typename boost::graph_traits<PolygonMe
   }
 
   return res;
+}
+
+template <typename PolygonMesh>
+bool is_pinched_nm_vertex(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                          const PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+
+  int number_of_border_halfedges = 0;
+
+  for(const halfedge_descriptor ih : halfedges_around_target(h, pmesh))
+    if(is_border(ih, pmesh))
+      ++number_of_border_halfedges;
+
+  return (number_of_border_halfedges > 1);
+}
+
+template <typename UmbrellaContainer, typename PolygonMesh>
+bool treat_pinched_stars(UmbrellaContainer& umbrellas,
+                         const NM_TREATMENT /*treatment*/, // @todo merge treatment...?
+                         PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+
+  bool has_pinched_nm_vertices = false;
+
+  for(const halfedge_descriptor h : umbrellas)
+  {
+    if(!is_pinched_nm_vertex(h, pmesh))
+      continue;
+
+    has_pinched_nm_vertices = true;
+
+    std::vector<halfedge_descriptor> faces_to_delete;
+    for(const halfedge_descriptor ih : halfedges_around_target(h, pmesh))
+      faces_to_delete.push_back(ih);
+
+    for(const halfedge_descriptor ih : halfedges_around_target(h, pmesh))
+      Euler::remove_face(ih, pmesh);
+  }
+
+  return has_pinched_nm_vertices;
 }
 
 // Merging combinatorially changes the star, so we don't want to have two adjacent nm vertices
@@ -445,64 +447,6 @@ void enforce_non_manifold_vertex_separation(NMVM nm_marks,
   }
 }
 
-// this is an alternate function in the case where radius is smaller
-// than the shortest incident edge length incident to target(h, pmesh)
-//
-// @todo unused function, update or delete
-template <typename PolygonMesh, typename VPM, typename GeomTraits>
-typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
-dig_star_hole(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-              const typename GeomTraits::FT radius,
-              PolygonMesh& pmesh,
-              VPM vpm,
-              const GeomTraits& gt)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
-
-  typedef typename boost::property_traits<VPM>::reference                     Point_ref;
-  typedef typename boost::property_traits<VPM>::value_type                    Point;
-
-  typedef typename GeomTraits::Vector_3                                       Vector;
-
-  const vertex_descriptor vt = target(h, pmesh);
-  const Point_ref tpt = get(vpm, vt);
-
-  halfedge_descriptor ih = h, done = h;
-  do
-  {
-    CGAL_assertion(target(ih, pmesh) == target(h, pmesh));
-
-    const halfedge_descriptor next_ih = prev(opposite(ih, pmesh), pmesh);
-    const vertex_descriptor vs = source(ih, pmesh);
-
-    halfedge_descriptor ih_to_split = ih;
-    if(is_border(ih_to_split, pmesh))
-      ih_to_split = opposite(ih_to_split, pmesh);
-
-    // note that below uses 'ih', which always points to nm point
-    const Point_ref spt = get(vpm, vs);
-    Vector tsv(tpt, spt);
-    CGAL_assertion(CGAL::square(radius) <= tsv.squared_length());
-
-    internal::normalize(tsv, gt);
-    const Point new_pt = tpt + radius * tsv;
-
-    const halfedge_descriptor new_ih = split_edge_and_triangulate_incident_faces(ih_to_split, pmesh);
-    put(vpm, target(new_ih, pmesh), new_pt);
-
-    ih = next_ih;
-  }
-  while(ih != done);
-
-  // now delete the faces
-  Iterator_range<Face_around_target_iterator<PolygonMesh> > fat = faces_around_target(h, pmesh);
-  std::set<face_descriptor> faces(std::begin(fat), std::end(fat));
-
-  return faces;
-}
-
 // note that this also refines the mesh
 template <typename PolygonMesh, typename VPM, typename GeomTraits>
 void construct_work_zone(Work_zone<PolygonMesh>& wz,
@@ -510,7 +454,7 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
                          const typename GeomTraits::FT radius,
                          PolygonMesh& pmesh,
                          VPM vpm,
-                         const GeomTraits& /*gt*/) // @todo proper traits usage
+                         const GeomTraits& gt)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
@@ -590,7 +534,7 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
     const vertex_descriptor vt = target(h, pmesh);
     const Point_ref spt = get(vpm, vs);
     const Point_ref tpt = get(vpm, vt);
-    Vector tsv(tpt, spt);
+    Vector tsv = gt.construct_vector_3_object()(tpt, spt);
 
     const FT dist_at_vs = get(wz.distances, vs);
     const FT dist_at_vt = get(wz.distances, vt);
@@ -602,13 +546,15 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
     {
       CGAL_assertion(dist_at_vs < radius && radius <= dist_at_vt);
       const FT lambda = (radius - dist_at_vs) / (dist_at_vt - dist_at_vs);
-      new_p = spt - lambda * tsv;
+      new_p = gt.construct_translated_point_3_object()(
+                spt, gt.construct_scaled_vector_3_object()(tsv, - lambda));
     }
     else
     {
       CGAL_assertion(dist_at_vt < radius && radius <= dist_at_vs);
       const FT lambda = (radius - dist_at_vt) / (dist_at_vs - dist_at_vt);
-      new_p = tpt + lambda * tsv;
+      new_p = gt.construct_translated_point_3_object()(
+                tpt, gt.construct_scaled_vector_3_object()(tsv, lambda));
     }
 
     halfedge_descriptor new_h = split_edge_and_triangulate_incident_faces(h, pmesh);
@@ -621,13 +567,13 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
       faces_to_consider.insert(face(h, pmesh));
       faces_to_consider.insert(face(new_h, pmesh));
     }
+
     if(!is_border(opposite(h, pmesh), pmesh))
     {
       faces_to_consider.insert(face(opposite(h, pmesh), pmesh));
       faces_to_consider.insert(face(opposite(new_h, pmesh), pmesh));
     }
   }
-
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::cout << faces_to_consider.size() << " faces to consider" << std::endl;
@@ -638,7 +584,7 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
   dump_cc(faces_to_consider, pmesh, oss.str().c_str());
 #endif
 
-  for(face_descriptor f : faces_to_consider)
+  for(const face_descriptor f : faces_to_consider)
   {
     bool is_face_in = true;
     for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
@@ -1300,14 +1246,14 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
   // intentional point copy, because the mesh is modified
   const Point nm_vertex_pos = get(vpm, target(umbrellas.front(), pmesh));
 
-  // @todo // can't merge if there were any pinched stars
-//  bool can_merge = !treat_pinched_stars(umbrellas, treatment, radius, pmesh, vpm, gt);
+  // can't merge if there were any pinched stars
+  const bool can_employ_merge_strategy = !treat_pinched_stars(umbrellas, treatment, pmesh);
 
-  std::vector<Work_zone<PolygonMesh> > wzs;
-  wzs = construct_work_zones(umbrellas, radius, pmesh, vpm, gt);
+  std::vector<Work_zone<PolygonMesh> > wzs = construct_work_zones(umbrellas, radius, pmesh, vpm, gt);
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::cout << wzs.size() << " work zones" << std::endl;
 
-// --- debug start
   static int i = 0;
   for(const Work_zone<PolygonMesh>& wz : wzs)
   {
@@ -1317,14 +1263,12 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
   }
 
   std::ofstream("results/post_construction.off") << std::setprecision(17) << pmesh;
-// --- debug end
+#endif
 
   if(treatment == SEPARATE)
     return fill_zones(wzs, nm_vertex_pos, radius, pmesh, vpm, gt);
 
-  // @todo
-  // can_merge &= borders.size() != 2;
-  if(wzs.size() != 2) // if(!can_merge)
+  if(!can_employ_merge_strategy || wzs.size() != 2)
   {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
     std::cout << "Merging treatment requested, but configuration makes it impossible" << std::endl;
