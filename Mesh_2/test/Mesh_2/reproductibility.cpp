@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
     std::stringstream ss;
     ss << cdt;
-    
+
     return ss.str();
   };
 
@@ -108,4 +108,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
