@@ -50,15 +50,16 @@ class OBJ_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  OBJ_builder(std::istream& is_) : Base(is_) { }
+  OBJ_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
 
   template <typename NamedParameters>
   bool read(std::istream& input,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np)
+            const NamedParameters& np,
+            bool verbose)
   {
-    return read_OBJ(input, points, faces, np);
+    return read_OBJ(input, points, faces, np, verbose);
   }
 };
 
@@ -88,12 +89,13 @@ public:
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& in,
               FaceGraph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::OBJ_builder<FaceGraph, Point> builder(in);
+  IO::internal::OBJ_builder<FaceGraph, Point> builder(in, verbose);
   return builder(g, np);
 }
 
@@ -121,18 +123,20 @@ bool read_OBJ(std::istream& in,
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const char* fname,
               FaceGraph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream in(fname);
-  return read_OBJ(in, g, np);
+  return read_OBJ(in, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const std::string& fname,
               FaceGraph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return read_OBJ(fname.c_str(), g, np);
+  return read_OBJ(fname.c_str(), g, np, verbose);
 }
 
 template <typename FaceGraph>

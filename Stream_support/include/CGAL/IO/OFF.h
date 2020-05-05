@@ -49,8 +49,10 @@ bool read_OFF(std::istream& is,
               VertexNormalOutputIterator vn_out,
               VertexColorOutputIterator vc_out,
               VertexTextureOutputIterator vt_out,
-              FaceColorOutputIterator fc_out)
+              FaceColorOutputIterator fc_out,
+              bool verbose = true)
 {
+  CGAL_USE(verbose);
   typedef typename boost::range_value<PointRange>::type                               Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Point_2                                                    Texture;
@@ -154,7 +156,8 @@ template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool read_OFF(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const NamedParameters& np)
+              const NamedParameters& np,
+              bool verbose = true)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -167,23 +170,26 @@ bool read_OFF(std::istream& is,
                                 choose_parameter(get_parameter(np, internal_np::vertex_texture_output_iterator),
                                                  CGAL::Emptyset_iterator()),
                                 choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()));
+                                                 CGAL::Emptyset_iterator()),
+                                verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream in(fname);
-  return read_OFF(in, points, polygons, np);
+  return read_OFF(in, points, polygons, np, verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
+bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return read_OFF(fname.c_str(), points, polygons, np);
+  return read_OFF(fname.c_str(), points, polygons, np, verbose);
 }
 
 /*!

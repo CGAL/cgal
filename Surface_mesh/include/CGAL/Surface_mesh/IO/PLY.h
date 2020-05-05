@@ -932,13 +932,15 @@ bool write_PLY(std::ostream& os,
 template <typename P>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
-              std::string& comments)
+              std::string& comments,
+              bool verbose = true)
 {
   typedef typename Surface_mesh<P>::size_type size_type;
 
   if(!is.good())
   {
-    std::cerr << "Error: cannot open file" << std::endl;
+    if(verbose)
+      std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 

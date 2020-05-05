@@ -36,7 +36,7 @@ protected:
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor                     face_descriptor;
 
 public:
-  Generic_facegraph_builder(std::istream& in_) : m_in(in_) { }
+  Generic_facegraph_builder(std::istream& in_, bool verbose) : m_in(in_), m_verbose(verbose) { }
 
   template <typename NamedParameters>
   bool operator()(FaceGraph& g, const NamedParameters& np)
@@ -81,11 +81,13 @@ public:
     std::vector<Vertex_texture> vertex_textures;
     std::vector<Face_color> face_colors;
 
-    bool ok = static_cast<Derived*>(this)->read(m_in, m_points, m_faces,
-      parameters::vertex_normal_output_iterator(std::back_inserter(vertex_normals))
-                 .vertex_color_output_iterator(std::back_inserter(vertex_colors))
-                 .vertex_texture_output_iterator(std::back_inserter(vertex_textures))
-                 .face_color_output_iterator(std::back_inserter(face_colors)));
+    bool ok =
+        static_cast<Derived*>(this)->read(m_in, m_points, m_faces,
+                                          parameters::vertex_normal_output_iterator(std::back_inserter(vertex_normals))
+                                          .vertex_color_output_iterator(std::back_inserter(vertex_colors))
+                                          .vertex_texture_output_iterator(std::back_inserter(vertex_textures))
+                                          .face_color_output_iterator(std::back_inserter(face_colors)),
+                                          m_verbose);
     if(!ok)
       return false;
 
@@ -140,6 +142,7 @@ protected:
 
   Point_container m_points;
   Face_container m_faces;
+  bool m_verbose;
 };
 
 } // end internal

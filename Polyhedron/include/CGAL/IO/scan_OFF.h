@@ -47,7 +47,7 @@ template <class Traits,
           class HDS, class Alloc>
 void scan_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-              bool verbose = false)
+              bool verbose = true)
 {
   // reads a polyhedron from `in' and appends it to P.
   typedef Polyhedron_3<Traits, Items, HDS, Alloc> Polyhedron;

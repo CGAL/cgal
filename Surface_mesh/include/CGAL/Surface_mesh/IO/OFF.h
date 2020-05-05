@@ -59,8 +59,7 @@ bool read_OFF(std::istream& is,
               #else
               const NamedParameters& np
               #endif
-
-              )
+              , bool verbose = true)
 {
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Vertex_index                                    Vertex_index;
@@ -97,7 +96,8 @@ bool read_OFF(std::istream& is,
                                                              .vertex_normal_map(vnormals)
                                                              .vertex_color_map(vcolors)
                                                              .vertex_texture_map(vtextures)
-                                                             .face_color_map(fcolors));
+                                                             .face_color_map(fcolors),
+                                    verbose);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -241,11 +241,6 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     }
     if ( ! in )
       return in;
-    if( ! h.off_header())
-    {
-      in.clear( std::ios::badbit);
-      return in;
-    }
     h.set_skel(false);
     h.set_binary(false);
     h.set_index_offset(1);
@@ -265,7 +260,14 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     keyword[i] = '\0';
     if ( i < 2 || (std::isdigit(keyword[0]) && keyword[0] != '4')
                || std::isdigit(keyword[1])) {
-        h.set_vertices( std::atoi( keyword));
+      in.clear( std::ios::badbit);
+      if ( h.verbose()) {
+          std::cerr << " " << std::endl;
+          std::cerr << "error: File_header_OFF: "
+                        "Missing header."
+                    << std::endl;
+      }
+      return in;
     } else {
         h.set_index_offset( 0);
         int j = 0;

@@ -414,9 +414,10 @@ class PLY_reader
 {
   std::vector<PLY_element> m_elements;
   std::string m_comments;
+  bool m_verbose;
 
 public:
-  PLY_reader() { }
+  PLY_reader(bool verbose) : m_verbose(verbose) { }
 
   std::size_t number_of_elements() const { return m_elements.size(); }
   PLY_element& element(std::size_t idx)
@@ -449,7 +450,8 @@ public:
         if(!(iss >> signature) || (signature != "ply"))
         {
           // if wrong file format
-          std::cerr << "Error: incorrect file format line " << lineNumber << " of file" << std::endl;
+          if(m_verbose)
+            std::cerr << "Error: incorrect file format line " << lineNumber << " of file" << std::endl;
           return false;
         }
       }
@@ -460,7 +462,8 @@ public:
         std::string tag, format_string, version;
         if( !(iss >> tag >> format_string >> version) )
         {
-          std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+          if(m_verbose)
+            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
           return false;
         }
         if(format_string == "ascii") format = ASCII;
@@ -468,7 +471,8 @@ public:
         else if(format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
         else
         {
-          std::cerr << "Error: unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
+          if(m_verbose)
+            std::cerr << "Error: unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
           return false;
         }
       }
@@ -479,7 +483,8 @@ public:
         std::string keyword;
         if(!(iss >> keyword))
         {
-          std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+          if(m_verbose)
+            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
           return false;
         }
 
@@ -488,7 +493,8 @@ public:
           std::string type, name;
           if(!(iss >> type >> name))
           {
-            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            if(m_verbose)
+              std::cerr << "Error line " << lineNumber << " of file" << std::endl;
             return false;
           }
 
@@ -500,7 +506,8 @@ public:
             name.clear();
             if(!(iss >> index_type >> name))
             {
-              std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+              if(m_verbose)
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
               return false;
             }
 
@@ -542,7 +549,8 @@ public:
           std::size_t number;
           if(!(iss >> type >> number))
           {
-            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            if(m_verbose)
+              std::cerr << "Error line " << lineNumber << " of file" << std::endl;
             return false;
           }
 

@@ -37,7 +37,8 @@ template <typename PointRange, typename PolygonRange, typename VertexNormalOutpu
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& faces,
-              VertexNormalOutputIterator vn_out)
+              VertexNormalOutputIterator vn_out,
+              bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type                               Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
@@ -103,12 +104,14 @@ bool read_OBJ(std::istream& is,
   }
   if(maxi<0)
   {
-    //not a OBJ file
+    if(verbose)
+      std::cerr<<"No face detected."<<std::endl;
     return false;
   }
   if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
   {
-    std::cerr << "a face index is invalid " << std::endl;
+    if(verbose)
+      std::cerr << "a face index is invalid " << std::endl;
     return false;
   }
   bool res = is.bad();
@@ -123,30 +126,34 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& faces,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   return IO::internal::read_OBJ(is, points, faces,
                                 choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
-                                                 CGAL::Emptyset_iterator()));
+                                                 CGAL::Emptyset_iterator()),
+                                verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const char* fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream in(fname);
-  return read_OBJ(in, points, polygons, np);
+  return read_OBJ(in, points, polygons, np, verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
+bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return read_OBJ(fname.c_str(), points, polygons, np);
+  return read_OBJ(fname.c_str(), points, polygons, np, verbose);
 }
 
 //! \ingroup IOstreamFunctions

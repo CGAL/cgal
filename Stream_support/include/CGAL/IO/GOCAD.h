@@ -39,8 +39,10 @@ bool read_GOCAD(std::istream& input,
                 std::pair<std::string, std::string>& name_and_color,
                 PointRange& points,
                 PolygonRange& polygons,
-                const NamedParameters&)
+                const NamedParameters&,
+                bool verbose = true)
 {
+  CGAL_USE(verbose);
   typedef typename boost::range_value<PointRange>::type     Point;
   typedef typename boost::range_value<PolygonRange>::type   CGAL_Polygon;
   int offset = 0;

@@ -43,42 +43,46 @@ class PLY_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  PLY_builder(std::istream& is_) : Base(is_) { }
+  PLY_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
   //! TODO: use vertex_point_map
   template <typename NamedParameters>
   bool read(std::istream& input,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np)
+            const NamedParameters& np,
+            bool verbose)
   {
-    return read_PLY(input, points, faces, np);
+    return read_PLY(input, points, faces, np, verbose);
   }
 };
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY_BGL(std::istream& in,
                   FaceGraph& g,
-                  const CGAL_BGL_NP_CLASS& np)
+                  const CGAL_BGL_NP_CLASS& np,
+                  bool verbose = true)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::PLY_builder<FaceGraph, Point> builder(in);
+  IO::internal::PLY_builder<FaceGraph, Point> builder(in, verbose);
   return builder(g, np);
 }
 
 // document that too
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+                              bool verbose = true)
 {
   std::ifstream in(fname);
-  return read_PLY(in, g, np);
+  return read_PLY(in, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return read_PLY(fname.c_str(), g, np);
+  return read_PLY(fname.c_str(), g, np, verbose);
 }
 
 template <typename FaceGraph>
@@ -118,9 +122,9 @@ bool read_PLY(const std::string& fname, FaceGraph& g) { return read_PLY(fname, g
   \see \ref IOStreamPLY
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
-  return IO::internal::read_PLY_BGL(in, g, np);
+  return IO::internal::read_PLY_BGL(in, g, np, verbose);
 }
 
 /*!
@@ -148,16 +152,18 @@ bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
   \see \ref IOStreamPLY
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream is(fname);
-  return IO::internal::read_PLY_BGL(is, g, np);
+  return IO::internal::read_PLY_BGL(is, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return IO::internal::read_PLY_BGL(fname.c_str(), g, np);
+  return IO::internal::read_PLY_BGL(fname.c_str(), g, np, verbose);
 }
 
 

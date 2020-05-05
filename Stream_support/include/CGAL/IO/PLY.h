@@ -39,7 +39,7 @@ bool read_PLY(std::istream& is,
               ColorOutputIterator fc_out,
               ColorOutputIterator vc_out,
               HUVOutputIterator huvs_out,
-              bool /* verbose */ = false,
+              bool  verbose  = true,
               typename std::enable_if<
                 CGAL::is_iterator<ColorOutputIterator>::value
               >::type* =0)
@@ -48,11 +48,12 @@ bool read_PLY(std::istream& is,
   typedef CGAL::Color                     Color_rgb;
   if(!is.good())
   {
-    std::cerr << "Error: cannot open file" << std::endl;
+    if(verbose)
+      std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
-  IO::internal::PLY_reader reader;
+  IO::internal::PLY_reader reader(verbose);
 
   if(!(reader.init(is)))
   {
@@ -124,7 +125,8 @@ bool read_PLY(std::istream& is,
         IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fc_out, "vertex_index");
       else
       {
-        std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
+        if(verbose)
+          std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
         return false;
       }
     }
@@ -203,12 +205,12 @@ bool read_PLY(std::istream& is,
               ColorRange& fcolors,
               ColorRange& vcolors,
               HUVRange& huvs,
-              bool /* verbose */ = false,
+              bool verbose =true,
               typename std::enable_if<
                 !CGAL::is_iterator<ColorRange>::value
               >::type* =0)
 {
-  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs));
+  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs), verbose);
 }
 template <class PointRange, class PolygonRange, class ColorRange>
 bool read_PLY(std::istream& is,
@@ -216,19 +218,20 @@ bool read_PLY(std::istream& is,
               PolygonRange& polygons,
               ColorRange& fcolors,
               ColorRange& vcolors,
-              bool /* verbose */ = false)
+              bool verbose = true)
 {
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
-  return IO::internal::read_PLY(is, points, polygons, dummy_pui, std::back_inserter(fcolors), std::back_inserter(vcolors), dummy_pf);
+  return IO::internal::read_PLY(is, points, polygons, dummy_pui, std::back_inserter(fcolors), std::back_inserter(vcolors), dummy_pf, verbose);
 }
 
 
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const NamedParameters& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
 
   using parameters::choose_parameter;
@@ -241,7 +244,7 @@ bool read_PLY(std::istream& is,
                                    CGAL::Emptyset_iterator()),
                   choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
                                    CGAL::Emptyset_iterator()),
-                  std::back_inserter(dummy_pf));
+                  std::back_inserter(dummy_pf), verbose);
 }
 
 
@@ -263,7 +266,8 @@ template <class PointRange, class PolygonRange>
 bool
 read_PLY(std::istream& is,
          PointRange& points,
-         PolygonRange& polygons
+         PolygonRange& polygons,
+         bool verbose = true
 #ifndef DOXYGEN_RUNNING
     ,typename std::enable_if<
          boost::has_value_type<PointRange>::value
@@ -274,11 +278,12 @@ read_PLY(std::istream& is,
   typedef typename PointRange::value_type Point_3;
   if(!is.good())
   {
-    std::cerr << "Error: cannot open file" << std::endl;
+    if(verbose)
+      std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
-  IO::internal::PLY_reader reader;
+  IO::internal::PLY_reader reader(verbose);
 
   if(!(reader.init(is)))
   {
@@ -325,7 +330,8 @@ read_PLY(std::istream& is,
         IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, dummy, "vertex_index");
       else
       {
-        std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
+        if(verbose)
+          std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
         return false;
       }
     }
@@ -352,10 +358,11 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_PLY(const char* fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ofstream os(fname);
-  return read_PLY(os, points, polygons, np);
+  return read_PLY(os, points, polygons, np, verbose);
 }
 
 /*!
@@ -383,9 +390,10 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_PLY(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return read_PLY(fname.c_str(), points, polygons, np);
+  return read_PLY(fname.c_str(), points, polygons, np, verbose);
 }
 
 template <typename PointRange, typename PolygonRange>

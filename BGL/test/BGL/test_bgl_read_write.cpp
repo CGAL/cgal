@@ -76,6 +76,7 @@ void test_bgl_OFF(const char* filename)
   Mesh sm;
   std::ifstream in(filename);
   CGAL::read_polygon_mesh(in,sm);
+
   CGAL::write_OFF(std::cout, sm);
 }
 
@@ -564,7 +565,7 @@ int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
   // OFF
-  /*test_bgl_OFF<Polyhedron>(filename);
+  test_bgl_OFF<Polyhedron>(filename);
   test_bgl_OFF<SM>(filename);
   test_bgl_OFF<LCC>(filename);
 #ifdef CGAL_USE_OPENMESH
@@ -594,7 +595,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OBJ_with_np<OMesh>();
 #endif
-*/
+
 
   //PLY
   if(!test_bgl_PLY<Polyhedron>())

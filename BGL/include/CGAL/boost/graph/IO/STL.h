@@ -45,15 +45,16 @@ class STL_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  STL_builder(std::istream& is_) : Base(is_) { }
+  STL_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
 
   template <typename NamedParameters>
   bool read(std::istream& input,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np)
+            const NamedParameters& np,
+            bool verbose)
   {
-    return read_STL(input, points, faces, np);
+    return read_STL(input, points, faces, np, verbose);
   }
 };
 
@@ -63,26 +64,29 @@ public:
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& in,
               FaceGraph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::STL_builder<FaceGraph, Point> builder(in);
+  IO::internal::STL_builder<FaceGraph, Point> builder(in, verbose);
   return builder(g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_STL(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream in(fname);
-  return read_STL(in, g, np);
+  return read_STL(in, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool read_STL(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
-  return read_STL(fname.c_str(), g, np);
+  return read_STL(fname.c_str(), g, np, verbose);
 }
 
 template <typename FaceGraph>
