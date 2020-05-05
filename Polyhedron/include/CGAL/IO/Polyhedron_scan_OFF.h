@@ -57,7 +57,7 @@ template < class HDS >
 void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
 {
   File_scanner_OFF scanner( m_in, m_file_header.verbose());
-  if(! m_in)
+  if(! m_in )
   {
     if(scanner.verbose())
     {
@@ -66,6 +66,7 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
       std::cerr << "operator(): input error: file format is not in "
                    "OFF." << std::endl;
     }
+    m_in.clear( std::ios::badbit);
     return;
   }
   m_file_header = scanner; // Remember file header after return.

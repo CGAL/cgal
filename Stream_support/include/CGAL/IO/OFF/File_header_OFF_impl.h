@@ -239,8 +239,13 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
         } else if ( c != '\n')
             in >> skip_until_EOL;
     }
-    if ( ! in)
-        return in;
+    if ( ! in )
+      return in;
+    if( ! h.off_header())
+    {
+      in.clear( std::ios::badbit);
+      return in;
+    }
     h.set_skel(false);
     h.set_binary(false);
     h.set_index_offset(1);

@@ -10,9 +10,6 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/boost/graph/IO/PLY.h>
-#include <CGAL/boost/graph/IO/GOCAD.h>
-
 #if defined(CGAL_USE_OPENMESH)
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
@@ -78,7 +75,7 @@ void test_bgl_OFF(const char* filename)
 {
   Mesh sm;
   std::ifstream in(filename);
-  CGAL::read_OFF(in,sm);
+  CGAL::read_polygon_mesh(in,sm);
   CGAL::write_OFF(std::cout, sm);
 }
 
@@ -101,7 +98,7 @@ void test_bgl_OFF_with_np()
   FaceColorMap fcm  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
 
 
-  bool ok = CGAL::read_OFF(in,fg, CGAL::parameters::vertex_normal_map(vnm)
+  bool ok = CGAL::read_polygon_mesh(in, fg, CGAL::parameters::vertex_normal_map(vnm)
                  .vertex_color_map(vcm)
                  .vertex_texture_map(vtm)
                  .face_color_map(fcm));
@@ -133,7 +130,7 @@ bool test_bgl_OBJ()
   CGAL::write_OBJ(out, fg);
   std::istringstream in( out.str());
   fg.clear();
-  CGAL::read_OBJ(in, fg);
+  CGAL::read_polygon_mesh(in, fg);
   CGAL_assertion(num_vertices(fg) == 4);
   CGAL_assertion(num_faces(fg) == 4);
 
@@ -157,7 +154,7 @@ bool test_bgl_OBJ_with_np()
   CGAL::write_OBJ(out, fg, CGAL::parameters::vertex_normal_map(vnm));
   std::istringstream in( out.str());
 
-  CGAL::read_OBJ(in, fg2, CGAL::parameters::vertex_normal_map(vnm2));
+  CGAL::read_polygon_mesh(in, fg2, CGAL::parameters::vertex_normal_map(vnm2));
 
   CGAL_assertion(num_vertices(fg2) == 4);
   CGAL_assertion(num_faces(fg2) == 4);
@@ -171,8 +168,6 @@ bool test_bgl_OBJ_with_np()
 
   return true;
 }
-
-
 
 void test_bgl_soup_obj()
 {
@@ -448,7 +443,7 @@ bool test_bgl_stl()
   }
   FaceGraph fg2;
   std::istringstream in(out.str());
-  if(!CGAL::read_STL(in, fg2)){
+  if(!CGAL::read_polygon_mesh(in, fg2)){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
@@ -490,7 +485,7 @@ bool test_bgl_PLY(bool binary = false)
     CGAL::set_mode(in, CGAL::IO::BINARY);
 
   fg.clear();
-  if(!CGAL::read_PLY(in,fg)){
+  if(!CGAL::read_polygon_mesh(in, fg)){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
@@ -542,7 +537,7 @@ bool test_bgl_PLY_with_np(bool binary)
 
   VertexColorMap vcm2  = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
   FaceColorMap fcm2  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
-  if(!CGAL::read_PLY(in,fg, CGAL::parameters::vertex_color_map(vcm2).face_color_map(fcm2))){
+  if(!CGAL::read_polygon_mesh(in, fg, CGAL::parameters::vertex_color_map(vcm2).face_color_map(fcm2))){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
@@ -565,13 +560,11 @@ bool test_bgl_PLY_with_np(bool binary)
 }
 
 
-//todo tests with all NPs and without NP for all tests
-//todo Polyhedron read_OFF NPs
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
   // OFF
-  test_bgl_OFF<Polyhedron>(filename);
+  /*test_bgl_OFF<Polyhedron>(filename);
   test_bgl_OFF<SM>(filename);
   test_bgl_OFF<LCC>(filename);
 #ifdef CGAL_USE_OPENMESH
@@ -601,7 +594,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OBJ_with_np<OMesh>();
 #endif
-
+*/
 
   //PLY
   if(!test_bgl_PLY<Polyhedron>())

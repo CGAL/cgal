@@ -44,7 +44,7 @@ bool read_OBJ(std::istream& is,
   typedef typename Kernel::Vector_3                                                   Normal;
 
   int mini(1),
-      maxi(-INT_MAX);
+      maxi(-1);
   Point p;
   std::string line;
 
@@ -101,7 +101,11 @@ bool read_OBJ(std::istream& is,
      continue;
     }
   }
-
+  if(maxi<0)
+  {
+    //not a OBJ file
+    return false;
+  }
   if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
   {
     std::cerr << "a face index is invalid " << std::endl;
