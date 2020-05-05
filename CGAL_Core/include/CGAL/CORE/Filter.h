@@ -164,7 +164,7 @@ public:
       double maxVal = ( core_abs(val) + maxAbs / x.maxAbs) / xxx + DBL_MIN;
       return filteredFp(val, maxVal, 1 + core_max(ind, x.ind + 1));
     } else
-      return filteredFp(getDoubleInfty(), 0.0, 0);
+      return filteredFp( std::nan(""), getDoubleInfty(), 1);
   }
   /// square root
   filteredFp sqrt () const {
