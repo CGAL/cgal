@@ -740,7 +740,7 @@ void extract_border_of_work_zone(const typename boost::graph_traits<PolygonMesh>
 
         std::cout << "add_to_sequence = " << add_to_sequence << std::endl;
         if(add_to_sequence)
-          wz.border.insert(wz.border.end(), seq.begin(), seq.end()); // not worth move-ing pointers
+          wz.border.insert(wz.border.end(), std::begin(seq), std::end(seq)); // not worth move-ing pointers
       }
       else
       {
@@ -852,12 +852,12 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
   // @todo this type of matching might not be the best idea
 
   double best_score = std::numeric_limits<double>::max();
-  for(HCit_A it_A=bhv_A.begin(), A_end=bhv_A.end(); it_A!=A_end; ++it_A)
+  for(HCit_A it_A=std::begin(bhv_A), A_end=std::end(bhv_A); it_A!=A_end; ++it_A)
   {
     const Point_ref_A sap = get(vpm_A, source(*it_A, pmesh_A));
     const Point_ref_A tap = get(vpm_A, target(*it_A, pmesh_A));
 
-    for(HCit_B it_B=bhv_B.begin(), B_end=bhv_B.end(); it_B!=B_end; ++it_B)
+    for(HCit_B it_B=std::begin(bhv_B), B_end=std::end(bhv_B); it_B!=B_end; ++it_B)
     {
       const Point_ref_B sbp = get(vpm_B, source(*it_B, pmesh_B));
       const Point_ref_B tbp = get(vpm_B, target(*it_B, pmesh_B));
@@ -905,7 +905,7 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
 
   // Walk A's border
   HCit_A last_A = std::prev(bhv_A.end());
-  HCit_A it_A = (canon_A == last_A) ? bhv_A.begin() : std::next(canon_A);
+  HCit_A it_A = (canon_A == last_A) ? std::begin(bhv_A) : std::next(canon_A);
   do
   {
     const halfedge_descriptor h = *it_A;
@@ -921,7 +921,7 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
       third_points.push_back(construct_artificial_third_point(h, pmesh_A, vpm_A, gt));
     else
       third_points.push_back(get(vpm_A, target(next(oh, pmesh_A), pmesh_A)));
-    it_A = (it_A == last_A) ? bhv_A.begin() : std::next(it_A);
+    it_A = (it_A == last_A) ? std::begin(bhv_A) : std::next(it_A);
   }
   while(it_A != canon_A);
 
@@ -934,7 +934,7 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
 
   // Walk B's border
   HCit_B last_B = std::prev(bhv_B.end());
-  HCit_B it_B = (canon_B == last_B) ? bhv_B.begin() : std::next(canon_B);
+  HCit_B it_B = (canon_B == last_B) ? std::begin(bhv_B) : std::next(canon_B);
   do
   {
     const halfedge_descriptor h = *it_B;
@@ -947,7 +947,7 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
       third_points.push_back(construct_artificial_third_point(h, pmesh_B, vpm_B, gt));
     else
       third_points.push_back(get(vpm_B, target(next(opposite(h, pmesh_B), pmesh_B), pmesh_B)));
-    it_B = (it_B == last_B) ? bhv_B.begin() : std::next(it_B);
+    it_B = (it_B == last_B) ? std::begin(bhv_B) : std::next(it_B);
   }
   while(it_B != canon_B);
 
@@ -1103,8 +1103,8 @@ bool merge_zones(const WorkZone& wz_1,
     return false; // can't find an orientation compatible with both borders
   }
 
-  std::set<face_descriptor> fs(wz_1.faces.begin(), wz_1.faces.end());
-  fs.insert(wz_2.faces.begin(), wz_2.faces.end());
+  std::set<face_descriptor> fs(std::begin(wz_1.faces), std::end(wz_1.faces));
+  fs.insert(std::begin(wz_2.faces), std::end(wz_2.faces));
 
   return replace_faces_with_patch(fs, point_patch, pmesh, vpm);
 }
@@ -1183,7 +1183,7 @@ bool fill_zones(const WorkZoneContainer& wzs,
 
     if(wzs[i].faces.size() == 1)
     {
-      Euler::remove_face(halfedge(*(wzs[i].faces.begin()), pmesh), pmesh);
+      Euler::remove_face(halfedge(*(std::begin(wzs[i].faces)), pmesh), pmesh);
       continue;
     }
 
@@ -1220,7 +1220,6 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::cout << wzs.size() << " work zones" << std::endl;
-
   static int i = 0;
   for(const Work_zone<PolygonMesh>& wz : wzs)
   {
@@ -1373,13 +1372,13 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   for(vertex_descriptor v : vertices(pmesh))
     put(nm_marks, v, false);
 
-  typedef std::set<halfedge_descriptor>                                       Cones;
-  std::unordered_map<Point, Cones> nm_points;
-
+  std::unordered_map<Point, std::set<halfedge_descriptor> > nm_points;
   internal::geometrically_non_manifold_vertices(nm_points, nm_marks, pmesh, vpm, gt);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::cout << nm_points.size() << " cases to treat" << std::endl;
+  for(auto& e : nm_points)
+    std::cout << e.first << std::endl;
 #endif
 
   internal::enforce_non_manifold_vertex_separation(nm_marks, pmesh, vpm, gt);
@@ -1395,13 +1394,12 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
               << " with " << umbrellas.size() << " incident umbrellas:" << std::endl;
     for(const halfedge_descriptor h : umbrellas)
       std::cout << h << " (" << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
-    std::cout << std::endl;
 #endif
 
     internal::treat_umbrellas(umbrellas, treatment, radius, pmesh, vpm, gt);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "done with that nm vertex" << std::endl;
+    std::cout << "done with that nm vertex" << std::endl << std::endl;
     std::ofstream("results/intermediary.off") << std::setprecision(17) << pmesh;
 #endif
   }

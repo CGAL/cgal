@@ -39,6 +39,8 @@ void read_mesh(const char* fname,
 template <typename PolygonMesh>
 void repair_non_manifold_vertices(const char* fname)
 {
+  std::cout << "Test: " << fname << std::endl;
+
   PolygonMesh pmesh;
   read_mesh(fname, pmesh);
 
