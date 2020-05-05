@@ -387,6 +387,7 @@ bool treat_pinched_stars(UmbrellaContainer& umbrellas,
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
   bool has_pinched_nm_vertices = false;
+  std::set<halfedge_descriptor> treated_umbrellas;
 
   for(const halfedge_descriptor h : umbrellas)
   {
@@ -394,14 +395,19 @@ bool treat_pinched_stars(UmbrellaContainer& umbrellas,
       continue;
 
     has_pinched_nm_vertices = true;
+    treated_umbrellas.insert(h);
 
     std::vector<halfedge_descriptor> faces_to_delete;
     for(const halfedge_descriptor ih : halfedges_around_target(h, pmesh))
-      faces_to_delete.push_back(ih);
+      if(!is_border(ih, pmesh))
+        faces_to_delete.push_back(ih);
 
-    for(const halfedge_descriptor ih : halfedges_around_target(h, pmesh))
-      Euler::remove_face(ih, pmesh);
+    for(halfedge_descriptor ih : faces_to_delete)
+       Euler::remove_face(ih, pmesh);
   }
+
+  for(halfedge_descriptor h : treated_umbrellas)
+    umbrellas.erase(h);
 
   return has_pinched_nm_vertices;
 }
@@ -1300,16 +1306,16 @@ void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] =
 
       // if this is the second time we visit that vertex and the first star was manifold, we have
       // not marked the vertex as non-manifold from the first star
-      const auto nm_itb = nm_points.emplace(p, std::vector<halfedge_descriptor>{h});
+      const auto nm_itb = nm_points.emplace(p, std::set<halfedge_descriptor>{h});
       if(nm_itb.second) // successful insertion
       {
         const halfedge_descriptor h_from_another_star = visited_itb.first->second;
-        nm_itb.first->second.push_back(h_from_another_star);
+        nm_itb.first->second.insert(h_from_another_star);
         put(nm_marks, target(h_from_another_star, pmesh), true);
       }
       else
       {
-        nm_itb.first->second.push_back(h);
+        nm_itb.first->second.insert(h);
       }
     }
 
@@ -1330,7 +1336,7 @@ void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] =
     if(border_counter > 1 && !is_non_manifold_due_to_multiple_umbrellas)
     {
       put(nm_marks, v, true);
-      nm_points[p].push_back(h); // might or might not have been an empty vector before
+      nm_points[p].insert(h); // might or might not have been an empty vector before
     }
   }
 }
@@ -1367,7 +1373,7 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   for(vertex_descriptor v : vertices(pmesh))
     put(nm_marks, v, false);
 
-  typedef std::vector<halfedge_descriptor>                                    Cones;
+  typedef std::set<halfedge_descriptor>                                       Cones;
   std::unordered_map<Point, Cones> nm_points;
 
   internal::geometrically_non_manifold_vertices(nm_points, nm_marks, pmesh, vpm, gt);
@@ -1379,13 +1385,13 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   internal::enforce_non_manifold_vertex_separation(nm_marks, pmesh, vpm, gt);
   std::ofstream("results/enforced_separation.off") << std::setprecision(17) << pmesh;
 
-  for(const auto& e : nm_points)
+  for(auto& e : nm_points)
   {
-    const std::vector<halfedge_descriptor>& umbrellas = e.second;
-    CGAL_assertion(std::set<halfedge_descriptor>(umbrellas.begin(), umbrellas.end()).size() == umbrellas.size());
+    std::set<halfedge_descriptor>& umbrellas = e.second;
+    CGAL_assertion(!umbrellas.empty());
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "NM vertex at pos " << get(vpm, target(umbrellas.front(), pmesh))
+    std::cout << "NM vertex at pos " << get(vpm, target(*(std::begin(umbrellas)), pmesh))
               << " with " << umbrellas.size() << " incident umbrellas:" << std::endl;
     for(const halfedge_descriptor h : umbrellas)
       std::cout << h << " (" << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
