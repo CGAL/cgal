@@ -45,7 +45,8 @@ if (EIGEN3_FOUND)
   CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_test)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
   CGAL_target_use_Eigen(test_shape_smoothing)
-
+  create_single_source_cgal_program("test_pmp_repair_manifoldness.cpp")
+  CGAL_target_use_Eigen(test_pmp_repair_manifoldness)
 endif(EIGEN3_FOUND)
 
 find_package( OpenMesh QUIET )
@@ -101,7 +102,7 @@ endif()
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
   create_single_source_cgal_program("test_remove_caps_needles.cpp")
-#  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
+  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
   if( TBB_FOUND )
     include(CGAL_target_use_TBB)
