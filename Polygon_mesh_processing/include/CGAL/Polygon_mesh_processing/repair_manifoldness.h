@@ -312,6 +312,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 // main:
 // @todo something without heat method ? (SMSP)
 // @todo handle geodesic spheres that intersect
+// @todo VPM for heat method / heat method on a FFG
 //
 // optimization:
 // @todo can make maps of Points lighter with a vertex as key, and a custom equal comparing actual points
@@ -350,11 +351,13 @@ split_edge_and_triangulate_incident_faces(typename boost::graph_traits<PolygonMe
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
   halfedge_descriptor res = Euler::split_edge(h, pmesh);
-  Euler::split_face(res, next(h, pmesh), pmesh);
 
-  if(!is_border(edge(h, pmesh), pmesh))
+  if(!is_border(res, pmesh))
+    Euler::split_face(res, next(h, pmesh), pmesh);
+
+  halfedge_descriptor opp_h = opposite(h, pmesh);
+  if(!is_border(opp_h, pmesh))
   {
-    halfedge_descriptor opp_h = opposite(h, pmesh);
     Euler::split_face(opp_h, next(next(opp_h, pmesh), pmesh), pmesh);
   }
 
@@ -450,7 +453,7 @@ void enforce_non_manifold_vertex_separation(NMVM nm_marks,
 // note that this also refines the mesh
 template <typename PolygonMesh, typename VPM, typename GeomTraits>
 void construct_work_zone(Work_zone<PolygonMesh>& wz,
-                         const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                         const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor zh,
                          const typename GeomTraits::FT radius,
                          PolygonMesh& pmesh,
                          VPM vpm,
@@ -474,15 +477,19 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   wz.distances = get(Distance_tag(), pmesh);
 
-  vertex_descriptor source_v = target(h, pmesh);
-  CGAL::Heat_method_3::estimate_geodesic_distances(pmesh, wz.distances, source_v);
+  vertex_descriptor source_v = target(zh, pmesh);
+
+  std::cout << "zh: " << edge(zh, pmesh) << " " << get(vpm, source(zh, pmesh)) << " " << get(vpm, target(zh, pmesh)) << std::endl;
+  const auto& nmp = pmesh.point(source_v); // @tmp
+
+  CGAL::Heat_method_3::estimate_geodesic_distances(pmesh, wz.distances, source_v); // @fixme vpm?
 
   // Corefine the mesh with a piecewise(face)-linear approximation of the geodesic circle
   std::set<face_descriptor> faces_to_consider;
-  std::vector<edge_descriptor> edges_to_split;
+  std::vector<halfedge_descriptor> edges_to_split;
 
   std::stack<halfedge_descriptor> halfedges_to_consider;
-  halfedges_to_consider.push(opposite(h, pmesh));
+  halfedges_to_consider.push(opposite(zh, pmesh));
 
   Considered_edge_map considered_edges = get(Considered_tag(), pmesh);
 
@@ -494,24 +501,28 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
     std::cout << get(vpm, source(curr_h, pmesh)) << " " << get(vpm, target(curr_h, pmesh)) << std::endl;
 
-    edge_descriptor curr_e = edge(curr_h, pmesh);
+    const edge_descriptor curr_e = edge(curr_h, pmesh);
     put(considered_edges, curr_e, true);
 
     const bool is_s_in = (get(wz.distances, source(curr_e, pmesh)) <= radius);
     const bool is_t_in = (get(wz.distances, target(curr_e, pmesh)) <= radius);
+
     if(is_s_in != is_t_in)
-      edges_to_split.push_back(curr_e);
+    {
+      // We want to keep zh pointing to the nm vertex after the edge split
+      edges_to_split.push_back((curr_h == opposite(zh, pmesh)) ? zh : curr_h);
+    }
 
     if(!is_border(curr_h, pmesh))
       faces_to_consider.insert(face(curr_h, pmesh));
     if(!is_border(opposite(curr_h, pmesh), pmesh))
       faces_to_consider.insert(face(opposite(curr_h, pmesh), pmesh));
 
-    vertex_descriptor curr_v = source(curr_h, pmesh);
+    const vertex_descriptor curr_v = source(curr_h, pmesh);
     if(get(wz.distances, curr_v) > radius)
       continue;
 
-    for(halfedge_descriptor adj_h : CGAL::halfedges_around_source(curr_h, pmesh))
+    for(const halfedge_descriptor adj_h : CGAL::halfedges_around_source(curr_h, pmesh))
     {
       if(get(considered_edges, edge(adj_h, pmesh))) // already visited
         continue;
@@ -523,12 +534,12 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   std::cout << edges_to_split.size() << " edges to split" << std::endl;
 
+  CGAL_assertion(get(vpm, target(zh, pmesh)) == nmp);
+
   // Actual split
-  for(edge_descriptor e : edges_to_split)
+  for(halfedge_descriptor h : edges_to_split)
   {
-    halfedge_descriptor h = halfedge(e, pmesh);
-    if(is_border(h, pmesh))
-      h = opposite(h, pmesh);
+    std::cout << "split: " << edge(h, pmesh) << " " << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << std::endl;
 
     const vertex_descriptor vs = source(h, pmesh);
     const vertex_descriptor vt = target(h, pmesh);
@@ -561,6 +572,8 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
     put(vpm, target(new_h, pmesh), new_p);
     put(wz.distances, target(new_h, pmesh), radius);
 
+    std::cout << "new: " << edge(new_h, pmesh) << " " << get(vpm, source(new_h, pmesh)) << " " << get(vpm, target(new_h, pmesh)) << std::endl;
+
     // @todo might be simplifiable?
     if(!is_border(h, pmesh))
     {
@@ -573,6 +586,9 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
       faces_to_consider.insert(face(opposite(h, pmesh), pmesh));
       faces_to_consider.insert(face(opposite(new_h, pmesh), pmesh));
     }
+
+    std::cout << "zh: " << edge(zh, pmesh) << " " << get(vpm, source(zh, pmesh)) << " " << get(vpm, target(zh, pmesh)) << std::endl;
+    CGAL_assertion(get(vpm, target(zh, pmesh)) == nmp);
   }
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
