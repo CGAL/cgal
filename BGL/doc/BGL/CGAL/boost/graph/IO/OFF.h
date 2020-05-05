@@ -1,28 +1,31 @@
 namespace CGAL {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
+/* \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
 
+    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
+
+    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd*/
 /*!
   \ingroup PkgBGLIOFct
 
   reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash,
   and lines with whitespace.
 
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+
+    `face_color_map` the property map with the colors associated to the faces of `g`.
 
   \pre The data must represent a 2-manifold
 
@@ -43,15 +46,15 @@ bool read_OFF(std::istream& in, FaceGraph& g, const NamedParameters& np);
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
     \cgalNamedParamsEnd
+
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+
+    `face_color_map` the property map with the colors associated to the faces of `g`.
 
   \pre The data must represent a 2-manifold
 
@@ -62,9 +65,6 @@ bool read_OFF(std::istream& in, FaceGraph& g, const NamedParameters& np);
 template <typename FaceGraph, typename NamedParameters>
 bool read_OFF(const char* fname, FaceGraph& g, const NamedParameters& np);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
 
 /*!
   \ingroup PkgBGLIOFct
@@ -75,15 +75,15 @@ bool read_OFF(const char* fname, FaceGraph& g, const NamedParameters& np);
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
     \cgalNamedParamsEnd
+
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+
+    `face_color_map` the property map with the colors associated to the faces of `g`.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
@@ -101,15 +101,14 @@ bool write_OFF(std::ostream& os, const FaceGraph& g, const NamedParameters& np);
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
     \cgalNamedParamsEnd
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+
+    `face_color_map` the property map with the colors associated to the faces of `g`.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 

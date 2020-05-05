@@ -263,8 +263,7 @@ template <class PointRange, class PolygonRange>
 bool
 read_PLY(std::istream& is,
          PointRange& points,
-         PolygonRange& polygons,
-         bool /* verbose */ = false
+         PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
     ,typename std::enable_if<
          boost::has_value_type<PointRange>::value

@@ -236,7 +236,7 @@ bool write_GOCAD(std::ostream& os,
 /*!
   \ingroup IOstreamFunctions
 
- * writes the content of `points` and `polygons` in `out`, in the TS format.
+ * writes the content of `points` and `polygons` in `os`, in the TS format.
 
   \see \ref IOStreamGocad
 */

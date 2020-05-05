@@ -238,7 +238,7 @@ bool write_OFF(std::ostream& os,
 /*!
  * \ingroup IOstreamFunctions
  *
- * writes the content of `points` and `polygons` in `out`, in the OFF format.
+ * writes the content of `points` and `polygons` in `os`, in the OFF format.
  *
  * \see \ref IOStreamOFF
  */

@@ -1,10 +1,6 @@
 
 namespace CGAL {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
-
 
 /*!
   \ingroup PkgBGLIOFct
@@ -15,8 +11,9 @@ namespace CGAL {
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+
 
   \returns `true` if the resulting mesh is valid.
 
@@ -40,8 +37,8 @@ bool read_OBJ(std::istream& in,
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
+  `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
 
   \returns `true` if the resulting mesh is valid.
 
@@ -55,9 +52,6 @@ template <typename FaceGraph, typename NamedParameter>
 bool read_OBJ(const char* fname,
               FaceGraph& g,
               const NamedParameter& np);
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
 
 /*!
  \ingroup PkgBGLIOFct
@@ -68,8 +62,8 @@ bool read_OBJ(const char* fname,
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
+  `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
 
   \returns `true` if writing was successful.
 
@@ -91,8 +85,8 @@ bool write_OBJ(std::ostream& os,
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
+  `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
 
   \returns `true` if writing was successful.
 

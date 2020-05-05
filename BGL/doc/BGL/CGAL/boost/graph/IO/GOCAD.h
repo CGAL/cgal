@@ -1,9 +1,5 @@
 namespace CGAL {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
-
 /*!
   \ingroup PkgBGLIOFct
 
@@ -48,14 +44,11 @@ bool read_GOCAD(std::istream& in,
 template <typename FaceGraph, typename NamedParameter>
 bool read_GOCAD(const char* fname, FaceGraph& g, const NamedParameter& np);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
 /*!
   \ingroup PkgBGLIOFct
 
   writes the graph `g` in the TS format into `os`. `fname` is the
-  mandatory name that will be assigned to `g`in the file.
+  mandatory name that will be assigned to `g` in the file.
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
@@ -96,7 +89,7 @@ bool write_GOCAD(const char* fname,
   \ingroup PkgBGLIOFct
 
   writes the graph `g` in the TS format into `os`. The name
- that will be assigned to `g`in the file is `anonymous`.
+ that will be assigned to `g` in the file is `anonymous`.
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.

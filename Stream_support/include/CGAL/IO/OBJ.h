@@ -149,28 +149,28 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 //!
 /// reads the content of `is` into `points` and `faces`, using the `OBJ` format.
 ///
-/// \tparam PointRange a `RandomAccessContainer` of `Point_3,
+/// \tparam PointRange a `RandomAccessContainer` of `Point_3`
 /// \tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
 ///
 /// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
-bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons)
+bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& faces)
 {
-  return read_OBJ(is, points, polygons, parameters::all_default());
+  return read_OBJ(is, points, faces, parameters::all_default());
 }
 
 //! \ingroup IOstreamFunctions
 //!
 /// reads the content of the file `fname` into `points` and `faces`, using the `OBJ` format.
 ///
-/// \tparam PointRange a `RandomAccessContainer` of `Point_3,
+/// \tparam PointRange a `RandomAccessContainer` of `Point_3`
 /// \tparam PolygonRange a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
 ///
 /// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
-bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons)
+bool read_OBJ(const char* fname, PointRange& points, PolygonRange& faces)
 {
-  return read_OBJ(fname, points, polygons, parameters::all_default());
+  return read_OBJ(fname, points, faces, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange>
@@ -183,13 +183,6 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * writes the content of `points` and `polygons` in `os`, in the OBJ format.
- *
- * \see \ref IOStreamOBJ
- */
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -202,6 +195,13 @@ bool write_OBJ(std::ostream& os,
   return writer(points, polygons);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in `os`, in the OBJ format.
+ *
+ * \see \ref IOStreamOBJ
+ */
 template <typename PointRange,
           typename PolygonRange>
 bool write_OBJ(std::ostream& os,
@@ -211,13 +211,6 @@ bool write_OBJ(std::ostream& os,
   return write_OBJ(os, points, polygons, parameters::all_default());
 }
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * writes the content of `points` and `polygons` in a file named `fname`, in the OBJ format.
- *
- * \see \ref IOStreamOBJ
- */
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -230,6 +223,13 @@ bool write_OBJ(const char* fname,
   return write_OBJ(out, points, polygons, np);
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in a file named `fname`, in the OBJ format.
+ *
+ * \see \ref IOStreamOBJ
+ */
 template <typename PointRange,
           typename PolygonRange>
 bool write_OBJ(const char* fname,

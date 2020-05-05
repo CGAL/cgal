@@ -1,9 +1,6 @@
 
 namespace CGAL {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
 
 /*!
  * \ingroup PkgBGLIOFct
@@ -14,6 +11,8 @@ namespace CGAL {
  *
  * \param fname the path to the file that will be read.
  * \param g the output mesh.
+ * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
+ * ones listed below
  *
  * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
  * \cgalNamedParamsBegin
@@ -27,9 +26,6 @@ namespace CGAL {
 template<typename FaceGraph, typename NamedParameter>
 bool read_VTP(const char* fname, FaceGraph& g, const NamedParameter& np);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
 
 /*! \ingroup PkgBGLIOFct
  *
@@ -69,7 +65,7 @@ void write_VTP(std::ostream& os,
  * \tparam FaceGraph a model of `FaceListGraph` with only triangle faces.
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * \param os the stream used for writing.
+ * \param fname the name of the output file.
  * \param g the triangle mesh to be written.
  * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
  * ones listed below
