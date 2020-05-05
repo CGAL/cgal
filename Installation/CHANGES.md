@@ -31,6 +31,12 @@ Release History
  -   The long-deprecated function `CGAL::convex_hull_3_to_polyhedron_3()` has been removed.
      The function `CGAL::convex_hull_3_to_face_graph()` should be used instead.
 
+### dD Spatial Searching
+
+ - The kd-tree can now be built in parallel: `CGAL::Kd_tree::build()`
+   is given an optional template parameter `ConcurrencyTag` (default
+   value remains `CGAL::Sequential_tag` for backward compatibility).
+
 Release 5.0
 -----------
 
