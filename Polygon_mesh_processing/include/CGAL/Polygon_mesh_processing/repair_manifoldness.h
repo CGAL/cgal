@@ -1,4 +1,4 @@
-// Copyright (c) 2020 GeometryFactory (France).
+// Copyright (c) 2019-2020 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -310,8 +310,8 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 /// Geometrical treatment
 
 // main:
-// @todo something without heat method ? (SMSP)
-// @todo handle geodesic spheres that intersect
+// @todo handle overlapping geodesic disks
+//       --> in the future: identify matching zones and fill hole with screened poisson?
 // @todo VPM for heat method / heat method on a FFG
 //
 // optimization:
@@ -381,7 +381,7 @@ bool is_pinched_nm_vertex(const typename boost::graph_traits<PolygonMesh>::halfe
 
 template <typename UmbrellaContainer, typename PolygonMesh>
 bool treat_pinched_stars(UmbrellaContainer& umbrellas,
-                         const NM_TREATMENT /*treatment*/, // @todo merge treatment...?
+                         const NM_TREATMENT /*treatment*/, // @todo what should be done in merge treatment...?
                          PolygonMesh& pmesh)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
@@ -479,9 +479,6 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   vertex_descriptor source_v = target(zh, pmesh);
 
-  std::cout << "zh: " << edge(zh, pmesh) << " " << get(vpm, source(zh, pmesh)) << " " << get(vpm, target(zh, pmesh)) << std::endl;
-  const auto& nmp = pmesh.point(source_v); // @tmp
-
   CGAL::Heat_method_3::estimate_geodesic_distances(pmesh, wz.distances, source_v); // @fixme vpm?
 
   // Corefine the mesh with a piecewise(face)-linear approximation of the geodesic circle
@@ -493,13 +490,10 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   Considered_edge_map considered_edges = get(Considered_tag(), pmesh);
 
-  std::cout << "growing zone" << std::endl;
   while(!halfedges_to_consider.empty())
   {
     const halfedge_descriptor curr_h = halfedges_to_consider.top();
     halfedges_to_consider.pop();
-
-    std::cout << get(vpm, source(curr_h, pmesh)) << " " << get(vpm, target(curr_h, pmesh)) << std::endl;
 
     const edge_descriptor curr_e = edge(curr_h, pmesh);
     put(considered_edges, curr_e, true);
@@ -534,13 +528,9 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
 
   std::cout << edges_to_split.size() << " edges to split" << std::endl;
 
-  CGAL_assertion(get(vpm, target(zh, pmesh)) == nmp);
-
   // Actual split
   for(halfedge_descriptor h : edges_to_split)
   {
-    std::cout << "split: " << edge(h, pmesh) << " " << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << std::endl;
-
     const vertex_descriptor vs = source(h, pmesh);
     const vertex_descriptor vt = target(h, pmesh);
     const Point_ref spt = get(vpm, vs);
@@ -572,8 +562,6 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
     put(vpm, target(new_h, pmesh), new_p);
     put(wz.distances, target(new_h, pmesh), radius);
 
-    std::cout << "new: " << edge(new_h, pmesh) << " " << get(vpm, source(new_h, pmesh)) << " " << get(vpm, target(new_h, pmesh)) << std::endl;
-
     // @todo might be simplifiable?
     if(!is_border(h, pmesh))
     {
@@ -586,9 +574,6 @@ void construct_work_zone(Work_zone<PolygonMesh>& wz,
       faces_to_consider.insert(face(opposite(h, pmesh), pmesh));
       faces_to_consider.insert(face(opposite(new_h, pmesh), pmesh));
     }
-
-    std::cout << "zh: " << edge(zh, pmesh) << " " << get(vpm, source(zh, pmesh)) << " " << get(vpm, target(zh, pmesh)) << std::endl;
-    CGAL_assertion(get(vpm, target(zh, pmesh)) == nmp);
   }
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
@@ -624,14 +609,9 @@ Work_zone<PolygonMesh> construct_work_zone(const typename boost::graph_traits<Po
                                            VPM vpm,
                                            const GeomTraits& gt)
 {
-  std::cout << "Marking zone incident to halfedge: " << h << " ("
-            << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
-
   // 'set' complexity should be fine, it's not supposed to be a large number of faces
   Work_zone<PolygonMesh> wz;
   construct_work_zone(wz, h, radius, pmesh, vpm, gt);
-
-  std::cout << wz.faces.size() << " faces in selection" << std::endl;
   CGAL_assertion(!wz.faces.empty());
 
   // If the selection is not a topological disk, just don't do anything
@@ -1142,14 +1122,11 @@ bool fill_zone_with_open_border(const Work_zone<PolygonMesh>& wz,
 
   typedef CGAL::Triple<int, int, int>                                         Face_indices;
 
-  std::cout << "fill_zone_with_open_border" << std::endl;
-
   std::vector<Point> hole_points, third_points;
   for(const halfedge_descriptor bh : wz.border)
   {
     const halfedge_descriptor obh = opposite(bh, pmesh);
 
-    std::cout << "add " << get(vpm, source(bh, pmesh)) << std::endl;
     hole_points.push_back(get(vpm, source(bh, pmesh)));
 
     if(is_border(obh, pmesh))
@@ -1168,24 +1145,6 @@ bool fill_zone_with_open_border(const Work_zone<PolygonMesh>& wz,
   else
     third_points.push_back(get(vpm, target(next(olh, pmesh), pmesh)));
 
-  // bridge the gap between 'lit' and 'rit'
-//  const halfedge_descriptor rh = *rit;
-//  hole_points.push_back(get(vpm, source(rh, pmesh))); // == hole_points.front()
-
-//  const halfedge_descriptor ogh = opposite(lh, pmesh);
-//  if(is_border(ogh, pmesh))
-//  {
-//    const Point_ref p1 = get(vpm, target(lh, pmesh));
-//    const Point_ref p2 = get(vpm, source(rh, pmesh));
-//    const Point_ref opp_p = get(vpm, target(next(lh, pmesh), pmesh));
-//    third_points.push_back(construct_artificial_third_point(p1, p2, opp_p, gt));
-//  }
-//  else
-//  {
-//    third_points.push_back(get(vpm, target(next(ogh, pmesh), pmesh)));
-//  }
-
-  std::cout << hole_points.size() << " hole points" << std::endl;
   CGAL_assertion(hole_points.size() == third_points.size());
 
   std::vector<Face_indices> patch;
