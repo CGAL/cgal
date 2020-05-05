@@ -3,6 +3,14 @@ Release History
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 
+### 3D Fast Intersection and Distance Computation
+- The introduction of the usage of the search tree by default for all distance queries
+  in the 5.0 release was actually not lazy contrary to what was announced. The behavior of the
+  search tree is now the following: it will be used except if an explicit call to `do_not_accelerate_distance_queries()`
+  is made. The construction of the search tree (once insertion of primitives is done) will be triggered by the first
+  distance query or by an explicit call to `accelerate_distance_queries()`.
+- **Breaking change**: `accelerate_distance_queries()` and `do_not_accelerate_distance_queries()` are not longer `const` functions.
+
 ### Optimal Bounding Box (new package)
 - This package implements an optimization algorithm that aims to construct a close approximation
   of the *optimal bounding box* of a mesh or a point set, which is defined as the smallest
