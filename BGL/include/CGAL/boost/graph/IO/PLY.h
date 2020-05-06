@@ -163,7 +163,7 @@ template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
-  return IO::internal::read_PLY_BGL(fname.c_str(), g, np, verbose);
+  return IO::internal::read_PLY(fname.c_str(), g, np, verbose);
 }
 
 

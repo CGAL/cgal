@@ -99,8 +99,8 @@ bool read_polygon_mesh(const std::string& fname,
     return read_VTP(fname, g, np);
   }
 
-  std::istream is(fname.c_str());
-  return read_polygon_mesh(is, g, np, false);
+  std::ifstream is(fname.c_str());
+  return read_polygon_mesh(is, g, np);
 }
 
 template <class FaceGraph>

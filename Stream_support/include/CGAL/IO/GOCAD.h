@@ -34,12 +34,12 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& input,
                 std::pair<std::string, std::string>& name_and_color,
                 PointRange& points,
                 PolygonRange& polygons,
-                const NamedParameters&,
+                const CGAL_BGL_NP_CLASS&,
                 bool verbose = true)
 {
   CGAL_USE(verbose);
@@ -105,33 +105,33 @@ bool read_GOCAD(std::istream& input,
   return !input.fail();
 }
 
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 PointRange& points,
                 PolygonRange& polygons,
-                const NamedParameters&np)
+                const CGAL_BGL_NP_CLASS&np)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(is, dummy, points, polygons, np);
 }
 
 
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname,
                 PointRange& points,
                 PolygonRange& polygons,
-                const NamedParameters& np)
+                const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream in(fname);
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(in, dummy, points, polygons, np);
 }
 
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const std::string& fname,
                 PointRange& points,
                 PolygonRange& polygons,
-                const NamedParameters& np)
+                const CGAL_BGL_NP_CLASS& np)
 {
   return read_GOCAD(fname.c_str(), points, polygons, np);
 }

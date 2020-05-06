@@ -73,9 +73,10 @@ void fill_soup(PointRange& points, PolygonRange& polygons)
 template<typename Mesh>
 void test_bgl_OFF(const char* filename)
 {
-  Mesh sm;
+  Mesh sm, sm2;
   std::ifstream in(filename);
   CGAL::read_polygon_mesh(in,sm);
+  CGAL::read_polygon_mesh(filename, sm2);
 
   CGAL::write_OFF(std::cout, sm);
 }
@@ -100,6 +101,12 @@ void test_bgl_OFF_with_np()
 
 
   bool ok = CGAL::read_polygon_mesh(in, fg, CGAL::parameters::vertex_normal_map(vnm)
+                 .vertex_color_map(vcm)
+                 .vertex_texture_map(vtm)
+                 .face_color_map(fcm));
+  CGAL_assertion(ok);
+  fg.clear();
+  ok = CGAL::read_polygon_mesh("data/full.off", fg, CGAL::parameters::vertex_normal_map(vnm)
                  .vertex_color_map(vcm)
                  .vertex_texture_map(vtm)
                  .face_color_map(fcm));
@@ -134,6 +141,11 @@ bool test_bgl_OBJ()
   CGAL::read_polygon_mesh(in, fg);
   CGAL_assertion(num_vertices(fg) == 4);
   CGAL_assertion(num_faces(fg) == 4);
+  fg.clear();
+  CGAL::read_polygon_mesh("data/sphere.obj", fg);
+  CGAL_assertion(num_vertices(fg) == 162);
+  CGAL_assertion(num_faces(fg) == 320);
+
 
   return true;
 }
@@ -203,7 +215,7 @@ bool test_bgl_vtp(bool binary = false)
   }
   os.close();
   Mesh fg2;
-  if(!CGAL::read_VTP("tetrahedron.vtp", fg2))
+  if(!CGAL::read_polygon_mesh("tetrahedron.vtp", fg2))
   {
     std::cerr<<"vtp reading failed."<<std::endl;
     return false;
@@ -239,7 +251,7 @@ bool test_bgl_vtp<Polyhedron>(bool binary)
   }
   os.close();
   Polyhedron fg2;
-  if(!CGAL::read_VTP("tetrahedron.vtp", fg2))
+  if(!CGAL::read_polygon_mesh("tetrahedron.vtp", fg2))
   {
     std::cerr<<"vtp reading failed."<<std::endl;
     return false;

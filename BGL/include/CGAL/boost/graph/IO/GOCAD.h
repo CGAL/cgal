@@ -153,16 +153,15 @@ template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::ifstream in(fname);
-  std::string unused_name;
-  std::string unused_color;
+  std::pair<std::string, std::string> dummy;
 
-  return read_GOCAD(in, unused_name, unused_color, g, np, verbose);
+  return read_GOCAD(in, dummy, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname, FaceGraph& g, CGAL_BGL_NP_CLASS np)
+bool read_GOCAD(const std::string& fname, FaceGraph& g, CGAL_BGL_NP_CLASS np, bool verbose = true)
 {
-  return read_GOCAD(fname.c_str(), g, np);
+  return read_GOCAD(fname.c_str(), g, np, verbose);
 }
 
 template <typename FaceGraph>
