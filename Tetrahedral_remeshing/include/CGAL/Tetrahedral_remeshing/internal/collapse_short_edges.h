@@ -61,9 +61,9 @@ public:
   CollapseTriangulation(C3t3& c3t3,
                         const Edge& e,
                         Collapse_type _collapse_type)
-    : v0_init(e.first->vertex(e.second))
+    : collapse_type(_collapse_type)
+    , v0_init(e.first->vertex(e.second))
     , v1_init(e.first->vertex(e.third))
-    , collapse_type(_collapse_type)
   {
     typedef std::array<int, 3> Facet; // 3 = id
     typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
@@ -768,7 +768,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
   // update complex edges
   const std::array<std::array<int, 2>, 6> edges
-    = { { 0,1, 0,2, 0,3, 1,2, 1,3, 2,3 } }; //vertex indices in cells
+    = { { {{0,1}}, {{0,2}}, {{0,3}}, {{1,2}}, {{1,3}}, {{2,3}} } }; //vertex indices in cells
   const Vertex_handle vkept = vh0;
   const Vertex_handle vdeleted = vh1;
   for (const Cell_handle c : cells_to_update)

@@ -1095,7 +1095,6 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
                            Visitor& visitor)
 {
   typedef typename C3t3::Triangulation Tr;
-//    typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle   Cell_handle;
   typedef typename Tr::Edge          Edge;
 

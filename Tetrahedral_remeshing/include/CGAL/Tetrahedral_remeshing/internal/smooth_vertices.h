@@ -118,20 +118,17 @@ private:
     return {};
   }
 
-  template<typename CellSelector>
+  template<typename Gt>
   Vector_3 compute_normal(const Facet& f,
                           const Vector_3& reference_normal,
-                          const C3t3& c3t3,
-                          const CellSelector& cell_selector)
+                          const Gt& gt)
   {
-    CGAL_assertion(is_boundary(c3t3, f, cell_selector));
+    typename Gt::Construct_opposite_vector_3
+      opp = gt.construct_opposite_vector_3_object();
+    typename Gt::Compute_scalar_product_3
+      scalar_product = gt.compute_scalar_product_3_object();
 
-    typename Tr::Geom_traits::Construct_opposite_vector_3
-    opp = c3t3.triangulation().geom_traits().construct_opposite_vector_3_object();
-    typename Tr::Geom_traits::Compute_scalar_product_3
-    scalar_product = c3t3.triangulation().geom_traits().compute_scalar_product_3_object();
-
-    Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, c3t3.triangulation().geom_traits());
+    Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, gt);
     if (scalar_product(n, reference_normal) < 0.)
       n = opp(n);
 
@@ -143,10 +140,9 @@ private:
                                 VertexNormalsMap& normals_map,
                                 const CellSelector& cell_selector)
   {
+    typename Tr::Geom_traits gt = c3t3.triangulation().geom_traits();
     typename Tr::Geom_traits::Construct_opposite_vector_3
-    opp = c3t3.triangulation().geom_traits().construct_opposite_vector_3_object();
-//        typename Tr::Geom_traits::Construct_scaled_vector_3
-//          scale = c3t3.triangulation().geom_traits().construct_scaled_vector_3_object();
+      opp = gt.construct_opposite_vector_3_object();
 
     const Tr& tr = c3t3.triangulation();
 
@@ -185,10 +181,10 @@ private:
 
         const typename C3t3::Cell_handle ch = f.first;
         const std::array<std::array<int, 2>, 3> edges
-        = { (ff.second + 1) % 4, (ff.second + 2) % 4, //edge 1-2
-            (ff.second + 2) % 4, (ff.second + 3) % 4, //edge 2-3
-            (ff.second + 3) % 4, (ff.second + 1) % 4  //edge 3-1
-          }; //vertex indices in cells
+          = {{ {{(ff.second + 1) % 4, (ff.second + 2) % 4}}, //edge 1-2
+               {{(ff.second + 2) % 4, (ff.second + 3) % 4}}, //edge 2-3
+               {{(ff.second + 3) % 4, (ff.second + 1) % 4}}  //edge 3-1
+            }}; //vertex indices in cells
 
         const Vector_3& ref = fnormals[f];
         for (const std::array<int, 2>& ei : edges)
@@ -200,7 +196,7 @@ private:
             const Facet neigh = *neighbor; //already a canonical_facet
             if (fnormals[neigh] == CGAL::NULL_VECTOR) //check it's not already computed
             {
-              fnormals[neigh] = compute_normal(neigh, ref, c3t3, cell_selector);
+              fnormals[neigh] = compute_normal(neigh, ref, gt);
               facets.push_back(neigh);
             }
           }
