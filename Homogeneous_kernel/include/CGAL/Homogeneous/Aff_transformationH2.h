@@ -783,6 +783,17 @@ operator*(const Aff_transformationH2<R>& right_argument) const
 }
 
 template <class R>
+std::ostream&
+operator<<(std::ostream& out, const Aff_transformationH2<R>& t)
+{
+  typename R::RT RT0(0);
+  Aff_transformation_repH2<R> r = t.Ptr()->general_form();
+  return out << "| "<< r.a << ' ' << r.b << ' ' << r.c << " |\n"
+             << "| "<< r.d << ' ' << r.e << ' ' << r.f << " |\n"
+             << "| "<< RT0 << ' ' << RT0 << ' ' << r.g << " |\n";
+}
+
+template <class R>
 Aff_transformationH2<R>
 _general_transformation_composition( Aff_transformation_repH2<R> l,
                                      Aff_transformation_repH2<R> r )
