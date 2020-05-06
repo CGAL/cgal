@@ -21,6 +21,10 @@ Release History
    the signed distance of two points to a line, or the line passing through two given points.
    Corresponding functors in the model (`Compare_signed_distance_to_line_2`) are also added.
 
+### Point Set Processing
+ - Add a function `CGAL::cluster_point_set()` that segments a point
+   cloud into connected components based on a distance threshold.
+
 ### 2D Triangulations
  - Add function `split_subconstraint_graph_into_constraints()` to
    `Constrained_triangulation_plus_2` to initialize the constraints
