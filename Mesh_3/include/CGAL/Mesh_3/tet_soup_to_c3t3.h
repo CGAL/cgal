@@ -24,6 +24,9 @@
 #include <CGAL/IO/File_medit.h>
 
 #include <array>
+#include <vector>
+#include <utility>
+#include <map>
 #include <boost/unordered_map.hpp>
 
 
