@@ -68,23 +68,30 @@ public:
     typedef std::array<int, 3> Facet; // 3 = id
     typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
 
-    std::vector<Tet_with_ref> finite_cells;
-    std::vector<Point_3> points;
-    std::map<Facet, int> border_facets;
+    std::unordered_set<Cell_handle> cells_to_insert;
+    c3t3.triangulation().finite_incident_cells(v0_init,
+      std::inserter(cells_to_insert, cells_to_insert.end()));
+    c3t3.triangulation().finite_incident_cells(v1_init,
+      std::inserter(cells_to_insert, cells_to_insert.end()));
 
-    std::vector<Vertex_handle> vertices_to_insert;
-    c3t3.triangulation().finite_incident_vertices(v0_init,
-        std::back_inserter(vertices_to_insert));
-    vertices_to_insert.push_back(v0_init);
-    c3t3.triangulation().finite_incident_vertices(v1_init,
-      std::back_inserter(vertices_to_insert));
+    make_cells_set_manifold(c3t3, cells_to_insert);
+
+    std::unordered_set<Vertex_handle> vertices_to_insert;
+    for (Cell_handle ch : cells_to_insert)
+    {
+      for(int i = 0; i < 4; ++i)
+        vertices_to_insert.insert(ch->vertex(i));
+    }
 
     CGAL_assertion(vertices_to_insert.end()
       != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v1_init));
+    CGAL_assertion(vertices_to_insert.end()
+      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v0_init));
 
     std::unordered_map<Vertex_handle, int> v2i;/*vertex of main tr - vertex of collapse tr*/
 
     //To add the vertices only once
+    std::vector<Point_3> points;
     int index = 0;
     for (Vertex_handle vh : vertices_to_insert)
     {
@@ -95,12 +102,7 @@ public:
       }
     }
 
-    std::unordered_set<Cell_handle> cells_to_insert;
-    c3t3.triangulation().finite_incident_cells(v0_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
-    c3t3.triangulation().finite_incident_cells(v1_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
-
+    std::vector<Tet_with_ref> finite_cells;
     for (Cell_handle ch : cells_to_insert)
     {
       Tet_with_ref t = { { v2i.at(ch->vertex(0)),
@@ -111,60 +113,35 @@ public:
       finite_cells.push_back(t);
     }
 
-//    std::cout << "cells_to_insert : " << cells_to_insert.size() << std::endl;
-//    make_cells_set_manifold(c3t3, cells_to_insert);
-//    std::cout << "cells_to_insert : " << cells_to_insert.size() << std::endl;
-//
-//    std::cout << "Collapse : " << point(v0_init->point()) << " " << point(v1_init->point()) << std::endl;
-//    debug::dump_cells_polylines(cells_to_insert, "collapse_cells_to_insert.polylines.txt");
-//    debug::dump_cells<Tr>(cells_to_insert, "collapse_cells_to_insert.mesh");
-
     // finished
     std::vector<Vertex_handle> new_vertices;
-    CGAL_assertion_code(bool built = )
-    CGAL::build_triangulation<Tr, false>(triangulation,
-      points, finite_cells, border_facets,
-      new_vertices, false/*verbose*/);
-    CGAL_assertion(built);
-
-    if (!triangulation.tds().is_valid())
+    std::map<Facet, int> border_facets;
+     if (CGAL::build_triangulation<Tr, false>(triangulation,
+                                              points, finite_cells, border_facets,
+                                              new_vertices, false/*verbose*/))
     {
-      std::cout << point(v0_init->point()) << " " << point(v1_init->point()) << std::endl;
-      debug::dump_cells_off(triangulation, "collapse_triangulation_finite_cells.off");
-      CGAL_assertion(false);
+      CGAL_assertion(triangulation.tds().is_valid());
+      CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
+
+      // update()
+      vh0 = new_vertices[v2i.at(v0_init) + 1];
+      vh1 = new_vertices[v2i.at(v1_init) + 1];
+
+      Cell_handle ch;
+      int i0, i1;
+      not_an_edge = true;
+      CGAL_assertion(triangulation.tds().is_vertex(vh0));
+      CGAL_assertion(triangulation.tds().is_vertex(vh1));
+      if (triangulation.is_edge(vh0, vh1, ch, i0, i1))
+      {
+        edge = Edge(ch, i0, i1);
+        not_an_edge = false;
+      }
     }
-
-    // update()
-    vh0 = new_vertices[v2i.at(v0_init) + 1];
-    vh1 = new_vertices[v2i.at(v1_init) + 1];
-
-    Cell_handle ch;
-    int i0, i1;
-    not_an_edge = true;
-    CGAL_assertion(triangulation.tds().is_vertex(vh0));
-    CGAL_assertion(triangulation.tds().is_vertex(vh1));
-    if (triangulation.is_edge(vh0, vh1, ch, i0, i1))
-    {
-      edge = Edge(ch, i0, i1);
-      not_an_edge = false;
-    }
-    CGAL_assertion(!not_an_edge);
-
-    //std::unordered_map<Cell_handle, bool> to_remove; //default is false
-    //std::unordered_map<Cell_handle, bool> sharing_neighbor;//default is false
-
-    //typedef typename Tr::Cell_circulator Cell_circulator;
-    //Cell_circulator circ = triangulation.incident_cells(edge);
-    //Cell_circulator done = circ;
-    //do
-    //{
-    //  to_remove[circ] = true;
-    //  if (circ->neighbor(circ->index(vh0))->has_neighbor(circ->neighbor(circ->index(vh1))))
-    //  {
-    //    sharing_neighbor[circ->neighbor(circ->index(vh0))] = true;
-    //    sharing_neighbor[circ->neighbor(circ->index(vh1))] = true;
-    //  }
-    //} while (++circ != done);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    else
+      std::cout << "Warning : CollapseTriangulation is not valid!" << std::endl;
+#endif
   }
 
   void make_cells_set_manifold(const C3t3& c3t3,
@@ -223,7 +200,9 @@ public:
   {
     if (not_an_edge)
     {
-      std::cout << "LocalTriangulation::Not an edge..." << std::endl;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+      std::cout << "CollapseTriangulation::Not an edge..." << std::endl;
+#endif
       return E_PROBLEM;
     }
     else
