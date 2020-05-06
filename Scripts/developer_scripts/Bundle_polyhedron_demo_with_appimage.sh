@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "$1" == '--help' ]; then
+if [ "$1" == '--help' -o ! -d "$1" -o ! -d "$2" ]; then
   echo "Usage: $0 <path to CGAL release> <path to output> <number of cores to dedicate>"
   echo "Builds and packages the Polyhedron demo form the CGAL dir."
   exit 0
