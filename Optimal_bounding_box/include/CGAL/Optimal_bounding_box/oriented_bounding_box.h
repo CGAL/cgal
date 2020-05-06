@@ -23,7 +23,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
@@ -64,25 +63,40 @@ void construct_oriented_bounding_box(const PointRange& points,
                                      std::array<typename Traits::Point_3, 8>& obb_points,
                                      const Traits& traits)
 {
+  typedef typename Traits::FT                                        FT;
   typedef typename Traits::Point_3                                   Point;
 
+  CGAL_precondition(!points.empty());
+
   // Construct the bbox of the transformed point set
-  CGAL::Bbox_3 bbox;
-  for(const Point& pt : points)
+  typename PointRange::const_iterator pit = std::begin(points);
+  const Point& first_pt = *pit++;
+  const Point first_rot_pt = transformation.transform(first_pt);
+  FT xmin = first_rot_pt.x(), xmax = first_rot_pt.x();
+  FT ymin = first_rot_pt.y(), ymax = first_rot_pt.y();
+  FT zmin = first_rot_pt.z(), zmax = first_rot_pt.z();
+
+  for(typename PointRange::const_iterator end=std::end(points); pit!=end; ++pit)
   {
-    const Point rotated_pt = transformation.transform(pt);
-    bbox += traits.construct_bbox_3_object()(rotated_pt);
+    const Point rot_pt = transformation.transform(*pit);
+
+    xmin = (std::min)(rot_pt.x(), xmin);
+    ymin = (std::min)(rot_pt.y(), ymin);
+    zmin = (std::min)(rot_pt.z(), zmin);
+    xmax = (std::max)(rot_pt.x(), xmax);
+    ymax = (std::max)(rot_pt.y(), ymax);
+    zmax = (std::max)(rot_pt.z(), zmax);
   }
 
-  obb_points[0] = Point(bbox.xmin(), bbox.ymin(), bbox.zmin());
-  obb_points[1] = Point(bbox.xmax(), bbox.ymin(), bbox.zmin());
-  obb_points[2] = Point(bbox.xmax(), bbox.ymax(), bbox.zmin());
-  obb_points[3] = Point(bbox.xmin(), bbox.ymax(), bbox.zmin());
+  obb_points[0] = Point(xmin, ymin, zmin);
+  obb_points[1] = Point(xmax, ymin, zmin);
+  obb_points[2] = Point(xmax, ymax, zmin);
+  obb_points[3] = Point(xmin, ymax, zmin);
 
-  obb_points[4] = Point(bbox.xmin(), bbox.ymax(), bbox.zmax()); // see order in make_hexahedron()...
-  obb_points[5] = Point(bbox.xmin(), bbox.ymin(), bbox.zmax());
-  obb_points[6] = Point(bbox.xmax(), bbox.ymin(), bbox.zmax());
-  obb_points[7] = Point(bbox.xmax(), bbox.ymax(), bbox.zmax());
+  obb_points[4] = Point(xmin, ymax, zmax); // see order in make_hexahedron()...
+  obb_points[5] = Point(xmin, ymin, zmax);
+  obb_points[6] = Point(xmax, ymin, zmax);
+  obb_points[7] = Point(xmax, ymax, zmax);
 
   // Apply the inverse rotation to the rotated axis aligned bounding box
   for(std::size_t i=0; i<8; ++i)
