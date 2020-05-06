@@ -2838,20 +2838,33 @@ void
 Surface_mesh<P>::
 clear()
 {
-    vprops_.resize(0);
-    hprops_.resize(0);
-    eprops_.resize(0);
-    fprops_.resize(0);
+  vprops_.clear();
+  hprops_.clear();
+  eprops_.clear();
+  fprops_.clear();
 
-    vprops_.shrink_to_fit();
-    hprops_.shrink_to_fit();
-    eprops_.shrink_to_fit();
-    fprops_.shrink_to_fit();
+  vprops_.resize(0);
+  hprops_.resize(0);
+  eprops_.resize(0);
+  fprops_.resize(0);
 
-    removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
-    garbage_ = false;
-    anonymous_property_ = 0;
+  vprops_.shrink_to_fit();
+  hprops_.shrink_to_fit();
+  eprops_.shrink_to_fit();
+  fprops_.shrink_to_fit();
+
+  vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+  hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+  fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+  vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
+  vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+  eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+  fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
+
+  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  anonymous_property_ = 0;
 }
 
 //-----------------------------------------------------------------------------
