@@ -1016,6 +1016,59 @@ void dump_surface_off(const Tr& tr, const char* filename)
   ofs.close();
 }
 
+template<typename CellRange, typename Tr>
+void dump_cells_off(const CellRange& cells, const Tr& tr, const char* filename)
+{
+  typedef typename Tr::Vertex_handle              Vertex_handle;
+  typedef typename Tr::Cell_handle                Cell_handle;
+  typedef boost::bimap<Vertex_handle, int>        Bimap_t;
+  typedef typename Bimap_t::left_map::value_type  value_type;
+
+  Bimap_t vertices;
+  int index = 0;
+  boost::unordered_set<std::array<Vertex_handle, 3> > facets;
+
+  for (Cell_handle c : cells)
+  {
+    //collect vertices
+    for (int i = 0; i < 4; ++i)
+    {
+      Vertex_handle vi = c->vertex(i);
+      if (vertices.left.find(c->vertex(i)) == vertices.left.end())
+        vertices.left.insert(value_type(vi, index++));
+    }
+    //collect facets
+    for (int i = 0; i < 4; ++i)
+    {
+      //if (tr.is_infinite(c->neighbor(i)))
+      {
+        std::array<Vertex_handle, 3> fi = make_vertex_array(c->vertex((i + 1) % 4),
+          c->vertex((i + 2) % 4),
+          c->vertex((i + 3) % 4));
+          facets.insert(fi);
+      }
+    }
+  }
+
+  //write header
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+  ofs << "OFF" << std::endl;
+  ofs << vertices.size() << " " << facets.size() << " 0" << std::endl << std::endl;
+
+  for(const typename Bimap_t::right_map::value_type& v : vertices.right)
+    ofs << v.second->point().x() << " "
+        << v.second->point().y() << " "
+        << v.second->point().z() << std::endl;
+
+  for(const std::array<Vertex_handle, 3>& f : facets)
+    ofs << "3  " << vertices.left.at(f[0]) << " "
+                 << vertices.left.at(f[1]) << " "
+                 << vertices.left.at(f[2]) << std::endl;
+
+  ofs.close();
+}
+
 template<typename Tr>
 void dump_cells_off(const Tr& tr, const char* filename)
 {
