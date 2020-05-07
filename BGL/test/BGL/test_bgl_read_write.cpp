@@ -18,7 +18,7 @@
 
 #endif
 
-#include <CGAL/boost/graph/io.h>
+#include <CGAL/boost/graph/polygon_mesh_io.h>
 
 #include <CGAL/IO/VTK.h>
 #include <CGAL/IO/polygon_soup_io.h>
