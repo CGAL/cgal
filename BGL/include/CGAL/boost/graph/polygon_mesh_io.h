@@ -11,6 +11,9 @@
 #define CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
 
 #include <CGAL/boost/graph/io.h>
+
+//doc in doc/
+
 namespace CGAL{
 
 //not for now.
@@ -56,17 +59,13 @@ bool read_polygon_mesh(std::istream& is,
   return read_polygon_mesh(is, g, parameters::all_default());
 }
 */
-/*!
- *
- */
+
+
 template <class FaceGraph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
                        FaceGraph& g,
                        const NamedParameters& np)
 {
-  if (fname.find(".TS") != std::string::npos) {
-    return read_GOCAD(fname, g, np);
-  }
 
   if (fname.find(".obj") != std::string::npos) {
     return read_OBJ(fname, g, np);
@@ -88,6 +87,9 @@ bool read_polygon_mesh(const std::string& fname,
     return read_VTP(fname, g, np);
   }
 
+  if (fname.find(".ts") != std::string::npos) {
+    return read_GOCAD(fname, g, np);
+  }
   return false;
 }
 
@@ -116,6 +118,61 @@ bool read_polygon_mesh(const char* fname,
 }
 
 
+template <class FaceGraph, typename NamedParameters>
+bool write_polygon_mesh(const std::string& fname,
+                       FaceGraph& g,
+                       const NamedParameters& np)
+{
+  if (fname.find(".ts") != std::string::npos) {
+    return write_GOCAD(fname, g, np);
+  }
+
+  if (fname.find(".obj") != std::string::npos) {
+    return write_OBJ(fname, g, np);
+  }
+
+  if (fname.find(".off") != std::string::npos) {
+    return write_OFF(fname, g, np);
+  }
+
+  if (fname.find(".ply") != std::string::npos) {
+    return write_PLY(fname, g, np);
+  }
+
+  if (fname.find(".stl") != std::string::npos) {
+    return write_STL(fname, g, np);
+  }
+
+  if (fname.find(".vtp") != std::string::npos) {
+    return write_VTP(fname, g, np);
+  }
+
+  return false;
+}
+
+template <class FaceGraph>
+bool write_polygon_mesh(const std::string& fname,
+                       FaceGraph& g)
+{
+  return write_polygon_mesh(fname, g, parameters::all_default());
+}
+
+
+
+template <class FaceGraph, typename NamedParameters>
+bool write_polygon_mesh(const char* fname,
+                       FaceGraph& g,
+                       const NamedParameters& np)
+{
+  return write_polygon_mesh(std::string(fname), g, np);
+}
+
+template <class FaceGraph>
+bool write_polygon_mesh(const char* fname,
+                       FaceGraph& g)
+{
+  return write_polygon_mesh(fname, g, parameters::all_default());
+}
 }//end CGAL
 
 #endif // CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H

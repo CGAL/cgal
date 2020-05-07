@@ -26,6 +26,7 @@
 
 // @todo reintroduce deprecated versions of the functions using lower case file formats
 
+//documentation in doc/ directory
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,64 +80,13 @@ bool read_OFF_BGL(std::istream& in,
 } // namespace internal
 } // namespace IO
 
-/*!
-  \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash,
-  and lines with whitespace.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-  \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
-
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \see \ref IOStreamOFF
-*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   return IO::internal::read_OFF_BGL(in, g, np, verbose);
 }
 
-/*!
-  \ingroup PkgBGLIOFct
-
-  reads the graph `g` from `fname`, a file in the OFF format. Ignores comment lines which start with a hash,
-  and lines with whitespace.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
-
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \see \ref IOStreamOFF
-*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
@@ -184,58 +134,13 @@ bool write_OFF_BGL(std::ostream& os,
 } // namespace internal
 } // namespace IO
 
-/*!
-  \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the OFF format.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalNamedParamsEnd
-
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \see \ref IOStreamOFF
-*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return IO::internal::write_OFF_BGL(os, g, np);
 }
 
-/*!
-  \ingroup PkgBGLIOFct
-
-  writes the graph `g` in the file `fname`, in the OFF format.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalNamedParamsEnd
-
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \see \ref IOStreamOFF
-*/
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {

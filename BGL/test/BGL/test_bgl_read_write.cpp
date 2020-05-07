@@ -93,6 +93,29 @@ void test_polygon_soup_io()
   }
 }
 
+template<class Mesh>
+void test_polygon_mesh_io()
+{
+  Mesh fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+
+  std::string filenames[6] = {"mesh.obj", "mesh.off", "mesh.stl", "mesh.ts", "mesh.ply", "mesh.vtp"};
+
+  for(const std::string& name : filenames)
+  {
+    CGAL_assertion(CGAL::write_polygon_mesh(name, fg));
+  }
+
+  for(const std::string& name : filenames)
+  {
+    fg.clear();
+    CGAL_assertion(CGAL::read_polygon_mesh(name, fg));
+    CGAL_assertion(num_vertices(fg) == 4);
+    CGAL_assertion(num_faces(fg) == 4);
+  }
+}
+
 template<typename Mesh>
 void test_bgl_OFF(const char* filename)
 {
@@ -443,7 +466,7 @@ bool test_soup_gocad()
   poly[2] = 2;
   polys[3] = poly;
 
-  std::ofstream os("tetrahedron.TS");
+  std::ofstream os("tetrahedron.ts");
   CGAL::write_GOCAD(os, points, polys);
   if(!os)
   {
@@ -455,7 +478,7 @@ bool test_soup_gocad()
 
   std::vector<Point> soup_points;
   std::vector<std::vector<std::size_t> > soup_polygons;
-  CGAL::read_GOCAD("tetrahedron.TS", soup_points, soup_polygons);
+  CGAL::read_GOCAD("tetrahedron.ts", soup_points, soup_polygons);
   if(4 != soup_points.size()
      || 4 != soup_polygons.size())
   {
@@ -597,10 +620,13 @@ bool test_bgl_PLY_with_np(bool binary)
   return true;
 }
 
-
+//todo: doc the global functions
 int main(int argc, char** argv)
 {
   test_polygon_soup_io();
+  test_polygon_mesh_io<Polyhedron>();
+  test_polygon_mesh_io<SM>();
+  test_polygon_mesh_io<LCC>();
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
   // OFF
   test_bgl_OFF<Polyhedron>(filename);

@@ -33,6 +33,27 @@
 
 namespace CGAL {
 
+/*!
+ * \ingroup IOstreamFunctions
+ * \brief reads a polygon soup from a file.
+ * \tparam PolygonRange a model of the concept `RandomAccessContainer`
+ * whose value_type is a model of the concept `RandomAccessContainer`
+ * whose value_type is `std::size_t`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer`
+ * whose value type is the point type
+ *
+ * \param filename the name of the file. Its extension must be one of the following :
+ * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
+ * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
+ * or `.ts`(\ref IOStreamGocad "GOCAD file format").
+ * \param polygons each element in the range describes a polygon
+ * using the indices of the vertices.
+ * \param points points of the soup of polygons
+
+ * \return `true` if the reading worked, `false` otherwise.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange>
 bool read_polygon_soup(const std::string& filename,
                        PointRange& points,
@@ -62,6 +83,28 @@ bool read_polygon_soup(const std::string& filename,
   return false;
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ * \brief writes a polygon soup in a file.
+ * \tparam PolygonRange a model of the concept `RandomAccessContainer`
+ * whose value_type is a model of the concept `RandomAccessContainer`
+ * whose value_type is `std::size_t`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer`
+ * whose value type is the point type
+
+ *
+ * \param filename the name of the file. Its extension must be one of the following :
+ * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
+ * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
+ * or `.ts`(\ref IOStreamGocad "GOCAD file format").
+ * \param polygons each element in the range describes a polygon
+ * using the indices of the vertices.
+ * \param points points of the soup of polygons
+
+ * \return `true` if the writing worked, `false` otherwise.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <typename PointRange, typename PolygonRange>
 bool write_polygon_soup(const std::string& filename,
                         const PointRange& points,

@@ -381,7 +381,7 @@ void write_polys_points(std::ostream& os,
  * \see \ref IOStreamVTK
  */
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-void write_VTP(std::ostream& os,
+bool write_VTP(std::ostream& os,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
@@ -401,7 +401,7 @@ void write_VTP(std::ostream& os,
   {
     case 4: os << " header_type=\"UInt32\""; break;
     case 8: os << " header_type=\"UInt64\""; break;
-    default: CGAL_error_msg("Unknown size of std::size_t");
+  default: CGAL_error_msg("Unknown size of std::size_t"); return false;
   }
 
   os << ">\n"
@@ -424,10 +424,12 @@ void write_VTP(std::ostream& os,
     IO::internal::write_polys(os, g, np);
   }
   os << "</VTKFile>\n";
+
+  return true;
 }
 
 template<typename FaceGraph>
-void write_VTP(std::ostream& os, const FaceGraph& g)
+bool write_VTP(std::ostream& os, const FaceGraph& g)
 {
   write_VTP(os, g, CGAL::parameters::all_default());
 }
@@ -460,7 +462,7 @@ void write_VTP(std::ostream& os, const FaceGraph& g)
  * \see \ref IOStreamVTK
  */
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-void write_VTP(const char* fname,
+bool write_VTP(const char* fname,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
@@ -469,14 +471,14 @@ void write_VTP(const char* fname,
 }
 
 template<typename FaceGraph>
-void write_VTP(const char* fname,
+bool write_VTP(const char* fname,
                const FaceGraph& g)
 {
   return write_VTP(fname, g, parameters::all_default());
 }
 
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-void write_VTP(const std::string& fname,
+bool write_VTP(const std::string& fname,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
@@ -484,7 +486,7 @@ void write_VTP(const std::string& fname,
 }
 
 template<typename FaceGraph>
-void write_VTP(const std::string& fname,
+bool write_VTP(const std::string& fname,
                const FaceGraph& g)
 {
   return write_VTP(fname, g, parameters::all_default());
