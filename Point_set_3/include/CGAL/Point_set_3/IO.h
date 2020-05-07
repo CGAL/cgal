@@ -243,6 +243,25 @@ read_XYZ(
   return out;
 }
 
+template <typename Point, typename Vector>
+bool
+read_XYZ(
+    const char* fname,
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+{
+  std::ifstream is(fname);
+  return read_XYZ(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+read_XYZ(
+    const std::string& fname,
+    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+{
+  return read_XYZ(fname.c_str(), point_set);
+}
+
 /*!
   \ingroup PkgPointSet3IO
  */
@@ -275,6 +294,24 @@ read_OFF(
   return out;
 }
 
+template <typename Point, typename Vector>
+bool
+read_OFF(
+    const char* fname,
+    CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return read_OFF(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+read_OFF(
+    const std::string& fname,
+    CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return read_OFF(fname.c_str(), point_set);
+}
 
 /// \cond SKIP_IN_MANUAL
 template <typename Point, typename Vector>
@@ -287,6 +324,24 @@ read_PLY(
   return read_PLY (stream, point_set, dummy);
 }
 
+template <typename Point, typename Vector>
+bool
+read_PLY(
+    const char* fname,
+    CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return read_PLY(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+read_PLY(
+    const std::string& fname,
+    CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return read_PLY(fname.c_str(), point_set);
+}
 /// \endcond
 
 /*!
@@ -358,6 +413,7 @@ read_PLY(
 
   return !stream.bad();
 }
+
 
 /*!
   \ingroup PkgPointSet3IO
@@ -576,6 +632,25 @@ write_PLY(
   return true;
 }
 
+template <typename Point, typename Vector>
+bool
+write_PLY(
+    const char* fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return write_PLY(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+write_PLY(
+    const std::string& fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_PLY(fname.c_str(), point_set);
+}
+
 #if defined(CGAL_LINKED_WITH_LASLIB) || defined(DOXYGEN_RUNNING)
 
 namespace internal
@@ -677,6 +752,24 @@ read_LAS(
   internal::check_if_property_is_used (point_set, I);
 
   return okay;
+}
+template <typename Point, typename Vector>
+bool
+read_LAS(
+    const char* fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return read_LAS(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+read_LAS(
+    const std::string& fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return read_LAS(fname.c_str(), point_set);
 }
 
 /*!
@@ -854,6 +947,25 @@ write_LAS(
   return okay;
 }
 
+template <typename Point, typename Vector>
+bool
+write_LAS(
+    const char* fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return write_LAS(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+write_LAS(
+    const std::string& fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_LAS(fname.c_str(), point_set);
+}
+
 #endif // LAS
 
 /*!
@@ -876,6 +988,24 @@ write_XYZ(
        CGAL::parameters::point_map(point_set.point_map()));
 }
 
+template <typename Point, typename Vector>
+bool
+write_XYZ(
+    const char* fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return write_XYZ(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+write_XYZ(
+    const std::string& fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_XYZ(fname.c_str(), point_set);
+}
 /*!
   \ingroup PkgPointSet3IO
  */
@@ -896,6 +1026,24 @@ write_OFF(
        CGAL::parameters::point_map(point_set.point_map()));
 }
 
+template <typename Point, typename Vector>
+bool
+write_OFF(
+    const char* fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::ifstream is(fname);
+  return write_OFF(is, point_set);
+}
+
+template <typename Point, typename Vector>
+bool
+write_OFF(
+    const std::string& fname,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_OFF(fname.c_str(), point_set);
+}
 
 /*!
 

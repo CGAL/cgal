@@ -620,7 +620,6 @@ bool test_bgl_PLY_with_np(bool binary)
   return true;
 }
 
-//todo: doc the global functions
 int main(int argc, char** argv)
 {
   test_polygon_soup_io();
