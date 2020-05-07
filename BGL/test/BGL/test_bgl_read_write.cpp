@@ -21,7 +21,7 @@
 #include <CGAL/boost/graph/io.h>
 
 #include <CGAL/IO/VTK.h>
-
+#include <CGAL/IO/polygon_soup_io.h>
 #include <iostream>
 #include <fstream>
 
@@ -70,13 +70,37 @@ void fill_soup(PointRange& points, PolygonRange& polygons)
   polygons[3] = poly;
 }
 
+
+void test_polygon_soup_io()
+{
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > polygons;
+  fill_soup(points, polygons);
+  std::string filenames[5] = {"soup.obj", "soup.off", "soup.stl", "soup.ts", "soup.ply"};
+
+  for(const std::string& name : filenames)
+  {
+    CGAL_assertion(CGAL::write_polygon_soup(name, points, polygons));
+  }
+
+  for(const std::string& name : filenames)
+  {
+    points.clear();
+    polygons.clear();
+    CGAL_assertion(CGAL::read_polygon_soup(name, points, polygons));
+    CGAL_assertion(points.size() == 4);
+    CGAL_assertion(polygons.size() == 4);
+  }
+}
+
 template<typename Mesh>
 void test_bgl_OFF(const char* filename)
 {
-  Mesh sm, sm2;
+  Mesh sm;
   std::ifstream in(filename);
-  CGAL::read_polygon_mesh(in,sm);
-  CGAL::read_polygon_mesh(filename, sm2);
+  CGAL::read_OFF(in,sm);
+  sm.clear();
+  CGAL::read_polygon_mesh(filename, sm);
 
   CGAL::write_OFF(std::cout, sm);
 }
@@ -100,12 +124,13 @@ void test_bgl_OFF_with_np()
   FaceColorMap fcm  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
 
 
-  bool ok = CGAL::read_polygon_mesh(in, fg, CGAL::parameters::vertex_normal_map(vnm)
+  bool ok = CGAL::read_OFF(in, fg, CGAL::parameters::vertex_normal_map(vnm)
                  .vertex_color_map(vcm)
                  .vertex_texture_map(vtm)
                  .face_color_map(fcm));
   CGAL_assertion(ok);
   fg.clear();
+  vnm  = get(CGAL::dynamic_vertex_property_t<Kernel::Vector_3>(), fg);
   ok = CGAL::read_polygon_mesh("data/full.off", fg, CGAL::parameters::vertex_normal_map(vnm)
                  .vertex_color_map(vcm)
                  .vertex_texture_map(vtm)
@@ -138,7 +163,7 @@ bool test_bgl_OBJ()
   CGAL::write_OBJ(out, fg);
   std::istringstream in( out.str());
   fg.clear();
-  CGAL::read_polygon_mesh(in, fg);
+  CGAL::read_OBJ(in, fg);
   CGAL_assertion(num_vertices(fg) == 4);
   CGAL_assertion(num_faces(fg) == 4);
   fg.clear();
@@ -167,7 +192,7 @@ bool test_bgl_OBJ_with_np()
   CGAL::write_OBJ(out, fg, CGAL::parameters::vertex_normal_map(vnm));
   std::istringstream in( out.str());
 
-  CGAL::read_polygon_mesh(in, fg2, CGAL::parameters::vertex_normal_map(vnm2));
+  CGAL::read_OBJ(in, fg2, CGAL::parameters::vertex_normal_map(vnm2));
 
   CGAL_assertion(num_vertices(fg2) == 4);
   CGAL_assertion(num_faces(fg2) == 4);
@@ -456,7 +481,7 @@ bool test_bgl_stl()
   }
   FaceGraph fg2;
   std::istringstream in(out.str());
-  if(!CGAL::read_polygon_mesh(in, fg2)){
+  if(!CGAL::read_STL(in, fg2)){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
@@ -498,7 +523,7 @@ bool test_bgl_PLY(bool binary = false)
     CGAL::set_mode(in, CGAL::IO::BINARY);
 
   fg.clear();
-  if(!CGAL::read_polygon_mesh(in, fg)){
+  if(!CGAL::read_PLY(in, fg)){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
@@ -550,7 +575,7 @@ bool test_bgl_PLY_with_np(bool binary)
 
   VertexColorMap vcm2  = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
   FaceColorMap fcm2  = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
-  if(!CGAL::read_polygon_mesh(in, fg, CGAL::parameters::vertex_color_map(vcm2).face_color_map(fcm2))){
+  if(!CGAL::read_PLY(in, fg, CGAL::parameters::vertex_color_map(vcm2).face_color_map(fcm2))){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
@@ -575,6 +600,7 @@ bool test_bgl_PLY_with_np(bool binary)
 
 int main(int argc, char** argv)
 {
+  test_polygon_soup_io();
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
   // OFF
   test_bgl_OFF<Polyhedron>(filename);

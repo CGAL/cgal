@@ -24,6 +24,7 @@
 // #include <CGAL/IO/VRML.h>
 // #include <CGAL/IO/VTK.h>
 // #include <CGAL/IO/WKT.h>
+#include <CGAL/IO/GOCAD.h>
 
 #include <algorithm>
 #include <iostream>
@@ -47,12 +48,14 @@ bool read_polygon_soup(const std::string& filename,
   // extension determines reader
   if(ext == "obj")
     return read_OBJ(filename, points, polygons);
-  else if(ext == "off") // @fixme coff, stoff, etc.
+  else if(ext == "off")
     return read_OFF(filename, points, polygons);
   else if(ext == "ply")
     return read_PLY(filename, points, polygons);
   else if(ext == "stl")
     return read_STL(filename, points, polygons);
+  else if(ext == "ts")
+    return read_GOCAD(filename, points, polygons);
 
   std::cerr << "Cannot open file with extension: " << ext << std::endl;
 
@@ -80,8 +83,10 @@ bool write_polygon_soup(const std::string& filename,
     return write_PLY(filename, points, polygons);
   else if(ext == "stl")
     return write_STL(filename, points, polygons);
+  else if(ext == "ts")
+    return write_GOCAD(filename, points, polygons);
 
-  std::cerr << "Cannot open file with extension: " << ext << std::endl;
+  std::cerr << "Cannot save file with extension: " << ext << std::endl;
 
   return false;
 }

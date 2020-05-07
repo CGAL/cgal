@@ -23,9 +23,8 @@
 
 namespace CGAL{
 
-/*!
- *
- */
+//not for now.
+/*
 template <class FaceGraph, typename NamedParameters>
 bool read_polygon_mesh(std::istream& is,
                        FaceGraph& g,
@@ -66,7 +65,7 @@ bool read_polygon_mesh(std::istream& is,
 {
   return read_polygon_mesh(is, g, parameters::all_default());
 }
-
+*/
 /*!
  *
  */
@@ -99,8 +98,7 @@ bool read_polygon_mesh(const std::string& fname,
     return read_VTP(fname, g, np);
   }
 
-  std::ifstream is(fname.c_str());
-  return read_polygon_mesh(is, g, np);
+  return false;
 }
 
 template <class FaceGraph>

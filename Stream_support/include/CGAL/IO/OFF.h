@@ -260,11 +260,11 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool write_OFF(const char* fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS&)
 {
   std::ofstream os(fname);
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
-  return writer(points, polygons, np);
+  return writer(points, polygons);
 }
 
 /*!

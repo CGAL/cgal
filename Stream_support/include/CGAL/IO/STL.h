@@ -173,7 +173,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  * \see \ref IOStreamSTL
  */
 template <class PointRange, class TriangleRange>
-std::ostream& write_STL(std::ostream& out,
+bool write_STL(std::ostream& out,
                         const PointRange& points,
                         const TriangleRange& facets)
 {
@@ -225,7 +225,7 @@ std::ostream& write_STL(std::ostream& out,
     out << "endsolid\n";
   }
 
-  return out;
+  return !out.fail();
 }
 
 /*!

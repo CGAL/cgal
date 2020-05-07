@@ -361,8 +361,8 @@ bool read_PLY(const char* fname,
               const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
-  std::ofstream os(fname);
-  return read_PLY(os, points, polygons, np, verbose);
+  std::ifstream is(fname);
+  return read_PLY(is, points, polygons, np, verbose);
 }
 
 /*!

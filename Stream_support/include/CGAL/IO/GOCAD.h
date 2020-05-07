@@ -290,7 +290,7 @@ bool write_GOCAD(const std::string& fname,
                  const CGAL_BGL_NP_CLASS&np)
 {
   std::ofstream os(fname.c_str());
-  return IO::internal::write_GOCAD(os, fname, points, polygons, np);
+  return IO::internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange,

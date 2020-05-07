@@ -944,7 +944,7 @@ bool read_PLY(std::istream& is,
     return false;
   }
 
-  IO::internal::PLY_reader reader;
+  IO::internal::PLY_reader reader(verbose);
   IO::internal::Surface_mesh_filler<P> filler(sm);
 
   if(!(reader.init(is)))
