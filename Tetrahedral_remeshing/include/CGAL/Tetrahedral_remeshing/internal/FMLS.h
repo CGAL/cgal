@@ -44,7 +44,7 @@ namespace internal
 //  MLS Projection
 // --------------------------------------------------------------
 
-inline float wendland(float x, float h)
+inline double wendland(double x, double h)
 {
   x = CGAL::abs(x);
   if (x < h)
@@ -53,18 +53,18 @@ inline float wendland(float x, float h)
     return 0.0;
 }
 
-inline void setPNSample(std::vector<float>& p,
-                        const std::size_t& i,
-                        const float x, const float y, const float z,
-                        const float nx, const float ny, const float nz)
-{
-  p[6 * i] = x;
-  p[6 * i + 1] = y;
-  p[6 * i + 2] = z;
-  p[6 * i + 3] = nx;
-  p[6 * i + 4] = ny;
-  p[6 * i + 5] = nz;
-}
+//inline void setPNSample(std::vector<float>& p,
+//                        const std::size_t& i,
+//                        const float x, const float y, const float z,
+//                        const float nx, const float ny, const float nz)
+//{
+//  p[6 * i] = x;
+//  p[6 * i + 1] = y;
+//  p[6 * i + 2] = z;
+//  p[6 * i + 3] = nx;
+//  p[6 * i + 4] = ny;
+//  p[6 * i + 5] = nz;
+//}
 
 template<typename Gt>
 inline CGAL::Vector_3<Gt> projectOn(const CGAL::Vector_3<Gt>& x,
@@ -98,11 +98,11 @@ template<typename Gt>
 inline void weightedPointCombination(const CGAL::Vector_3<Gt>& x,
                                      const CGAL::Vector_3<Gt>& pi,
                                      const CGAL::Vector_3<Gt>& ni,
-                                     float sigma_s, bool bilateral, float sigma_r,
+                                     double sigma_s, bool bilateral, double sigma_r,
                                      bool hermite,
-                                     CGAL::Vector_3<Gt>& c, CGAL::Vector_3<Gt>& nc, float& sumW)
+                                     CGAL::Vector_3<Gt>& c, CGAL::Vector_3<Gt>& nc, double& sumW)
 {
-  float w = wendland(distance(x, pi), sigma_s);
+  double w = wendland(distance(x, pi), sigma_s);
   if (bilateral)
     w *= wendland(length(x - projectOn(x, ni, pi)), sigma_r);
   if (hermite)
@@ -148,14 +148,14 @@ public:
   //  Main Interface
   // --------------------------------------------------------------
 
-  std::vector<float> createPN(unsigned int size)
-  {
-    return std::vector<float>(size * SURFEL_SIZE);
-  }
+//  std::vector<double> createPN(std::size_t size)
+//  {
+//    return std::vector<double>(size * SURFEL_SIZE);
+//  }
 
   void setPN(const std::vector<double>& newPN,
-             const unsigned int newPNSize,
-             const float& pointSpacing)
+             const std::size_t newPNSize,
+             const double& pointSpacing)
   {
     freeCPUMemory();
     PN = newPN;
@@ -170,21 +170,22 @@ public:
   // of p and store the resulting position in q and normal in n.
   void fastProjectionCPU(const Vector_3& p, Vector_3& q, Vector_3& n) const
   {
-    float sigma_s = PNScale * MLSRadius;
-    float sigma_r = bilateralRange;
+    double sigma_s = PNScale * MLSRadius;
+    double sigma_r = bilateralRange;
 
     Vector_3 g = (p - Vector_3(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
     std::array<FT, 3> gxyz = { g.x(), g.y(), g.z() };
 
-    for (unsigned int j = 0; j < 3; j++) {
+    for (std::size_t j = 0; j < 3; j++) {
       gxyz[j] = floor(gxyz[j]);
       if (gxyz[j] < 0.f)
         gxyz[j] = 0.f;
       if (gxyz[j] >= grid.getRes()[j])
         gxyz[j] = grid.getRes()[j] - 1;
     }
-    unsigned int minIt[3], maxIt[3];
-    for (unsigned int j = 0; j < 3; j++) {
+    std::array<std::size_t, 3> minIt;
+    std::array<std::size_t, 3> maxIt;
+    for (std::size_t j = 0; j < 3; j++) {
       if (((unsigned int)gxyz[j]) == 0)
         minIt[j] = 0;
       else
@@ -195,17 +196,17 @@ public:
         maxIt[j] = ((unsigned int)gxyz[j]) + 1;
     }
     Vector_3 c = CGAL::NULL_VECTOR;
-    float sumW = 0.f;
-    unsigned int it[3];
+    double sumW = 0.f;
+    std::array<std::size_t, 3> it;
     for (it[0] = minIt[0]; it[0] <= maxIt[0]; it[0]++)
       for (it[1] = minIt[1]; it[1] <= maxIt[1]; it[1]++)
         for (it[2] = minIt[2]; it[2] <= maxIt[2]; it[2]++) {
-          unsigned int gridIndex = grid.getLUTElement(it[0], it[1], it[2]);
+          std::size_t gridIndex = grid.getLUTElement(it[0], it[1], it[2]);
           if (gridIndex == 2 * PNSize)
             continue;
-          unsigned int neigh = grid.getCellIndicesSize(it[0], it[1], it[2]);
-          for (unsigned int j = 0; j < neigh; j++) {
-            unsigned int k = grid.getIndicesElement(it[0], it[1], it[2], j);
+          std::size_t neigh = grid.getCellIndicesSize(it[0], it[1], it[2]);
+          for (std::size_t j = 0; j < neigh; j++) {
+            std::size_t k = grid.getIndicesElement(it[0], it[1], it[2], j);
             Vector_3 pk(PN[6 * k], PN[6 * k + 1], PN[6 * k + 2]);
             Vector_3 nk(PN[6 * k + 3], PN[6 * k + 4], PN[6 * k + 5]);
             weightedPointCombination(p, pk, nk, sigma_s, bilateral, sigma_r, hermite, c, n, sumW);
@@ -247,69 +248,69 @@ public:
 //    }
 //  }
 
-  // Brute force version. O(PNSize) complexity. For comparison only.
-  void projectionCPU(const Vector_3& x, Vector_3& q, Vector_3& n)
-  {
-    float sigma_s = MLSRadius * PNScale;
-    float sigma_r = bilateralRange;
-    Vector_3 p(x);
-    for (unsigned int k = 0; k < numIter; k++) {
-      Vector_3 c = CGAL::NULL_VECTOR;
-      n = CGAL::NULL_VECTOR;
-      float sumW = 0.f;
-      for (unsigned int j = 0; j < PNSize; j++) {
-        Vector_3 pj(PN[6 * j], PN[6 * j + 1], PN[6 * j + 2]);
-        Vector_3 nj(PN[6 * j + 3], PN[6 * j + 4], PN[6 * j + 5]);
-        weightedPointCombination(p, pj, nj, sigma_s, bilateral, sigma_r, hermite, c, n, sumW);
-      }
-      c /= sumW;
-      n.normalize();
-      q = projectOn(p, n, c);
-      p = q;
-    }
-
-  }
-  // Brute force version. O(pvSize*PNSize) complexity. For comparison only.
-  void projectionCPU(const std::vector<float>& pv,
-                     unsigned int pvSize,
-                     std::vector<float>& qv,
-                     unsigned int stride = 3)
-  {
-    for (int i = 0; i < int(pvSize); i++) {
-      Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
-      Vector_3 q, n;
-      for (unsigned int j = 0; j < numIter; j++) {
-        q = CGAL::NULL_VECTOR;
-        n = CGAL::NULL_VECTOR;
-        projectionCPU(p, q, n);
-        p = q;
-      }
-      setPNSample(qv, i, q[0], q[1], q[2], n[0], n[1], n[2]);
-    }
-  }
+//  // Brute force version. O(PNSize) complexity. For comparison only.
+//  void projectionCPU(const Vector_3& x, Vector_3& q, Vector_3& n)
+//  {
+//    float sigma_s = MLSRadius * PNScale;
+//    float sigma_r = bilateralRange;
+//    Vector_3 p(x);
+//    for (unsigned int k = 0; k < numIter; k++) {
+//      Vector_3 c = CGAL::NULL_VECTOR;
+//      n = CGAL::NULL_VECTOR;
+//      float sumW = 0.f;
+//      for (unsigned int j = 0; j < PNSize; j++) {
+//        Vector_3 pj(PN[6 * j], PN[6 * j + 1], PN[6 * j + 2]);
+//        Vector_3 nj(PN[6 * j + 3], PN[6 * j + 4], PN[6 * j + 5]);
+//        weightedPointCombination(p, pj, nj, sigma_s, bilateral, sigma_r, hermite, c, n, sumW);
+//      }
+//      c /= sumW;
+//      n.normalize();
+//      q = projectOn(p, n, c);
+//      p = q;
+//    }
+//  }
+//
+//  // Brute force version. O(pvSize*PNSize) complexity. For comparison only.
+//  void projectionCPU(const std::vector<float>& pv,
+//                     unsigned int pvSize,
+//                     std::vector<float>& qv,
+//                     unsigned int stride = 3)
+//  {
+//    for (int i = 0; i < int(pvSize); i++) {
+//      Vector_3 p(pv[stride * i], pv[stride * i + 1], pv[stride * i + 2]);
+//      Vector_3 q, n;
+//      for (unsigned int j = 0; j < numIter; j++) {
+//        q = CGAL::NULL_VECTOR;
+//        n = CGAL::NULL_VECTOR;
+//        projectionCPU(p, q, n);
+//        p = q;
+//      }
+//      setPNSample(qv, i, q[0], q[1], q[2], n[0], n[1], n[2]);
+//    }
+//  }
 
   // --------------------------------------------------------------
   //  Accessors
   // --------------------------------------------------------------
 
   // Number of elements of the PN. One elemnt is a 6-float32 chunk.
-  inline unsigned int getPNSize() const { return PNSize; }
+  inline std::size_t getPNSize() const { return PNSize; }
   inline std::vector<double>& getPN() { return PN; }
   inline const std::vector<double>& getPN() const { return PN; }
 
   // Min/Max corners of PN's bounding volume
-  inline const float* getMinMax() const { return grid.getMinMax(); }
+  inline const double* getMinMax() const { return grid.getMinMax(); }
   // Radius of the bounding sphere of the PN
-  inline float getPNScale() const { return PNScale; }
+  inline double getPNScale() const { return PNScale; }
   // Normalized MLS support size
-  inline float getMLSRadius() const { return MLSRadius; }
-  inline void setMLSRadius(float s) { MLSRadius = s; grid.clear(); grid.init(PN, PNSize, MLSRadius * PNScale); }
+  inline double getMLSRadius() const { return MLSRadius; }
+  inline void setMLSRadius(double s) { MLSRadius = s; grid.clear(); grid.init(PN, PNSize, MLSRadius * PNScale); }
   // Bilateral weighting for feature preservation (inspired by [Jones 2003]).
   inline bool isBilateral() const { return bilateral; }
   inline void toggleBilateral(bool b) { bilateral = b; }
   // Bilateral support size for the range weight
-  inline float getBilateralRange() const { return bilateralRange; }
-  inline void setBilateralRange(float r) { bilateralRange = r; }
+  inline double getBilateralRange() const { return bilateralRange; }
+  inline void setBilateralRange(double r) { bilateralRange = r; }
   // Hermite interpolation [Alexa 2009]
   inline bool isHermite() const { return hermite; }
   inline void toggleHermite(bool b) { hermite = b; }
@@ -334,7 +335,7 @@ private:
     c /= PNSize;
     PNScale = 0.f;
     for (std::size_t i = 0; i < PNSize; i++) {
-      float r = distance(c, Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
+      double r = distance(c, Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
       if (r > PNScale)
         PNScale = r;
     }
@@ -362,48 +363,48 @@ private:
       clear();
     }
 
-    void init(const std::vector<double>& PN, unsigned int PNSize, float sigma_s)
+    void init(const std::vector<double>& PN, std::size_t PNSize, double sigma_s)
     {
       cellSize = sigma_s;
-      for (unsigned int i = 0; i < 3; i++) {
+      for (std::size_t i = 0; i < 3; i++) {
         minMax[i] = PN[i];
         minMax[3 + i] = PN[i];
       }
-      for (unsigned int i = 0; i < PNSize; i++)
-        for (unsigned int j = 0; j < 3; j++) {
+      for (std::size_t i = 0; i < PNSize; i++)
+        for (std::size_t j = 0; j < 3; j++) {
           if (PN[6 * i + j] < minMax[j])
             minMax[j] = PN[6 * i + j];
           if (PN[6 * i + j] > minMax[3 + j])
             minMax[3 + j] = PN[6 * i + j];
         }
-      for (unsigned int i = 0; i < 3; i++) {
+      for (std::size_t i = 0; i < 3; i++) {
         minMax[i] -= 0.001f;
         minMax[3 + i] += 0.001f;
       }
-      for (unsigned int i = 0; i < 3; i++)
-        res[i] = (unsigned int)ceil((minMax[3 + i] - minMax[i]) / cellSize);
-      unsigned int LUTSize = res[0] * res[1] * res[2];
+      for (std::size_t i = 0; i < 3; i++)
+        res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
+      std::size_t LUTSize = res[0] * res[1] * res[2];
       LUT.resize(LUTSize);
       LUT.assign(LUTSize, 0);
 
-      unsigned int nonEmptyCells = 0;
+      std::size_t nonEmptyCells = 0;
       Vector_3 gMin(minMax[0], minMax[1], minMax[2]);
       Vector_3 gMax(minMax[3], minMax[4], minMax[5]);
-      for (unsigned int i = 0; i < PNSize; i++) {
-        unsigned int index = getLUTIndex(Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
+      for (std::size_t i = 0; i < PNSize; i++) {
+        std::size_t index = getLUTIndex(Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
         if (LUT[index] == 0)
           nonEmptyCells++;
         LUT[index]++;
       }
-      unsigned int indicesSize = PNSize + nonEmptyCells;
+      std::size_t indicesSize = PNSize + nonEmptyCells;
       indices.reserve(indicesSize);
       indices.assign(indicesSize, 0);
 
-      unsigned int cpt = 0;
-      for (unsigned int i = 0; i < res[0]; i++)
-        for (unsigned int j = 0; j < res[1]; j++)
-          for (unsigned int k = 0; k < res[2]; k++) {
-            unsigned int index = getLUTIndex(i, j, k);
+      std::size_t cpt = 0;
+      for (std::size_t i = 0; i < res[0]; i++)
+        for (std::size_t j = 0; j < res[1]; j++)
+          for (std::size_t k = 0; k < res[2]; k++) {
+            std::size_t index = getLUTIndex(i, j, k);
             if (LUT[index] != 0) {
               indices[cpt] = LUT[index];
               LUT[index] = cpt;
@@ -413,15 +414,15 @@ private:
             else
               LUT[index] = 2 * PNSize;
           }
-      for (unsigned int i = 0; i < PNSize; i++) {
+      for (std::size_t i = 0; i < PNSize; i++) {
         Vector_3 p = Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
-        unsigned int indicesIndex = getLUTElement(p);
-        unsigned int totalCount = indices[indicesIndex];
-        unsigned int countIndex = indicesIndex + totalCount;
-        unsigned int currentCount = indices[countIndex];
+        std::size_t indicesIndex = getLUTElement(p);
+        std::size_t totalCount = indices[indicesIndex];
+        std::size_t countIndex = indicesIndex + totalCount;
+        std::size_t currentCount = indices[countIndex];
         if (currentCount < indices[indicesIndex])
           indices[countIndex]++;
-        unsigned int pIndex = indicesIndex + 1 + currentCount;
+        std::size_t pIndex = indicesIndex + 1 + currentCount;
         indices[pIndex] = i;
       }
     }
@@ -434,61 +435,61 @@ private:
     // Accessors
 
     inline const std::array<double, 6> getMinMax() const { return minMax; }
-    inline const std::array<unsigned int, 3> getRes() const { return res; }
-    inline float getCellSize() const { return cellSize; }
-    inline std::vector<unsigned int>& getLUT() { return LUT; }
-    inline const std::vector<unsigned int>& getLUT() const { return LUT; }
-    inline unsigned int getLUTIndex(unsigned int i,
-                                    unsigned int j,
-                                    unsigned int k) const
+    inline const std::array<std::size_t, 3> getRes() const { return res; }
+    inline double getCellSize() const { return cellSize; }
+    inline std::vector<std::size_t>& getLUT() { return LUT; }
+    inline const std::vector<std::size_t>& getLUT() const { return LUT; }
+    inline std::size_t getLUTIndex(const std::size_t i,
+                                    const std::size_t j,
+                                    const std::size_t k) const
     {
       return k * res[0] * res[1] + j * res[0] + i;
     }
-    inline unsigned int getLUTElement(unsigned int i,
-                                      unsigned int j,
-                                      unsigned int k) const
+    inline std::size_t getLUTElement(const std::size_t i,
+                                      const std::size_t j,
+                                      const std::size_t k) const
     {
       return LUT[getLUTIndex(i, j, k)];
     }
-    unsigned int getLUTIndex(const Vector_3& x) const
+    std::size_t getLUTIndex(const Vector_3& x) const
     {
       Vector_3 vp = (x - Vector_3(minMax[0], minMax[1], minMax[2])) / cellSize;
       std::array<FT, 3> p = { vp.x(), vp.y(), vp.z() };
-      for (unsigned int j = 0; j < 3; j++) {
+      for (std::size_t j = 0; j < 3; j++) {
         p[j] = floor(p[j]);
         if (p[j] < 0)
           p[j] = 0.f;
         if (p[j] >= res[j])
           p[j] = res[j] - 1;
       }
-      unsigned index = ((unsigned int)floor(p[2])) * res[0] * res[1]
-                       + ((unsigned int)floor(p[1])) * res[0]
-                       + ((unsigned int)floor(p[0]));
+      std::size_t index = ((std::size_t)floor(p[2])) * res[0] * res[1]
+                        + ((std::size_t)floor(p[1])) * res[0]
+                        + ((std::size_t)floor(p[0]));
       return index;
     }
-    inline unsigned int getLUTElement(const Vector_3& x) const {
+    inline std::size_t getLUTElement(const Vector_3& x) const {
       return LUT[getLUTIndex(x)];
     }
-    inline std::vector<unsigned int>& getIndices() { return indices; }
-    inline const std::vector<unsigned int>& getIndices() const { return indices; }
-    inline unsigned int getCellIndicesSize(unsigned int i,
-                                           unsigned int j,
-                                           unsigned int k) const {
+    inline std::vector<std::size_t>& getIndices() { return indices; }
+    inline const std::vector<std::size_t>& getIndices() const { return indices; }
+    inline std::size_t getCellIndicesSize(std::size_t i,
+                                           std::size_t j,
+                                           std::size_t k) const {
       return indices[getLUTElement(i, j, k)];
     }
-    inline unsigned int getIndicesElement(unsigned int i,
-                                          unsigned int j,
-                                          unsigned int k,
-                                          unsigned int e) const {
+    inline std::size_t getIndicesElement(std::size_t i,
+                                          std::size_t j,
+                                          std::size_t k,
+                                          std::size_t e) const {
       return indices[getLUTElement(i, j, k) + 1 + e];
     }
 
   private:
     std::array<double, 6> minMax;
-    float cellSize;
-    std::array<unsigned int, 3> res;
-    std::vector<unsigned int> LUT; // 3D Index Look-Up Table
-    std::vector<unsigned int> indices; // 3D Grid data
+    double cellSize;
+    std::array<std::size_t, 3> res;
+    std::vector<std::size_t> LUT; // 3D Index Look-Up Table
+    std::vector<std::size_t> indices; // 3D Grid data
   };
 
 
@@ -507,10 +508,10 @@ private:
   // --------------------------------------------------------------
 
   std::vector<double> PN;
-  unsigned int PNSize;
-  float PNScale; // size of the bounding sphere radius
-  float MLSRadius;
-  float bilateralRange;
+  std::size_t PNSize;
+  double PNScale; // size of the bounding sphere radius
+  double MLSRadius;
+  double bilateralRange;
   bool bilateral;
   bool hermite;
   unsigned int numIter;
@@ -547,7 +548,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   subdomain_FMLS.clear();
   subdomain_FMLS_indices.clear();
 
-  typedef boost::unordered_map<Surface_index, unsigned int> SurfaceIndexMap;
+  typedef boost::unordered_map<Surface_index, std::size_t> SurfaceIndexMap;
 
   SurfaceIndexMap current_subdomain_FMLS_indices;
   SurfaceIndexMap subdomain_sample_numbers;
@@ -587,7 +588,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
 
   std::vector< std::vector<double> > pns;
 
-  int count = 0;
+  std::size_t count = 0;
   //Memory allocation for the point plus normals of the point samples
   for (typename SurfaceIndexMap::iterator it = subdomain_sample_numbers.begin();
        it != subdomain_sample_numbers.end(); ++it)
@@ -597,7 +598,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
     count++;
   }
 
-  std::vector<int> current_v_count(count, 0);
+  std::vector<std::size_t> current_v_count(count, 0);
   std::vector<double> point_spacing(count, 0.);
   std::vector<int> point_spacing_count(count, 0);
 
@@ -613,7 +614,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
 
     for (const Surface_index& surf_i : v_surface_indices)
     {
-      const int fmls_id = current_subdomain_FMLS_indices[surf_i];
+      const std::size_t& fmls_id = current_subdomain_FMLS_indices[surf_i];
 
       const Point_3& p = point(vit->point());
 
@@ -656,7 +657,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
             edgeMap.insert(e);
 
             const Surface_index surf_i = c3t3.surface_patch_index(*fit);
-            const int fmls_id = current_subdomain_FMLS_indices[surf_i];
+            const std::size_t fmls_id = current_subdomain_FMLS_indices[surf_i];
 
             point_spacing[fmls_id] += CGAL::approximate_sqrt(
                 CGAL::squared_distance(point(vh0->point()), point(vh1->point())));
@@ -675,7 +676,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
     {
       const Surface_index surf_i = c3t3.surface_patch_index(*fit);
 
-      const int fmls_id = current_subdomain_FMLS_indices[surf_i];
+      const std::size_t fmls_id = current_subdomain_FMLS_indices[surf_i];
 
       Vertex_handle vhs[3] = { fit->first->vertex(indices(fit->second, 0)),
                                fit->first->vertex(indices(fit->second, 1)),
@@ -735,7 +736,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
           point_spacing_count[fmls_id] += 3;
         }
       }
-      for (unsigned int i = 0; i < points_to_add.size(); i++)
+      for (std::size_t i = 0; i < points_to_add.size(); i++)
       {
         Vector_3& point = points_to_add[i];
 
@@ -755,7 +756,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   }
 
 
-  int nb_of_mls_to_create = 0;
+  std::size_t nb_of_mls_to_create = 0;
   double average_point_spacing = 0;
 
   //Cretaing the actual MLS surfaces
@@ -784,7 +785,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   {
     if (current_v_count[it->second] > 3)
     {
-      float current_point_spacing = static_cast<float>(point_spacing[it->second]);
+      const double current_point_spacing = point_spacing[it->second];
 
       //subdomain_FMLS[count].toggleHermite(true);
       subdomain_FMLS[count].setPN(pns[it->second],

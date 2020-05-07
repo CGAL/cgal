@@ -50,7 +50,7 @@ class Tetrahedral_remeshing_smoother
 private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
-  boost::unordered_map<Surface_patch_index, unsigned int> subdomain_FMLS_indices;
+  boost::unordered_map<Surface_patch_index, std::size_t> subdomain_FMLS_indices;
 
 public:
   template<typename CellSelector>

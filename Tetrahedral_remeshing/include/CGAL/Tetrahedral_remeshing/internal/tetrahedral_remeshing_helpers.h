@@ -64,7 +64,7 @@ const int indices_table[4][3] = { { 3, 1, 2 },
                                   { 3, 0, 1 },
                                   { 2, 1, 0 } };
 
-int indices(const unsigned int& i, const unsigned int& j)
+int indices(const int& i, const int& j)
 {
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)

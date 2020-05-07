@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   Remeshing_triangulation tr;
   generate_input_one_subdomain(1000, tr);
 
-  const float target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1f;
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
 
