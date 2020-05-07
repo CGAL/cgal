@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -103,7 +103,7 @@ public Q_SLOTS:
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       CGAL::tetrahedral_isotropic_remeshing(

@@ -231,7 +231,6 @@ public:
       std::vector<Cell_handle> cells_to_update;
       triangulation.incident_cells(vh1, std::back_inserter(cells_to_update));
 
-       Result_type r = VALID;
       do
       {
         int v0_id = circ->index(vh0);
@@ -244,7 +243,7 @@ public:
         int ch_id_in_n1 = n1_ch->index(circ);
 
         if (n0_ch->has_neighbor(n1_ch))
-          r = SHARED_NEIGHBOR_PROBLEM;
+          return SHARED_NEIGHBOR_PROBLEM;
 
         //Update neighbors before removing cell
         n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
