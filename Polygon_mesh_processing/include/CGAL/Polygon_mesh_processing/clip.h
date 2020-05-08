@@ -465,10 +465,9 @@ clip(TriangleMesh& tm,
     parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
 
   if(clip_volume && is_closed(tm))
-    return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
+    return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c, np_tm);
   return corefine_and_compute_intersection(tm, clipper, tm,
-                                           np_tm.use_bool_op_to_clip_surface(true),
-                                           np_c);
+                                           np_tm.use_bool_op_to_clip_surface(true), np_c, np_tm);
 }
 
 /**
