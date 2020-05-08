@@ -868,25 +868,25 @@ public:
 };
 
 // Cotangent_value_Meyer has been changed to the version:
-// Cotangent_value_Meyer_secure to avoid imprecisions from 
+// Cotangent_value_Meyer_secure to avoid imprecisions from
 // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
 template<
 class PolygonMesh, class VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
 class Cotangent_weight_with_voronoi_area_fairing_secure {
-  
+
   typedef PolygonMesh PM;
   typedef VertexPointMap VPMap;
   Voronoi_area<PM, VPMap> voronoi_functor;
   Cotangent_weight<PM, VPMap, Cotangent_value_Meyer_secure<PM, VPMap> > cotangent_functor;
 
 public:
-  Cotangent_weight_with_voronoi_area_fairing_secure(PM& pmesh_) : 
-  voronoi_functor(pmesh_, get(CGAL::vertex_point, pmesh_)), 
+  Cotangent_weight_with_voronoi_area_fairing_secure(PM& pmesh_) :
+  voronoi_functor(pmesh_, get(CGAL::vertex_point, pmesh_)),
   cotangent_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
   { }
 
-  Cotangent_weight_with_voronoi_area_fairing_secure(PM& pmesh_, VPMap vpmap_) : 
-  voronoi_functor(pmesh_, vpmap_), 
+  Cotangent_weight_with_voronoi_area_fairing_secure(PM& pmesh_, VPMap vpmap_) :
+  voronoi_functor(pmesh_, vpmap_),
   cotangent_functor(pmesh_, vpmap_)
   { }
 

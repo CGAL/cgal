@@ -148,7 +148,7 @@ namespace internal {
     typedef typename GetVertexPointMap < TriangleMesh, NamedParameters>::type VPMap;
 
     // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
-    // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from 
+    // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
     // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing_secure<TriangleMesh, VPMap>
       Default_Weight_calculator;
