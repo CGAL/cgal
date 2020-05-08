@@ -122,15 +122,15 @@ bool  are_triangles_coplanar_same_side(
 }
 
 
-template <class Node_id, class Node_vector, class vertex_descriptor, class Vpm>
+template <class Node_id, class Node_vector, class vertex_descriptor, class VPMP, class VPMQ>
 bool are_triangles_coplanar_same_side(Node_id o_prime_index,
                                       Node_id o_index,
                                       Node_id p_index,
                                       Node_id q_index,
                                       vertex_descriptor p,
                                       vertex_descriptor q,
-                                      const Vpm& vpm_p,
-                                      const Vpm& vpm_q,
+                                      const VPMP& vpm_p,
+                                      const VPMQ& vpm_q,
                                       const Node_vector& nodes)
 {
   const Node_id NID((std::numeric_limits<Node_id>::max)());
@@ -142,7 +142,7 @@ bool are_triangles_coplanar_same_side(Node_id o_prime_index,
     );
 }
 
-template <class Node_id, class Node_vector, class vertex_descriptor, class Vpm>
+template <class Node_id, class Node_vector, class vertex_descriptor, class VPMP, class VPMQ>
 bool sorted_around_edge( Node_id o_prime_index,
                          Node_id o_index,
                          Node_id p1_index,
@@ -151,8 +151,8 @@ bool sorted_around_edge( Node_id o_prime_index,
                          vertex_descriptor p1,
                          vertex_descriptor p2,
                          vertex_descriptor q,
-                         const Vpm& vpm_p,
-                         const Vpm& vpm_q,
+                         const VPMP& vpm_p,
+                         const VPMQ& vpm_q,
                          const Node_vector& nodes)
 {
   const Node_id NID((std::numeric_limits<Node_id>::max)());

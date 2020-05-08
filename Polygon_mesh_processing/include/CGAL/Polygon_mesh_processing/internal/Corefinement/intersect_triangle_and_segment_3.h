@@ -78,7 +78,7 @@ find_intersection(const Point_3& p, const Point_3& q,  //segment
 }
 
 
-template<class TriangleMesh, class VertexPointMap>
+template<class TriangleMesh, class VertexPointMap1, class VertexPointMap2>
 std::tuple<Intersection_type,
              typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
              bool,bool>
@@ -87,15 +87,20 @@ intersection_type(
              typename boost::graph_traits<TriangleMesh>::face_descriptor f_2,
              const TriangleMesh& tm1,
              const TriangleMesh& tm2,
-             const VertexPointMap& vpm1,
-             const VertexPointMap& vpm2)
+             const VertexPointMap1& vpm1,
+             const VertexPointMap2& vpm2)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef std::tuple<Intersection_type,halfedge_descriptor,bool,bool> result_type;
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+  typedef typename boost::property_traits<VertexPointMap1>::reference Point_ref;
+  typedef typename boost::property_traits<VertexPointMap1>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
+
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::reference,
+                                      typename boost::property_traits<VertexPointMap2>::reference>::value));
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
+                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
 
   halfedge_descriptor h_2=halfedge(f_2,tm2);
 

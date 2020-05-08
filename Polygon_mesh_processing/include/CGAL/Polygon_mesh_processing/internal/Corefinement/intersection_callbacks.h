@@ -67,15 +67,15 @@ public:
 };
 
 template<class TriangleMesh,
-         class VertexPointMap,
+         class VertexPointMapF, class VertexPointMapE,
          class EdgeToFaces,
          class CoplanarFaceSet>
 class Collect_face_bbox_per_edge_bbox_with_coplanar_handling {
 protected:
   const TriangleMesh& tm_faces;
   const TriangleMesh& tm_edges;
-  const VertexPointMap& vpmap_tmf;
-  const VertexPointMap& vpmap_tme;
+  const VertexPointMapF& vpmap_tmf;
+  const VertexPointMapE& vpmap_tme;
   EdgeToFaces& edge_to_faces;
   CoplanarFaceSet& coplanar_faces;
 
@@ -83,7 +83,7 @@ protected:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::property_traits<VertexPointMap>::reference Point;
+  typedef typename boost::property_traits<VertexPointMapF>::reference Point;
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
@@ -92,8 +92,8 @@ public:
   Collect_face_bbox_per_edge_bbox_with_coplanar_handling(
     const TriangleMesh& tm_faces,
     const TriangleMesh& tm_edges,
-    const VertexPointMap& vpmap_tmf,
-    const VertexPointMap& vpmap_tme,
+    const VertexPointMapF& vpmap_tmf,
+    const VertexPointMapE& vpmap_tme,
     EdgeToFaces& edge_to_faces,
     CoplanarFaceSet& coplanar_faces)
   : tm_faces(tm_faces)
