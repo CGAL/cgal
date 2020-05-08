@@ -495,9 +495,11 @@ if( "${CMAKE_CXX_COMPILER}" MATCHES "icl" OR "${CMAKE_CXX_COMPILER}" MATCHES "ic
   endif()
 endif()
 
+# This fixes the issue #3816 - https://github.com/CGAL/cgal/issues/3816.
 if ("${CMAKE_CXX_COMPILER}" MATCHES "xctoolchain")
   message(STATUS "Clang compiler is detected.")
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
+    message(STATUS "Boost mp is turned off for all clang versions below 11.0.3!")
     uniquely_add_flags(CMAKE_CXX_FLAGS "-DCGAL_DO_NOT_USE_BOOST_MP")
   endif()
 endif()
