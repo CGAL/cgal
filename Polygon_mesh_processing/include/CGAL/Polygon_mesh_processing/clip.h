@@ -859,6 +859,9 @@ void split(TriangleMesh& tm,
 
 /// \endcond
 
-} } //end of namespace CGAL::Polygon_mesh_processing
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
+
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/clip_experimental.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_CLIP_H
