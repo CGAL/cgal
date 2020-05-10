@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Michal Balas   <balasmic@post.tau.ac.il>
 //            Efi Fogel      <efifogel@gmail.com>
@@ -229,7 +220,7 @@ deactivate_trapezoid(Dag_node& trpz_node, Dag_node* active_node) const
   CGAL_precondition(traits->is_td_trapezoid(trpz_node.get_data()));
   if (Td_active_trapezoid* trap =
       boost::get<Td_active_trapezoid>(&trpz_node.get_data()))
-    trap->clear_neighbors();
+    trap->non_recursive_clear_neighbors();
   trpz_node.set_data(Td_inactive_trapezoid());
   if (active_node) trpz_node.set_left_child(*active_node);
 }
@@ -510,10 +501,10 @@ update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
 
   Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(), vtx_item));
   if ((old_he == cw_he) || (old_he->twin() == cw_he)) {
-    Halfedge_const_handle new_he = cw_he->twin()->prev();
-    if (new_he != old_he)
+    Halfedge_const_handle new_he = cw_he->twin()->next();
+    if (new_he != cw_he)
       boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
-    else boost::apply_visitor(reset_cw_he_visitor(), vtx_item);
+    else boost::apply_visitor(reset_cw_he_visitor(), vtx_item); // dangling edge removed
   }
 }
 

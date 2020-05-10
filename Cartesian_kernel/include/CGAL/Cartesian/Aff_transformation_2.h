@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Lutz Kettner
 
@@ -66,7 +57,7 @@ class Aff_transformationC2
 
 public:
   typedef R_                                R;
-   
+
   Aff_transformationC2()
   {
     initialize_with(Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1)));
@@ -109,7 +100,7 @@ public:
     else
       initialize_with(Scaling_repC2<R>(s));
   }
-  
+
   Aff_transformationC2(const Reflection, const Line_2& l)
   {
       initialize_with(Reflection_repC2<R>(l));
@@ -135,18 +126,18 @@ public:
   {
     initialize_with(Aff_transformation_repC2<R>(m11/w, m12/w, m21/w, m22/w));
   }
-  
+
 
   Point_2
-  transform(const Point_2 &p) const 
-  { return this->Ptr()->transform(p); } 
+  transform(const Point_2 &p) const
+  { return this->Ptr()->transform(p); }
 
   Point_2
   operator()(const Point_2 &p) const
   { return transform(p); }
 
   Vector_2
-  transform(const Vector_2 &v) const 
+  transform(const Vector_2 &v) const
   { return this->Ptr()->transform(v); }
 
   Vector_2
@@ -186,7 +177,7 @@ public:
 
   std::ostream &
   print(std::ostream &os) const;
-  
+
   bool operator==(const Aff_transformationC2 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -195,12 +186,12 @@ public:
           return false;
     return true;
   }
-  
+
   bool operator!=(const Aff_transformationC2 &t)const
   {
     return !(*this == t);
   }
-  
+
 };
 
 template < class R >

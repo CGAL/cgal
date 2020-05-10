@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -122,7 +113,8 @@ class Intersect_facets
   typename Kernel::Construct_triangle_2 triangle_functor;
   typename Kernel::Do_intersect_2 do_intersect_2_functor;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor, Box_policy> Box;
 
   const TriangleMesh& mesh;
   const VertexUVMap uvmap;
@@ -259,7 +251,8 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename Kernel::FT                                         NT;
   typedef typename Kernel::Point_2                                    Point_2;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor, Box_policy> Box;
 
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;
@@ -292,8 +285,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   unsigned int counter = 0;
   Intersect_facets<TriangleMesh, VertexUVMap> intersect_facets(mesh, uvmap, counter);
   std::ptrdiff_t cutoff = 2000;
-  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
-                                intersect_facets, cutoff);
+  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(), intersect_facets, cutoff);
   return (counter == 0);
 }
 

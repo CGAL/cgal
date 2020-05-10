@@ -1,20 +1,11 @@
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Philipp Moeller
 
@@ -63,9 +54,9 @@ BOOST_concept(HalfedgeGraph,(G))
     h = next(h, cg);
     h = prev(h, cg);
   }
-  
+
   G g;
-  
+
   typename boost::graph_traits<G>::vertex_descriptor v, u;
   typename boost::graph_traits<G>::edge_descriptor e;
   typename boost::graph_traits<G>::halfedge_descriptor h;
@@ -77,7 +68,7 @@ BOOST_concept(HalfedgeListGraph,(G))
 {
   typedef typename boost::graph_traits<G>::halfedge_iterator   halfedge_iterator;
   typedef typename boost::graph_traits<G>::halfedges_size_type halfedges_size_type;
-  
+
   BOOST_CONCEPT_USAGE(HalfedgeListGraph)
   {
     // BOOST_CONCEPT_ASSERT((boost::BidirectionalIterator<halfedge_iterator>));
@@ -93,7 +84,7 @@ BOOST_concept(HalfedgeListGraph,(G))
     p = halfedges(cg);
     this->h = *p.first;
   }
-  
+
   G g;
   halfedges_size_type h_num;
   std::pair<halfedge_iterator, halfedge_iterator> p;

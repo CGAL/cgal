@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -96,7 +87,7 @@ private:
     CGAL_precondition( p.is_point() && s.is_segment() );
 
     return ( same_points(p, s.source_site()) ||
-	     same_points(p, s.target_site()) );
+             same_points(p, s.target_site()) );
   }
 
   // given that p is an endpoint of seg (not checked), returns the
@@ -126,10 +117,10 @@ private:
 
   void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
-	     const PPP_Type&) const
+             const PPP_Type&) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
-		       sr.is_point() );
+                       sr.is_point() );
 
     // the following check is not really needed in this
     if ( is_vv_computed ) { return; }
@@ -146,8 +137,8 @@ private:
     ux = np * (q.y() - r.y()) + nq * (r.y() - p.y()) + nr * (p.y() - q.y());
     uy = -(np * (q.x() - r.x()) + nq * (r.x() - p.x()) + nr * (p.x() - q.x()));
     uz = FT(2) * ( (q.x() * r.y() - r.x() * q.y()) +
-		   (r.x() * p.y() - p.x() * r.y()) +
-		   (p.x() * q.y() - q.x() * p.y()) );
+                   (r.x() * p.y() - p.x() * r.y()) +
+                   (p.x() * q.y() - q.x() * p.y()) );
 
     vv = Point_2(ux / uz, uy / uz);
   }
@@ -159,10 +150,10 @@ private:
 
   void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
-	     const PPS_Type&) const
+             const PPS_Type&) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
-		       sr.is_segment() );
+                       sr.is_segment() );
 
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
@@ -176,11 +167,11 @@ private:
     FT cq_ = a * qq.x() + b * qq.y() + c;
 
     if ( same_points(sp, sr.source_site()) ||
-	 same_points(sp, sr.target_site()) ) {
+         same_points(sp, sr.target_site()) ) {
       c_ = FT(0);
     }
     if ( same_points(sq, sr.source_site()) ||
-	 same_points(sq, sr.target_site()) ) {
+         same_points(sq, sr.target_site()) ) {
       cq_ = FT(0);
     }
 
@@ -198,7 +189,7 @@ private:
 
       CGAL_assertion( s1 != ZERO );
       if ( s1 == NEGATIVE ) {
-	a = -a;  b = -b;  c = -c;  c_ = -c_;  cq_ = -cq_;
+        a = -a;  b = -b;  c = -c;  c_ = -c_;  cq_ = -cq_;
       }
     }
 #endif
@@ -263,7 +254,7 @@ private:
 
   void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
-	     const PSS_Type&) const
+             const PSS_Type&) const
   {
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
@@ -280,7 +271,7 @@ private:
 #endif
 
     CGAL_precondition( sp.is_point() && sq.is_segment() &&
-		       sr.is_segment() );
+                       sr.is_segment() );
 
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
@@ -320,7 +311,7 @@ private:
 
       CGAL_assertion( pq );
       if ( same_points(sp, sq.target_site()) ) {
-	a1 = -a1;  b1 = -b1;  c1_ = -c1_;
+        a1 = -a1;  b1 = -b1;  c1_ = -c1_;
       }
     }
 
@@ -330,7 +321,7 @@ private:
 
       CGAL_assertion( pr );
       if ( same_points(sp, sr.source_site()) ) {
-	a2 = -a2;  b2 = -b2;  c2_ = -c2_;
+        a2 = -a2;  b2 = -b2;  c2_ = -c2_;
       }
     }
 
@@ -430,13 +421,13 @@ private:
   //--------------------------------------------------------------------------
 
   bool check_if_exact(const Site_2& , unsigned int ,
-		      const Tag_false&) const
+                      const Tag_false&) const
   {
     return true;
-  } 
+  }
 
   bool check_if_exact(const Site_2& s, unsigned int i,
-		      const Tag_true&) const
+                      const Tag_true&) const
   {
     return s.is_input(i);
   }
@@ -447,36 +438,36 @@ private:
   // pass it so that we do not have to recompute it
   bool
   is_on_positive_halfspace(const Site_2& supp,
-			   const Site_2& s, const Line_2& l) const
+                           const Site_2& s, const Line_2& l) const
   {
     CGAL_precondition( supp.is_segment() && s.is_segment() );
 
     if ( same_segments(supp.supporting_site(),
-		       s.supporting_site()) ) {
+                       s.supporting_site()) ) {
       return false;
     }
 
     if ( same_points(supp.source_site(), s.source_site()) ||
-	 same_points(supp.target_site(), s.source_site()) ) {
+         same_points(supp.target_site(), s.source_site()) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
     if ( same_points(supp.source_site(), s.target_site()) ||
-	 same_points(supp.target_site(), s.target_site()) ) {
+         same_points(supp.target_site(), s.target_site()) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
     ITag itag;
 
     if ( !check_if_exact(s, 0, itag) &&
-	 same_segments(supp.supporting_site(),
-		       s.crossing_site(0)) ) {
+         same_segments(supp.supporting_site(),
+                       s.crossing_site(0)) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
     if ( !check_if_exact(s, 1, itag) &&
-	 same_segments(supp.supporting_site(),
-		       s.crossing_site(1)) ) {
+         same_segments(supp.supporting_site(),
+                       s.crossing_site(1)) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
@@ -486,63 +477,63 @@ private:
 
   void
   orient_lines(const Site_2& sp, const Site_2& sq,
-	       const Site_2& sr, FT a[], FT b[], FT c[]) const
+               const Site_2& sr, FT a[], FT b[], FT c[]) const
   {
     CGAL_precondition( sp.is_segment() && sq.is_segment() &&
-		       sr.is_segment() );
+                       sr.is_segment() );
 
     Line_2 l[3];
     l[0] = compute_supporting_line(sp.supporting_site());
     l[1] = compute_supporting_line(sq.supporting_site());
     l[2] = compute_supporting_line(sr.supporting_site());
-    
+
     bool is_oriented[3] = {false, false, false};
 
     if ( is_on_positive_halfspace(sp, sq, l[0]) ||
-    	 is_on_positive_halfspace(sp, sr, l[0]) ) {
+             is_on_positive_halfspace(sp, sr, l[0]) ) {
       is_oriented[0] = true;
     } else {
-      
+
       l[0] = opposite_line(l[0]);
       if ( is_on_positive_halfspace(sp, sq, l[0]) ||
-      	   is_on_positive_halfspace(sp, sr, l[0]) ) {
-	is_oriented[0] = true;
+                 is_on_positive_halfspace(sp, sr, l[0]) ) {
+        is_oriented[0] = true;
       } else {
-	l[0] = opposite_line(l[0]);
+        l[0] = opposite_line(l[0]);
       }
     }
 
     if ( is_on_positive_halfspace(sq, sp, l[1]) ||
-	 is_on_positive_halfspace(sq, sr, l[1]) ) {
+         is_on_positive_halfspace(sq, sr, l[1]) ) {
       is_oriented[1] = true;
     } else {
       l[1] = opposite_line(l[1]);
       if ( is_on_positive_halfspace(sq, sp, l[1]) ||
-	   is_on_positive_halfspace(sq, sr, l[1]) ) {
-	is_oriented[1] = true;
+           is_on_positive_halfspace(sq, sr, l[1]) ) {
+        is_oriented[1] = true;
       } else {
-	l[1] = opposite_line(l[1]);
+        l[1] = opposite_line(l[1]);
       }
     }
 
     if ( is_on_positive_halfspace(sr, sp, l[2]) ||
-	 is_on_positive_halfspace(sr, sq, l[2]) ) {
+         is_on_positive_halfspace(sr, sq, l[2]) ) {
       is_oriented[2] = true;
     } else {
       l[2] = opposite_line(l[2]);
       if ( is_on_positive_halfspace(sr, sp, l[2]) ||
-	   is_on_positive_halfspace(sr, sq, l[2]) ) {
-	is_oriented[2] = true;
+           is_on_positive_halfspace(sr, sq, l[2]) ) {
+        is_oriented[2] = true;
       } else {
-	l[2] = opposite_line(l[2]);
+        l[2] = opposite_line(l[2]);
       }
     }
 
     if ( is_oriented[0] && is_oriented[1] && is_oriented[2] ) {
       for (int i = 0; i < 3; i++) {
-	a[i] = l[i].a();
-	b[i] = l[i].b();
-	c[i] = l[i].c();
+        a[i] = l[i].a();
+        b[i] = l[i].b();
+        c[i] = l[i].c();
       }
       return;
     }
@@ -550,9 +541,9 @@ private:
     int i_no(-1);
     for (int i = 0; i < 3; i++) {
       if ( !is_oriented[i] ) {
-	i_no = i;
-	CGAL_assertion( is_oriented[(i+1)%3] && is_oriented[(i+2)%3] );
-	break;
+        i_no = i;
+        CGAL_assertion( is_oriented[(i+1)%3] && is_oriented[(i+2)%3] );
+        break;
       }
     }
 
@@ -567,7 +558,7 @@ private:
     FT z[3];
     for (int i = 0; i < 3; i++) {
       z[i] = l[(i+1)%3].a() * l[(i+2)%3].b()
-	- l[(i+2)%3].a() * l[(i+1)%3].b();
+        - l[(i+2)%3].a() * l[(i+1)%3].b();
     }
 
 
@@ -581,9 +572,9 @@ private:
       l[i_no] = opposite_line(l[i_no]);
 
       for (int i = 0; i < 3; i++) {
-	a[i] = l[i].a();
-	b[i] = l[i].b();
-	c[i] = l[i].c();
+        a[i] = l[i].a();
+        b[i] = l[i].b();
+        c[i] = l[i].c();
       }
       return;
     }
@@ -602,9 +593,9 @@ private:
     if ( s_minus_vz_2 == NEGATIVE ) {
       // the other orientation does not correspond to a CCW triangle.
       for (int i = 0; i < 3; i++) {
-	a[i] = l[i].a();
-	b[i] = l[i].b();
-	c[i] = l[i].c();
+        a[i] = l[i].a();
+        b[i] = l[i].b();
+        c[i] = l[i].c();
       }
       return;
     }
@@ -635,7 +626,7 @@ private:
 
     FT dist =
       a[(i_no+1)%3] * vx + b[(i_no+1)%3] * vy + c[(i_no+1)%3] * vw;
-    
+
 
     Sign sgn_dist = s_vw * CGAL::sign(dist);
 
@@ -651,10 +642,10 @@ private:
 
   void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
-	     const SSS_Type&) const
+             const SSS_Type&) const
   {
     CGAL_precondition( sp.is_segment() && sq.is_segment() &&
-		       sr.is_segment() );
+                       sr.is_segment() );
 
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
@@ -691,8 +682,8 @@ private:
   inline
   FT
   squared_radius(const Point_2& vv,
-		 const Site_2& p, const Site_2& /*q*/, const Site_2& /*r*/,
-		 const Type&) const
+                 const Site_2& p, const Site_2& /*q*/, const Site_2& /*r*/,
+                 const Type&) const
   {
     CGAL_precondition( p.is_point() );
 
@@ -706,8 +697,8 @@ private:
   inline
   FT
   squared_radius(const Point_2& vv,
-		 const Site_2& p, const Site_2& q, const Site_2& r,
-		 const SSS_Type&) const
+                 const Site_2& p, const Site_2& q, const Site_2& r,
+                 const SSS_Type&) const
   {
     CGAL_USE(q);
     CGAL_USE(r);
@@ -733,8 +724,8 @@ private:
   // the incircle test when the query object t is a point
   template<class Type>
   Sign incircle_p(const Point_2& vv,
-		  const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const Type& type) const
+                  const Site_2& p, const Site_2& q, const Site_2& r,
+                  const Site_2& t, const Type& type) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -750,13 +741,13 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_p(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const PPP_Type&) const
+                  const Site_2& t, const PPP_Type&) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_point() );
     CGAL_precondition( r.is_point() );
     CGAL_precondition( t.is_point() );
-    
+
     Oriented_side os =
       side_of_oriented_circle(p.point(), q.point(), r.point(), t.point());
     if ( os == ON_POSITIVE_SIDE ) { return NEGATIVE; }
@@ -770,7 +761,7 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_p(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const PPS_Type& type) const
+                  const Site_2& t, const PPS_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_point() );
@@ -801,7 +792,7 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_p(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const PSS_Type& type) const
+                  const Site_2& t, const PSS_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_segment() );
@@ -819,7 +810,7 @@ private:
 
     // if p and t are the same point, then return ZERO
     if ( same_points(p, t) ) { return ZERO; }
-    
+
     // if t is an endpoint of either q or r, then t has to be outside
     // the Voronoi circle and thus the result is POSITIVE
     if ( is_endpoint_of(t, q) || is_endpoint_of(t, r) ) {
@@ -837,19 +828,19 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_p(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const SSS_Type& type) const
+                  const Site_2& t, const SSS_Type& type) const
   {
     CGAL_precondition( p.is_segment() );
     CGAL_precondition( q.is_segment() );
     CGAL_precondition( r.is_segment() );
-    CGAL_precondition( t.is_point() ); 
+    CGAL_precondition( t.is_point() );
 
     // easy degeneracies --- start
 
     // if t is an endpoint of p, q or r, then t has to lie outside the
     // Voronoi circle of p, q and r and thus the result is positive
     if ( is_endpoint_of(t, p) || is_endpoint_of(t, q) ||
-	 is_endpoint_of(t, r) ) {
+         is_endpoint_of(t, r) ) {
       return POSITIVE;
     }
 
@@ -868,8 +859,8 @@ private:
   inline
   Sign
   incircle_xxxl(const Point_2& vv,
-		const Site_2& p, const Site_2& q, const Site_2& r,
-		const Line_2& l, const Type& type) const
+                const Site_2& p, const Site_2& q, const Site_2& r,
+                const Line_2& l, const Type& type) const
   {
     FT r2 = squared_radius(vv, p, q, r, type);
 
@@ -905,14 +896,14 @@ private:
   // there is no conflict, otherwise there is a conflict.
   template<class Type>
   Sign incircle_xxxs(const Site_2& p, const Site_2& q, const Site_2& r,
-		     const Site_2& t, const Type& type) const
+                     const Site_2& t, const Type& type) const
   {
     CGAL_precondition( t.is_segment() );
 
     Sign d1, d2;
     if (  ( p.is_point() && same_points(p, t.source_site()) ) ||
-	  ( q.is_point() && same_points(q, t.source_site()) ) ||
-	  ( r.is_point() && same_points(r, t.source_site()) )  ) {
+          ( q.is_point() && same_points(q, t.source_site()) ) ||
+          ( r.is_point() && same_points(r, t.source_site()) )  ) {
       d1 = ZERO;
     } else {
       d1 = incircle_p(p, q, r, t.source_site(), type);
@@ -922,8 +913,8 @@ private:
     if (  !is_certain(d1 == NEGATIVE)  ) { return indeterminate<Sign>(); }
 
     if (   ( p.is_point() && same_points(p, t.target_site()) ) ||
-	   ( q.is_point() && same_points(q, t.target_site()) ) ||
-	   ( r.is_point() && same_points(r, t.target_site()) )  ) {
+           ( q.is_point() && same_points(q, t.target_site()) ) ||
+           ( r.is_point() && same_points(r, t.target_site()) )  ) {
       d2 = ZERO;
     } else {
       d2 = incircle_p(p, q, r, t.target_site(), type);
@@ -935,7 +926,7 @@ private:
     Line_2 l = compute_supporting_line(t.supporting_site());
     compute_vv(p, q, r, type);
     Sign sl = incircle_xxxl(vv, p, q, r, l, type);
-    
+
     if (  certainly( sl == POSITIVE )  ) { return sl; }
     if (  !is_certain( sl == POSITIVE )  ) { return indeterminate<Sign>(); }
 
@@ -946,7 +937,7 @@ private:
 
     if ( sl == ZERO ) {
       if (os1 == ON_ORIENTED_BOUNDARY || os2 == ON_ORIENTED_BOUNDARY) {
-	return ZERO;
+        return ZERO;
       }
       return ( os1 == os2 ) ? POSITIVE : ZERO;
     }
@@ -960,7 +951,7 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const PPP_Type& type) const
+                  const Site_2& t, const PPP_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_point() );
@@ -995,7 +986,7 @@ private:
       Point_2 p1 = pp1->point();
       Point_2 p2 = other_site(*pp1, t).point();
       compute_vv(p, q, r, type);
-        
+
       Compute_scalar_product_2 csp;
       return -CGAL::sign( csp(vv - p1, p2 - p1) );
     }
@@ -1013,7 +1004,7 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const PPS_Type& type) const
+                  const Site_2& t, const PPS_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_point() );
@@ -1055,7 +1046,7 @@ private:
   //--------------------------------------------------------------------------
 
   Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const PSS_Type& type) const
+                  const Site_2& t, const PSS_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_segment() );
@@ -1073,11 +1064,11 @@ private:
 
       // check if t has the same support as either q or r
       if ( same_segments(q.supporting_site(), t.supporting_site()) ) {
-	return ZERO;
+        return ZERO;
       }
 
       if ( same_segments(r.supporting_site(), t.supporting_site()) ) {
-	return ZERO;
+        return ZERO;
       }
 
 
@@ -1090,8 +1081,8 @@ private:
       Point_2 p_ = p.point();
 
       if ( CGAL::orientation(p_, q_, t_) == LEFT_TURN &&
-	   CGAL::orientation(p_, r_, t_) == RIGHT_TURN ) {
-	return NEGATIVE;
+           CGAL::orientation(p_, r_, t_) == RIGHT_TURN ) {
+        return NEGATIVE;
       }
       return ZERO;
     }
@@ -1135,7 +1126,7 @@ private:
 
   inline
   Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t, const SSS_Type& type) const
+                  const Site_2& t, const SSS_Type& type) const
   {
     CGAL_precondition( p.is_segment() );
     CGAL_precondition( q.is_segment() );
@@ -1178,7 +1169,7 @@ private:
 
 
   Sign incircle_p(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t) const
+                  const Site_2& t) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -1187,19 +1178,19 @@ private:
       return incircle_p(p, q, r, t, PPP_Type());
     case PPS:
       if ( p.is_segment() ) {
-	return incircle_p(q, r, p, t, PPS_Type());
+        return incircle_p(q, r, p, t, PPS_Type());
       } else if ( q.is_segment() ) {
-	return incircle_p(r, p, q, t, PPS_Type());
+        return incircle_p(r, p, q, t, PPS_Type());
       } else {
-	return incircle_p(p, q, r, t, PPS_Type());
+        return incircle_p(p, q, r, t, PPS_Type());
       }
     case PSS:
       if ( p.is_point() ) {
-	return incircle_p(p, q, r, t, PSS_Type());
+        return incircle_p(p, q, r, t, PSS_Type());
       } else if ( q.is_point() ) {
-	return incircle_p(q, r, p, t, PSS_Type());
+        return incircle_p(q, r, p, t, PSS_Type());
       } else {
-	return incircle_p(r, p, q, t, PSS_Type());
+        return incircle_p(r, p, q, t, PSS_Type());
       }
       return incircle_p(p, q, r, t, PSS_Type());
     default: // case SSS
@@ -1210,7 +1201,7 @@ private:
 
 
   Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& t) const
+                  const Site_2& t) const
   {
     CGAL_precondition( t.is_segment() );
 
@@ -1219,19 +1210,19 @@ private:
       return incircle_s(p, q, r, t, PPP_Type());
     case PPS:
       if ( p.is_segment() ) {
-	return incircle_s(q, r, p, t, PPS_Type());
+        return incircle_s(q, r, p, t, PPS_Type());
       } else if ( q_.is_segment() ) {
-	return incircle_s(r, p, q, t, PPS_Type());
+        return incircle_s(r, p, q, t, PPS_Type());
       } else {
-	return incircle_s(p, q, r, t, PPS_Type());
+        return incircle_s(p, q, r, t, PPS_Type());
       }
     case PSS:
       if ( p.is_point() ) {
-	return incircle_s(p, q, r, t, PSS_Type());
+        return incircle_s(p, q, r, t, PSS_Type());
       } else if ( q.is_point() ) {
-	return incircle_s(q, r, p, t, PSS_Type());
+        return incircle_s(q, r, p, t, PSS_Type());
       } else {
-	return incircle_s(r, p, q, t, PSS_Type());
+        return incircle_s(r, p, q, t, PSS_Type());
       }
     default: // case SSS
       return incircle_s(p, q, r, t, SSS_Type());
@@ -1241,8 +1232,8 @@ private:
 
 public:
   Voronoi_vertex_sqrt_field_new_C2(const Site_2& p,
-				   const Site_2& q,
-				   const Site_2& r)
+                                   const Site_2& q,
+                                   const Site_2& r)
     : p_(p), q_(q), r_(r), is_vv_computed(false)
   {
     v_type = compute_type(p, q, r);
@@ -1282,29 +1273,29 @@ public:
     if ( !is_vv_computed ) {
       switch ( v_type ) {
       case PPP:
-	compute_vv(p_, q_, r_, PPP_Type());
-	break;
+        compute_vv(p_, q_, r_, PPP_Type());
+        break;
       case PPS:
-	if ( p_.is_segment() ) {
-	  compute_vv(q_, r_, p_, PPS_Type());
-	} else if ( q_.is_segment() ) {
-	  compute_vv(r_, p_, q_, PPS_Type());
-	} else {
-	  compute_vv(p_, q_, r_, PPS_Type());
-	}
-	break;
+        if ( p_.is_segment() ) {
+          compute_vv(q_, r_, p_, PPS_Type());
+        } else if ( q_.is_segment() ) {
+          compute_vv(r_, p_, q_, PPS_Type());
+        } else {
+          compute_vv(p_, q_, r_, PPS_Type());
+        }
+        break;
       case PSS:
-	if ( p_.is_point() ) {
-	  compute_vv(p_, q_, r_, PSS_Type());
-	} else if ( q_.is_point() ) {
-	  compute_vv(q_, r_, p_, PSS_Type());
-	} else {
-	  compute_vv(r_, p_, q_, PSS_Type());
-	}
-	break;
+        if ( p_.is_point() ) {
+          compute_vv(p_, q_, r_, PSS_Type());
+        } else if ( q_.is_point() ) {
+          compute_vv(q_, r_, p_, PSS_Type());
+        } else {
+          compute_vv(r_, p_, q_, PSS_Type());
+        }
+        break;
       default: // case SSS:
-	compute_vv(p_, q_, r_, SSS_Type());
-	break;
+        compute_vv(p_, q_, r_, SSS_Type());
+        break;
       }
     }
 
@@ -1322,7 +1313,7 @@ public:
 
 
   inline Sign operator()(const Site_2& p, const Site_2& q, const Site_2& r,
-			 const Site_2& t) const
+                         const Site_2& t) const
   {
     if ( t.is_point() ) {
       return incircle_p(p, q, r, t);
@@ -1334,8 +1325,8 @@ private:
 
   template<class Type>
   Sign incircle_p_no_easy(const Point_2& vv,
-			  const Site_2& p, const Site_2& q, const Site_2& r,
-			  const Site_2& t, const Type& type) const
+                          const Site_2& p, const Site_2& q, const Site_2& r,
+                          const Site_2& t, const Type& type) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -1348,9 +1339,9 @@ private:
     return CGAL::compare(d2, r2);
   }
 
-  
+
   Sign incircle_p_no_easy(const Site_2& p, const Site_2& q, const Site_2& r,
-			  const Site_2& t) const
+                          const Site_2& t) const
   {
     Sign s(ZERO);
     switch ( v_type ) {
@@ -1360,27 +1351,27 @@ private:
     case PPS:
       PPS_Type pps;
       if ( p.is_segment() ) {
-	compute_vv(q, r, p, pps);
-	s = incircle_p_no_easy(vv, q, r, p, t, pps);
+        compute_vv(q, r, p, pps);
+        s = incircle_p_no_easy(vv, q, r, p, t, pps);
       } else if ( q.is_segment() ) {
-	compute_vv(r, p, q, pps);
-	s = incircle_p_no_easy(vv, r, p, q, t, pps);
+        compute_vv(r, p, q, pps);
+        s = incircle_p_no_easy(vv, r, p, q, t, pps);
       } else {
-	compute_vv(p, q, r, pps);
-	s = incircle_p_no_easy(vv, p, q, r, t, pps);
+        compute_vv(p, q, r, pps);
+        s = incircle_p_no_easy(vv, p, q, r, t, pps);
       }
       break;
     case PSS:
       PSS_Type pss;
       if ( p.is_point() ) {
-	compute_vv(p, q, r, pss);
-	s = incircle_p_no_easy(vv, p, q, r, t, pss);
+        compute_vv(p, q, r, pss);
+        s = incircle_p_no_easy(vv, p, q, r, t, pss);
       } else if ( q.is_point() ) {
-	compute_vv(q, r, p, pss);
-	s = incircle_p_no_easy(vv, q, r, p, t, pss);
+        compute_vv(q, r, p, pss);
+        s = incircle_p_no_easy(vv, q, r, p, t, pss);
       } else {
-	compute_vv(r, p, q, pss);
-	s = incircle_p_no_easy(vv, r, p, q, t, pss);
+        compute_vv(r, p, q, pss);
+        s = incircle_p_no_easy(vv, r, p, q, t, pss);
       }
       break;
     case SSS:
@@ -1395,26 +1386,26 @@ private:
 
 
   Sign incircle_s_no_easy(const Site_2& p, const Site_2& q, const Site_2& r,
-			  const Site_2& t) const 
+                          const Site_2& t) const
   {
     switch ( v_type ) {
     case PPP:
       return incircle_xxxs(p, q, r, t, PPP_Type());
     case PPS:
       if ( p.is_segment() ) {
-	return incircle_xxxs(q, r, p, t, PPS_Type());
+        return incircle_xxxs(q, r, p, t, PPS_Type());
       } else if ( q_.is_segment() ) {
-	return incircle_xxxs(r, p, q, t, PPS_Type());
+        return incircle_xxxs(r, p, q, t, PPS_Type());
       } else {
-	return incircle_xxxs(p, q, r, t, PPS_Type());
+        return incircle_xxxs(p, q, r, t, PPS_Type());
       }
     case PSS:
       if ( p.is_point() ) {
-	return incircle_xxxs(p, q, r, t, PSS_Type());
+        return incircle_xxxs(p, q, r, t, PSS_Type());
       } else if ( q.is_point() ) {
-	return incircle_xxxs(q, r, p, t, PSS_Type());
+        return incircle_xxxs(q, r, p, t, PSS_Type());
       } else {
-	return incircle_xxxs(r, p, q, t, PSS_Type());
+        return incircle_xxxs(r, p, q, t, PSS_Type());
       }
     default: // case SSS:
       return incircle_xxxs(p, q, r, t, SSS_Type());
@@ -1447,20 +1438,20 @@ public:
       break;
     case PPS:
       if ( p_.is_segment() ) {
-	compute_vv(q_, r_, p_, PPS_Type());
+        compute_vv(q_, r_, p_, PPS_Type());
       } else if ( q_.is_segment() ) {
-	compute_vv(r_, p_, q_, PPS_Type());
+        compute_vv(r_, p_, q_, PPS_Type());
       } else {
-	compute_vv(p_, q_, r_, PPS_Type());
+        compute_vv(p_, q_, r_, PPS_Type());
       }
       break;
     case PSS:
       if ( p_.is_point() ) {
-	compute_vv(p_, q_, r_, PSS_Type());
+        compute_vv(p_, q_, r_, PSS_Type());
       } else if ( q_.is_point() ) {
-	compute_vv(q_, r_, p_, PSS_Type());
+        compute_vv(q_, r_, p_, PSS_Type());
       } else {
-	compute_vv(r_, p_, q_, PSS_Type());
+        compute_vv(r_, p_, q_, PSS_Type());
       }
       break;
     default: // case SSS:
@@ -1482,7 +1473,7 @@ private:
   const Site_2& p_, &q_, &r_;
 
   // indicates whether the Voronoi vertex has been computed
-  mutable bool is_vv_computed; 
+  mutable bool is_vv_computed;
 
   // the type of the Voronoi vertex
   vertex_t v_type;

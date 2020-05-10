@@ -1,14 +1,14 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Segment_Delaunay_Graphs
 \anchor chaptersegdel2
 \cgalAutoToc
 \author Menelaos Karavelas
 
 This chapter describes the two-dimensional segment Delaunay graph
-package of \cgal. We start with a few definitions in 
+package of \cgal. We start with a few definitions in
 Section \ref secsdg2definitions.
 The software design of the 2D segment Delaunay graph package is
 described in Section \ref secsdg2design.
@@ -18,7 +18,7 @@ traits of the 2D segment Delaunay graph package and in Section
 data structure suitable for fast nearest neighbor queries, is briefly
 described.
 
-\section secsdg2definitions Definitions 
+\section secsdg2definitions Definitions
 
 \cgalFigureBegin{figsvd,svd-weakly-bw.jpg,svd-strongly-bw.png}
 The segment Voronoi diagram for a set of weakly (left) and
@@ -27,7 +27,7 @@ strongly (right) intersecting sites.
 
 The 2D segment Delaunay graph package of \cgal is designed to
 compute the Delaunay graph of a set of possibly intersecting segments
-on the plane. Although we compute the Delaunay graph, we 
+on the plane. Although we compute the Delaunay graph, we
 will often refer to its dual, the segment Voronoi diagram, since it is
 easier to explain and understand. The algorithm that has been
 implemented is incremental. The corresponding \cgal class is called
@@ -151,7 +151,7 @@ one (output) site.
 two (output) sites.
 </UL>
 
-\section secsdg2design Software Design 
+\section secsdg2design Software Design
 
 The 2D segment Delaunay graph class
 `Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>`
@@ -242,7 +242,7 @@ represented by two segments, a point, and a Boolean, namely, \f$ t_1\f$
 (the supporting segment of \f$ s_1q_1\f$), \f$ t_2\f$ and `false` (it is the
 second endpoint of \f$ s_1q_1\f$ that is an input point). Subsegments
 \f$ p_2s_1\f$ and \f$ s_1q_2\f$ are represented analogously.
-Consider now what happens when we insert \f$ t_3\f$. The point 
+Consider now what happens when we insert \f$ t_3\f$. The point
 \f$ s_2\f$ will again be represented by two segments, but not \f$ s_1q_1\f$ and
 \f$ t_3\f$. In fact, it will be represented by \f$ t_1\f$ (the supporting
 segment of \f$ s_1q_1\f$) and \f$ t_3\f$. \f$ s_2q_1\f$ will be represented
@@ -288,7 +288,7 @@ Even this representation, however, has some degree of redundancy. The
 endpoint of a segment appears in both the representation of the (open)
 segment site as well as the representation of the point site
 itself. The situation becomes even worse in the presence of strongly
-intersecting sites: a 
+intersecting sites: a
 point may appear in the representation of multiple subsegments and/or
 points of intersection. To avoid this redundancy, input points are
 stored in a container, and the various types of sites (input points
@@ -314,9 +314,9 @@ avoid this overhead we have introduced two series of traits classes:
 <UL>
 <LI>One that supports the full-fledged sites, and is suitable when
 the input consists of strongly intersecting sites. This series
-consists of the 
+consists of the
 `Segment_Delaunay_graph_traits_2<K,MTag>` and
-`Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` 
+`Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
 classes.
 <LI>One that is customized for input that contain only weakly
 intersecting sites. This series consists of the
@@ -338,7 +338,7 @@ of traits classes is used, we can avoid geometric filtering tests
 that have meaning only in the case of strongly intersecting sites.
 </UL>
 
-\section secsdg2traits The Geometric Traits 
+\section secsdg2traits The Geometric Traits
 
 The predicates required for the computation of the segment Voronoi
 diagram are rather complicated. It is not the purpose of this document to
@@ -378,7 +378,7 @@ Suppose we want to determine if two non-input points are
 identical (we assume here that the input sites are represented by
 `double`s). In order to do that we need to compute their
 coordinates and compare them. If the two points are identical, the
-answer to our question using `double` arithmetic may be 
+answer to our question using `double` arithmetic may be
 wrong (due to numerical errors), in which case we will have to reside
 to the more expensive exact computation. Instead, before testing the
 coordinates for equality, we can use the representation of the points
@@ -404,30 +404,17 @@ classes:
 
 As mentioned above, performing computations with exact arithmetic
 can be very costly. For this reason we have devoted considerable
-effort in implementing different kinds of arithmetic filtering
-mechanisms. Presently, there two ways of performing arithmetic
-filtering for the predicates involved in the computation of
-segment Delaunay graphs:
-<OL>
-<LI>The user can use a kernel with a filtered number type
-as the first template parameter in the `Segment_Delaunay_graph_traits_2<K,MTag>`.
-<LI>The user can define up to three different kernels `CK`,
+effort in implementing arithmetic filtering mechanisms
+through special traits classes, `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+and `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`.
+These two traits class employ the `Filtered_predicate<EP,FP>` mechanism,
+and the user can define up to three different kernels `CK`,
 `FK` and `EK` (default values are provided for most
-parameters). The first kernel `CK` is used only for
+parameters): the first kernel `CK` is used only for
 constructions. The second kernel `FK` is the filtering kernel:
 the traits class will attempt to compute the predicates using this
 kernel. If the filtering kernel fails to successfully compute a
-predicate, the exact kernel `EK` will be used. These three
-kernels are then used in the 
-`Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and
-`Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-classes, which have been implemented using the
-`Filtered_predicate<EP,FP>` mechanism.
-</OL>
-Our experience so far has shown that for all reasonable and valid
-values of the template parameters, the second method for arithmetic
-filtering is more efficient among the two.
-This approach is also used in the examples.
+predicate, the exact kernel `EK` will be used.
 
 Let's consider once more the class
 `Segment_Delaunay_graph_traits_2<K,MTag>`.
@@ -447,7 +434,7 @@ exactly.
 
 The semantics for the template parameters `CM`, `FM` and
 `EM` in the
-`Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and 
+`Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
 classes are analogous. With each of these template parameters we can
 control the type of arithmetic operations that are going to be used in
@@ -455,12 +442,12 @@ calculations involving each of the corresponding kernels `CK`,
 `FK` and `EK`. When the
 `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` is
 used the possible values for `CM`, `FM` and `EM` are
-`Field_with_sqrt_tag` and `Field_tag`, whereas if the 
+`Field_with_sqrt_tag` and `Field_tag`, whereas if the
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
 class is used, the possible values are `Field_with_sqrt_tag` and
-`Euclidean_ring_tag`. 
+`Euclidean_ring_tag`.
 
-\section secsdg2hierarchy The Segment Delaunay Graph Hierarchy 
+\section secsdg2hierarchy The Segment Delaunay Graph Hierarchy
 
 The
 `Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>` class is the analogue
@@ -501,12 +488,12 @@ additional cost in space and time for maintaining the hierarchy. Our
 experiments have shown that it usually pays off to use the hierarchy
 for inputs consisting of more than about 1,000 sites.
 
-\section secsdg2examples Examples 
+\section secsdg2examples Examples
 
 \subsection Segment_Delaunay_graph_2FirstExample First Example using the Filtered Traits
 
 The following example shows how to use the segment Delaunay graph traits
-in conjunction with the `Filtered_exact<CT,ET>` mechanism. In
+in conjunction with filtered traits mechanisms. In
 addition it shows how to use a few of the iterators provided by the
 `Segment_Delaunay_graph_2` class in order to count a few
 site-related quantities.
@@ -546,6 +533,6 @@ edges of the segment Delaunay graph computed).
 
 \cgalExample{Segment_Delaunay_graph_2/sdg-voronoi-edges.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

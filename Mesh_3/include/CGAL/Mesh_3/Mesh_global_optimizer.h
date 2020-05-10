@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -38,8 +29,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
+#include <CGAL/Time_stamper.h>
 
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
@@ -56,7 +47,8 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
+# include <mutex>
 # include <tbb/parallel_do.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -131,7 +123,7 @@ protected:
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
   typedef tbb::concurrent_vector<std::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
                                                             Moves_vector;
-  typedef tbb::atomic<unsigned int>                         Nb_frozen_points_type ;
+  typedef std::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
     : big_moves_size_(0)
@@ -145,7 +137,7 @@ protected:
   {
     if (++big_moves_current_size_ <= big_moves_size_ )
     {
-      tbb::mutex::scoped_lock lock(m_big_moves_mutex);
+      std::lock_guard<std::mutex> lock(m_big_moves_mutex);
       typename std::multiset<FT>::const_iterator it = big_moves_.insert(new_sq_move);
 
       // New smallest move of all big moves?
@@ -158,7 +150,7 @@ protected:
 
       if( new_sq_move > big_moves_smallest_ )
       {
-        tbb::mutex::scoped_lock lock(m_big_moves_mutex);
+        std::lock_guard<std::mutex> lock(m_big_moves_mutex);
         // Test it again since it may have been modified by another
         // thread in the meantime
         if( new_sq_move > big_moves_smallest_ )
@@ -194,11 +186,11 @@ protected:
 public:
 
 protected:
-  tbb::atomic<std::size_t>  big_moves_current_size_;
-  tbb::atomic<FT>           big_moves_smallest_;
+  std::atomic<std::size_t>  big_moves_current_size_;
+  std::atomic<FT>           big_moves_smallest_;
   std::size_t               big_moves_size_;
   std::multiset<FT>         big_moves_;
-  tbb::mutex                m_big_moves_mutex;
+  std::mutex                m_big_moves_mutex;
 
   /// Lock data structure
   Lock_data_structure m_lock_ds;

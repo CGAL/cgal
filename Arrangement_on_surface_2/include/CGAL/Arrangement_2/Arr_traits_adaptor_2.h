@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // $Date$
 //
 //
@@ -1398,34 +1389,34 @@ public:
 
       // now we are in the open case: ARR_MIN_END > vertical > ARR_MAX_END
       if (vert1) {
-	if (!vert2) {
-	  res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
-	  return res;
-	}
-	// both are vertical
-	if (loc1 == loc2) { // both ends converge to the same infinity
-	  res = CGAL::EQUAL;
-	  return res;
-	}
-	res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
+        if (!vert2) {
+          res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
+          return res;
+        }
+        // both are vertical
+        if (loc1 == loc2) { // both ends converge to the same infinity
+          res = CGAL::EQUAL;
+          return res;
+        }
+        res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
                CGAL::SMALLER : CGAL::LARGER);
-	return res;
+        return res;
       }
 
       if (vert2) {
-	res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
-	return res;
+        res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
+        return res;
       }
 
       // otherwise: both ends have asymptotic behaviour
       if (ce1 == ce2) { // both ends approach asymptote from one side
-	if (loc1 == loc2) { // need special y-comparison
-	  res = m_self->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
-	  return res;
-	}
-	// else: order can be determined without y-comparison
-	res = CGAL::EQUAL;
-	return res;
+        if (loc1 == loc2) { // need special y-comparison
+          res = m_self->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
+          return res;
+        }
+        // else: order can be determined without y-comparison
+        res = CGAL::EQUAL;
+        return res;
       }
       // curve ends approach vertical asymptote (or singularity) from
       // different sides => no comparisons required
@@ -2167,9 +2158,9 @@ public:
 
       // Case 4: xcv1 is defined to the right of p, and xcv2 to its left.
       if (xcv_to_right) {
-	res1 = compare_y_at_x_right(xcv1, xcv, p);
-	if (res1 == EQUAL) xcv_equal_xcv1 = true;
-	return (res1  == LARGER);
+        res1 = compare_y_at_x_right(xcv1, xcv, p);
+        if (res1 == EQUAL) xcv_equal_xcv1 = true;
+        return (res1  == LARGER);
       }
 
       res2 = compare_y_at_x_left(xcv2, xcv, p);

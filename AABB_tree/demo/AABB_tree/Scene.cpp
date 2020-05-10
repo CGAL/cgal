@@ -590,7 +590,7 @@ void Scene::update_bbox()
 }
 
 void Scene::draw(CGAL::QGLViewer* viewer)
-{       
+{
     if(!gl_init)
         initGL();
     if(!are_buffers_initialized)
@@ -806,7 +806,6 @@ void Scene::build_facet_tree()
     timer.start();
     std::cout << "Construct Facet AABB tree...";
     m_facet_tree.rebuild(faces(*m_pPolyhedron).first, faces(*m_pPolyhedron).second,*m_pPolyhedron);
-    m_facet_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
 
@@ -826,7 +825,6 @@ void Scene::build_edge_tree()
     timer.start();
     std::cout << "Construct Edge AABB tree...";
     m_edge_tree.rebuild(edges(*m_pPolyhedron).first,edges(*m_pPolyhedron).second,*m_pPolyhedron);
-    m_edge_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
 
@@ -857,8 +855,8 @@ void Scene::update_grid_size()
 }
 
 void Scene::generate_points_in(const unsigned int nb_points,
-                               const double min,
-                               const double max)
+                               const double vmin,
+                               const double vmax)
 {
     if(m_pPolyhedron == NULL)
     {
@@ -877,7 +875,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
     CGAL::Timer timer;
     timer.start();
     std::cout << "Generate " << nb_points << " points in interval ["
-              << min << ";" << max << "]";
+              << vmin << ";" << vmax << "]";
 
     unsigned int nb_trials = 0;
     Vector vec = random_vector();
@@ -894,8 +892,8 @@ void Scene::generate_points_in(const unsigned int nb_points,
         if(nb_intersections % 2 != 0)
             signed_distance *= -1.0;
 
-        if(signed_distance >= min &&
-                signed_distance <= max)
+        if(signed_distance >= vmin &&
+                signed_distance <= vmax)
         {
             m_points.push_back(p);
             if(m_points.size()%(nb_points/10) == 0)

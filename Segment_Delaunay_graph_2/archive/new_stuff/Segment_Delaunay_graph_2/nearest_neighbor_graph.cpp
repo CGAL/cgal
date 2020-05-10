@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -114,15 +105,15 @@ int main()
        nit != nng.nodes_end(); ++nit) {
     std::cout << "Node: " << accessor( nng[nit] ) << std::endl;
     std::cout << "\tIn-neighbors (in-degree: " << nng.in_degree(nit)
-	      << "): " << std::endl;
+              << "): " << std::endl;
     for (NNG::Node_iterator nnit = nng.in_neighbors_begin(nit);
-	 nnit != nng.in_neighbors_end(nit); ++nnit) {
+         nnit != nng.in_neighbors_end(nit); ++nnit) {
       std::cout << "\t\t" << accessor( nng[nnit] ) << std::endl;
     }
     std::cout << "\tOut-neighbors (out-degree: " << nng.out_degree(nit)
-	      << "):" << std::endl;
+              << "):" << std::endl;
     for (NNG::Node_iterator nnit = nng.out_neighbors_begin(nit);
-	 nnit != nng.out_neighbors_end(nit); ++nnit) {
+         nnit != nng.out_neighbors_end(nit); ++nnit) {
       std::cout << "\t\t" << accessor( nng[nnit] ) << std::endl;
     }
   }

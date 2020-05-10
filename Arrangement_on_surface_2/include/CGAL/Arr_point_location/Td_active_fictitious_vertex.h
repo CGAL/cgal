@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Oren Nechushtan   <theoren@math.tau.ac.il>
 //            Michal Balas      <balasmic@post.tau.ac.il>
@@ -138,7 +129,7 @@ public:
   };
 
 private:
-  Data* ptr() const { return (Data*)(PTR); }
+  Data* ptr() const { return (Data*)(PTR.p); }
 
   Curve_end vtx_to_ce(Vertex_const_handle v) const
   {
@@ -189,14 +180,14 @@ public:
 
   Td_active_fictitious_vertex()
   {
-    PTR = new Data(Traits::empty_vtx_handle(), Traits::empty_he_handle(), nullptr);
+    PTR.p = new Data(Traits::empty_vtx_handle(), Traits::empty_he_handle(), nullptr);
   }
 
   /*! Constructor given Vertex & Halfedge handles. */
   Td_active_fictitious_vertex(Vertex_const_handle v,
                               Halfedge_const_handle cw_he,
                               Dag_node* node = 0)
-  { PTR = new Data(v, cw_he, node); }
+  { PTR.p = new Data(v, cw_he, node); }
 
 
   /*! Copy constructor. */
@@ -233,7 +224,7 @@ public:
   inline const Self& self() const { return *this; }
 
   /*! Access the trapezoid id (PTR). */
-  inline unsigned long id() const { return (unsigned long) PTR; }
+  inline unsigned long id() const { return (unsigned long) PTR.p; }
 
   /*! Access trapezoid left.
    *   filters out the infinite case which returns predefined dummy values

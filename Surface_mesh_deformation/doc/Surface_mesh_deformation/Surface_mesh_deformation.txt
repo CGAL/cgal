@@ -491,9 +491,9 @@ Using 1-ring elements, SR-ARAP adds a bending element to Eq. \f$\eqref{eq:arap_e
   \label{eq:sre_arap_energy}
 \f}
 
-where 
+where
 - \f$\alpha=0.02\f$ is a weighting coefficient.
-- \f$A\f$ is the surface area for scaling invariance. 
+- \f$A\f$ is the surface area for scaling invariance.
 
 Only the local step is influenced by the added term, and the optimal rotation now takes into account the rotation of neighbors.
 

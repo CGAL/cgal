@@ -9,7 +9,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -20,7 +20,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -31,5 +31,11 @@ endif()
 # ##########################################################
 
 create_single_source_cgal_program( "dynamic_properties.cpp" )
+
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (EIGEN3_FOUND)
+  create_single_source_cgal_program( "custom_property_map.cpp" )
+  CGAL_target_use_Eigen(custom_property_map)
+endif()
 
 

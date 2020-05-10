@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau
 //
@@ -86,7 +77,7 @@ struct Sizing_field_with_aabb_tree
    Get_curve_index get_curve_index = Get_curve_index(),
    Get_facet_patch_id get_facet_patch_id = Get_facet_patch_id()
    )
-    : d_(d), aabb_tree(aabb_tree), 
+    : d_(d), aabb_tree(aabb_tree),
       domain(domain),
       dt(),
       get_curve_index(get_curve_index),
@@ -174,14 +165,14 @@ struct Sizing_field_with_aabb_tree
     }
   }
 
-  double operator()(const Point_3& p, 
-                    const int dim, 
+  double operator()(const Point_3& p,
+                    const int dim,
                     const Index& id) const
-  { 
+  {
     CGAL_PROFILER("Sizing field");
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     if(dim <= 1) {
-      std::cerr << "Sizing("  << p << ", dim=" << dim 
+      std::cerr << "Sizing("  << p << ", dim=" << dim
                 << ", index=#" << CGAL::oformat(id) << "): ";
     }
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
@@ -199,28 +190,28 @@ struct Sizing_field_with_aabb_tree
       int li, lj;
       const typename Dt::Cell_handle ch = dt.locate(p, lt, li, lj);
       if(lt == Dt::VERTEX) {
-// 	std::cerr << "lt == Dt::VERTEX\n";
+//         std::cerr << "lt == Dt::VERTEX\n";
         const typename Dt::Vertex_handle vh = ch->vertex(li);
         std::vector<typename Dt::Vertex_handle> vs;
         vs.reserve(32);
         dt.finite_adjacent_vertices(vh, std::back_inserter(vs));
         CGAL_assertion(!vs.empty());
         nearest = dt.point(vs[0]);
-// 	std::cerr << "sq_dist = " << CGAL::squared_distance(p, nearest)
-// 		  << std::endl;
+//         std::cerr << "sq_dist = " << CGAL::squared_distance(p, nearest)
+//                   << std::endl;
         typename Kernel_::Compare_distance_3 compare_dist;
         for (typename std::vector<typename Dt::Vertex_handle>::const_iterator
-               it = vs.begin(); it != vs.end(); ++it) 
+               it = vs.begin(); it != vs.end(); ++it)
         {
-// 	  std::cerr << "sq_dist = " << CGAL::squared_distance(p, dt.point(*it))
-// 		  << std::endl;
+//           std::cerr << "sq_dist = " << CGAL::squared_distance(p, dt.point(*it))
+//                   << std::endl;
           if(compare_dist(p, dt.point(*it), nearest) == CGAL::SMALLER) {
-// 	    std::cerr << "  nearest!\n";
+//             std::cerr << "  nearest!\n";
             nearest = dt.point(*it);
           }
         }
       } else {
-// 	std::cerr << "lt=" << lt << std::endl;
+//         std::cerr << "lt=" << lt << std::endl;
         const typename Dt::Vertex_handle vh = dt.nearest_vertex(p, ch);
         nearest = dt.point(vh);
       }
@@ -239,24 +230,24 @@ struct Sizing_field_with_aabb_tree
 
         CGAL::Mesh_3::Filtered_projection_traits<
           typename Input_facets_AABB_tree_::AABB_traits,
-          Get_facet_patch_id 
+          Get_facet_patch_id
           > projection_traits(ids.begin(), ids.end(),
-                              aabb_tree.traits(), 
+                              aabb_tree.traits(),
                               get_facet_patch_id);
 
         aabb_tree.traversal(p, projection_traits);
 
         if(projection_traits.found()) {
-          result = 
-            (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) * 
-                       CGAL_NTS 
-                       sqrt(CGAL::squared_distance(p, 
+          result =
+            (std::min)(0.9 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
+                       CGAL_NTS
+                       sqrt(CGAL::squared_distance(p,
                                                    projection_traits.closest_point())),
                        result);
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           {
             std::stringstream s;
-       
+
             using boost::io::group;
             using std::setprecision;
             s << boost::format("\nSizing field is %1% at point (%2%)"
@@ -290,9 +281,9 @@ struct Sizing_field_with_aabb_tree
       std::cerr << result << "\n";
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
       return result;
-    } 
+    }
     else { // dim == 1
-      const typename MeshDomain::Curve_index& curve_id = 
+      const typename MeshDomain::Curve_index& curve_id =
         domain.curve_index(id);
       const Patches_ids& ids = curves_incident_patches[curve_id];
       if(!aabb_tree.empty()) {
@@ -325,11 +316,11 @@ struct Sizing_field_with_aabb_tree
                      sqrt(CGAL::squared_distance(p,
                                                  projection_traits.closest_point())),
                      result);
-      
+
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
         {
           std::stringstream s;
-       
+
           s << boost::format("\nSizing field is %1% at point (%2%)"
                              " on curve #%3% !\n"
                              "Closest face id: %4%\n"
@@ -348,7 +339,7 @@ struct Sizing_field_with_aabb_tree
 #ifndef CGAL_NO_ASSERTIONS
         if(result <= 0) {
           std::stringstream s;
-       
+
           s << boost::format("Sizing field is %1% at point (%2%)"
                              " on curve #%3% !\n"
                              "Closest face id: %4%\n"
@@ -490,8 +481,8 @@ struct Sizing_field_with_aabb_tree
         std::cerr << "  closest_point: " << closest_intersection << "\n"
                   << "  distance = " << CGAL_NTS sqrt(sqd_intersection) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
-        double new_result = 
-          (std::min)(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) * 
+        double new_result =
+          (std::min)(0.45 / CGAL::sqrt(CGAL::Mesh_3::internal::weight_modifier) *
                      CGAL_NTS sqrt(sqd_intersection),
                      d_);
 
@@ -503,7 +494,7 @@ struct Sizing_field_with_aabb_tree
           result = new_result;
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
           std::stringstream s;
-       
+
           s << boost::format("\nSizing field is %1% at point (%2%)"
                              " on curve #%3% !\n"
                              "Closest CURVE id: %4%\n"

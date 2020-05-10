@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   random_points<Point>(poly, nb_query, back_inserter(points));
   inside_test(poly, points);
 
-  //test compilation of constructor from AABB_tree  
+  //test compilation of constructor from AABB_tree
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> FGTP;
   typedef CGAL::AABB_traits<K, FGTP>    AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;

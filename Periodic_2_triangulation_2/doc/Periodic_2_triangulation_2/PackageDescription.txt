@@ -15,18 +15,26 @@
 /// \defgroup PkgPeriodic2Triangulation2Enums Enums
 /// \ingroup PkgPeriodic2Triangulation2Ref
 
+/*! Draw.
+  \code
+   #include <CGAL/draw_periodic_2_triangulation_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawPeriodic2Triangulation2 Draw a 2D Periodic Triangulation
+/// \ingroup PkgPeriodic2Triangulation2Ref
+
 /*!
 \addtogroup PkgPeriodic2Triangulation2Ref
- 
+
 \cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2}
 \cgalPkgPicture{Periodic_2_triangulation_2/fig/p2Delaunay2_thumb.png}
- 
+
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
 \cgalPkgDesc{This package allows to build and handle triangulations of point sets in the two dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities.  The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
 \cgalPkgManuals{Chapter_2D_Periodic_Triangulations,PkgPeriodic2Triangulation2Ref}
 \cgalPkgSummaryEnd
- 
+
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.3}
 \cgalPkgDependsOn{\ref PkgTriangulation2}
@@ -34,9 +42,9 @@
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Periodic Delaunay Triangulation,Periodic_2_Delaunay_triangulation_2.zip}
 \cgalPkgShortInfoEnd
- 
+
 \cgalPkgDescriptionEnd
- 
+
 The main classes of the 2D Periodic Triangulation package are
 `CGAL::Periodic_2_triangulation_2` and
 `CGAL::Periodic_2_Delaunay_triangulation_2`. They contain functionality
@@ -102,6 +110,9 @@ of the concept `Periodic_2Offset_2`.
 
 - `CGAL::Periodic_2_triangulation_2::Iterator_type`
 - `CGAL::Periodic_2_triangulation_2::Locate_type`
+
+\cgalCRPSection{Draw 2D Periodic Triangulation}
+ - \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
 
 */
 

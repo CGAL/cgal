@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -83,9 +74,9 @@ public:
 
 private:
   result_type compute_type_C2(const RT& x1, const RT& y1,
-			      const RT& x2, const RT& y2,
-			      const RT& x3, const RT& y3,
-			      const RT& x4, const RT& y4) const
+                              const RT& x2, const RT& y2,
+                              const RT& x3, const RT& y3,
+                              const RT& x4, const RT& y4) const
   {
     RT delta = -determinant<RT>(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
 
@@ -99,8 +90,8 @@ private:
 
   result_type
   non_parallel_C2(const RT& x1, const RT& y1, const RT& x2, const RT& y2,
-		  const RT& x3, const RT& y3, const RT& x4, const RT& y4,
-		  const RT& D) const
+                  const RT& x3, const RT& y3, const RT& x4, const RT& y4,
+                  const RT& D) const
   {
     RT Dt = -determinant<RT>(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
     RT Ds = determinant<RT>(x2 - x1, x3 - x1, y2 - y1, y3 - y1);
@@ -119,7 +110,7 @@ private:
     Sign s_s_minus_1 = s_sdiff * s_D;
 
     if ( s_t == CGAL::NEGATIVE || s_t_minus_1 == CGAL::POSITIVE ||
-	 s_s == CGAL::NEGATIVE || s_s_minus_1 == CGAL::POSITIVE ) {
+         s_s == CGAL::NEGATIVE || s_s_minus_1 == CGAL::POSITIVE ) {
       //  t < 0 or t > 1 or s < 0 or s > 1
       return Enum::DISJOINT;
     }
@@ -142,27 +133,27 @@ private:
 
     if ( it == 0 ) {
       if ( is == 0 ) {
-	return Enum::TOUCH_11;
+        return Enum::TOUCH_11;
       } else if ( is == 1 ) {
-	return Enum::TOUCH_12;
+        return Enum::TOUCH_12;
       } else {
-	return Enum::TOUCH_INTERIOR_12;
+        return Enum::TOUCH_INTERIOR_12;
       }
     } else if ( it == 1 ) {
       if ( is == 0 ) {
-	return Enum::TOUCH_21;
+        return Enum::TOUCH_21;
       } else if ( is == 1 ) {
-	return Enum::TOUCH_22;
+        return Enum::TOUCH_22;
       } else {
-	return Enum::TOUCH_INTERIOR_22;
+        return Enum::TOUCH_INTERIOR_22;
       }
     } else {
       if ( is == 0 ) {
-	return Enum::TOUCH_INTERIOR_11;
+        return Enum::TOUCH_INTERIOR_11;
       } else if ( is == 1 ) {
-	return Enum::TOUCH_INTERIOR_21;
+        return Enum::TOUCH_INTERIOR_21;
       } else {
-	return Enum::CROSSING;
+        return Enum::CROSSING;
       }
     }
   }
@@ -170,9 +161,9 @@ private:
 
   result_type
   parallel_C2(const RT& x1, const RT& y1, const RT& x2, const RT& y2,
-	      const RT& x3, const RT& y3, const RT& x4, const RT& y4) const
+              const RT& x3, const RT& y3, const RT& x4, const RT& y4) const
   {
-    RT D1 = determinant<RT>(x2 - x1, x3 - x1,	y2 - y1, y3 - y1);
+    RT D1 = determinant<RT>(x2 - x1, x3 - x1,        y2 - y1, y3 - y1);
 
     if ( CGAL::sign( D1 ) != CGAL::ZERO ) {
       return Enum::DISJOINT;
@@ -208,7 +199,7 @@ private:
     } else if ( s_t3_minus_1 == CGAL::ZERO ) { // t3 == 1
       it3 = 1;
     } else if ( s_t3 == CGAL::POSITIVE &&
-		s_t3_minus_1 == CGAL::NEGATIVE ) { // 0 < t3 < 1
+                s_t3_minus_1 == CGAL::NEGATIVE ) { // 0 < t3 < 1
       it3 = 2;
     } else if ( s_t3 == CGAL::NEGATIVE ) { // t3 < 0
       it3 = -1;
@@ -221,7 +212,7 @@ private:
     } else if ( s_t4_minus_1 == CGAL::ZERO ) { // t4 == 1
       it4 = 1;
     } else if ( s_t4 == CGAL::POSITIVE &&
-		s_t4_minus_1 == CGAL::NEGATIVE ) { // 0 < t4 < 1
+                s_t4_minus_1 == CGAL::NEGATIVE ) { // 0 < t4 < 1
       it4 = 2;
     } else if ( s_t4 == CGAL::NEGATIVE ) { // t4 < 0
       it4 = -1;
@@ -232,61 +223,61 @@ private:
     // decode now
     if ( it3 == -1 ) {
       if ( it4 == -1 ) {
-	return Enum::DISJOINT;
+        return Enum::DISJOINT;
       } else if ( it4 == 0 ) {
-	return Enum::TOUCH_12;
+        return Enum::TOUCH_12;
       } else if ( it4 == 1 ) {
-	return Enum::TOUCH_22_INTERIOR_2;
+        return Enum::TOUCH_22_INTERIOR_2;
       } else if ( it4 == 2 ) {
-	return Enum::OVERLAPPING_12;
+        return Enum::OVERLAPPING_12;
       } else { // it4 == 3
-	return Enum::INTERIOR_2;
+        return Enum::INTERIOR_2;
       }
     } else if ( it3 == 0 ) {
       CGAL_assertion( it4 != 0 );
       if ( it4 == -1 ) {
-	return Enum::TOUCH_11;
+        return Enum::TOUCH_11;
       } else if ( it4 == 1 ) {
-	return Enum::IDENTICAL;
+        return Enum::IDENTICAL;
       } else if ( it4 == 2 ) {
-	return Enum::TOUCH_11_INTERIOR_1;
+        return Enum::TOUCH_11_INTERIOR_1;
       } else { // it4 == 3
-	return Enum::TOUCH_11_INTERIOR_2;
+        return Enum::TOUCH_11_INTERIOR_2;
       }
     } else if ( it3 == 1 ) {
       CGAL_assertion( it4 != 1 );
       if ( it4 == -1 ) {
-	return Enum::TOUCH_21_INTERIOR_2;
+        return Enum::TOUCH_21_INTERIOR_2;
       } else if ( it4 == 0 ) {
-	return Enum::IDENTICAL;
+        return Enum::IDENTICAL;
       } else if ( it4 == 2 ) {
-	return Enum::TOUCH_21_INTERIOR_1;
+        return Enum::TOUCH_21_INTERIOR_1;
       } else { // it4 == 3
-	return Enum::TOUCH_21;
+        return Enum::TOUCH_21;
       }
     } else if ( it3 == 2 ) {
       if ( it4 == -1 ) {
-	return Enum::OVERLAPPING_11;
+        return Enum::OVERLAPPING_11;
       } else if ( it4 == 0 ) {
-	return Enum::TOUCH_12_INTERIOR_1;
+        return Enum::TOUCH_12_INTERIOR_1;
       } else if ( it4 == 1 ) {
-	return Enum::TOUCH_22_INTERIOR_1;
+        return Enum::TOUCH_22_INTERIOR_1;
       } else if ( it4 == 2 ) {
-	return Enum::INTERIOR_1;
+        return Enum::INTERIOR_1;
       } else { // it4 == 3
-	return Enum::OVERLAPPING_21;
+        return Enum::OVERLAPPING_21;
       }
     } else { // it3 == 3  ( t3 > 1 )
       if ( it4 == -1 ) {
-	return Enum::INTERIOR_2;
+        return Enum::INTERIOR_2;
       } else if ( it4 == 0 ) {
-	return Enum::TOUCH_12_INTERIOR_2;
+        return Enum::TOUCH_12_INTERIOR_2;
       } else if ( it4 == 1 ) {
-	return Enum::TOUCH_22;
+        return Enum::TOUCH_22;
       } else if ( it4 == 2 ) {
-	return Enum::OVERLAPPING_22;
+        return Enum::OVERLAPPING_22;
       } else { // it4 == 3
-	return Enum::DISJOINT;
+        return Enum::DISJOINT;
       }
     }
   }
@@ -337,7 +328,7 @@ private:
 
   result_type
   arrangement_type_same_point(const Site_2& p, const Site_2& q,
-			      unsigned int ip, unsigned int iq) const
+                              unsigned int ip, unsigned int iq) const
   {
     CGAL_precondition( ip < 2 && iq < 2 );
 
@@ -353,17 +344,17 @@ private:
 
     if ( Orientation_2()(p1, p2, p3) != COLLINEAR ) {
       if ( ip == 0 ) {
-	if ( iq == 0 ) {
-	  return TOUCH_11;
-	} else {
-	  return TOUCH_12;
-	}
+        if ( iq == 0 ) {
+          return TOUCH_11;
+        } else {
+          return TOUCH_12;
+        }
       } else {
-	if ( iq == 0 ) {
-	  return TOUCH_21;
-	} else {
-	  return TOUCH_22;
-	}
+        if ( iq == 0 ) {
+          return TOUCH_21;
+        } else {
+          return TOUCH_22;
+        }
       }
 
     } else {
@@ -371,9 +362,9 @@ private:
       Segment_2 s2 = q.segment();
 
       return parallel_C2( s1.source().x(), s1.source().y(),
-			  s1.target().x(), s1.target().y(),
-			  s2.source().x(), s2.source().y(),
-			  s2.target().x(), s2.target().y() );
+                          s1.target().x(), s1.target().y(),
+                          s2.source().x(), s2.source().y(),
+                          s2.target().x(), s2.target().y() );
     }
   }
 
@@ -403,9 +394,9 @@ private:
     Segment_2 s2 = q.segment();
 
     result_type res = compute_type_C2( s1.source().x(), s1.source().y(),
-				       s1.target().x(), s1.target().y(),
-				       s2.source().x(), s2.source().y(),
-				       s2.target().x(), s2.target().y() );
+                                       s1.target().x(), s1.target().y(),
+                                       s2.source().x(), s2.source().y(),
+                                       s2.target().x(), s2.target().y() );
 
     return res;
   }
@@ -451,15 +442,15 @@ public:
 
     if ( p.is_point() ) {
       if ( q.is_point() ) {
-	return arrangement_type_pp(p, q);
+        return arrangement_type_pp(p, q);
       } else {
-	return arrangement_type_ps(p, q);
+        return arrangement_type_ps(p, q);
       }
     } else {
       if ( q.is_point() ) {
-	return opposite( arrangement_type_ps(q, p) );
+        return opposite( arrangement_type_ps(q, p) );
       } else {
-	return arrangement_type_ss(p, q);
+        return arrangement_type_ss(p, q);
       }
     }
   }

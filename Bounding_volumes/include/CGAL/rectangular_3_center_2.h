@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -167,15 +158,15 @@ rectangular_3_center_2_type1(
     RandomAccessIterator e = l;
     bool b_empty = true;
     Min< FT > minft;
-    Gamma gamma = boost::bind(minft, 
-		       boost::bind(dist, v(r, i), _1),
-		       boost::bind(dist, v(r, 2 + i), _1));
-    
+    Gamma gamma = boost::bind(minft,
+                       boost::bind(dist, v(r, i), _1),
+                       boost::bind(dist, v(r, 2 + i), _1));
+
     while (e - s > 1) {
       // step (a)
       RandomAccessIterator m = s + (e - s - 1) / 2;
       std::nth_element(s, m, e, boost::bind(less<FT>(), boost::bind(gamma, _1), boost::bind(gamma, _2)));
-      
+
       // step (b)
       Rectangle b_prime = bounding_box_2(m + 1, e, t);
       if (!b_empty)
@@ -246,7 +237,7 @@ struct Rectangular_3_center_2_type2_operations_base {
   typedef typename R::Construct_point_2_below_left_implicit_point_2
     Construct_point_2_below_left_implicit_point_2;
   typedef boost::function1<FT,Point_2>           Delta;
-  
+
   Delta  delta() const { return delta_; }
   Less_x_2  less_x_2_object() const { return r_.less_x_2_object(); }
   Less_y_2  less_y_2_object() const { return r_.less_y_2_object(); }
@@ -260,7 +251,7 @@ struct Rectangular_3_center_2_type2_operations_base {
   { return r_.construct_vertex_2_object(); }
   Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const
   { return r_.construct_iso_rectangle_2_object(); }
-  
+
   Construct_point_2_below_left_implicit_point_2
   pt_b_l() const
   { return r_.construct_point_2_below_left_implicit_point_2_object(); }
@@ -273,12 +264,12 @@ struct Rectangular_3_center_2_type2_operations_base {
   Construct_point_2_above_right_implicit_point_2
   pt_a_r() const
   { return r_.construct_point_2_above_right_implicit_point_2_object(); }
-  
+
   Min_x_2 minx() const { return Min_x_2(less_x_2_object()); }
   Min_y_2 miny() const { return Min_y_2(less_y_2_object()); }
   Max_x_2 maxx() const { return Max_x_2(less_x_2_object()); }
   Max_y_2 maxy() const { return Max_y_2(less_y_2_object()); }
-  
+
   private:
     R& r_;
     Delta delta_;
@@ -324,7 +315,7 @@ struct Rectangular_3_center_2_type2_operations0
 
   X_compare  compare_x() const { return less_x_2_object(); }
   Y_compare  compare_y() const { return greater_y_2_object(); }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -337,7 +328,7 @@ struct Rectangular_3_center_2_type2_operations0
                     v(bbox, 2)),
                3);
     }
-  
+
     Point place_x_square(bool constraint_empty,
                          const Rectangle& constraint,
                          const Rectangle& bbox) const
@@ -348,7 +339,7 @@ struct Rectangular_3_center_2_type2_operations0
                     v(bbox, 2)),
                3);
     }
-  
+
     Point place_x_square(const Point& so_far,
                          const Rectangle& bbox,
                          FT radius) const
@@ -359,7 +350,7 @@ struct Rectangular_3_center_2_type2_operations0
                     so_far),
              3);
     }
-  
+
     Point place_y_square(bool constraint_empty,
                          const Rectangle& constraint,
                          const Point& first_uncovered,
@@ -372,7 +363,7 @@ struct Rectangular_3_center_2_type2_operations0
                       miny()(first_uncovered, v(constraint, 0))),
                1);
     }
-  
+
     Point place_y_square(bool constraint_empty,
                          const Rectangle& constraint,
                          const Rectangle& bbox) const
@@ -383,7 +374,7 @@ struct Rectangular_3_center_2_type2_operations0
                     constraint_empty ? v(bbox, 2) : v(constraint, 0)),
                1);
     }
-  
+
     Point place_y_square(const Point& so_far,
                          const Rectangle& bbox,
                          FT radius) const
@@ -395,37 +386,37 @@ struct Rectangular_3_center_2_type2_operations0
                            so_far)),
                1);
     }
-  
+
     Point update_x_square(const Point& s, const Point& newp) const
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  
+
       return v(rect(minx()(s, newp), s), 3);
     }
-  
+
     Point update_y_square(const Point& s, const Point& newp) const {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  
+
       return v(rect(s, miny()(s, newp)), 1);
     }
-  
+
     FT compute_x_distance(const Point& extreme,
                           const Rectangle& constraint) const
     { return distance()(extreme, construct_vertex_2_object()(constraint, 1)); }
-  
+
     FT compute_y_distance(const Point& extreme,
                           const Rectangle& constraint) const
     { return distance()(extreme, construct_vertex_2_object()(constraint, 3)); }
-  
+
     Point construct_corner_square(const Rectangle& bbox, FT r) const
     { return pt_a_r()(construct_vertex_2_object()(bbox, 0),
                       construct_vertex_2_object()(bbox, 0), r); }
-  
+
     Point construct_x_square(const Point& p, FT r) const
     { return pt_b_r()(p, p, r); }
-  
+
     Point construct_y_square(const Point& p, FT r) const
     { return pt_a_l()(p, p, r); }
 };
@@ -462,7 +453,7 @@ struct Rectangular_3_center_2_type2_operations1
 
   X_compare  compare_x() const { return greater_x_2_object(); }
   Y_compare  compare_y() const { return greater_y_2_object(); }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -475,7 +466,7 @@ struct Rectangular_3_center_2_type2_operations1
                   v(bbox, 3)),
              2);
   }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
@@ -486,7 +477,7 @@ struct Rectangular_3_center_2_type2_operations1
                   v(bbox, 3)),
              2);
   }
-  
+
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
@@ -498,7 +489,7 @@ struct Rectangular_3_center_2_type2_operations1
                   so_far),
              2);
   }
-  
+
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -511,7 +502,7 @@ struct Rectangular_3_center_2_type2_operations1
                     miny()(first_uncovered, v(constraint, 0))),
              0);
   }
-  
+
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
@@ -522,7 +513,7 @@ struct Rectangular_3_center_2_type2_operations1
                   constraint_empty ? v(bbox, 2) : v(constraint, 0)),
              0);
   }
-  
+
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
@@ -534,34 +525,34 @@ struct Rectangular_3_center_2_type2_operations1
                                           v(bbox, 2), radius))),
              0);
   }
-  
+
   Point update_x_square(const Point& s, const Point& newp) const {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
     return v(rect(maxx()(s, newp), s), 2);
   }
-  
+
   Point update_y_square(const Point& s, const Point& newp) const {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
     return v(rect(s, miny()(s, newp)), 0);
   }
-  
+
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
   { return distance()(extreme, construct_vertex_2_object()(constraint, 0)); }
-  
+
   FT compute_y_distance(const Point& extreme,
                         const Rectangle& constraint) const
   { return distance()(extreme, construct_vertex_2_object()(constraint, 2)); }
-  
+
   Point construct_corner_square(const Rectangle& bbox, FT r) const
   { return pt_a_l()(construct_vertex_2_object()(bbox, 2),
                     construct_vertex_2_object()(bbox, 0), r); }
-  
+
   Point construct_x_square(const Point& p, FT r) const
   { return pt_b_l()(p, p, r); }
-  
+
   Point construct_y_square(const Point& p, FT r) const
   { return pt_a_r()(p, p, r); }
 };
@@ -599,7 +590,7 @@ struct Rectangular_3_center_2_type2_operations2
 
   X_compare  compare_x() const { return greater_x_2_object(); }
   Y_compare  compare_y() const { return less_y_2_object(); }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -612,7 +603,7 @@ struct Rectangular_3_center_2_type2_operations2
                   v(bbox, 0)),
              1);
   }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
@@ -623,7 +614,7 @@ struct Rectangular_3_center_2_type2_operations2
                   v(bbox, 0)),
              1);
   }
-  
+
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
@@ -635,7 +626,7 @@ struct Rectangular_3_center_2_type2_operations2
                   so_far),
              1);
   }
-  
+
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -648,7 +639,7 @@ struct Rectangular_3_center_2_type2_operations2
                     maxy()(first_uncovered, v(constraint, 2))),
              3);
   }
-  
+
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
@@ -659,7 +650,7 @@ struct Rectangular_3_center_2_type2_operations2
                   constraint_empty ? v(bbox, 0) : v(constraint, 2)),
              3);
   }
-  
+
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
@@ -671,34 +662,34 @@ struct Rectangular_3_center_2_type2_operations2
                                   v(bbox, 0), radius), so_far)),
              3);
   }
-  
+
   Point update_x_square(const Point& s, const Point& newp) const {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
     return v(rect(maxx()(s, newp), s), 1);
   }
-  
+
   Point update_y_square(const Point& s, const Point& newp) const {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
     return v(rect(s, maxy()(s, newp)), 3);
   }
-  
+
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
   { return distance()(extreme, construct_vertex_2_object()(constraint, 3)); }
-  
+
   FT compute_y_distance(const Point& extreme,
                         const Rectangle& constraint) const
   { return distance()(extreme, construct_vertex_2_object()(constraint, 1)); }
-  
+
   Point construct_corner_square(const Rectangle& bbox, FT r) const
   { return pt_b_l()(construct_vertex_2_object()(bbox, 2),
                     construct_vertex_2_object()(bbox, 2), r); }
-  
+
   Point construct_x_square(const Point& p, FT r) const
   { return pt_a_l()(p, p, r); }
-  
+
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_r()(p, p, r); }
 };
@@ -735,7 +726,7 @@ struct Rectangular_3_center_2_type2_operations3
 
   X_compare  compare_x() const { return less_x_2_object(); }
   Y_compare  compare_y() const { return less_y_2_object(); }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -748,7 +739,7 @@ struct Rectangular_3_center_2_type2_operations3
                   v(bbox, 1)),
              0);
   }
-  
+
   Point place_x_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
@@ -759,7 +750,7 @@ struct Rectangular_3_center_2_type2_operations3
                   v(bbox, 1)),
              0);
   }
-  
+
   Point place_x_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
@@ -771,7 +762,7 @@ struct Rectangular_3_center_2_type2_operations3
                   so_far),
              0);
   }
-  
+
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Point& first_uncovered,
@@ -784,7 +775,7 @@ struct Rectangular_3_center_2_type2_operations3
                     maxy()(first_uncovered, v(constraint, 2))),
              2);
   }
-  
+
   Point place_y_square(bool constraint_empty,
                        const Rectangle& constraint,
                        const Rectangle& bbox) const
@@ -795,7 +786,7 @@ struct Rectangular_3_center_2_type2_operations3
                   constraint_empty ? v(bbox, 0) : v(constraint, 2)),
              2);
   }
-  
+
   Point place_y_square(const Point& so_far,
                        const Rectangle& bbox,
                        FT radius) const
@@ -807,34 +798,34 @@ struct Rectangular_3_center_2_type2_operations3
                                   v(bbox, 0), radius), so_far)),
              2);
   }
-  
+
   Point update_x_square(const Point& s, const Point& newp) const {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
     return v(rect(minx()(s, newp), s), 0);
   }
-  
+
   Point update_y_square(const Point& s, const Point& newp) const {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
     return v(rect(s, maxy()(s, newp)), 2);
   }
-  
+
   FT compute_x_distance(const Point& extreme,
                         const Rectangle& constraint) const
   { return distance()(extreme, construct_vertex_2_object()(constraint, 2)); }
-  
+
   FT compute_y_distance(const Point& extreme,
                         const Rectangle& constraint) const
   { return distance()(extreme, construct_vertex_2_object()(constraint, 0)); }
-  
+
   Point construct_corner_square(const Rectangle& bbox, FT r) const
   { return pt_b_r()(construct_vertex_2_object()(bbox, 0),
                     construct_vertex_2_object()(bbox, 2), r); }
-  
+
   Point construct_x_square(const Point& p, FT r) const
   { return pt_a_r()(p, p, r); }
-  
+
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_l()(p, p, r); }
 };
@@ -930,9 +921,9 @@ rectangular_3_center_2_type2(
   while (e - s > 6) {
     std::ptrdiff_t cutoff = (e - s) / 2;
     RandomAccessIterator m = s + cutoff - 1;
-    std::nth_element(s, m, e, 
-		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
-    
+    std::nth_element(s, m, e,
+                boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
+
     // step (b)
     IP pos = min_max_element(m + 1, e, op.compare_x(), op.compare_y());
     // extreme points of the two other squares
@@ -968,9 +959,9 @@ rectangular_3_center_2_type2(
     // step (a)
     std::ptrdiff_t cutoff = (e - s) / fraction;
     RandomAccessIterator m = s + cutoff - 1;
-    std::nth_element(s, m, e, 
-		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
-    
+    std::nth_element(s, m, e,
+                boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
+
     // step (b)
     IP pos = min_max_element(m + 1, e, op.compare_x(), op.compare_y());
     // extreme points of the two other squares
@@ -987,22 +978,22 @@ rectangular_3_center_2_type2(
     // to Q_t and Q_r are covered by q_t and q_r
     if ((Q_t_empty || op.compute_x_distance(q_t, Q_t) <= op.delta()(*m)) &&
         (Q_r_empty || op.compute_y_distance(q_r, Q_r) <= op.delta()(*m))) {
-      boost::function1<bool,FT> 
+      boost::function1<bool,FT>
         greater_delta_m = boost::bind(less< FT >(), op.delta()(*m));
       CGAL_optimisation_assertion_code(RandomAccessIterator iii =)
         find_if(e,
                 l,
                 boost::bind(logical_and< bool >(),
-		     boost::bind(greater_delta_m,
-			  boost::bind(op.distance(), q_t, _1)),
-		     boost::bind(greater_delta_m,
-			  boost::bind(op.distance(), q_r, _1))));
+                     boost::bind(greater_delta_m,
+                          boost::bind(op.distance(), q_t, _1)),
+                     boost::bind(greater_delta_m,
+                          boost::bind(op.distance(), q_r, _1))));
         CGAL_optimisation_assertion(iii == l);
     }
     // check whether the points in [f,s) are covered
     {
-      boost::function1<bool,FT> 
-	le_delta_m = boost::bind(greater_equal<FT>(), op.delta()(*m));
+      boost::function1<bool,FT>
+        le_delta_m = boost::bind(greater_equal<FT>(), op.delta()(*m));
       RandomAccessIterator iii =
         partition(f, s, boost::bind(le_delta_m, boost::bind(op.delta(), _1)));
       iii = partition(iii, s,
@@ -1016,7 +1007,7 @@ rectangular_3_center_2_type2(
     // partition the range [m+1, e) into ranges
     // [m+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
-    boost::function1<bool,FT> 
+    boost::function1<bool,FT>
       le_delta_m = boost::bind(greater_equal<FT>(), op.delta()(*m), _1);
     RandomAccessIterator b2 =
       partition(m + 1, e, boost::bind(le_delta_m, boost::bind(op.distance(), q_t, _1)));
@@ -1109,9 +1100,9 @@ rectangular_3_center_2_type2(
       // step 1
       RandomAccessIterator s_m = s_b + (s_e - s_b - 1) / 2;
       std::nth_element(s_b, s_m, s_e,
-                  boost::bind(less<FT>(), 
-		       boost::bind(op.delta(), _1), 
-		       boost::bind(op.delta(), _2)));
+                  boost::bind(less<FT>(),
+                       boost::bind(op.delta(), _1),
+                       boost::bind(op.delta(), _2)));
 
       // step 2 (as above)
       Point q_t_m = q_t_afap;
@@ -1150,9 +1141,9 @@ CGAL_3CENTER_REPEAT_CHECK:
     boost::function1<bool,FT>
       le_delta_sb = boost::bind(greater_equal<FT>(), op.delta()(*s_b), _1);
     b2 = partition(s_b + 1, e, boost::bind(le_delta_sb,
-				    boost::bind(op.distance(), q_t, _1)));
+                                    boost::bind(op.distance(), q_t, _1)));
     b1 = partition(s_b + 1, b2, boost::bind(le_delta_sb,
-				     boost::bind(op.distance(), q_r, _1)));
+                                     boost::bind(op.distance(), q_r, _1)));
     b3 = partition(b2, e,
                    boost::bind(le_delta_sb, boost::bind(op.distance(), q_r, _1)));
 
@@ -1161,13 +1152,13 @@ CGAL_3CENTER_REPEAT_CHECK:
         (!Q_r_empty && op.compute_y_distance(q_r, Q_r) > op.delta()(*s_b))) {
       // no covering
       if (b1 - s < cutoff) {
-	// in degenerate situations it can happen that the number of
-	// points in R is too small => decrease radius and check again
-	--s_b;
-	CGAL_optimisation_assertion(!loopcheck);
-	CGAL_optimisation_assertion(s != s_b);
-	CGAL_optimisation_assertion_code(loopcheck = true;)
-	goto CGAL_3CENTER_REPEAT_CHECK;
+        // in degenerate situations it can happen that the number of
+        // points in R is too small => decrease radius and check again
+        --s_b;
+        CGAL_optimisation_assertion(!loopcheck);
+        CGAL_optimisation_assertion(s != s_b);
+        CGAL_optimisation_assertion_code(loopcheck = true;)
+        goto CGAL_3CENTER_REPEAT_CHECK;
       }
       s = b1;
       rho_min = op.delta()(*s_b);
@@ -1237,12 +1228,12 @@ CGAL_3CENTER_REPEAT_CHECK:
     // we have to take the next smaller radius
     RandomAccessIterator next =
       max_element_if(s, s_b,
-                     boost::bind(less<FT>(), 
-			  boost::bind(op.delta(), _1), 
-			  boost::bind(op.delta(), _2)),
+                     boost::bind(less<FT>(),
+                          boost::bind(op.delta(), _1),
+                          boost::bind(op.delta(), _2)),
                      boost::bind(not_equal_to<FT>(),
-			  op.delta()(*s_b),
-			  boost::bind(op.delta(), _1)));
+                          op.delta()(*s_b),
+                          boost::bind(op.delta(), _1)));
     rho_max = op.delta()(*s_b);
     q_t_at_rho_max = q_t, q_r_at_rho_max = q_r;
     CGAL_optimisation_assertion(op.delta()(*next) < op.delta()(*s_b));
@@ -1364,8 +1355,8 @@ CGAL_3CENTER_REPEAT_CHECK:
             t + 1,
             e,
             boost::bind(logical_and<bool>(),
-		 boost::bind(greater_rho_max, boost::bind(op.distance(), q_t, _1)),
-		 boost::bind(greater_rho_max, boost::bind(op.distance(), q_r, _1)))))
+                 boost::bind(greater_rho_max, boost::bind(op.distance(), q_t, _1)),
+                 boost::bind(greater_rho_max, boost::bind(op.distance(), q_r, _1)))))
         {
           rho_min = try_rho;
           q_t_q_r_cover_at_rho_min = 0;
@@ -1404,15 +1395,15 @@ CGAL_3CENTER_REPEAT_CHECK:
   if (s_at_rho_min != e_at_rho_min) {
     boost::function1<FT,Point>
       mydist = boost::bind(Min<FT>(),
-		    boost::bind(op.distance(), q_t_at_rho_min, _1),
-		    boost::bind(op.distance(), q_r_at_rho_min, _1));
+                    boost::bind(op.distance(), q_t_at_rho_min, _1),
+                    boost::bind(op.distance(), q_r_at_rho_min, _1));
     rad_2 =
       max BOOST_PREVENT_MACRO_SUBSTITUTION (
         rad_2,
         mydist(*max_element(s_at_rho_min, e_at_rho_min,
-                            boost::bind(less< FT >(), 
-				 boost::bind(mydist, _1), 
-				 boost::bind(mydist, _2)))));
+                            boost::bind(less< FT >(),
+                                 boost::bind(mydist, _1),
+                                 boost::bind(mydist, _2)))));
   }
   CGAL_optimisation_assertion(rad_2 == 0 || rad_2 > rho_min);
 

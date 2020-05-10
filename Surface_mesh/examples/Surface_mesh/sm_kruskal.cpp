@@ -23,7 +23,7 @@ kruskal(const Mesh& sm)
 
   std::list<edge_descriptor> mst;
 
-  boost::kruskal_minimum_spanning_tree(sm, 
+  boost::kruskal_minimum_spanning_tree(sm,
                                        std::back_inserter(mst));
 
   std::cout << "#VRML V2.0 utf8\n"

@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastien Loriot <sebastien.loriot@cgal.org>,
 //                 Jane Tournois
@@ -80,7 +71,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
-typedef boost::property_traits<boost::property_map<FaceGraph, 
+typedef boost::property_traits<boost::property_map<FaceGraph,
 CGAL::vertex_point_t>::type>::value_type Point;
 
 
@@ -299,15 +290,16 @@ public:
 
 
   QString nameFilters() const {
-    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
+    return "VTK XML UnstructuredGrid (*.vtu);;VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp)"; }
   QString name() const { return "vtk_plugin"; }
   bool canSave(const CGAL::Three::Scene_item* item)
   {
+
     return (qobject_cast<const Scene_facegraph_item*>(item)
             || qobject_cast<const Scene_c3t3_item*>(item));
   }
-  
-  
+
+
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   {
     Scene_item* item = items.front();
@@ -319,7 +311,7 @@ public:
 
     const Scene_facegraph_item* poly_item =
       qobject_cast<const Scene_facegraph_item*>(item);
-    
+
     if (poly_item)
     {
       if (extension != "vtp")
@@ -350,11 +342,11 @@ public:
           qobject_cast<const Scene_c3t3_item*>(item);
       if(!c3t3_item || extension != "vtu")
         return false;
-      
+
       std::ofstream os(output_filename.data());
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
-      
+
       CGAL::output_to_vtu(os, c3t3);
     }
     items.pop_front();
@@ -399,7 +391,7 @@ public:
         CGAL::Three::Three::scene()->addItem(item);
       return QList<Scene_item*>()<<item;
     }
-    
+
     vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
@@ -486,7 +478,7 @@ public:
     {
       group = new Scene_group_item(fileinfo.baseName());
     }
-  
+
     if(is_polygon_mesh)
     {
       FaceGraph* poly = new FaceGraph();
@@ -508,7 +500,7 @@ public:
         }
       }
     }
-    
+
     if (is_c3t3)
     {
       typedef boost::array<int, 3> Facet; // 3 = id
@@ -556,7 +548,7 @@ public:
         }
       }
       CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(), points, finite_cells, border_facets);
-      
+
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
            cit != c3t3_item->c3t3().triangulation().finite_cells_end();
@@ -572,7 +564,7 @@ public:
           }
         }
       }
-      
+
       //if there is no facet in the complex, we add the border facets.
       if(c3t3_item->c3t3().number_of_facets_in_complex() == 0)
       {
@@ -582,10 +574,10 @@ public:
              ++fit)
         {
           typedef C3t3::Triangulation::Cell_handle      Cell_handle;
-          
+
           Cell_handle c = fit->first;
           Cell_handle nc = c->neighbor(fit->second);
-          
+
           // By definition, Subdomain_index() is supposed to be the id of the exterior
           if(c->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index() &&
              nc->subdomain_index() == C3t3::Triangulation::Cell::Subdomain_index())
@@ -611,7 +603,7 @@ public:
         return QList<Scene_item*>()<<c3t3_item;
       }
     }
-    
+
     if(is_polyline)
     {
       std::vector< std::vector<Point> > segments;
@@ -633,14 +625,14 @@ public:
         return QList<Scene_item*>()<<polyline_item;
       }
     }
-    
+
     if(group){
       ok = true;
       if(add_to_scene)
         CGAL::Three::Three::scene()->addItem(group);
       return QList<Scene_item*>()<<group;
     }
-    
+
     QApplication::restoreOverrideCursor();
     QMessageBox::warning(CGAL::Three::Three::mainWindow(),
                          "Problematic file",

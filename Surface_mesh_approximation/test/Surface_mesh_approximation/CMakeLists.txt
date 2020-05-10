@@ -32,8 +32,6 @@ find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
-else()
-  include( ${EIGEN3_USE_FILE} )
 endif()
 
 
@@ -43,21 +41,30 @@ endif()
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "vsa_class_interface_test.cpp" )
+CGAL_target_use_Eigen(vsa_class_interface_test)
 
 create_single_source_cgal_program( "vsa_correctness_test.cpp" )
+CGAL_target_use_Eigen(vsa_correctness_test)
 
 create_single_source_cgal_program( "vsa_error_decrease_test.cpp" )
+CGAL_target_use_Eigen(vsa_error_decrease_test)
 
 create_single_source_cgal_program( "vsa_kernel_test.cpp" )
+CGAL_target_use_Eigen(vsa_kernel_test)
 
 create_single_source_cgal_program( "vsa_approximation_test.cpp" )
+CGAL_target_use_Eigen(vsa_approximation_test)
 
 create_single_source_cgal_program( "vsa_segmentation_test.cpp" )
+CGAL_target_use_Eigen(vsa_segmentation_test)
 
 create_single_source_cgal_program( "vsa_meshing_manifold_test.cpp" )
+CGAL_target_use_Eigen(vsa_meshing_manifold_test)
 
 create_single_source_cgal_program( "vsa_metric_test.cpp" )
+CGAL_target_use_Eigen(vsa_metric_test)
 
 create_single_source_cgal_program( "vsa_teleportation_test.cpp" )
+CGAL_target_use_Eigen(vsa_teleportation_test)
 
 

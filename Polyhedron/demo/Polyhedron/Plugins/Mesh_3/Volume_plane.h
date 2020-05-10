@@ -65,7 +65,7 @@ struct z_tag {};
 
 template<typename Tag>
 class Volume_plane : public Volume_plane_interface, public Tag {
-private : 
+private :
   float tx, ty, tz;
 public:
  Volume_plane(float tx, float ty, float tz);
@@ -108,7 +108,7 @@ public:
 
   virtual RenderingMode renderingMode() const { return Flat; }
   bool supportsRenderingMode(RenderingMode m) const { return m == Flat; }
-  
+
   QString toolTip() const { return "Plane through a volume"; }
   QString name() const { return name(*this); }
 
@@ -149,63 +149,63 @@ public:
           Tc::Facet_centers,
           c_spheres.data(),
           static_cast<int>(c_spheres.size()*sizeof(float)));
-    
+
     nb_vertices = v_spheres.size();
     nb_centers = c_spheres.size();
     v_rec.resize(0);
     getEdgeContainer(0)->reset_vbos(ALL);
     drawRectangle(*this, !viewer->isOpenGL_4_3());
     getEdgeContainer(0)->allocate(Ec::Vertices,
-                                  v_rec.data(), 
+                                  v_rec.data(),
                                   static_cast<int>(v_rec.size()*sizeof(float)));
     nb_edges = v_rec.size();
     is_grabbing = false;
-    
+
     // for each vertex
     getTriangleContainer(0)->reset_vbos(ALL);
     vertices.resize(0);
     indices.resize(0);
     vertices.reserve(bdim_ * adim_ * 3);
-    for(unsigned int i = 0; i < adim_; ++i) 
+    for(unsigned int i = 0; i < adim_; ++i)
     {
       for(unsigned int j = 0; j < bdim_; ++j)
       {
         buildVertex(vertices, i, j);
       }
     }
-    
+
     assert(vertices.size() == (3 * adim_ * bdim_));
-    
+
     // for each patch
     for(unsigned int j = 0; j < adim_ - 1; ++j) {
       for(unsigned int k = 0; k < bdim_ - 1; ++k) {
         //0
         indices.push_back( j * bdim_ + k );
         assert(indices.back() < (vertices.size() / 3));
-        
+
         //1
         indices.push_back( j * bdim_ + (k + 1) );
         assert(indices.back() < (vertices.size() / 3));
-        
+
         //3
         indices.push_back( (j+1) * bdim_ + (k+1) );
         assert(indices.back() < (vertices.size() / 3));
-        
+
         //0
         indices.push_back( j * bdim_ + k );
         assert(indices.back() < (vertices.size() / 3));
-        
+
         //3
         indices.push_back( (j+1) * bdim_ + (k+1) );
         assert(indices.back() < (vertices.size() / 3));
-        
+
         //2
         indices.push_back( (j+1) * bdim_ + (k) );
         assert(indices.back() < (vertices.size() / 3));
-        
+
       }
     }
-    
+
     assert((indices.size() / 6) == (adim_ - 1) * (bdim_ - 1));
     getTriangleContainer(0)->allocate(
           Tc::Vertex_indices,
@@ -234,7 +234,7 @@ private:
   CGAL::qglviewer::Vec translationVector(z_tag) const {
     return CGAL::qglviewer::Vec(0.0, 0.0, zscale_);
   }
-  
+
   void buildVertex(std::vector<float>& out, unsigned int i, unsigned int j) {
     buildVertex(out, i, j, *this);
   }
@@ -272,24 +272,43 @@ private:
   mutable std::vector< float > colors_;
   mutable std::vector< float > vertices;
   mutable std::vector<unsigned int> indices;
-  
+
 
   QString name(x_tag) const { return tr("X Slice for %1").arg(name_); }
   QString name(y_tag) const { return tr("Y Slice for %2").arg(name_); }
   QString name(z_tag) const { return tr("Z Slice for %2").arg(name_); }
 
-  double compute_maxDim() const
+  //according to the tag, a,b,c dim change but not the scale. We look for the max dimension of the whole image.
+  //A high scale factor will often go with a low dimesion, to compensate it. So we don't want a max being the
+  //higher scale * the higher dim, hence the tag specialisation.
+//TODO: set the scale factors according to the dimensipon to avoid doing that.
+  double compute_maxDim(x_tag) const
   {
-    double ax((adim_ - 1) * xscale_), ay((adim_ - 1) * yscale_), az((adim_ - 1) * zscale_),
-           bx((bdim_ - 1) * xscale_), by((bdim_ - 1) * yscale_), bz((bdim_ - 1) * zscale_),
-           cx((cdim_ - 1) * xscale_), cy((cdim_ - 1) * yscale_), cz((cdim_ - 1) * zscale_);
+    double max_a((adim_ - 1) * yscale_),
+        max_b((bdim_ - 1) * zscale_),
+        max_c((cdim_ - 1) * xscale_);
 
-    double max_a = (std::max)((std::max)(ax, ay), az);
-    double max_b = (std::max)((std::max)(bx, by), bz);
-    double max_c = (std::max)((std::max)(cx, cy), cz);
     return (std::max)((std::max)(max_a, max_b), max_c);
-
   }
+
+  double compute_maxDim(y_tag) const
+  {
+    double max_a((adim_ - 1) * xscale_),
+        max_b((bdim_ - 1) * zscale_),
+        max_c((cdim_ - 1) * yscale_);
+
+    return (std::max)((std::max)(max_a, max_b), max_c);
+  }
+
+  double compute_maxDim(z_tag) const
+  {
+    double max_a((adim_ - 1) * xscale_),
+        max_b((bdim_ - 1) * yscale_),
+        max_c((cdim_ - 1) * zscale_);
+
+    return (std::max)((std::max)(max_a, max_b), max_c);
+  }
+
   void drawRectangle(x_tag, bool is_loop) const {
 
 
@@ -348,20 +367,23 @@ private:
 
   void drawSpheres(x_tag) const
   {
-      double max_dim = compute_maxDim();
+      double max_dim = compute_maxDim(x_tag());
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres, 18);
 
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
-      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back((bdim_ - 1 ) * zscale_);
-      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + 1.1*sphere_radius); c_spheres.push_back(0.0f);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + 1.1*sphere_radius);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + 1.1*sphere_radius); c_spheres.push_back((bdim_ - 1 ) * zscale_);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + 1.1*sphere_radius);
 
   }
 
   void drawSpheres(y_tag) const
   {
-      double max_dim = compute_maxDim();
+      double max_dim = compute_maxDim(y_tag());
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
@@ -373,14 +395,14 @@ private:
 
   void drawSpheres(z_tag) const
   {
-      double max_dim = compute_maxDim();
+      double max_dim = compute_maxDim(z_tag());
       sphere_radius = max_dim / 40.0f;
       create_flat_sphere(1.0f, v_spheres, n_spheres,18);
 
-      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f);
-      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - 1.1*sphere_radius); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-1.1*sphere_radius); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-1.1*sphere_radius); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-1.1*sphere_radius); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
   CGAL::qglviewer::Constraint* setConstraint(x_tag) {
@@ -389,7 +411,7 @@ private:
     c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(1.0f, 0.0f, 0.0f));
     return c;
   }
-  
+
   CGAL::qglviewer::Constraint* setConstraint(y_tag) {
     CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
     c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
@@ -425,7 +447,7 @@ private:
 
   void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
   {
-    getTriangleContainer(0)->getVbo(Tc::VColors)->offset 
+    getTriangleContainer(0)->getVbo(Tc::VColors)->offset
         = (currentCube*int(sizeof(float))) * (bdim_) * (adim_) * 3;
       getTriangleContainer(1)->initializeBuffers(viewer);
       getTriangleContainer(1)->setFlatDataSize(nb_vertices);
@@ -451,7 +473,7 @@ private:
 template<typename T>
 Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
   : Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame),
-    tx(tx), ty(ty), tz(tz)    
+    tx(tx), ty(ty), tz(tz)
  {
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);
@@ -461,10 +483,10 @@ Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
     sphere_Slider->setMaximum(100);
     setTriangleContainer(1, new Tc(Vi::PROGRAM_SPHERES, false));
     setTriangleContainer(0, new Tc(Vi::PROGRAM_NO_SELECTION, true));
-    setEdgeContainer(0, new Ec(Three::mainViewer()->isOpenGL_4_3() 
+    setEdgeContainer(0, new Ec(Three::mainViewer()->isOpenGL_4_3()
                                ? PROGRAM_SOLID_WIREFRAME
                                : PROGRAM_NO_SELECTION, false));
-    
+
  }
 template<typename T>
 void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors)
@@ -522,7 +544,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   {
     f.data()[i] = (float)mFrame_->matrix()[i];
   }
-  
+
   f.translate(QVector3D(tx, ty, tz));
   getEdgeContainer(0)->setFrameMatrix(f);
   printGlError(viewer, __LINE__);
@@ -533,18 +555,18 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   viewer->glDepthRangef(0.00005f, 0.99995f);
   getEdgeContainer(0)->draw(viewer, true);
   viewer->glDepthRangef(0.0,1.0);
-  
-  
+
+
   getTriangleContainer(0)->setFrameMatrix(f);
   getTriangleContainer(0)->draw(viewer, false);
   printGlError(viewer, __LINE__);
-  
+
   //hide spheres if only 1 plane.
   if(aDim() <= 1 ||
      bDim() <= 1 ||
      cDim() <=1)
     return;
-  double max_dim = compute_maxDim();
+  double max_dim = compute_maxDim(*this);
   sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
   getTriangleContainer(1)->getVbo(Tc::Radius)->bind();
   getTriangleContainer(1)->getVao(viewer)->program->setAttributeValue("radius", sphere_radius);

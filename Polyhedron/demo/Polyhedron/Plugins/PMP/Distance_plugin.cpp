@@ -99,7 +99,7 @@ public:
     }
     getTriangleContainer(0)->draw(viewer, false);
   }
-  
+
   void drawEdges(Viewer_interface* viewer) const
   {
     getEdgeContainer(0)->setColor(QColor(Qt::black));
@@ -133,7 +133,6 @@ private:
     typedef CGAL::AABB_tree< Traits > Tree;
 
     Tree tree( faces(m).first, faces(m).second, m);
-    tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
     Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);
@@ -169,11 +168,11 @@ private:
     normals.resize(0);
     colors.resize(0);
 
-    typedef Kernel::Vector_3	    Vector;
+    typedef Kernel::Vector_3            Vector;
     typedef boost::graph_traits<Face_graph>::face_descriptor   face_descriptor;
     typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
 
-    typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap; 
+    typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point,*poly);
 
     //facets
@@ -191,7 +190,7 @@ private:
       for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*poly)) {
         Vector nf = get(nf_pmap, f);
         typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
-        
+
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
@@ -278,8 +277,8 @@ private:
     //edges
     {
       //Lines
-      typedef Kernel::Point_3		Point;
-      typedef boost::graph_traits<Face_graph>::edge_descriptor	edge_descriptor;
+      typedef Kernel::Point_3                Point;
+      typedef boost::graph_traits<Face_graph>::edge_descriptor        edge_descriptor;
 
       for(edge_descriptor he : edges(*poly)){
         const Point& a = get(vpmap,target(he,*poly));
@@ -296,10 +295,10 @@ private:
         }
       }
     }
-    
+
     Tc* tc = getTriangleContainer(0);
     Ec* ec = getEdgeContainer(0);
-    
+
     tc->allocate(
           Tc::Flat_vertices,
           m_vertices.data(),
@@ -320,7 +319,7 @@ private:
     setBuffersFilled(true);
     QApplication::restoreOverrideCursor();
   }
-  
+
   void initializeBuffers(Viewer_interface *viewer)const
   {
     Tc* tc = getTriangleContainer(0);

@@ -33,10 +33,9 @@ int main()
     segments.push_back(Segment(a,c));
     segments.push_back(Segment(c,d));
 
-    // constructs the AABB tree and the internal search tree for 
+    // constructs the AABB tree and the internal search tree for
     // efficient distance computations.
     Tree tree(segments.begin(),segments.end());
-    tree.accelerate_distance_queries();
 
     // counts #intersections with a plane query
     Plane plane_query(a,b,d);
@@ -48,7 +47,7 @@ int main()
     std::cout << tree.number_of_intersected_primitives(triangle_query)
         << " intersections(s) with triangle" << std::endl;
 
-    // computes the closest point from a point query 
+    // computes the closest point from a point query
     Point point_query(2.0, 2.0, 2.0);
     Point closest = tree.closest_point(point_query);
 

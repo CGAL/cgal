@@ -18,16 +18,16 @@ typedef CGAL::Nonnegative_linear_program_from_iterators
 <int**,                                                // for A
  int*,                                                 // for b
  CGAL::Comparison_result*,                             // for r
- int*>                                                 // for c 
+ int*>                                                 // for c
 Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
-// we demonstrate Farkas Lemma: either the system 
+// we demonstrate Farkas Lemma: either the system
 //     A x <= b
 //       x >= 0
 // has a solution, or there exists y such that
-//       y >= 0 
-//    y^TA >= 0 
+//       y >= 0
+//    y^TA >= 0
 //    y^Tb <  0
 // In the following instance, the first system has no solution,
 // since adding up the two inequalities gives x_2 <= -1:
@@ -40,7 +40,7 @@ int main() {
   int  Ax2[] = {-2,  3};                        // column for x2
   int*   A[] = {Ax1, Ax2};                      // A comes columnwise
   int    b[] = {1, -2};                         // right-hand side
-  CGAL::Comparison_result 
+  CGAL::Comparison_result
     r[] = {CGAL::SMALLER, CGAL::SMALLER};      // constraints are "<="
   int    c[] = {0, 0};                         // zero objective function
 
@@ -53,7 +53,7 @@ int main() {
 
   // get certificate for infeasibility
   assert (s.is_infeasible());
-  Solution::Infeasibility_certificate_iterator y = 
+  Solution::Infeasibility_certificate_iterator y =
     s.infeasibility_certificate_begin();
   // check y >= 0
   assert (ET(y[0]) >= 0);

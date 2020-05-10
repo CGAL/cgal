@@ -1,20 +1,11 @@
 // Copyright (c) 2014, 2017 GeometryFactory (France). All rights reserved.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno,
 //             Mael Rouxel-Labbé
@@ -742,11 +733,12 @@ make_icosahedron(Graph& g,
  * If `triangulated` is `true`, the diagonal of each cell is oriented from (0,0) to (1,1)
  * in the cell coordinates.
  *
- *\tparam CoordinateFunctor a function object providing `Point_3 operator()(size_type I, size_type J)` with `Point_3` being
- * the value_type of the internal property_map for `CGAL::vertex_point_t`.
- * and outputs a `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
- *  It will be called with arguments (`w`, `h`), with `w` in [0..`i`] and `h` in [0..`j`].
- * <p>%Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
+ *\tparam CoordinateFunctor a function object providing:
+ * `%Point_3 operator()(size_type I, size_type J)`, with `%Point_3` being the value_type
+ * of the internal property_map for `CGAL::vertex_point_t` and outputs an object of type
+ * `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
+ *  It will be called with arguments (`w`, `h`), with `w` in [0..`i`] and `h` in [0..`j`].<br>
+ * %Default: a point with positive integer coordinates (`w`, `h`, 0), with `w` in [0..`i`] and `h` in [0..`j`]
  *
  * \returns the non-border non-diagonal halfedge that has the target vertex associated with the first point of the grid (default is (0,0,0) ).
  */

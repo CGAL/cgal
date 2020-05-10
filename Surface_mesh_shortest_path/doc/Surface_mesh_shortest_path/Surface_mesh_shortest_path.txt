@@ -43,7 +43,7 @@ of the input surface mesh.
 
 For efficiency reason, index property maps for vertices, halfedges and faces are internally used. For each simplex
 type the property map must provide an index between 0 and the number of simplices. We recommend to use
-the class `CGAL::Surface_mesh` as model of `FaceListGraph`. 
+the class `CGAL::Surface_mesh` as model of `FaceListGraph`.
 If you use the class `CGAL::Polyhedron_3`, you should use it with the item class `CGAL::Polyhedron_items_with_id_3`,
 for which default property maps are provided.
 This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
@@ -60,7 +60,18 @@ If the traits class used holds some local state, it must also be passed to the c
 The set of source points for shortest path queries can be populated one by one or using a range.
 A source point can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
 with some barycentric coordinates.
-Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinates are a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
+Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinates
+are a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$,
+and \f$b_0 + b_1 + b_2 = 1\f$.
+
+For convenience, a function `Surface_mesh_shortest_path::locate()` is provided to construct face locations from geometric
+inputs:
+- given a point `p` living in 3D space, this function computes the point closest to `p` on the surface,
+and returns the face containing this point, as well as its barycentric coordinates;
+- given a ray `r` living in 3D space, this function computes the intersection of the ray with the surface,
+and (if an intersection exists) returns the face containing this point, as well as its barycentric coordinates;
+
+Usage of this function is illustrated in the example \ref Surface_mesh_shortest_path/shortest_path_with_locate.cpp.
 
 \subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
 
@@ -106,8 +117,8 @@ but it will be extremely slow. Indeed, in order to compute the distance along th
 
 \subsection Surface_mesh_shortest_pathSimpleExample Simple Example
 
-The following example shows how to get the shortest path to every vertex from an arbitrary source point on a surface.  
-The shortest path class needs to have an index associated to each vertex, halfedge and face, which is naturally given for the class `Surface_mesh`. 
+The following example shows how to get the shortest path to every vertex from an arbitrary source point on a surface.
+The shortest path class needs to have an index associated to each vertex, halfedge and face, which is naturally given for the class `Surface_mesh`.
 
 \cgalExample{Surface_mesh_shortest_path/shortest_paths.cpp}
 

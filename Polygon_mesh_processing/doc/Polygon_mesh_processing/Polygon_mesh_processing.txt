@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors Sébastien Loriot, Jane Tournois, Ilker %O. Yaz
+\authors Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -312,18 +312,19 @@ the limited precision of floating point numbers.
 As a natural extension, some clipping functionalities with a volume bounded by a closed mesh
 and a halfspace (defined by the negative side of a plane to be consistent with
 the outward normal convention) are offered. The functions `CGAL::Polygon_mesh_processing::clip()`
+and `CGAL::Polygon_mesh_processing::split()`
 have some options to select whether the clipping should be done at the volume or surface
 level, and also if the clipper should be considered as compact or not. This is illustrated on
 \cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
 
 \cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
 Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
-defining the clipping halfspace; (ii) `close_volumes=false`: clipping of the surface mesh (boundary edges
-depicted in red); (iii) `close_volumes=true`: clipping of the volume bounded by the surface mesh.
+defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
+depicted in red); (iii) `clip_volume=true`: clipping of the volume bounded by the surface mesh.
 \cgalFigureEnd
 
 \cgalFigureBegin{coref_clip_compact, clip_compact.png}
-Clipping a cube with a halfspace: compacity of the clipper (`close_volumes=false` in both cases).
+Clipping a cube with a halfspace: compacity of the clipper (`clip_volume=false` in both cases).
 From left to right: (i) initial cube and the plane defining the clipping halfspace,
 note that a whole face of the cube (2 triangles) is exactly contained in the plane;
 (ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
@@ -412,10 +413,13 @@ one incident non-null face) after each hole filling step.
 Holes are filled one after the other, and the process stops when there is no border edge left.
 
 This process is illustrated by the example below, where holes are
-iteratively filled, refined and faired to get a faired mesh with no hole.
+iteratively filled, refined and faired. Optionally, only holes
+not exceeding a certain diameter or number of edges can be filled.
+This example assumes that the mesh is stored in a `Surface_mesh`
+datastructure. Analogous examples when using the `Polyhedron_3`
+class and a few others are part of the code base.
 
-
-\cgalExample{Polygon_mesh_processing/hole_filling_example.cpp}
+\cgalExample{Polygon_mesh_processing/hole_filling_example_SM.cpp}
 
  \cgalFigureBegin{Triangulated_fork, fork.jpg}
  Holes in the fork model are filled with triangle patches.
@@ -535,6 +539,8 @@ finding the nearest point on a mesh given a point or a ray
 (`CGAL::Polygon_mesh_processing::locate_with_AABB_tree()`, and similar), and location-based predicates
 (for example, `CGAL::Polygon_mesh_processing::is_on_face_border()`).
 
+The example \ref Polygon_mesh_processing/locate_example.cpp presents a few of these functions.
+
 ****************************************
 \section PMPOrientation Orientation
 
@@ -573,6 +579,9 @@ to build a valid polygon mesh.
 The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 performs this mesh construction step.
 
+Inversely, a polygon soup can be constructed from a polygon mesh,
+using the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+
 \subsection OrientingPolygonMeshes Polygon Meshes
 
 This package provides functions dealing with the orientation of faces in a closed polygon mesh.
@@ -589,8 +598,16 @@ outside of the domain bounded by the input polygon mesh.
 of halfedges around faces.
 As a consequence, the normal computed for each face (see Section
 \ref PMPNormalComp) is also reversed.
-
-\subsection PolygonSoupExample Orientation Example
+- The function `CGAL::Polygon_mesh_processing::volume_connected_components()` provides information about
+the 3D arrangement of the surface connected components in a given triangle mesh. It comes with many
+named parameter options making it also a more general version of `is_outward_oriented()`.
+- The function `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
+duplicates points and edges to make a soup orientable, without changing the orientation of the faces.
+- The function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
+takes an input mesh as a reference and orients the triangles of a soup according to it.
+- The function `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
+merges the connected components of a polygon mesh if possible.
+\subsection PolygonSoupExample Orientation Examples
 
 This example shows how to generate a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -600,6 +617,11 @@ polygon mesh to illustrate
 Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
+
+This example shows how to correctly repair and orient a soup to get a mesh from a reference :
+
+\cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
+
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing
@@ -781,6 +803,10 @@ enable the user to keep and remove only a selection of connected components,
 provided either as a range of faces that belong to the desired connected components
 or as a range of connected component ids (one or more per connected component).
 
+When a triangle mesh has no boundary, it partitions the 3D space in different volumes.
+The function `CGAL::Polygon_mesh_processing::volume_connected_components()` can be used to assign to
+each face an id per volume defined by the surface connected components.
+
 Finally, it can be useful to quickly remove some connected components, for example for noisy data
 where small connected components should be discarded in favor of major connected components.
 The function `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
@@ -792,6 +818,10 @@ is its area, for example.
 Similarly to the previous function, the function
 `CGAL::Polygon_mesh_processing::keep_large_connected_components()` can be used to discard all connected
 components whose size is below a user-defined threshold.
+
+Also, the function `CGAL::Polygon_mesh_processing::split_connected_components()`
+enables the user to split the connected components of a polygon mesh in as many
+polygon meshes.
 
 \subsection CCExample Connected Components Example
 
@@ -808,7 +838,6 @@ The second example shows how to use the class template `Face_filtered_graph`
 which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
-
 
 \section PMPDistance Approximate Hausdorff Distance
 
@@ -874,6 +903,12 @@ and the number of surface patches that are separated by these edges.
 A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
 Jane Tournois worked on the finalization of the API, code, and documentation.
 
+A prototype of mesh and shape smoothing was developed during the 2017 edition of the Google Summer of Code
+by Konstantinos Katrioplas, under supervision of Jane Tournois. It was finalized by Mael Rouxel-Labbé and
+integrated in \cgal 5.0.
+
+Functionalities related to mesh and polygon soup reparation have been introduced steadily over multiple versions
+since \cgal 4.10, in joint work between Sébastien Loriot and Mael Rouxel-Labbé.
 
 */
 } /* namespace CGAL */

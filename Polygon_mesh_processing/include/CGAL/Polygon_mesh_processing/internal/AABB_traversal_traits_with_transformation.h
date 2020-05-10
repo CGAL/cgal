@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Maxime Gimeno
@@ -35,7 +26,6 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <boost/mpl/if.hpp>
 
@@ -61,9 +51,9 @@ class Traversal_traits_with_transformation_helper
 
     AK::Aff_transformation_3 a_at = c2f(at);
 
-    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
-                       c2f(bbox.min(1)), c2f(bbox.max(1)),
-                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+    AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                       c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                       c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
 
     typename AK::Point_3 ps[8];
     ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
@@ -93,9 +83,9 @@ class Traversal_traits_with_transformation_helper
 
     AK::Aff_transformation_3 a_at = c2f(at);
 
-    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
-                       c2f(bbox.min(1)), c2f(bbox.max(1)),
-                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+    AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                       c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                       c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
 
     typename AK::Point_3 ps[2];
     ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );

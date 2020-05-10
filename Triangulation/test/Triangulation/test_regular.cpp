@@ -1,4 +1,5 @@
 #include <CGAL/Epick_d.h>
+#include <CGAL/Epeck_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/algorithm.h>
@@ -31,7 +32,7 @@ void test(const int d, const string & type, const int N)
   RTri rt(d);
   cerr << "\nBuilding Regular triangulation of (" << type << d << ") dimension with " << N << " points";
   assert(rt.empty());
-  
+
   // Generate N random points
   std::vector<Weighted_point> points;
   for (int i = 0; i < N; ++i)
@@ -93,13 +94,21 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-  typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
-  typedef CGAL::Regular_triangulation<FK> Triangulation;
-  test<FK, Triangulation>(D, "static", N);
+  typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > KI;
+  typedef CGAL::Regular_triangulation<KI> Triangulation;
+  test<KI, Triangulation>(D, "inexact static", N);
 
-  typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
-  typedef CGAL::Regular_triangulation<FK_dyn> Triangulation_dyn;
-  test<FK_dyn, Triangulation_dyn>(D, "dynamic", N);
+  typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> KI_dyn;
+  typedef CGAL::Regular_triangulation<KI_dyn> Triangulation_dyn;
+  test<KI_dyn, Triangulation_dyn>(D, "inexact dynamic", N);
+
+  typedef CGAL::Epeck_d<CGAL::Dimension_tag<D> > KE;
+  typedef CGAL::Regular_triangulation<KE> TriangulationE;
+  test<KE, TriangulationE>(D, "exact static", N);
+
+  typedef CGAL::Epeck_d<CGAL::Dynamic_dimension_tag> KE_dyn;
+  typedef CGAL::Regular_triangulation<KE_dyn> TriangulationE_dyn;
+  test<KE_dyn, TriangulationE_dyn>(D, "exact dynamic", N);
 }
 
 void test_inserting_points_at_the_same_position()
@@ -137,13 +146,13 @@ void test_inserting_points_at_the_same_position()
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 0);
   assert(vh == vh2);
-  
+
   // Same position, bigger weight
   vh = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
   assert(rt.number_of_hidden_vertices() == 1);
   assert(vh != Vertex_handle());
-  
+
   // Same point
   vh2 = rt.insert(Weighted_point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
@@ -267,7 +276,7 @@ int main(int argc, char **argv)
   go<3>(N);
   go<2>(N);
   go<1>(N);
-  
+
   cerr << endl;
   return 0;
 }

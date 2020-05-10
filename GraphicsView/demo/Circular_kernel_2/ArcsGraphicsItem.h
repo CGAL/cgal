@@ -29,9 +29,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& intersectionsPen() const
   {
@@ -62,7 +62,7 @@ protected:
   QRectF bounding_rect;
 
   QPen intersections_pen;
-  QPen input_pen;  
+  QPen input_pen;
   Converter<CK> convert;
 };
 
@@ -80,7 +80,7 @@ ArcsGraphicsItem<CK>::ArcsGraphicsItem(std::vector<CGAL::Object>& arcs_, std::ve
 }
 
 template <typename CK>
-QRectF 
+QRectF
 ArcsGraphicsItem<CK>::boundingRect() const
 {
   return bounding_rect;
@@ -89,14 +89,14 @@ ArcsGraphicsItem<CK>::boundingRect() const
 
 
 template <typename CK>
-void 
-ArcsGraphicsItem<CK>::paint(QPainter *painter, 
+void
+ArcsGraphicsItem<CK>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *,
                                     QWidget * )
 {
   painter->setPen(this->inputPen());
   painterostream = PainterOstream<CK>(painter);
- 
+
   for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
     Circular_arc_2 ca;
     Line_arc_2 la;
@@ -129,7 +129,7 @@ ArcsGraphicsItem<CK>::paint(QPainter *painter,
 }
 
 template <typename CK>
-void 
+void
 ArcsGraphicsItem<CK>::updateBoundingBox()
 {
   bounding_rect = QRectF(0,0,100, 100);
@@ -140,17 +140,17 @@ ArcsGraphicsItem<CK>::updateBoundingBox()
     Line_arc_2 la;
     if(assign(ca, *it)){
       if(initialized){
-	bb = bb + ca.supporting_circle().bbox();
+        bb = bb + ca.supporting_circle().bbox();
       } else {
-	initialized = true;
-	bb = ca.supporting_circle().bbox();
+        initialized = true;
+        bb = ca.supporting_circle().bbox();
       }
     } else if(assign(la, *it)){
       if(initialized){
-	bb = bb + la.bbox();
+        bb = bb + la.bbox();
       } else {
-	initialized = true;
-	bb = la.bbox();
+        initialized = true;
+        bb = la.bbox();
       }
     }
   }
@@ -161,7 +161,7 @@ ArcsGraphicsItem<CK>::updateBoundingBox()
 
 
 template <typename CK>
-void 
+void
 ArcsGraphicsItem<CK>::modelChanged()
 {
   if((arcs.empty()) ){

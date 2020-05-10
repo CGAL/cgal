@@ -55,7 +55,7 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    
+
     QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
     if(!menu){
       QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
@@ -766,7 +766,7 @@ struct Point_generator
   {
     return Point(bl.x() + i*(ur.x()-bl.x())/(w-1),
                  bl.y() + j*(ur.y()-bl.y())/(h-1),
-                 0);
+                 bl.z() + j*(ur.z()-bl.z())/(h-1));
   }
 };
 template<class Facegraph_item>
@@ -777,7 +777,8 @@ void Basic_generator_plugin::generateGrid()
 
   QString points_text;
   Point extrema[2];
-  typename boost::graph_traits<Face_graph>::vertices_size_type nb_cells[2];
+  using size_type = typename boost::graph_traits<Face_graph>::vertices_size_type;
+  size_type nb_cells[2];
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
 
@@ -806,8 +807,8 @@ void Basic_generator_plugin::generateGrid()
   }
   extrema[0] = Point(coords[0], coords[1], coords[2]);
   extrema[1] = Point(coords[3], coords[4], coords[5]);
-  nb_cells[0] = static_cast<std::size_t>(dock_widget->gridX_spinBox->value());
-  nb_cells[1] = static_cast<std::size_t>(dock_widget->gridY_spinBox->value());
+  nb_cells[0] = static_cast<size_type>(dock_widget->gridX_spinBox->value());
+  nb_cells[1] = static_cast<size_type>(dock_widget->gridY_spinBox->value());
 
   //nb_points = nb_cells+1
   Point_generator point_gen(nb_cells[0]+1, nb_cells[1]+1, extrema[0], extrema[1]);

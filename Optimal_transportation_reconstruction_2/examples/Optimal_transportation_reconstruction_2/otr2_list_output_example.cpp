@@ -35,11 +35,11 @@ void list_output(Otr_2& otr2)
     std::back_inserter(isolated_points), std::back_inserter(segments));
 
   std::vector<Point>::iterator pit;
-  for (pit = isolated_points.begin(); pit != isolated_points.end(); pit++) 
+  for (pit = isolated_points.begin(); pit != isolated_points.end(); pit++)
     std::cout  << *pit << std::endl;
 
   std::vector<Segment>::iterator sit;
-  for (sit = segments.begin(); sit != segments.end(); sit++) 
+  for (sit = segments.begin(); sit != segments.end(); sit++)
     std::cout << *sit << std::endl;
 }
 

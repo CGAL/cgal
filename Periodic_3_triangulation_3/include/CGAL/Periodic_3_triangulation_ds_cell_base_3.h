@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -189,9 +180,9 @@ public:
     int bit_offset = 3 * vhi;
 
     // first reset the bit to 0 (AND), then assign the value given in input (OR)
-    off = off & ~(1 <<  bit_offset)      | (offo[0] <<  bit_offset);
-    off = off & ~(1 << (bit_offset + 1)) | (offo[1] << (bit_offset + 1));
-    off = off & ~(1 << (bit_offset + 2)) | (offo[2] << (bit_offset + 2));
+    off = (off & ~(1 <<  bit_offset))      | (offo[0] <<  bit_offset);
+    off = (off & ~(1 << (bit_offset + 1))) | (offo[1] << (bit_offset + 1));
+    off = (off & ~(1 << (bit_offset + 2))) | (offo[2] << (bit_offset + 2));
 
     CGAL_postcondition(offset(vhi) == o);
   }

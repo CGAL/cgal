@@ -4,17 +4,11 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -45,6 +39,28 @@
 
 namespace CGAL{
 
+namespace internal {
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_2<K>& poly)
+  {
+    typename CGAL::Polygon_2<K>::iterator it = poly.end();
+    --it;
+    if( (*poly.begin()) == *it){
+      poly.erase(it);
+    }
+  }
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
+  {
+    pop_back_if_equal_to_front(pwh.outer_boundary());
+    for(auto i = pwh.holes_begin(); i!= pwh.holes_end(); ++i){
+      pop_back_if_equal_to_front(*i);
+    }
+  }
+}
+
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -53,23 +69,23 @@ read_point_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return in;
   }
-  
+
   std::string line;
   while(std::getline(in, line))
   {
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-    
+
     if(type.substr(0, 5).compare("POINT")==0)
     {
       boost::geometry::read_wkt(line, point);
       break;
     }
   }
-  return in;  
+  return in;
 }
 
 template<typename MultiPoint>
@@ -80,7 +96,7 @@ read_multi_point_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return in;
   }
   internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   std::string line;
@@ -89,14 +105,14 @@ read_multi_point_WKT( std::istream& in,
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-    
+
     if(type.substr(0, 10).compare("MULTIPOINT")==0)
     {
       boost::geometry::read_wkt(line, gc);
       break;
     }
   }
-  return in;  
+  return in;
 }
 
 
@@ -108,7 +124,7 @@ read_linestring_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return in;
   }
   internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
   std::string line;
@@ -117,14 +133,14 @@ read_linestring_WKT( std::istream& in,
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-    
+
     if(type.substr(0, 10).compare("LINESTRING")==0)
     {
       boost::geometry::read_wkt(line, gc);
       break;
     }
   }
-  return in;  
+  return in;
 }
 
 template<typename MultiLineString>
@@ -135,11 +151,11 @@ read_multi_linestring_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return in;
   }
   typedef typename MultiLineString::value_type PointRange;
   typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
-  
+
   std::vector<LineString> pr_range;
   internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
   std::string line;
@@ -148,7 +164,7 @@ read_multi_linestring_WKT( std::istream& in,
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-    
+
     if(type.substr(0, 15).compare("MULTILINESTRING")==0)
     {
       boost::geometry::read_wkt(line, gc);
@@ -159,7 +175,7 @@ read_multi_linestring_WKT( std::istream& in,
   {
     mls.push_back(*ls.range);
   }
-  return in;  
+  return in;
 }
 
 template<typename Polygon>
@@ -171,23 +187,29 @@ read_polygon_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return in;
   }
-  
+
   std::string line;
   while(std::getline(in, line))
   {
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-    
+
     if(type.substr(0, 7).compare("POLYGON")==0)
     {
-      boost::geometry::read_wkt(line, polygon);
+      try {
+        boost::geometry::read_wkt(line, polygon);
+      } catch( ...){
+        in.setstate(std::ios::failbit);
+        return in;
+      };
+      internal::pop_back_if_equal_to_front(polygon);
       break;
     }
   }
-  return in;  
+  return in;
 }
 
 template<typename MultiPolygon>
@@ -199,7 +221,7 @@ read_multi_polygon_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return in;
   }
   internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   std::string line;
@@ -208,14 +230,25 @@ read_multi_polygon_WKT( std::istream& in,
     std::istringstream iss(line);
     std::string type;
     iss >> type;
-    
+
     if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try {
+              boost::geometry::read_wkt(line, gc);
+            } catch( ...){
+              in.setstate(std::ios::failbit);
+              return in;
+            };
+      for( typename
+           internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it
+          = gc.begin(); it != gc.end(); ++it)
+      {
+        internal::pop_back_if_equal_to_front(*it);
+      }
       break;
     }
   }
-  return in;  
+  return in;
 }
 
 template<typename Point>
@@ -325,7 +358,7 @@ template<typename MultiPoint,
          typename MultiPolygon>
 std::istream&
 read_WKT( std::istream& input,
-          MultiPoint& points,   
+          MultiPoint& points,
           MultiLineString& polylines,
           MultiPolygon& polygons)
 {
@@ -390,7 +423,7 @@ read_WKT( std::istream& input,
           polygons.push_back(poly);
     }
   }while(input.good() && !input.eof());
-  return input;  
+  return input;
 }
 }//end CGAL
 #endif

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Frederic Fichel, Mariette Yvinec, Julia Floetotto
 
@@ -29,7 +20,6 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Object.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
@@ -43,6 +33,7 @@
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+#include <boost/property_map/function_property_map.hpp>
 
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
@@ -176,7 +167,7 @@ public:
   };
 
   typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
-  
+
   class Finite_vertices_iterator :
     public Filter_iterator<Finite_vib, Hidden_tester>
   {
@@ -193,7 +184,7 @@ public:
  };
 
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
-  
+
   class Hidden_vertices_iterator :
     public Filter_iterator<Finite_vib, Unhidden_tester>
   {
@@ -210,7 +201,7 @@ public:
  };
 
   typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator> > Hidden_vertex_handles;
-  
+
  //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
   typedef Finite_edges_iterator                Edge_iterator;
@@ -348,17 +339,17 @@ public:
   All_vertices_iterator all_vertices_begin() const;
   All_vertices_iterator all_vertices_end() const;
   All_vertex_handles all_vertex_handles() const;
-  
+
   Finite_vertices_iterator finite_vertices_begin() const;
   Finite_vertices_iterator finite_vertices_end() const;
   Finite_vertex_handles finite_vertex_handles() const;
-  
+
   Vertex_handle finite_vertex() const;
 
   Hidden_vertices_iterator hidden_vertices_begin() const;
   Hidden_vertices_iterator hidden_vertices_end() const;
   Hidden_vertex_handles hidden_vertex_handles() const;
-  
+
 //  Vertex_handle file_input(std::istream& is);
 //  void file_output(std::ostream& os) const;
 
@@ -423,12 +414,12 @@ public:
     // spatial sorting must use bare points, so we need an adapter
     typedef typename Geom_traits::Construct_point_2 Construct_point_2;
     typedef typename boost::result_of<const Construct_point_2(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Weighted_point, Ret> fpmap;
+    typedef boost::function_property_map<Construct_point_2, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
 
     spatial_sort(points.begin(), points.end(),
                  Search_traits_2(
-                   CGAL::internal::boost_::make_function_property_map<Weighted_point, Ret, Construct_point_2>(
+                   boost::make_function_property_map<Weighted_point, Ret, Construct_point_2>(
                      geom_traits().construct_point_2_object()), geom_traits()));
 
     Face_handle hint;
@@ -491,13 +482,13 @@ private:
     typedef Index_to_Bare_point<Construct_point_2,
                                 std::vector<Weighted_point> > Access_bare_point;
     typedef typename boost::result_of<const Construct_point_2(const Weighted_point&)>::type Ret;
-    typedef CGAL::internal::boost_::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
+    typedef boost::function_property_map<Access_bare_point, std::size_t, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_2<Gt, fpmap> Search_traits_2;
 
     Access_bare_point accessor(points, geom_traits().construct_point_2_object());
     spatial_sort(indices.begin(), indices.end(),
                  Search_traits_2(
-                   CGAL::internal::boost_::make_function_property_map<
+                   boost::make_function_property_map<
                      std::size_t, Ret, Access_bare_point>(accessor),
                    geom_traits()));
 
@@ -2201,7 +2192,7 @@ all_vertices_end() const
   return CGAL::filter_iterator(Base::all_vertices_end(),
                                Hidden_tester());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::All_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
@@ -2209,7 +2200,7 @@ all_vertex_handles() const
 {
   return make_prevent_deref_range(all_vertices_begin(),all_vertices_end());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Finite_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
@@ -2220,7 +2211,7 @@ finite_vertices_begin() const
                                Base::finite_vertices_begin());
 }
 
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
@@ -2247,7 +2238,7 @@ finite_vertex_handles() const
 {
   return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
 }
- 
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
@@ -2266,7 +2257,7 @@ hidden_vertices_end() const
   return CGAL::filter_iterator(Base::finite_vertices_end(),
                                Unhidden_tester());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Hidden_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
@@ -2274,7 +2265,7 @@ hidden_vertex_handles() const
 {
   return make_prevent_deref_range(hidden_vertices_begin(),hidden_vertices_end());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::

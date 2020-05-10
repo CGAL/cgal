@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jocelyn Meyron
@@ -51,11 +42,11 @@ namespace CGAL
                             Point_3 origin = Point_3(CGAL::ORIGIN))
       {
         typedef typename Kernel_traits<Point_3>::Kernel::Plane_3 Plane_3;
-          
+
         typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
         typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
         typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-          
+
         typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpm_primal = get(CGAL::vertex_point, primal);
         typename boost::property_map<Polyhedron, vertex_point_t>::type vpm_dual = get(CGAL::vertex_point, dual);
         // compute coordinates of extreme vertices in the dual polyhedron
@@ -76,18 +67,18 @@ namespace CGAL
           extreme_points[fd] = vd;
           put(vpm_dual, vd, translated_extreme_p);
         }
-        
+
         // build faces
         for(vertex_descriptor vd : vertices(primal)) {
           //CGAL_assertion (it->is_bivalent() == false);
-          
+
           std::list<vertex_descriptor> vertices;
           for(face_descriptor fd : faces_around_target(halfedge(vd,primal),primal)){
             vertices.push_front(extreme_points[fd]);
           }
         Euler::add_face(vertices,dual);
         }
-        
+
       }
     } // namespace internal
   } // namespace Convex_hull_3
@@ -106,7 +97,7 @@ namespace CGAL
           typedef typename K::Plane_3 Plane;
 
           Point p_origin;
-            
+
           if (origin) {
             p_origin = boost::get(origin);
           } else {
@@ -151,7 +142,7 @@ namespace CGAL
                                                             boost::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> const& origin = boost::none) {
           typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
           typedef typename K::Point_3 Point_3;
-          typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+          typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3>::type Traits;
 
           halfspace_intersection_with_constructions_3(pbegin, pend, P, origin, Traits());
         }

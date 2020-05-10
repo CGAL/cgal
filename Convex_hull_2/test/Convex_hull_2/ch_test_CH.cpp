@@ -2,9 +2,9 @@
 //
 // Copyright (c) 1999 The CGAL Consortium
 //
-// 
-// 
-// 
+//
+//
+//
 //
 // ----------------------------------------------------------------------------
 // release       :
@@ -35,7 +35,7 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
-#endif 
+#endif
 
 #include <CGAL/_test_fct_ch_I_2.h>
 

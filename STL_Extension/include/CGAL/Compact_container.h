@@ -2,20 +2,11 @@
 // Copyright (c) 2014  GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
@@ -39,6 +30,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Has_member.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -90,24 +82,6 @@
 //   things (e.g. freeing empty blocks automatically) ?
 
 namespace CGAL {
-
-#define CGAL_GENERATE_MEMBER_DETECTOR(X)                                             \
-template<typename T> class has_##X {                                          \
-    struct Fallback { int X; };                                               \
-    struct Derived : T, Fallback { };                                         \
-                                                                              \
-    template<typename U, U> struct Check;                                     \
-                                                                              \
-    typedef char ArrayOfOne[1];                                               \
-    typedef char ArrayOfTwo[2];                                               \
-                                                                              \
-    template<typename U> static ArrayOfOne & func(                            \
-                                            Check<int Fallback::*, &U::X> *); \
-    template<typename U> static ArrayOfTwo & func(...);                       \
-  public:                                                                     \
-    typedef has_##X type;                                                     \
-    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
-} // semicolon is after the macro call
 
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
@@ -1135,8 +1109,24 @@ namespace internal {
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
     typedef Time_stamper_impl<typename DSC::value_type> Stamper;
-    return Stamper::hash_value(&*i);
+    return Stamper::hash_value(i.operator->());
   }
+
+namespace handle {
+  // supply a specialization for Hash_functor
+
+  // forward declare base template
+  template <class H> struct Hash_functor;
+
+  template<class DSC, bool Const>
+  struct Hash_functor<CC_iterator<DSC, Const>>{
+    std::size_t
+    operator()(const CC_iterator<DSC, Const>& i)
+    {
+      return hash_value(i);
+    }
+  };
+} // namespace handle
 
 } // namespace internal
 

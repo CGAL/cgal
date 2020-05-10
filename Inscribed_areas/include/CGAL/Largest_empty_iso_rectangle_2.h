@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Eli Packer (algorithm), Andreas Fabri (cgal conformance)
 
@@ -101,8 +92,8 @@ public:
       if(c == LARGER) {
         return true;
       } else if (c == EQUAL) {
-        return traits().less_x_2_object()(a->p.x_part, b->p.x_part); 
-      } 
+        return traits().less_x_2_object()(a->p.x_part, b->p.x_part);
+      }
       return false;
     }
   };
@@ -126,8 +117,8 @@ public:
       if(c == LARGER) {
         return true;
       } else if (c == EQUAL) {
-        return traits().less_y_2_object()(a->p.y_part, b->p.y_part); 
-      } 
+        return traits().less_y_2_object()(a->p.y_part, b->p.y_part);
+      }
       return false;
     }
   };
@@ -143,10 +134,10 @@ public:
   typedef std::set<Point_data *,Less_xy> Point_data_set_of_x;
   typedef std::set<Point_data *,Less_yx> Point_data_set_of_y;
 
-  // The following is an iterator adapter that allows us to enumerate 
+  // The following is an iterator adapter that allows us to enumerate
   // the points in a set where they are stored
-  typedef Iterator_project<typename Point_data_set_of_x::const_iterator, 
-                           Proj_point<Point_data*>, 
+  typedef Iterator_project<typename Point_data_set_of_x::const_iterator,
+                           Proj_point<Point_data*>,
                            const Point_2&,
                            const Point_2*> const_iterator;
 
@@ -176,7 +167,7 @@ public:
   {
     insert(_p);
   }
-  
+
   //! Insertion of an iterator range.
   template < class InputIterator >
   int
@@ -185,7 +176,7 @@ public:
     int n = 0;
     while(first != last){
       if(insert(*first)){
-	n++;
+        n++;
       }
       ++first;
     }
@@ -208,7 +199,7 @@ public:
    * inside its interior.
    * \return the largest empty iso rectangle.
    */
-  Iso_rectangle_2 
+  Iso_rectangle_2
   get_largest_empty_iso_rectangle();
 
   //! Retrieve four points from the input that define the largest
@@ -221,16 +212,16 @@ public:
                             tr_p.original, tr_p.original));
     }
     update();
-    return(make_quadruple(left_p.original, bottom_p.original, 
+    return(make_quadruple(left_p.original, bottom_p.original,
                           right_p.original, top_p.original));
   }
 
   //! Clear the data(remove the points).
-  void 
+  void
   clear();
 
   //! Get a begin iterator to points
-  const_iterator 
+  const_iterator
   begin()  const;
 
   //! Get a after-the-end iterator to points
@@ -247,7 +238,7 @@ public:
 
   //! A copy constructor
   Largest_empty_iso_rectangle_2<T>(
-	       const Largest_empty_iso_rectangle_2<T>& ler);
+               const Largest_empty_iso_rectangle_2<T>& ler);
 
   struct Internal_point {
     Point_2 x_part;// the x coordinate of the point
@@ -274,14 +265,14 @@ public:
     */
     std::set<Point_data *,Less_yx> *right_tent;
     std::set<Point_data *,Less_yx> *left_tent;
-    
+
     /* detemine whether the point is a bounding box corner
        (thus not implicitely inserted as a point, or not.
     */
 
     Point_type type;
 
-    Point_data(const Point& _p) 
+    Point_data(const Point& _p)
       :  p(_p),type(REG)
     {
       right_tent = 0;
@@ -289,21 +280,21 @@ public:
     }
 
     Point_data(const Point& _p,
-	       std::set<Point_data *,Less_yx> *r_tent,
-	       std::set<Point_data *,Less_yx> *l_tent)
-      : p(_p),right_tent(r_tent),left_tent(l_tent),type(REG) 
+               std::set<Point_data *,Less_yx> *r_tent,
+               std::set<Point_data *,Less_yx> *l_tent)
+      : p(_p),right_tent(r_tent),left_tent(l_tent),type(REG)
     {}
 
     Point_data(const Point& _p,
-	       std::set<Point_data *,Less_yx> *r_tent,
-	       std::set<Point_data *,Less_yx> *l_tent,
-	       Point_type i_type)
-      : p(_p),right_tent(r_tent),left_tent(l_tent),type(i_type) 
+               std::set<Point_data *,Less_yx> *r_tent,
+               std::set<Point_data *,Less_yx> *l_tent,
+               Point_type i_type)
+      : p(_p),right_tent(r_tent),left_tent(l_tent),type(i_type)
     {}
 
 
-    Point_data (const Point_data &other) : 
-      p(other.p), right_tent(other.right_tent), left_tent(other.left_tent) 
+    Point_data (const Point_data &other) :
+      p(other.p), right_tent(other.right_tent), left_tent(other.left_tent)
     {}
 
     ~Point_data() {
@@ -314,7 +305,7 @@ public:
         delete left_tent;
       }
     }
-  }; 
+  };
 
 
 private:
@@ -347,8 +338,8 @@ private:
       if(c == LARGER) {
         return true;
       } else if (c == EQUAL) {
-        return traits().less_y_2_object()(a.y_part, b.y_part); 
-      } 
+        return traits().less_y_2_object()(a.y_part, b.y_part);
+      }
       return false;
     }
   };
@@ -374,8 +365,8 @@ private:
       if(c == LARGER) {
         return true;
       } else if (c == EQUAL) {
-        return traits().less_x_2_object()(a.x_part, b.x_part); 
-      } 
+        return traits().less_x_2_object()(a.x_part, b.x_part);
+      }
       return false;
     }
   };
@@ -404,8 +395,8 @@ private:
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return traits().less_y_2_object()(b->p.y_part, a->p.y_part); 
-    } 
+      return traits().less_y_2_object()(b->p.y_part, a->p.y_part);
+    }
     return false;
   }
 
@@ -416,8 +407,8 @@ private:
     if(c == LARGER) {
       return true;
     } else if (c == EQUAL) {
-      return traits().less_x_2_object()(b->p.x_part, a->p.x_part); 
-    } 
+      return traits().less_x_2_object()(b->p.x_part, a->p.x_part);
+    }
     return false;
   }
 
@@ -426,7 +417,7 @@ private:
   Point_data_set_of_y y_sorted;
 
   Less_xy_internal_point less_xy_point;
-  Less_yx_internal_point less_yx_point;  
+  Less_yx_internal_point less_yx_point;
 
   // bottom left and top right points of the bounding box
   Point bl_p, tr_p;
@@ -435,7 +426,7 @@ private:
   Iso_rectangle_2 bbox_p;
 
   // the points that define the largest empty iso-rectangle
-  Point left_p, bottom_p, right_p ,top_p; 
+  Point left_p, bottom_p, right_p ,top_p;
 
   // save the largest empty rectangle size found by now
   NT largest_rect_size;
@@ -443,7 +434,7 @@ private:
   // insert points
   bool insert(const Point& _p,Point_type i_type);
   bool insert(const Point_2& _p,Point_type i_type);
-  
+
   /* the phases of the algorithm as described in the paper
   */
 
@@ -460,22 +451,22 @@ private:
   void phase_2();
   void phase_3();
 
-  // the next functions are used by the functions of the three phases 
-  void check_for_larger(const Point& px0, 
-			const Point& py0, 
-			const Point& px1,
-			const Point& py1);
+  // the next functions are used by the functions of the three phases
+  void check_for_larger(const Point& px0,
+                        const Point& py0,
+                        const Point& px1,
+                        const Point& py1);
   void tent(Point_data *first, Point_data *second);
   void tent(Point_data *first, Point_data *second, Point_data *third);
 
   void get_next_for_top(typename std::list<Point_data *>::iterator &iter,
-			typename std::list<Point_data *>::iterator &beyond)
+                        typename std::list<Point_data *>::iterator &beyond)
   {
-    while(iter != beyond && ((*iter)->type == BOT_RIGHT 
-	  		   || (*iter)->type == BOT_LEFT))
+    while(iter != beyond && ((*iter)->type == BOT_RIGHT
+                             || (*iter)->type == BOT_LEFT))
       ++iter;
   }
- 
+
 
   void get_prev_for_top(typename std::list<Point_data *>::iterator &iter)
   {
@@ -484,10 +475,10 @@ private:
   }
 
   void get_next_for_bot(typename std::list<Point_data *>::iterator &iter,
-			typename std::list<Point_data *>::iterator &beyond)
+                        typename std::list<Point_data *>::iterator &beyond)
   {
-    while(iter != beyond && ((*iter)->type == TOP_LEFT 
-			     || (*iter)->type == TOP_RIGHT))
+    while(iter != beyond && ((*iter)->type == TOP_LEFT
+                             || (*iter)->type == TOP_RIGHT))
       ++iter;
   }
 
@@ -502,12 +493,12 @@ private:
     while((*iter)->type == TOP_LEFT || (*iter)->type == TOP_RIGHT)
       ++iter;
   }
- 
+
   void get_next_for_bot(typename Point_data_set_of_y::iterator &iter,
-			typename Point_data_set_of_y::iterator &last)
+                        typename Point_data_set_of_y::iterator &last)
   {
-   while(iter != last && ((*iter)->type == TOP_LEFT 
-			  || (*iter)->type == TOP_RIGHT))
+   while(iter != last && ((*iter)->type == TOP_LEFT
+                          || (*iter)->type == TOP_RIGHT))
      ++iter;
   }
 
@@ -519,10 +510,10 @@ private:
 
 
   void get_next_for_left(typename std::list<Point_data *>::iterator &iter,
-			 typename std::list<Point_data *>::iterator &beyond)
+                         typename std::list<Point_data *>::iterator &beyond)
   {
-    while(iter != beyond && ((*iter)->type == BOT_RIGHT 
-			     || (*iter)->type == TOP_RIGHT))
+    while(iter != beyond && ((*iter)->type == BOT_RIGHT
+                             || (*iter)->type == TOP_RIGHT))
       ++iter;
   }
 
@@ -533,10 +524,10 @@ private:
   }
 
   void get_next_for_right(typename std::list<Point_data *>::iterator &iter,
-			  typename std::list<Point_data *>::iterator &beyond)
+                          typename std::list<Point_data *>::iterator &beyond)
   {
-    while(iter != beyond && ((*iter)->type == BOT_LEFT 
-			   || (*iter)->type == TOP_LEFT))
+    while(iter != beyond && ((*iter)->type == BOT_LEFT
+                           || (*iter)->type == TOP_LEFT))
       ++iter;
   }
 
@@ -548,11 +539,11 @@ private:
   }
 
   void determine_first_two_iters(typename Point_data_set_of_y::iterator& iter1,
-				 typename Point_data_set_of_y::iterator& iter2,
-				 typename Point_data_set_of_y::iterator& iter3,
-				 bool& first_iter_is_right,
-				 bool& second_iter_is_right,
-				 bool& third_iter_is_right)
+                                 typename Point_data_set_of_y::iterator& iter2,
+                                 typename Point_data_set_of_y::iterator& iter3,
+                                 bool& first_iter_is_right,
+                                 bool& second_iter_is_right,
+                                 bool& third_iter_is_right)
   {
     if (first_iter_is_right) {
       if (second_iter_is_right) {
@@ -565,44 +556,44 @@ private:
           iter1 = iter2;
           iter2 = iter3;
           first_iter_is_right = second_iter_is_right;
-          second_iter_is_right = third_iter_is_right;  
+          second_iter_is_right = third_iter_is_right;
         } else {
           iter2 = iter3;
-          second_iter_is_right = third_iter_is_right;  
+          second_iter_is_right = third_iter_is_right;
         }
       }
     } else {
       if (second_iter_is_right) {
         if (third_iter_is_right) {
           iter2 = iter3;
-          second_iter_is_right = third_iter_is_right;  
+          second_iter_is_right = third_iter_is_right;
         } else {
           iter1 = iter2;
           iter2 = iter3;
           first_iter_is_right = second_iter_is_right;
-          second_iter_is_right = third_iter_is_right;  
+          second_iter_is_right = third_iter_is_right;
         }
       } else {
         iter1 = iter2;
         iter2 = iter3;
         first_iter_is_right = second_iter_is_right;
-        second_iter_is_right = third_iter_is_right;  
+        second_iter_is_right = third_iter_is_right;
       }
     }
   }
 
   void determine_next_iter(
-		    typename Point_data_set_of_y::iterator &iter,
-		    typename Point_data_set_of_y::iterator &right_iter,
-		    typename Point_data_set_of_y::iterator &left_iter,
-		    typename Point_data_set_of_y::const_iterator right_iter_end,
-		    typename Point_data_set_of_y::const_iterator left_iter_end,
-		    bool &iter_is_right,
-		    bool &exist)
+                    typename Point_data_set_of_y::iterator &iter,
+                    typename Point_data_set_of_y::iterator &right_iter,
+                    typename Point_data_set_of_y::iterator &left_iter,
+                    typename Point_data_set_of_y::const_iterator right_iter_end,
+                    typename Point_data_set_of_y::const_iterator left_iter_end,
+                    bool &iter_is_right,
+                    bool &exist)
   {
-    if((typename Point_data_set_of_y::const_iterator)right_iter 
+    if((typename Point_data_set_of_y::const_iterator)right_iter
        != right_iter_end) {
-      if((typename Point_data_set_of_y::const_iterator)left_iter 
+      if((typename Point_data_set_of_y::const_iterator)left_iter
          != left_iter_end) {
         if(less_yx(*right_iter, *left_iter)) {
           iter = right_iter;
@@ -618,8 +609,8 @@ private:
         iter_is_right = true;
         ++right_iter;
       }
-    } else { 
-      if((typename Point_data_set_of_y::const_iterator)left_iter 
+    } else {
+      if((typename Point_data_set_of_y::const_iterator)left_iter
          != left_iter_end) {
         iter = left_iter;
         iter_is_right = false;
@@ -630,7 +621,7 @@ private:
   }
 
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
-		       typename Point_data_set_of_y::iterator iter2)
+                       typename Point_data_set_of_y::iterator iter2)
   {
     if(less_xy(*iter1, *iter2))
       tent(*iter1,*iter2);
@@ -640,8 +631,8 @@ private:
 
 
   void calls_for_tents(typename Point_data_set_of_y::iterator iter1,
-		       typename Point_data_set_of_y::iterator iter2,
-		       typename Point_data_set_of_y::iterator iter3)
+                       typename Point_data_set_of_y::iterator iter2,
+                       typename Point_data_set_of_y::iterator iter3)
   {
     bool first_is_right_to_second = less_xy(*iter1, *iter2);
     bool second_is_right_to_third = less_xy(*iter2, *iter3);
@@ -666,20 +657,20 @@ private:
 
   void phase_2_update_y_sorted_list();
   void phase_3_check_for_larger(typename Point_data_set_of_y::iterator iter,
-				typename Point_data_set_of_y::iterator iter1,
-				typename Point_data_set_of_y::iterator iter2,
-				typename Point_data_set_of_y::iterator iter3,
-				bool first_iter_is_right,
-				bool second_iter_is_right)
+                                typename Point_data_set_of_y::iterator iter1,
+                                typename Point_data_set_of_y::iterator iter2,
+                                typename Point_data_set_of_y::iterator iter3,
+                                bool first_iter_is_right,
+                                bool second_iter_is_right)
   {
     if(first_iter_is_right) {
       if(!second_iter_is_right)
-	check_for_larger((*iter2)->p, (*iter)->p, (*iter1)->p, (*iter3)->p);
+        check_for_larger((*iter2)->p, (*iter)->p, (*iter1)->p, (*iter3)->p);
     } else
       if(second_iter_is_right)
-	check_for_larger((*iter1)->p,(*iter)->p,(*iter2)->p,(*iter3)->p);
+        check_for_larger((*iter1)->p,(*iter)->p,(*iter2)->p,(*iter3)->p);
   }
-  
+
   void empty_tents();
 
   // call the computation of the largest empty rectangle .
@@ -700,7 +691,7 @@ private:
 template<class Ptr>
 struct Delete {
   void operator()(Ptr ptr)const {
-    
+
     delete(ptr);
   }
 };
@@ -708,9 +699,9 @@ struct Delete {
 template<class T>
 void Largest_empty_iso_rectangle_2<T>::free_memory()
 {
-  std::for_each(x_sorted.begin(), 
-	   x_sorted.end(), 
-	   Delete<Point_data*>());
+  std::for_each(x_sorted.begin(),
+           x_sorted.end(),
+           Delete<Point_data*>());
 
   x_sorted.clear();
   y_sorted.clear();
@@ -733,11 +724,11 @@ void Largest_empty_iso_rectangle_2<T>::
   // copy points
   for(typename Point_data_set_of_x::const_iterator iter = ler.x_sorted.begin();
         iter != ler.x_sorted.end();
-	++iter) {
+        ++iter) {
       if((*iter)->type == REG)
-	insert((*iter)->p);
+        insert((*iter)->p);
       else
-	insert((*iter)->p,(*iter)->type);
+        insert((*iter)->p,(*iter)->type);
   }
 }
 
@@ -771,7 +762,7 @@ template<class T>
 bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p)
 {
-  // check that the point is inside the bounding box 
+  // check that the point is inside the bounding box
   if(bbox_p.has_on_unbounded_side(_p)) {
     return(false);
   }
@@ -826,9 +817,9 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
 template<class T>
 bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
-					 Point_type i_type)
+                                         Point_type i_type)
 {
-  // check that the point is inside the bounding box 
+  // check that the point is inside the bounding box
   if((i_type == REG) && bbox_p.has_on_unbounded_side(_p)) {
     return false;
   }
@@ -840,7 +831,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point_2& _p,
 template<class T>
 bool
 Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
-					 Point_type i_type)
+                                         Point_type i_type)
 {
   // check that the point is not already inserted
   Point_data po(_p);
@@ -852,7 +843,7 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
   cache_valid = false;
   Point_data_set_of_y *right_tent =
     new Point_data_set_of_y(Less_yx(traits()));
-  Point_data_set_of_y *left_tent = 
+  Point_data_set_of_y *left_tent =
     new Point_data_set_of_y(Less_yx(traits()));
   Point_data *ppo = new Point_data(_p,right_tent,left_tent,i_type);
 
@@ -862,15 +853,15 @@ Largest_empty_iso_rectangle_2<T>::insert(const Point& _p,
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::check_for_larger(const Point& px0,
-						   const Point& py0,
-						   const Point& px1,
-						   const Point& py1)
+                                                   const Point& py0,
+                                                   const Point& px1,
+                                                   const Point& py1)
 {
   bool do_check = true;
 
-  // check if the rectangle represented by the parameters is larger 
+  // check if the rectangle represented by the parameters is larger
   //than the current one
   Iso_rectangle_2 rec(less_xy_point(px0,px1) ? px0.x_part : px1.x_part,
                       less_xy_point(px0,px1) ? px1.x_part : px0.x_part,
@@ -903,7 +894,7 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_x()
   }
 
   // traverse over all possibilities for finding a larger empty rectangle
-  // rectangles here touch the top and the buttom of the bounding box  
+  // rectangles here touch the top and the buttom of the bounding box
   while(iter != last_iter) {
     // filter false points
     if((*iter)->type != TOP_RIGHT && (*iter)->type != TOP_LEFT) {
@@ -915,7 +906,7 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_x()
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_1_on_y()
 {
   typename Point_data_set_of_y::const_iterator iter = y_sorted.begin(),
@@ -930,7 +921,7 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_y()
   }
 
   // traverse over all possibilities for finding a larger empty rectangle
-  // rectangles here touch the left and the right of the bounding box  
+  // rectangles here touch the left and the right of the bounding box
   while(iter != last_iter) {
     // filter false points
     if((*iter)->type != BOT_RIGHT && (*iter)->type != TOP_RIGHT) {
@@ -942,7 +933,7 @@ Largest_empty_iso_rectangle_2<T>::phase_1_on_y()
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_1()
 {
   phase_1_on_x();
@@ -951,7 +942,7 @@ Largest_empty_iso_rectangle_2<T>::phase_1()
 
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::tent(Point_data *first, Point_data *second)
 {
   if(less_yx(first, second))
@@ -961,10 +952,10 @@ Largest_empty_iso_rectangle_2<T>::tent(Point_data *first, Point_data *second)
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::tent(Point_data *first,
-				       Point_data *second,
-				       Point_data *third)
+                                       Point_data *second,
+                                       Point_data *third)
 {
   first->right_tent->insert(second);
   third->left_tent->insert(second);
@@ -976,17 +967,17 @@ Largest_empty_iso_rectangle_2<T>::tent(Point_data *first,
 
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(x_sorted.begin(), 
-	    x_sorted.end(), 
-	    std::back_inserter(Point_data_list));
+  std::copy(x_sorted.begin(),
+            x_sorted.end(),
+            std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2,iter3,first_iter,
     beyond = Point_data_list.end();
-  int points_removed = 0, 
+  int points_removed = 0,
     size = static_cast<int>(Point_data_list.size());
 
   get_next_for_bot(iter1,beyond);
@@ -1024,13 +1015,13 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
 
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
 {
   std::list<Point_data *> Point_data_list;
    std::copy(x_sorted.begin(),
-	     x_sorted.end(),
-	     std::back_inserter(Point_data_list));
+             x_sorted.end(),
+             std::back_inserter(Point_data_list));
 
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
@@ -1071,13 +1062,13 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(y_sorted.begin(), 
-	    y_sorted.end(), 
-	    std::back_inserter(Point_data_list));
+  std::copy(y_sorted.begin(),
+            y_sorted.end(),
+            std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
@@ -1117,15 +1108,15 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
 {
   std::list<Point_data *> Point_data_list;
-  std::copy(y_sorted.begin(), 
-	    y_sorted.end(), 
-	    std::back_inserter(Point_data_list));
+  std::copy(y_sorted.begin(),
+            y_sorted.end(),
+            std::back_inserter(Point_data_list));
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
-    iter2, iter3, first_iter, 
+    iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,size = static_cast<int>(Point_data_list.size());
 
@@ -1162,7 +1153,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_2()
 {
   phase_2_on_top();
@@ -1175,7 +1166,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2()
 
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::phase_3()
 {
   // init for compiler warning
@@ -1185,9 +1176,9 @@ Largest_empty_iso_rectangle_2<T>::phase_3()
   bool first_exist(true);
   bool second_exist(true);
   bool third_exist(true);
-  
+
   typename Point_data_set_of_y::iterator iter, last_iter = y_sorted.end();
-  typename Point_data_set_of_y::iterator iter1, iter2, iter3, 
+  typename Point_data_set_of_y::iterator iter1, iter2, iter3,
                                 right_iter, left_iter, last = last_iter;
 
   --last_iter;
@@ -1203,47 +1194,47 @@ Largest_empty_iso_rectangle_2<T>::phase_3()
     right_iter = (*iter)->right_tent->begin();
     left_iter = (*iter)->left_tent->begin();
     determine_next_iter(iter1,
-			right_iter,
-			left_iter,
-			(*iter)->right_tent->end(),
-			(*iter)->left_tent->end(),
-			first_iter_is_right,
-			first_exist);
+                        right_iter,
+                        left_iter,
+                        (*iter)->right_tent->end(),
+                        (*iter)->left_tent->end(),
+                        first_iter_is_right,
+                        first_exist);
     determine_next_iter(iter2,right_iter,left_iter,
-			(*iter)->right_tent->end(),
-			(*iter)->left_tent->end(),
-			second_iter_is_right,
-			second_exist);
+                        (*iter)->right_tent->end(),
+                        (*iter)->left_tent->end(),
+                        second_iter_is_right,
+                        second_exist);
     determine_next_iter(iter3,
-			right_iter,
-			left_iter,
-			(*iter)->right_tent->end(),
-			(*iter)->left_tent->end(),
-			third_iter_is_right,
-			third_exist);
+                        right_iter,
+                        left_iter,
+                        (*iter)->right_tent->end(),
+                        (*iter)->left_tent->end(),
+                        third_iter_is_right,
+                        third_exist);
     bool had_three = false;
 
     while(third_exist) {
       had_three = true;
       phase_3_check_for_larger(iter,
-			       iter1,
-			       iter2,
-			       iter3,
-			       first_iter_is_right,
-			       second_iter_is_right);
+                               iter1,
+                               iter2,
+                               iter3,
+                               first_iter_is_right,
+                               second_iter_is_right);
       calls_for_tents(iter1, iter2, iter3);
       determine_first_two_iters(iter1,
-				iter2,
-				iter3,
-				first_iter_is_right,
-				second_iter_is_right,
-				third_iter_is_right);
+                                iter2,
+                                iter3,
+                                first_iter_is_right,
+                                second_iter_is_right,
+                                third_iter_is_right);
       determine_next_iter(iter3,
-			  right_iter,left_iter,
-			  (*iter)->right_tent->end(),
-			  (*iter)->left_tent->end(),
-			  third_iter_is_right,
-			  third_exist);
+                          right_iter,left_iter,
+                          (*iter)->right_tent->end(),
+                          (*iter)->left_tent->end(),
+                          third_iter_is_right,
+                          third_exist);
     }
 
     if(!had_three && second_exist)
@@ -1252,7 +1243,7 @@ Largest_empty_iso_rectangle_2<T>::phase_3()
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::empty_tents()
 {
   for(typename Point_data_set_of_x::const_iterator iter = x_sorted.begin();
@@ -1314,7 +1305,7 @@ Largest_empty_iso_rectangle_2<T>::init(const Point_2& bl, const Point_2& tr)
   // determine extreme values of bounding box
   bbox_p = Iso_rectangle_2(bl,tr);
   // add extreme points
-  
+
   insert(bbox_p.vertex(0), BOT_LEFT);
   insert(bbox_p.vertex(1), BOT_RIGHT);
   insert(bbox_p.vertex(3), TOP_LEFT);
@@ -1370,18 +1361,18 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2()
 
 
 template<class T>
-typename Largest_empty_iso_rectangle_2<T>::const_iterator 
+typename Largest_empty_iso_rectangle_2<T>::const_iterator
 Largest_empty_iso_rectangle_2<T>::begin() const
 {
   typename Point_data_set_of_x::const_iterator i = x_sorted.begin();
-  while(i != x_sorted.end() && (*i)->type != REG) 
+  while(i != x_sorted.end() && (*i)->type != REG)
     ++i;
- 
+
   return const_iterator(i);
 }
 
 template<class T>
-typename Largest_empty_iso_rectangle_2<T>::const_iterator 
+typename Largest_empty_iso_rectangle_2<T>::const_iterator
 Largest_empty_iso_rectangle_2<T>::end() const
 {
    typename Point_data_set_of_x::const_iterator i = x_sorted.end();
@@ -1398,7 +1389,7 @@ Largest_empty_iso_rectangle_2<T>::end() const
 }
 
 template<class T>
-void 
+void
 Largest_empty_iso_rectangle_2<T>::clear()
 {
   cache_valid = false;

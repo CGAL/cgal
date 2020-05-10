@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -45,50 +36,70 @@ class Rep
 class Handle
 {
   public:
-    
-    typedef std::ptrdiff_t Id_type ;
-    
-    Handle()
-	: PTR(static_cast<Rep*>(0)) {}
 
-    Handle(const Handle& x)
+    typedef std::ptrdiff_t Id_type ;
+
+    Handle() noexcept
+        : PTR{static_cast<Rep*>(0)} {}
+
+    // FIXME: if the precondition throws in a noexcept function, the program terminates
+    Handle(const Handle& x) noexcept
     {
-      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
-      PTR = x.PTR;
-      PTR->count++;
+      CGAL_precondition( x.PTR.p != static_cast<Rep*>(0) );
+      PTR.p = x.PTR.p;
+      CGAL_assume (PTR.p->count > 0);
+      PTR.p->count++;
     }
 
     ~Handle()
     {
-	if ( PTR && (--PTR->count == 0))
-	    delete PTR;
+        if ( PTR.p && (--PTR.p->count == 0))
+            delete PTR.p;
     }
 
     Handle&
-    operator=(const Handle& x)
+    operator=(const Handle& x) noexcept
     {
-      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
-      x.PTR->count++;
-      if ( PTR && (--PTR->count == 0))
-	  delete PTR;
-      PTR = x.PTR;
+      CGAL_precondition( x.PTR.p != static_cast<Rep*>(0) );
+      x.PTR.p->count++;
+      if ( PTR.p && (--PTR.p->count == 0))
+          delete PTR.p;
+      PTR.p = x.PTR.p;
       return *this;
     }
 
-    int
-    refs()  const { return PTR->count; }
+    friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
 
-    Id_type id() const { return PTR - static_cast<Rep*>(0); }
+    void reset()
+    {
+      if (PTR.p)
+      {
+        if (--PTR.p->count==0)
+          delete PTR.p;
+        PTR.p=0;
+      }
+    }
 
-    bool identical(const Handle& h) const { return PTR == h.PTR; }
+    int refs()  const noexcept { return PTR.p->count; }
+
+    Id_type id() const noexcept { return PTR.p - static_cast<Rep*>(0); }
+
+    bool identical(const Handle& h) const noexcept { return PTR.p == h.PTR.p; }
+
+    void*  for_compact_container() const { return PTR.vp; }
+    void*& for_compact_container() { return PTR.vp; }
 
   protected:
-    Rep* PTR;
+
+  union {
+    Rep* p;
+    void* vp;
+  } PTR;
 };
 
 //inline Handle::Id_type id(const Handle& x) { return x.id() ; }
 
-inline bool identical(const Handle &h1, const Handle &h2) { return h1.identical(h2); }
+inline bool identical(const Handle &h1, const Handle &h2) noexcept { return h1.identical(h2); }
 
 } //namespace CGAL
 

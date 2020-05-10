@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -76,7 +68,7 @@ Camera::Camera(QObject *parent)
   // Dummy values
   setScreenWidthAndHeight(600, 400);
 
-  
+
   // focusDistance is set from setFieldOfView()
 
   // #CONNECTION# Camera copy constructor
@@ -1484,7 +1476,7 @@ int project(qreal objx, qreal objy, qreal objz, GLdouble *modelview,
       fTempo[6]=projection[2]*fTempo[0]+projection[6]*fTempo[1]+projection[10]*fTempo[2]+projection[14]*fTempo[3];
       fTempo[7]=projection[3]*fTempo[0]+projection[7]*fTempo[1]+projection[11]*fTempo[2]+projection[15]*fTempo[3];
       //The result normalizes between -1 and 1
-      if(fTempo[7]==0.0)	//The w value
+      if(fTempo[7]==0.0)        //The w value
          return 0;
       fTempo[7]=1.0/fTempo[7];
       //Perspective division
@@ -1496,7 +1488,7 @@ int project(qreal objx, qreal objy, qreal objz, GLdouble *modelview,
       *winX=(fTempo[4]*0.5+0.5)*viewport[2]+viewport[0];
       *winY=(fTempo[5]*0.5+0.5)*viewport[3]+viewport[1];
       //This is only correct when glDepthRange(0.0, 1.0)
-      *winZ=(1.0+fTempo[6])*0.5;	//Between 0 and 1
+      *winZ=(1.0+fTempo[6])*0.5;        //Between 0 and 1
       return 1;
 }
 
@@ -1696,12 +1688,12 @@ CGAL_INLINE_FUNCTION
    /* last check */
    if (0.0 == r3[3])
       return 0;
-   s = 1.0 / r3[3];		/* now back substitute row 3 */
+   s = 1.0 / r3[3];                /* now back substitute row 3 */
    r3[4] *= s;
    r3[5] *= s;
    r3[6] *= s;
    r3[7] *= s;
-   m2 = r2[3];			/* now back substitute row 2 */
+   m2 = r2[3];                        /* now back substitute row 2 */
    s = 1.0 / r2[2];
    r2[4] = s * (r2[4] - r3[4] * m2), r2[5] = s * (r2[5] - r3[5] * m2),
       r2[6] = s * (r2[6] - r3[6] * m2), r2[7] = s * (r2[7] - r3[7] * m2);
@@ -1711,14 +1703,14 @@ CGAL_INLINE_FUNCTION
    m0 = r0[3];
    r0[4] -= r3[4] * m0, r0[5] -= r3[5] * m0,
       r0[6] -= r3[6] * m0, r0[7] -= r3[7] * m0;
-   m1 = r1[2];			/* now back substitute row 1 */
+   m1 = r1[2];                        /* now back substitute row 1 */
    s = 1.0 / r1[1];
    r1[4] = s * (r1[4] - r2[4] * m1), r1[5] = s * (r1[5] - r2[5] * m1),
       r1[6] = s * (r1[6] - r2[6] * m1), r1[7] = s * (r1[7] - r2[7] * m1);
    m0 = r0[2];
    r0[4] -= r2[4] * m0, r0[5] -= r2[5] * m0,
       r0[6] -= r2[6] * m0, r0[7] -= r2[7] * m0;
-   m0 = r0[1];			/* now back substitute row 0 */
+   m0 = r0[1];                        /* now back substitute row 0 */
    s = 1.0 / r0[0];
    r0[4] = s * (r0[4] - r1[4] * m0), r0[5] = s * (r0[5] - r1[5] * m0),
       r0[6] = s * (r0[6] - r1[6] * m0), r0[7] = s * (r0[7] - r1[7] * m0);
@@ -2380,14 +2372,14 @@ void Camera::getFrustum(double frustum[6])
         E(projectionMatrix_[14]),F(projectionMatrix_[10]);
     double B1 = (B+1)/(1-B), D1 = (1-D)/(D+1),
         E1=(E+1)/(1-E);
-    
+
     l = -2*B1/(1+B1*A);
     r = 2+A*l;
     t = 2*D1/(C*(1+D1));
     b =t -2/C;
     n = -2/(F*(1+E1));
     f=n-2/F;
-    
+
   }
   frustum[0] = l;
   frustum[1] = r;

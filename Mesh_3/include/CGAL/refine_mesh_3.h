@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -383,10 +374,10 @@ BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
                           (dump_after_perturb_prefix_, (std::string), "" )
                           (dump_after_exude_prefix_, (std::string), "" )
                           (number_of_initial_points_, (int), -1)
-			  (maximal_number_of_vertices_, (std::size_t), 0)
+                          (maximal_number_of_vertices_, (std::size_t), 0)
                           (nonlinear_growth_of_balls_, (bool), false)
-			  (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
-			  (pointer_to_stop_atomic_boolean_, (internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t), ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0))
+                          (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
+                          (pointer_to_stop_atomic_boolean_, (internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t), ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0))
                           )
                          )
 {
@@ -459,7 +450,7 @@ CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
 
 
-  
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro
@@ -564,7 +555,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
 #ifndef CGAL_NO_ATOMIC
                  , mesh_options.pointer_to_stop_atomic_boolean
 #endif
-		 );
+                 );
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
   c3t3.clear_manifold_info();
 

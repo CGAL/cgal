@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
@@ -79,7 +70,7 @@ template<
   Reconstruction_vertex_base_2<Traits_>,
   Reconstruction_face_base_2<Traits_> > >
 class Reconstruction_triangulation_2
-  : public Delaunay_triangulation_2<Traits_, Tds_> 
+  : public Delaunay_triangulation_2<Traits_, Tds_>
 {
 public:
 
@@ -108,10 +99,10 @@ public:
 
   typedef std::map<Vertex_handle, Vertex_handle,
       less_Vertex_handle<Vertex_handle> > Vertex_handle_map;
-  typedef std::map<Face_handle, Face_handle, 
+  typedef std::map<Face_handle, Face_handle,
                    less_Face_handle<Face_handle> > Face_handle_map;
 
-  typedef std::set<Vertex_handle, 
+  typedef std::set<Vertex_handle,
                    less_Vertex_handle<Vertex_handle> > Vertex_handle_set;
   typedef std::set<Edge, less_Edge<Edge> > Edge_set;
 
@@ -126,7 +117,7 @@ public:
   typedef std::priority_queue<PSample, boost::container::deque<PSample>,
       OTR_2::greater_priority<PSample> > SQueue;
 
-  typedef Reconstruction_edge_2<FT, Edge, 
+  typedef Reconstruction_edge_2<FT, Edge,
                                 Vertex_handle, Face_handle> Rec_edge_2;
 
   using Base::geom_traits;
@@ -341,14 +332,14 @@ public:
   }
 
   void collect_samples_from_edge(
-    const Edge& edge, Sample_vector& samples) const 
+    const Edge& edge, Sample_vector& samples) const
   {
     const Sample_vector& edge_samples = edge.first->samples(edge.second);
     samples.insert(samples.end(), edge_samples.begin(), edge_samples.end());
   }
 
   void collect_samples_from_vertex(
-    Vertex_handle vertex, Sample_vector& samples, bool cleanup) const 
+    Vertex_handle vertex, Sample_vector& samples, bool cleanup) const
   {
     Face_circulator fcirc = Base::incident_faces(vertex);
     Face_circulator fend = fcirc;
@@ -730,7 +721,7 @@ public:
     const Point& p1 = segment.target();
     Vector p0p1 = geom_traits().construct_vector_2_object()(p0, p1);
     Vector p0q  = geom_traits().construct_vector_2_object()(p0, q);
-    
+
     FT t = geom_traits().compute_scalar_product_2_object()(p0q, p0p1)
          / geom_traits().compute_scalar_product_2_object()(p0p1, p0p1);
     return t; // [0,1]
@@ -934,7 +925,7 @@ public:
         return false;
     }
 
-    return true;  
+    return true;
   }
 
   // COLLAPSE //
@@ -1092,7 +1083,7 @@ public:
       // if ( max(Dac,Dbd)+CGAL_EPS < Dbc )
       if (value + CGAL_EPS < Dbc)
       {
-			/*
+                        /*
         std::cerr.precision(10);
         std::cerr << "--- Flip makes kernel worse ---" << std::endl;
         std::cerr << Dac << " or " << Dbd << " vs " << Dbc << std::endl;
@@ -1102,7 +1093,7 @@ public:
         std::cerr << "d: " << d->point() << std::endl;
         std::cerr << "t: " << target->point() << std::endl;
         std::cerr << "diff = " << Dbc - (std::max)(Dac, Dbd) << std::endl;
-				*/
+                                */
         return false;
       }
 

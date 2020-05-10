@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -218,7 +209,7 @@ class Delaunay_graph_concept
     }
   };
 
-  
+
 
  private:
   static const Edge_circulator& dummy_edge_circulator() {
@@ -231,7 +222,7 @@ class Delaunay_graph_concept
 
   template<class Iterator>
   Delaunay_graph_concept(Iterator /* first */, Iterator /* beyond */,
-			 const Geom_traits& /* gt */ = Geom_traits()) {}
+                         const Geom_traits& /* gt */ = Geom_traits()) {}
 
 
   void insert(const Site_2&) {}
@@ -299,19 +290,19 @@ class Delaunay_graph_concept
   }
 
   Edge_circulator incident_edges(const Vertex_handle&,
-				 const Face_handle& = Face_handle()) const
+                                 const Face_handle& = Face_handle()) const
   {
     return dummy_edge_circulator();
   }
 
   Vertex_circulator incident_vertices(const Vertex_handle&,
-				      const Face_handle& = Face_handle()) const
+                                      const Face_handle& = Face_handle()) const
   {
     return Vertex_circulator::dummy_reference();
   }
 
   Face_circulator incident_faces(const Vertex_handle&,
-				 const Face_handle& = Face_handle()) const
+                                 const Face_handle& = Face_handle()) const
   {
     return Face_circulator::dummy_reference();
   }
@@ -344,7 +335,7 @@ operator<<(std::ostream& os, const Delaunay_graph_concept<K>&)
 template<class K>
 std::istream&
 operator>>(std::istream& is,
-	   const typename Delaunay_graph_concept<K>::Site_2&)
+           const typename Delaunay_graph_concept<K>::Site_2&)
 {
   double d;
   is >> d;
@@ -354,7 +345,7 @@ operator>>(std::istream& is,
 template<class K>
 std::ostream&
 operator<<(std::ostream& os,
-	   const typename Delaunay_graph_concept<K>::Site_2&)
+           const typename Delaunay_graph_concept<K>::Site_2&)
 {
   return os;
 }

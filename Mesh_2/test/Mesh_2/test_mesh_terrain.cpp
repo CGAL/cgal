@@ -13,7 +13,7 @@ typedef CGAL::Projection_traits_xy_3<K>  Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<Gt> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, 
+typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS,
                                                    CGAL::Exact_predicates_tag> Delaunay;
 typedef CGAL::Delaunay_mesh_size_criteria_2<Delaunay> Criteria;
 

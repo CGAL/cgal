@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::ComputeApproximateSquaredLength_3` 
+\cgalRefines `Kernel::ComputeApproximateSquaredLength_3`
 
 */
 
@@ -15,10 +15,10 @@ public:
 /// @{
 
 /*!
-Computes an approximation of the squared length of the arc `a`. 
-*/ 
-double 
-operator()(const SphericalKernel::Circular_arc_3 & a); 
+Computes an approximation of the squared length of the arc `a`.
+*/
+double
+operator()(const SphericalKernel::Circular_arc_3 & a);
 
 ///@}
 

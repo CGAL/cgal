@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Profiling_Tools_Hash_Map_Union-find_Modifiers
 
 \anchor chapMiscellany
@@ -21,8 +21,8 @@ either <I>running</I> or it is <I>stopped</I>. The state of an object
 with `t.start()` and `t.stop()`. The timer counts the
 time elapsed since its creation or last reset. It counts only the time
 where it is in the running state. The time information is given in seconds.
-The timer counts also the number of intervals it was running, i.e.\ it 
-counts the number of calls of the `start()` member function since the 
+The timer counts also the number of intervals it was running, i.e.\ it
+counts the number of calls of the `start()` member function since the
 last reset. If the reset occurs while the timer is running it counts as the
 first interval.
 
@@ -48,7 +48,7 @@ global macro `CGAL_PROFILE`.
 The class `Unique_hash_map` implements an injective mapping between
 a set of unique keys and a set of data values. This is implemented using
 a chained hashing scheme and access operations take \f$ O(1)\f$ expected time.
-Such a mapping is useful, for example, when keys are pointers, 
+Such a mapping is useful, for example, when keys are pointers,
 handles, iterators or circulators that refer to unique memory locations.
 In this case, the default hash function is `Handle_hash_function`.
 
@@ -71,7 +71,7 @@ directly. An example are intermediate steps within an algorithm where
 the internal representation would be invalid. We present a general
 method to accomplish access in a safe manner, such that the high level
 data structures can guarantee validity after the possibly compromising
-algorithm has finished its work. An example are polyhedral surfaces, 
+algorithm has finished its work. An example are polyhedral surfaces,
 where a construction process like for
 a file scanner could be performed more efficiently on the internal
 halfedge data structure than by using the high-level Euler operators
@@ -82,7 +82,7 @@ Class diagram for the modifier. It illustrates the safe access to an internal re
 \cgalFigureEnd
 
 The solution provided here is inspired by the strategy
-pattern \cgalCite{cgal:ghjv-dpero-95}, though it serves a different intent. 
+pattern \cgalCite{cgal:ghjv-dpero-95}, though it serves a different intent.
 The abstract base class
 `Modifier_base<R>` declares a pure virtual member function
 `operator()` that accepts a single reference parameter of the
@@ -101,6 +101,6 @@ indirection via the virtual function invocation is negligible for
 operations that consists of more than a pointer update or integer
 addition.
 
-*/ 
+*/
 } /* namespace CGAL */
 

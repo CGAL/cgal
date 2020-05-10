@@ -1,6 +1,6 @@
 #include <fstream>
 
-// CGAL headers 
+// CGAL headers
 
 #include <CGAL/point_generators_2.h>
 #include <internal/Qt/HyperbolicPainterOstream.h>
@@ -22,12 +22,12 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <internal/Qt/TriangulationCircumcircle.h>
-#include <internal/Qt/TriangulationGraphicsItem.h>    
+#include <internal/Qt/TriangulationGraphicsItem.h>
 #include <internal/Qt/VoronoiGraphicsItem.h>
 #include <internal/Qt/TriangulationConflictZone.h>
 #include <internal/Qt/TriangulationPointInput.h>
 
-#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h> 
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 
 #include <CGAL/Hyperbolic_octagon_translation.h>
@@ -37,7 +37,7 @@
 
 #include <CGAL/Timer.h>
 
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits; 
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits;
 typedef Traits::Segment_2                                                       Segment_2;
 typedef Traits::Circle_2                                                        Circle_2;
 typedef Traits::Circular_arc_2                                                  Circular_arc_2;
@@ -58,13 +58,13 @@ class MainWindow :
   public Ui::Periodic_4_hyperbolic_Delaunay_triangulation_2
 {
   Q_OBJECT
-  
-private:    
+
+private:
 
   Point                                                              movingPoint;
 
   Triangulation                                                      dt;
-  QGraphicsScene                                                     scene;  
+  QGraphicsScene                                                     scene;
 
   CGAL::Qt::TriangulationGraphicsItem<Triangulation>               * dgi;
   CGAL::Qt::VoronoiGraphicsItem<Triangulation>                     * vgi;
@@ -94,7 +94,7 @@ public slots:
   void processInput(CGAL::Object o);
 
   void updateMovingPoint(CGAL::Object o);
-  
+
   void on_actionCircumcenter_toggled(bool checked);
 
   void on_actionPlayDemo_toggled(bool checked);
@@ -108,7 +108,7 @@ public slots:
   void on_actionShowOctagon_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
-  
+
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionLoadPoints_triggered();
@@ -136,20 +136,20 @@ MainWindow::MainWindow()
   setupUi(this);
 
   this->graphicsView->setAcceptDrops(false);
-  
+
   // Add Poincaré disk
   qreal origin_x = 0, origin_y = 0, radius = 1, diameter = 2*radius;
   qreal left_top_corner_x = origin_x - radius;
   qreal left_top_corner_y = origin_y - radius;
   qreal width = diameter, height = diameter;
-  
+
   // set background
   qreal eps = 0.01;
   QGraphicsRectItem* rect = new QGraphicsRectItem(left_top_corner_x - eps, left_top_corner_y - eps, width + 2*eps, height + 2*eps);
   rect->setPen(Qt::NoPen);
   rect->setBrush(Qt::white);
   scene.addItem(rect);
-  
+
   // Add a GraphicItem for the Triangulation triangulation
   dgi = new CGAL::Qt::TriangulationGraphicsItem<Triangulation>(&dt);
 
@@ -178,8 +178,8 @@ MainWindow::MainWindow()
 
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
   pi = new CGAL::Qt::TriangulationPointInput<Triangulation>(&scene, &dt, this );
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
@@ -192,7 +192,7 @@ MainWindow::MainWindow()
   QObject::connect(cz, SIGNAL(generate(CGAL::Object)), this, SLOT(updateMovingPoint(CGAL::Object)));
 
 
-  // 
+  //
   // Manual handling of actions
   //
 
@@ -203,7 +203,7 @@ MainWindow::MainWindow()
   ag->addAction(this->actionInsertPoint);
   ag->addAction(this->actionCircumcenter);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPoint->setChecked(true);
   this->actionShowTriangulation->setChecked(true);
   this->actionShowOctagon->setChecked(true);
@@ -256,10 +256,10 @@ MainWindow::updateMovingPoint(CGAL::Object o) {
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -294,7 +294,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
   if(checked){
     scene.installEventFilter(tcc);
     tcc->show();
-  } else {  
+  } else {
     scene.removeEventFilter(tcc);
     tcc->hide();
   }
@@ -315,7 +315,7 @@ MainWindow::on_actionShowConflictZone_toggled(bool checked)
   dgi->setVisibleConflictZone(checked);
   if(checked){
     scene.installEventFilter(cz);
-  } else {  
+  } else {
     scene.removeEventFilter(cz);
   }
 }
@@ -345,13 +345,13 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   bool ok = false;
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                         tr("Number of random points"),
                         tr("Enter number of random points"),
            100,
            0,
-           std::numeric_limits<int>::max(),
+           (std::numeric_limits<int>::max)(),
            1,
            &ok);
 
@@ -367,17 +367,17 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   typedef CGAL::Creator_uniform_2<double, Point_double >     Creator;
 
   CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
-  
+
   Traits::Side_of_original_octagon pred;
   std::vector<Point> pts;
   int cnt = 0;
-  do {    
+  do {
       Point_double pd = *(++g);
       if(pred(pd) != CGAL::ON_UNBOUNDED_SIDE) {
           Point pt = Point(pd.x(), pd.y());
           pts.push_back(pt);
           cnt++;
-      } 
+      }
   } while(cnt < number_of_points);
 
 
@@ -424,7 +424,7 @@ MainWindow::open(QString fileName)
 
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());    
+  emit(changed());
 }
 
 
@@ -433,7 +433,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

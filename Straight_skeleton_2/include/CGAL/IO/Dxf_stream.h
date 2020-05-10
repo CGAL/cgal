@@ -1,20 +1,11 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Fernando Cacciola
 //
@@ -40,21 +31,21 @@ class Dxf_layer
 public:
 
   Dxf_layer( std::string aStr ) : mStr(aStr) {}
-  
+
   std::string str() const { return mStr ; }
-  
+
 private:
-  
+
   std::string mStr ;
 } ;
- 
+
 template <class Kernel_>
 class Dxf_stream
 {
 public:
 
   typedef Kernel_                                Kernel;
-  
+
   // Define the kernel objects.
   typedef typename Kernel::FT                    NT;
   typedef typename Kernel::Point_2               Point_2;
@@ -72,26 +63,26 @@ protected:
   Dxf_writer          mWriter ;
   int                 mDefaultDxfColor;
   int                 mDxfColor;
-  Color               mCgalColor ; 
+  Color               mCgalColor ;
   std::string         mLayer ;
-  
+
   struct Color_less
   {
     bool operator() ( Color const& a, Color const& b ) const
     {
-      return Color_value(a) < Color_value(b);        
+      return Color_value(a) < Color_value(b);
     }
-    
-    static int Color_value ( Color const& c ) 
+
+    static int Color_value ( Color const& c )
     {
-      return ( int(c.r()) << 16 ) + ( int(c.g()) << 8  ) + ( int(c.b()) ) ;  
+      return ( int(c.r()) << 16 ) + ( int(c.g()) << 8  ) + ( int(c.b()) ) ;
     }
   } ;
-  
+
   typedef std::map<Color,int,Color_less>  Color_table ;
-  typedef typename Color_table::const_iterator Color_table_iterator ;  
+  typedef typename Color_table::const_iterator Color_table_iterator ;
   Color_table mColorTable ;
-   
+
 private:
 
   // Copy constructor and assignment operator - not supported.
@@ -116,7 +107,7 @@ public:
    ,mLayer           ("0")
   {
     setup_initial_color_table();
-  }  
+  }
 
   /*!
    * Destructor.
@@ -126,12 +117,12 @@ public:
 
   /// \name Accessing drawing properties.
   //@{
-  
+
   /*!
    * Get the current layer.
    */
   std::string layer() const { return mLayer ; }
-  
+
   /*!
    * Get the current CGAL color.
    */
@@ -146,9 +137,9 @@ public:
    * Get the current DXF color.
    */
   int default_dxf_color () const { return mDefaultDxfColor ; }
-  
+
   // @}
-  
+
   /// \name Set the drawing properties.
   //@{
 
@@ -156,7 +147,7 @@ public:
    * Set the current layer.
    */
   void set_layer ( std::string aLayer ) { mLayer = aLayer ; }
-  
+
   /*!
    * Set the current color.
    * \pre The color must be defined.
@@ -164,7 +155,7 @@ public:
   void set_color ( Color aColor )
   {
     mCgalColor = aColor ;
-    
+
     Color_table_iterator f = mColorTable.find(aColor);
     if ( f != mColorTable.end() )
          mDxfColor = f->second ;
@@ -180,7 +171,7 @@ public:
   {
     mDefaultDxfColor = aDxfColor ;
   }
-  
+
   /*!
    * Adds a mapping between a CGAL Color and a DXF color.
    * \param aCgalColor The CGAL color.
@@ -226,7 +217,7 @@ public:
   {
     mWriter.add_polyline_2( begin, end, true, mLayer, mDxfColor ) ;
   }
-  
+
   /*!
    * Write a 2D polyline but as a sequence of line segments
    * \param begin An iterator of the control points (of type Point_2).
@@ -248,7 +239,7 @@ public:
   {
     mWriter.add_segments_2( begin, end, true, mLayer, mDxfColor ) ;
   }
-  
+
   /*!
    * Write a 2D (closed) polygon.
    */
@@ -270,7 +261,7 @@ public:
     set_layer ( aLayer.str() );
     return (*this);
   }
-  
+
   /*!
    * Set the current color.
    */
@@ -319,7 +310,7 @@ protected:
     define_color(white(),7);
     define_color(gray(),8);
   }
-  
+
 };
 
 } // end namespace CGAL

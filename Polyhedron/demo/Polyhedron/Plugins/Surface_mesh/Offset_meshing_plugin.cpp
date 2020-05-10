@@ -11,7 +11,7 @@
 #include <QtPlugin>
 #include <QThread>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polygon_soup_item.h" 
+#include "Scene_polygon_soup_item.h"
 #include <QInputDialog>
 #include <QStringList>
 #include <QMessageBox>
@@ -58,7 +58,6 @@ public:
     , m_is_closed( is_closed(tm) )
   {
     CGAL_assertion(!m_tree_ptr->empty());
-    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const typename GeomTraits::Point_3& p) const
@@ -188,7 +187,6 @@ public:
     , m_offset_distance(offset_distance)
   {
     CGAL_assertion(! m_tree_ptr->empty() );
-    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const EPICK::Point_3& p) const
@@ -201,7 +199,7 @@ public:
     return m_offset_distance - distance;
   }
 
-}; // end class Polygon_soup_offset_function 
+}; // end class Polygon_soup_offset_function
 
 } //end of CGAL namespace
 
@@ -319,7 +317,7 @@ SMesh* cgal_off_meshing(QWidget*,
     {
       CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
     }
-    
+
     return pRemesh;
   }
   else
@@ -328,7 +326,7 @@ SMesh* cgal_off_meshing(QWidget*,
 
 struct Mesher_thread:public QThread{
   Q_OBJECT
-  
+
 private:
   SMesh* sMesh;
   Scene_polygon_soup_item* soup_item;
@@ -438,9 +436,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   }
   else if(soup_item == 0)
     return;
-  double X=box.max(0)-box.min(0),
-      Y = box.max(1)-box.min(1),
-      Z = box.max(2)-box.min(2);
+  double X=(box.max)(0)-(box.min)(0),
+      Y = (box.max)(1)-(box.min)(1),
+      Z = (box.max)(2)-(box.min)(2);
   diag = CGAL::sqrt(X*X+Y*Y+Z*Z);
   double offset_value = QInputDialog::getDouble(mw,
                                                 QString("Choose Offset Value"),
@@ -452,17 +450,16 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   QDialog dialog(mw);
   Ui::Remeshing_dialog ui;
   ui.setupUi(&dialog);
+  ui.angle->setRange(1.0, 30.0);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
 
-  ui.sizing->setDecimals(4);
   ui.sizing->setRange(diag * 10e-6, // min
                       diag); // max
   ui.sizing->setValue(diag * 0.05); // default value
 
-  ui.approx->setDecimals(6);
   ui.approx->setRange(diag * 10e-7, // min
                       diag); // max
   ui.approx->setValue(diag * 0.005);
@@ -506,7 +503,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                                approx,
                                tag_index);
   connect(worker, &QThread::finished, worker, &QObject::deleteLater);
-  connect(worker, &Mesher_thread::resultReady, this, 
+  connect(worker, &Mesher_thread::resultReady, this,
           [item, angle, sizing, approx, offset_value, index]
           (SMesh *new_mesh){
     QApplication::restoreOverrideCursor();
@@ -526,7 +523,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     item->setVisible(false);
     CGAL::Three::Three::scene()->itemChanged(index);
     QApplication::restoreOverrideCursor();
-    
+
   });
   QMessageBox* message_box = new QMessageBox(QMessageBox::NoIcon,
                                              "Meshing",
@@ -546,7 +543,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   connect(worker, &Mesher_thread::finished,
           message_box, &QMessageBox::close);
   message_box->open();
-  
+
   QApplication::setOverrideCursor(Qt::BusyCursor);
   worker->start();
 }

@@ -2,21 +2,12 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
+// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez
 
 #ifndef CGAL_UPSAMPLE_POINT_SET_H
 #define CGAL_UPSAMPLE_POINT_SET_H
@@ -53,8 +44,8 @@ namespace upsample_internal{
 
 /// For each query point, select a best "base point" in its neighborhoods.
 /// Then, a new point will be interpolated between query point and "base point".
-/// This is the key part of the upsample algorithm 
-/// 
+/// This is the key part of the upsample algorithm
+///
 /// \pre `radius > 0`
 ///
 /// @tparam Kernel Geometric traits class.
@@ -64,7 +55,7 @@ template <typename Kernel>
 typename Kernel::FT
 base_point_selection(
   const rich_grid_internal::Rich_point<Kernel>& query, ///< 3D point to project
-  const std::vector<rich_grid_internal::Rich_point<Kernel> >& 
+  const std::vector<rich_grid_internal::Rich_point<Kernel> >&
                     neighbor_points,///< neighbor sample points
   const typename Kernel::FT edge_sensitivity,///< edge sensitivity parameter
   unsigned int& output_base_index ///< base point index
@@ -97,7 +88,7 @@ base_point_selection(
 
     Vector diff_v_t = t - v.pt;
     Point mid_point = v.pt + (diff_v_t * FT(0.5));
-    
+
     FT dot_produce = std::pow((FT(2.0) - vm * tm), edge_sensitivity);
 
     Vector diff_t_mid = mid_point - t;
@@ -126,12 +117,12 @@ base_point_selection(
     }
   }
 
-  return best_dist2; 
+  return best_dist2;
 }
 
 /// For each new inserted point, we need to do the following job
 /// 1, get neighbor information from the two "parent points"
-/// 2, update position and determine normal by bilateral projection 
+/// 2, update position and determine normal by bilateral projection
 /// 3, update neighbor information again
 ///
 /// \pre `radius > 0`
@@ -156,10 +147,8 @@ update_new_point(
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   CGAL_assertion_code( unsigned int size = static_cast<unsigned int>(rich_point_set.size()) );
-  CGAL_point_set_processing_precondition(father_index >= 0 &&
-                                         father_index < size);
-  CGAL_point_set_processing_precondition(mother_index >= 0 &&
-                                           mother_index < size);
+  CGAL_point_set_processing_precondition(father_index < size);
+  CGAL_point_set_processing_precondition(mother_index < size);
 
   // 1, get neighbor information from the two "parent points"
   Rich_point& new_v = rich_point_set[new_point_index];
@@ -189,7 +178,7 @@ update_new_point(
 
   new_v.neighbors.clear();
   std::set<int>::iterator set_iter;
-  for (set_iter = neighbor_indexes.begin(); 
+  for (set_iter = neighbor_indexes.begin();
        set_iter != neighbor_indexes.end(); ++set_iter)
   {
     Rich_point& t = rich_point_set[*set_iter];
@@ -201,7 +190,7 @@ update_new_point(
     }
   }
 
-  // 2, update position and normal by bilateral projection 
+  // 2, update position and normal by bilateral projection
   const unsigned int candidate_num = 2; // we have two normal candidates:
                                         // we say father's is 0
                                         //        mother's is 1
@@ -212,7 +201,7 @@ update_new_point(
   std::vector<FT> project_dist_sum(candidate_num, FT(0.0));
   std::vector<FT> weight_sum(candidate_num, FT(0.0));
   std::vector<Vector> normal_sum(candidate_num, NULL_VECTOR);
-   
+
   FT radius16 = FT(-4.0) / radius2;
 
   for (unsigned int i = 0; i < new_v.neighbors.size(); ++i)
@@ -258,7 +247,7 @@ update_new_point(
 
   // 3, update neighbor information again
   new_v.neighbors.clear();
-  for (set_iter = neighbor_indexes.begin(); 
+  for (set_iter = neighbor_indexes.begin();
        set_iter != neighbor_indexes.end(); ++set_iter)
   {
     Rich_point& t = rich_point_set[*set_iter];
@@ -282,21 +271,21 @@ update_new_point(
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   This method progressively upsamples the point set while 
-   approaching the edge singularities (detected by normal variation), which 
-   generates a denser point set from an input point set. This has applications 
-   in point-based rendering, hole filling, and sparse surface reconstruction. 
+   This method progressively upsamples the point set while
+   approaching the edge singularities (detected by normal variation), which
+   generates a denser point set from an input point set. This has applications
+   in point-based rendering, hole filling, and sparse surface reconstruction.
    Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
- 
+
    \tparam ConcurrencyTag enables sequential versus parallel versions
-   of `compute_average_spacing()` (called internally).  Possible
-   values are `Sequential_tag` and `Parallel_tag`.
+   of `compute_average_spacing()` (called internally). Possible
+   values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
-   \tparam OutputIterator Type of the output iterator. 
-   The type of the objects put in it is 
+   \tparam OutputIterator Type of the output iterator.
+   The type of the objects put in it is
    `std::pair<geom_traits::Point_3, geom_traits::Vector_3>`.
-   Note that the user may use a 
+   Note that the user may use a
    <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
@@ -320,7 +309,7 @@ update_new_point(
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-	  typename OutputIterator,
+          typename OutputIterator,
           typename NamedParameters>
 OutputIterator
 edge_aware_upsample_point_set(
@@ -330,23 +319,23 @@ edge_aware_upsample_point_set(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
                               typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                             "Error: no normal map");
-  
+
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   double sharpness_angle = choose_parameter(get_parameter(np, internal_np::sharpness_angle), 30.);
   double edge_sensitivity = choose_parameter(get_parameter(np, internal_np::edge_sensitivity), 1);
   double neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
@@ -357,12 +346,12 @@ edge_aware_upsample_point_set(
   // trick in case the output iterator add points to the input container
   typename PointRange::const_iterator begin = points.begin();
   typename PointRange::const_iterator end = points.end();
-  
+
   // preconditions
   CGAL_point_set_processing_precondition(begin != end);
-  CGAL_point_set_processing_precondition(sharpness_angle >= 0 
+  CGAL_point_set_processing_precondition(sharpness_angle >= 0
                                        &&sharpness_angle <= 90);
-  CGAL_point_set_processing_precondition(edge_sensitivity >= 0 
+  CGAL_point_set_processing_precondition(edge_sensitivity >= 0
                                        &&edge_sensitivity <= 1);
   CGAL_point_set_processing_precondition(neighbor_radius > 0);
 
@@ -383,13 +372,13 @@ edge_aware_upsample_point_set(
     std::cout << "neighbor radius: " << neighbor_radius << std::endl;
 #endif
   }
-  
+
   Real_timer task_timer;
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
-  CGAL::Bbox_3 bbox(0., 0., 0., 0., 0., 0.);
-  
+  CGAL::Bbox_3 bbox;
+
   typename PointRange::const_iterator it = begin; // point iterator
   for(unsigned int i = 0; it != end; ++it, ++i)
   {
@@ -433,7 +422,7 @@ edge_aware_upsample_point_set(
                                                           current_radius);
     }
  #ifdef CGAL_PSP3_VERBOSE
-    std::cout << "current radius: " << current_radius << std::endl; 
+    std::cout << "current radius: " << current_radius << std::endl;
  #endif
 
     std::size_t current_size = rich_point_set.size();
@@ -477,7 +466,7 @@ edge_aware_upsample_point_set(
     sum_density = 0.;
     count_density = 1;
 
-    FT density_pass_threshold2 = density_pass_threshold * 
+    FT density_pass_threshold2 = density_pass_threshold *
                                  density_pass_threshold;
  #ifdef CGAL_PSP3_VERBOSE
     std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
@@ -511,7 +500,7 @@ edge_aware_upsample_point_set(
           neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
         }
 
-        // select base point 
+        // select base point
         unsigned int base_index = 0;
         FT density2 = upsample_internal::
                               base_point_selection(v,
@@ -545,10 +534,10 @@ edge_aware_upsample_point_set(
         is_pass_threshold.push_back(false);
 
         //update new rich point
-        upsample_internal::update_new_point(new_point_index, 
-                                            father_index, 
-                                            mother_index, 
-                                            rich_point_set, 
+        upsample_internal::update_new_point(new_point_index,
+                                            father_index,
+                                            mother_index,
+                                            rich_point_set,
                                             current_radius,
                                             sharpness_bandwidth);
 
@@ -560,8 +549,8 @@ edge_aware_upsample_point_set(
    #ifdef CGAL_PSP3_VERBOSE
       std::cout << "current size: " << rich_point_set.size() << std::endl;
    #endif
-      if (count_not_pass == 0 || 
-          loop >= max_loop_time || 
+      if (count_not_pass == 0 ||
+          loop >= max_loop_time ||
           rich_point_set.size() >= number_of_output_points)
       {
         break;
@@ -582,7 +571,7 @@ edge_aware_upsample_point_set(
     Vector normal = v.normal;
     *output++ = std::make_pair(point, normal);
   }
- 
+
   return output;
 }
 
@@ -591,7 +580,7 @@ edge_aware_upsample_point_set(
 // variant with default NP
 template <typename ConcurrencyTag,
           typename PointRange,
-	  typename OutputIterator>
+          typename OutputIterator>
 OutputIterator
 edge_aware_upsample_point_set(
   const PointRange& points,

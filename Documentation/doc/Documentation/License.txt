@@ -1,0 +1,104 @@
+/*!
+\page license License
+\cgalAutoToc
+
+\cgal is distributed under a dual license scheme, that is under the
+GNU GPL/LGPL open source license, as well as under commercial licenses.
+
+\cgal consists of different parts covered by different open source licenses.
+In this section we explain the essence of the different licenses, as well as
+the rationale why we have chosen them.
+
+The fact that \cgal is Open Source software does not mean that users are free
+to do whatever they want with the software. Using the software means to accept
+the license, which has the status of a contract between the user and the owner
+of the \cgal software.
+
+\section licensesGPL GNU GPL
+
+The GNU GPL is an Open Source license that, if you distribute your software
+based on GPLed \cgal data structures, obliges you to distribute the
+source code of your software under the GPL.
+
+The exact license terms can be found at the  Free Software Foundation
+web site: http://www.gnu.org/copyleft/gpl.html.
+
+\section licensesLGPL GNU LGPL
+
+The GNU LGPL is an Open Source license that obliges you to distribute
+modifications you make on \cgal software accessible to the users.
+In contrast to the GPL, there is no obligation to make the source
+code of software you build on top of LGPLed \cgal data structures.
+
+The exact license terms can be found at the Free Software Foundation web site:
+http://www.gnu.org/copyleft/lesser.html.
+
+\section licensesRationale Rationale of the License Choice
+
+We have chosen the GPL and the LGPL as they are well-known
+and well-understood open source licenses. The former restricts
+commercial use, and the latter allows to promote software as de facto standard
+so that people can build new higher level data structures on top.
+
+Therefore, the packages forming a foundation layer are distributed under
+the LGPL, and the higher level packages under the GPL.
+The package overview states for each package under which license it is distributed.
+
+\section licensesCommercial Commercial Licenses
+
+Users who cannot comply with the Open Source license terms can buy individual
+data structures under various commercial licenses from GeometryFactory:
+http://www.geometryfactory.com/. License fees paid by commercial
+customers are reinvested in R\&D performed by the \cgal project partners,
+as well as in evolutive maintenance.
+
+\section licenseCheck License Checking
+
+Users who have a commercial license for specific packages can check that
+they do not accidentally use packages for which they do not have a commercial
+license. The same holds for users who want to be sure that they only
+use packages of \cgal released under the LGPL.
+
+To enable checking, users have to define one of the following macros:
+
+| Macro Name                   | Effect |
+| :---------                   | :------ |
+| `CGAL_LICENSE_WARNING`       | get a warning during the compilation  |
+| `CGAL_LICENSE_ERROR`         | get an error during the compilation  |
+
+The license checking is not a mean to control users as no information
+is collected or transmitted.
+
+\section seccgal_version Identifying the Version of CGAL
+
+Every release of \cgal defines the following preprocessor macros:
+
+<DL>
+<DT>`CGAL_VERSION_STR`</DT>
+<DD>a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15) as a string literal</DD>
+<DT>`CGAL_VERSION_NR`</DT>
+<DD>a numerical description of the current release such that more recent
+releases have higher number.
+
+More precisely, it is defined as `1MMmmbiiii`, where `MM` is
+the major release number (e.g. 03), `mm` is the minor release
+number (e.g. 02), `b` is the bug-fix release number (e.g. 0),
+and `iiii` is the internal release number (e.g. 0001). For
+public releases, the latter is defined as 1000.  Examples: for the
+public release 3.2.4 this number is 1030241000; for internal release
+3.2-I-1, it is 1030200001.  Note that this scheme was modified around
+3.2-I-30.
+</DD>
+<DT>`CGAL_VERSION_NUMBER(M,m,b)`</DT>
+<DD>
+a function macro computing the version number macro from the
+M.m.b release version. Note that the internal release number is
+dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
+1030241000.
+</DD>
+</DL>
+
+The macro `CGAL_VERSION` is deprecated. It is the same as
+`CGAL_VERSION_STR`, but not as a string literal.
+
+*/

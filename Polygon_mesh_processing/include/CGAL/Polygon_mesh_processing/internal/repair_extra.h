@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -119,7 +110,8 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   typedef boost::unordered_map<halfedge_descriptor, int> Halfedge_multiplicity;
   typedef std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > Halfedge_pairs;
 
-  typedef typename Box_intersection_d::Box_with_info_d<double, 3, edge_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, edge_descriptor, Box_policy> Box;
 
   typedef Union_find<vertex_descriptor> UF_vertices;
   typedef std::map<vertex_descriptor, typename UF_vertices::handle> Handle_map;
@@ -149,7 +141,6 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   box_ptrs.reserve(boxes.size());
   for(Box& b : boxes)
     box_ptrs.push_back(&b);
-
 
   Halfedge_multiplicity multiplicity;
   Halfedge_pairs matching_hedges;

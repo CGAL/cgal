@@ -6,14 +6,14 @@ namespace CGAL {
 
 \cgalModels `GeneralPolygonSetTraits_2`
 
-\sa `CGAL::Arr_segment_traits_2<Kernel>` 
+\sa `CGAL::Arr_segment_traits_2<Kernel>`
 
 */
 template< typename Kernel, typename Container, typename ArrSegmentTraits >
 class Gps_segment_traits_2 {
 public:
 
-/// \name Definition 
+/// \name Definition
 /// The traits class `Gps_segment_traits_2` models the concept
 /// `GeneralPolygonSetTraits_2`. It enables Boolean set-operations on
 /// (linear) polygons. It defines the exposed type `Polygon_2` to be
@@ -26,8 +26,8 @@ public:
 
 /*!
 
-*/ 
-typedef CGAL::Polygon_2<Kernel,Container> Polygon_2; 
+*/
+typedef CGAL::Polygon_2<Kernel,Container> Polygon_2;
 
 /// @}
 
