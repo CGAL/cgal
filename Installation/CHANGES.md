@@ -174,17 +174,15 @@ Release date: July 2020
 
 ### [3D Triangulations](https://doc.cgal.org/5.1/Manual/packages.html#PkgTriangulation3)
 
--   The free function `CGAL::file_input()` and the member function [`CGAL::Triangulation_3::file_input()`](https://doc.cgal.org/5.1/Triangulation_3/group__PkgIOTriangulation3.html#gadd94d0613e2dd9cdd2e88d2c74d5b1c8)
-    have been added. The first allows to load a [`CGAL::Triangulation_3`](https://doc.cgal.org/5.1/Triangulation_3/classCGAL_1_1Triangulation__3.html)
+-   The member function [`CGAL::Triangulation_3::file_input()`](https://doc.cgal.org/5.1/Triangulation_3/group__PkgIOTriangulation3.html#gadd94d0613e2dd9cdd2e88d2c74d5b1c8)
+    have been added. It allows to load a [`CGAL::Triangulation_3`](https://doc.cgal.org/5.1/Triangulation_3/classCGAL_1_1Triangulation__3.html)
     from an input stream, using functors to create vertices and cells.
-    The second is simply the member function version of the first one.
 
 ### [3D Triangulation Data Structure](https://doc.cgal.org/5.1/Manual/packages.html#PkgTDS3)
 
--   The free function `CGAL::file_input()` and the member function [`CGAL::TDS_3::file_input()`](https://doc.cgal.org/5.1/TDS_3/group__PkgIOTDS3.html#ga381446a02a9240cc83e79c48b37cd119)
-    have been added. The first allows to load a [`CGAL::Triangulation_data_structure_3`](https://doc.cgal.org/5.1/TDS_3/classCGAL_1_1Triangulation__data__structure__3.html)
+-   The member function [`CGAL::TDS_3::file_input()`](https://doc.cgal.org/5.1/TDS_3/group__PkgIOTDS3.html#ga381446a02a9240cc83e79c48b37cd119)
+    have been added. It allows to load a [`CGAL::Triangulation_data_structure_3`](https://doc.cgal.org/5.1/TDS_3/classCGAL_1_1Triangulation__data__structure__3.html)
     from an input stream, using functors to create vertices and cells.
-    The second is simply the member function version of the first one.
 
 ### [Surface Mesh Simplification](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshSimplification)
 
