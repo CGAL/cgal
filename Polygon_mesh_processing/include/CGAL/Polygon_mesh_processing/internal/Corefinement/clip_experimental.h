@@ -47,10 +47,10 @@ void output_mesh(const char* filename, const PolygonMesh& pmesh)
 
 template <typename TriangleMesh, typename EVPM,
           typename NamedParameters1, typename NamedParameters2>
-bool clip_mesh_exactly(TriangleMesh& tm,
-                       EVPM tm_evpm,
+bool clip_mesh_exactly(TriangleMesh& cc,
+                       EVPM cc_evpm,
                        TriangleMesh clipper, // intentional copy
-                       const NamedParameters1& np_tm,
+                       const NamedParameters1& np_cc,
                        const NamedParameters2& np_c)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
@@ -89,29 +89,38 @@ bool clip_mesh_exactly(TriangleMesh& tm,
     put(clipper_evpm, vd, to_exact(get(clipper_vpm, vd)));
 
 #ifdef CGAL_DEBUG_CLIPPING
-  const bool valid_input = is_valid(tm) && is_valid(clipper) &&
-                           !does_self_intersect(tm, parameters::vertex_point_map(tm_evpm)) &&
+  const bool valid_input = is_valid(cc) && is_valid(clipper) &&
+                           !does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)) &&
                            !does_self_intersect(clipper, parameters::vertex_point_map(clipper_evpm)) &&
                            does_bound_a_volume(clipper, parameters::vertex_point_map(clipper_evpm));
   if(!valid_input)
   {
     std::cerr << "Invalid input for clip()" << std::endl;
-    std::cerr << "is tm valid: " << tm.is_valid() << std::endl;
+    std::cerr << "is cc valid: " << cc.is_valid() << std::endl;
     std::cerr << "is clipper valid: " << clipper.is_valid() << std::endl;
-    std::cerr << "does part self intersect? " << does_self_intersect(tm, parameters::vertex_point_map(tm_evpm)) << std::endl;
+    std::cerr << "does part self intersect? " << does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)) << std::endl;
     std::cerr << "does clipper self intersect? " << does_self_intersect(clipper, parameters::vertex_point_map(clipper_evpm)) << std::endl;
     std::cerr << "clipper bounds a volume? " << does_bound_a_volume(clipper) << std::endl;
     std::exit(1);
   }
 #endif
 
-  bool res = clip(tm, clipper,
-                  parameters::vertex_point_map(tm_evpm).throw_on_self_intersection(true),
+  bool clip_volume = choose_parameter(get_parameter(np_cc, internal_np::clip_volume), true);
+  bool use_compact_clipper = choose_parameter(get_parameter(np_cc, internal_np::use_compact_clipper), false);
+
+  // @todo is it possible to forward clip_volume/use_compact_clipper/visitor?
+  clip_volume = false;
+  use_compact_clipper = false;
+
+  bool res = clip(cc, clipper,
+                  parameters::vertex_point_map(cc_evpm)
+                             .clip_volume(clip_volume)
+                             .clip_volume(use_compact_clipper)
+                             .throw_on_self_intersection(true),
                   parameters::vertex_point_map(clipper_evpm));
 
-  CGAL_postcondition(CGAL::is_valid_polygon_mesh(tm));
-  CGAL_postcondition(tm.is_valid());
-  CGAL_postcondition(clipper.is_valid());
+  CGAL_postcondition(is_valid_polygon_mesh(cc));
+  CGAL_postcondition(is_valid_polygon_mesh(clipper));
 
   return res;
 }
@@ -386,24 +395,32 @@ namespace experimental {
 // Try to split the mesh in multiple connected components and clip them independently
 template <typename TriangleMesh,
           typename NamedParameters1, typename NamedParameters2>
-void clip_self_intersecting_mesh(TriangleMesh& tm,
+bool clip_self_intersecting_mesh(TriangleMesh& tm,
                                  TriangleMesh& clipper,
                                  const NamedParameters1& np_tm,
                                  const NamedParameters2& np_c)
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor           face_descriptor;
 
-  typedef typename boost::graph_traits<TriangleMesh>::faces_size_type           faces_size_type;
-  typedef typename boost::property_map<TriangleMesh,
-                                       face_patch_id_t<faces_size_type> >::type PatchIDMap;
-
-  // These typedefs concern the VPM of the CLIPPED mesh
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
   typedef CGAL::dynamic_vertex_property_t<Point>                                P_property_tag;
   typedef typename boost::property_map<TriangleMesh, P_property_tag>::type      DVPM;
 
+  typedef typename boost::graph_traits<TriangleMesh>::faces_size_type           faces_size_type;
+  typedef typename boost::property_map<TriangleMesh,
+                                       face_patch_id_t<faces_size_type> >::type PatchIDMap;
+
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  // @todo keep this?
+  if(!does_self_intersect(tm, np_tm))
+    return clip(tm, clipper, np_tm, np_c);
+
+  // Splitting connected components avoids having to treat a lot of "easy" self-intersections
+  // (for example from two spheres intersecting)
   PatchIDMap pidmap = get(CGAL::face_patch_id_t<faces_size_type>(), tm);
   faces_size_type num_cc = connected_components(tm, pidmap);
 
@@ -438,6 +455,7 @@ void clip_self_intersecting_mesh(TriangleMesh& tm,
                           np_tm, parameters::vertex_point_map(cc_vpms[i]));
   }
 
+  bool res = true;
   const CGAL::Bbox_3 clipper_bbox = CGAL::Polygon_mesh_processing::bbox(clipper, np_c);
 
   // Clip CC by CC
@@ -446,8 +464,8 @@ void clip_self_intersecting_mesh(TriangleMesh& tm,
   const CGAL::Bbox_3 tm_bbox = CGAL::Polygon_mesh_processing::bbox(tm, np_tm);
   if(CGAL::do_overlap(tm_bbox, clipper_bbox))
   {
-    // @fixme likely don't want to forward clip_volumes to this single CC
-    internal::clip_single_cc(tm, clipper, np_tm, np_c);
+    if(!internal::clip_single_cc(tm, clipper, np_tm, np_c))
+      res = false;
   }
 
   for(faces_size_type i=1; i<num_cc; ++i)
@@ -457,38 +475,36 @@ void clip_self_intersecting_mesh(TriangleMesh& tm,
 
     std::cout << "CC w/ " << num_vertices(tm_cc) << " nv " << num_faces(tm_cc) << " nf" << std::endl;
 
-    const CGAL::Bbox_3 cc_bbox = CGAL::Polygon_mesh_processing::bbox(tm_cc, np_tm);
+    const CGAL::Bbox_3 cc_bbox = CGAL::Polygon_mesh_processing::bbox(tm_cc, parameters::vertex_point_map(cc_vpm));
 
-    // @fixme np forwarding
     if(CGAL::do_overlap(cc_bbox, clipper_bbox))
-      internal::clip_single_cc(tm_cc, clipper, parameters::vertex_point_map(cc_vpm), np_c);
+      if(!internal::clip_single_cc(tm_cc, clipper,  parameters::vertex_point_map(cc_vpm), np_c)) // @todo np forwarding
+        res = false;
 
     CGAL::copy_face_graph(tm_cc, tm, parameters::vertex_point_map(cc_vpm), np_tm);
   }
+
+  return res;
 }
 
 template <typename TriangleMesh,
           typename NamedParameters1, typename NamedParameters2>
-void generic_clip(TriangleMesh& tm,
+bool generic_clip(TriangleMesh& tm,
                   TriangleMesh& clipper,
                   const NamedParameters1& np_tm,
                   const NamedParameters2& np_c)
 {
-  // @todo: do the self-intersection test only once
-  if(!does_self_intersect(tm, np_tm))
-    clip(tm, clipper, np_tm, np_c);
-  else
-    clip_self_intersecting_mesh(tm, clipper, np_tm, np_c);
+  return clip_self_intersecting_mesh(tm, clipper, np_tm, np_c);
 }
 
 template <typename TriangleMesh, typename NamedParameters>
-void generic_clip(TriangleMesh& tm, TriangleMesh& clipper, const NamedParameters& np_tm)
+bool generic_clip(TriangleMesh& tm, TriangleMesh& clipper, const NamedParameters& np_tm)
 {
   return generic_clip(tm, clipper, np_tm, parameters::all_default());
 }
 
 template <typename TriangleMesh>
-void generic_clip(TriangleMesh& tm, TriangleMesh& clipper)
+bool generic_clip(TriangleMesh& tm, TriangleMesh& clipper)
 {
   return generic_clip(tm, clipper, parameters::all_default(), parameters::all_default());
 }
