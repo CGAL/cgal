@@ -81,7 +81,7 @@ bool clip_mesh_exactly(TriangleMesh& cc,
 
   // Initialize an exact vpm for the clipper
   Clipper_VPM clipper_vpm = choose_parameter(get_parameter(np_c, internal_np::vertex_point),
-                                             get_const_property_map(CGAL::vertex_point, clipper));
+                                             get_property_map(CGAL::vertex_point, clipper));
 
   C2E to_exact;
   EVPM clipper_evpm = get(EP_property_tag(), clipper);
@@ -101,7 +101,7 @@ bool clip_mesh_exactly(TriangleMesh& cc,
     std::cerr << "does part self intersect? " << does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)) << std::endl;
     std::cerr << "does clipper self intersect? " << does_self_intersect(clipper, parameters::vertex_point_map(clipper_evpm)) << std::endl;
     std::cerr << "clipper bounds a volume? " << does_bound_a_volume(clipper) << std::endl;
-    std::exit(1);
+    return false;
   }
 #endif
 
@@ -115,7 +115,7 @@ bool clip_mesh_exactly(TriangleMesh& cc,
   bool res = clip(cc, clipper,
                   parameters::vertex_point_map(cc_evpm)
                              .clip_volume(clip_volume)
-                             .clip_volume(use_compact_clipper)
+                             .use_compact_clipper(use_compact_clipper)
                              .throw_on_self_intersection(true),
                   parameters::vertex_point_map(clipper_evpm));
 
@@ -135,15 +135,11 @@ void fill_triangle_mesh(typename boost::graph_traits<TriangleMesh>::halfedge_des
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
 
-  typedef typename GetVertexPointMap<TriangleMesh>::type                        F_VPM;
-  F_VPM si_face_vpm = get_property_map(CGAL::vertex_point, si_face);
-
   vertex_descriptor vd0 = add_vertex(si_face);
   vertex_descriptor vd1 = add_vertex(si_face);
   vertex_descriptor vd2 = add_vertex(si_face);
-  put(si_face_vpm, vd0, get(tm_vpm, source(hd, tm)));
-  put(si_face_vpm, vd1, get(tm_vpm, target(hd, tm)));
-  put(si_face_vpm, vd2, get(tm_vpm, target(next(hd, tm), tm)));
+
+  // Note that we don't even fill the internal VPM
   put(si_face_evpm, vd0, get(tm_evpm, source(hd, tm)));
   put(si_face_evpm, vd1, get(tm_evpm, target(hd, tm)));
   put(si_face_evpm, vd2, get(tm_evpm, target(next(hd, tm), tm)));
@@ -153,8 +149,8 @@ void fill_triangle_mesh(typename boost::graph_traits<TriangleMesh>::halfedge_des
 
 template <typename TriangleMesh, typename FacePairRange,
           typename NamedParameters1, typename NamedParameters2>
-bool clip_single_self_intersecting_cc(TriangleMesh& cc,
-                                      const FacePairRange& self_intersecting_faces,
+bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_faces,
+                                      TriangleMesh& cc,
                                       TriangleMesh& clipper,
                                       const NamedParameters1& np_cc,
                                       const NamedParameters2& np_c)
@@ -219,7 +215,7 @@ bool clip_single_self_intersecting_cc(TriangleMesh& cc,
   // 2. ------------------------------
   // Switch to an exact VPM
   CC_VPM cc_vpm = choose_parameter(get_parameter(np_cc, internal_np::vertex_point),
-                                   get_const_property_map(CGAL::vertex_point, cc));
+                                   get_property_map(CGAL::vertex_point, cc));
 
   C2E to_exact;
   EVPM cc_evpm = get(EP_property_tag(), cc);
@@ -385,7 +381,7 @@ bool clip_single_cc(TriangleMesh& cc,
   if(intersecting_faces.empty())
     return clip(cc, clipper, np_cc, np_c);
   else
-    return clip_single_self_intersecting_cc(cc, intersecting_faces, clipper, np_cc, np_c);
+    return clip_single_self_intersecting_cc(intersecting_faces, cc, clipper, np_cc, np_c);
 }
 
 } // namespace internal
