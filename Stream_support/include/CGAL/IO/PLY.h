@@ -381,7 +381,13 @@ bool read_PLY(const char* fname,
 template <typename PointRange, typename PolygonRange>
 bool read_PLY(const char* fname,
               PointRange& points,
-              PolygonRange& polygons)
+              PolygonRange& polygons
+              #ifndef DOXYGEN_RUNNING
+              ,typename std::enable_if<
+              CGAL::is_iterator<PolygonRange>::value
+              >::type* =0
+              #endif
+    )
 {
   return read_PLY(fname, points, polygons, parameters::all_default());
 }
@@ -399,7 +405,13 @@ bool read_PLY(const std::string& fname,
 template <typename PointRange, typename PolygonRange>
 bool read_PLY(const std::string fname,
               PointRange& points,
-              PolygonRange& polygons)
+              PolygonRange& polygons
+              #ifndef DOXYGEN_RUNNING
+              ,typename std::enable_if<
+              CGAL::is_iterator<PolygonRange>::value
+              >::type* =0
+              #endif
+    )
 {
   return read_PLY(fname, points, polygons, parameters::all_default());
 }

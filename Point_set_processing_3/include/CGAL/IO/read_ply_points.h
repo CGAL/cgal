@@ -140,7 +140,7 @@ bool read_PLY_with_properties (std::istream& stream,
     return false;
   }
 
-  IO::internal::PLY_reader reader;
+  IO::internal::PLY_reader reader(true);
 
   if (!(reader.init (stream)))
   {
@@ -256,9 +256,65 @@ bool read_PLY(std::istream& stream,
                                    make_ply_point_reader (point_map));
 }
 
+/**
+   \ingroup PkgPointSetProcessing3IOPly
+   Reads points (positions + normals, if available) from a .ply
+   file (ASCII or binary).
+   Potential additional point properties and faces are ignored.
+
+   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam OutputIterator iterator over output points.
+
+   \param stream input stream.
+   \param output output iterator over points.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `WritablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
+     `geom_traits::Vector_3`. If this parameter is omitted, normals in the input stream are
+     ignored.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return true on success.
+
+   \cgalRequiresCPP11
+*/
+template < typename OutputIteratorValueType,
+           typename OutputIterator,
+           #ifdef DOXYGEN_RUNNING
+           typename NamedParameters
+           #else
+           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+           #endif
+           >
+bool read_PLY(const char* fname,
+              OutputIterator output,
+              #ifdef DOXYGEN_RUNNING
+              const NamedParameters& np)
+#else
+              const CGAL_BGL_NP_CLASS& np)
+#endif
+{
+  std::ifstream is(fname);
+  return read_PLY<OutputIteratorValueType>(is, output, np);
+}
+
+template < typename OutputIteratorValueType,
+           typename OutputIterator,
+           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              OutputIterator output,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  return read_PLY<OutputIteratorValueType>(fname.c_str(), output, np);
+}
 
 /// \cond SKIP_IN_MANUAL
-// variant with default NP
+// variants with default NP
 template <typename OutputIteratorValueType,
           typename OutputIterator>
 bool
@@ -270,7 +326,23 @@ read_PLY(
       (stream, output, CGAL::parameters::all_default());
 }
 
-// variant with default output iterator value type
+template < typename OutputIteratorValueType,
+           typename OutputIterator>
+bool read_PLY(const std::string& fname,
+              OutputIterator output)
+{
+  return read_PLY<OutputIteratorValueType>(fname, output, parameters::all_default());
+}
+
+template < typename OutputIteratorValueType,
+           typename OutputIterator>
+bool read_PLY(const char* fname,
+              OutputIterator output)
+{
+  return read_PLY<OutputIteratorValueType>(fname, output, parameters::all_default());
+}
+
+// variants with default output iterator value type
 template <typename OutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool
@@ -283,7 +355,24 @@ read_PLY(
       (stream, output, np);
 }
 
-// variant with default NP and output iterator value type
+template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const char* fname,
+              OutputIterator output,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream is(fname);
+  return read_PLY<typename value_type_traits<OutputIterator>::type>(is, output, np);
+}
+
+template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              OutputIterator output,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  return read_PLY<typename value_type_traits<OutputIterator>::type>(fname.c_str(), output, np);
+}
+
+// variants with default NP and output iterator value type
 template <typename OutputIterator>
 bool
 read_PLY(
@@ -292,6 +381,20 @@ read_PLY(
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>
       (stream, output, CGAL::parameters::all_default());
+}
+
+template < typename OutputIterator>
+bool read_PLY(const std::string& fname,
+              OutputIterator output)
+{
+  return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
+}
+
+template <typename OutputIterator>
+bool read_PLY(const char* fname,
+              OutputIterator output)
+{
+  return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
