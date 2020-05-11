@@ -46,6 +46,15 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
        message(STATUS "Mac Leopard detected")
       set(CGAL_APPLE_LEOPARD 1)
     endif()
+
+    # This fixes the issue #3816 - https://github.com/CGAL/cgal/issues/3816.
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
+      message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")
+      if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
+        message(STATUS "Boost MP is turned off for all Apple Clang versions below 11.0.3!")
+        uniquely_add_flags(CMAKE_CXX_FLAGS "-DCGAL_DO_NOT_USE_BOOST_MP")
+      endif()
+    endif()
   endif()
 
   if ( NOT "${CMAKE_CFG_INTDIR}" STREQUAL "." )
