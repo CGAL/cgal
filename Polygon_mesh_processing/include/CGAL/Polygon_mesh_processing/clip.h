@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/clip_experimental.h>
+
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -34,11 +36,9 @@
 
 #include <unordered_map>
 
-namespace CGAL{
+namespace CGAL {
 namespace Polygon_mesh_processing {
-
-namespace internal
-{
+namespace internal {
 
 template <class Geom_traits, class Plane_3, class Point_3>
 int
@@ -402,6 +402,17 @@ void split_along_edges(TriangleMesh& tm,
 
 } // end of internal namespace
 
+namespace experimental {
+
+template <typename TriangleMesh,
+          typename NamedParameters1, typename NamedParameters2>
+bool clip_self_intersecting_mesh(TriangleMesh& tm,
+                                 TriangleMesh& clipper,
+                                 const NamedParameters1& np_tm,
+                                 const NamedParameters2& np_c);
+
+} // namespace experimental
+
 /**
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink
@@ -461,8 +472,14 @@ clip(TriangleMesh& tm,
      const NamedParameters1& np_tm,
      const NamedParameters2& np_c)
 {
-  const bool clip_volume =
-    parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const bool clip_with_si = choose_parameter(get_parameter(np_tm, internal_np::input_might_have_self_intersection), false);
+  if(clip_with_si)
+    return experimental::clip_self_intersecting_mesh(tm, clipper, np_tm, np_c);
+
+  const bool clip_volume = choose_parameter(get_parameter(np_tm, internal_np::clip_volume), false);
 
   if(clip_volume && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c, np_tm);
@@ -861,7 +878,5 @@ void split(TriangleMesh& tm,
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
-
-#include <CGAL/Polygon_mesh_processing/internal/Corefinement/clip_experimental.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_CLIP_H

@@ -16,6 +16,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -32,8 +33,23 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
+#include <iostream>
+#include <iterator>
+#include <fstream>
+#include <set>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
+
+template <class TriangleMesh, class NamedParameters1, class NamedParameters2>
+bool clip(TriangleMesh& tm,
+          TriangleMesh& clipper,
+          const NamedParameters1& np_tm,
+          const NamedParameters2& np_c);
+
 namespace internal {
 
 template <typename PolygonMesh>
@@ -483,26 +499,16 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
   return res;
 }
 
-template <typename TriangleMesh,
-          typename NamedParameters1, typename NamedParameters2>
-bool generic_clip(TriangleMesh& tm,
-                  TriangleMesh& clipper,
-                  const NamedParameters1& np_tm,
-                  const NamedParameters2& np_c)
-{
-  return clip_self_intersecting_mesh(tm, clipper, np_tm, np_c);
-}
-
 template <typename TriangleMesh, typename NamedParameters>
-bool generic_clip(TriangleMesh& tm, TriangleMesh& clipper, const NamedParameters& np_tm)
+bool clip_self_intersecting_mesh(TriangleMesh& tm, TriangleMesh& clipper, const NamedParameters& np_tm)
 {
-  return generic_clip(tm, clipper, np_tm, parameters::all_default());
+  return clip_self_intersecting_mesh(tm, clipper, np_tm, parameters::all_default());
 }
 
 template <typename TriangleMesh>
-bool generic_clip(TriangleMesh& tm, TriangleMesh& clipper)
+bool clip_self_intersecting_mesh(TriangleMesh& tm, TriangleMesh& clipper)
 {
-  return generic_clip(tm, clipper, parameters::all_default(), parameters::all_default());
+  return clip_self_intersecting_mesh(tm, clipper, parameters::all_default(), parameters::all_default());
 }
 
 } // namespace experimental
