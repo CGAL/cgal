@@ -214,6 +214,48 @@ write_PLY(
     make_ply_point_writer(point_map));
 }
 
+
+template <typename PointRange,
+          #ifdef DOXYGEN_RUNNING
+          typename NamedParameters
+          #else
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #endif
+          >
+bool
+write_PLY(
+    const char* fname,
+    const PointRange& points,
+    #ifdef DOXYGEN_RUNNING
+    const NamedParameters& np)
+#else
+    const CGAL_BGL_NP_CLASS& np)
+#endif
+{
+  std::ofstream os(fname);
+  return write_PLY(os, points, np);
+}
+
+template <typename PointRange,
+          #ifdef DOXYGEN_RUNNING
+          typename NamedParameters
+          #else
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #endif
+          >
+bool
+write_PLY(
+    const std::string& fname,
+    const PointRange& points,
+    #ifdef DOXYGEN_RUNNING
+    const NamedParameters& np)
+#else
+    const CGAL_BGL_NP_CLASS& np)
+#endif
+{
+  return write_PLY(fname.c_str(), points, np);
+}
+
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename PointRange>
@@ -225,6 +267,26 @@ write_PLY(
   return write_PLY
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
+
+template <typename PointRange>
+bool
+write_PLY(
+    const char* fname,
+    const PointRange& points)
+{
+  std::ofstream os(fname);
+  return write_PLY(os, points, CGAL::Point_set_processing_3::parameters::all_default(points)());
+}
+
+template <typename PointRange>
+bool
+write_PLY(
+    const std::string& fname,
+    const PointRange& points)
+{
+  return write_PLY(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API

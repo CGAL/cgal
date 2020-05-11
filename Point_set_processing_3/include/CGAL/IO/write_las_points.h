@@ -282,17 +282,60 @@ write_LAS(
   return write_LAS_with_properties (stream, points, make_las_point_writer(point_map));
 }
 
+template <typename PointRange,
+          typename NamedParameters>
+bool
+write_LAS(
+    const char* fname,
+    const PointRange& points,
+    const NamedParameters& np)
+{
+  std::ofstream os(fname);
+  return write_LAS(os, points, np);
+}
+
+template <typename PointRange,
+          typename NamedParameters>
+bool
+write_LAS(
+    const std::string& fname,
+    const PointRange& points,
+    const NamedParameters& np)
+{
+  return write_LAS(fname.c_str(), points, np);
+}
+
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
-template < typename PointRange>
+template <typename PointRange>
 bool
-write_las_points(
-  std::ostream& stream,
-  const PointRange& points)
+write_LAS(
+    std::ostream& stream, ///< output stream.
+    const PointRange& points)
 {
   return write_LAS
-    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+      (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
+
+template <typename PointRange>
+bool
+write_LAS(
+    const char* fname,
+    const PointRange& points)
+{
+  std::ofstream os(fname);
+  return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points)());
+}
+
+template <typename PointRange>
+bool
+write_LAS(
+    const std::string& fname,
+    const PointRange& points)
+{
+  return write_LAS(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API

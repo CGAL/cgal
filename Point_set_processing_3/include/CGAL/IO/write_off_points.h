@@ -108,7 +108,32 @@ write_OFF(
   return ! stream.fail();
 }
 
+
+template <typename PointRange,
+          typename NamedParameters>
+bool
+write_OFF(
+    const char* fname,
+    const PointRange& points,
+    const NamedParameters& np)
+{
+  std::ofstream os(fname);
+  return write_OFF(os, points, np);
+}
+
+template <typename PointRange,
+          typename NamedParameters>
+bool
+write_OFF(
+    const std::string& fname,
+    const PointRange& points,
+    const NamedParameters& np)
+{
+  return write_OFF(fname.c_str(), points, np);
+}
+
 /// \cond SKIP_IN_MANUAL
+
 namespace internal{
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Point_set)
 }
@@ -130,6 +155,35 @@ write_OFF(
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+
+template <typename PointRange>
+bool
+write_OFF(
+    std::ostream& stream, ///< output stream.
+    const PointRange& points)
+{
+  return write_OFF
+      (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+template <typename PointRange>
+bool
+write_OFF(
+    const char* fname,
+    const PointRange& points)
+{
+  std::ofstream os(fname);
+  return write_OFF(os, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+template <typename PointRange>
+bool
+write_OFF(
+    const std::string& fname,
+    const PointRange& points)
+{
+  return write_OFF(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
 #ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ForwardIterator,

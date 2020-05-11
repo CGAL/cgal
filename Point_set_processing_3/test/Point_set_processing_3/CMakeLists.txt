@@ -30,6 +30,7 @@ if ( CGAL_FOUND )
 
   # Executables that do *not* require Eigen
   create_single_source_cgal_program( "read_test.cpp" )
+  create_single_source_cgal_program( "test_read_write_point_set.cpp" )
   create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )
@@ -37,6 +38,14 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "bilateral_smoothing_test.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
   create_single_source_cgal_program( "structuring_test.cpp" )
+
+  #Use LAS
+  find_package(LASLIB)
+  if (LASLIB_FOUND)
+    CGAL_target_use_LASLIB(test_read_write_point_set)
+  else()
+    message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+  endif()
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

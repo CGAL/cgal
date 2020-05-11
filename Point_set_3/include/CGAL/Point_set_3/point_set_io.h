@@ -19,27 +19,25 @@
 namespace CGAL {
 
 template <typename Point,
-          typename Vector,
-          typename NamedParameters>
+          typename Vector>
 bool read_point_set(const std::string& fname,
-                    CGAL::Point_set_3<Point, Vector>& ps,
-                    const NamedParameters& np)
+                    CGAL::Point_set_3<Point, Vector>& ps)
 {
   if (fname.find(".xyz") != std::string::npos) {
-    return read_XYZ(fname, ps, np);
+    return read_XYZ(fname, ps);
   }
 
   if (fname.find(".off") != std::string::npos) {
-    return read_OFF(fname, ps, np);
+    return read_OFF(fname, ps);
   }
 
   if (fname.find(".ply") != std::string::npos) {
-    return read_PLY(fname, ps, np);
+    return read_PLY(fname, ps);
   }
 
 #ifdef CGAL_LINKED_WITH_LASLIB
   if (fname.find(".las") != std::string::npos) {
-    return read_LAS(fname, ps, np);
+    return read_LAS(fname, ps);
   }
 #endif
   return false;
@@ -47,30 +45,11 @@ bool read_point_set(const std::string& fname,
 
 template <typename Point,
           typename Vector>
-bool read_point_set(const std::string& fname,
-                    CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return read_point_set(fname, ps, parameters::all_default());
-}
-
-template <typename Point,
-          typename Vector,
-          typename NamedParameters>
 bool read_point_set(const char* fname,
-                    CGAL::Point_set_3<Point, Vector>& ps,
-                    const NamedParameters& np)
+                    CGAL::Point_set_3<Point, Vector>& ps)
 {
   return read_point_set(std::string(fname),
-                        ps,
-                        np);
-}
-
-template <typename Point,
-          typename Vector>
-bool read_point_set(const char* fname,
-                    CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return read_point_set(fname, ps, parameters::all_default());
+                        ps);
 }
 
 template <typename Point,

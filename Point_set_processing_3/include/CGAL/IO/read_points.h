@@ -20,6 +20,33 @@
 
 namespace CGAL {
 
+/**
+  \ingroup PkgPointSetProcessing3IO
+  Reads the point set from an input file that can be either:
+
+  - XYZ
+  - OFF
+  - PLY
+  - LAS
+  \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+  It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+  \tparam OutputIterator iterator over output points.
+
+  \param fname the name of the input file.
+  \param output output iterator over points.
+  \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{point_map} a model of `WritablePropertyMap` with value type `geom_traits::Point_3`.
+    If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+    \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
+    `geom_traits::Vector_3`. If this parameter is omitted, normals in the input stream are
+    ignored.\cgalParamEnd
+    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  \cgalNamedParamsEnd
+
+   \return true on success.
+*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename NamedParameters>
@@ -41,7 +68,7 @@ bool read_points(const std::string& fname,
 
 #ifdef CGAL_LINKED_WITH_LASLIB
   if (fname.find(".las") != std::string::npos) {
-    return read_LAS<OutputIteratorValueType>fname, output, np);
+    return read_LAS<OutputIteratorValueType>(fname, output, np);
   }
 #endif
   return false;

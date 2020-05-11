@@ -95,6 +95,29 @@ write_XYZ(
   return ! stream.fail();
 }
 
+template <typename PointRange,
+          typename NamedParameters>
+bool
+write_XYZ(
+    const char* fname,
+    const PointRange& points,
+    const NamedParameters& np)
+{
+  std::ofstream os(fname);
+  return write_XYZ(os, points, np);
+}
+
+template <typename PointRange,
+          typename NamedParameters>
+bool
+write_XYZ(
+    const std::string& fname,
+    const PointRange& points,
+    const NamedParameters& np)
+{
+  return write_XYZ(fname.c_str(), points, np);
+}
+
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename PointRange>
@@ -105,6 +128,25 @@ write_XYZ(
 {
   return write_XYZ
       (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+template <typename PointRange>
+bool
+write_XYZ(
+    const char* fname,
+    const PointRange& points)
+{
+  std::ofstream os(fname);
+  return write_XYZ(os, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+template <typename PointRange>
+bool
+write_XYZ(
+    const std::string& fname,
+    const PointRange& points)
+{
+  return write_XYZ(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

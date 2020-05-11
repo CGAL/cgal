@@ -470,23 +470,6 @@ bool read_LAS(std::istream& stream,
 }
 
 /// \cond SKIP_IN_MANUAL
-template < typename OutputIterator,
-           #ifdef DOXYGEN_RUNNING
-           typename NamedParameters
-           #else
-           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-           #endif
-           >
-bool read_LAS(std::istream& stream,
-              OutputIterator output,
-              #ifdef DOXYGEN_RUNNING
-              const NamedParameters& np)
-#else
-              const CGAL_BGL_NP_CLASS& np)
-#endif
-{
-  return read_LAS_with_properties(stream, output, np);
-}
 // variants with default NP
 template <typename OutputIteratorValueType,
           typename OutputIterator>
@@ -550,7 +533,11 @@ template <typename OutputIterator>
 bool
 read_LAS(
     std::istream& stream, ///< input stream.
-    OutputIterator output)
+    OutputIterator output,
+    typename std::enable_if<
+      CGAL::is_iterator<OutputIterator>::value
+    >::type* =0
+    )
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>
       (stream, output, CGAL::parameters::all_default());
@@ -616,14 +603,6 @@ bool read_LAS(const char* fname,
 }
 
 template < typename OutputIteratorValueType,
-           typename OutputIterator>
-bool read_LAS(const char* fname,
-              OutputIterator output)
-{
-  return read_LAS(fname, output, parameters::all_default());
-}
-
-template < typename OutputIteratorValueType,
            typename OutputIterator,
            typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const std::string& fname,
@@ -633,13 +612,6 @@ bool read_LAS(const std::string& fname,
   return read_LAS(fname.c_str(), output, np);
 }
 
-template < typename OutputIteratorValueType,
-           typename OutputIterator>
-bool read_LAS(const std::string& fname,
-              OutputIterator output)
-{
-  return read_LAS(fname, output, parameters::all_default());
-}
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API

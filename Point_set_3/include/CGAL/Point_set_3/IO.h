@@ -374,7 +374,7 @@ read_PLY(
     return false;
   }
 
-  IO::internal::PLY_reader reader;
+  IO::internal::PLY_reader reader(true);
   IO::internal::Point_set_3_filler<Point, Vector> filler(point_set);
 
   if (!(reader.init (stream)))
@@ -753,11 +753,12 @@ read_LAS(
 
   return okay;
 }
+
 template <typename Point, typename Vector>
 bool
 read_LAS(
     const char* fname,
-    const CGAL::Point_set_3<Point, Vector>& point_set)
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname);
   return read_LAS(is, point_set);
@@ -767,7 +768,7 @@ template <typename Point, typename Vector>
 bool
 read_LAS(
     const std::string& fname,
-    const CGAL::Point_set_3<Point, Vector>& point_set)
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return read_LAS(fname.c_str(), point_set);
 }
