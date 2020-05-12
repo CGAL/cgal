@@ -101,6 +101,7 @@ endif()
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
   create_single_source_cgal_program("test_remove_caps_needles.cpp")
+  create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
   if( TBB_FOUND )

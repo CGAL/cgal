@@ -384,7 +384,7 @@ bool read_PLY(const char* fname,
               PolygonRange& polygons
               #ifndef DOXYGEN_RUNNING
               ,typename std::enable_if<
-              CGAL::is_iterator<PolygonRange>::value
+              !CGAL::is_iterator<PolygonRange>::value
               >::type* =0
               #endif
     )
@@ -408,7 +408,7 @@ bool read_PLY(const std::string fname,
               PolygonRange& polygons
               #ifndef DOXYGEN_RUNNING
               ,typename std::enable_if<
-              CGAL::is_iterator<PolygonRange>::value
+              !CGAL::is_iterator<PolygonRange>::value
               >::type* =0
               #endif
     )
