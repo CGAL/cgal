@@ -59,6 +59,9 @@ struct Cartesian_filter_K : public Base_
 {
     CGAL_NO_UNIQUE_ADDRESS Store_kernel<AK_> sak;
     CGAL_NO_UNIQUE_ADDRESS Store_kernel<EK_> sek;
+
+    constexpr Cartesian_filter_K(){}
+    constexpr Cartesian_filter_K(int d):Base_(d){}
     //FIXME: or do we want an instance of AK and EK belonging to this kernel,
     //instead of a reference to external ones?
     CGAL_CONSTEXPR Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),sak(a),sek(b){}
