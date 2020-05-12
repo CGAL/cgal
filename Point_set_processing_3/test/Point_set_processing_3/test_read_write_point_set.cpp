@@ -14,82 +14,105 @@ typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
 typedef std::pair<Point_3, Vector_3> PointVectorPair;
 
-template <typename PointRange>
-void fill_points(PointRange& points)
+
+bool write_ps(std::string s)
 {
+  std::vector<Point_3> points;
   points.push_back(Point_3(0,0,0));
   points.push_back(Point_3(1,0,0));
   points.push_back(Point_3(0,1,0));
   points.push_back(Point_3(0,0,1));
   points.push_back(Point_3(1,1,1));
-}
-
-bool write_ps(std::string s)
-{
-  std::vector<Point_3> points;
-  fill_points(points);
 
   return CGAL::write_points(s, points);
 }
 
-//todo
 bool write_ps_with_np(std::string s)
 {
-  return false;
+  std::vector<PointVectorPair> points;
+  points.push_back(std::make_pair(Point_3(0,0,0), Vector_3(0,0,0)));
+  points.push_back(std::make_pair(Point_3(1,0,0), Vector_3(1,0,0)));
+  points.push_back(std::make_pair(Point_3(0,1,0), Vector_3(0,1,0)));
+  points.push_back(std::make_pair(Point_3(0,0,1), Vector_3(0,0,1)));
+  points.push_back(std::make_pair(Point_3(1,1,1), Vector_3(1,1,1)));
+
+  return CGAL::write_points(s, points,
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                            normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
+
+bool write_point_set(std::string s)
+{
+  CGAL::Point_set_3<Point_3, Vector_3> point_set;
+  point_set.insert (Point_3(0,0,0));
+  point_set.insert (Point_3(1,0,0));
+  point_set.insert (Point_3(0,1,0));
+  point_set.insert (Point_3(0,0,1));
+  point_set.insert (Point_3(1,1,1));
+
+  point_set.add_normal_map();
+  return CGAL::write_point_set(s, point_set);
+}
+
 bool read_point_set(std::string s)
 {
   CGAL::Point_set_3<Point_3, Vector_3> ps;
-  return CGAL::read_point_set(s, ps);
+  if(!CGAL::read_point_set(s, ps))
+    return false;
+  if(ps.size() != 5)
+  {
+    std::cerr <<"error: wrong number of points read."<<std::endl;
+    return false;
+  }
+  return true;
 }
 
 bool read_ps(std::string s)
 {
   std::vector<Point_3> points;
-  return CGAL::read_points(s, std::back_inserter(points));
+  if(!CGAL::read_points(s, std::back_inserter(points)))
+    return false;
+  if(points.size() != 5)
+  {
+    std::cerr <<"error: wrong number of points read."<<std::endl;
+    return false;
+  }
+  return true;
 }
 
 bool read_ps_with_np(std::string s)
 {
   std::vector<PointVectorPair> pv_pairs;
-  return CGAL::read_points(s,
-                           std::back_inserter(pv_pairs),
-                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                           normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  if(!CGAL::read_points(s,
+                        std::back_inserter(pv_pairs),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+    return false;
+  if(pv_pairs.size() != 5)
+  {
+    std::cerr <<"error: wrong number of points read."<<std::endl;
+    return false;
+  }
+  return true;
 }
 
 
 int main()
 {
-  assert(write_ps("test.xyz"));
-  assert(write_ps("test.off"));
-  assert(write_ps("test.ply"));
+  std::vector<std::string> filenames = {"test.xyz" ,
+                                        "test.off" ,
+                                        "test.ply"};
 #ifdef CGAL_LINKED_WITH_LASLIB
-  assert(write_ps("test.las"));
+  filenames.push_back("test.las");
 #endif
-
-  assert(read_point_set("data/read_test/ok_1.xyz"));
-  assert(read_point_set("data/read_test/ok_1.off"));
-  assert(read_point_set("data/read_test/simple.ply"));
-#ifdef CGAL_LINKED_WITH_LASLIB
-  assert(read_point_set("data/read_test/pig_points.las"));
-#endif
-
-  assert(read_ps("data/read_test/ok_1.xyz"));
-  assert(read_ps("data/read_test/ok_1.off"));
-  assert(read_ps("data/read_test/simple.ply"));
-#ifdef CGAL_LINKED_WITH_LASLIB
-  assert(read_ps("data/read_test/pig_points.las"));
-#endif
-
-  assert(read_ps_with_np("data/read_test/ok_1.xyz"));
-  assert(read_ps_with_np("data/read_test/ok_1.off"));
-  assert(read_ps_with_np("data/read_test/simple.ply"));
-#ifdef CGAL_LINKED_WITH_LASLIB
-  assert(read_ps_with_np("data/read_test/pig_points.las"));
-#endif
-
-
-
+  for(const std::string filename : filenames)
+  {
+    assert(write_ps(filename));
+    assert(read_ps(filename));
+    assert(write_ps_with_np(filename));
+    assert(read_ps_with_np(filename));
+    assert(write_point_set(filename));
+    assert(read_point_set(filename));
+  }
   return 0;
 }

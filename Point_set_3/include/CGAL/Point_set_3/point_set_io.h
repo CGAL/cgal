@@ -18,6 +18,9 @@
 
 namespace CGAL {
 
+/*!
+  \ingroup PkgPointSet3IO
+ */
 template <typename Point,
           typename Vector>
 bool read_point_set(const std::string& fname,
@@ -52,6 +55,9 @@ bool read_point_set(const char* fname,
                         ps);
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+ */
 template <typename Point,
           typename Vector>
 bool write_point_set(const std::string& fname,
@@ -76,6 +82,8 @@ bool write_point_set(const std::string& fname,
 #endif
   return false;
 }
+
+
 }
 
 #endif // CGAL_POINT_SET_IO_H

@@ -266,7 +266,7 @@ bool read_PLY(std::istream& stream,
    It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
 
-   \param stream input stream.
+   \param fname input file name.
    \param output output iterator over points.
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 

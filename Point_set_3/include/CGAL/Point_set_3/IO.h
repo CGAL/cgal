@@ -247,7 +247,7 @@ template <typename Point, typename Vector>
 bool
 read_XYZ(
     const char* fname,
-    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname);
   return read_XYZ(is, point_set);
@@ -257,7 +257,7 @@ template <typename Point, typename Vector>
 bool
 read_XYZ(
     const std::string& fname,
-    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return read_XYZ(fname.c_str(), point_set);
 }
@@ -638,8 +638,8 @@ write_PLY(
     const char* fname,
     const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  std::ifstream is(fname);
-  return write_PLY(is, point_set);
+  std::ofstream os(fname);
+  return write_PLY(os, point_set);
 }
 
 template <typename Point, typename Vector>
@@ -952,17 +952,17 @@ template <typename Point, typename Vector>
 bool
 write_LAS(
     const char* fname,
-    const CGAL::Point_set_3<Point, Vector>& point_set)
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  std::ifstream is(fname);
-  return write_LAS(is, point_set);
+  std::ofstream os(fname);
+  return write_LAS(os, point_set);
 }
 
 template <typename Point, typename Vector>
 bool
 write_LAS(
     const std::string& fname,
-    const CGAL::Point_set_3<Point, Vector>& point_set)
+     CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return write_LAS(fname.c_str(), point_set);
 }
@@ -995,8 +995,8 @@ write_XYZ(
     const char* fname,
     const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  std::ifstream is(fname);
-  return write_XYZ(is, point_set);
+  std::ofstream os(fname);
+  return write_XYZ(os, point_set);
 }
 
 template <typename Point, typename Vector>
@@ -1033,8 +1033,8 @@ write_OFF(
     const char* fname,
     const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  std::ifstream is(fname);
-  return write_OFF(is, point_set);
+  std::ofstream os(fname);
+  return write_OFF(os, point_set);
 }
 
 template <typename Point, typename Vector>

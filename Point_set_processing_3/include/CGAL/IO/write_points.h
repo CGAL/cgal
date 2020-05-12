@@ -29,12 +29,11 @@ namespace CGAL {
   - OFF
   - PLY
   - LAS
-  \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-  It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-  \tparam OutputIterator iterator over output points.
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
 
   \param fname the name of the input file.
-  \param output output iterator over points.
+  \param points the range of points that will be written.
   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
   \cgalNamedParamsBegin
