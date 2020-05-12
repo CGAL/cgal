@@ -6,12 +6,15 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
 #include <iostream>
+#include <iterator>
 #include <fstream>
+#include <unordered_map>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = CGAL::parameters;
@@ -22,6 +25,10 @@ template <typename Mesh>
 void test_stitch_boundary_cycles(const char* fname,
                                  const std::size_t expected_n)
 {
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor         face_descriptor;
+
   std::cout << "Testing stitch_boundary_cycles(); file: " << fname << "..." << std::flush;
 
   std::ifstream input(fname);
@@ -31,11 +38,33 @@ void test_stitch_boundary_cycles(const char* fname,
     return;
   }
 
+  // stitching a single cycle should work from any border halfedge
+  for(halfedge_descriptor h : halfedges(mesh))
+  {
+    if(!is_border(h, mesh))
+      continue;
+
+    std::unordered_map<vertex_descriptor, vertex_descriptor> v2v;
+    std::unordered_map<halfedge_descriptor, halfedge_descriptor> h2h;
+    std::unordered_map<face_descriptor, face_descriptor> f2f;
+
+    Mesh mesh_cpy;
+    CGAL::copy_face_graph(mesh, mesh_cpy,
+                          std::inserter(v2v, v2v.end()),
+                          std::inserter(h2h, h2h.end()),
+                          std::inserter(f2f, f2f.end()));
+
+    assert(is_border(h2h.at(h), mesh_cpy));
+
+    PMP::stitch_boundary_cycle(h2h.at(h), mesh_cpy);
+    assert(is_valid_polygon_mesh(mesh_cpy));
+  }
+
   std::size_t res = PMP::stitch_boundary_cycles(mesh);
   std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
 
   assert(res == expected_n);
-  assert(is_valid(mesh));
+  assert(is_valid_polygon_mesh(mesh));
 }
 
 template <typename Mesh>
