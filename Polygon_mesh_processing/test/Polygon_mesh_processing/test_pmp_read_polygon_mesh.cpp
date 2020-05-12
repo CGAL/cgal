@@ -4,7 +4,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Polygon_mesh_processing/read_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <fstream>
 #include <vector>
 
@@ -28,7 +28,7 @@ void do_test()
   for(const std::string& name : filenames)
   {
     Mesh g;
-    CGAL_assertion(CGAL::Polygon_mesh_processing::read_polygon_mesh(name, g));
+    CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g));
   }
 }
 

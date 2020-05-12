@@ -63,6 +63,10 @@
 /// Note that those functions will be exact as long as the underlying do-intersect predicates used are exact.
 /// In practice, it means that the 3D point type used must come from a \cgal kernel with exact predicates.
 /// \ingroup PkgPolygonMeshProcessingRef
+
+/// \defgroup pmp_io_grp I/O
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /*!
 \addtogroup PkgPolygonMeshProcessingRef
 
@@ -223,5 +227,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::transform()`
+- \link pmp_io_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink
 
 */

@@ -6,6 +6,8 @@ EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
 
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h
+
 # macros to be used inside the code
 ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
 ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
