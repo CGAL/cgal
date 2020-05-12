@@ -124,33 +124,6 @@ void fill_pairs(const Halfedge& he,
   }
 }
 
-template<typename Mesh,
-         typename CCMap,
-         typename FIMap>
-std::size_t num_component_wrapper(const Mesh& pmesh,
-                                  CCMap cc,
-                                  FIMap fim)
-{
-  return connected_components(pmesh, cc, parameters::face_index_map(fim));
-}
-
-//specialization if there is no default FIMap, create one
-template<typename Mesh,
-         typename CCMap>
-std::size_t num_component_wrapper(Mesh& pmesh,
-                                  CCMap cc,
-                                  boost::cgal_no_property::type)
-{
-  std::unordered_map<typename boost::graph_traits<Mesh>::face_descriptor, std::size_t> fim;
-
-  //init the map
-  std::size_t i=-1;
-  for(typename boost::graph_traits<Mesh>::face_descriptor f : faces(pmesh))
-    fim[f] = ++i;
-
-  return connected_components(pmesh, cc, parameters::face_index_map(boost::make_assoc_property_map(fim)));
-}
-
 template <typename Mesh>
 struct Default_halfedges_keeper
 {
@@ -210,8 +183,9 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
 
   typedef CGAL::dynamic_face_property_t<int>                                      Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type      Face_cc_map;
+
   Face_cc_map cc;
-  std::size_t num_component = 0;
+  std::size_t num_cc = 0;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
@@ -234,9 +208,8 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
   if(per_cc)
   {
     cc = get(Face_property_tag(), pmesh);
-
-    num_component = num_component_wrapper(pmesh, cc, CGAL::get_initialized_face_index_map(pmesh, np));
-    border_edges_per_cc.resize(num_component);
+    num_cc = connected_components(pmesh, cc, np);
+    border_edges_per_cc.resize(num_cc);
   }
 
   for(halfedge_descriptor he : halfedges(pmesh))
@@ -252,7 +225,7 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
 
   if(per_cc)
   {
-    for(std::size_t i=0; i<num_component; ++i)
+    for(std::size_t i=0; i<num_cc; ++i)
     {
       CGAL_assertion(halfedge_pairs.empty());
       CGAL_assertion(manifold_halfedge_pairs.empty());
