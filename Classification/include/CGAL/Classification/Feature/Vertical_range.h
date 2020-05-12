@@ -59,7 +59,7 @@ class Vertical_range : public Feature_base
   const Grid& grid;
   Image_float dtm;
   std::vector<float> values;
-  
+
 public:
   /*!
     \brief Constructs the feature.
@@ -81,15 +81,15 @@ public:
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
         {
-          float z_max = -std::numeric_limits<float>::max();
-          float z_min = std::numeric_limits<float>::max();
+          float z_max = -(std::numeric_limits<float>::max)();
+          float z_min = (std::numeric_limits<float>::max)();
 
           typename Grid::iterator end = grid.indices_end(i,j);
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_max = (std::max(z_max, z));
-            z_min = (std::min(z_min, z));
+            z_max = ((std::max)(z_max, z));
+            z_min = ((std::min)(z_min, z));
           }
 
           dtm(i,j) = z_max - z_min;
@@ -118,7 +118,7 @@ public:
       std::size_t J = grid.y(pt_index);
       return dtm(I,J);
     }
-    
+
     return values[pt_index];
   }
 

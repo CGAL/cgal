@@ -37,14 +37,14 @@ public:
 
     // For generating all the combinations of |k| distinct elements in the
     // interval [min, max] (both included)
-    Combination_enumerator(const int k, const int min, const int max)
-    : combi_(k), k_(k), min_(min), max_(max), max_at_pos_0_(max + 1 - k)
+    Combination_enumerator(const int k, const int imin, const int imax)
+    : combi_(k), k_(k), min_(imin), max_(imax), max_at_pos_0_(imax + 1 - k)
     {
-        CGAL_assertion_msg( min <= max, "min is larger than max");
-        CGAL_assertion_msg( 1 <= k && k <= ( max - min + 1 ), "wrong value of k");
+        CGAL_assertion_msg( imin <= imax, "min is larger than max");
+        CGAL_assertion_msg( 1 <= k && k <= ( imax - imin + 1 ), "wrong value of k");
         init();
     }
-    
+
     Combination_enumerator(const Combination_enumerator & c)
     : combi_(c.combi_), k_(c.k_), min_(c.min_), max_(c.max_), max_at_pos_0_(c.max_at_pos_0_)
     {}

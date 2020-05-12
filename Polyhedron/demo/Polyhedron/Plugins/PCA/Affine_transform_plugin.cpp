@@ -62,7 +62,7 @@ public:
     setPointContainer(0, new Pc(Vi::PROGRAM_NO_SELECTION, false));
     setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                  bbox.xmax(),bbox.ymax(),bbox.zmax()));
-    
+
     nb_points = points.size();
     for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
@@ -76,7 +76,7 @@ public:
     Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
       initializeBuffers(qobject_cast<Vi*>(v));
   }
-  
+
   void initializeBuffers(Viewer_interface *v) const
   {
     Pc* pc = getPointContainer(0);
@@ -192,7 +192,7 @@ public:
           || qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
           || qobject_cast<Scene_transform_point_set_item*>(scene->item(scene->mainSelectionIndex()));
   }
-  
+
   void init(QMainWindow* _mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     for(int i=0; i<3; ++i)
     {
@@ -247,7 +247,7 @@ public:
             this, &Polyhedron_demo_affine_transform_plugin::clear);
     connect(ui.undoButton, &QPushButton::clicked,
             this, &Polyhedron_demo_affine_transform_plugin::undo);
-    connect(ui.validatePushButton, &QPushButton::clicked, 
+    connect(ui.validatePushButton, &QPushButton::clicked,
             this, &Polyhedron_demo_affine_transform_plugin::end);
     //initial state is Translation: no need for this one
     ui.lineEditA->hide();
@@ -260,7 +260,7 @@ public:
   {
     dock_widget->hide();
   }
-  
+
 private:
   QDockWidget* dock_widget;
   Ui::TransformationWidget ui;
@@ -406,24 +406,24 @@ public:
 
 void Polyhedron_demo_affine_transform_plugin::grid()
 {
-      Facegraph_item* item = 
+      Facegraph_item* item =
           qobject_cast<Facegraph_item*>(scene->item(scene->mainSelectionIndex()));
       if(!item)
         return;
-      
-      
+
+
       FaceGraph m = *item->face_graph();
-      
+
       Scene_item::Bbox b = item->bbox();
-      
-      
-      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)), 
-                                                   Kernel::Point_3(b.max(0), b.min(1), b.min(2))))),
-          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)), 
-                                                Kernel::Point_3(b.min(0), b.max(1), b.min(2))))),
-          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)), 
-                                                Kernel::Point_3(b.min(0), b.min(1), b.max(2)))));
-      
+
+
+      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+                                                   Kernel::Point_3((b.max)(0), (b.min)(1), (b.min)(2))))),
+          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+                                                Kernel::Point_3((b.min)(0), (b.max)(1), (b.min)(2))))),
+          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+                                                Kernel::Point_3((b.min)(0), (b.min)(1), (b.max)(2)))));
+
       GridDialog dialog(mw);
       dialog.x_space_doubleSpinBox->setValue(x_t);
       dialog.y_space_doubleSpinBox->setValue(y_t);
@@ -437,7 +437,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       x_t = dialog.x_space_doubleSpinBox->value();
       y_t = dialog.y_space_doubleSpinBox->value();
       z_t = dialog.z_space_doubleSpinBox->value();
-      
+
       for(int i = 0; i < i_max; ++i)
       {
         for(int j = 0; j< j_max; ++j)
@@ -446,7 +446,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
           {
             FaceGraph e;
             CGAL::copy_face_graph(m,e);
-            
+
             Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, Kernel::Vector_3(i*x_t,j*y_t,k*z_t));
             CGAL::Polygon_mesh_processing::transform(trans, e);
             Facegraph_item* t_item = new Facegraph_item(e);
@@ -495,7 +495,7 @@ void Polyhedron_demo_affine_transform_plugin::transformed_killed(){
 
 void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const QString name, const Scene_item::Bbox &bbox){
   QApplication::setOverrideCursor(Qt::PointingHandCursor);
-  
+
   double x=(bbox.xmin()+bbox.xmax())/2;
   double y=(bbox.ymin()+bbox.ymax())/2;
   double z=(bbox.zmin()+bbox.zmax())/2;
@@ -603,7 +603,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
                                                    new_ps->point(idx).z() - c.z);
       new_ps->point(idx) = Kernel::Point_3 (vec.x(), vec.y(), vec.z());
     }
-    
+
     new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
     scene->replaceItem(tr_item_index,new_item);
     delete transform_points_item;

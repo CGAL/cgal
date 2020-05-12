@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Gael Guennebaud (gael.guennebaud@inria.fr)
 
@@ -32,7 +32,7 @@ namespace internal{
   * While the queue has not reached its maximum capacity, elements are
   * inserted as they will be in a heap, the root (top()) being such that
   * Compare(top(),x)=false for any x in the queue.
-  * Once the queue is full, trying to insert x in the queue will have no effect if 
+  * Once the queue is full, trying to insert x in the queue will have no effect if
   * Compare(x,top())=false. Otherwise, the element at the root of the heap is removed
   * and x is inserted so as to keep the heap property.
   */

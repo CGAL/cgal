@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include <QObject>
@@ -30,12 +30,12 @@ class Sphere_implicit_function :
 
 public:
   virtual QString name() const { return "Sphere function"; }
-  
+
   virtual double operator()(double x, double y, double z) const
   {
     return (x*x + y*y + z*z - radius);
   }
-  
+
   virtual Bbox bbox() const
   {
     double r = radius * 1.2;

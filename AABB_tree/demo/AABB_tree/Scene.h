@@ -60,22 +60,22 @@ public:
 public:
     // types
     typedef CGAL::Bbox_3 Bbox;
-    
+
 private:
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>         Facet_Primitive;
     typedef CGAL::AABB_traits<Kernel, Facet_Primitive>                  Facet_Traits;
     typedef CGAL::AABB_tree<Facet_Traits>                               Facet_tree;
-  
+
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_Primitive;
     typedef CGAL::AABB_traits<Kernel, Edge_Primitive>                   Edge_Traits;
     typedef CGAL::AABB_tree<Edge_Traits>                                Edge_tree;
-    
+
     typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
-    
+
     enum Cut_planes_types {
         NONE, UNSIGNED_FACETS, SIGNED_FACETS, UNSIGNED_EDGES, CUT_SEGMENTS
     };
-  
+
 public:
     QGLContext* context;
     void draw(CGAL::QGLViewer*);
@@ -102,7 +102,7 @@ private:
     FT m_max_distance_function;
     typedef std::pair<Point,FT> Point_distance;
     Point_distance m_distance_function[100][100];
-  
+
     // frame
     ManipulatedFrame* m_frame;
     bool m_view_plane;
@@ -112,10 +112,10 @@ private:
     // An aabb_tree indexing polyhedron facets/segments
     Facet_tree m_facet_tree;
     Edge_tree m_edge_tree;
-    
+
     Cut_planes_types m_cut_plane;
     bool are_buffers_initialized;
-  
+
 private:
     // utility functions
     Vector random_vector();
@@ -135,7 +135,7 @@ private:
 
     template <typename Tree>
     void compute_distance_function(const Tree& tree);
-    
+
     template <typename Tree>
     void sign_distance_function(const Tree& tree);
 
@@ -182,7 +182,7 @@ public:
     void clear_points() { m_points.clear(); changed(); }
     void clear_segments() { m_segments.clear(); changed(); }
     void clear_cutting_plane();
-    
+
     // fast distance setter
     void set_fast_distance(bool b) { m_fast_distance = b; update_grid_size(); }
 
@@ -192,13 +192,13 @@ public:
     void generate_boundary_points(const unsigned int nb_points);
     void generate_boundary_segments(const unsigned int nb_slices);
     void generate_points_in(const unsigned int nb_points,
-        const double min, const double max);
+        const double vmin, const double vmax);
 
     // algorithms/refine
     void refine_loop();
     void refine_bisection(const FT max_sqlen);
 
-    // distance functions 
+    // distance functions
     void signed_distance_function();
     void unsigned_distance_function();
     void unsigned_distance_function_to_edges();
@@ -215,7 +215,7 @@ public:
     bool m_view_segments;
     bool m_view_polyhedron;
 
-    // benchmarks 
+    // benchmarks
     enum {DO_INTERSECT,
         ANY_INTERSECTION,
         NB_INTERSECTIONS,
@@ -254,7 +254,7 @@ public:
     //timer sends a top when all the events are finished
     void timerEvent(QTimerEvent *);
 
-  
+
 public slots:
     // cutting plane
     void cutting_plane(bool override = false);

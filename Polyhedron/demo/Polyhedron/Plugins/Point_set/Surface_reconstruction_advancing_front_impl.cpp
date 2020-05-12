@@ -92,7 +92,7 @@ struct Priority_with_structure_coherence {
 
   Structuring& structuring;
   double bound;
-  
+
   Priority_with_structure_coherence(Structuring& structuring,
                                     double bound)
     : structuring (structuring), bound (bound)
@@ -150,7 +150,7 @@ void get_planes_from_shape_map (const Point_set& points,
   int plane_idx = shape_map[sorted_indices.front()];
   if (plane_idx != -1)
     begin = sorted_indices.begin();
-  
+
   for (std::vector<Point_set::Index>::iterator it = sorted_indices.begin();
        it != sorted_indices.end(); ++ it)
   {
@@ -211,7 +211,7 @@ SMesh* advancing_front (const Point_set& points,
     for (std::size_t i = 0; i < structuring.size(); ++ i)
       structured.push_back (structuring.point(i));
     std::cerr << structured.size() << " structured point(s) generated" << std::endl;
-    
+
     Priority_with_structure_coherence<Structuring> priority
       (structuring, 10. * sampling);
     Construct construct(*mesh, structured);

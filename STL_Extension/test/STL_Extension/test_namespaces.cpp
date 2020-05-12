@@ -26,10 +26,12 @@ int main()
 
   CGAL::cpp0x::copy_n(arr.begin(), 3, arr2.begin());
   std::copy_n(arr.begin(), 3, arr2.begin());
-  
-  CGAL::cpp0x::prev(arr.end());
-  std::prev(arr.end());
-  CGAL::cpp0x::next(arr.begin());
-  std::next(arr.begin());
+
+  CGAL::cpp0x::array<int, 3>::iterator it = CGAL::cpp0x::prev(arr.end());
+  it = std::prev(arr.end());
+  it = CGAL::cpp0x::next(arr.begin());
+  it = std::next(arr.begin());
+  CGAL_USE(it);
+
   return 0;
 }

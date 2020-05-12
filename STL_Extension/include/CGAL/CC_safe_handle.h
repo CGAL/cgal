@@ -14,7 +14,7 @@
 
 namespace CGAL {
 
-// CC_safe_handle is a helper that store a CC handle and its erase 
+// CC_safe_handle is a helper that store a CC handle and its erase
 // counter value (value when the CC_safe_handle instance was created).
 // The is_zombie() function allows to know if the pointee was erased since.
 template <typename CC_iterator>

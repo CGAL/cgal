@@ -67,7 +67,7 @@ Refer to those respective papers for the details of the implementation.
 If index property maps are not provided through the constructor of the class, internal property maps must
 be available and initialized.
 
-\sa \link PkgBGLHelper `CGAL::set_halfedgeds_items_id()`\endlink
+\sa \link BGLGraphExternalIndices `CGAL::set_halfedgeds_items_id()`\endlink
 */
 
 template<class Traits,
@@ -413,7 +413,7 @@ public:
                                  + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize)
                                  + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
 
-    return std::max(peakNodeUsage, peakQueueUsage);
+    return (std::max)(peakNodeUsage, peakQueueUsage);
   }
 
   /// \endcond
@@ -2199,7 +2199,7 @@ public:
 
   Internal property maps must be available and initialized.
 
-  \sa \link PkgBGLHelper `CGAL::set_halfedgeds_items_id()`\endlink
+  \sa \link BGLGraphExternalIndices `CGAL::set_halfedgeds_items_id()`\endlink
   */
   Surface_mesh_shortest_path(const Triangle_mesh& tm,
                              const Traits& traits = Traits())

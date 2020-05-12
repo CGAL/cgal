@@ -266,7 +266,7 @@ public :
     painter->setPen(pen);
     painter->setBrush(brush);
     SMesh::Property_map<halfedge_descriptor,float> u,v;
-    
+
     u = graph->add_property_map<halfedge_descriptor,float>("h:u", 0.0f).first;
     v = graph->add_property_map<halfedge_descriptor,float>("h:v", 0.0f).first;
 
@@ -417,7 +417,7 @@ public Q_SLOTS:
   void replacePolyline()
   {
     if(current_uv_item){
-      Scene_textured_facegraph_item* t_item = 
+      Scene_textured_facegraph_item* t_item =
           qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
      t_item->add_border_edges(std::vector<float>(0));
     }
@@ -443,14 +443,14 @@ public Q_SLOTS:
         graphics_scene->removeItem(graphics_scene->items().first());
 
       graphics_scene->addItem(current_uv_item);
-      ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), 
+      ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(),
                                         Qt::KeepAspectRatio);
       ui_widget.component_numberLabel->setText(
             QString("Component : %1/%2").arg(current_uv_item->current_component()+1)
             .arg(current_uv_item->number_of_components()));
       dock_widget->setWindowTitle(tr("UVMapping for %1")
                                   .arg(current_uv_item->item_name()));
-      Scene_textured_facegraph_item* t_item = 
+      Scene_textured_facegraph_item* t_item =
           qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
      t_item->add_border_edges(
             current_uv_item->concatenated_borders());
@@ -605,7 +605,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   QElapsedTimer time;
   time.start();
   // add textured polyhedon to the scene
-  
+
   // \todo for surface_mesh
   Base_face_graph tMesh = *pMesh;
   std::vector<bool> mark(num_halfedges(tMesh)/2,false);
@@ -907,14 +907,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   } //end for each component
 
   QApplication::restoreOverrideCursor();
-  QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
+  QPointF pmin(FLT_MAX, FLT_MAX), pmax(-FLT_MAX, -FLT_MAX);
 
   SMesh::Property_map<halfedge_descriptor, float> umap;
   SMesh::Property_map<halfedge_descriptor, float> vmap;
-  
+
   umap = tMesh.add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
   vmap = tMesh.add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
-  
+
   tMesh.property_stats(std::cerr);
   Base_face_graph::Halfedge_iterator it;
   for(it = tMesh.halfedges_begin();
@@ -926,14 +926,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     FT v = uv_pm[target(hd, sMesh)].y();
     put(umap, *it, static_cast<float>(u));
     put(vmap, *it, static_cast<float>(v));
-    if(u<min.x())
-      min.setX(u);
-    if(u>max.x())
-      max.setX(u);
-    if(v<min.y())
-      min.setY(v);
-    if(v>max.y())
-      max.setY(v);
+    if(u<pmin.x())
+      pmin.setX(u);
+    if(u>pmax.x())
+      pmax.setX(u);
+    if(v<pmin.y())
+      pmin.setY(v);
+    if(v>pmax.y())
+      pmax.setY(v);
   }
 
   Components* components = new Components(0);
@@ -948,7 +948,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   Scene_textured_facegraph_item* new_item = new Scene_textured_facegraph_item(tMesh);
-  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(min, max));
+  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(pmin, pmax));
   projection->set_item_name(new_item_name);
 
   new_item->setName(new_item_name);
@@ -964,12 +964,12 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   graphics_scene->addItem(projection);
   projections[new_item] = projection;
   if(current_uv_item){
-    Scene_textured_facegraph_item* t_item = 
+    Scene_textured_facegraph_item* t_item =
         qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
    t_item->add_border_edges(std::vector<float>(0));
   }
   current_uv_item = projection;
-  Scene_textured_facegraph_item* t_item = 
+  Scene_textured_facegraph_item* t_item =
       qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
   t_item->add_border_edges(
         current_uv_item->concatenated_borders());

@@ -3,9 +3,9 @@ namespace ArrTraits {
 \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines AdaptableUnaryFunction 
+\cgalRefines AdaptableUnaryFunction
 
-\cgalHasModel ArrangementBasicTraits_2::Construct_min_vertex_2 
+\cgalHasModel ArrangementBasicTraits_2::Construct_min_vertex_2
 
 */
 
@@ -17,9 +17,9 @@ public:
 /// @{
 
 /*!
-returns the lexicographically smaller (left) endpoint of `xc`. 
-*/ 
-ArrTraits::Point_2 operator()(ArrTraits::X_monotone_curve_2 xc); 
+returns the lexicographically smaller (left) endpoint of `xc`.
+*/
+ArrTraits::Point_2 operator()(ArrTraits::X_monotone_curve_2 xc);
 
 /// @}
 

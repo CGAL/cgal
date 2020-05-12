@@ -6,7 +6,7 @@
    Halfedge_handle h; //or Vertex_handle or Facet_handle
    for(One_ring_iterator<Halfedge_handle> circ(h); circ; ++circ) {
      Halfedge_handle h_neighbor = circ;
-   } 
+   }
 */
 template<typename Mesh, class T>
 struct One_ring_iterator;
@@ -18,9 +18,9 @@ struct One_ring_iterator<Mesh, typename boost::graph_traits<Mesh>::vertex_descri
 
   operator bool() const { return first || circ != end; }
   operator typename boost::graph_traits<Mesh>::vertex_descriptor() const { return target(opposite(*circ, mesh), mesh); }
-  One_ring_iterator& operator++() { 
+  One_ring_iterator& operator++() {
     first = false;
-    ++circ; 
+    ++circ;
     return *this;
   }
 
@@ -56,7 +56,7 @@ struct One_ring_iterator<Mesh, typename boost::graph_traits<Mesh>::face_descript
     if(circ != end) { iterate_to_non_border(); }
     return *this;
   }
-  
+
   void iterate_to_non_border() {
     while(is_border_edge(opposite(*circ, mesh), mesh)) {
       first = false;

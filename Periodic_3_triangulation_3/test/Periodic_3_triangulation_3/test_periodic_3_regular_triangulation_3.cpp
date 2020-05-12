@@ -188,7 +188,7 @@ public:
 
     std::size_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
-      hidden_point_count +=  iter->hidden_points().size();  
+      hidden_point_count +=  iter->hidden_points().size();
     assert(hidden_point_count == 0);
   }
 

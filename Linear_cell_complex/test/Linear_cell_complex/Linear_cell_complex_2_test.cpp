@@ -78,7 +78,7 @@ int main()
     std::cout<<" Error during Test_LCC_2<LCC2>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_2<LCC2b>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2,
                                     CGAL::Linear_cell_complex_traits<2>,
@@ -88,7 +88,7 @@ int main()
     std::cout<<" Error during Test_LCC_2<LCC2b>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_2<LCC2c>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2,
                                     CGAL::Linear_cell_complex_traits<2>,

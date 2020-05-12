@@ -50,6 +50,14 @@ typedef Edge_container Ec;
 typedef Point_container Pc;
 typedef Viewer_interface Vi;
 
+QVector4D cgal_plane_to_vector4d(EPICK::Plane_3 plane) {
+  return {
+    static_cast<float>(-plane.a()),
+    static_cast<float>(-plane.b()),
+    static_cast<float>(-plane.c()),
+    static_cast<float>(-plane.d()) };
+}
+
 // The special Scene_item only for triangles
 class Scene_intersection_item : public CGAL::Three::Scene_item_rendering_helper
 {
@@ -71,7 +79,7 @@ public :
          delete alphaSlider;
   }
   void compute_bbox() const Q_DECL_OVERRIDE{}
-  
+
   void gl_initialization(Vi* viewer)
   {
     if(!isInit(viewer))
@@ -105,7 +113,7 @@ public :
   {
     getTriangleContainer(0)->reset_vbos(ALL);
     getEdgeContainer(0)->reset_vbos(ALL);
-    
+
     getTriangleContainer(0)->allocate(Tc::Flat_vertices,
           vertices->data(), static_cast<int>(vertices->size()*sizeof(float)));
     getTriangleContainer(0)->allocate(Tc::Flat_normals, normals->data(),
@@ -131,7 +139,7 @@ public :
       getEdgeContainer(0)->setFlatDataSize(edges->size());
     }
   }
-  
+
   //Displays the item
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
@@ -148,7 +156,7 @@ public :
     viewer->makeCurrent();
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
-    QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
+    QVector4D cp = cgal_plane_to_vector4d(plane);
     getTriangleContainer(0)->setPlane(cp);
     getTriangleContainer(0)->setShrinkFactor(shrink_factor);
     // positions_poly is also used for the faces in the cut plane
@@ -161,11 +169,11 @@ public :
     if(is_fast)
       return;
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
-    QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
+    QVector4D cp = cgal_plane_to_vector4d(plane);
     getEdgeContainer(0)->setPlane(cp);
     getEdgeContainer(0)->setColor(QColor(Qt::black));
     getEdgeContainer(0)->draw(viewer, true);
-    
+
   }
 
   void setFast(bool b)
@@ -180,48 +188,38 @@ public :
     Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
     n = n / CGAL::sqrt(n*n);
 
+    auto push_normal = [this](auto n) {
+      normals->push_back(static_cast<float>(n.x()));
+      normals->push_back(static_cast<float>(n.y()));
+      normals->push_back(static_cast<float>(n.z()));
+    };
+
+    auto push_vertex = [this, &offset](const auto& p) {
+      this->vertices->push_back(static_cast<float>(p.x()+offset.x));
+      this->vertices->push_back(static_cast<float>(p.y()+offset.y));
+      this->vertices->push_back(static_cast<float>(p.z()+offset.z));
+    };
+
+    auto push_edge = [this, &offset](const auto& pa, const auto& pb) {
+      this->edges->push_back(static_cast<float>(pa.x()+offset.x));
+      this->edges->push_back(static_cast<float>(pa.y()+offset.y));
+      this->edges->push_back(static_cast<float>(pa.z()+offset.z));
+      this->edges->push_back(static_cast<float>(pb.x()+offset.x));
+      this->edges->push_back(static_cast<float>(pb.y()+offset.y));
+      this->edges->push_back(static_cast<float>(pb.z()+offset.z));
+    };
+
     for (int i = 0; i<3; i++)
     {
-      normals->push_back(n.x());
-      normals->push_back(n.y());
-      normals->push_back(n.z());
+      push_normal(n);
     }
+    push_vertex(pa);
+    push_vertex(pb);
+    push_vertex(pc);
 
-    vertices->push_back(pa.x()+offset.x);
-    vertices->push_back(pa.y()+offset.y);
-    vertices->push_back(pa.z()+offset.z);
-
-    vertices->push_back(pb.x()+offset.x);
-    vertices->push_back(pb.y()+offset.y);
-    vertices->push_back(pb.z()+offset.z);
-
-    vertices->push_back(pc.x()+offset.x);
-    vertices->push_back(pc.y()+offset.y);
-    vertices->push_back(pc.z()+offset.z);
-
-    edges->push_back(pa.x()+offset.x);
-    edges->push_back(pa.y()+offset.y);
-    edges->push_back(pa.z()+offset.z);
-
-    edges->push_back(pb.x()+offset.x);
-    edges->push_back(pb.y()+offset.y);
-    edges->push_back(pb.z()+offset.z);
-
-    edges->push_back(pb.x()+offset.x);
-    edges->push_back(pb.y()+offset.y);
-    edges->push_back(pb.z()+offset.z);
-
-    edges->push_back(pc.x()+offset.x);
-    edges->push_back(pc.y()+offset.y);
-    edges->push_back(pc.z()+offset.z);
-
-    edges->push_back(pc.x()+offset.x);
-    edges->push_back(pc.y()+offset.y);
-    edges->push_back(pc.z()+offset.z);
-
-    edges->push_back(pa.x()+offset.x);
-    edges->push_back(pa.y()+offset.y);
-    edges->push_back(pa.z()+offset.z);
+    push_edge(pa, pb);
+    push_edge(pb, pc);
+    push_edge(pc, pa);
 
     for(int i=0; i<3; i++)
     {
@@ -229,9 +227,9 @@ public :
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
 
-      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
-      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
-      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
+      barycenters->push_back(static_cast<float>((pa[0]+pb[0]+pc[0])/3.0 + offset.x));
+      barycenters->push_back(static_cast<float>((pa[1]+pb[1]+pc[1])/3.0 + offset.y));
+      barycenters->push_back(static_cast<float>((pa[2]+pb[2]+pc[2])/3.0 + offset.z));
     }
   }
 
@@ -240,10 +238,10 @@ public :
   QMenu* contextMenu() Q_DECL_OVERRIDE
   {
     QMenu* menu = Scene_item::contextMenu();
-  
+
     const char* prop_name = "Menu modified by Scene_surface_mesh_item.";
     bool menuChanged = menu->property(prop_name).toBool();
-  
+
     if(!menuChanged) {
       menu->addSeparator();
       QMenu *container = new QMenu(tr("Alpha value"));
@@ -255,7 +253,7 @@ public :
         setAlpha(alphaSlider->value());
         redraw();
       });
-      
+
       container->addAction(sliderAction);
       menu->addMenu(container);
       setProperty("menu_changed", true);
@@ -267,10 +265,10 @@ public :
   {
     return m_alpha ;
   }
-  
+
   void setAlpha(int a) Q_DECL_OVERRIDE
   {
-    m_alpha = a / 255.0f;    
+    m_alpha = a / 255.0f;
     redraw();
   }
 private:
@@ -395,10 +393,10 @@ struct Scene_c3t3_item_priv {
 
   void invalidate_stats()
   {
-    min_edges_length = std::numeric_limits<float>::max();
+    min_edges_length = (std::numeric_limits<float>::max)();
     max_edges_length = 0;
     mean_edges_length = 0;
-    min_dihedral_angle = std::numeric_limits<float>::max();
+    min_dihedral_angle = (std::numeric_limits<float>::max)();
     max_dihedral_angle = 0;
     mean_dihedral_angle = 0;
     nb_subdomains = 0;
@@ -406,8 +404,8 @@ struct Scene_c3t3_item_priv {
     nb_cnc = 0;
     nb_vertices = 0;
     nb_tets = 0;
-    smallest_radius_radius = std::numeric_limits<float>::max();
-    smallest_edge_radius = std::numeric_limits<float>::max();
+    smallest_radius_radius = (std::numeric_limits<float>::max)();
+    smallest_edge_radius = (std::numeric_limits<float>::max)();
     biggest_v_sma_cube = 0;
     computed_stats = false;
   }
@@ -503,6 +501,28 @@ struct Scene_c3t3_item_priv {
   bool is_valid;
   bool is_surface;
   bool last_intersection;
+
+  void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
+  {
+    normals.push_back(static_cast<float>(n.x()));
+    normals.push_back(static_cast<float>(n.y()));
+    normals.push_back(static_cast<float>(n.z()));
+  }
+  void push_point(std::vector<float>& points, const EPICK::Point_3& p,
+                  const CGAL::qglviewer::Vec& offset) const
+  {
+    points.push_back(static_cast<float>(p.x()+offset.x));
+    points.push_back(static_cast<float>(p.y()+offset.y));
+    points.push_back(static_cast<float>(p.z()+offset.z));
+  }
+  void push_edge(std::vector<float>& edges,
+                 const EPICK::Point_3& pa,
+                 const EPICK::Point_3& pb,
+                 const CGAL::qglviewer::Vec& offset) const
+  {
+    push_point(edges, pa, offset);
+    push_point(edges, pb, offset);
+  }
 };
 
 struct Set_show_tetrahedra {
@@ -521,14 +541,14 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
-  
+
   d->is_surface = is_surface;
   d->is_grid_shown = !is_surface;
   d->show_tetrahedra = !is_surface;
   d->last_intersection = !d->show_tetrahedra;
-  
+
   setTriangleContainer(C3t3_faces, new Tc(Vi::PROGRAM_C3T3, false));
-  
+
   setEdgeContainer(CNC, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(Grid_edges, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(C3t3_edges, new Ec(Vi::PROGRAM_C3T3_EDGES, false));
@@ -549,7 +569,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3, bool is_surface)
   : Scene_group_item("unnamed")
   , d(new Scene_c3t3_item_priv(c3t3, this))
 {
-  d->reset_cut_plane();  
+  d->reset_cut_plane();
   common_constructor(is_surface);
 }
 
@@ -748,8 +768,8 @@ Scene_c3t3_item::build_histogram()
   const int text_margin = 3;
   const int text_height = 34;
 
-  histogram_ = QPixmap(width, height + text_height);
-  histogram_.fill(QColor(255, 255, 255));
+  d->histogram_ = QPixmap(width, height + text_height);
+  d->histogram_.fill(QColor(255, 255, 255));
 #else
   // Create an histogram_ and display it
   const int height = 140;
@@ -933,7 +953,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   if(renderingMode() == Flat ||
      renderingMode() == FlatPlusEdges)
   {
-    QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+    QVector4D cp = cgal_plane_to_vector4d(this->plane());
     getTriangleContainer(C3t3_faces)->setPlane(cp);
     float shrink_factor = getShrinkFactor();
     getTriangleContainer(C3t3_faces)->setShrinkFactor(shrink_factor);
@@ -948,7 +968,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         d->intersection->setFast(false);
       else
         d->intersection->setFast(true);
-      
+
       if(!d->frame->isManipulated() && !d->areInterBufFilled(viewer))
       {
         //initGL
@@ -964,11 +984,11 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   }
   if(d->is_grid_shown)
   {
-    //viewer->makeCurrent(); //messes with the depthPeeling 
+    //viewer->makeCurrent(); //messes with the depthPeeling
     getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
     QMatrix4x4 f_mat;
     for (int i = 0; i<16; i++)
-      f_mat.data()[i] = d->frame->matrix()[i];
+      f_mat.data()[i] = static_cast<float>(d->frame->matrix()[i]);
     getEdgeContainer(Grid_edges)->setFrameMatrix(f_mat);
     getEdgeContainer(Grid_edges)->draw(viewer, true);
   }
@@ -1005,17 +1025,17 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
      getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
       QMatrix4x4 f_mat;
       for (int i = 0; i<16; i++)
-        f_mat.data()[i] = d->frame->matrix()[i];
+        f_mat.data()[i] = static_cast<float>(d->frame->matrix()[i]);
       getEdgeContainer(Grid_edges)->setFrameMatrix(f_mat);
       getEdgeContainer(Grid_edges)->draw(viewer, true);
     }
-    
-    QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+
+    QVector4D cp = cgal_plane_to_vector4d(this->plane());
     getEdgeContainer(C3t3_edges)->setPlane(cp);
     getEdgeContainer(C3t3_edges)->setIsSurface(d->is_surface);
     getEdgeContainer(C3t3_edges)->setColor(QColor(Qt::black));
     getEdgeContainer(C3t3_edges)->draw(viewer, true);
-    
+
     if(d->show_tetrahedra){
       if(!d->frame->isManipulated())
         d->intersection->setFast(false);
@@ -1058,20 +1078,20 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
       computeElements();
       initializeBuffers(viewer);
     }
-    
-    
-    QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+
+
+    QVector4D cp = cgal_plane_to_vector4d(this->plane());
     getPointContainer(C3t3_points)->setPlane(cp);
     getPointContainer(C3t3_points)->setIsSurface(d->is_surface);
     getPointContainer(C3t3_points)->setColor(this->color());
     getPointContainer(C3t3_points)->draw(viewer, true);
-    
+
     if(d->is_grid_shown)
     {
       getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
       QMatrix4x4 f_mat;
       for (int i = 0; i<16; i++)
-        f_mat.data()[i] = d->frame->matrix()[i];
+        f_mat.data()[i] = static_cast<float>(d->frame->matrix()[i]);
       getEdgeContainer(Grid_edges)->setFrameMatrix(f_mat);
       getEdgeContainer(Grid_edges)->draw(viewer, true);
     }
@@ -1086,100 +1106,41 @@ void Scene_c3t3_item_priv::draw_triangle(const Tr::Bare_point& pa,
                                          const Tr::Bare_point& pb,
                                          const Tr::Bare_point& pc) const
 {
-#undef darker
   Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
   n = n / CGAL::sqrt(n*n);
   const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
 
   for (int i = 0; i<3; i++)
   {
-    normals.push_back(n.x());
-    normals.push_back(n.y());
-    normals.push_back(n.z());
+    push_normal(normals, n);
   }
-  positions_poly.push_back(pa.x()+offset.x);
-  positions_poly.push_back(pa.y()+offset.y);
-  positions_poly.push_back(pa.z()+offset.z);
-
-  positions_poly.push_back(pb.x()+offset.x);
-  positions_poly.push_back(pb.y()+offset.y);
-  positions_poly.push_back(pb.z()+offset.z);
-
-  positions_poly.push_back(pc.x()+offset.x);
-  positions_poly.push_back(pc.y()+offset.y);
-  positions_poly.push_back(pc.z()+offset.z);
+  push_point(positions_poly, pa, offset);
+  push_point(positions_poly, pb, offset);
+  push_point(positions_poly, pc, offset);
 
   for(int i=0; i<3; ++i)
   {
-   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
-   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
-   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
+    push_point(positions_barycenter, CGAL::centroid(pa, pb, pc), offset);
   }
-
-
 }
 
 void Scene_c3t3_item_priv::draw_triangle_edges(const Tr::Bare_point& pa,
                                                const Tr::Bare_point& pb,
                                                const Tr::Bare_point& pc) const
 {
-#undef darker
   const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
-  positions_lines.push_back(pa.x()+offset.x);
-  positions_lines.push_back(pa.y()+offset.y);
-  positions_lines.push_back(pa.z()+offset.z);
-
-  positions_lines.push_back(pb.x()+offset.x);
-  positions_lines.push_back(pb.y()+offset.y);
-  positions_lines.push_back(pb.z()+offset.z);
-
-  positions_lines.push_back(pb.x()+offset.x);
-  positions_lines.push_back(pb.y()+offset.y);
-  positions_lines.push_back(pb.z()+offset.z);
-
-  positions_lines.push_back(pc.x()+offset.x);
-  positions_lines.push_back(pc.y()+offset.y);
-  positions_lines.push_back(pc.z()+offset.z);
-
-  positions_lines.push_back(pc.x()+offset.x);
-  positions_lines.push_back(pc.y()+offset.y);
-  positions_lines.push_back(pc.z()+offset.z);
-
-  positions_lines.push_back(pa.x()+offset.x);
-  positions_lines.push_back(pa.y()+offset.y);
-  positions_lines.push_back(pa.z()+offset.z);
-
+  push_edge(positions_lines, pa, pb, offset);
+  push_edge(positions_lines, pb, pc, offset);
+  push_edge(positions_lines, pc, pa, offset);
 }
 void Scene_c3t3_item_priv::draw_triangle_edges_cnc(const Tr::Bare_point& pa,
                                                    const Tr::Bare_point& pb,
                                                    const Tr::Bare_point& pc) const
 {
-#undef darker
   const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
-  positions_lines_not_in_complex.push_back(pa.x()+offset.x);
-  positions_lines_not_in_complex.push_back(pa.y()+offset.y);
-  positions_lines_not_in_complex.push_back(pa.z()+offset.z);
-
-  positions_lines_not_in_complex.push_back(pb.x()+offset.x);
-  positions_lines_not_in_complex.push_back(pb.y()+offset.y);
-  positions_lines_not_in_complex.push_back(pb.z()+offset.z);
-
-  positions_lines_not_in_complex.push_back(pb.x()+offset.x);
-  positions_lines_not_in_complex.push_back(pb.y()+offset.y);
-  positions_lines_not_in_complex.push_back(pb.z()+offset.z);
-
-  positions_lines_not_in_complex.push_back(pc.x()+offset.x);
-  positions_lines_not_in_complex.push_back(pc.y()+offset.y);
-  positions_lines_not_in_complex.push_back(pc.z()+offset.z);
-
-  positions_lines_not_in_complex.push_back(pc.x()+offset.x);
-  positions_lines_not_in_complex.push_back(pc.y()+offset.y);
-  positions_lines_not_in_complex.push_back(pc.z()+offset.z);
-
-  positions_lines_not_in_complex.push_back(pa.x()+offset.x);
-  positions_lines_not_in_complex.push_back(pa.y()+offset.y);
-  positions_lines_not_in_complex.push_back(pa.z()+offset.z);
-
+  push_edge(positions_lines_not_in_complex, pa, pb, offset);
+  push_edge(positions_lines_not_in_complex, pb, pc, offset);
+  push_edge(positions_lines_not_in_complex, pc, pa, offset);
 }
 
 double Scene_c3t3_item_priv::complex_diag() const {
@@ -1214,7 +1175,7 @@ QMenu* Scene_c3t3_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
-    
+
     QMenu *container = new QMenu(tr("Alpha value"));
     container->menuAction()->setProperty("is_groupable", true);
     QWidgetAction *sliderAction = new QWidgetAction(0);
@@ -1229,7 +1190,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     );
     container->addAction(sliderAction);
     menu->addMenu(container);
-    
+
     container = new QMenu(tr("Tetrahedra's Shrink Factor"));
     sliderAction = new QWidgetAction(0);
     connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
@@ -1273,7 +1234,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     connect(actionShowGrid, SIGNAL(toggled(bool)),
             this, SLOT(show_grid(bool)));
 
-    
+
     menu->setProperty(prop_name, true);
   }
   return menu;
@@ -1287,8 +1248,8 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     item->getTriangleContainer(Scene_c3t3_item::C3t3_faces)->initializeBuffers(viewer);
     item->getTriangleContainer(Scene_c3t3_item::C3t3_faces)->setFlatDataSize(
           positions_poly_size);
-    
-    
+
+
     positions_poly.clear();
     positions_poly.shrink_to_fit();
     normals.clear();
@@ -1310,7 +1271,7 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     item->getPointContainer(Scene_c3t3_item::C3t3_points)->initializeBuffers(viewer);
     item->getPointContainer(Scene_c3t3_item::C3t3_points)->setFlatDataSize(
           positions_lines_size);
-    
+
     positions_lines.clear();
     positions_lines.shrink_to_fit();
   }
@@ -1380,7 +1341,7 @@ void Scene_c3t3_item_priv::computeIntersections(CGAL::Three::Viewer_interface* v
   positions_barycenter.clear();
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
-        boost::make_function_output_iterator(ComputeIntersection(*this)));  
+        boost::make_function_output_iterator(ComputeIntersection(*this)));
   intersection->gl_initialization(viewer);
 }
 
@@ -1435,18 +1396,18 @@ void Scene_c3t3_item_priv::computeSpheres()
     Tr::Bare_point center(wp2p(vit->point()).x() + offset.x,
                           wp2p(vit->point()).y() + offset.y,
                           wp2p(vit->point()).z() + offset.z);
-    float radius = vit->point().weight() ;
+    double radius = vit->point().weight() ;
     typedef unsigned char UC;
     tr_vertices.push_back(*vit);
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
                         CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
-    
+
   }
   spheres->invalidateOpenGLBuffers();
 }
 
 void Scene_c3t3_item_priv::computeElements()
-{  
+{
   if(!alphaSlider)
    {
      alphaSlider = new QSlider(::Qt::Horizontal);
@@ -1454,7 +1415,7 @@ void Scene_c3t3_item_priv::computeElements()
      alphaSlider->setMaximum(255);
      alphaSlider->setValue(255);
    }
-  
+
   positions_poly.clear();
   positions_grid.clear();
   normals.clear();
@@ -1468,29 +1429,29 @@ void Scene_c3t3_item_priv::computeElements()
   //The grid
   {
 
-    float x = (2 * (float)complex_diag()) / 10.0;
-    float y = (2 * (float)complex_diag()) / 10.0;
+    float x = (2 * (float)complex_diag()) / 10.0f;
+    float y = (2 * (float)complex_diag()) / 10.0f;
     for (float u = 0; u < 11; u += 1.f)
     {
 
       positions_grid.push_back(-(float)complex_diag() + x* u);
       positions_grid.push_back(-(float)complex_diag());
-      positions_grid.push_back(0.0);
+      positions_grid.push_back(0.0f);
 
       positions_grid.push_back(-(float)complex_diag() + x* u);
       positions_grid.push_back((float)complex_diag());
-      positions_grid.push_back(0.0);
+      positions_grid.push_back(0.0f);
     }
     for (float v = 0; v<11; v += 1.f)
     {
 
       positions_grid.push_back(-(float)complex_diag());
       positions_grid.push_back(-(float)complex_diag() + v * y);
-      positions_grid.push_back(0.0);
+      positions_grid.push_back(0.0f);
 
       positions_grid.push_back((float)complex_diag());
       positions_grid.push_back(-(float)complex_diag() + v * y);
-      positions_grid.push_back(0.0);
+      positions_grid.push_back(0.0f);
     }
   }
 
@@ -1511,9 +1472,9 @@ void Scene_c3t3_item_priv::computeElements()
       const Tr::Bare_point& pc = wp2p(cell->vertex((index + 3) & 3)->point());
 
       QColor color = colors[cell->surface_patch_index(index)];
-      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+      f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
+      f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
+      f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       if ((index % 2 == 1) == c3t3.is_in_complex(cell))
         draw_triangle(pb, pa, pc);
       else draw_triangle(pa, pb, pc);
@@ -1615,7 +1576,7 @@ void Scene_c3t3_item::show_spheres(bool b)
         QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
         CGAL::Three::Three::information(msg);
         CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
-        
+
       });
       d->spheres->setName("Protecting spheres");
       d->spheres->setRenderingMode(Gouraud);
@@ -1784,10 +1745,10 @@ QString Scene_c3t3_item::computeStats(int type)
 
   if(!d->computed_stats)
   {
-    float nb_edges = 0;
-    float total_edges = 0;
-    float nb_angle = 0;
-    float total_angle = 0;
+    double nb_edges = 0;
+    double total_edges = 0;
+    double nb_angle = 0;
+    double total_angle = 0;
 
     for (C3t3::Facet_iterator
       fit = d->c3t3.facets_begin(),
@@ -1799,19 +1760,19 @@ QString Scene_c3t3_item::computeStats(int type)
       const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point());
       const Tr::Bare_point& pb = wp2p(cell->vertex((index + 2) & 3)->point());
       const Tr::Bare_point& pc = wp2p(cell->vertex((index + 3) & 3)->point());
-      float edges[3];
+      double edges[3];
       edges[0]=(std::sqrt(CGAL::squared_distance(pa, pb)));
       edges[1]=(std::sqrt(CGAL::squared_distance(pa, pc)));
       edges[2]=(std::sqrt(CGAL::squared_distance(pb, pc)));
       for(int i=0; i<3; ++i)
       {
-        if(edges[i] < d->min_edges_length){ d->min_edges_length = edges[i]; }
-        if(edges[i] > d->max_edges_length){ d->max_edges_length = edges[i]; }
+        if(edges[i] < d->min_edges_length){ d->min_edges_length = static_cast<float>(edges[i]); }
+        if(edges[i] > d->max_edges_length){ d->max_edges_length = static_cast<float>(edges[i]); }
         total_edges+=edges[i];
         ++nb_edges;
       }
     }
-    d->mean_edges_length = total_edges/(float)nb_edges;
+    d->mean_edges_length = static_cast<float>(total_edges/nb_edges);
     for(Tr::Finite_vertices_iterator
         vit = d->c3t3.triangulation().finite_vertices_begin(),
         end =  d->c3t3.triangulation().finite_vertices_end();
@@ -1859,10 +1820,10 @@ QString Scene_c3t3_item::computeStats(int type)
       const Tr::Bare_point& p1 = wp2p(cit->vertex(1)->point());
       const Tr::Bare_point& p2 = wp2p(cit->vertex(2)->point());
       const Tr::Bare_point& p3 = wp2p(cit->vertex(3)->point());
-      float v = std::abs(CGAL::volume(p0, p1, p2, p3));
-      float circumradius = std::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
+      double v = std::abs(CGAL::volume(p0, p1, p2, p3));
+      double circumradius = std::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
       //find smallest edge
-      float edges[6];
+      double edges[6];
       edges[0] = std::sqrt(CGAL::squared_distance(p0, p1));
       edges[1] = std::sqrt(CGAL::squared_distance(p0, p2));
       edges[2] = std::sqrt(CGAL::squared_distance(p0, p3));
@@ -1870,60 +1831,59 @@ QString Scene_c3t3_item::computeStats(int type)
       edges[4] = std::sqrt(CGAL::squared_distance(p2, p3));
       edges[5] = std::sqrt(CGAL::squared_distance(p1, p3));
 
-      float min_edge = edges[0];
+      double min_edge = edges[0];
       for(int i=1; i<6; ++i)
       {
        if(edges[i]<min_edge)
          min_edge=edges[i];
       }
-      float sumar = std::sqrt(CGAL::squared_area(p0,p1,p2))+std::sqrt(CGAL::squared_area(p1,p2,p3))+
+      double sumar = std::sqrt(CGAL::squared_area(p0,p1,p2))+std::sqrt(CGAL::squared_area(p1,p2,p3))+
           std::sqrt(CGAL::squared_area(p2,p3,p0)) + std::sqrt(CGAL::squared_area(p3,p1,p0));
-      float inradius = 3*v/sumar;
-      float smallest_edge_radius = min_edge/circumradius*std::sqrt(6)/4.0;//*sqrt(6)/4 so that the perfect tet ratio is 1
-      float smallest_radius_radius = inradius/circumradius*3; //*3 so that the perfect tet ratio is 1 instead of 1/3
-      float biggest_v_sma_cube = v/std::pow(min_edge,3)*6*std::sqrt(2);//*6*sqrt(2) so that the perfect tet ratio is 1 instead
+      double inradius = 3*v/sumar;
+      double smallest_edge_radius = min_edge/circumradius*std::sqrt(6)/4.0;//*sqrt(6)/4 so that the perfect tet ratio is 1
+      double smallest_radius_radius = inradius/circumradius*3; //*3 so that the perfect tet ratio is 1 instead of 1/3
+      double biggest_v_sma_cube = v/std::pow(min_edge,3)*6*std::sqrt(2);//*6*sqrt(2) so that the perfect tet ratio is 1 instead
 
       if(smallest_edge_radius < d->smallest_edge_radius)
-        d->smallest_edge_radius = smallest_edge_radius;
+        d->smallest_edge_radius = static_cast<float>(smallest_edge_radius);
 
       if(smallest_radius_radius < d->smallest_radius_radius)
-        d->smallest_radius_radius = smallest_radius_radius;
+        d->smallest_radius_radius = static_cast<float>(smallest_radius_radius);
 
       if(biggest_v_sma_cube > d->biggest_v_sma_cube)
-        d->biggest_v_sma_cube = biggest_v_sma_cube;
+        d->biggest_v_sma_cube = static_cast<float>(biggest_v_sma_cube);
+
+      auto update_min_max_dihedral_angle = [this](double a) {
+        if(a < this->d->min_dihedral_angle) { this->d->min_dihedral_angle = static_cast<float>(a); }
+        if(a > this->d->max_dihedral_angle) { this->d->max_dihedral_angle = static_cast<float>(a); }
+      };
 
       double a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p1, p2, p3)));
-      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
-      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
       a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p2, p1, p3)));
-      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
-      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
       a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p3, p1, p2)));
-      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
-      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
       a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p1, p2, p0, p3)));
-      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
-      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
       a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p1, p3, p0, p2)));
-      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
-      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
       a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p2, p3, p0, p1)));
-      if(a < d->min_dihedral_angle) { d->min_dihedral_angle = a; }
-      if(a > d->max_dihedral_angle) { d->max_dihedral_angle = a; }
+      update_min_max_dihedral_angle(a);
       total_angle+=a;
       ++nb_angle;
     }
-    d->mean_dihedral_angle = total_angle/(float)nb_angle;
+    d->mean_dihedral_angle = static_cast<float>(total_angle/nb_angle);
     d->nb_subdomains = sub_ids.size();
     d->nb_vertices = d->c3t3.number_of_vertices_in_complex();
     d->nb_tets = d->c3t3.number_of_cells();
@@ -1998,7 +1958,7 @@ void Scene_c3t3_item::invalidateOpenGLBuffers()
   getEdgeContainer(CNC)->reset_vbos(ALL);
   getEdgeContainer(Grid_edges)->reset_vbos(ALL);
   getPointContainer(C3t3_points)->reset_vbos(ALL);
-  
+
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -2077,52 +2037,52 @@ void Scene_c3t3_item::computeElements()const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const_cast<Scene_c3t3_item*>(this)->d->computeElements();
-  
+
   getTriangleContainer(C3t3_faces)->allocate(
         Tc::Flat_vertices, d->positions_poly.data(),
         static_cast<int>(d->positions_poly.size()*sizeof(float)));
-  
+
   getTriangleContainer(C3t3_faces)->allocate(
         Tc::Flat_normals,
         d->normals.data(),
         static_cast<int>(d->normals.size()*sizeof(float)));
-  
-  
+
+
   getTriangleContainer(C3t3_faces)->allocate(
         Tc::FColors,
         d->f_colors.data(),
         static_cast<int>(d->f_colors.size()*sizeof(float)));
-  
+
   getTriangleContainer(C3t3_faces)->allocate(
         Tc::Facet_centers,
         d->positions_barycenter.data(),
         static_cast<int>(d->positions_barycenter.size()*sizeof(float)));
-  
+
   d->positions_poly_size = d->positions_poly.size();
-  
+
   getEdgeContainer(C3t3_edges)->allocate(
         Ec::Vertices,
         d->positions_lines.data(),
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
   d->positions_lines_size = d->positions_lines.size();
-  
+
   getEdgeContainer(CNC)->allocate(
         Ec::Vertices,
         d->positions_lines_not_in_complex.data(),
         static_cast<int>(d->positions_lines_not_in_complex.size()*sizeof(float)));
-  
+
   d->positions_lines_not_in_complex_size = d->positions_lines_not_in_complex.size();
-  
+
   getEdgeContainer(Grid_edges)->allocate(
         Ec::Vertices,
         d->positions_grid.data(),
         static_cast<int>(d->positions_grid.size()*sizeof(float)));
-  
+
   getPointContainer(C3t3_points)->allocate(
         Pc::Vertices,
         d->positions_lines.data(),
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
-  
+
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
 }

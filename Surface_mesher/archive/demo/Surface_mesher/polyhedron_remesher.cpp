@@ -74,12 +74,12 @@ void usage(std::string error = "")
       it != string_options.end();
       ++it)
     std::cerr << "--" << it->first << " default value is \""
-	      << it->second << "\".\n";
+              << it->second << "\".\n";
   for(Double_options::iterator it = double_options.begin();
       it != double_options.end();
       ++it)
     std::cerr << "--" << it->first << " default value is "
-	      << it->second << ".\n";
+              << it->second << ".\n";
   exit(EXIT_FAILURE);
 }
 
@@ -130,23 +130,23 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
           parse_argv(argc, argv, extra_args + 2);
         }
       else if( arg.substr(0, 2) == "--" )
-	{
-	  Double_options::iterator opt_it =
-	    double_options.find(arg.substr(2, arg.length()-2));
-	  if( opt_it != double_options.end() )
-	    {
-	      if( argc < (3 + extra_args) )
-		usage((arg + " must be followed by a double!").c_str());
-	      std::stringstream s;
-	      double val;
-	      s << argv[extra_args + 2];
-	      s >> val;
-	      if( !s )
-		usage(("Bad double after " + arg + "!").c_str());
-	      opt_it->second = val;
-	      parse_argv(argc, argv, extra_args + 2);
-	    }
-	  else
+        {
+          Double_options::iterator opt_it =
+            double_options.find(arg.substr(2, arg.length()-2));
+          if( opt_it != double_options.end() )
+            {
+              if( argc < (3 + extra_args) )
+                usage((arg + " must be followed by a double!").c_str());
+              std::stringstream s;
+              double val;
+              s << argv[extra_args + 2];
+              s >> val;
+              if( !s )
+                usage(("Bad double after " + arg + "!").c_str());
+              opt_it->second = val;
+              parse_argv(argc, argv, extra_args + 2);
+            }
+          else
           {
             String_options::iterator opt_it =
                 string_options.find(arg.substr(2, arg.length()-2));
@@ -161,12 +161,12 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
             else
               usage(("Invalid option " + arg).c_str());
           }
-	}
+        }
       else
-	{
-	  filename = argv[1+extra_args];
-	  parse_argv(argc, argv, extra_args + 1);
-	}
+        {
+          filename = argv[1+extra_args];
+          parse_argv(argc, argv, extra_args + 1);
+        }
     }
 }
 
@@ -211,12 +211,12 @@ int main(int argc, char **argv) {
     CGAL_assertion(in);
     while( !in.eof() )
       {
-	Point_3 p;
-	if(in >> p)
-	  {
-	    tr.insert(p);
-	    --n;
-	  }
+        Point_3 p;
+        if(in >> p)
+          {
+            tr.insert(p);
+            --n;
+          }
       }
     CGAL_assertion( n == 0 );
     double_options["number_of_initial_points"] = 0;

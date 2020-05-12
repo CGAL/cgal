@@ -3,12 +3,12 @@ namespace CGAL {
 /*!
 \addtogroup boolean_complement Complement Functions
 \ingroup PkgBooleanSetOperations2Ref
-\anchor ref_bso_complement 
+\anchor ref_bso_complement
 
 The `complement` function is overloaded. Depending on the
-type of polygon `pgn` the complement is either a single (general) polygon with 
-holes, or several (general) poylgons with holes. In the latter case 
-the `complement function` writes them into an output iterator 
+type of polygon `pgn` the complement is either a single (general) polygon with
+holes, or several (general) poylgons with holes. In the latter case
+the `complement function` writes them into an output iterator
 `oi`.
 
 \param pgn The input polygon for the `complement` function. It may be of the type
@@ -59,37 +59,36 @@ namespace CGAL {
 /*!
 \addtogroup boolean_difference Difference Functions
 \ingroup PkgBooleanSetOperations2Ref
-\anchor ref_bso_difference 
+\anchor ref_bso_difference
 
-Each one of these functions computes the difference between two given 
-polygons `p1` and `p2`, and inserts the resulting polygons 
-with holes into an output container through the output iterator `oi`. 
-The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
+Each one of these functions computes the difference between two given
+polygons `p1` and `p2`, and inserts the resulting polygons
+with holes into an output container through the output iterator `oi`.
+The value type of the `OutputIterator` is either
+`Polygon_with_holes_2` or
+`General_polygon_with_holes_2`.
 
-The signature of the function is
-\code
-  OutputIterator difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
-\endcode
+The signature of the function is:
+  - `%OutputIterator %difference(const Type1 & p1, const Type2 & p2, %OutputIterator oi);`
+
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `difference()` function are any of the following combinations.
+The types of the parameters of the `difference()` function are any of the following combinations.
 
-<div align="left"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Type1</th><th>Type2</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
+<div align="left">
+<table cellpadding=3 border="1">
+<tr><th> Type1</th><th>Type2</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
 
 \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
 \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -182,33 +181,32 @@ namespace CGAL {
 /*!
 \addtogroup boolean_do_intersect Intersection Testing Functions
 \ingroup PkgBooleanSetOperations2Ref
-\anchor ref_bso_do_intersect 
+\anchor ref_bso_do_intersect
 
-Each one of these functions computes if the interior of two given 
-polygons `p1` and `p2` intersect. 
+Each one of these functions computes if the interior of two given
+polygons `p1` and `p2` intersect.
 
-The signature of the function is
-\code
-  bool do_intersect(const Type1 & p1, const Type2 & p2);
-\endcode
+The signature of the function is:
+  - `bool do_intersect(const Type1 & p1, const Type2 & p2);`
+
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `do_intersect()` function are any of the following combinations.
+The types of the parameters of the \link ref_bso_do_intersect `do_intersect()` \endlink function are any of the following combinations.
 
-<div align="left"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Type1 </th><th>Type2</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
+<div align="left">
+<table cellpadding=3 border="1">
+<tr><th> Type1 </th><th>Type2</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
 
 
 \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -256,7 +254,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container> & p1,
 template <class Traits>
 bool do_intersect(const General_polygon_2<Traits> & p1,
                   const General_polygon_2<Traits> & p2);
-  
+
 /*!
   returns `true` if the general polygons `p1` and `p2` intersect in their interior.
  */
@@ -280,18 +278,18 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon> & p1,
                   const General_polygon_with_holes_2<Polygon> & p2);
 
   /*!
-    returns `true`, if the set of general polygons (or general 
-    polygons with holes) in the given range intersect in their interior, 
-    and `false` otherwise. (The value type of the input iterator is 
-    used to distinguish between the two). 
+    returns `true`, if the set of general polygons (or general
+    polygons with holes) in the given range intersect in their interior,
+    and `false` otherwise. (The value type of the input iterator is
+    used to distinguish between the two).
   */
 template <class InputIterator>
 bool do_intersect(InputIterator begin, InputIterator end);
 
   /*!
-    returns `true`, if the set of general polygons and general 
-    polygons with holes in the given two ranges respectively intersect in 
-    their interior, and `false` otherwise. 
+    returns `true`, if the set of general polygons and general
+    polygons with holes in the given two ranges respectively intersect in
+    their interior, and `false` otherwise.
   */
 template <class InputIterator1, class InputIterator2>
 bool do_intersect(InputIterator1 pgn_begin1,
@@ -308,38 +306,37 @@ namespace CGAL {
 \ingroup PkgBooleanSetOperations2Ref
 \anchor ref_bso_intersection
 
-Each one of these functions computes the intersection of two given 
-polygons `p1` and `p2`, inserts the resulting polygons with 
-holes into an output container through a given output iterator 
-`oi`, and returns the output iterator. The value type of the 
-`OutputIterator` is either `Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
+Each one of these functions computes the intersection of two given
+polygons `p1` and `p2`, inserts the resulting polygons with
+holes into an output container through a given output iterator
+`oi`, and returns the output iterator. The value type of the
+`OutputIterator` is either `Polygon_with_holes_2` or
+`General_polygon_with_holes_2`.
 
 
-The signature of the function is
-\code
-  OutputIterator intersection(const Type1 & p1, const Type2 & p2, OutputIterator oi);
-\endcode
+The signature of the function is:
+  - `%OutputIterator %intersection(const Type1 & p1, const Type2 & p2, %OutputIterator oi);`
+
 
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `intersection()` function are any of the following combinations.
+The types of the parameters of the `intersection()` function are any of the following combinations.
 
 
-<div align="left"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Type1</th><th> Type2</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
+<div align="left">
+<table cellpadding=3 border="1">
+<tr><th> Type1</th><th> Type2</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
 
 
 \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
@@ -433,23 +430,23 @@ OutputIterator intersection(const General_polygon_with_holes_2<Polygon> & p1,
 
 
 /*!
-  computes the intersection of the general polygons (or general polygons with 
-  holes) in the given range. (The value type of the input iterator is 
-  used to distinguish between the two.) The result, represented by a set 
-  of general polygon with holes, is written into the output iterator `oi`. 
-  The output iterator is returned. The value type of the `OutputIterator` is 
-  `Traits::Polygon_with_holes_2`. 
+  computes the intersection of the general polygons (or general polygons with
+  holes) in the given range. (The value type of the input iterator is
+  used to distinguish between the two.) The result, represented by a set
+  of general polygon with holes, is written into the output iterator `oi`.
+  The output iterator is returned. The value type of the `OutputIterator` is
+  `Traits::Polygon_with_holes_2`.
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi);
 
 /*!
-  computes the intersection of the general polygons and general polygons 
-  with holes in the given two ranges. The result, represented by a set 
-  of general polygon with holes, is written into the output iterator `oi`. 
-  The output iterator is returned. The value type of the `OutputIterator` is 
-  `Traits::Polygon_with_holes_2`. 
+  computes the intersection of the general polygons and general polygons
+  with holes in the given two ranges. The result, represented by a set
+  of general polygon with holes, is written into the output iterator `oi`.
+  The output iterator is returned. The value type of the `OutputIterator` is
+  `Traits::Polygon_with_holes_2`.
 */
 template <class InputIterator1, class InputIterator2,
 class OutputIterator>
@@ -470,34 +467,33 @@ namespace CGAL {
 \ingroup PkgBooleanSetOperations2Ref
 \anchor ref_bso_union
 
-Each one of these functions computes the union of two given polygons 
-`p1` and `p2`. If the two given polygons overlap, it returns 
-`true`, and places the resulting polygon in `p`. Otherwise, it 
-returns `false`. 
+Each one of these functions computes the union of two given polygons
+`p1` and `p2`. If the two given polygons overlap, it returns
+`true`, and places the resulting polygon in `p`. Otherwise, it
+returns `false`.
 
 
-The signature of the function is
-\code
-  bool join(const Type1 & p1, const Type2 & p2, General_polygon_with_holes_2 & res);
-\endcode
+The signature of the function is:
+  - `bool join(const Type1 & p1, const Type2 & p2, General_polygon_with_holes_2 & res);`
+
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `join()` function are any of the following combinations.
+The types of the parameters of the `join()` function are any of the following combinations.
 
-<div align="left"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Type1</th><th> Type2</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
+<div align="left">
+<table cellpadding=3 border="1">
+<tr><th> Type1</th><th> Type2</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
 
 \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
 \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -589,25 +585,25 @@ bool join(const General_polygon_with_holes_2<Polygon> & p1,
 
 
 /*!
-  computes the union of the general polygons (or general polygons with 
-  holes) in the given range. (The value type of the input iterator is 
-  used to distinguish between the two.) The result, represented by a set 
-  of general polygon with holes, is written into the output iterator `oi`. 
-  The output iterator is 
-  returned. The value type of the `OutputIterator` is 
-  `Traits::Polygon_with_holes_2`. 
+  computes the union of the general polygons (or general polygons with
+  holes) in the given range. (The value type of the input iterator is
+  used to distinguish between the two.) The result, represented by a set
+  of general polygon with holes, is written into the output iterator `oi`.
+  The output iterator is
+  returned. The value type of the `OutputIterator` is
+  `Traits::Polygon_with_holes_2`.
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator join(InputIterator begin, InputIterator end,
 OutputIterator oi);
 
   /*!
-    computes the union of the general polygons and general polygons 
-    with holes in the given two ranges. The result, represented by a set 
-    of general polygon with holes, is written into the output iterator `oi`. 
-    The output iterator is 
-    returned. The value type of the `OutputIterator` is 
-    `Traits::Polygon_with_holes_2`. 
+    computes the union of the general polygons and general polygons
+    with holes in the given two ranges. The result, represented by a set
+    of general polygon with holes, is written into the output iterator `oi`.
+    The output iterator is
+    returned. The value type of the `OutputIterator` is
+    `Traits::Polygon_with_holes_2`.
   */
 template <class InputIterator1, class InputIterator2,
 class OutputIterator>
@@ -624,34 +620,32 @@ namespace CGAL {
 \ingroup PkgBooleanSetOperations2Ref
 \anchor ref_bso_oriented_side
 
-Each one of these functions returns `ON_POSITIVE_SIDE` if the two 
-given polygons `p1` and `p2` intersect in their interior, 
-`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at 
-all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect 
-only in their boundaries. 
+Each one of these functions returns `ON_POSITIVE_SIDE` if the two
+given polygons `p1` and `p2` intersect in their interior,
+`ON_NEGATIVE_SIDE` if `p1` and `p2` do not intersect at
+all, and `ON_ORIENTED_BOUNDARY` if `p1` and `p2` intersect
+only in their boundaries.
 
-The signature of the function is
-\code
-  Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);
-\endcode
+The signature of the function is:
+  - `Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);`
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `oriented_side()` function are any of the following combinations.
+The types of the parameters of the `oriented_side()` function are any of the following combinations.
 
-<div align="left"> 
-<table cellpadding=3 border="1"> 
-<tr><th>Type1</th><th>Type2</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
+<div align="left">
+<table cellpadding=3 border="1">
+<tr><th>Type1</th><th>Type2</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
 
 \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
 
@@ -707,37 +701,35 @@ namespace CGAL {
 /*!
 \addtogroup boolean_symmetric_difference Symmetric Difference Functions
 \ingroup PkgBooleanSetOperations2Ref
-\anchor ref_bso_symmetric_difference 
+\anchor ref_bso_symmetric_difference
 
-Each one of these functions computes the symmetric difference between 
-two given polygons `p1` and `p2`, and inserts the resulting 
-polygons with holes into an output container through the output 
-iterator `oi`. The value type of the `OutputIterator` is either 
-`Polygon_with_holes_2` or 
-`General_polygon_with_holes_2`. 
+Each one of these functions computes the symmetric difference between
+two given polygons `p1` and `p2`, and inserts the resulting
+polygons with holes into an output container through the output
+iterator `oi`. The value type of the `OutputIterator` is either
+`Polygon_with_holes_2` or
+`General_polygon_with_holes_2`.
 
-The signature of the function is
-\code
-  OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
-\endcode
+The signature of the function is:
+  - `%OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2, %OutputIterator oi);`
 
 \cgalHeading{Parameters}
 
-The types of the paramters of the `symmetric_difference()` function are any of the following combinations.
+The types of the parameters of the `symmetric_difference()` function are any of the following combinations.
 
-<div align="left"> 
-<table cellpadding=3 border="1"> 
-<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr> 
-<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr> 
-<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr> 
-</table> 
-</div> 
+<div align="left">
+<table cellpadding=3 border="1">
+<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
 
 
 \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
@@ -760,20 +752,20 @@ OutputIterator symmetric_difference(const Polygon_2<Kernel, Container> & p1,
 
 
 template <class Kernel, class Container, class OutputIterator>
-OutputIterator 
+OutputIterator
 symmetric_difference(const Polygon_2<Kernel, Container> & p1,
                      const Polygon_with_holes_2<Kernel, Container> & p2,
                      OutputIterator oi);
 
 template <class Kernel, class Container, class OutputIterator>
-OutputIterator 
+OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container> & p1,
                      const Polygon_2<Kernel, Container> & p2,
                      OutputIterator oi);
 
 
 template <class Kernel, class Container, class OutputIterator>
-OutputIterator 
+OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container> & p1,
                      const Polygon_with_holes_2<Kernel, Container> & p2,
                      OutputIterator oi);
@@ -786,53 +778,53 @@ OutputIterator symmetric_difference(const General_polygon_2<Traits> & p1,
 
 
 template <class Traits, class OutputIterator>
-OutputIterator 
+OutputIterator
 symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
                      const General_polygon_2<Traits> & p2,
                      OutputIterator oi);
 
 
 template <class Traits, class OutputIterator>
-OutputIterator 
+OutputIterator
 symmetric_difference(const General_polygon_2<Traits> & p1,
                      const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
                      OutputIterator oi);
 
 
 template <class Polygon, class OutputIterator>
-OutputIterator 
+OutputIterator
 symmetric_difference(const General_polygon_with_holes_2<Polygon> & p1,
                      const General_polygon_with_holes_2<Polygon> & p2,
                      OutputIterator oi);
 
   /*!
-    computes the symmetric difference of the general polygons (or general 
-    polygons with holes) in the given range. A point is contained in the 
-    symmetric difference, if and only if it is contained in an odd number of 
-    input polygons. (The value type of the input iterator is used to 
-    distinguish between the two.) The result, represented by a set 
-    of general polygon with holes, is inserted into an output container 
-    through a given output iterator `oi`. The output iterator is 
-    returned. The value type of the `OutputIterator` is 
-    `Traits::Polygon_with_holes_2`. 
+    computes the symmetric difference of the general polygons (or general
+    polygons with holes) in the given range. A point is contained in the
+    symmetric difference, if and only if it is contained in an odd number of
+    input polygons. (The value type of the input iterator is used to
+    distinguish between the two.) The result, represented by a set
+    of general polygon with holes, is inserted into an output container
+    through a given output iterator `oi`. The output iterator is
+    returned. The value type of the `OutputIterator` is
+    `Traits::Polygon_with_holes_2`.
   */
 template <class InputIterator, class OutputIterator>
 OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
                                     OutputIterator oi);
 
   /*!
-    computes the symmetric difference of the general polygons and general polygons 
-    with holes in the given two ranges. A point is contained in the 
-    symmetric difference, if and only if it is contained in an odd number of 
-    input polygons. The result, represented by a set of general polygon with 
-    holes, is inserted into an output container through a given output 
-    iterator `oi`. The output iterator is returned. The value type of 
-    the `OutputIterator` is `Traits::Polygon_with_holes_2`. 
+    computes the symmetric difference of the general polygons and general polygons
+    with holes in the given two ranges. A point is contained in the
+    symmetric difference, if and only if it is contained in an odd number of
+    input polygons. The result, represented by a set of general polygon with
+    holes, is inserted into an output container through a given output
+    iterator `oi`. The output iterator is returned. The value type of
+    the `OutputIterator` is `Traits::Polygon_with_holes_2`.
   */
 template <class InputIterator1, class InputIterator2, class OutputIterator>
-OutputIterator symmetric_difference(InputIterator1 pgn_begin1, 
+OutputIterator symmetric_difference(InputIterator1 pgn_begin1,
                                     InputIterator1 pgn_end1,
-                                    InputIterator2 pgn_begin2, 
+                                    InputIterator2 pgn_begin2,
                                     InputIterator2 pgn_end2,
                                     OutputIterator oi);
 /// @}

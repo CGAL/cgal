@@ -42,9 +42,9 @@ class SCENE_EXPORT Scene  :
 public:
   QList<QModelIndex> getModelIndexFromId(int id) const;
   int getIdFromModelIndex(QModelIndex modelId) const;
-  enum Columns { NameColumn = 0, 
-                 ColorColumn, 
-                 RenderingModeColumn, 
+  enum Columns { NameColumn = 0,
+                 ColorColumn,
+                 RenderingModeColumn,
                  VisibleColumn,
                  ABColumn,
                  LastColumn = ABColumn,
@@ -66,7 +66,7 @@ public:
   const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
   Q_INVOKABLE CGAL::Three::Scene_item* item(int) const Q_DECL_OVERRIDE;
   int item_id(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
-  
+
   //! \todo Replace Index based selection functionality with those
   //! functions.
   ///@{
@@ -148,7 +148,7 @@ public:
     if(!b)
       allItemsChanged();
   }
-  
+
 public Q_SLOTS:
   //!Specifies a group as Expanded for the Geometric Objects view
   void setExpanded(QModelIndex);
@@ -299,7 +299,7 @@ private:
   QMap<CGAL::Three::Viewer_interface*, QOpenGLVertexArrayObject*> vaos;
   mutable QOpenGLBuffer vbo[2];
   Bbox last_bbox;
-  //the scene will ignore the itemChanged() signals while this is true. 
+  //the scene will ignore the itemChanged() signals while this is true.
   bool dont_emit_changes;
   bool visibility_recentering_enabled;
   bool sort_lists(QVector<QList<int> >&sorted_lists, bool up);
@@ -338,7 +338,7 @@ private:
   QAbstractProxyModel *proxy;
   Scene *scene;
   mutable int size;
-  
+
 }; // end class SceneDelegate
 
 #endif // SCENE_H

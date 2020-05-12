@@ -97,7 +97,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  const GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  const GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, tm));
 
   typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
@@ -794,7 +794,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 
   VPMS vpm_S = choose_parameter(get_parameter(snp, internal_np::vertex_point), get_property_map(vertex_point, tm_S));
   VPMT vpm_T = choose_parameter(get_parameter(tnp, internal_np::vertex_point), get_property_map(vertex_point, tm_T));
-  const GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+  const GT gt = choose_parameter<GT>(get_parameter(snp, internal_np::geom_traits));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Gather unique points in source range..." << std::endl;
@@ -1185,13 +1185,13 @@ std::size_t snap_borders(TriangleMesh& tm_A,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
-  std::vector<halfedge_descriptor> border_vertices_1;
-  border_halfedges(tm_A, std::back_inserter(border_vertices_1));
-  std::vector<halfedge_descriptor> border_vertices_2;
-  border_halfedges(tm_B, std::back_inserter(border_vertices_2));
+  std::vector<halfedge_descriptor> border_vertices_A;
+  border_halfedges(tm_A, std::back_inserter(border_vertices_A));
+  std::vector<halfedge_descriptor> border_vertices_B;
+  border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_1, tm_A, tolerance_map_A,
-                                                      border_vertices_2, tm_B, tolerance_map_B,
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_A, tm_A, tolerance_map_A,
+                                                      border_vertices_B, tm_B, tolerance_map_B,
                                                       false /*not self snapping*/, np_A, np_B);
 }
 
@@ -1211,19 +1211,19 @@ std::size_t snap_borders(TriangleMesh& tm_A,
   typedef CGAL::dynamic_vertex_property_t<FT>                                    Vertex_property_tag;
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Tolerance_map;
 
-  std::vector<halfedge_descriptor> border_vertices_1;
-  std::vector<halfedge_descriptor> border_vertices_2;
-  border_halfedges(tm_A, std::back_inserter(border_vertices_1));
-  border_halfedges(tm_B, std::back_inserter(border_vertices_2));
+  std::vector<halfedge_descriptor> border_vertices_A;
+  std::vector<halfedge_descriptor> border_vertices_B;
+  border_halfedges(tm_A, std::back_inserter(border_vertices_A));
+  border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_1, tolerance_map_A, tol_mx, tm_A, np_A);
-  Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_A);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_2, tolerance_map_B, tol_mx, tm_B, np_B);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_A, tolerance_map_A, tol_mx, tm_A, np_A);
+  Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_B);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_B, tolerance_map_B, tol_mx, tm_B, np_B);
 
-  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_1, tm_A, tolerance_map_A,
-                                                      border_vertices_2, tm_B, tolerance_map_B,
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_A, tm_A, tolerance_map_A,
+                                                      border_vertices_B, tm_B, tolerance_map_B,
                                                       false /*no self snapping*/, np_A, np_B);
 }
 
@@ -1296,7 +1296,7 @@ std::size_t snap_borders(TriangleMesh& tm,
   std::vector<halfedge_descriptor> border_vertices;
   border_halfedges(tm, std::back_inserter(border_vertices));
 
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   Tolerance_map tolerance_map = get(Vertex_property_tag(), tm);
   internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tolerance_map, tol_mx, tm, np);
 

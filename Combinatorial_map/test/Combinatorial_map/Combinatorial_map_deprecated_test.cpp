@@ -33,7 +33,7 @@ bool test()
     CGAL::make_combinatorial_tetrahedron(map);
     CGAL::make_combinatorial_hexahedron(map);
   }
-  
+
   for ( int i=0; i<20; ++i )
   {
     CMap::Dart_handle d1=map.darts().begin();
@@ -58,7 +58,7 @@ bool test()
     CGAL::insert_cell_0_in_cell_2<CMap>(map, d2);
 
     CGAL::insert_dangling_cell_1_in_cell_2<CMap>(map, d2);
-      
+
     if (CGAL::is_insertable_cell_1_in_cell_2<CMap>(map, d2, d3))
       CGAL::insert_cell_1_in_cell_2<CMap>(map, d2, d3);
 
@@ -66,11 +66,11 @@ bool test()
     adarts.push_back(d2);
     adarts.push_back(d3);
     adarts.push_back(map.beta<1>(d3));
-    
+
     if (CGAL::is_insertable_cell_2_in_cell_3(map, adarts.begin(), adarts.end()))
       CGAL::insert_cell_2_in_cell_3<CMap>(map, adarts.begin(), adarts.end());
   }
-  
+
   return true;
 }
 

@@ -75,14 +75,14 @@ template<class Map_>
 class Light_MQ  // MQ for minimal quadrangulation
 {
 public:
-  typedef Map_                              Reduced_map;
+  typedef Map_                              Local_map;
   typedef Map_                              Mesh;
   typedef typename Map_::Dart_const_handle  Dart_const_handle;
-  
-  Light_MQ(const Reduced_map& m): m_map(m)
+
+  Light_MQ(const Local_map& m): m_map(m)
   {}
-  
-  const Reduced_map& get_reduced_map() const
+
+  const Local_map& get_local_map() const
   { return m_map; }
 
   std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
@@ -90,9 +90,9 @@ public:
 
   std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
   { return m_map.negative_turn(d1, d2); }
-  
+
 protected:
-  const Reduced_map& m_map;
+  const Local_map& m_map;
 };
 
 template<typename MQ> // MQ for minimal quadrangulation
@@ -100,7 +100,7 @@ class Path_on_surface_with_rle
 {
 public:
   typedef Path_on_surface_with_rle<MQ>                       Self;
-  typedef typename MQ::Reduced_map                           Map;
+  typedef typename MQ::Local_map                             Map;
   typedef typename MQ::Mesh                                  Mesh;
   typedef typename Map::Dart_handle                          Dart_handle;
   typedef typename Map::Dart_const_handle                    Dart_const_handle;
@@ -275,7 +275,7 @@ public:
     Path_on_surface<Map> p2(other);
     return p1==p2;
   }
-  
+
   bool operator!=(Self&  other)
   { return !(operator==(other)); }
 
@@ -298,7 +298,7 @@ public:
 
   /// @return the underlying map.
   const Map& get_map() const
-  { return m_MQ.get_reduced_map(); }
+  { return m_MQ.get_local_map(); }
 
   /// clear the path.
   void clear()
@@ -955,7 +955,7 @@ public:
     advance_iterator(itend);
     return true;
   }
-  
+
   /// Return true if it is the beginning of a negative bracket.
   /// If true, itend is updated to be the end of the bracket
   bool is_negative_bracket(const List_iterator& it,
@@ -1026,9 +1026,9 @@ public:
       m_length-=2;
       return;
     }
-    
+
     it2=next_iterator(it1); // it2 is the the next flat after it1
-    
+
     reduce_flat_from_end(it1, modified_flats); // decrease also m_length
     reduce_flat_from_beginning(it3, modified_flats);
 
@@ -1092,7 +1092,7 @@ public:
 
     // CGAL_assertion(is_valid());
   }
-  
+
   /// Simplify the path by removing all brackets, if all==true (default),
   /// or by removing only one bracket, if all==false.
   /// @return true iff at least one bracket was removed
@@ -1204,7 +1204,7 @@ public:
      return (flat_length(ittemp)>0 && positive_flat) ||
        (flat_length(ittemp)<0 && negative_flat);
   }
-  
+
   /// @return true iff the flat after flat 'it' can be extended by adding
   ///              dart 'dh' to its beginning.
   bool is_next_flat_can_be_extended_at_beginning(const List_iterator& it,
@@ -1236,7 +1236,7 @@ public:
     }
     ++m_length;
   }
-  
+
   /// Add the given dart 'dh' after the flat 'it'.
   void add_dart_after(const List_iterator& it, Dart_const_handle dh,
                       Set_of_it& modified_flats)
@@ -1258,7 +1258,7 @@ public:
     }
     ++m_length;
   }
-  
+
   /// Right push the given l-shape.
   void right_push_l_shape(List_iterator& it1)
   {
@@ -1437,7 +1437,7 @@ public:
     if (flat_length(it1)==0) { set_end_of_flat(it1, dh2); }
     else { set_end_of_flat(it1, dh3); } // End of the moved flat
     flat_modified(it1, modified_flats);
-   
+
     // 4) Move the second flat
     CGAL_assertion(flat_length(it2)<0);
     set_begin_of_flat(it2, dh4);
@@ -1550,7 +1550,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Self& p)
   {
-    p.display();
+    const_cast<Self&>(p).display(); // Problem of const correctness: todo solve
     return os;
   }
 

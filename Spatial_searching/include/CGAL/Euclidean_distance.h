@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 //                 Clement Jamin (clement.jamin.pro@gmail.com)
@@ -29,7 +29,7 @@ namespace CGAL {
   template <class SearchTraits>
   class Euclidean_distance;
 
-    
+
   namespace internal{
     template <class SearchTraits>
     struct Spatial_searching_default_distance{
@@ -39,9 +39,9 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Euclidean_distance {
-    
+
     SearchTraits traits;
-    
+
     public:
 
     typedef typename SearchTraits::FT    FT;
@@ -49,7 +49,7 @@ namespace CGAL {
     typedef Point_d Query_item;
 
     typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
-	
+
 
     // default constructor
     Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
@@ -118,8 +118,8 @@ namespace CGAL {
     // During the computation, if the partially-computed distance `pcd` gets greater or equal
     // to `stop_if_geq_to_this`, the computation is stopped and `pcd` is returned
     template <typename Coord_iterator>
-    inline FT interruptible_transformed_distance(const Query_item& q, 
-                                                 Coord_iterator it_coord_begin, Coord_iterator /*unused*/, 
+    inline FT interruptible_transformed_distance(const Query_item& q,
+                                                 Coord_iterator it_coord_begin, Coord_iterator /*unused*/,
                                                  FT stop_if_geq_to_this) const
     {
       FT distance = FT(0);
@@ -129,10 +129,10 @@ namespace CGAL {
       {
         // Every 4 coordinates, the current partially-computed distance
         // is compared to stop_if_geq_to_this
-        // Note: the concept SearchTraits specifies that Cartesian_const_iterator_d 
+        // Note: the concept SearchTraits specifies that Cartesian_const_iterator_d
         //       must be a random-access iterator
         typename SearchTraits::Cartesian_const_iterator_d qe_minus_5 = qe;
-        std::advance(qe, -5);
+        std::advance(qe_minus_5, -5);
         for (;;)
         {
           FT diff = (*qit) - (*it_coord_begin);

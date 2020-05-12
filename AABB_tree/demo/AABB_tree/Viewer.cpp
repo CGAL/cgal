@@ -42,7 +42,7 @@ void Viewer::mousePressEvent(QMouseEvent* e)
     m_pScene->cutting_plane(true);
     m_custom_mouse = true;
   }
-  
+
   CGAL::QGLViewer::mousePressEvent(e);
 }
 
@@ -55,10 +55,10 @@ void Viewer::mouseReleaseEvent(QMouseEvent* e)
     QApplication::setOverrideCursor(Qt::WaitCursor);
     m_pScene->cutting_plane(true);
     QApplication::restoreOverrideCursor();
-      
+
     m_custom_mouse = false;
   }
-  
+
   CGAL::QGLViewer::mouseReleaseEvent(e);
 }
 

@@ -78,12 +78,12 @@ public:
                                        m_is_closed(apath.m_is_closed),
                                        m_flip(apath.m_flip)
   {}
-  
+
   void swap(Self& p2)
   {
     if (this==&p2) { return; }
-    
-    CGAL_assertion(&m_map==&(p2.m_map));
+
+    CGAL_assertion(&get_mesh()==&(p2.get_mesh()));
     m_path.swap(p2.m_path);
     std::swap(m_is_closed, p2.m_is_closed);
     m_flip.swap(p2.m_flip);
@@ -91,7 +91,7 @@ public:
 
   Self& operator=(const Self& other)
   {
-    CGAL_assertion(&m_map==&(other.m_map));
+    CGAL_assertion(&get_mesh()==&(other.get_mesh()));
     if (this!=&other)
     {
       m_path=other.m_path;
@@ -158,7 +158,7 @@ public:
     CGAL_assertion(i<m_path.size());
     return m_flip[i];
   }
-  
+
   /// @return the ith dart of the path.
   Dart_const_handle operator[] (std::size_t i) const
   { return get_ith_dart(i); }
@@ -206,7 +206,7 @@ public:
     CGAL_assertion(!is_empty());
     return m_path.front();
   }
-  
+
   /// @return the last dart of the path.
   /// @pre !is_empty()
   Dart_const_handle back() const
@@ -222,7 +222,7 @@ public:
     CGAL_assertion(!is_empty());
     return m_flip.front();
   }
-  
+
   /// @return the last flip of the path.
   /// @pre !is_empty()
   bool back_flip() const
@@ -240,13 +240,13 @@ public:
   /// @pre !is_empty()
   std::size_t back_index() const
   { return get_map().darts().index(back()); }
-  
+
   /// @return the ith dart of the path taking into account flip.
   /// return null_handle if flip and there is no beta2
   Dart_const_handle get_ith_real_dart(std::size_t i) const
   {
     CGAL_assertion(i<m_path.size());
-    return (get_ith_flip(i)?get_map().template beta<2>(get_ith_dart(i)):
+    return (get_ith_flip(i)?get_map().opposite2(get_ith_dart(i)):
                             get_ith_dart(i));
   }
 
@@ -256,7 +256,7 @@ public:
   {
     CGAL_assertion(i<m_path.size());
     return (get_ith_flip(i)?get_ith_dart(i):
-                            get_map().template beta<2>(get_ith_dart(i)));
+                            get_map().opposite2(get_ith_dart(i)));
   }
 
   /// @return the first dart of the path, taking into account flip.
@@ -294,7 +294,7 @@ public:
   {
     CGAL_assertion(dh!=Map::null_handle);
     /* This assert is too long, it is tested in the is_valid method. */
-    //  CGAL_assertion(can_be_pushed(dh, flip)); 
+    //  CGAL_assertion(can_be_pushed(dh, flip));
 
     m_path.push_back(dh);
     m_flip.push_back(flip);
@@ -302,22 +302,22 @@ public:
   }
 
   /// @return true iff the ith dart can be added at the end of the path.
-  bool can_be_pushed_by_index(std::size_t i, bool flip=false,
+  bool can_be_pushed_by_index(typename Map::size_type i, bool flip=false,
                               bool update_isclosed=true) const
   { return can_be_pushed(get_map().dart_handle(i), flip, update_isclosed); }
-  
-  /// Add the given ith dart at the end of this path. 
-  void push_back_by_index(std::size_t i, bool flip=false,
+
+  /// Add the given ith dart at the end of this path.
+  void push_back_by_index(typename Map::size_type i, bool flip=false,
                           bool update_isclosed=true)
   { push_back(get_map().dart_handle(i), flip, update_isclosed); }
-  
-  void push_back_by_index(std::initializer_list<std::size_t> l,
+
+  void push_back_by_index(std::initializer_list<typename Map::size_type> l,
                           bool update_isclosed=true)
   {
     for (std::size_t i : l)
     { push_back_by_index(i, false, update_isclosed); }
   }
-  
+
   /// @return true iff the dart labeled e can be added at the end of the path.
   bool can_be_pushed_by_label(const std::string& e, bool flip=false) const
   {
@@ -325,7 +325,7 @@ public:
     if (dh==nullptr) { return false; }
     return can_be_pushed(dh, flip);
   }
-  
+
   /// Add the dart having the given labels at the end of this path.
   /// Each label is a word, possibly starting by -, words are separated by spaces
   void push_back_by_label(const std::string& s, bool update_isclosed=true)
@@ -334,10 +334,10 @@ public:
     for (std::string e; std::getline(iss, e, ' '); )
     {
       Dart_const_handle dh=get_map().get_dart_labeled(e);
-      if (dh!=nullptr) { push_back(dh, false, update_isclosed); }    
+      if (dh!=nullptr) { push_back(dh, false, update_isclosed); }
     }
   }
-  
+
   void push_back_by_label(std::initializer_list<const char*> l,
                           bool update_isclosed=true)
   {
@@ -372,7 +372,7 @@ public:
     {
       if (m_flip[i] && !get_map().template is_free<2>(m_path[i]))
       {
-        m_path[i]=get_map().template beta<2>(m_path[i]);
+        m_path[i]=get_map().opposite2(m_path[i]);
         m_flip[i]=!m_flip[i];
       }
       else if (show_flips_left)
@@ -436,17 +436,17 @@ public:
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_positive"); return; }
       else
-      { dh=get_map().template beta<2>(dh); }
+      { dh=get_map().opposite2(dh); }
     }
 
     for (unsigned int i=0; i<nb; ++i)
     {
-      dh=get_map().template beta<1>(dh);
+      dh=get_map().next(dh);
 
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_positive"); return; }
-      dh=get_map().template beta<2, 1>(dh);
-      
+      dh=get_map().next(get_map().opposite2(dh));
+
       push_back(dh, false, false);
     }
 
@@ -466,20 +466,20 @@ public:
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_positive"); return; }
       else
-      { dh=get_map().template beta<2>(dh); }
+      { dh=get_map().opposite2(dh); }
     }
 
     for (unsigned int i=0; i<nb; ++i)
     {
-      dh=get_map().template beta<0>(dh);
-      
+      dh=get_map().previous(dh);
+
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_straight_negative"); return; }
-      dh=get_map().template beta<2, 0>(dh);
-      
+      dh=get_map().previous(get_map().opposite2(dh));
+
       push_back(dh, true, false);
     }
-    
+
     if (update_isclosed) { update_is_closed(); }
   }
 
@@ -502,15 +502,15 @@ public:
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_positive_turn"); return; }
       else
-      { dh=get_map().template beta<2>(dh); }
+      { dh=get_map().opposite2(dh); }
     }
-    dh=get_map().template beta<1>(dh);
-    
+    dh=get_map().next(dh);
+
     for (unsigned int i=1; i<nb; ++i)
     {
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_positive_turn"); return; }
-      dh=get_map().template beta<2, 1>(dh);
+      dh=get_map().next(get_map().opposite2(dh));
     }
 
     push_back(dh, false, update_isclosed);
@@ -534,15 +534,15 @@ public:
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_negative_turn"); return; }
       else
-      { dh=get_map().template beta<2>(dh); }
+      { dh=get_map().opposite2(dh); }
     }
-    dh=get_map().template beta<0>(dh);
-    
+    dh=get_map().previous(dh);
+
     for (unsigned int i=1; i<nb; ++i)
     {
       if (get_map().template is_free<2>(dh))
       { display_failed_extention("extend_negative_turn"); return; }
-      dh=get_map().template beta<2, 0>(dh);
+      dh=get_map().previous(get_map().opposite2(dh));
     }
 
     push_back(dh, true, update_isclosed);
@@ -557,17 +557,17 @@ public:
 
     // first select a random edge by taking the lower index of
     // the two darts when it is not a boundary
-    std::size_t index=static_cast<std::size_t>
+    typename Map::size_type index=static_cast<typename Map::size_type>
       (random.get_int(0, static_cast<int>(get_map().darts().capacity())));
     while (!get_map().darts().is_used(index) ||
           (!get_map().template is_free<2>(get_map().dart_handle(index)) &&
            get_map().dart_handle(index)>get_map().
-           template beta<2>(get_map().dart_handle(index))))
+           opposite2(get_map().dart_handle(index))))
     {
       ++index;
       if (index==get_map().darts().capacity()) index=0;
     }
-    
+
     // second we take randomly one of the two darts of this edge
     // (potentially with the help of a flip)
     bool heads_or_tails=random.get_bool();
@@ -580,7 +580,7 @@ public:
       if (heads_or_tails)
       { push_back(get_map().dart_handle(index), false, update_isclosed); }
       else
-      { push_back(get_map().template beta<2>(get_map().dart_handle(index)),
+      { push_back(get_map().opposite2(get_map().dart_handle(index)),
                   false, update_isclosed); }
     }
     return true;
@@ -610,9 +610,9 @@ public:
     if (back_flip())
     { next_vertex=back(); }
     else if (get_map().template is_free<2>(back()))
-    { next_vertex=get_map().template beta<1>(back()); }
+    { next_vertex=get_map().next(back()); }
     else
-    { next_vertex=get_map().template beta<2>(back()); }
+    { next_vertex=get_map().opposite2(back()); }
 
     std::vector<std::pair<Dart_const_handle, bool> > candidats;
     for (auto it=get_map().template darts_of_cell<0>(next_vertex).begin(),
@@ -622,15 +622,15 @@ public:
       if (back_flip() || !get_map().template is_free<2>(back()))
       {
         candidats.push_back(std::make_pair(it, false));
-        if (get_map().template is_free<2>(get_map().template beta<0>(it)))
+        if (get_map().template is_free<2>(get_map().previous(it)))
         { candidats.push_back
-              (std::make_pair(get_map().template beta<0>(it), true)); }
+              (std::make_pair(get_map().previous(it), true)); }
       }
       else
       {
-        if (get_map().template is_free<2>(get_map().template beta<0>(it)))
+        if (get_map().template is_free<2>(get_map().previous(it)))
         { candidats.push_back
-              (std::make_pair(get_map().template beta<0>(it), true)); }
+              (std::make_pair(get_map().previous(it), true)); }
         candidats.push_back(std::make_pair(it, false));
       }
     }
@@ -738,21 +738,21 @@ public:
     // 1) We add in p2 the part of the path which is pushed.
     if (get_ith_flip(i))
     {
-      Dart_const_handle dh=get_map().template beta<1>(get_ith_dart(i));
+      Dart_const_handle dh=get_map().next(get_ith_dart(i));
       do
       {
         p2.push_back(dh, false, false);
-        dh=get_map().template beta<1>(dh);
+        dh=get_map().next(dh);
       }
       while(dh!=get_ith_dart(i));
     }
     else
     {
-      Dart_const_handle dh=get_map().template beta<0>(get_ith_dart(i));
+      Dart_const_handle dh=get_map().previous(get_ith_dart(i));
       do
       {
         p2.push_back(dh, true, false);
-        dh=get_map().template beta<0>(dh);
+        dh=get_map().previous(dh);
       }
       while(dh!=get_ith_dart(i));
     }
@@ -819,7 +819,7 @@ public:
         get_map().template is_free<2>(other[j]))
     { return false; }
 
-    return get_ith_dart(i)==get_map().template beta<2>(other[j]);
+    return get_ith_dart(i)==get_map().opposite2(other[j]);
   }
 
   /// @return true if this path is equal to other path, identifying dart 0 of
@@ -867,7 +867,7 @@ public:
 
     if (!is_closed())
     { return are_same_paths_from(other, 0); }
-    
+
     Self pp1=*this;
     pp1.simplify_flips();
     Self pp2=other;
@@ -945,10 +945,10 @@ public:
       /* This assert is long if (!m_map.darts().owns(m_path[i]))
       { return false; } */
 
-      if (m_path[i]==m_map.null_dart_handle)
+      if (m_path[i]==Map::null_handle || m_path[i]==m_map.null_dart_handle)
       { return false; }
 
-      last_vertex=m_flip[i-1]?m_path[i-1]:get_map().beta(m_path[i-1], 1);
+      last_vertex=m_flip[i-1]?m_path[i-1]:get_map().next(m_path[i-1]);
       if (last_vertex==Map::null_handle)
       {
         if (display_error)
@@ -958,7 +958,7 @@ public:
       }
 
       if (!m_map.template belong_to_same_cell<0>
-          (m_flip[i]?get_map().beta(m_path[i], 1):m_path[i], last_vertex))
+          (m_flip[i]?get_map().next(m_path[i]):m_path[i], last_vertex))
       {
         if (display_error)
         { std::cout<<"Invalid path: dart "<<i-1<<" and dart "<<i
@@ -966,7 +966,7 @@ public:
         return false;
       }
     }
-    last_vertex=back_flip()?back():get_map().template beta<1>(back());
+    last_vertex=back_flip()?back():get_map().next(back());
     if (is_closed())
     {
       if (last_vertex==Map::null_handle)
@@ -977,7 +977,7 @@ public:
         return false;
       }
       if (!m_map.template belong_to_same_cell<0>
-          (front_flip()?get_map().beta(front(), 1):front(), last_vertex))
+          (front_flip()?get_map().next(front()):front(), last_vertex))
       {
         if (display_error)
         { std::cout<<"Invalid path: m_is_closed is true but the path is "
@@ -995,7 +995,7 @@ public:
         return false;
       }
       if (m_map.template belong_to_same_cell<0>
-          (front_flip()?get_map().beta(front(), 1):front(), last_vertex))
+          (front_flip()?get_map().next(front()):front(), last_vertex))
       {
         if (display_error)
         { std::cout<<"Invalid path: m_is_closed is false but the path "
@@ -1020,7 +1020,7 @@ public:
           pend=m_flip.back()?back():m_map.other_extremity(back());
       if (pend==Map::null_handle) { m_is_closed=false; }
       else
-      { 
+      {
         Dart_const_handle
             pbegin=m_flip[0]?m_map.other_extremity(m_path[0]):m_path[0];
         m_is_closed=m_map.template belong_to_same_cell<0>(pbegin, pend);
@@ -1040,7 +1040,7 @@ public:
     unsigned int i=0;
     for (i=0; res && i<m_path.size(); ++i)
     {
-      dh_vertex=m_flip[i]?get_map().template beta<1>(m_path[i]):m_path[i];
+      dh_vertex=m_flip[i]?get_map().next(m_path[i]):m_path[i];
       if (m_map.is_marked(dh_vertex, markvertex)) { res=false; }
       else { CGAL::mark_cell<Map, 0>(m_map, dh_vertex, markvertex); }
 
@@ -1053,7 +1053,7 @@ public:
           m_map.number_of_marked_darts(markvertex)>0)
     {
       CGAL_assertion(i<m_path.size());
-      dh_vertex=m_flip[i]?get_map().template beta<1>(m_path[i]):m_path[i];
+      dh_vertex=m_flip[i]?get_map().next(m_path[i]):m_path[i];
       if (m_map.is_marked(dh_vertex, markvertex))
       { CGAL::unmark_cell<Map, 0>(m_map, dh_vertex, markvertex); }
       if (m_map.is_marked(m_path[i], markedge))
@@ -1107,8 +1107,8 @@ public:
 
     if ((get_ith_flip(i) && get_map().template is_free<2>(get_ith_dart(i))) ||
         (get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i))))
-    { return std::numeric_limits<std::size_t>::max(); }
-    
+    { return (std::numeric_limits<std::size_t>::max)(); }
+
     return m_map.positive_turn(get_ith_real_dart(i),
                                get_ith_real_dart(next_index(i)));
   }
@@ -1123,7 +1123,7 @@ public:
 
     if ((!get_ith_flip(i) && get_map().template is_free<2>(get_ith_dart(i))) ||
         (!get_next_flip(i) && get_map().template is_free<2>(get_next_dart(i))))
-    { return std::numeric_limits<std::size_t>::max(); }
+    { return (std::numeric_limits<std::size_t>::max)(); }
 
     return m_map.positive_turn(get_opposite_ith_real_dart(next_index(i)),
                                get_opposite_ith_real_dart(i));

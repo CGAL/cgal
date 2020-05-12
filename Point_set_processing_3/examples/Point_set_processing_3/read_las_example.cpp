@@ -40,6 +40,6 @@ int main(int argc, char*argv[])
 
   for (std::size_t i = 0; i < points.size(); ++ i)
     std::cout << points[i].first << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

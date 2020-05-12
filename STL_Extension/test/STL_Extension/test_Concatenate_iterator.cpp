@@ -12,7 +12,7 @@ class Concatenate_container
 public:
   typedef
   CGAL::Concatenate_iterator<typename C1::iterator,
-			     typename C2::iterator>  Iterator;
+                             typename C2::iterator>  Iterator;
 
   typedef typename C1::size_type  size_type;
 
@@ -142,7 +142,7 @@ int test(A a, B b)
 
 
   std::cout << "==========================================="
-	    << std::endl << std::endl;
+            << std::endl << std::endl;
   print_container<A,typename A::iterator>(a, false);
   print_container<B,typename B::iterator>(b, false);
   std::cout << "AB container:" << std::endl;
@@ -152,7 +152,7 @@ int test(A a, B b)
   std::cout << "BA container:" << std::endl;
   print_container<BA_container,BA_iterator>(ba);
   std::cout << "==========================================="
-	    << std::endl << std::endl << std::endl;
+            << std::endl << std::endl << std::endl;
 
   return 1;
 }
@@ -210,7 +210,7 @@ int main()
     v2.clear();
 
     std::cout << "testing cases where at least one container "
-	      << "is empty..." << std::endl;
+              << "is empty..." << std::endl;
 
     assert( test(v1, l1) );
     assert( test(l1, v1) );
@@ -237,7 +237,7 @@ int main()
     vl_iterator vl_begin(v1.end(), l2.begin(), v1.begin());
     vl_iterator vl_end(v1.end(), l2.begin(), l2.end(),0);
 
-  
+
     std::cout << "Vector-list combined iterator:" << std::endl;
     for (vl_iterator vl_it = vl_begin; vl_it != vl_end; ++vl_it) {
       std::cout << " " << (*vl_it);

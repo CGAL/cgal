@@ -8,7 +8,7 @@
 //
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//                 Michael Hemmer <hemmer@informatik.uni-mainz.de>
 //
 // ============================================================================
 
@@ -26,24 +26,24 @@ namespace CGAL {
 namespace internal {
 template< class Polynomial , class TAG> class Real_embeddable_traits_poly_base;
 
-template< class NT , class TAG> class Real_embeddable_traits_poly_base< Polynomial<NT>, TAG > 
+template< class NT , class TAG> class Real_embeddable_traits_poly_base< Polynomial<NT>, TAG >
   : public INTERN_RET::Real_embeddable_traits_base< Polynomial<NT> , CGAL::Tag_false > {};
-  
+
 // Real embeddable traits
 // TODO: Polynomials aren't Real_embeddable! But for debugging and testing
 //       reasons, the real embeddable functors are provided.
-template< class NT > class Real_embeddable_traits_poly_base< Polynomial<NT>, CGAL::Tag_true > 
+template< class NT > class Real_embeddable_traits_poly_base< Polynomial<NT>, CGAL::Tag_true >
   : public INTERN_RET::Real_embeddable_traits_base< Polynomial<NT> , CGAL::Tag_false > {
 public:
-  
+
     typedef Tag_false Is_real_embeddable;
-    
+
     class Abs {
     public:
         typedef Polynomial<NT> argument_type;
         typedef Polynomial<NT> result_type;
         Polynomial<NT> operator()( const Polynomial<NT>& x ) const {
-            return x.abs(); 
+            return x.abs();
         }
     };
 
@@ -55,19 +55,19 @@ public:
             return x.sign();
         }
     };
-    
+
     class Compare {
     public:
         typedef Polynomial<NT>                    first_argument_type;
         typedef Polynomial<NT>                    second_argument_type;
         typedef CGAL::Comparison_result result_type;
-        
-        CGAL::Comparison_result operator()( 
-                const Polynomial<NT>& x, 
+
+        CGAL::Comparison_result operator()(
+                const Polynomial<NT>& x,
                 const Polynomial<NT>& y ) const {
             return x.compare(y);
         }
-        
+
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Polynomial<NT>,
                 CGAL::Comparison_result )
     };
@@ -93,7 +93,7 @@ public:
         typedef Polynomial<NT> argument_type;
         result_type operator()( const Polynomial<NT>& x ) const {
             CGAL_precondition( x.degree() >= 0 );
-            NT_to_interval to_interval;  
+            NT_to_interval to_interval;
             return result_type(
                     ::boost::make_transform_iterator(x.begin(),to_interval),
                     ::boost::make_transform_iterator(x.end()  ,to_interval));
@@ -103,7 +103,7 @@ public:
 } // namespace internal
 
 template <typename NT>
-class Real_embeddable_traits<Polynomial<NT> > 
+class Real_embeddable_traits<Polynomial<NT> >
   :public internal::Real_embeddable_traits_poly_base<
   Polynomial<NT>,
   typename Real_embeddable_traits<typename internal::Innermost_coefficient_type<NT>::Type>::Is_real_embeddable>

@@ -33,7 +33,7 @@ int main()
     std::cout << "Number of segments: " << number_of_segments << std::endl;
 
     // print segment-ids
-    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
+    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
         std::cout << segment_property_map[facet_it] << " ";
     }

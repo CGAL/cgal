@@ -24,7 +24,7 @@ class DoTreesIntersectplugin:
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-  
+
   bool eventFilter(QObject *, QEvent *event) Q_DECL_OVERRIDE
   {
     if(event->type() != QEvent::KeyPress)
@@ -37,7 +37,7 @@ public:
     }
     return false;
   }
-  
+
   bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     if(scene->selectionIndices().size() <2)
@@ -49,13 +49,13 @@ public:
     }
     return (! group_item);
   }
-  
+
   QList<QAction*> actions() const Q_DECL_OVERRIDE
   {
     return _actions;
   }
-  
-  
+
+
   void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
   {
     this->messageInterface = mi;
@@ -94,18 +94,18 @@ private Q_SLOTS:
         delete col_det;
       col_det = nullptr;
       group_item = nullptr;});
-    
+
     scene->addItem(group_item);
     Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
     {
       Scene_surface_mesh_item* item=qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
-              this, &DoTreesIntersectplugin::cleanup);     
-      
-      CGAL::qglviewer::Vec pos((item->bbox().min(0) + item->bbox().max(0))/2.0, 
-                               (item->bbox().min(1) + item->bbox().max(1))/2.0, 
-                               (item->bbox().min(2) + item->bbox().max(2))/2.0);
-      
+              this, &DoTreesIntersectplugin::cleanup);
+
+      CGAL::qglviewer::Vec pos(((item->bbox().min)(0) + (item->bbox().max)(0))/2.0,
+                               ((item->bbox().min)(1) + (item->bbox().max)(1))/2.0,
+                               ((item->bbox().min)(2) + (item->bbox().max)(2))/2.0);
+
       Scene_movable_sm_item* mov_item = new Scene_movable_sm_item(pos,item->face_graph(),"");
       connect(mov_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
               this, &DoTreesIntersectplugin::update_trees);
@@ -141,7 +141,7 @@ private Q_SLOTS:
     QApplication::restoreOverrideCursor();
     CGAL::Three::Three::information("Press `W` to switch between Wireframe and Transparency mode.");
   }
-  
+
 public Q_SLOTS:
   void init_trees()
   {
@@ -149,13 +149,13 @@ public Q_SLOTS:
       return;
     Q_FOREACH(Scene_movable_sm_item* item, items)
       item->setColor(QColor(Qt::green));
-    
+
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first());
     Scene_movable_sm_item* sel_item = qobject_cast<Scene_movable_sm_item*>(scene->item(scene->mainSelectionIndex()));
     if(!sel_item)
-      return;    
-    
+      return;
+
     std::size_t mesh_id = 0;
     std::size_t sel_id = 0;
     Q_FOREACH(Scene_movable_sm_item* item, items)
@@ -186,11 +186,11 @@ public Q_SLOTS:
             matrix[0], matrix[4], matrix[8],matrix[12],
           matrix[1], matrix[5], matrix[9],matrix[13],
           matrix[2], matrix[6], matrix[10],matrix[14]);
-      EPICK::Aff_transformation_3 transfo = 
+      EPICK::Aff_transformation_3 transfo =
           rota*translation;
-      
+
       col_det->set_transformation(mesh_id++, transfo);
-      
+
       if(do_transparency)
       {
         item->setRenderingMode(Flat);
@@ -211,7 +211,7 @@ public Q_SLOTS:
           matrix[0], matrix[4], matrix[8],matrix[12],
         matrix[1], matrix[5], matrix[9],matrix[13],
         matrix[2], matrix[6], matrix[10],matrix[14]);
-    EPICK::Aff_transformation_3 transfo = 
+    EPICK::Aff_transformation_3 transfo =
         rota*translation;
     col_det->set_transformation(sel_id, transfo);
     std::vector<std::pair<std::size_t, bool> > inter_and_incl
@@ -238,17 +238,17 @@ public Q_SLOTS:
     sel_item->itemChanged();
     viewer->update();
   }
-  
+
   void update_trees()
   {
     if(items.empty())
-      return;    
+      return;
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first());
     Scene_movable_sm_item* sel_item = qobject_cast<Scene_movable_sm_item*>(scene->item(scene->mainSelectionIndex()));
     if(!sel_item)
-      return;    
-    
+      return;
+
     std::size_t mesh_id = 0;
     std::size_t sel_id = 0;
     Q_FOREACH(Scene_movable_sm_item* item, items)
@@ -257,7 +257,7 @@ public Q_SLOTS:
       {
         sel_id = mesh_id;
         ++mesh_id;
-        item->setColor(QColor(255,184,61));        
+        item->setColor(QColor(255,184,61));
         break;
       }
       ++mesh_id;
@@ -276,7 +276,7 @@ public Q_SLOTS:
     prev_ids.clear();
     const double* matrix = sel_item->manipulatedFrame()->matrix();
     sel_item->setFMatrix(matrix);
-    
+
     EPICK::Aff_transformation_3 translation(CGAL::TRANSLATION, -EPICK::Vector_3(sel_item->center().x,
                                                                                 sel_item->center().y,
                                                                                 sel_item->center().z));
@@ -284,7 +284,7 @@ public Q_SLOTS:
           matrix[0], matrix[4], matrix[8],matrix[12],
         matrix[1], matrix[5], matrix[9],matrix[13],
         matrix[2], matrix[6], matrix[10],matrix[14]);
-    EPICK::Aff_transformation_3 transfo = 
+    EPICK::Aff_transformation_3 transfo =
         rota*translation;
     col_det->set_transformation(sel_id, transfo);
     std::vector<std::pair<std::size_t, bool> > inter_and_incl
@@ -303,7 +303,7 @@ public Q_SLOTS:
     sel_item->itemChanged();
     viewer->update();
   }
-  
+
   void cleanup()
   {
     if(!group_item)
@@ -315,7 +315,7 @@ public Q_SLOTS:
     delete col_det;
     col_det = nullptr;
   }
-  
+
   //switch transparent/wireframe.
   void change_display()
   {
@@ -332,7 +332,7 @@ public Q_SLOTS:
       }
     }
   }
-  
+
 private:
   QList<QAction*> _actions;
   Messages_interface* messageInterface;

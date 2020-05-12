@@ -18,7 +18,7 @@ int main()
   typedef CGAL::Circulator_from_iterator<int*> Circulator_from_intp;
   typedef CGAL::Circulator_from_iterator<std::vector<int>::iterator> Circulator_from_veci;
   typedef CGAL::Circulator_from_iterator<std::list<int>::iterator> Circulator_from_listi;
-  
+
   BOOST_CONCEPT_ASSERT((CGAL::Concepts::RandomAccessCirculator<Circulator_from_intp>)) CGAL_UNUSED;
   BOOST_CONCEPT_ASSERT((CGAL::Concepts::RandomAccessCirculator<Circulator_from_veci>)) CGAL_UNUSED;
   BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<Circulator_from_listi>)) CGAL_UNUSED;

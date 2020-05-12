@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -131,7 +131,7 @@ public:
   //! initialize with a reference to \a t.
   Input_rep( double& tt) : t(tt) {}
 
-  std::istream& operator()( std::istream& is) const 
+  std::istream& operator()( std::istream& is) const
   {
     typedef std::istream istream;
     typedef istream::char_type char_type;
@@ -145,7 +145,7 @@ public:
     do {
       const int_type i = is.get();
       if(i == traits_type::eof()) {
-	return is;
+        return is;
       }
       c = static_cast<char_type>(i);
     }while (std::isspace(c));
@@ -157,22 +157,22 @@ public:
     do {
       const int_type i = is.get();
       if(i == traits_type::eof()) {
-	is.clear(is.rdstate() & ~std::ios_base::failbit);
-	break;
+        is.clear(is.rdstate() & ~std::ios_base::failbit);
+        break;
       }
       c = static_cast<char_type>(i);
       if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
         buffer += c;
       }else{
-	is.unget();
-	break;
+        is.unget();
+        break;
       }
     }while(true);
     if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
-    return is; 
+    return is;
   }
 };
 
@@ -183,7 +183,7 @@ public:
   //! initialize with a reference to \a t.
   Input_rep( float& tt) : t(tt) {}
 
-  std::istream& operator()( std::istream& is) const 
+  std::istream& operator()( std::istream& is) const
   {
     typedef std::istream istream;
     typedef istream::char_type char_type;
@@ -197,7 +197,7 @@ public:
     do {
       const int_type i = is.get();
       if(i == traits_type::eof()) {
-	return is;
+        return is;
       }
       c = static_cast<char_type>(i);
     }while (std::isspace(c));
@@ -209,22 +209,22 @@ public:
     do {
       const int_type i = is.get();
       if(i == traits_type::eof()) {
-	is.clear(is.rdstate() & ~std::ios_base::failbit);
-	break;
+        is.clear(is.rdstate() & ~std::ios_base::failbit);
+        break;
       }
       c = static_cast<char_type>(i);
       if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
         buffer += c;
       }else{
-	is.unget();
-	break;
+        is.unget();
+        break;
       }
     }while(true);
     if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
-    return is; 
+    return is;
   }
 };
 #endif
@@ -254,7 +254,7 @@ public:
     std::ostream& operator()( std::ostream& out) const {
         return out << t;
     }
-    
+
     // static function to get the benchmark name
     static std::string get_benchmark_name() {
         return "";
@@ -458,7 +458,7 @@ void eat_white_space(std::istream &is)
     }
   } while (true);
 }
- 
+
 
   inline
   bool is_space (const std::istream& /*is*/, std::istream::int_type c)
@@ -493,13 +493,13 @@ void eat_white_space(std::istream &is)
     else
       return is.peek();
   }
-   
-    
+
+
 template <typename ET>
 inline void read_float_or_quotient(std::istream & is, ET& et)
 {
   is >> et;
-}   
+}
 
 
 
@@ -600,9 +600,9 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
   if (!is.fail())
     z = (negative ? compose(-n,d) : compose(n,d));
 
-} 
-    
-    
+}
+
+
   } // namespace internal
 
 } //namespace CGAL

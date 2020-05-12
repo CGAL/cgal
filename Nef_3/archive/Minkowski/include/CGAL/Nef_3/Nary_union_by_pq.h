@@ -18,27 +18,27 @@ class Nary_union_by_pq {
     pq.insert(make_pair(P.number_of_vertices(),P));
 #ifndef NDEBUG
     if(pq.size()%100 == 0 || pq.size()<30)
-	std::cerr << "pq size: " << pq.size() << std::endl;
+        std::cerr << "pq size: " << pq.size() << std::endl;
 #endif
   }
 
   Polyhedron get_union() {
 
-    PQ_iterator i1, i2; 
+    PQ_iterator i1, i2;
     while(pq.size() > 1) {
       i1 = i2 = pq.begin();
       ++i2;
-      
-#ifndef NDEBUG      
+
+#ifndef NDEBUG
       if(pq.size()%100 == 0 || pq.size()<30)
-	std::cerr << pq.size() << " polyhedra in the priority queue " 
-		  << i1->first << "," << i2->first << std::endl;
+        std::cerr << pq.size() << " polyhedra in the priority queue "
+                  << i1->first << "," << i2->first << std::endl;
  #endif
-     
+
       Polyhedron N1(i1->second);
       Polyhedron N2(i2->second);
       Polyhedron Ntmp(N1 + N2);
-      
+
       pq.erase(i1);
       pq.erase(i2);
       pq.insert(make_pair(Ntmp.number_of_vertices(),Ntmp));

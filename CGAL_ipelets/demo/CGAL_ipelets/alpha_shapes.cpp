@@ -6,12 +6,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -41,7 +41,7 @@ const std::string  helpmsg[] = {
 };
 
 
-class ASphapeIpelet 
+class ASphapeIpelet
   : public CGAL::Ipelet_base<Kernel,2> {
 public:
   ASphapeIpelet()
@@ -61,10 +61,10 @@ void ASphapeIpelet::protected_run(int fn)
 
   std::list<Circle_2> cir_list;
   std::list<Point_2> pt_list;
-  
-  
-  
-  
+
+
+
+
   read_active_objects(
     CGAL::dispatch_or_drop_output<Point_2,Circle_2>(std::back_inserter(pt_list),
                                                     std::back_inserter(cir_list))
@@ -86,19 +86,19 @@ void ASphapeIpelet::protected_run(int fn)
   int alpha=-1;
   int nb_ret;
   boost::tie(nb_ret,alpha)=request_value_from_user<int>((boost::format("# Spectral critical value (0-%d)") % A.number_of_alphas()).str() );
-  if (nb_ret == -1) return;  
-  
+  if (nb_ret == -1) return;
+
   if(alpha<0 || (std::size_t) alpha>A.number_of_alphas()){
     print_error_message("Not a good value");
     return;
   }
-  
-  
-  A.set_alpha(alpha==0?std::max(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
+
+
+  A.set_alpha(alpha==0?(std::max)(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
               (std::size_t) alpha==A.number_of_alphas()?A.get_nth_alpha(alpha-1)+1:A.get_nth_alpha(alpha-1)/2.+A.get_nth_alpha(alpha)/2.);
   for ( Alpha_shape_2::Alpha_shape_edges_iterator it=A.alpha_shape_edges_begin();it!=A.alpha_shape_edges_end();++it)
     draw_in_ipe(A.segment(*it));
-  
+
   for (Alpha_shape_2::Finite_faces_iterator it=A.finite_faces_begin();it!=A.finite_faces_end();++it){
     if (A.classify(it)==Alpha_shape_2::INTERIOR){
       std::list<Point_2> LP;

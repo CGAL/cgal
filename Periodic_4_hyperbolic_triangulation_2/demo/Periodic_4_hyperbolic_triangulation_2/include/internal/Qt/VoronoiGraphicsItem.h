@@ -37,13 +37,13 @@ public:
   VoronoiGraphicsItem(DT  * dt_);
 
 
-  QRectF 
+  QRectF
   boundingRect() const;
-  
-  void 
+
+  void
   paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
-  void 
+
+  void
   modelChanged();
 
   const QPen& edgesPen() const
@@ -85,7 +85,7 @@ VoronoiGraphicsItem<DT>::VoronoiGraphicsItem(DT * dt_)
 }
 
 template <typename DT>
-QRectF 
+QRectF
 VoronoiGraphicsItem<DT>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -94,25 +94,25 @@ VoronoiGraphicsItem<DT>::boundingRect() const
 
 
 template <typename DT>
-void 
+void
 VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
   QRectF rect = option->exposedRect;
   PainterOstream<typename DT::Geom_traits> pos(painter, rect);
-  
+
   painter->setPen(edgesPen());
-  
+
   // delete
   QPen temp = painter->pen();
   QPen old = temp;
   temp.setWidthF(0.01);
   painter->setPen(temp);
-  
+
   for(typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
     for(int i=0; i<3; ++i) {
       Point p1 = cc[fit];
       Point p2 = dt->geom_traits().construct_hyperbolic_point_2_object()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i));
-      typename DT::Hyperbolic_segment s =  dt->geom_traits().construct_hyperbolic_segment_2_object()(p1, p2); 
+      typename DT::Hyperbolic_segment s =  dt->geom_traits().construct_hyperbolic_segment_2_object()(p1, p2);
       pos << s;
     }
   }
@@ -122,7 +122,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
 
 template <typename T>
-void 
+void
 VoronoiGraphicsItem<T>::modelChanged()
 {
   updateCCenters();

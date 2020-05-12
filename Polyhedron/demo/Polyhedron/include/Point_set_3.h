@@ -44,7 +44,7 @@ template <class Gt>
 class Point_set_3 : public CGAL::Point_set_3<typename Gt::Point_3,
                                              typename Gt::Vector_3>
 {
-  
+
 public:
 
   typedef Gt  Geom_traits; ///< Geometric traits class.
@@ -60,14 +60,14 @@ public:
   typedef typename Base::iterator iterator;
   typedef typename Base::const_iterator const_iterator;
   typedef typename Base::Index Index;
-  
+
   // Classic CGAL geometric types
 
   typedef typename Base::template Property_map<double> Double_map;
   typedef typename Base::template Property_map<unsigned char> Byte_map;
-  
+
 private:
-  
+
   // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and
   // m_diameter_standard_deviation below are valid.
   mutable bool m_bounding_box_is_valid;
@@ -85,10 +85,10 @@ private:
   Double_map m_fred;
   Double_map m_fgreen;
   Double_map m_fblue;
-  
+
   mutable CGAL::Iterator_range<const_iterator> m_const_range;
   CGAL::Iterator_range<iterator> m_range;
-  
+
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
   Point_set_3& operator= (const Point_set_3&)
@@ -96,9 +96,9 @@ private:
     return *this;
   }
 
-  
+
 public:
-  
+
   Point_set_3 ()
     : m_const_range (begin(), end())
     , m_range (begin(), end())
@@ -107,7 +107,7 @@ public:
     m_radii_are_uptodate = false;
   }
 
-  // copy constructor 
+  // copy constructor
   Point_set_3 (const Point_set_3& p)
     : Base (p)
     , m_const_range (begin(), end())
@@ -131,7 +131,7 @@ public:
   {
     this->cancel_removals();
   }
-  
+
   bool add_radius()
   {
     bool out = false;
@@ -144,7 +144,7 @@ public:
   bool check_colors()
   {
     bool found = false;
-    
+
     boost::tie (m_red, found) = this->template property_map<unsigned char>("red");
     if (!found)
       {
@@ -205,10 +205,10 @@ public:
   bool get_las_colors()
   {
     bool found = false;
-    
+
     typedef typename Base::template Property_map<unsigned short> Ushort_map;
     Ushort_map red, green, blue;
-    
+
     boost::tie (red, found) = this->template property_map<unsigned short>("R");
     if (!found)
       return false;
@@ -243,7 +243,7 @@ public:
     this->remove_property_map(red);
     this->remove_property_map(green);
     this->remove_property_map(blue);
-    
+
     return true;
   }
 
@@ -261,14 +261,14 @@ public:
   {
     if (has_colors())
       return false;
-    
+
     m_red = this->template add_property_map<unsigned char>("red", 0).first;
     m_green = this->template add_property_map<unsigned char>("green", 0).first;
     m_blue = this->template add_property_map<unsigned char>("blue", 0).first;
 
     return true;
   }
-  
+
   void remove_colors()
   {
     if (m_blue != Byte_map())
@@ -291,7 +291,7 @@ public:
   { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
   double blue (const Index& index) const
   { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
-  
+
   void set_color (const Index& index, unsigned char r = 0, unsigned char g = 0, unsigned char b = 0)
   {
     m_red[index] = r;
@@ -313,8 +313,8 @@ public:
     m_green[index] = color[1];
     m_blue[index] = color[2];
   }
-    
-  
+
+
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
   const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }
   void set_first_selected(iterator it)
@@ -348,7 +348,7 @@ public:
   {
     return this->is_removed (it);
   }
-  
+
   // Test if point is selected
   bool is_selected(const Index& idx) const
   {
@@ -396,7 +396,7 @@ public:
 
     while (sel != first - 1 && unsel != first)
       std::swap (*(sel --), *(unsel ++));
-    
+
     this->m_nb_removed = size() - this->m_nb_removed;
   }
 
@@ -492,10 +492,10 @@ public:
   {
     m_bounding_box_is_valid = false;
   }
-  
+
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
-  
+
   CGAL::Named_function_parameters
   <Kernel,
    CGAL::internal_np::geom_traits_t,
@@ -530,7 +530,7 @@ private:
     for (const_iterator it = begin(); it != end(); it++)
     {
       const Point& p = this->point(*it);
-      
+
       // update bbox
       xmin = (std::min)(p.x(),xmin);
       ymin = (std::min)(p.y(),ymin);
@@ -572,7 +572,7 @@ private:
 
     m_bounding_box_is_valid = true;
   }
-  
+
 }; // end of class Point_set_3
 
 namespace CGAL
@@ -585,7 +585,7 @@ namespace Point_set_processing_3
   public:
     typedef typename Kernel::FT type;
   };
-  
+
   namespace parameters
   {
     template <typename Kernel>
