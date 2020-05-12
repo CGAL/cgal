@@ -96,7 +96,6 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::dry_run).v == 60);
   assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 61);
   assert(get_parameter(np, CGAL::internal_np::halfedges_keeper).v == 62);
-  assert(get_parameter(np, CGAL::internal_np::dry_run).v == 63);
   assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 64);
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
 
@@ -204,7 +203,6 @@ void test(const NamedParameters& np)
   check_same_type<60>(get_parameter(np, CGAL::internal_np::dry_run));
   check_same_type<61>(get_parameter(np, CGAL::internal_np::do_lock_mesh));
   check_same_type<62>(get_parameter(np, CGAL::internal_np::halfedges_keeper));
-  check_same_type<63>(get_parameter(np, CGAL::internal_np::dry_run));
   check_same_type<64>(get_parameter(np, CGAL::internal_np::do_simplify_border));
   check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
 
@@ -353,9 +351,8 @@ int main()
                          .dry_run(A<60>(60))
                          .do_lock_mesh(A<61>(61))
                          .halfedges_keeper(A<62>(62))
-                         .dry_run(A<63>(63))
-                         .do_simplify_border(A<64>(64))
                          .use_convex_hull(A<63>(63))
+                         .do_simplify_border(A<64>(64))
                          .point_map(A<9000>(9000))
                          .query_point_map(A<9001>(9001))
                          .normal_map(A<9002>(9002))
