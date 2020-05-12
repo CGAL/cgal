@@ -1182,7 +1182,7 @@ void split_connected_components(const PolygonMesh& pmesh,
   internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pmesh, np),
                                             CGAL::get_initialized_halfedge_index_map(pmesh, np),
                                             CGAL::get_initialized_vertex_index_map(pmesh, np),
-                                            ecm, cc_meshes, pm, np);
+                                            ecm, cc_meshes, pmesh, np);
 }
 
 template <class PolygonMesh, class PolygonMeshRange>
