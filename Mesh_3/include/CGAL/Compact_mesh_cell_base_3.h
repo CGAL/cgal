@@ -408,7 +408,7 @@ public:
   void set_neighbor(int i, Cell_handle n)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    CGAL_triangulation_precondition( this != &*n );
+    CGAL_triangulation_precondition( this != n.operator->() );
     N[i] = n;
   }
 
@@ -421,10 +421,10 @@ public:
   void set_neighbors(Cell_handle n0, Cell_handle n1,
                      Cell_handle n2, Cell_handle n3)
   {
-    CGAL_triangulation_precondition( this != &*n0 );
-    CGAL_triangulation_precondition( this != &*n1 );
-    CGAL_triangulation_precondition( this != &*n2 );
-    CGAL_triangulation_precondition( this != &*n3 );
+    CGAL_triangulation_precondition( this != n0.operator->() );
+    CGAL_triangulation_precondition( this != n1.operator->() );
+    CGAL_triangulation_precondition( this != n2.operator->() );
+    CGAL_triangulation_precondition( this != n3.operator->() );
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
