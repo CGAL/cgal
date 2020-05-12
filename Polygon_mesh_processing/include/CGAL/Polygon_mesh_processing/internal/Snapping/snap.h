@@ -1214,7 +1214,7 @@ std::size_t snap_borders(TriangleMesh& tm_A,
   border_halfedges(tm_A, std::back_inserter(border_vertices_A));
   border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
   internal::assign_tolerance_with_local_edge_length_bound(border_vertices_A, tolerance_map_A, tol_mx, tm_A, np_A);
   Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_B);
@@ -1294,7 +1294,7 @@ std::size_t snap_borders(TriangleMesh& tm,
   std::vector<halfedge_descriptor> border_vertices;
   border_halfedges(tm, std::back_inserter(border_vertices));
 
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   Tolerance_map tolerance_map = get(Vertex_property_tag(), tm);
   internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tolerance_map, tol_mx, tm, np);
 

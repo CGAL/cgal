@@ -76,3 +76,12 @@ else()
   message(STATUS "will not be compiled as they use CGAL::Epick_d which requires the Eigen library.")
 
 endif()
+
+find_package( TBB QUIET )
+if(TBB_FOUND)
+  create_single_source_cgal_program( "parallel_kdtree.cpp" )
+  cgal_target_use_TBB(parallel_kdtree)
+else()
+  message(STATUS "parallel_kdtree.cpp requires TBB and will not be compiled")
+endif()
+

@@ -40,31 +40,31 @@ class Handle
     typedef std::ptrdiff_t Id_type ;
 
     Handle() noexcept
-        : PTR(static_cast<Rep*>(0)) {}
+        : PTR{static_cast<Rep*>(0)} {}
 
     // FIXME: if the precondition throws in a noexcept function, the program terminates
     Handle(const Handle& x) noexcept
     {
-      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
-      PTR = x.PTR;
-      CGAL_assume (PTR->count > 0);
-      PTR->count++;
+      CGAL_precondition( x.PTR.p != static_cast<Rep*>(0) );
+      PTR.p = x.PTR.p;
+      CGAL_assume (PTR.p->count > 0);
+      PTR.p->count++;
     }
 
     ~Handle()
     {
-        if ( PTR && (--PTR->count == 0))
-            delete PTR;
+        if ( PTR.p && (--PTR.p->count == 0))
+            delete PTR.p;
     }
 
     Handle&
     operator=(const Handle& x) noexcept
     {
-      CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
-      x.PTR->count++;
-      if ( PTR && (--PTR->count == 0))
-          delete PTR;
-      PTR = x.PTR;
+      CGAL_precondition( x.PTR.p != static_cast<Rep*>(0) );
+      x.PTR.p->count++;
+      if ( PTR.p && (--PTR.p->count == 0))
+          delete PTR.p;
+      PTR.p = x.PTR.p;
       return *this;
     }
 
@@ -72,23 +72,29 @@ class Handle
 
     void reset()
     {
-      if (PTR)
+      if (PTR.p)
       {
-        if (--PTR->count==0)
-          delete PTR;
-        PTR=0;
+        if (--PTR.p->count==0)
+          delete PTR.p;
+        PTR.p=0;
       }
     }
 
-    int
-    refs()  const noexcept { return PTR->count; }
+    int refs()  const noexcept { return PTR.p->count; }
 
-    Id_type id() const noexcept { return PTR - static_cast<Rep*>(0); }
+    Id_type id() const noexcept { return PTR.p - static_cast<Rep*>(0); }
 
-    bool identical(const Handle& h) const noexcept { return PTR == h.PTR; }
+    bool identical(const Handle& h) const noexcept { return PTR.p == h.PTR.p; }
+
+    void*  for_compact_container() const { return PTR.vp; }
+    void*& for_compact_container() { return PTR.vp; }
 
   protected:
-    Rep* PTR;
+
+  union {
+    Rep* p;
+    void* vp;
+  } PTR;
 };
 
 //inline Handle::Id_type id(const Handle& x) { return x.id() ; }

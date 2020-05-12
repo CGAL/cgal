@@ -4,21 +4,22 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QVector>
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
+
+#include <CGAL/Three/Triangle_container.h>
 
 //! [itemdeclaration]
 // The special Scene_item only for triangles
 
-//this is used by the Qt's MOC system to manage the metadata.
-#ifdef scene_triangle_item_EXPORTS
-#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_EXPORT
-#else
-#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_IMPORT
-#endif
+using namespace CGAL::Three;
+typedef Triangle_container Tc;
+typedef Viewer_interface VI;
 
-class Scene_triangle_item : public CGAL::Three::Scene_item
+
+class Scene_triangle_item
+    : public CGAL::Three::Scene_item_rendering_helper
 {
 
   Q_OBJECT
@@ -40,78 +41,78 @@ public :
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
   //fills the std::vector
-  void computeElements(double ax,double ay, double az,
-                        double bx,double by, double bz,
-                        double cx,double cy, double cz) const Q_DECL_OVERRIDE;
+  void computeElements() const Q_DECL_OVERRIDE;
 
   Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
   QString toolTip() const Q_DECL_OVERRIDE {return QString();}
-
+  void compute_bbox() const Q_DECL_OVERRIDE { _bbox = Bbox(); }
 
 private:
   //contains the data
   mutable std::vector<float> vertices;
-  mutable int nb_pos;
-  mutable QOpenGLShaderProgram *program;
-  using CGAL::Three::Scene_item::initializeBuffers;
+  mutable std::size_t nb_pos;
   //Fills the buffers with data. The buffers allow us to give data to the shaders.
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE;
+  void initializeBuffers(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
 }; //end of class Scene_triangle_item
 //! [itemdeclaration]
 Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
                                          double bx,double by, double bz,
                                          double cx,double cy, double cz)
-  :  CGAL::Three::Scene_item(1,1)
 {
-  nb_pos = 0;
-  are_buffers_filled = false;
-  computeElements(ax, ay, az,
-                   bx, by, bz,
-                   cx, cy, cz);
-  invalidateOpenGLBuffers();
-}
-
+  //! [creation]
+  //Prepare a single TriangleContainer, as we will only use one program.
+  setTriangleContainer(0, new Tc(VI::PROGRAM_NO_SELECTION,
+                                 false));
+  //! [creation]
 //! [computeelements]
-//Fills the position vector with data.
-void Scene_triangle_item::computeElements(double ax, double ay, double az,
-                                           double bx, double by, double bz,
-                                           double cx, double cy, double cz)const
-{
+  //Fills the position vector with data.
+  nb_pos = 0;
   vertices.resize(9);
   vertices[0] = ax; vertices[1] = ay; vertices[2] = az;
   vertices[3] = bx; vertices[4] = by; vertices[5] = bz;
   vertices[6] = cx; vertices[7] = cy; vertices[8] = cz;
+  nb_pos=vertices.size();
+//! [computeelements]
+  //be sure the data will be computed next draw call
+  invalidateOpenGLBuffers();
 }
 
-//! [computeelements]
+
+//prepare the TriangleContainer with the computed data.
+void Scene_triangle_item::computeElements()const
+{
+//! [allocateelements]
+getTriangleContainer(0)->allocate(Tc::Flat_vertices, vertices.data(),
+                                  static_cast<int>(vertices.size()
+                                                   * sizeof(float)));
+setBuffersFilled(true);
+//! [allocateelements]
+}
+
 //! [draw]
 
 void Scene_triangle_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
-  //The filling of the buffers should be performed in this function, because it needs a valid openGL context, and we are certain to have one in this function.
-  if(!are_buffers_filled)
+  //Initializes the OpenGL context for `viewer` if needed.
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    computeElements(0, 0, 0,
-                     1, 0, 0,
-                     0.5, 0.5, 0);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
     initializeBuffers(viewer);
   }
-  //Binds the vao corresponding to the type of data we are drawing.
-  vaos[0]->bind();
-  //Gets the program corresponding to the type of data we are drawing.
-  //Here we want triangles with light effects.
-  program = getShaderProgram(PROGRAM_WITH_LIGHT);
-  //Gives most of the uniform values to the shaders.
-  attribBuffers(viewer, PROGRAM_WITH_LIGHT);
-  //Binds the program chosen before to use the right shaders.
-  program->bind();
-  //Gives the wanted color to the fragment shader as uniform value.
-  program->setAttributeValue("colors", this->color());
-  //Draws the items
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_pos/3));
-  //clean up
-  vaos[0]->release();
-  program->release();
+
+  //set the uniform properties for the TriangleContainer.
+  //Uniform values are setted at each draw call and are defined for the whole item.
+  //Values per simplex are computed as buffers in ComputeElements() and bound in initializeBuffers().
+  getTriangleContainer(0)->setColor(this->color());
+  getTriangleContainer(0)->draw(viewer, true);
 
 }
 //! [draw]
@@ -119,38 +120,21 @@ void Scene_triangle_item::draw(CGAL::Three::Viewer_interface* viewer) const
 //Is mostly called after a change of geometry in the data.
 void Scene_triangle_item::invalidateOpenGLBuffers()
 {
-  are_buffers_filled = false;
+  setBuffersFilled(false);
+  getTriangleContainer(0)->reset_vbos(ALL);
 }
 
 
 //! [fillbuffers]
 void Scene_triangle_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
 {
+//Bind the buffers filled in ComputeElements() for the TriangleContainer.
+  getTriangleContainer(0)->initializeBuffers(viewer);
+  getTriangleContainer(0)->setFlatDataSize(nb_pos);
 
-  //vao containing the data for the facets
-  {
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
-    program->bind();
-
-    vaos[0]->bind();
-    buffers[0].bind();
-    buffers[0].allocate(vertices.data(),
-                        static_cast<GLsizei>(vertices.size()*sizeof(float)));
-    program->enableAttributeArray("vertex");
-    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[0].release();
-
-    vaos[0]->release();
-    program->release();
-
-  }
-
-//once the buffers are fill, we can empty the vectors to optimize memory consumption
-  nb_pos = vertices.size();
-  vertices.resize(0);
-  //"Swap trick" insures that the memory is indeed freed and not kept available
-  std::vector<float>(vertices).swap(vertices);
-  are_buffers_filled = true;
+//once the buffers are bound, we can clear the vectors to optimize memory consumption
+  vertices.clear();
+  vertices.shrink_to_fit();
 }
 //! [fillbuffers]
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>

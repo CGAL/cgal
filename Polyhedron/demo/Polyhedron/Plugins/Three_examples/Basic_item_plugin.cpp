@@ -1,11 +1,11 @@
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
 #include <QInputDialog>
-#include "Messages_interface.h"
 #include "CGAL/Three/Scene_group_item.h"
+#include "CGAL/Three/Three.h"
 #include "Scene_plane_item.h"
 
 //This plugin crates an action in Operations that displays the name of the selected item,
@@ -31,10 +31,8 @@ public:
     return _actions;
   }
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
   {
-    //gets the reference to the message interface, to display text in the console widget
-    this->messageInterface = mi;
     //get the references
     this->scene = sc;
     this->mw = mw;
@@ -57,7 +55,7 @@ private Q_SLOTS:
   { //! [use]
     //get a reference to the selected item.
     CGAL::Three::Scene_item *item = scene->item(scene->mainSelectionIndex());
-    messageInterface->information(QString("The selected item's name is  : %1").arg(item->name()));
+    CGAL::Three::Three::information(QString("The selected item's name is  : %1").arg(item->name()));
     //! [use]
     //! [additem]
     //creates a plane item
@@ -80,7 +78,6 @@ private Q_SLOTS:
 
 private:
   QList<QAction*> _actions;
-  Messages_interface* messageInterface;
   //The reference to the scene
   CGAL::Three::Scene_interface* scene;
   //The reference to the main window

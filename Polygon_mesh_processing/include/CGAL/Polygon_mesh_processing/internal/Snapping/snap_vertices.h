@@ -866,7 +866,7 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
   typedef CGAL::dynamic_vertex_property_t<FT>                                         Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;
 
-  const FT max_tol(std::numeric_limits<double>::max());
+  const FT max_tol((std::numeric_limits<double>::max)());
 
   Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
   internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_A, tolerance_map_A, max_tol, tm_A, np_A);

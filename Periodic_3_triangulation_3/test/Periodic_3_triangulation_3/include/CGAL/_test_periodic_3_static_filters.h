@@ -61,17 +61,17 @@ Point my_rand_p3()
 }
 
 // Random int in [0;256).
-int my_rand_int(int min, int max)
+int my_rand_int(int imin, int imax)
 {
-  return r->get_int(min, max+1);
+  return r->get_int(imin, imax+1);
 }
 
 // Random offset
-Offset my_rand_o3(int min, int max)
+Offset my_rand_o3(int imin, int imax)
 {
-  int x = my_rand_int(min,max);
-  int y = my_rand_int(min,max);
-  int z = my_rand_int(min,max);
+  int x = my_rand_int(imin,imax);
+  int y = my_rand_int(imin,imax);
+  int z = my_rand_int(imin,imax);
   return Offset(x, y, z);
 }
 

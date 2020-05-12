@@ -27,6 +27,7 @@ high performance libraries, e.g.,
 <a href = "http://www.gurobi.com/"> Gurobi </a>.
 
 
+
 \section SectionSolverDiagonalize Matrix Diagonalization
 
 The concept `DiagonalizeTraits<T,dim>` defines an interface for the
@@ -41,6 +42,7 @@ class:
 \cgalExample{Solver_interface/diagonalize_matrix.cpp}
 
 
+
 \section SectionSolverSVD Singular Value Decomposition
 
 The concept `SvdTraits` defines an interface for solving in the least
@@ -52,7 +54,6 @@ Here is a simple example that shows how to handle matrices, vectors
 and this solver:
 
 \cgalExample{Solver_interface/singular_value_decomposition.cpp}
-
 
 
 
@@ -102,14 +103,13 @@ formulating and solving (constrained or unconstrained) mixed integer
 programs. It can also be used for general linear programs.
 
 The field type is `double`. We provide two models of this concept:
-`GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and
-`SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
+`CGAL::GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and
+`CGAL::SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
 
 Here is an example that shows how to formulate and solve a simple
-mixed integer programs using this solver.
+mixed integer program using this solver.
 
 \cgalExample{Solver_interface/mixed_integer_program.cpp}
-
 
 
 
@@ -132,4 +132,3 @@ with the help of Andreas Fabri.
 
 */
 } /* namespace CGAL */
-

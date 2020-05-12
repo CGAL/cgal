@@ -118,8 +118,8 @@ class Point_set_item_classification : public Item_classification_base
 
     for (std::size_t i = 0; i < m_features.size(); ++ i)
     {
-      float vmin = std::numeric_limits<float>::max();
-      float vmax = -std::numeric_limits<float>::max();
+      float vmin = (std::numeric_limits<float>::max)();
+      float vmax = -(std::numeric_limits<float>::max)();
       float vmean = 0.f;
       std::size_t nb = 0;
 
