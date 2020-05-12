@@ -241,7 +241,7 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
       // put in `out` only manifold edges from the set of edges to stitch.
       // We choose not to allow only a pair out of the whole set to be stitched
       // as we can produce inconsistent stitching along a sequence of non-manifold edges
-      std::size_t nb_pairs = halfedge_pairs.size();
+      const std::size_t nb_pairs = halfedge_pairs.size();
       for(std::size_t k=0; k<nb_pairs; ++k)
       {
         if(manifold_halfedge_pairs[k])
@@ -253,8 +253,8 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
           *out++ = halfedge_pairs[k];
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
-          halfedge_descriptor h = halfedge_pairs[k].first;
-          halfedge_descriptor hn = halfedge_pairs[k].second;
+          const halfedge_descriptor h = halfedge_pairs[k].first;
+          const halfedge_descriptor hn = halfedge_pairs[k].second;
           std::cout << "Stitch "
                     << edge(h, pmesh) << " (" << get(vpm, source(h, pmesh)) << ") - (" << get(vpm, target(h, pmesh)) << ") and "
                     << edge(hn, pmesh) << " (" << get(vpm, source(hn, pmesh)) << ") - (" << get(vpm, target(hn, pmesh)) << ")" << std::endl;
@@ -271,7 +271,7 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
   // put in `out` only manifold edges from the set of edges to stitch.
   // We choose not to allow only a pair out of the whole set to be stitched
   // as we can produce inconsistent stitching along a sequence of non-manifold edges
-    std::size_t nb_pairs=halfedge_pairs.size();
+    const std::size_t nb_pairs=halfedge_pairs.size();
     for(std::size_t i=0; i<nb_pairs; ++i)
     {
       if(manifold_halfedge_pairs[i])
@@ -283,8 +283,8 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
         *out++ = halfedge_pairs[i];
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
-        halfedge_descriptor h = halfedge_pairs[i].first;
-        halfedge_descriptor hn = halfedge_pairs[i].second;
+        const halfedge_descriptor h = halfedge_pairs[i].first;
+        const halfedge_descriptor hn = halfedge_pairs[i].second;
         std::cout << "Stitch "
                   << edge(h, pmesh) << " (" << get(vpm, source(h, pmesh)) << ") - (" << get(vpm, target(h, pmesh)) << ") and "
                   << edge(hn, pmesh) << " (" << get(vpm, source(hn, pmesh)) << ") - (" << get(vpm, target(hn, pmesh)) << ")" << std::endl;
