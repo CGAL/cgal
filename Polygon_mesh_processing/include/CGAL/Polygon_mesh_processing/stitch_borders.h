@@ -729,6 +729,8 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
       if(face(opposite(curr_h, pm), pm) == face(opposite(curr_hn, pm), pm))
       {
         unstitchable_halfedges.insert(curr_h);
+        unstitchable_halfedges.insert(curr_hn);
+
         bh = curr_hn;
         break;
       }
@@ -792,7 +794,10 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 #endif
 
         for(const auto& hp : hedges_to_stitch)
+        {
           unstitchable_halfedges.insert(hp.first);
+          unstitchable_halfedges.insert(hp.second);
+        }
       }
     }
   }
