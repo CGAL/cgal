@@ -133,11 +133,11 @@ public:
     {
       bbox = bbox + ps.point(*it).bbox();
     }
-    CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
-    CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+    CGAL::qglviewer::Vec v_min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    CGAL::qglviewer::Vec v_max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
-    _bbox = Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z);
+    _bbox = Bbox(v_min.x,v_min.y,v_min.z,
+                 v_max.x,v_max.y,v_max.z);
   }
   bool isEmpty() const{return false;}
 Q_SIGNALS:
