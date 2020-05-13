@@ -224,7 +224,7 @@ remove_outliers(
                             return p.first < threshold_distance * threshold_distance;
                           });
 
-  if (std::distance (sorted_points.begin(), f2r) < first_index_to_remove)
+  if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
   {
     std::nth_element (f2r,
                       sorted_points.begin() + first_index_to_remove,
