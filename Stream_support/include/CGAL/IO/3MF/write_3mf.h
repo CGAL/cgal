@@ -24,6 +24,9 @@
 #include <vector>
 #include <string>
 
+/*
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
+ * */
 namespace CGAL {
 namespace tmf_internal {
 
@@ -59,7 +62,7 @@ NMR::MODELMESHCOLOR_SRGB fnCreateColor(unsigned char red, unsigned char green,
 
 } // namespace tmf_internal
 
-namespace 3MF {
+namespace IO {
 
 bool add_build_item(NMR::PLib3MFModel * pModel,
                     NMR::PLib3MFModelMeshObject* pMeshObject)
@@ -357,12 +360,8 @@ bool write_polyline_to_model(const PointRange& points,
   return write_points(points, color, pc_name, pMeshObject, pModel);
 }
 
-} // namespace 3MF
+} // namespace IO
 } // namespace CGAL
- * 
- * \attention Only versions inferior to 2.0 of lib3mf are supported.
- *
- * \attention Only versions inferior to 2.0 of lib3mf are supported.
 
 #endif // CGAL_LINKED_WITH_3MF
 

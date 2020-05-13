@@ -307,8 +307,11 @@ bool read_OFF(const std::string& fname,
 template <typename OutputIterator>
 bool
 read_OFF(
-    std::istream& stream, ///< input stream.
-    OutputIterator output)
+    std::istream& stream,
+    OutputIterator output,
+    typename std::enable_if<
+    CGAL::is_iterator<OutputIterator>::value
+  >::type* =0)
 {
   return read_OFF<typename value_type_traits<OutputIterator>::type>
       (stream, output, CGAL::parameters::all_default());

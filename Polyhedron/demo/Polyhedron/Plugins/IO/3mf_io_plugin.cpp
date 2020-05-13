@@ -6,8 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#include <CGAL/IO/read_3mf.h>
-#include <CGAL/IO/write_3mf.h>
+#include <CGAL/IO/3MF.h>
 #include <QFileDialog>
 
 #include "Scene_surface_mesh_item.h"
@@ -241,14 +240,14 @@ class Io_3mf_plugin:
           color.set_rgb(c.red(), c.green(), c.blue());
       }
 
-      CGAL::write_mesh_to_model(points, triangles, colors,
+      CGAL::IO::write_mesh_to_model(points, triangles, colors,
                                 sm_item->name().toStdString(), &pMeshObject, pModel);
     }
     for(Scene_points_with_normal_item* pts_item : pts_items)
     {
       QColor qc = pts_item->color();
       CGAL::Color color(qc.red(), qc.green(), qc.blue());
-      CGAL::write_point_cloud_to_model(pts_item->point_set()->points(), color,
+      CGAL::IO::write_point_cloud_to_model(pts_item->point_set()->points(), color,
                                        pts_item->name().toStdString(),
                                        &pMeshObject, pModel);
     }
@@ -259,12 +258,12 @@ class Io_3mf_plugin:
       {
         QColor qc = pol_item->color();
         CGAL::Color color(qc.red(), qc.green(), qc.blue());
-        CGAL::write_polyline_to_model(*pol_it,color,
+        CGAL::IO::write_polyline_to_model(*pol_it,color,
                                       pol_item->name().toStdString(),
                                       &pMeshObject, pModel);
       }
     }
-    CGAL::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
+    CGAL::IO::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
     items = to_return;
     return true;
   }

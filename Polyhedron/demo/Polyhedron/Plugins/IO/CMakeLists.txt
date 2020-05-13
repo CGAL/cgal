@@ -67,11 +67,11 @@ if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
   message(STATUS "NOTICE : LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
 else()
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-  
+
   polyhedron_demo_plugin(ply_plugin PLY_io_plugin KEYWORDS IO PointSetProcessing Classification PMP)
   target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
   target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
-  
+
   if (LASLIB_FOUND)
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS IO PointSetProcessing Classification)
     target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item)
@@ -93,6 +93,7 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NM
   include_directories(${3MF_INCLUDE_DIR})
   polyhedron_demo_plugin(3mf_io_plugin 3mf_io_plugin KEYWORDS IO PMP)
   target_link_libraries(3mf_io_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
+  add_definitions(-DCGAL_LINKED_WITH_3MF)
 else()
   message(STATUS "NOTICE : The 3mf_io_plugin requires the lib3MF library in a version < 2.0, and will not be compiled.")
 endif()

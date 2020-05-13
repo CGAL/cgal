@@ -19,6 +19,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Iterator_range.h>
+#include <boost/range/value_type.hpp>
 
 
 #include <boost/utility/enable_if.hpp>
@@ -115,7 +116,10 @@ bool
 write_OFF(
     const char* fname,
     const PointRange& points,
-    const NamedParameters& np)
+    const NamedParameters& np
+    ,typename boost::disable_if<
+    typename boost::has_range_const_iterator<NamedParameters>::type
+    >::type* =0)
 {
   std::ofstream os(fname);
   return write_OFF(os, points, np);
@@ -127,7 +131,10 @@ bool
 write_OFF(
     const std::string& fname,
     const PointRange& points,
-    const NamedParameters& np)
+    const NamedParameters& np
+    ,typename boost::disable_if<
+    typename boost::has_range_const_iterator<NamedParameters>::type
+    >::type* =0)
 {
   return write_OFF(fname.c_str(), points, np);
 }
@@ -160,7 +167,10 @@ template <typename PointRange>
 bool
 write_OFF(
     std::ostream& stream, ///< output stream.
-    const PointRange& points)
+    const PointRange& points,
+    typename boost::enable_if<
+    typename boost::has_range_const_iterator<PointRange>::type
+    >::type* =0)
 {
   return write_OFF
       (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
@@ -170,7 +180,10 @@ template <typename PointRange>
 bool
 write_OFF(
     const char* fname,
-    const PointRange& points)
+    const PointRange& points,
+    typename boost::enable_if<
+    typename boost::has_range_const_iterator<PointRange>::type
+    >::type* =0)
 {
   std::ofstream os(fname);
   return write_OFF(os, points, CGAL::Point_set_processing_3::parameters::all_default(points));
@@ -180,7 +193,10 @@ template <typename PointRange>
 bool
 write_OFF(
     const std::string& fname,
-    const PointRange& points)
+    const PointRange& points
+    ,typename boost::enable_if<
+    typename boost::has_range_const_iterator<PointRange>::type
+    >::type* =0)
 {
   return write_OFF(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }

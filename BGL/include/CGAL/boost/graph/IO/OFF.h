@@ -136,20 +136,29 @@ bool write_OFF_BGL(std::ostream& os,
 
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+               typename boost::disable_if<
+               typename boost::has_range_const_iterator<FaceGraph>::type
+               >::type* =0)
 {
   return IO::internal::write_OFF_BGL(os, g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
+               ,typename boost::disable_if<
+               typename boost::has_range_const_iterator<FaceGraph>::type
+               >::type* =0)
 {
   std::ofstream out(fname);
   return write_OFF(out, g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
+               ,typename boost::disable_if<
+               typename boost::has_range_const_iterator<FaceGraph>::type
+               >::type* =0)
 {
   return write_OFF(fname.c_str(), g, np);
 }

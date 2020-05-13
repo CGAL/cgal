@@ -251,7 +251,10 @@ bool write_OFF(std::ostream& os,
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
-               const PolygonRange& polygons)
+               const PolygonRange& polygons
+               ,typename boost::enable_if<
+               typename boost::has_range_const_iterator<PolygonRange>::type
+               >::type* =0)
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }
@@ -277,7 +280,10 @@ bool write_OFF(const char* fname,
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const char* fname,
                const PointRange& points,
-               const PolygonRange& polygons)
+               const PolygonRange& polygons
+               ,typename boost::enable_if<
+               typename boost::has_range_const_iterator<PolygonRange>::type
+               >::type* =0)
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }
@@ -294,7 +300,10 @@ bool write_OFF(const std::string& fname,
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const std::string& fname,
                const PointRange& points,
-               const PolygonRange& polygons)
+               const PolygonRange& polygons
+               ,typename boost::enable_if<
+               typename boost::has_range_const_iterator<PolygonRange>::type
+               >::type* =0)
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }

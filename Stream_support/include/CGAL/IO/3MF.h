@@ -32,51 +32,6 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * \brief extracts ranges of points and triangles from a 3mf file.
- *
- * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value type` is
- *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value type` is the point type.
- * \tparam PolygonRanges a model of the concept `RandomAccessContainer` whose
- *  `value_type` is a model of the concept `RandomAccessContainer`
- *  whose `value_type` is a model of the concept `RandomAccessContainer` whose
- *  `value_type` is std::size_t.
- * \tparam ColorRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value type` is
- *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value type` is `CGAL::Color`.
- *
- * \param file_name the name of the 3mf file to read.
- * \param all_points a `PointRanges` that will contain the points of the meshes in `file_name`.
- *  Each of these meshes will add a range of its points.
- * \param all_polygons a `PolygonRanges` that will contain the triangles of the meshes in `file_name`.
- *  Each of these meshes will add a range of its triangles. A `triangle` of
- *  `all_polygons[i]` contains the indices of its points in `all_points[i]`.
- * \param all_colors will contain the color of each triangle for each soup.
- * \param names will contain the name of each mesh in `file_name` if any.
- *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
- *
- * \return the number of soups read.
- */
-template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
-int read_triangle_soups_from_3mf(const std::string& file_name,
-                                 PointRanges& all_points,
-                                 PolygonRanges& all_polygons,
-                                 ColorRanges& all_colors,
-                                 std::vector<std::string>& names)
-{
-  typedef typename PointRanges::value_type PointRange;
-  typedef typename PolygonRanges::value_type PolygonRange;
-  typedef typename ColorRanges::value_type ColorRange;
-  return read_from_3mf<PointRanges,PolygonRanges,ColorRanges,
-                       PointRange, PolygonRange, ColorRange>
-          (file_name, all_points, all_polygons, all_colors, names,
-           extract_soups<PointRange, PolygonRange, ColorRange>);
-}
 
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
          typename PointRange, typename PolygonRange, typename ColorRange>
@@ -413,6 +368,52 @@ int read_from_3mf(const std::string& file_name,
   return all_points.size();
 }
 
+
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * \brief extracts ranges of points and triangles from a 3mf file.
+ *
+ * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
+ *  `BackInsertionSequence` whose `value type` is
+ *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *  whose `value type` is the point type.
+ * \tparam PolygonRanges a model of the concept `RandomAccessContainer` whose
+ *  `value_type` is a model of the concept `RandomAccessContainer`
+ *  whose `value_type` is a model of the concept `RandomAccessContainer` whose
+ *  `value_type` is std::size_t.
+ * \tparam ColorRanges a model of the concepts `RandomAccessContainer` and
+ *  `BackInsertionSequence` whose `value type` is
+ *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *  whose `value type` is `CGAL::Color`.
+ *
+ * \param file_name the name of the 3mf file to read.
+ * \param all_points a `PointRanges` that will contain the points of the meshes in `file_name`.
+ *  Each of these meshes will add a range of its points.
+ * \param all_polygons a `PolygonRanges` that will contain the triangles of the meshes in `file_name`.
+ *  Each of these meshes will add a range of its triangles. A `triangle` of
+ *  `all_polygons[i]` contains the indices of its points in `all_points[i]`.
+ * \param all_colors will contain the color of each triangle for each soup.
+ * \param names will contain the name of each mesh in `file_name` if any.
+ *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
+ *
+ * \return the number of soups read.
+ */
+template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
+int read_triangle_soups_from_3mf(const std::string& file_name,
+                                 PointRanges& all_points,
+                                 PolygonRanges& all_polygons,
+                                 ColorRanges& all_colors,
+                                 std::vector<std::string>& names)
+{
+  typedef typename PointRanges::value_type PointRange;
+  typedef typename PolygonRanges::value_type PolygonRange;
+  typedef typename ColorRanges::value_type ColorRange;
+  return read_from_3mf<PointRanges,PolygonRanges,ColorRanges,
+                       PointRange, PolygonRange, ColorRange>
+          (file_name, all_points, all_polygons, all_colors, names,
+           extract_soups<PointRange, PolygonRange, ColorRange>);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
@@ -468,10 +469,10 @@ bool write_triangle_soups_to_3mf(const std::string& file_name,
     }
 
     std::vector<CGAL::Color> colors(all_polygons[id].size());
-    write_mesh_to_model(all_points[id], all_polygons[id], colors, name, &pMeshObject, pModel);
+    IO::write_mesh_to_model(all_points[id], all_polygons[id], colors, name, &pMeshObject, pModel);
   }
 
-  return export_model_to_file(file_name, pModel);
+  return IO::export_model_to_file(file_name, pModel);
 }
 
 } // namespace CGAL

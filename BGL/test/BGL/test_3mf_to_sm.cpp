@@ -99,7 +99,7 @@ int main(int argc, char** argv)
   colors.clear();
   vertex_id_map.clear();
   i = 0;
-  
+
   vpm = get(boost::vertex_point, tube);
   for(auto v : tube.vertices())
   {
@@ -127,8 +127,8 @@ int main(int argc, char** argv)
   meshes.resize(2);
   meshes[0] = sphere;
   meshes[1] = tube;
-  // @fixme this should be in BGL
-  CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);
+
+  //CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);
 
   std::cout<<"OK."<<std::endl;
 #endif //CGAL_LINKED_WITH_3MF

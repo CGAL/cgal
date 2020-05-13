@@ -16,6 +16,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Point_set_3/IO.h>
 
 #include <QObject>
 #include <QApplication>
