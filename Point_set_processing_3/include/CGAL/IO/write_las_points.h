@@ -372,7 +372,7 @@ write_las_points(
 /// \endcond
 #ifndef CGAL_NO_DEPRECATED_CODE
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOLas
   @todo update version
   \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_LAS_with_properties()` should be used instead.
 */
@@ -392,7 +392,7 @@ write_las_points_with_properties (std::ostream& stream,
 }
 
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOLas
   @todo update version
   \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_LAS()` should be used instead.
 */

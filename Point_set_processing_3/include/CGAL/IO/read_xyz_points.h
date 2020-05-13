@@ -32,7 +32,7 @@
 namespace CGAL {
 
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOXyz
    Reads points (positions + normals, if available) from a .xyz ASCII stream.
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
@@ -175,7 +175,7 @@ read_XYZ(
 }
 
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOXyz
    Reads points (positions + normals, if available) from a .xyz ASCII file.
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
@@ -516,7 +516,7 @@ read_xyz_points(
 ///
 ///
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOXyz
    @todo update version
    \deprecated This function is deprecated since \cgal 5.1, `CGAL::read_XYZ()` should be used instead.
 

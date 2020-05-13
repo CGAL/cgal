@@ -67,7 +67,8 @@ the printing mode.
 - \link OffIoFuncs I/O on OFF files (`CGAL::write_OFF()`and `CGAL::read_OFF()`)\endlink
 - \link GocadIoFuncs I/O on GOCAD files (`CGAL::write_GOCAD()`and `CGAL::read_GOCAD()`)\endlink
 - \link VtpIoFuncs I/O on VTP files (`CGAL::write_VTP()`and `CGAL::read_VTP()`)\endlink
-
+- `GCAL::read_polygon_soup()`
+- `GCAL::write_polygon_soup()`
 - `GCAL::read_WKT()`
 - `CGAL::read_point_WKT()`
 - `GCAL::read_multi_point_WKT()`
@@ -89,6 +90,5 @@ the printing mode.
 - `CGAL::Verbose_ostream`
 - `CGAL::Input_rep<T,F>`
 - `CGAL::Output_rep<T,F>`
-
 */
 

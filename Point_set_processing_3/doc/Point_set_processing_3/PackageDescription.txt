@@ -7,11 +7,14 @@
 Collection of algorithms of point set processing (smoothing,
 simplification, etc.).
 
-\defgroup PkgPointSetProcessing3IO IO (XYZ/OFF Formats)
+\defgroup PkgPointSetProcessing3IO IO (I/O Functions)
 \ingroup PkgPointSetProcessing3Ref
 
-Read and write points (with or without normal vectors) in XYZ and OFF
-formats.
+\defgroup PkgPointSetProcessing3IOOff IO (OFF Formats)
+\ingroup PkgPointSetProcessing3Ref
+
+\defgroup PkgPointSetProcessing3IOXyz IO (XYZ Formats)
+\ingroup PkgPointSetProcessing3Ref
 
 \defgroup PkgPointSetProcessing3IOPly IO (PLY Format)
 \ingroup PkgPointSetProcessing3Ref
@@ -73,10 +76,8 @@ format.
 
 \cgalCRPSection{IO (XYZ/OFF Formats)}
 
-- `CGAL::read_off_points()`
-- `CGAL::read_xyz_points()`
-- `CGAL::write_off_points()`
-- `CGAL::write_xyz_points()`
+- \link PkgPointSetProcessing3IOOff OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
+- \link PkgPointSetProcessing3IOXyz XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
 
 \cgalCRPSection{IO (PLY Format)}
 
@@ -99,5 +100,9 @@ format.
 - `CGAL::make_las_point_reader()`
 - `CGAL::make_las_point_writer()`
 
+\cgalCRPSection{IO (All Formats)}
+
+- `CGAL::read_points()`
+- `CGAL::write_points()`
 */
 

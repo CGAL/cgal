@@ -37,7 +37,7 @@ namespace CGAL {
 
 
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOOff
    Reads points (positions + normals, if available) from a .off ASCII stream.
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
@@ -187,7 +187,7 @@ read_OFF(
 
 
 /**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOOff
    Reads points (positions + normals, if available) from a .off ASCII file.
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
@@ -525,35 +525,40 @@ read_off_points(
 
 
 #ifndef CGAL_NO_DEPRECATED_CODE
+#ifdef DOXYGEN_RUNNING
 /*!
-/**
-   \ingroup PkgPointSetProcessing3IO
+   \ingroup PkgPointSetProcessing3IOOff
    @todo update version
    \deprecated This function is deprecated since \cgal 5.1, `CGAL::read_OFF()` should be used instead.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-#ifdef DOXYGEN_RUNNING
           typename NamedParameters
-#else
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-#endif
 >
-
-/// \cond SKIP_IN_MANUAL
 CGAL_DEPRECATED bool
 read_off_points(
     std::istream& stream,
     OutputIterator output,
-#ifdef DOXYGEN_RUNNING
     const NamedParameters& np)
-#else
-    const CGAL_BGL_NP_CLASS& np)
-#endif
 {
   return read_OFF(stream, output, np);
 }
 
+#else
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool
+read_off_points(
+    std::istream& stream,
+    OutputIterator output,
+    const CGAL_BGL_NP_CLASS& np)
+{
+  return read_OFF(stream, output, np);
+}
+#endif
+/// \cond SKIP_IN_MANUAL
 template <typename OutputIteratorValueType,
           typename OutputIterator>
 CGAL_DEPRECATED bool

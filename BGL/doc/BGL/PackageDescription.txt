@@ -731,6 +731,8 @@ user might encounter.
 - `CGAL::read_GOCAD()`
 - `CGAL::write_GOCAD()`
 
+- `CGAL::read_polygon_mesh()`
+- `CGAL::write_polygon_mesh()`
 */
 
 /*!
