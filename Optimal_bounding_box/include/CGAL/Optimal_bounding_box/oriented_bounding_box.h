@@ -88,15 +88,15 @@ void construct_oriented_bounding_box(const PointRange& points,
     zmax = (std::max)(rot_pt.z(), zmax);
   }
 
-  obb_points[0] = Point(xmin, ymin, zmin);
-  obb_points[1] = Point(xmax, ymin, zmin);
-  obb_points[2] = Point(xmax, ymax, zmin);
-  obb_points[3] = Point(xmin, ymax, zmin);
+  obb_points[0] = traits.construct_point_3_object()(xmin, ymin, zmin);
+  obb_points[1] = traits.construct_point_3_object()(xmax, ymin, zmin);
+  obb_points[2] = traits.construct_point_3_object()(xmax, ymax, zmin);
+  obb_points[3] = traits.construct_point_3_object()(xmin, ymax, zmin);
 
-  obb_points[4] = Point(xmin, ymax, zmax); // see order in make_hexahedron()...
-  obb_points[5] = Point(xmin, ymin, zmax);
-  obb_points[6] = Point(xmax, ymin, zmax);
-  obb_points[7] = Point(xmax, ymax, zmax);
+  obb_points[4] = traits.construct_point_3_object()(xmin, ymax, zmax); // see order in make_hexahedron()...
+  obb_points[5] = traits.construct_point_3_object()(xmin, ymin, zmax);
+  obb_points[6] = traits.construct_point_3_object()(xmax, ymin, zmax);
+  obb_points[7] = traits.construct_point_3_object()(xmax, ymax, zmax);
 
   // Apply the inverse rotation to the rotated axis aligned bounding box
   for(std::size_t i=0; i<8; ++i)
