@@ -720,11 +720,17 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- \link PkgBGLIOFct `CGAL::read_OFF()` \endlink
-- \link PkgBGLIOFct `CGAL::write_OFF()` \endlink
-- \link PkgBGLIOFct `CGAL::write_WRL()` \endlink
-- \link PkgBGLIOFct `CGAL::write_VTP()` \endlink
-- \link PkgBGLIOFct `CGAL::write_STL()` \endlink
+- `CGAL::read_OFF()`
+- `CGAL::write_OFF()`
+- `CGAL::read_OBJ()`
+- `CGAL::write_OBJ()`
+- `CGAL::read_VTP()`
+- `CGAL::write_VTP()`
+- `CGAL::read_STL()`
+- `CGAL::write_STL()`
+- `CGAL::read_GOCAD()`
+- `CGAL::write_GOCAD()`
+
 */
 
 /*!
