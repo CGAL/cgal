@@ -982,6 +982,7 @@ insert_in_edge(Face_handle f, int i)
     flip(n,in);
     }
 
+
   return v;
 }
 
@@ -1002,26 +1003,94 @@ insert_dim_up(Vertex_handle w,  bool orient)
   set_dimension( dimension() + 1);
   Face_handle f1;
   Face_handle f2;
+  Face_handle f3;
 
   const int dim = dimension(); //it is the resulting dimension
 
   switch (dim) {
-  case -1:
+  case -1: // v is the infinite vertex of the T2
     f1 = create_face(v,Vertex_handle(),Vertex_handle());
     v->set_face(f1);
     break;
-  case 0 :
+  case 0 : // v is the first finite vertex of the T2
     f1 = face_iterator_base_begin();
     f2 = create_face(v,Vertex_handle(),Vertex_handle());
     set_adjacency(f1, 0, f2, 0);
     v->set_face(f2);
     break;
-  case 1 :
-  case 2 :
-    {
+  case 1 : // v is the second finite vertex of the T2
+
+     f1 = face_iterator_base_begin();
+     f2 = f1->neighbor(0);
+
+     f2->set_vertex(1, v);
+     v->set_face(f2);
+     f1->set_vertex(1, f1->vertex(0));
+     f1->set_vertex(0, v);
+     f1->set_neighbor(1, f2);
+     f3 = create_face(f1->vertex(1), f2->vertex(0), Vertex_handle(),
+                                  f2, f1,Face_handle());
+     f1->set_neighbor(0,f3);
+     f2->set_neighbor(1,f3);
+     break;
+
+  case 2 : // v is the vertex making the T2 2D
+  {
+    if (orient) {
+      Face_iterator ib = face_iterator_base_begin();
+      Face_iterator ib_end = face_iterator_base_end();
+      for (; ib != ib_end; ++ib) {
+        ib->reorient();
+      }
+    }
+    std::list<Face_handle> faces_list;
+    Face_handle f = face_iterator_base_begin();
+    while (f->vertex(0) != w) {
+      f = f->neighbor(1);
+    }
+    Face_handle left = f;
+//    std::cout << left->vertex(1)->point() << std::endl;
+    f = f->neighbor(0);
+    while (f->vertex(1) != w) {
+      faces_list.push_back(f);
+      f = f->neighbor(0);
+    }
+    Face_handle right = f;
+ //   std::cout << right->vertex(0)->point() << std::endl;
+    Face_handle g, le = left;
+
+    left->set_vertex(2, w);
+    right->set_vertex(2, w);
+    left->set_vertex(0, v);
+    right->set_vertex(1, v);
+    // faces_list now only contains faces for which we create new neighbor(2)s
+    typename std::list<Face_handle>::iterator lfit = faces_list.begin();
+    int index = 2; // for connecting with left
+    for (; lfit != faces_list.end(); ++lfit) {
+      f = *lfit;
+      g = create_face(f->vertex(1),
+                      f->vertex(0),
+                      v);
+      f->set_vertex(2,w);
+
+    //  std::cout << "f " << &(*f) << " " << f->vertex(0)->point() << "  " <<  f->vertex(1)->point() << std::endl;
+   //   std::cout << "w = " << &*(w) << std::endl;
+
+      set_adjacency(f, 2, g, 2);
+      set_adjacency(le, index, g, 0);
+      index = 1; // for connecting new faces
+      le = g;
+    }
+    set_adjacency(g, 1, right, 2);
+    v->set_face(g);
+    w->set_face(left);
+  }
+  break;
+#if 0
       std::list<Face_handle> faces_list;
       Face_iterator ib= face_iterator_base_begin();
       Face_iterator ib_end = face_iterator_base_end();
+
       for (; ib != ib_end ; ++ib){
         faces_list.push_back( ib);
       }
@@ -1032,16 +1101,17 @@ insert_dim_up(Vertex_handle w,  bool orient)
 
       for ( ; lfit != faces_list.end() ; ++lfit) {
         f = * lfit;
-        // g = create_face(f); //calls copy constructor of face
+        g = create_face(f); //calls copy constructor of face
+        /*
         g = create_face(f->vertex(0),
                         f->vertex(1),
                         f->vertex(2),
                         f->neighbor(0),
                         f->neighbor(1),
                         f->neighbor(2));
-
-        f->set_vertex(dim,v);
-        g->set_vertex(dim,w);
+        */
+        f->set_vertex(dim,w);
+        g->set_vertex(dim,v);
         set_adjacency(f, dim, g, dim);
         if (f->has_vertex(w)) to_delete.push_back(g); // flat face to delete
       }
@@ -1088,9 +1158,11 @@ insert_dim_up(Vertex_handle w,  bool orient)
       v->set_face( *(faces_list.begin()));
     }
     break;
+#endif
   default:
     CGAL_triangulation_assertion(false);
     break;  }
+
   return v;
 }
 
