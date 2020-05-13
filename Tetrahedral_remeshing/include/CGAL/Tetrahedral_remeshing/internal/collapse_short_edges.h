@@ -568,6 +568,151 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
   return is_valid_collapse(edge, c3t3);
 }
 
+template<typename Facet, typename Vh>
+bool facet_has_edge(const Facet& f, const Vh v0, const Vh v1)
+{
+  std::array<std::array<int, 2>, 3> edges = {{ {{1,2}}, {{2,3}}, {{3,1}} }};
+
+  for (int i = 0; i < 3; ++i)
+  {
+    const std::array<int, 2>& ei = edges[i];
+    if ( f.first->vertex((f.second + ei[0]) % 4) == v0
+      && f.first->vertex((f.second + ei[1]) % 4) == v1)
+      return true;
+    if ( f.first->vertex((f.second + ei[0]) % 4) == v1
+      && f.first->vertex((f.second + ei[1]) % 4) == v0)
+      return true;
+  }
+  return false;
+}
+
+template<typename C3t3, typename CellSelector>
+bool collapse_preserves_surface_star(const typename C3t3::Edge& edge,
+                                     const C3t3& c3t3,
+                                     const typename C3t3::Triangulation::Point& new_pos,
+                                     const CellSelector& cell_selector)
+{
+  typedef typename C3t3::Triangulation       Tr;
+  typedef typename C3t3::Vertex_handle       Vertex_handle;
+  typedef typename C3t3::Facet               Facet;
+  typedef typename Tr::Geom_traits::Vector_3 Vector_3;
+  typedef typename Tr::Geom_traits::Point_3  Point_3;
+
+  const Tr& tr = c3t3.triangulation();
+
+  const Vertex_handle v0 = edge.first->vertex(edge.second);
+  const Vertex_handle v1 = edge.first->vertex(edge.third);
+  if (c3t3.in_dimension(v0) != 2 || c3t3.in_dimension(v1) != 2)
+    return true;//other cases should not be treated here
+
+  typename Tr::Geom_traits gt = c3t3.triangulation().geom_traits();
+  typename Tr::Geom_traits::Construct_opposite_vector_3
+    opp = gt.construct_opposite_vector_3_object();
+  typename Tr::Geom_traits::Compute_scalar_product_3
+    product = gt.compute_scalar_product_3_object();
+  typename Tr::Geom_traits::Construct_normal_3
+    normal = gt.construct_normal_3_object();
+
+  boost::unordered_set<Facet> facets;
+  tr.finite_incident_facets(v0, std::inserter(facets, facets.end()));
+  tr.finite_incident_facets(v1, std::inserter(facets, facets.end()));
+
+// note : checking a 2nd ring of facets does not change the result
+//  boost::unordered_set<Facet> ring2;
+//  for (const Facet& f : facets)
+//  {
+//    for (int i = 1; i < 4; ++i)
+//    {
+//      Vertex_handle vi = f.first->vertex((f.second + i) % 4);
+//      tr.finite_incident_facets(vi, std::inserter(ring2, ring2.end()));
+//    }
+//  }
+//  facets.insert(ring2.begin(), ring2.end());
+
+  Vector_3 reference_normal = CGAL::NULL_VECTOR;
+  //Point_3 reference_c;
+  for (const Facet& f : facets)
+  {
+    if (!is_boundary(c3t3, f, cell_selector))
+      continue;
+    if (facet_has_edge(f, v0, v1))
+      continue; //this facet will collapse if collapse happens
+
+    std::array<Point_3, 3> pts = {{ point(f.first->vertex((f.second + 1) % 4)->point()),
+                                    point(f.first->vertex((f.second + 2) % 4)->point()),
+                                    point(f.first->vertex((f.second + 3) % 4)->point()) }};
+    if(f.second % 2 == 0)
+      std::swap(pts[0], pts[1]);
+
+    Vector_3 n_before_collapse = normal(pts[0], pts[1], pts[2]);
+
+    const Facet& mf = tr.mirror_facet(f);
+    bool do_opp = false;
+    if (  c3t3.triangulation().is_infinite(mf.first)
+      ||  c3t3.subdomain_index(mf.first) < c3t3.subdomain_index(f.first))
+    {
+      n_before_collapse = opp(n_before_collapse);
+      do_opp = true;
+    }
+
+    if (reference_normal == CGAL::NULL_VECTOR)
+    {
+      //reference_c = CGAL::centroid(pts[0], pts[1], pts[2]);
+      reference_normal = n_before_collapse;
+    }
+
+    // check after move
+    for (int i = 0; i < 3; ++i)
+    {
+      const Vertex_handle vi = f.first->vertex((f.second + i + 1) % 4);
+      if (vi == v0 || vi == v1)
+      {
+        if (f.second % 2 == 0)
+        {
+          if(i == 0)      pts[1] = point(new_pos);
+          else if(i == 1) pts[0] = point(new_pos);
+          else            pts[2] = point(new_pos);
+        }
+        else
+          pts[i] = point(new_pos);
+        break;
+      }
+    }
+
+    Vector_3 n_after_collapse = normal(pts[0], pts[1], pts[2]);
+    if(do_opp)
+      n_after_collapse = opp(n_after_collapse);
+
+    const double dotref = product(reference_normal, n_after_collapse);
+    if(dotref < 0)
+      return false;
+    const double dot = product(n_before_collapse, n_after_collapse);
+    if(dot < 0)
+      return false;
+
+//    if (dot * dotref < 0)
+//    {
+//      std::cout << "collapse edge : " << std::endl;
+//      std::cout << point(v0->point()) << " " << point(v1->point()) << std::endl;
+//      std::cout << "facet : " << std::endl;
+//      std::cout << pts[0] << " " << pts[1] << " " << pts[2] << std::endl;
+//
+//      Point_3 c = CGAL::centroid(pts[0], pts[1], pts[2]);
+//      std::cout << "n_before_collapse ";
+//      std::cout << c << " " << (c + n_before_collapse) << std::endl;
+//      std::cout << "n_after_collapse  ";
+//      std::cout << c << " " << (c + n_after_collapse) << std::endl;
+//      std::cout << "reference_normal  ";
+//      std::cout << reference_c << " " << (reference_c + reference_normal) << std::endl;
+//      std::cout << std::endl;
+//    }
+//    if (dotref < 0 || dot < 0)
+//      return false;
+  }
+
+  return true;
+}
+
 template<typename C3t3, typename CellSelector>
 bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
                             const C3t3& c3t3,
@@ -965,7 +1110,8 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     }
   }
 
-  if (are_edge_lengths_valid(edge, c3t3, new_pos, sqhigh, cell_selector/*, adaptive = false*/))
+  if (are_edge_lengths_valid(edge, c3t3, new_pos, sqhigh, cell_selector/*, adaptive = false*/)
+    && collapse_preserves_surface_star(edge, c3t3, new_pos, cell_selector))
   {
     CGAL_assertion_code(typename Tr::Cell_handle dc);
     CGAL_assertion_code(int di);
@@ -1063,10 +1209,8 @@ void collapse_short_edges(C3T3& c3t3,
 
   //collect long edges
   Boost_bimap short_edges;
-  for (Finite_edges_iterator eit = tr.finite_edges_begin();
-       eit != tr.finite_edges_end(); ++eit)
+  for (const Edge& e : tr.finite_edges())
   {
-    const Edge& e = *eit;
     if (!can_be_collapsed(e, c3t3, protect_boundaries, cell_selector))
       continue;
 
