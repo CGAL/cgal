@@ -142,7 +142,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
 
     std::size_t nb_clusters = *functor.result;
 
-    Scene_group_item* group;
+    Scene_group_item* group = nullptr;
     std::vector<Scene_points_with_normal_item*> new_items;
 
     if (gen_sub->isChecked())
@@ -154,7 +154,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
       {
         Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item;
         new_item->point_set()->copy_properties (*points);
-        CGAL::Random rand(i);
+        CGAL::Random rand((unsigned int)(i));
         unsigned char r, g, b;
         r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
         g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
@@ -193,7 +193,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
         Point_set::Index iidx = *(colored->point_set()->insert (points->point(idx)));
         if (cluster_size[cluster_map[idx]] >= std::size_t(min_nb->value()))
         {
-          CGAL::Random rand(cluster_map[idx] + 1);
+          CGAL::Random rand((unsigned int)(cluster_map[idx] + 1));
           unsigned char r, g, b;
           r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
           g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
