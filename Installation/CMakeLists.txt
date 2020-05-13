@@ -871,6 +871,8 @@ if(NOT CGAL_HEADER_ONLY)
 else()
   configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
     "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+  configure_file("${CGAL_MODULES_DIR}/CGALConfigVersion_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"  @ONLY)
 endif()
 
 #--------------------------------------------------------------------------------------------------
