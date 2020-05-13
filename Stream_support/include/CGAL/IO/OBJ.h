@@ -54,9 +54,12 @@ bool read_OBJ(std::istream& is,
     if(line[0] == 'v' && line[1] == ' ')
     {
       std::istringstream iss(line.substr(1));
-      iss >> p; // @fixme check successful reading
-      if(!iss)
+      if(!(iss >> p) || !iss)
+      {
+        if(verbose)
+          std::cerr<<"error while reading OBJ vertex. "<<std::endl;
         return false;
+      }
 
       points.push_back(p);
     }
@@ -89,7 +92,13 @@ bool read_OBJ(std::istream& is,
     {
       std::istringstream iss(line);
       std::string dummy;
-      iss >> dummy;
+      if(!(iss >> dummy))
+      {
+        if(verbose)
+          std::cerr<<"error while reading OBJ vertex normal. "<<std::endl;
+        return false;
+      }
+
       double nx, ny, nz; // @fixme double?
       if(iss >> nx >> ny >> nz)
         *vn_out++ = Normal(nx, ny, nz); // @fixme check that every vertex has a normal?

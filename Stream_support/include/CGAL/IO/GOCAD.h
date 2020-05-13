@@ -61,13 +61,23 @@ bool read_GOCAD(std::istream& input,
     if((idx = s.find("name")) != std::string::npos)
     {
       std::istringstream str(s.substr(idx + 5));
-      str >> name_and_color.first;
+      if(!(str >> name_and_color.first))
+      {
+        if(verbose)
+          std::cerr<<"error while reading expected name. "<<std::endl;
+        return false;
+      }
     }
 
     if((idx = s.find("color")) != std::string::npos)
     {
       std::istringstream str(s.substr(idx + 6));
-      str >> name_and_color.second;
+      if(!(str >> name_and_color.second))
+      {
+        if(verbose)
+          std::cerr<<"error while reading expected color. "<<std::endl;
+        return false;
+      }
     }
   }
   std::getline(input, s);
@@ -76,7 +86,12 @@ bool read_GOCAD(std::istream& input,
   {
     if((c == 'V') || (c == 'P'))
     {
-      input >> s >> i >> p; // @fixme check for failure
+      if(!(input >> s >> i >> p))
+      {
+        if(verbose)
+          std::cerr<<"error while reading vertex. "<<std::endl;
+        return false;
+      }
       if(!vertices_read)
       {
         vertices_read = true;
@@ -87,7 +102,12 @@ bool read_GOCAD(std::istream& input,
     }
     else if(vertices_read && (c == 'T'))
     {
-      input >> c >> c >> c >>  i >> j >> k;
+      if(!(input >> c >> c >> c >>  i >> j >> k))
+      {
+        if(verbose)
+          std::cerr<<"error while reading triangle. "<<std::endl;
+        return false;
+      }
       CGAL_Polygon new_face(3);
       new_face[0] = offset+i;
       new_face[1] = offset+j;

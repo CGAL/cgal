@@ -93,7 +93,7 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NM
   include_directories(${3MF_INCLUDE_DIR})
   polyhedron_demo_plugin(3mf_io_plugin 3mf_io_plugin KEYWORDS IO PMP)
   target_link_libraries(3mf_io_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
-  add_definitions(-DCGAL_LINKED_WITH_3MF)
+  target_compile_definitions(3mf_io_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
   message(STATUS "NOTICE : The 3mf_io_plugin requires the lib3MF library in a version < 2.0, and will not be compiled.")
 endif()

@@ -71,11 +71,23 @@ public:
     else
     {
       skip_comment();
-      m_in >> iformat(x) >> iformat(y) >> iformat(z);
+      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       if(is_homogeneous())
       {
         float w;
-        m_in >> iformat(w);
+        if(!(m_in >> iformat(w)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         x /= w;
         y /= w;
         z /= w;
@@ -105,11 +117,24 @@ public:
     else
     {
       skip_comment();
-      m_in >> iformat(x) >> iformat(y) >> iformat(z);
+      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       if(is_homogeneous())
       {
         double w;
         m_in >> iformat(w);
+        if(!(m_in >> iformat(w)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         x /= w;
         y /= w;
         z /= w;
@@ -143,7 +168,13 @@ public:
       if(is_homogeneous())
       {
         double fx, fy, fz, fw;
-        m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw);
+        if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         x = int(fx / fw);
         y = int(fy / fw);
         z = int(fz / fw);
@@ -151,11 +182,29 @@ public:
       else
       {
         double d;
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         x = int(d);
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         y = int(d);
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         z = int(d);
       }
     }
@@ -175,9 +224,21 @@ public:
     else
     {
       skip_comment();
-      m_in >> iformat(x) >> iformat(y) >> iformat(z);
+      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       if(is_homogeneous())
-        m_in >> iformat(w);
+        if(!(m_in >> iformat(w)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
     }
   }
   void scan_vertex(double& x, double& y, double& z, double& w)
@@ -201,11 +262,22 @@ public:
     else
     {
       skip_comment();
-      m_in >> iformat(x);
-      m_in >> iformat(y);
-      m_in >> iformat(z);
+      if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       if(is_homogeneous())
-        m_in >> iformat(w);
+        if(!(m_in >> iformat(w)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
+
     }
   }
 
@@ -231,15 +303,39 @@ public:
     {
       skip_comment();
       double d;
-      m_in >> iformat(d);
+      if(!(m_in >> iformat(d)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       x = int(d);
-      m_in >> iformat(d);
+      if(!(m_in >> iformat(d)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       y = int(d);
-      m_in >> iformat(d);
+      if(!(m_in >> iformat(d)))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading vertex."<<std::endl;
+        return;
+      }
       z = int(d);
       if(is_homogeneous())
       {
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading vertex."<<std::endl;
+          return;
+        }
         w = int(d);
       }
     }
@@ -271,13 +367,25 @@ public:
         if(is_homogeneous())
         {
           float fx, fy, fw;
-          m_in >> iformat(fx) >> iformat(fy) >> iformat(fw);
+          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fw)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading texture."<<std::endl;
+            return;
+          }
           x = fx / fw;
           y = fy / fw;
         }
         else
         {
-          m_in >> iformat(x) >> iformat(y);
+          if(!(m_in >> iformat(x) >> iformat(y)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading texture."<<std::endl;
+            return;
+          }
         }
       }
     }
@@ -310,13 +418,25 @@ public:
         if(is_homogeneous())
         {
           float fx, fy, fw;
-          m_in >> iformat(fx) >> iformat(fy) >> iformat(fw);
+          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fw)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading texture."<<std::endl;
+            return;
+          }
           x = fx / fw;
           y = fy / fw;
         }
         else
         {
-          m_in >> iformat(x) >> iformat(y);
+          if(!(m_in >> iformat(x) >> iformat(y)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading texture."<<std::endl;
+            return;
+          }
         }
       }
     }
@@ -343,11 +463,23 @@ public:
       }
       else
       {
-        m_in >> iformat(x) >> iformat(y) >> iformat(z);
+        if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading normal."<<std::endl;
+          return;
+        }
         if(is_homogeneous())
         {
           float w;
-          m_in >> iformat(w);
+          if(!(m_in >> iformat(w)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
           x /= w;
           y /= w;
           z /= w;
@@ -386,14 +518,27 @@ public:
         if(is_homogeneous())
         {
           float fx, fy, fz, fw;
-          m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw);
+          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
           x = fx / fw;
           y = fy / fw;
           z = fz / fw;
         }
         else
         {
-          m_in >> iformat(x) >> iformat(y) >> iformat(z);
+          if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
+
         }
       }
     }
@@ -427,7 +572,13 @@ public:
         if(is_homogeneous())
         {
           float fx, fy, fz, fw;
-          m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw);
+          if(!(m_in >> iformat(fx) >> iformat(fy) >> iformat(fz) >> iformat(fw)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
           x = int(fx / fw);
           y = int(fy / fw);
           z = int(fz / fw);
@@ -435,11 +586,30 @@ public:
         else
         {
           double d;
-          m_in >> iformat(d);
+          if(!(m_in >> iformat(d)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
           x = int(d);
-          m_in >> iformat(d);
+          if(!(m_in >> iformat(d)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
+
           y = int(d);
-          m_in >> iformat(d);
+          if(!(m_in >> iformat(d)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
           z = int(d);
         }
       }
@@ -462,9 +632,21 @@ public:
       }
       else
       {
-        m_in >> iformat(x) >> iformat(y) >> iformat(z);
+        if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading normal."<<std::endl;
+          return;
+        }
         if(is_homogeneous())
-          m_in >> iformat(w);
+          if(!(m_in >> iformat(w)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
       }
     }
   }
@@ -492,9 +674,21 @@ public:
       }
       else
       {
-        m_in >> iformat(x) >> iformat(y) >> iformat(z);
+        if(!(m_in >> iformat(x) >> iformat(y) >> iformat(z)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading normal."<<std::endl;
+          return;
+        }
         if(is_homogeneous())
-          m_in >> iformat(w);
+          if(!(m_in >> iformat(w)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
       }
     }
   }
@@ -522,15 +716,39 @@ public:
       else
       {
         double d;
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading normal."<<std::endl;
+          return;
+        }
         x = int(d);
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading normal."<<std::endl;
+          return;
+        }
         y = int(d);
-        m_in >> iformat(d);
+        if(!(m_in >> iformat(d)))
+        {
+          m_in.clear(std::ios::badbit);
+          if(verbose())
+            std::cerr<<"error while reading normal."<<std::endl;
+          return;
+        }
         z = int(d);
         if(is_homogeneous())
         {
-          m_in >> iformat(d);
+          if(!(m_in >> iformat(d)))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading normal."<<std::endl;
+            return;
+          }
           w = int(d);
         }
       }
@@ -818,9 +1036,21 @@ public:
       {
         double dummy;
         if(is_homogeneous()) {
-          m_in >> dummy >> dummy >> dummy >> dummy;
+          if(!(m_in >> dummy >> dummy >> dummy >> dummy))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading. Missing expected characters."<<std::endl;
+            return;
+          }
         } else {
-          m_in >> dummy >> dummy >> dummy;
+          if(!(m_in >> dummy >> dummy >> dummy))
+          {
+            m_in.clear(std::ios::badbit);
+            if(verbose())
+              std::cerr<<"error while reading. Missing expected characters."<<std::endl;
+            return;
+          }
         }
       }
 
@@ -858,7 +1088,13 @@ public:
     else
     {
       skip_comment();
-      m_in >> size;
+      if(!(m_in >> size))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading facet. Missing size."<<std::endl;
+        return;
+      }
     }
   }
 
@@ -872,7 +1108,13 @@ public:
     }
     else
     {
-      m_in >> index;
+      if(!(m_in >> index))
+      {
+        m_in.clear(std::ios::badbit);
+        if(verbose())
+          std::cerr<<"error while reading facet. Missing index."<<std::endl;
+        return;
+      }
     }
 
     if(m_in.fail())

@@ -155,37 +155,46 @@ public:
   void read_ascii(std::istream& stream, char& c) const
   {
     short s;
-    stream >> s;
-    c = static_cast<char>(s);
+    if(stream >> s)
+      c = static_cast<char>(s);
+    else
+      stream.clear(std::ios::badbit);
   }
   void read_ascii(std::istream& stream, signed char& c) const
   {
     short s;
-    stream >> s;
-    c = static_cast<signed char>(s);
+    if(stream >> s)
+      c = static_cast<signed char>(s);
+    else
+      stream.clear(std::ios::badbit);
   }
   void read_ascii(std::istream& stream, unsigned char& c) const
   {
     unsigned short s;
-    stream >> s;
-    c = static_cast<unsigned char>(s);
+    if(stream >> s)
+      c = static_cast<unsigned char>(s);
+    else
+      stream.clear(std::ios::badbit);
   }
 
   void read_ascii(std::istream& stream, float& t) const
   {
-    stream >> iformat(t);
+    if(!(stream >> iformat(t)))
+      stream.clear(std::ios::badbit);
   }
 
   void read_ascii(std::istream& stream, double& t) const
   {
-    stream >> iformat(t);
+    if(!(stream >> iformat(t)))
+      stream.clear(std::ios::badbit);
   }
 
   // Default template when Type is not a char type
   template <typename Type>
   void read_ascii(std::istream& stream, Type& t) const
   {
-    stream >> t;
+    if(!(stream >> t))
+      stream.clear(std::ios::badbit);
   }
 
 
