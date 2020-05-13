@@ -156,7 +156,7 @@ bool read_GOCAD(const std::string& fname,
   return read_GOCAD(fname.c_str(), points, polygons, np);
 }
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup GocadIoFuncs
  *
  * reads the content of `is` into `points` and `polygons`, in the GOCAD format.
  *
@@ -170,7 +170,7 @@ bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons)
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup GocadIoFuncs
  *
  * reads the content of the file `fname` into `points` and `polygons`, in the GOCAD format.
  *
@@ -256,7 +256,7 @@ bool write_GOCAD(std::ostream& os,
 
 }
 /*!
-  \ingroup IOstreamFunctions
+  \ingroup GocadIoFuncs
 
  * writes the content of `points` and `polygons` in `os`, in the TS format.
 
@@ -286,7 +286,7 @@ bool write_GOCAD(const char* fname,
 
 
 /*!
-  \ingroup IOstreamFunctions
+  \ingroup GocadIoFuncs
 
  * writes the content of `points` and `polygons` in a file named `fname`, in the TS format.
 

@@ -165,7 +165,7 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
   return read_OBJ(fname.c_str(), points, polygons, np, verbose);
 }
 
-//! \ingroup IOstreamFunctions
+//! \ingroup ObjIoFuncs
 //!
 /// reads the content of `is` into `points` and `faces`, using the `OBJ` format.
 ///
@@ -179,7 +179,7 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& faces)
   return read_OBJ(is, points, faces, parameters::all_default());
 }
 
-//! \ingroup IOstreamFunctions
+//! \ingroup ObjIoFuncs
 //!
 /// reads the content of the file `fname` into `points` and `faces`, using the `OBJ` format.
 ///
@@ -216,7 +216,7 @@ bool write_OBJ(std::ostream& os,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup ObjIoFuncs
  *
  * writes the content of `points` and `polygons` in `os`, in the OBJ format.
  *
@@ -244,7 +244,7 @@ bool write_OBJ(const char* fname,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup ObjIoFuncs
  *
  * writes the content of `points` and `polygons` in a file named `fname`, in the OBJ format.
  *

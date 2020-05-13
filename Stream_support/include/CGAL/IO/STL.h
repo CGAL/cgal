@@ -129,7 +129,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup StlIoFuncs
  *
  * reads the content of `is` into `points` and `facets`, in the STL format.
  *
@@ -142,7 +142,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets)
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup StlIoFuncs
  *
  * reads the content of a file named `fname` into `points` and `facets`, in the STL format.
  *
@@ -165,7 +165,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 /// Write
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup StlIoFuncs
  *
  * writes the content of `points` and `facets` in `out`, in the STL format.
  *
@@ -228,7 +228,7 @@ bool write_STL(std::ostream& out,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup StlIoFuncs
  *
  * writes the content of `points` and `facets` in a file named `fname`, in the STL format.
  *

@@ -250,7 +250,7 @@ bool read_PLY(std::istream& is,
 
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup PlyIoFuncs
  *
  * reads the content of `is` into `points` and `polygons`, in the PLY format.
  *
@@ -366,7 +366,7 @@ bool read_PLY(const char* fname,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup PlyIoFuncs
  *
  * reads the content of `fname` into `points` and `polygons`, in the PLY format.
  *
@@ -472,7 +472,7 @@ bool write_PLY(std::ostream& out,
 
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup PlyIoFuncs
  *
  * writes the content of `points` and `polygons` in `out`, in the PLY format.
  *
@@ -512,7 +512,7 @@ bool write_PLY(const char* fname,
 
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup PlyIoFuncs
  *
  * writes the content of `points` and `polygons` in the file `fname`, in the PLY format.
  *

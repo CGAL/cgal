@@ -193,7 +193,7 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup OffIoFuncs
  *
  * reads the content of `is` into `points` and `polygons`, in the OFF format.
  *
@@ -207,7 +207,7 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup OffIoFuncs
  *
  * reads the content of the file `fname` into `points` and `polygons`, in the OFF format.
  *
@@ -242,7 +242,7 @@ bool write_OFF(std::ostream& os,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup OffIoFuncs
  *
  * writes the content of `points` and `polygons` in `os`, in the OFF format.
  *
@@ -271,7 +271,7 @@ bool write_OFF(const char* fname,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup OffIoFuncs
  *
  * writes the content of `points` and `polygons` in  the file `fname`, in the OFF format.
  *

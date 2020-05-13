@@ -112,7 +112,7 @@ bool read_VTP(const std::string&  fname,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup VtpIoFuncs
  *
  * reads the content of `is` into `points` and `polygons`, in the VTPformat.
  *
@@ -388,7 +388,7 @@ bool write_VTP(std::ostream& os,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup VtpIoFuncs
  *
  * writes the content of `points` and `polygons` in `out`, in the VTP format.
  *
@@ -418,7 +418,7 @@ bool write_VTP(const char* fname,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup VtpIoFuncs
  *
  * writes the content of `points` and `polygons` in a file named `fname`, in the VTP format.
  *
@@ -455,5 +455,40 @@ bool write_VTP(const std::string& fname,
 }
 
 }//end CGAL
+#elif DOXYGEN_RUNNING
+
+/*!
+ * \ingroup VtpIoFuncs
+ *
+ * reads the content of `is` into `points` and `polygons`, in the VTPformat.
+ *
+ * \see \ref IOStreamVTK
+ */
+template <typename PointRange, typename PolygonRange>
+bool read_VTP(const char* fname,
+              PointRange& points,
+              PolygonRange& polygons);
+/*!
+ * \ingroup VtpIoFuncs
+ *
+ * writes the content of `points` and `polygons` in `out`, in the VTP format.
+ * \see \ref IOStreamVTK
+ */
+template <typename PointRange, typename PolygonRange>
+bool write_VTP(std::ostream& os,
+               const PointRange& points,
+               const PolygonRange& polygons);
+/*!
+ * \ingroup VtpIoFuncs
+ *
+ * writes the content of `points` and `polygons` in a file named `fname`, in the VTP format.
+ *
+ * \see \ref IOStreamVTK
+ */
+template <typename PointRange, typename PolygonRange>
+bool write_VTP(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons);
+
 #endif //CGAL_USE_VTK
 #endif // CGAL_IO_VTK_H

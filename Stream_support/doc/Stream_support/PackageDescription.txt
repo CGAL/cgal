@@ -3,8 +3,22 @@
 /// \ingroup PkgStreamSupportRef
 /// \defgroup IOstreamFunctions I/O Functions
 /// \ingroup PkgStreamSupportRef
+
+/// \defgroup StlIoFuncs STL I/O Functions
+/// \ingroup IOstreamFunctions
+/// \defgroup PlyIoFuncs PLY I/O Functions
+/// \ingroup IOstreamFunctions
+/// \defgroup ObjIoFuncs OBJ I/O Functions
+/// \ingroup IOstreamFunctions
+/// \defgroup OffIoFuncs OFF I/O Functions
+/// \ingroup IOstreamFunctions
+/// \defgroup VtpIoFuncs VTP I/O Functions
+/// \ingroup IOstreamFunctions
+/// \defgroup GocadIoFuncs GOCAD I/O Functions
+/// \ingroup IOstreamFunctions
 /// \defgroup PkgStreamSupportEnumRef I/O Enums
 /// \ingroup PkgStreamSupportRef
+
 /*!
 \addtogroup PkgStreamSupportRef
 \cgalPkgDescriptionBegin{IO Streams,PkgStreamSupport}
@@ -47,17 +61,14 @@ the printing mode.
 - `CGAL::oformat()`
 
 \cgalCRPSection{File I/O Functions}
-- \ref CGAL::read_STL()
-- `CGAL::write_STL()`
-- `CGAL::read_PLY()`
-- `CGAL::write_PLY()`
-- `CGAL::read_OBJ()`
-- `CGAL::read_OFF()`
-- `CGAL::write_OFF()`
-- `CGAL::read_VTK()`
-- `CGAL::write_VTK()`
-- `GCAL::read_WKT()`
+- \link StlIoFuncs I/O on STL files (`CGAL::write_STL()`and `CGAL::read_STL()`)\endlink
+- \link PlyIoFuncs I/O on PLY files (`CGAL::write_PLY()`and `CGAL::read_PLY()`)\endlink
+- \link ObjIoFuncs I/O on OBJ files (`CGAL::write_OBJ()`and `CGAL::read_OBJ()`)\endlink
+- \link OffIoFuncs I/O on OFF files (`CGAL::write_OFF()`and `CGAL::read_OFF()`)\endlink
+- \link GocadIoFuncs I/O on GOCAD files (`CGAL::write_GOCAD()`and `CGAL::read_GOCAD()`)\endlink
+- \link VtpIoFuncs I/O on VTP files (`CGAL::write_VTP()`and `CGAL::read_VTP()`)\endlink
 
+- `GCAL::read_WKT()`
 - `CGAL::read_point_WKT()`
 - `GCAL::read_multi_point_WKT()`
 - `GCAL::read_linestring_WKT()`
