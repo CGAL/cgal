@@ -47,7 +47,7 @@ public:
 };
 
 /*!
-\ingroup PkgStreamSupportRef
+\ingroup PkgStreamSupportEnumRef
 
 All classes in the \cgal `Kernel` provide input and output operators for
 IOStreams.  The basic task of such an operator is to produce a

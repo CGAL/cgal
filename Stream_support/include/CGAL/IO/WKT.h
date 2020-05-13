@@ -526,7 +526,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup IOstreamFunctions
 //!
 //! reads the content of a WKT stream and fills
 //! `points`, `polylines` and `polygons` with all the POINT, MULTIPOINT,

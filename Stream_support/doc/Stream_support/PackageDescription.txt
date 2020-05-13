@@ -3,6 +3,8 @@
 /// \ingroup PkgStreamSupportRef
 /// \defgroup IOstreamFunctions I/O Functions
 /// \ingroup PkgStreamSupportRef
+/// \defgroup PkgStreamSupportEnumRef I/O Enums
+/// \ingroup PkgStreamSupportRef
 /*!
 \addtogroup PkgStreamSupportRef
 \cgalPkgDescriptionBegin{IO Streams,PkgStreamSupport}
@@ -45,7 +47,7 @@ the printing mode.
 - `CGAL::oformat()`
 
 \cgalCRPSection{File I/O Functions}
-- `CGAL::read_STL()`
+- \ref CGAL::read_STL()
 - `CGAL::write_STL()`
 - `CGAL::read_PLY()`
 - `CGAL::write_PLY()`
@@ -54,6 +56,7 @@ the printing mode.
 - `CGAL::write_OFF()`
 - `CGAL::read_VTK()`
 - `CGAL::write_VTK()`
+- `GCAL::read_WKT()`
 
 - `CGAL::read_point_WKT()`
 - `GCAL::read_multi_point_WKT()`
@@ -61,7 +64,6 @@ the printing mode.
 - `GCAL::read_multi_linestring_WKT()`
 - `GCAL::read_polygon_WKT()`
 - `GCAL::read_multi_polygon_WKT()`
-- `GCAL::read_WKT()`
 - `CGAL::write_point_WKT()`
 - `CGAL::write_polygon_WKT()`
 - `CGAL::write_linestring_WKT()`
