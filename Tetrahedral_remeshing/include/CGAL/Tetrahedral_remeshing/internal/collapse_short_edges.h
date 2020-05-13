@@ -1184,7 +1184,6 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename C3T3::Triangulation       T3;
   typedef typename T3::Cell_handle           Cell_handle;
   typedef typename T3::Edge                  Edge;
-  typedef typename T3::Finite_edges_iterator Finite_edges_iterator;
   typedef typename T3::Vertex_handle         Vertex_handle;
   typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
