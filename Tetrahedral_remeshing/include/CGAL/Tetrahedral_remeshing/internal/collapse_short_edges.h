@@ -115,7 +115,7 @@ public:
 
     // finished
     std::vector<Vertex_handle> new_vertices;
-    std::map<Facet, int> border_facets;
+    std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
      if (CGAL::build_triangulation<Tr, false>(triangulation,
                                               points, finite_cells, border_facets,
                                               new_vertices, false/*verbose*/))
