@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
+#include <CGAL/Point_set_3/point_set_io.h>
 
 #include <fstream>
 #include <limits>
@@ -19,7 +19,7 @@ int main (int argc, char** argv)
   Point_set point_set;
 
   // Reading input in XYZ format
-  if (!f || !CGAL::read_XYZ (f, point_set))
+  if (!f || !CGAL::read_XYZ(f, point_set))
     {
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;

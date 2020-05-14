@@ -33,7 +33,7 @@ std::cout << "=== test_fandisk ===\n";
   cov.reserve(nb_points);
   std::ifstream stream("data/fandisk.off");
   if (!stream ||
-      !CGAL::read_off_points(stream,
+      !CGAL::read_OFF(stream,
                              std::back_inserter(points),
                              CGAL::parameters::point_map(pmap)))
   {

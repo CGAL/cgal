@@ -27,7 +27,7 @@ int main(int argc, const char** argv)
   std::vector<Pwn> pwns1, pwns2;
   std::ifstream input(fname1);
   if (!input ||
-      !CGAL::read_PLY_points(input, std::back_inserter(pwns1),
+      !CGAL::read_PLY(input, std::back_inserter(pwns1),
             CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
             normal_map (Normal_map())))
   {
@@ -38,7 +38,7 @@ int main(int argc, const char** argv)
 
   input.open(fname2);
   if (!input ||
-      !CGAL::read_PLY_points(input, std::back_inserter(pwns2),
+      !CGAL::read_PLY(input, std::back_inserter(pwns2),
             CGAL::parameters::point_map (Point_map()).
             normal_map (Normal_map())))
   {

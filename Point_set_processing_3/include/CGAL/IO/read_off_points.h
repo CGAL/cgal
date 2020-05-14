@@ -545,7 +545,6 @@ read_off_points(
 }
 
 #else
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

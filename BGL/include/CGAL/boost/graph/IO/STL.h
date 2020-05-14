@@ -139,10 +139,10 @@ bool write_STL(std::ostream& out,
 
       const float coords[12] =
       {
-        static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
-        static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z()),
-        static_cast<float>(q.x()), static_cast<float>(q.y()), static_cast<float>(q.z()),
-        static_cast<float>(r.x()), static_cast<float>(r.y()), static_cast<float>(r.z()) };
+        static_cast<float>(to_double(n.x())), static_cast<float>(to_double(n.y())), static_cast<float>(to_double(n.z())),
+        static_cast<float>(to_double(p.x())), static_cast<float>(to_double(p.y())), static_cast<float>(to_double(p.z())),
+        static_cast<float>(to_double(q.x())), static_cast<float>(to_double(q.y())), static_cast<float>(to_double(q.z())),
+        static_cast<float>(to_double(r.x())), static_cast<float>(to_double(r.y())), static_cast<float>(to_double(r.z())) };
 
       for(int i=0; i<12; ++i)
         out.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));

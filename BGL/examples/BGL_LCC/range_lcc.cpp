@@ -2,7 +2,7 @@
 
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -36,15 +36,15 @@ struct Fct
 void fct(const LCC& lcc)
 {
   vertex_range vr(vertices(lcc));
-  
+
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-  
+
   std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
-  
+
   boost::tie(vb,ve) = vertices_range(lcc);
   std::for_each(vb,ve, Fct());
 }
@@ -52,7 +52,7 @@ void fct(const LCC& lcc)
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_OFF((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
 
   fct(lcc);
   return 0;

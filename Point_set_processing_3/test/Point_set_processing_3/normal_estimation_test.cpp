@@ -311,7 +311,7 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_off_points(stream,
+                CGAL::read_OFF(stream,
                                       std::back_inserter(points),
                                       CGAL::parameters::normal_map
                                       (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))

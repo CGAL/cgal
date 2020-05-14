@@ -222,7 +222,7 @@ bool read_PLY(std::istream& is,
 {
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
-  return IO::internal::read_PLY(is, points, polygons, dummy_pui, std::back_inserter(fcolors), std::back_inserter(vcolors), dummy_pf, verbose);
+  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(dummy_pui), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(dummy_pf), verbose);
 }
 
 

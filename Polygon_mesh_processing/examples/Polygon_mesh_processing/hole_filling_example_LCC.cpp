@@ -3,6 +3,7 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -23,7 +24,7 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   LCC mesh;
-  CGAL::read_OFF(filename, mesh);
+  CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh);
 
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
@@ -53,10 +54,10 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
-  
+
   std::ofstream out("filled_LCC.off");
   out.precision(17);
-  CGAL::write_off(out, mesh);
+  CGAL::write_OFF(out, mesh);
 
   return 0;
 }

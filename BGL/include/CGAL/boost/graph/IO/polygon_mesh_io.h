@@ -144,10 +144,11 @@ bool write_polygon_mesh(const std::string& fname,
   if (fname.find(".stl") != std::string::npos) {
     return write_STL(fname, g, np);
   }
-
+#ifdef CGAL_USE_VTK
   if (fname.find(".vtp") != std::string::npos) {
     return write_VTP(fname, g, np);
   }
+#endif
 
   return false;
 }

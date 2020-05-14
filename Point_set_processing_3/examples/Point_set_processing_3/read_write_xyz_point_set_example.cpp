@@ -36,7 +36,7 @@ int main(int argc, char*argv[])
     }
 
     // Saves point set.
-    // Note: write_xyz_points() requires property maps to access each
+    // Note: write_XYZ() requires property maps to access each
     // point position and normal.
     std::ofstream out("oni_copy.xyz");
     out.precision(17);

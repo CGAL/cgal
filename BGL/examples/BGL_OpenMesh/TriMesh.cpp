@@ -33,7 +33,7 @@ int main(int argc, char** argv )
     for(halfedge_descriptor hd : CGAL::halfedges_around_target(vd,mesh)){
       if(! CGAL::is_border(edge(hd,mesh),mesh)){
         CGAL::Euler::flip_edge(hd,mesh);
-        CGAL::write_off((argc>2)?argv[2]:"out.off", mesh);
+        CGAL::write_OFF((argc>2)?argv[2]:"out.off", mesh);
         return 0;
       }
     }

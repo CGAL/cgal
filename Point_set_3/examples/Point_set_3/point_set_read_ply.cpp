@@ -53,7 +53,7 @@ int main (int argc, char** argv)
   {
     std::ofstream out ("out.ply");
     out.precision(17); // Use sufficient precision in ASCII
-    CGAL::write_ply_point_set (out, point_set); // same as `out << point_set`
+    CGAL::write_PLY (out, point_set); // same as `out << point_set`
   }
 
   return 0;

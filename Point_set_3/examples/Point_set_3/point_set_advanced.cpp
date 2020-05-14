@@ -19,7 +19,7 @@ int main (int argc, char** argv)
   Point_set point_set;
   point_set.add_normal_map();
   // Reading input in OFF format
-  if (!f || !CGAL::read_off_points
+  if (!f || !CGAL::read_OFF
                    (f,
                     point_set.index_back_inserter(), // OutputIterator
                     CGAL::parameters::point_map(point_set.point_push_map()).
