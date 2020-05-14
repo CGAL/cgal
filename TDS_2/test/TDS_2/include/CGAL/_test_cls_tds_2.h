@@ -210,8 +210,29 @@ _test_cls_tds_2( const Tds &)
 
   assert(td45.is_valid() && td45.number_of_vertices() == 4 && td45.number_of_faces() == 4);
 
-  Face_handle f0_0 = td45.faces_begin();
-  Face_handle f0_1 = f0_0++;
+  Face_handle f0_0, f0_1;
+
+  {
+    int count = 0;
+    for (Face_iterator it = td45.faces_begin(); it != td45.faces_end(); ++it) {
+      if (it->has_vertex(v345) && it->has_vertex(v145) && it->has_vertex(v245)) {
+        f0_0 = it;
+        ++count;
+      }
+    }
+    assert(count == 1);
+  }
+  {
+    int count = 0;
+    for (Face_iterator it = td45.faces_begin(); it != td45.faces_end(); ++it) {
+      if (it->has_vertex(v045) && it->has_vertex(v245) && it->has_vertex(v345)) {
+        f0_1 = it;
+        ++count;
+      }
+    }
+    assert(count == 1);
+  }
+
 
   Vertex_handle v445 = td45.insert_in_face(f0_0);
   Vertex_handle v545 = td45.insert_in_face(f0_1);
@@ -230,7 +251,6 @@ _test_cls_tds_2( const Tds &)
       fcf_0 = fc1;
     }
   } while(++fc1 != fc1e);
-
 
   Face_circulator fc2 = td45.incident_faces(v545), fc2e(fc2);
   do {
