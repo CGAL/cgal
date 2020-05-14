@@ -25,7 +25,7 @@ if(POLICY CMP0056)
   cmake_policy(SET CMP0056 NEW)
 endif()
 
-# Use GNUInstallDirst to get canonical paths
+# Use GNUInstallDirs to get canonical paths
 include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
@@ -773,11 +773,11 @@ set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DOCDIR}"
   CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_MANDIR}/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
