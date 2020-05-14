@@ -31,7 +31,7 @@ public:
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/triangulation_two_subdomains.binary.cgal";
-  const float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
+  const double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1;
 
   std::ifstream input(filename, std::ios_base::in | std::ios_base::binary);
   if(!input)

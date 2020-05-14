@@ -299,8 +299,8 @@ private:
 
     int it_nb = 0;
     const int max_it_nb = 5;
-    const float epsilon = fmls.getPNScale() / 1000.f;
-    const float sq_eps = CGAL::square(epsilon);
+    const double epsilon = fmls.getPNScale() / 1000.;
+    const double sq_eps = CGAL::square(epsilon);
 
     do
     {

@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   std::cout << "CGAL Random seed = "
     << CGAL::get_default_random().get_seed() << std::endl;
 
-  const float target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1f;
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
 
   Remeshing_triangulation tr;
   generate_input_two_subdomains(1000, tr);

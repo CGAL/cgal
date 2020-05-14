@@ -145,8 +145,8 @@ int main(int argc, char* argv[])
   boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
   generate_input_cube(1000, tr, constraints);
 
-  double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
-  int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
+  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
 
   set_subdomain(tr, 1);
   assert(tr.is_valid());

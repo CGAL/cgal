@@ -173,27 +173,31 @@ public:
     double sigma_s = PNScale * MLSRadius;
     double sigma_r = bilateralRange;
 
-    Vector_3 g = (p - Vector_3(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
-    std::array<FT, 3> gxyz = { g.x(), g.y(), g.z() };
+    const Vector_3 g = (p - Vector_3(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
 
-    for (std::size_t j = 0; j < 3; j++) {
-      gxyz[j] = floor(gxyz[j]);
-      if (gxyz[j] < 0.f)
-        gxyz[j] = 0.f;
-      if (gxyz[j] >= grid.getRes()[j])
+    std::array<std::size_t, 3> gxyz;
+    for (int j = 0; j < 3; ++j)
+    {
+      if (g[j] < 0.)
+        gxyz[j] = 0;
+      if (g[j] >= grid.getRes()[j])
         gxyz[j] = grid.getRes()[j] - 1;
+      else
+        gxyz[j] = static_cast<std::size_t>(std::floor(g[j]));
     }
+
     std::array<std::size_t, 3> minIt;
     std::array<std::size_t, 3> maxIt;
-    for (std::size_t j = 0; j < 3; j++) {
-      if (((unsigned int)gxyz[j]) == 0)
+    for (std::size_t j = 0; j < 3; ++j)
+    {
+      if (gxyz[j] == 0)
         minIt[j] = 0;
       else
-        minIt[j] = ((unsigned int)gxyz[j]) - 1;
-      if (((unsigned int)gxyz[j]) == (grid.getRes()[j] - 1))
+        minIt[j] = gxyz[j] - 1;
+      if (gxyz[j] == grid.getRes()[j] - 1)
         maxIt[j] = (grid.getRes()[j] - 1);
       else
-        maxIt[j] = ((unsigned int)gxyz[j]) + 1;
+        maxIt[j] = gxyz[j] + 1;
     }
     Vector_3 c = CGAL::NULL_VECTOR;
     double sumW = 0.f;
@@ -332,8 +336,8 @@ private:
     Vector_3 c = CGAL::NULL_VECTOR;
     for (std::size_t i = 0; i < PNSize; i++)
       c += Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]);
-    c /= PNSize;
-    PNScale = 0.f;
+    c /= (double)PNSize;
+    PNScale = 0.;
     for (std::size_t i = 0; i < PNSize; i++) {
       double r = distance(c, Vector_3(PN[6 * i], PN[6 * i + 1], PN[6 * i + 2]));
       if (r > PNScale)
@@ -453,18 +457,20 @@ private:
     }
     std::size_t getLUTIndex(const Vector_3& x) const
     {
-      Vector_3 vp = (x - Vector_3(minMax[0], minMax[1], minMax[2])) / cellSize;
-      std::array<FT, 3> p = { vp.x(), vp.y(), vp.z() };
-      for (std::size_t j = 0; j < 3; j++) {
-        p[j] = floor(p[j]);
-        if (p[j] < 0)
-          p[j] = 0.f;
-        if (p[j] >= res[j])
+      const Vector_3 vp = (x - Vector_3(minMax[0], minMax[1], minMax[2])) / cellSize;
+      std::array<std::size_t, 3> p;
+      for (int j = 0; j < 3; j++)
+      {
+        if (vp[j] < 0)
+          p[j] = 0.;
+        if (vp[j] >= res[j])
           p[j] = res[j] - 1;
+        else
+          p[j] = static_cast<std::size_t>(std::floor(vp[j]));
       }
-      std::size_t index = ((std::size_t)floor(p[2])) * res[0] * res[1]
-                        + ((std::size_t)floor(p[1])) * res[0]
-                        + ((std::size_t)floor(p[0]));
+      std::size_t index = p[2] * res[0] * res[1]
+                        + p[1] * res[0]
+                        + p[0];
       return index;
     }
     inline std::size_t getLUTElement(const Vector_3& x) const {
