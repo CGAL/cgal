@@ -926,12 +926,17 @@ if(NOT CGAL_HEADER_ONLY)
     ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
-  configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
-    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
   install(FILES
-    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
-    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+    ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfigVersion.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  if(NOT CGAL_INSTALL_CMAKE_DIR STREQUAL "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL")
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
+      ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
+    install(FILES
+      ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
+      DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  endif()
 endif()
 
 if(CGAL_INSTALL_MAN_DIR)
@@ -1379,4 +1384,3 @@ if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
-
