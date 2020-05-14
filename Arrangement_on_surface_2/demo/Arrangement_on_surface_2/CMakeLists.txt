@@ -73,7 +73,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  #GraphicsViewCurveInput.cpp
                  Utils.cpp
                  AlgebraicCurveExpressionParser.cpp
-                 AlgebraicCurveParserOld.cpp
                  NewTabDialog.cpp
                  OverlayDialog.cpp
                  ArrangementDemoPropertiesDialog.cpp
