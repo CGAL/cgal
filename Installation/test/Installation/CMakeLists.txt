@@ -106,7 +106,10 @@ endif()
 function(CGAL_installation_test_find_package_version mode)
   set(EXACT)
   if(mode STREQUAL "less")
-    MATH(EXPR CGAL_MAJOR_VERSION "${CGAL_MAJOR_VERSION} - 1")
+    set(CGAL_MINOR_VERSION 0)
+  endif()
+  if(mode STREQUAL "less_major")
+    set(CGAL_MAJOR_VERSION 0)
   endif()
   if(mode STREQUAL "greater" OR mode STREQUAL "fail-exact")
     MATH(EXPR CGAL_MINOR_VERSION "${CGAL_MINOR_VERSION} + 1")
@@ -129,11 +132,13 @@ function(CGAL_installation_test_find_package_version mode)
 endfunction()
 
 CGAL_installation_test_find_package_version(less)
+CGAL_installation_test_find_package_version(less_major)
 CGAL_installation_test_find_package_version(equal)
 CGAL_installation_test_find_package_version(greater)
 CGAL_installation_test_find_package_version(exact)
 CGAL_installation_test_find_package_version(fail-exact)
 set_tests_properties(
   test_find_package_version_greater
+  test_find_package_version_less_major
   test_find_package_version_fail-exact
   PROPERTIES WILL_FAIL TRUE)
