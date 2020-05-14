@@ -88,7 +88,7 @@ void construct_oriented_bounding_box(const PointRange& points,
     zmax = (std::max)(rot_pt.z(), zmax);
   }
 
-  const typename Traits::Construct_point_3 cp = traits.construct_point_3_object();
+  typename Traits::Construct_point_3 cp = traits.construct_point_3_object();
 
   obb_points[0] = cp(xmin, ymin, zmin);
   obb_points[1] = cp(xmax, ymin, zmin);
