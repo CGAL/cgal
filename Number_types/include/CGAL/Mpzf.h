@@ -578,10 +578,10 @@ struct Mpzf {
   friend bool operator!=(Mpzf const&a, Mpzf const&b){
     return !(a==b);
   }
-  friend Mpzf const&min(Mpzf const&a, Mpzf const&b){
+  friend Mpzf const& min BOOST_PREVENT_MACRO_SUBSTITUTION (Mpzf const&a, Mpzf const&b){
     return (b<a)?b:a;
   }
-  friend Mpzf const&max(Mpzf const&a, Mpzf const&b){
+  friend Mpzf const& max BOOST_PREVENT_MACRO_SUBSTITUTION (Mpzf const&a, Mpzf const&b){
     return (a<b)?b:a;
   }
   private:
