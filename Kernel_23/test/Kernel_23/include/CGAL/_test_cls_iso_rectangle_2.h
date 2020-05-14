@@ -90,6 +90,7 @@ _test_cls_iso_rectangle_2(const R& )
 
  std::cout << '.';
 
+
  assert( r1.vertex(0) == p1 );
  assert( r1.vertex(1) == p5 );
  assert( r1.vertex(2) == p3 );

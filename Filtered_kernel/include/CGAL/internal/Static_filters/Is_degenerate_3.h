@@ -70,12 +70,10 @@ public:
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Plane_3> get_approx; // Identity functor for all planes
-                                    // but lazy planes
     double a, b, c;
 
-    if (fit_in_double(get_approx(p).a(), a) && fit_in_double(get_approx(p).b(), b) &&
-        fit_in_double(get_approx(p).c(), c) )
+    if (fit_in_double(p.a(), a) && fit_in_double(p.b(), b) &&
+        fit_in_double(p.c(), c) )
     {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return a == 0 && b == 0 && c == 0;

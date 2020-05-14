@@ -70,11 +70,9 @@ public:
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_2> get_approx; // Identity functor for all points
-                                    // but lazy points
     double py, qy;
 
-    if (fit_in_double(get_approx(p).y(), py) && fit_in_double(get_approx(q).y(), qy) )
+    if (fit_in_double(p.y(), py) && fit_in_double(q.y(), qy) )
     {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return compare(py, qy);

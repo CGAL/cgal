@@ -16,12 +16,9 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <cmath>
-
-namespace CGAL { namespace internal { namespace Static_filters_predicates {
-
-
 #include <iostream>
 
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
 class Orientation_3

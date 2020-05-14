@@ -19,9 +19,29 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Filtered_rational_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/internal/Exact_type_selector.h>
+
+#ifdef CGAL_USE_FILTERED_RATIONAL_KERNEL
+
+namespace CGAL {
+
+typedef CGAL::Simple_cartesian<CGAL::Interval_nt<false> >                    FRK_IA;
+typedef CGAL::Simple_cartesian<internal::Exact_field_selector<double>::Type> FRK_EA;
+typedef CGAL::Filtered_rational_kernel<FRK_IA, FRK_EA>                       Epeck;
+
+typedef Epeck Exact_predicates_exact_constructions_kernel;
+
+template <>
+struct Triangulation_structural_filtering_traits<Epeck> {
+  typedef Tag_true Use_structural_filtering_tag;
+};
+
+} // namespace CGAL
+
+#else // no CGAL_USE_FILTERED_RATIONAL_KERNEL
 
 #ifndef CGAL_DONT_USE_LAZY_KERNEL
 #  include <CGAL/Lazy_kernel.h>
@@ -71,5 +91,7 @@ struct Triangulation_structural_filtering_traits<Epeck> {
 };
 
 } //namespace CGAL
+
+#endif // CGAL_USE_FILTERED_RATIONAL_KERNEL
 
 #endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H

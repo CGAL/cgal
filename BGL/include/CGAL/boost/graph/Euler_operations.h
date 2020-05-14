@@ -15,6 +15,8 @@
 #include <stdexcept>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/container/small_vector.hpp>
+
 #include <CGAL/boost/graph/properties.h>
 
 #include <CGAL/assertions.h>
@@ -614,9 +616,8 @@ add_face(const VertexRange& vr, Graph& g)
                       patch_start, patch_end;
   // cache for set_next and vertex' set_halfedge
   typedef std::pair<halfedge_descriptor, halfedge_descriptor> NextCacheEntry;
-  typedef std::vector<NextCacheEntry>    NextCache;
+  typedef boost::container::small_vector<NextCacheEntry,12>    NextCache;
   NextCache next_cache;
-  next_cache.reserve(3 * n);
 
   // re-link patches if necessary
   for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)

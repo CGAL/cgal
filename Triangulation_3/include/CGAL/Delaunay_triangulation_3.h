@@ -1402,8 +1402,9 @@ side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
 {
   CGAL_triangulation_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
 
-  Oriented_side os =
-      geom_traits().side_of_oriented_sphere_3_object()(p0, p1, p2, p3, p);
+  typename Gt::Side_of_oriented_sphere_3 soos = geom_traits().side_of_oriented_sphere_3_object();
+
+  Oriented_side os = soos(p0, p1, p2, p3, p);
 
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;

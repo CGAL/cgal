@@ -30,7 +30,7 @@ if (NOT MPFR_in_cache)
   	        DOC "The directory containing the MPFR header files"
            )
 
-  find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-4 libmpfr-1
+  find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-6 libmpfr-4 libmpfr-1
     HINTS ENV MPFR_LIB_DIR
           ENV MPFR_DIR
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib

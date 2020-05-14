@@ -57,14 +57,12 @@ public:
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_3> get_approx; // Identity functor for all points
-                                    // but lazy points
     double px, py, pz, qx, qy, qz;
 
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(p.z(), pz) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(q.z(), qz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return px == qx && py == qy && pz == qz;
@@ -78,14 +76,12 @@ public:
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Vector_3> get_approx; // Identity functor for all points
-                                     // but lazy points
     double px, py, pz, qx, qy, qz;
 
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(p.z(), pz) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(q.z(), qz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return px == qx && py == qy && pz == qz;

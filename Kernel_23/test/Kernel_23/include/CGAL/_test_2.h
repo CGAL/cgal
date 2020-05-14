@@ -52,6 +52,7 @@ _test_2(const R& r)
  && _test_cls_weighted_point_2(r)
  && _test_fct_point_vector_2(r)
  && _test_fct_point_2(r)
+
  && _test_fct_weighted_point_2(r)
  && _test_fct_line_2(r)
  && _test_fct_segment_2(r)
@@ -60,12 +61,16 @@ _test_2(const R& r)
  && _test_fct_direction_2(r)
  && _test_fct_point_line_2( r )
  && _test_fct_point_segment_2( r )
+
  && _test_further_fct_point_line_2( r )
  && _test_cls_line_2( r )
  && _test_cls_segment_2( r )
+
+
  && _test_cls_ray_2( r )
  && _test_cls_triangle_2( r )
  && _test_cls_circle_2( r )
+
  && _test_cls_iso_rectangle_2( r )
  && _test_cls_aff_transformation_2( r )
  ;

@@ -17,6 +17,7 @@
 #ifndef CGAL__TEST_IO_H
 #define CGAL__TEST_IO_H
 
+#include <iostream>
 #include <fstream>
 #include <cassert>
 

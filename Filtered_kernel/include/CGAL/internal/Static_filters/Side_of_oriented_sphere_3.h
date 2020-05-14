@@ -18,6 +18,7 @@
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
+
 template < typename K_base >
 class Side_of_oriented_sphere_3
   : public K_base::Side_of_oriented_sphere_3
@@ -165,6 +166,7 @@ public:
     return err;
   }
 };
+
 
 } } } // namespace CGAL::internal::Static_filters_predicates
 

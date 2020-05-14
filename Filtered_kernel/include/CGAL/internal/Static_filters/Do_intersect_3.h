@@ -101,16 +101,14 @@ public:
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_3> get_approx; // Identity functor for all points
-                                    // but lazy points
     const Point_3& p = s.source();
     const Point_3& q = s.target();
 
     double px, py, pz, qx, qy, qz;
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(p.z(), pz) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(q.z(), qz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
@@ -144,16 +142,14 @@ public:
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_3> get_approx; // Identity functor for all points
-    // but lazy points.
     const Point_3& p = r.source();
     const Point_3& q = r.second_point();
 
     double px, py, pz, qx, qy, qz;
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(p.z(), pz) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(q.z(), qz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
@@ -185,14 +181,13 @@ public:
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_3> get_approx; // Identity functor for all points
     const Point_3& c = s.center();
 
     double scx, scy, scz, ssr, bxmin, bymin, bzmin, bxmax, bymax, bzmax;
 
-    if (fit_in_double(get_approx(c).x(), scx) &&
-        fit_in_double(get_approx(c).y(), scy) &&
-        fit_in_double(get_approx(c).z(), scz) &&
+    if (fit_in_double(c.x(), scx) &&
+        fit_in_double(c.y(), scy) &&
+        fit_in_double(c.z(), scz) &&
         fit_in_double(s.squared_radius(), ssr) &&
         fit_in_double(b.xmin(), bxmin) &&
         fit_in_double(b.ymin(), bymin) &&
