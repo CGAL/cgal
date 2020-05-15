@@ -35,37 +35,7 @@ namespace CGAL {
 
 /// \cond SKIP_DOXYGEN
 
-/// This class is almost the same as boost::static_property_map
-/// The difference is that it is writable, although put() does nothing
-template <typename K, typename V>
-class Static_property_map
-{
-public:
-  typedef K key_type;
-  typedef V value_type;
-  typedef const V& reference;
-  typedef boost::read_write_property_map_tag category;
-
-private:
-  V v;
-
-public:
-  Static_property_map(V pv)
-    :v(pv){}
-  inline friend
-  value_type
-  get(const Static_property_map& pm, const key_type&)
-  {
-    return pm.v;
-  }
-
-  inline friend
-  void
-  put(Static_property_map&, const key_type&, const value_type&)
-  {}
-};
-
-/// Similar to Static_property_map but retricted to bool and the value is const at compile time
+/// A boolean property map return a const value at compile time
 template <typename Key, bool default_value>
 class Static_boolean_property_map
 {

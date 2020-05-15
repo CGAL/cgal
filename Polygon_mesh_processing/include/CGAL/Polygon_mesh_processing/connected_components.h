@@ -936,13 +936,6 @@ void keep_connected_components(PolygonMesh& pmesh
 
 namespace internal {
 
-template <typename G>
-struct No_mark
-{
-  friend bool get(No_mark<G>, typename boost::graph_traits<G>::edge_descriptor) { return false; }
-  friend void put(No_mark<G>, typename boost::graph_traits<G>::edge_descriptor, bool) { }
-};
-
 template < class PolygonMesh, class PolygonMeshRange,
            class FIMap, class VIMap,
            class HIMap, class Ecm, class NamedParameters >
@@ -1039,17 +1032,19 @@ void split_connected_components(const PolygonMesh& pm,
                                 PolygonMeshRange& cc_meshes,
                                 const NamedParameters& np)
 {
+  typedef Static_boolean_property_map<
+    typename boost::graph_traits<PolygonMesh>::edge_descriptor, false> Default_ecm;
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
-    internal::No_mark<PolygonMesh>//default
+    Default_ecm//default
   > ::type Ecm;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             internal::No_mark<PolygonMesh>());
+                             Default_ecm());
 
   internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pm, np),
                                             CGAL::get_initialized_halfedge_index_map(pm, np),

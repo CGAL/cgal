@@ -174,10 +174,10 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                        NamedParameters,
-                                                       Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
+                                                       Static_boolean_property_map<vertex_descriptor, false> // default (no constraint pmap)
                                                        >::type                  VerticesMap;
   VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                      Constant_property_map<vertex_descriptor, bool>(false));
+                                      Static_boolean_property_map<vertex_descriptor, false>());
 
   std::size_t nb_new_vertices = 0;
 

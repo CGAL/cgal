@@ -163,10 +163,10 @@ void random_perturbation(VertexRange vertices
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       NamedParameters,
-      Constant_property_map<vertex_descriptor, bool> // default
+      Static_boolean_property_map<vertex_descriptor, false> // default
     > ::type VCMap;
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 Constant_property_map<vertex_descriptor, bool>(false));
+                                 Static_boolean_property_map<vertex_descriptor, false>());
 
   unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1);
   bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), true);

@@ -122,7 +122,7 @@ void smooth_mesh(const FaceRange& faces,
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                  NamedParameters,
-                                                 Constant_property_map<edge_descriptor, bool> // default
+                                                 Static_boolean_property_map<edge_descriptor, false> // default
                                                  > ::type                             ECMap;
 
   typedef internal::Area_smoother<TriangleMesh, VertexPointMap, GeomTraits>           Area_optimizer;
@@ -182,7 +182,7 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Constant_property_map<edge_descriptor, bool>(false));
+                                 Static_boolean_property_map<edge_descriptor, false>());
 
   // a constrained edge has constrained extremities
   for(face_descriptor f : faces)

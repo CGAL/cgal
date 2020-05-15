@@ -1216,7 +1216,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
-  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
   std::size_t res =
     volume_connected_components(tm, vidmap, np.do_orientation_tests(true)
                                               .i_used_as_a_predicate(true));
@@ -1297,7 +1297,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
   std::vector<std::size_t> nesting_levels;
   std::vector<bool> is_cc_outward_oriented;
-  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
 
   volume_connected_components(tm, vidmap,
                               parameters::vertex_point_map(vpm)
