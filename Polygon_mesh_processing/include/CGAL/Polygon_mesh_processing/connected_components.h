@@ -579,6 +579,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
@@ -692,10 +693,22 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   for(vertex_descriptor v: vertices(pmesh))
     if (!keep_vertex[v])
       vertices_to_remove.push_back(v);
-
-  for (vertex_descriptor v : vertices_to_remove)
-    remove_vertex(v, pmesh);
-
+  if ( is_default_parameter(get_parameter(np, internal_np::vertex_is_constrained)) )
+    for (vertex_descriptor v : vertices_to_remove)
+      remove_vertex(v, pmesh);
+  else
+  {
+   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                        NamedParameters,
+                                                        Static_boolean_property_map<vertex_descriptor, false> // default (not used)
+                                                         >::type Vertex_map;
+    Vertex_map is_cst = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
+                                         Static_boolean_property_map<vertex_descriptor, false>());
+    for (vertex_descriptor v : vertices_to_remove)
+      if (!get(is_cst, v))
+        remove_vertex(v, pmesh);
+      else
+        set_halfedge(v, boost::graph_traits<PolygonMesh>::null_halfedge(), pmesh);
   }
 }
 
