@@ -615,11 +615,9 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
     }
   }
 
-  edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = edges(pmesh); eb != ee;)
+  std::vector<edge_descriptor> edges_to_remove;
+  for (edge_descriptor e : edges(pmesh))
   {
-    edge_descriptor e = *eb;
-    ++eb;
     vertex_descriptor v = source(e, pmesh);
     vertex_descriptor w = target(e, pmesh);
     halfedge_descriptor h = halfedge(e, pmesh);
@@ -627,7 +625,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
     if (!keep_vertex[v] && !keep_vertex[w]){
       // don't care about connectivity
       // As vertices are not kept the faces and vertices will be removed later
-      remove_edge(e, pmesh);
+      edges_to_remove.push_back(e);
     }
     else if (keep_vertex[v] && keep_vertex[w]){
       face_descriptor fh = face(h, pmesh), ofh = face(oh, pmesh);
@@ -660,7 +658,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
         // shortcut the next pointers as e will be removed
         set_next(prev(h, pmesh), next(oh, pmesh), pmesh);
         set_next(prev(oh, pmesh), next(h, pmesh), pmesh);
-        remove_edge(e, pmesh);
+        edges_to_remove.push_back(e);
       }
     }
     else if (keep_vertex[v]){
@@ -668,7 +666,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
         set_halfedge(v, prev(h, pmesh), pmesh);
       }
       set_next(prev(h, pmesh), next(oh, pmesh), pmesh);
-      remove_edge(e, pmesh);
+      edges_to_remove.push_back(e);
     }
     else {
       CGAL_assertion(keep_vertex[w]);
@@ -676,26 +674,28 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
         set_halfedge(w, prev(oh, pmesh), pmesh);
       }
       set_next(prev(oh, pmesh), next(h, pmesh), pmesh);
-      remove_edge(e, pmesh);
+      edges_to_remove.push_back(e);
     }
   }
+  for (edge_descriptor e : edges_to_remove)
+    remove_edge(e, pmesh);
 
-  face_iterator fb, fe;
   // We now can remove all vertices and faces not marked as kept
-  for (boost::tie(fb, fe) = faces(pmesh); fb != fe;){
-    face_descriptor f = *fb;
-    ++fb;
-    if (get(fcm,f) != 1){
-      remove_face(f, pmesh);
-    }
-  }
-  vertex_iterator b, e;
-  for (boost::tie(b, e) = vertices(pmesh); b != e;){
-    vertex_descriptor v = *b;
-    ++b;
-    if (!keep_vertex[v]){
-      remove_vertex(v, pmesh);
-    }
+  std::vector<face_descriptor> faces_to_remove;
+  for (face_descriptor f : faces(pmesh))
+    if (get(fcm,f) != 1)
+      faces_to_remove.push_back(f);
+  for (face_descriptor f : faces_to_remove)
+    remove_face(f, pmesh);
+
+  std::vector<vertex_descriptor> vertices_to_remove;
+  for(vertex_descriptor v: vertices(pmesh))
+    if (!keep_vertex[v])
+      vertices_to_remove.push_back(v);
+
+  for (vertex_descriptor v : vertices_to_remove)
+    remove_vertex(v, pmesh);
+
   }
 }
 
