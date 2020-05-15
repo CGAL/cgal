@@ -1606,7 +1606,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     boost::vector_property_map<int,
       boost::property_map<SMesh, boost::face_index_t>::type>
-      fccmap(get(boost::face_index, *(d->smesh_)));
+      fccmap(num_faces(*(d->smesh_)), get(boost::face_index, *(d->smesh_)));
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*(d->smesh_), fccmap));
   }
   case NB_BORDER_EDGES:

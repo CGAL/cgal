@@ -387,7 +387,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   // vector_property_map
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(num_faces(pmesh), fimap);
   std::size_t num = connected_components(pmesh, face_cc, np);
 
   // Even if we do not want to keep anything we need to first
@@ -518,7 +518,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   // vector_property_map
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(num_faces(pmesh), fim);
   std::size_t num = connected_components(pmesh, face_cc, np);
   std::vector<Face_size> component_size(num, 0);
 
@@ -595,10 +595,10 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   for(std::size_t i : components_to_keep)
     cc_to_keep.insert(i);
 
-  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim);
-  for(vertex_descriptor v : vertices(pmesh)){
+  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(num_vertices(pmesh), vim);
+  for(vertex_descriptor v : vertices(pmesh))
     keep_vertex[v] = false;
-  }
+
   for(face_descriptor f : faces(pmesh)){
     if (cc_to_keep.find(get(fcm,f)) != cc_to_keep.end())
       put(fcm, f, keep ? 1 : 0);
@@ -821,7 +821,7 @@ void remove_connected_components(PolygonMesh& pmesh
   typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(num_faces(pmesh), fim);
   connected_components(pmesh, face_cc, np);
 
   std::vector<std::size_t> cc_to_remove;
@@ -871,7 +871,7 @@ void keep_connected_components(PolygonMesh& pmesh
   typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(num_faces(pmesh), fim);
   connected_components(pmesh, face_cc, np);
 
   std::vector<std::size_t> cc_to_keep;

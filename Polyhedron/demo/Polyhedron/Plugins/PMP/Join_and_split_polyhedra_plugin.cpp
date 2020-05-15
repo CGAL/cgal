@@ -237,7 +237,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
           = get(boost::face_index, pmesh);
         boost::vector_property_map<int,
           boost::property_map<FaceGraph, boost::face_index_t>::type>
-          fccmap(fim);
+          fccmap(num_faces(pmesh),fim);
         boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type pid
           = get(CGAL::face_patch_id_t<int>(), pmesh);
 

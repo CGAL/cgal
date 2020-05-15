@@ -179,7 +179,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     return 0;
 
   // Compute the connected components only once
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(num_faces(tmesh), fim);
   std::size_t num = connected_components(tmesh, face_cc, np);
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
