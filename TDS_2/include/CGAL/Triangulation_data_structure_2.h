@@ -986,6 +986,111 @@ insert_in_edge(Face_handle f, int i)
   return v;
 }
 
+#if 1  // master
+
+template <  class Vb, class Fb>
+typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
+Triangulation_data_structure_2<Vb,Fb>::
+insert_dim_up(Vertex_handle w,  bool orient)
+{
+  // the following function insert
+  // a vertex  v which is outside the affine  hull of Tds
+  // The triangulation will be starred from  v and w
+  // ( geometrically w=  // the infinite vertex )
+  // w=nullptr for first and second insertions
+  // orient governs the orientation of the resulting triangulation
+
+  Vertex_handle v = create_vertex();
+  set_dimension( dimension() + 1);
+  Face_handle f1;
+  Face_handle f2;
+
+  const int dim = dimension(); //it is the resulting dimension
+
+  switch (dim) {
+  case -1:
+    f1 = create_face(v,Vertex_handle(),Vertex_handle());
+    v->set_face(f1);
+    break;
+  case 0 :
+    f1 = face_iterator_base_begin();
+    f2 = create_face(v,Vertex_handle(),Vertex_handle());
+    set_adjacency(f1, 0, f2, 0);
+    v->set_face(f2);
+    break;
+  case 1 :
+  case 2 :
+    {
+      std::list<Face_handle> faces_list;
+      Face_iterator ib= face_iterator_base_begin();
+      Face_iterator ib_end = face_iterator_base_end();
+      for (; ib != ib_end ; ++ib){
+	faces_list.push_back( ib);
+      }
+
+      std::list<Face_handle>  to_delete;
+      typename std::list<Face_handle>::iterator lfit = faces_list.begin();
+      Face_handle f, g;
+
+      for ( ; lfit != faces_list.end() ; ++lfit) {
+	f = * lfit;
+	g = create_face(f); //calls copy constructor of face
+	f->set_vertex(dim,v);
+	g->set_vertex(dim,w);
+	set_adjacency(f, dim, g, dim);
+	if (f->has_vertex(w)) to_delete.push_back(g); // flat face to delete
+      }
+
+      lfit = faces_list.begin();
+      for ( ; lfit != faces_list.end() ; ++lfit) {
+	f = * lfit;
+	g = f->neighbor(dim);
+	for(int j = 0; j < dim ; ++j) {
+	  g->set_neighbor(j, f->neighbor(j)->neighbor(dim));
+	}
+      }
+
+      // couldn't unify the code for reorientation mater
+      lfit = faces_list.begin() ;
+      if (dim == 1){
+	if (orient) {
+	  (*lfit)->reorient(); ++lfit ;  (*lfit)->neighbor(1)->reorient();
+	}
+	else {
+	  (*lfit)->neighbor(1)->reorient(); ++lfit ; (*lfit)->reorient();
+	}
+      }
+      else { // dimension == 2
+	for( ;lfit  != faces_list.end(); ++lfit ) {
+	  if (orient) {(*lfit)->neighbor(2)->reorient();}
+	  else { (*lfit)->reorient();}
+	}
+      }
+
+      lfit = to_delete.begin();
+      int i1, i2;
+      for ( ;lfit  != to_delete.end(); ++lfit){
+	f = *lfit ;
+	int j ;
+	if (f->vertex(0) == w) {j=0;}
+	else {j=1;}
+	f1= f->neighbor(dim); i1= mirror_index(f,dim); //f1->index(f);
+	f2= f->neighbor(j); i2= mirror_index(f,j); //f2->index(f);
+	set_adjacency(f1, i1, f2, i2);
+	delete_face(f);
+      }
+
+      v->set_face( *(faces_list.begin()));
+    }
+    break;
+  default:
+    CGAL_triangulation_assertion(false);
+    break;  }
+  return v;
+}
+
+
+#else
 
 template <  class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
@@ -1034,10 +1139,12 @@ insert_dim_up(Vertex_handle w,  bool orient)
                       f2, f1,Face_handle());
      f1->set_neighbor(0,f3);
      f2->set_neighbor(1,f3);
+
      break;
 
   case 2 : // v is the vertex making the T2 2D
     {
+      assert(w != Vertex_handle());
       if (orient) {
         Face_iterator ib = face_iterator_base_begin();
         Face_iterator ib_end = face_iterator_base_end();
@@ -1100,6 +1207,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
   return v;
 }
 
+#endif
 
 template <class Vb, class Fb>
 void
