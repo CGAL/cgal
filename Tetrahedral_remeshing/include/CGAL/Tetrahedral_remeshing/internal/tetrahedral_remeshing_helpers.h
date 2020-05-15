@@ -1017,7 +1017,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
 }
 
 template<typename CellRange, typename Tr>
-void dump_cells_off(const CellRange& cells, const Tr& tr, const char* filename)
+void dump_cells_off(const CellRange& cells, const Tr& /*tr*/, const char* filename)
 {
   typedef typename Tr::Vertex_handle              Vertex_handle;
   typedef typename Tr::Cell_handle                Cell_handle;

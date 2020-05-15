@@ -275,7 +275,7 @@ void tetrahedral_isotropic_remeshing(
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
-    [target_edge_length](const typename Tr::Point& p)
+    [target_edge_length](const typename Tr::Point& /*p*/)
                         {return target_edge_length; },
     np);
 }
