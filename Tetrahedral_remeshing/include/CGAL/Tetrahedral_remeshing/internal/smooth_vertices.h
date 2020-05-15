@@ -292,7 +292,7 @@ private:
     CGAL_assertion(!std::isnan(gi.x()) && !std::isnan(gi.y()) && !std::isnan(gi.z()));
 
     Vector_3 point(gi.x(), gi.y(), gi.z());
-    Vector_3 res_normal;
+    Vector_3 res_normal = CGAL::NULL_VECTOR;
     Vector_3 result(point);
 
     const FMLS& fmls = subdomain_FMLS[subdomain_FMLS_indices.at(si)];
