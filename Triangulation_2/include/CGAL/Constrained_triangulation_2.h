@@ -665,8 +665,8 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
         it != finite_edges_end();
         ++it){
       if(is_constrained(*it)){
-        constrained_edges.push_back(std::make_pair(it->first->vertex(cw(it->second)),
-                                                   it->first->vertex(ccw(it->second))));
+        constrained_edges.emplace_back(it->first->vertex(cw(it->second)),
+                                       it->first->vertex(ccw(it->second)));
       }
     }
   }
@@ -683,7 +683,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   va = Triangulation::insert(a,lt,loc,li);
 
   if(one_dimensional && (dimension() == 2)){
-    for(const std::pair<Vertex_handle,Vertex_handle> vp : constrained_edges){
+    for(const std::pair<Vertex_handle,Vertex_handle>& vp : constrained_edges){
       Face_handle fh;
       int i;
       if(this->is_edge(vp.first, vp.second, fh,i)){
