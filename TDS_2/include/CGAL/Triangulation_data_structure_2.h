@@ -986,7 +986,7 @@ insert_in_edge(Face_handle f, int i)
   return v;
 }
 
-#if 1  // master
+#if 0  // master
 
 template <  class Vb, class Fb>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
@@ -1126,21 +1126,27 @@ insert_dim_up(Vertex_handle w,  bool orient)
     break;
 
   case 1 : // v is the second finite vertex of the T2
+    {
+      f1 = face_iterator_base_begin();
+      f2 = f1->neighbor(0);
 
-     f1 = face_iterator_base_begin();
-     f2 = f1->neighbor(0);
-
-     f2->set_vertex(1, v);
-     v->set_face(f2);
-     f1->set_vertex(1, f1->vertex(0));
-     f1->set_vertex(0, v);
-     f1->set_neighbor(1, f2);
-     f3 = create_face(f1->vertex(1), f2->vertex(0), Vertex_handle(),
-                      f2, f1,Face_handle());
-     f1->set_neighbor(0,f3);
-     f2->set_neighbor(1,f3);
-
-     break;
+      Vertex_handle nv = v;
+      if(! orient){
+        nv = f2->vertex(0);
+        f2->set_vertex(0,v);
+        v->set_face(f2);
+      }
+      f2->set_vertex(1, nv);
+      nv->set_face(f2);
+      f1->set_vertex(1, f1->vertex(0));
+      f1->set_vertex(0, nv);
+      f1->set_neighbor(1, f2);
+      f3 = create_face(f1->vertex(1), f2->vertex(0), Vertex_handle(),
+                       f2, f1,Face_handle());
+      f1->set_neighbor(0,f3);
+      f2->set_neighbor(1,f3);
+    }
+    break;
 
   case 2 : // v is the vertex making the T2 2D
     {
