@@ -34,7 +34,6 @@
 #include "ISnappable.h"
 #include "PointsGraphicsItem.h"
 #include "AlgebraicCurveParser.h"
-#include "AlgebraicCurveParserOld.h"
 
 namespace CGAL {
 namespace Qt {
@@ -832,7 +831,7 @@ protected:
 }; // class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > >
 
 /**
-   Specialization of GraphicsViewCurveInput for Arr_circular_arc_traits_2; handles
+   Specialization of GraphicsViewCurveInput for Arr_algebraic_segment_traits_2; handles
    user-defined generation of algebraic curves.
 */
 template < typename Coefficient_ >
@@ -913,52 +912,25 @@ public:
 
   void addAlgebraicCurve ( std::string& expression ) {
       this->algebraicExpression = expression;
-      AlgebraicCurveParser parser(this->algebraicExpression);
-      std::vector<struct AlgebraicCurveTerm> terms;
+      AlgebraicCurveParser<Polynomial_2> parser(this->algebraicExpression);
+	  boost::optional<Polynomial_2> poly = parser.parse();
 
-      try {
-          if (!parser.validateExpression(algebraicExpression))
-          {
-              throw std::invalid_argument("Invalid Expression");
-          }
-      } catch (std::invalid_argument) {
-
-          QMessageBox msgBox;
-          msgBox.setWindowTitle("Wrong Expression");
-          msgBox.setIcon(QMessageBox::Critical);
-          msgBox.setText(QString::fromStdString( + " is invalid"));
-          msgBox.setStandardButtons(QMessageBox::Ok);
-          msgBox.exec();
-          return;
+      if(!poly) {
+         QMessageBox msgBox;
+         msgBox.setWindowTitle("Wrong Expression");
+         msgBox.setIcon(QMessageBox::Critical);
+         msgBox.setText(QString::fromStdString("Invalid Expression"));
+         msgBox.setStandardButtons(QMessageBox::Ok);
+         msgBox.exec();
+         return;
       }
 
-      terms = parser.extractTerms();
       //To create a curve
       Traits::Construct_curve_2 construct_curve
               = traits.construct_curve_2_object();
 
-      Polynomial_2 polynomial;
-      Polynomial_2 x = CGAL::shift(Polynomial_2(1),1,0);
-      Polynomial_2 y = CGAL::shift(Polynomial_2(1),1,1);
-
-      //extracting coefficients and power
-      for (auto & term : terms)
-      {
-          long xExp = (term.xExponent)? *term.xExponent: 0;
-          long yExp = (term.yExponent)? *term.yExponent: 0;
-          long coeff = (term.coefficient)? * term.coefficient : 1;
-          polynomial += coeff
-                        *CGAL::ipower(x , xExp)
-                        *CGAL::ipower(y , yExp);
-          qDebug()<< "Coefficient: "<<coeff;
-          qDebug()<< "X "<<xExp;
-          qDebug()<< "Y "<<yExp;
-          if (coeff>=0) qDebug()<< "positive";
-          else qDebug()<<"negative";
-      }
-
-      //adding curve to the arrangement
-      Curve_2 cv = construct_curve(polynomial);
+      // adding curve to the arrangement
+      Curve_2 cv = construct_curve(poly.value());
       Q_EMIT generate( CGAL::make_object( cv ) );
   }
 

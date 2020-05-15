@@ -17,94 +17,27 @@
 //
 // Author(s): Saurabh Singh <ssingh@cs.iitr.ac.in>
 
+#ifndef ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H
+#define ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H
+
 #include <vector>
 #include <string>
 #include <complex>
-#include <boost/config/warning_disable.hpp>
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_core.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
-#include <boost/spirit/include/phoenix_object.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/fusion/include/io.hpp>
-#include <boost/bind.hpp>
-#include <boost/spirit/include/phoenix.hpp>
-#ifndef ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H
-#define ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H
-namespace qi = boost::spirit::qi;
-namespace ascii = boost::spirit::ascii;
+#include <boost/optional.hpp>
+#include <CGAL/Polynomial_traits_d.h>
 
-typedef std::vector<struct AlgebraicCurveTerm> Terms;
-struct AlgebraicCurveTerm {
-    boost::optional<long long> xExponent, yExponent, coefficient;
-};
-
-template <typename Iterator>
-    struct polynomial_parser : qi::grammar<Iterator,
-        std::vector<AlgebraicCurveTerm>(),
-        ascii::space_type>
-    {
-        polynomial_parser() : polynomial_parser::base_type(start)
-        {
-            namespace phx = boost::phoenix;
-            using qi::int_;
-            using qi::lit;
-            using qi::double_;
-            using qi::lexeme;
-            using ascii::char_;
-            using qi::_val;
-            using qi::eps;
-
-            exponent %= '^' >> int_;
-
-            xExponent %= 'x' >> ( exponent | eps[_val = 1] );
-
-            yExponent %= 'y' >> ( exponent | eps[_val = 1] );
-
-            poly_term = eps[_val = AlgebraicCurveTerm()]
-                  >>
-                    -int_[phx::bind(&AlgebraicCurveTerm::coefficient, _val) = qi::_1]
-                  >>
-                    -xExponent[phx::bind(&AlgebraicCurveTerm::xExponent, _val) = qi::_1]
-                  >>
-                    -yExponent[phx::bind(&AlgebraicCurveTerm::yExponent, _val) = qi::_1]
-            ;
-
-            negative_poly_term = eps[_val = AlgebraicCurveTerm()] >>
-                (
-                    int_[phx::bind(&AlgebraicCurveTerm::coefficient, _val) = -1 * qi::_1]
-                    | eps[phx::bind(&AlgebraicCurveTerm::coefficient, _val) = -1]
-                ) >>
-                    -xExponent[phx::bind(&AlgebraicCurveTerm::xExponent, _val) = qi::_1]
-                  >>
-                    -yExponent[phx::bind(&AlgebraicCurveTerm::yExponent, _val) = qi::_1]
-            ;
-
-            start = eps[_val = std::vector<AlgebraicCurveTerm>()]
-                >> poly_term[phx::push_back(_val, qi::_1)]
-                >> *(
-                    ('+' >> poly_term[phx::push_back(_val, qi::_1)])
-                    |
-                    ('-' >> negative_poly_term[phx::push_back(_val, qi::_1)])
-                    )
-            ;
-        }
-
-        qi::rule<Iterator, int(), ascii::space_type> exponent;
-        qi::rule<Iterator, int(), ascii::space_type> xExponent;
-        qi::rule<Iterator, int(), ascii::space_type> yExponent;
-        qi::rule<Iterator, AlgebraicCurveTerm(), ascii::space_type> poly_term;
-        qi::rule<Iterator, AlgebraicCurveTerm(), ascii::space_type> negative_poly_term;
-        qi::rule<Iterator, std::vector<AlgebraicCurveTerm>(), ascii::space_type> start;
-    };
-
+template <typename Polynomial_2>
 class AlgebraicCurveParser {
+	using Traits = CGAL::Polynomial_traits_d<Polynomial_2>;
+	using Coefficient = typename Traits::Innermost_coefficient_type;
+
 public:
-    explicit AlgebraicCurveParser(std::string& expression);
-    bool validateExpression(const std::string &expression);
-    Terms extractTerms();
+    explicit AlgebraicCurveParser(std::string expression);
+    bool validateExpression();
+	boost::optional<Polynomial_2> parse();
+
+private:
     std::string expression;
 };
-
 
 #endif //ARRANGEMENT_ON_SURFACE_2_DEMO_ALGEBRAICCURVEPARSERNEW_H

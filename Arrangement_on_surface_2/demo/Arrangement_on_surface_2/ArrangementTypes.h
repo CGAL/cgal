@@ -65,6 +65,7 @@ typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
 // workaround for VC++
 struct Kernel : public CGAL::Cartesian<NT> {};
 
+#include <QColor>
 
 class Face_with_color : public CGAL::Arr_face_base
 {
@@ -334,6 +335,8 @@ public:
     new_f ->set_color(f->color());
   }
 };
+
+#include <QMetaType>
 
 //Q_DECLARE_METATYPE( Seg_arr )
 //Q_DECLARE_METATYPE( Pol_arr )
