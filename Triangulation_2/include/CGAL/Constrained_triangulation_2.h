@@ -148,6 +148,7 @@ public:
   using Triangulation::all_edges_begin;
   using Triangulation::all_edges_end;
   using Triangulation::mirror_index;
+  using Triangulation::mirror_edge;
   using Triangulation::orientation;
 #endif
 
@@ -656,6 +657,19 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
+  std::list<std::pair<Vertex_handle,Vertex_handle> > constrained_edges;
+  bool one_dimensional = false;
+  if(dimension() == 1){
+    one_dimensional = true;
+    for(Finite_edges_iterator it = finite_edges_begin();
+        it != finite_edges_end();
+        ++it){
+      if(is_constrained(*it)){
+        constrained_edges.push_back(std::make_pair(it->first->vertex(cw(it->second)),
+                                                   it->first->vertex(ccw(it->second))));
+      }
+    }
+  }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
     if(boost::is_same<Itag, No_constraint_intersection_tag>::value)
@@ -667,6 +681,18 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
 
   va = Triangulation::insert(a,lt,loc,li);
+
+  if(one_dimensional && (dimension() == 2)){
+    for(const std::pair<Vertex_handle,Vertex_handle> vp : constrained_edges){
+      Face_handle fh;
+      int i;
+      if(this->is_edge(vp.first, vp.second, fh,i)){
+        fh->set_constraint(i,true);
+        boost::tie(fh,i) = mirror_edge(Edge(fh,i));
+        fh->set_constraint(i,true);
+      }
+    }
+  }
 
   if (insert_in_constrained_edge)
     update_constraints_incident(va, v1,v2);
