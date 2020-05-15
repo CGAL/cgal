@@ -23,23 +23,23 @@ int main()
     vertex_descriptor vr = CGAL::add_vertex(sm);
     vertex_descriptor vs = CGAL::add_vertex(sm);
     std::array<vertex_descriptor,0> face0;
-    assert( ! CGAL::test_face(face0,sm) );
+    assert( ! CGAL::can_add_face(face0,sm) );
     std::array<vertex_descriptor,1> face1;
-    assert( ! CGAL::test_face(face1,sm) );
+    assert( ! CGAL::can_add_face(face1,sm) );
     std::array<vertex_descriptor,2> face2;
-    assert( ! CGAL::test_face(face2,sm) );
+    assert( ! CGAL::can_add_face(face2,sm) );
 
     std::array<vertex_descriptor,3> face = { vp, vq, vr };
     CGAL::Euler::add_face(face, sm);
 
-    assert( ! CGAL::test_face(face,sm) );
+    assert( ! CGAL::can_add_face(face,sm) );
     std::swap(face[0],face[1]);
-    assert( CGAL::test_face(face,sm) );
+    assert( CGAL::can_add_face(face,sm) );
 
     face[2] = vs;
-    assert( CGAL::test_face(face,sm) );
+    assert( CGAL::can_add_face(face,sm) );
     std::swap(face[0],face[1]);
-    assert( ! CGAL::test_face(face,sm) );
+    assert( ! CGAL::can_add_face(face,sm) );
   }
 
   {
@@ -52,9 +52,9 @@ int main()
     ++it;
     face[1] = *it;
     face[2] = CGAL::add_vertex(sm);
-    assert( ! CGAL::test_face(face,sm) );
+    assert( ! CGAL::can_add_face(face,sm) );
     std::swap(face[0],face[1]);
-    assert( ! CGAL::test_face(face,sm) );
+    assert( ! CGAL::can_add_face(face,sm) );
   }
 
   return 0;
