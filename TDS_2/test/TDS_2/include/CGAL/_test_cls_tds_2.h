@@ -324,10 +324,14 @@ _test_cls_tds_2( const Tds &)
   // dim_down
   std::cout << "    dim_down" << std::endl;
   Tds td5;
-  Vertex_handle v5_0 = td5.insert_first();
-  Vertex_handle v5_1 = td5.insert_second();
-  Vertex_handle v5_2 = td5.insert_dim_up(v5_1, false);
-  Vertex_handle v5_3 = td5.insert_dim_up();
+  Vertex_handle v5_0 = td5.insert_first();             // infinite vertex
+  Vertex_handle v5_1 = td5.insert_second();            // 0D
+  Vertex_handle v5_2 = td5.insert_dim_up(v5_1, false); //
+  Vertex_handle v5_3 = td5.insert_dim_up(v5_0);         // 2D must not be Vertex_handle()
+
+  std::cout << td5 << std::endl;
+  assert(td5.is_valid());
+
   (void)v5_0; (void)v5_2; // Hush unused warnings
   Face_handle f5_0 = v5_3->face();
   int i = f5_0->index(v5_3);
