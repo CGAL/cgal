@@ -103,6 +103,8 @@ class Adaptive_remesher
   typedef typename C3t3::Vertex_handle       Vertex_handle;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename C3t3::Curve_index         Curve_index;
+  typedef typename C3t3::Corner_index        Corner_index;
 
   typedef Tetrahedral_remeshing_smoother<C3t3> Smoother;
 
@@ -188,6 +190,8 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
 #endif
   }
 
@@ -205,6 +209,8 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "2-collapse");
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
 #endif
   }
 
@@ -217,6 +223,8 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "3-flip");
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
 #endif
   }
 
@@ -228,6 +236,8 @@ public:
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "4-smooth");
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
 #endif
   }
 
@@ -417,7 +427,7 @@ private:
 #endif
 
     //tag vertices
-    unsigned int corner_id = 0;
+    Corner_index corner_id = 0;
     for (Vertex_handle vit : tr().finite_vertex_handles())
     {
       if ( vit->in_dimension() == 0
@@ -429,11 +439,16 @@ private:
         if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
           vit->set_dimension(0);
 
+        vit->set_index(corner_id);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbv;
 #endif
       }
     }
+
+    for (Vertex_handle v : tr().finite_vertex_handles())
+      set_index(v, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::cout << "C3t3 ready :" << std::endl;
