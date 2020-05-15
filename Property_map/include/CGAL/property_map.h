@@ -65,6 +65,31 @@ public:
   {}
 };
 
+/// Similar to Static_property_map but retricted to bool and the value is const at compile time
+template <typename Key, bool default_value>
+class Static_boolean_property_map
+{
+public:
+  typedef Key key_type;
+  typedef bool value_type;
+  typedef bool reference;
+  typedef boost::read_write_property_map_tag category;
+
+public:
+
+  inline friend
+  value_type
+  get(const Static_boolean_property_map&, const key_type&)
+  {
+    return default_value;
+  }
+
+  inline friend
+  void
+  put(Static_boolean_property_map&, const key_type&, const value_type&)
+  {}
+};
+
 
 template <typename PM1, typename PM2>
 class OR_property_map {
