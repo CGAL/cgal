@@ -18,6 +18,7 @@
 	<file>resources/union.bmp</file>
 	<file>resources/symm_diff.bmp</file>
 	<file>resources/comp_P.bmp</file>
+    <file>resources/vis.bmp</file>
     <file>resources/clear.png</file>
     <file>resources/PQ.xpm</file>
     <file>resources/Minkowski_sum_2.png</file>
