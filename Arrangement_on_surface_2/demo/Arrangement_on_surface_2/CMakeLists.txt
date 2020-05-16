@@ -34,13 +34,11 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                ArrangementDemoWindow.h
                ArrangementDemoTab.h
                Callback.h
-               # NewTabDialog.h
                OverlayDialog.h
                ArrangementDemoPropertiesDialog.h
                AlgebraicCurveInputDialog.h
                ColorItemEditor.h
                DeleteCurveModeItemEditor.h
-	       # PropertyValueDelegate.h
                PropertyValueDelegate.h)
 
   qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ArrangementDemoWindow.qrc)
@@ -49,10 +47,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   if (CGAL_EXPLICIT_INSTANTIATION)
     set(EXPLICIT_INSTANTIATION_SRCS
         ArrangementPainterOstreamExplicitInstantiation.cpp
-        # ArrangementGraphicsItemExplicitInstantiation.cpp
-        # GraphicsViewCurveInputExplicitInstantiation.cpp
         ArrangementPainterOstream.cpp
-        # ArrangementGraphicsItem.cpp
         GraphicsViewCurveInput.cpp
         AlgebraicCurveParser.cpp )
   endif()
@@ -60,7 +55,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
 
   add_executable(arrangement_2
                  arrangement_2.cpp
-                 # ArrangementGraphicsItem.cpp
                  ArrangementDemoWindow.cpp
                  ArrangementDemoTab.cpp
                  ArrangementDemoGraphicsView.cpp
@@ -70,7 +64,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  SplitEdgeCallback.cpp
                  FillFaceCallback.cpp
                  GraphicsViewSegmentInput.cpp
-                 #GraphicsViewCurveInput.cpp
                  Utils.cpp
                  AlgebraicCurveExpressionParser.cpp
                  NewTabDialog.cpp

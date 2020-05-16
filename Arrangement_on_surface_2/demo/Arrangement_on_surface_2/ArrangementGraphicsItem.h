@@ -64,7 +64,6 @@ public:
     this->verticesPen.setCosmetic( true );
     this->verticesPen.setCapStyle( ::Qt::SquareCap );
     this->edgesPen.setCosmetic( true );
-    this->firstEntry = true;
   }
 
   const QPen& getVerticesPen( ) const
@@ -161,7 +160,6 @@ protected:
 
   QColor backgroundColor;
   double scalingFactor;
-  bool firstEntry;
 
 }; // class ArrangementGraphicsItemBase
 
@@ -206,13 +204,6 @@ public:
                      QWidget* widget);
 
 protected:
-
-  template < typename TTraits >
-  void modelChanged(TTraits traits);
-
-  template < typename Coefficient_>
-  void modelChanged(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
-                    traits);
 
   template < typename TTraits >
   void paint( QPainter* painter, TTraits traits );
@@ -1082,6 +1073,12 @@ ArrangementGraphicsItem< Arr_, ArrTraits >::
 boundingRect( ) const
 {
   QRectF rect = this->convert( this->bb );
+  if (!rect.isValid() || std::isinf(rect.width()) || std::isinf(rect.height()))
+  {
+    // TODO: Add a proper logging utility
+    std::cerr << "ArrangementGraphicsItem.h:boundingRect invalid bounding box!\n";
+    rect = this->viewportRect();
+  }
   return rect;
 }
 
@@ -1127,23 +1124,6 @@ paint(QPainter* painter, TTraits /* traits */)
     // Bbox_2 bbox = curve.bbox();
     this->painterostream << curve;
   }
-
-  if ( this->firstEntry )
-  {
-    this->firstEntry = false;
-    QEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(),
-      keyEvent);
-
-    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(), keyEvent);
-
-    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(), keyEvent);
-
-    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(), keyEvent);
-  }
 }
 
 template < typename Arr_, typename ArrTraits >
@@ -1177,23 +1157,6 @@ paint(QPainter* painter,
     X_monotone_curve_2 curve = it->curve( );
     this->painterostream << curve;
   }
-
-  if ( this->firstEntry )
-  {
-    this->firstEntry = false;
-    QEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(),
-      keyEvent);
-
-    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(), keyEvent);
-
-    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(), keyEvent);
-
-    keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
-    QCoreApplication::postEvent(getCurrentView(), keyEvent);
-  }
 }
 
 
@@ -1206,32 +1169,6 @@ paint(QPainter* painter,
   QRectF clipRect = this->boundingRect( );
 
   QList< QGraphicsView* > views = this->scene->views( );
-  // QGraphicsView* view = views.first( );
-
-  // view->resetMatrix();
-  if ( !std::isinf(clipRect.left( )) &&
-       !std::isinf(clipRect.right( )) &&
-       !std::isinf(clipRect.top( )) &&
-       !std::isinf(clipRect.bottom( )) )
-  {
-    // view->resetMatrix();
-    // double viewHeight = view->height();
-#if 0
-    double viewHeight = 456;
-    std::cout<<"viewHeight: "<<viewHeight<<std::endl;
-
-    double boundingRectHeight = clipRect.bottom() - clipRect.top();
-
-    view->scale(1/this->scalingFactor, 1/this->scalingFactor);
-    this->scalingFactor = (0.5 * viewHeight) / boundingRectHeight;
-    view->scale(scalingFactor, scalingFactor);
-#endif
-
-  }
-  else
-  {
-    clipRect = this->viewportRect( );
-  }
 
   // paint the faces for the purpose of brushing
   this->paintFaces( painter );
@@ -1247,9 +1184,6 @@ paint(QPainter* painter,
         it != this->arr->vertices_end( ); ++it )
   {
     Point_2 p = it->point( );
-    //std::pair< double, double > approx = p.to_double( );
-    //Kernel_point_2 pt( approx.first, approx.second );
-    //this->painterostream << pt;
     this->painterostream << p;
   }
 
@@ -1259,62 +1193,6 @@ paint(QPainter* painter,
   {
     X_monotone_curve_2 curve = it->curve( );
     this->painterostream << curve;
-  }
-
-  // To make room for the scene so
-  // there will be for dragging
-  if ( this->firstEntry )
-  {
-    this->firstEntry = false;
-    QEvent *keyEvent = NULL;
-
-    for (int i=0; i<160; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<160; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<160; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Right, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<151; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Left, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<80; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<80; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<80; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Down, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
-
-    for (int i=0; i<77; i++)
-    {
-      keyEvent = new QKeyEvent(QEvent::KeyPress, ::Qt::Key_Up, ::Qt::NoModifier);
-      QCoreApplication::postEvent(getCurrentView(), keyEvent);
-    }
   }
 }
 
@@ -1476,149 +1354,20 @@ updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits)
 {
 
   this->prepareGeometryChange( );
-  if ( this->arr->number_of_vertices( ) == 0 )
-  {
-    double inf = std::numeric_limits<double>::infinity();
-    this->bb = Bbox_2( -inf, -inf, inf, inf );
-    this->bb_initialized = false;
-    return;
-  }
-  else
-  {
-    //std::pair< double, double > approx =
-    //  this->arr->vertices_begin( )->point( ).to_double( );
-    //this->bb = CGAL::Bbox_2( approx.first, approx.second,
-    //                         approx.first, approx.second );
-    this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
-    this->bb_initialized = true;
-  }
-#if 0
-  typename Traits::Make_x_monotone_2 make_x_monotone_2 =
-    traits.make_x_monotone_2_object( );
-  for ( Curve_iterator it = this->arr->curves_begin( );
-        it != this->arr->curves_end( );
-        ++it )
-  {
-    std::vector< CGAL::Object > cvs;
-    make_x_monotone_2( *it, std::back_inserter( cvs ) );
-    for ( unsigned int i = 0 ; i < cvs.size( ); ++i )
-    {
-      X_monotone_curve_2 cv;
-      CGAL::assign( cv, cvs[ i ] );
-      this->bb = this->bb + cv.bbox( );
-    }
-  }
-#endif
-
-  int curve_cnt = 0;
-
-  for ( Edge_iterator it = this->arr->edges_begin( );
-        it != this->arr->edges_end( ); ++it )
-  {
-    X_monotone_curve_2 curve = it->curve( );
-    this->bb = this->bb + curve.bbox( );
-
-    curve_cnt++;
-
-  }
+  // TODO(Ahmed Essam): viewport should contain interesting points
+  // This is where to implement it
 }
 
 template < typename Arr_, typename ArrTraits >
 void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 {
-  this->modelChanged( ArrTraits() );
-}
-
-template < typename Arr_, typename ArrTraits >
-template < typename TTraits >
-void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged(TTraits )
-{
   if ( this->arr->is_empty( ) )
   {
     this->hide( );
+    return;
   }
-  else
-  {
-    this->show( );
-  }
-
+  this->show( );
   this->updateBoundingBox( );
-
-  QRectF clipRect = this->boundingRect( );
-
-  QList< QGraphicsView* > views = this->scene->views( );
-  QGraphicsView* view = views.first( );
-
-  // view->resetMatrix();
-  if ( !std::isinf(clipRect.left( )) &&
-       !std::isinf(clipRect.right( )) &&
-       !std::isinf(clipRect.top( )) &&
-       !std::isinf(clipRect.bottom( )) )
-  {
-
-    Ui::ArrangementDemoWindow *ui = getCurrentDemoWindowUi();
-
-    if (!ui->actionDelete->isChecked())
-    {
-      // force the update of the scene
-      view->scale(1.1, 1.1);
-      view->scale(1/1.1, 1/1.1);
-    }
-  }
-
-  this->update( );
-}
-
-template < typename Arr_, typename ArrTraits >
-template < typename Coefficient_ >
-void ArrangementGraphicsItem< Arr_, ArrTraits >::
-modelChanged(CGAL::Arr_algebraic_segment_traits_2<Coefficient_> )
-{
-  if ( this->arr->is_empty( ) )
-  {
-    this->hide( );
-  }
-  else
-  {
-    this->show( );
-  }
-
-  this->updateBoundingBox( );
-
-  QRectF clipRect = this->boundingRect( );
-
-  QList< QGraphicsView* > views = this->scene->views( );
-  QGraphicsView* view = views.first( );
-
-  // view->resetMatrix();
-  if ( !std::isinf(clipRect.left( )) &&
-       !std::isinf(clipRect.right( )) &&
-       !std::isinf(clipRect.top( )) &&
-       !std::isinf(clipRect.bottom( )) )
-  {
-    // view->resetMatrix();
-    // double viewHeight = view->height();
-
-    // QList<QWidget*> qWidgetList = QApplication::topLevelWidgets();
-    // extern class ArrangementDemoWindow;
-
-    Ui::ArrangementDemoWindow *ui = getCurrentDemoWindowUi();
-          // dynamic_cast<Ui::ArrangementDemoWindow>qWidgetList.first();
-    // ArrangementDemoWindow *myWindw;
-    // std::cout<<Ui::ArrangementDemoWindow::SEGMENT_TRAITS;
-    double viewHeight = 456;
-
-    if (!ui->actionDelete->isChecked())
-    {
-      double boundingRectHeight = clipRect.bottom() - clipRect.top();
-
-      view->scale(1/this->scalingFactor, 1/this->scalingFactor);
-      this->scalingFactor = (0.5 * viewHeight) / boundingRectHeight;
-      view->scale(this->scalingFactor, this->scalingFactor);
-    }
-
-  }
-
   this->update( );
 }
 
