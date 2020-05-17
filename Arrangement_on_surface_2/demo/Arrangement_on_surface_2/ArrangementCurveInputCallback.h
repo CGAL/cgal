@@ -51,19 +51,10 @@ public:
   void processInput( CGAL::Object o )
   {
     Curve_2 curve;
-    X_monotone_curve_2 xcurve;
     if ( CGAL::assign( curve, o ) )
     {
       CGAL::insert( *( this->arrangement ), curve );
     }
-#if 0
-    else if ( CGAL::assign( xcurve, o ) )
-    {
-      std::vector< X_monotone_curve_2 > box;
-      box.push_back( xcurve );
-      CGAL::insert( *( this->arrangement ), box.begin( ), box.end( ) );
-    }
-#endif
 
     Q_EMIT CGAL::Qt::GraphicsViewInput::modelChanged( );
   }

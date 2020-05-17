@@ -92,34 +92,6 @@ public:
     this->convert = Converter< Kernel >( this->clippingRect );
   }
 
-#if 0
-  void setScene( QGraphicsScene* scene_ )
-  {
-    this->scene = scene_;
-
-    // set the clipping rectangle
-    if ( scene_ == NULL )
-    {
-      return;
-    }
-    this->clippingRect = this->getViewportRect( );
-  }
-#endif
-
-protected: // methods
-#if 0
-  QRectF getViewportRect( ) const
-  {
-    // assumes scene is not null and attached to exactly one view
-    QGraphicsView* view = this->scene->views( ).first( );
-    QPointF p1 = view->mapToScene( 0, 0 );
-    QPointF p2 = view->mapToScene( view->width( ), view->height( ) );
-    QRectF clipRect = QRectF( p1, p2 );
-
-    return clipRect;
-  }
-#endif
-
 protected:
   // fields
   PainterOstream< Kernel > painterOstream;
@@ -842,16 +814,18 @@ public: // methods
 
 protected:
   void setupFacade( );
-  
+  void remapFacadePainter();
+
 };
+
+template class ArrangementPainterOstream<Seg_traits>;
+template class ArrangementPainterOstream<Pol_traits>;
+template class ArrangementPainterOstream<Conic_traits>;
+template class ArrangementPainterOstream<Lin_traits>;
+template class ArrangementPainterOstream<Arc_traits>;
+template class ArrangementPainterOstream<Alg_seg_traits>;
 
 } // namespace Qt
 } // namespace CGAL
-
-// #if CGAL_EXPLICIT_INSTANTIATION == 0
-
-// #include "ArrangementPainterOstream.cpp"
-
-// #endif
 
 #endif // CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H

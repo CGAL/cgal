@@ -32,6 +32,7 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   this->setTransform( m );
   this->setBackgroundBrush( QBrush( backgroundColor ) );
   this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+  this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
 void ArrangementDemoGraphicsView::wheelEvent(QWheelEvent* event)

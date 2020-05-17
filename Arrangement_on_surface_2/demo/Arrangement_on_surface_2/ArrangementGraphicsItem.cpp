@@ -388,8 +388,20 @@ void ArrangementGraphicsItem<Arr_, ArrTraits>::updateBoundingBox(
   }
 
   // add margin to bounding box
-
-  std::cout << this->bb << '\n';
+  float x_margin;
+  float y_margin;
+  if (this->bb.xmin() == this->bb.xmax() ||
+      this->bb.ymin() == this->bb.ymax()) {
+    static constexpr float const_margin = 10;
+    x_margin = const_margin;
+    y_margin = const_margin;
+  } else {
+    static constexpr float prop_margin = 0.10;
+    x_margin = (this->bb.xmax() - this->bb.xmin()) * prop_margin;
+    y_margin = (this->bb.ymax() - this->bb.ymin()) * prop_margin;
+  }
+  this->bb = Bbox_2{this->bb.xmin() - x_margin, this->bb.ymin() - y_margin,
+                    this->bb.xmax() + x_margin, this->bb.ymax() + y_margin};
 }
 
 template < typename Arr_, typename ArrTraits >
@@ -407,6 +419,26 @@ void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
   {
     QGraphicsView* viewport = views.first( );
 	viewport->setSceneRect(this->boundingRect());
+  }
+  this->update( );
+}
+
+template <>
+void ArrangementGraphicsItem<Alg_seg_arr>::modelChanged()
+{
+  if ( this->arr->is_empty( ) )
+  {
+    this->hide( );
+    return;
+  }
+  this->show( );
+  this->updateBoundingBox( );
+  QList< QGraphicsView* > views = this->scene->views( );
+  if ( views.size( ) != 0 )
+  {
+    QGraphicsView* viewport = views.first( );
+	viewport->setSceneRect(this->boundingRect());
+	viewport->fitInView(this, ::Qt::KeepAspectRatio);
   }
   this->update( );
 }
@@ -500,9 +532,6 @@ paintFace( Face_handle f, QPainter* painter,
       color = f->color();
     }
     QBrush oldBrush = painter->brush( );
-//    QPen pen = painter->pen();
-//    pen.setCosmetic(true);
-//    painter->setPen(pen);
     painter->setBrush( color );
     painter->drawPolygon( pgn );
     painter->setBrush( oldBrush );
