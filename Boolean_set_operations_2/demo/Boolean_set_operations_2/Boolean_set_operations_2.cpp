@@ -4270,6 +4270,8 @@ void MainWindow::on_actionComplement_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
+  actionCopy->setChecked(false);
+  actionMove->setChecked(false);
 
   result_set().clear();
   result_linear_sources().clear();
@@ -4406,6 +4408,8 @@ void MainWindow::on_actionIntersection_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
+  actionCopy->setChecked(false);
+  actionMove->setChecked(false);
 
   
   result_set().clear();
@@ -4592,6 +4596,8 @@ void MainWindow::on_actionDifference_triggered()
   //actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
+  actionCopy->setChecked(false);
+  actionMove->setChecked(false);
 
   size_t count = 0;
   if (showBlueDiff ->isChecked()) count++;
@@ -4810,6 +4816,8 @@ void MainWindow::on_actionSymmetric_Difference_triggered()
   actionDifference->setChecked(false); 
   //actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
+  actionCopy->setChecked(false);
+  actionMove->setChecked(false);
   
 
   
@@ -4975,6 +4983,8 @@ void MainWindow::on_actionUnion_triggered()
   actionDifference->setChecked(false); 
   actionSymmetric_Difference->setChecked(false); 
   actionMinkowski_Sum->setChecked(false);
+  actionCopy->setChecked(false);
+  actionMove->setChecked(false);
 
   result_set().clear();
   result_linear_sources().clear();
@@ -5794,6 +5804,8 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
     actionIntersection->setChecked(false);
     actionDifference->setChecked(false); 
     actionSymmetric_Difference->setChecked(false); 
+    actionCopy->setChecked(false);
+    actionMove->setChecked(false);
     //actionMinkowski_Sum->setChecked(false);
 
     actionComplement->setChecked(false);
