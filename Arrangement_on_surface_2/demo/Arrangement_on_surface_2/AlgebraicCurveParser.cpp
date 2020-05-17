@@ -64,12 +64,16 @@ struct polynomial_parser :
 		// multiplication using *, and implied multiplication as in (x+y)(x+y)
 		term = pow_expr[_val = qi::_1] >>
 			   *((qi::char_('*') >> pow_expr[_val *= qi::_1]) |
-				 factor2[_val *= qi::_1]);
+				 pow_expr2[_val *= qi::_1]);
 		// power
-		pow_expr = factor[_val = qi::_1] >>
-				   pow_expr_helper[_val = phx::bind(raise, _val, qi::_1)];
-		pow_expr_helper =
-			'^' >> pow_expr[_val = qi::_1] | eps[_val = Polynomial_2(1)];
+		pow_expr =
+			factor[_val = qi::_1] >>
+			(('^' >> factor2[_val = phx::bind(raise, _val, qi::_1)]) | eps);
+		// to avoid ambiguity in a case like x^2+y
+		// which can be seen as implied multiplication (x^2)*(+y)
+		pow_expr2 =
+			factor2[_val = qi::_1] >>
+			(('^' >> factor2[_val = phx::bind(raise, _val, qi::_1)]) | eps);
 		// uniary - and + operators
 		factor = qi::char_('-') >> factor2[_val = -qi::_1] |
 				 -qi::char_('+') >> factor2[_val = qi::_1];
@@ -89,7 +93,7 @@ struct polynomial_parser :
 	qi::rule<Iterator, Polynomial_2(), ascii::space_type> expr;
 	qi::rule<Iterator, Polynomial_2(), ascii::space_type> term;
 	qi::rule<Iterator, Polynomial_2(), ascii::space_type> pow_expr;
-	qi::rule<Iterator, Polynomial_2(), ascii::space_type> pow_expr_helper;
+	qi::rule<Iterator, Polynomial_2(), ascii::space_type> pow_expr2;
 	qi::rule<Iterator, Polynomial_2(), ascii::space_type> factor;
 	qi::rule<Iterator, Polynomial_2(), ascii::space_type> factor2;
 	qi::rule<Iterator, Polynomial_2(), ascii::space_type> factor3;

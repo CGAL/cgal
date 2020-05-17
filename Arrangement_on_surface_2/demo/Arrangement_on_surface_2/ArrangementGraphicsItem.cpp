@@ -361,8 +361,12 @@ void ArrangementGraphicsItem<Arr_, ArrTraits>::updateBoundingBox(
   }
 
   // include finite bounds of edges
-  for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it)
-    this->bb += make_finite(it->curve().bbox());
+  for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it) {
+	// can throws "CGAL::internal::Zero_resultant_exception"
+	try {
+	  this->bb += make_finite(it->curve().bbox());
+	} catch(...) {}
+  }
 
   // we didn't find any "interesting" point to include in the bounding box
   // we find intersections with x and y axis and add those instead
