@@ -668,7 +668,9 @@ private:
   size_t m_color_active;
   size_t m_color_result_active;
   size_t m_color_active_mink;
-  size_t m_color_complement; 
+  size_t m_color_complement;
+  size_t m_color_copy;
+  size_t m_color_move; 
   bool m_blue_int;
   bool m_red_int;
   bool m_black_int;
@@ -818,6 +820,8 @@ public slots:
   //void on_actionSaveResult_triggered();
   void on_actionAddColor_triggered();
   void on_actionMinusColor_triggered();
+  void on_actionCopy_triggered();
+  void on_actionMove_triggered();
 
 
   void on_showBlue_toggled  (bool a_check);
@@ -828,6 +832,23 @@ public slots:
   void on_showMagenta_toggled   (bool a_check);
   void on_showAqua_toggled   (bool a_check);
   void on_showResult_toggled  (bool a_check);
+
+
+  void on_cfBlue_toggled  (bool a_check);
+  void on_cfRed_toggled   (bool a_check);
+  void on_cfBlack_toggled   (bool a_check);
+  void on_cfBrown_toggled   (bool a_check);
+  void on_cfYellow_toggled   (bool a_check);
+  void on_cfMagenta_toggled   (bool a_check);
+  void on_cfAqua_toggled   (bool a_check);
+
+  void on_mfBlue_toggled  (bool a_check);
+  void on_mfRed_toggled   (bool a_check);
+  void on_mfBlack_toggled   (bool a_check);
+  void on_mfBrown_toggled   (bool a_check);
+  void on_mfYellow_toggled   (bool a_check);
+  void on_mfMagenta_toggled   (bool a_check);
+  void on_mfAqua_toggled   (bool a_check);
 
   //To be added again in GSoC2020
 
@@ -1168,6 +1189,8 @@ MainWindow::MainWindow() :
   m_color_active(0), //default
   m_color_active_mink(1), //default
   m_color_complement(0), //default
+  m_color_copy(1111), //default
+  m_color_move(1111), //default
   m_blue_int(true), //default
   minkowksi_sum_operated(false), //default
   m_red_int(true), //default
@@ -1325,6 +1348,36 @@ MainWindow::MainWindow() :
   QObject::connect(showInfo, SIGNAL(toggled(bool)), this,
                    SLOT(on_showInfo_toggled(bool))); 
 
+
+  QObject::connect(cfBlue, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfBlue_toggled(bool)));
+  QObject::connect(cfRed, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfRed_toggled(bool)));
+  QObject::connect(cfBlack, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfBlack_toggled(bool)));
+  QObject::connect(cfBrown, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfBrown_toggled(bool)));
+  QObject::connect(cfYellow, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfYellow_toggled(bool)));
+  QObject::connect(cfMagenta, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfMagenta_toggled(bool)));
+  QObject::connect(cfAqua, SIGNAL(toggled(bool)), this,
+                   SLOT(on_cfAqua_toggled(bool)));
+
+  QObject::connect(mfBlue, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfBlue_toggled(bool)));
+  QObject::connect(mfRed, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfRed_toggled(bool)));
+  QObject::connect(mfBlack, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfBlack_toggled(bool)));
+  QObject::connect(mfBrown, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfBrown_toggled(bool)));
+  QObject::connect(mfYellow, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfYellow_toggled(bool)));
+  QObject::connect(mfMagenta, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfMagenta_toggled(bool)));
+  QObject::connect(mfAqua, SIGNAL(toggled(bool)), this,
+                   SLOT(on_mfAqua_toggled(bool)));
 
   //for the colour buckets
 
@@ -2159,6 +2212,276 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
   }
 }
 
+
+void MainWindow::on_cfBlue_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 0;
+    cfRed->setChecked(false);
+    cfBlack->setChecked(false);
+    cfAqua->setChecked(false);
+    cfBrown->setChecked(false);
+    cfYellow->setChecked(false);
+    cfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    cfBlue->setChecked(false);
+  } 
+}
+
+void MainWindow::on_cfRed_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 1;
+    cfAqua->setChecked(false);
+    cfBlack->setChecked(false);
+    cfBlue->setChecked(false);
+    cfBrown->setChecked(false);
+    cfYellow->setChecked(false);
+    cfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    cfRed->setChecked(false);
+  } 
+}
+
+void MainWindow::on_cfBlack_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 2;
+    cfRed->setChecked(false);
+    cfAqua->setChecked(false);
+    cfBlue->setChecked(false);
+    cfBrown->setChecked(false);
+    cfYellow->setChecked(false);
+    cfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    cfBlack->setChecked(false);
+  } 
+}
+
+void MainWindow::on_cfBrown_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 3;
+    cfRed->setChecked(false);
+    cfBlack->setChecked(false);
+    cfBlue->setChecked(false);
+    cfAqua->setChecked(false);
+    cfYellow->setChecked(false);
+    cfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    cfBrown->setChecked(false);
+  } 
+}
+
+void MainWindow::on_cfYellow_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 4;
+    cfRed->setChecked(false);
+    cfBlack->setChecked(false);
+    cfBlue->setChecked(false);
+    cfBrown->setChecked(false);
+    cfAqua->setChecked(false);
+    cfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    cfYellow->setChecked(false);
+  } 
+}
+
+void MainWindow::on_cfMagenta_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 5;
+    cfRed->setChecked(false);
+    cfBlack->setChecked(false);
+    cfBlue->setChecked(false);
+    cfBrown->setChecked(false);
+    cfYellow->setChecked(false);
+    cfAqua->setChecked(false);
+  } 
+
+  else
+  {
+    cfMagenta->setChecked(false);
+  } 
+}
+
+void MainWindow::on_cfAqua_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_copy = 6;
+    cfRed->setChecked(false);
+    cfBlack->setChecked(false);
+    cfBlue->setChecked(false);
+    cfBrown->setChecked(false);
+    cfYellow->setChecked(false);
+    cfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    cfAqua->setChecked(false);
+  } 
+}
+
+
+void MainWindow::on_mfBlue_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 0;
+    mfRed->setChecked(false);
+    mfBlack->setChecked(false);
+    mfAqua->setChecked(false);
+    mfBrown->setChecked(false);
+    mfYellow->setChecked(false);
+    mfMagenta->setChecked(false);
+  } 
+
+  else
+  {
+    mfBlue->setChecked(false);
+  } 
+}
+
+void MainWindow::on_mfRed_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 1;
+    mfAqua->setChecked(false);
+    mfBlack->setChecked(false);
+    mfBlue->setChecked(false);
+    mfBrown->setChecked(false);
+    mfYellow->setChecked(false);
+    mfMagenta->setChecked(false);
+  }
+
+  else
+  {
+    mfRed->setChecked(false);
+  } 
+}
+
+void MainWindow::on_mfBlack_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 2;
+    mfRed->setChecked(false);
+    mfAqua->setChecked(false);
+    mfBlue->setChecked(false);
+    mfBrown->setChecked(false);
+    mfYellow->setChecked(false);
+    mfMagenta->setChecked(false);
+  }
+
+  else
+  {
+    mfBlack->setChecked(false);
+  } 
+}
+
+void MainWindow::on_mfBrown_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 3;
+    mfRed->setChecked(false);
+    mfBlack->setChecked(false);
+    mfBlue->setChecked(false);
+    mfAqua->setChecked(false);
+    mfYellow->setChecked(false);
+    mfMagenta->setChecked(false);
+  }
+
+  else
+  {
+    mfBrown->setChecked(false);
+  } 
+}
+
+void MainWindow::on_mfYellow_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 4;
+    mfRed->setChecked(false);
+    mfBlack->setChecked(false);
+    mfBlue->setChecked(false);
+    mfBrown->setChecked(false);
+    mfAqua->setChecked(false);
+    mfMagenta->setChecked(false);
+  }
+
+  else
+  {
+    mfYellow->setChecked(false);
+  } 
+}
+
+void MainWindow::on_mfMagenta_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 5;
+    mfRed->setChecked(false);
+    mfBlack->setChecked(false);
+    mfBlue->setChecked(false);
+    mfBrown->setChecked(false);
+    mfYellow->setChecked(false);
+    mfAqua->setChecked(false);
+  } 
+
+  else
+  {
+    mfMagenta->setChecked(false);
+  } 
+}
+
+void MainWindow::on_mfAqua_toggled(bool aCheck)
+{
+  if(aCheck)
+  {
+    m_color_move = 6;
+    mfRed->setChecked(false);
+    mfBlack->setChecked(false);
+    mfBlue->setChecked(false);
+    mfBrown->setChecked(false);
+    mfYellow->setChecked(false);
+    mfMagenta->setChecked(false);
+  }
+
+  else
+  {
+    mfAqua->setChecked(false);
+  } 
+}
+
+
+
 //////////###################### Add Color Plus Button ###########################////////////
 void MainWindow::on_actionAddColor_triggered()
 {
@@ -2176,6 +2499,10 @@ void MainWindow::on_actionAddColor_triggered()
     showBrownSym_Diff -> setVisible(true);
     showBrownMink_Sum -> setVisible(true);
     showBrownLabel -> setVisible(true);
+    cfBrown -> setVisible(true);
+    ctBrown -> setVisible(true);
+    mfBrown -> setVisible(true);
+    mtBrown -> setVisible(true);
 
     line10 -> setVisible(true);
 
@@ -2188,6 +2515,10 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,155));
       line006 -> setGeometry(QRect(440,0,7,155));
       line0007 -> setGeometry(QRect(500,0,7,155));
+      linec0->setGeometry(QRect(540,20,7,135));
+      linec1->setGeometry(QRect(580,0,7,155));
+      linem0->setGeometry(QRect(620,20,7,135));
+      linem1->setGeometry(QRect(665,0,7,155));
       line0006 -> setGeometry(QRect(70,0,7,155));
 
       actionMinusColor -> setVisible(true);
@@ -2209,6 +2540,10 @@ void MainWindow::on_actionAddColor_triggered()
     showYellowSym_Diff -> setVisible(true);
     showYellowMink_Sum -> setVisible(true);
     showYellowLabel -> setVisible(true);
+    cfYellow -> setVisible(true);
+    ctYellow -> setVisible(true);
+    mfYellow -> setVisible(true);
+    mtYellow -> setVisible(true);
 
     line9 -> setVisible(true);
 
@@ -2221,6 +2556,10 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,185));
       line006 -> setGeometry(QRect(440,0,7,185));
       line0007 -> setGeometry(QRect(500,0,7,185));
+      linec0->setGeometry(QRect(540,20,7,165));
+      linec1->setGeometry(QRect(580,0,7,185));
+      linem0->setGeometry(QRect(620,20,7,165));
+      linem1->setGeometry(QRect(665,0,7,185));
       line0006 -> setGeometry(QRect(70,0,7,185));
 
       
@@ -2242,6 +2581,10 @@ void MainWindow::on_actionAddColor_triggered()
     showMagentaSym_Diff -> setVisible(true);
     showMagentaMink_Sum -> setVisible(true);
     showMagentaLabel -> setVisible(true);
+    cfMagenta -> setVisible(true);
+    ctMagenta -> setVisible(true);
+    mfMagenta -> setVisible(true);
+    mtMagenta -> setVisible(true);
 
     line8 -> setVisible(true);
 
@@ -2253,7 +2596,11 @@ void MainWindow::on_actionAddColor_triggered()
       line6 -> setGeometry(QRect(335,0,7,215));
       line06 -> setGeometry(QRect(380,0,7,215));
       line006 -> setGeometry(QRect(440,0,7,215));
-      line0007 -> setGeometry(QRect(500,0,7,215));      
+      line0007 -> setGeometry(QRect(500,0,7,215));
+      linec0->setGeometry(QRect(540,20,7,195));
+      linec1->setGeometry(QRect(580,0,7,215));
+      linem0->setGeometry(QRect(620,20,7,195));
+      linem1->setGeometry(QRect(665,0,7,215));      
       line0006 -> setGeometry(QRect(70,0,7,215));
 
       
@@ -2275,6 +2622,10 @@ void MainWindow::on_actionAddColor_triggered()
     showAquaSym_Diff -> setVisible(true);
     showAquaMink_Sum -> setVisible(true); 
     showAquaLabel -> setVisible(true);
+    cfAqua -> setVisible(true);
+    ctAqua -> setVisible(true);
+    mfAqua -> setVisible(true);
+    mtAqua -> setVisible(true);
 
     line7 -> setVisible(true);
 
@@ -2287,6 +2638,10 @@ void MainWindow::on_actionAddColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,245));
       line006 -> setGeometry(QRect(440,0,7,245));
       line0007 -> setGeometry(QRect(500,0,7,245));
+      linec0->setGeometry(QRect(540,20,7,225));
+      linec1->setGeometry(QRect(580,0,7,245));
+      linem0->setGeometry(QRect(620,20,7,225));
+      linem1->setGeometry(QRect(665,0,7,245));
       line0006 -> setGeometry(QRect(70,0,7,245));
 
 
@@ -2333,6 +2688,10 @@ void MainWindow::on_actionMinusColor_triggered()
     showBrownSym_Diff -> setVisible(false);
     showBrownMink_Sum -> setVisible(false);
     showBrownLabel -> setVisible(false);
+    cfBrown -> setVisible(false);
+    ctBrown -> setVisible(false);
+    mfBrown -> setVisible(false);
+    mtBrown -> setVisible(false);
 
     
 
@@ -2350,6 +2709,10 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,125));
       line006 -> setGeometry(QRect(440,0,7,125));
       line0007 -> setGeometry(QRect(500,0,7,125));
+      linec0->setGeometry(QRect(540,20,7,105));
+      linec1->setGeometry(QRect(580,0,7,125));
+      linem0->setGeometry(QRect(620,20,7,105));
+      linem1->setGeometry(QRect(665,0,7,125));
       line0006 -> setGeometry(QRect(70,0,7,125));
 
       actionMinusColor -> setText("Remove Black");
@@ -2381,6 +2744,10 @@ void MainWindow::on_actionMinusColor_triggered()
     showYellowSym_Diff -> setVisible(false);
     showYellowMink_Sum -> setVisible(false);
     showYellowLabel -> setVisible(false);
+    cfYellow -> setVisible(false);
+    ctYellow -> setVisible(false);
+    mfYellow -> setVisible(false);
+    mtYellow -> setVisible(false);
 
     drawBlue -> setChecked(true);
 
@@ -2397,6 +2764,10 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,155));
       line006 -> setGeometry(QRect(440,0,7,155));
       line0007 -> setGeometry(QRect(500,0,7,155));
+      linec0->setGeometry(QRect(540,20,7,135));
+      linec1->setGeometry(QRect(580,0,7,155));
+      linem0->setGeometry(QRect(620,20,7,135));
+      linem1->setGeometry(QRect(665,0,7,155));
       line0006 -> setGeometry(QRect(70,0,7,155));
 
       actionMinusColor -> setText("Remove Brown");  
@@ -2424,6 +2795,10 @@ void MainWindow::on_actionMinusColor_triggered()
     showMagentaSym_Diff -> setVisible(false);
     showMagentaMink_Sum -> setVisible(false);
     showMagentaLabel -> setVisible(false);
+    cfMagenta -> setVisible(false);
+    ctMagenta -> setVisible(false);
+    mfMagenta -> setVisible(false);
+    mtMagenta -> setVisible(false);
 
     drawBlue -> setChecked(true);
 
@@ -2439,6 +2814,10 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,185));
       line006 -> setGeometry(QRect(440,0,7,185));
       line0007 -> setGeometry(QRect(500,0,7,185));
+      linec0->setGeometry(QRect(540,20,7,165));
+      linec1->setGeometry(QRect(580,0,7,185));
+      linem0->setGeometry(QRect(620,20,7,165));
+      linem1->setGeometry(QRect(665,0,7,185));
       line0006 -> setGeometry(QRect(70,0,7,185));
 
       actionMinusColor -> setText("Remove Yellow");
@@ -2469,6 +2848,10 @@ void MainWindow::on_actionMinusColor_triggered()
     showAquaSym_Diff -> setVisible(false);
     showAquaMink_Sum -> setVisible(false);
     showAquaLabel -> setVisible(false);
+    cfAqua -> setVisible(false);
+    ctAqua -> setVisible(false);
+    mfAqua -> setVisible(false);
+    mtAqua -> setVisible(false);
 
 
     drawBlue -> setChecked(true);
@@ -2484,6 +2867,10 @@ void MainWindow::on_actionMinusColor_triggered()
       line06 -> setGeometry(QRect(380,0,7,215));
       line006 -> setGeometry(QRect(440,0,7,215));
       line0007 -> setGeometry(QRect(500,0,7,215));
+      linec0->setGeometry(QRect(540,20,7,195));
+      linec1->setGeometry(QRect(580,0,7,215));
+      linem0->setGeometry(QRect(620,20,7,195));
+      linem1->setGeometry(QRect(665,0,7,215));
       line0006 -> setGeometry(QRect(70,0,7,215));
 
 
@@ -2584,6 +2971,8 @@ void MainWindow::on_actionNew_triggered()
   actionMinkowski_Sum -> setVisible(true);
 
   m_color_complement = 111; //default
+  m_color_copy = 1111;//default
+  m_color_move = 1111;//default
   m_blue_int = true; //default
   m_red_int = true ; //default
   m_black_int = false; //default
@@ -2635,6 +3024,59 @@ void MainWindow::on_actionNew_triggered()
   clearYellow->setChecked(false);
   clearMagenta->setChecked(false);
   clearAqua->setChecked(false);
+
+  cfBlue -> setChecked(false);
+  cfRed -> setChecked(false);
+  cfBlack -> setChecked(false);
+  cfBrown -> setChecked(false);
+  cfYellow -> setChecked(false);
+  cfMagenta -> setChecked(false);
+  cfAqua -> setChecked(false);
+
+  ctBlue -> setChecked(false);
+  ctRed -> setChecked(false);
+  ctBlack -> setChecked(false);
+  ctBrown -> setChecked(false);
+  ctYellow -> setChecked(false);
+  ctMagenta -> setChecked(false);
+  ctAqua -> setChecked(false);
+
+  mfBlue -> setChecked(false);
+  mfRed -> setChecked(false);
+  mfBlack -> setChecked(false);
+  mfBrown -> setChecked(false);
+  mfYellow -> setChecked(false);
+  mfMagenta -> setChecked(false);
+  mfAqua -> setChecked(false);
+
+  mtBlue -> setChecked(false);
+  mtRed -> setChecked(false);
+  mtBlack -> setChecked(false);
+  mtBrown -> setChecked(false);
+  mtYellow -> setChecked(false);
+  mtMagenta -> setChecked(false);
+  mtAqua -> setChecked(false);
+
+
+  cfBrown -> setVisible(false);
+  ctBrown -> setVisible(false);
+  mfBrown -> setVisible(false);
+  mtBrown -> setVisible(false);
+
+  cfYellow -> setVisible(false);
+  ctYellow -> setVisible(false);
+  mfYellow -> setVisible(false);
+  mtYellow -> setVisible(false);
+
+  cfMagenta -> setVisible(false);
+  ctMagenta -> setVisible(false);
+  mfMagenta -> setVisible(false);
+  mtMagenta -> setVisible(false);
+
+  cfAqua -> setVisible(false);
+  ctAqua -> setVisible(false);
+  mfAqua -> setVisible(false);
+  mtAqua -> setVisible(false);
 
   clearBrown->setVisible(false);
   clearYellow->setVisible(false);
@@ -2768,6 +3210,10 @@ void MainWindow::on_actionNew_triggered()
   line06 -> setGeometry(QRect(380,0,7,125));
   line006 -> setGeometry(QRect(440,0,7,125));
   line0007 -> setGeometry(QRect(500,0,7,125));
+  linec0->setGeometry(QRect(540,20,7,105));
+  linec1->setGeometry(QRect(580,0,7,125));
+  linem0->setGeometry(QRect(620,20,7,105));
+  linem1->setGeometry(QRect(665,0,7,125));
   line0006 -> setGeometry(QRect(70,0,7,125));
 
   zoomToFit();
@@ -4635,6 +5081,587 @@ void MainWindow::on_actionUnion_triggered()
 
   if (lDone) modelChanged();
 }
+
+
+void MainWindow::on_actionCopy_triggered()
+{
+	bool lDone = false;
+  	QCursor old = this->cursor();
+  	this->setCursor(Qt::WaitCursor);
+
+	actionComplement->setChecked(false);
+  	actionUnion->setChecked(false);
+  	actionIntersection->setChecked(false);
+  	actionDifference->setChecked(false); 
+  	actionSymmetric_Difference->setChecked(false); 
+  	actionMinkowski_Sum->setChecked(false);
+  	actionMove->setChecked(false);
+
+  	result_set().clear();
+  	result_linear_sources().clear();
+  	result_circular_sources().clear();
+  	result_bezier_sources().clear();
+
+  	switch(m_color_copy)
+  	{
+  		case 0: if(ctBlue->isChecked()) show_error("Can't copy within same Color Bucket");
+  			if(ctRed->isChecked()) red_set().join(blue_set());
+  			if(ctBlack->isChecked()) black_set().join(blue_set());
+  			if(ctBrown->isChecked()) brown_set().join(blue_set());
+  			if(ctYellow->isChecked()) yellow_set().join(blue_set());
+  			if(ctMagenta->isChecked()) magenta_set().join(blue_set());
+  			if(ctAqua->isChecked()) aqua_set().join(blue_set());
+  			break;
+
+  		case 1: if(ctBlue->isChecked()) blue_set().join(red_set());
+  			if(ctRed->isChecked()) show_error("Can't copy within same Color Bucket");
+  			if(ctBlack->isChecked()) black_set().join(red_set());
+  			if(ctBrown->isChecked()) brown_set().join(red_set());
+  			if(ctYellow->isChecked()) yellow_set().join(red_set());
+  			if(ctMagenta->isChecked()) magenta_set().join(red_set());
+  			if(ctAqua->isChecked()) aqua_set().join(red_set());
+  			break;
+
+  		case 2: if(ctBlue->isChecked()) blue_set().join(black_set());
+  			if(ctRed->isChecked()) red_set().join(black_set());
+  			if(ctBlack->isChecked()) show_error("Can't copy within same Color Bucket");
+  			if(ctBrown->isChecked()) brown_set().join(black_set());
+  			if(ctYellow->isChecked()) yellow_set().join(black_set());
+  			if(ctMagenta->isChecked()) magenta_set().join(black_set());
+  			if(ctAqua->isChecked()) aqua_set().join(black_set());
+  			break;
+
+  		case 3: if(ctBlue->isChecked()) blue_set().join(brown_set());
+  			if(ctRed->isChecked()) red_set().join(brown_set());
+  			if(ctBlack->isChecked()) black_set().join(brown_set());
+  			if(ctBrown->isChecked()) show_error("Can't copy within same Color Bucket");
+  			if(ctYellow->isChecked()) yellow_set().join(brown_set());
+  			if(ctMagenta->isChecked()) magenta_set().join(brown_set());
+  			if(ctAqua->isChecked()) aqua_set().join(brown_set());
+  			break;
+
+  		case 4: if(ctBlue->isChecked()) blue_set().join(yellow_set());
+  			if(ctRed->isChecked()) red_set().join(yellow_set());
+  			if(ctBlack->isChecked()) black_set().join(yellow_set());
+  			if(ctBrown->isChecked()) brown_set().join(yellow_set());
+  			if(ctYellow->isChecked()) show_error("Can't copy within same Color Bucket");
+  			if(ctMagenta->isChecked()) magenta_set().join(yellow_set());
+  			if(ctAqua->isChecked()) aqua_set().join(yellow_set());
+  			break;
+
+  		case 5: if(ctBlue->isChecked()) blue_set().join(magenta_set());
+  			if(ctRed->isChecked()) red_set().join(magenta_set());
+  			if(ctBlack->isChecked()) black_set().join(magenta_set());
+  			if(ctBrown->isChecked()) brown_set().join(magenta_set());
+  			if(ctYellow->isChecked()) yellow_set().join(magenta_set());
+  			if(ctMagenta->isChecked()) show_error("Can't copy within same Color Bucket");
+  			if(ctAqua->isChecked()) aqua_set().join(magenta_set());
+  			break;
+
+
+  		case 6: if(ctBlue->isChecked()) blue_set().join(aqua_set());
+  			if(ctRed->isChecked()) red_set().join(aqua_set());
+  			if(ctBlack->isChecked()) black_set().join(aqua_set());
+  			if(ctBrown->isChecked()) brown_set().join(aqua_set());
+  			if(ctYellow->isChecked()) yellow_set().join(aqua_set());
+  			if(ctMagenta->isChecked()) magenta_set().join(aqua_set());
+  			if(ctAqua->isChecked()) show_error("Can't copy within same Color Bucket");
+  			break;
+
+  		case 1111: show_error("Can't copy ! No Color Bucket selected !!!");
+  			break;
+
+  		default:
+  			break;
+  	}
+
+  	lDone = true;
+	this->setCursor(old);
+	if (lDone) modelChanged();
+}
+
+void MainWindow::on_actionMove_triggered()
+{
+	bool lDone = false;
+  	QCursor old = this->cursor();
+  	this->setCursor(Qt::WaitCursor);
+
+	actionComplement->setChecked(false);
+  	actionUnion->setChecked(false);
+  	actionIntersection->setChecked(false);
+  	actionDifference->setChecked(false); 
+  	actionSymmetric_Difference->setChecked(false); 
+  	actionMinkowski_Sum->setChecked(false);
+  	actionCopy->setChecked(false);
+
+  	result_set().clear();
+  	result_linear_sources().clear();
+  	result_circular_sources().clear();
+  	result_bezier_sources().clear();
+
+  	switch(m_color_move)
+  	{
+  		case 0: if(mtBlue->isChecked()) show_error("Can't move within same Color Bucket");
+  			if(mtRed->isChecked()) 
+  			{ 
+  				red_set().join(blue_set()); 
+
+  				blue_set().clear();
+				blue_linear_sources().clear();
+				blue_circular_sources().clear();
+				blue_bezier_sources().clear();
+				if (pathItem0_exists) m_scene.removeItem(pathItem0);
+  			}
+  			if(mtBlack->isChecked()) 
+  			{
+  				black_set().join(blue_set());
+
+  				blue_set().clear();
+				blue_linear_sources().clear();
+				blue_circular_sources().clear();
+				blue_bezier_sources().clear();
+				if (pathItem0_exists) m_scene.removeItem(pathItem0);
+
+  			}
+  			if(mtBrown->isChecked())
+  			{
+  				brown_set().join(blue_set());
+
+  				blue_set().clear();
+				blue_linear_sources().clear();
+				blue_circular_sources().clear();
+				blue_bezier_sources().clear();
+				if (pathItem0_exists) m_scene.removeItem(pathItem0);
+  			}
+  			if(mtYellow->isChecked())
+  			{ 
+  				yellow_set().join(blue_set());
+
+  				blue_set().clear();
+				blue_linear_sources().clear();
+				blue_circular_sources().clear();
+				blue_bezier_sources().clear();
+				if (pathItem0_exists) m_scene.removeItem(pathItem0);
+  			}
+  			if(mtMagenta->isChecked())
+  			{
+  				magenta_set().join(blue_set());
+
+  				blue_set().clear();
+				blue_linear_sources().clear();
+				blue_circular_sources().clear();
+				blue_bezier_sources().clear();
+				if (pathItem0_exists) m_scene.removeItem(pathItem0);
+  			}
+  			if(mtAqua->isChecked())
+  			{
+  				aqua_set().join(blue_set());
+
+  				blue_set().clear();
+				blue_linear_sources().clear();
+				blue_circular_sources().clear();
+				blue_bezier_sources().clear();
+				if (pathItem0_exists) m_scene.removeItem(pathItem0);
+  			}
+  			break;
+
+  		case 1: if(mtBlue->isChecked()) 
+  			{
+  				blue_set().join(red_set());
+
+  				red_set().clear();
+				red_linear_sources().clear();
+				red_circular_sources().clear();
+				red_bezier_sources().clear();
+				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+
+  			}
+  			if(mtRed->isChecked()) show_error("Can't move within same Color Bucket");
+  			if(mtBlack->isChecked()) 
+  			{
+  				black_set().join(red_set());
+
+  				red_set().clear();
+				red_linear_sources().clear();
+				red_circular_sources().clear();
+				red_bezier_sources().clear();
+				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+
+  			}
+  			if(mtBrown->isChecked())
+  			{
+  				brown_set().join(red_set());
+
+  				red_set().clear();
+				red_linear_sources().clear();
+				red_circular_sources().clear();
+				red_bezier_sources().clear();
+				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+  			}
+  			if(mtYellow->isChecked())
+  			{ 
+  				yellow_set().join(red_set());
+
+  				red_set().clear();
+				red_linear_sources().clear();
+				red_circular_sources().clear();
+				red_bezier_sources().clear();
+				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+  			}
+  			if(mtMagenta->isChecked())
+  			{
+  				magenta_set().join(red_set());
+
+  				red_set().clear();
+				red_linear_sources().clear();
+				red_circular_sources().clear();
+				red_bezier_sources().clear();
+				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+  			}
+  			if(mtAqua->isChecked())
+  			{
+  				aqua_set().join(red_set());
+  			
+  				red_set().clear();
+				red_linear_sources().clear();
+				red_circular_sources().clear();
+				red_bezier_sources().clear();
+				if (pathItem1_exists) m_scene.removeItem(pathItem1);
+  			}
+  			break;
+
+  		case 2:  if(mtBlue->isChecked()) 
+  			{
+  				blue_set().join(black_set());
+
+  				black_set().clear();
+				black_linear_sources().clear();
+				black_circular_sources().clear();
+				black_bezier_sources().clear();
+				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+
+  			}
+  			if(mtRed->isChecked()) 
+  			{
+  				red_set().join(black_set());
+
+  				black_set().clear();
+				black_linear_sources().clear();
+				black_circular_sources().clear();
+				black_bezier_sources().clear();
+				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+
+  			}
+  			if(mtBlack->isChecked()) show_error("Can't move within same Color Bucket");
+  			if(mtBrown->isChecked())
+  			{
+  				brown_set().join(black_set());
+
+  				black_set().clear();
+				black_linear_sources().clear();
+				black_circular_sources().clear();
+				black_bezier_sources().clear();
+				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+  			}
+  			if(mtYellow->isChecked())
+  			{ 
+  				yellow_set().join(black_set());
+
+  				black_set().clear();
+				black_linear_sources().clear();
+				black_circular_sources().clear();
+				black_bezier_sources().clear();
+				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+  			}
+  			if(mtMagenta->isChecked())
+  			{
+  				magenta_set().join(black_set());
+
+  				black_set().clear();
+				black_linear_sources().clear();
+				black_circular_sources().clear();
+				black_bezier_sources().clear();
+				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+  			}
+  			if(mtAqua->isChecked())
+  			{
+  				aqua_set().join(black_set());
+  			
+  				black_set().clear();
+				black_linear_sources().clear();
+				black_circular_sources().clear();
+				black_bezier_sources().clear();
+				if (pathItem2_exists) m_scene.removeItem(pathItem2);
+  			}
+  			break;
+
+  		case 3: if(mtBlue->isChecked()) 
+  			{
+  				blue_set().join(brown_set());
+
+  				brown_set().clear();
+				brown_linear_sources().clear();
+				brown_circular_sources().clear();
+				brown_bezier_sources().clear();
+				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+
+  			}
+  			if(mtRed->isChecked()) 
+  			{
+  				red_set().join(brown_set());
+
+  				brown_set().clear();
+				brown_linear_sources().clear();
+				brown_circular_sources().clear();
+				brown_bezier_sources().clear();
+				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+
+  			}
+  			if(mtBlack->isChecked()) 
+  			{
+  				black_set().join(brown_set());
+
+  				brown_set().clear();
+				brown_linear_sources().clear();
+				brown_circular_sources().clear();
+				brown_bezier_sources().clear();
+				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+  			}
+  			if(mtBrown->isChecked())show_error("Can't move within same Color Bucket");
+  			if(mtYellow->isChecked())
+  			{ 
+  				yellow_set().join(brown_set());
+
+  				brown_set().clear();
+				brown_linear_sources().clear();
+				brown_circular_sources().clear();
+				brown_bezier_sources().clear();
+				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+  			}
+  			if(mtMagenta->isChecked())
+  			{
+  				magenta_set().join(brown_set());
+
+  				brown_set().clear();
+				brown_linear_sources().clear();
+				brown_circular_sources().clear();
+				brown_bezier_sources().clear();
+				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+  			}
+  			if(mtAqua->isChecked())
+  			{
+  				aqua_set().join(brown_set());
+  			
+  				brown_set().clear();
+				brown_linear_sources().clear();
+				brown_circular_sources().clear();
+				brown_bezier_sources().clear();
+				if (pathItem3_exists) m_scene.removeItem(pathItem3);
+  			}
+  			break;
+
+  		case 4: if(mtBlue->isChecked()) 
+  			{
+  				blue_set().join(yellow_set());
+
+  				yellow_set().clear();
+				yellow_linear_sources().clear();
+				yellow_circular_sources().clear();
+				yellow_bezier_sources().clear();
+				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  			}
+  			if(mtRed->isChecked()) 
+  			{
+  				red_set().join(yellow_set());
+
+  				yellow_set().clear();
+				yellow_linear_sources().clear();
+				yellow_circular_sources().clear();
+				yellow_bezier_sources().clear();
+				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  			}
+  			if(mtBlack->isChecked()) 
+  			{
+  				black_set().join(yellow_set());
+
+  				yellow_set().clear();
+				yellow_linear_sources().clear();
+				yellow_circular_sources().clear();
+				yellow_bezier_sources().clear();
+				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  			}
+  			if(mtBrown->isChecked())
+  			{
+  				brown_set().join(yellow_set());
+
+  				yellow_set().clear();
+				yellow_linear_sources().clear();
+				yellow_circular_sources().clear();
+				yellow_bezier_sources().clear();
+				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  			}
+  			if(mtYellow->isChecked())show_error("Can't move within same Color Bucket");
+  			if(mtMagenta->isChecked())
+  			{
+  				magenta_set().join(yellow_set());
+
+  				yellow_set().clear();
+				yellow_linear_sources().clear();
+				yellow_circular_sources().clear();
+				yellow_bezier_sources().clear();
+				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  			}
+  			if(mtAqua->isChecked())
+  			{
+  				aqua_set().join(yellow_set());
+  			
+  				yellow_set().clear();
+				yellow_linear_sources().clear();
+				yellow_circular_sources().clear();
+				yellow_bezier_sources().clear();
+				if (pathItem4_exists) m_scene.removeItem(pathItem4);
+  			}
+  			break;
+
+  		case 5: if(mtBlue->isChecked()) 
+  			{
+  				blue_set().join(magenta_set());
+
+  				magenta_set().clear();
+				magenta_linear_sources().clear();
+				magenta_circular_sources().clear();
+				magenta_bezier_sources().clear();
+				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  			}
+  			if(mtRed->isChecked()) 
+  			{
+  				red_set().join(magenta_set());
+
+  				magenta_set().clear();
+				magenta_linear_sources().clear();
+				magenta_circular_sources().clear();
+				magenta_bezier_sources().clear();
+				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  			}
+  			if(mtBlack->isChecked()) 
+  			{
+  				black_set().join(magenta_set());
+
+  				magenta_set().clear();
+				magenta_linear_sources().clear();
+				magenta_circular_sources().clear();
+				magenta_bezier_sources().clear();
+				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  			}
+  			if(mtBrown->isChecked())
+  			{
+  				brown_set().join(magenta_set());
+
+  				magenta_set().clear();
+				magenta_linear_sources().clear();
+				magenta_circular_sources().clear();
+				magenta_bezier_sources().clear();
+				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  			}
+  			if(mtYellow->isChecked())
+  			{
+  				yellow_set().join(magenta_set());
+
+  				magenta_set().clear();
+				magenta_linear_sources().clear();
+				magenta_circular_sources().clear();
+				magenta_bezier_sources().clear();
+				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  			}
+  			if(mtMagenta->isChecked())show_error("Can't move within same Color Bucket");
+  			if(mtAqua->isChecked())
+  			{
+  				aqua_set().join(magenta_set());
+  			
+  				magenta_set().clear();
+				magenta_linear_sources().clear();
+				magenta_circular_sources().clear();
+				magenta_bezier_sources().clear();
+				if (pathItem5_exists) m_scene.removeItem(pathItem5);
+  			}
+  			break;
+
+
+  		case 6: if(mtBlue->isChecked()) 
+  			{
+  				blue_set().join(aqua_set());
+
+  				aqua_set().clear();
+				aqua_linear_sources().clear();
+				aqua_circular_sources().clear();
+				aqua_bezier_sources().clear();
+				if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  			}
+  			if(mtRed->isChecked()) 
+  			{
+  				red_set().join(aqua_set());
+
+  				aqua_set().clear();
+				aqua_linear_sources().clear();
+				aqua_circular_sources().clear();
+				aqua_bezier_sources().clear();
+				if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  			}
+  			if(mtBlack->isChecked()) 
+  			{
+  				black_set().join(aqua_set());
+
+  				aqua_set().clear();
+				aqua_linear_sources().clear();
+				aqua_circular_sources().clear();
+				aqua_bezier_sources().clear();
+				if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  			}
+  			if(mtBrown->isChecked())
+  			{
+  				brown_set().join(aqua_set());
+
+  				aqua_set().clear();
+				aqua_linear_sources().clear();
+				aqua_circular_sources().clear();
+				aqua_bezier_sources().clear();
+				if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  			}
+  			if(mtYellow->isChecked())
+  			{
+  				yellow_set().join(aqua_set());
+
+  				aqua_set().clear();
+				aqua_linear_sources().clear();
+				aqua_circular_sources().clear();
+				aqua_bezier_sources().clear();
+				if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  			}
+  			if(mtMagenta->isChecked())
+  			{
+  				magenta_set().join(aqua_set());
+
+  				aqua_set().clear();
+				aqua_linear_sources().clear();
+				aqua_circular_sources().clear();
+				aqua_bezier_sources().clear();
+				if (pathItem6_exists) m_scene.removeItem(pathItem6);
+  			}
+  			if(mtAqua->isChecked())show_error("Can't move within same Color Bucket");
+  			break;
+
+  		case 1111: show_error("Can't copy ! No Color Bucket selected !!!");
+  			break;
+
+  		default:
+  			break;
+  	}
+
+  	lDone = true;
+	this->setCursor(old);
+	if (lDone) modelChanged();
+}
+
 
 
 
