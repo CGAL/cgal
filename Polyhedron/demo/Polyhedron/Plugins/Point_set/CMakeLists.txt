@@ -94,6 +94,9 @@ endif()
   polyhedron_demo_plugin(point_set_wlop_plugin Point_set_wlop_plugin ${point_set_wlopFILES} KEYWORDS PointSetProcessing)
   target_link_libraries(point_set_wlop_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
+  polyhedron_demo_plugin(point_set_clustering_plugin Point_set_clustering_plugin KEYWORDS PointSetProcessing)
+  target_link_libraries(point_set_clustering_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
+
   polyhedron_demo_plugin(merge_point_sets_plugin Merge_point_sets_plugin KEYWORDS PointSetProcessing Classification)
   target_link_libraries(merge_point_sets_plugin PUBLIC scene_points_with_normal_item)
 

@@ -147,6 +147,7 @@ CGAL_add_named_parameter(transformation_checkers_t, transformation_checkers, tra
 CGAL_add_named_parameter(inspector_t, inspector, inspector)
 CGAL_add_named_parameter(logger_t, logger, logger)
 CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatcher_config)
+CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
@@ -176,4 +177,3 @@ CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
 CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
-
