@@ -99,3 +99,38 @@ else()
   message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
+
+function(CGAL_installation_test_find_package_version mode)
+  set(EXACT)
+  if(mode STREQUAL "less")
+    MATH(EXPR CGAL_MAJOR_VERSION "${CGAL_MAJOR_VERSION} - 1")
+  endif()
+  if(mode STREQUAL "greater" OR mode STREQUAL "fail-exact")
+    MATH(EXPR CGAL_MINOR_VERSION "${CGAL_MINOR_VERSION} + 1")
+  endif()
+  if(mode STREQUAL "exact" OR mode STREQUAL "fail-exact")
+    set(EXACT "EXACT ")
+  endif()
+  if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
+    set(VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
+  else()
+    set(VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
+  endif()
+  file(REMOVE_RECURSE "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}")
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode})
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode})
+  configure_file(test_find_package.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}/CMakeLists.txt)
+  add_test(NAME test_find_package_version_${mode}
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode} -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode})
+  cgal_setup_test_properties(test_find_package_version_${mode})
+endfunction()
+
+CGAL_installation_test_find_package_version(less)
+CGAL_installation_test_find_package_version(equal)
+CGAL_installation_test_find_package_version(greater)
+CGAL_installation_test_find_package_version(exact)
+CGAL_installation_test_find_package_version(fail-exact)
+set_tests_properties(
+  test_find_package_version_greater
+  test_find_package_version_fail-exact
+  PROPERTIES WILL_FAIL TRUE)
