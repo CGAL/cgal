@@ -98,6 +98,7 @@ CGAL_add_named_parameter(i_used_as_a_predicate_t, i_used_as_a_predicate, i_used_
 CGAL_add_named_parameter(nesting_levels_t, nesting_levels, nesting_levels);
 CGAL_add_named_parameter(i_used_for_volume_orientation_t, i_used_for_volume_orientation, i_used_for_volume_orientation);
 CGAL_add_named_parameter(area_threshold_t, area_threshold, area_threshold)
+CGAL_add_named_parameter(halfedges_keeper_t, halfedges_keeper, halfedges_keeper)
 CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 
