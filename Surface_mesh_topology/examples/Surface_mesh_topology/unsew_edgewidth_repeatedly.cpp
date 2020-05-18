@@ -81,7 +81,10 @@ int main(int argc, char* argv[])
 {
   std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
   std::string filename(argc==1?"data/double-torus.off":argv[1]);
+
+#ifdef CGAL_USE_BASIC_VIEWER
   bool draw=(argc<3?false:std::string(argv[2])=="-draw");
+#endif // CGAL_USE_BASIC_VIEWER
 
   std::ifstream inp(filename);
   if (inp.fail())
@@ -153,7 +156,6 @@ int main(int argc, char* argv[])
   while(cycle_exist);
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
   if (draw)
   {
     Draw_functor df(is_root, belong_to_cycle);
