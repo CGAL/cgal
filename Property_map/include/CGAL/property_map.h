@@ -49,14 +49,14 @@ public:
 
   inline friend
   value_type
-  get(const Static_boolean_property_map&, const key_type&)
+  get(Static_boolean_property_map, const key_type&)
   {
     return default_value;
   }
 
   inline friend
   void
-  put(Static_boolean_property_map&, const key_type&, const value_type&)
+  put(Static_boolean_property_map, const key_type&, const value_type&)
   {}
 };
 

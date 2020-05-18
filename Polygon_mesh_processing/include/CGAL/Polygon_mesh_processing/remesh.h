@@ -168,7 +168,7 @@ void isotropic_remeshing(const FaceRange& faces
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
     > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Static_boolean_property_map<edge_descriptor, bool>());
+                                 Static_boolean_property_map<edge_descriptor, false>());
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,

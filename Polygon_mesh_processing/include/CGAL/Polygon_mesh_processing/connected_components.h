@@ -582,12 +582,9 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   using parameters::is_default_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator   vertex_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
 
   typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vim = get_initialized_vertex_index_map(pmesh, np);
