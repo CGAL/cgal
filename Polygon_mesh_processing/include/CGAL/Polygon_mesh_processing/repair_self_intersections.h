@@ -1161,8 +1161,9 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
                                                  CGAL::parameters::edge_is_constrained_map(eif));
 
     visited_faces.insert(sub_cc.begin(), sub_cc.end());
-
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     std::cout << "CC of size " << sub_cc.size() << " (total: " << cc_faces.size() << ")" << std::endl;
+#endif
     ++cc_counter;
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
@@ -1176,9 +1177,9 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
       return fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh, vpm, gt);
     }
   }
-
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::cout << cc_counter << " independent sub holes" << std::endl;
-
+#endif
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   std::ofstream out("results/hole_fillers.off");
   out.precision(17);
@@ -1204,7 +1205,9 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
   // We're assembling multiple patches so we could have the same face appearing multiple times...
   if(!check_patch_sanity<TriangleMesh>(patch))
   {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     std::cout << "Unhealthy patch, use base fill_hole" << std::endl;
+#endif
     return fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh, vpm, gt);
   }
 
@@ -1796,9 +1799,9 @@ bool remove_self_intersections(const FaceRange& face_range,
       // TODO : possible optimization to reduce the range to check with the bbox
       // of the previous patches or something.
       self_intersections(working_face_range, tmesh, std::back_inserter(self_inter));
-
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
       std::cout << self_inter.size() << " intersecting pairs" << std::endl;
-
+#endif
       for(const Face_pair& fp : self_inter)
       {
         faces_to_remove.insert(fp.first);
