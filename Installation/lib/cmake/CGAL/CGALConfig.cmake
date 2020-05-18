@@ -1,4 +1,4 @@
-# 
+#
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
@@ -47,6 +47,9 @@ else()
   if(NOT _has_installation_dirs)
     set(CGAL_ROOT ${CGAL_CONFIG_DIR})
     get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
+    if(NOT EXISTS ${CGAL_ROOT}/include/CGAL/config.h)
+      get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
+    endif()
     if(NOT EXISTS ${CGAL_ROOT}/include/CGAL/config.h)
       get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
     endif()

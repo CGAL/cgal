@@ -180,9 +180,13 @@ else
 fi
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
-MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
-MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
-BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+if [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+    MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
+    MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
+    BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+else
+    eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
+fi
 
 # Do not show the bugfix number if it is 0.
 if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
@@ -301,6 +305,9 @@ if [ -n "$DO_PUBLIC" ]; then
         public_release_version=${public_release_name#CGAL-}
     else
 	public_release_name="CGAL-${public_release_version}"
+    fi
+    if ! [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+        eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
     fi
 
     cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
