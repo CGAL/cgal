@@ -37,6 +37,10 @@ Release History
    is given an optional template parameter `ConcurrencyTag` (default
    value remains `CGAL::Sequential_tag` for backward compatibility).
 
+### Surface Mesh
+
+ - The function `CGAL::Surface_mesh::clear()` now removes all non-default properties instead of just emptying them. 
+
 Release 5.0
 -----------
 
