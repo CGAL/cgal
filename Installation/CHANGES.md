@@ -24,6 +24,11 @@ Release History
 ### Point Set Processing
  - Add a function `CGAL::cluster_point_set()` that segments a point
    cloud into connected components based on a distance threshold.
+ - **Breaking change:** `CGAL::remove_outliers()` has been
+   parallelized and thus has a new template parameter
+   `ConcurrencyTag`. To update your code simply add as first template
+   parameter `CGAL::Sequential_tag` or `CGAL::Parallel_tag` when
+   calling this function.
 
 ### 2D Triangulations
  - Add function `split_subconstraint_graph_into_constraints()` to
