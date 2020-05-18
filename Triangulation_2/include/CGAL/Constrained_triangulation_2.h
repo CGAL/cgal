@@ -87,6 +87,7 @@ public:
   typedef typename Triangulation::size_type size_type;
   typedef typename Triangulation::Locate_type Locate_type;
   typedef typename Triangulation::All_faces_iterator All_faces_iterator;
+  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
@@ -129,6 +130,8 @@ public:
   using Triangulation::geom_traits;
   using Triangulation::all_faces_begin;
   using Triangulation::all_faces_end;
+  using Triangulation::finite_edges_begin;
+  using Triangulation::finite_edges_end;
   using Triangulation::side_of_oriented_circle;
   using Triangulation::is_infinite;
   using Triangulation::collinear_between;
