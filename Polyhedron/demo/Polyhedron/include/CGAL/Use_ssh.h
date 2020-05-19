@@ -12,6 +12,12 @@ bool establish_ssh_session(ssh_session& session,
                            const char *pub_key_path,
                            const char *priv_key_path,
                            const char *priv_key_password);
+
+bool establish_ssh_session_from_agent(ssh_session& session,
+                                      const char *user,
+                                      const char *server,
+                                      const char *pub_key_path);
+
 void close_connection(ssh_session& session);
 
 bool push_file(ssh_session& session,

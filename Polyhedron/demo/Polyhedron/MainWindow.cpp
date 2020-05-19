@@ -2934,25 +2934,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   bool do_upload = false;
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
-  QString pass;
   if(!user.isEmpty())
   {
     QMessageBox::StandardButton doyou =
         QMessageBox::question(this, tr("Upload ?"), tr("Do you wish to upload the scene"
                                                        " using the SSH preferences ?"));
-    bool ok;
     do_upload = (doyou == QMessageBox::Yes);
-    if(do_upload)
-    {
-      pass = QInputDialog::getText(this, "SSH Password",
-                                   "Enter ssh key password:",
-                                   QLineEdit::Password,
-                                   tr(""),
-                                   &ok);
-      if(!ok)
-        return;
-      pass = pass.trimmed();
-    }
   }
 #endif
 
@@ -3103,12 +3090,31 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
       path.prepend("Polyhedron_demo_");
     try{
       ssh_session session;
-      bool res = establish_ssh_session(session,
-                            user.toStdString().c_str(),
-                            server.toStdString().c_str(),
-                            pk.toStdString().c_str(),
-                            privK.toStdString().c_str(),
-                            pass.toStdString().c_str());
+      bool res = establish_ssh_session_from_agent(session,
+                                                  user.toStdString().c_str(),
+                                                  server.toStdString().c_str(),
+                                                  pk.toStdString().c_str());
+
+      if(!res)
+      {
+        bool ok;
+        QString pass;
+        pass = QInputDialog::getText(this, "SSH Password",
+                                     "Enter ssh key password:",
+                                     QLineEdit::Password,
+                                     tr(""),
+                                     &ok);
+        if(!ok)
+          return;
+        pass = pass.trimmed();
+        res = establish_ssh_session(session,
+                                    user.toStdString().c_str(),
+                                    server.toStdString().c_str(),
+                                    pk.toStdString().c_str(),
+                                    privK.toStdString().c_str(),
+                                    pass.toStdString().c_str());
+      }
+
       if(!res)
       {
         QMessageBox::warning(this,
@@ -3584,25 +3590,13 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
-  QString pass;
+
   if(!user.isEmpty())
   {
     QMessageBox::StandardButton doyou =
         QMessageBox::question(this, tr("Download ?"), tr("Do you wish to download the scene"
                                                          " using the SSH preferences ?"));
-    bool ok;
     do_download= (doyou == QMessageBox::Yes);
-    if(do_download)
-    {
-      pass = QInputDialog::getText(this, "SSH Password",
-                                   "Enter ssh key password:",
-                                   QLineEdit::Password,
-                                   tr(""),
-                                   &ok);
-      if(!ok)
-        return;
-      pass = pass.trimmed();
-    }
   }
 #endif
 
@@ -3627,12 +3621,27 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
       path.prepend("Polyhedron_demo_");
     try{
       ssh_session session;
-      bool res = establish_ssh_session(session,
-                            user.toStdString().c_str(),
-                            server.toStdString().c_str(),
-                            pk.toStdString().c_str(),
-                            privK.toStdString().c_str(),
-                            pass.toStdString().c_str());
+      bool res = establish_ssh_session_from_agent(session,
+                                                  user.toStdString().c_str(),
+                                                  server.toStdString().c_str(),
+                                                  pk.toStdString().c_str());
+      if(!res){
+        bool ok;
+        QString pass= QInputDialog::getText(this, "SSH Password",
+                                     "Enter ssh key password:",
+                                     QLineEdit::Password,
+                                     tr(""),
+                                     &ok);
+        if(!ok)
+          return;
+        pass = pass.trimmed();
+        res = establish_ssh_session(session,
+                                    user.toStdString().c_str(),
+                                    server.toStdString().c_str(),
+                                    pk.toStdString().c_str(),
+                                    privK.toStdString().c_str(),
+                                    pass.toStdString().c_str());
+      }
       if(!res)
       {
         QMessageBox::warning(this,

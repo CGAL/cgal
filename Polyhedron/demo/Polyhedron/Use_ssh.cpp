@@ -135,6 +135,79 @@ bool establish_ssh_session(ssh_session &session,
   return true;
 }
 
+
+bool establish_ssh_session_from_agent(ssh_session& session,
+                                      const char *user,
+                                      const char *server,
+                                      const char *pub_key_path)
+{
+  int port = 22;
+
+  //Can use SSH_LOG_PROTOCOL here for verbose output
+  int verbosity = SSH_LOG_NOLOG;
+  int res;
+  //retry 4 times max each time the connection asks to be retried.
+  for(int k = 0; k < 4; ++k)
+  {
+    session = ssh_new();
+    ssh_options_set( session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity );
+    ssh_options_set( session, SSH_OPTIONS_PORT, &port );
+    ssh_options_set( session, SSH_OPTIONS_USER, user );
+    ssh_options_set( session, SSH_OPTIONS_HOST, server);
+
+    ssh_connect(session);
+#if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
+    if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
+#else
+      if( ssh_session_is_known_server(session) != SSH_KNOWN_HOSTS_OK )
+#endif
+    {
+      if(QMessageBox::warning(CGAL::Three::Three::mainWindow(), QString("Unknown Server"),
+                              QString ("The server you are trying to join is not known.\n"
+                                       "Do you wish to add it to the known servers list and continue?"),
+                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+      {
+        return false;
+      }
+#if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
+      if( ssh_write_knownhost(session) != SSH_OK )
+#else
+      if( ssh_session_update_known_hosts(session) != SSH_OK )
+#endif
+      {
+        std::cerr << "writeKnownHost failed" << std::endl;
+        return false;
+      }
+      else
+      {
+        ssh_connect(session);
+      }
+    }
+      ssh_key pubkey = ssh_key_new();
+      ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
+      res = ssh_userauth_try_publickey(session, NULL, pubkey);
+      if(res == SSH_AUTH_AGAIN)
+        ssh_disconnect(session);
+      else
+        break;
+    }
+
+
+  if(!test_result(res))
+  {
+    ssh_disconnect(session);
+    return false;
+  }
+
+  res = ssh_userauth_agent(session, user);
+  if(!test_result(res))
+  {
+    ssh_disconnect(session);
+    return false;
+  }
+  return true;
+}
+
 void close_connection(ssh_session &session)
 {
   ssh_disconnect(session);
