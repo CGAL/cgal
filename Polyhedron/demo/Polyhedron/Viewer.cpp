@@ -2020,7 +2020,12 @@ void Viewer::onTextMessageSocketReceived(QString message)
   if(session != d->session){
     return;
   }
-  moveCameraToCoordinates(position, 0.05f);
+  QStringList sl = position.split(" ");
+  CGAL::qglviewer::Vec pos(sl[0].toDouble(),sl[1].toDouble(),sl[2].toDouble());
+  CGAL::qglviewer::Quaternion q(sl[3].toDouble(),sl[4].toDouble(),
+      sl[5].toDouble(),sl[6].toDouble());
+  camera()->frame()->setPositionAndOrientation(pos, q);
+  update();
 }
 #endif
 #include "Viewer.moc"
