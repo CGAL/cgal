@@ -11,7 +11,7 @@ function mytime {
 function build_examples {
   mkdir -p build-travis
   cd build-travis
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS} -I/home/travis/build/CGAL/cgal/.travis/" -DCGAL_BUILD_THREE_DOC=TRUE -DCGAL_INCLUDE_WINDOWS_DOT_H ..
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" -DCGAL_BUILD_THREE_DOC=TRUE ..
   mytime make -j2 VERBOSE=1
 }
 
@@ -28,7 +28,7 @@ function build_demo {
       EXTRA_CXX_FLAGS="-Werror=inconsistent-missing-override"
       ;;
   esac
-  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS} -I/home/travis/build/CGAL/cgal/.travis/" -DCGAL_INCLUDE_WINDOWS_DOT_H ..
+  mytime cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}"  ..
   mytime make -j2 VERBOSE=1
 }
 old_IFS=$IFS
