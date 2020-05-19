@@ -1690,6 +1690,9 @@ void Viewer::setTotalPass(int p)
 
 void Viewer::messageLogged(QOpenGLDebugMessage msg)
 {
+  //filter out useless warning
+  if(msg.message().contains("is being recompiled"))
+    return;
   QString error;
 
   // Format based on severity
