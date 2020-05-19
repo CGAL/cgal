@@ -109,8 +109,8 @@ MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
 class MP_Float : boost::totally_ordered1<MP_Float
 #ifdef _MSC_VER
-                 , boost::equality_comparable2<MP_Float, int
-                 , boost::equality_comparable2<MP_Float, double
+                 , boost::ordered_ring_operators2<MP_Float, int
+                 , boost::ordered_ring_operators2<MP_Float, double
                  > >
 #endif
                  >
@@ -237,11 +237,13 @@ public:
   { return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
 
 #ifdef _MSC_VER
-  // Needed because without /permissive-, it makes hidden friends visible (operator== from Quotient)
-  friend bool operator==(const MP_Float &a, int b)
-  { return a == MP_Float(b); }
-  friend bool operator==(const MP_Float &a, double b)
-  { return a == MP_Float(b); }
+  // Needed because without /permissive-, it makes hidden friends visible (from Quotient)
+  friend bool operator==(const MP_Float &a, int    b) { return a == MP_Float(b); }
+  friend bool operator==(const MP_Float &a, double b) { return a == MP_Float(b); }
+  friend bool operator< (const MP_Float &a, int    b) { return a <  MP_Float(b); }
+  friend bool operator< (const MP_Float &a, double b) { return a <  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, int    b) { return a >  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, double b) { return a >  MP_Float(b); }
 #endif
 
   exponent_type max_exp() const
