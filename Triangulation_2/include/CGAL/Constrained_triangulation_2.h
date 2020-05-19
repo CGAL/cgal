@@ -995,8 +995,8 @@ intersect(Face_handle f, int i,
 
   Vertex_handle vi;
   if ( !ok) {  //intersection detected but not computed
-    int i = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
-    switch(i){
+    int int_index = limit_intersection(geom_traits(), pa, pb, pc, pd, itag);
+    switch(int_index){
     case 0 : vi = vaa; break;
     case 1 : vi = vbb; break;
     case 2 : vi = vcc; break;
