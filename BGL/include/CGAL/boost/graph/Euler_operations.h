@@ -642,12 +642,12 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
         CGAL_precondition(is_border(prev_hd,sm));
         break;
       }
-      halfedge_around_vertex = opposite(next(v,sm),sm);
+      halfedge_around_vertex = opposite(next(halfedge_around_vertex,sm),sm);
     }
     while (halfedge_around_vertex!=start);
 
     if (prev_hd != boost::graph_traits<PMesh>::null_halfedge()){
-      halfedge_around_vertex = opposite(next(v,sm),sm);
+      halfedge_around_vertex = opposite(next(halfedge_around_vertex,sm),sm);
       //prev_hd and next are already consecutive in the HDS
       if (target(opposite(halfedge_around_vertex,sm),sm)==next_vertex) continue;
 
@@ -668,7 +668,7 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
       //prev_hd and next_hd to be adjacent:
       do{
         halfedge_around_vertex = opposite(next(halfedge_around_vertex, sm),sm);
-        if ( is_border(opposite(v,sm),sm) ) break;
+        if ( is_border(opposite(halfedge_around_vertex,sm),sm) ) break;
       }
       while (halfedge_around_vertex != prev_hd);
       if (halfedge_around_vertex == prev_hd) return false;
