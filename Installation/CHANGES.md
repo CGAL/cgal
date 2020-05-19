@@ -49,7 +49,7 @@ Release date: June 2020
 ### 2D Arrangement on Surface
  -   Changed intersection return type from legacy `CGAL::Object` to modern
      `boost::variant` in all traits concepts and models.
-     As there is an implicit conversion from boost::variant to CGAL::Object, the
+     As there is an implicit conversion from `boost::variant` to `CGAL::Object`, the
      new code is backward compatible. However, it is recommended that all calls
      to the intersection functions are fixed to use the new return type.
 
