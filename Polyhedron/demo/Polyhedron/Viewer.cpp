@@ -1691,6 +1691,9 @@ void Viewer::setTotalPass(int p)
 void Viewer::messageLogged(QOpenGLDebugMessage msg)
 {
   //filter out useless warning
+  // From those two links, we decided we didn't care for this warning:
+  // https://community.khronos.org/t/vertex-shader-in-program-2-is-being-recompiled-based-on-gl-state/76019
+  // https://stackoverflow.com/questions/12004396/opengl-debug-context-performance-warning
   if(msg.message().contains("is being recompiled"))
     return;
   QString error;
