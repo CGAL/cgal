@@ -2021,6 +2021,9 @@ void Viewer::onTextMessageSocketReceived(QString message)
     return;
   }
   QStringList sl = position.split(" ");
+  if(sl.size() != 7)
+    return;
+
   CGAL::qglviewer::Vec pos(sl[0].toDouble(),sl[1].toDouble(),sl[2].toDouble());
   CGAL::qglviewer::Quaternion q(sl[3].toDouble(),sl[4].toDouble(),
       sl[5].toDouble(),sl[6].toDouble());
