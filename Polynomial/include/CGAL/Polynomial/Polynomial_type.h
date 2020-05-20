@@ -190,9 +190,18 @@ template <class NT_>
 class Polynomial
   : public Handle_with_policy< internal::Polynomial_rep<NT_> >,
     public boost::ordered_field_operators1< Polynomial<NT_> ,
+#if __cpp_impl_three_way_comparison >= 201907L
+           boost::less_than_comparable2< Polynomial<NT_> , NT_ ,
+           boost::less_than_comparable2< Polynomial<NT_> , CGAL_icoeff(NT_),
+           boost::less_than_comparable2< Polynomial<NT_> , CGAL_int(NT_),
+           boost::field_operators2< Polynomial<NT_> , NT_ ,
+           boost::field_operators2< Polynomial<NT_> , CGAL_icoeff(NT_),
+           boost::field_operators2< Polynomial<NT_> , CGAL_int(NT_)  > > > > > > >
+#else
            boost::ordered_field_operators2< Polynomial<NT_> , NT_ ,
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_icoeff(NT_),
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_int(NT_)  > > > >
+#endif
 {
   typedef typename internal::Innermost_coefficient_type<NT_>::Type Innermost_coefficient_type;
 public:
