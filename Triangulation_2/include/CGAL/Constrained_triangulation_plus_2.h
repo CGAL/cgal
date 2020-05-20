@@ -21,6 +21,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/CTP2_subconstraint_graph.h>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_same.hpp>
 
@@ -319,6 +320,22 @@ public:
     return n;
   }
   */
+
+  void split_subconstraint_graph_into_constraints(const std::function<bool(Vertex_handle)>& is_terminal
+                                                  = std::function<bool(Vertex_handle)>())
+  {
+    internal::CTP2_graph_visitor<Self> visitor(*this);
+    if (is_terminal)
+      CGAL::split_graph_into_polylines (internal::CTP2_subconstraint_graph<Self>(*this), visitor,
+                                        [&is_terminal](Vertex_handle vh,
+                                                       const internal::CTP2_subconstraint_graph<Self>&) -> bool
+                                        {
+                                          return is_terminal(vh);
+                                        });
+    else
+      CGAL::split_graph_into_polylines (internal::CTP2_subconstraint_graph<Self>(*this), visitor);
+  }
+
   Vertex_handle push_back(const Point& p)
   {
     return insert(p);

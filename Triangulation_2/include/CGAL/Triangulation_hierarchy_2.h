@@ -25,10 +25,9 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <CGAL/internal/boost/function_property_map.hpp>
-
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -156,12 +155,12 @@ public:
       // Spatial sort can only be used with Gt::Point_2: we need an adapter
       typedef typename Geom_traits::Construct_point_2 Construct_point_2;
       typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
-      typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Point, Ret> fpmap;
+      typedef boost::function_property_map<Construct_point_2, Point, Ret> fpmap;
       typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
 
       spatial_sort(points.begin(), points.end(),
                    Search_traits_2(
-                     CGAL::internal::boost_::make_function_property_map<Point, Ret, Construct_point_2>(
+                     boost::make_function_property_map<Point, Ret, Construct_point_2>(
                        geom_traits().construct_point_2_object()), geom_traits()));
 
       // hints[i] is the face of the previously inserted point in level i.

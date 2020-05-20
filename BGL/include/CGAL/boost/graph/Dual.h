@@ -158,19 +158,15 @@ struct Dual_face_index_pmap{
   }
 };
 
-template<typename P, typename Property,
-         bool is_edge = boost::is_same<boost::edge_property_tag,
-                                       typename boost::property_kind<Property>::type>::value>
-struct Dual_property_maps : boost::property_map<P, Property> {};
-
-template< typename P, typename Property>
-struct Dual_property_maps<P, Property, false> {};
-
 } //end of namespace internal
 
-template <typename P, typename Property>
-struct property_map<CGAL::Dual<P>, Property>
-  : internal::Dual_property_maps<P, Property> {};
+template <typename P>
+struct property_map<CGAL::Dual<P>, halfedge_index_t>
+  : boost::property_map<P, halfedge_index_t> {};
+
+template <typename P>
+struct property_map<CGAL::Dual<P>, edge_index_t>
+  : boost::property_map<P, edge_index_t> {};
 
 template <typename P>
 struct property_map<CGAL::Dual<P>, boost::vertex_index_t>
@@ -190,51 +186,47 @@ struct property_map<CGAL::Dual<P>, boost::face_index_t>
 
 namespace CGAL {
 
-template <typename P, typename Property>
-typename boost::property_map<P, Property>::type
-get(Property p, Dual<P>& dual)
-{
-  return get(p, dual.primal());
+#define CGAL_GET_OVERLOADS(Property) \
+\
+template <typename P> \
+typename boost::property_map<P, Property>::type \
+get(Property p, Dual<P>& dual) \
+{ \
+  return get(p, dual.primal()); \
+} \
+\
+template <typename P> \
+typename boost::property_map<P, Property>::const_type \
+get(Property p, const Dual<P>& dual) \
+{ \
+  return get(p, dual.primal()); \
+} \
+\
+template <typename P, typename Key > \
+typename boost::property_map_value<P, Property>::type \
+get(Property p, const Dual<P>& dual, const Key& k) \
+{ \
+  return get(p, dual.primal(), k); \
 }
 
-template <typename P, typename Property>
-typename boost::property_map<P, Property>::const_type
-get(Property p, const Dual<P>& dual)
-{
-  return get(p, dual.primal());
-}
+CGAL_GET_OVERLOADS(boost::edge_index_t)
+CGAL_GET_OVERLOADS(boost::halfedge_index_t)
+CGAL_GET_OVERLOADS(boost::vertex_point_t)
 
-template <typename P, typename Property, typename Key >
-typename boost::property_map_value<P, Property>::type
-get(Property p, const Dual<P>& dual, const Key& k)
-{
-  return get(p, dual.primal(), k);
-}
-
-template<typename G, typename P, typename>
-struct Property_map_value_dummy {
-  typedef typename boost::property_map_value<G, P>::type type;
-};
+#undef CGAL_GET_OVERLOADS
 
 template <typename P, typename Key>
-typename Property_map_value_dummy<Dual<P>, boost::vertex_index_t, Key>::type
+typename boost::property_map_value<Dual<P>, boost::vertex_index_t>::type
 get(boost::vertex_index_t, const Dual<P>& dual, const Key& k)
 {
   return get(typename boost::internal::Dual_vertex_index_pmap<P>(dual.primal()), k);
 }
 
 template <typename P, typename Key>
-typename Property_map_value_dummy<Dual<P>, boost::face_index_t, Key>::type
+typename  boost::property_map_value<Dual<P>, boost::face_index_t>::type
 get(boost::face_index_t, const Dual<P>& dual, const Key& k)
 {
   return get(typename boost::internal::Dual_face_index_pmap<P>(dual.primal()), k);
-}
-
-template <typename P, typename Property, typename Key, typename Value>
-void
-put(Property p, const Dual<P>& dual, const Key& k, const Value& val)
-{
-  put(p, dual.primal(), k, val);
 }
 
 template <typename P>

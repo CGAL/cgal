@@ -298,7 +298,8 @@ _test_cls_delaunay_triangulation_2( const Del & )
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 2);
-  assert(TM_0.move_if_no_collision(tmv1, Point(3, 0)) != tmv1);
+  Vertex_handle mtmv1 = TM_0.move_if_no_collision(tmv1, Point(3, 0));
+  assert(mtmv1 != tmv1);
 
   TM_0.move_if_no_collision(tmv1, Point(0, 1));
   assert(TM_0.tds().is_valid());
@@ -345,7 +346,8 @@ _test_cls_delaunay_triangulation_2( const Del & )
 
   // A simple test to see if move return the good vertex
   // when there is a collision
-  assert(TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point()) == vTM_1);
+  Vertex_handle mvTM_1 = TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point());
+  assert(mvTM_1 == vTM_1);
 }
 
 

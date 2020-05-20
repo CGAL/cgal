@@ -1006,7 +1006,7 @@ void MainWindow::updateViewersBboxes(bool recenter)
 
 }
 
-void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::Vec& max)
+void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::Vec& vmax)
 {
   const Scene::Bbox bbox = scene->bbox();
   const double xmin = bbox.xmin();
@@ -1018,8 +1018,8 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
 
 
 
-  min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
-  max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
+  vmin = CGAL::qglviewer::Vec(xmin, ymin, zmin);
+  vmax= CGAL::qglviewer::Vec(xmax, ymax, zmax);
 
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
 
@@ -1574,7 +1574,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             }
             else if(action->text() == QString("Line Width"))
             {
-              menu_actions["line width"] = action->menu()->actions().last();
+              menu_actions["Line width"] = action->menu()->actions().last();
             }
           }
 
@@ -1719,7 +1719,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             slider->setValue(
                   qobject_cast<QSlider*>(
                     qobject_cast<QWidgetAction*>
-                    (menu_actions["line width"])->defaultWidget()
+                    (menu_actions["Line width"])->defaultWidget()
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
@@ -2504,8 +2504,8 @@ void MainWindow::viewerShowObject()
     CGAL::qglviewer::Vec min((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z),
         max((float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
     viewer->setSceneBoundingBox(min, max);
-    viewerShow(min.x, min.y, min.z,
-               max.x, max.y, max.z);
+    viewerShow((float)min.x, (float)min.y, (float)min.z,
+               (float)max.x, (float)max.y, (float)max.z);
   }
 }
 /* to check

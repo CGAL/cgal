@@ -201,6 +201,15 @@ if(CGAL_DOC_CREATE_LOGS)
   file(MAKE_DIRECTORY "${CGAL_DOC_LOG_DIR}")
 endif()
 
+option(CGAL_EXTRACT_ALL_NO_DETAILED_IF_EMPTY "Use CGAL special doxygen setting EXTRACT_ALL_NO_DETAILED_IF_EMPTY." ON)
+if(CGAL_EXTRACT_ALL_NO_DETAILED_IF_EMPTY)
+  set(CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY "EXTRACT_ALL_NO_DETAILED_IF_EMPTY = YES")
+else()
+  # The default is NO, so we could leave it out, but it is better to have a commented out placeholder
+  # this will work for versions with and without the setting.
+  set(CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY "#EXTRACT_ALL_NO_DETAILED_IF_EMPTY = NO")
+endif()
+
 #we use two directories for the generation/reading of tag files to prevent issues
 #if the targets are built in parallel
 set(CGAL_DOC_TAG_GEN_DIR "${CMAKE_BINARY_DIR}/doc_gen_tags")
@@ -243,9 +252,7 @@ endif()
 
 if (NOT CGAL_CREATED_VERSION_NUM)
   if (CGAL_BRANCH_BUILD)
-    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/MAJOR_NUMBER" CGAL_MAJOR_VERSION REGEX "[0-9]*")
-    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
-    file(STRINGS "${CGAL_ROOT}/Maintenance/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
+    include(${CGAL_ROOT}/CGALConfigVersion.cmake)
 
     if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
       set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
@@ -342,6 +349,12 @@ else()
   foreach(pkg ${CGAL_DEMO_PACKAGES})
     set(CGAL_${pkg}_DEMO_DIR "${CGAL_ROOT}/demo")
   endforeach()
+endif()
+
+option(CGAL_BUILD_THREE_DOC "Build the documentation of the Three package" OFF)
+
+if (NOT CGAL_BUILD_THREE_DOC)
+  list(REMOVE_ITEM CGAL_DOC_PACKAGES "Three")
 endif()
 
 foreach(package ${CGAL_DOC_PACKAGES})

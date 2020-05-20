@@ -413,7 +413,7 @@ public:
                                  + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize)
                                  + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
 
-    return std::max(peakNodeUsage, peakQueueUsage);
+    return (std::max)(peakNodeUsage, peakQueueUsage);
   }
 
   /// \endcond

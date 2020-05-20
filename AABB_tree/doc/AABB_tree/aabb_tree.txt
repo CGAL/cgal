@@ -336,7 +336,7 @@ inside the bounding box.
 The experiments described above are neither exhaustive nor conclusive
 as we have chosen one specific case where the input primitives are the
 facets of a triangle surface polyhedron. Nevertheless we now provide
-some general observations and advices about how to put the AABB tree
+some general observations and advises about how to put the AABB tree
 to use with satisfactory performances. While the tree construction
 times and memory occupancy do not fluctuate much in our experiments
 depending on the input surface triangle mesh, the performance
@@ -423,10 +423,11 @@ primitives at the leafs of the tree. The ball radius is then shrunk to
 the distance between `p` and `q` for all remaining recursive
 traversals of the tree. Efficiency is achieved through setting the
 initial ball radius to a small value still guaranteed to intersect the
-input primitives. This is achieved by constructing through the
-function `AABB_tree::accelerate_distance_queries()` an internal secondary data
+input primitives. This is achieved by constructing an internal secondary data
 structure which provides a good hint to the algorithm at the beginning
-of the traversal.
+of the traversal (done by default).
+Calling `do_not_accelerate_distance_queries()` will disable
+the construction and the usage of this internal secondary data structure.
 
 \section aabb_tree_history Design and Implementation History
 
@@ -434,10 +435,10 @@ Camille Wormser and Pierre Alliez started working on a data structure
 for efficient collision detection in 2007. The generic design for
 implementing both intersection and distance queries, and for generic
 queries and primitives was developed by Camille Wormser. In 2009,
-Pierre Alliez, St&eacute;phane Tayeb and Camille Wormser made the
+Pierre Alliez, Stéphane Tayeb and Camille Wormser made the
 implementation CGAL-compliant, with the help of Laurent Rineau for
 optimizing the tree construction. The authors wish to thank Andreas
-Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lef&egrave;bvre for
+Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre for
 helpful comments and discussions.
 
 */

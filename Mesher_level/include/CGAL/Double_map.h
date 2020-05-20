@@ -129,7 +129,6 @@ public :
 
   size_type size() const
   {
-    CGAL_assertion(is_valid());
     return direct_func().size();
   }
 

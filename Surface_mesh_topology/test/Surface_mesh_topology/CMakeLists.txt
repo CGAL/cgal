@@ -33,8 +33,10 @@ set(SOURCE_FILES
   homotopy_small_cylinder.cpp
   path_tests.cpp
   path_with_rle_deformation_tests.cpp
+  shortest_noncontractible_cycle_tests.cpp
   test_homotopy.cpp
   test_homotopy_with_polygonal_schema.cpp
+  test_shortest_cycle_non_contractible.cpp
   tests_path_on_surface.cpp
   )
 

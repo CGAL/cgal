@@ -10,6 +10,7 @@ polyhedron_demo_plugin(mesh_3_plugin Mesh_3_plugin
   ${meshingUI_FILES} KEYWORDS Mesh_3)
 target_link_libraries(mesh_3_plugin PUBLIC scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
   scene_surface_mesh_item scene_c3t3_item ${OPENGL_gl_LIBRARY} )
+target_include_directories(mesh_3_plugin PRIVATE include)
 
 find_package(VTK QUIET COMPONENTS
   vtkImagingGeneral  vtkIOImage NO_MODULE)
@@ -33,13 +34,13 @@ else()
   message(STATUS "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to.")
 endif()
 
-find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem)
+find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
 if(Boost_FILESYSTEM_FOUND)
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS IO Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
   if(TARGET Boost::filesystem)
-    target_link_libraries(io_image_plugin PUBLIC Boost::filesystem)
+    target_link_libraries(io_image_plugin PUBLIC Boost::filesystem Boost::system)
   else()
     target_link_libraries(io_image_plugin PUBLIC ${Boost_LIBRARIES})
   endif()

@@ -901,12 +901,12 @@ namespace internal {
     }
 
     // Construction from nullptr
-    CC_iterator (std::nullptr_t CGAL_assertion_code(n))
+    CC_iterator (std::nullptr_t /*CGAL_assertion_code(n)*/)
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       : ts(0)
 #endif
     {
-      CGAL_assertion (n == nullptr);
+      //CGAL_assertion (n == nullptr);
       m_ptr = nullptr;
     }
 
@@ -1106,18 +1106,18 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  std::nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t /*CGAL_assertion_code(n)*/)
   {
-    CGAL_assertion( n == nullptr);
+    //CGAL_assertion( n == nullptr);
     return rhs.operator->() == nullptr;
   }
 
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-                  std::nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t /*CGAL_assertion_code(n)*/)
   {
-    CGAL_assertion( n == nullptr);
+    //CGAL_assertion( n == nullptr);
     return rhs.operator->() != nullptr;
   }
 
@@ -1125,8 +1125,24 @@ namespace internal {
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
     typedef Time_stamper_impl<typename DSC::value_type> Stamper;
-    return Stamper::hash_value(&*i);
+    return Stamper::hash_value(i.operator->());
   }
+
+namespace handle {
+  // supply a specialization for Hash_functor
+
+  // forward declare base template
+  template <class H> struct Hash_functor;
+
+  template<class DSC, bool Const>
+  struct Hash_functor<CC_iterator<DSC, Const>>{
+    std::size_t
+    operator()(const CC_iterator<DSC, Const>& i)
+    {
+      return hash_value(i);
+    }
+  };
+} // namespace handle
 
 } // namespace internal
 

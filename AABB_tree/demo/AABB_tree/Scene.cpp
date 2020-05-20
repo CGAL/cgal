@@ -855,8 +855,8 @@ void Scene::update_grid_size()
 }
 
 void Scene::generate_points_in(const unsigned int nb_points,
-                               const double min,
-                               const double max)
+                               const double vmin,
+                               const double vmax)
 {
     if(m_pPolyhedron == NULL)
     {
@@ -875,7 +875,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
     CGAL::Timer timer;
     timer.start();
     std::cout << "Generate " << nb_points << " points in interval ["
-              << min << ";" << max << "]";
+              << vmin << ";" << vmax << "]";
 
     unsigned int nb_trials = 0;
     Vector vec = random_vector();
@@ -892,8 +892,8 @@ void Scene::generate_points_in(const unsigned int nb_points,
         if(nb_intersections % 2 != 0)
             signed_distance *= -1.0;
 
-        if(signed_distance >= min &&
-                signed_distance <= max)
+        if(signed_distance >= vmin &&
+                signed_distance <= vmax)
         {
             m_points.push_back(p);
             if(m_points.size()%(nb_points/10) == 0)
