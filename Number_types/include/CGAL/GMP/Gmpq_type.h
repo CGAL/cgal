@@ -35,10 +35,6 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Profile_counter.h>
 
-#if __cpp_impl_three_way_comparison >= 201907L
-# include <compare>
-#endif
-
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4146)
@@ -65,17 +61,8 @@ private:
 
 
 class Gmpq
-  : Handle_for<Gmpq_rep>
-#if __cpp_impl_three_way_comparison >= 201907L
-  , boost::field_operators2< Gmpq, int
-  , boost::field_operators2< Gmpq, long
-  , boost::field_operators2< Gmpq, long long
-  , boost::field_operators2< Gmpq, double
-  , boost::field_operators2< Gmpq, Gmpz
-  , boost::field_operators2< Gmpq, Gmpfr
-    > > > > > >
-#else
-  , boost::totally_ordered1< Gmpq
+  : Handle_for<Gmpq_rep>,
+    boost::totally_ordered1< Gmpq
   , boost::ordered_field_operators2< Gmpq, int
   , boost::ordered_field_operators2< Gmpq, long
   , boost::ordered_field_operators2< Gmpq, long long
@@ -83,7 +70,6 @@ class Gmpq
   , boost::ordered_field_operators2< Gmpq, Gmpz
   , boost::ordered_field_operators2< Gmpq, Gmpfr
     > > > > > > >
-#endif
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -237,11 +223,7 @@ public:
   Gmpq& operator/=(const Gmpq &q);
 
   bool operator==(const Gmpq &q) const noexcept { return mpq_equal(this->mpq(), q.mpq()) != 0;}
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(const Gmpq&q) const { return mpq_cmp(this->mpq(), q.mpq()) <=> 0; }
-#else
   bool operator< (const Gmpq &q) const { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
-#endif
 
   double to_double() const noexcept;
   Sign sign() const noexcept;
@@ -263,78 +245,54 @@ public:
   Gmpq& operator-=(int z){return (*this)-= Gmpq(z);}
   Gmpq& operator*=(int z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(int z){return (*this)/= Gmpq(z);}
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(int z) const { return mpq_cmp_si(mpq(),z,1) <=> 0; }
-#else
   bool  operator==(int z) const {return mpq_cmp_si(mpq(),z,1)==0;}
   bool  operator< (int z) const {return mpq_cmp_si(mpq(),z,1)<0;}
   bool  operator> (int z) const {return mpq_cmp_si(mpq(),z,1)>0;}
-#endif
 
   // Interoperability with long
   Gmpq& operator+=(long z){return (*this)+= Gmpq(z);}
   Gmpq& operator-=(long z){return (*this)-= Gmpq(z);}
   Gmpq& operator*=(long z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(long z){return (*this)/= Gmpq(z);}
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(long z) const { return mpq_cmp_si(mpq(),z,1) <=> 0; }
-#else
   bool  operator==(long z) const {return mpq_cmp_si(mpq(),z,1)==0;}
   bool  operator< (long z) const {return mpq_cmp_si(mpq(),z,1)<0;}
   bool  operator> (long z) const {return mpq_cmp_si(mpq(),z,1)>0;}
-#endif
 
   // Interoperability with long long
   Gmpq& operator+=(long long z){return (*this)+= Gmpq(z);}
   Gmpq& operator-=(long long z){return (*this)-= Gmpq(z);}
   Gmpq& operator*=(long long z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(long long z){return (*this)/= Gmpq(z);}
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(long long z) const { return *this <=> Gmpq(z); }
-#else
   bool  operator==(long long z) const {return (*this)== Gmpq(z);}
   bool  operator< (long long z) const {return (*this)<  Gmpq(z);}
   bool  operator> (long long z) const {return (*this)>  Gmpq(z);}
-#endif
 
   // Interoperability with double
   Gmpq& operator+=(double d){return (*this)+= Gmpq(d);}
   Gmpq& operator-=(double d){return (*this)-= Gmpq(d);}
   Gmpq& operator*=(double d){return (*this)*= Gmpq(d);}
   Gmpq& operator/=(double d){return (*this)/= Gmpq(d);}
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(double d) const { return *this <=> Gmpq(d); }
-#else
   bool  operator==(double d) const {return (*this)== Gmpq(d);}
   bool  operator< (double d) const {return (*this)<  Gmpq(d);}
   bool  operator> (double d) const {return (*this)>  Gmpq(d);}
-#endif
 
   // Interoperability with Gmpz
   Gmpq& operator+=(const Gmpz&);
   Gmpq& operator-=(const Gmpz&);
   Gmpq& operator*=(const Gmpz&);
   Gmpq& operator/=(const Gmpz&);
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(const Gmpz& z) const { return *this <=> Gmpq(z); }
-#else
   bool  operator==(const Gmpz &z) const {return (*this)== Gmpq(z);}
   bool  operator< (const Gmpz &z) const {return (*this)<  Gmpq(z);}
   bool  operator> (const Gmpz &z) const {return (*this)>  Gmpq(z);}
-#endif
 
   // Interoperability with Gmpfr
   Gmpq& operator+=(const Gmpfr &f){return (*this)+= Gmpq(f);}
   Gmpq& operator-=(const Gmpfr &f){return (*this)-= Gmpq(f);}
   Gmpq& operator*=(const Gmpfr &f){return (*this)*= Gmpq(f);}
   Gmpq& operator/=(const Gmpfr &f){return (*this)/= Gmpq(f);}
-#if __cpp_impl_three_way_comparison >= 201907L
-  std::strong_ordering operator<=>(const Gmpfr& f) const { return 0 <=> mpfr_cmp_q(f.fr(),mpq()); }
-#else
   bool  operator==(const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())==0;}
   bool  operator< (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())>0;}
   bool  operator> (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())<0;}
-#endif
 };
 
 
