@@ -1349,7 +1349,7 @@ public:
     void set_recycle_garbage(bool b);
 
     /// Getter
-    bool does_recycle_garbage();
+    bool does_recycle_garbage() const;
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// removes unused memory from vectors. This shrinks the storage
