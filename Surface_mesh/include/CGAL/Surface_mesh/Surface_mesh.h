@@ -1342,9 +1342,10 @@ public:
     template <typename Visitor>
     void collect_garbage(Visitor& visitor);
 
-    /// when set to `true` functions like `add_vertex()` will first
-    /// see if they can recycle a previously element marked as removed.
-    /// When set to `false` new elements will be created.
+    /// controls the recycling or not of simplices previously marked as removed
+    /// upon addition of new elements.
+    /// When set to `true` (default value), new elements are first picked in the garbage (if any) 
+    /// while if set to `false` only new elements are created.
     void set_recycle_garbage(bool b);
 
     /// Getter
