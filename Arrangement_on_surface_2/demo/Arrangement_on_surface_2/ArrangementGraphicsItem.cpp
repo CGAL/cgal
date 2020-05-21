@@ -10,11 +10,6 @@ ArrangementGraphicsItem( Arrangement* arr_ ):
   arr( arr_ ),
   painterostream( 0 )
 {
-  if ( this->arr->number_of_vertices( ) == 0 )
-  {
-    this->hide( );
-  }
-
   this->updateBoundingBox( );
   this->setZValue( 3 );
 }
@@ -27,7 +22,6 @@ boundingRect( ) const
   QRectF rect = this->convert( this->bb );
   if (!rect.isValid() || std::isinf(rect.width()) || std::isinf(rect.height()))
   {
-    // TODO: Add a proper logging utility
     std::cerr << "ArrangementGraphicsItem.h:boundingRect invalid bounding box!\n";
     rect = this->viewportRect();
   }
@@ -119,8 +113,6 @@ paint(QPainter* painter,
       CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > /* traits */)
 {
   QRectF clipRect = this->boundingRect( );
-
-  QList< QGraphicsView* > views = this->scene->views( );
 
   // paint the faces for the purpose of brushing
   this->paintFaces( painter );
@@ -362,10 +354,10 @@ void ArrangementGraphicsItem<Arr_, ArrTraits>::updateBoundingBox(
 
   // include finite bounds of edges
   for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it) {
-	// can throws "CGAL::internal::Zero_resultant_exception"
-	try {
-	  this->bb += make_finite(it->curve().bbox());
-	} catch(...) {}
+    // can throws "CGAL::internal::Zero_resultant_exception"
+    try {
+      this->bb += make_finite(it->curve().bbox());
+    } catch(...) {}
   }
 
   // we didn't find any "interesting" point to include in the bounding box
@@ -374,22 +366,28 @@ void ArrangementGraphicsItem<Arr_, ArrTraits>::updateBoundingBox(
     std::vector<CGAL::Object> intersections;
     for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it) {
       for (auto &arc : get_xy_curves<ArrTraits>()) {
-        it->curve().intersections(arc, std::back_inserter(intersections));
+        if (arc.is_vertical() != it->curve().is_vertical()) {
+          it->curve().intersections(arc, std::back_inserter(intersections));
+        }
       }
     }
     for (auto it = intersections.begin(); it != intersections.end(); it++) {
       std::pair<typename Traits::Point_2, unsigned int> point_multiplicity;
       CGAL::assign(point_multiplicity, *it);
       auto &point = point_multiplicity.first;
-      if (point.location() != CGAL::ARR_INTERIOR) {
+      if (point.location() == CGAL::ARR_INTERIOR) {
         auto xy = point.to_double();
         this->bb += make_finite({xy.first, xy.second, xy.first, xy.second});
       } else {
-		  // the curve is probably the x or y axis
-		  this->bb += Bbox_2{0, 0, 0, 0};
+        // the curve is probably the x or y axis
+        this->bb += {0, 0, 0, 0};
       }
     }
   }
+
+  // this should happen only if the arrangement is empty
+  if (!is_finite(this->bb))
+    this->bb += {0, 0, 0, 0};
 
   // add margin to bounding box
   float x_margin;
@@ -411,18 +409,12 @@ void ArrangementGraphicsItem<Arr_, ArrTraits>::updateBoundingBox(
 template < typename Arr_, typename ArrTraits >
 void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 {
-  if ( this->arr->is_empty( ) )
-  {
-    this->hide( );
-    return;
-  }
-  this->show( );
   this->updateBoundingBox( );
   QList< QGraphicsView* > views = this->scene->views( );
   if ( views.size( ) != 0 )
   {
     QGraphicsView* viewport = views.first( );
-	viewport->setSceneRect(this->boundingRect());
+    viewport->setSceneRect(this->boundingRect());
   }
   this->update( );
 }
@@ -430,21 +422,21 @@ void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 template <>
 void ArrangementGraphicsItem<Alg_seg_arr>::modelChanged()
 {
-  if ( this->arr->is_empty( ) )
-  {
-    this->hide( );
-    return;
-  }
-  this->show( );
+  auto oldBoundingRect = this->boundingRect();
   this->updateBoundingBox( );
   QList< QGraphicsView* > views = this->scene->views( );
   if ( views.size( ) != 0 )
   {
     QGraphicsView* viewport = views.first( );
-	viewport->setSceneRect(this->boundingRect());
-	viewport->fitInView(this, ::Qt::KeepAspectRatio);
+    auto newBoundingRect = this->boundingRect();
+    if (oldBoundingRect != newBoundingRect) {
+      // calling fitInView while moving the mouse causes the program to crash
+      // this happens with the curve erasing tool
+      viewport->setSceneRect(newBoundingRect);
+      viewport->fitInView(this, ::Qt::KeepAspectRatio);
+    }
   }
-  this->update( );
+  this->update();
 }
 
 template < typename Arr_, typename ArrTraits >

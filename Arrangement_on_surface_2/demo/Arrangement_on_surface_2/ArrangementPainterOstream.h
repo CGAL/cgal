@@ -14,26 +14,21 @@
 #include <QRectF>
 #include <vector>
 
-// TODO: should be included in PainterOstream.h
-#include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Qt/PainterOstream.h>
-#include <CGAL/Qt/Converter.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
-
 #include "Utils.h"
-
-#include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 
 class QPainter;
 
 namespace CGAL {
 namespace Qt {
 
+// TODO: should be included in PainterOstream.h
 template < typename ArrTraits >
 class ArrangementPainterOstreamBase : public QGraphicsSceneMixin
 {
@@ -56,11 +51,10 @@ public:
     painterOstream( p, clippingRectangle ),
     qp( p ),
     convert( clippingRectangle ),
-    // scene( NULL ),
     clippingRect( QRectF( ) ), // null rectangle
     scale( 1.0 )
   {
-    if ( p != 0 )
+    if (p)
     {
       this->scale = p->worldTransform( ).m11( );
     }
@@ -82,14 +76,11 @@ public:
     this->scene = scene_;
 
     // set the clipping rectangle
-    if ( scene_ == NULL )
+    if ( scene_ )
     {
-      return;
+      this->clippingRect = this->viewportRect( );
+      this->convert = Converter< Kernel >( this->clippingRect );
     }
-
-    // std::cout<<"In setScene: scene_ != NULL\n";
-    this->clippingRect = this->viewportRect( );
-    this->convert = Converter< Kernel >( this->clippingRect );
   }
 
 protected:
@@ -97,7 +88,6 @@ protected:
   PainterOstream< Kernel > painterOstream;
   QPainter* qp;
   Converter< Kernel > convert;
-  // QGraphicsScene* scene;
   QRectF clippingRect;
   double scale;
 
@@ -468,30 +458,12 @@ public: // typedefs
   typedef typename Superclass::Circle_2                 Circle_2;
   typedef typename Traits::Curve_2                      Curve_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-//  typedef typename Traits::Construct_x_monotone_curve_2
-//    Construct_x_monotone_curve_2;
   typedef typename Traits::Point_2                      Intersection_point_2;
   typedef typename Traits::Intersect_2                  Intersect_2;
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename Kernel::FT                           FT;
 
-#if 0
-public: // inner classes
-  // utility class to use with std::sort on an Intersect_2 result set.
-  class Compare_intersection_point_result
-  {
-  public:
-    typedef std::pair< Intersection_point_2, Multiplicity > Result;
-    // returns whether the point1 < point2, using x-coord to compare
-    bool operator()( const Result& o1, const Result& o2 )
-    {
-      Point_2 p1 = o1.first;
-      Point_2 p2 = o2.first;
-      return ( p1.x( ) < p2.x( ) );
-    }
-  };
-#endif
 public:
   /*! Constructor */
   ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
@@ -510,189 +482,8 @@ public: // methods
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
-    // std::cout<< "In ArrangementPainterOstream& operator T"<<std::endl;
-    (*(static_cast< Superclass* >(this)) << p);
     return *this;
   }
-#if 0
-protected: // methods
-  // Returns subcurves of curve that are actually visible in the view.
-  // Assumes that clippingRect is valid.
-  std::vector< X_monotone_curve_2 > visibleParts( X_monotone_curve_2 curve )
-  {
-    // see if we intersect the bottom edge of the viewport
-    Intersect_2 intersect_2 = this->traits.intersect_2_object( );
-    Point_2 bottomLeft = this->convert( this->clippingRect.bottomLeft( ) );
-    Point_2 bottomRight = this->convert( this->clippingRect.bottomRight( ) );
-    Point_2 topLeft = this->convert( this->clippingRect.topLeft( ) );
-    Point_2 topRight = this->convert( this->clippingRect.topRight( ) );
-    X_monotone_curve_2 bottom =
-      this->construct_x_monotone_curve_2( bottomLeft, bottomRight );
-    X_monotone_curve_2 left =
-      this->construct_x_monotone_curve_2( bottomLeft, topLeft );
-    X_monotone_curve_2 top =
-      this->construct_x_monotone_curve_2( topLeft, topRight );
-    X_monotone_curve_2 right =
-      this->construct_x_monotone_curve_2( topRight, bottomRight );
-
-    std::vector< CGAL::Object > bottomIntersections;
-    std::vector< CGAL::Object > leftIntersections;
-    std::vector< CGAL::Object > topIntersections;
-    std::vector< CGAL::Object > rightIntersections;
-    std::vector< CGAL::Object > intersections;
-
-    intersect_2( bottom, curve, std::back_inserter( bottomIntersections ) );
-    intersect_2( left, curve, std::back_inserter( leftIntersections ) );
-    intersect_2( top, curve, std::back_inserter( topIntersections ) );
-    intersect_2( right, curve, std::back_inserter( rightIntersections ) );
-    // int total = bottomIntersections.size( )
-    //   + leftIntersections.size( )
-    //   + topIntersections.size( )
-    //   + rightIntersections.size( );
-
-    intersect_2( bottom, curve, std::back_inserter( intersections ) );
-    intersect_2( left, curve, std::back_inserter( intersections ) );
-    intersect_2( top, curve, std::back_inserter( intersections ) );
-    intersect_2( right, curve, std::back_inserter( intersections ) );
-
-    this->filterIntersectionPoints( intersections );
-    //std::cout << "total intersections: " << intersections.size( )
-    //          << std::endl;
-    //this->printIntersectResult( intersections );
-
-    Point_2 leftEndpt = curve.source( );
-    Point_2 rightEndpt = curve.target( );
-
-    if ( leftEndpt.x( ) > rightEndpt.x( ) )
-    {
-      std::swap( leftEndpt, rightEndpt );
-    }
-
-    QPointF qendpt1 = this->convert( leftEndpt );
-    QPointF qendpt2 = this->convert( rightEndpt );
-
-    std::list< Point_2 > pointList;
-    for ( unsigned int i = 0; i < intersections.size( ); ++i )
-    {
-      CGAL::Object o = intersections[ i ];
-      std::pair< Intersection_point_2, Multiplicity > pair;
-      if ( CGAL::assign( pair, o ) )
-      {
-        Point_2 pt = pair.first;
-        pointList.push_back( pt );
-      }
-    }
-
-    bool includeLeftEndpoint = this->clippingRect.contains( qendpt1 );
-    bool includeRightEndpoint = this->clippingRect.contains( qendpt2 );
-    if ( includeLeftEndpoint )
-    {
-      pointList.push_front( leftEndpt );
-    }
-
-    if ( includeRightEndpoint )
-    {
-      pointList.push_back( rightEndpt );
-    }
-
-    Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
-    std::vector< X_monotone_curve_2 > clippings;
-    typename std::list< Point_2 >::iterator pointListItr = pointList.begin( );
-    for ( unsigned int i = 0; i < pointList.size( ); i += 2 )
-    {
-      Point_2 p1 = *pointListItr++;
-      Point_2 p2 = *pointListItr++;
-      X_monotone_curve_2 subcurve =
-        construct_x_monotone_subcurve_2( curve, p1, p2 );
-      clippings.push_back( subcurve );
-    }
-
-#if 0
-    // std::cout << "pointList size: " << pointList.size( ) << std::endl;
-    // if ( intersections.size( ) % 2 == 0 )
-    // {
-    //   // either both curve endpoints are in view or both are out
-    //     if ( this->clippingRect.contains( qendpt1 ) )
-    //     {
-    //         if ( this->clippingRect.contains( qendpt2 ) )
-    //         {
-    //             std::cout << "both endpoints are in view" << std::endl;
-    //         }
-    //     }
-    //     else if ( !this->clippingRect.contains( qendpt2 ) )
-    //     {
-    //         std::cout << "both endpoints are out of view" << std::endl;
-    //     }
-    // }
-    // else
-    // { // one curve endpoint is in view
-    //     if ( this->clippingRect.contains( qendpt1 ) )
-    //     {
-    //         std::cout << "left endpoint is in view" << std::endl;
-    //     }
-    //     else if ( this->clippingRect.contains( qendpt2 ) )
-    //     {
-    //         std::cout << "right endpoint is in view" << std::endl;
-    //     }
-    // }
-
-    std::vector< X_monotone_curve_2 > res;
-    res.push_back( curve );
-    return res;
-#endif
-    return clippings;
-  }
-
-  // keep only the intersection points ie. throw out overlapping curve segments
-  void filterIntersectionPoints( std::vector< CGAL::Object >& res )
-  {
-    std::vector< std::pair< Intersection_point_2, Multiplicity > > tmp;
-
-    // filter out the non-intersection point results
-    for ( unsigned int i = 0; i < res.size( ); ++i )
-    {
-      CGAL::Object obj = res[ i ];
-      std::pair< Intersection_point_2, Multiplicity > pair;
-      if ( CGAL::assign( pair, obj ) )
-      {
-        tmp.push_back( pair );
-      }
-    }
-    res.clear( );
-
-    // sort the intersection points by x-coord
-    Compare_intersection_point_result compare_intersection_point_result;
-    std::sort( tmp.begin( ), tmp.end( ), compare_intersection_point_result );
-
-    // box up the sorted elements
-    for ( unsigned int i = 0; i < tmp.size( ); ++i )
-    {
-      std::pair< Intersection_point_2, Multiplicity > pair = tmp[ i ];
-      CGAL::Object o = CGAL::make_object( pair );
-      res.push_back( o );
-    }
-  }
-
-  void printIntersectResult( const std::vector< CGAL::Object >& res )
-  {
-    for ( std::vector< CGAL::Object >::const_iterator it = res.begin( );
-          it != res.end( ); ++it )
-    {
-      CGAL::Object obj = *it;
-      std::pair< Intersection_point_2, Multiplicity > pair;
-      if ( CGAL::assign( pair, obj ) )
-      {
-        Point_2 pt = pair.first;
-        /* QPointF qpt = */ this->convert( pt );
-        // std::cout << "(" << pt.x( ) << " " << pt.y( ) < ")" << std::endl;
-      }
-    }
-  }
-#endif
-protected: // members
-  Traits traits;
-  //Intersect_2 intersect_2;
-  //Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
 };
 
 template < typename Kernel_ >
@@ -817,13 +608,6 @@ protected:
   void remapFacadePainter();
 
 };
-
-template class ArrangementPainterOstream<Seg_traits>;
-template class ArrangementPainterOstream<Pol_traits>;
-template class ArrangementPainterOstream<Conic_traits>;
-template class ArrangementPainterOstream<Lin_traits>;
-template class ArrangementPainterOstream<Arc_traits>;
-template class ArrangementPainterOstream<Alg_seg_traits>;
 
 } // namespace Qt
 } // namespace CGAL

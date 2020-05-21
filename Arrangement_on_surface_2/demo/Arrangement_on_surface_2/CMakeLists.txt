@@ -86,6 +86,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
                  DeleteCurveModeItemEditor.cpp
                  PointsGraphicsItem.cpp
                  VerticalRayGraphicsItem.cpp
+				 DeleteCurveCallback.cpp
                  ${EXPLICIT_INSTANTIATION_SRCS}
                  ${CGAL_Qt5_MOC_FILES}
                  ${arrangement_2_uis}

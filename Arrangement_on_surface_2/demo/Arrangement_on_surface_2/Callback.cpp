@@ -31,23 +31,27 @@ bool Callback::eventFilter( QObject* object, QEvent* event )
     QGraphicsSceneMouseEvent* mouseEvent =
       static_cast< QGraphicsSceneMouseEvent* >( event );
     this->mouseMoveEvent( mouseEvent );
+    return true;
   }
   else if ( event->type( ) == QEvent::GraphicsSceneMousePress )
   {
     QGraphicsSceneMouseEvent* mouseEvent =
       static_cast< QGraphicsSceneMouseEvent* >( event );
     this->mousePressEvent( mouseEvent );
+    return true;
   }
   else if ( event->type( ) == QEvent::GraphicsSceneMouseRelease )
   {
     QGraphicsSceneMouseEvent* mouseEvent =
       static_cast< QGraphicsSceneMouseEvent* >( event );
     this->mouseReleaseEvent( mouseEvent );
+    return true;
   }
   else if ( event->type( ) == QEvent::KeyPress )
   {
     QKeyEvent* keyEvent = static_cast< QKeyEvent* >( event );
     this->keyPressEvent( keyEvent );
+    return true;
   }
   return QObject::eventFilter( object, event );
 }

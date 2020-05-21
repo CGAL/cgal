@@ -1,8 +1,8 @@
-
-// #ifndef CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_CPP
-// #define CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_CPP
-
 #include "ArrangementPainterOstream.h"
+
+#include <CGAL/Kernel/global_functions.h>
+#include <CGAL/Qt/Converter.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 
 namespace CGAL {
 namespace Qt {
@@ -524,7 +524,7 @@ static bool lies_on_border(const ArrangementPainterOstream<Traits> *apo,
   QGraphicsView* view = apo->getScene()->views().first();
   qreal width = view->width();
   qreal height = view->height();
-  float tol = 3;
+  const float tol = 3;
   return std::abs(point.x() - width) < tol || point.x() < tol ||
          std::abs(point.y() - height) < tol || point.y() < tol;
 }
@@ -613,7 +613,13 @@ setupFacade( )
   Facade::setup(bbox, view->width(), view->height());
 }
 
+
+template class ArrangementPainterOstream<Seg_traits>;
+template class ArrangementPainterOstream<Pol_traits>;
+template class ArrangementPainterOstream<Conic_traits>;
+template class ArrangementPainterOstream<Lin_traits>;
+template class ArrangementPainterOstream<Arc_traits>;
+template class ArrangementPainterOstream<Alg_seg_traits>;
+
 } // namespace Qt
 } // namespace CGAL
-
-// #endif // CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_CPP
