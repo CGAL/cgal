@@ -718,7 +718,7 @@ void Concurrent_compact_container<T, Allocator>::clear()
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
-        m_alloc.destroy(pp);
+        std::allocator_traits<allocator_type>::destroy(m_alloc, pp);
     }
     m_alloc.deallocate(p, s);
   }
