@@ -428,12 +428,6 @@ bool write_VTP(std::ostream& os,
   return true;
 }
 
-template<typename FaceGraph>
-bool write_VTP(std::ostream& os, const FaceGraph& g)
-{
-  write_VTP(os, g, CGAL::parameters::all_default());
-}
-
 
 /*! \ingroup PkgBGLIOFct
  *

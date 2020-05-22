@@ -14,26 +14,29 @@
 
 #include <CGAL/IO/3MF.h>
 
+#include <boost/property_map/property_map.hpp>
+
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace CGAL {
 
 /*!
-  \ingroup PkgBGLIOFct
-
+ * \ingroup PkgBGLIOFct
+ *
  * \brief writes the triangle meshes contained in `gs` into the 3mf file `file_name`.
  *
  * \tparam FaceGraphRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is
- * a model of the concepts `FaceListGraph` and `HalfedgeListGraph`
- * that has only triangle faces.
+ *                        and `BackInsertionSequence` whose `value type` is
+ *                        a model of the concepts `FaceListGraph` and `HalfedgeListGraph`
+ *                        that has only triangle faces.
  *
  * \param file_name the name of the 3mf file to write.
- * \param gs a `FaceGraphRange` that contains the meshes
- *  to write. An internal property map for `CGAL::vertex_point_t`
- * must be available for each mesh.
- * \param names will contains the name of each mesh in `file_name`.
+ * \param gs a container of triangle meshes to write. An internal property map for `CGAL::vertex_point_t`
+ *           must be available for each mesh.
+ * \param names a range of `std::string` associating a name to each mesh to be written out, which
+ *              will appear in the output.
  *
  * \return `true` if the writing is successful, `false` otherwise.
  */
