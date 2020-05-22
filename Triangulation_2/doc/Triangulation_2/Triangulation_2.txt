@@ -152,6 +152,17 @@ Therefore, each edge of the triangulation
 is incident to exactly two faces
 and the set of faces of a triangulation is topologically
 equivalent to a two-dimensional sphere.
+
+Note that
+the *infinite vertex* has no significant
+coordinates and that no geometric predicate can be applied on it
+nor on an infinite face.
+
+\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.png}
+Infinite vertex and infinite faces
+\cgalFigureEnd
+
+
 This extends to lower dimensional triangulations
 arising in degenerate cases or when the triangulations
 as less than three vertices.
@@ -163,14 +174,10 @@ A zero dimensional triangulation, whose domain is reduced to a
 single point, is represented by two vertices that is
 topologically equivalent to a \f$ 0\f$-sphere.
 
-Note that
-the *infinite vertex* has no significant
-coordinates and that no geometric predicate can be applied on it
-nor on an infinite face.
-
-\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.png}
-Infinite vertex and infinite faces
+\cgalFigureBegin{Triangulation_2D_Fig_low_dimensional,lowdimensional.svg}
+Triangulations with zero, one, and two finite vertices.
 \cgalFigureEnd
+
 
 \subsection Triangulation_2ARepresentationBasedonFaces A Representation Based on Faces and Vertices
 
@@ -1355,4 +1362,3 @@ Julia Fl&ouml;totto, Monique Teillaud and Mariette Yvinec.
 
 */
 } /* namespace CGAL */
-
