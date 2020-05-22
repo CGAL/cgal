@@ -643,11 +643,12 @@ computed and stored as colors in a PLY file:
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
-Function `remove_outliers()` deletes a user-specified fraction
-of outliers from an input point set. More specifically, it sorts the
-input points in increasing order of average squared distances to their
-nearest neighbors and deletes the points with largest value. The user
-can either specify a fixed number of nearest neighbors or a fixed
+Function `remove_outliers()` deletes a user-specified fraction of
+outliers from an input point set. More specifically, it partitions the
+input points with respect to the average squared distances to their
+nearest neighbors and deletes the points with largest value, either
+partitionning with a threshold or removing a fixed percentage. The
+user can either specify a fixed number of nearest neighbors or a fixed
 spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_outlier_removal Example
