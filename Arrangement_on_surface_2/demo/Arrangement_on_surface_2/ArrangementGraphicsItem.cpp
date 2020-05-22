@@ -21,11 +21,9 @@ boundingRect( ) const
 {
   QRectF rect = this->convert( this->bb );
   if (!rect.isValid() || std::isinf(rect.width()) || std::isinf(rect.height()))
-  {
-    std::cerr << "ArrangementGraphicsItem.h:boundingRect invalid bounding box!\n";
-    rect = this->viewportRect();
-  }
-  return rect;
+    return this->viewportRect();
+  else
+    return rect;
 }
 
 template < typename Arr_, typename ArrTraits >
