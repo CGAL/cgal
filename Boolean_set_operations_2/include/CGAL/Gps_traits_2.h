@@ -35,6 +35,8 @@ public:
 
   typedef typename Base::Point_2                        Point_2;
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
+  typedef typename Base::Multiplicity                   Multiplicity;
+
   //Polygon_2 type is required by GeneralPolygonSetTraits Concept
   typedef General_polygon_t                             Polygon_2;
   //Polygon_2 is a model of the GeneralPolygon2 concept

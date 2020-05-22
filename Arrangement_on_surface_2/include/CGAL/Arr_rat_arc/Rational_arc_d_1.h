@@ -1848,8 +1848,8 @@ public:
 
   typedef typename Base::Cache                          Cache;
 
-  typedef std::pair<Algebraic_point_2, Multiplicity>    Intersection_point_2;
-  //typedef std::pair<Algebraic_point_2, unsigned int>  Intersection_point_2;
+  typedef std::pair<Algebraic_point_2, Multiplicity>    Intersection_point;
+  //typedef std::pair<Algebraic_point_2, unsigned int>  Intersection_point;
 
 
   /// \name Constrcution methods.
@@ -2029,8 +2029,7 @@ public:
   /// \name Constructions of points and curves.
   //@{
 
-  /*!
-   * Compute the intersections with the given arc.
+  /*! Compute the intersections with the given arc.
    * \param arc The given intersecting arc.
    * \param oi The output iterator.
    * \return The past-the-end iterator.
@@ -2039,33 +2038,31 @@ public:
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            const Cache& cache) const
   {
+    typedef boost::variant<Intersection_point, Self>    Intersection_result;
+
     CGAL_precondition(this->is_valid() && this->is_continuous());
     CGAL_precondition(arc.is_valid() && arc.is_continuous());
 
-    if (this->equals(arc))
-    {
-      Self      overlap_arc(*this);
-      *oi++ = make_object(overlap_arc);
-      return (oi);
+    if (this->equals(arc)) {
+      Self overlap_arc(*this);
+      *oi++ = Intersection_result(overlap_arc);
+      return oi;
     }
 
-    if (this->_has_same_base(arc))
-    {
+    if (this->_has_same_base(arc)) {
       // Get the left and right endpoints of (*this) and their information
       // bits.
-      const Algebraic_point_2&   left1 = (this->is_directed_right() ?
-                                          this->_ps : this->_pt);
-      const Algebraic_point_2&   right1 = (this->is_directed_right() ?
-                                           this->_pt : this->_ps);
-      int      info_left1, info_right1;
+      const Algebraic_point_2& left1 =
+        (this->is_directed_right() ? this->_ps : this->_pt);
+      const Algebraic_point_2& right1 =
+        (this->is_directed_right() ? this->_pt : this->_ps);
+      int info_left1, info_right1;
 
-      if (this->is_directed_right())
-      {
+      if (this->is_directed_right()) {
         info_left1 = (this->_info & this->SRC_INFO_BITS);
         info_right1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
       }
-      else
-      {
+      else {
         info_right1 = (this->_info & this->SRC_INFO_BITS);
         info_left1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
       }
@@ -2076,110 +2073,93 @@ public:
         (arc.is_directed_right() ? arc._ps : arc._pt);
       const Algebraic_point_2& right2 =
         (arc.is_directed_right() ? arc._pt : arc._ps);
-      int      info_left2, info_right2;
+      int info_left2, info_right2;
 
-      if (arc.is_directed_right())
-      {
+      if (arc.is_directed_right()) {
         info_left2 = (arc._info & this->SRC_INFO_BITS);
         info_right2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
       }
-      else
-      {
+      else {
         info_right2 = (arc._info & this->SRC_INFO_BITS);
         info_left2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
       }
 
       // Locate the left curve-end with larger x-coordinate.
-      bool                 at_minus_infinity = false;
-      Arr_parameter_space  inf_l1 = this->left_parameter_space_in_x();
-      Arr_parameter_space  inf_l2 = arc.left_parameter_space_in_x();
-      Algebraic_point_2    p_left;
-      int                  info_left;
+      bool at_minus_infinity = false;
+      Arr_parameter_space inf_l1 = this->left_parameter_space_in_x();
+      Arr_parameter_space inf_l2 = arc.left_parameter_space_in_x();
+      Algebraic_point_2 p_left;
+      int info_left;
 
-      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR)
-      {
+      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR) {
         // Let p_left be the rightmost of the two left endpoints.
-        if (left1.x() > left2.x())
-        {
+        if (left1.x() > left2.x()) {
           p_left = left1;
           info_left = info_left1;
         }
-        else
-        {
+        else {
           p_left = left2;
           info_left = info_left2;
         }
       }
-      else if (inf_l1 == ARR_INTERIOR)
-      {
+      else if (inf_l1 == ARR_INTERIOR) {
         // Let p_left be the left endpoint of (*this).
         p_left = left1;
         info_left = info_left1;
       }
-      else if (inf_l2 == ARR_INTERIOR)
-      {
+      else if (inf_l2 == ARR_INTERIOR) {
         // Let p_left be the left endpoint of the other arc.
         p_left = left2;
         info_left = info_left2;
       }
-      else
-      {
+      else {
         // Both arcs are defined at x = -oo.
         at_minus_infinity = true;
         info_left = info_left1;
       }
 
       // Locate the right curve-end with smaller x-coordinate.
-      bool                 at_plus_infinity = false;
-      Arr_parameter_space  inf_r1 = this->right_parameter_space_in_x();
-      Arr_parameter_space  inf_r2 = arc.right_parameter_space_in_x();
-      Algebraic_point_2    p_right;
-      int                  info_right;
+      bool at_plus_infinity = false;
+      Arr_parameter_space inf_r1 = this->right_parameter_space_in_x();
+      Arr_parameter_space inf_r2 = arc.right_parameter_space_in_x();
+      Algebraic_point_2 p_right;
+      int info_right;
 
-      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
-      {
+      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR) {
         // Let p_right be the rightmost of the two right endpoints.
-        if (right1.x() < right2.x())
-        {
+        if (right1.x() < right2.x()) {
           p_right = right1;
           info_right = info_right1;
         }
-        else
-        {
+        else {
           p_right = right2;
           info_right = info_right2;
         }
       }
-      else if (inf_r1 == ARR_INTERIOR)
-      {
+      else if (inf_r1 == ARR_INTERIOR) {
         // Let p_right be the right endpoint of (*this).
         p_right = right1;
         info_right = info_right1;
       }
-      else if (inf_r2 == ARR_INTERIOR)
-      {
+      else if (inf_r2 == ARR_INTERIOR) {
         // Let p_right be the right endpoint of the other arc.
         p_right = right2;
         info_right = info_right2;
       }
-      else
-      {
+      else {
         // Both arcs are defined at x = +oo.
         at_plus_infinity = true;
         info_right = info_right2;
       }
 
       // Check the case of two bounded (in x) ends.
-      if (! at_minus_infinity && ! at_plus_infinity)
-      {
+      if (! at_minus_infinity && ! at_plus_infinity) {
         Comparison_result res = CGAL::compare(p_left.x(), p_right.x());
-        if (res == LARGER)
-        {
-          // The x-range of the overlap is empty, so there is no overlap.
-          return (oi);
-        }
-        else if (res == EQUAL)
-        {
+
+        // The x-range of the overlap is empty, so there is no overlap.
+        if (res == LARGER) return oi;
+
+        if (res == EQUAL) {
           // We have a single overlapping point. Just make sure this point
           // is not at y = -/+ oo.
           if (info_left &&
@@ -2187,19 +2167,18 @@ public:
               info_right &&
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
           {
-            Intersection_point_2  ip(p_left, 0);
-
-            *oi++ = make_object(ip);
+            Intersection_point ip(p_left, 0);
+            *oi++ = Intersection_result(ip);
           }
 
-          return (oi);
+          return oi;
         }
       }
 
       // Create the overlapping portion of the rational arc by properly setting
       // the source (left) and target (right) endpoints and their information
       // bits.
-      Self      overlap_arc(*this);
+      Self overlap_arc(*this);
 
       overlap_arc._ps = p_left;
       overlap_arc._pt = p_right;
@@ -2208,8 +2187,8 @@ public:
                            this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS |
                            this->IS_VALID);
 
-      *oi++ = make_object(overlap_arc);
-      return (oi);
+      *oi++ = Intersection_result(overlap_arc);
+      return oi;
     }
 
     // We wish to find the intersection points between:
@@ -2237,15 +2216,14 @@ public:
       if (this->_is_in_true_x_range(*x_iter) && arc._is_in_true_x_range(*x_iter))
       {
         // Compute the intersection point and obtain its multiplicity.
-        Algebraic_point_2   p(this->_f, *x_iter);
+        Algebraic_point_2 p(this->_f, *x_iter);
         // Output the intersection point:
-        Intersection_point_2  ip(p, *m_iter);
-
-        *oi++ = make_object(ip);
+        Intersection_point ip(p, *m_iter);
+        *oi++ = Intersection_result(ip);
       }
     }
 
-    return (oi);
+    return oi;
   }
 
   /*!
@@ -2255,7 +2233,8 @@ public:
    * \param c2 Output: The first resulting arc, lying to the right of p.
    * \pre p lies in the interior of the arc (not one of its endpoints).
    */
-  void split(const Algebraic_point_2& p, Self& c1, Self& c2, const Cache& CGAL_assertion_code(cache)) const
+  void split(const Algebraic_point_2& p, Self& c1, Self& c2,
+             const Cache& CGAL_assertion_code(cache)) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
 
@@ -2598,4 +2577,3 @@ public:
 }       //namespace CGAL {
 
 #endif //CGAL_RATIONAL_ARC_D_1_H
-

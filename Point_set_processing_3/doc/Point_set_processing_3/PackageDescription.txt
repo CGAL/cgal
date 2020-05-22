@@ -59,6 +59,7 @@ format.
 - `CGAL::pointmatcher::compute_registration_transformation()`
 - `CGAL::pointmatcher::register_point_sets()`
 - `CGAL::remove_outliers()`
+- `CGAL::cluster_point_set()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
 - `CGAL::hierarchy_simplify_point_set()`

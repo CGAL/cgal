@@ -52,11 +52,11 @@ public:
   /// \name Type definitions for the intersection-point mapping.
   //@{
 
-  /*! \struct Intersection_point_2
+  /*! \struct Intersection_point
    * Representation of an intersection point (in both parameter and physical
    * spaces).
    */
-  struct Intersection_point_2
+  struct Intersection_point
   {
     Algebraic          s;      // The parameter for the first curve.
     Algebraic          t;      // The parameter for the second curve.
@@ -64,7 +64,7 @@ public:
     Algebraic          y;      // The y-coordinate.
 
     /*! Constructor. */
-    Intersection_point_2 (const Algebraic& _s, const Algebraic& _t,
+    Intersection_point (const Algebraic& _s, const Algebraic& _t,
                           const Algebraic& _x, const Algebraic& _y) :
       s(_s), t(_t),
       x(_x), y(_y)
@@ -73,7 +73,7 @@ public:
 
   typedef std::pair<Curve_id, Curve_id>              Curve_pair;
   typedef std::pair<Algebraic, Algebraic>            Parameter_pair;
-  typedef std::list<Intersection_point_2>            Intersection_list;
+  typedef std::list<Intersection_point>            Intersection_list;
   typedef
     typename Intersection_list::const_iterator       Intersection_iter;
 
@@ -378,7 +378,7 @@ _Bezier_cache<NtTraits>::get_intersections
             CGAL::compare (nt_traits.evaluate_at (polyY_1, *t_it),
                            y) == EQUAL)
         {
-          info.first.push_back (Intersection_point_2 (*s_it, *t_it,
+          info.first.push_back (Intersection_point (*s_it, *t_it,
                                                       x / denX, y / denY));
         }
       }
@@ -535,10 +535,8 @@ _Bezier_cache<NtTraits>::get_intersections
     CGAL_assertion(CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
                    CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER);
 
-    if (!swapt)
-      info.first.push_back (Intersection_point_2 (s, t,pit1->x, pit1->y));
-    else
-      info.first.push_back (Intersection_point_2 (t, s,pit1->x, pit1->y));
+    if (!swapt) info.first.push_back(Intersection_point(s, t,pit1->x, pit1->y));
+    else info.first.push_back(Intersection_point(t, s,pit1->x, pit1->y));
   }
 
   info.second = false;

@@ -1459,29 +1459,24 @@ public:
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
+      typedef unsigned int                              Multiplicity;
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+
         CERR("\nintersect; cv1: " << cv1
              << ";\n cv2:" << cv2 << "");
 
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
-        std::vector< Arc_2 > common_arcs;
-        if (cv1._trim_if_overlapped(cv2, std::back_inserter(common_arcs))) {
-            typename std::vector< Arc_2 >::const_iterator it;
-            for(it = common_arcs.begin(); it < common_arcs.end(); it++) {
-                *oi++ = CGAL::make_object(*it);
-            }
+        std::vector<Arc_2> arcs;
+        if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) {
+            for (const auto& item : arcs) *oi++ = Intersection_result(item);
             return oi;
         }
         // process non-ov erlapping case
-        typedef std::pair< Point_2, unsigned int > Point_and_mult;
-        typedef std::vector< Point_and_mult > Point_vector;
-        Point_vector vec;
-        typename Point_vector::const_iterator it;
+        std::vector<Intersection_point> vec;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-
-        for (it = vec.begin(); it != vec.end(); it++) {
-            *oi++ = CGAL::make_object(*it);
-        }
+        for (const auto& item : vec) *oi++ = Intersection_result(item);
         return oi;
     }
 

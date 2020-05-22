@@ -69,7 +69,11 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "normal_estimation.cpp" )
     CGAL_target_use_Eigen(normal_estimation)
 
+    create_single_source_cgal_program( "clustering_example.cpp" )
+    CGAL_target_use_Eigen(clustering_example)
+
     create_single_source_cgal_program( "edges_example.cpp" )
+    CGAL_target_use_Eigen(edges_example)
 
     # Executables that require libpointmatcher
     find_package(libpointmatcher QUIET)
@@ -101,8 +105,6 @@ if ( CGAL_FOUND )
       message(STATUS "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
     endif()
 
-    CGAL_target_use_Eigen(edges_example)
-
     create_single_source_cgal_program( "callback_example.cpp" )
     CGAL_target_use_Eigen(callback_example)
 
@@ -132,7 +134,8 @@ if ( CGAL_FOUND )
         normals_example
         jet_smoothing_example
         normal_estimation
-        callback_example)
+        callback_example
+        clustering_example)
       if(TARGET ${target})
         CGAL_target_use_TBB(${target})
       endif()

@@ -130,7 +130,7 @@ public:
   // constructors
   /*!
     \tparam Iterator an input iterator with `Id` as value type.
-    Constructs a primitive.
+    constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `get(vertex_point, graph)`.
   */
@@ -142,7 +142,7 @@ public:
   {}
 
   /*!
-    Constructs a primitive.
+    constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `get(vertex_point, graph)`.
   */

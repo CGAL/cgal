@@ -11,7 +11,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_3                                              Point_3;
 
-typedef std::vector<std::size_t>                                Polygon;
+typedef std::vector<std::size_t>                                CGAL_Polygon;
 typedef CGAL::Surface_mesh<Point_3>                             Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -20,7 +20,7 @@ int main(int, char**)
 {
   // First, construct a polygon soup with some problems
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_Polygon> polygons;
 
   points.push_back(Point_3(0,0,0));
   points.push_back(Point_3(1,0,0));
@@ -30,7 +30,7 @@ int main(int, char**)
   points.push_back(Point_3(0,1,0)); // duplicate point
   points.push_back(Point_3(0,-2,0)); // unused point
 
-  Polygon p;
+  CGAL_Polygon p;
   p.push_back(0); p.push_back(1); p.push_back(2);
   polygons.push_back(p);
 

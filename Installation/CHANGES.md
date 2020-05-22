@@ -3,6 +3,14 @@ Release History
 
 [Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 
+### 3D Fast Intersection and Distance Computation
+- The introduction of the usage of the search tree by default for all distance queries
+  in the 5.0 release was actually not lazy contrary to what was announced. The behavior of the
+  search tree is now the following: it will be used except if an explicit call to `do_not_accelerate_distance_queries()`
+  is made. The construction of the search tree (once insertion of primitives is done) will be triggered by the first
+  distance query or by an explicit call to `accelerate_distance_queries()`.
+- **Breaking change**: `accelerate_distance_queries()` and `do_not_accelerate_distance_queries()` are not longer `const` functions.
+
 ### Optimal Bounding Box (new package)
 - This package implements an optimization algorithm that aims to construct a close approximation
   of the *optimal bounding box* of a mesh or a point set, which is defined as the smallest
@@ -12,6 +20,10 @@ Release History
  - Add `CompareSignedDistanceToLine_2` in the 2D/3D Kernel concept to compare
    the signed distance of two points to a line, or the line passing through two given points.
    Corresponding functors in the model (`Compare_signed_distance_to_line_2`) are also added.
+
+### Point Set Processing
+ - Add a function `CGAL::cluster_point_set()` that segments a point
+   cloud into connected components based on a distance threshold.
 
 ### 2D Triangulations
  - Add function `split_subconstraint_graph_into_constraints()` to
@@ -23,10 +35,32 @@ Release History
  -   The long-deprecated function `CGAL::convex_hull_3_to_polyhedron_3()` has been removed.
      The function `CGAL::convex_hull_3_to_face_graph()` should be used instead.
 
+### dD Spatial Searching
+
+ - The kd-tree can now be built in parallel: `CGAL::Kd_tree::build()`
+   is given an optional template parameter `ConcurrencyTag` (default
+   value remains `CGAL::Sequential_tag` for backward compatibility).
+
 Release 5.0
 -----------
 
 Release date: June 2020
+
+### 2D Arrangement on Surface
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant` in all traits concepts and models.
+     As there is an implicit conversion from `boost::variant` to `CGAL::Object`, the
+     new code is backward compatible. However, it is recommended that all calls
+     to the intersection functions are fixed to use the new return type.
+
+### 2D Regularized Boolean Operations
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant` in the concept `ArrDirectionalTraits::Intersect_2` and
+     its models..
+
+### 2D Minkowski sums
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant` in the (internally used) model `Arr_labeled_traits_2`.
 
 ### Surface Mesh Topology (new package)
 

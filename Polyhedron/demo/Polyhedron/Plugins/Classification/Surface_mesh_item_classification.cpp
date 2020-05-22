@@ -151,7 +151,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       {
         for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
-          float v = std::max (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][fd]));
+          float v = (std::max) (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][fd]));
           m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
                                     (unsigned char)(ramp.g(v) * 255),
                                     (unsigned char)(ramp.b(v) * 255));
