@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -90,7 +90,7 @@ using boost::face_external_index;
 
 namespace CGAL {
 namespace internal {
-  
+
   template<typename Polyhedron, typename Handle>
 struct Index_accessor
     : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >

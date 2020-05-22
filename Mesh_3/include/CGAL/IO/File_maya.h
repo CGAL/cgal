@@ -27,8 +27,8 @@
 namespace CGAL {
 template <class C3T3>
 void
-output_to_maya(std::ostream& os, 
-               const C3T3& c3t3, 
+output_to_maya(std::ostream& os,
+               const C3T3& c3t3,
                bool surfaceOnly = true)
 {
   typedef typename C3T3::Triangulation Tr;
@@ -44,7 +44,7 @@ output_to_maya(std::ostream& os,
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to maya:\n";
 #endif
-  
+
   const Tr& tr = c3t3.triangulation();
 
   //-------------------------------------------------------
@@ -75,13 +75,13 @@ output_to_maya(std::ostream& os,
   os << "  setAttr \".cuvs\" -type \"string\" \"map1\";" << std::endl;
   os << "  setAttr \".dcol\" yes;" << std::endl;
   os << "  setAttr \".dcc\" -type \"string\" \"Ambient+Diffuse\";" << std::endl;
-  
+
   os << "  connectAttr \"" << name << "Shape.iog\" \":initialShadingGroup.dsm\" -na;\n\n";
-    
+
   //-------------------------------------------------------
   // Colors
   //------------------------------------------------------
-  
+
   /*os << "  setAttr \".ccls\" -type \"string\" \"colorSet\";\n";
   os << "  setAttr \".clst[0].clsn\" -type \"string\" \"colorSet\";\n";
   os << "  setAttr \".clst[0].rprt\" 3;\n";
@@ -90,11 +90,11 @@ output_to_maya(std::ostream& os,
   os << "    100 250 50" << std::endl;
   os << "    0 200 200" << std::endl;
   os << "  ;\n";*/
-  
+
   //-------------------------------------------------------
   // Vertices
   //------------------------------------------------------
-  
+
   boost::unordered_map<Vertex_handle, int, Hash_fct> V;
   std::stringstream vertices_sstr;
   int num_vertices = 0;
@@ -110,7 +110,7 @@ output_to_maya(std::ostream& os,
       vertices_sstr << "    " << CGAL::to_double(p.x()) << " " << CGAL::to_double(p.y()) << " " << CGAL::to_double(p.z()) << std::endl;
     }
   }
-    
+
   os << "  setAttr -s " << num_vertices << " \".vt[0:" << num_vertices-1 << "]\"" << std::endl;
   os << vertices_sstr.str();
   os << ";\n";
@@ -134,7 +134,7 @@ output_to_maya(std::ostream& os,
   //-------------------------------------------------------
 
   typename C3T3::size_type number_of_triangles = c3t3.number_of_facets_in_complex();
-  
+
   std::stringstream facets_sstr;
   //std::stringstream normals_sstr;
 
@@ -147,7 +147,7 @@ output_to_maya(std::ostream& os,
   // Surface only
   if (surfaceOnly)
   {
-    facets_sstr <<  "  setAttr -s " << number_of_triangles 
+    facets_sstr <<  "  setAttr -s " << number_of_triangles
       << " \".fc[0:" << number_of_triangles-1 << "]\"  -type \"polyFaces\" \n";
     int c = 0;
     for( Facet_iterator fit = c3t3.facets_in_complex_begin();
@@ -163,9 +163,9 @@ output_to_maya(std::ostream& os,
         indices[j] = V[vh];
         //points[j] = tr.point(fit->first, i);
       }
-    
+
       // Reverse triangle orientation?
-      bool reverse_triangle = 
+      bool reverse_triangle =
            (fit->second % 2 == 0 && !c3t3.is_in_complex(fit->first))
         || (fit->second % 2 != 0 && c3t3.is_in_complex(fit->first));
       if (reverse_triangle)
@@ -194,7 +194,7 @@ output_to_maya(std::ostream& os,
         // ith edge of triangle
         facets_sstr << pos << " ";
       }
-    
+
       // 1 triangles
       facets_sstr << std::endl;
       // Colors
@@ -204,7 +204,7 @@ output_to_maya(std::ostream& os,
   // Tetrahedra = 4 facets for each
   else
   {
-    facets_sstr <<  "  setAttr -s " << 4*c3t3.number_of_cells_in_complex() 
+    facets_sstr <<  "  setAttr -s " << 4*c3t3.number_of_cells_in_complex()
       << " \".fc[0:" << 4*c3t3.number_of_cells_in_complex()-1 << "]\"  -type \"polyFaces\" \n";
     int c = 0;
     for( Cell_iterator cit = c3t3.cells_in_complex_begin();
@@ -222,7 +222,7 @@ output_to_maya(std::ostream& os,
           indices[j] = V[vh];
           //points[j] = tr.point(cit, i);
         }
-    
+
         // Reverse triangle orientation?
         bool reverse_triangle = (facet_i % 2 != 0 && c3t3.is_in_complex(cit, facet_i));
         if (reverse_triangle)
@@ -251,7 +251,7 @@ output_to_maya(std::ostream& os,
           // ith edge of triangle
           facets_sstr << pos << " ";
         }
-    
+
         // 1 triangles
         facets_sstr << std::endl;
         // Colors
@@ -261,30 +261,30 @@ output_to_maya(std::ostream& os,
   }
   facets_sstr << ";\n\n";
   //normals_sstr << ";\n\n";
-  
+
   //-------------------------------------------------------
   // Edges
   //-------------------------------------------------------
-  os << "  setAttr -s " << edges.size() << " \".ed[0:" 
+  os << "  setAttr -s " << edges.size() << " \".ed[0:"
      << edges.size() - 1 << "]\"" << std::endl;
 
   for (EdgeList::const_iterator it = edges.begin(), it_end = edges.end() ; it != it_end ; ++it)
     os << "    " << it->first << " " << it->second << " " << 0 << std::endl;
 
   os << ";\n";
-  
+
   //-------------------------------------------------------
   // Normals
   //-------------------------------------------------------
-  
+
   //os << normals_sstr.str();
 
   //-------------------------------------------------------
   // Facets
   //-------------------------------------------------------
-  
+
   os << facets_sstr.str();
-  
+
   //-------------------------------------------------------
   // Tetrahedra
   //-------------------------------------------------------

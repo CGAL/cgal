@@ -6,10 +6,10 @@
 
 #ifdef CGAL_USE_SCIP  // defined (or not) by CMake scripts, do not define by hand
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
-typedef CGAL::SCIP_mixed_integer_program_traits<double>			MIP_Solver;
+typedef CGAL::SCIP_mixed_integer_program_traits<double>                        MIP_Solver;
 #elif defined(CGAL_USE_GLPK)  // defined (or not) by CMake scripts, do not define by hand
 #include <CGAL/GLPK_mixed_integer_program_traits.h>
-typedef CGAL::GLPK_mixed_integer_program_traits<double>			MIP_Solver;
+typedef CGAL::GLPK_mixed_integer_program_traits<double>                        MIP_Solver;
 #endif
 
 
@@ -20,17 +20,17 @@ typedef CGAL::GLPK_mixed_integer_program_traits<double>			MIP_Solver;
 #include <fstream>
 
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel		Kernel;
-typedef Kernel::Point_3											Point;
-typedef Kernel::Vector_3										Vector;
-typedef	CGAL::Polygonal_surface_reconstruction<Kernel>			Polygonal_surface_reconstruction;
-typedef CGAL::Surface_mesh<Point>								Surface_mesh;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel                Kernel;
+typedef Kernel::Point_3                                                                                        Point;
+typedef Kernel::Vector_3                                                                                Vector;
+typedef        CGAL::Polygonal_surface_reconstruction<Kernel>                        Polygonal_surface_reconstruction;
+typedef CGAL::Surface_mesh<Point>                                                                Surface_mesh;
 
 // Point with normal, and plane index
-typedef boost::tuple<Point, Vector, int>						PNI;
-typedef CGAL::Nth_of_tuple_property_map<0, PNI>					Point_map;
-typedef CGAL::Nth_of_tuple_property_map<1, PNI>					Normal_map;
-typedef CGAL::Nth_of_tuple_property_map<2, PNI>					Plane_index_map;
+typedef boost::tuple<Point, Vector, int>                                                PNI;
+typedef CGAL::Nth_of_tuple_property_map<0, PNI>                                        Point_map;
+typedef CGAL::Nth_of_tuple_property_map<1, PNI>                                        Normal_map;
+typedef CGAL::Nth_of_tuple_property_map<2, PNI>                                        Plane_index_map;
 
 /*
 * The following example shows the reconstruction using user-provided

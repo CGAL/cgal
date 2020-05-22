@@ -60,7 +60,7 @@ namespace CGAL {
 ///
 /// @return `true`, if reading succeeded, `false` otherwise
 ///
-#endif 
+#endif
 template <typename K>
 bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename)
 {
@@ -97,7 +97,7 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename)
 ///
 #endif
 template <typename K>
-bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename) 
+bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
 {
   // extract file extension
   std::string::size_type dot(filename.rfind("."));

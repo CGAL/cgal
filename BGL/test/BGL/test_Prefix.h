@@ -174,7 +174,7 @@ bool read_a_mesh(Polyhedron& p, const std::string& str)
 }
 
 template <typename T>
-std::vector<T> t_data() 
+std::vector<T> t_data()
 {
   std::vector<T> vs;
   for(unsigned int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
@@ -258,7 +258,7 @@ struct Surface_fixture_1 {
     f1 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
     CGAL::Halfedge_around_face_iterator<Graph> hafib, hafie;
-    for(boost::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib) 
+    for(boost::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib)
     {
       if(! CGAL::is_border(opposite(*hafib, m), m))
         f2 = face(opposite(*hafib, m), m);
@@ -408,7 +408,7 @@ struct Surface_fixture_4 {
             h2 = *hb;
             ++found;
           }
-        } 
+        }
       }
     }
     assert(found == 2);
@@ -442,7 +442,7 @@ struct Surface_fixture_5 {
         } else if(get(pm, target(*hb,m)) == Point_3(2,-1,0)){
           h2 = *hb;
           found++;
-        } 
+        }
       }
     }
     assert(found == 2);
@@ -461,9 +461,9 @@ struct Surface_fixture_6 {
     assert(CGAL::is_valid_polygon_mesh(m));
 
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
-    
+
     h1 = halfedge(*faces(m).first, m);
-    
+
     h2 = next(next(h1,m),m);
   }
 
@@ -480,7 +480,7 @@ struct Surface_fixture_7 {
     assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
-    h = *(halfedges(m).first);    
+    h = *(halfedges(m).first);
   }
 
   Graph m;
@@ -512,9 +512,9 @@ struct Surface_fixture_8 {
                 get(pm, target(*hb,m)) == Point_3(0,0,0)){
         h3 = *hb;
         found++;
-      } 
+      }
     }
-    
+
     assert(found == 3);
   }
 

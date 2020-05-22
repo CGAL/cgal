@@ -30,9 +30,9 @@ class Polyhedron_demo_ply_plugin :
 
 public:
   bool isDefaultLoader(const CGAL::Three::Scene_item *item) const override
-  { 
-    if(qobject_cast<const Scene_points_with_normal_item*>(item)) 
-      return true; 
+  {
+    if(qobject_cast<const Scene_points_with_normal_item*>(item))
+      return true;
     return false;
   }
   QString name() const override{ return "ply_plugin"; }
@@ -66,7 +66,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     ok = false;
     return QList<Scene_item*>();
   }
-  
+
   // Test if input is mesh or point set
   bool input_is_mesh = false;
   std::string line;
@@ -101,7 +101,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     // First try mesh
     SMesh *surface_mesh = new SMesh();
     std::string comments;
-    
+
     if (CGAL::read_PLY(in, *surface_mesh, comments))
     {
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
@@ -191,13 +191,13 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 
   if (!ok)
     return false;
-  
+
   std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
   if (choice == tr("Binary"))
     CGAL::set_binary_mode(out);
   else
     out.precision (std::numeric_limits<double>::digits10 + 2);
-  
+
   // This plugin supports point sets
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);
@@ -233,7 +233,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
       items.pop_front();
     return res;
   }
-  
+
   // This plugin supports textured surface meshes
   const Scene_textured_surface_mesh_item* stm_item =
     qobject_cast<const Scene_textured_surface_mesh_item*>(item);
