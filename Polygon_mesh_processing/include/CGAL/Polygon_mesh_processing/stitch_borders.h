@@ -1071,6 +1071,9 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  if(boundary_cycle_representatives.size() == 0)
+    return 0;
+
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type  VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
