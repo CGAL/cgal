@@ -75,6 +75,7 @@ void test_stitch_boundary_cycles()
 {
   test_stitch_boundary_cycles<Mesh>("data_stitching/boundary_cycle.off", 4);
   test_stitch_boundary_cycles<Mesh>("data_stitching/boundary_cycle_2.off", 2);
+  test_stitch_boundary_cycles<Mesh>("data_stitching/complex_hole.off", 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,16 +156,19 @@ void test_stitch_borders(const char* fname,
   assert(is_valid_polygon_mesh(mesh));
 
   // Just to test the API
-  PMP::stitch_borders(std::deque<halfedge_descriptor>(), Mesh()); // @fix ambiguous calls
-  PMP::stitch_borders(Mesh(), params::apply_per_connected_component(true));
-  PMP::stitch_borders(Mesh());
+  Mesh dummy_mesh;
+  PMP::stitch_borders(std::deque<halfedge_descriptor>(), dummy_mesh);
+  PMP::stitch_borders(dummy_mesh, params::apply_per_connected_component(true));
+  PMP::stitch_borders(dummy_mesh);
 }
 
 template <typename Mesh>
 void test_stitch_borders()
 {
+  test_stitch_borders<Mesh>("data_stitching/complex_hole.off", 3, false, {}, {83});
   test_stitch_borders<Mesh>("data_stitching/pinched.off", 2, false, {130, 94});
   test_stitch_borders<Mesh>("data_stitching/pinched.off", 2, false, {130, 94}, {94});
+  test_stitch_borders<Mesh>("data_stitching/pinched.off", 0, false, {}, {140}); // outer border, nothing to stitch
   test_stitch_borders<Mesh>("data_stitching/full_border.off", 4);
   test_stitch_borders<Mesh>("data_stitching/full_border_quads.off", 4);
   test_stitch_borders<Mesh>("data_stitching/half_border.off", 2, false, {23, 15});
