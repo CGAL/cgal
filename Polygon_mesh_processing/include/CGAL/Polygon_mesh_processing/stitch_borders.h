@@ -123,10 +123,11 @@ private:
   const PolygonMesh& pmesh;
 };
 
-// The following structs are visitors used to maintain a set of cycle representatives
-// when stitching a subset of the cycles
+// The following structs are visitors used to maintain a set of cycle representatives (i.e. halfedges)
+// when stitching only a subset of the boundary cycles of the mesh
 //
-// This is for the global version
+// This is for the (default) version, where all cycles are being considered hence
+// there is nothing to maintain
 template <typename PolygonMesh>
 struct Dummy_cycle_rep_maintainer
 {
@@ -158,7 +159,7 @@ private:
   const PolygonMesh& m_pmesh;
 };
 
-// This is the local version
+// This is the version used when a specific (sub)range of cycles are being used
 template <typename PolygonMesh>
 struct Boundary_cycle_rep_maintainer
 {
@@ -183,7 +184,7 @@ public:
       for(halfedge_descriptor h : CGAL::halfedges_around_face(bh, m_pmesh))
         boundaries.push_back(h);
 
-    // There should be only one rep per cycle
+    // There should be only one representative per cycle
     CGAL_assertion(std::set<halfedge_descriptor>(boundaries.begin(), boundaries.end()).size() == boundaries.size());
 
     return boundaries;
@@ -195,8 +196,12 @@ public:
   void remove_representative(const halfedge_descriptor h) { m_cycle_reps.erase(h); }
   void clear_representatives( ) { m_cycle_reps.clear(); }
 
-  // Pick a single cycle representative (i.e. halfedge) for the cycles that appear in 'cycle_halfedges'
-  // The representative must not appear in 'filtered_stitchable_halfedges'
+  // Pick a single cycle representative for each cycle that appears in 'cycle_halfedges'
+  // The representative must not appear in 'filtered_stitchable_halfedges' since this contains
+  // halfedges that will not be border (or even exist) after stitching
+  //
+  // Stitching matching pairs on the same boundary can split a single hole into multiple holes,
+  // each with their representative
   template <typename CycleHalfedgeRange,
             typename FilteredHalfedgePairsRange,
             typename VPM>
@@ -241,14 +246,14 @@ public:
       halfedge_descriptor walker_h = h;
       for(;;)
       {
-        std::cout << "walker at: " << edge(walker_h, m_pmesh) << std::endl;
         put(m_candidate_halfedges, walker_h, false);
 
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
+        std::cout << "walker at : " << edge(walker_h, m_pmesh) << std::endl;
         ++border_length;
 #endif
 
-        // everything below is just to find the next halfedge of the cycle post-stitching (things
+        // Everything below is just to find the next halfedge of the cycle post-stitching (things
         // aren't stitched yet because we need to keep valid halfedges)
         vertex_descriptor curr_v = target(walker_h, m_pmesh);
         Point_ref curr_p = get(vpm, curr_v);
@@ -260,15 +265,19 @@ public:
           break;
 
         bool ignore_till_back_at_curr_p = !get(m_candidate_halfedges, walker_h);
-        while(ignore_till_back_at_curr_p) // can have multiple loops at curr_v @todo test that
+        while(ignore_till_back_at_curr_p) // can have multiple loops at curr_v
         {
+#ifdef CGAL_PMP_STITCHING_DEBUG_PP
           std::cout << "Ignoring a cycle starting at " << curr_v << " pos: " << curr_p << std::endl;
+#endif
 
           // walk the cycle to be ignored
           do
           {
+#ifdef CGAL_PMP_STITCHING_DEBUG_PP
             std::cout << "Ignoring " << edge(walker_h, m_pmesh)
                       << "(" << source(walker_h, m_pmesh) << " " << target(walker_h, m_pmesh) << ")" << std::endl;
+#endif
             CGAL_assertion(walker_h != h);
             walker_h = next(walker_h, m_pmesh);
           }
@@ -964,7 +973,6 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
   // If this API is called, we are not from stitch_borders() (otherwise there would be a maintainer)
   // so there is only one pass and we don't carea bout maintaining the cycle subset
   internal::Dummy_cycle_rep_maintainer<PolygonMesh> mv(pmesh);
-
   return stitch_boundary_cycles(boundary_cycle_representatives, pmesh, mv, np);
 }
 
@@ -1021,22 +1029,23 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 
 /*!
 * \ingroup PMP_repairing_grp
+*
 * Stitches together border halfedges in a polygon mesh.
 * The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
 * For each pair `p` in this vector, `p.second` and its opposite will be removed
 * from `pmesh`.
 *
-* @tparam PolygonMesh a model of `MutableFaceGraph`
-* @tparam HalfedgePairsRange a range of
+* \tparam PolygonMesh a model of `MutableFaceGraph`
+* \tparam HalfedgePairsRange a range of
 *         `std::pair<boost::graph_traits<PolygonMesh>::%halfedge_descriptor,
 *         boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`,
 *         model of `Range`.
 *         Its iterator type is `InputIterator`.
 *
-* @param pmesh the polygon mesh to be modified by stitching
-* @param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
+* \param pmesh the polygon mesh to be modified by stitching
+* \param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
 *
-* @return the number of pairs of halfedges that were stitched.
+* \return the number of pairs of halfedges that were stitched.
 *
 */
 template <typename PolygonMesh,
@@ -1075,7 +1084,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
   bool per_cc = choose_parameter(get_parameter(np, internal_np::apply_per_connected_component), false);
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
-  std::cout << "------- Stitch cycles... (" << boundary_cycle_representatives.size() << " cycles)" << std::endl;
+  std::cout << "------- Stitch cycles... (" << boundary_cycle_representatives.size() << " cycle(s))" << std::endl;
 #endif
 
   std::size_t res = stitch_boundary_cycles(boundary_cycle_representatives, pmesh, mv, np);
@@ -1146,10 +1155,10 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// @return the number of pairs of halfedges that were stitched.
+/// \return the number of pairs of halfedges that were stitched.
 ///
-/// @sa `stitch_boundary_cycle()`
-/// @sa `stitch_boundary_cycles()`
+/// \sa `stitch_boundary_cycle()`
+/// \sa `stitch_boundary_cycles()`
 ///
 template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representatives,
