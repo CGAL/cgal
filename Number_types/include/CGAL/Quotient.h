@@ -129,13 +129,13 @@ class Quotient
   Quotient<NT>& operator*= (const CGAL_double(NT)& r);
   Quotient<NT>& operator/= (const CGAL_double(NT)& r);
 
-  friend bool operator==(const Quotient<NT>& x, const Quotient<NT>& y)
+  friend bool operator==(const Quotient& x, const Quotient& y)
   { return x.num * y.den == x.den * y.num; }
-  friend bool operator==(const Quotient<NT>& x, const NT& y)
+  friend bool operator==(const Quotient& x, const NT& y)
   { return x.den * y == x.num; }
-  friend inline bool operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
+  friend inline bool operator==(const Quotient& x, const CGAL_int(NT) & y)
   { return x.den * y == x.num; }
-  friend inline bool operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
+  friend inline bool operator==(const Quotient& x, const CGAL_double(NT) & y)
   { return x.den * y == x.num; } // Uh?
 
   Quotient<NT>&    normalize();
