@@ -23,24 +23,11 @@ using Mesher =  CGAL::Delaunay_mesher_2<CDT, Criteria>;
 using Vertex_handle = CDT::Vertex_handle;
 using Point = CDT::Point;
 
-int main(int argc, char* argv[])
+int main(int, char*)
 {
-  std::string path = argv[0];
-  path = path.substr(0, path.rfind('/') + 1);
-
-  std::cout << "Current dir:" << path << std::endl;
-
-  auto triangulate = [&path](int index)
+  auto triangulate = [](int index)
   {
     CDT cdt;
-
-    auto write_tr = [&](const std::string& filename)
-    {
-//       std::ofstream file(path + filename + "_" + std::to_string(index) + ".off");
-//
-//       cdt.file_output(file);
-//       file.close();
-    };
 
     Vertex_handle va = cdt.insert(Point(-0.74397572, -0.54545455));
     Vertex_handle vb = cdt.insert(Point(-0.13526831, -1));
@@ -77,17 +64,10 @@ int main(int argc, char* argv[])
 
     std::cout << "Number of vertices before: " << cdt.number_of_vertices() << std::endl;
 
-    write_tr("before_refine");
-
     Mesher mesher(cdt);
     mesher.set_criteria(Criteria(0.125, 0.05*std::sqrt(2)));
 
-//     mesher.clear_seeds();
-//     mesher.init();
-
     mesher.refine_mesh();
-
-    write_tr("after_refine");
 
     std::cout << "Number of vertices after: " << cdt.number_of_vertices() << std::endl;
 
