@@ -1,6 +1,10 @@
 #ifndef USE_SSH_H
 #define USE_SSH_H
 #include <libssh/libsshpp.hpp>
+#include <vector>
+
+class QStringList;
+
 namespace CGAL{
 namespace ssh_internal{
 //should be used inside a try/catch(ssh::SshException e)
@@ -26,6 +30,9 @@ bool push_file(ssh_session& session,
 bool pull_file(ssh_session &session,
                const char *from_path,
                const char *to_path);
+
+bool explore_the_galaxy(ssh_session &session,
+                        QStringList &files);
 
 }}
 #endif

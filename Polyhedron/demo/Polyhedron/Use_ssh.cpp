@@ -20,8 +20,10 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <sstream>
 
 #include <QMessageBox>
+#include <QStringList>
 
 bool test_result(int res)
 {
@@ -355,5 +357,62 @@ bool pull_file(ssh_session &session,
   return true;
 }
 
-}}
+bool explore_the_galaxy(ssh_session &session,
+                        QStringList& files)
+{
+  ssh_channel channel;
+  int rc;
+  channel = ssh_channel_new(session);
+  if (channel == NULL) return false;
+  rc = ssh_channel_open_session(channel);
+  if (rc != SSH_OK)
+  {
+    ssh_channel_free(channel);
+    return rc;
+  }
+  rc = ssh_channel_request_exec(channel, "ls /tmp");
+  if (rc != SSH_OK)
+  {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+    return rc;
+  }
+
+  char buffer[256];
+  int nbytes;
+  nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+  while (nbytes > 0)
+  {
+
+    std::string sbuf(buffer, nbytes);
+    if(sbuf.find("Polyhedron_demo_") != std::string::npos)
+    {
+      std::istringstream iss(sbuf);
+      std::string file;
+      while(iss >> file)
+      {
+        if(file.find("Polyhedron_demo_") != std::string::npos)
+        {
+          QString name(file.c_str());
+          files.push_back(name.remove("Polyhedron_demo_"));
+        }
+      }
+    }
+
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+  }
+  if (nbytes < 0)
+  {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+    return false;
+  }
+  ssh_channel_send_eof(channel);
+  ssh_channel_close(channel);
+  ssh_channel_free(channel);
+  return true;
+}
+
+}// end of ssh_internal
+}// end of CGAL
 #endif

@@ -3611,14 +3611,7 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     server = server.trimmed();
     pk = pk.trimmed();
     privK=privK.trimmed();
-    QString path;
-    path = QInputDialog::getText(this,
-                                 "",
-                                 tr("Enter the name of the scene file."));
-    if(path.isEmpty())
-      return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+
     try{
       ssh_session session;
       bool res = establish_ssh_session_from_agent(session,
@@ -3649,7 +3642,22 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                              "The SSH session could not be started.");
         return;
       }
+      QStringList names;
+      if(!CGAL::ssh_internal::explore_the_galaxy(session, names))
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "Could not find remote directory.");
+      }
+      QString path;
+      path = QInputDialog::getItem(this,
+                                   "Choose a file",
+                                   tr("Choose the scene file."),
+                                   names);
       filename = QString("%1/load_scene.js").arg(QDir::tempPath());
+      if(path.isEmpty())
+        return;
+      path.prepend("Polyhedron_demo_");
       path = tr("/tmp/%2").arg(path);
       res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
       if(!res)
