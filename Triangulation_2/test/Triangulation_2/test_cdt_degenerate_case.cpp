@@ -36,9 +36,9 @@ public:
 };
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-using Vb = My_vertex_base<CGAL::Triangulation_vertex_base_2<EPIC>>;
+typedef My_vertex_base<CGAL::Triangulation_vertex_base_2<EPIC> > Vb;
 #else
-using Vb = CGAL::Triangulation_vertex_base_2<K>;
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 #endif
 
 typedef CGAL::Constrained_triangulation_face_base_2<EPIC> Fb;

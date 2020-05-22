@@ -54,18 +54,20 @@ namespace internal {
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   struct Indentation_level {
-    int n = 0;
+    int n;
+    Indentation_level() : n(0) {}
     friend std::ostream& operator<<(std::ostream& os, Indentation_level level) {
       return os << std::string(2*level.n, ' ');
     }
     Indentation_level& operator++() { ++n; return *this; }
     Indentation_level& operator--() { --n; return *this; }
     struct Exit_guard {
+      Exit_guard(Indentation_level& level): level(level) { ++level; }
+      Exit_guard(const Exit_guard& other) : level(other.level) { ++level; }
       Indentation_level& level;
       ~Exit_guard() { --level; }
     };
-    Exit_guard exit_guard() { return Exit_guard{*this}; }
-    Exit_guard open_new_scope() { return Exit_guard{++*this}; }
+    Exit_guard open_new_scope() { return Exit_guard(*this); }
   } cdt_2_indent_level;
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
@@ -712,7 +714,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
             << "CT_2::insert_constraint( #" << vaa->time_stamp() << "= " << vaa->point()
             << " , #" << vbb->time_stamp() << "= " << vbb->point()
             << " )\n";
-  auto exit_guard = CGAL::internal::cdt_2_indent_level.open_new_scope();
+  internal::Indentation_level::Exit_guard exit_guard = CGAL::internal::cdt_2_indent_level.open_new_scope();
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   while(! stack.empty()){
     boost::tie(vaa,vbb) = stack.top();
