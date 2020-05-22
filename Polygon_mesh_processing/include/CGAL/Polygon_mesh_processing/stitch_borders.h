@@ -649,11 +649,10 @@ void run_stitch_borders(PolygonMesh& pmesh,
   }
 }
 
-template <typename PolygonMesh, typename HalfedgePairsRange, typename VertexPointMap,
+template <typename PolygonMesh, typename HalfedgePairsRange,
           typename Uf_vertices, typename Uf_handles>
 HalfedgePairsRange filter_stitchable_pairs(PolygonMesh& pmesh,
                                            const HalfedgePairsRange& to_stitch,
-                                           const VertexPointMap& vpm,
                                            Uf_vertices& uf_vertices,
                                            Uf_handles& uf_handles)
 {
@@ -813,8 +812,7 @@ std::size_t stitch_halfedge_range(const StitchableHalfedgePairsRange& to_stitch,
   typedef std::unordered_map<vertex_descriptor, typename Uf_vertices::handle> Uf_handles;
   Uf_handles uf_handles;
 
-  std::vector<halfedges_pair> to_stitch_filtered =
-      filter_stitchable_pairs(pmesh, to_stitch, vpm, uf_vertices, uf_handles);
+  std::vector<halfedges_pair> to_stitch_filtered = filter_stitchable_pairs(pmesh, to_stitch, uf_vertices, uf_handles);
 
   mv.update_representatives(representative_candidates, to_stitch_filtered, vpm);
 
@@ -841,7 +839,6 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
                                   MaintainerVisitor& mv,
                                   const CGAL_PMP_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor             vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor>             halfedges_pair;
 
