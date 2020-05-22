@@ -12,8 +12,6 @@
 #ifndef CGAL_BGL_IO_VTK_H
 #define CGAL_BGL_IO_VTK_H
 
-#ifdef CGAL_USE_VTK
-
 #include <CGAL/IO/VTK.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -21,18 +19,20 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#ifdef CGAL_USE_VTK
 #include <vtkCell.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+#endif
+
+#if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
 
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
-
-#ifdef CGAL_USE_VTK
 
 namespace IO {
 namespace internal {
@@ -117,7 +117,9 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *    If this parameter is omitted, an internal property map for
  *    `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
  * \cgalNamedParamsEnd
+ *
  * \pre The data must represent a 2-manifold
+ *
  * \see \ref IOStreamVTK
 */
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -137,15 +139,10 @@ bool read_VTP(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& n
 {
   return read_VTP(fname.c_str(), g, np);
 }
-
 template<typename FaceGraph>
 bool read_VTP(const char* fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
-
 template<typename FaceGraph>
 bool read_VTP(const std::string& fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
-
-#endif // CGAL_USE_VTK
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,6 +375,7 @@ void write_polys_points(std::ostream& os,
  * the vertices of `g`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
  * \see \ref IOStreamVTK
  */
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -428,7 +426,6 @@ bool write_VTP(std::ostream& os,
   return true;
 }
 
-
 /*! \ingroup PkgBGLIOFct
  *
  * \brief  writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
@@ -453,41 +450,32 @@ bool write_VTP(std::ostream& os,
  * the vertices of `g`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
  * \see \ref IOStreamVTK
  */
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const char* fname,
-               const FaceGraph& g,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_VTP(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_VTP(os, g, np);
 }
 
 template<typename FaceGraph>
-bool write_VTP(const char* fname,
-               const FaceGraph& g)
-{
-  return write_VTP(fname, g, parameters::all_default());
-}
-
+bool write_VTP(std::ostream& os, const FaceGraph& g) { return write_VTP(os, g, CGAL::parameters::all_default()); }
+template<typename FaceGraph>
+bool write_VTP(const char* fname, const FaceGraph& g) { return write_VTP(fname, g, parameters::all_default()); }
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname,
-               const FaceGraph& g,
-               const CGAL_BGL_NP_CLASS& np)
-{
+bool write_VTP(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np) {
   return write_VTP(fname.c_str(), g, np);
 }
-
 template<typename FaceGraph>
-bool write_VTP(const std::string& fname,
-               const FaceGraph& g)
-{
+bool write_VTP(const std::string& fname, const FaceGraph& g) {
   return write_VTP(fname, g, parameters::all_default());
 }
+
 } // namespace CGAL
 
-#endif // CGAL_USE_VTK
+#endif // defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_BGL_IO_VTK_H
 
