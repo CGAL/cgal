@@ -200,7 +200,10 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  CGAL_precondition(does_self_intersect(cc));
+  CC_VPM cc_vpm = choose_parameter(get_parameter(np_cc, internal_np::vertex_point),
+                                   get_property_map(CGAL::vertex_point, cc));
+
+  CGAL_precondition(does_self_intersect(cc, parameters::vertex_point_map(cc_vpm)));
 
 #ifdef CGAL_DEBUG_CLIPPING
   std::cout << "CC self-intersects" << std::endl;
@@ -230,9 +233,6 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
 
   // 2. ------------------------------
   // Switch to an exact VPM
-  CC_VPM cc_vpm = choose_parameter(get_parameter(np_cc, internal_np::vertex_point),
-                                   get_property_map(CGAL::vertex_point, cc));
-
   C2E to_exact;
   EVPM cc_evpm = get(EP_property_tag(), cc);
   for(vertex_descriptor vd : vertices(cc))
@@ -246,14 +246,14 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
   si_face_evpms.reserve(independent_faces_n);
 
   std::size_t counter = 0;
-  for(face_descriptor fd : si_faces)
+  for(const face_descriptor fd : si_faces)
   {
 #ifdef CGAL_DEBUG_CLIPPING
     std::cout << "  Build single mesh for face: " << fd << " (" << counter+1 << "/" << independent_faces_n << ")" << std::endl;
 #endif
 
     const halfedge_descriptor hd = halfedge(fd, cc);
-    if(!is_degenerate_triangle_face(face(hd, cc), cc))
+    if(!is_degenerate_triangle_face(face(hd, cc), cc, np_cc)) // no need to use cc_evpm here
     {
       ++counter;
 
@@ -265,6 +265,12 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
 
       fill_triangle_mesh(hd, cc, cc_vpm, cc_evpm, si_face, si_face_evpm);
     }
+#ifdef CGAL_DEBUG_CLIPPING
+    else
+    {
+      std::cout << "degenerate face..." << std::endl;
+    }
+#endif
   }
 #ifdef CGAL_DEBUG_CLIPPING
   std::cout << clipped_si_faces.size() << " problematic faces to clip" << std::endl;
@@ -306,7 +312,8 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
   }
 
   CGAL_postcondition(is_valid(cc));
-  CGAL_postcondition(!does_self_intersect(cc));
+  CGAL_postcondition(!does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)));
+
 #ifdef CGAL_DEBUG_CLIPPING
   std::cout << "Pruned mesh: " << vertices(cc).size() << " nv "  << faces(cc).size() << " nf " << std::endl;
   output_mesh("pruned_mesh.off", cc);
