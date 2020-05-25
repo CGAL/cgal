@@ -23,7 +23,7 @@ using Mesher =  CGAL::Delaunay_mesher_2<CDT, Criteria>;
 using Vertex_handle = CDT::Vertex_handle;
 using Point = CDT::Point;
 
-int main(int, char*)
+int main(int, char**)
 {
   auto triangulate = [](int index)
   {
