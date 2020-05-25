@@ -111,7 +111,7 @@ bool read_OBJ(std::istream& is,
      continue;
     }
   }
-  if(maxi<0)
+  if(maxi==-1 && mini == 1)
   {
     if(verbose)
       std::cerr<<"No face detected."<<std::endl;

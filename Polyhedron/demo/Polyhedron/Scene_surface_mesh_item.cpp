@@ -31,6 +31,7 @@
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include "triangulate_primitive.h"
 
 #include <CGAL/IO/OBJ.h>
@@ -1494,11 +1495,16 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
   bool failed = !CGAL::read_OBJ(in, *(d->smesh_));
   if(failed)
   {
+    in.clear();
+    in.seekg(0);
     std::vector<Point> points;
     std::vector<std::vector<std::size_t> > faces;
     failed = !CGAL::read_OBJ(in, points, faces);
-
-    failed = !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+    if(!failed)
+    {
+      CGAL::Polygon_mesh_processing::repair_polygon_soup(points, faces);
+      failed = !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+    }
     if(!failed)
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
   }
