@@ -452,26 +452,30 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
   for(face_descriptor f : faces(tm))
     number_of_faces_in_cc[get(pidmap, f)] += 1;
 
-  std::vector<int> ordered_cc_ids(num_cc);
+  std::vector<faces_size_type> ordered_cc_ids(num_cc);
   std::iota(std::begin(ordered_cc_ids), std::end(ordered_cc_ids), 0);
   std::sort(std::begin(ordered_cc_ids), std::end(ordered_cc_ids),
             [&number_of_faces_in_cc](const int i, const int j) -> bool {
               return (number_of_faces_in_cc[i] > number_of_faces_in_cc[j]);
             });
 
+#ifdef CGAL_DEBUG_CLIPPING
   for(std::size_t i=0; i<ordered_cc_ids.size(); ++i)
-    std::cout << "CC #" << i << " " << number_of_faces_in_cc[i] << " nf" << std::endl;
+    std::cout << "CC #" << i << " (rid: " << ordered_cc_ids[i] << ") " << number_of_faces_in_cc[i] << " nf" << std::endl;
+#endif
 
-  std::vector<TriangleMesh> ccs(num_cc - 1); // largest CC stays in 'tm'
-  std::vector<DVPM> cc_vpms(num_cc - 1);
+  faces_size_type num_cc_to_clip = num_cc - 1;
+  std::vector<TriangleMesh> ccs(num_cc_to_clip); // largest CC stays in 'tm'
+  std::vector<DVPM> cc_vpms(num_cc_to_clip);
 
-  // Extract all but the largest CC
-  for(faces_size_type i=1; i<num_cc; ++i)
+  for(faces_size_type i=0; i<num_cc_to_clip; ++i)
   {
+    faces_size_type cc_id = ordered_cc_ids[1+i]; // extract all but the largest CC, so start at '1'
+    CGAL_assertion(cc_id < num_cc);
+
     cc_vpms[i] = get(P_property_tag(), ccs[i]);
-    CGAL::Face_filtered_graph<TriangleMesh> tm_cc(tm, ordered_cc_ids[i], pidmap);
-    CGAL::copy_face_graph(tm_cc, ccs[ordered_cc_ids[i]],
-                          np_tm, parameters::vertex_point_map(cc_vpms[i]));
+    CGAL::Face_filtered_graph<TriangleMesh> tm_cc(tm, cc_id, pidmap);
+    CGAL::copy_face_graph(tm_cc, ccs[i], np_tm, parameters::vertex_point_map(cc_vpms[i]));
   }
 
   bool res = true;
@@ -487,17 +491,19 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
       res = false;
   }
 
-  for(faces_size_type i=1; i<num_cc; ++i)
+  for(faces_size_type i=0; i<num_cc_to_clip; ++i)
   {
-    TriangleMesh& tm_cc = ccs[ordered_cc_ids[i]];
-    DVPM cc_vpm = cc_vpms[ordered_cc_ids[i]];
+    TriangleMesh& tm_cc = ccs[i];
+    DVPM cc_vpm = cc_vpms[i];
 
+#ifdef CGAL_DEBUG_CLIPPING
     std::cout << "CC w/ " << num_vertices(tm_cc) << " nv " << num_faces(tm_cc) << " nf" << std::endl;
+#endif
 
     const CGAL::Bbox_3 cc_bbox = CGAL::Polygon_mesh_processing::bbox(tm_cc, parameters::vertex_point_map(cc_vpm));
 
-    if(CGAL::do_overlap(cc_bbox, clipper_bbox))
-      if(!internal::clip_single_cc(tm_cc, clipper,  parameters::vertex_point_map(cc_vpm), np_c)) // @todo np forwarding
+    if(CGAL::do_overlap(cc_bbox, clipper_bbox)) // @todo check that earlier and don't separate the CC if not needed?
+      if(!internal::clip_single_cc(tm_cc, clipper, parameters::vertex_point_map(cc_vpm), np_c)) // @todo np forwarding
         res = false;
 
     CGAL::copy_face_graph(tm_cc, tm, parameters::vertex_point_map(cc_vpm), np_tm);
