@@ -39,7 +39,7 @@ Release History
 
 ### Surface Mesh
 
- - The function `CGAL::Surface_mesh::clear()` now removes all non-default properties instead of just emptying them. 
+ - **Breaking change**: The function `CGAL::Surface_mesh::clear()` now removes all non-default properties instead of just emptying them. 
 
 Release 5.0
 -----------
