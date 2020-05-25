@@ -977,7 +977,6 @@ void precompute(const Polynomial_2& in) {
     Coeff_src max_c = max_coeff(in);
     /////// magic symbol ////////////
     // somehow relates to double precision fix
-    std::cerr << ' ';
 
     typedef Reduce_by<Rat_coercion_type, Coeff_src> Reduce_op;
     Transform<Rational_poly_2, Polynomial_2, Reduce_op> transform;

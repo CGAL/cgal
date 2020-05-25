@@ -73,49 +73,14 @@ public:
   */
   void slotModelChanged( ) override;
 
-  void setEnvelopeEdgeColor( const QColor& color )
-  {
-    this->lowerEnvelope->setEdgeColor( color );
-    this->upperEnvelope->setEdgeColor( color );
-  }
-
-  const QColor& getEnvelopeEdgeColor( ) const
-  {
-    return this->lowerEnvelope->edgeColor( );
-  }
-
-  void setEnvelopeEdgeWidth( int width )
-  {
-    this->lowerEnvelope->setEdgeWidth( width );
-    this->upperEnvelope->setEdgeWidth( width );
-  }
-
-  int getEnvelopeEdgeWidth( ) const
-  {
-    return this->lowerEnvelope->edgeWidth( );
-  }
-
-  void setEnvelopeVertexColor( const QColor& color )
-  {
-    this->lowerEnvelope->setVertexColor( color );
-    this->upperEnvelope->setVertexColor( color );
-  }
-
-  const QColor& getEnvelopeVertexColor( ) const
-  {
-    return this->lowerEnvelope->vertexColor( );
-  }
-
-  void setEnvelopeVertexRadius( int radius )
-  {
-    this->lowerEnvelope->setVertexRadius( radius );
-    this->upperEnvelope->setVertexRadius( radius );
-  }
-
-  int getEnvelopeVertexRadius( ) const
-  {
-    return this->lowerEnvelope->vertexRadius( );
-  }
+  void setEnvelopeEdgeColor( const QColor& color );
+  const QColor& getEnvelopeEdgeColor( ) const;
+  void setEnvelopeEdgeWidth( int width );
+  int getEnvelopeEdgeWidth( ) const;
+  void setEnvelopeVertexColor( const QColor& color );
+  const QColor& getEnvelopeVertexColor( ) const;
+  void setEnvelopeVertexRadius( int radius );
+  int getEnvelopeVertexRadius( ) const;
 
 protected:
   void setScene( QGraphicsScene* scene_ ) override;
@@ -125,22 +90,6 @@ protected:
   */
   void updateEnvelope( bool lower );
 
-  template < typename TTraits >
-  void updateEnvelope( bool lower, TTraits traits );
-
-  template < typename Kernel_ >
-  void updateEnvelope( bool lower, 
-                      CGAL::Arr_linear_traits_2< Kernel_ > traits );
-
-#if 0
-  template < typename CircularKernel >
-  void updateEnvelope(bool lower,
-                      CGAL::Arr_circular_arc_traits_2<CircularKernel> traits);
-#endif
-  template < typename Coefficient_ >
-  void updateEnvelope(bool lower,
-                      CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits);
- 
   Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* lowerEnvelope;

@@ -102,7 +102,144 @@ operator<<( const Point_2& p )
 }
 
 // Instantiation of Arr_conic_traits_2
+template <typename RatKernel, class AlgKernel, class NtTraits>
+auto ArrangementPainterOstream<CGAL::Arr_conic_traits_2<
+	RatKernel, AlgKernel, NtTraits>>::visibleParts(X_monotone_curve_2 curve)
+	-> std::vector<X_monotone_curve_2>
+{
+  // see if we intersect the bottom edge of the viewport
+  Intersect_2 intersect_2 = this->traits.intersect_2_object( );
+  Point_2 bottomLeft = this->convert( this->clippingRect.bottomLeft( ) );
+  Point_2 bottomRight = this->convert( this->clippingRect.bottomRight( ) );
+  Point_2 topLeft = this->convert( this->clippingRect.topLeft( ) );
+  Point_2 topRight = this->convert( this->clippingRect.topRight( ) );
+  X_monotone_curve_2 bottom =
+    this->construct_x_monotone_curve_2( bottomLeft, bottomRight );
+  X_monotone_curve_2 left =
+    this->construct_x_monotone_curve_2( bottomLeft, topLeft );
+  X_monotone_curve_2 top =
+    this->construct_x_monotone_curve_2( topLeft, topRight );
+  X_monotone_curve_2 right =
+    this->construct_x_monotone_curve_2( topRight, bottomRight );
 
+  std::vector< CGAL::Object > bottomIntersections;
+  std::vector< CGAL::Object > leftIntersections;
+  std::vector< CGAL::Object > topIntersections;
+  std::vector< CGAL::Object > rightIntersections;
+  std::vector< CGAL::Object > intersections;
+
+  intersect_2( bottom, curve, std::back_inserter( bottomIntersections ) );
+  intersect_2( left, curve, std::back_inserter( leftIntersections ) );
+  intersect_2( top, curve, std::back_inserter( topIntersections ) );
+  intersect_2( right, curve, std::back_inserter( rightIntersections ) );
+
+  intersect_2( bottom, curve, std::back_inserter( intersections ) );
+  intersect_2( left, curve, std::back_inserter( intersections ) );
+  intersect_2( top, curve, std::back_inserter( intersections ) );
+  intersect_2( right, curve, std::back_inserter( intersections ) );
+
+  this->filterIntersectionPoints( intersections );
+
+  Point_2 leftEndpt = curve.source( );
+  Point_2 rightEndpt = curve.target( );
+
+  if ( leftEndpt.x( ) > rightEndpt.x( ) )
+  {
+    std::swap( leftEndpt, rightEndpt );
+  }
+
+  QPointF qendpt1 = this->convert( leftEndpt );
+  QPointF qendpt2 = this->convert( rightEndpt );
+
+  std::list< Point_2 > pointList;
+  for ( unsigned int i = 0; i < intersections.size( ); ++i )
+  {
+    CGAL::Object o = intersections[ i ];
+    std::pair< Intersection_point_2, Multiplicity > pair;
+    if ( CGAL::assign( pair, o ) )
+    {
+      Point_2 pt = pair.first;
+      pointList.push_back( pt );
+    }
+  }
+
+  bool includeLeftEndpoint = this->clippingRect.contains( qendpt1 );
+  bool includeRightEndpoint = this->clippingRect.contains( qendpt2 );
+  if ( includeLeftEndpoint )
+  {
+    pointList.push_front( leftEndpt );
+  }
+
+  if ( includeRightEndpoint )
+  {
+    pointList.push_back( rightEndpt );
+  }
+
+  Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
+  std::vector< X_monotone_curve_2 > clippings;
+  typename std::list< Point_2 >::iterator pointListItr = pointList.begin( );
+  for ( unsigned int i = 0; i < pointList.size( ); i += 2 )
+  {
+    typename Traits::Point_2 p1 = *pointListItr++;
+    typename Traits::Point_2 p2 = *pointListItr++;
+    X_monotone_curve_2 subcurve =
+      construct_x_monotone_subcurve_2( curve, p1, p2 );
+    clippings.push_back( subcurve );
+  }
+
+  return clippings;
+}
+
+template <typename RatKernel, class AlgKernel, class NtTraits>
+void ArrangementPainterOstream<
+	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
+	filterIntersectionPoints(std::vector<CGAL::Object>& res)
+{
+  std::vector< std::pair< Intersection_point_2, Multiplicity > > tmp;
+
+  // filter out the non-intersection point results
+  for ( unsigned int i = 0; i < res.size( ); ++i )
+  {
+    CGAL::Object obj = res[ i ];
+    std::pair< Intersection_point_2, Multiplicity > pair;
+    if ( CGAL::assign( pair, obj ) )
+    {
+      tmp.push_back( pair );
+    }
+  }
+  res.clear( );
+
+  // sort the intersection points by x-coord
+  Compare_intersection_point_result compare_intersection_point_result;
+  std::sort( tmp.begin( ), tmp.end( ), compare_intersection_point_result );
+
+  // box up the sorted elements
+  for ( unsigned int i = 0; i < tmp.size( ); ++i )
+  {
+    std::pair< Intersection_point_2, Multiplicity > pair = tmp[ i ];
+    CGAL::Object o = CGAL::make_object( pair );
+    res.push_back( o );
+  }
+}
+
+template <typename RatKernel, class AlgKernel, class NtTraits>
+void ArrangementPainterOstream<
+	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
+	printIntersectResult(const std::vector<CGAL::Object>& res)
+{
+  for ( std::vector< CGAL::Object >::const_iterator it = res.begin( );
+        it != res.end( ); ++it )
+  {
+    CGAL::Object obj = *it;
+    std::pair< Intersection_point_2, Multiplicity > pair;
+    if ( CGAL::assign( pair, obj ) )
+    {
+      Point_2 pt = pair.first;
+      /* QPointF qpt = */ this->convert( pt );
+      // std::cout << "(" << pt.x( ) << " " << pt.y( ) < ")" << std::endl;
+    }
+  }
+}
 template < typename RatKernel, class AlgKernel, class NtTraits >
 ArrangementPainterOstream<CGAL::Arr_conic_traits_2<RatKernel, AlgKernel,
                                                    NtTraits > >&
@@ -587,12 +724,14 @@ operator<<( const Point_2& p )
 
   this->qp->save();
   this->remapFacadePainter();
+  // workaround for https://github.com/CGAL/cgal/issues/4745
+  coord = p.to_double();
   if (Facade::instance().draw(p, coord))
   {
     QPointF qpt(coord.first, coord.second);
     QPen savePen = this->qp->pen( );
     this->qp->setBrush( QBrush( savePen.color( ) ) );
-	double radius = savePen.width( ) / 2.0;
+    double radius = savePen.width( ) / 2.0;
     this->qp->drawEllipse( qpt, radius, radius );
     this->qp->setBrush( QBrush( ) );
     this->qp->setPen( savePen );

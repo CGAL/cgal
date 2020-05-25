@@ -918,8 +918,10 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     typename Curve_kernel_2::Algebraic_kernel_d_1::Approximate_relative_1
       approximate_x;
     Bounds bnd = approximate_x(x0, 0); // do not approximate
+    int asf = 0;
     while(bnd.second - bnd.first > ref_bound) {
         bnd = approximate_x(x0, 1);
+        std::cout << "asf = " << asf++ << '\n';
     }
 
 //     while(ubound_x(x0) - lbound_x(x0) > ref_bound)

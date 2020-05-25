@@ -249,20 +249,8 @@ updateBoundingBox(CGAL::Arr_linear_traits_2< Kernel_ > /* traits */)
     this->bb = this->convert( clipRect ).bbox( );
   }
 
-  int curve_cnt = 0;
-
-  for ( Edge_iterator it = this->arr->edges_begin( );
-        it != this->arr->edges_end( ); ++it )
-  {
-    X_monotone_curve_2 curve = it->curve( );
-    this->bb = this->bb + curve.bbox( );
-
-    curve_cnt++;
-
-  }
   for ( Curve_iterator it = this->arr->curves_begin( );
-        it != this->arr->curves_end( );
-        ++it )
+        it != this->arr->curves_end( ); ++it )
   {
     if ( it->is_segment( ) )
     {

@@ -641,6 +641,150 @@ auto Find_nearest_edge<Arr_, CGAL::Arr_linear_traits_2<Kernel_>>::getFace(
 	return (eit->face());
 }
 
+template <typename ArrTraits>
+Construct_x_monotone_subcurve_2<ArrTraits>::Construct_x_monotone_subcurve_2() :
+	intersect_2(this->traits.intersect_2_object()),
+	split_2(this->traits.split_2_object()),
+	compare_x_2(this->traits.compare_x_2_object()),
+	construct_min_vertex_2(this->traits.construct_min_vertex_2_object()),
+	construct_max_vertex_2(this->traits.construct_max_vertex_2_object())
+{
+}
+
+template <typename ArrTraits>
+auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
+	const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
+	const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+{
+  Point_2 pMin, pMax;
+  bool unbounded_min = false;
+  bool unbounded_max = false;
+  try {
+    pMin = this->construct_min_vertex_2(curve);
+  } catch(...) {
+    unbounded_min = true;
+  }
+  try {
+    pMax = this->construct_max_vertex_2(curve);
+  } catch(...) {
+    unbounded_max = true;
+  }
+
+	X_monotone_curve_2 subcurve;
+	X_monotone_curve_2 unusedTrimmings;
+	X_monotone_curve_2 finalSubcurve;
+	if (pLeft &&
+		(unbounded_min || this->compare_x_2(*pLeft, pMin) == CGAL::LARGER))
+	{
+		CoordinateType y1 = this->compute_y_at_x(curve, pLeft->x());
+		Point_2 splitPoint(pLeft->x(), y1);
+		this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
+	}
+	else
+	{
+		subcurve = curve;
+	}
+
+	if (pRight &&
+		(unbounded_max || this->compare_x_2(*pRight, pMax) == CGAL::SMALLER))
+	{
+		CoordinateType y2 = this->compute_y_at_x(subcurve, pRight->x());
+		Point_2 splitPoint(pRight->x(), y2);
+		this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
+	}
+	else
+	{
+		finalSubcurve = subcurve;
+	}
+
+	return finalSubcurve;
+}
+
+template <typename CircularKernel>
+Construct_x_monotone_subcurve_2<CGAL::Arr_circular_arc_traits_2<
+	CircularKernel>>::Construct_x_monotone_subcurve_2() :
+	intersect_2(this->traits.intersect_2_object()),
+	split_2(this->traits.split_2_object()),
+	compare_x_2(this->traits.compare_x_2_object()),
+	construct_min_vertex_2(this->traits.construct_min_vertex_2_object()),
+	construct_max_vertex_2(this->traits.construct_max_vertex_2_object())
+{
+}
+
+template <typename CircularKernel>
+auto Construct_x_monotone_subcurve_2<
+	CGAL::Arr_circular_arc_traits_2<CircularKernel>>::
+operator()(
+	const X_monotone_curve_2& curve, const boost::optional<Arc_point_2>& pLeft_,
+	const boost::optional<Arc_point_2>& pRight_) -> X_monotone_curve_2
+{
+	const Arc_point_2 pMin = this->construct_min_vertex_2(curve);
+	const Arc_point_2 pMax = this->construct_max_vertex_2(curve);
+  const Arc_point_2& pLeft = (pLeft_)? *pLeft_ : pMin;
+  const Arc_point_2& pRight = (pRight_)? *pRight_ : pMax;
+
+	X_monotone_curve_2 subcurve;
+	X_monotone_curve_2 unusedTrimmings;
+	X_monotone_curve_2 finalSubcurve;
+	if (this->compare_x_2(pLeft, pMin) == CGAL::LARGER)
+	{
+		Arr_compute_y_at_x_2<ArrTraits> compute_y_at_x;
+		FT x_approx(CGAL::to_double(pLeft.x()));
+		Root_of_2 y1 = compute_y_at_x(curve, x_approx);
+		Root_for_circles_2_2 intersectionPoint(x_approx, y1);
+		Arc_point_2 splitPoint(intersectionPoint);
+		this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
+	}
+	else
+	{
+		subcurve = curve;
+	}
+
+	if (this->compare_x_2(pRight, pMax) == CGAL::SMALLER)
+	{
+		Arr_compute_y_at_x_2<ArrTraits> compute_y_at_x;
+		FT x_approx(CGAL::to_double(pRight.x()));
+		Root_of_2 y2 = compute_y_at_x(subcurve, x_approx);
+		Root_for_circles_2_2 intersectionPoint(x_approx, y2);
+		Arc_point_2 splitPoint(intersectionPoint);
+		this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
+	}
+	else
+	{
+		finalSubcurve = subcurve;
+	}
+
+	return finalSubcurve;
+}
+
+template <typename RatKernel, typename AlgKernel, typename NtTraits>
+auto Construct_x_monotone_subcurve_2<
+	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
+operator()(
+	const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
+	const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+{
+  // TODO: handle when pLeft or pRight is null
+
+	// find the points on the curve
+	Point_2 left = curve.point_at_x(*pLeft);
+	Point_2 right = curve.point_at_x(*pRight);
+
+	// make sure the points are oriented in the direction that the curve is
+	// going
+	AlgKernel ker;
+	if (!(((curve.is_directed_right()) &&
+		   ker.compare_xy_2_object()(left, right) == CGAL::SMALLER) ||
+		  ((!curve.is_directed_right()) &&
+		   ker.compare_xy_2_object()(left, right) == CGAL::LARGER)))
+	{
+    std::swap(left, right);
+	}
+
+	X_monotone_curve_2 res = curve.trim(left, right);
+	return res;
+}
+
 // TODO(Ahmed Essam): create a macro to specialize structs
 template class Compute_squared_distance_2<Seg_traits>;
 template class Compute_squared_distance_2<Pol_traits>;
@@ -662,3 +806,10 @@ template class Find_nearest_edge<Conic_arr, Conic_traits>;
 template class Find_nearest_edge<Lin_arr, Lin_traits>;
 template class Find_nearest_edge<Arc_arr, Arc_traits>;
 template class Find_nearest_edge<Alg_seg_arr, Alg_seg_traits>;
+
+template class Construct_x_monotone_subcurve_2<Seg_traits>;
+template class Construct_x_monotone_subcurve_2<Pol_traits>;
+template class Construct_x_monotone_subcurve_2<Conic_traits>;
+template class Construct_x_monotone_subcurve_2<Lin_traits>;
+template class Construct_x_monotone_subcurve_2<Arc_traits>;
+template class Construct_x_monotone_subcurve_2<Alg_seg_traits>;

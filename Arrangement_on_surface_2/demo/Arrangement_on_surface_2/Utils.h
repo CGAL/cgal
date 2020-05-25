@@ -215,19 +215,8 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
-template < class RatKernel, class AlgKernel, class NtTraits >
-class ArrTraitsAdaptor< CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel,
-                                                  NtTraits > >
-{
-public:
-  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
-  typedef AlgKernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::FT CoordinateType;
-};
-
-template < class Coefficient_ >
-  class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
+template <typename Coefficient_>
+class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
 {
 public:
   typedef Coefficient_ Coefficient;
@@ -429,7 +418,8 @@ public:
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
   CoordinateType operator() ( const X_monotone_curve_2& curve,
-                              const CoordinateType& x )
+                              const CoordinateType& x,
+                              Point_2* out=nullptr )
   {
     CGAL::Object o;
     CGAL::Oneset_iterator< CGAL::Object > oi( o );
@@ -442,6 +432,7 @@ public:
       Point_2 p = res.first;
       // std::cout << "approx y: " << p.to_double( ).second << std::endl;
       CoordinateType coord = p.y( );
+      if ( out ) *out = p;
       return coord;
     }
     else
@@ -688,13 +679,7 @@ public:
   //typedef typename Kernel::Line_2 Line_2;
   //typedef typename Kernel::Compute_y_at_x_2 Compute_y_at_x_2;
 
-  Construct_x_monotone_subcurve_2( ):
-    intersect_2( this->traits.intersect_2_object( ) ),
-    split_2( this->traits.split_2_object( ) ),
-    compare_x_2( this->traits.compare_x_2_object( ) ),
-    construct_min_vertex_2( this->traits.construct_min_vertex_2_object( ) ),
-    construct_max_vertex_2( this->traits.construct_max_vertex_2_object( ) )
-  { }
+  Construct_x_monotone_subcurve_2( );
 
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
@@ -703,37 +688,8 @@ public:
     projection.
   */
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const Point_2& pLeft, const Point_2& pRight )
-  {
-    Point_2 pMin = this->construct_min_vertex_2( curve );
-    Point_2 pMax = this->construct_max_vertex_2( curve );
-    X_monotone_curve_2 subcurve;
-    X_monotone_curve_2 unusedTrimmings;
-    X_monotone_curve_2 finalSubcurve;
-    if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
-    {
-      CoordinateType y1 = this->compute_y_at_x( curve, pLeft.x( ) );
-      Point_2 splitPoint( pLeft.x( ), y1 );
-      this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
-    }
-    else
-    {
-      subcurve = curve;
-    }
-
-    if ( this->compare_x_2( pRight, pMax ) == CGAL::SMALLER )
-    {
-      CoordinateType y2 = this->compute_y_at_x( subcurve, pRight.x( ) );
-      Point_2 splitPoint( pRight.x( ), y2 );
-      this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
-    }
-    else
-    {
-      finalSubcurve = subcurve;
-    }
-
-    return finalSubcurve;
-  }
+                                  const boost::optional<Point_2>& pLeft,
+                                  const boost::optional<Point_2>& pRight );
 
 protected:
   ArrTraits traits;
@@ -764,53 +720,11 @@ public:
   typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
 
 public:
-  Construct_x_monotone_subcurve_2( ):
-    intersect_2( this->traits.intersect_2_object( ) ),
-    split_2( this->traits.split_2_object( ) ),
-    compare_x_2( this->traits.compare_x_2_object( ) ),
-    construct_min_vertex_2( this->traits.construct_min_vertex_2_object( ) ),
-    construct_max_vertex_2( this->traits.construct_max_vertex_2_object( ) )
-  { }
+  Construct_x_monotone_subcurve_2( );
 
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const Arc_point_2& pLeft,
-                                  const Arc_point_2& pRight )
-  {
-    Arc_point_2 pMin = this->construct_min_vertex_2( curve );
-    Arc_point_2 pMax = this->construct_max_vertex_2( curve );
-    X_monotone_curve_2 subcurve;
-    X_monotone_curve_2 unusedTrimmings;
-    X_monotone_curve_2 finalSubcurve;
-    if ( this->compare_x_2( pLeft, pMin ) == CGAL::LARGER )
-    {
-      Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
-      FT x_approx( CGAL::to_double( pLeft.x( ) ) );
-      Root_of_2 y1 = compute_y_at_x( curve, x_approx );
-      Root_for_circles_2_2 intersectionPoint( x_approx, y1 );
-      Arc_point_2 splitPoint( intersectionPoint );
-      this->split_2( curve, splitPoint, unusedTrimmings, subcurve );
-    }
-    else
-    {
-      subcurve = curve;
-    }
-
-    if ( this->compare_x_2( pRight, pMax ) == CGAL::SMALLER )
-    {
-      Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
-      FT x_approx( CGAL::to_double( pRight.x( ) ) );
-      Root_of_2 y2 = compute_y_at_x( subcurve, x_approx );
-      Root_for_circles_2_2 intersectionPoint( x_approx, y2 );
-      Arc_point_2 splitPoint( intersectionPoint );
-      this->split_2( subcurve, splitPoint, finalSubcurve, unusedTrimmings );
-    }
-    else
-    {
-      finalSubcurve = subcurve;
-    }
-
-    return finalSubcurve;
-  }
+                                  const boost::optional<Arc_point_2>& pLeft,
+                                  const boost::optional<Arc_point_2>& pRight );
 
 protected:
   ArrTraits traits;
@@ -833,175 +747,16 @@ class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel,
 public:
   typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename AlgKernel::Point_2 Point_2;
+  typedef typename ArrTraits::Point_2 Point_2;
 
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
   */
   X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const Point_2& pLeft, const Point_2& pRight )
-  {
-    // find the points on the curve
-    Point_2 left = curve.point_at_x( pLeft );
-    Point_2 right = curve.point_at_x( pRight );
+                                  const boost::optional<Point_2>& pLeft,
+                                  const boost::optional<Point_2>& pRight );
 
-    // make sure the points are oriented in the direction that the curve is
-    // going
-    AlgKernel ker;
-    if (! (((curve.is_directed_right( )) &&
-            ker.compare_xy_2_object() ( left, right ) == CGAL::SMALLER) ||
-           ((! curve.is_directed_right( )) &&
-            ker.compare_xy_2_object() ( left, right ) == CGAL::LARGER)))
-    {
-      Point_2 tmp = left;
-      left = right;
-      right = tmp;
-    }
-
-    X_monotone_curve_2 res = curve.trim( left, right );
-    return res;
-  }
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
-
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-class Construct_x_monotone_subcurve_2< CGAL::Arr_Bezier_curve_traits_2< RatKernel,
-                                                                 AlgKernel,
-                                                                 NtTraits > >
-{
-public:
-  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename AlgKernel::Point_2 Point_2;
-
-  /*
-    Return the subcurve of curve bracketed by pLeft and pRight.
-  */
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const Point_2& pLeft, const Point_2& pRight )
-  {
-    // find the points on the curve
-    Point_2 left = curve.point_at_x( pLeft );
-    Point_2 right = curve.point_at_x( pRight );
-
-    // make sure the points are oriented in the direction that the curve is
-    // going
-    AlgKernel ker;
-    if (! (((curve.is_directed_right( )) &&
-            ker.compare_xy_2_object() ( left, right ) == CGAL::SMALLER) ||
-           ((! curve.is_directed_right( )) &&
-            ker.compare_xy_2_object() ( left, right ) == CGAL::LARGER)))
-    {
-      Point_2 tmp = left;
-      left = right;
-      right = tmp;
-    }
-
-    X_monotone_curve_2 res = curve.trim( left, right );
-    return res;
-  }
-}; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
-
-template <typename Kernel_ >
-class Construct_x_monotone_subcurve_2< CGAL::Arr_linear_traits_2< Kernel_ > >
-{
-public: // typedefs
-  typedef CGAL::Arr_linear_traits_2< Kernel_ > ArrTraits;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef Kernel_ Kernel;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-
-public: // methods
-  // curve can be unbounded. if curve is unbounded to the left,
-  // pLeft is a point on the left edge of viewport.
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const Point_2& pLeft, const Point_2& pRight )
-  {
-
-    Segment_2 subsegment;
-
-    if ( curve.is_segment( ) )
-    {
-      subsegment = this->constructSubsegment( curve.segment( ), pLeft, pRight );
-    }
-    else if (curve.is_ray( ))
-    {
-      Ray_2 ray = curve.ray();
-      Point_2 rightP;
-      Point_2 leftP;
-
-      if (ray.source() == pRight)
-      {
-        rightP = pRight;
-      }
-      else
-      {
-        double right_y = arr_compute_y_at_x_2.approx(curve, CGAL::to_double(pRight.x()));
-        rightP = Point_2(CGAL::to_double(pRight.x()), right_y);
-      }
-
-      if (ray.source() == pLeft)
-      {
-        leftP = pLeft;
-      }
-      else
-      {
-        double left_y = arr_compute_y_at_x_2.approx(curve, CGAL::to_double(pLeft.x()));
-        leftP = Point_2(CGAL::to_double(pLeft.x()), left_y);
-      }
-
-      subsegment = Segment_2(leftP, rightP);
-    }
-    else if (curve.is_line( ))
-    {
-      double left_y = arr_compute_y_at_x_2.approx(curve, CGAL::to_double(pLeft.x()));
-      double right_y = arr_compute_y_at_x_2.approx(curve, CGAL::to_double(pRight.x()));
-
-      Point_2 leftP(CGAL::to_double(pLeft.x()), left_y);
-      Point_2 rightP(CGAL::to_double(pRight.x()), right_y);
-
-      subsegment = Segment_2(leftP, rightP);
-    }
-    else
-    {
-      return curve;
-    }
-
-    return X_monotone_curve_2( subsegment );
-  }
-
-
-protected:
-  Construct_x_monotone_subcurve_2< CGAL::Arr_segment_traits_2< Kernel_ > >
-    constructSubsegment;
-  Arr_compute_y_at_x_2<ArrTraits> arr_compute_y_at_x_2;
-};
-
-template <typename Coefficient_ >
-class Construct_x_monotone_subcurve_2< CGAL::Arr_algebraic_segment_traits_2<
-                                         Coefficient_ > >
-{
-public: // typedefs
-  typedef Coefficient_ Coefficient;
-  typedef CGAL::Arr_algebraic_segment_traits_2< Coefficient > ArrTraits;
-  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< ArrTraits >::Kernel Kernel;
-  typedef typename ArrTraits::Point_2                   Point_2;
-  //typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-
-public: // methods
-  // curve can be unbounded. if curve is unbounded to the left, pLeft is a
-  // point on the left edge of viewport.
-  X_monotone_curve_2 operator()(const X_monotone_curve_2& curve,
-                                const Point_2& /* pLeft */,
-                                const Point_2& /* pRight */)
-  {
-    // TODO: trim the algebraic curve
-    return curve;
-  }
-};
 
 // FIXME: return Traits::Point_2 instead of Kernel::Point_2
 template <typename ArrTraits >

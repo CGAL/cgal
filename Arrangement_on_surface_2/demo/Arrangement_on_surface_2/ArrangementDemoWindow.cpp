@@ -730,10 +730,12 @@ void ArrangementDemoWindow::updateEnvelope( QAction* newMode )
   if ( newMode == this->ui->actionLowerEnvelope )
   {
     activeTab->getEnvelopeCallback( )->showLowerEnvelope( show );
+    activeTab->update();
   }
   else if ( newMode == this->ui->actionUpperEnvelope )
   {
     activeTab->getEnvelopeCallback( )->showUpperEnvelope( show );
+    activeTab->update();
   }
 }
 
