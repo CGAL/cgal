@@ -221,10 +221,9 @@ bool test_bgl_OBJ_with_np()
   CGAL_assertion(num_vertices(fg2) == 4);
   CGAL_assertion(num_faces(fg2) == 4);
 
+  CGAL_assertion(num_vertices(fg) == num_vertices(fg2));
   typename boost::graph_traits<Mesh>::vertex_iterator vit, vit2;
-  for(vit = vertices(fg).begin(), vit2 = vertices(fg2).begin();
-      vit != vertices(fg).end(), vit2 != vertices(fg2).end();
-      ++vit, ++vit2)
+  for(vit = vertices(fg).begin(), vit2 = vertices(fg2).begin(); vit != vertices(fg).end(); ++vit, ++vit2)
   {
     CGAL_assertion(get(vnm, *vit) == get(vnm2, *vit2));
   }
