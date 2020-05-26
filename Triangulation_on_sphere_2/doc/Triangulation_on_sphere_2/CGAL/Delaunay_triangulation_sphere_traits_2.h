@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
 The class `Delaunay_triangulation_sphere_traits_2` is a model
-of the concept `DelaunayTriangulationOnSphereTraits_2`. It implements the `Point_on_sphere` type
+of the concept `DelaunayTriangulationOnSphereTraits_2`. It implements the `Point_on_sphere_2` type
 as a kernel's `Point_3` type.
 
 If the kernel template parameter `K` does not enable exact representation of points on sphere
@@ -45,7 +45,7 @@ public:
   typedef typename K::FT                            FT;
 
   /// For this model, the point on the sphere is simply a 3D point
-  typedef typename K::Point_3                       Point_on_sphere;
+  typedef typename K::Point_3                       Point_on_sphere_2;
 
   ///
   typedef typename K::Point_3                       Point_3;
@@ -57,10 +57,7 @@ public:
   typedef typename K::Compare_xyz_3                 Compare_on_sphere_2;
 
   ///
-  typedef typename K::Construct_circumcenter_3      Construct_circumcenter_3;
-
-  ///
-  typedef unspecified_type                          Construct_point_3;
+  typedef typename unspecified_type                 Construct_circumcenter_on_sphere_2;
 
   ///
   typedef typename K::Construct_segment_3           Construct_segment_3;
@@ -80,11 +77,11 @@ public:
 public:
   /// Returns whether `p` is exactly on the sphere if `K` can represent algebraic coordinates,
   /// or whether `p` is within an automatically computed small distance otherwise.
-  bool is_on_sphere(const Point_on_sphere& p) const;
+  bool is_on_sphere(const Point_on_sphere_2& p) const;
 
   /// Returns `false` if `K` can represent algeabric coordinates, and whether the distance
   /// between `p` and `q` is lower than \f$ 2 \sqrt{R\delta} \f$ otherwise.
-  bool are_points_too_close(const Point_on_sphere& p, const Point_on_sphere& q) const;
+  bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const;
 };
 
 } // namespace CGAL

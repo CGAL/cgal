@@ -102,7 +102,7 @@ class Delaunay_triangulation_sphere_traits_2
 
 public:
   typedef typename K::FT                            FT;
-  typedef typename K::Point_3                       Point_on_sphere;
+  typedef typename K::Point_3                       Point_on_sphere_2;
   typedef typename K::Point_3                       Point_3;
   typedef typename K::Segment_3                     Segment_3;
 
@@ -112,9 +112,8 @@ public:
   typedef typename K::Orientation_3                 Orientation_3;
   typedef internal::Orientation_on_sphere_2<Base>   Orientation_on_sphere_2;
 
-  // @fixme should it project on the sphere?
+  // @fixme should project on the sphere
   typedef typename K::Construct_circumcenter_3      Construct_circumcenter_on_sphere_2;
-  typedef typename K::Construct_point_3             Construct_point_3;
   typedef typename K::Construct_segment_3           Construct_segment_3;
 
   Delaunay_triangulation_sphere_traits_2(const Point_3& center = CGAL::ORIGIN,
@@ -158,10 +157,6 @@ public:
   { return Orientation_on_sphere_2(_center, K()); }
 
 public:
-  Construct_point_3
-  construct_point_3_object() const
-  { return Base().construct_point_3_object(); }
-
   Construct_segment_3
   construct_segment_3_object() const
   { return Base().construct_segment_3_object(); }

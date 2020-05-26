@@ -26,32 +26,20 @@ class DelaunayTriangulationOnSphereTraits_2
 public:
   /// Construction object type. Must provide the operator
   ///
-  /// `Point_3 operator()(Point_on_sphere p, Point_on_sphere q, Point_on_sphere r)`
+  /// `Point_on_sphere_2 operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
-  /// which returns the center of the smallest ball passing through the three points `p`, `q`, and `r`.
-  ///
-  /// @todo should this actually be something like `Construct_circumcenter_on_sphere_2`
-  /// and project the circumcenter on the sphere rather than just computing the center of the smallest
-  /// circumscribing ball of the triangle?
+  /// which returns the intersection of the dual of the facet defined by the three points `p`, `q`, and `r`,
+  /// and the sphere.
   ///
   /// \note This type is only required for the computation of dual objects
   /// and a dummy type can be used otherwise.
-  typedef unspecified_type Construct_circumcenter_3;
+  typedef unspecified_type Construct_circumcenter_on_sphere_2;
 
   /// Construction object which must provide the following operator
   ///
-  /// `Point_3 operator()(Point_on_sphere p)`
+  /// `Segment_3 operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
   ///
-  /// which constructs a 3D point from the point on the sphere.
-  ///
-  /// \note This operator should return a const reference if it makes sense, to avoid superfluous copies.
-  typedef unspecified_type Construct_point_3;
-
-  /// Construction object which must provide the following operator
-  ///
-  /// `Segment_3 operator()(Point_3 p, Point_3 q)`
-  ///
-  /// which introduces a segment with source `p` and target `q`.
+  /// which introduces an arc of great circle, with source `p` and target `q`.
   ///
   /// \note This type is only required for the computation of dual objects
   /// and a dummy type can be used otherwise.
@@ -67,7 +55,7 @@ public:
   /// @{
 
   ///
-  Construct_circumcenter_3 construct_circumcenter_3_object();
+  Construct_circumcenter_on_sphere_2 construct_circumcenter_on_sphere_2_object();
 
   ///
   Construct_segment_3 construct_segment_3_object();

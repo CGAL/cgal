@@ -49,7 +49,7 @@ public:
 
   typedef typename Geom_traits::FT                FT;
   typedef typename Geom_traits::Point_3           Point_3;
-  typedef typename Geom_traits::Point_on_sphere   Point;
+  typedef typename Geom_traits::Point_on_sphere_2 Point;
   typedef typename Geom_traits::Segment_3         Segment_3;
 
   typedef typename Base::Vertex                   Vertex;

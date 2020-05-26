@@ -58,7 +58,7 @@ public:
   /*!
   The point type representing a point on the sphere.
   */
-  typedef Traits::Point_on_sphere Point;
+  typedef Traits::Point_on_sphere_2 Point;
 
   /*!
   The 3D point type.

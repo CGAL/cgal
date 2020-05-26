@@ -21,7 +21,7 @@ public:
   /// @{
 
   /*!
-  Must be the equivalent to the point type `Point_on_sphere` of the concept `TriangulationOnSphereTraits_2`
+  Must be the equivalent to the point type `Point_on_sphere_2` of the concept `TriangulationOnSphereTraits_2`
   */
   typedef unspecified_type Point;
 

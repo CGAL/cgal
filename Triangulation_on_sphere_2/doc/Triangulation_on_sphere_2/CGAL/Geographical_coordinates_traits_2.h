@@ -6,8 +6,8 @@ namespace CGAL {
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 
 The class `Geographical_coordinates_traits_2` is a model
-of the concept `DelaunayTriangulationOnSphereTraits_2`. It implements the `Point_on_sphere` type
-using a custom coordinate type made.
+of the concept `DelaunayTriangulationOnSphereTraits_2`. It implements the `Point_on_sphere_2` type
+as a pair of coordinates representing the lattitude and the longitude of the point on the sphere.
 
 \tparam K a kernel type; must be a model of `Kernel`
 
@@ -22,7 +22,7 @@ public:
   typedef typename K::FT                            FT;
 
   /// A pair of lattitude and longitude values.
-  typedef Geographical_coordinates<K>               Point_on_sphere;
+  typedef Geographical_coordinates<K>               Point_on_sphere_2;
 
   ///
   typedef typename K::Point_3                       Point_3;
@@ -34,10 +34,7 @@ public:
   typedef unspecified_type                          Compare_on_sphere_2;
 
   ///
-  typedef unspecified_type                          Construct_circumcenter_3;
-
-  ///
-  typedef unspecified_type                          Construct_point_3;
+  typedef unspecified_type                          Construct_circumcenter_on_sphere_2;
 
   ///
   typedef typename K::Construct_segment_3           Construct_segment_3;
@@ -57,12 +54,12 @@ public:
 public:
   /// Due to their representation, points are always exactly on the sphere, and consequently
   /// this function simply returns `true` for any input.
-  bool is_on_sphere(const Point_on_sphere& p) const;
+  bool is_on_sphere(const Point_on_sphere_2& p) const;
 
   /// Since there is no need to ensure separations of the points because representation
   /// of the points is exact (see also \cgalCite{cgal:ccplr-redtp-10}),
   /// this function simply returns `false` for any input.
-  bool are_points_too_close(const Point_on_sphere& p, const Point_on_sphere& q) const;
+  bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const;
 };
 
 /*!

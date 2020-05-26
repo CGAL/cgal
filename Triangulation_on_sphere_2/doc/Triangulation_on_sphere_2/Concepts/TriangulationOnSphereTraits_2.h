@@ -30,7 +30,7 @@ public:
   /*!
   The point type of the triangulation, representing a point on the sphere.
   */
-  typedef unspecified_type Point_on_sphere;
+  typedef unspecified_type Point_on_sphere_2;
 
   /*!
   The 3D point type.
@@ -42,21 +42,21 @@ public:
 
   /// Predicate object type. Must provide the operator:
   ///
-  /// `bool operator()(Point_on_sphere p, Point_on_sphere q)`
+  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
   ///
   /// which returns `true` or `false` based on some (arbitrary) strict total order of points.
   typedef unspecified_type Compare_on_sphere_2;
 
   /// Predicate object type. Must provide the operator:
   ///
-  /// `bool operator()(Point_on_sphere p, Point_on_sphere q)`
+  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
   ///
   /// which returns `true` if and only if `p` and `q` are equal.
   typedef unspecified_type Equal_on_sphere_2;
 
   /// Predicate object type. Must provide the operator:
   ///
-  /// `bool operator()(Point_on_sphere p, Point_on_sphere q, Point_on_sphere r)`
+  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
   /// which returns `true` if `r` strictly lies inside the cone defined by the center of the sphere,
   /// `p` and `q`.
@@ -64,7 +64,7 @@ public:
 
   /// Predicate object type. Must provide the operator:
   ///
-  /// `Orientation operator()(Point_on_sphere p, Point_on_sphere q, Point_on_sphere r, Point_on_sphere s)`
+  /// `Orientation operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r, Point_on_sphere_2 s)`
   ///
   /// which returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented plane `h`
   /// defined by `p`, `q`, and `r`; returns `CGAL::NEGATIVE` if `s` lies on the negative side of `h`;
@@ -73,14 +73,14 @@ public:
 
   /// Predicate object type. Must provide the operators:
   ///
-  /// `Orientation operator()(Point_on_sphere p, Point_on_sphere q, Point_on_sphere r)`
+  /// `Orientation operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
   /// which returns `CGAL::POSITIVE`, if `r` lies on the positive side of the oriented plane `h`
   /// defined by the center of the sphere, `p`, and `q`; returns `CGAL::NEGATIVE` if `r`
   /// lies on the negative side of `h`; and returns `CGAL::COPLANAR` if `r` lies on `h`.
   ///
   /// \note This is distinguished from `Orientation_3` because the center of the sphere has type
-  /// `Point_3`, which might not be equivalent or convertible to `Point_on_sphere`.
+  /// `Point_3`, which might not be equivalent or convertible to `Point_on_sphere_2`.
   typedef unspecified_type Orientation_on_sphere_2;
 
 public:
@@ -154,8 +154,8 @@ public:
   /// Returns whether the point `p` is on the sphere or not.
   ///
   /// \note A point that is not on the sphere will not be inserted in the triangulation.
-  bool is_on_sphere(Point_on_sphere p);
+  bool is_on_sphere(Point_on_sphere_2 p);
 
   /// Returns whether `p` and `q` are too close.
-  bool are_points_too_close(Point_on_sphere p, Point_on_sphere q);
+  bool are_points_too_close(Point_on_sphere_2 p, Point_on_sphere_2 q);
 };

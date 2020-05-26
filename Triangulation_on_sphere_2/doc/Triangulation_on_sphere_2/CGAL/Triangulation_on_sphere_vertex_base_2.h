@@ -10,7 +10,7 @@ for the concept `TriangulationOnSphereVertexBase_2`.
 structure of a triangulation, or used as a base class to derive
 other base vertex classes tuned for specific applications.
 
-\tparam Traits must be a geometric traits class which provides the type `Point_on_sphere`.
+\tparam Traits must be a geometric traits class which provides the type `Point_on_sphere_2`.
 It is strongly recommended to instantiate this traits class with the model used
 for the triangulation traits class. This ensures that the point type defined by
 `Triangulation_on_sphere_vertex_base_2` is the same as the point type defined by
@@ -38,7 +38,7 @@ public:
   /*!
 
   */
-  typedef Traits::Point_on_sphere Point;
+  typedef Traits::Point_on_sphere_2 Point;
 
   /// @}
 

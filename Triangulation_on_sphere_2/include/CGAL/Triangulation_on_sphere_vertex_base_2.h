@@ -27,7 +27,7 @@ class Triangulation_on_sphere_vertex_base_2
   typedef typename Vb::Triangulation_data_structure                  Tds;
 public:
   typedef GT                                                         Geom_traits;
-  typedef typename GT::Point_on_sphere                               Point;
+  typedef typename GT::Point_on_sphere_2                             Point;
   typedef Tds                                                        Triangulation_data_structure;
   typedef typename Tds::Face_handle                                  Face_handle;
   typedef typename Tds::Vertex_handle                                Vertex_handle;

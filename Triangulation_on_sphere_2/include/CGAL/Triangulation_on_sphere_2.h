@@ -64,7 +64,7 @@ public:
 
   typedef typename Geom_traits::FT                FT;
   typedef typename Geom_traits::Point_3           Point_3;
-  typedef typename Geom_traits::Point_on_sphere   Point;
+  typedef typename Geom_traits::Point_on_sphere_2 Point;
 
   typedef typename Tds::size_type                 size_type;
   typedef typename Tds::difference_type           difference_type;

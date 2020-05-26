@@ -66,7 +66,7 @@ class Functor_projection_adaptor
   typedef Predicate_                                 Base;
 
   typedef typename Traits::FT                        FT;
-  typedef typename Traits::Point_on_sphere           Point;
+  typedef typename Traits::Point_on_sphere_2         Point;
   typedef typename Traits::Point_3                   Point_3;
 
 public:
@@ -106,7 +106,7 @@ protected:
 
 public:
   typedef typename K::FT                                                              FT;
-  typedef Point_with_scale<K>                                                         Point_on_sphere;
+  typedef Point_with_scale<K>                                                         Point_on_sphere_2;
   typedef typename K::Point_3                                                         Point_3;
 
   typedef Functor_projection_adaptor<Self, typename Base::Construct_circumcenter_on_sphere_2>  Construct_circumcenter_on_sphere_2;
@@ -145,11 +145,11 @@ public:
 public:
   // @fixme rename that?
   struct Construct_projected_point_3
-    : public std::unary_function<Point_3, Point_on_sphere>
+    : public std::unary_function<Point_3, Point_on_sphere_2>
   {
     Construct_projected_point_3(const Point_3& sc) : sphere_center(sc) { }
 
-    Point_on_sphere operator()(const Point_3& pt) const { return Point_on_sphere(pt, sphere_center); }
+    Point_on_sphere_2 operator()(const Point_3& pt) const { return Point_on_sphere_2(pt, sphere_center); }
 
   private:
     const Point_3& sphere_center;
