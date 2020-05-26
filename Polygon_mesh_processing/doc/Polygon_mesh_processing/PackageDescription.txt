@@ -108,6 +108,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`
 - `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
 - `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
+- `CGAL::Polygon_mesh_processing::triangulate_hole_with_cdt_2()`
 
 \cgalCRPSection{Predicate Functions}
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
