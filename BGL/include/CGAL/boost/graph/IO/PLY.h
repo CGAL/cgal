@@ -214,22 +214,25 @@ bool read_PLY(const std::string& fname, FaceGraph& g)
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(std::ostream& os,
                const FaceGraph& g,
-               const std::string& comments,
+               const std::string comments,
                const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor            face_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor                          vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor                        halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                            face_descriptor;
+
   typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type VIMap;
-  typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point_3;
-  typedef CGAL::Color                                                                Color;
+  typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type                  Vpm;
+  typedef typename boost::property_traits<Vpm>::reference                                     Point_3;
+  typedef CGAL::Color                                                                         Color;
   typedef typename internal_np::Lookup_named_param_def<
-    internal_np::vertex_color_map_t, NamedParameters,
-    Constant_property_map<vertex_descriptor, Color> >::type                          VCM;
+                     internal_np::vertex_color_map_t,
+                     NamedParameters,
+                     Constant_property_map<vertex_descriptor, Color> >::type                  VCM;
   typedef typename internal_np::Lookup_named_param_def<
-    internal_np::face_color_map_t, NamedParameters,
-    Constant_property_map<face_descriptor, Color> >::type                            FCM;
+                     internal_np::face_color_map_t,
+                     NamedParameters,
+                     Constant_property_map<face_descriptor, Color> >::type                    FCM;
 
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -242,7 +245,7 @@ bool write_PLY(std::ostream& os,
   bool has_fcolor = !is_default_parameter(get_parameter(np, internal_np::face_color_map));
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                         get_const_property_map(boost::vertex_point, g));
+                             get_const_property_map(boost::vertex_point, g));
 
   if(!os.good())
   {
@@ -297,15 +300,11 @@ bool write_PLY(std::ostream& os,
     IO::internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
     if(has_vcolor)
     {
-      CGAL::Color c = get(vcm, vd);
+      const CGAL::Color& c = get(vcm, vd);
       if(get_mode(os) == CGAL::IO::ASCII)
-      {
         os << c << std::endl;
-      }
       else
-      {
         os.write(reinterpret_cast<char*>(&c), sizeof(c));
-      }
     }
   }
 
@@ -315,18 +314,17 @@ bool write_PLY(std::ostream& os,
     polygon.clear();
     for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, g), g))
       polygon.push_back(get(vim, target(hd,g)));
+
     IO::internal::output_properties(os, &polygon,
                                     std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                                                    PLY_property<std::vector<int> >("vertex_indices")));
     if(has_fcolor)
     {
-      CGAL::Color c = get(fcm, fd);
+      const CGAL::Color& c = get(fcm, fd);
       if(get_mode(os) == CGAL::IO::ASCII)
         os << c << std::endl;
       else
-      {
         os.write(reinterpret_cast<char*>(&c), sizeof(c));
-      }
     }
   }
 
@@ -390,14 +388,12 @@ bool write_PLY(std::ostream& os,
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(const char* fname,
                const FaceGraph& g,
-               const std::string& comments,
-               const NamedParameters& np
-               )
+               const std::string comments,
+               const NamedParameters& np)
 {
   std::ofstream os(fname);
   return write_PLY(os, g, comments, np);
 }
-
 
 template <class FaceGraph>
 bool write_PLY(const char* fname,
