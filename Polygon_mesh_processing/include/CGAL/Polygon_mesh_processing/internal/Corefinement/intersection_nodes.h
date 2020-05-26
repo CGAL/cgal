@@ -119,11 +119,6 @@ public:
         to_exact( get(vpm_a, target(h_a,tm_a)) ) ) );
   }
 
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
-  }
-
   template <class VPM> // VertexPointMap1 or VertexPointMap2
   void call_put(const VPM& vpm, vertex_descriptor vd, std::size_t i, TriangleMesh&)
   {
@@ -271,11 +266,6 @@ public:
     add_new_node(*pt);
   }
 
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
-  }
-
   //the point is an input
   void add_new_node(const Point_3& p){
     enodes.push_back(to_exact(p));
@@ -416,12 +406,6 @@ public:
         get(vpm_a, source(h_a,tm_a)),
         get(vpm_a, target(h_a,tm_a)) ) );
   }
-
-  void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
-  {
-    add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
-  }
-
 
   void add_new_node(const Point_3& p)
   {
