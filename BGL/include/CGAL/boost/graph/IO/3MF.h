@@ -59,7 +59,7 @@ bool write_triangle_meshes_to_3mf(const std::string& file_name,
   std::vector<PointRange> all_points;
   std::vector<PolygonRange> all_polygons;
 
-  for(const auto& g : gs)
+  for(const FaceGraph& g : gs)
   {
     PointRange points;
     points.reserve(num_vertices(g));
