@@ -154,12 +154,12 @@ template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
-  return IO::internal::read_PLY(fname.c_str(), g, np, verbose);
+  std::ifstream is(fname.c_str());
+  return IO::internal::read_PLY_BGL(is, g, np, verbose);
 }
 
-
 template <typename FaceGraph>
-bool read_PLY(std::istream& in, FaceGraph& g)
+bool read_PLY(std::istream& in, FaceGraph& g) // @todo uniformize is/in os/out
 {
   return IO::internal::read_PLY_BGL(in, g, parameters::all_default());
 }

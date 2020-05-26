@@ -133,7 +133,7 @@ bool read_GOCAD(std::istream& in,
                 bool verbose = true)
 {
   std::pair<std::string, std::string> dummy;
-  return internal::read_GOCAD(in, dummy, g, np, verbose);
+  return IO::internal::read_GOCAD(in, dummy, g, np, verbose);
 }
 
 template <typename FaceGraph>
@@ -141,8 +141,7 @@ bool read_GOCAD(std::istream& in,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g)
 {
-
-  return internal::read_GOCAD(in, name_and_color, g, parameters::all_default());
+  return IO::internal::read_GOCAD(in, name_and_color, g, parameters::all_default());
 }
 
 /// \ingroup PkgBGLIOFct
@@ -175,7 +174,7 @@ bool read_GOCAD(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bo
   std::ifstream in(fname);
   std::pair<std::string, std::string> dummy;
 
-  return read_GOCAD(in, dummy, g, np, verbose);
+  return IO::internal::read_GOCAD(in, dummy, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

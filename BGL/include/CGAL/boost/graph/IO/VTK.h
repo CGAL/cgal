@@ -475,17 +475,12 @@ bool write_VTP(std::ostream& os, const FaceGraph& g) { return write_VTP(os, g, C
 template<typename FaceGraph>
 bool write_VTP(const char* fname, const FaceGraph& g) { return write_VTP(fname, g, parameters::all_default()); }
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np) {
-  return write_VTP(fname.c_str(), g, np);
-}
+bool write_VTP(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np) { return write_VTP(fname.c_str(), g, np); }
 template<typename FaceGraph>
-bool write_VTP(const std::string& fname, const FaceGraph& g) {
-  return write_VTP(fname, g, parameters::all_default());
-}
+bool write_VTP(const std::string& fname, const FaceGraph& g) { return write_VTP(fname, g, parameters::all_default()); }
 
 } // namespace CGAL
 
 #endif // defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_BGL_IO_VTK_H
-
