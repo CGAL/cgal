@@ -61,7 +61,7 @@ public:
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     CGAL_assertion(k.first < k.second);
-    return map.m_set_ptr->count(k);
+    return (map.m_set_ptr->count(k) > 0);
   }
 };
 
