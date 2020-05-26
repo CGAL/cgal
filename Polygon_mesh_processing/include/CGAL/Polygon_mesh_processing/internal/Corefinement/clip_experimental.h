@@ -144,7 +144,7 @@ bool clip_mesh_exactly(TriangleMesh& cc,
 template <typename TriangleMesh, typename VPM, typename EVPM>
 void fill_triangle_mesh(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
                         const TriangleMesh& tm,
-                        VPM tm_vpm,
+                        VPM /* tm_vpm */,
                         EVPM tm_evpm,
                         TriangleMesh& si_face,
                         EVPM si_face_evpm)
