@@ -101,12 +101,13 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
+  template <class VPM_A, class VPM_B> // VertexPointMap1 or VertexPointMap2
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
                     const TriangleMesh& tm_b,
-                    const VertexPointMap1& vpm_a,
-                    const VertexPointMap2& vpm_b)
+                    const VPM_A& vpm_a,
+                    const VPM_B& vpm_b)
   {
     halfedge_descriptor h_b = halfedge(f_b, tm_b);
     add_new_node(
@@ -222,7 +223,7 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
-  template <typename VPM_A, typename VPM_B> // VertexPointMap1 or VertexPointMap2
+  template <class VPM_A, class VPM_B> // VertexPointMap1 or VertexPointMap2
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
@@ -397,12 +398,13 @@ public:
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
+  template <class VPM_A, class VPM_B> // VertexPointMap1 or VertexPointMap2
   void add_new_node(halfedge_descriptor h_a,
                     face_descriptor f_b,
                     const TriangleMesh& tm_a,
                     const TriangleMesh& tm_b,
-                    const VertexPointMap1& vpm_a,
-                    const VertexPointMap2& vpm_b)
+                    const VPM_A& vpm_a,
+                    const VPM_B& vpm_b)
   {
     halfedge_descriptor h_b=halfedge(f_b,tm_b);
 
