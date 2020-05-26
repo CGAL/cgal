@@ -428,8 +428,8 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
   typedef typename boost::property_map<TriangleMesh, P_property_tag>::type      DVPM;
 
   typedef typename boost::graph_traits<TriangleMesh>::faces_size_type           faces_size_type;
-  typedef typename boost::property_map<TriangleMesh,
-                                       face_patch_id_t<faces_size_type> >::type PatchIDMap;
+  typedef CGAL::dynamic_face_property_t<faces_size_type>                        Patch_ID;
+  typedef typename boost::property_map<TriangleMesh, Patch_ID>::type            PatchIDMap;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -440,7 +440,7 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
 
   // Splitting connected components avoids having to treat a lot of "easy" self-intersections
   // (for example from two spheres intersecting)
-  PatchIDMap pidmap = get(CGAL::face_patch_id_t<faces_size_type>(), tm);
+  PatchIDMap pidmap = get(Patch_ID(), tm);
   faces_size_type num_cc = connected_components(tm, pidmap);
 
 #ifdef CGAL_DEBUG_CLIPPING
