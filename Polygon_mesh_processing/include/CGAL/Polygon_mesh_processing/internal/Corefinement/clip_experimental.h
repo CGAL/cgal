@@ -112,7 +112,7 @@ bool clip_mesh_exactly(TriangleMesh& cc,
   if(!valid_input)
   {
     std::cerr << "Invalid input for clip()" << std::endl;
-    std::cerr << "is cc valid: " << cc.is_valid() << std::endl;
+    std::cerr << "is cc valid: " << is_valid(cc) << std::endl;
     std::cerr << "is clipper valid: " << clipper.is_valid() << std::endl;
     std::cerr << "does part self intersect? " << does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)) << std::endl;
     std::cerr << "does clipper self intersect? " << does_self_intersect(clipper, parameters::vertex_point_map(clipper_evpm)) << std::endl;
@@ -293,8 +293,8 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
       continue;
 
     for(halfedge_descriptor hd : CGAL::halfedges_around_target(nm_hd, cc))
-      if(cc.face(hd) != face_descriptor())
-        nm_faces.insert(cc.face(hd));
+      if(!is_border(hd, cc))
+        nm_faces.insert(face(hd, cc));
   }
 
   clipped_si_faces.reserve(clipped_si_faces.size() + nm_faces.size());
