@@ -141,10 +141,9 @@ bool clip_mesh_exactly(TriangleMesh& cc,
   return res;
 }
 
-template <typename TriangleMesh, typename VPM, typename EVPM>
+template <typename TriangleMesh, typename EVPM>
 void fill_triangle_mesh(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
                         const TriangleMesh& tm,
-                        VPM /* tm_vpm */,
                         EVPM tm_evpm,
                         TriangleMesh& si_face,
                         EVPM si_face_evpm)
@@ -263,7 +262,7 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
       EVPM& si_face_evpm = si_face_evpms.back();
       si_face_evpm = get(EP_property_tag(), si_face);
 
-      fill_triangle_mesh(hd, cc, cc_vpm, cc_evpm, si_face, si_face_evpm);
+      fill_triangle_mesh(hd, cc, cc_evpm, si_face, si_face_evpm);
     }
 #ifdef CGAL_DEBUG_CLIPPING
     else
@@ -307,7 +306,7 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
     EVPM si_face_evpm = si_face_evpms.back();
 
     const halfedge_descriptor hd = halfedge(fd, cc);
-    fill_triangle_mesh(hd, cc, cc_vpm, cc_evpm, si_face, si_face_evpm);
+    fill_triangle_mesh(hd, cc, cc_evpm, si_face, si_face_evpm);
     CGAL::Euler::remove_face(hd, cc);
   }
 
