@@ -66,10 +66,26 @@ public:
 
   reads the graph `g` from data in the STL format.
 
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param in the input stream
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+  \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
 
+  \attention The graph `g` is not cleared, and the data from the stream is added.
+
+  \returns `true` if the resulting mesh is valid.
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamSTL
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -90,10 +106,26 @@ bool read_STL(std::istream& in,
 
   reads the graph `g` from the file `fname` in the STL format.
 
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the input file
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+  \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
 
+  \attention The graph `g` is not cleared, and the data from the stream is added.
+
+  \returns `true` if the resulting mesh is valid.
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamSTL
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -122,18 +154,27 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
 
-
 /*!
   \ingroup PkgBGLIOFct
 
   writes the graph `g` in the stream `out` in the STL format.
+
+  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param out the output stream
+  \param g the graph to be output
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
   \cgalNamedParamsEnd
+
   \pre The graph must contain only triangle faces.
+
+  \returns `true` if writing was successful.
 
   \see \ref IOStreamSTL
 */
@@ -214,11 +255,20 @@ bool write_STL(std::ostream& out,
 
  writes the graph `g` in the STL format into a file named `fname`.
 
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-  \cgalNamedParamsEnd
+ \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+ \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+ \param fname the name of the output stream
+ \param g the graph to be output
+ \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+ \cgalNamedParamsBegin
+   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+     If this parameter is omitted, an internal property map for
+     `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+ \cgalNamedParamsEnd
+
+ \pre The graph must contain only triangle faces.
 
  \sa Overloads of this function for specific models of the concept `FaceGraph`.
 

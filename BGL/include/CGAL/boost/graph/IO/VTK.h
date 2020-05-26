@@ -106,19 +106,26 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \brief reads a PolyData in the VTP format into a triangulated surface mesh.
  *
- * \tparam FaceGraph a model of `FaceListGraph`.
+ * \tparam FaceGraph a model of `MutableFaceGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param fname the path to the file that will be read.
- * \param g the output mesh.
+ * \param fname the path to the file that will be read
+ * \param g the output mesh
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
- * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
  * \cgalNamedParamsBegin
- *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
- *    If this parameter is omitted, an internal property map for
- *    `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+ *   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `FaceGraph`
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \pre The data must represent a 2-manifold
+ * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
+ *
+ * \attention The graph `g` is not cleared, and the data from the stream is added.
+ *
+ * \returns `true` if reading was successful
  *
  * \see \ref IOStreamVTK
 */
@@ -353,15 +360,14 @@ void write_polys_points(std::ostream& os,
 
 /*! \ingroup PkgBGLIOFct
  *
- * \brief  writes a triangulated surface mesh in the `PolyData` XML format.
+ * \brief writes a triangulated surface mesh in the `PolyData` XML format.
  *
- * \tparam FaceGraph a model of `FaceListGraph` with only triangle faces.
+ * \tparam FaceGraph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * \param os the stream used for writing.
- * \param g the triangle mesh to be written.
- * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
- * ones listed below
+ * \param os the output stream
+ * \param g the triangle mesh to be output
+ * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
@@ -375,6 +381,8 @@ void write_polys_points(std::ostream& os,
  * the vertices of `g`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
+ * \pre `g` contains only triangular faces
  *
  * \see \ref IOStreamVTK
  */
@@ -428,13 +436,13 @@ bool write_VTP(std::ostream& os,
 
 /*! \ingroup PkgBGLIOFct
  *
- * \brief  writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
+ * \brief writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
  *
- * \tparam FaceGraph a model of `FaceListGraph` with only triangle faces.
+ * \tparam FaceGraph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * \param os the stream used for writing.
- * \param g the triangle mesh to be written.
+ * \param fname the name of the output file
+ * \param g the triangle mesh to be output
  * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
  * ones listed below
  *
@@ -450,6 +458,8 @@ bool write_VTP(std::ostream& os,
  * the vertices of `g`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
+ * \pre `g` contains only triangular faces
  *
  * \see \ref IOStreamVTK
  */

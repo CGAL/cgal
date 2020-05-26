@@ -29,7 +29,7 @@ namespace CGAL {
  *
  * \tparam FaceGraphRange a model of the concepts `RandomAccessContainer`
  *                        and `BackInsertionSequence` whose `value type` is
- *                        a model of the concepts `FaceListGraph` and `HalfedgeListGraph`
+ *                        a model of the concepts `FaceGraph` and `HalfedgeListGraph`
  *                        that has only triangle faces.
  *
  * \param file_name the name of the 3mf file to write.

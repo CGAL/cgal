@@ -86,6 +86,14 @@ bool read_OFF_BGL(std::istream& in,
   reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash,
   and lines with whitespace.
 
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param in the input stream
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
@@ -96,6 +104,10 @@ bool read_OFF_BGL(std::istream& in,
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
+
+  \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
@@ -113,6 +125,14 @@ bool read_OFF(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
   reads the graph `g` from `fname`, a file in the OFF format. Ignores comment lines which start with a hash,
   and lines with whitespace.
 
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the input file
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
@@ -125,8 +145,11 @@ bool read_OFF(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
 
   \pre The data must represent a 2-manifold
 
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
+  \returns `true` if the resulting mesh is valid.
+
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -182,6 +205,13 @@ bool write_OFF_BGL(std::ostream& os,
 
   writes the graph `g` in the OFF format.
 
+  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param os the output stream
+  \param g the graph to be output
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
@@ -210,6 +240,13 @@ bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
 
   writes the graph `g` in the file `fname`, in the OFF format.
 
+  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the output file
+  \param g the graph to be output
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
@@ -220,8 +257,9 @@ bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
     \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
 
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \returns `true` if writing was successful.
 
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

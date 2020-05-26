@@ -102,6 +102,14 @@ bool read_PLY(const std::string& fname, FaceGraph& g) { return read_PLY(fname, g
 
   reads the graph `g` from data in the PLY format.
 
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param in the input stream
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
       the property map with the points associated to the vertices of `g` .
@@ -131,6 +139,14 @@ bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
   \ingroup PkgBGLIOFct
 
   reads the graph `g` from a file named `fname`, in the PLY format.
+
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the input file
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
@@ -185,32 +201,41 @@ bool read_PLY(const std::string& fname, FaceGraph& g)
 {
   return IO::internal::read_PLY_BGL(fname.c_str(), g, parameters::all_default());
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Write
+
 /*!
  \ingroup PkgBGLIOFct
 
- Inserts the graph in an output stream in PLY format.
+ writes the graph in an output stream in PLY format.
 
- If provided, the `comments` string is included line by line in
- the header of the PLY stream (each line will be precedeed by
- "comment ").
+ \tparam FaceGraph a model of `FaceListGraph`
+ \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
- The `np` is an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ \param os the output stream
+ \param g the graph to be output
+ \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment ")
+ \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `g` .
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`
-    \cgalParamEnd
-    \cgalParamBegin{vertex_index_map}
-      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
-    \cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-  \cgalNamedParamsEnd
+ \cgalNamedParamsBegin
+   \cgalParamBegin{vertex_point_map}
+     the property map with the points associated to the vertices of `g` .
+     If this parameter is omitted, an internal property map for
+     `CGAL::vertex_point_t` should be available in `FaceGraph`
+   \cgalParamEnd
+   \cgalParamBegin{vertex_index_map}
+     is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
+   \cgalParamEnd
+   \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+   \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+ \cgalNamedParamsEnd
 
-  \see \ref IOStreamPLY
- */
+ \returns `true` if writing was successful.
+
+ \see \ref IOStreamPLY
+*/
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(std::ostream& os,
                const FaceGraph& g,
@@ -360,29 +385,33 @@ bool write_PLY(std::ostream& os,
 /*!
   \ingroup PkgBGLIOFct
 
-  Inserts the graph in the output file `fname` in PLY format.
+  writes the graph in the output file `fname` in PLY format.
 
-  If provided, the `comments` string is included line by line in
-  the header of the PLY stream (each line will be precedeed by
-  "comment ").
+ \tparam FaceGraph a model of `FaceListGraph`
+ \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  The `np` is an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ \param fname the name of the output file
+ \param g the graph to be output
+ \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment ")
+ \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `g` .
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`
-    \cgalParamEnd
-    \cgalParamBegin{vertex_index_map}
-      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
-    \cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-  \cgalNamedParamsEnd
+ \cgalNamedParamsBegin
+   \cgalParamBegin{vertex_point_map}
+     the property map with the points associated to the vertices of `g` .
+     If this parameter is omitted, an internal property map for
+     `CGAL::vertex_point_t` should be available in `FaceGraph`
+   \cgalParamEnd
+   \cgalParamBegin{vertex_index_map}
+     is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
+   \cgalParamEnd
+   \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+   \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+ \cgalNamedParamsEnd
 
-  \see \ref IOStreamPLY
- */
+ \returns `true` if writing was successful.
+
+ \see \ref IOStreamPLY
+*/
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(const char* fname,
                const FaceGraph& g,

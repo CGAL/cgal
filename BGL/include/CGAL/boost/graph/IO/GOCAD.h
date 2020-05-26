@@ -123,6 +123,8 @@ bool read_GOCAD(std::istream& in,
 ///
 /// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
+/// \returns `true` if the resulting mesh is valid.
+///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& in,
@@ -197,7 +199,7 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 ///
 /// writes the graph `g` in the TS format into `os`.
 ///
-/// \tparam FaceGraph a model of `FaceGraph`
+/// \tparam FaceGraph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param os the stream into which `g` is dumped
@@ -284,10 +286,10 @@ bool write_GOCAD(std::ostream& os,
 /// writes the graph `g` in the TS format into a file named `fname`. In this overload,
 /// `fname` is used as the name of the graph within the file.
 ///
-/// \tparam FaceGraph a model of `FaceGraph`
+/// \tparam FaceGraph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param fname the name of the file into which `g` will be dumped
+/// \param fname the name of the output file
 /// \param g the graph to be output
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
@@ -319,12 +321,12 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
 /// \ingroup PkgBGLIOFct
 ///
 /// writes the graph `g` in the TS format into `os`. The name
-/// that will be assigned to `g`in the file is `anonymous`.
+/// assigned to `g`in the output is `anonymous`.
 ///
-/// \tparam FaceGraph a model of `FaceGraph`
+/// \tparam FaceGraph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param os the stream into which `g` is dumped
+/// \param os the output stream
 /// \param g the graph to be output
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///

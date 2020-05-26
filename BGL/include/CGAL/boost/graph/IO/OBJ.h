@@ -69,7 +69,16 @@ public:
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from the stream `in` in the OBJ format.
+  reads the graph `g` from the stream `in` in the OBJ format. Ignores comment lines which start with a hash,
+  and lines with whitespace.
+
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param in the input stream
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
@@ -78,12 +87,13 @@ public:
     \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
 
+  \pre The data must represent a 2-manifold
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
+
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \pre The data must represent a 2-manifold
-
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -102,8 +112,16 @@ bool read_OBJ(std::istream& in,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash,
+  reads the graph `g` from data in the OBJ format. Ignores comment lines which start with a hash,
   and lines with whitespace.
+
+  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the input file
+  \param g the graph to be built from the input data
+  \param verbose whether extra information is printed when an incident occurs during reading
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
@@ -112,12 +130,13 @@ bool read_OBJ(std::istream& in,
     \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
 
+  \pre The data must represent a 2-manifold
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
+
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \pre The data must represent a 2-manifold
-
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -155,6 +174,13 @@ bool read_OBJ(const std::string& fname, FaceGraph& g) { return read_OBJ(fname, g
 
   writes the graph `g` in the OBJ format.
 
+  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param os the output stream
+  \param g the graph to be output
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
@@ -165,7 +191,6 @@ bool read_OBJ(const std::string& fname, FaceGraph& g) { return read_OBJ(fname, g
   \returns `true` if writing was successful.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -180,7 +205,14 @@ bool write_OBJ(std::ostream& os,
 /*!
 \ingroup PkgBGLIOFct
 
- writes the graph `g` in the OFF format into a file named `fname`.
+  writes the graph `g` in the OBJ format into a file named `fname`.
+
+  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the output file
+  \param g the graph to be output
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
@@ -192,8 +224,7 @@ bool write_OBJ(std::ostream& os,
   \returns `true` if writing was successful.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
- \see \ref IOStreamOBJ
+  \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const char* fname,
