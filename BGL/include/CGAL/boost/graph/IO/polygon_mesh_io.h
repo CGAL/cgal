@@ -95,55 +95,43 @@ bool read_polygon_mesh(const std::string& fname,
                        FaceGraph& g,
                        const NamedParameters& np)
 {
-
-  if (fname.find(".obj") != std::string::npos) {
+  if(fname.find(".obj") != std::string::npos)
     return read_OBJ(fname, g, np);
-  }
 
-  if (fname.find(".off") != std::string::npos) {
+  if(fname.find(".off") != std::string::npos)
     return read_OFF(fname, g, np);
-  }
 
-  if (fname.find(".ply") != std::string::npos) {
+  if(fname.find(".ply") != std::string::npos)
     return read_PLY(fname, g, np);
-  }
 
-  if (fname.find(".stl") != std::string::npos) {
+  if(fname.find(".stl") != std::string::npos)
     return read_STL(fname, g, np);
-  }
 
 #ifdef CGAL_USE_VTK
-  if (fname.find(".vtp") != std::string::npos) {
+  if(fname.find(".vtp") != std::string::npos)
     return read_VTP(fname, g, np);
-  }
 #endif
 
-  if (fname.find(".ts") != std::string::npos) {
+  if(fname.find(".ts") != std::string::npos)
     return read_GOCAD(fname, g, np);
-  }
+
   return false;
 }
 
 template <class FaceGraph>
-bool read_polygon_mesh(const std::string& fname,
-                       FaceGraph& g)
+bool read_polygon_mesh(const std::string& fname, FaceGraph& g)
 {
   return read_polygon_mesh(fname, g, parameters::all_default());
 }
 
-
-
 template <class FaceGraph, typename NamedParameters>
-bool read_polygon_mesh(const char* fname,
-                       FaceGraph& g,
-                       const NamedParameters& np)
+bool read_polygon_mesh(const char* fname, FaceGraph& g, const NamedParameters& np)
 {
   return read_polygon_mesh(std::string(fname), g, np);
 }
 
 template <class FaceGraph>
-bool read_polygon_mesh(const char* fname,
-                       FaceGraph& g)
+bool read_polygon_mesh(const char* fname, FaceGraph& g)
 {
   return read_polygon_mesh(fname, g, parameters::all_default());
 }
@@ -154,83 +142,76 @@ bool read_polygon_mesh(const char* fname,
 
 /*!
  * \ingroup PkgBGLIOFct
+ *
  * \brief writes a polygon mesh in a file.
- * \tparam FaceGraph a model of `FaceGraph`
+ *
+ * \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
  * `.vtp`(\ref IOStreamVTK "VTP file format")  or `.ts`(\ref IOStreamGocad "GOCAD file format").
- * \param g the mesh
+ * \param g the mesh to be output
  * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
- * \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+ *   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `FaceGraph`
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
- * Other named parameters may be used according to the file extension.
- * See `PkgBGLIOFct`  for an exhaustive list.
- * \return `true` if the writing worked, `false` otherwise.
  *
- * \see \ref IOStreamOFF
+ * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
+ *
+ * \return `true` if writing was successful, `false` otherwise.
  */
 template <class FaceGraph, typename NamedParameters>
 bool write_polygon_mesh(const std::string& fname,
                        FaceGraph& g,
                        const NamedParameters& np)
 {
-  if (fname.find(".ts") != std::string::npos) {
-    return write_GOCAD(fname, g, np);
-  }
-
-  if (fname.find(".obj") != std::string::npos) {
+  if(fname.find(".obj") != std::string::npos) // @fixme what about my_super_file.obj.off
     return write_OBJ(fname, g, np);
-  }
 
-  if (fname.find(".off") != std::string::npos) {
+  if(fname.find(".off") != std::string::npos) // @fixme case sensitivity
     return write_OFF(fname, g, np);
-  }
 
-  if (fname.find(".ply") != std::string::npos) {
+  if(fname.find(".ply") != std::string::npos)
     return write_PLY(fname, g, np);
-  }
 
-  if (fname.find(".stl") != std::string::npos) {
+  if(fname.find(".stl") != std::string::npos)
     return write_STL(fname, g, np);
-  }
+
+  if(fname.find(".ts") != std::string::npos)
+    return write_GOCAD(fname, g, np);
+
 #ifdef CGAL_USE_VTK
-  if (fname.find(".vtp") != std::string::npos) {
+  if(fname.find(".vtp") != std::string::npos)
     return write_VTP(fname, g, np);
-  }
 #endif
 
   return false;
 }
 
 template <class FaceGraph>
-bool write_polygon_mesh(const std::string& fname,
-                       FaceGraph& g)
+bool write_polygon_mesh(const std::string& fname, FaceGraph& g)
 {
   return write_polygon_mesh(fname, g, parameters::all_default());
 }
 
 template <class FaceGraph, typename NamedParameters>
-bool write_polygon_mesh(const char* fname,
-                       FaceGraph& g,
-                       const NamedParameters& np)
+bool write_polygon_mesh(const char* fname, FaceGraph& g, const NamedParameters& np)
 {
   return write_polygon_mesh(std::string(fname), g, np);
 }
 
 template <class FaceGraph>
-bool write_polygon_mesh(const char* fname,
-                       FaceGraph& g)
+bool write_polygon_mesh(const char* fname, FaceGraph& g)
 {
   return write_polygon_mesh(fname, g, parameters::all_default());
 }
 
-}//end CGAL
+} // namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H

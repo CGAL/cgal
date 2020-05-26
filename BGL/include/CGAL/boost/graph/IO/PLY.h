@@ -19,9 +19,9 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
+#include <string>
 
 namespace CGAL {
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ class PLY_builder
 
 public:
   PLY_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
-  //! TODO: use vertex_point_map
+
   template <typename NamedParameters>
   bool read(std::istream& input,
             Point_container& points,

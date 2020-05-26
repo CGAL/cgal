@@ -222,14 +222,15 @@ bool write_OFF_BGL(std::ostream& os,
     \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
 
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \returns `true` if writing was successful.
 
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
                typename boost::disable_if<
-               typename boost::has_range_const_iterator<FaceGraph>::type
+                 typename boost::has_range_const_iterator<FaceGraph>::type
                >::type* =0)
 {
   return IO::internal::write_OFF_BGL(os, g, np);
@@ -263,9 +264,9 @@ bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
-               ,typename boost::disable_if<
-               typename boost::has_range_const_iterator<FaceGraph>::type
+bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+               typename boost::disable_if<
+                 typename boost::has_range_const_iterator<FaceGraph>::type
                >::type* =0)
 {
   std::ofstream out(fname);
@@ -273,9 +274,9 @@ bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& n
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
-               ,typename boost::disable_if<
-               typename boost::has_range_const_iterator<FaceGraph>::type
+bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+               typename boost::disable_if<
+                 typename boost::has_range_const_iterator<FaceGraph>::type
                >::type* =0)
 {
   return write_OFF(fname.c_str(), g, np);
