@@ -77,26 +77,6 @@ public:
   std::string color;
 };
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& in,
-                std::pair<std::string, std::string>& name_and_color,
-                FaceGraph& g,
-                const CGAL_BGL_NP_CLASS& np,
-                bool verbose = true)
-{
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
-  typedef typename boost::property_traits<VPM>::value_type                     Point;
-
-  IO::internal::GOCAD_builder<FaceGraph, Point> builder(in, verbose);
-  if(!builder(g, np))
-    return false;
-
-  name_and_color.first = builder.name;
-  name_and_color.second = builder.color;
-
-  return is_valid(g); // @fixme keep validity check?
-}
-
 } // namespace internal
 } // namespace IO
 
@@ -108,6 +88,7 @@ bool read_GOCAD(std::istream& in,
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param in the input stream
+/// \param name_and_color name and color of the mesh
 /// \param g the graph to be built from the input data
 /// \param verbose whether extra information is printed when an incident occurs during reading
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -128,12 +109,29 @@ bool read_GOCAD(std::istream& in,
 /// \see \ref IOStreamGocad
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& in,
+                std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
                 const CGAL_BGL_NP_CLASS& np,
                 bool verbose = true)
 {
+  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type                     Point;
+
+  IO::internal::GOCAD_builder<FaceGraph, Point> builder(in, verbose);
+  if(!builder(g, np))
+    return false;
+
+  name_and_color.first = builder.name;
+  name_and_color.second = builder.color;
+
+  return is_valid(g); // @fixme keep validity check?
+}
+
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+{
   std::pair<std::string, std::string> dummy;
-  return IO::internal::read_GOCAD(in, dummy, g, np, verbose);
+  return read_GOCAD(in, dummy, g, np, verbose);
 }
 
 template <typename FaceGraph>
@@ -141,7 +139,7 @@ bool read_GOCAD(std::istream& in,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g)
 {
-  return IO::internal::read_GOCAD(in, name_and_color, g, parameters::all_default());
+  return read_GOCAD(in, name_and_color, g, parameters::all_default());
 }
 
 /// \ingroup PkgBGLIOFct
@@ -152,6 +150,7 @@ bool read_GOCAD(std::istream& in,
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param fname the name of the input file
+/// \param name_and_color name and color of the mesh
 /// \param g the graph to be built from the input data
 /// \param verbose whether extra information is printed when an incident occurs during reading
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -169,12 +168,21 @@ bool read_GOCAD(std::istream& in,
 ///
 /// \see \ref IOStreamGOCAD
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_GOCAD(const char* fname,
+                std::pair<std::string, std::string>& name_and_color,
+                FaceGraph& g,
+                const CGAL_BGL_NP_CLASS& np,
+                bool verbose = true)
 {
   std::ifstream in(fname);
-  std::pair<std::string, std::string> dummy;
+  return read_GOCAD(in, name_and_color, g, np, verbose);
+}
 
-  return IO::internal::read_GOCAD(in, dummy, g, np, verbose);
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+{
+  std::pair<std::string, std::string> dummy;
+  return read_GOCAD(fname, dummy, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
