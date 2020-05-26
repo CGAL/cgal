@@ -69,33 +69,8 @@ bool read_PLY_BGL(std::istream& in,
   return builder(g, np);
 }
 
-// document that too
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
-                              bool verbose = true)
-{
-  std::ifstream in(fname);
-  return read_PLY(in, g, np, verbose);
-}
-
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
-{
-  return read_PLY(fname.c_str(), g, np, verbose);
-}
-
-template <typename FaceGraph>
-bool read_PLY(std::istream& is, FaceGraph& g) { return read_PLY(is, g, parameters::all_default()); }
-
-template <typename FaceGraph>
-bool read_PLY(const char* fname, FaceGraph& g) { return read_PLY(fname, g, parameters::all_default()); }
-
-template <typename FaceGraph>
-bool read_PLY(const std::string& fname, FaceGraph& g) { return read_PLY(fname, g, parameters::all_default()); }
-
-}//end internal
-}//end IO
+} // namespace internal
+} // namespace IO
 
 /*!
   \ingroup PkgBGLIOFct
