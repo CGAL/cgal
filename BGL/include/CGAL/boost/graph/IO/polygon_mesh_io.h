@@ -76,6 +76,7 @@ bool read_polygon_mesh(std::istream& is,
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
  * `.vtp`(\ref IOStreamVTK "VTP file format")  or `.ts`(\ref IOStreamGocad "GOCAD file format").
  * \param g the mesh
+ * \param verbose whether extra information is printed when an incident occurs during reading
  * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -94,27 +95,37 @@ bool read_polygon_mesh(std::istream& is,
 template <class FaceGraph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
                        FaceGraph& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np,
+                       const bool verbose = false)
 {
-  if(fname.find(".obj") != std::string::npos)
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if(ext == std::string())
+  {
+    if(verbose)
+      std::cerr << "Error: cannot read from file without extension" << std::endl;
+    return false;
+  }
+
+  if(ext == "obj")
     return read_OBJ(fname, g, np);
-
-  if(fname.find(".off") != std::string::npos)
+  else if(ext == "off")
     return read_OFF(fname, g, np);
-
-  if(fname.find(".ply") != std::string::npos)
+  else if(ext == "ply")
     return read_PLY(fname, g, np);
-
-  if(fname.find(".stl") != std::string::npos)
+  else if(ext == "stl")
     return read_STL(fname, g, np);
-
+  else if(ext == "ts")
+    return read_GOCAD(fname, g, np);
 #ifdef CGAL_USE_VTK
-  if(fname.find(".vtp") != std::string::npos)
+  else if(ext == "vtp")
     return read_VTP(fname, g, np);
 #endif
 
-  if(fname.find(".ts") != std::string::npos)
-    return read_GOCAD(fname, g, np);
+  if(verbose)
+  {
+    std::cerr << "Error: unknown input file extension: " << ext << "\n"
+              << "Please refer to the documentation for the list of supported file formats" << std::endl;
+  }
 
   return false;
 }
@@ -154,6 +165,7 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
  * `.vtp`(\ref IOStreamVTK "VTP file format")  or `.ts`(\ref IOStreamGocad "GOCAD file format").
  * \param g the mesh to be output
+ * \param verbose whether extra information is printed when an incident occurs during writing
  * \param np optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -170,27 +182,37 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
 template <class FaceGraph, typename NamedParameters>
 bool write_polygon_mesh(const std::string& fname,
                        FaceGraph& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np,
+                        const bool verbose = false)
 {
-  if(fname.find(".obj") != std::string::npos) // @fixme what about my_super_file.obj.off
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if(ext == std::string())
+  {
+    if(verbose)
+      std::cerr << "Error: trying to output to file without extension" << std::endl;
+    return false;
+  }
+
+  if(ext == "obj")
     return write_OBJ(fname, g, np);
-
-  if(fname.find(".off") != std::string::npos) // @fixme case sensitivity
+  else if(ext == "off")
     return write_OFF(fname, g, np);
-
-  if(fname.find(".ply") != std::string::npos)
+  else if(ext == "ply")
     return write_PLY(fname, g, np);
-
-  if(fname.find(".stl") != std::string::npos)
+  else if(ext == "stl")
     return write_STL(fname, g, np);
-
-  if(fname.find(".ts") != std::string::npos)
+  else if(ext == "ts")
     return write_GOCAD(fname, g, np);
-
 #ifdef CGAL_USE_VTK
-  if(fname.find(".vtp") != std::string::npos)
+  else if(ext == "vtp")
     return write_VTP(fname, g, np);
 #endif
+
+  if(verbose)
+  {
+    std::cerr << "Error: unknown output file extension: " << ext << "\n"
+              << "Please refer to the documentation for the list of supported file formats" << std::endl;
+  }
 
   return false;
 }

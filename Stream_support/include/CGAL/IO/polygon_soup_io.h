@@ -22,7 +22,7 @@
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/STL.h>
 // #include <CGAL/IO/VRML.h>
-// #include <CGAL/IO/VTK.h>
+#include <CGAL/IO/VTK.h>
 // #include <CGAL/IO/WKT.h>
 #include <CGAL/IO/GOCAD.h>
 
@@ -33,103 +33,138 @@
 
 namespace CGAL {
 
+namespace IO {
+namespace internal {
+
+std::string get_file_extension(const std::string fname)
+{
+  std::string::size_type dot(fname.rfind("."));
+  if(dot == std::string::npos)
+    return std::string();
+
+  std::string ext = fname.substr(dot+1, fname.length() - dot - 1);
+  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+  return ext;
+}
+
+} // namespace internal
+} // namespace IO
+
 /*!
  * \ingroup IOstreamFunctions
+ *
  * \brief reads a polygon soup from a file.
+ *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
  * \tparam PointRange a model of the concept `RandomAccessContainer`
  * whose value type is the point type
  *
- * \param filename the name of the file. Its extension must be one of the following :
+ * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
  * or `.ts`(\ref IOStreamGocad "GOCAD file format").
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
-
- * \return `true` if the reading worked, `false` otherwise.
+ *
+ * \return `true` if reading was successful, `false` otherwise.
  *
  * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
-bool read_polygon_soup(const std::string& filename,
+bool read_polygon_soup(const std::string& fname,
                        PointRange& points,
-                       PolygonRange& polygons)
+                       PolygonRange& polygons,
+                       const bool verbose = false)
 {
-  std::string::size_type dot(filename.rfind("."));
-  if(dot == std::string::npos)
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if(ext == std::string())
+  {
+    if(verbose)
+      std::cerr << "Error: cannot read from file without extension" << std::endl;
     return false;
+  }
 
-  std::string ext = filename.substr(dot+1, filename.length() - dot - 1);
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
-  // extension determines reader
   if(ext == "obj")
-    return read_OBJ(filename, points, polygons);
+    return read_OBJ(fname, points, polygons);
   else if(ext == "off")
-    return read_OFF(filename, points, polygons);
+    return read_OFF(fname, points, polygons);
   else if(ext == "ply")
-    return read_PLY(filename, points, polygons);
+    return read_PLY(fname, points, polygons);
   else if(ext == "stl")
-    return read_STL(filename, points, polygons);
+    return read_STL(fname, points, polygons);
   else if(ext == "ts")
-    return read_GOCAD(filename, points, polygons);
+    return read_GOCAD(fname, points, polygons);
+#ifdef CGAL_USE_VTK
+  else if(ext == "ts")
+    return read_VTP(fname, points, polygons);
+#endif
 
-  std::cerr << "Cannot open file with extension: " << ext << std::endl;
+  if(verbose)
+  {
+    std::cerr << "Error: unknown input file extension: " << ext << "\n"
+              << "Please refer to the documentation for the list of supported file formats" << std::endl;
+  }
 
   return false;
 }
 
 /*!
  * \ingroup IOstreamFunctions
+ *
  * \brief writes a polygon soup in a file.
+ *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
  * \tparam PointRange a model of the concept `RandomAccessContainer`
  * whose value type is the point type
-
  *
- * \param filename the name of the file. Its extension must be one of the following :
+ * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
  * or `.ts`(\ref IOStreamGocad "GOCAD file format").
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
-
- * \return `true` if the writing worked, `false` otherwise.
+ *
+ * \return `true` if writing was successful, `false` otherwise.
  *
  * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
-bool write_polygon_soup(const std::string& filename,
+bool write_polygon_soup(const std::string& fname,
                         const PointRange& points,
-                        const PolygonRange& polygons)
+                        const PolygonRange& polygons,
+                        const bool verbose = false)
 {
-  std::string::size_type dot(filename.rfind("."));
-  if(dot == std::string::npos)
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if(ext == std::string())
+  {
+    if(verbose)
+      std::cerr << "Error: trying to output to file without extension" << std::endl;
     return false;
+  }
 
-  std::string ext = filename.substr(dot+1, filename.length()-dot-1);
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
-  // extension determines writer
   if(ext == "obj")
-    return write_OBJ(filename, points, polygons);
-  else if(ext == "off") // @fixme coff, stoff, etc.
-    return write_OFF(filename, points, polygons);
+    return write_OBJ(fname, points, polygons);
+  else if(ext == "off")
+    return write_OFF(fname, points, polygons);
   else if(ext == "ply")
-    return write_PLY(filename, points, polygons);
+    return write_PLY(fname, points, polygons);
   else if(ext == "stl")
-    return write_STL(filename, points, polygons);
+    return write_STL(fname, points, polygons);
   else if(ext == "ts")
-    return write_GOCAD(filename, points, polygons);
+    return write_GOCAD(fname, points, polygons);
 
-  std::cerr << "Cannot save file with extension: " << ext << std::endl;
+  if(verbose)
+  {
+    std::cerr << "Error: unknown output file extension: " << ext << "\n"
+              << "Please refer to the documentation for the list of supported file formats" << std::endl;
+  }
 
   return false;
 }
