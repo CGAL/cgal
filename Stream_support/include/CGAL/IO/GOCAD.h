@@ -297,7 +297,7 @@ bool write_GOCAD(const char* fname,
                  const PointRange& points,
                  const PolygonRange& polygons)
 {
-  return IO::internal::write_GOCAD(fname, points, polygons, parameters::all_default());
+  return write_GOCAD(fname, points, polygons, parameters::all_default());
 }
 
 template <typename PointRange,
