@@ -39,8 +39,8 @@ namespace CGAL
 * \ingroup PkgTetrahedralRemeshingRef
 * remeshes a tetrahedral mesh.
 *
-* A good default for the `Triangulation_3` type is to use `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
-* that inherits from `Triangulation_3` with a `TDS` suitable for this function.
+* It is recommended to use `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
+* for the first parameter, as it inherits from `Triangulation_3` with a `TDS` suitable for this function.
 *
 * This function takes as input a 3-dimensional triangulation
 * and performs a sequence of atomic operations
