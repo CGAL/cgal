@@ -1690,6 +1690,12 @@ void Viewer::setTotalPass(int p)
 
 void Viewer::messageLogged(QOpenGLDebugMessage msg)
 {
+  //filter out useless warning
+  // From those two links, we decided we didn't care for this warning:
+  // https://community.khronos.org/t/vertex-shader-in-program-2-is-being-recompiled-based-on-gl-state/76019
+  // https://stackoverflow.com/questions/12004396/opengl-debug-context-performance-warning
+  if(msg.message().contains("is being recompiled"))
+    return;
   QString error;
 
   // Format based on severity
@@ -2017,7 +2023,15 @@ void Viewer::onTextMessageSocketReceived(QString message)
   if(session != d->session){
     return;
   }
-  moveCameraToCoordinates(position, 0.05f);
+  QStringList sl = position.split(" ");
+  if(sl.size() != 7)
+    return;
+
+  CGAL::qglviewer::Vec pos(sl[0].toDouble(),sl[1].toDouble(),sl[2].toDouble());
+  CGAL::qglviewer::Quaternion q(sl[3].toDouble(),sl[4].toDouble(),
+      sl[5].toDouble(),sl[6].toDouble());
+  camera()->frame()->setPositionAndOrientation(pos, q);
+  update();
 }
 #endif
 #include "Viewer.moc"

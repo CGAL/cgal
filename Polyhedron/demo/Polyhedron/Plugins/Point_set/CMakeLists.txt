@@ -59,7 +59,7 @@ if(EIGEN3_FOUND)
       CGAL_target_use_pointmatcher(register_point_sets_plugin)
     endif()
   else()
-    message(STATUS "NOTICE: OpenGR and libpointmatcher were not found. Registrationp plugin will not be available.")
+    message(STATUS "NOTICE: OpenGR and libpointmatcher were not found. Registration plugin will not be available.")
   endif()
 
 else(EIGEN3_FOUND)
