@@ -106,6 +106,7 @@ public:
   typedef typename Triangulation::size_type size_type;
   typedef typename Triangulation::Locate_type Locate_type;
   typedef typename Triangulation::All_faces_iterator All_faces_iterator;
+  typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Vertex_circulator Vertex_circulator;
@@ -148,6 +149,8 @@ public:
   using Triangulation::geom_traits;
   using Triangulation::all_faces_begin;
   using Triangulation::all_faces_end;
+  using Triangulation::finite_edges_begin;
+  using Triangulation::finite_edges_end;
   using Triangulation::side_of_oriented_circle;
   using Triangulation::is_infinite;
   using Triangulation::collinear_between;
@@ -167,6 +170,7 @@ public:
   using Triangulation::all_edges_begin;
   using Triangulation::all_edges_end;
   using Triangulation::mirror_index;
+  using Triangulation::mirror_edge;
   using Triangulation::orientation;
 #endif
 
@@ -675,6 +679,19 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
+  std::list<std::pair<Vertex_handle,Vertex_handle> > constrained_edges;
+  bool one_dimensional = false;
+  if(dimension() == 1){
+    one_dimensional = true;
+    for(Finite_edges_iterator it = finite_edges_begin();
+        it != finite_edges_end();
+        ++it){
+      if(is_constrained(*it)){
+        constrained_edges.emplace_back(it->first->vertex(cw(it->second)),
+                                       it->first->vertex(ccw(it->second)));
+      }
+    }
+  }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
     if(boost::is_same<Itag, No_constraint_intersection_tag>::value)
@@ -686,6 +703,18 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
 
   va = Triangulation::insert(a,lt,loc,li);
+
+  if(one_dimensional && (dimension() == 2)){
+    for(const std::pair<Vertex_handle,Vertex_handle>& vp : constrained_edges){
+      Face_handle fh;
+      int i;
+      if(this->is_edge(vp.first, vp.second, fh,i)){
+        fh->set_constraint(i,true);
+        boost::tie(fh,i) = mirror_edge(Edge(fh,i));
+        fh->set_constraint(i,true);
+      }
+    }
+  }
 
   if (insert_in_constrained_edge)
     update_constraints_incident(va, v1,v2);
