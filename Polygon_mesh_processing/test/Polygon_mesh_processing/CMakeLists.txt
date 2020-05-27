@@ -102,6 +102,7 @@ endif()
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
   create_single_source_cgal_program("test_remove_caps_needles.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
+  create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
 
   if( TBB_FOUND )
     include(CGAL_target_use_TBB)
