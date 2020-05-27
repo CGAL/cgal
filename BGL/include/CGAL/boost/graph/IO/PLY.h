@@ -214,7 +214,7 @@ bool read_PLY(const std::string& fname, FaceGraph& g)
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(std::ostream& os,
                const FaceGraph& g,
-               const std::string comments,
+               const std::string& comments,
                const NamedParameters& np)
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor                          vertex_descriptor;
@@ -334,7 +334,7 @@ bool write_PLY(std::ostream& os,
 template <class FaceGraph>
 bool write_PLY(std::ostream& os,
                const FaceGraph& g,
-               const std::string comments)
+               const std::string& comments)
 {
   return write_PLY(os, g, comments, parameters::all_default());
 }
@@ -387,7 +387,7 @@ bool write_PLY(std::ostream& os,
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(const char* fname,
                const FaceGraph& g,
-               const std::string comments,
+               const std::string& comments,
                const NamedParameters& np)
 {
   std::ofstream os(fname);
