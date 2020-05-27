@@ -3,16 +3,14 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
-#include <CGAL/Random.h>
 #include <CGAL/property_map.h>
 
 #include <boost/unordered_set.hpp>
 
 #include <iostream>
-#include <fstream>
 #include <utility>
 
-#include <CGAL/Tetrahedral_remeshing/tetrahedral_remeshing_io.h>
+#include "tetrahedral_remeshing_generate_input.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -62,69 +60,6 @@ public:
   }
 };
 
-void add_edge(Vertex_handle v1,
-              Vertex_handle v2,
-              const Remeshing_triangulation& tr,
-              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
-{
-  Cell_handle c;
-  int i, j;
-  if(tr.is_edge(v1, v2, c, i, j))
-    constraints.insert(std::make_pair(v1, v2));
-}
-
-void make_constraints_from_cube_edges(
-              Remeshing_triangulation& tr,
-              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
-{
-  const Point p0(-2., -2., -2.);
-  const Point p1(-2., -2., -2.);
-  const Point p2( 2., -2., -2.);
-  const Point p3( 2., -2.,  2.);
-  const Point p4(-2.,  2., -2.);
-  const Point p5(-2.,  2.,  2.);
-  const Point p6( 2.,  2., -2.);
-  const Point p7( 2.,  2.,  2.);
-
-  Remeshing_triangulation::Locate_type lt;
-  int li, lj;
-  Cell_handle c = tr.locate(p0, lt, li, lj);
-  Vertex_handle v0 = c->vertex(li);
-  c = tr.locate(p1, lt, li, lj);
-  Vertex_handle v1 = c->vertex(li);
-
-  c = tr.locate(p2, lt, li, lj);
-  Vertex_handle v2 = c->vertex(li);
-  c = tr.locate(p3, lt, li, lj);
-  Vertex_handle v3 = c->vertex(li);
-
-  c = tr.locate(p4, lt, li, lj);
-  Vertex_handle v4 = c->vertex(li);
-  c = tr.locate(p5, lt, li, lj);
-  Vertex_handle v5 = c->vertex(li);
-
-  c = tr.locate(p6, lt, li, lj);
-  Vertex_handle v6 = c->vertex(li);
-  c = tr.locate(p7, lt, li, lj);
-  Vertex_handle v7 = c->vertex(li);
-
-  // constrain cube edges
-  add_edge(v0, v1, tr, constraints);
-  add_edge(v1, v2, tr, constraints);
-  add_edge(v2, v3, tr, constraints);
-  add_edge(v3, v0, tr, constraints);
-
-  add_edge(v4, v5, tr, constraints);
-  add_edge(v5, v6, tr, constraints);
-  add_edge(v6, v7, tr, constraints);
-  add_edge(v7, v4, tr, constraints);
-
-  add_edge(v0, v4, tr, constraints);
-  add_edge(v1, v5, tr, constraints);
-  add_edge(v2, v6, tr, constraints);
-  add_edge(v3, v7, tr, constraints);
-}
-
 void set_subdomain(Remeshing_triangulation& tr, const int index)
 {
   for (Remeshing_triangulation::Finite_cells_iterator cit = tr.finite_cells_begin();
@@ -136,21 +71,15 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  const char* filename = "data/sphere_in_cube.tr.cgal";
   const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
   const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
-
-  std::ifstream input(filename, std::ios_base::in | std::ios_base::binary);
-  if (!input)
-  {
-    std::cerr << "File " << filename << " could not be found" << std::endl;
-    return EXIT_FAILURE;
-  }
+  const int nbv = (argc > 3) ? atoi(argv[3]) : 500;
 
   Remeshing_triangulation t3;
-  CGAL::load_triangulation(input, t3);
-
   boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
+
+  CGAL::Tetrahedral_remeshing::generate_input_cube(nbv, t3, constraints);
+
   make_constraints_from_cube_edges(t3, constraints);
 
   CGAL_assertion(t3.is_valid());
@@ -159,9 +88,6 @@ int main(int argc, char* argv[])
     CGAL::parameters::edge_is_constrained_map(
       Constrained_edges_property_map(&constraints))
     .number_of_iterations(nb_iter));
-
-  std::ofstream out("tet_remeshing_with_features_after.mesh", std::ios_base::out);
-  CGAL::save_ascii_triangulation(out, t3);
 
   return EXIT_SUCCESS;
 }

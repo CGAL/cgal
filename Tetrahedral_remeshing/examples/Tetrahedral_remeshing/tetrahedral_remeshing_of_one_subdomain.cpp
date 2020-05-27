@@ -1,11 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <fstream>
-
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
-#include <CGAL/Tetrahedral_remeshing/tetrahedral_remeshing_io.h>
+#include "tetrahedral_remeshing_generate_input.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -30,21 +28,14 @@ public:
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/triangulation_two_subdomains.binary.cgal";
-  const double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1;
-
-  std::ifstream input(filename, std::ios_base::in | std::ios_base::binary);
-  if(!input)
-    return EXIT_FAILURE;
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
+  const std::size_t nbv = (argc > 2) ? atoi(argv[2]) : 1000;
 
   Remeshing_triangulation tr;
-  CGAL::load_triangulation(input, tr);
+  CGAL::Tetrahedral_remeshing::generate_input_two_subdomains(nbv, tr);
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
       CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
-
-  std::ofstream ofile("output.binary.cgal", std::ios_base::out | std::ios_base::binary);
-  CGAL::save_binary_triangulation(ofile, tr);
 
   return EXIT_SUCCESS;
 }
