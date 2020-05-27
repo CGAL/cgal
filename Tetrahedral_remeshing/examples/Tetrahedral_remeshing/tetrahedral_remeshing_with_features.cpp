@@ -1,6 +1,3 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_DUMP_REMESHING_STEPS
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
