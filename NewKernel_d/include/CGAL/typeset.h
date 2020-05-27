@@ -55,6 +55,11 @@ namespace CGAL {
     template<class X> using contains = std::false_type;
     template<class X> using add = typeset<X>;
   };
+  struct typeset_all {
+    typedef typeset_all type;
+    template<class X> using contains = std::true_type;
+    template<class X> using add = typeset_all;
+  };
 #else
   template<class,class> struct typeset;
   template<class H=void, class T=typename
@@ -81,12 +86,20 @@ namespace CGAL {
   template<class H,class T>
     template<class V>
     struct typeset<H,T>::add<H,V> : typeset<H,T> {};
+  struct typeset_all {
+    typedef typeset_all type;
+    template<class X> struct contains : public boost::true_type {};
+    template<class X> struct add {
+      typedef typeset_all type;
+    };
+  };
 #endif
 
   template<class T1, class T2> struct typeset_union_ :
     typeset_union_<typename T1::template add<typename T2::head>::type, typename T2::tail>
   {};
   template<class T> struct typeset_union_ <T, typeset<> > : T {};
+  template<class T> struct typeset_union_ <T, typeset_all > : typeset_all {};
 
   template<class T1, class T2>
     struct typeset_intersection_ {
@@ -100,8 +113,8 @@ namespace CGAL {
 #endif
         typename U::template add<H>::type, U>::type type;
     };
-  template<class T>
-    struct typeset_intersection_<typeset<>,T> : typeset<> {};
+  template<class T> struct typeset_intersection_<typeset<>, T> : typeset<> {};
+  template<class T> struct typeset_intersection_<typeset_all, T> : T {};
 
 #ifdef CGAL_CXX11
   template<class T1, class T2>
