@@ -144,8 +144,8 @@ protected:
   bool m_verbose;
 };
 
-} // end internal
-} // end IO
-} // end CGAL
+} // namespace internal
+} // namespace IO
+} // namespace CGAL
 
 #endif // CGAL_BGL_IO_GENERIC_FACEGRAPH_BUILDER_H

@@ -354,7 +354,6 @@ bool write_PLY(std::ostream& os,
   return write_PLY(os, g, "", parameters::all_default());
 }
 
-
 /*!
   \ingroup PkgBGLIOFct
 
@@ -396,61 +395,50 @@ bool write_PLY(const char* fname,
 }
 
 template <class FaceGraph>
-bool write_PLY(const char* fname,
-               const FaceGraph& g,
-               const std::string comments)
+bool write_PLY(const char* fname, const FaceGraph& g, const std::string comments)
 {
   return write_PLY(fname, g, comments, parameters::all_default());
 }
 
 template <class FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const char* fname,
-               const FaceGraph& g,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_PLY(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_PLY(fname, g, "", np);
 }
 
 template <class FaceGraph>
-bool write_PLY(const char* fname,
-               const FaceGraph& g)
+bool write_PLY(const char* fname, const FaceGraph& g)
 {
   return write_PLY(fname, g, "", parameters::all_default());
 }
-
 
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(const std::string& fname,
                const FaceGraph& g,
                const std::string& comments,
-               const NamedParameters& np
-               )
+               const NamedParameters& np)
 {
   return write_PLY(fname.c_str(), g, comments, np);
 }
 
 template <class FaceGraph>
-bool write_PLY(const std::string& fname,
-               const FaceGraph& g,
-               const std::string comments)
+bool write_PLY(const std::string& fname, const FaceGraph& g, const std::string comments)
 {
   return write_PLY(fname, g, comments, parameters::all_default());
 }
 
 template <class FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname,
-               const FaceGraph& g,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_PLY(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_PLY(fname, g, "", np);
 }
 
 template <class FaceGraph>
-bool write_PLY(const std::string& fname,
-               const FaceGraph& g)
+bool write_PLY(const std::string& fname, const FaceGraph& g)
 {
   return write_PLY(fname, g, "", parameters::all_default());
 }
+
 } // namespace CGAL
 
 #endif // CGAL_BGL_IO_PLY_H

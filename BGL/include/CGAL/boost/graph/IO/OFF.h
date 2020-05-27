@@ -170,7 +170,7 @@ bool read_OFF(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& n
 template <typename FaceGraph>
 bool read_OFF(std::istream& is, FaceGraph& g,
               typename boost::disable_if<
-              typename boost::has_range_const_iterator<FaceGraph>::type
+                typename boost::has_range_const_iterator<FaceGraph>::type
               >::type* =0)
 {
   return read_OFF(is, g, parameters::all_default());
@@ -198,7 +198,6 @@ bool write_OFF_BGL(std::ostream& os,
 
 } // namespace internal
 } // namespace IO
-
 
 /*!
   \ingroup PkgBGLIOFct
