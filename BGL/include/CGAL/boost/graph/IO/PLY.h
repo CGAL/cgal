@@ -304,7 +304,7 @@ bool write_PLY(std::ostream& os,
       if(get_mode(os) == CGAL::IO::ASCII)
         os << c << std::endl;
       else
-        os.write(reinterpret_cast<char*>(&c), sizeof(c));
+        os.write(reinterpret_cast<const char*>(&c), sizeof(c));
     }
   }
 
@@ -324,7 +324,7 @@ bool write_PLY(std::ostream& os,
       if(get_mode(os) == CGAL::IO::ASCII)
         os << c << std::endl;
       else
-        os.write(reinterpret_cast<char*>(&c), sizeof(c));
+        os.write(reinterpret_cast<const char*>(&c), sizeof(c));
     }
   }
 
