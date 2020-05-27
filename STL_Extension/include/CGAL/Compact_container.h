@@ -1119,7 +1119,7 @@ namespace handle {
   template <class H> struct Hash_functor;
 
   template<class DSC, bool Const>
-  struct Hash_functor<CC_iterator<DSC, Const>>{
+  struct Hash_functor<CC_iterator<DSC, Const> >{
     std::size_t
     operator()(const CC_iterator<DSC, Const>& i)
     {
