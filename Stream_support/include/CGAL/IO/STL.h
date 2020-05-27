@@ -23,6 +23,8 @@
 #include <boost/range/value_type.hpp>
 
 #include <iostream>
+#include <fstream>
+#include <string>
 
 namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,8 +175,8 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  */
 template <class PointRange, class TriangleRange>
 bool write_STL(std::ostream& out,
-                        const PointRange& points,
-                        const TriangleRange& facets)
+               const PointRange& points,
+               const TriangleRange& facets)
 {
   typedef typename boost::range_value<TriangleRange>::type            Triangle;
   typedef typename boost::range_value<PointRange>::type               Point;

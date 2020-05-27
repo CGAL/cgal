@@ -17,7 +17,9 @@
 
 #include <CGAL/IO/VTK/VTK_reader.h>
 #include <CGAL/IO/VTK/VTK_writer.h>
+
 #include <CGAL/boost/graph/Named_function_parameters.h>
+
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
 #include <vtkCommand.h>
@@ -25,9 +27,11 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+
 namespace CGAL {
 namespace IO {
 namespace internal {
+
 //append the content of poly_data to a soup.
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
@@ -103,7 +107,7 @@ bool read_VTP(const char* fname,
 }
 
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
-bool read_VTP(const std::string&  fname,
+bool read_VTP(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
               const NamedParameters& np)

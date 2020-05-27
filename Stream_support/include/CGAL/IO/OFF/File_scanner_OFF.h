@@ -18,8 +18,10 @@
 #define CGAL_IO_OFF_FILE_SCANNER_OFF_H
 
 #include <CGAL/config.h>
+
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/OFF/File_header_OFF.h>
+#include <CGAL/IO/io.h>
 
 #include <boost/cstdint.hpp>
 

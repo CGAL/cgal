@@ -284,7 +284,6 @@ bool write_GOCAD(const char* fname,
   return IO::internal::write_GOCAD(os, fname, points, polygons, np);
 }
 
-
 /*!
   \ingroup GocadIoFuncs
 

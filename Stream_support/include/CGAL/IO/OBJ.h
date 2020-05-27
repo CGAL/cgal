@@ -19,6 +19,7 @@
 
 #include <boost/range/value_type.hpp>
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -209,7 +210,7 @@ template <typename PointRange,
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& )
+               const CGAL_BGL_NP_CLASS&)
 {
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
   return writer(points, polygons);

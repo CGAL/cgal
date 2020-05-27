@@ -14,17 +14,17 @@
 //
 // Author(s)     : Andreas Fabri
 
-
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
+
+#include <CGAL/assertions.h>
 #include <CGAL/Fraction_traits.h>
+#include <CGAL/tags.h>
 
 #include <cstdio>
 #include <cctype>

@@ -21,4 +21,6 @@
 #include <CGAL/boost/graph/IO/VTK.h>
 #include <CGAL/boost/graph/IO/WRL.h>
 
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+
 #endif // CGAL_BOOST_GRAPH_IO_H

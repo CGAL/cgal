@@ -21,6 +21,14 @@
 
 #include <boost/utility/enable_if.hpp>
 
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

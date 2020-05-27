@@ -11,6 +11,7 @@
 #define CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
 
 #include <CGAL/boost/graph/io.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 namespace CGAL {
 

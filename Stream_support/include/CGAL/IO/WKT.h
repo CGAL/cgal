@@ -34,6 +34,7 @@
 #include <boost/geometry/io/wkt/write.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
 
