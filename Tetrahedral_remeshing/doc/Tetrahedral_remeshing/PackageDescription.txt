@@ -36,6 +36,8 @@ targetting high quality meshes with respect to dihedral angles.}
 \cgalCRPSection{Concepts}
 
 - `RemeshingTriangulationTraits_3`
+- `RemeshingVertexBase_3`
+- `RemeshingCellBase_3`
 
 \cgalCRPSection{Classes}
 

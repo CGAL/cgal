@@ -39,6 +39,9 @@ namespace CGAL
 * \ingroup PkgTetrahedralRemeshingRef
 * remeshes a tetrahedral mesh.
 *
+* A good default for the `Triangulation_3` type is to use `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
+* that inherits from `Triangulation_3` with a `TDS` suitable for this function.
+*
 * This function takes as input a 3-dimensional triangulation
 * and performs a sequence of atomic operations
 * in order to generate as output a high quality mesh with a prescribed
@@ -57,7 +60,7 @@ namespace CGAL
 *
 * Subdomains are defined by indices that
 * are stored in the cells of the input triangulation, following the `MeshCellBase_3`
-* concept.
+* concept (refined by `RemeshingCellBase_3`).
 * The surfacic interfaces between subdomains are formed by facets whose two incident cells
 * have different subdomain indices.
 * The edges where three or more subdomains meet form feature polylines,
@@ -67,8 +70,8 @@ namespace CGAL
 * @tparam Traits is the geometric traits, model of `RemeshingTriangulationTraits_3`
 * @tparam TDS is the triangulation data structure for `Triangulation_3`,
 *             model of ` TriangulationDataStructure_3`,
-*             with cell base model of `MeshCellBase_3`
-*             and vertex base model of `MeshVertexBase_3`.
+*             with cell base model of `RemeshingCellBase_3`
+*             and vertex base model of `RemeshingVertexBase_3`.
 * @tparam SLDS is an optional parameter for `Triangulation_3`, that
 *             specifies the type of the spatial lock data structure.
 * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
@@ -105,7 +108,9 @@ namespace CGAL
 *    By default, all cells with a non-zero `Subdomain_index` are selected.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
-
+*
+* \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
+*
 * @todo implement non-uniform sizing field instead of uniform target edge length
 */
 template<typename Traits, typename TDS, typename SLDS,
