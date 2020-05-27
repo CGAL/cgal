@@ -58,12 +58,7 @@ template<typename Gt,
          typename Cb = Remeshing_cell_base_3<Gt>
 >
 class Remeshing_triangulation_3
-  : public CGAL::Triangulation_3<Gt,
-      CGAL::Triangulation_data_structure_3<
-        Remeshing_vertex_base_3<Gt, Vb>,
-        Remeshing_cell_base_3<Gt, Cb>
-      >
-    >
+  : public CGAL::Triangulation_3<Gt, CGAL::Triangulation_data_structure_3<Vb,Cb> >
 {
 public:
   typedef Vb Remeshing_Vb;

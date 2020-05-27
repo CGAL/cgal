@@ -24,13 +24,13 @@ namespace Tetrahedral_remeshing
   {
     CGAL::Random rng;
 
-    typedef Tr::Point Point;
-    typedef Tr::Cell_handle Cell_handle;
+    typedef typename Tr::Point Point;
+    typedef typename Tr::Cell_handle Cell_handle;
 
     while (tr.number_of_vertices() < nbv)
       tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
 
-    const Tr::Geom_traits::Plane_3
+    const typename Tr::Geom_traits::Plane_3
       plane(Point(0, 0, 0), Point(0, 1, 0), Point(0, 0, 1));
 
     for (Cell_handle c : tr.finite_cell_handles())
