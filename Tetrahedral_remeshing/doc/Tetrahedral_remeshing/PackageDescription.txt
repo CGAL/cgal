@@ -7,12 +7,6 @@
 /// \defgroup PkgTetrahedralRemeshingClasses Classes
 /// \ingroup PkgTetrahedralRemeshingRef
 
-/// \defgroup PkgPACKAGETraitsClasses Traits Classes
-/// \ingroup PkgPACKAGE
-
-/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
-/// \ingroup PkgPACKAGE
-
 /*!
 \addtogroup PkgTetrahedralRemeshingRef
 
@@ -22,14 +16,14 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Jane Tournois, Noura Faraj}
 \cgalPkgDesc{
-The package provides a function for remeshing of tetrahedral meshes,
+The package provides a function for remeshing tetrahedral meshes,
 targetting high quality meshes with respect to dihedral angles.}
 \cgalPkgManuals{Chapter_Tetrahedral_Remeshing,PkgTetrahedralRemeshingRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.1}
-\cgalPkgDependsOn{\ref PkgTriangulation3, PkgMesh3}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{faraj2016mvr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

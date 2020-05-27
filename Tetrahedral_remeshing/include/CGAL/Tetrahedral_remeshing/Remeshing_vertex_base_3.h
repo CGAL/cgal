@@ -49,14 +49,15 @@ It has the default value `Triangulation_vertex_base_3<Gt>`.
 
 \cgalModels `MeshVertexBase_3`
 */
-
+#ifndef DOXYGEN_RUNNING
 template<typename GT,
          typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
 using Remeshing_vertex_base_3
-#ifndef DOXYGEN_RUNNING
   = CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>;
 #else
-  = unspecified_type;
+template<typename GT,
+         typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
+class Remeshing_vertex_base_3;
 #endif
 
 }//end namespace Tetrahedral_remeshing
