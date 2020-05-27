@@ -41,8 +41,7 @@ public:
   template <typename NamedParameters>
   bool operator()(FaceGraph& g, const NamedParameters& np)
   {
-    // @fixme move to CGAL namespace
-    typedef typename Polygon_mesh_processing::GetK<FaceGraph, NamedParameters>::Kernel Kernel;
+    typedef typename GetK<FaceGraph, NamedParameters>::Kernel                          Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;
     typedef typename Kernel::Point_2                                                   Texture;
     typedef CGAL::Color                                                                Color;
