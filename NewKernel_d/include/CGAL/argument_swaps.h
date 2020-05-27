@@ -18,9 +18,9 @@
 namespace CGAL {
 namespace internal {
 
-template<int,class...> struct Apply_to_last_then_rest_;
+template<std::size_t,class...> struct Apply_to_last_then_rest_;
 
-template<int d,class F,class T,class... U>
+template<std::size_t d,class F,class T,class... U>
 struct Apply_to_last_then_rest_<d,F,T,U...> {
         typedef typename Apply_to_last_then_rest_<d-1,F,U...,T>::result_type result_type;
         inline result_type operator()(F&&f,T&&t,U&&...u)const{

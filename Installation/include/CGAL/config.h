@@ -546,13 +546,9 @@ using std::max;
 #endif
 
 // Macro to specify a 'noreturn' attribute.
-#if defined(__GNUG__) || __has_attribute(__noreturn__)
-#  define CGAL_NORETURN  __attribute__ ((__noreturn__))
-#elif defined (_MSC_VER)
-#  define CGAL_NORETURN __declspec(noreturn)
-#else
-#  define CGAL_NORETURN
-#endif
+// (This macro existed in CGAL before we switched to C++11. Let's keep
+// the macro defined for backward-compatibility. That cannot harm.)
+#define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
 #if __has_cpp_attribute(no_unique_address)
