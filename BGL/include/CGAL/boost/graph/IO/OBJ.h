@@ -50,16 +50,16 @@ class OBJ_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  OBJ_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
+  OBJ_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
 
   template <typename NamedParameters>
-  bool read(std::istream& input,
+  bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
             const NamedParameters& np,
             bool verbose)
   {
-    return read_OBJ(input, points, faces, np, verbose);
+    return read_OBJ(is, points, faces, np, verbose);
   }
 };
 
@@ -75,7 +75,7 @@ public:
   \tparam FaceGraph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param in the input stream
+  \param is the input stream
   \param g the graph to be built from the input data
   \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -97,7 +97,7 @@ public:
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(std::istream& in,
+bool read_OBJ(std::istream& is,
               FaceGraph& g,
               const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
@@ -105,7 +105,7 @@ bool read_OBJ(std::istream& in,
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::OBJ_builder<FaceGraph, Point> builder(in, verbose);
+  IO::internal::OBJ_builder<FaceGraph, Point> builder(is, verbose);
   return builder(g, np);
 }
 
@@ -231,8 +231,8 @@ bool write_OBJ(const char* fname,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream out(fname);
-  return write_OBJ(out, g, np);
+  std::ofstream os(fname);
+  return write_OBJ(os, g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

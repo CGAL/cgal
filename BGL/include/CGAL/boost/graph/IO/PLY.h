@@ -43,21 +43,21 @@ class PLY_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  PLY_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
+  PLY_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
 
   template <typename NamedParameters>
-  bool read(std::istream& input,
+  bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
             const NamedParameters& np,
             bool verbose)
   {
-    return read_PLY(input, points, faces, np, verbose);
+    return read_PLY(is, points, faces, np, verbose);
   }
 };
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY_BGL(std::istream& in,
+bool read_PLY_BGL(std::istream& is,
                   FaceGraph& g,
                   const CGAL_BGL_NP_CLASS& np,
                   bool verbose = true)
@@ -65,7 +65,7 @@ bool read_PLY_BGL(std::istream& in,
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::PLY_builder<FaceGraph, Point> builder(in, verbose);
+  IO::internal::PLY_builder<FaceGraph, Point> builder(is, verbose);
   return builder(g, np);
 }
 
@@ -80,7 +80,7 @@ bool read_PLY_BGL(std::istream& in,
   \tparam FaceGraph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param in the input stream
+  \param is the input stream
   \param g the graph to be built from the input data
   \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -105,9 +105,9 @@ bool read_PLY_BGL(std::istream& in,
   \see \ref IOStreamPLY
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_PLY(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
-  return IO::internal::read_PLY_BGL(in, g, np, verbose);
+  return IO::internal::read_PLY_BGL(is, g, np, verbose);
 }
 
 /*!
@@ -159,9 +159,9 @@ bool read_PLY(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& n
 }
 
 template <typename FaceGraph>
-bool read_PLY(std::istream& in, FaceGraph& g) // @todo uniformize is/in os/out
+bool read_PLY(std::istream& is, FaceGraph& g)
 {
-  return IO::internal::read_PLY_BGL(in, g, parameters::all_default());
+  return IO::internal::read_PLY_BGL(is, g, parameters::all_default());
 }
 
 template <typename FaceGraph>

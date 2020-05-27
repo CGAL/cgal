@@ -34,8 +34,8 @@ class Generic_facegraph_printer
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor                     face_descriptor;
 
 public:
-  Generic_facegraph_printer(Stream& out) : m_out(out) { }
-  Generic_facegraph_printer(Stream& out, FileWriter writer) : m_out(out), m_writer(writer) { }
+  Generic_facegraph_printer(Stream& os) : m_os(os) { }
+  Generic_facegraph_printer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
   template <typename NamedParameters>
   bool operator()(const FaceGraph& g,
@@ -66,7 +66,7 @@ public:
     using parameters::is_default_parameter;
     using parameters::get_parameter;
 
-    if(!m_out.good())
+    if(!m_os.good())
       return false;
 
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -85,7 +85,7 @@ public:
     // @todo bench that against CGAL::Inverse_index and std::unordered_map
     boost::container::flat_map<vertex_descriptor, vertices_size_type> index_map;
 
-    m_writer.write_header(m_out, num_vertices(g), num_halfedges(g), num_faces(g));
+    m_writer.write_header(m_os, num_vertices(g), num_halfedges(g), num_faces(g));
 
     vertices_size_type id = 0;
     for(const vertex_descriptor v : vertices(g))
@@ -141,13 +141,13 @@ public:
     }
     m_writer.write_footer();
 
-    return m_out.good();
+    return m_os.good();
   }
 
   bool operator()(const FaceGraph& g) { return operator()(g, parameters::all_default()); }
 
 protected:
-  Stream& m_out;
+  Stream& m_os;
   FileWriter m_writer;
 };
 

@@ -49,23 +49,23 @@ class OFF_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  OFF_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
+  OFF_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
 
   template <typename NamedParameters>
-  bool read(std::istream& input,
+  bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
             const NamedParameters& np,
             bool verbose)
   {
-    return read_OFF(input, points, faces, np, verbose);
+    return read_OFF(is, points, faces, np, verbose);
   }
 };
 
 // Because some packages can provide overloads with the same signature to automatically initialize
 // property maps (see Surface_mesh/IO/ for example)
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF_BGL(std::istream& in,
+bool read_OFF_BGL(std::istream& is,
                   FaceGraph& g,
                   const CGAL_BGL_NP_CLASS& np,
                   bool verbose = true)
@@ -73,7 +73,7 @@ bool read_OFF_BGL(std::istream& in,
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::OFF_builder<FaceGraph, Point> builder(in, verbose);
+  IO::internal::OFF_builder<FaceGraph, Point> builder(is, verbose);
   return builder(g, np);
 }
 
@@ -89,7 +89,7 @@ bool read_OFF_BGL(std::istream& in,
   \tparam FaceGraph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param in the input stream
+  \param is the input stream
   \param g the graph to be built from the input data
   \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -114,9 +114,9 @@ bool read_OFF_BGL(std::istream& in,
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_OFF(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
-  return IO::internal::read_OFF_BGL(in, g, np, verbose);
+  return IO::internal::read_OFF_BGL(is, g, np, verbose);
 }
 
 /*!
@@ -156,8 +156,8 @@ template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
-  std::ifstream in(fname);
-  return read_OFF(in, g, np, verbose);
+  std::ifstream is(fname);
+  return read_OFF(is, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -269,8 +269,8 @@ bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& n
                  typename boost::has_range_const_iterator<FaceGraph>::type
                >::type* =0)
 {
-  std::ofstream out(fname);
-  return write_OFF(out, g, np);
+  std::ofstream os(fname);
+  return write_OFF(os, g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -283,9 +283,9 @@ bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_C
 }
 
 template <typename FaceGraph>
-bool write_OFF(std::ostream& os, const FaceGraph& g
-               ,typename boost::disable_if<
-               typename boost::has_range_const_iterator<FaceGraph>::type
+bool write_OFF(std::ostream& os, const FaceGraph& g,
+               typename boost::disable_if<
+                 typename boost::has_range_const_iterator<FaceGraph>::type
                >::type* =0)
 {
   return write_OFF(os, g, parameters::all_default());

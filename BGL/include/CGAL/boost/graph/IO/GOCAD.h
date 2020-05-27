@@ -52,18 +52,18 @@ class GOCAD_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  GOCAD_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
+  GOCAD_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
 
   // @check ascii
   template <typename NamedParameters>
-  bool read(std::istream& input,
+  bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
             const NamedParameters& np,
             bool verbose)
   {
     std::pair<std::string, std::string> name_and_color;
-    bool res = read_GOCAD(input, name_and_color, points, faces, np, verbose);
+    bool res = read_GOCAD(is, name_and_color, points, faces, np, verbose);
     if(res)
     {
       name = name_and_color.first;
@@ -87,7 +87,7 @@ public:
 /// \tparam FaceGraph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param in the input stream
+/// \param is the input stream
 /// \param name_and_color name and color of the mesh
 /// \param g the graph to be built from the input data
 /// \param verbose whether extra information is printed when an incident occurs during reading
@@ -108,7 +108,7 @@ public:
 ///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& in,
+bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
                 const CGAL_BGL_NP_CLASS& np,
@@ -117,7 +117,7 @@ bool read_GOCAD(std::istream& in,
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
   typedef typename boost::property_traits<VPM>::value_type                     Point;
 
-  IO::internal::GOCAD_builder<FaceGraph, Point> builder(in, verbose);
+  IO::internal::GOCAD_builder<FaceGraph, Point> builder(is, verbose);
   if(!builder(g, np))
     return false;
 
@@ -128,18 +128,18 @@ bool read_GOCAD(std::istream& in,
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_GOCAD(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::pair<std::string, std::string> dummy;
-  return read_GOCAD(in, dummy, g, np, verbose);
+  return read_GOCAD(is, dummy, g, np, verbose);
 }
 
 template <typename FaceGraph>
-bool read_GOCAD(std::istream& in,
+bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g)
 {
-  return read_GOCAD(in, name_and_color, g, parameters::all_default());
+  return read_GOCAD(is, name_and_color, g, parameters::all_default());
 }
 
 /// \ingroup PkgBGLIOFct
@@ -174,8 +174,8 @@ bool read_GOCAD(const char* fname,
                 const CGAL_BGL_NP_CLASS& np,
                 bool verbose = true)
 {
-  std::ifstream in(fname);
-  return read_GOCAD(in, name_and_color, g, np, verbose);
+  std::ifstream is(fname);
+  return read_GOCAD(is, name_and_color, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -315,8 +315,8 @@ bool write_GOCAD(const char* fname,
                  const FaceGraph& g,
                  const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream out(fname);
-  return write_GOCAD(out, fname, g, np);
+  std::ofstream os(fname);
+  return write_GOCAD(os, fname, g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

@@ -75,8 +75,8 @@ bool write_INP(const char* fname,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream out(fname);
-  return write_INP(out, fname, type, g, np);
+  std::ofstream os(fname);
+  return write_INP(os, fname, type, g, np);
 }
 
 template <typename FaceGraph>

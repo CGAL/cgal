@@ -45,16 +45,16 @@ class STL_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  STL_builder(std::istream& is_, bool verbose) : Base(is_, verbose) { }
+  STL_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
 
   template <typename NamedParameters>
-  bool read(std::istream& input,
+  bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
             const NamedParameters& np,
             bool verbose)
   {
-    return read_STL(input, points, faces, np, verbose);
+    return read_STL(is, points, faces, np, verbose);
   }
 };
 
@@ -69,7 +69,7 @@ public:
   \tparam FaceGraph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param in the input stream
+  \param is the input stream
   \param g the graph to be built from the input data
   \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -89,7 +89,7 @@ public:
   \see \ref IOStreamSTL
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(std::istream& in,
+bool read_STL(std::istream& is,
               FaceGraph& g,
               const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
@@ -97,7 +97,7 @@ bool read_STL(std::istream& in,
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::STL_builder<FaceGraph, Point> builder(in, verbose);
+  IO::internal::STL_builder<FaceGraph, Point> builder(is, verbose);
   return builder(g, np);
 }
 
@@ -132,8 +132,8 @@ template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
-  std::ifstream in(fname);
-  return read_STL(in, g, np, verbose);
+  std::ifstream is(fname);
+  return read_STL(is, g, np, verbose);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -157,12 +157,12 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
 /*!
   \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the stream `out` in the STL format.
+  writes the graph `g` in the stream `os` in the STL format.
 
   \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param out the output stream
+  \param os the output stream
   \param g the graph to be output
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
@@ -179,7 +179,7 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
   \see \ref IOStreamSTL
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(std::ostream& out,
+bool write_STL(std::ostream& os,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
@@ -197,14 +197,14 @@ bool write_STL(std::ostream& out,
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, g));
 
-  if(!out.good())
+  if(!os.good())
     return false;
 
-  if(get_mode(out) == IO::BINARY)
+  if(get_mode(os) == IO::BINARY)
   {
-    out << "FileType: Binary                                                                ";
+    os << "FileType: Binary                                                                ";
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
-    out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
+    os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const face_descriptor f : faces(g))
     {
@@ -223,13 +223,13 @@ bool write_STL(std::ostream& out,
         static_cast<float>(to_double(r.x())), static_cast<float>(to_double(r.y())), static_cast<float>(to_double(r.z())) };
 
       for(int i=0; i<12; ++i)
-        out.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
-      out << "  ";
+        os.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
+      os << "  ";
     }
   }
   else
   {
-    out << "solid\n";
+    os << "solid\n";
     for(const face_descriptor f : faces(g))
     {
       halfedge_descriptor h = halfedge(f, g);
@@ -238,16 +238,16 @@ bool write_STL(std::ostream& out,
       Point_ref r = get(vpm, source(h, g));
       Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
 
-      out << "facet normal " << n << "\nouter loop\n";
-      out << "vertex " << p << "\n";
-      out << "vertex " << q << "\n";
-      out << "vertex " << r << "\n";
-      out << "endloop\nendfacet\n";
+      os << "facet normal " << n << "\nouter loop\n";
+      os << "vertex " << p << "\n";
+      os << "vertex " << q << "\n";
+      os << "vertex " << r << "\n";
+      os << "endloop\nendfacet\n";
     }
-    out << "endsolid\n";
+    os << "endsolid\n";
   }
 
-  return out.good();
+  return os.good();
 }
 
 /*!
@@ -277,8 +277,8 @@ bool write_STL(std::ostream& out,
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream out(fname);
-  return write_STL(out, g, np);
+  std::ofstream os(fname);
+  return write_STL(os, g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
