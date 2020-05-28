@@ -26,6 +26,11 @@
 #include <iostream>
 #include <tuple>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,20 +51,11 @@ namespace CGAL {
 ///      the `failbit` of `is` is set and the mesh cleared.
 ///
 template <typename Point,
-          #ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-          typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               Surface_mesh<Point>& sm,
-              #ifndef DOXYGEN_RUNNING
-              const CGAL_BGL_NP_CLASS& np
-              #else
-              const NamedParameters& np
-              #endif
-              , bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Vertex_index                                    Vertex_index;
