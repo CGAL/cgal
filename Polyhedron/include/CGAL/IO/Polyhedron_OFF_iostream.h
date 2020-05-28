@@ -22,6 +22,8 @@
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Has_conversion.h>
+#include <CGAL/property_map.h>
 
 #include <iostream>
 
@@ -64,8 +66,20 @@ bool read_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
               const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
+  typedef typename boost::graph_traits<Polyhedron_3<Traits, Items, HDS, Alloc> >::vertex_descriptor Vertex;
+
   // reads a polyhedron from `in' and appends it to P.
-  typedef typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>, CGAL_BGL_NP_CLASS>::type VPM;
+  typedef typename property_map_selector<Polyhedron_3<Traits, Items, HDS, Alloc>,
+                                                      boost::vertex_point_t>::type      Def_VPM;
+  typedef typename boost::property_traits<Def_VPM>::value_type                          Def_point;
+  typedef typename Kernel_traits<Def_point>::Kernel                                     Def_kernel;
+
+  typedef typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>,
+                                                        CGAL_BGL_NP_CLASS>::type        VPM;
+  typedef typename boost::property_traits<VPM>::value_type                              Point;
+  typedef typename Kernel_traits<Point>::Kernel                                         Kernel;
+
+  typedef typename internal::Converter_selector<Def_kernel, Kernel>::type               Converter;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -74,15 +88,13 @@ bool read_OFF(std::istream& in,
 
   if(!parameters::is_default_parameter(get_parameter(np, internal_np::vertex_point)))
   {
-    typedef typename boost::graph_traits<Polyhedron_3<Traits, Items, HDS, Alloc> >::vertex_descriptor Vertex;
-
-    typename property_map_selector<Polyhedron_3<Traits, Items, HDS, Alloc>, boost::vertex_point_t>::type
-        def_vpm = get_property_map(CGAL::vertex_point, P);
+    Def_VPM def_vpm = get_property_map(CGAL::vertex_point, P);
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, P));
 
+    Converter to_vpm_type;
     for(Vertex v : vertices(P))
-      put(vpm, v, get(def_vpm, v));
+      put(vpm, v, to_vpm_type(get(def_vpm, v)));
   }
 
   return !in.fail();
