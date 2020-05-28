@@ -83,6 +83,7 @@ namespace CGAL
 *          mesh density target for the remeshing algorithm.
 * @param np optional sequence of \ref Remeshing_namedparameters "Named Parameters"
 *          among the ones listed below
+*
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the full
 *     sequence of atomic operations
