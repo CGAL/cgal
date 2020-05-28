@@ -173,6 +173,9 @@ topologically equivalent to a \f$ 1\f$-sphere.
 A zero dimensional triangulation, whose domain is reduced to a
 single point, is represented by two vertices that is
 topologically equivalent to a \f$ 0\f$-sphere.
+This is illustrated in \cgalFigureRef{Triangulation_2D_Fig_low_dimensional}
+and the example \ref Triangulation_2/low_dimensional.cpp
+shows how to traverse a low dimensional triangulation.
 
 \cgalFigureBegin{Triangulation_2D_Fig_low_dimensional,low_dimensional.svg}
 Triangulations with zero, one, and two finite vertices.
