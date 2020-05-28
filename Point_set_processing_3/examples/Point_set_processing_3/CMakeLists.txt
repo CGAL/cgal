@@ -78,7 +78,6 @@ if ( CGAL_FOUND )
     foreach(target
         jet_smoothing_example
         normal_estimation
-        edges_example
         clustering_example
         edges_example
         callback_example
