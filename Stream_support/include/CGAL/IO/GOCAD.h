@@ -14,11 +14,10 @@
 #define CGAL_IO_GOCAD_H
 
 #include <CGAL/IO/reader_helpers.h>
-#include <CGAL/IO/Generic_writer.h>
 
-#include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>
@@ -34,37 +33,46 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& input,
+bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 PointRange& points,
                 PolygonRange& polygons,
                 const CGAL_BGL_NP_CLASS&,
-                bool verbose = true)
+                bool verbose = false)
 {
-  CGAL_USE(verbose);
   typedef typename boost::range_value<PointRange>::type     Point;
-  typedef typename boost::range_value<PolygonRange>::type   CGAL_Polygon;
+  typedef typename boost::range_value<PolygonRange>::type   Poly;
+
+  verbose = true;
+
   int offset = 0;
-  char c;
-  std::string s, tface("TFACE");
-  int i,j,k;
+  std::string s;
   Point p;
   bool vertices_read = false;
 
-  while(input >> s)
+  std::string line;
+  while(std::getline(is, line))
   {
-    if(s == tface)
+    if(line.empty())
+      break;
+
+    std::istringstream iss(line);
+
+    iss >> s;
+    if(s == "TFACE")
       break;
 
     std::string::size_type idx;
     if((idx = s.find("name")) != std::string::npos)
     {
+      // @fixme no reason that it should be "name:asd" and not "name : asd"
       std::istringstream str(s.substr(idx + 5));
       if(!(str >> name_and_color.first))
       {
         if(verbose)
-          std::cerr<<"error while reading expected name. "<<std::endl;
+          std::cerr << "error while reading expected name." << std::endl;
         return false;
       }
     }
@@ -75,23 +83,28 @@ bool read_GOCAD(std::istream& input,
       if(!(str >> name_and_color.second))
       {
         if(verbose)
-          std::cerr<<"error while reading expected color. "<<std::endl;
+          std::cerr << "error while reading expected color." << std::endl;
         return false;
       }
     }
   }
-  std::getline(input, s);
 
-  while(input.get(c))
+  while(std::getline(is, line))
   {
-    if((c == 'V') || (c == 'P'))
+    if(line.empty())
+      break;
+
+    std::istringstream iss(line);
+    if((line[0] == 'V') || (line[0] == 'P'))
     {
-      if(!(input >> s >> i >> p))
+      int i;
+      if(!(iss >> s >> i >> p))
       {
         if(verbose)
-          std::cerr<<"error while reading vertex. "<<std::endl;
+          std::cerr << "error while reading vertex." << std::endl;
         return false;
       }
+
       if(!vertices_read)
       {
         vertices_read = true;
@@ -100,41 +113,44 @@ bool read_GOCAD(std::istream& input,
 
       points.push_back(p);
     }
-    else if(vertices_read && (c == 'T'))
+    else if(line[0] == 'T')
     {
-      if(!(input >> c >> c >> c >>  i >> j >> k))
+      iss >> s;
+      if(s != "TRGL")
+        continue;
+
+      int i,j,k;
+      if(!(iss >> i >> j >> k))
       {
         if(verbose)
-          std::cerr<<"error while reading triangle. "<<std::endl;
+          std::cerr << "error while reading triangle." << std::endl;
         return false;
       }
-      CGAL_Polygon new_face(3);
-      new_face[0] = offset+i;
-      new_face[1] = offset+j;
-      new_face[2] = offset+k;
+
+      Poly new_face(3);
+      new_face[0] = offset + i;
+      new_face[1] = offset + j;
+      new_face[2] = offset + k;
       polygons.push_back(new_face);
     }
-    else if(c == 'E')
+    else if(line[0] == 'E')
     {
       break;
     }
-
-    std::getline(input, s);
   }
 
-  return !input.fail();
+  return !is.bad();
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 PointRange& points,
                 PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS&np)
+                const CGAL_BGL_NP_CLASS& np)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(is, dummy, points, polygons, np);
 }
-
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname,
@@ -155,6 +171,7 @@ bool read_GOCAD(const std::string& fname,
 {
   return read_GOCAD(fname.c_str(), points, polygons, np);
 }
+
 /*!
  * \ingroup GocadIoFuncs
  *
@@ -191,8 +208,9 @@ bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& poly
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
-namespace IO{
-namespace internal{
+
+namespace IO {
+namespace internal {
 
 template <typename PointRange,
           typename PolygonRange,
@@ -201,10 +219,16 @@ bool write_GOCAD(std::ostream& os,
                  const char* fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS&)
+                 const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::range_value<PointRange>::type     Point;
-  typedef typename boost::range_value<PolygonRange>::type   CGAL_polygon;
+  typedef typename boost::range_value<PolygonRange>::type                   Poly;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
   if(!os.good())
     return false;
 
@@ -223,17 +247,14 @@ bool write_GOCAD(std::ostream& os,
         "END_ORIGINAL_COORDINATE_SYSTEM\n"
         "TFACE\n";
 
-  std::size_t i = 0;
-  for(const Point& p : points)
-  {
-    os << "VRTX " << i << " " << p << "\n";
-  }
+  for(std::size_t i=0, end=points.size(); i<end; ++i)
+    os << "VRTX " << i << " " << get(point_map, points[i]) << "\n";
 
-  for(const CGAL_polygon& poly : polygons)
+  for(const Poly& poly : polygons)
   {
     os << "TRGL";
     for(const auto& id : poly)
-      os << " " << points[id];
+      os << " " << id;
     os<< "\n";
   }
 
@@ -241,8 +262,9 @@ bool write_GOCAD(std::ostream& os,
 
   return os.good();
 }
-} //end internal
-}//end IO
+
+} // namespace internal
+} // namespace IO
 
 template <typename PointRange,
           typename PolygonRange,
@@ -250,26 +272,9 @@ template <typename PointRange,
 bool write_GOCAD(std::ostream& os,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS&np)
+                 const CGAL_BGL_NP_CLASS& np)
 {
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, np);
-
-}
-/*!
-  \ingroup GocadIoFuncs
-
- * writes the content of `points` and `polygons` in `os`, in the TS format.
-
-  \see \ref IOStreamGocad
-*/
-template <typename PointRange,
-          typename PolygonRange>
-bool write_GOCAD(std::ostream& os,
-                 const PointRange& points,
-                 const PolygonRange& polygons)
-{
-  return IO::internal::write_GOCAD(os, "anonymous", points, polygons, parameters::all_default());
-
 }
 
 template <typename PointRange,
@@ -287,15 +292,25 @@ bool write_GOCAD(const char* fname,
 /*!
   \ingroup GocadIoFuncs
 
+ * writes the content of `points` and `polygons` in `os`, in the TS format.
+
+  \see \ref IOStreamGocad
+*/
+template <typename PointRange, typename PolygonRange>
+bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
+{
+  return IO::internal::write_GOCAD(os, "anonymous", points, polygons, parameters::all_default());
+}
+
+/*!
+  \ingroup GocadIoFuncs
+
  * writes the content of `points` and `polygons` in a file named `fname`, in the TS format.
 
   \see \ref IOStreamGocad
 */
-template <typename PointRange,
-          typename PolygonRange>
-bool write_GOCAD(const char* fname,
-                 const PointRange& points,
-                 const PolygonRange& polygons)
+template <typename PointRange, typename PolygonRange>
+bool write_GOCAD(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
   return write_GOCAD(fname, points, polygons, parameters::all_default());
 }
@@ -306,21 +321,17 @@ template <typename PointRange,
 bool write_GOCAD(const std::string& fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS&np)
+                 const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname.c_str());
   return IO::internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
 }
 
-template <typename PointRange,
-          typename PolygonRange>
-bool write_GOCAD(const std::string& fname,
-                 const PointRange& points,
-                 const PolygonRange& polygons)
+template <typename PointRange, typename PolygonRange>
+bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
 {
   return write_GOCAD(fname, points, polygons, parameters::all_default());
 }
-
 
 } // namespace CGAL
 
