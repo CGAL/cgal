@@ -61,7 +61,7 @@ bool read_OFF(std::istream& is,
   typedef typename Mesh::Vertex_index                                    Vertex_index;
   typedef typename Mesh::Face_index                                      Face_index;
 
-  typedef typename Kernel_traits<Point>::Kernel                          K;
+  typedef typename GetK<Surface_mesh<Point>, CGAL_BGL_NP_CLASS>::Kernel  K;
   typedef typename K::Vector_3                                           Normal;
   typedef typename K::Point_2                                            Texture;
   typedef CGAL::Color                                                    Color;
@@ -130,7 +130,7 @@ bool write_OFF_with_or_without_vtextures(std::ostream& os,
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Vertex_index                                    Vertex_index;
 
-  typedef typename Kernel_traits<Point>::Kernel                          K;
+  typedef typename GetK<Surface_mesh<Point>, CGAL_BGL_NP_CLASS>::Kernel  K;
   typedef typename K::Point_2                                            Texture;
 
   typename Mesh::template Property_map<Vertex_index, Texture> vtextures;
@@ -170,7 +170,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Vertex_index                                    Vertex_index;
 
-  typedef typename Kernel_traits<Point>::Kernel                          K;
+  typedef typename GetK<Surface_mesh<Point>, CGAL_BGL_NP_CLASS>::Kernel  K;
   typedef typename K::Vector_3                                           Normal;
 
   typename Mesh::template Property_map<Vertex_index, Normal> vnormals;

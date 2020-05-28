@@ -26,6 +26,57 @@ namespace CGAL{
 namespace IO {
 namespace internal {
 
+// Unfortunately, we don't know the value type of the normal/texture property maps
+template <typename VNM>
+struct Normal_writer
+{
+  Normal_writer(const VNM vnm) : vnm(vnm) { }
+
+  template <typename Writer, typename VD>
+  void operator()(Writer& writer, const VD v) const
+  {
+    const typename boost::property_traits<VNM>::reference n = get(vnm, v);
+    writer.write_vertex_normal(to_double(n.x()), to_double(n.y()), to_double(n.z()));
+  }
+
+private:
+  const VNM vnm;
+};
+
+template <>
+struct Normal_writer<internal_np::Param_not_found>
+{
+  Normal_writer(const internal_np::Param_not_found&) { }
+
+  template <typename Writer, typename VD>
+  void operator()(Writer&, const VD) const { }
+};
+
+template <typename VTM>
+struct Texture_writer
+{
+  Texture_writer(const VTM vtm) : vtm(vtm) { }
+
+  template <typename Writer, typename VD>
+  void operator()(Writer& writer, const VD v) const
+  {
+    const typename boost::property_traits<VTM>::reference t = get(vtm, v);
+    writer.write_vertex_texture(to_double(t.x()), to_double(t.y()));
+  }
+
+private:
+  const VTM vtm;
+};
+
+template <>
+struct Texture_writer<internal_np::Param_not_found>
+{
+  Texture_writer(const internal_np::Param_not_found&) { }
+
+  template <typename Writer, typename VD>
+  void operator()(Writer&, const VD) const { }
+};
+
 template <typename Stream, typename FaceGraph, typename FileWriter>
 class Generic_facegraph_printer
 {
@@ -44,23 +95,20 @@ public:
     typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type         VPM;
     typedef typename boost::property_traits<VPM>::reference                            Point_ref;
 
-    typedef typename GetK<FaceGraph, NamedParameters>::Kernel                          Kernel;
-    typedef typename Kernel::Vector_3                                                  Vector;
-    typedef typename Kernel::Point_2                                                   Texture;
     typedef CGAL::Color                                                                Color;
 
-    typedef typename internal_np::Lookup_named_param_def<
-      internal_np::vertex_normal_map_t, NamedParameters,
-      Constant_property_map<vertex_descriptor, Vector> >::type                         VNM;
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_color_map_t, NamedParameters,
       Constant_property_map<vertex_descriptor, Color> >::type                          VCM;
     typedef typename internal_np::Lookup_named_param_def<
-      internal_np::vertex_texture_map_t, NamedParameters,
-      Constant_property_map<vertex_descriptor, Texture> >::type                        VTM;
-    typedef typename internal_np::Lookup_named_param_def<
       internal_np::face_color_map_t, NamedParameters,
       Constant_property_map<face_descriptor, Color> >::type                            FCM;
+
+    // No default because value_type is unknown, but the pmap is only used if provided via NP
+    typedef typename internal_np::Get_param<
+      typename NamedParameters::base, internal_np::vertex_normal_map_t>::type          VNM;
+    typedef typename internal_np::Get_param<
+      typename NamedParameters::base, internal_np::vertex_texture_map_t>::type         VTM;
 
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
@@ -77,10 +125,13 @@ public:
     const bool has_vertex_textures = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
     const bool has_face_colors = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
 
-    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), VNM());
-    VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
-    VTM vtm = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), VTM());
-    FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+    VNM vnm = get_parameter(np, internal_np::vertex_normal_map);
+    VTM vtm = get_parameter(np, internal_np::vertex_texture_map);
+    VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
+    FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
+
+    Normal_writer<VNM> nw(vnm);
+    Texture_writer<VTM> tw(vtm);
 
     // @todo bench that against CGAL::Inverse_index and std::unordered_map
     boost::container::flat_map<vertex_descriptor, vertices_size_type> index_map;
@@ -91,13 +142,10 @@ public:
     for(const vertex_descriptor v : vertices(g))
     {
       const Point_ref p = get(vpm, v);
-      m_writer.write_vertex(::CGAL::to_double(p.x()), ::CGAL::to_double(p.y()), ::CGAL::to_double(p.z()));
+      m_writer.write_vertex(to_double(p.x()), to_double(p.y()), to_double(p.z()));
 
       if(has_vertex_normals)
-      {
-        const Vector& n = get(vnm, v);
-        m_writer.write_vertex_normal(::CGAL::to_double(n.x()), ::CGAL::to_double(n.y()), ::CGAL::to_double(n.z()));
-      }
+        nw(m_writer, v);
 
       if(has_vertex_colors)
       {
@@ -106,10 +154,7 @@ public:
       }
 
       if(has_vertex_textures)
-      {
-        const Texture& t = get(vtm, v);
-        m_writer.write_vertex_texture(::CGAL::to_double(t.x()), ::CGAL::to_double(t.y()));
-      }
+        tw(m_writer, v);
 
       index_map[v] = id++;
     }
