@@ -14,7 +14,8 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -27,5 +28,5 @@ foreach(target
         test_OBB_traits
         test_nelder_mead
         test_optimization_algorithms)
-  CGAL_target_use_Eigen(${target})
+  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
 endforeach()

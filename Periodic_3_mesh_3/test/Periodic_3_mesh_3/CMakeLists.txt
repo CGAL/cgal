@@ -16,21 +16,21 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (NOT TARGET CGAL::Eigen_support)
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
   endif()
 
   create_single_source_cgal_program( "test_implicit_shapes_bunch.cpp" )
-  CGAL_target_use_Eigen(test_implicit_shapes_bunch)
+  target_link_libraries(test_implicit_shapes_bunch PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program( "test_implicit_shapes_with_features.cpp" )
-  CGAL_target_use_Eigen(test_implicit_shapes_with_features)
+  target_link_libraries(test_implicit_shapes_with_features PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program( "test_triply_periodic_minimal_surfaces.cpp" )
-  CGAL_target_use_Eigen(test_triply_periodic_minimal_surfaces)
+  target_link_libraries(test_triply_periodic_minimal_surfaces PUBLIC CGAL::Eigen_support)
 
 else()
 
   message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-
