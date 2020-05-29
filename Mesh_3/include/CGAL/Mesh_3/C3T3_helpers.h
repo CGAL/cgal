@@ -840,16 +840,6 @@ public:
                            bool *could_lock_zone) const;
 
   /**
-   * Try to lock the incident cells and return them in \c cells
-   * Return value:
-   * - false: everything is unlocked and \c cells is empty
-   * - true: incident cells are locked and \c cells contains all of them
-   */
-  bool
-  try_lock_and_get_incident_cells(const Vertex_handle& v,
-                                  Cell_vector &cells) const;
-
-  /**
    * Try to lock ALL the incident cells and return in \c cells the ones
    * whose \c filter says "true".
    * Return value:
@@ -3041,9 +3031,10 @@ move_point(const Vertex_handle& old_vertex,
   //======= Get incident cells ==========
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  if (try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
+  if (tr_.try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
   {
     *could_lock_zone = false;
+    unlock_all_elements();
     return Vertex_handle();
   }
   //======= /Get incident cells ==========
@@ -3587,60 +3578,6 @@ get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
   tr_.incident_cells_threadsafe(v, boost::make_function_output_iterator(f));
 }
 
-// CJTODO: call tr_.try_lock_and_get_incident_cells instead?
-template <typename C3T3, typename MD>
-bool
-C3T3_helpers<C3T3,MD>::
-try_lock_and_get_incident_cells(const Vertex_handle& v,
-                                Cell_vector &cells) const
-  {
-    // We need to lock v individually first, to be sure v->cell() is valid
-    if (!try_lock_vertex(v))
-      return false;
-
-    Cell_handle d = v->cell();
-    if (!try_lock_element(d)) // LOCK
-    {
-      unlock_all_elements();
-      return false;
-    }
-    cells.push_back(d);
-    d->tds_data().mark_in_conflict();
-    int head=0;
-    int tail=1;
-    do {
-      Cell_handle c = cells[head];
-
-      for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v)
-          continue;
-        Cell_handle next = c->neighbor(i);
-
-        if (!try_lock_element(next)) // LOCK
-        {
-          for(Cell_handle ch : cells)
-          {
-            ch->tds_data().clear();
-          }
-          cells.clear();
-          unlock_all_elements();
-          return false;
-        }
-        if (! next->tds_data().is_clear())
-          continue;
-        cells.push_back(next);
-        ++tail;
-        next->tds_data().mark_in_conflict();
-      }
-      ++head;
-    } while(head != tail);
-    for(Cell_handle ch : cells)
-    {
-      ch->tds_data().clear();
-    }
-    return true;
-  }
-
 template <typename C3T3, typename MD>
 template <typename Filter>
 bool
@@ -3651,7 +3588,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 {
   std::vector<Cell_handle> tmp_cells;
   tmp_cells.reserve(64);
-  bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
+  bool ret = tr_.try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
     for(Cell_handle ch : tmp_cells)
@@ -3660,6 +3597,8 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
         cells.push_back(ch);
     }
   }
+  else
+    tr_.unlock_all_elements();
   return ret;
 }
 
