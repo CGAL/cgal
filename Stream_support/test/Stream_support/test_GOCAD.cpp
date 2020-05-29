@@ -22,6 +22,9 @@ int main(int argc, char** argv)
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
+  if(argc == 0)
+    assert(points.size() == 12491 && polygons.size() == 24191);
+
   points.clear();
   polygons.clear();
   std::string gocad_string(gocad_file);

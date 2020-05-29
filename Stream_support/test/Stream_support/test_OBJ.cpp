@@ -1,10 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/IO/OFF.h>
+#include <CGAL/IO/GOCAD.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 typedef CGAL::Simple_cartesian<double>                Kernel;
@@ -13,49 +13,49 @@ typedef std::vector<std::size_t>                      Face;
 
 int main(int argc, char** argv)
 {
-  const char* off_file = (argc > 1) ? argv[1] : "data/cube.off";
+  const char* obj_file = (argc > 1) ? argv[1] : "data/90089.obj";
 
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_OFF(off_file, points, polygons);
+  bool ok = CGAL::read_OBJ(obj_file, points, polygons);
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
   if(argc == 0)
-    assert(points.size() == 8 && polygons.size() == 12);
+    assert(points.size() == 434 && polygons.size() == 864);
 
   points.clear();
   polygons.clear();
-  std::string off_string(off_file);
-  ok = CGAL::read_OFF(off_string, points, polygons);
+  std::string obj_string(obj_file);
+  ok = CGAL::read_OBJ(obj_string, points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
-  std::ifstream is(off_file);
-  ok = CGAL::read_OFF(is, points, polygons);
+  std::ifstream is(obj_file);
+  ok = CGAL::read_OBJ(is, points, polygons);
   assert(ok);
   is.close();
 
-  std::ofstream os("tmp.off", std::ios::binary);
-  ok = CGAL::write_OFF(os, points, polygons);
+  std::ofstream os("tmp.obj", std::ios::binary);
+  ok = CGAL::write_OBJ(os, points, polygons);
   assert(ok);
   os.close();
 
-  ok = CGAL::write_OFF("tmp.off", points, polygons);
+  ok = CGAL::write_OBJ("tmp.obj", points, polygons);
   assert(ok);
 
   std::vector<Point> pts_backup = points;
   std::vector<Face> pls_backup = polygons;
 
-  ok = CGAL::write_polygon_soup("tmp.off", points, polygons);
+  ok = CGAL::write_polygon_soup("tmp.obj", points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
 
-  ok = CGAL::read_polygon_soup("tmp.off", points, polygons);
+  ok = CGAL::read_polygon_soup("tmp.obj", points, polygons);
   assert(ok);
 
   assert(points.size() == pts_backup.size());
