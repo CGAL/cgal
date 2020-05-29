@@ -46,7 +46,7 @@ bool read_GOCAD(std::istream& is,
   typedef typename boost::range_value<PointRange>::type     Point;
   typedef typename boost::range_value<PolygonRange>::type   Poly;
 
-  verbose = true;
+  set_ascii_mode(is); // GOCAD is ASCII only
 
   int offset = 0;
   std::string s;
@@ -57,11 +57,12 @@ bool read_GOCAD(std::istream& is,
   while(std::getline(is, line))
   {
     if(line.empty())
-      break;
+      continue;
 
     std::istringstream iss(line);
+    if(!(iss >> s))
+      continue; // can't read anything on the line, whitespace only?
 
-    iss >> s;
     if(s == "TFACE")
       break;
 
@@ -93,7 +94,7 @@ bool read_GOCAD(std::istream& is,
   while(std::getline(is, line))
   {
     if(line.empty())
-      break;
+      continue;
 
     std::istringstream iss(line);
     if((line[0] == 'V') || (line[0] == 'P'))
@@ -229,6 +230,8 @@ bool write_GOCAD(std::ostream& os,
 
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
+  set_ascii_mode(os); // GOCAD is ASCII only
 
   if(!os.good())
     return false;
