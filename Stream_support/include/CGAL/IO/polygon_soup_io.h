@@ -159,6 +159,15 @@ bool write_polygon_soup(const std::string& fname,
     return write_STL(fname, points, polygons);
   else if(ext == "ts")
     return write_GOCAD(fname, points, polygons);
+#ifdef CGAL_USE_VTK
+  else if(ext == "vtp")
+    return write_VTP(fname, points, polygons);
+#endif
+#ifdef CGAL_LINKED_WITH_3MF
+  else if(ext == "ts")
+    return write_3MF(fname, points, polygons);
+#endif
+
 
   if(verbose)
   {
