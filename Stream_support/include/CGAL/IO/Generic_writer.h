@@ -17,7 +17,6 @@
 #ifndef CGAL_IO_GENERIC_WRITER_H
 #define CGAL_IO_GENERIC_WRITER_H
 
-#include <CGAL/basic.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 

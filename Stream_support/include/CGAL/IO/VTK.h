@@ -84,8 +84,8 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
 
   return true;
 }
-}//end internal
-}//end IO
+} // namespace internal
+} // namespace IO
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -339,9 +339,8 @@ void write_soup_polys_points(std::ostream& os,
   write_vector<FT>(os, coordinates);
 }
 
-}//end internal
-}//end IO
-
+} // namespace internal
+} // namespace IO
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
@@ -458,7 +457,7 @@ bool write_VTP(const std::string& fname,
   return write_VTP(fname, points, polygons, parameters::all_default());
 }
 
-}//end CGAL
+} // namespace CGAL
 #elif DOXYGEN_RUNNING
 
 /*!
@@ -472,6 +471,7 @@ template <typename PointRange, typename PolygonRange>
 bool read_VTP(const char* fname,
               PointRange& points,
               PolygonRange& polygons);
+
 /*!
  * \ingroup VtpIoFuncs
  *
@@ -482,6 +482,7 @@ template <typename PointRange, typename PolygonRange>
 bool write_VTP(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons);
+
 /*!
  * \ingroup VtpIoFuncs
  *

@@ -72,13 +72,13 @@ private:
 };
 
 template <class vtkReader>
-vtkSmartPointer<vtkReader> read_vtk_file(const std::string& input_filename,
+vtkSmartPointer<vtkReader> read_vtk_file(const std::string& fname,
                                          vtkSmartPointer<ErrorObserverVtk> errorObserver)
 {
   vtkSmartPointer<vtkReader> reader = vtkSmartPointer<vtkReader>::New();
   reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
   reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
-  reader->SetFileName(input_filename.data());
+  reader->SetFileName(fname.data());
   reader->Update();
 
   return reader;

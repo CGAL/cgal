@@ -27,14 +27,14 @@ namespace CGAL {
 
 class File_writer_OFF
 {
-  std::ostream* m_out;
+  std::ostream* m_os;
   File_header_OFF m_header;
 
 public:
   File_writer_OFF(bool verbose = false) : m_header(verbose) {}
   File_writer_OFF(const File_header_OFF& h) : m_header(h) {}
 
-  std::ostream& out() { return *m_out; }
+  std::ostream& out() { return *m_os; }
   File_header_OFF& header() { return m_header; }
   const File_header_OFF& header() const { return m_header; }
 
@@ -44,7 +44,7 @@ public:
                     std::size_t facets,
                     bool normals = false)
   {
-    m_out = &os;
+    m_os = &os;
 
     m_header.set_vertices(vertices);
     m_header.set_facets(facets);

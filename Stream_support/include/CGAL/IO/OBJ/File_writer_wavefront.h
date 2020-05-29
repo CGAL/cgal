@@ -25,18 +25,18 @@ namespace CGAL {
 
 class File_writer_wavefront
 {
-  std::ostream* m_out;
+  std::ostream* m_os;
   std::size_t m_facets;
 
 public:
-  std::ostream& out() const { return *m_out; }
+  std::ostream& out() const { return *m_os; }
 
   void write_header(std::ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_out = &o;
+    m_os = &o;
     m_facets = facets;
 
     // Print header.

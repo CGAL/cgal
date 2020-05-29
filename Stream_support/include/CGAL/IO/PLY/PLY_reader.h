@@ -79,10 +79,10 @@ struct Get_FT_from_map
 
 template <typename PointMap>
 std::tuple<PointMap,
-typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-PLY_property<typename Get_FT_from_map<PointMap>::type>,
-PLY_property<typename Get_FT_from_map<PointMap>::type>,
-PLY_property<typename Get_FT_from_map<PointMap>::type> >
+           typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
+           PLY_property<typename Get_FT_from_map<PointMap>::type>,
+           PLY_property<typename Get_FT_from_map<PointMap>::type>,
+           PLY_property<typename Get_FT_from_map<PointMap>::type> >
 make_ply_point_reader(PointMap point_map)
 {
   return std::make_tuple(point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
@@ -93,10 +93,10 @@ make_ply_point_reader(PointMap point_map)
 
 template <typename VectorMap>
 std::tuple<VectorMap,
-typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
-PLY_property<typename Get_FT_from_map<VectorMap>::type>,
-PLY_property<typename Get_FT_from_map<VectorMap>::type>,
-PLY_property<typename Get_FT_from_map<VectorMap>::type> >
+           typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
+           PLY_property<typename Get_FT_from_map<VectorMap>::type>,
+           PLY_property<typename Get_FT_from_map<VectorMap>::type>,
+           PLY_property<typename Get_FT_from_map<VectorMap>::type> >
 make_ply_normal_reader(VectorMap normal_map)
 {
   return std::make_tuple(normal_map, typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3(),
@@ -107,9 +107,9 @@ make_ply_normal_reader(VectorMap normal_map)
 
 template <typename PointMap>
 std::tuple<PointMap,
-PLY_property<typename Get_FT_from_map<PointMap>::type>,
-PLY_property<typename Get_FT_from_map<PointMap>::type>,
-PLY_property<typename Get_FT_from_map<PointMap>::type> >
+           PLY_property<typename Get_FT_from_map<PointMap>::type>,
+           PLY_property<typename Get_FT_from_map<PointMap>::type>,
+           PLY_property<typename Get_FT_from_map<PointMap>::type> >
 make_ply_point_writer(PointMap point_map)
 {
   return std::make_tuple(point_map,
@@ -120,9 +120,9 @@ make_ply_point_writer(PointMap point_map)
 
 template <typename VectorMap>
 std::tuple<VectorMap,
-PLY_property<typename Get_FT_from_map<VectorMap>::type>,
-PLY_property<typename Get_FT_from_map<VectorMap>::type>,
-PLY_property<typename Get_FT_from_map<VectorMap>::type> >
+           PLY_property<typename Get_FT_from_map<VectorMap>::type>,
+           PLY_property<typename Get_FT_from_map<VectorMap>::type>,
+           PLY_property<typename Get_FT_from_map<VectorMap>::type> >
 make_ply_normal_writer(VectorMap normal_map)
 {
   return std::make_tuple(normal_map,
@@ -160,6 +160,7 @@ public:
     else
       stream.clear(std::ios::badbit);
   }
+
   void read_ascii(std::istream& stream, signed char& c) const
   {
     short s;
@@ -168,6 +169,7 @@ public:
     else
       stream.clear(std::ios::badbit);
   }
+
   void read_ascii(std::istream& stream, unsigned char& c) const
   {
     unsigned short s;
@@ -196,7 +198,6 @@ public:
     if(!(stream >> t))
       stream.clear(std::ios::badbit);
   }
-
 
   template <typename Type>
   Type read(std::istream& stream) const
@@ -241,46 +242,39 @@ class PLY_read_typed_number : public PLY_read_number
 public:
   PLY_read_typed_number(std::string name, std::size_t format)
     : PLY_read_number(name, format)
-  {
-  }
-  void get(std::istream& stream) const
-  {
-    m_buffer =(this->read<Type>(stream));
-  }
-  const Type& buffer() const
-  {
-    return m_buffer;
-  }
+  { }
+
+  void get(std::istream& stream) const { m_buffer =(this->read<Type>(stream)); }
+
+  const Type& buffer() const { return m_buffer; }
 };
 
 template <typename Type>
-class PLY_read_typed_list : public PLY_read_number
+class PLY_read_typed_list
+  : public PLY_read_number
 {
 protected:
   mutable std::vector<Type> m_buffer;
+
 public:
   PLY_read_typed_list(std::string name, std::size_t format)
     : PLY_read_number(name, format)
-  {
-  }
+  { }
+
   virtual void get(std::istream& stream) const = 0;
 
-  const std::vector<Type>& buffer() const
-  {
-    return m_buffer;
-  }
+  const std::vector<Type>& buffer() const { return m_buffer; }
 };
 
 template <typename SizeType, typename IndexType>
 class PLY_read_typed_list_with_typed_size
-    : public PLY_read_typed_list<IndexType>
+  : public PLY_read_typed_list<IndexType>
 {
-
 public:
   PLY_read_typed_list_with_typed_size(std::string name, std::size_t format)
     : PLY_read_typed_list<IndexType>(name, format)
-  {
-  }
+  { }
+
   void get(std::istream& stream) const
   {
     std::size_t size = static_cast<std::size_t>(this->template read<SizeType>(stream));
@@ -294,10 +288,9 @@ class PLY_element
 {
   std::string m_name;
   std::size_t m_number;
-
   std::vector<PLY_read_number*> m_properties;
-public:
 
+public:
   PLY_element(const std::string& name, std::size_t number)
     : m_name(name), m_number(number)
   { }
@@ -339,6 +332,7 @@ public:
   {
     return has_property(tag, Type());
   }
+
   template <typename Type>
   bool has_property(const char* tag, const std::vector<Type>&)
   {
@@ -356,6 +350,7 @@ public:
         return (dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]) != nullptr);
     return false;
   }
+
   bool has_property(const char* tag, double)
   {
     for(std::size_t i = 0; i < number_of_properties(); ++ i)
@@ -585,7 +580,6 @@ void get_value(Reader& r, T& v, PLY_property<T>& wrapper)
   return r.assign(v, wrapper.name);
 }
 
-
 template <std::size_t N>
 struct Filler
 {
@@ -709,7 +703,11 @@ bool read_PLY_faces(std::istream& in,
   {
     has_colors = true;
     if(element.has_property<boost::uint8_t>("red"))
-      rtag = "red"; gtag = "green"; btag = "blue";
+    {
+      rtag = "red";
+      gtag = "green";
+      btag = "blue";
+    }
   }
 
   for(std::size_t j = 0; j < element.number_of_items(); ++ j)
@@ -766,6 +764,7 @@ bool read_PLY_faces(std::istream& in,
 {
   return read_PLY_faces<Integer>(in, element, polygons, std::back_inserter(fcolors), vertex_indices_tag);
 }
+
 } // namespace PLY
 } // namespace internal
 /// \endcond

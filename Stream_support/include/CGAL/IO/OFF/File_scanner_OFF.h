@@ -271,6 +271,7 @@ public:
           std::cerr<<"error while reading vertex."<<std::endl;
         return;
       }
+
       if(is_homogeneous())
         if(!(m_in >> iformat(w)))
         {

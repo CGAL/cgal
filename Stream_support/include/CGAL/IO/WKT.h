@@ -544,7 +544,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
 template<typename MultiPoint,
          typename MultiLineString,
          typename MultiPolygon>
-std::istream& read_WKT(std::istream& input,
+std::istream& read_WKT(std::istream& is,
                        MultiPoint& points,
                        MultiLineString& polylines,
                        MultiPolygon& polygons)
@@ -556,8 +556,8 @@ std::istream& read_WKT(std::istream& input,
     typedef typename MultiPolygon::value_type Polygon;
 
     std::string line;
-    std::streampos input_pos = input.tellg();
-    std::getline(input, line);
+    std::streampos input_pos = is.tellg();
+    std::getline(is, line);
     std::istringstream iss(line);
     std::string t;
     std::string type="";
@@ -572,51 +572,51 @@ std::istream& read_WKT(std::istream& input,
       type.push_back(c);
     }
 
-    input.seekg(input_pos);
+    is.seekg(input_pos);
     if(type == "POINT")
     {
       Point p;
-      CGAL::read_point_WKT(input, p);
+      CGAL::read_point_WKT(is, p);
       points.push_back(p);
     }
     else if(type == "LINESTRING")
     {
       LineString l;
-      CGAL::read_linestring_WKT(input, l);
+      CGAL::read_linestring_WKT(is, l);
       polylines.push_back(l);
     }
     else if(type == "POLYGON")
     {
       Polygon p;
-      CGAL::read_polygon_WKT(input, p);
+      CGAL::read_polygon_WKT(is, p);
       if(!p.outer_boundary().is_empty())
         polygons.push_back(p);
     }
     else if(type == "MULTIPOINT")
     {
       MultiPoint mp;
-      CGAL::read_multi_point_WKT(input, mp);
+      CGAL::read_multi_point_WKT(is, mp);
       for(const Point& point : mp)
         points.push_back(point);
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
-      CGAL::read_multi_linestring_WKT(input, mls);
+      CGAL::read_multi_linestring_WKT(is, mls);
       for(const LineString& ls : mls)
         polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
-      CGAL::read_multi_polygon_WKT(input, mp);
+      CGAL::read_multi_polygon_WKT(is, mp);
       for(const Polygon& poly : mp)
         polygons.push_back(poly);
     }
   }
-  while(input.good() && !input.eof());
+  while(is.good() && !is.eof());
 
-  return input;
+  return !is.fail();
 }
 
 } // namespace CGAL CGAL

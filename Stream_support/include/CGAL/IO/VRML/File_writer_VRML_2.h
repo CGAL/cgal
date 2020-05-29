@@ -28,19 +28,19 @@ namespace CGAL {
 
 class File_writer_VRML_2
 {
-  VRML_2_ostream* m_out;
+  VRML_2_ostream* m_os;
   std::size_t m_facets;
 
 public:
   File_writer_VRML_2() {}
-  std::ostream& out() const { return m_out->os(); }
+  std::ostream& out() const { return m_os->os(); }
 
   void write_header(VRML_2_ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_out = &o;
+    m_os = &o;
     m_facets = facets;
 
     out() << "        #-- Begin of Polygon Mesh\n";

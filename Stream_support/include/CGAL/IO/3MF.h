@@ -32,10 +32,9 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
 
-
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
          typename PointRange, typename PolygonRange, typename ColorRange>
-int read_from_3mf(const std::string& file_name,
+int read_from_3mf(const std::string& fname,
                   PointRanges& all_points,
                   PolygonRanges& all_polygons,
                   ColorRanges& all_colors,
@@ -80,7 +79,7 @@ int read_from_3mf(const std::string& file_name,
   }
 
   // Import Model from File
-  hResult = NMR::lib3mf_reader_readfromfileutf8(pReader, file_name.c_str());
+  hResult = NMR::lib3mf_reader_readfromfileutf8(pReader, fname.c_str());
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not parse file: " << std::hex << hResult << std::endl;
@@ -368,7 +367,6 @@ int read_from_3mf(const std::string& file_name,
   return all_points.size();
 }
 
-
 /*!
  * \ingroup IOstreamFunctions
  *
@@ -387,20 +385,20 @@ int read_from_3mf(const std::string& file_name,
  *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *  whose `value type` is `CGAL::Color`.
  *
- * \param file_name the name of the 3mf file to read.
- * \param all_points a `PointRanges` that will contain the points of the meshes in `file_name`.
+ * \param fname the name of the 3mf file to read.
+ * \param all_points a `PointRanges` that will contain the points of the meshes in `fname`.
  *  Each of these meshes will add a range of its points.
- * \param all_polygons a `PolygonRanges` that will contain the triangles of the meshes in `file_name`.
+ * \param all_polygons a `PolygonRanges` that will contain the triangles of the meshes in `fname`.
  *  Each of these meshes will add a range of its triangles. A `triangle` of
  *  `all_polygons[i]` contains the indices of its points in `all_points[i]`.
  * \param all_colors will contain the color of each triangle for each soup.
- * \param names will contain the name of each mesh in `file_name` if any.
+ * \param names will contain the name of each mesh in `fname` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
  *
  * \return the number of soups read.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
-int read_triangle_soups_from_3mf(const std::string& file_name,
+int read_triangle_soups_from_3mf(const std::string& fname,
                                  PointRanges& all_points,
                                  PolygonRanges& all_polygons,
                                  ColorRanges& all_colors,
@@ -411,9 +409,10 @@ int read_triangle_soups_from_3mf(const std::string& file_name,
   typedef typename ColorRanges::value_type ColorRange;
   return read_from_3mf<PointRanges,PolygonRanges,ColorRanges,
                        PointRange, PolygonRange, ColorRange>
-          (file_name, all_points, all_polygons, all_colors, names,
+          (fname, all_points, all_polygons, all_colors, names,
            extract_soups<PointRange, PolygonRange, ColorRange>);
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
@@ -422,7 +421,7 @@ int read_triangle_soups_from_3mf(const std::string& file_name,
  * \ingroup IOstreamFunctions
  *
  * \brief writes the triangle soups contained in `all_points` and
- *  `all_polygons` into the 3mf file `file_name`.
+ *  `all_polygons` into the 3mf file `fname`.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
  *  `BackInsertionSequence` whose `value type` is
@@ -433,15 +432,15 @@ int read_triangle_soups_from_3mf(const std::string& file_name,
  * whose `value_type` is a model of the concept `RandomAccessContainer` whose
  *  `value_type` is std::size_t.
  *
- * \param file_name the name of the 3mf file to write.
+ * \param fname the name of the 3mf file to write.
  * \param all_points a `PointRanges` that contains the points of the soups to write.
- * \param all_polygons a `PolygonRanges` that contains the triangles of the soups in `file_name`.
- * \param names will contains the name of each mesh in `file_name`.
+ * \param all_polygons a `PolygonRanges` that contains the triangles of the soups in `fname`.
+ * \param names contains the name of each mesh to be output.
  *
  * \return `true` if the writing is successful, `false` otherwise.
  */
 template<typename PointRanges, typename PolygonRanges>
-bool write_triangle_soups_to_3mf(const std::string& file_name,
+bool write_triangle_soups_to_3mf(const std::string& fname,
                                  const PointRanges& all_points,
                                  const PolygonRanges& all_polygons,
                                  const std::vector<std::string>& names)

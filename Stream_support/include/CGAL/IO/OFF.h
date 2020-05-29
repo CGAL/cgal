@@ -52,12 +52,13 @@ bool read_OFF(std::istream& is,
               FaceColorOutputIterator fc_out,
               bool verbose = true)
 {
-  CGAL_USE(verbose);
   typedef typename boost::range_value<PointRange>::type                               Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
   typedef CGAL::Color                                                                 Color;
+
+  CGAL_USE(verbose);
 
   if(!is.good())
     return false;
@@ -145,8 +146,7 @@ bool read_OFF(std::istream& is,
     }
   }
 
-  bool res = !is.fail();
-  return res;
+  return !is.fail();
 }
 
 } // namespace internal
@@ -230,17 +230,6 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
 
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(std::ostream& os,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& )
-{
-  Generic_writer<std::ostream, File_writer_OFF> writer(os);
-  return writer(points, polygons);
-}
-
 /*!
  * \ingroup OffIoFuncs
  *
@@ -248,26 +237,14 @@ bool write_OFF(std::ostream& os,
  *
  * \see \ref IOStreamOFF
  */
-template <typename PointRange, typename PolygonRange>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
-               const PolygonRange& polygons
-               ,typename boost::enable_if<
-               typename boost::has_range_const_iterator<PolygonRange>::type
-               >::type* =0)
-{
-  return write_OFF(os, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname,
-               const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS&)
+               const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname);
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
-  return writer(points, polygons);
+  return writer(points, polygons, np);
 }
 
 /*!
@@ -277,37 +254,52 @@ bool write_OFF(const char* fname,
  *
  * \see \ref IOStreamOFF
  */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  Generic_writer<std::ostream, File_writer_OFF> writer(os);
+  return writer(points, polygons, np);
+}
+
+template <typename PointRange, typename PolygonRange>
+bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& polygons,
+               typename boost::enable_if<
+                 typename boost::has_range_const_iterator<PolygonRange>::type
+               >::type* =0)
+{
+  return write_OFF(os, points, polygons, parameters::all_default());
+}
+
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const char* fname,
                const PointRange& points,
-               const PolygonRange& polygons
-               ,typename boost::enable_if<
-               typename boost::has_range_const_iterator<PolygonRange>::type
+               const PolygonRange& polygons,
+               typename boost::enable_if<
+                 typename boost::has_range_const_iterator<PolygonRange>::type
                >::type* =0)
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
+bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np)
 {
   return write_OFF(fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_OFF(const std::string& fname,
-               const PointRange& points,
-               const PolygonRange& polygons
-               ,typename boost::enable_if<
-               typename boost::has_range_const_iterator<PolygonRange>::type
+bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
+               typename boost::enable_if<
+                 typename boost::has_range_const_iterator<PolygonRange>::type
                >::type* =0)
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }
-
 
 } // namespace CGAL
 

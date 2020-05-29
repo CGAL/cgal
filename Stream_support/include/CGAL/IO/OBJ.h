@@ -18,6 +18,7 @@
 #include <CGAL/IO/Generic_writer.h>
 
 #include <boost/range/value_type.hpp>
+#include <CGAL/IO/io.h>
 
 #include <fstream>
 #include <iostream>
@@ -149,19 +150,16 @@ bool read_OBJ(std::istream& is,
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const char* fname,
-              PointRange& points,
-              PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons,
+              const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::ifstream in(fname);
   return read_OBJ(in, points, polygons, np, verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons,
+              const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   return read_OBJ(fname.c_str(), points, polygons, np, verbose);
 }
@@ -216,6 +214,25 @@ bool write_OBJ(std::ostream& os,
   return writer(points, polygons);
 }
 
+template <typename PointRange,
+          typename PolygonRange,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream out(fname);
+  return write_OBJ(out, points, polygons, np);
+}
+
+template <typename PointRange,
+          typename PolygonRange,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_OBJ(fname.c_str(), points, polygons, np);
+}
+
 /*!
  * \ingroup ObjIoFuncs
  *
@@ -223,25 +240,10 @@ bool write_OBJ(std::ostream& os,
  *
  * \see \ref IOStreamOBJ
  */
-template <typename PointRange,
-          typename PolygonRange>
-bool write_OBJ(std::ostream& os,
-               const PointRange& points,
-               const PolygonRange& polygons)
+template <typename PointRange, typename PolygonRange>
+bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
 {
   return write_OBJ(os, points, polygons, parameters::all_default());
-}
-
-template <typename PointRange,
-          typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
-{
-  std::ofstream out(fname);
-  return write_OBJ(out, points, polygons, np);
 }
 
 /*!
@@ -251,24 +253,10 @@ bool write_OBJ(const char* fname,
  *
  * \see \ref IOStreamOBJ
  */
-template <typename PointRange,
-          typename PolygonRange>
-bool write_OBJ(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons)
+template <typename PointRange, typename PolygonRange>
+bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
-  return write_OBJ(fname, points, polygons);
-}
-
-template <typename PointRange,
-          typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
-{
-  return write_OBJ(fname.c_str(), points, polygons,np);
+  return write_OBJ(fname, points, polygons, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange>
