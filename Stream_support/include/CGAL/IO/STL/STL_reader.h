@@ -34,7 +34,7 @@ bool read_ASCII_facet(std::istream& is,
                       TriangleRange& facets,
                       int& index,
                       IndexMap& index_map,
-                      bool verbose = false)
+                      bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type         Point;
   typedef typename boost::range_value<TriangleRange>::type      Triangle;
@@ -114,7 +114,7 @@ template <class PointRange, class TriangleRange>
 bool parse_ASCII_STL(std::istream& is,
                      PointRange& points,
                      TriangleRange& facets,
-                     bool verbose = false)
+                     bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type           Point;
 
@@ -166,7 +166,7 @@ template <class PointRange, class TriangleRange>
 bool parse_binary_STL(std::istream& is,
                       PointRange& points,
                       TriangleRange& facets,
-                      bool verbose = false)
+                      bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type         Point;
   typedef typename boost::range_value<TriangleRange>::type      Triangle;

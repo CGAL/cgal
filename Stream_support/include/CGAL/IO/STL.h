@@ -18,6 +18,7 @@
 #include <CGAL/IO/STL/STL_reader.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <boost/range/value_type.hpp>
@@ -35,8 +36,8 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool read_STL(std::istream& is,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& /*np*/,
-              bool verbose = true) // might become useful one day for face normals
+              const CGAL_BGL_NP_CLASS& /*np*/, // might become useful one day for face normals
+              bool verbose = false)
 {
   int pos = 0;
 

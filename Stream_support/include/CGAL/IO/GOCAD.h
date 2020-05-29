@@ -41,7 +41,7 @@ bool read_GOCAD(std::istream& is,
                 PointRange& points,
                 PolygonRange& polygons,
                 const CGAL_BGL_NP_CLASS&,
-                bool verbose = false)
+                bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type     Point;
   typedef typename boost::range_value<PolygonRange>::type   Poly;
