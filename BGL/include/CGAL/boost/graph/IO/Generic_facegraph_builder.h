@@ -107,7 +107,17 @@ public:
     const bool has_vertex_textures = (is_vtm_requested && !(vertex_textures.empty()));
     const bool has_face_colors = (is_fcm_requested && !(face_colors.empty()));
 
+    if(has_vertex_normals && vertex_normals.size() != m_points.size())
+      return false;
+    if(has_vertex_colors && vertex_colors.size() != m_points.size())
+      return false;
+    if(has_vertex_textures && vertex_textures.size() != m_points.size())
+      return false;
+    if(has_face_colors && face_colors.size() != m_faces.size())
+      return false;
+
     std::vector<vertex_descriptor> vertices(m_points.size());
+
     for(std::size_t id=0, ps=m_points.size(); id<ps; ++id)
     {
       vertices[id] = add_vertex(g);
