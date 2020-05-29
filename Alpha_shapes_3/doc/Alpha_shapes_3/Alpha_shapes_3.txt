@@ -194,7 +194,7 @@ the vertices, edges, facets and cells of the different types
 
 \subsection AlphaShape3DIO Input/Output
 It is possible to export a 3D alpha shape to a `std::ostream` or to a `Geomview_stream`
-using the `operator<<`. More information in the references of `Alpha_shape_3`.
+using the `operator<<`, see the documentation of the class `Alpha_shape_3` for more information.
 
 \section AlphaShape3D_ConceptAndModels Concepts and Models
 

@@ -65,7 +65,7 @@ std::string get_file_extension(const std::string fname)
  * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
- * or `.ts`(\ref IOStreamGocad "GOCAD file format").
+ * or `.ts` (\ref IOStreamGocad "GOCAD file format").
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
@@ -126,7 +126,7 @@ bool read_polygon_soup(const std::string& fname,
  * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
- * or `.ts`(\ref IOStreamGocad "GOCAD file format").
+ * or `.ts` (\ref IOStreamGocad "GOCAD file format").
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons

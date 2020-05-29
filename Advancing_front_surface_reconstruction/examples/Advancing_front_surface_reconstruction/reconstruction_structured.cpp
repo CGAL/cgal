@@ -114,9 +114,9 @@ int main (int argc, char* argv[])
   // Loading point set from a file.
 
   if (!CGAL::read_points(fname,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).
-      normal_map(Normal_map())))
+                         std::back_inserter(points),
+                         CGAL::parameters::point_map(Point_map()).
+                                           normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file" << std::endl;
       return EXIT_FAILURE;

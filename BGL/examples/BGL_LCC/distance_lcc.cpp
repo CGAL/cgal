@@ -36,8 +36,8 @@ int main(int argc, char** argv)
   // bfs = breadth first search explores the graph
   // Just as the distance_recorder there is a way to record the predecessor of a vertex
   boost::breadth_first_search(lcc,
-            vd,
-            visitor(boost::make_bfs_visitor
+                              vd,
+                              visitor(boost::make_bfs_visitor
                                       (boost::record_distances
                                        (make_iterator_property_map
                                         (distance.begin(),

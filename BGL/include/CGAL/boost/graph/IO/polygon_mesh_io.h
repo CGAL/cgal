@@ -74,7 +74,7 @@ bool read_polygon_mesh(std::istream& is,
  * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
- * `.vtp`(\ref IOStreamVTK "VTP file format")  or `.ts`(\ref IOStreamGocad "GOCAD file format").
+ * `.vtp` (\ref IOStreamVTK "VTP file format")  or `.ts` (\ref IOStreamGocad "GOCAD file format").
  * \param g the mesh
  * \param verbose whether extra information is printed when an incident occurs during reading
  * \param np optional \ref pmp_namedparameters "Named Parameters" described below
@@ -163,7 +163,7 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
  * \param fname the name of the file. Its extension must be one of the following :
  * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
  * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
- * `.vtp`(\ref IOStreamVTK "VTP file format")  or `.ts`(\ref IOStreamGocad "GOCAD file format").
+ * `.vtp` (\ref IOStreamVTK "VTP file format")  or `.ts` (\ref IOStreamGocad "GOCAD file format").
  * \param g the mesh to be output
  * \param verbose whether extra information is printed when an incident occurs during writing
  * \param np optional \ref pmp_namedparameters "Named Parameters" described below
@@ -181,8 +181,8 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
  */
 template <class FaceGraph, typename NamedParameters>
 bool write_polygon_mesh(const std::string& fname,
-                       FaceGraph& g,
-                       const NamedParameters& np,
+                        FaceGraph& g,
+                        const NamedParameters& np,
                         const bool verbose = false)
 {
   const std::string ext = IO::internal::get_file_extension(fname);

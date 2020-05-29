@@ -186,6 +186,7 @@ struct LCC_property_map<edge_external_index_t>
     typedef type const_type;
   };
 };
+
 template <>
 struct LCC_property_map<halfedge_external_index_t>
 {
@@ -197,6 +198,8 @@ struct LCC_property_map<halfedge_external_index_t>
     typedef type const_type;
   };
 };
+
+
 template <>
 struct LCC_property_map<vertex_external_index_t>
 {
@@ -208,6 +211,7 @@ struct LCC_property_map<vertex_external_index_t>
     typedef type const_type;
   };
 };
+
 template <>
 struct LCC_property_map<face_external_index_t>
 {
@@ -234,6 +238,7 @@ get(boost::halfedge_external_index_t, CGAL_LCC_TYPE const&)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
     const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t >::const_type
 get(boost::vertex_external_index_t, CGAL_LCC_TYPE const&)
@@ -242,6 +247,7 @@ get(boost::vertex_external_index_t, CGAL_LCC_TYPE const&)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
     const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t >::const_type
 get(boost::edge_external_index_t, CGAL_LCC_TYPE const&)
@@ -249,6 +255,7 @@ get(boost::edge_external_index_t, CGAL_LCC_TYPE const&)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t >::const_type
 get(boost::face_external_index_t, CGAL_LCC_TYPE const&)
@@ -267,6 +274,7 @@ get(boost::edge_index_t, CGAL_LCC_TYPE const& cmap)
   return typename boost::property_map<CGAL_LCC_TYPE,boost::edge_index_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_index_t >::const_type
 get(boost::halfedge_index_t, CGAL_LCC_TYPE const& cmap)
@@ -274,6 +282,7 @@ get(boost::halfedge_index_t, CGAL_LCC_TYPE const& cmap)
   return typename boost::property_map<CGAL_LCC_TYPE,boost::halfedge_index_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_index_t >::const_type
 get(boost::vertex_index_t, CGAL_LCC_TYPE const& cmap)
@@ -281,6 +290,7 @@ get(boost::vertex_index_t, CGAL_LCC_TYPE const& cmap)
   return typename boost::property_map<CGAL_LCC_TYPE,boost::vertex_index_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::face_index_t >::const_type
 get(boost::face_index_t, CGAL_LCC_TYPE const& cmap)
@@ -288,6 +298,7 @@ get(boost::face_index_t, CGAL_LCC_TYPE const& cmap)
   return typename boost::property_map<CGAL_LCC_TYPE,boost::face_index_t>::
     const_type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+
 */
 
 /*template<CGAL_LCC_ARGS>
@@ -316,6 +327,7 @@ get(boost::halfedge_external_index_t, CGAL_LCC_TYPE&)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
     type(halfedges(cmap).begin(), halfedges(cmap).end(), num_halfedges(cmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t >::type
 get(boost::vertex_external_index_t, CGAL_LCC_TYPE&)
@@ -323,6 +335,7 @@ get(boost::vertex_external_index_t, CGAL_LCC_TYPE&)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
     type(vertices(cmap).begin(), vertices(cmap).end(), num_vertices(cmap));
 }
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t >::type
 get(boost::edge_external_index_t, CGAL_LCC_TYPE& cmap)
@@ -330,6 +343,8 @@ get(boost::edge_external_index_t, CGAL_LCC_TYPE& cmap)
   return typename boost::property_map<CGAL_LCC_TYPE, boost::edge_external_index_t>::
     type(const_cast<CGAL_LCC_TYPE&>(cmap));
 }
+
+
 template<CGAL_LCC_ARGS>
 typename boost::property_map<CGAL_LCC_TYPE, boost::face_external_index_t >::type
 get(boost::face_external_index_t, CGAL_LCC_TYPE&)
