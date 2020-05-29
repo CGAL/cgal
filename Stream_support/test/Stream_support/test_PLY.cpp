@@ -13,49 +13,49 @@ typedef std::vector<std::size_t>                      Face;
 
 int main(int argc, char** argv)
 {
-  const char* obj_file = (argc > 1) ? argv[1] : "data/90089.obj";
+  const char* ply_file = (argc > 1) ? argv[1] : "data/colored_tetra.ply";
 
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_OBJ(obj_file, points, polygons);
+  bool ok = CGAL::read_PLY(ply_file, points, polygons);
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
   if(argc == 0)
-    assert(points.size() == 434 && polygons.size() == 864);
+    assert(points.size() == 4 && polygons.size() == 4);
 
   points.clear();
   polygons.clear();
-  std::string obj_string(obj_file);
-  ok = CGAL::read_OBJ(obj_string, points, polygons);
+  std::string ply_string(ply_file);
+  ok = CGAL::read_PLY(ply_string, points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
-  std::ifstream is(obj_file);
-  ok = CGAL::read_OBJ(is, points, polygons);
+  std::ifstream is(ply_file);
+  ok = CGAL::read_PLY(is, points, polygons);
   assert(ok);
   is.close();
 
-  std::ofstream os("tmp.obj");
-  ok = CGAL::write_OBJ(os, points, polygons);
+  ok = CGAL::write_PLY("tmp.ply", points, polygons);
+  assert(ok);
+
+  ok = CGAL::write_polygon_soup("tmp.ply", points, polygons);
+  assert(ok);
+
+  std::ofstream os("tmp.ply");
+  CGAL::set_binary_mode(os);
+  ok = CGAL::write_PLY(os, points, polygons);
   assert(ok);
   os.close();
 
-  ok = CGAL::write_OBJ("tmp.obj", points, polygons);
-  assert(ok);
-
   std::vector<Point> pts_backup = points;
   std::vector<Face> pls_backup = polygons;
-
-  ok = CGAL::write_polygon_soup("tmp.obj", points, polygons);
-  assert(ok);
-
   points.clear();
   polygons.clear();
 
-  ok = CGAL::read_polygon_soup("tmp.obj", points, polygons);
+  ok = CGAL::read_polygon_soup("tmp.ply", points, polygons);
   assert(ok);
 
   assert(points.size() == pts_backup.size());
