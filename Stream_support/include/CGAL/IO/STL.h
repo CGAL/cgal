@@ -114,22 +114,6 @@ bool read_STL(std::istream& is,
   }
 }
 
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname,
-              PointRange& points,
-              TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np)
-{
-  std::ifstream in(fname);
-  return read_STL(in, points, facets, np);
-}
-
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_STL(fname.c_str(), points, facets, np);
-}
-
 /*!
  * \ingroup StlIoFuncs
  *
@@ -141,6 +125,20 @@ template <typename PointRange, typename TriangleRange>
 bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets)
 {
   return read_STL(is, points, facets, parameters::all_default());
+}
+
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_STL(const char* fname, PointRange& points, TriangleRange& facets,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream in(fname);
+  return read_STL(in, points, facets, np);
+}
+
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_STL(fname.c_str(), points, facets, np);
 }
 
 /*!
@@ -169,31 +167,40 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 /*!
  * \ingroup StlIoFuncs
  *
- * writes the content of `points` and `facets` in `out`, in the STL format.
+ * writes the content of `points` and `facets` in `os`, in the STL format.
  *
  * \see \ref IOStreamSTL
  */
-template <class PointRange, class TriangleRange>
-bool write_STL(std::ostream& out,
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(std::ostream& os,
                const PointRange& points,
-               const TriangleRange& facets)
+               const TriangleRange& facets,
+               const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::range_value<TriangleRange>::type            Triangle;
-  typedef typename boost::range_value<PointRange>::type               Point;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel                 K;
-  typedef typename K::Vector_3                                        Vector_3;
+  typedef typename boost::range_value<TriangleRange>::type                  Triangle;
 
-  if (get_mode(out) == IO::BINARY)
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
+  typedef typename boost::property_traits<PointMap>::value_type             Point;
+  typedef typename boost::property_traits<PointMap>::reference              Point_ref;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
+  typedef typename K::Vector_3                                              Vector_3;
+
+  if(get_mode(os) == IO::BINARY)
   {
-    out << "FileType: Binary                                                                ";
+    os << "FileType: Binary                                                                ";
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
-    out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
+    os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const Triangle& face : facets)
     {
-      const Point& p = points[face[0]];
-      const Point& q = points[face[1]];
-      const Point& r = points[face[2]];
+      const Point_ref p = get(point_map, points[face[0]]);
+      const Point_ref q = get(point_map, points[face[1]]);
+      const Point_ref r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
@@ -202,31 +209,37 @@ bool write_STL(std::ostream& out,
                                  static_cast<float>(q.x()), static_cast<float>(q.y()), static_cast<float>(q.z()),
                                  static_cast<float>(r.x()), static_cast<float>(r.y()), static_cast<float>(r.z()) };
 
-      for (int i=0; i<12; ++i)
-        out.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
-      out << "  ";
+      for(int i=0; i<12; ++i)
+        os.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
+      os << "  ";
     }
   }
   else
   {
-    out << "solid\n";
+    os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point& p = points[face[0]];
-      const Point& q = points[face[1]];
-      const Point& r = points[face[2]];
+      const Point_ref p = get(point_map, points[face[0]]);
+      const Point_ref q = get(point_map, points[face[1]]);
+      const Point_ref r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
-      out << "facet normal " << n << "\nouter loop\n";
-      out << "vertex " << p << "\n";
-      out << "vertex " << q << "\n";
-      out << "vertex " << r << "\n";
-      out << "endloop\nendfacet\n";
+      os << "facet normal " << n << "\nouter loop\n";
+      os << "vertex " << p << "\n";
+      os << "vertex " << q << "\n";
+      os << "vertex " << r << "\n";
+      os << "endloop\nendfacet\n";
     }
-    out << "endsolid\n";
+    os << "endsolid\n";
   }
 
-  return !out.fail();
+  return !os.fail();
+}
+
+template <typename PointRange, typename TriangleRange>
+bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets)
+{
+  return write_STL(os, points, facets, parameters::all_default());
 }
 
 /*!
@@ -236,17 +249,31 @@ bool write_STL(std::ostream& out,
  *
  * \see \ref IOStreamSTL
  */
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  return write_STL(os, points, facets, np);
+}
+
 template <typename PointRange, typename TriangleRange>
 bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets)
 {
-  std::ofstream out(fname);
-  return write_STL(out, points, facets);
+  return write_STL(fname, points, facets, parameters::all_default());
+}
+
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_STL(fname.c_str(), points, facets, np);
 }
 
 template <typename PointRange, typename TriangleRange>
 bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets)
 {
-  return write_STL(fname.c_str(), points, facets);
+  return write_STL(fname.c_str(), points, facets, parameters::all_default());
 }
 
 } // namespace CGAL
