@@ -44,6 +44,7 @@ if (NOT TARGET CGAL::Eigen_support)
 endif()
 
 find_package(TBB QUIET)
+include(CGAL_TBB_support)
 
 if (NOT Classification_dependencies_met)
   return()
