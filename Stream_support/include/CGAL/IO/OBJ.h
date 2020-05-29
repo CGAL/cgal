@@ -46,35 +46,60 @@ bool read_OBJ(std::istream& is,
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Vector_3                                                   Normal;
 
-  int mini(1),
-      maxi(-1);
-  Point p;
-  std::string line;
+  set_ascii_mode(is); // obj is ASCII only
 
+  int mini(1), maxi(-1);
+  std::string s;
+  Point p;
+
+  std::string line;
   while(getline(is, line))
   {
-    if(line[0] == 'v' && line[1] == ' ')
+    if(line.empty())
+      continue;
+
+    std::istringstream iss(line);
+    if(!(iss >> s))
+      continue; // can't read anything on the line, whitespace only?
+
+    if(s == "v")
     {
-      std::istringstream iss(line.substr(1));
-      if(!(iss >> p) || !iss)
+      if(!(iss >> p))
       {
         if(verbose)
-          std::cerr<<"error while reading OBJ vertex. "<<std::endl;
+          std::cerr << "error while reading OBJ vertex." << std::endl;
         return false;
       }
 
       points.push_back(p);
     }
-    else if(line[0] == 'f' && line[1] == ' ') // @fixme range checks
+    else if(s == "vt")
     {
-      std::istringstream iss(line.substr(1));
+      // @todo vertex textures
+    }
+    else if(s == "vn")
+    {
+      double nx, ny, nz; // @fixme double?
+      if(iss >> nx >> ny >> nz)
+      {
+        *vn_out++ = Normal(nx, ny, nz); // @fixme check that every vertex has a normal?
+      }
+      else
+      {
+        if(verbose)
+          std::cerr << "error while reading OBJ vertex normal." << std::endl;
+        return false;
+      }
+    }
+    else if(s == "f")
+    {
       int i;
-      faces.push_back(std::vector<std::size_t>());
+      faces.emplace_back();
       while(iss >> i)
       {
         if(i < 1)
         {
-          faces.back().push_back(points.size()+i); // negative indices are relative references
+          faces.back().push_back(points.size() + i); // negative indices are relative references
           if(i < mini)
             mini = i;
         }
@@ -84,55 +109,43 @@ bool read_OBJ(std::istream& is,
           if(i-1 > maxi)
             maxi = i-1;
         }
-       // iss.ignore(256, ' ');
+
+        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
+        // so skip to the next vertex
+        iss.ignore(256, ' ');
       }
 
       if(iss.bad())
         return false;
     }
-    else if(line[0] == 'v' &&  line[1] == 'n' && line[2] == ' ')
-    {
-      std::istringstream iss(line);
-      std::string dummy;
-      if(!(iss >> dummy))
-      {
-        if(verbose)
-          std::cerr<<"error while reading OBJ vertex normal. "<<std::endl;
-        return false;
-      }
-
-      double nx, ny, nz; // @fixme double?
-      if(iss >> nx >> ny >> nz)
-        *vn_out++ = Normal(nx, ny, nz); // @fixme check that every vertex has a normal?
-      else
-        return false;
-    }
     else
     {
-      //std::cerr << "ERROR : Cannnot read line beginning with " << line[0] << std::endl;
+      // std::cerr << "ERROR : Cannnot read line beginning with " << line[0] << std::endl;
      continue;
     }
   }
-  if(maxi==-1 && mini == 1)
+
+  if(maxi == -1 && mini == 1)
   {
     if(verbose)
-      std::cerr<<"No face detected."<<std::endl;
+      std::cerr << "No face detected." << std::endl;
     return false;
   }
+
   if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
   {
     if(verbose)
       std::cerr << "a face index is invalid " << std::endl;
     return false;
   }
-  bool res = is.bad();
-  return !res;
+
+  return !is.bad();
 }
 
 } // namespace internal
 } // namespace IO
 
-
+// @todo could have point_map too (same for other readers)
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
@@ -208,10 +221,11 @@ template <typename PointRange,
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS&)
+               const CGAL_BGL_NP_CLASS& np)
 {
+  set_ascii_mode(os); // obj is ASCII only
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
-  return writer(points, polygons);
+  return writer(points, polygons, np);
 }
 
 template <typename PointRange,
