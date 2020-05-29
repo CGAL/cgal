@@ -471,7 +471,29 @@ bool write_triangle_soups_to_3mf(const std::string& fname,
     IO::write_mesh_to_model(all_points[id], all_polygons[id], colors, name, &pMeshObject, pModel);
   }
 
-  return IO::export_model_to_file(file_name, pModel);
+  return IO::export_model_to_file(fname, pModel);
+}
+
+// convenience
+template<typename PointRanges, typename PolygonRanges>
+bool write_triangle_soup_to_3mf(const std::string& fname,
+                                const PointRange& points,
+                                const PolygonRange& polygons,
+                                const std::string& name)
+{
+  std::vector<PointRange> all_points(1, points);
+  std::vector<PointRange> all_polygons(1, polygons);
+  std::vector<std::string> names(1, name);
+
+  return write_triangle_soups_to_3mf(fname, all_points, all_polygons, names);
+}
+
+template<typename PointRanges, typename PolygonRanges>
+bool write_3MF(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons)
+{
+  return write_triangle_soup_to_3mf(fname, points, polygons, "anonymous");
 }
 
 } // namespace CGAL
