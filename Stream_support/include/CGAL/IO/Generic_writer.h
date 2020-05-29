@@ -30,29 +30,36 @@ template <typename Stream, typename FileWriter>
 class Generic_writer
 {
 public:
-  Generic_writer(Stream& out) : m_out(out) { }
-  Generic_writer(Stream& out, FileWriter writer) : m_out(out), m_writer(writer) { }
+  Generic_writer(Stream& os) : m_os(os) { }
+  Generic_writer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
-  template <typename PointRange_3, typename PolygonRange_3>
-  bool operator()(const PointRange_3& points,
-                  const PolygonRange_3& polygons)
+  template <typename PointRange, typename PolygonRange, typename NamedParameters>
+  bool operator()(const PointRange& points,
+                  const PolygonRange& polygons,
+                  const NamedParameters& np)
   {
-    typedef typename PointRange_3::value_type Point_3;
-    typedef typename PolygonRange_3::value_type Polygon_3;
-    if(m_out.fail())
+    typedef typename boost::range_value<PolygonRange>::type                   Poly;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type     PointMap;
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
+    if(!m_os.good())
       return false;
 
-    m_writer.write_header(m_out, points.size(), 0, polygons.size());
+    m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {
-      const Point_3& p = points[i];
+      const typename boost::property_traits<PointMap>::reference p = get(point_map, points[i]);
       m_writer.write_vertex(p.x(), p.y(), p.z());
     }
 
     m_writer.write_facet_header();
     for(std::size_t i=0, end=polygons.size(); i<end; ++i)
     {
-      const Polygon_3& polygon = polygons[i];
+      const Poly& polygon = polygons[i];
       const std::size_t size = polygon.size();
 
       m_writer.write_facet_begin(size);
@@ -62,11 +69,18 @@ public:
     }
     m_writer.write_footer();
 
-    return m_out.good();
+    return m_os.good();
+  }
+
+  template <typename PointRange, typename PolygonRange, typename NamedParameters>
+  bool operator()(const PointRange& points,
+                  const PolygonRange& polygons)
+  {
+    return this->operator()(points, polygons, parameters::all_default());
   }
 
 protected:
-  Stream& m_out;
+  Stream& m_os;
   FileWriter m_writer;
 };
 
