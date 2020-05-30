@@ -31,7 +31,7 @@ class QGraphicsSceneMixin
 {
 public:
   /*! Costructor */
-  QGraphicsSceneMixin( ) : scene( 0 ) { }
+  QGraphicsSceneMixin(QGraphicsScene* scene_=nullptr) : scene{scene_} { }
 
   /*! Destructor (virtual) */
   virtual ~QGraphicsSceneMixin() {}
@@ -1217,5 +1217,21 @@ protected: // member fields
   Point_curve_distance pointCurveDistance;
   Point_location_strategy pointLocationStrategy;
 }; // class Find_nearest_edge
+
+
+// TODO(Ahmed Essam): move these somewhere else!
+template <std::size_t I = 0, typename FuncT, typename... Tp>
+inline typename std::enable_if<I == sizeof...(Tp), void>::type
+for_each(std::tuple<Tp...>&, FuncT)
+{
+}
+
+template <std::size_t I = 0, typename FuncT, typename... Tp>
+  inline typename std::enable_if <
+  I<sizeof...(Tp), void>::type for_each(std::tuple<Tp...>& t, FuncT f)
+{
+  f(std::get<I>(t));
+  for_each<I + 1, FuncT, Tp...>(t, f);
+}
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

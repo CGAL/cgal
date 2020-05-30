@@ -33,7 +33,7 @@
 
 #include "ui_AlgebraicCurveInputDialog.h"
 
-ArrangementDemoWindow *ArrangementDemoWindow::instance_ = NULL;
+using namespace CGAL::Qt;
 
 Ui::ArrangementDemoWindow* getCurrentDemoWindowUi()
 {
@@ -813,17 +813,16 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
       ( LinearCurveInputCallback* ) activeTab->getCurveInputCallback( );
     if ( newType == this->ui->actionConicSegment )
     {
-      curveInputCallback->setCurveType( LinearCurveInputCallback::SEGMENT );
+      curveInputCallback->setCurveType(CurveType::Segment);
     }
     else if ( newType == this->ui->actionCurveRay )
     {
-      curveInputCallback->setCurveType( LinearCurveInputCallback::RAY );
+      curveInputCallback->setCurveType(CurveType::Ray);
     }
     else if ( newType == this->ui->actionCurveLine )
     {
-      curveInputCallback->setCurveType( LinearCurveInputCallback::LINE );
+      curveInputCallback->setCurveType(CurveType::Line);
     }
-    //std::cout << "do nothing" << std::endl;
   }
 
 #ifdef CGAL_USE_CORE
@@ -836,25 +835,23 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
       ( ConicCurveInputCallback* ) activeTab->getCurveInputCallback( );
     if ( newType == this->ui->actionConicSegment )
     {
-      curveInputCallback->setConicType(ConicCurveInputCallback::CONIC_SEGMENT);
+      curveInputCallback->setCurveType(CurveType::Segment);
     }
     else if ( newType == this->ui->actionConicCircle )
     {
-      curveInputCallback->setConicType(ConicCurveInputCallback::CONIC_CIRCLE);
+      curveInputCallback->setCurveType(CurveType::Circle);
     }
     else if ( newType == this->ui->actionConicEllipse )
     {
-      curveInputCallback->setConicType(ConicCurveInputCallback::CONIC_ELLIPSE);
+      curveInputCallback->setCurveType(CurveType::Ellipse);
     }
     else if ( newType == this->ui->actionConicThreePoint )
     {
-      curveInputCallback->setConicType( ConicCurveInputCallback::
-                                        CONIC_THREE_POINT );
+      curveInputCallback->setCurveType(CurveType::ThreePointCircularArc);
     }
     else if ( newType == this->ui->actionConicFivePoint )
     {
-      curveInputCallback->setConicType( ConicCurveInputCallback::
-                                        CONIC_FIVE_POINT );
+      curveInputCallback->setCurveType(CurveType::FivePointConicArc);
     }
   }
 #if 0
@@ -867,28 +864,29 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
   }
 #endif
 #endif
-  if (isAlgSegArr && (newType == this->ui->actionAddAlgebraicCurve))
-  {
-    if (this->ui->actionInsert->isChecked())
-    {
-      typedef Alg_seg_arr::Geometry_traits_2       Alg_seg_geom_traits;
-      typedef CGAL::Qt::GraphicsViewCurveInput<Alg_seg_geom_traits>
-        AlgSegCurveInputCallback;
-      AlgSegCurveInputCallback* algCurveInputCallback =
-        ( AlgSegCurveInputCallback* ) activeTab->getCurveInputCallback( );
+  // TODO(Ahmed Essam)
+  // if (isAlgSegArr && (newType == this->ui->actionAddAlgebraicCurve))
+  // {
+  //   if (this->ui->actionInsert->isChecked())
+  //   {
+  //     typedef Alg_seg_arr::Geometry_traits_2       Alg_seg_geom_traits;
+  //     typedef CGAL::Qt::GraphicsViewCurveInput<Alg_seg_geom_traits>
+  //       AlgSegCurveInputCallback;
+  //     AlgSegCurveInputCallback* algCurveInputCallback =
+  //       ( AlgSegCurveInputCallback* ) activeTab->getCurveInputCallback( );
 
-      AlgebraicCurveInputDialog* newDialog = new AlgebraicCurveInputDialog;
-      newDialog->getUi()->lineEdit->setFocus();
+  //     AlgebraicCurveInputDialog* newDialog = new AlgebraicCurveInputDialog;
+  //     newDialog->getUi()->lineEdit->setFocus();
 
-      if ( newDialog->exec( ) == QDialog::Accepted )
-      {
-        std::string algebraicExpression = newDialog->getLineEditText();
-        algCurveInputCallback->addAlgebraicCurve(algebraicExpression);
-      }
+  //     if ( newDialog->exec( ) == QDialog::Accepted )
+  //     {
+  //       std::string algebraicExpression = newDialog->getLineEditText();
+  //       algCurveInputCallback->addAlgebraicCurve(algebraicExpression);
+  //     }
 
-      delete newDialog;
-    }
-  }
+  //     delete newDialog;
+  //   }
+  // }
 }
 
 void ArrangementDemoWindow::on_actionSaveAs_triggered( )

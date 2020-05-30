@@ -101,7 +101,7 @@ public:
     this->arrangementGraphicsItem =
       new CGAL::Qt::ArrangementGraphicsItem<Arrangement>(this->arrangement);
     this->curveInputCallback =
-      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this);
+      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this, this->scene);
     this->deleteCurveCallback =
       new DeleteCurveCallback<Arrangement>( this->arrangement, this );
     this->pointLocationCallback =
@@ -163,7 +163,7 @@ public:
       new CGAL::Qt::ArrangementGraphicsItem<Arrangement>( this->arrangement );
 
     this->curveInputCallback =
-      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this);
+      new ArrangementCurveInputCallback<Arrangement>(this->arrangement, this, this->scene);
     this->deleteCurveCallback =
       new DeleteCurveCallback<Arrangement>( this->arrangement, this );
     this->pointLocationCallback =
@@ -207,7 +207,7 @@ public:
     Q_EMIT modelChanged( );
   }
 
-protected:  
+protected:
   Arrangement* arrangement;               /*!< pointer to the parent class */
 
 }; // class ArrangementDemoTab

@@ -38,11 +38,12 @@ public:
   typedef typename Kernel::Segment_2                    Segment_2;
   typedef typename Kernel::FT                           FT;
 
-  ArrangementCurveInputCallback( Arrangement* arrangement_, QObject* parent ):
-    Superclass( parent ),
-    arrangement( arrangement_ )
+  ArrangementCurveInputCallback(Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene):
+    Superclass( parent, scene ),
+    arrangement( arrangement_)
   {
     this->snapToVertexStrategy.setArrangement( arrangement_ );
+    this->setScene(scene);
 
     QObject::connect( this, SIGNAL( generate( CGAL::Object ) ),
                       this, SLOT( processInput( CGAL::Object ) ) );

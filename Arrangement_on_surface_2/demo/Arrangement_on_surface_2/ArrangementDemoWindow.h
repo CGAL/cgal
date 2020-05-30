@@ -43,10 +43,7 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 {
   Q_OBJECT
   public:
-#if 0
-  typedef Seg_traits::Point_2 Point;
-  typedef Seg_traits::Segment_2 Segment;
-#endif
+
   typedef enum TraitsType {
     SEGMENT_TRAITS,
     POLYLINE_TRAITS,
@@ -75,14 +72,9 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
 public:
   static ArrangementDemoWindow* getInstance()
   {
-    if (instance_ == NULL)
-    {
-        instance_ = new ArrangementDemoWindow;
-    }
+    static ArrangementDemoWindow* instance_ = new ArrangementDemoWindow();
     return instance_;
   }
-private:
-  static ArrangementDemoWindow* instance_;
 
 public Q_SLOTS:
   void updateMode( QAction* a );

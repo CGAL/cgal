@@ -37,6 +37,7 @@ qt5_wrap_ui(arrangement_2_uis
 qt5_wrap_cpp(CGAL_Qt5_MOC_FILES
 		   ArrangementDemoWindow.h
 		   ArrangementDemoTab.h
+		   GraphicsViewCurveInput.h
 		   Callback.h
 		   OverlayDialog.h
 		   ArrangementDemoPropertiesDialog.h

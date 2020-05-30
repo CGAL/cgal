@@ -239,7 +239,7 @@ protected:
 
   void paintFaces( QPainter* painter )
   {
-    painter->setPen(QColorConstants::Transparent);
+    painter->setPen(::Qt::transparent);
     typename Traits::Left_side_category category;
     this->paintFaces( painter, category );
     painter->setPen(edgesPen);
