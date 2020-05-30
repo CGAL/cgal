@@ -16,14 +16,13 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(CGAL REQUIRED COMPONENTS Core Qt5 )
-find_package( Qt5 REQUIRED COMPONENTS Gui Widgets)
-
 include(${CGAL_USE_FILE})
-
 include_directories( ./ )
 # Arrangement package includes
 include_directories(BEFORE ../../include)
+
+find_package(CGAL REQUIRED COMPONENTS Core Qt5 )
+find_package( Qt5 REQUIRED COMPONENTS Gui Widgets)
 
 add_definitions(-DQT_NO_KEYWORDS)
 

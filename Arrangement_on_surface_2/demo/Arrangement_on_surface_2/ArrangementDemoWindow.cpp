@@ -14,6 +14,7 @@
 #include "ArrangementDemoTab.h"
 #include "Conic_reader.h"
 #include "AlgebraicCurveInputDialog.h"
+#include "AlgebraicCurveParser.h"
 
 #include "DeleteCurveMode.h"
 #include "ArrangementGraphicsItem.h"
@@ -854,39 +855,66 @@ void ArrangementDemoWindow::updateConicType( QAction* newType )
       curveInputCallback->setCurveType(CurveType::FivePointConicArc);
     }
   }
-#if 0
-  else if (isBezierArr) {
-    typedef Bezier_arr::Geometry_traits_2       Conic_geom_traits;
-    typedef CGAL::Qt::GraphicsViewCurveInput<Conic_geom_traits>
-      ConicCurveInputCallback;
-    ConicCurveInputCallback* curveInputCallback =
-      ( ConicCurveInputCallback* ) activeTab->getCurveInputCallback( );
+#endif
+
+  if (isAlgSegArr)
+  {
+    typedef Alg_seg_arr::Geometry_traits_2       Alg_seg_geom_traits;
+    typedef typename Alg_seg_geom_traits::Polynomial_2 Polynomial_2;
+    typedef CGAL::Qt::GraphicsViewCurveInput<Alg_seg_geom_traits>
+      AlgSegCurveInputCallback;
+    AlgSegCurveInputCallback* algCurveInputCallback =
+      ( AlgSegCurveInputCallback* ) activeTab->getCurveInputCallback( );
+
+    if (newType == this->ui->actionAddAlgebraicCurve)
+    {
+      if (this->ui->actionInsert->isChecked())
+      {
+        AlgebraicCurveInputDialog* newDialog = new AlgebraicCurveInputDialog;
+        newDialog->getUi()->lineEdit->setFocus();
+
+        if ( newDialog->exec( ) == QDialog::Accepted )
+        {
+          std::string algebraicExpression = newDialog->getLineEditText();
+          AlgebraicCurveParser<Polynomial_2> parser(algebraicExpression);
+          boost::optional<Polynomial_2> poly = parser.parse();
+
+          if(!poly) {
+             QMessageBox msgBox;
+             msgBox.setWindowTitle("Wrong Expression");
+             msgBox.setIcon(QMessageBox::Critical);
+             msgBox.setText(QString::fromStdString("Invalid Expression"));
+             msgBox.setStandardButtons(QMessageBox::Ok);
+             msgBox.exec();
+             return;
+          }
+
+          //To create a curve
+          Alg_seg_geom_traits alg_traits;
+          Alg_seg_geom_traits::Construct_curve_2 construct_curve
+                  = alg_traits.construct_curve_2_object();
+
+          // adding curve to the arrangement
+          auto cv = construct_curve(poly.value());
+          Q_EMIT algCurveInputCallback->generate(CGAL::make_object(cv));
+        }
+
+        delete newDialog;
+      }
+    }
+    else if ( newType == this->ui->actionCurveLine )
+    {
+      algCurveInputCallback->setCurveType(CurveType::Line);
+    }
+    else if ( newType == this->ui->actionConicCircle )
+    {
+      algCurveInputCallback->setCurveType(CurveType::Circle);
+    }
+    else if ( newType == this->ui->actionConicEllipse )
+    {
+      algCurveInputCallback->setCurveType(CurveType::Ellipse);
+    }
   }
-#endif
-#endif
-  // TODO(Ahmed Essam)
-  // if (isAlgSegArr && (newType == this->ui->actionAddAlgebraicCurve))
-  // {
-  //   if (this->ui->actionInsert->isChecked())
-  //   {
-  //     typedef Alg_seg_arr::Geometry_traits_2       Alg_seg_geom_traits;
-  //     typedef CGAL::Qt::GraphicsViewCurveInput<Alg_seg_geom_traits>
-  //       AlgSegCurveInputCallback;
-  //     AlgSegCurveInputCallback* algCurveInputCallback =
-  //       ( AlgSegCurveInputCallback* ) activeTab->getCurveInputCallback( );
-
-  //     AlgebraicCurveInputDialog* newDialog = new AlgebraicCurveInputDialog;
-  //     newDialog->getUi()->lineEdit->setFocus();
-
-  //     if ( newDialog->exec( ) == QDialog::Accepted )
-  //     {
-  //       std::string algebraicExpression = newDialog->getLineEditText();
-  //       algCurveInputCallback->addAlgebraicCurve(algebraicExpression);
-  //     }
-
-  //     delete newDialog;
-  //   }
-  // }
 }
 
 void ArrangementDemoWindow::on_actionSaveAs_triggered( )
@@ -1226,9 +1254,9 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
 
         this->ui->actionConicSegment->setVisible( false );
         this->ui->actionCurveRay->setVisible( false );
-        this->ui->actionCurveLine->setVisible( false );
-        this->ui->actionConicCircle->setVisible( false );
-        this->ui->actionConicEllipse->setVisible( false );
+        this->ui->actionCurveLine->setVisible( true );
+        this->ui->actionConicCircle->setVisible( true );
+        this->ui->actionConicEllipse->setVisible( true );
         this->ui->actionConicThreePoint->setVisible( false );
         this->ui->actionConicFivePoint->setVisible( false );
 

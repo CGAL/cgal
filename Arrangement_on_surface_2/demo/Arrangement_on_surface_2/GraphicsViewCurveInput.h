@@ -186,6 +186,35 @@ struct CurveGenerator<CGAL::Arr_circular_arc_traits_2<CircularKernel>> :
   generateThreePointCircularArc(const std::vector<QPointF>&) override;
 };
 
+template <typename Coefficient_>
+struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
+    public CurveGeneratorBase
+{
+  using Coefficient = Coefficient_;
+  using ArrTraits = CGAL::Arr_algebraic_segment_traits_2<Coefficient>;
+  using X_monotone_curve_2 = typename ArrTraits::X_monotone_curve_2;
+  using Kernel = typename ArrTraitsAdaptor<ArrTraits>::Kernel;
+  using Point_2 = typename ArrTraits::Point_2;
+  using Kernel_point_2 = typename Kernel::Point_2;
+  using Polynomial_2 = typename ArrTraits::Polynomial_2;
+  using Curve_2 = typename ArrTraits::Curve_2;
+  using Rational = CORE::BigRat; // FIX: should probably query rational type
+  using RationalTraits = Rational_traits<Rational>;
+
+  boost::optional<CGAL::Object>
+  generateLine(const std::vector<QPointF>&) override;
+
+  boost::optional<CGAL::Object>
+  generateCircle(const std::vector<QPointF>&) override;
+
+  boost::optional<CGAL::Object>
+  generateEllipse(const std::vector<QPointF>&) override;
+
+private:
+  boost::optional<CGAL::Object>
+  generateEllipse_(const QPointF&, float, float);
+};
+
 class CurveInputMethod : public QGraphicsSceneMixin
 {
 public:
@@ -393,6 +422,14 @@ struct GraphicsViewCurveInputTypeHelper<
   CGAL::Arr_circular_arc_traits_2<CircularKernel>>
 {
   using InputMethodTuple = std::tuple<ThreePointCircularInputMethod>;
+};
+
+template <typename Coefficient_>
+struct GraphicsViewCurveInputTypeHelper<
+  CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>
+{
+  using InputMethodTuple =
+    std::tuple<LineInputMethod, CircleInputMethod, EllipseInputMethod>;
 };
 
 template <typename ArrTraits>

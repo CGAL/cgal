@@ -21,7 +21,8 @@ namespace Qt
 GraphicsViewCurveInputBase::GraphicsViewCurveInputBase(
   QObject* parent, QGraphicsScene* scene) :
     GraphicsViewInput(parent),
-    QGraphicsSceneMixin(scene)
+    QGraphicsSceneMixin(scene),
+    inputMethod(nullptr)
 {
 }
 
@@ -178,6 +179,7 @@ void SegmentInputMethod::beginInput()
   this->segmentGuide.setLine(0, 0, 0, 0);
   QPen pen = this->segmentGuide.pen();
   pen.setColor(this->color);
+  pen.setCosmetic(true);
   this->segmentGuide.setPen(pen);
 }
 
@@ -203,6 +205,7 @@ void PolylineInputMethod::beginInput()
   this->lastLine.setLine(0, 0, 0, 0);
   QPen pen = this->polylineGuide.pen();
   pen.setColor(this->color);
+  pen.setCosmetic(true);
   this->polylineGuide.setPen(pen);
   this->lastLine.setPen(pen);
 }
@@ -235,6 +238,7 @@ void RayInputMethod::beginInput()
   this->rayGuide.setLine(0, 0, 0, 0);
   QPen pen = this->rayGuide.pen();
   pen.setColor(this->color);
+  pen.setCosmetic(true);
   this->rayGuide.setPen(pen);
 }
 
@@ -266,6 +270,7 @@ void LineInputMethod::beginInput()
   this->lineGuide.setLine(0, 0, 0, 0);
   QPen pen = this->lineGuide.pen();
   pen.setColor(this->color);
+  pen.setCosmetic(true);
   this->lineGuide.setPen(pen);
 }
 
@@ -299,6 +304,7 @@ void CircleInputMethod::beginInput()
   this->circleGuide.setRect(0, 0, 0, 0);
   QPen pen = this->circleGuide.pen();
   pen.setColor(this->color);
+  pen.setCosmetic(true);
   this->circleGuide.setPen(pen);
 }
 
@@ -323,6 +329,7 @@ void EllipseInputMethod::beginInput()
   this->ellipseGuide.setRect(0, 0, 0, 0);
   QPen pen = this->ellipseGuide.pen();
   pen.setColor(this->color);
+  pen.setCosmetic(true);
   this->ellipseGuide.setPen(pen);
 }
 
@@ -690,6 +697,107 @@ CurveGenerator<CGAL::Arr_circular_arc_traits_2<CircularKernel>>::
     std::cout << "Points don't specify a valid circular arc. Try again!\n";
   }
   return {};
+}
+
+// CurveGenerator Algebraic Traits
+template <typename Coefficient_>
+boost::optional<CGAL::Object>
+CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+  generateLine(const std::vector<QPointF>& points)
+{
+  RationalTraits ratTraits;
+  ArrTraits arrTraits;
+
+  float dx = points[1].x() - points[0].x();
+  float dy = points[1].y() - points[0].y();
+  Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
+  Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
+
+  Polynomial_2 poly;
+  if (dx != 0)
+  {
+    float m = dy / dx;
+    float c = points[0].y() - m * points[0].x();
+    Rational mRat = m;
+    Rational cRat = c;
+    // y = (a/b) x + (e/f)
+    auto a = ratTraits.numerator(mRat);
+    auto b = ratTraits.denominator(mRat);
+    auto e = ratTraits.numerator(cRat);
+    auto f = ratTraits.denominator(cRat);
+
+    poly = b * f * y - f * a * x - b * e;
+  }
+  // vertical line
+  else
+  {
+    Rational xP = points[0].x();
+    auto a = ratTraits.numerator(xP);
+    auto b = ratTraits.denominator(xP);
+    poly = b * x - a;
+  }
+
+  auto construct_curve = arrTraits.construct_curve_2_object();
+  auto res = construct_curve(poly);
+  return CGAL::make_object(res);
+}
+
+template <typename Coefficient_>
+boost::optional<CGAL::Object>
+CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+  generateCircle(const std::vector<QPointF>& points)
+{
+  float sq_rad =
+    (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
+    (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
+  return this->generateEllipse_(points[0], sq_rad, sq_rad);
+}
+
+template <typename Coefficient_>
+boost::optional<CGAL::Object>
+CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+  generateEllipse(const std::vector<QPointF>& points)
+{
+  float rx =
+    (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) / 4.;
+  float ry =
+    (points[0].y() - points[1].y()) * (points[0].y() - points[1].y()) / 4.;
+  QPointF center = (points[1] + points[0]) / 2;
+  return this->generateEllipse_(center, rx, ry);
+}
+
+template <typename Coefficient_>
+boost::optional<CGAL::Object>
+CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+  generateEllipse_(const QPointF& center, float rx, float ry)
+{
+  RationalTraits ratTraits;
+  ArrTraits arrTraits;
+
+  Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
+  Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
+  Rational xCenter = center.x();
+  Rational yCenter = center.y();
+  Rational rxRat = rx;
+  Rational ryRat = ry;
+
+  // (g/h) (x - a/b)^2 + (e/f) (y - c/d)^2 = (e/f) * (g/h)
+  auto a = ratTraits.numerator(xCenter);
+  auto b = ratTraits.denominator(xCenter);
+  auto c = ratTraits.numerator(yCenter);
+  auto d = ratTraits.denominator(yCenter);
+  auto e = ratTraits.numerator(rxRat);
+  auto f = ratTraits.denominator(rxRat);
+  auto g = ratTraits.numerator(ryRat);
+  auto h = ratTraits.denominator(ryRat);
+
+  Polynomial_2 poly = g * f * CGAL::ipower(b * d * x - d * a, 2) +
+                            e * h * CGAL::ipower(b * d * y - b * c, 2) -
+                            e * g * b * b * d * d;
+
+  auto construct_curve = arrTraits.construct_curve_2_object();
+  auto res = construct_curve(poly);
+  return CGAL::make_object(res);
 }
 
 template class GraphicsViewCurveInput<Seg_traits>;

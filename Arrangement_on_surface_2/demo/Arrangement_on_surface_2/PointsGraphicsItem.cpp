@@ -30,19 +30,15 @@ void PointsGraphicsItem::paint(QPainter* painter,
 							   const QStyleOptionGraphicsItem* /* option */,
 							   QWidget* /* widget */)
 {
-  double scale = painter->worldTransform( ).m11( );
-  double radius = this->pointRadius;
-  radius /= scale;
-  QPen savePen = painter->pen( );
-  painter->setBrush( QBrush( this->color ) );
-
-  for ( unsigned int i = 0; i < this->points.size( ); ++i )
-  {
-	QPointF pt = this->points[ i ];
-	painter->drawEllipse( pt, radius, radius );
+  painter->save();
+  painter->setBrush(QBrush(this->color));
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
+  for(auto& point : this->points){
+    painter->drawEllipse(
+      matrix.map(point), this->pointRadius, this->pointRadius);
   }
-
-  painter->setPen( savePen );
+  painter->restore();
 }
 
 //! determing the bounding box of the curve.
