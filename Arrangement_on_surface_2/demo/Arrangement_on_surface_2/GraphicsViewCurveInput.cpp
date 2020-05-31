@@ -357,7 +357,7 @@ template <size_t... Is>
 GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
   QObject* parent, QGraphicsScene* scene, std::index_sequence<Is...>) :
     GraphicsViewCurveInputBase(parent, scene),
-    inputMethods{std::make_tuple((Is, scene)...)}
+    inputMethods{(Is, scene)...}
 {
   this->setDefaultInputMethod(
     std::integral_constant<
