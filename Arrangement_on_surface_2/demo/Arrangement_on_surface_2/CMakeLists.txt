@@ -49,14 +49,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
 
 	qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ArrangementDemoWindow.qrc)
 
-	set(EXPLICIT_INSTANTIATION_SRCS)
-	if (CGAL_EXPLICIT_INSTANTIATION)
-	set(EXPLICIT_INSTANTIATION_SRCS
-		ArrangementPainterOstream.cpp
-		GraphicsViewCurveInput.cpp
-		AlgebraicCurveParser.cpp )
-	endif()
-
 	add_executable(arrangement_2
 				 arrangement_2.cpp
 				 ArrangementDemoWindow.cpp
@@ -82,7 +74,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
 				 VerticalRayGraphicsItem.cpp
 				 DeleteCurveCallback.cpp
 				 CurveGraphicsItem.cpp
-				 ${EXPLICIT_INSTANTIATION_SRCS}
+				 ArrangementPainterOstream.cpp
+				 GraphicsViewCurveInput.cpp
+				 AlgebraicCurveParser.cpp
 				 ${CGAL_Qt5_MOC_FILES}
 				 ${arrangement_2_uis}
 				 ${CGAL_Qt5_RESOURCE_FILES})
