@@ -198,5 +198,4 @@ template class EnvelopeCallback<Seg_arr, Seg_traits>;
 template class EnvelopeCallback<Pol_arr, Pol_traits>;
 template class EnvelopeCallback<Conic_arr, Conic_traits>;
 template class EnvelopeCallback<Lin_arr, Lin_traits>;
-template class EnvelopeCallback<Arc_arr, Arc_traits>;
 template class EnvelopeCallback<Alg_seg_arr, Alg_seg_traits>;

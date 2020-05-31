@@ -91,7 +91,6 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
 #endif
 
   Lin_arr* lin_arr;
-  Arc_arr* arc_arr;
   Alg_seg_arr* alg_seg_arr;
   CGAL::Object arr;
 
@@ -125,12 +124,6 @@ ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
     demoTab = new ArrangementDemoTab< Lin_arr >( lin_arr, 0 );
     arr = CGAL::make_object( lin_arr );
     tabLabel = QString( "%1 - Linear" ).arg( tabLabelCounter++ );
-    break;
-   case CIRCULAR_ARC_TRAITS:
-    arc_arr = new Arc_arr;
-    demoTab = new ArrangementDemoTab< Arc_arr >( arc_arr, 0 );
-    arr = CGAL::make_object( arc_arr );
-    tabLabel = QString( "%1 - Circular Arc" ).arg( tabLabelCounter++ );
     break;
    case ALGEBRAIC_TRAITS:
     alg_seg_arr = new Alg_seg_arr;
@@ -467,7 +460,6 @@ void ArrangementDemoWindow::openArrFile( QString filename )
   Seg_arr* seg;
   Pol_arr* pol;
   Lin_arr* lin;
-  Arc_arr* arc;
   Alg_seg_arr* alg_seg;
 
 #ifdef CGAL_USE_CORE
@@ -517,19 +509,6 @@ void ArrangementDemoWindow::openArrFile( QString filename )
     this->arrangements[ index ] = CGAL::make_object( lin );
     TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
     tab->setArrangement( lin );
-  }
-  else if ( CGAL::assign( arc, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter< Arc_arr >         Arc_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Arc_text_formatter>
-      ArrFormatter;
-    typedef ArrangementDemoTab< Arc_arr >               TabType;
-
-    ArrFormatter arrFormatter;
-    CGAL::read( *arc, ifs, arrFormatter );
-    this->arrangements[ index ] = CGAL::make_object( arc );
-    TabType* tab = static_cast< TabType* >( this->tabs[ index ] );
-    tab->setArrangement( arc );
   }
   else if ( CGAL::assign( alg_seg, arr ) )
   {
@@ -938,7 +917,6 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered( )
   Seg_arr* seg;
   Pol_arr* pol;
   Lin_arr* lin;
-  Arc_arr* arc;
   Alg_seg_arr* alg_seg;
 
 #ifdef CGAL_USE_CORE
@@ -968,22 +946,6 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered( )
       ArrFormatter;
     ArrFormatter                                        arrFormatter;
     CGAL::write( *lin, ofs, arrFormatter );
-  }
-  else if ( CGAL::assign( arc, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter<Arc_arr>           Arc_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Arc_text_formatter>
-      ArrFormatter;
-    ArrFormatter                                        arrFormatter;
-    CGAL::write( *arc, ofs, arrFormatter );
-  }
-  else if ( CGAL::assign( arc, arr ) )
-  {
-    typedef CGAL::Arr_text_formatter<Arc_arr>           Arc_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Arc_text_formatter>
-      ArrFormatter;
-    ArrFormatter                                        arrFormatter;
-    CGAL::write( *arc, ofs, arrFormatter );
   }
   else if ( CGAL::assign( alg_seg, arr ) )
   {
@@ -1150,10 +1112,6 @@ void ArrangementDemoWindow::on_actionNewTab_triggered( )
     {
       this->makeTab( LINEAR_TRAITS );
     }
-    else if ( id == CIRCULAR_ARC_TRAITS )
-    {
-      this->makeTab( CIRCULAR_ARC_TRAITS );
-    }
     else if ( id == ALGEBRAIC_TRAITS )
     {
       this->makeTab( ALGEBRAIC_TRAITS );
@@ -1182,7 +1140,6 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
   Pol_arr *pol;
   Alg_seg_arr *alg_seg;
   Lin_arr *lin;
-  Arc_arr *arc;
 #ifdef CGAL_USE_CORE
   Conic_arr* conic;
 #if 0
@@ -1270,10 +1227,6 @@ void ArrangementDemoWindow::on_tabWidget_currentChanged( )
     {
       this->ui->actionConicSegment->setToolTip("Polyline");
     }
-    else if ( CGAL::assign( arc, arr ) )
-    {
-      this->ui->actionConicSegment->setToolTip("Arc");
-    }
     else
     {
       this->ui->actionConicSegment->setToolTip("Segment");
@@ -1320,8 +1273,6 @@ void ArrangementDemoWindow::on_actionOverlay_triggered( )
 #endif
       Lin_arr* lin_arr;
       Lin_arr* lin_arr2;
-      Arc_arr* arc_arr;
-      Arc_arr* arc_arr2;
       // Alg_seg_arr* alg_arr;
       // Alg_seg_arr* alg_arr2;
       if ( CGAL::assign( seg_arr, arrs[ 0 ] ) &&
@@ -1351,11 +1302,6 @@ void ArrangementDemoWindow::on_actionOverlay_triggered( )
            CGAL::assign( lin_arr2, arrs[ 1 ] ) )
       {
         this->makeOverlayTab( lin_arr, lin_arr2 );
-      }
-      if ( CGAL::assign( arc_arr, arrs[ 0 ] ) &&
-           CGAL::assign( arc_arr2, arrs[ 1 ] ) )
-      {
-        this->makeOverlayTab( arc_arr, arc_arr2 );
       }
       // if ( CGAL::assign( alg_arr, arrs[ 0 ] ) &&
       //      CGAL::assign( alg_arr2, arrs[ 1 ] ) )

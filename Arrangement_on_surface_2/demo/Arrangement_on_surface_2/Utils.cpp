@@ -78,84 +78,6 @@ Compute_squared_distance_2<CGAL::Arr_polyline_traits_2<Kernel_>>::operator()(
 	return CGAL::to_double(min_dist);
 }
 
-template <typename CircularKernel>
-double
-Compute_squared_distance_2<CGAL::Arr_circular_arc_traits_2<CircularKernel>>::
-operator()(const Non_arc_point_2& p, const X_monotone_curve_2& c)
-{
-	QVector<QPointF> pts;
-	Arr_compute_y_at_x_2<Traits> compute_y_at_x_2;
-
-	double sx = CGAL::to_double(c.source().x()),
-		   sy = CGAL::to_double(c.source().y()),
-		   tx = CGAL::to_double(c.target().x()),
-		   ty = CGAL::to_double(c.target().y());
-
-	QPointF coord_source(sx, sy);
-	QPointF coord_target(tx, ty);
-
-	QPoint coord_source_viewport = this->fromScene(coord_source);
-	QPoint coord_target_viewport = this->fromScene(coord_target);
-
-	bool is_source_left = (sx < tx);
-	int x_min =
-		is_source_left ? coord_source_viewport.x() : coord_target_viewport.x();
-	int x_max =
-		is_source_left ? coord_target_viewport.x() : coord_source_viewport.x();
-	double curr_x, curr_y;
-	int x;
-
-	pts.push_back(coord_source);
-
-	// Draw the curve as pieces of small segments
-	const int DRAW_FACTOR = 2;
-	if (is_source_left)
-	{
-		for (x = x_min + DRAW_FACTOR; x < x_max; x += DRAW_FACTOR)
-		{
-			//= COORD_SCALE)
-			curr_x = this->toScene(x);
-
-			// If curr_x > x_max or curr_x < x_min
-			if (curr_x < CGAL::to_double(c.left().x()) ||
-				curr_x > CGAL::to_double(c.right().x()))
-			{
-				continue;
-			}
-
-			curr_y = compute_y_at_x_2.approx(c, Root_of_2(curr_x));
-			pts.push_back(QPointF(curr_x, curr_y));
-		} // for
-	}
-	else
-	{
-		for (x = x_max; x > x_min; x -= DRAW_FACTOR)
-		{
-			curr_x = this->toScene(x);
-			if (curr_x < CGAL::to_double(c.left().x()) ||
-				curr_x > CGAL::to_double(c.right().x()))
-			{
-				continue;
-			}
-
-			curr_y = compute_y_at_x_2.approx(c, Root_of_2(curr_x));
-			pts.push_back(QPointF(curr_x, curr_y));
-		} // for
-	}	  // else
-	pts.push_back(coord_target);
-
-	FT minDist(10000000000);
-
-	for (int i = 0; i < pts.size(); i++)
-	{
-		Non_arc_point_2 target_point(FT(pts[i].x()), FT(pts[i].y()));
-
-		FT curDist = CGAL::squared_distance(p, target_point);
-		minDist = curDist < minDist ? curDist : minDist;
-	}
-	return CGAL::to_double(minDist);
-}
-
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 double Compute_squared_distance_2<
 	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
@@ -369,20 +291,6 @@ auto Arr_construct_point_2<ArrTraits>::operator()(
 	CoordinateType xx(x);
 	CoordinateType yy(y);
 	Point_2 res(xx, yy);
-	return res;
-}
-
-template <typename ArrTraits>
-template <typename T, typename CircularKernel>
-auto Arr_construct_point_2<ArrTraits>::operator()(
-	const T& x, const T& y, CGAL::Arr_circular_arc_traits_2<CircularKernel>
-	/* traits */) -> Point_2
-{
-	typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
-	CoordinateType xx(x);
-	CoordinateType yy(y);
-	Root_for_circles_2_2 p(xx, yy);
-	Point_2 res(p);
 	return res;
 }
 
@@ -700,63 +608,6 @@ auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
 	return finalSubcurve;
 }
 
-template <typename CircularKernel>
-Construct_x_monotone_subcurve_2<CGAL::Arr_circular_arc_traits_2<
-	CircularKernel>>::Construct_x_monotone_subcurve_2() :
-	intersect_2(this->traits.intersect_2_object()),
-	split_2(this->traits.split_2_object()),
-	compare_x_2(this->traits.compare_x_2_object()),
-	construct_min_vertex_2(this->traits.construct_min_vertex_2_object()),
-	construct_max_vertex_2(this->traits.construct_max_vertex_2_object())
-{
-}
-
-template <typename CircularKernel>
-auto Construct_x_monotone_subcurve_2<
-	CGAL::Arr_circular_arc_traits_2<CircularKernel>>::
-operator()(
-	const X_monotone_curve_2& curve, const boost::optional<Arc_point_2>& pLeft_,
-	const boost::optional<Arc_point_2>& pRight_) -> X_monotone_curve_2
-{
-	const Arc_point_2 pMin = this->construct_min_vertex_2(curve);
-	const Arc_point_2 pMax = this->construct_max_vertex_2(curve);
-  const Arc_point_2& pLeft = (pLeft_)? *pLeft_ : pMin;
-  const Arc_point_2& pRight = (pRight_)? *pRight_ : pMax;
-
-	X_monotone_curve_2 subcurve;
-	X_monotone_curve_2 unusedTrimmings;
-	X_monotone_curve_2 finalSubcurve;
-	if (this->compare_x_2(pLeft, pMin) == CGAL::LARGER)
-	{
-		Arr_compute_y_at_x_2<ArrTraits> compute_y_at_x;
-		FT x_approx(CGAL::to_double(pLeft.x()));
-		Root_of_2 y1 = compute_y_at_x(curve, x_approx);
-		Root_for_circles_2_2 intersectionPoint(x_approx, y1);
-		Arc_point_2 splitPoint(intersectionPoint);
-		this->split_2(curve, splitPoint, unusedTrimmings, subcurve);
-	}
-	else
-	{
-		subcurve = curve;
-	}
-
-	if (this->compare_x_2(pRight, pMax) == CGAL::SMALLER)
-	{
-		Arr_compute_y_at_x_2<ArrTraits> compute_y_at_x;
-		FT x_approx(CGAL::to_double(pRight.x()));
-		Root_of_2 y2 = compute_y_at_x(subcurve, x_approx);
-		Root_for_circles_2_2 intersectionPoint(x_approx, y2);
-		Arc_point_2 splitPoint(intersectionPoint);
-		this->split_2(subcurve, splitPoint, finalSubcurve, unusedTrimmings);
-	}
-	else
-	{
-		finalSubcurve = subcurve;
-	}
-
-	return finalSubcurve;
-}
-
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto Construct_x_monotone_subcurve_2<
 	CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
@@ -790,26 +641,22 @@ template class Compute_squared_distance_2<Seg_traits>;
 template class Compute_squared_distance_2<Pol_traits>;
 template class Compute_squared_distance_2<Conic_traits>;
 template class Compute_squared_distance_2<Lin_traits>;
-template class Compute_squared_distance_2<Arc_traits>;
 template class Compute_squared_distance_2<Alg_seg_traits>;
 
 template class Arr_construct_point_2<Seg_traits>;
 template class Arr_construct_point_2<Pol_traits>;
 template class Arr_construct_point_2<Conic_traits>;
 template class Arr_construct_point_2<Lin_traits>;
-template class Arr_construct_point_2<Arc_traits>;
 template class Arr_construct_point_2<Alg_seg_traits>;
 
 template class Find_nearest_edge<Seg_arr, Seg_traits>;
 template class Find_nearest_edge<Pol_arr, Pol_traits>;
 template class Find_nearest_edge<Conic_arr, Conic_traits>;
 template class Find_nearest_edge<Lin_arr, Lin_traits>;
-template class Find_nearest_edge<Arc_arr, Arc_traits>;
 template class Find_nearest_edge<Alg_seg_arr, Alg_seg_traits>;
 
 template class Construct_x_monotone_subcurve_2<Seg_traits>;
 template class Construct_x_monotone_subcurve_2<Pol_traits>;
 template class Construct_x_monotone_subcurve_2<Conic_traits>;
 template class Construct_x_monotone_subcurve_2<Lin_traits>;
-template class Construct_x_monotone_subcurve_2<Arc_traits>;
 template class Construct_x_monotone_subcurve_2<Alg_seg_traits>;

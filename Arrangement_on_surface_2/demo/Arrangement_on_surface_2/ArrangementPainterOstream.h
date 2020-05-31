@@ -362,46 +362,6 @@ public: // methods
   }
 };
 
-template < typename CircularKernel >
-class ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<
-                                   CircularKernel > >:
-  public ArrangementPainterOstreamBase< CGAL::Arr_circular_arc_traits_2<
-                                          CircularKernel > >
-{
-public:
-  typedef CircularKernel                                Kernel;
-  typedef CGAL::Arr_circular_arc_traits_2< Kernel >     Traits;
-  typedef ArrangementPainterOstreamBase< Traits >       Superclass;
-  typedef typename Superclass::Point_2                  Point_2;
-  typedef typename Superclass::Segment_2                Segment_2;
-  typedef typename Superclass::Ray_2                    Ray_2;
-  typedef typename Superclass::Line_2                   Line_2;
-  typedef typename Superclass::Triangle_2               Triangle_2;
-  typedef typename Superclass::Iso_rectangle_2          Iso_rectangle_2;
-  typedef typename Superclass::Circle_2                 Circle_2;
-  typedef typename Traits::Curve_2                      Curve_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-public:
-  /*! Constructor */
-  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()):
-    Superclass( p, clippingRectangle )
-  { }
-
-  /*! Destructor (virtual) */
-  virtual ~ArrangementPainterOstream() {}
-
-public: // methods
-  ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
-
-  ArrangementPainterOstream& operator<<( const Point_2& p );
-
-  template < typename T >
-  ArrangementPainterOstream& operator<<( const T& p )
-  {
-    (*(static_cast< Superclass* >(this)) << p);
-    return *this;
-  }
-};
 
 template < typename Coefficient_ >
 class ArrangementPainterOstream< CGAL::Arr_algebraic_segment_traits_2<

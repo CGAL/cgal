@@ -617,42 +617,6 @@ operator<<( const Point_2& p )
   return *this;
 }
 
-// Instantiation of Arr_circular_arc_traits_2
-
-template < typename CircularKernel >
-ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<CircularKernel > >&
-ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<CircularKernel > >::
-operator<<( const X_monotone_curve_2& curve )
-{
-  this->painterOstream << curve;
-  return *this;
-}
-
-template < typename CircularKernel >
-ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<CircularKernel > >&
-ArrangementPainterOstream< CGAL::Arr_circular_arc_traits_2<CircularKernel > >::
-operator<<( const Point_2& p )
-{
-  QPointF qpt = this->convert( p );
-  // clip the point if possible
-  if ( this->clippingRect.isValid( ) &&
-       ! this->clippingRect.contains( qpt ) )
-  {
-    return *this;
-  }
-
-  QPen savePen = this->qp->pen( );
-  this->qp->setBrush( QBrush( savePen.color( ) ) );
-  double radius = savePen.width( ) / 2.0;
-  radius /= this->scale;
-
-  this->qp->drawEllipse( qpt, radius, radius );
-
-  this->qp->setBrush( QBrush( ) );
-  this->qp->setPen( savePen );
-  return *this;
-}
-
 // Instantiation of Arr_algebraic_segment_traits_2
 template <typename Traits>
 static bool lies_on_border(const ArrangementPainterOstream<Traits> *apo,
@@ -757,7 +721,6 @@ template class ArrangementPainterOstream<Seg_traits>;
 template class ArrangementPainterOstream<Pol_traits>;
 template class ArrangementPainterOstream<Conic_traits>;
 template class ArrangementPainterOstream<Lin_traits>;
-template class ArrangementPainterOstream<Arc_traits>;
 template class ArrangementPainterOstream<Alg_seg_traits>;
 
 } // namespace Qt

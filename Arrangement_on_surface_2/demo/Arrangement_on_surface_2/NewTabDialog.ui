@@ -43,7 +43,7 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="0">
+    <item row="4" column="0">
      <widget class="QRadioButton" name="algebraicRadioButton">
       <property name="text">
        <string>Algebraic</string>
@@ -74,14 +74,7 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QRadioButton" name="circularArcRadioButton">
-      <property name="text">
-       <string>Circular Arc</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0">
+    <item row="5" column="0">
      <widget class="QRadioButton" name="bezierRadioButton">
       <property name="text">
        <string>Bezier</string>

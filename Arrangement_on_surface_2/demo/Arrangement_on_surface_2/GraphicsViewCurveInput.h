@@ -15,7 +15,6 @@
 
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
-#include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
@@ -168,22 +167,6 @@ struct CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>> :
 
   boost::optional<CGAL::Object>
   generateLine(const std::vector<QPointF>&) override;
-};
-
-template <typename CircularKernel>
-struct CurveGenerator<CGAL::Arr_circular_arc_traits_2<CircularKernel>> :
-    public CurveGeneratorBase
-{
-  using ArrTraits = CGAL::Arr_circular_arc_traits_2<CircularKernel>;
-  using Curve_2 = typename ArrTraits::Curve_2;
-  using Point_2 = typename ArrTraits::Point_2;
-  using Circular_arc_2 = typename CircularKernel::Circular_arc_2;
-  using Arc_point_2 = Point_2;
-  using Non_arc_point_2 = typename CircularKernel::Point_2;
-  using Circle_2 = typename CircularKernel::Circle_2;
-
-  boost::optional<CGAL::Object>
-  generateThreePointCircularArc(const std::vector<QPointF>&) override;
 };
 
 template <typename Coefficient_>
@@ -415,13 +398,6 @@ struct GraphicsViewCurveInputTypeHelper<
   using InputMethodTuple = std::tuple<
     SegmentInputMethod, CircleInputMethod, EllipseInputMethod,
     ThreePointCircularInputMethod, FivePointConicInputMethod>;
-};
-
-template <typename CircularKernel>
-struct GraphicsViewCurveInputTypeHelper<
-  CGAL::Arr_circular_arc_traits_2<CircularKernel>>
-{
-  using InputMethodTuple = std::tuple<ThreePointCircularInputMethod>;
 };
 
 template <typename Coefficient_>

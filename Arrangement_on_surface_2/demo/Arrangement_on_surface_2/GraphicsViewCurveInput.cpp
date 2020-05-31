@@ -647,58 +647,6 @@ CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   return {};
 }
 
-// CurveGenerator Circular Traits
-template <typename CircularKernel>
-boost::optional<CGAL::Object>
-CurveGenerator<CGAL::Arr_circular_arc_traits_2<CircularKernel>>::
-  generateThreePointCircularArc(const std::vector<QPointF>& points)
-{
-  auto& qp0 = points[0];
-  auto& qp1 = points[1];
-  auto& qp2 = points[2];
-  Non_arc_point_2 pp0(qp0.x(), qp0.y());
-  Non_arc_point_2 pp1(qp1.x(), qp1.y());
-  Non_arc_point_2 pp2(qp2.x(), qp2.y());
-  CircularKernel ker;
-  if (!ker.collinear_2_object()(pp0, pp1, pp2))
-  {
-    Circle_2 circle(pp0, pp1, pp2);
-    Circular_arc_2 arc(circle, pp0, pp2);
-    std::vector<CGAL::Object> subarcs;
-    CGAL::make_x_monotone(arc, std::back_inserter(subarcs));
-    typename CircularKernel::Has_on_2 has_on;
-    bool isOn = false;
-    for (unsigned int i = 0; i < subarcs.size(); ++i)
-    {
-      Circular_arc_2 subarc;
-      if (CGAL::assign(subarc, subarcs[i]))
-      {
-        if (has_on(subarc, pp1))
-        {
-          isOn = true;
-          break;
-        }
-      }
-    }
-
-    if (isOn)
-    {
-      Curve_2 res(circle, pp0, pp2);
-      return CGAL::make_object(res);
-    }
-    else
-    {
-      Curve_2 res(circle, pp2, pp0);
-      return CGAL::make_object(res);
-    }
-  }
-  else
-  {
-    std::cout << "Points don't specify a valid circular arc. Try again!\n";
-  }
-  return {};
-}
-
 // CurveGenerator Algebraic Traits
 template <typename Coefficient_>
 boost::optional<CGAL::Object>
@@ -804,7 +752,6 @@ template class GraphicsViewCurveInput<Seg_traits>;
 template class GraphicsViewCurveInput<Pol_traits>;
 template class GraphicsViewCurveInput<Conic_traits>;
 template class GraphicsViewCurveInput<Lin_traits>;
-template class GraphicsViewCurveInput<Arc_traits>;
 template class GraphicsViewCurveInput<Alg_seg_traits>;
 
 } // namespace Qt

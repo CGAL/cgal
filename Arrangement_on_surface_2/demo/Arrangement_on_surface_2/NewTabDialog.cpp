@@ -33,8 +33,6 @@ NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
 								ArrangementDemoWindow::CONIC_TRAITS );
   this->buttonGroup->addButton( this->ui->linearRadioButton,
 								ArrangementDemoWindow::LINEAR_TRAITS );
-  this->buttonGroup->addButton( this->ui->circularArcRadioButton,
-								ArrangementDemoWindow::CIRCULAR_ARC_TRAITS );
   this->buttonGroup->addButton( this->ui->algebraicRadioButton,
 								ArrangementDemoWindow::ALGEBRAIC_TRAITS );
   this->buttonGroup->addButton( this->ui->bezierRadioButton,

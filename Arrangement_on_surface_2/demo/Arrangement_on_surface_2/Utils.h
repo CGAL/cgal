@@ -18,7 +18,6 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
@@ -194,16 +193,6 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
-template <typename CircularKernel >
-class ArrTraitsAdaptor< CGAL::Arr_circular_arc_traits_2< CircularKernel > >
-{
-public:
-  typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > ArrTraits;
-  typedef CircularKernel Kernel;
-  typedef typename ArrTraits::Point_2 Point_2;
-  typedef typename Kernel::Root_of_2 CoordinateType;
-};
-
 template <typename RatKernel, typename AlgKernel, typename NtTraits >
 class ArrTraitsAdaptor< CGAL::Arr_conic_traits_2< RatKernel, AlgKernel,
                                                   NtTraits > >
@@ -325,78 +314,6 @@ protected:
       res = pt.y( );
     }
     return res;
-  }
-
-protected:
-  Traits traits;
-  Intersect_2 intersectCurves;
-};
-
-template <typename CircularKernel>
-class Arr_compute_y_at_x_2< CGAL::Arr_circular_arc_traits_2<CircularKernel> > :
-  public QGraphicsSceneMixin
-{
-public:
-  typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Traits;
-  typedef CircularKernel                                Kernel;
-  typedef typename Kernel::FT                           FT;
-  typedef typename Kernel::Root_of_2                    Root_of_2;
-  typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Traits::Point_2                      Arc_point_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename Kernel::Line_arc_2                   Line_arc_2;
-  // Circular_arc_2
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Intersect_2                  Intersect_2;
-  typedef typename Traits::Multiplicity                 Multiplicity;
-  typedef std::pair< typename Traits::Point_2, Multiplicity >
-                                                        IntersectionResult;
-
-  /*! Constructor */
-  Arr_compute_y_at_x_2( ) :
-    intersectCurves( this->traits.intersect_2_object( ) )
-  { }
-
-  /*! Destructor (virtual) */
-  virtual ~Arr_compute_y_at_x_2() {}
-
-  Root_of_2 operator() ( const X_monotone_curve_2& curve, const FT& x )
-  {
-    Root_of_2 res( 0 );
-    CGAL::Bbox_2 clipRect = curve.bbox( );
-    Point_2 p1c1( x, FT( clipRect.ymin( ) - 1 ) ); // clicked point
-    Point_2 p2c1( x, FT( clipRect.ymax( ) + 1 ) ); // upper bounding box
-    Line_arc_2 verticalLine( Segment_2( p1c1, p2c1 ) );
-
-    CGAL::Object o;
-    CGAL::Oneset_iterator< CGAL::Object > oi( o );
-
-    this->intersectCurves( curve, verticalLine, oi );
-
-    IntersectionResult pair;
-    if ( CGAL::assign( pair, o ) )
-    {
-      Arc_point_2 pt = pair.first;
-      res = pt.y( );
-    }
-    return res;
-  }
-
-  double approx( const X_monotone_curve_2& curve, const FT& x )
-  {
-    return CGAL::to_double( (*this)( curve, x ) );
-  }
-
-  // FIXME: inexact projection
-  Root_of_2 operator() ( const X_monotone_curve_2& curve, const Root_of_2& x )
-  {
-    FT approx( CGAL::to_double( x ) );
-    return this->operator()( curve, approx );
-  }
-
-  double approx( const X_monotone_curve_2& curve, const Root_of_2& x )
-  {
-    return CGAL::to_double( (*this)( curve, x ) );
   }
 
 protected:
@@ -559,27 +476,6 @@ public:
   double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const;
 };
 
-template <typename CircularKernel >
-class Compute_squared_distance_2< CGAL::Arr_circular_arc_traits_2<
-                                    CircularKernel > > :
-  public Compute_squared_distance_2_base< CGAL::Arr_circular_arc_traits_2<
-                                            CircularKernel > >
-{
-public: // typedefs
-  typedef CircularKernel Kernel;
-  typedef CGAL::Arr_circular_arc_traits_2< CircularKernel > Traits;
-  typedef Compute_squared_distance_2_base< Traits > Superclass;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Point_2 Arc_point_2;
-  typedef typename Kernel::Point_2 Non_arc_point_2;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Root_of_2 Root_of_2;
-
-public: // methods
-  double operator() ( const Non_arc_point_2& p, const X_monotone_curve_2& c );
-};
-
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 class Compute_squared_distance_2< CGAL::Arr_conic_traits_2< RatKernel,
                                                             AlgKernel,
@@ -701,39 +597,6 @@ protected:
   Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2
 
-template <typename CircularKernel>
-class Construct_x_monotone_subcurve_2< CGAL::Arr_circular_arc_traits_2<
-                                         CircularKernel > >
-{
-public:
-  typedef CGAL::Arr_circular_arc_traits_2<CircularKernel> ArrTraits;
-  typedef typename ArrTraits::Intersect_2               Intersect_2;
-  typedef typename ArrTraits::Split_2                   Split_2;
-  typedef typename ArrTraits::Compare_x_2               Compare_x_2;
-  typedef typename ArrTraits::Construct_min_vertex_2    Construct_min_vertex_2;
-  typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
-  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename CircularKernel::Point_2              Non_arc_point_2;
-  typedef typename ArrTraits::Point_2                   Arc_point_2;
-  typedef typename CircularKernel::FT                   FT;
-  typedef typename CircularKernel::Root_of_2            Root_of_2;
-  typedef typename CircularKernel::Root_for_circles_2_2 Root_for_circles_2_2;
-
-public:
-  Construct_x_monotone_subcurve_2( );
-
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const boost::optional<Arc_point_2>& pLeft,
-                                  const boost::optional<Arc_point_2>& pRight );
-
-protected:
-  ArrTraits traits;
-  Intersect_2 intersect_2;
-  Split_2 split_2;
-  Compare_x_2 compare_x_2;
-  Construct_min_vertex_2 construct_min_vertex_2;
-  Construct_max_vertex_2 construct_max_vertex_2;
-};
 
 /*
  * This specialization for conic traits makes use of X_monotone_curve_2::trim,
@@ -849,51 +712,6 @@ public:
     return res;
   }
 
-  template <typename CircularKernel>
-  Point_2 snapPoint(QGraphicsSceneMouseEvent* event,
-                    CGAL::Arr_circular_arc_traits_2<CircularKernel>
-                    /* traits */)
-  {
-    QPointF clickedPoint = event->scenePos( );
-    QRectF viewportRect = this->viewportRect( );
-    if ( viewportRect == QRectF( ) )
-    {
-      Kernel_point_2 res = this->convert( event->scenePos( ) );
-      return Point_2( res );
-    }
-
-    qreal d( this->gridSize / 2.0 );
-    int left = int( viewportRect.left( ) ) -
-      (int( viewportRect.left( ) ) % this->gridSize);
-    int right = int( viewportRect.right( ) ) +
-      (this->gridSize - int( viewportRect.right( ) ) % this->gridSize);
-    int x = int(clickedPoint.x( ));
-    int y = int(clickedPoint.y( ));
-    for ( int i = left - this->gridSize; i <= right; i += this->gridSize )
-    {
-      if ( i - d <= clickedPoint.x( ) && clickedPoint.x( ) <= i + d )
-      {
-        x = i;
-        break;
-      }
-    }
-    int top = int( viewportRect.top( ) ) -
-      (int( viewportRect.top( ) ) % this->gridSize);
-    int bottom = int( viewportRect.bottom( ) ) +
-      (this->gridSize - int( viewportRect.bottom( ) ) % this->gridSize);
-    for ( int i = top - this->gridSize; i <= bottom; i += this->gridSize )
-    {
-      if ( i - d <= clickedPoint.y( ) && clickedPoint.y( ) <= i + d )
-      {
-        y = i;
-        break;
-      }
-    }
-    //return this->convert( QPointF( x, y ) );
-    Kernel_point_2 res( x, y );
-    return Point_2( res );
-  }
-
   void setGridSize( int size )
   {
     this->gridSize = size;
@@ -976,50 +794,6 @@ public:
     }
   }
 
-  template <typename CircularKernel>
-  Point_2 snapPoint(const Kernel_point_2& clickedPoint,
-                    CGAL::Arr_circular_arc_traits_2<CircularKernel>
-                    /* traits */)
-  {
-    typedef Kernel_point_2 Non_arc_point_2;
-    typedef typename CircularKernel::Circular_arc_point_2 Arc_point_2;
-
-    Non_arc_point_2 closestKernelPoint = clickedPoint;
-    Arc_point_2 closestPoint( closestKernelPoint );
-    bool first = true;
-    FT minDist( 0 );
-    QRectF viewportRect = this->viewportRect( );
-    if ( viewportRect == QRectF( ) )
-    {
-      return clickedPoint;
-    }
-
-    FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
-    for ( Vertex_iterator vit = this->arrangement->vertices_begin( );
-          vit != this->arrangement->vertices_end( ); ++vit )
-    {
-      Arc_point_2 point = vit->point( );
-      Non_arc_point_2 point2( CGAL::to_double(point.x( )),
-                              CGAL::to_double(point.y()) );
-      FT dist = this->compute_squared_distance_2( clickedPoint, point2 );
-      if ( first || ( dist < minDist ) )
-      {
-        first = false;
-        minDist = dist;
-        //closestPoint = point2;
-        closestPoint = point;
-      }
-    }
-    if ( ! first && minDist < maxDist )
-    {
-      return closestPoint;
-    }
-    else
-    {
-      return clickedPoint;
-    }
-  }
-
   void setArrangement( Arrangement* arr )
   {
     this->arrangement = arr;
@@ -1053,11 +827,6 @@ public:
 protected:
   template <typename T, typename TTraits >
   Point_2 operator()(const T& x, const T& y, TTraits /* traits */);
-
-  template <typename T, typename CircularKernel >
-  Point_2 operator()(const T& x, const T& y,
-                     CGAL::Arr_circular_arc_traits_2<CircularKernel>
-                     /* traits */);
 };
 
 class Find_nearest_edge_base : public QGraphicsSceneMixin

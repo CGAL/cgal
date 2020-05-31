@@ -82,15 +82,9 @@ protected:
   virtual Point_2 snapPoint( QGraphicsSceneMouseEvent *event );
   template < class TTraits >
   Point_2 snapPoint( QGraphicsSceneMouseEvent *event, TTraits traits );
-  template < class CircularKernel >
-  Point_2 snapPoint( QGraphicsSceneMouseEvent* event,
-                     CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
 
   template < class TTraits >
   void splitEdges( const Point_2& pt, TTraits traits );
-  template < class CircularKernel >
-  void splitEdges( const Point_2& pt,
-                   CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
   template < typename RatKernel, typename AlgKernel, typename NtTraits >
   void splitEdges( const Point_2& pt,
                    CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits> traits);
@@ -101,10 +95,6 @@ protected:
 
   template < class TTraits >
   void updateGuide( const Point_2& pt, TTraits traits );
-
-  template < class CircularKernel >
-  void updateGuide( const Point_2& pt,
-                    CGAL::Arr_circular_arc_traits_2< CircularKernel > traits );
 
   Traits traits;
   CGAL::Qt::Converter<Kernel> convert;
