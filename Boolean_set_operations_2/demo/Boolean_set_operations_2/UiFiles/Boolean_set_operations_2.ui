@@ -64,8 +64,10 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionClearResult"/>
-    <addaction name="actionDeleteAll"/>
+     <addaction name="actionNew"/>
+     <addaction name="actionCopy"/>
+     <addaction name="actionMove"/>
+     <addaction name="actionDeleteAll"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -85,7 +87,6 @@
     <addaction name="actionInsertLinear"/> 
     <addaction name="actionInsertCircular"/>
     <addaction name="actionInsertBezier" />
-    <!--<addaction name="actionInsertMink_Polygon" />-->
     <addaction name="separator"/>
     <addaction name="actionComplement"/>
     <addaction name="actionIntersection"/>
@@ -93,12 +94,6 @@
     <addaction name="actionDifference"/>
     <addaction name="actionSymmetric_Difference"/>
     <addaction name="actionMinkowski_Sum" />
-    <addaction name="separator" />
-   <addaction name="actionCopy"/>
-   <addaction name="actionMove"/>
-    <!--<addaction name="actionOffsettingPoygon" />
-    <addaction name="actionInsettingPoygon" />
-    <addaction name="actionInsertOffsettngCircle" />-->
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -111,81 +106,14 @@
    <addaction name="menuView"/>
    <addaction name="menu_Help"/>
   </widget>
-  <widget class="QToolBar" name="inputToolBar" >
-   <property name="windowTitle" >
-    <string>Input Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionInsertLinear"/>
-   <addaction name="actionInsertCircular"/>
-   <addaction name="actionInsertBezier" />
-  </widget>
-  <widget class ="QToolBar" name="addRemoveColorToolBar">
-    <property name="windowTitle" >
-    <string>Operation Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionAddColor"/>
-   <addaction name="actionMinusColor"/>
-   <addaction name="actionNew" />
-  </widget>
-  <widget class="QToolBar" name="operationsToolBar" >
-   <property name="windowTitle" >
-    <string>Operation Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionComplement"/>
-   <addaction name="actionIntersection"/>
-   <addaction name="actionUnion"/>
-   <addaction name="actionDifference"/>
-   <addaction name="actionSymmetric_Difference"/>
-   <addaction name="actionMinkowski_Sum" />
-   <addaction name="actionCopy"/>
-   <addaction name="actionMove"/>
-  </widget>
-  <widget class="QToolBar" name="viewToolBar" >
-   <property name="windowTitle" >
-    <string>Operation Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionRecenter"/>
-   <addaction name="actionPAN"/>
-  </widget>
-  <widget class="QToolBar" name="delToolBar" >
-   <property name="windowTitle" >
-    <string>Operation Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionClearResult"/>
-   <addaction name="actionDeleteAll"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="consoleDockWidget">
+   <property name="minimumSize" >
+    <size>
+      <width>400</width>
+      <height>70</height>
+    </size>
+   </property>
    <property name="allowedAreas">
     <set>Qt::TopDockWidgetArea</set>
    </property>
@@ -227,7 +155,7 @@
     <set>Qt::BottomDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>                                                       BOOLEAN OPERATIONS COLOR BUCKET</string>
+    <string>                                                                            OPERATIONS HANDLER</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -238,6 +166,130 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+            <number>5</number>
+          </property>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar0" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionInsertLinear"/>
+           </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar01" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionInsertCircular"/>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar02" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionInsertBezier" />
+           </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar1" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionAddColor"/>          
+         </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="operationsTootBar11" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionMinusColor"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar2">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionRecenter"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar21">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionPAN"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar3">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionCopy"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar31">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionMove"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar32">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionDeleteAll"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar33">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionNew" />
+          </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -257,7 +309,7 @@
             <widget class="QLabel" name="showBlueLabel">
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>10</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -270,7 +322,7 @@
             <widget class="QLabel" name="showRedLabel">
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>10</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -286,7 +338,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>10</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -302,7 +354,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>10</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -318,7 +370,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>10</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -334,7 +386,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>5</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -350,7 +402,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>0</x>
+               <x>10</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -359,211 +411,6 @@
              <property name="text">
               <string>Aqua</string>
              </property>
-            </widget>
-            <widget class="QCheckBox" name="ResultComplement">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>100</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="ComplementHeader0" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/comp_P.bmp</pixmap>
-              </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-              <property name="geometry">
-                <rect>
-                  <x>80</x>
-                  <y>100</y>
-                  <width>90</width>
-                  <height>22</height>  
-                </rect>
-              </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-            </widget>
-            <widget class="QCheckBox" name="ResultIntersection">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>130</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="IntersectionHeader0" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/intersection.bmp</pixmap>
-              </property>
-              <property name="geometry">
-                <rect>
-                  <x>80</x>
-                  <y>130</y>
-                  <width>90</width>
-                  <height>22</height>  
-                </rect>
-              </property>  
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-            </widget>
-            <widget class="QCheckBox" name="ResultUnion">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>160</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="UnionHeader0" >
-                <property name="pixmap">
-                  <pixmap>:/cgal/icons/resources/union.bmp</pixmap>
-                </property>
-                <property name="geometry">
-                <rect>
-                  <x>80</x>
-                  <y>160</y>
-                  <width>90</width>
-                  <height>22</height>  
-                </rect>
-                </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-            </widget>
-            <widget class="QCheckBox" name="ResultDiff">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>190</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="DifferenceHeader0" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/diff_PQ.bmp</pixmap>
-              </property>
-              <property name="geometry">
-              <rect>
-                <x>80</x>
-                <y>190</y>
-                <width>90</width>
-                <height>22</height>  
-              </rect>
-              </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-            </widget>
-            <widget class="QCheckBox" name="ResultSym_Diff">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>220</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QLabel" name="symm_diffHeader0" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/symm_diff.bmp</pixmap>
-              </property>
-              <property name="geometry">
-              <rect>
-                <x>80</x>
-                <y>220</y>
-                <width>90</width>
-                <height>22</height>  
-              </rect>
-              </property>
-             <property name="Visible">
-              <bool>false</bool>
-             </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
             </widget>
             <widget class="QRadioButton" name="drawBlue">
              <property name="geometry">
@@ -677,7 +524,7 @@
             <widget class="QCheckBox" name="showBlueComp">
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>40</y>
                <width>97</width>
                <height>22</height>
@@ -693,7 +540,7 @@
             <widget class="QCheckBox" name="showBlueInt">
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -709,7 +556,7 @@
             <widget class="QCheckBox" name="showBlueUnion">
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -725,7 +572,7 @@
             <widget class="QCheckBox" name="showBlueDiff">
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -741,7 +588,7 @@
             <widget class="QCheckBox" name="showBlueSym_Diff">
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -760,7 +607,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -776,7 +623,7 @@
             <widget class="QCheckBox" name="showRedComp">
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>70</y>
                <width>97</width>
                <height>22</height>
@@ -792,7 +639,7 @@
             <widget class="QCheckBox" name="showRedInt">
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -808,7 +655,7 @@
             <widget class="QCheckBox" name="showRedUnion">
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -824,7 +671,7 @@
             <widget class="QCheckBox" name="showRedDiff">
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -840,7 +687,7 @@
             <widget class="QCheckBox" name="showRedSym_Diff">
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -859,7 +706,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -878,7 +725,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>100</y>
                <width>111</width>
                <height>22</height>
@@ -897,7 +744,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -916,7 +763,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -935,7 +782,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -954,7 +801,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -973,7 +820,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -992,7 +839,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>130</y>
                <width>111</width>
                <height>22</height>
@@ -1011,7 +858,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1030,7 +877,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1049,7 +896,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1068,7 +915,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1087,7 +934,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1106,7 +953,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>160</y>
                <width>111</width>
                <height>22</height>
@@ -1125,7 +972,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1144,7 +991,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1163,7 +1010,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1182,7 +1029,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1201,7 +1048,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1220,7 +1067,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>190</y>
                <width>131</width>
                <height>22</height>
@@ -1239,7 +1086,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1258,7 +1105,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1277,7 +1124,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1296,7 +1143,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1315,7 +1162,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1334,7 +1181,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>125</x>
+               <x>130</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1353,7 +1200,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>170</x>
+               <x>175</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1372,7 +1219,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>215</x>
+               <x>220</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1391,7 +1238,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>260</x>
+               <x>265</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1410,7 +1257,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>305</x>
+               <x>310</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1429,7 +1276,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>350</x>
+               <x>355</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1442,137 +1289,10 @@
               <bool>false</bool>
              </property>
             </widget>
-            <widget class="QCheckBox" name="showBlue">
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>40</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="showRed">
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>70</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="showBlack">
-              <property name="Visible">
-                <bool>true</bool>
-              </property>
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>100</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="showBrown">
-              <property name="Visible">
-                <bool>false</bool>
-              </property>
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>130</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="showYellow">
-              <property name="Visible">
-                <bool>false</bool>
-              </property>
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>160</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="showMagenta">
-              <property name="Visible">
-                <bool>false</bool>
-              </property>
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>190</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="showAqua">
-              <property name="Visible">
-                <bool>false</bool>
-              </property>
-             <property name="geometry">
-              <rect>
-               <x>405</x>
-               <y>220</y>
-               <width>101</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string></string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
             <widget class="QCheckBox" name="clearBlue">
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -1588,7 +1308,7 @@
             <widget class="QCheckBox" name="clearRed">
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -1604,7 +1324,7 @@
             <widget class="QCheckBox" name="clearBlack">
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -1623,7 +1343,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1642,7 +1362,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1661,7 +1381,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1680,7 +1400,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>465</x>
+               <x>405</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1693,7 +1413,133 @@
               <bool>false</bool>
              </property>
             </widget>
-
+            <widget class="QCheckBox" name="showBlue">
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>40</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRed">
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlack">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>465</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
             <widget class="QCheckBox" name="cfBlue">
              <property name="geometry">
               <rect>
@@ -2620,14 +2466,14 @@
               </property>
               <property name="geometry">
                 <rect>
-                  <x>0</x>
+                  <x>10</x>
                   <y>0</y>
                   <width>101</width>
                   <height>40</height>  
                 </rect>
               </property>
               <property name="text" >
-               <string>Colors</string>
+               <string>Buckets</string>
               </property>
             </widget>
             <widget class="QLabel" name="DrawHeader" >
@@ -2649,17 +2495,20 @@
                 </rect>
               </property>
             </widget>
-            <widget class="QLabel" name="ComplementHeader" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/comp_P.bmp</pixmap>
-              </property>
+            <widget class="QToolButton" name="actionComplementH">
               <property name="geometry">
                 <rect>
                   <x>120</x>
                   <y>0</y>
-                  <width>101</width>
-                  <height>35</height>  
+                  <width>33</width>
+                  <height>33</height>  
                 </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
               </property>
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -2667,56 +2516,69 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/comp_P.bmp</normaloff>:/cgal/icons/resources/comp_P.bmp</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Complement</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+C</string>
+             </property>
             </widget>
-            <widget class="QLabel" name="IntersectionHeader" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/intersection.bmp</pixmap>
-              </property>
+            <widget class="QToolButton" name="actionIntersectionH">
               <property name="geometry">
                 <rect>
                   <x>165</x>
                   <y>0</y>
-                  <width>101</width>
-                  <height>35</height>  
+                  <width>33</width>
+                  <height>33</height>  
                 </rect>
-              </property>  
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/intersection.bmp</normaloff>:/cgal/icons/resources/intersection.bmp</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Intersection</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+I</string>
+             </property>
             </widget>
-            <widget class="QLabel" name="UnionHeader" >
-                <property name="pixmap">
-                  <pixmap>:/cgal/icons/resources/union.bmp</pixmap>
-                </property>
-                <property name="geometry">
+            <widget class="QToolButton" name="actionUnionH">
+              <property name="geometry">
                 <rect>
                   <x>210</x>
                   <y>0</y>
-                  <width>101</width>
-                  <height>35</height>  
+                  <width>33</width>
+                  <height>33</height>  
                 </rect>
-                </property>
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-            </widget>
-            <widget class="QLabel" name="DifferenceHeader" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/diff_PQ.bmp</pixmap>
               </property>
-              <property name="geometry">
-              <rect>
-                <x>255</x>
-                <y>0</y>
-                <width>101</width>
-                <height>35</height>  
-              </rect>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
               </property>
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -2724,52 +2586,129 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-            </widget>
-            <widget class="QLabel" name="symm_diffHeader" >
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/symm_diff.bmp</pixmap>
-              </property>
-              <property name="geometry">
-              <rect>
-                <x>300</x>
-                <y>0</y>
-                <width>101</width>
-                <height>35</height>  
-              </rect>
-              </property>
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-            </widget>
-            <widget class="QLabel" name="Minkowksi_SumHeader" >
-              <property name="Visible">
-                <bool>true</bool>
-              </property>
-              <property name="pixmap">
-                <pixmap>:/cgal/icons/resources/mink_sum.bmp</pixmap>
-              </property>
-              <property name="geometry">
-              <rect>
-                <x>345</x>
-                <y>0</y>
-                <width>101</width>
-                <height>35</height>  
-              </rect>
+             <property name="checkable" >
+              <bool>true</bool>
              </property>
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/union.bmp</normaloff>:/cgal/icons/resources/union.bmp</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Union</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+U</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionDifferenceH">
+              <property name="geometry">
+                <rect>
+                  <x>255</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/diff_PQ.bmp</normaloff>:/cgal/icons/resources/diff_PQ.bmp</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Difference</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+D</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionSymmetric_DifferenceH">
+              <property name="geometry">
+                <rect>
+                  <x>300</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/symm_diff.bmp</normaloff>:/cgal/icons/resources/symm_diff.bmp</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Symmetric Difference</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+S</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionMinkowski_SumH">
+              <property name="geometry">
+                <rect>
+                  <x>345</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/mink_sum.bmp</normaloff>:/cgal/icons/resources/mink_sum.bmp</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Minkowski Sum</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+M</string>
              </property>
             </widget>
             <widget class="QLabel" name="VisibleHeader" >
               <property name="geometry">
                 <rect>
-                  <x>390</x>
+                  <x>450</x>
                   <y>0</y>
                   <width>101</width>
                   <height>40</height>  
@@ -2785,24 +2724,37 @@
                 <string>Visible</string>
               </property>
             </widget>
-            <widget class="QLabel" name="clearHeader" >
+            <widget class="QToolButton" name="actionClearH">
+              <property name="geometry">
+                <rect>
+                  <x>395</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="geometry">
-                <rect>
-                  <x>455</x>
-                  <y>0</y>
-                  <width>101</width>
-                  <height>40</height>  
-                </rect>
-              </property>
-              <property name="text" >
-               <string>Clean</string>
-              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/clear.png</normaloff>:/cgal/icons/resources/clear.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Clear Selected Bucket</string>
+             </property>
             </widget>
             <widget class="QLabel" name="copyHeader" >
               <property name="sizePolicy" >
@@ -3118,6 +3070,9 @@
    <property name="checkable" >
     <bool>true</bool>
    </property>
+   <property name = "checked">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
      <normaloff>:/cgal/icons/resources/insert_circle.xpm</normaloff>:/cgal/icons/resources/insert_circle.xpm</iconset>
@@ -3190,11 +3145,14 @@
    </property>
   </action>
   <action name="actionDifference">
+  <property name="enabled">
+    <bool>true</bool>
+  </property>
    <property name="checkable" >
     <bool>true</bool>
    </property> 
    <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
+    <iconset resource="Boolean_operations_2rc">
      <normaloff>:/cgal/icons/resources/diff_PQ.bmp</normaloff>:/cgal/icons/resources/diff_PQ.bmp</iconset>
    </property>
    <property name="text">
@@ -3220,6 +3178,9 @@
    </property>
   </action>
   <action name="actionMinkowski_Sum">
+  <property name="enabled">
+    <bool>true</bool>
+  </property>
     <property name="Visible">
       <bool>true</bool>
     </property>
@@ -3232,6 +3193,9 @@
    </property>
    <property name="text">
     <string>Minkowski Sum</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -3306,15 +3270,18 @@
    </property>  
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
-    <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
+    <normaloff>:/cgal/icons/resources/add_bucket.svg</normaloff>:/cgal/icons/resources/add_bucket.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Add Color</string>
+    <string>&amp;Add a Bucket</string>
    </property>
   </action>
   <action name="actionMinusColor">
-    <property name="Visible"  >
+    <property name="enabled">
       <bool>false</bool>
+    </property>
+    <property name="Visible"  >
+      <bool>true</bool>
     </property>
     <property name="checkable" >
      <bool>false</bool>
@@ -3324,7 +3291,7 @@
       <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
     </property>
     <property name="text">
-      <string>Color Removal Not Allowed</string>
+      <string>&amp;Bucket Removal Not Allowed</string>
     </property>
   </action>
   <action name="actionDeleteAll">
@@ -3333,16 +3300,19 @@
      <normaloff>:/cgal/icons/resources/check-off.png</normaloff>:/cgal/icons/resources/check-off.png</iconset>
    </property> 
    <property name="text">
-    <string>Delete all polygons</string>
+    <string>Delete all Buckets</string>
    </property>
   </action>
   <action name="actionNew" >
    <property name="icon" >
     <iconset resource="boolean_operations_2.qrc" >
-     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+     <normaloff>:/cgal/icons/resources/reset.png</normaloff>:/cgal/icons/resources/reset.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;New</string>
+    <string>&amp;Reset</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
   <action name="actionClearResult">
@@ -3351,7 +3321,7 @@
      <normaloff>:/cgal/icons/resources/clear.png</normaloff>:/cgal/icons/resources/clear.png</iconset>
    </property> 
    <property name="text">
-    <string>Clear Selected Outputs</string>
+    <string>Clear Selected Buckets</string>
    </property>
   </action>
   <action name="actionOpenDXF" >
@@ -3399,9 +3369,9 @@
    <property name="checkable" >
     <bool>true</bool>
    </property>
-   <!--<property name="checked" >
+   <property name="checked" >
     <bool>false</bool>
-   </property>-->
+   </property>
    <property name="icon" >
     <iconset resource="boolean_operations_2.qrc" >
      <normaloff>:/cgal/icons/resources/insert_bezier.xpm</normaloff>:/cgal/icons/resources/insert_bezier.xpm
