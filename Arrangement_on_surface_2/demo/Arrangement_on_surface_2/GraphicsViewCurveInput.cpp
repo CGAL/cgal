@@ -72,10 +72,8 @@ void GraphicsViewCurveInputBase::setColor(QColor c)
   this->inputMethod->setColor(c);
 }
 
-CurveInputMethod::CurveInputMethod(
-  QGraphicsScene* scene, CurveType type_, int num_points_) :
-    QGraphicsSceneMixin(scene),
-    type{type_}, num_points{num_points_}
+CurveInputMethod::CurveInputMethod(CurveType type_, int num_points_) :
+    QGraphicsSceneMixin(), type{type_}, num_points{num_points_}
 {
   if (num_points > 0) clickedPoints.reserve(num_points);
   this->pointsGraphicsItem.setZValue(100);
@@ -131,8 +129,7 @@ void CurveInputMethod::beginInput_()
 {
   this->beginInput();
   this->getScene()->addItem(&(this->pointsGraphicsItem));
-  for (auto& item : items)
-    this->getScene()->addItem(item);
+  for (auto& item : items) this->getScene()->addItem(item);
 }
 
 void CurveInputMethod::resetInput_()
@@ -141,8 +138,7 @@ void CurveInputMethod::resetInput_()
   this->clickedPoints.clear();
   this->pointsGraphicsItem.clear();
   this->getScene()->removeItem(&(this->pointsGraphicsItem));
-  for (auto& item : items)
-    this->getScene()->removeItem(item);
+  for (auto& item : items) this->getScene()->removeItem(item);
 }
 
 void CurveInputMethod::resetInput() { }
@@ -168,8 +164,8 @@ void CurveInputMethod::appendGraphicsItem(QGraphicsItem* item)
 }
 
 // SegmentInputMethod
-SegmentInputMethod::SegmentInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::Segment, 2)
+SegmentInputMethod::SegmentInputMethod() :
+    CurveInputMethod(CurveType::Segment, 2)
 {
   this->appendGraphicsItem(&(this->segmentGuide));
 }
@@ -191,8 +187,8 @@ void SegmentInputMethod::updateVisualGuideMouseMoved(
 }
 
 // PolylineInputMethod
-PolylineInputMethod::PolylineInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::Polyline, -1)
+PolylineInputMethod::PolylineInputMethod() :
+    CurveInputMethod(CurveType::Polyline, -1)
 {
   this->appendGraphicsItem(&(this->polylineGuide));
   this->appendGraphicsItem(&(this->lastLine));
@@ -216,7 +212,8 @@ void PolylineInputMethod::updateVisualGuideMouseMoved(
   this->lastLine.setLine(QLineF{clickedPoints.back(), movePoint});
 }
 
-void PolylineInputMethod::updateVisualGuideNewPoint(const std::vector<QPointF>& points)
+void PolylineInputMethod::updateVisualGuideNewPoint(
+  const std::vector<QPointF>& points)
 {
   if (points.size() == 1)
     this->painterPath.moveTo(points.back());
@@ -227,8 +224,7 @@ void PolylineInputMethod::updateVisualGuideNewPoint(const std::vector<QPointF>& 
 }
 
 // RayInputMethod
-RayInputMethod::RayInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::Ray, 2)
+RayInputMethod::RayInputMethod() : CurveInputMethod(CurveType::Ray, 2)
 {
   this->appendGraphicsItem(&(this->rayGuide));
 }
@@ -259,8 +255,7 @@ void RayInputMethod::updateVisualGuideMouseMoved(
 }
 
 // LineInputMethod
-LineInputMethod::LineInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::Line, 2)
+LineInputMethod::LineInputMethod() : CurveInputMethod(CurveType::Line, 2)
 {
   this->appendGraphicsItem(&(this->lineGuide));
 }
@@ -293,8 +288,7 @@ void LineInputMethod::updateVisualGuideMouseMoved(
 }
 
 // CircleInputMethod
-CircleInputMethod::CircleInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::Circle, 2)
+CircleInputMethod::CircleInputMethod() : CurveInputMethod(CurveType::Circle, 2)
 {
   this->appendGraphicsItem(&(this->circleGuide));
 }
@@ -318,8 +312,8 @@ void CircleInputMethod::updateVisualGuideMouseMoved(
 }
 
 // EllipseInputMethod
-EllipseInputMethod::EllipseInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::Ellipse, 2)
+EllipseInputMethod::EllipseInputMethod() :
+    CurveInputMethod(CurveType::Ellipse, 2)
 {
   this->appendGraphicsItem(&(this->ellipseGuide));
 }
@@ -340,24 +334,21 @@ void EllipseInputMethod::updateVisualGuideMouseMoved(
 }
 
 // ThreePointCircularInputMethod
-ThreePointCircularInputMethod::ThreePointCircularInputMethod(
-  QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::ThreePointCircularArc, 3)
+ThreePointCircularInputMethod::ThreePointCircularInputMethod() :
+    CurveInputMethod(CurveType::ThreePointCircularArc, 3)
 {
 }
 
 // FivePointConicInputMethod
-FivePointConicInputMethod::FivePointConicInputMethod(QGraphicsScene* scene) :
-    CurveInputMethod(scene, CurveType::FivePointConicArc, 5)
+FivePointConicInputMethod::FivePointConicInputMethod() :
+    CurveInputMethod(CurveType::FivePointConicArc, 5)
 {
 }
 
 template <typename ArrTraits>
-template <size_t... Is>
 GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
-  QObject* parent, QGraphicsScene* scene, std::index_sequence<Is...>) :
-    GraphicsViewCurveInputBase(parent, scene),
-    inputMethods{(Is, scene)...}
+  QObject* parent, QGraphicsScene* scene) :
+    GraphicsViewCurveInputBase(parent, scene)
 {
   this->setDefaultInputMethod(
     std::integral_constant<
@@ -365,17 +356,10 @@ GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
   QObject::connect(
     &curveGenerator, SIGNAL(generate(CGAL::Object)), this,
     SIGNAL(generate(CGAL::Object)));
-}
-
-template <typename ArrTraits>
-GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
-  QObject* parent, QGraphicsScene* scene) :
-    GraphicsViewCurveInput(
-      parent, scene,
-      std::make_index_sequence<std::tuple_size<InputMethodTuple>::value>())
-{
-  for_each(
-    inputMethods, [&](auto&& it) { it.setCurveGenerator(&curveGenerator); });
+  for_each(inputMethods, [&](auto&& it) {
+    it.setScene(scene);
+    it.setCurveGenerator(&curveGenerator);
+  });
 }
 
 template <typename ArrTraits>
@@ -499,8 +483,7 @@ CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::generatePolyline(
   ArrTraits poly_tr;
   auto construct_poly = poly_tr.construct_curve_2_object();
   std::vector<Point_2> points;
-  for(auto& p : clickedPoints)
-    points.emplace_back(p.x(), p.y());
+  for (auto& p : clickedPoints) points.emplace_back(p.x(), p.y());
   Curve_2 res = construct_poly(points.begin(), points.end());
   return CGAL::make_object(res);
 }
@@ -740,8 +723,8 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   auto h = ratTraits.denominator(ryRat);
 
   Polynomial_2 poly = g * f * CGAL::ipower(b * d * x - d * a, 2) +
-                            e * h * CGAL::ipower(b * d * y - b * c, 2) -
-                            e * g * b * b * d * d;
+                      e * h * CGAL::ipower(b * d * y - b * c, 2) -
+                      e * g * b * b * d * d;
 
   auto construct_curve = arrTraits.construct_curve_2_object();
   auto res = construct_curve(poly);

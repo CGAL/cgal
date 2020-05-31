@@ -194,14 +194,13 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
   generateEllipse(const std::vector<QPointF>&) override;
 
 private:
-  boost::optional<CGAL::Object>
-  generateEllipse_(const QPointF&, float, float);
+  boost::optional<CGAL::Object> generateEllipse_(const QPointF&, float, float);
 };
 
 class CurveInputMethod : public QGraphicsSceneMixin
 {
 public:
-  CurveInputMethod(QGraphicsScene*, CurveType, int num_points_ = -1);
+  CurveInputMethod(CurveType, int num_points_ = -1);
   virtual ~CurveInputMethod() { }
 
   void setCurveGenerator(CurveGeneratorBase*);
@@ -238,7 +237,7 @@ private:
 class SegmentInputMethod : public CurveInputMethod
 {
 public:
-  SegmentInputMethod(QGraphicsScene*);
+  SegmentInputMethod();
 
   void beginInput() override;
 
@@ -253,7 +252,7 @@ private:
 class RayInputMethod : public CurveInputMethod
 {
 public:
-  RayInputMethod(QGraphicsScene*);
+  RayInputMethod();
 
   void beginInput() override;
 
@@ -268,7 +267,7 @@ private:
 class LineInputMethod : public CurveInputMethod
 {
 public:
-  LineInputMethod(QGraphicsScene*);
+  LineInputMethod();
 
   void beginInput() override;
 
@@ -283,7 +282,7 @@ private:
 class PolylineInputMethod : public CurveInputMethod
 {
 public:
-  PolylineInputMethod(QGraphicsScene*);
+  PolylineInputMethod();
 
   void beginInput() override;
 
@@ -302,7 +301,7 @@ private:
 class CircleInputMethod : public CurveInputMethod
 {
 public:
-  CircleInputMethod(QGraphicsScene*);
+  CircleInputMethod();
 
   void beginInput() override;
 
@@ -317,7 +316,7 @@ private:
 class EllipseInputMethod : public CurveInputMethod
 {
 public:
-  EllipseInputMethod(QGraphicsScene*);
+  EllipseInputMethod();
 
   void beginInput() override;
 
@@ -332,13 +331,13 @@ private:
 class ThreePointCircularInputMethod : public CurveInputMethod
 {
 public:
-  ThreePointCircularInputMethod(QGraphicsScene*);
+  ThreePointCircularInputMethod();
 };
 
 class FivePointConicInputMethod : public CurveInputMethod
 {
 public:
-  FivePointConicInputMethod(QGraphicsScene*);
+  FivePointConicInputMethod();
 };
 
 class GraphicsViewCurveInputBase :
@@ -413,10 +412,6 @@ class GraphicsViewCurveInput : public GraphicsViewCurveInputBase
 {
   using InputMethodTuple =
     typename GraphicsViewCurveInputTypeHelper<ArrTraits>::InputMethodTuple;
-
-  template <size_t... Is>
-  GraphicsViewCurveInput(
-    QObject* parent, QGraphicsScene* scene, std::index_sequence<Is...>);
 
 public:
   GraphicsViewCurveInput(QObject* parent, QGraphicsScene* scene);

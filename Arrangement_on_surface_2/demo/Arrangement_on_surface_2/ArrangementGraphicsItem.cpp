@@ -257,12 +257,12 @@ static const std::vector<typename Traits::X_monotone_curve_2> &get_xy_curves() {
     std::vector<CGAL::Object> arcs;
     make_x_monotone(x_cv, std::back_inserter(arcs));
     make_x_monotone(y_cv, std::back_inserter(arcs));
-    std::transform(arcs.begin(), arcs.end(), std::back_inserter(xy_curves),
-                   [](auto &&arc_obj) {
-                     typename Traits::X_monotone_curve_2 arc;
-                     CGAL::assign(arc, arc_obj);
-                     return arc;
-                   });
+    for (auto& arc_obj : arcs)
+    {
+      typename Traits::X_monotone_curve_2 arc;
+      CGAL::assign(arc, arc_obj);
+      xy_curves.push_back(arc);
+    }
   }
   return xy_curves;
 }
