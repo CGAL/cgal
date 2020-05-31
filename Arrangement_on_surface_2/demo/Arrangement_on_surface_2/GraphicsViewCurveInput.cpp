@@ -200,7 +200,7 @@ PolylineInputMethod::PolylineInputMethod(QGraphicsScene* scene) :
 
 void PolylineInputMethod::beginInput()
 {
-  this->painterPath.clear();
+  this->painterPath = {};
   this->polylineGuide.setPath(this->painterPath);
   this->lastLine.setLine(0, 0, 0, 0);
   QPen pen = this->polylineGuide.pen();
