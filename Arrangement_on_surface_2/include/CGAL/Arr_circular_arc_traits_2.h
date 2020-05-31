@@ -134,10 +134,6 @@ public:
   typedef typename CircularKernel::Intersect_2          Intersect_2;
   typedef typename CircularKernel::Is_vertical_2        Is_vertical_2;
 
-  /// \name Functor definitions for the landmarks point-location strategy.
-  //@{
-  typedef double                                        Approximate_number_type;
-
   Compare_x_2 compare_x_2_object() const
   { return ck.compare_x_2_object(); }
 
