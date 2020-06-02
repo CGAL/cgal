@@ -12,6 +12,7 @@
     <file>resources/delete.xpm</file>
     <file>resources/copy.png</file>
     <file>resources/move.png</file>
+    <file>resources/draw.png</file>
     <file>resources/add_bucket.svg</file>
 	<file>resources/insert_circle.xpm</file>
 	<file>resources/demo_conic_circle.xpm</file>

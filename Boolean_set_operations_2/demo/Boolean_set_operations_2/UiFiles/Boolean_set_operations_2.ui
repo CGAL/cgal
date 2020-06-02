@@ -2476,24 +2476,24 @@
                <string>Buckets</string>
               </property>
             </widget>
-            <widget class="QLabel" name="DrawHeader" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Draw</string>
-              </property>
-              <property name="geometry">
-                <rect>
-                  <x>75</x>
-                  <y>0</y>
-                  <width>101</width>
-                  <height>40</height>  
-                </rect>
-              </property>
+            <widget class="QLabel" name="DrawHeader" >  
+              <property name="pixmap">  
+                <pixmap>:/cgal/icons/resources/draw.png</pixmap>  
+              </property> 
+              <property name="geometry">  
+                <rect>  
+                  <x>75</x>  
+                  <y>0</y>  
+                  <width>101</width>  
+                  <height>35</height>   
+                </rect> 
+              </property>   
+              <property name="sizePolicy" > 
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >  
+                <horstretch>0</horstretch>  
+                <verstretch>0</verstretch>  
+               </sizepolicy>  
+              </property> 
             </widget>
             <widget class="QToolButton" name="actionComplementH">
               <property name="geometry">
