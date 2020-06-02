@@ -1344,7 +1344,7 @@ public:
 
     /// controls the recycling or not of simplices previously marked as removed
     /// upon addition of new elements.
-    /// When set to `true` (default value), new elements are first picked in the garbage (if any) 
+    /// When set to `true` (default value), new elements are first picked in the garbage (if any)
     /// while if set to `false` only new elements are created.
     void set_recycle_garbage(bool b);
 
@@ -3179,13 +3179,15 @@ set_recycle_garbage(bool b)
   recycle_ = b;
 }
 
+
 template <typename P>
 bool
 Surface_mesh<P>::
-does_recycle_garbage()
+does_recycle_garbage() const
 {
   return recycle_;
 }
+
 
 namespace internal{
   namespace handle {
