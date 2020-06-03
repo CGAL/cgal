@@ -21,6 +21,7 @@ Release date: July 2020
     (in terms of volume) bounding box that contains a given mesh or point set.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
+
 -   This package implements a tetrahedral isotropic remeshing algorithm,
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targetting a given edge length.
@@ -42,15 +43,16 @@ Release date: July 2020
 
 ### [Surface Mesh](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMesh)
 
--   **Breaking change**: The function `CGAL::Surface_mesh::clear()` now removes all non-default properties instead of just emptying them.
+-   **Breaking change**: The function [`CGAL::Surface_mesh::clear()`](https://doc.cgal.org/5.1/Surface_mesh/classCGAL_1_1Surface__mesh.html#a247d4ad3e6b106ae22e5306203812642)
+    now removes all non-default properties instead of just emptying them.
 
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.1/Manual/packages.html#PkgBGL)
 
--   Added the function [`alpha_expansion_graphcut()`](https://doc.cgal.org/5.1/BGL/group__PkgBGLPartition.html#ga79c3f58b577af51d1140450729d38f22),
+-   Added the function [`CGAL::alpha_expansion_graphcut()`](https://doc.cgal.org/5.1/BGL/group__PkgBGLPartition.html#ga79c3f58b577af51d1140450729d38f22),
     which regularizes a multi-label partition over a user-defined graph.
--   Added the function [`regularize_face_selection_borders()`](https://doc.cgal.org/5.1/BGL/group__PkgBGLSelectionFct.html#gac71322b0cc7d7d59447531d5e5e345b6),
+-   Added the function [`CGAL::regularize_face_selection_borders()`](https://doc.cgal.org/5.1/BGL/group__PkgBGLSelectionFct.html#gac71322b0cc7d7d59447531d5e5e345b6),
     which uses this alpha expansion graphcut to regularize the borders of a selected faces on a triangle mesh.
--   Added the function [`set_triangulation_ids()`](https://doc.cgal.org/5.1/BGL/group__BGLGraphExternalIndices.html#ga1a22cf8bdde32fcdf1a4a78966eed630),
+-   Added the function [`CGAL::set_triangulation_ids()`](https://doc.cgal.org/5.1/BGL/group__BGLGraphExternalIndices.html#ga1a22cf8bdde32fcdf1a4a78966eed630),
     which must be used to initialize vertex, edge, and face indices of a triangulation meant to be used with BGL algorithms.
 
 ### [3D Fast Intersection and Distance Computation](https://doc.cgal.org/5.1/Manual/packages.html#PkgAABBTree)
@@ -58,11 +60,11 @@ Release date: July 2020
 -   The behavior of the internal search tree used to accelerate distance queries has changed:
     usage of the internal search tree will now be enabled by default, and its construction
     will be triggered by the first distance query. Automatic construction and usage can be disabled
-    by calling [`do_not_accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#abde62f52ccdf411847151aa5000ba4a4)
+    by calling [`CGAL::AABB_tree::do_not_accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#abde62f52ccdf411847151aa5000ba4a4)
     before the first distance query, and the tree can be built at any moment by calling
-    [`accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#a5d3877d3f2afbd09341eb4b8c230080b).
--   **Breaking change**: [`accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#a5d3877d3f2afbd09341eb4b8c230080b)
-    and [`do_not_accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#abde62f52ccdf411847151aa5000ba4a4)
+    [`CGAL::AABB_tree::accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#a5d3877d3f2afbd09341eb4b8c230080b).
+-   **Breaking change**: [`CGAL::AABB_tree::accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#a5d3877d3f2afbd09341eb4b8c230080b)
+    and [`CGAL::AABB_tree::do_not_accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#abde62f52ccdf411847151aa5000ba4a4)
     are no longer `const` functions.
 
 ### [2D Arrangements](https://doc.cgal.org/5.1/Manual/packages.html#PkgArrangementOnSurface2)
@@ -131,7 +133,7 @@ Release date: July 2020
 ### [3D Convex Hulls](https://doc.cgal.org/5.1/Manual/packages.html#PkgConvexHull3)
 
 -   A new overload for [`CGAL::convex_hull_3()`](https://doc.cgal.org/5.1/Convex_hull_3/group__PkgConvexHull3Functions.html#gaa02a3013808fc9a2e5e2f42b9fde8e30)
-    that takes a model of `VertexListGraph` has been added.
+    that takes a model of [`VertexListGraph`](https://doc.cgal.org/5.1/BGL/classVertexListGraph.html) has been added.
 -   The long-deprecated function `CGAL::convex_hull_3_to_polyhedron_3()` has been removed.
     The function [`CGAL::convex_hull_3_to_face_graph()`](https://doc.cgal.org/5.1/Convex_hull_3/group__PkgConvexHull3Functions.html#ga2750f7f197588ed643679835c748c671)
     should be used instead.
@@ -204,7 +206,7 @@ Release date: July 2020
     common endpoints, for convience.
 -   Added the function [`CGAL::split_subconstraint_graph_into_constraints()`](https://doc.cgal.org/5.1/Triangulation_2/classCGAL_1_1Constrained__triangulation__plus__2.html#adea77f5db5cd4dfae302e4502f1caa85)
     to [`Constrained_triangulation_plus_2`](https://doc.cgal.org/5.1/Triangulation_2/classCGAL_1_1Constrained__triangulation__plus__2.html) to initialize the constraints
-     from a soup of disconnected segments that should first be split into polylines.
+    from a soup of disconnected segments that should first be split into polylines.
 
 ### [3D Triangulations](https://doc.cgal.org/5.1/Manual/packages.html#PkgTriangulation3)
 
