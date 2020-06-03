@@ -166,6 +166,16 @@ public:
     return m_facewidth->compute_face_width(display_time);
   }
 
+//================================================================================
+// Test whether a path is homotopic to a simple cycle
+
+  bool is_simple_cycle(const Path_on_surface<Mesh>& p,
+                       bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
+    return m_minimal_quadrangulation->is_simple_cycle(p, display_time);
+  }
+
 protected:
   const Mesh&                                             m_original_mesh;
   mutable std::unique_ptr<Minimal_quadrangulation>        m_minimal_quadrangulation;

@@ -475,6 +475,67 @@ public:
 #endif // defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
   }
 
+  /// @return true iff 'p' is a simple curve.
+  bool is_simple_cycle(const Path_on_surface<Mesh>& p,
+                       bool display_time=false) const
+  {
+    if (p.is_empty())
+    { return true; }
+
+    if (!p.is_closed())
+    {
+      std::cerr<<"Error: is_contractible requires a closed path."<<std::endl;
+      return false;
+    }
+
+    if (get_local_map().is_empty())
+    { return true; } // A closed path on a sphere is always simple
+
+    CGAL::Timer t;
+    if (display_time)
+    { t.start(); }
+
+    bool res=false;
+    if (local_map_is_a_torus())
+    {
+      Path_on_surface<Local_map>
+        pt=transform_original_path_into_quad_surface_for_torus(p);
+
+      int a, b;
+      count_edges_of_path_on_torus(pt, a, b);
+      a = std::abs(a);
+      b = std::abs(b);
+      res=(a == 0 || b == 0 || CGAL::gcd(a, b) - 1 == 0);
+    }
+    else if (local_map_is_a_cylinder())
+    {
+      internal::Path_on_surface_with_rle<Self>
+        pt=transform_original_path_into_quad_surface_with_rle(p);
+
+      int p = count_edges_of_path_on_cylinder(pt);
+      res=(std::abs(p) <= 1);
+    }
+	else if (is_contractible())
+    {
+      // genus > 1 and contractible
+      res=true;
+    }
+    else
+    {
+      // TODO: genus > 1 and not contractible, perform unzip algorithm
+    }
+
+    if (display_time)
+    {
+      t.stop();
+      std::cout<<"[TIME] is_simple_cycle: "<<t.time()<<" seconds"
+               <<std::endl;
+    }
+
+    return res;
+  }
+
+
 protected:
 
   /// @return true iff the dart dh is contracted, i.e. if it belongs to T
@@ -508,6 +569,35 @@ protected:
         else if (path[i]==get_local_map().template beta<2>(dhb)) { --b; }
       }
     }
+  }
+
+  int count_edges_of_path_on_cylinder
+  (const Path_on_surface<Local_map>& path) const
+  {
+    CGAL_assertion(local_map_is_a_cylinder());
+    int p = 0;
+
+    Dart_const_handle dhp=get_local_map().darts().begin();
+    Dart_const_handle dhn=get_local_map().template beta<2>(dhp);
+    for (std::size_t i = 0; i < path.length(); ++i)
+    {
+      if(path.get_ith_flip(i))
+      {
+        if (path[i]==dhp || path[i]==get_local_map().template beta<1>(dhp))
+        { --p; }
+        else if (path[i]==dhn || path[i]==get_local_map().template beta<1>(dhn))
+        { ++p; }
+      }
+      else
+      {
+        if (path[i]==dhp || path[i]==get_local_map().template beta<1>(dhp))
+        { ++p; }
+        else if (path[i]==dhn || path[i]==get_local_map().template beta<1>(dhn))
+        { --p; }
+      }
+    }
+
+    return p/2;
   }
 
   Path_on_surface<Local_map>
@@ -1403,6 +1493,13 @@ protected:
     if (get_local_map().number_of_darts()!=4)
     { return false; }
     return (get_local_map().number_of_marked_darts(m_mark_perforated)==0);
+  }
+
+  bool local_map_is_a_cylinder() const
+  {
+    if (get_local_map().number_of_darts()!=4)
+    { return false; }
+    return (get_local_map().number_of_marked_darts(m_mark_perforated)==4);
   }
 
   /// @return true iff the perforated faces are correctly marked
