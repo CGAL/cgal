@@ -34,7 +34,7 @@ struct Data_access
   typedef typename Map::mapped_type   Data_type;
   typedef typename Map::key_type      Key_type;
 
-  Data_access<Map>(const Map& m): map(m){}
+  Data_access(const Map& m): map(m){}
 
   std::pair< Data_type, bool>
   operator()(const Key_type& p) const

@@ -340,17 +340,61 @@ struct Mpzf {
     exp=x.exp;
     if(size!=0) mpn_copyi(data(),x.data(),asize);
   }
-#if !defined(CGAL_MPZF_USE_CACHE)
+#if defined(CGAL_MPZF_USE_CACHE)
+  Mpzf(Mpzf&& x)noexcept:size(x.size),exp(x.exp){
+    auto xd = x.data();
+    while(*--xd==0);
+    if (xd != x.cache) {
+      data() = x.data();
+      x.init();
+    } else {
+      init();
+      if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
+    }
+    x.size = 0;
+  }
+  Mpzf& operator=(Mpzf&& x)noexcept{
+    if (this == &x) return *this; // is this needed?
+    size = x.size;
+    exp = x.exp;
+    auto xd = x.data();
+    auto td = data();
+    while(*--xd==0);
+    while(*--td==0);
+    if (xd != x.cache) {
+      data() = x.data();
+      if (td != cache) {
+        pool::push(td+1);
+        // should we instead give it to x in case x is reused?
+        // x.data() = td + 1;
+      }
+      x.init();
+    } else {
+      // In some cases data points in the middle of the buffer, reset it
+      data() = td + 1;
+      if(size!=0) mpn_copyi(data(),x.data(),std::abs(size));
+    }
+    x.size = 0;
+    return *this;
+  }
+#else
   Mpzf(Mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
     x.exp = 0;
   }
-  Mpzf& operator=(Mpzf&& x){
-    std::swap(size,x.size);
+  Mpzf& operator=(Mpzf&& x)noexcept{
+    size = x.size;
+    // In case something tries to read it, size needs to be smaller than data
+    x.size = 0;
     exp = x.exp;
     std::swap(data(),x.data());
     return *this;
+  }
+  friend void swap(Mpzf&a, Mpzf&b)noexcept{
+    std::swap(a.size, b.size);
+    std::swap(a.exp, b.exp);
+    std::swap(a.data(), b.data());
   }
   friend Mpzf operator-(Mpzf&& x){
     Mpzf ret = std::move(x);
@@ -533,6 +577,12 @@ struct Mpzf {
   }
   friend bool operator!=(Mpzf const&a, Mpzf const&b){
     return !(a==b);
+  }
+  friend Mpzf const& min BOOST_PREVENT_MACRO_SUBSTITUTION (Mpzf const&a, Mpzf const&b){
+    return (b<a)?b:a;
+  }
+  friend Mpzf const& max BOOST_PREVENT_MACRO_SUBSTITUTION (Mpzf const&a, Mpzf const&b){
+    return (a<b)?b:a;
   }
   private:
   static Mpzf aors(Mpzf const&a, Mpzf const&b, int bsize){
@@ -846,6 +896,9 @@ struct Mpzf {
     }
   }
 
+  friend Mpzf operator+(Mpzf const&x){
+    return x;
+  }
   friend Mpzf operator-(Mpzf const&x){
     Mpzf ret = x;
     ret.size = -ret.size;

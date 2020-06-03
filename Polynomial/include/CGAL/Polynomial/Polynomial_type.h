@@ -957,6 +957,52 @@ public:
     }
 
     friend Polynomial<NT> operator - <> (const Polynomial<NT>&);
+
+    //
+    // Comparison Operators
+    //
+
+    // polynomials only
+    friend bool operator == (const Polynomial& p1, const Polynomial& p2) {
+      CGAL_precondition(p1.degree() >= 0);
+      CGAL_precondition(p2.degree() >= 0);
+      if (p1.is_identical(p2)) return true;
+      if (p1.degree() != p2.degree()) return false;
+      for (int i = p1.degree(); i >= 0; i--) if (p1[i] != p2[i]) return false;
+      return true;
+    }
+    friend bool operator < (const Polynomial& p1, const Polynomial& p2)
+    { return ( p1.compare(p2) < 0 ); }
+
+    // operators NT
+    friend bool operator == (const Polynomial& p, const NT& num)  {
+      CGAL_precondition(p.degree() >= 0);
+      return p.degree() == 0 && p[0] == num;
+    }
+    friend bool operator < (const Polynomial& p,const NT& num)
+    { return ( p.compare(num) < 0 );}
+    friend bool operator > (const Polynomial& p,const NT& num)
+    { return ( p.compare(num) > 0 );}
+
+    // compare int #################################
+    friend bool operator == (const Polynomial& p, const CGAL_int(NT)& num)  {
+      CGAL_precondition(p.degree() >= 0);
+      return p.degree() == 0 && p[0] == NT(num);
+    }
+    friend bool operator < (const Polynomial& p, const CGAL_int(NT)& num)
+    { return ( p.compare(NT(num)) < 0 );}
+    friend bool operator > (const Polynomial& p, const CGAL_int(NT)& num)
+    { return ( p.compare(NT(num)) > 0 );}
+
+    // compare icoeff ###################################
+    friend bool operator == (const Polynomial& p, const CGAL_icoeff(NT)& num)  {
+      CGAL_precondition(p.degree() >= 0);
+      return p.degree() == 0 && p[0] == NT(num);
+    }
+    friend bool operator < (const Polynomial& p, const CGAL_icoeff(NT)& num)
+    { return ( p.compare(NT(num)) < 0 );}
+    friend bool operator > (const Polynomial& p, const CGAL_icoeff(NT)& num)
+    { return ( p.compare(NT(num)) > 0 );}
 }; // class Polynomial<NT_>
 
 // Arithmetic Operators, Part III:
@@ -998,102 +1044,6 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
   return p;
 }
 
-
-//
-// Comparison Operators
-//
-
-// polynomials only
-template <class NT> inline
-bool operator == (const Polynomial<NT>& p1, const Polynomial<NT>& p2) {
-  CGAL_precondition(p1.degree() >= 0);
-  CGAL_precondition(p2.degree() >= 0);
-  if (p1.is_identical(p2)) return true;
-  if (p1.degree() != p2.degree()) return false;
-  for (int i = p1.degree(); i >= 0; i--) if (p1[i] != p2[i]) return false;
-  return true;
-}
-template <class NT> inline
-bool operator < (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ return ( p1.compare(p2) < 0 ); }
-template <class NT> inline
-bool operator > (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ return ( p1.compare(p2) > 0 ); }
-
-// operators NT
-template <class NT> inline
-bool operator == (const NT& num, const Polynomial<NT>& p) {
-  CGAL_precondition(p.degree() >= 0);
-  return p.degree() == 0 && p[0] == num;
-}
-template <class NT> inline
-bool operator == (const Polynomial<NT>& p, const NT& num)  {
-  CGAL_precondition(p.degree() >= 0);
-  return p.degree() == 0 && p[0] == num;
-}
-template <class NT> inline
-bool operator < (const NT& num, const Polynomial<NT>& p)
-{ return ( p.compare(num) > 0 );}
-template <class NT> inline
-bool operator < (const Polynomial<NT>& p,const NT& num)
-{ return ( p.compare(num) < 0 );}
-template <class NT> inline
-bool operator > (const NT& num, const Polynomial<NT>& p)
-{ return ( p.compare(num) < 0 );}
-template <class NT> inline
-bool operator > (const Polynomial<NT>& p,const NT& num)
-{ return ( p.compare(num) > 0 );}
-
-
-// compare int #################################
-template <class NT> inline
-bool operator == (const CGAL_int(NT)& num, const Polynomial<NT>& p)  {
-  CGAL_precondition(p.degree() >= 0);
-  return p.degree() == 0 && p[0] == NT(num);
-}
-template <class NT> inline
-bool operator == (const Polynomial<NT>& p, const CGAL_int(NT)& num)  {
-  CGAL_precondition(p.degree() >= 0);
-  return p.degree() == 0 && p[0] == NT(num);
-}
-template <class NT> inline
-bool operator < (const CGAL_int(NT)& num, const Polynomial<NT>& p)
-{ return ( p.compare(NT(num)) > 0 );}
-template <class NT> inline
-bool operator < (const Polynomial<NT>& p, const CGAL_int(NT)& num)
-{ return ( p.compare(NT(num)) < 0 );}
-template <class NT> inline
-bool operator > (const CGAL_int(NT)& num, const Polynomial<NT>& p)
-{ return ( p.compare(NT(num)) < 0 );}
-template <class NT> inline
-bool operator > (const Polynomial<NT>& p, const CGAL_int(NT)& num)
-{ return ( p.compare(NT(num)) > 0 );}
-
-// compare icoeff ###################################
-template <class NT> inline
-bool operator == (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p)  {
-  CGAL_precondition(p.degree() >= 0);
-  return p.degree() == 0 && p[0] == NT(num);
-}
-template <class NT> inline
-bool operator == (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num)  {
-  CGAL_precondition(p.degree() >= 0);
-  return p.degree() == 0 && p[0] == NT(num);
-}
-template <class NT> inline
-bool operator < (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p)
-{ return ( p.compare(NT(num)) > 0 );}
-template <class NT> inline
-bool operator < (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num)
-{ return ( p.compare(NT(num)) < 0 );}
-
-
-template <class NT> inline
-bool operator > (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p)
-{ return ( p.compare(NT(num)) < 0 );}
-template <class NT> inline
-bool operator > (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num)
-{ return ( p.compare(NT(num)) > 0 );}
 
 //
 // Algebraically non-trivial operations

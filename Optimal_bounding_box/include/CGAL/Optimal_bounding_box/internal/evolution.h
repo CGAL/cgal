@@ -76,7 +76,7 @@ public:
     std::generate(group4.begin(), group4.end(), [&]{ return m_rng.get_int(0, im); });
 
     // crossover I, pick A or B
-    constexpr FT lweight = 0.4, uweight = 0.6;
+    const FT lweight = 0.4, uweight = 0.6;
 
     std::vector<Simplex> new_simplices(m);
 
@@ -160,8 +160,6 @@ public:
       std::cout << std::endl;
 #endif
 
-      // optimize the current best rotation by using the exact OBB 2D algorithm
-      // along the axes of the current best OBB
       m_best_v = &(m_population.get_best_vertex());
       Matrix& best_m = m_best_v->matrix();
 
@@ -170,7 +168,10 @@ public:
       std::cout << "fitness: " << m_best_v->fitness() << std::endl;
 #endif
 
-      optimize_along_OBB_axes(best_m, m_points, m_traits);
+      // optimize the current best rotation by using the exact OBB 2D algorithm
+      // along the axes of the current best OBB
+      Optimizer_along_axes<Traits> optimizer_2D;
+      optimizer_2D(best_m, m_points, m_traits);
       m_best_v->fitness() = compute_fitness(best_m, m_points, m_traits);
 
       // stopping criteria

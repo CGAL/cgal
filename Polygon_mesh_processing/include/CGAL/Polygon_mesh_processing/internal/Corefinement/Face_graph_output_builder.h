@@ -682,6 +682,10 @@ public:
       halfedge_descriptor h1 = it->second.first[&tm1];
       halfedge_descriptor h2 = it->second.first[&tm2];
 
+#ifdef CGAL_COREFINEMENT_DEBUG
+      std::cout << "Looking at triangles around edge " << tm1.point(source(h1, tm1)) << " " << tm1.point(target(h1, tm1)) << "\n";
+#endif
+
       CGAL_assertion(ids.first==vertex_to_node_id1[source(h1,tm1)]);
       CGAL_assertion(ids.second==vertex_to_node_id1[target(h1,tm1)]);
       CGAL_assertion(ids.first==vertex_to_node_id2[source(h2,tm2)]);
@@ -713,6 +717,9 @@ public:
             //Nothing allowed
             if (!used_to_clip_a_surface)
             {
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 1\n";
+#endif
               impossible_operation.set();
               return;
             }
@@ -723,6 +730,9 @@ public:
           //Ambiguous, we can do nothing
           if (!used_to_clip_a_surface)
           {
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 2\n";
+#endif
             impossible_operation.set();
             return;
           }
@@ -776,6 +786,9 @@ public:
         {
           CGAL_assertion(!used_to_clip_a_surface);
           //Ambiguous, we do nothing
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 3\n";
+#endif
           impossible_operation.set();
           return;
         }
@@ -971,6 +984,9 @@ public:
                 // poly_second - poly_first             = {0}
                 // poly_first \cap poly_second          = q1q2
                 // opposite( poly_first U poly_second ) = p2p1
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 4\n";
+#endif
                 impossible_operation.set(TM1_MINUS_TM2); // tm1-tm2 is non-manifold
               }
               else{
@@ -982,7 +998,12 @@ public:
                 is_patch_inside_tm2.set(patch_id_p1);
                 is_patch_inside_tm2.set(patch_id_p2);
                 if (!used_to_clip_a_surface)
+                {
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 5\n";
+#endif
                   impossible_operation.set(INTERSECTION); // tm1 n tm2 is non-manifold
+                }
               }
             }
             else
@@ -997,6 +1018,9 @@ public:
               {
                 if (!used_to_clip_a_surface)
                 {
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 6\n";
+#endif
                   impossible_operation.set();
                   return;
                 }
@@ -1018,6 +1042,9 @@ public:
               {
                 if (!used_to_clip_a_surface)
                 {
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 7\n";
+#endif
                   impossible_operation.set();
                   return;
                 }
@@ -1039,6 +1066,9 @@ public:
                 // poly_second - poly_first             = q1q2
                 // poly_first \cap poly_second          = {0}
                 // opposite( poly_first U poly_second ) = p2q1 U q2p1
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 8\n";
+#endif
                 impossible_operation.set(UNION); // tm1 U tm2 is non-manifold
               }
               else{
@@ -1049,6 +1079,9 @@ public:
                 // poly_second - poly_first             = q1p1 U p2q2
                 // poly_first \cap poly_second          = p1p2
                 // opposite( poly_first U poly_second ) = q2q1
+#ifdef CGAL_COREFINEMENT_DEBUG
+              std::cout << "  Non-manifold edge case 9\n";
+#endif
                 impossible_operation.set(TM2_MINUS_TM1); // tm2 - tm1 is non-manifold
               }
             }

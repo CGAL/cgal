@@ -17,7 +17,7 @@
 #ifndef CGAL_MESH_3_UTILITIES_H
 #define CGAL_MESH_3_UTILITIES_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Has_timestamp.h>
 #include <iterator>

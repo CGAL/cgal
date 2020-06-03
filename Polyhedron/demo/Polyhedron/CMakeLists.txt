@@ -402,6 +402,13 @@ add_executable  ( CGAL_PMP PMP.cpp )
 add_dependencies(CGAL_PMP PMP)
 target_link_libraries( CGAL_PMP PRIVATE polyhedron_demo )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_PMP )
+
+#WS Server
+if(TARGET Qt5::WebSockets)
+  add_executable  (WS_server Server_ws.cpp)
+  target_link_libraries(WS_server PUBLIC Qt5::WebSockets)
+  message(STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
+endif()
 #
 # Exporting
 #
