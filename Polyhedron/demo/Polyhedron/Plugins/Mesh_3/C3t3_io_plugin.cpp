@@ -135,7 +135,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
              ++cit)
         {
             CGAL_assertion(cit->info() >= 0);
-            item->c3t3().add_to_complex(cit, cit->info());
+            if(cit->info() != 0)
+              item->c3t3().add_to_complex(cit, cit->info());
             for(int i=0; i < 4; ++i)
             {
               if(cit->surface_patch_index(i)>0)

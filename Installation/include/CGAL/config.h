@@ -36,6 +36,10 @@
 #  define WIN64
 #endif
 
+#ifdef BOOST_MSVC
+#define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
+#endif
+
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
@@ -735,6 +739,5 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #endif // not BOOST_MSVC
 /// @}
 #include <CGAL/license/lgpl.h>
-
 
 #endif // CGAL_CONFIG_H

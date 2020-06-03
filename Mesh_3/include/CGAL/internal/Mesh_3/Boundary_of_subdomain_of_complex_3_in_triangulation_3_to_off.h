@@ -12,7 +12,7 @@
 #ifndef CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H
 #define CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 

@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 #define CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <CGAL/Mesh_3/config.h>

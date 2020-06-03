@@ -129,6 +129,7 @@ Surface_sweep_2
 TDS_2
 TDS_3
 Testsuite
+Tetrahedral_remeshing
 Three
 Triangulation
 Triangulation_2
