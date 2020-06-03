@@ -17,7 +17,7 @@
 #define CGAL_VERSION_H
 
 #ifndef SWIG
-#define CGAL_VERSION 5.1
+#define CGAL_VERSION 5.1-beta1
 #define CGAL_GIT_HASH abcdef
 #endif
 #define CGAL_VERSION_NR 1050100000

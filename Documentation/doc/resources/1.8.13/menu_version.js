@@ -3,10 +3,11 @@
 
   var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = '5.1-dev'
+  var current_version_local = '5.1-beta1'
   var all_versions = [
       'master',
       'latest',
+      '5.1-beta1',
       '5.0.2',
       '4.14.3',
       '4.13.2',
@@ -44,7 +45,7 @@
   }
 
   function patch_url(url, new_version) {
-    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){  
+    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){
       return url.replace(url_re, 'doc.cgal.org/' + new_version + '/');
     }
     else{
@@ -65,7 +66,7 @@
       var motherNode=$("#back-nav ul")[0];
       var node = document.createElement("LI");
       var spanNode = document.createElement("SPAN");
-      var titleNode =document.createTextNode("CGAL Version: "); 
+      var titleNode =document.createTextNode("CGAL Version: ");
       var textNode = document.createTextNode("x.y");
       spanNode.setAttribute("class", "version_menu");
       spanNode.appendChild(textNode);
@@ -90,4 +91,4 @@
         }
      }
   });
-})(); 
+})();
