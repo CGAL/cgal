@@ -1430,6 +1430,7 @@ void Scene_c3t3_item_priv::computeElements()
 
   //The grid
   {
+    positions_grid.resize(0);
 
     float x = (2 * (float)complex_diag()) / 10.0f;
     float y = (2 * (float)complex_diag()) / 10.0f;

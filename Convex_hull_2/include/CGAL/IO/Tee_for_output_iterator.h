@@ -39,7 +39,7 @@ class Tee_for_output_iterator
 
 public:
   Tee_for_output_iterator(const OutputIterator& o) : o_it(o)
-  {  PTR.p = (Rep*) new _Tee_for_output_iterator_rep<T>(); }
+  {  PTR = (Rep*) new _Tee_for_output_iterator_rep<T>(); }
 
   Tee_for_output_iterator<OutputIterator,T>&
   operator=(const T& value)
@@ -82,7 +82,7 @@ public:
 
   _Tee_for_output_iterator_rep<T>*
   ptr()
-  { return (_Tee_for_output_iterator_rep<T>*)(PTR.p); }
+  { return (_Tee_for_output_iterator_rep<T>*)PTR; }
 
 protected:
   OutputIterator o_it;
