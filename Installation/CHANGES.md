@@ -28,13 +28,14 @@ Release date: July 2020
     Corresponding functors in the model ([`Compare_signed_distance_to_line_2`](https://doc.cgal.org/5.1/Kernel_23/classKernel.html#a066d07dd592ac36ba7ee90988abd349f)) are also added.
 
 ### [dD Geometry Kernel](https://doc.cgal.org/5.1/Manual/packages.html#PkgKernelD)
+
 -   The kernels [`Epick_d`](https://doc.cgal.org/5.1/Kernel_d/structCGAL_1_1Epick__d.html)
     and [`Epeck_d`](https://doc.cgal.org/5.1/Kernel_d/structCGAL_1_1Epeck__d.html) gain two new functors:
     [`Power_side_of_bounded_power_sphere_d`](https://doc.cgal.org/5.1/Kernel_d/classCGAL_1_1Epeck__d_1_1Power__side__of__bounded__power__sphere__d.html)
     and [`Compute_squared_radius_smallest_orthogonal_sphere_d`](https://doc.cgal.org/5.1/Kernel_d/classCGAL_1_1Epeck__d_1_1Compute__squared__radius__smallest__orthogonal__sphere__d.html).
     Those are essential for the computation of weighted alpha-complexes.
 
-### Surface Mesh
+### [Surface Mesh](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMesh)
 
 -   **Breaking change**: The function `CGAL::Surface_mesh::clear()` now removes all non-default properties instead of just emptying them.
 
@@ -59,21 +60,24 @@ Release date: July 2020
     and [`do_not_accelerate_distance_queries()`](https://doc.cgal.org/5.1/AABB_tree/classCGAL_1_1AABB__tree.html#abde62f52ccdf411847151aa5000ba4a4)
     are no longer `const` functions.
 
-### 2D Arrangement on Surface
- -   Changed intersection return type from legacy `CGAL::Object` to modern
-     `boost::variant` in all traits concepts and models.
+### [2D Arrangements](https://doc.cgal.org/5.1/Manual/packages.html#PkgArrangementOnSurface2)
+
+ -   Changed intersection return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+     to modern `boost::variant` in all traits concepts and models.
      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
      new code is backward compatible. However, it is recommended that all calls
      to the intersection functions are fixed to use the new return type.
 
-### 2D Regularized Boolean Operations
- -   Changed intersection return type from legacy `CGAL::Object` to modern
-     `boost::variant` in the concept `ArrDirectionalTraits::Intersect_2` and
-     its models.
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.1/Manual/packages.html#PkgBooleanSetOperations2)
 
-### 2D Minkowski Sums
- -   Changed intersection return type from legacy `CGAL::Object` to modern
-     `boost::variant` in the (internally used) model `Arr_labeled_traits_2`.
+ -   Changed intersection return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+     to modern `boost::variant` in the concept [`ArrDirectionalTraits::Intersect_2`](https://doc.cgal.org/5.1/Boolean_set_operations_2/namespaceArrDirectionalTraits.html)
+     and its models.
+
+### [2D Minkowski Sums](https://doc.cgal.org/5.1/Manual/packages.html#PkgMinkowskiSum2)
+
+ -   Changed intersection return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+     to modern `boost::variant` in the (internally used) model `Arr_labeled_traits_2`.
 
 ### [dD Spatial Searching](https://doc.cgal.org/5.1/Manual/packages.html#PkgSpatialSearchingD)
 
@@ -159,13 +163,12 @@ Release date: July 2020
 
 ### [Point Set Processing](https://doc.cgal.org/5.1/Manual/packages.html#PkgPointSetProcessing3)
 
--   **Breaking change:** `CGAL::remove_outliers()` has been
-    parallelized and thus has a new template parameter
-    `ConcurrencyTag`. To update your code simply add as first template
-    parameter `CGAL::Sequential_tag` or `CGAL::Parallel_tag` when
-    calling this function.
--   Add a function `CGAL::cluster_point_set()` that segments a point
-    cloud into connected components based on a distance threshold.
+-   **Breaking change:** [`CGAL::remove_outliers()`](https://doc.cgal.org/5.1/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga1ab1dcee59caadde50572c5a504cc41a)
+    has been parallelized and thus has a new template parameter `ConcurrencyTag`.
+    To update your code simply add as first template parameter `CGAL::Sequential_tag` or `CGAL::Parallel_tag`
+    when calling this function.
+-   Add a function [`CGAL::cluster_point_set()`](https://doc.cgal.org/5.1/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#gafee41d60b5a257ae034e9157d0af8e46)
+    that segments a point cloud into connected components based on a distance threshold.
 -   Added wrapper functions for registration:
     - [`CGAL::OpenGR::compute_registration_transformation()`](https://doc.cgal.org/5.1/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#gab81663c718960780ddb176aad845e8cd),
       which computes the registration transformation for two point sets using the Super4PCS algorithm
