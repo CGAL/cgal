@@ -41,14 +41,14 @@ public: //iddo (for CC-7.2) maybe protected?
   typedef const T & const_reference;
 
 protected:
-  void init() { PTR.p = 0; }
+  void init() { PTR = 0; }
 
 public:
   Td_dag_base() {init();}
   Td_dag_base(const Td_dag_base<T> & x) : Handle(x) {}
   Td_dag_base & operator=(const Td_dag_base<T> & x)
   {Handle::operator=(x); return *this; }
-  bool operator!() const { return PTR.p == 0; }
+  bool operator!() const { return PTR == 0; }
 };
 
 template<class T>
@@ -96,9 +96,9 @@ public:
   Td_dag(){}
   Td_dag(const Td_dag_handle& dag):Td_dag_handle(dag){}
   Td_dag(const Self& dag):Td_dag_handle(dag){}
-  Td_dag(const T& rootValue){PTR.p = new node(rootValue);}
+  Td_dag(const T& rootValue){PTR = new node(rootValue);}
   Td_dag(const T& rootValue, const Self& left, const Self& right)
-  {PTR.p = new node(rootValue, left, right); rebalance_depth();}
+  {PTR = new node(rootValue, left, right); rebalance_depth();}
   ~Td_dag(){}
 
   /* --------information retrieval -------*/
@@ -145,7 +145,7 @@ public:
   }
   bool operator==(const Self& b) const
   {
-    return PTR.p==b.PTR.p;
+    return PTR==b.PTR;
   }
   bool operator!=(const Self& b) const
   {
@@ -189,7 +189,7 @@ public:
         // detach left son,redirect to dummy
         set_left(dummy);
         // set left son pointer to 0
-        ptr()->leftPtr.PTR.p=0;
+        ptr()->leftPtr.PTR=0;
         // delete dummy Td_dag
         delete dummy.ptr();
       }
@@ -204,7 +204,7 @@ public:
                                 // detach right son,redirect to dummy
         set_right(dummy);
                                 // set right son pointer to 0
-        ptr()->rightPtr.PTR.p=0;
+        ptr()->rightPtr.PTR=0;
                                 // delete dummy Td_dag
         delete dummy.ptr();
       }
@@ -371,7 +371,7 @@ protected:
   }
 #endif
  private:
-  node* ptr() const {return (node*)PTR.p;}
+  node* ptr() const {return (node*)PTR;}
 };
 
 template<class T,class Traits>
@@ -441,7 +441,7 @@ template<class T> std::ostream& operator<<(std::ostream&  out,
    tech notes:
    The code is Handle designed.
    left(),right() are designed to cope with Handle(Handle& x)
-     precondition x.PTR.p!=0
+     precondition x.PTR!=0
    operator=() performs shallow copy
    operator*() returns data type
    output is done as a binary tree.

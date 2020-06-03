@@ -39,7 +39,7 @@ template<class Traits>
 class Td_dag_node_base : public Handle
 {
 protected:
-  void init() { PTR.p = 0; } //MICHAL: I think it is not used - so need to be removed
+  void init() { PTR = 0; } //MICHAL: I think it is not used - so need to be removed
 
 public:
   //c'tors
@@ -57,12 +57,12 @@ public:
     return *this;
   }
 
-  //bool operator!() const {  return PTR.p == 0;  } //MICHAL: maybe use ptr(), and also can change to is_null or something similar
-  bool is_null() const { return PTR.p == 0; }
-  Rep * ptr() const { return (Rep*) PTR.p; }
+  //bool operator!() const {  return PTR == 0;  } //MICHAL: maybe use ptr(), and also can change to is_null or something similar
+  bool is_null() const { return PTR == 0; }
+  Rep * ptr() const { return (Rep*) PTR; }
 protected:
-  //Rep *& ptr() { return (Rep*) PTR.p; }
-  void set_ptr(Rep* rep) { PTR.p = rep; }
+  //Rep *& ptr() { return (Rep*) PTR; }
+  void set_ptr(Rep* rep) { PTR = rep; }
 
 };
 
@@ -94,7 +94,7 @@ public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
 
 public:
-  //using Td_dag_node_handle::PTR.p;
+  //using Td_dag_node_handle::PTR;
   //using Td_dag_node_handle::operator!;
 
 #endif //CGAL_CFG_USING_BASE_MEMBER_BUG_2
@@ -549,7 +549,7 @@ protected:
 
 private:
 
-  Node* node() const {   return (Node*)Base::PTR.p;  }
+  Node* node() const {   return (Node*)Base::PTR;  }
 
 };
 
@@ -629,7 +629,7 @@ std::ostream& operator<< (std::ostream&  out,
    tech notes:
    The code is Handle designed.
    left_child(),right_child() are designed to cope with Handle(Handle& x)
-     precondition x.PTR.p!=0
+     precondition x.PTR!=0
    operator=() performs shallow copy
    operator*() returns data type
    output is done as a binary tree.
