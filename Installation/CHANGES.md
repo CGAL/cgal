@@ -13,6 +13,7 @@ Release date: July 2020
       between free homotopy and homotopy with fixed endpoints;
     - test is a curve is contractible;
     - compute shortest non-contractible cycles on a surface, with or without weights on edges.
+
     See also the associated [blog entry](https://www.cgal.org/2020/05/08/Surface_mesh_topology/).
 
 ### [Optimal Bounding Box](https://doc.cgal.org/5.1/Manual/packages.html#PkgOptimalBoundingBox) (new package)
@@ -20,6 +21,7 @@ Release date: July 2020
 -   This package implements an optimization algorithm that aims to construct a close approximation
     of the *optimal bounding box* of a mesh or a point set, which is defined as the smallest
     (in terms of volume) bounding box that contains a given mesh or point set.
+
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
@@ -35,6 +37,7 @@ Release date: July 2020
       which goes over a typical full processing pipeline in a CGAL environment.
     - [Geographic Information Systems (GIS)](https://doc.cgal.org/5.1/Manual/tuto_gis.html),
       which demonstrates usage of CGAL data structures and algorithms in the context of a typical GIS application.
+
     In both tutorials, complete code is provided.
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.1/Manual/packages.html#PkgKernel23)
