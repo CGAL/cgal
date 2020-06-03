@@ -76,29 +76,54 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and the number of already
-      computed clusters is returned.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood
-     radius. If no value is provided, the default value is 1% of the
-     bounding box diagonal.\cgalParamEnd
-     \cgalParamBegin{attraction_factor} used to compute adjacencies
-     between clusters. Adjacencies are computed using a nearest
-     neighbor graph built similarly to the one used for clustering,
-     using `attraction_factor * neighbor_radius` as
-     parameter. %Default value is `2`.\cgalParamEnd
-     \cgalParamBegin{adjacencies} model of `OutputIterator` that
-     accepts objects of type `std::pair<std::size_t,
-     std::size_t>`. Each pair contains the indices of two adjacent
-     clusters. If this parameter is not used, adjacencies are not
-     computed at all.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{callback}
+       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
+                             while it's running and to interrupt it if needed}
+       \cgalParamType{an instance of `std::function<bool(double)>`.}
+       \cgalParamDefault{unused}
+       \cgalParamExtra{It is called regularly when the
+                       algorithm is running: the current advancement (between 0. and
+                       1.) is passed as parameter. If it returns `true`, then the
+                       algorithm continues its execution normally; if it returns
+                       `false`, the algorithm is stopped and the number of already
+                       computed clusters is returned.}
+       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`1` percent of the bounding box diagonal}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{attraction_factor}
+       \cgalParamDescription{used to compute adjacencies between clusters.
+                             Adjacencies are computed using a nearest neighbor graph built similarly
+                             to the one used for clustering, using `attraction_factor * neighbor_radius` as
+                             parameter.}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`2`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{adjacencies}
+       \cgalParamDescription{an output iterator used to output pairs containing the indices of two adjacent clusters.}
+       \cgalParamType{a model of `OutputIterator` that accepts objects of type `std::pair<std::size_t, std::size_t>`}
+       \cgalParamDefault{`CGAL::Emptyset_iterator`}
+       \cgalParamExtra{If this parameter is not used, adjacencies are not computed at all.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return the number of clusters identified.
