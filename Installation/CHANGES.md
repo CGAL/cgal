@@ -20,6 +20,11 @@ Release date: July 2020
     of the *optimal bounding box* of a mesh or a point set, which is defined as the smallest
     (in terms of volume) bounding box that contains a given mesh or point set.
 
+### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
+-   This package implements a tetrahedral isotropic remeshing algorithm,
+    that improves the quality of tetrahedra in terms of dihedral angles,
+    while targetting a given edge length.
+
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.1/Manual/packages.html#PkgKernel23)
 
 -   Added the functor [`CompareSignedDistanceToLine_2`](https://doc.cgal.org/5.1/Kernel_23/classKernel_1_1CompareSignedDistanceToLine__2.html)
