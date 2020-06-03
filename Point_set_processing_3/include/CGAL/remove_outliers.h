@@ -17,12 +17,16 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/iterator/zip_iterator.hpp>
 
 #include <iterator>
 #include <algorithm>
@@ -84,7 +88,9 @@ compute_avg_knn_sq_distance_3(
    \ingroup PkgPointSetProcessing3Algorithms
    Removes outliers:
    - computes average squared distance to the nearest neighbors,
-   - and sorts the points in increasing order of average distance.
+   - and partitions the points either using a threshold on the of
+     average distance or selecting a fixed percentage of points with
+     the highest average distances
 
    This method modifies the order of input points so as to pack all remaining points first,
    and returns an iterator over the first point to remove (see erase-remove idiom).
@@ -92,6 +98,8 @@ compute_avg_knn_sq_distance_3(
 
    \pre `k >= 2`
 
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
@@ -160,7 +168,8 @@ compute_avg_knn_sq_distance_3(
    account; if `threshold_distance=0` only `threshold_percent` is
    taken into account.
 */
-template <typename PointRange,
+template <typename ConcurrencyTag,
+          typename PointRange,
           typename NamedParameters
 >
 typename PointRange::iterator
@@ -190,9 +199,6 @@ remove_outliers(
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
 
-  // actual type of input points
-  typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
-
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
@@ -211,48 +217,76 @@ remove_outliers(
   std::size_t nb_points = points.size();
 
   // iterate over input points and add them to multimap sorted by distance to k
-  std::multimap<FT,Enriched_point> sorted_points;
-  std::size_t nb = 0;
-  for(const value_type& vt : points)
+  std::vector<std::pair<FT, value_type> > sorted_points;
+  sorted_points.reserve (nb_points);
+  for (const value_type& p : points)
+    sorted_points.push_back(std::make_pair (FT(0), p));
+
+  Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+    callback_wrapper (callback, nb_points);
+
+  CGAL::for_each<ConcurrencyTag>
+    (sorted_points,
+     [&](std::pair<FT, value_type>& p) -> bool
+     {
+       if (callback_wrapper.interrupted())
+         return false;
+
+       p.first = internal::compute_avg_knn_sq_distance_3(
+         get(point_map, p.second),
+         neighbor_query, k, neighbor_radius);
+
+       ++ callback_wrapper.advancement();
+       return true;
+     });
+
+  std::size_t first_index_to_remove = std::size_t(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
+
+  typename std::vector<std::pair<FT, value_type> >::iterator f2r
+    = sorted_points.begin();
+
+  if (threshold_distance != FT(0))
+    f2r = std::partition (sorted_points.begin(), sorted_points.end(),
+                          [&threshold_distance](const std::pair<FT, value_type>& p) -> bool
+                          {
+                            return p.first < threshold_distance * threshold_distance;
+                          });
+
+  if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
   {
-    FT sq_distance = internal::compute_avg_knn_sq_distance_3(
-      get(point_map, vt),
-      neighbor_query, k, neighbor_radius);
-    sorted_points.insert( std::make_pair(sq_distance, vt) );
-    if (callback && !callback ((nb+1) / double(nb_points)))
-      return points.end();
-    ++ nb;
+    std::nth_element (f2r,
+                      sorted_points.begin() + first_index_to_remove,
+                      sorted_points.end());
+    f2r = sorted_points.begin() + first_index_to_remove;
   }
 
-  // Replaces [points.begin(), points.end()) range by the multimap content.
-  // Returns the iterator after the (100-threshold_percent) % best points.
-  typename PointRange::iterator first_point_to_remove = points.begin();
-  typename PointRange::iterator dst = points.begin();
-  int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
-  typename std::multimap<FT,Enriched_point>::iterator src;
-  int index;
-  for (src = sorted_points.begin(), index = 0;
-       src != sorted_points.end();
-       ++src, ++index)
+  // Replaces [points.begin(), points.end()) range by the sorted content.
+  iterator pit = points.begin();
+  iterator out = points.begin();
+
+  for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
   {
-    *dst++ = src->second;
-    if (index <= first_index_to_remove ||
-        src->first < threshold_distance * threshold_distance)
-      first_point_to_remove = dst;
+    *pit = sit->second;
+    if (sit == f2r)
+      out = pit;
+    ++ pit;
   }
 
-  return first_point_to_remove;
+  callback_wrapper.join();
+
+  // Returns the iterator on the first point to remove
+  return out;
 }
 
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
-template <typename PointRange>
+template <typename ConcurrencyTag, typename PointRange>
 typename PointRange::iterator
 remove_outliers(
   PointRange& points,
   unsigned int k) ///< number of neighbors.
 {
-  return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return remove_outliers<ConcurrencyTag> (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 /// \endcond
 

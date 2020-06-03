@@ -59,7 +59,7 @@ if(EIGEN3_FOUND)
       CGAL_target_use_pointmatcher(register_point_sets_plugin)
     endif()
   else()
-    message(STATUS "NOTICE: OpenGR and libpointmatcher were not found. Registrationp plugin will not be available.")
+    message(STATUS "NOTICE: OpenGR and libpointmatcher were not found. Registration plugin will not be available.")
   endif()
 
 else(EIGEN3_FOUND)
@@ -93,6 +93,9 @@ endif()
   qt5_wrap_ui(point_set_wlopFILES Point_set_wlop_plugin.ui)
   polyhedron_demo_plugin(point_set_wlop_plugin Point_set_wlop_plugin ${point_set_wlopFILES} KEYWORDS PointSetProcessing)
   target_link_libraries(point_set_wlop_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
+
+  polyhedron_demo_plugin(point_set_clustering_plugin Point_set_clustering_plugin KEYWORDS PointSetProcessing)
+  target_link_libraries(point_set_clustering_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
   polyhedron_demo_plugin(merge_point_sets_plugin Merge_point_sets_plugin KEYWORDS PointSetProcessing Classification)
   target_link_libraries(merge_point_sets_plugin PUBLIC scene_points_with_normal_item)

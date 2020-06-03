@@ -610,15 +610,43 @@ individually.
 \cgalFigureCaptionEnd
 
 
+\section Point_set_processing_3Clustering Clustering
 
+If an input point set represents several objects which are spatially
+separated, a clustering algorithm can be applied to identify connected
+components on a nearest neighbor graph built using a query sphere of
+fixed radius centered on each point.
+
+The clustering is stored in a cluster map which associates each input
+point with the index of the cluster it belongs to: users can then use
+this map however they find it relevant to their use case, for example
+segmenting the input point set into one point set per
+cluster. \cgalFigureRef{Point_set_processing_3figclustering} shows
+different clustering outputs.
+
+\cgalFigureBegin{Point_set_processing_3figclustering,clustering.png}
+Point Set Clustering outputs (one color per cluster). Top: input point
+set and clustering using a neighbor radius of 1.5 (147 clusters
+extracted). Bottom: clustering with neighbor radius 3.0 (37 clusters
+extracted), and with neighbor radius 6.0 (5 clusters extracted).
+\cgalFigureEnd
+
+
+\subsection Point_set_processing_3Example_clustering Example
+
+In the following example, clusters (and adjacencies between them) are
+computed and stored as colors in a PLY file:
+
+\cgalExample{Point_set_processing_3/clustering_example.cpp}
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
-Function `remove_outliers()` deletes a user-specified fraction
-of outliers from an input point set. More specifically, it sorts the
-input points in increasing order of average squared distances to their
-nearest neighbors and deletes the points with largest value. The user
-can either specify a fixed number of nearest neighbors or a fixed
+Function `remove_outliers()` deletes a user-specified fraction of
+outliers from an input point set. More specifically, it partitions the
+input points with respect to the average squared distances to their
+nearest neighbors and deletes the points with largest value, either
+partitionning with a threshold or removing a fixed percentage. The
+user can either specify a fixed number of nearest neighbors or a fixed
 spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_outlier_removal Example
@@ -966,4 +994,3 @@ libraries that perform registration on two point sets.
 
 */
 } /* namespace CGAL */
-

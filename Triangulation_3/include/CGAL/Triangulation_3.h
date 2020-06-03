@@ -179,7 +179,7 @@ public:
 
   void *get_lock_data_structure() const
   {
-    return 0;
+    return nullptr;
   }
 
   void set_lock_data_structure(void *) const {}
@@ -245,7 +245,7 @@ protected:
 public:
   bool is_parallel() const
   {
-    return m_lock_ds != 0;
+    return m_lock_ds != nullptr;
   }
 
   // LOCKS
@@ -731,6 +731,9 @@ public:
     CGAL_triangulation_expensive_postcondition(*this == tr);
   }
 
+  Triangulation_3(Triangulation_3&& tr) = default;
+  ~Triangulation_3() = default;
+
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
@@ -757,21 +760,21 @@ public:
     init_tds();
   }
 
-  Triangulation_3& operator=(Triangulation_3 tr)
+  Triangulation_3& operator=(const Triangulation_3& tr)
   {
-    // Because the parameter tr is passed by value, the triangulation passed
-    // as argument has been copied.
-    // The following 'swap' consumes the *copy* and the original triangulation
-    // is left untouched.
-    swap(tr);
+    Triangulation_3 copy(tr);
+    swap(copy);
     return *this;
   }
 
+  Triangulation_3& operator=(Triangulation_3&& tr) = default;
+
   // HELPING FUNCTIONS
-  void swap(Triangulation_3& tr)
+  void swap(Triangulation_3& tr) noexcept
   {
-    std::swap(tr._gt, _gt);
-    std::swap(tr.infinite, infinite);
+    using std::swap;
+    swap(tr._gt, _gt);
+    swap(tr.infinite, infinite);
     _tds.swap(tr._tds);
     Base::swap(tr);
   }
@@ -1139,7 +1142,7 @@ public:
                               typename std::iterator_traits<InputIterator>::value_type,
                               Point
                           >
-                        >::type* = NULL)
+                        >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)

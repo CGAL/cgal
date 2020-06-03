@@ -21,6 +21,15 @@ Release History
    the signed distance of two points to a line, or the line passing through two given points.
    Corresponding functors in the model (`Compare_signed_distance_to_line_2`) are also added.
 
+### Point Set Processing
+ - Add a function `CGAL::cluster_point_set()` that segments a point
+   cloud into connected components based on a distance threshold.
+ - **Breaking change:** `CGAL::remove_outliers()` has been
+   parallelized and thus has a new template parameter
+   `ConcurrencyTag`. To update your code simply add as first template
+   parameter `CGAL::Sequential_tag` or `CGAL::Parallel_tag` when
+   calling this function.
+
 ### 2D Triangulations
  - Add function `split_subconstraint_graph_into_constraints()` to
    `Constrained_triangulation_plus_2` to initialize the constraints
@@ -37,10 +46,30 @@ Release History
    is given an optional template parameter `ConcurrencyTag` (default
    value remains `CGAL::Sequential_tag` for backward compatibility).
 
+### Surface Mesh
+
+ - **Breaking change**: The function `CGAL::Surface_mesh::clear()` now removes all non-default properties instead of just emptying them. 
+
 Release 5.0
 -----------
 
 Release date: June 2020
+
+### 2D Arrangement on Surface
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant` in all traits concepts and models.
+     As there is an implicit conversion from `boost::variant` to `CGAL::Object`, the
+     new code is backward compatible. However, it is recommended that all calls
+     to the intersection functions are fixed to use the new return type.
+
+### 2D Regularized Boolean Operations
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant` in the concept `ArrDirectionalTraits::Intersect_2` and
+     its models..
+
+### 2D Minkowski sums
+ -   Changed intersection return type from legacy `CGAL::Object` to modern
+     `boost::variant` in the (internally used) model `Arr_labeled_traits_2`.
 
 ### Surface Mesh Topology (new package)
 

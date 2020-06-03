@@ -115,7 +115,7 @@ class Interval_for_container : public Interval_
       {}
 
       void *   for_compact_container() const { return p; }
-      void * & for_compact_container()       { return p; }
+      void for_compact_container(void *ptr) { p = ptr; }
     };
 
 
@@ -457,7 +457,7 @@ class Interval_for_container : public Interval_
   public:
 #ifdef CGAL_ISL_USE_CCC
     void *   for_compact_container() const { return p; }
-    void * & for_compact_container()       { return p; }
+    void for_compact_container(void *ptr) { p = ptr; }
 #endif
 
     bool operator==(const IntervalListElt& e)

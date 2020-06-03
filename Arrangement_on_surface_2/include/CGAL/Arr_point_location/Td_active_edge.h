@@ -135,7 +135,7 @@ public:
 
  private:
 
-  Data* ptr() const { return (Data*)(PTR.p);  }
+  Data* ptr() const { return (Data*)(PTR);  }
 
 
 #ifndef CGAL_TD_DEBUG
@@ -194,7 +194,7 @@ public:
   Td_active_edge ()
   {
 
-    PTR.p = new Data
+    PTR = new Data
       (Traits::empty_he_handle(), Td_map_item(0), nullptr);
     //m_dag_node = nullptr;
   }
@@ -204,7 +204,7 @@ public:
                   boost::optional<Td_map_item&> next = boost::none)
   {
 
-    PTR.p = new Data(he, (next) ? *next : Td_map_item(0), node);
+    PTR = new Data(he, (next) ? *next : Td_map_item(0), node);
     //m_dag_node = node;
   }
 
@@ -261,7 +261,7 @@ public:
   /*! Access the trapezoid id (PTR). */
   CGAL_TD_INLINE unsigned long id() const
     {
-      return (unsigned long) PTR.p;
+      return (unsigned long) PTR;
     }
 
 
