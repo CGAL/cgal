@@ -157,7 +157,7 @@ public :
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp = cgal_plane_to_vector4d(plane);
-    getTriangleContainer(0)->setPlane(cp);
+    getTriangleContainer(0)->setPlane(-cp);
     getTriangleContainer(0)->setShrinkFactor(shrink_factor);
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
@@ -569,8 +569,10 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3, bool is_surface)
   : Scene_group_item("unnamed")
   , d(new Scene_c3t3_item_priv(c3t3, this))
 {
-  d->reset_cut_plane();
   common_constructor(is_surface);
+  d->reset_cut_plane();
+  c3t3_changed();
+  changed();
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -2097,5 +2099,11 @@ void Scene_c3t3_item::newViewer(Viewer_interface *viewer)
     d->computeIntersections(viewer);
   }
 }
+
+Scene_c3t3_item* Scene_c3t3_item::clone() const
+{
+  return new Scene_c3t3_item(d->c3t3, d->is_surface);
+}
+
 #include "Scene_c3t3_item.moc"
 
