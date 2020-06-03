@@ -28,6 +28,15 @@ Release date: July 2020
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targetting a given edge length.
 
+### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
+
+-   Two new, detailed tutorials have been added:
+    - [Surface Reconstruction from Point Clouds](https://doc.cgal.org/5.1/Manual/tuto_reconstruction.html),
+      which goes over a typical full processing pipeline in a CGAL environment.
+    - [Geographic Information Systems (GIS)](https://doc.cgal.org/5.1/Manual/tuto_gis.html),
+      which demonstrates usage of CGAL data structures and algorithms in the context of a typical GIS application.
+    In both tutorials, complete code is provided.
+
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.1/Manual/packages.html#PkgKernel23)
 
 -   Added the functor [`CompareSignedDistanceToLine_2`](https://doc.cgal.org/5.1/Kernel_23/classKernel_1_1CompareSignedDistanceToLine__2.html)
