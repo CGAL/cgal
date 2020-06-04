@@ -117,7 +117,7 @@ struct Distance_computation{
       distance = hdist;
   }
 
-  void join( Distance_computation& rhs ) {distance = std::max(rhs.distance, distance); }
+  void join( Distance_computation& rhs ) {distance = (std::max)(rhs.distance, distance); }
 };
 #endif
 
