@@ -135,8 +135,10 @@ public:
 
     // @todo bench that against CGAL::Inverse_index and std::unordered_map
     boost::container::flat_map<vertex_descriptor, vertices_size_type> index_map;
-
-    m_writer.write_header(m_os, num_vertices(g), num_halfedges(g), num_faces(g));
+    m_writer.write_header(m_os, num_vertices(g), num_halfedges(g), num_faces(g),
+                          has_face_colors || has_vertex_colors,
+                          has_vertex_normals                  ,
+                          has_vertex_textures                 );
 
     vertices_size_type id = 0;
     for(const vertex_descriptor v : vertices(g))

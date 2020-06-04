@@ -42,13 +42,17 @@ public:
                     std::size_t vertices,
                     std::size_t /*halfedges*/,
                     std::size_t facets,
-                    bool normals = false)
+                    bool colors = false,
+                    bool normals = false,
+                    bool textures = false)
   {
     m_os = &os;
 
     m_header.set_vertices(vertices);
     m_header.set_facets(facets);
     m_header.set_normals(normals);
+    m_header.set_colors(colors);
+    m_header.set_textures(textures);
 
     // Print header.
     out() << m_header;

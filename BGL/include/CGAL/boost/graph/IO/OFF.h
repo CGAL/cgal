@@ -157,6 +157,10 @@ bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
   std::ifstream is(fname);
+  if(!is){
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
   return read_OFF(is, g, np, verbose);
 }
 
@@ -269,6 +273,11 @@ bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& n
                >::type* =0)
 {
   std::ofstream os(fname);
+  if(!os)
+  {
+    std::cerr<<"Could not create file.";
+    return false;
+  }
   return write_OFF(os, g, np);
 }
 

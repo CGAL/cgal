@@ -64,7 +64,8 @@ bool read_OFF(std::istream& is,
     return false;
 
   CGAL::File_scanner_OFF scanner(is);
-
+  if(is.fail())
+    return false;
   points.resize(scanner.size_of_vertices());
   polygons.resize(scanner.size_of_facets());
 
@@ -97,8 +98,9 @@ bool read_OFF(std::istream& is,
       CGAL_assertion(nw != 0);
       *vt_out++ = Texture(nx, ny, nw);
     }
-
-    scanner.skip_to_next_vertex(i);
+    if(!scanner.eol())
+      scanner.skip_to_next_vertex(i);
+    scanner.set_eol(false);
 
     if(!is.good())
       return false;
@@ -107,10 +109,10 @@ bool read_OFF(std::istream& is,
   bool has_fcolors = false;
   for(std::size_t i=0; i<scanner.size_of_facets(); ++i)
   {
-    std::size_t no;
+    std::size_t no(-1);
     scanner.scan_facet(no, i);
 
-    if(!is.good())
+    if(!is.good() || no == std::size_t(-1))
       return false;
 
     CGAL::internal::resize(polygons[i], no);
@@ -135,7 +137,8 @@ bool read_OFF(std::istream& is,
       {
         has_fcolors = true;
         std::istringstream iss2(col);
-        *fc_out++ = scanner.get_color_from_line(iss2);
+        bool dum;
+        *fc_out++ = scanner.get_color_from_line(iss2, dum);
       }
     }
     else if(has_fcolors)
@@ -182,6 +185,11 @@ bool read_OFF(const char* fname,
               bool verbose = true)
 {
   std::ifstream in(fname);
+  if(!in)
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
   return read_OFF(in, points, polygons, np, verbose);
 }
 

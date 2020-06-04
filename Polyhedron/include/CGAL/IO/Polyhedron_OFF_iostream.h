@@ -22,6 +22,7 @@
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/Has_conversion.h>
 #include <CGAL/property_map.h>
 
@@ -39,6 +40,14 @@ bool write_OFF(std::ostream& out,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
+  if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)))
+     ||!(is_default_parameter(get_parameter(np, internal_np::face_color_map)))
+     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)))
+     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
+  {
+    return CGAL::IO::internal::write_OFF_BGL(out, P, np);
+  }
 
   // writes P to `out' in PRETTY, ASCII or BINARY format as the stream indicates.
   File_header_OFF header(is_binary(out), ! is_pretty(out), false);
@@ -83,6 +92,14 @@ bool read_OFF(std::istream& in,
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
+  if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)))
+     ||!(is_default_parameter(get_parameter(np, internal_np::face_color_map)))
+     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)))
+     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
+  {
+    return CGAL::IO::internal::read_OFF_BGL(in, P, np, verbose);
+  }
 
   CGAL::scan_OFF(in, P, verbose);
 

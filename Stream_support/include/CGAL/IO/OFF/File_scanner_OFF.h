@@ -36,19 +36,20 @@ class File_scanner_OFF
 {
   std::istream& m_in;
   bool normals_read;
+  bool eol_reached;
 
   void skip_comment() { m_in >> skip_comment_OFF; }
 
 public:
   File_scanner_OFF(std::istream& in, bool verbose = false)
-    : File_header_OFF(verbose), m_in(in), normals_read(false)
+    : File_header_OFF(verbose), m_in(in), normals_read(false), eol_reached(false)
   {
     in >> static_cast<File_header_OFF&>(*this);
   }
 
   File_scanner_OFF(std::istream& in, const File_header_OFF& header)
     :
-      File_header_OFF(header), m_in(in), normals_read(false)
+      File_header_OFF(header), m_in(in), normals_read(false), eol_reached(false)
   { }
 
   std::istream& in() { return m_in; }
@@ -914,7 +915,7 @@ public:
     return color[id];
   }
 
-  static CGAL::Color get_color_from_line(std::istream &is)
+  static CGAL::Color get_color_from_line(std::istream &is, bool& eol_reached)
   {
     std::string color_info;
     bool is_float = false;
@@ -949,21 +950,26 @@ public:
       //else stores the value
       else
         rgb[index] = static_cast<unsigned char>(atoi(color_info.c_str()));
-
-      position += (color_info.length()+ index)*sizeof(char); //index indicates the number of whitespaces read.
+      //position += (color_info.length()+ index)*sizeof(char); //index indicates the number of whitespaces read.
       ++index;
       if(index == 3)
         break;
     }
-
     CGAL::Color color;
     //if there were only one number, fetch the color in the color map
     if(index < 2)
       color = get_indexed_color(rgb[0]);
-    //else create the coor with the 3 values;
+    //else create the color with the 3 values;
     else
       color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
-    is.seekg(position);
+
+    std::streampos ss_pos = iss.tellg();
+    if(ss_pos != -1)
+    {
+      position +=ss_pos;
+      is.seekg(position);
+    }
+    eol_reached = (ss_pos == -1);
     return color;
   }
 
@@ -982,7 +988,7 @@ public:
     }
     else
     {
-      CGAL::Color color = get_color_from_line(m_in);
+      CGAL::Color color = get_color_from_line(m_in, eol_reached);
       r = color.red();
       g = color.green();
       b = color.blue();
@@ -1057,7 +1063,7 @@ public:
         }
       }
 
-      if(has_colors()) // skip color entries (1 to 4)
+      if(has_colors() ) // skip color entries (1 to 4)
         m_in >> skip_until_EOL;
     }
 
@@ -1190,6 +1196,9 @@ public:
       m_in >> skip_until_EOL;
     }
   }
+
+  bool eol()const { return eol_reached; }
+  void set_eol(const bool b) {eol_reached = b; }
 };
 
 template < class Point> inline

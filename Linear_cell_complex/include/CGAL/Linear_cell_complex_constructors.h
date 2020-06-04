@@ -278,7 +278,7 @@ namespace CGAL {
     writer.write_header(out,
                         alcc.number_of_vertex_attributes(),
                         alcc.number_of_halfedges(),
-                        alcc.template one_dart_per_cell<2>().size() );
+                        alcc.template one_dart_per_cell<2>().size());
 
     typedef typename LCC::Vertex_attribute_range::iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();

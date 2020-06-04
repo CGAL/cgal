@@ -42,8 +42,9 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>                          
 
 #endif
 
-template <typename Mesh, typename VPM1, typename VPM2>
-bool are_equal_meshes(const Mesh& fg1, const VPM1 vpm1, const Mesh& fg2, const VPM2 vpm2)
+template <typename Mesh, typename VPM1, typename VPM2, typename VIM1, typename VIM2>
+bool are_equal_meshes(const Mesh& fg1, const VPM1 vpm1, const Mesh& fg2, const VPM2 vpm2,
+                      const VIM1 vim1, const VIM2 vim2)
 {
   typedef typename boost::property_traits<VPM1>::value_type P;
 
@@ -53,17 +54,37 @@ bool are_equal_meshes(const Mesh& fg1, const VPM1 vpm1, const Mesh& fg2, const V
      num_faces(fg1) != num_faces(fg2))
     return false;
 
-  std::set<P> fg1_points, fg2_points;
+  std::vector<P> fg1_points, fg2_points;
   for(auto v : vertices(fg1))
-    fg1_points.insert(get(vpm1, v));
+    fg1_points.push_back(get(vpm1, v));
 
   for(auto v : vertices(fg2))
-    fg2_points.insert(get(vpm2, v));
+    fg2_points.push_back(get(vpm2, v));
 
-  if(fg1_points != fg2_points) // @fixme this will break for precision reasons, so replace with tests like in stream_support
+  for(std::size_t id = 0; id < fg1_points.size(); ++id)
+  {
+    if(CGAL::squared_distance(fg1_points[id], fg2_points[id]) > 1e-6)
+    {
+      return false;
+    }
+  }
+  fg1_points.clear();
+  fg1_points.shrink_to_fit();
+  fg2_points.clear();
+  fg2_points.shrink_to_fit();
+
+  std::vector<std::size_t> fg1_faces;
+  std::vector<std::size_t> fg2_faces;
+  for(auto f : faces(fg1))
+    for(auto v : CGAL::vertices_around_face(halfedge(f, fg1), fg1))
+      fg1_faces.push_back(get(vim1, v));
+
+  for(auto f : faces(fg2))
+    for(auto v : CGAL::vertices_around_face(halfedge(f, fg2), fg2))
+      fg2_faces.push_back(get(vim2, v));
+
+  if(fg1_points != fg2_points)
     return false;
-
-  // @todo test that combinatorics are equal
 
   return true;
 }
@@ -71,7 +92,10 @@ bool are_equal_meshes(const Mesh& fg1, const VPM1 vpm1, const Mesh& fg2, const V
 template <typename Mesh>
 bool are_equal_meshes(const Mesh& fg1, const Mesh& fg2)
 {
-  return are_equal_meshes(fg1, get(CGAL::vertex_point, fg1), fg2, get(CGAL::vertex_point, fg2));
+  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh>::const_type      VIM;
+  VIM vim1 = CGAL::get_initialized_vertex_index_map(fg1);
+  VIM vim2 = CGAL::get_initialized_vertex_index_map(fg2);
+  return are_equal_meshes(fg1, get(CGAL::vertex_point, fg1), fg2, get(CGAL::vertex_point, fg2), vim1, vim2);
 }
 
 template<typename Mesh>
@@ -135,7 +159,6 @@ void test_bgl_OFF(const char* filename)
 
     // write with OFF
     {
-      std::ofstream os("tmp.off");
       ok = CGAL::write_OFF("tmp.off", fg, CGAL::parameters::vertex_color_map(vcm)
                                                            .face_color_map(fcm));
       assert(ok);
@@ -280,7 +303,10 @@ void test_bgl_OFF(const char* filename)
 
     // write with PM
     {
-      ok = CGAL::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm));
+      ok = CGAL::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm)
+                                    .vertex_color_map(vcm)
+                                    .vertex_texture_map(vtm)
+                                    .face_color_map(fcm));
       assert(ok);
 
       Mesh fg2;
@@ -309,6 +335,7 @@ void test_bgl_OFF(const char* filename)
   }
 
   // test wrong inputs
+  std::cerr<<"Error text is expected to follow."<<std::endl;
   ok = CGAL::read_OFF("data/mesh_that_doesnt_exist.off", fg);
   assert(!ok);
   ok = CGAL::read_OFF("data/invalid_cut.off", fg); // cut in half
@@ -321,6 +348,7 @@ void test_bgl_OFF(const char* filename)
   assert(!ok);
   ok = CGAL::read_OFF("data/pig.stl", fg);
   assert(!ok);
+  std::cerr<<"No more error text from here."<<std::endl;
 }
 
 template<typename Mesh>
@@ -733,7 +761,7 @@ int main(int argc, char** argv)
 {
   // OFF
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
-  test_bgl_OFF<Polyhedron>(off_file);
+  //test_bgl_OFF<Polyhedron>(off_file);
   test_bgl_OFF<SM>(off_file);
   test_bgl_OFF<LCC>(off_file);
 #ifdef CGAL_USE_OPENMESH

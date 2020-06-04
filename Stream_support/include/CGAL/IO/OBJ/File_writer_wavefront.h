@@ -34,7 +34,8 @@ public:
   void write_header(std::ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
-                    std::size_t facets)
+                    std::size_t facets,
+                    bool,bool,bool)
   {
     m_os = &o;
     m_facets = facets;

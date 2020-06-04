@@ -198,8 +198,12 @@ std::ostream& operator<<( std::ostream& out, const File_header_OFF& h) {
         out << "# Output of a CGAL tool\n";
         out << static_cast<const File_header_extended_OFF&>( h);
     }
+    if ( h.has_textures())
+        out << "ST";
+    if ( h.has_colors())
+        out << "C";
     if ( h.has_normals())
-        out << 'N';
+        out << "N";
     if ( h.skel())
         out << "SKEL";
     else
