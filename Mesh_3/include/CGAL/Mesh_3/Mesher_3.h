@@ -25,6 +25,15 @@
 
 #include <CGAL/Mesh_3/config.h>
 
+#if CGAL_MESH_3_USE_INTEL_ITT
+#  include <ittnotify.h>
+#  define CGAL_MESH_3_TASK_BEGIN(task_handle) __itt_task_begin(mesh_3_domain, __itt_null, __itt_null, task_handle);
+#  define CGAL_MESH_3_TASK_END(task_handle) __itt_task_end(mesh_3_domain);
+#else
+#  define CGAL_MESH_3_TASK_BEGIN(task_handle)
+#  define CGAL_MESH_3_TASK_END(task_handle)
+#endif
+
 #include <CGAL/Mesh_error_code.h>
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
@@ -406,6 +415,15 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   CGAL::Real_timer timer;
   timer.start();
   double elapsed_time = 0.;
+#if CGAL_MESH_3_USE_INTEL_ITT
+  auto mesh_3_domain = __itt_domain_create("org.cgal.Mesh_3.refine_mesh");
+  auto refine_mesh_task_handle = __itt_string_handle_create("Mesher_3::refine_mesh");
+  auto initialize_task_handle = __itt_string_handle_create("Mesher_3::initialize");
+  auto refine_surface_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine surface mesh");
+  auto scan_cells_task_handle = __itt_string_handle_create("Mesher_3 scan triangulation for bad cells");
+  auto refine_volume_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine volume mesh");
+  CGAL_MESH_3_TASK_BEGIN(refine_mesh_task_handle);
+#endif // CGAL_MESH_3_USE_INTEL_ITT
 
   // First surface mesh could modify c3t3 without notifying cells_mesher
   // So we have to ensure that no old cell will be left in c3t3
@@ -419,12 +437,15 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
 
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
+  CGAL_MESH_3_TASK_BEGIN(initialize_task_handle);
   initialize();
+  CGAL_MESH_3_TASK_END(initialize_task_handle);
 
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining facets..." << std::endl;
   WallClockTimer t;
 #endif
+  CGAL_MESH_3_TASK_BEGIN(refine_surface_mesh_task_handle);
   facets_mesher_.refine(facets_visitor_);
   facets_mesher_.scan_edges();
   refinement_stage = REFINE_FACETS_AND_EDGES;
@@ -432,6 +453,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   facets_mesher_.scan_vertices();
   refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
   facets_mesher_.refine(facets_visitor_);
+  CGAL_MESH_3_TASK_END(refine_surface_mesh_task_handle);
 #ifdef CGAL_MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
   std::cerr << "==== Facet refinement: " << facet_ref_time << " seconds ===="
@@ -464,13 +486,17 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   if(!forced_stop())
   {
     // Then scan volume and refine it
+    CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
     cells_mesher_.scan_triangulation();
+    CGAL_MESH_3_TASK_END(scan_cells_task_handle);
     refinement_stage = REFINE_ALL;
 #ifdef CGAL_MESH_3_PROFILING
     std::cerr << "Refining cells..." << std::endl;
     t.reset();
 #endif
+    CGAL_MESH_3_TASK_BEGIN(refine_volume_mesh_task_handle);
     cells_mesher_.refine(cells_visitor_);
+    CGAL_MESH_3_TASK_END(refine_volume_mesh_task_handle);
 #ifdef CGAL_MESH_3_PROFILING
     double cell_ref_time = t.elapsed();
     std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ===="
@@ -599,6 +625,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     << std::endl << std::endl;
 #endif
 
+  CGAL_MESH_3_TASK_END(refine_mesh_task_handle);
   return elapsed_time;
 }
 

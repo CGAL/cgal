@@ -169,7 +169,7 @@ if ( CGAL_FOUND )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )
 
-    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support AND TARGET ${target})
+    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
       foreach(target
           mesh_3D_image_with_features
           mesh_3D_image
@@ -184,10 +184,19 @@ if ( CGAL_FOUND )
           mesh_polyhedral_domain_sm
           mesh_polyhedral_domain_with_lipschitz_sizing
           mesh_polyhedral_complex
+          mesh_implicit_domains
           mesh_polyhedral_domain_with_features
           mesh_3D_image_variable_size)
-        target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+        if(TARGET ${target})
+          target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+        endif()
       endforeach()
+    endif()
+
+    find_package( ITT QUIET )
+    if(TARGET ITT::ITT)
+      target_link_libraries(mesh_implicit_domains PRIVATE ITT::ITT)
+      target_compile_definitions(mesh_implicit_domains PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
     endif()
 
 else()

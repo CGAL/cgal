@@ -14,6 +14,12 @@
 
 using namespace CGAL::parameters;
 
+#ifdef CGAL_CONCURRENT_MESH_3
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
@@ -23,7 +29,7 @@ typedef Function_wrapper::Function_vector Function_vector;
 typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Mesh Criteria
