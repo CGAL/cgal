@@ -167,6 +167,11 @@ bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::ifstream in(fname);
+  if(!in)
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
   return read_OBJ(in, points, polygons, np, verbose);
 }
 

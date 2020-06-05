@@ -392,7 +392,7 @@ void test_bgl_OBJ(const std::string filename)
   clear(fg);
   VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
 
-  ok = CGAL::read_OBJ("data/90089.obj", fg, CGAL::parameters::vertex_normal_map(vnm));
+  ok = CGAL::read_OBJ("data/sphere.obj", fg, CGAL::parameters::vertex_normal_map(vnm));
   assert(ok);
   assert(num_vertices(fg) == 434 && num_faces(fg) == 864);
 
@@ -760,14 +760,15 @@ void test_bgl_VTP<Polyhedron>(const char* filename,
 int main(int argc, char** argv)
 {
   // OFF
+  /*
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
-  //test_bgl_OFF<Polyhedron>(off_file);
+  test_bgl_OFF<Polyhedron>(off_file);
   test_bgl_OFF<SM>(off_file);
   test_bgl_OFF<LCC>(off_file);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh>(off_file);
 #endif
-
+*/
   // OBJ
   const char* obj_file = (argc > 2) ? argv[2] : "data/sphere.obj";
   test_bgl_OBJ<Polyhedron>(obj_file);
