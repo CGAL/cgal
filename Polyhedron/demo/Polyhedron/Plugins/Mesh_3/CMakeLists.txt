@@ -54,9 +54,10 @@ target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_su
 
 # Use Eigen
  find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+ include(CGAL_Eigen_support)
 
- if (EIGEN3_FOUND)
-   CGAL_target_use_Eigen(mesh_3_optimization_plugin)
+ if (TARGET CGAL::Eigen_support)
+   target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen_support)
  else() #eigen
    message(STATUS "The Mesh_3_optimization_plugin requires Eigen, which was not found, and will use a deprecated class to replace it. Warnings are to be expected.")
  endif()#eigen
@@ -69,8 +70,8 @@ polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI
 target_link_libraries(c3t3_rib_exporter_plugin PUBLIC scene_c3t3_item)
 
 if(TBB_FOUND)
-  CGAL_target_use_TBB(mesh_3_plugin)
-  CGAL_target_use_TBB(mesh_3_optimization_plugin)
-  CGAL_target_use_TBB(c3t3_io_plugin)
-  CGAL_target_use_TBB(c3t3_rib_exporter_plugin)
+  target_link_libraries(mesh_3_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(c3t3_io_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(c3t3_rib_exporter_plugin PUBLIC CGAL::TBB_support)
 endif()

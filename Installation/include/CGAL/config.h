@@ -105,6 +105,10 @@
 // <boost/type_traits/detail/has_postfix_operator.hpp> fails as well
 #  define BOOST_TT_HAS_POST_DECREMENT_HPP_INCLUDED
 #  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
+//work around for moc bug : https://bugreports.qt.io/browse/QTBUG-80990
+#if defined(CGAL_LINKED_WITH_TBB)
+#undef CGAL_LINKED_WITH_TBB
+#endif
 #endif
 
 // Macro used by Boost Parameter. Mesh_3 needs at least 12, before the
