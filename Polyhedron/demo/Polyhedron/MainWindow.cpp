@@ -1027,7 +1027,7 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist/bbox_diag) > 13.0 )
+  if((std::log2)(l_dist/bbox_diag) > 11.0 )
     for(int i=0; i<3; ++i)
     {
       offset[i] = -bbox_center[i];
