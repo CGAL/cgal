@@ -1,49 +1,61 @@
 #include <iostream>
+#include <fstream>
 #include <limits>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <embree3/rtcore.h> 
 
-struct Vertex   { float x,y,z,r;  }; 
+#include <CGAL/Timer.h>
+
+#include "RaysGenerate.h"
+
+typedef CGAL::Simple_cartesian<double> K;
+typedef K::Point_3 Point;
+typedef CGAL::Surface_mesh<Point> Mesh;
+typedef Mesh::Vertex_index vertex_descriptor;
+typedef Mesh::Face_index face_descriptor;
+
+struct Vertex   { float x,y,z,r; }; 
 struct Triangle { int v0, v1, v2; };
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {   
-      
+    const char* filename = (argc > 1) ? argv[1] : "data/data.ply";
+    std::ifstream input(filename);
+
+    Mesh surfaceMesh;
+    CGAL::read_ply(input, surfaceMesh);
+
     RTCDevice device = rtcNewDevice("verbose=0");
     RTCScene scene = rtcNewScene(device);
 
     RTCGeometry mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 
-    Vertex* vertices = (Vertex*) rtcSetNewGeometryBuffer(mesh,RTC_BUFFER_TYPE_VERTEX,0,RTC_FORMAT_FLOAT3,sizeof(Vertex),8);
-    vertices[0].x = -1; vertices[0].y = -1; vertices[0].z = -1;
-    vertices[1].x = -1; vertices[1].y = -1; vertices[1].z = +1;
-    vertices[2].x = -1; vertices[2].y = +1; vertices[2].z = -1;
-    vertices[3].x = -1; vertices[3].y = +1; vertices[3].z = +1;
-    vertices[4].x = +1; vertices[4].y = -1; vertices[4].z = -1;
-    vertices[5].x = +1; vertices[5].y = -1; vertices[5].z = +1;
-    vertices[6].x = +1; vertices[6].y = +1; vertices[6].z = -1;
-    vertices[7].x = +1; vertices[7].y = +1; vertices[7].z = +1;
+    Vertex* vertices = (Vertex*) rtcSetNewGeometryBuffer(mesh,RTC_BUFFER_TYPE_VERTEX,0,RTC_FORMAT_FLOAT3,sizeof(Vertex),surfaceMesh.number_of_vertices());
 
-    int tri = 0;
-    Triangle* triangles = (Triangle*) rtcSetNewGeometryBuffer(mesh,RTC_BUFFER_TYPE_INDEX,0,RTC_FORMAT_UINT3,sizeof(Triangle),12);
+    for(vertex_descriptor vd : surfaceMesh.vertices()){
+        Point data = surfaceMesh.point(vd);
+        vertices[vd.idx()].x = data.x();       
+        vertices[vd.idx()].y = data.y();       
+        vertices[vd.idx()].z = data.z();       
+    }
 
-    triangles[tri].v0 = 0; triangles[tri].v1 = 1; triangles[tri].v2 = 2; tri++;
-    triangles[tri].v0 = 1; triangles[tri].v1 = 3; triangles[tri].v2 = 2; tri++;
-
-    triangles[tri].v0 = 4; triangles[tri].v1 = 6; triangles[tri].v2 = 5; tri++;
-    triangles[tri].v0 = 5; triangles[tri].v1 = 6; triangles[tri].v2 = 7; tri++;
-
-    triangles[tri].v0 = 0; triangles[tri].v1 = 4; triangles[tri].v2 = 1; tri++;
-    triangles[tri].v0 = 1; triangles[tri].v1 = 4; triangles[tri].v2 = 5; tri++;
-
-    triangles[tri].v0 = 2; triangles[tri].v1 = 3; triangles[tri].v2 = 6; tri++;
-    triangles[tri].v0 = 3; triangles[tri].v1 = 7; triangles[tri].v2 = 6; tri++;
-
-    triangles[tri].v0 = 0; triangles[tri].v1 = 2; triangles[tri].v2 = 4; tri++;
-    triangles[tri].v0 = 2; triangles[tri].v1 = 6; triangles[tri].v2 = 4; tri++;
-
-    triangles[tri].v0 = 1; triangles[tri].v1 = 5; triangles[tri].v2 = 3; tri++;
-    triangles[tri].v0 = 3; triangles[tri].v1 = 5; triangles[tri].v2 = 7; tri++;
+    Triangle* triangles = (Triangle*) rtcSetNewGeometryBuffer(mesh,RTC_BUFFER_TYPE_INDEX,0,RTC_FORMAT_UINT3,sizeof(Triangle),surfaceMesh.number_of_faces());
+    
+    for (face_descriptor fd : surfaceMesh.faces()){
+        Mesh::Halfedge_index hf = surfaceMesh.halfedge(fd);
+        int temp[3]; int i=0;
+        for(Mesh::Halfedge_index hi : halfedges_around_face(hf, surfaceMesh)){
+            Mesh::Vertex_index vi = target(hi, surfaceMesh);
+            temp[i] = vi.idx();
+            i++;
+        }
+        triangles[fd.idx()].v0 = temp[0];
+        triangles[fd.idx()].v1 = temp[1];
+        triangles[fd.idx()].v2 = temp[2];
+    }
 
     rtcCommitGeometry(mesh);
     unsigned int geomID = rtcAttachGeometry(scene, mesh);
@@ -54,26 +66,32 @@ int main(int argc, char const *argv[])
     rtcInitIntersectContext(&context);
 
     RTCRayHit rayhit;
-    rayhit.ray.org_x = -2.0;
-    rayhit.ray.org_y = 0;
-    rayhit.ray.org_z = 0;
+    rayhit.ray.org_x = -2.0; /*POINT.X*/ 
+    rayhit.ray.org_y =  0.0; /*POINT.Y*/
+    rayhit.ray.org_z =  0.0; /*POINT.Z*/
+
     rayhit.ray.tnear = 0.0;
-
-    rayhit.ray.dir_x = 1;
-    rayhit.ray.dir_x = 0;
-    rayhit.ray.dir_x = 0;
-
     rayhit.ray.tfar = std::numeric_limits<double>::infinity();
     rayhit.ray.flags = 0;
 
-    rayhit.hit.primID = RTC_INVALID_GEOMETRY_ID;
-    rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+    // rayhit.hit.primID = RTC_INVALID_GEOMETRY_ID;
+    // rayhit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+    
+    int numberOfRays = 50000; /*NUMBER OF RAY QUERIES*/
+    RaysGenerate rg(numberOfRays); 
+    CGAL::Timer time;
+    time.start();
+    for(size_t n=0; n!=numberOfRays; ++n){
+        rayhit.ray.dir_x = rg.rayDirections[n]._x;
+        rayhit.ray.dir_x = rg.rayDirections[n]._y;
+        rayhit.ray.dir_x = rg.rayDirections[n]._z;
 
-    rtcIntersect1(scene, &context, &rayhit);
+        rtcIntersect1(scene, &context, &rayhit);
 
-    if(rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
-            std::cout<<"Intersection."<<std::endl;
-
+    }
+    time.stop();
+    std::cout << "  Function() time: " << time.time() << std::endl;
+        
     rtcReleaseDevice(device);
     return 0;
 }
