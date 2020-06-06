@@ -1499,6 +1499,12 @@ public:
      CGAL_assertion(is_valid());
   }
 
+  /// Factorize the path into primitive
+  Self factorize(int& power) {
+    Path_on_surface<Map> p(*this);
+    return Self(m_MQ, p.factorize(power), m_use_only_positive, m_use_only_negative);
+  }
+
   void display_positive_turns()
   {
     std::cout<<"+(";

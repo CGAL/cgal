@@ -1095,6 +1095,41 @@ public:
     }
   }
 
+  /// @return the primitive root and the power of the path in the sense of string.
+  ///         use the linear Knuth-Morris-Pratt search
+  Self factorize(int& power) {
+    CGAL_assertion(is_valid());
+    if (!is_closed()) {
+      // if a path is not closed, it is already primitive
+      power = 1;
+      return Path_on_surface<Map>(*this);
+    }
+
+    Self pp1(*this);
+    pp1.simplify_flips();
+    Self pp2(pp1);
+    /// create a path of (*this)->(*this)
+    pp2 += pp1;
+
+    /// Match (*this) to (*this)->(*this) with the first dart removed
+    auto itMatch = boost::algorithm::knuth_morris_pratt_search(pp2.m_path.begin() + 1,
+                                                               pp2.m_path.end(),
+                                                               pp1.m_path.begin(),
+                                                               pp1.m_path.end())
+#if BOOST_VERSION>=106200
+      .first
+#endif
+      ;
+    /// It can be proved that the first match location is the length of match
+    auto primitiveSize = itMatch - pp2.m_path.begin();
+    std::cout << pp1.length() << ' ' << primitiveSize << std::endl;
+    CGAL_assertion(pp1.length() % primitiveSize == 0);
+    power = pp1.length() / primitiveSize;
+    pp1.cut(primitiveSize);
+    CGAL_assertion(pp1.is_closed());
+    return pp1;
+  }
+
   /// @return the turn between dart number i and dart number i+1.
   ///         (turn is position of the second edge in the cyclic ordering of
   ///          edges starting from the first edge around the second extremity
