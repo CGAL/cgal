@@ -4,8 +4,8 @@
 #include <cassert>
 #include <string>
 
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -32,8 +32,9 @@ void detect_borders(
       Halfedge_around_facet_circulator done(hf_around_facet);
 
       do {
-        const bool insertion_ok = border_map.insert(*hf_around_facet).second;
-        assert(insertion_ok);
+        const bool is_insertion_ok =
+          border_map.insert(*hf_around_facet).second;
+        assert(is_insertion_ok);
       } while (++hf_around_facet != done);
     }
   }
@@ -42,32 +43,41 @@ void detect_borders(
 // This test is inspired by the issue: https://github.com/CGAL/cgal/issues/4464.
 template<
 typename PolygonMesh,
-typename GT>
+typename GeomTraits>
 void test_triangulate_hole_with_cdt_2(
   const std::string kernel_name,
-  int argc, char **argv, const bool save) {
+  int argc, char **argv,
+  const std::string file_name,
+  const std::size_t num_borders,
+  const std::size_t num_patch_faces,
+  const bool verbose) {
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor Face_handle;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_handle;
 
   // Reading the file.
-  std::cout << "test with the " << kernel_name << " kernel:" << std::endl;
+  if (verbose)
+    std::cout << "test with the " << kernel_name << " kernel:" << std::endl;
   PolygonMesh pmesh;
-  std::string path = "data/w.off";
+  std::string path = "data/" + file_name + ".off";
   std::ifstream in(path.c_str(), std::ios_base::in);
   CGAL::set_ascii_mode(in);
   CGAL::read_off(in, pmesh);
   in.close();
-  std::cout << "* finished reading the file" << std::endl;
+  if (verbose)
+    std::cout << "* finished reading the file" << std::endl;
 
   // Detecting the hole borders.
   std::vector<Halfedge_handle> borders;
   detect_borders(pmesh, borders);
-  assert(borders.size() == 2);
+  if (verbose)
+    std::cout << "* number of detected borders: " <<
+      borders.size() << std::endl;
+  assert(borders.size() == num_borders);
 
   // Triangulating the holes.
   std::vector<Face_handle> patch_faces;
-  for (Halfedge_handle h : borders) {
+  for (const Halfedge_handle h : borders) {
     patch_faces.clear();
     CGAL::Polygon_mesh_processing::triangulate_hole_with_cdt_2(
       pmesh,
@@ -75,19 +85,20 @@ void test_triangulate_hole_with_cdt_2(
       std::back_inserter(patch_faces),
       CGAL::Polygon_mesh_processing::parameters::vertex_point_map(
         get(CGAL::vertex_point, pmesh)).
-        geom_traits(GT()));
+        geom_traits(GeomTraits()));
 
-    assert(patch_faces.size() == 25);
-    std::cout << "* number of faces in the constructed patch: " <<
-      patch_faces.size() << std::endl;
+    if (verbose)
+      std::cout << "* number of faces in the constructed patch: " <<
+        patch_faces.size() << std::endl;
+    assert(patch_faces.size() == num_patch_faces);
   }
   assert(pmesh.is_valid() && is_closed(pmesh));
 
   // Writing the file.
-  if (save) {
+  if (verbose) {
     path = "";
     if (argc > 1) path = std::string(argv[1]);
-    path += "w-4464.off";
+    path += "4464_" + file_name + ".off";
     std::ofstream out(path.c_str(), std::ios_base::out);
     CGAL::set_ascii_mode(out);
     CGAL::write_off(out, pmesh);
@@ -104,8 +115,37 @@ int main(int argc, char **argv) {
   typedef CGAL::Surface_mesh<EI::Point_3> Surface_mesh_EI;
   typedef CGAL::Polyhedron_3<EE> Polyhedron_3_EE;
 
+  // Checking on a data file with two planar, simple, and horizontal holes.
   test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
-    "exact_inexact", argc, argv, false);
+    "exact_inexact", argc, argv, "w_horizontal_hole", 2, 25, false);
   test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
-    "exact_exact", argc, argv, true);
+    "exact_exact", argc, argv, "w_horizontal_hole", 2, 25, false);
+  std::cout <<
+    "test_triangulate_hole_with_cdt_2: horizontal hole SUCCESS" << std::endl;
+
+  // Checking on a data file with two planar, simple, and orthogonal holes.
+  test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
+    "exact_inexact", argc, argv, "w_orthogonal_hole", 2, 1, false);
+  test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
+    "exact_exact", argc, argv, "w_orthogonal_hole", 2, 1, false);
+  std::cout <<
+    "test_triangulate_hole_with_cdt_2: orthogonal hole SUCCESS" << std::endl;
+
+  // Checking on a data file with one simple but not a planar hole.
+  test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
+    "exact_inexact", argc, argv, "elephant_simple_hole", 1, 19, false);
+  test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
+    "exact_exact", argc, argv, "elephant_simple_hole", 1, 19, false);
+  std::cout <<
+    "test_triangulate_hole_with_cdt_2: simple hole SUCCESS" << std::endl;
+
+  // Checking on a data file with one hole that is neither simple nor planar.
+  test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
+    "exact_inexact", argc, argv, "elephant_nonsimple_hole", 1, 29, false);
+  test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
+    "exact_exact", argc, argv, "elephant_nonsimple_hole", 1, 29, false);
+  std::cout <<
+    "test_triangulate_hole_with_cdt_2: non simple hole SUCCESS" << std::endl;
+
+  return EXIT_SUCCESS;
 }
