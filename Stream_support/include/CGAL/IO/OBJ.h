@@ -42,6 +42,11 @@ bool read_OBJ(std::istream& is,
               VertexNormalOutputIterator vn_out,
               bool verbose = true)
 {
+  if(!is.good())
+  {
+    std::cerr<<"File doesn't exist"<<std::endl;
+    return false;
+  }
   typedef typename boost::range_value<PointRange>::type                               Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Vector_3                                                   Normal;
@@ -167,11 +172,6 @@ bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::ifstream in(fname);
-  if(!in)
-  {
-    std::cerr<<"File doesn't exist."<<std::endl;
-    return false;
-  }
   return read_OBJ(in, points, polygons, np, verbose);
 }
 

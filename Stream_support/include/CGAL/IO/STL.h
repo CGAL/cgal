@@ -39,8 +39,13 @@ bool read_STL(std::istream& is,
               const CGAL_BGL_NP_CLASS& /*np*/, // might become useful one day for face normals
               bool verbose = false)
 {
-  int pos = 0;
+  if(!is.good())
+  {
+    std::cerr<<"File doesn't exist"<<std::endl;
+    return false;
+  }
 
+  int pos = 0;
   // Ignore all initial whitespace
   unsigned char c;
 

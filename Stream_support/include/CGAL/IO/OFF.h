@@ -60,8 +60,10 @@ bool read_OFF(std::istream& is,
 
   CGAL_USE(verbose);
 
-  if(!is.good())
+  if(!is.good()){
+    std::cerr<<"File doesn't exist."<<std::endl;
     return false;
+  }
 
   CGAL::File_scanner_OFF scanner(is);
   if(is.fail())
@@ -185,11 +187,6 @@ bool read_OFF(const char* fname,
               bool verbose = true)
 {
   std::ifstream in(fname);
-  if(!in)
-  {
-    std::cerr<<"File doesn't exist."<<std::endl;
-    return false;
-  }
   return read_OFF(in, points, polygons, np, verbose);
 }
 

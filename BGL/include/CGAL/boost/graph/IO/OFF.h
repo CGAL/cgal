@@ -157,10 +157,6 @@ bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
   std::ifstream is(fname);
-  if(!is){
-    std::cerr<<"File doesn't exist."<<std::endl;
-    return false;
-  }
   return read_OFF(is, g, np, verbose);
 }
 

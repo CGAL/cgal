@@ -146,11 +146,6 @@ bool read_OBJ(const char* fname,
               bool verbose = true)
 {
   std::ifstream in(fname);
-  if(!in)
-  {
-    std::cerr<<"File doesn't exist"<<std::endl;
-    return false;
-  }
   return read_OBJ(in, g, np, verbose);
 }
 

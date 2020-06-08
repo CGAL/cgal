@@ -243,10 +243,14 @@ bool write_OFF_with_or_without_fcolors(std::ostream& os,
   typedef CGAL::Color                                                    Color;
 
   typename Mesh::template Property_map<Face_index, Color> fcolors;
-  bool has_fcolors;
-  std::tie(fcolors, has_fcolors) = sm.template property_map<Face_index, CGAL::Color>("f:color");
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+  const bool has_fcolors = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+  bool has_internal_fcolors;
+  std::tie(fcolors, has_internal_fcolors) = sm.template property_map<Face_index, CGAL::Color>("f:color");
 
-  if(has_fcolors && !std::distance(fcolors.begin(), fcolors.end()) > 0)
+  if(!has_fcolors && has_internal_fcolors && !std::distance(fcolors.begin(), fcolors.end()) > 0)
     return write_OFF_BGL(os, sm, np.face_color_map(fcolors));
   else
     return write_OFF_BGL(os, sm, np);
@@ -264,10 +268,14 @@ bool write_OFF_with_or_without_vtextures(std::ostream& os,
   typedef typename K::Point_2                                            Texture;
 
   typename Mesh::template Property_map<Vertex_index, Texture> vtextures;
-  bool has_vtextures;
-  std::tie(vtextures, has_vtextures) = sm.template property_map<Vertex_index, Texture>("v:texcoord");
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+  const bool has_vtextures = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
+  bool has_internal_vtextures;
+  std::tie(vtextures, has_internal_vtextures) = sm.template property_map<Vertex_index, Texture>("v:texcoord");
 
-  if(has_vtextures && !std::distance(vtextures.begin(), vtextures.end()) > 0)
+  if(!has_vtextures && has_internal_vtextures && !std::distance(vtextures.begin(), vtextures.end()) > 0)
     return write_OFF_with_or_without_fcolors(os, sm, np.vertex_texture_map(vtextures));
   else
     return write_OFF_with_or_without_fcolors(os, sm, np);
@@ -283,10 +291,16 @@ bool write_OFF_with_or_without_vcolors(std::ostream& os,
   typedef CGAL::Color                                                    Color;
 
   typename Mesh::template Property_map<Vertex_index, Color> vcolors;
-  bool has_vcolors;
-  std::tie(vcolors, has_vcolors) = sm.template property_map<Vertex_index, CGAL::Color>("v:color");
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+  const bool has_vcolors = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
+  bool has_internal_vcolors;
 
-  if(has_vcolors && !std::distance(vcolors.begin(), vcolors.end()) > 0)
+
+  std::tie(vcolors, has_internal_vcolors) = sm.template property_map<Vertex_index, CGAL::Color>("v:color");
+
+  if(!has_vcolors && has_internal_vcolors && !std::distance(vcolors.begin(), vcolors.end()) > 0)
     return write_OFF_with_or_without_vtextures(os, sm, np.vertex_color_map(vcolors));
   else
     return write_OFF_with_or_without_vtextures(os, sm, np);
@@ -304,10 +318,14 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
   typedef typename K::Vector_3                                           Normal;
 
   typename Mesh::template Property_map<Vertex_index, Normal> vnormals;
-  bool has_vnormals;
-  std::tie(vnormals, has_vnormals) = sm.template property_map<Vertex_index, Normal>("v:normal");
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+  const bool has_vnormals = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
+  bool has_internal_vnormals;
+  std::tie(vnormals, has_internal_vnormals) = sm.template property_map<Vertex_index, Normal>("v:normal");
 
-  if(has_vnormals && !std::distance(vnormals.begin(), vnormals.end()) > 0)
+  if(!has_vnormals && has_internal_vnormals && !std::distance(vnormals.begin(), vnormals.end()) > 0)
     return write_OFF_with_or_without_vcolors(os, sm, np.vertex_normal_map(vnormals));
   else
     return write_OFF_with_or_without_vcolors(os, sm, np);
@@ -329,12 +347,14 @@ bool write_OFF(std::ostream& os,
                const Surface_mesh<Point>& sm,
                const CGAL_BGL_NP_CLASS& np)
 {
-  // Just to discard any excess named parameters
-  typename CGAL::GetVertexPointMap<Surface_mesh<Point>, CGAL_BGL_NP_CLASS>::const_type
-      vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                         get_const_property_map(CGAL::vertex_point, sm));
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
 
-  return IO::internal::write_OFF_with_or_without_vnormals(os, sm, np.vertex_point_map(vpm));
+  const bool has_vpoints= !(is_default_parameter(get_parameter(np, internal_np::vertex_point)));
+  if(has_vpoints)
+    return IO::internal::write_OFF_with_or_without_vnormals(os, sm, np);
+  return IO::internal::write_OFF_with_or_without_vnormals(os, sm, np.vertex_point_map(get_const_property_map(CGAL::vertex_point, sm)));
 }
 
 } // namespace CGAL
