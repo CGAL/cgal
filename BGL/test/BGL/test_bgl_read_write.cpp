@@ -761,7 +761,7 @@ void test_bgl_VTP<Polyhedron>(const char* filename,
 int main(int argc, char** argv)
 {
   // OFF
-
+  /*
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
   test_bgl_OFF<Polyhedron>(off_file);
   test_bgl_OFF<SM>(off_file);
@@ -769,7 +769,6 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh>(off_file);
 #endif
-  return 0; //tmp
   // OBJ
   const char* obj_file = (argc > 2) ? argv[2] : "data/sphere.obj";
   test_bgl_OBJ<Polyhedron>(obj_file);
@@ -805,9 +804,8 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_GOCAD<OMesh>(gocad_file);
 #endif
-
+*/
   // VTP
-  /*
 #ifdef CGAL_USE_VTK
   const char* vtp_file = (argc > 6) ? argv[6] : "data/prim.off"; // @fixme put a VTP file
 
@@ -819,6 +817,5 @@ int main(int argc, char** argv)
   test_bgl_VTP<SM>(vtp_file, true);
   test_bgl_VTP<LCC>(vtp_file, true);
 #endif
-*/
   return EXIT_SUCCESS;
 }
