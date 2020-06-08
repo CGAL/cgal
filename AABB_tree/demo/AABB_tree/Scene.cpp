@@ -45,7 +45,7 @@ Scene::Scene()
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
-    ready_to_cut = false;
+    ready_to_cut = true;
     are_buffers_initialized = false;
     gl_init = false;
 
@@ -518,6 +518,7 @@ void Scene::changed()
         compute_elements(_UNSIGNED);
     else
         compute_elements(_SIGNED);
+    ready_to_cut=false;
     are_buffers_initialized = false;
 
 }
@@ -1225,12 +1226,16 @@ void Scene::cut_segment_plane()
     m_cut_plane = CUT_SEGMENTS;
     changed();
 }
+void Scene::updateCutPlane()
+{
+  ready_to_cut = true;
+       QTimer::singleShot(0,this,SLOT(cutting_plane()));
+}
 
 void Scene::cutting_plane(bool override)
 {
     if(ready_to_cut || override)
     {
-        ready_to_cut = false;
         switch( m_cut_plane )
         {
         case UNSIGNED_FACETS:
@@ -1303,13 +1308,13 @@ void Scene::refine_loop()
 
 void Scene::activate_cutting_plane()
 {
-    connect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
+    connect(m_frame, SIGNAL(modified()), this, SLOT(updateCutPlane()));
     m_view_plane = true;
 }
 
 void Scene::deactivate_cutting_plane()
 {
-    disconnect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
+    disconnect(m_frame, SIGNAL(modified()), this, SLOT(updateCutPlane()));
     m_view_plane = false;
 }
 void Scene::initGL()
@@ -1324,11 +1329,4 @@ void Scene::initGL()
     gl->glGenTextures(1, &textureId);
     compile_shaders();
     gl_init = true;
-}
-
-void Scene::timerEvent(QTimerEvent *)
-{
-    if(manipulatedFrame()->isSpinning())
-        set_fast_distance(true);
-    ready_to_cut = true;
 }
