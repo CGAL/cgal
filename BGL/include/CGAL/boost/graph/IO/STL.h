@@ -133,6 +133,11 @@ bool read_STL(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
   std::ifstream is(fname);
+  if(!is)
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
   return read_STL(is, g, np, verbose);
 }
 
@@ -229,7 +234,7 @@ bool write_STL(std::ostream& os,
   }
   else
   {
-    os << "solid\n";
+    os << "solid"<<std::endl;;
     for(const face_descriptor f : faces(g))
     {
       halfedge_descriptor h = halfedge(f, g);
@@ -238,13 +243,13 @@ bool write_STL(std::ostream& os,
       Point_ref r = get(vpm, source(h, g));
       Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
 
-      os << "facet normal " << n << "\nouter loop\n";
-      os << "vertex " << p << "\n";
-      os << "vertex " << q << "\n";
-      os << "vertex " << r << "\n";
-      os << "endloop\nendfacet\n";
+      os << "facet normal " << n << "\nouter loop"<<std::endl;;
+      os << "vertex " << p <<std::endl;
+      os << "vertex " << q <<std::endl;
+      os << "vertex " << r <<std::endl;
+      os << "endloop\nendfacet"<<std::endl;
     }
-    os << "endsolid\n";
+    os << "endsolid"<<std::endl;;
   }
 
   return os.good();

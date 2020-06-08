@@ -205,7 +205,7 @@ namespace CGAL {
         import_from_halfedge_graph(heg, default_point_converter,
                                    origin_to_copy, copy_to_origin);
       }
-
+      using Base::clear;
     };
 
 } // namespace CGAL

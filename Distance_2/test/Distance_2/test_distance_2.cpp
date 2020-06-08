@@ -73,7 +73,7 @@ struct Test {
   void check_squared_distance(const O1& o1, const O2& o2, const FT& result)
   {
         assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
-        assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o2, o1), rseult));
   }
 
 

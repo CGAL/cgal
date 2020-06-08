@@ -22,6 +22,7 @@
 #include <iostream>
 #include <fstream>
 
+
 typedef CGAL::Simple_cartesian<double>                                                   Kernel;
 typedef Kernel::Point_2                                                                  Point_2;
 typedef Kernel::Point_3                                                                  Point;
@@ -42,6 +43,19 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>                          
 
 #endif
 
+const double epsilon=1e-6;
+template < typename Type >
+bool approx_equal_nt(const Type &t1, const Type &t2)
+{
+      if (t1 == t2)
+              return true;
+      if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < std::abs(t1)*epsilon)
+              return true;
+      std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
+      return false;
+}
+
+
 template <typename Mesh, typename VPM1, typename VPM2, typename VIM1, typename VIM2>
 bool are_equal_meshes(const Mesh& fg1, const VPM1 vpm1, const Mesh& fg2, const VPM2 vpm2,
                       const VIM1 vim1, const VIM2 vim2)
@@ -53,20 +67,23 @@ bool are_equal_meshes(const Mesh& fg1, const VPM1 vpm1, const Mesh& fg2, const V
      num_edges(fg1) != num_edges(fg2) ||
      num_faces(fg1) != num_faces(fg2))
     return false;
-
   std::vector<P> fg1_points, fg2_points;
   for(auto v : vertices(fg1))
+  {
     fg1_points.push_back(get(vpm1, v));
+  }
 
   for(auto v : vertices(fg2))
     fg2_points.push_back(get(vpm2, v));
 
   for(std::size_t id = 0; id < fg1_points.size(); ++id)
   {
-    if(CGAL::squared_distance(fg1_points[id], fg2_points[id]) > 1e-6)
-    {
+    P p1 = fg1_points[id];
+    P p2 = fg2_points[id];
+    if (! (approx_equal_nt(p1.x(), p2.x())
+           && approx_equal_nt(p1.y(), p2.y())
+           && approx_equal_nt(p1.z(), p2.z())))
       return false;
-    }
   }
   fg1_points.clear();
   fg1_points.shrink_to_fit();
@@ -394,7 +411,7 @@ void test_bgl_OBJ(const std::string filename)
 
   ok = CGAL::read_OBJ("data/sphere.obj", fg, CGAL::parameters::vertex_normal_map(vnm));
   assert(ok);
-  assert(num_vertices(fg) == 434 && num_faces(fg) == 864);
+  assert(num_vertices(fg) == 162 && num_faces(fg) == 320);
 
   for(const auto v : vertices(fg))
     assert(get(vnm, v) != CGAL::NULL_VECTOR);
@@ -525,7 +542,7 @@ void test_bgl_PLY(const std::string filename,
     std::ifstream is_rpm("tmp.ply");
     if(binary)
       CGAL::set_mode(is_rpm, CGAL::IO::BINARY);
-    ok = CGAL::read_PLY(is_c, fg, CGAL::parameters::vertex_color_map(vcm2)
+    ok = CGAL::read_PLY(is_rpm, fg2, CGAL::parameters::vertex_color_map(vcm2)
                                                    .face_color_map(fcm2));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
@@ -635,7 +652,7 @@ void test_bgl_STL(const std::string filename)
   {
     ok = CGAL::write_polygon_mesh("tmp.stl", fg, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
-
+    cpoints.clear();
     Mesh fg2;
     ok = CGAL::read_polygon_mesh("tmp.stl", fg2, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
@@ -654,6 +671,8 @@ void test_bgl_GOCAD(const char* filename)
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
+  is.seekg(0);
+  fg.clear();
   clear(fg);
   std::pair<std::string, std::string> name_and_color;
   ok = CGAL::read_GOCAD(is, name_and_color, fg);
@@ -705,8 +724,8 @@ void test_bgl_GOCAD(const char* filename)
     ok = CGAL::read_GOCAD(is, cnn, fg2, CGAL::parameters::vertex_point_map(vpm2));
     assert(ok);
     assert(cnn.second.empty());
-    assert(num_vertices(fg2) == 4);
-    assert(num_faces(fg2) == 4);
+    assert(num_vertices(fg2) == 12491);
+    assert(num_faces(fg2) == 24191);
   }
 
   // @todo test wrong inputs (see tests of other formats)
@@ -768,7 +787,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh>(off_file);
 #endif
-*/
+
   // OBJ
   const char* obj_file = (argc > 2) ? argv[2] : "data/sphere.obj";
   test_bgl_OBJ<Polyhedron>(obj_file);
@@ -795,12 +814,12 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_STL<OMesh>(stl_file);
 #endif
-
+*/
   // GOCAD
   const char* gocad_file = (argc > 5) ? argv[5] : "data/2016206_MHT_surface.ts";
   test_bgl_GOCAD<Polyhedron>(gocad_file);
   test_bgl_GOCAD<SM>(gocad_file);
-  test_bgl_GOCAD<LCC>(gocad_file);
+ test_bgl_GOCAD<LCC>(gocad_file);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_GOCAD<OMesh>(gocad_file);
 #endif

@@ -43,6 +43,11 @@ bool read_GOCAD(std::istream& is,
                 const CGAL_BGL_NP_CLASS&,
                 bool verbose = true)
 {
+  if(!is)
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
   typedef typename boost::range_value<PointRange>::type     Point;
   typedef typename boost::range_value<PolygonRange>::type   Poly;
 
