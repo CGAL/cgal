@@ -45,7 +45,6 @@ Scene::Scene()
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
-    startTimer(0);
     ready_to_cut = false;
     are_buffers_initialized = false;
     gl_init = false;
