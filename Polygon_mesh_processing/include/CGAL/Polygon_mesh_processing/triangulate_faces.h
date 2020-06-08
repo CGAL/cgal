@@ -31,11 +31,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -305,7 +301,7 @@ public:
 
         // Euler::fill_hole(h0, pmesh);
         face_descriptor new_face = add_face(pmesh);
-        BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(h0, pmesh)) {
+        for (halfedge_descriptor hd : CGAL::halfedges_around_face(h0, pmesh)) {
           set_face(hd, new_face, pmesh);
         }
         set_halfedge(new_face, h0, pmesh);
@@ -583,105 +579,6 @@ bool triangulate_faces(PolygonMesh& pmesh)
   return triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
-/// \cond SKIP_IN_MANUAL
-template<typename GeomTraits>
-bool is_planar_2(
-  const std::vector<typename GeomTraits::Point_3>& polyline_3d,
-  const typename GeomTraits::Plane_3& fitted_plane,
-  GeomTraits traits) {
-
-  // Typedefs.
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename GeomTraits::Vector_3 Vector_3;
-  typedef typename GeomTraits::Compute_squared_length_3 Squared_length_3;
-  typedef typename GeomTraits::Compute_squared_distance_3 Squared_distance_3;
-  typedef typename GeomTraits::Compute_scalar_product_3 Scalar_product_3;
-  typedef typename GeomTraits::Collinear_3 Collinear_3;
-
-  const Squared_length_3 squared_length_3 = traits.compute_squared_length_3_object();
-  const Squared_distance_3 squared_distance_3 = traits.compute_squared_distance_3_object();
-  const Scalar_product_3 scalar_product_3 = traits.compute_scalar_product_3_object();
-  const Collinear_3 collinear_3 = traits.collinear_3_object();
-
-  CGAL_precondition(
-    polyline_3d.size() >= 3);
-
-  // Distance criteria.
-
-  // Tolerance.
-  const FT dist_tol = FT(1) / FT(100000);
-
-  // Compute max distance.
-  FT max_dist = -FT(1);
-  for (std::size_t i = 0; i < polyline_3d.size(); ++i) {
-    const Point_3& p = polyline_3d[i];
-    const FT dist = static_cast<FT>(
-      CGAL::sqrt(CGAL::to_double(squared_distance_3(p, fitted_plane))));
-    max_dist = (CGAL::max)(dist, max_dist);
-  }
-  CGAL_assertion(max_dist != -FT(1));
-
-  // Angle criteria.
-
-  // Tolerance.
-  const FT angle_tol = FT(5); // degrees
-  const FT normal_tol = static_cast<FT>(
-    std::cos(CGAL::to_double(
-      (angle_tol * static_cast<FT>(CGAL_PI)) / FT(180))));
-
-  // Compute fitted plane normal.
-  Vector_3 normal = fitted_plane.orthogonal_vector();
-  FT normal_length = static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_length_3(normal))));
-  CGAL_assertion(normal_length > FT(0));
-  const Vector_3 ref_normal = normal / normal_length;
-
-  // Compute average normal of the hole.
-  FT x = FT(0), y = FT(0), z = FT(0);
-  std::size_t num_normals = 0;
-  const Point_3& ref_point = polyline_3d[0];
-  for (std::size_t i = 1; i < polyline_3d.size() - 1; ++i) {
-    const std::size_t ip = i + 1;
-
-    const Point_3& p1 = ref_point;
-    const Point_3& p2 = polyline_3d[i];
-    const Point_3& p3 = polyline_3d[ip];
-
-    // Skip in case we have collinear points.
-    if (collinear_3(p1, p2, p3))
-      continue;
-
-    normal = CGAL::normal(p1, p2, p3);
-    normal_length = static_cast<FT>(
-      CGAL::sqrt(CGAL::to_double(squared_length_3(normal))));
-    CGAL_assertion(normal_length > FT(0));
-    normal /= normal_length;
-
-    x += normal.x(); y += normal.y(); z += normal.z();
-    ++num_normals;
-  }
-  CGAL_assertion(num_normals >= 1);
-  x /= static_cast<FT>(num_normals);
-  y /= static_cast<FT>(num_normals);
-  z /= static_cast<FT>(num_normals);
-
-  normal = Vector_3(x, y, z);
-  normal_length = static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_length_3(normal))));
-  const Vector_3 avg_normal = normal / normal_length;
-
-  const FT cos_value =
-    CGAL::abs(scalar_product_3(avg_normal, ref_normal));
-
-  // Check planarity.
-  const bool is_planar = (
-    (  max_dist <= dist_tol ) &&
-    ( cos_value >= normal_tol ));
-  return is_planar;
-}
-/// \endcond
-
 /*!
   \ingroup hole_filling_grp
   \brief triangulates a planar hole in a polygon mesh.
@@ -723,74 +620,93 @@ OutputIterator triangulate_hole_with_cdt_2(
   OutputIterator out,
   const NamedParameters& np) {
 
-  typedef Halfedge_around_face_circulator<PolygonMesh> Hedge_around_face_circulator;
+  #ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
+
+  return triangulate_hole(
+    pmesh, border_halfedge, out, np);
+
+  #else
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
+  const Traits traits = parameters::choose_parameter(
+    parameters::get_parameter(np, internal_np::geom_traits), Traits());
+
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Point_3 Point_3;
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Collinear_3 Collinear_3;
+  typedef typename Traits::Compute_squared_length_3 Squared_length_3;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPM;
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Plane_3 Plane_3;
-
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-
   const VPM vpm = parameters::choose_parameter(
     parameters::get_parameter(np, internal_np::vertex_point),
     get_const_property_map(boost::vertex_point, pmesh));
-  const Kernel traits = parameters::choose_parameter(
-    parameters::get_parameter(np, internal_np::geom_traits), Kernel());
 
+  typedef Halfedge_around_face_circulator<PolygonMesh> Hedge_around_face_circulator;
   Hedge_around_face_circulator circ(border_halfedge, pmesh);
   Hedge_around_face_circulator done(circ);
 
+  // Getting the hole boundary.
   std::vector<Point_3> polyline_3d;
   do {
     polyline_3d.push_back(get(vpm, target(*circ, pmesh)));
   } while (++circ != done);
+  CGAL_assertion(
+    polyline_3d.size() >= 3);
 
-  // Plane fitting.
-  typedef Exact_predicates_inexact_constructions_kernel Local_kernel;
-  typedef typename Local_kernel::FT Local_FT;
-  typedef typename Local_kernel::Point_3 Local_point_3;
-  typedef typename Local_kernel::Plane_3 Local_plane_3;
-  typedef Cartesian_converter<Kernel, Local_kernel> To_local_converter;
+  // Compute an average normal of the hole face.
+  const Squared_length_3 squared_length_3 =
+    traits.compute_squared_length_3_object();
+  const Collinear_3 collinear_3 =
+    traits.collinear_3_object();
 
-  const To_local_converter to_local_converter;
-  std::vector<Local_point_3> points;
-  points.reserve(polyline_3d.size());
-  for (std::size_t i = 0; i < polyline_3d.size(); ++i)
-    points.push_back(to_local_converter(polyline_3d[i]));
+  FT x = FT(0), y = FT(0), z = FT(0);
+  std::size_t num_normals = 0;
+  const Point_3& ref_point = polyline_3d[0];
+  for (std::size_t i = 1; i < polyline_3d.size() - 1; ++i) {
+    const std::size_t ip = i + 1;
 
-  Local_plane_3 fitted_plane;
-  Local_point_3 fitted_centroid;
-  linear_least_squares_fitting_3(
-    points.begin(), points.end(), fitted_plane, fitted_centroid,
-    CGAL::Dimension_tag<0>(), Local_kernel(),
-    CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
+    const Point_3& p1 = ref_point; // 3 points, which form a triangle
+    const Point_3& p2 = polyline_3d[i];
+    const Point_3& p3 = polyline_3d[ip];
 
-  const Plane_3 plane = Plane_3(
-    static_cast<FT>(fitted_plane.a()),
-    static_cast<FT>(fitted_plane.b()),
-    static_cast<FT>(fitted_plane.c()),
-    static_cast<FT>(fitted_plane.d()));
+    // Skip in case we have collinear points.
+    if (collinear_3(p1, p2, p3))
+      continue;
 
-  // Checking simplicity and planarity.
-  std::vector<Point_2> polyline_2d;
-  polyline_2d.reserve(polyline_3d.size());
-  for (std::size_t i = 0; i < polyline_3d.size(); ++i)
-    polyline_2d.push_back(plane.to_2d(polyline_3d[i]));
+    // Computing the normal of a triangle.
+    Vector_3 tri_normal = CGAL::normal(p1, p2, p3);
+    const FT tri_normal_length = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(squared_length_3(tri_normal))));
+    CGAL_assertion(tri_normal_length > FT(0));
+    tri_normal /= tri_normal_length;
 
+    x += tri_normal.x(); y += tri_normal.y(); z += tri_normal.z();
+    ++num_normals;
+  }
+
+  CGAL_assertion(num_normals >= 1);
+  x /= static_cast<FT>(num_normals);
+  y /= static_cast<FT>(num_normals);
+  z /= static_cast<FT>(num_normals);
+
+  // Setting the final normal.
+  const Vector_3 normal = Vector_3(x, y, z);
+  const FT normal_length = static_cast<FT>(
+    CGAL::sqrt(CGAL::to_double(squared_length_3(normal))));
+  const Vector_3 avg_normal = normal / normal_length;
+
+  // Checking the hole simplicity.
+  typedef Triangulation_2_projection_traits_3<Traits> P_traits;
+  const P_traits p_traits(avg_normal);
   const bool is_simple =
-    is_simple_2(polyline_2d.begin(), polyline_2d.end(), traits);
-  const bool is_planar =
-    is_planar_2(polyline_3d, plane, traits);
-
-  const bool is_planar_hole = is_simple && is_planar;
-  if (!is_planar_hole)
+    is_simple_2(polyline_3d.begin(), polyline_3d.end(), p_traits);
+  if (!is_simple)
     return triangulate_hole(
       pmesh, border_halfedge, out, np);
 
+  // Adding the new face.
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   face_descriptor new_face = add_face(pmesh);
   set_halfedge(new_face, border_halfedge, pmesh);
   do {
@@ -799,10 +715,12 @@ OutputIterator triangulate_hole_with_cdt_2(
 
   // Triangulating.
   const bool use_cdt = true;
-  internal::Triangulate_modifier<PolygonMesh, VPM, Kernel> modifier(vpm, traits);
+  internal::Triangulate_modifier<PolygonMesh, VPM, Traits> modifier(vpm, traits);
   const bool success_with_cdt_2 =
     modifier.triangulate_face(new_face, pmesh, use_cdt, out);
   CGAL_assertion(success_with_cdt_2);
+
+  #endif
   return out;
 }
 

@@ -4,8 +4,8 @@
 #include <cassert>
 #include <string>
 
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -22,7 +22,7 @@ void detect_borders(
 
   borders.clear();
   std::set<Halfedge_handle> border_map;
-  BOOST_FOREACH(Halfedge_handle h, halfedges(pmesh)) {
+  for (Halfedge_handle h : halfedges(pmesh)) {
     if (
       face(h, pmesh) == boost::graph_traits<PolygonMesh>::null_face() &&
       border_map.find(h) == border_map.end()) {
@@ -60,14 +60,14 @@ void test_triangulate_hole_with_cdt_2(
   in.close();
   std::cout << "* finished reading the file" << std::endl;
 
-  // Detecting hole borders.
+  // Detecting the hole borders.
   std::vector<Halfedge_handle> borders;
   detect_borders(pmesh, borders);
   assert(borders.size() == 2);
 
-  // Triangulating holes.
+  // Triangulating the holes.
   std::vector<Face_handle> patch_faces;
-  BOOST_FOREACH(Halfedge_handle h, borders) {
+  for (Halfedge_handle h : borders) {
     patch_faces.clear();
     CGAL::Polygon_mesh_processing::triangulate_hole_with_cdt_2(
       pmesh,

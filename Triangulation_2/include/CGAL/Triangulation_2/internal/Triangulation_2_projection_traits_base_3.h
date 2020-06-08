@@ -281,6 +281,33 @@ public:
   }
 }; // end class Compare_along_axis
 
+template <class Traits>
+class Less_xy_along_axis
+{
+  // private members
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  Vector_3 base1, base2;
+public:
+  Less_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
+  {
+    CGAL_PROFILER("Construct Less_xy_along_axis")
+    CGAL_TIME_PROFILER("Construct Less_xy_along_axis")
+  }
+
+  typedef bool result_type;
+
+  bool operator() (const Point &p, const Point &q) const {
+
+    Compare_along_axis<Traits> cx(base1);
+    Comparison_result crx = cx(p, q);
+    if (crx == SMALLER) { return true; }
+    if (crx == LARGER) { return false; }
+    Less_along_axis<Traits> ly(base2);
+    return ly(p, q);
+  }
+}; // end class Less_xy_along_axis
+
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
 
@@ -345,6 +372,8 @@ public:
     Less_along_axis<Self>                                    Less_x_2;
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Less_along_axis<Self>                                    Less_y_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Less_xy_along_axis<Self>                                 Less_xy_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Projected_orientation_with_normal_3<Self>                Orientation_2;
@@ -383,6 +412,12 @@ public:
   less_y_2_object() const
   {
     return Less_y_2(this->base2());
+  }
+
+  Less_xy_2
+  less_xy_2_object() const
+  {
+    return Less_xy_2(this->base1(), this->base2());
   }
 
   Compare_x_2
