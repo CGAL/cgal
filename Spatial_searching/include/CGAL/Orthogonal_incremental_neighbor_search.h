@@ -290,7 +290,7 @@ namespace CGAL {
         bool next_neighbour_found;
         if (!(PriorityQueue.empty()))
         {
-          rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
+          rd = std::get<1>(*PriorityQueue.top());
           next_neighbour_found = (search_furthest ?
             multiplication_factor*rd < Item_PriorityQueue.top()->second
             : multiplication_factor*rd > Item_PriorityQueue.top()->second);
@@ -325,7 +325,7 @@ namespace CGAL {
         bool next_neighbour_found;
         if (!(PriorityQueue.empty()))
         {
-          rd = CGAL::cpp11::get<1>(*PriorityQueue.top());
+          rd = std::get<1>(*PriorityQueue.top());
           next_neighbour_found = (search_furthest ?
             multiplication_factor*rd < Item_PriorityQueue.top()->second
             : multiplication_factor*rd > Item_PriorityQueue.top()->second);
