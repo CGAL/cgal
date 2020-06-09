@@ -23,7 +23,7 @@
 #include <memory>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Euclidean_distance.h>
-#include <CGAL/tuple.h>
+#include <tuple> // std::get for tuple
 
 namespace CGAL {
 
