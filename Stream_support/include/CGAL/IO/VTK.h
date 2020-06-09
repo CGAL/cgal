@@ -109,7 +109,8 @@ bool read_VTP(const char* fname,
       vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
 
   data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
-
+  if (obs->GetError())
+    return false;
   return  IO::internal::vtkPointSet_to_polygon_soup(data, points, polygons, np);
 }
 

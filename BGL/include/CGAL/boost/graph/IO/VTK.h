@@ -144,7 +144,8 @@ bool read_VTP(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
     vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
 
   data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
-
+  if (obs->GetError())
+    return false;
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 

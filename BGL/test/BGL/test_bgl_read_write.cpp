@@ -571,6 +571,8 @@ void test_bgl_PLY(const std::string filename,
   assert(!ok);
   ok = CGAL::read_PLY("data/invalid_nv.ply", fg); // broken formatting
   assert(!ok);
+  ok = CGAL::read_PLY("data/binary_cut.ply", fg); // broken binary
+  assert(!ok);
   ok = CGAL::read_PLY("data/cube.off", fg);
   assert(!ok);
   ok = CGAL::read_PLY("data/pig.stl", fg);
@@ -826,17 +828,30 @@ void test_bgl_VTP(const char* filename, // @fixme not finished
   }
 
   // test wrong inputs
+  std::cerr<<"Error text is expected to follow."<<std::endl;
   ok = CGAL::read_VTP("data/mesh_that_doesnt_exist.vtp", fg);
   assert(!ok);
-  //@todo misisng tests here
+  ok = CGAL::read_VTP("data/invalid_cut.vtp", fg); // cut in half
   assert(!ok);
+  ok = CGAL::read_VTP("data/invalid_header.vtp", fg); // missing header
+  assert(!ok);
+  ok = CGAL::read_VTP("data/wrong_nb_points.vtp", fg); // wrong number of points
+  assert(!ok);
+  ok = CGAL::read_VTP("data/sphere.obj", fg);
+  assert(!ok);
+  ok = CGAL::read_VTP("data/full.off", fg);
+  assert(!ok);
+  ok = CGAL::read_VTP("corrupted_bin.vtp", fg);
+  assert(!ok);
+  std::cerr<<"No more error text from here."<<std::endl;
 }
 
 
 #endif // CGAL_USE_VTK
 
 int main(int argc, char** argv)
-{/*
+{
+
   // OFF
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
   test_bgl_OFF<Polyhedron>(off_file);
@@ -854,6 +869,8 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OBJ<OMesh>(obj_file);
 #endif
+
+
   // PLY
   const char* ply_file_ascii = (argc > 3) ? argv[3] : "data/colored_tetra.ply";
   test_bgl_PLY<Polyhedron>(ply_file_ascii, false);
@@ -871,7 +888,6 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_STL<OMesh>(stl_file);
 #endif
-*/
 
   // GOCAD
   const char* gocad_file = (argc > 5) ? argv[5] : "data/2016206_MHT_surface.ts";
@@ -881,7 +897,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_GOCAD<OMesh>(gocad_file);
 #endif
-  return 0;
+
   // VTP
 #ifdef CGAL_USE_VTK
   const char* vtp_file = (argc > 6) ? argv[6] : "data/bones.vtp";
