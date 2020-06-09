@@ -140,7 +140,10 @@ public:
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
       if(f == boost::graph_traits<FaceGraph>::null_face())
+      {
+        clear(g);
         return false; // @fixme clear the graph?
+      }
 
       if(has_face_colors)
         put(fcm, f, face_colors[i]);

@@ -347,6 +347,7 @@ void test_bgl_OFF(const char* filename)
         assert(get(fcm2, f) != CGAL::Color());
     }
   }
+  //@todo test multi objects in a single file
 
   // test wrong inputs
   std::cerr<<"Error text is expected to follow."<<std::endl;
@@ -397,65 +398,49 @@ void test_bgl_OBJ(const std::string filename)
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
-
   // Test NPs
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
 
   clear(fg);
-  VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
-
-  ok = CGAL::read_OBJ("data/sphere.obj", fg, CGAL::parameters::vertex_normal_map(vnm));
+  ok = CGAL::read_OBJ("data/sphere.obj", fg);
   assert(ok);
   assert(num_vertices(fg) == 162 && num_faces(fg) == 320);
-
-  for(const auto v : vertices(fg))
-    assert(get(vnm, v) != CGAL::NULL_VECTOR);
 
   // write with OBJ
   {
     std::ofstream os("tmp.obj");
-    ok = CGAL::write_OBJ("tmp.obj", fg, CGAL::parameters::vertex_normal_map(vnm));
+    ok = CGAL::write_OBJ("tmp.obj", fg);
     assert(ok);
 
     Mesh fg2;
-    VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
-
-    ok = CGAL::read_polygon_mesh("tmp.obj", fg2, CGAL::parameters::vertex_normal_map(vnm2));
+    ok = CGAL::read_polygon_mesh("tmp.obj", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
-
-    for(const auto v : vertices(fg2))
-      assert(get(vnm2, v) != CGAL::NULL_VECTOR);
   }
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.obj", fg, CGAL::parameters::vertex_normal_map(vnm));
+    ok = CGAL::write_polygon_mesh("tmp.obj", fg);
     assert(ok);
 
     Mesh fg2;
-    VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
 
-    ok = CGAL::read_polygon_mesh("tmp.obj", fg2, CGAL::parameters::vertex_normal_map(vnm2));
+    ok = CGAL::read_polygon_mesh("tmp.obj", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
-
-    for(const auto v : vertices(fg2))
-      assert(get(vnm2, v) != CGAL::NULL_VECTOR);
   }
 
   // test wrong inputs
+  std::cerr<<"Error text is expected to follow."<<std::endl;
   ok = CGAL::read_OBJ("data/mesh_that_doesnt_exist.obj", fg);
   assert(!ok);
   ok = CGAL::read_OBJ("data/invalid_cut.obj", fg); // invalid vertex ids
-  assert(!ok);
-  VertexNormalMap vnm3 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
-  ok = CGAL::read_OBJ("data/invalid_nv.obj", fg, CGAL::parameters::vertex_normal_map(vnm3)); // not enough nv
   assert(!ok);
   ok = CGAL::read_OBJ("data/genus3.off", fg); // wrong extension
   assert(!ok);
   ok = CGAL::read_OBJ("data/pig.stl", fg);
   assert(!ok);
+  std::cerr<<"No more error text from here."<<std::endl;
 }
 
 template<class Mesh>
@@ -869,7 +854,6 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OBJ<OMesh>(obj_file);
 #endif
-
 
   // PLY
   const char* ply_file_ascii = (argc > 3) ? argv[3] : "data/colored_tetra.ply";

@@ -45,7 +45,8 @@ bool read_GOCAD(std::istream& is,
 {
   if(!is)
   {
-    std::cerr<<"File doesn't exist."<<std::endl;
+    if(verbose)
+      std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
   typedef typename boost::range_value<PointRange>::type     Point;
@@ -99,7 +100,7 @@ bool read_GOCAD(std::istream& is,
     if(line.find("GOCAD ") != std::string::npos) //the whitespace matters, it is used to define a gocad type, but not in the coord system keyword, for example.
       nb_gocad++;
 
-    if((line[0] == 'V') || (line[0] == 'P'))
+    if((line.find("VRTX") != std::string::npos))
     {
       int i;
       if(!(iss >> s >> i >> p))

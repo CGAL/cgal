@@ -61,7 +61,8 @@ bool read_OFF(std::istream& is,
   CGAL_USE(verbose);
 
   if(!is.good()){
-    std::cerr<<"File doesn't exist."<<std::endl;
+    if(verbose)
+      std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
 

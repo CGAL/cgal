@@ -35,16 +35,18 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator>
+template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& faces,
-              VertexNormalOutputIterator vn_out,
+              VertexNormalOutputIterator,
+              VertexTextureOutputIterator,
               bool verbose = true)
 {
   if(!is.good())
   {
-    std::cerr<<"File doesn't exist"<<std::endl;
+    if(verbose)
+      std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
   typedef typename boost::range_value<PointRange>::type                               Point;
@@ -58,6 +60,7 @@ bool read_OBJ(std::istream& is,
   Point p;
 
   std::string line;
+  bool tex_found(false), norm_found(false);
   while(getline(is, line))
   {
     if(line.empty())
@@ -80,21 +83,11 @@ bool read_OBJ(std::istream& is,
     }
     else if(s == "vt")
     {
-      // @todo vertex textures
+      tex_found = true;
     }
     else if(s == "vn")
     {
-      double nx, ny, nz; // @fixme double?
-      if(iss >> nx >> ny >> nz)
-      {
-        *vn_out++ = Normal(nx, ny, nz); // @fixme check that every vertex has a normal?
-      }
-      else
-      {
-        if(verbose)
-          std::cerr << "error while reading OBJ vertex normal." << std::endl;
-        return false;
-      }
+      norm_found = true;
     }
     else if(s == "f")
     {
@@ -129,6 +122,10 @@ bool read_OBJ(std::istream& is,
      continue;
     }
   }
+  if(norm_found && verbose)
+    std::cout<<"WARNING: normals were found in this file, but were discarded."<<std::endl;
+  if(tex_found && verbose)
+    std::cout<<"WARNING: textures were found in this file, but were discarded."<<std::endl;
 
   if(maxi == -1 && mini == 1)
   {
@@ -150,21 +147,18 @@ bool read_OBJ(std::istream& is,
 } // namespace internal
 } // namespace IO
 
-// @todo could have point_map too (same for other readers)
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& faces,
-              const CGAL_BGL_NP_CLASS& np,
+              const CGAL_BGL_NP_CLASS&,
               bool verbose = true)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  return IO::internal::read_OBJ(is, points, faces,
-                                choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                verbose);
+  return IO::internal::read_OBJ(is, points, faces, CGAL::Emptyset_iterator(),
+                                CGAL::Emptyset_iterator(), verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

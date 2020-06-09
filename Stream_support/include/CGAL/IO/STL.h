@@ -37,11 +37,12 @@ bool read_STL(std::istream& is,
               PointRange& points,
               TriangleRange& facets,
               const CGAL_BGL_NP_CLASS& /*np*/, // might become useful one day for face normals
-              bool verbose = false)
+              bool verbose = true)
 {
   if(!is.good())
   {
-    std::cerr<<"File doesn't exist"<<std::endl;
+    if(verbose)
+      std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
 
