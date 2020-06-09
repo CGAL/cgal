@@ -56,9 +56,12 @@ bool read_GOCAD(std::istream& is,
   int offset = 0;
   std::string s;
   Point p;
-  bool vertices_read = false;
+  bool vertices_read = false,
+      end_read = false;
 
   std::string line;
+  std::size_t nb_gocad=1, //don't read the first one, it is optional anyway.
+      nb_end=0;
   while(std::getline(is, line))
   {
     if(line.empty())
@@ -69,30 +72,21 @@ bool read_GOCAD(std::istream& is,
       continue; // can't read anything on the line, whitespace only?
 
     if(s == "TFACE")
+    {
       break;
+    }
 
     std::string::size_type idx;
     if((idx = s.find("name")) != std::string::npos)
     {
-      // @fixme no reason that it should be "name:asd" and not "name : asd"
-      std::istringstream str(s.substr(idx + 5));
-      if(!(str >> name_and_color.first))
-      {
-        if(verbose)
-          std::cerr << "error while reading expected name." << std::endl;
-        return false;
-      }
+      std::size_t pos = s.find(":")+1;
+      name_and_color.first = s.substr(pos, s.length());
     }
 
     if((idx = s.find("color")) != std::string::npos)
     {
-      std::istringstream str(s.substr(idx + 6));
-      if(!(str >> name_and_color.second))
-      {
-        if(verbose)
-          std::cerr << "error while reading expected color." << std::endl;
-        return false;
-      }
+      std::size_t pos = s.find(":")+1;
+      name_and_color.second = s.substr(pos, s.length());
     }
   }
 
@@ -102,6 +96,9 @@ bool read_GOCAD(std::istream& is,
       continue;
 
     std::istringstream iss(line);
+    if(line.find("GOCAD ") != std::string::npos) //the whitespace matters, it is used to define a gocad type, but not in the coord system keyword, for example.
+      nb_gocad++;
+
     if((line[0] == 'V') || (line[0] == 'P'))
     {
       int i;
@@ -140,13 +137,15 @@ bool read_GOCAD(std::istream& is,
       new_face[2] = offset + k;
       polygons.push_back(new_face);
     }
-    else if(line[0] == 'E')
+    else if(line == "END")
     {
-      break;
+      end_read=true;
+      nb_end++;
     }
   }
-
-  return !is.bad();
+  if(is.eof())
+    is.clear(std::ios::goodbit);
+  return end_read && nb_gocad == nb_end && !is.bad();
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

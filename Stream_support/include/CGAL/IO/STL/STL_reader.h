@@ -117,7 +117,7 @@ bool parse_ASCII_STL(std::istream& is,
                      bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type           Point;
-
+  bool solid_found = false;
   if(verbose)
     std::cout << "Parsing ASCII file..." << std::endl;
 
@@ -148,6 +148,7 @@ bool parse_ASCII_STL(std::istream& is,
     else if(s == endsolid)
     {
       in_solid = false;
+      solid_found = true;
     }
   }
 
@@ -159,7 +160,7 @@ bool parse_ASCII_STL(std::istream& is,
     return false;
   }
 
-  return !in_solid;
+  return solid_found && !in_solid;
 }
 
 template <class PointRange, class TriangleRange>

@@ -97,6 +97,13 @@ bool read_VTP(const char* fname,
               PolygonRange& polygons,
               const NamedParameters& np)
 {
+  std::ifstream test(fname);
+  if(!test.good())
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
+  test.close();
   vtkSmartPointer<vtkPointSet> data;
   vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
       vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();

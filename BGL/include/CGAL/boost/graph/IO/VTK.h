@@ -132,6 +132,13 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_VTP(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
+  std::ifstream test(fname);
+  if(!test.good())
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
+  test.close();
   vtkSmartPointer<vtkPointSet> data;
   vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
     vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();

@@ -238,10 +238,10 @@ bool write_STL(std::ostream& os,
       Point_ref r = get(vpm, source(h, g));
       Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
 
-      os << "facet normal " << n << "\nouter loop"<<std::endl;;
-      os << "vertex " << p <<std::endl;
-      os << "vertex " << q <<std::endl;
-      os << "vertex " << r <<std::endl;
+      os << "facet normal " << n << "\nouter loop"<< "\n";
+      os << "vertex " << p << "\n";
+      os << "vertex " << q << "\n";
+      os << "vertex " << r << "\n";
       os << "endloop\nendfacet"<<std::endl;
     }
     os << "endsolid"<<std::endl;;

@@ -127,9 +127,6 @@ void test_bgl_OFF(const char* filename)
 
   // write with OFF
   {
-    ok = CGAL::write_OFF(std::cout, fg);
-    assert(ok);
-
     std::ofstream os("tmp.off");
     ok = CGAL::write_OFF(os, fg);
     assert(ok);
@@ -380,8 +377,6 @@ void test_bgl_OBJ(const std::string filename)
 
   // write with OBJ
   {
-    ok = CGAL::write_OBJ(std::cout, fg);
-
     std::ofstream os("tmp.obj");
     ok = CGAL::write_OBJ(os, fg);
     assert(ok);
@@ -452,11 +447,12 @@ void test_bgl_OBJ(const std::string filename)
   // test wrong inputs
   ok = CGAL::read_OBJ("data/mesh_that_doesnt_exist.obj", fg);
   assert(!ok);
-  ok = CGAL::read_OBJ("data/invalid_cut.obj", fg); // cut in half
+  ok = CGAL::read_OBJ("data/invalid_cut.obj", fg); // invalid vertex ids
   assert(!ok);
-  ok = CGAL::read_OBJ("data/invalid_nv.obj", fg); // broken formatting
+  VertexNormalMap vnm3 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
+  ok = CGAL::read_OBJ("data/invalid_nv.obj", fg, CGAL::parameters::vertex_normal_map(vnm3)); // not enough nv
   assert(!ok);
-  ok = CGAL::read_OBJ("data/genus3.obj", fg); // wrong extension
+  ok = CGAL::read_OBJ("data/genus3.off", fg); // wrong extension
   assert(!ok);
   ok = CGAL::read_OBJ("data/pig.stl", fg);
   assert(!ok);
@@ -477,9 +473,6 @@ void test_bgl_PLY(const std::string filename,
 
   // write with PLY
   {
-    ok = CGAL::write_PLY(std::cout, fg);
-    assert(ok);
-
     std::ofstream os("tmp.ply");
     if(binary)
       CGAL::set_mode(os, CGAL::IO::BINARY);
@@ -491,15 +484,7 @@ void test_bgl_PLY(const std::string filename,
     assert(ok);
 
     Mesh fg2;
-    if(binary)
-    {
-      ok = CGAL::read_PLY("tmp.ply", fg2);
-    }
-    else
-    {
-      std::ifstream is(filename);
-      ok = CGAL::read_PLY("tmp.ply", fg2);
-    }
+    ok = CGAL::read_PLY("tmp.ply", fg2);
 
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
@@ -630,14 +615,13 @@ void test_bgl_STL(const std::string filename)
   std::ifstream is(filename);
   ok = CGAL::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
   assert(ok);
-  assert(filename != "data/sphere.stl" || (num_vertices(fg) == 162 && num_faces(fg) == 320));
-  assert(filename != "data/sphere.stl" || cpoints.size() == 162);
+  assert(filename != "data/pig.stl" || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
+  assert(filename != "data/pig.stl" || cpoints.size() == 8642);
+
+
 
   // write with STL
   {
-    ok = CGAL::write_STL(std::cout, fg, CGAL::parameters::vertex_point_map(cvpm));
-    assert(ok);
-
     std::ofstream os("tmp.stl");
     ok = CGAL::write_STL(os, fg, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
@@ -659,7 +643,18 @@ void test_bgl_STL(const std::string filename)
     assert(num_vertices(fg) == num_vertices(fg2) && num_faces(fg) == num_faces(fg2));
   }
 
-  // @todo test wrong inputs (see tests of other formats)
+  std::cerr<<"Error text is expected to follow."<<std::endl;
+  ok = CGAL::read_STL("data/mesh_that_doesnt_exist.stl", fg);
+  assert(!ok);
+  ok = CGAL::read_STL("data/invalid_cut.stl", fg); // cut in half
+  assert(!ok);
+  ok = CGAL::read_STL("data/invalid_header.stl", fg); // missing solid
+  assert(!ok);
+  ok = CGAL::read_STL("data/sphere.obj", fg);
+  assert(!ok);
+  ok = CGAL::read_STL("data/full.off", fg);
+  assert(!ok);
+  std::cerr<<"No more error text from here."<<std::endl;
 }
 
 template<class Mesh>
@@ -681,9 +676,6 @@ void test_bgl_GOCAD(const char* filename)
 
   // write with GOCAD
   {
-    ok = CGAL::write_GOCAD(std::cout, fg);
-    assert(ok);
-
     std::ofstream os("tmp.ts");
     bool ok = CGAL::write_GOCAD(os, "tetrahedron", fg);
     assert(ok);
@@ -698,11 +690,11 @@ void test_bgl_GOCAD(const char* filename)
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.off", fg);
+    ok = CGAL::write_polygon_mesh("tmp.ts", fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.off", fg2);
+    ok = CGAL::read_polygon_mesh("tmp.ts", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -728,7 +720,19 @@ void test_bgl_GOCAD(const char* filename)
     assert(num_faces(fg2) == 24191);
   }
 
-  // @todo test wrong inputs (see tests of other formats)
+
+  std::cerr<<"Error text is expected to follow."<<std::endl;
+  ok = CGAL::read_GOCAD("data/mesh_that_doesnt_exist.ts", fg);
+  assert(!ok);
+  ok = CGAL::read_GOCAD("data/invalid_cut.ts", fg); // cut in half
+  assert(!ok);
+  ok = CGAL::read_GOCAD("data/invalid_header.ts", fg); // missing header
+  assert(!ok);
+  ok = CGAL::read_GOCAD("data/sphere.obj", fg);
+  assert(!ok);
+  ok = CGAL::read_GOCAD("data/full.off", fg);
+  assert(!ok);
+  std::cerr<<"No more error text from here."<<std::endl;
 }
 
 #ifdef CGAL_USE_VTK
@@ -737,31 +741,103 @@ void test_bgl_VTP(const char* filename, // @fixme not finished
                   const bool binary = false)
 {
   Mesh fg;
-  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
-                         Point(2, 0, 1), Point(3, 0, 0), fg);
-
-  std::ofstream os("tetrahedron.vtp");
-  bool ok = CGAL::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
+  bool ok = CGAL::read_VTP(filename, fg);
   assert(ok);
+  assert(filename != "data/bones.vtp" || (num_vertices(fg) == 2154 && num_faces(fg) == 4204));
 
-  Mesh fg2;
-  ok = CGAL::read_polygon_mesh("tetrahedron.vtp", fg2);
+  // write with VTP
+  {
+    std::ofstream os("tmp.vtp");
+    if(binary)
+      CGAL::set_mode(os, CGAL::IO::BINARY);
+    ok = CGAL::write_VTP(os, fg);
+    assert(ok);
+
+    Mesh fg2;
+    ok = CGAL::read_VTP("tmp.vtp", fg2);
+    assert(ok);
+    assert(are_equal_meshes(fg, fg2));
+  }
+
+  // write with PM
+  {
+    if(binary)
+      ok = CGAL::write_polygon_mesh("tmp.vtp", fg);
+    else
+      ok = CGAL::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::use_binary_mode(false));
+    assert(ok);
+
+    Mesh fg2;
+    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2);
+    assert(ok);
+    assert(are_equal_meshes(fg, fg2));
+  }
+
+  // Test NPs
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
+
+  clear(fg);
+  VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
+
+  ok = CGAL::read_VTP("data/bones.vtp", fg, CGAL::parameters::vertex_normal_map(vnm));
   assert(ok);
-  assert(are_equal_meshes(fg, fg2));
+  assert(num_vertices(fg) == 2154 && num_faces(fg) == 4204);
+
+  for(const auto v : vertices(fg))
+    assert(get(vnm, v) != CGAL::NULL_VECTOR);
+
+  // write with VTP
+  {
+    std::ofstream os("tmp.vtp");
+    if(binary)
+      CGAL::set_mode(os, CGAL::IO::BINARY);
+    ok = CGAL::write_VTP(os, fg, CGAL::parameters::vertex_normal_map(vnm));
+    assert(ok);
+
+    Mesh fg2;
+    VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
+
+    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::vertex_normal_map(vnm2));
+    assert(ok);
+    assert(are_equal_meshes(fg, fg2));
+
+    for(const auto v : vertices(fg2))
+      assert(get(vnm2, v) != CGAL::NULL_VECTOR);
+  }
+
+  // write with PM
+  {
+    if(binary)
+      ok = CGAL::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::vertex_normal_map(vnm));
+    else
+      ok = CGAL::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::vertex_normal_map(vnm)
+                                    .use_binary_mode(false));
+    assert(ok);
+
+    Mesh fg2;
+    VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
+
+    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::vertex_normal_map(vnm2));
+    assert(ok);
+    assert(are_equal_meshes(fg, fg2));
+
+    for(const auto v : vertices(fg2))
+      assert(get(vnm2, v) != CGAL::NULL_VECTOR);
+  }
+
+  // test wrong inputs
+  ok = CGAL::read_VTP("data/mesh_that_doesnt_exist.vtp", fg);
+  assert(!ok);
+  //@todo misisng tests here
+  assert(!ok);
 }
 
-template<>
-void test_bgl_VTP<Polyhedron>(const char* filename,
-                              const bool binary)
-{
- //todo same tests as the others.
-}
+
 #endif // CGAL_USE_VTK
 
 int main(int argc, char** argv)
-{
+{/*
   // OFF
-  /*
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
   test_bgl_OFF<Polyhedron>(off_file);
   test_bgl_OFF<SM>(off_file);
@@ -769,6 +845,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh>(off_file);
 #endif
+
   // OBJ
   const char* obj_file = (argc > 2) ? argv[2] : "data/sphere.obj";
   test_bgl_OBJ<Polyhedron>(obj_file);
@@ -777,7 +854,6 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OBJ<OMesh>(obj_file);
 #endif
-
   // PLY
   const char* ply_file_ascii = (argc > 3) ? argv[3] : "data/colored_tetra.ply";
   test_bgl_PLY<Polyhedron>(ply_file_ascii, false);
@@ -795,6 +871,7 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_STL<OMesh>(stl_file);
 #endif
+*/
 
   // GOCAD
   const char* gocad_file = (argc > 5) ? argv[5] : "data/2016206_MHT_surface.ts";
@@ -804,10 +881,10 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_OPENMESH
   test_bgl_GOCAD<OMesh>(gocad_file);
 #endif
-*/
+  return 0;
   // VTP
 #ifdef CGAL_USE_VTK
-  const char* vtp_file = (argc > 6) ? argv[6] : "data/prim.off"; // @fixme put a VTP file
+  const char* vtp_file = (argc > 6) ? argv[6] : "data/bones.vtp";
 
   test_bgl_VTP<Polyhedron>(vtp_file, false);
   test_bgl_VTP<SM>(vtp_file, false);
