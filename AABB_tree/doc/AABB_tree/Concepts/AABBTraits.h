@@ -75,7 +75,7 @@ using Intersection_and_primitive_id = unspecified_type;
 
 /// \name Splitting
 /// During the construction of the AABB tree, the primitives are
-/// splitted according to some comparison functions related to the longest axis:
+/// split according to some comparison functions related to the longest axis:
 /// @{
 
 /*!
@@ -164,42 +164,42 @@ typedef unspecified_type Equal_3;
 /// @{
 
 /*!
-Returns the primitive splitting functor.
+returns the primitive splitting functor.
 */
 Split_primitives split_primitives_object();
 
 /*!
-Returns the bounding box constructor.
+returns the bounding box constructor.
 */
 Compute_bbox compute_bbox_object();
 
 /*!
-Returns the intersection detection functor.
+returns the intersection detection functor.
 */
 Do_intersect do_intersect_object();
 
 /*!
-Returns the intersection constructor.
+returns the intersection constructor.
 */
 Intersection intersection_object();
 
 /*!
-Returns the distance comparison functor.
+returns the distance comparison functor.
 */
 Compare_distance compare_distance_object();
 
 /*!
-Returns the closest point constructor.
+returns the closest point constructor.
 */
 Closest_point closest_point_object();
 
 /*!
-Returns the squared distance functor.
+returns the squared distance functor.
 */
 Squared_distance squared_distance_object();
 
 /*!
-Returns the equal functor.
+returns the equal functor.
 */
 Equal_3 equal_3_object();
 
@@ -220,7 +220,7 @@ void set_shared_data(T ... t);
 {}
 
 /*!
-Returns the shared data of the primitive constructed after a call to `set_shared_data`.
+returns the shared data of the primitive constructed after a call to `set_shared_data`.
 If no call to `set_shared_data` has been done, `Primitive::Shared_data()` is returned.
 */
 const Primitive::Shared_data& shared_data() const;

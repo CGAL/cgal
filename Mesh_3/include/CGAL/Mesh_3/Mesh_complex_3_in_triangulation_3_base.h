@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 #define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -31,7 +31,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Union_find.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>

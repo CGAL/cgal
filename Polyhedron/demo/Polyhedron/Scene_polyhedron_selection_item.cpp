@@ -2497,7 +2497,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
       return QString("n/a");
     if(is_triangle_mesh(*d->poly)){
       bool self_intersect
-          = CGAL::Polygon_mesh_processing::does_self_intersect(*(d->poly));
+        = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(*(d->poly));
       if (self_intersect)
         return QString("Yes");
       else

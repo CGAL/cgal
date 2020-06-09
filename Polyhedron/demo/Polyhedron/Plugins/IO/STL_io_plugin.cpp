@@ -6,19 +6,24 @@
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
-#include <fstream>
 
 #include <CGAL/IO/Polyhedron_builder_from_STL.h>
 #include <CGAL/IO/STL_writer.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
 
 #include <QColor>
 #include <QString>
 #include <QStringList>
 #include <QMainWindow>
 #include <QInputDialog>
+
+#include <boost/property_map/function_property_map.hpp>
+
 #include <cstdint>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <vector>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_stl_plugin :
@@ -79,11 +84,19 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     return QList<Scene_item*>();
   }
 
-  try{
+  try
+  {
     // Try building a surface_mesh
     SMesh* SM = new SMesh();
     if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM);
+    {
+      auto pmap = boost::make_function_property_map<std::array<double, 3>, Point_3>(
+                    [](const std::array<double, 3>& a) { return Point_3(a[0], a[1], a[2]); });
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM,
+                                                                  CGAL::parameters::point_map(pmap),
+                                                                  CGAL::parameters::all_default());
+    }
+
     if(!SM->is_valid() || SM->is_empty()){
       std::cerr << "Error: Invalid facegraph" << std::endl;
     }

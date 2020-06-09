@@ -80,8 +80,8 @@ public:
   // For use by the Compact_container.
   void *   for_compact_container() const
   { return _c.for_compact_container(); }
-  void * & for_compact_container()
-  { return _c.for_compact_container(); }
+  void for_compact_container(void *p)
+  { _c.for_compact_container(p); }
 
 private:
   Cell_handle _c;

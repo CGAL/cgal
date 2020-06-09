@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
     CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_output_iterator(std::inserter(v2v, v2v.end()))
                                                   .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())));
     std::ofstream out("reverse.off");
+    out.precision(17);
     out << S;
   }
   return 0;

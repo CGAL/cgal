@@ -51,33 +51,6 @@ int main(int argc, char** argv)
     ofs << mesh;
     ofs.close();
   }
-  int nb_polylines =
-      CGAL::read_polylines_from_3mf(file_name, all_points, all_colors, names);
-
-  if(nb_polylines == 0)
-    std::cout<<"No polyline found."<<std::endl;
-  else
-  {
-    std::cout<<nb_polylines<<" polylines found, of ";
-    for(int i = 0; i< nb_polylines-1; ++i){
-      std::cout<<all_points[i].size()<<", ";
-    }
-    std::cout<<all_points.back().size()<<" points."<<std::endl;
-  }
-  all_points.clear();
-  all_colors.clear();
-  int nb_point_sets =
-      CGAL::read_point_clouds_from_3mf(file_name, all_points, all_colors, names);
-  if(nb_point_sets == 0)
-    std::cout<<"No point cloud found."<<std::endl;
-  else
-  {
-    std::cout<<nb_point_sets<<" point clouds found, of ";
-    for(int i = 0; i< nb_point_sets-1; ++i){
-      std::cout<<all_points[i].size()<<", ";
-    }
-    std::cout<<all_points.back().size()<<" points."<<std::endl;
-  }
 
   // testing writing functions
   Mesh sphere, tube;
@@ -146,31 +119,6 @@ int main(int argc, char** argv)
   meshes[0] = sphere;
   meshes[1] = tube;
   CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);
-
-
-  //testing of point clouds
-
-  HRESULT hResult;
-  NMR::PLib3MFModel * pModel;
-  hResult = NMR::lib3mf_createmodel(&pModel);
-  NMR::PLib3MFModelMeshObject* pMeshObject;
-  if (hResult != LIB3MF_OK) {
-    std::cout << "could not create model: " << std::hex << hResult << std::endl;
-    return 1;
-  }
-  for(std::size_t i=0; i< names.size(); ++i)
-  {
-    CGAL::write_mesh_to_model(all_points[i], all_polygons[i],
-                              all_colors[i], names[i], &pMeshObject, pModel);
-  }
-  CGAL::Color color(255,0,0);
-  CGAL::write_point_cloud_to_model(all_points.front(),
-                                   color, names.front(), &pMeshObject, pModel);
-  CGAL::export_model_to_file("micro.3mf", pModel);
-  //testing of polylines
-  CGAL::write_polyline_to_model(all_points.back(),
-                                color, names.back(), &pMeshObject, pModel);
-  CGAL::export_model_to_file("micro.3mf", pModel);
 
   std::cout<<"OK."<<std::endl;
   return 0;

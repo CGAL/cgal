@@ -49,7 +49,7 @@ namespace CGAL {
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
  *   as key type and a \cgal Kernel `Point_3` as value type.
  * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`.
- *                         The default is `typename boost::property_map< HalfedgeGraph,vertex_point_t>::%type`.
+ *                         The default is `typename boost::property_map< HalfedgeGraph,vertex_point_t>::%const_type`.
  * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common `HalfedgeGraph` and some data will be factorized so that the size of
@@ -77,17 +77,17 @@ class AABB_halfedge_graph_segment_primitive
                               HalfedgeGraph,
                               typename Default::Get<VertexPointPMap,
                                                     typename boost::property_map< HalfedgeGraph,
-                                                                                  vertex_point_t>::type >::type >,
+                                                                                  vertex_point_t>::const_type >::type >,
                             Source_point_from_edge_descriptor_map<
                               HalfedgeGraph,
                               typename Default::Get<VertexPointPMap,
                                                     typename boost::property_map< HalfedgeGraph,
-                                                                                  vertex_point_t>::type >::type >,
+                                                                                  vertex_point_t>::const_type >::type >,
                             OneHalfedgeGraphPerTree,
                             CacheDatum >
 #endif
 {
-  typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::type >::type  VertexPointPMap_;
+  typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::const_type >::type  VertexPointPMap_;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor ED;
   typedef typename boost::mpl::if_<OneHalfedgeGraphPerTree, ED, std::pair<ED, const HalfedgeGraph*> >::type Id_;
 
@@ -118,7 +118,7 @@ public:
   /*!
   The point type.
   */
-  typedef boost::property_traits< boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type Point;
+  typedef boost::property_traits< boost::property_map< HalfedgeGraph, vertex_point_t>::const_type >::value_type Point;
   /*!
   Geometric data type.
   */
@@ -141,7 +141,7 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor edge_descriptor;
 
   /*!
-  Constructs a primitive.
+  constructs a primitive.
   \tparam Iterator is an input iterator with `Id` as value type.
   This \ref AABB_tree/AABB_halfedge_graph_edge_example.cpp "example" gives a way to call this constructor
   using the insert-by-range method of the class `AABB_tree<Traits>`.
@@ -156,7 +156,7 @@ public:
   {}
 
   /*!
-  Constructs a primitive.
+  constructs a primitive.
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */

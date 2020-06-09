@@ -92,6 +92,7 @@ public:
         dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
         dock_widget->setVisible(false); // do not show at the beginning
         ui_widget.setupUi(dock_widget);
+        ui_widget.Smoothness_spin_box->setMaximum(10.0);
         mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));

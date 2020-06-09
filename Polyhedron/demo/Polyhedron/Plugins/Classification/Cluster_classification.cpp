@@ -910,7 +910,7 @@ void Cluster_classification::train(int classifier, const QMultipleInputDialog& d
     m_neural_network->train (training,
                              dialog.get<QCheckBox>("restart")->isChecked(),
                              dialog.get<QSpinBox>("trials")->value(),
-                             dialog.get<QDoubleSpinBox>("learning_rate")->value(),
+                             dialog.get<DoubleEdit>("learning_rate")->value(),
                              dialog.get<QSpinBox>("batch_size")->value(),
                              hidden_layers);
 

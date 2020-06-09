@@ -34,6 +34,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
+#include <tbb/parallel_for.h>
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
@@ -133,7 +134,6 @@ private:
     typedef CGAL::AABB_tree< Traits > Tree;
 
     Tree tree( faces(m).first, faces(m).second, m);
-    tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
     Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);

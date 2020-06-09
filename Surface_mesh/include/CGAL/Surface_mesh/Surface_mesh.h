@@ -80,21 +80,6 @@ namespace CGAL {
           return idx_ != inf;
         }
 
-        /// are two indices equal?
-        bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
-
-        /// are two indices different?
-        bool operator!=(const T& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
-
-        /// Comparison by index.
-        bool operator<(const T& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
         // Compatibility with OpenMesh handle
         size_type idx() const {
           return idx_;
@@ -120,7 +105,7 @@ namespace CGAL {
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
 
-    private:
+    protected:
         size_type idx_;
     };
 
@@ -131,8 +116,8 @@ namespace CGAL {
     return ret;
   }
 
-    // Implementation for Surface_mesh::Vertex_index
 
+    // Implementation for Surface_mesh::Vertex_index
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
     {
@@ -141,6 +126,25 @@ namespace CGAL {
         SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
+
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
+        /// are two indices equal?
+        bool operator==(const SM_Vertex_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Vertex_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Vertex_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
 
         friend std::ostream& operator<<(std::ostream& os, SM_Vertex_index const& v)
@@ -168,6 +172,25 @@ namespace CGAL {
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
+        /// are two indices equal?
+        bool operator==(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Halfedge_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
+
         friend std::ostream& operator<<(std::ostream& os, SM_Halfedge_index const& h)
         {
           return (os << 'h' << (size_type)h );
@@ -184,6 +207,24 @@ namespace CGAL {
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
+        /// are two indices equal?
+        bool operator==(const SM_Face_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Face_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Face_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
         {
@@ -217,6 +258,11 @@ namespace CGAL {
 
         // returns whether the index is valid, i.e., the index is not equal to (std::numeric_limits<size_type>::max)().
         bool is_valid() const { return halfedge_.is_valid(); }
+
+
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
 
         // Are two indices equal?
         bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
@@ -1083,6 +1129,8 @@ public:
   }
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
+    ///
+    /// After calling this method, the object is the same as a newly constructed object. The additional properties (such as normal vectors) are also removed and must thus be re-added if needed.
     void clear();
 
 
@@ -2112,9 +2160,9 @@ private: //------------------------------------------------------- private data
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
-    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                           get_const_property_map(CGAL::vertex_point, sm));
+                               get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
     for(Vertex_index v : sm.vertices()){
@@ -2400,9 +2448,9 @@ private: //------------------------------------------------------- private data
    using parameters::choose_parameter;
    using parameters::get_parameter;
 
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
         vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
-                           get_property_map(CGAL::vertex_point, sm));
+                               get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
     std::string off;
     is >> sm_skip_comments;
@@ -2792,20 +2840,33 @@ void
 Surface_mesh<P>::
 clear()
 {
-    vprops_.resize(0);
-    hprops_.resize(0);
-    eprops_.resize(0);
-    fprops_.resize(0);
+  vprops_.clear();
+  hprops_.clear();
+  eprops_.clear();
+  fprops_.clear();
 
-    vprops_.shrink_to_fit();
-    hprops_.shrink_to_fit();
-    eprops_.shrink_to_fit();
-    fprops_.shrink_to_fit();
+  vprops_.resize(0);
+  hprops_.resize(0);
+  eprops_.resize(0);
+  fprops_.resize(0);
 
-    removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
-    garbage_ = false;
-    anonymous_property_ = 0;
+  vprops_.shrink_to_fit();
+  hprops_.shrink_to_fit();
+  eprops_.shrink_to_fit();
+  fprops_.shrink_to_fit();
+
+  vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+  hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+  fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+  vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
+  vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+  eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+  fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
+
+  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  anonymous_property_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -3229,4 +3290,3 @@ namespace boost {
 #include <CGAL/enable_warnings.h>
 
 #endif /* CGAL_SURFACE_MESH_H */
-

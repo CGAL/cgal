@@ -28,26 +28,12 @@ constexpr size_t rounded_down_log2(size_t n)
 template <typename T>
 struct Time_stamper
 {
-  Time_stamper()
-   : time_stamp_() {}
-
-  Time_stamper(const Time_stamper& ts)
-    : time_stamp_()
-  {
-    time_stamp_ = std::size_t(ts.time_stamp_);
-  }
-
-  Time_stamper& operator=(const Time_stamper& ts)
-  {
-    time_stamp_ = std::size_t(ts.time_stamp_);
-    return *this;
-  }
-
   static void initialize_time_stamp(T* pt) {
     pt->set_time_stamp(std::size_t(-1));
   }
 
-  void set_time_stamp(T* pt) {
+  template <typename time_stamp_t>
+  static void set_time_stamp(T* pt, time_stamp_t& time_stamp_) {
     if(pt->time_stamp() == std::size_t(-1)) {
       const std::size_t new_ts = time_stamp_++;
       pt->set_time_stamp(new_ts);
@@ -96,23 +82,14 @@ struct Time_stamper
       return time_stamp(p_t1) < time_stamp(p_t2);
     }
   }
-
-  void reset() {
-    time_stamp_ = 0;
-  }
-private:
-#ifdef CGAL_NO_ATOMIC
-  std::size_t time_stamp_;
-#else
-  CGAL::cpp11::atomic<std::size_t> time_stamp_;
-#endif
 }; // end class template Time_stamper<T>
 
 template <typename T>
 struct No_time_stamp
 {
 public:
-  void set_time_stamp(T*)  {}
+  template <typename time_stamp_t>
+  static void set_time_stamp(T*, time_stamp_t&)  {}
   static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
   }
@@ -130,8 +107,6 @@ public:
     constexpr std::size_t shift = internal::rounded_down_log2(sizeof(T));
     return reinterpret_cast<std::size_t>(p) >> shift;
   }
-
-  void reset()                {}
 }; // end class template No_time_stamp<T>
 
 // That class template is an auxiliary class.  It has a
@@ -158,6 +133,17 @@ struct Get_time_stamper<T,false>{
 // in `Compact_container` for example is possible with an incomplete type.
 template <class T>
 struct Time_stamper_impl : public Get_time_stamper<T>::type {};
+
+struct Hash_handles_with_or_without_timestamps
+{
+  template <typename Handle>
+  std::size_t operator()(const Handle h) const
+  {
+    typedef typename std::iterator_traits<Handle>::value_type Type;
+
+    return Get_time_stamper<Type>::type::hash_value(&*h);
+  }
+};
 
 } //end of namespace CGAL
 

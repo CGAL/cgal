@@ -178,9 +178,9 @@ void extrude_mesh(const InputMesh& input,
   using parameters::choose_parameter;
 
   VPMap output_vpm = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
-                                  get_property_map(vertex_point, output));
+                                      get_property_map(vertex_point, output));
   IVPMap input_vpm = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
-                                  get_const_property_map(vertex_point, input));
+                                      get_const_property_map(vertex_point, input));
 
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > bottom_h2h;

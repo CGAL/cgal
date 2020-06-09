@@ -66,9 +66,9 @@ struct S_or_D_array< Containee, Dimension_tag< D >, WithCompactContainerHelper >
     {
         return (*this)[0].for_compact_container();
     }
-    void* & for_compact_container()
+    void    for_compact_container(void *p)
     {
-        return (*this)[0].for_compact_container();
+        (*this)[0].for_compact_container(p);
     }
 };
 
@@ -101,7 +101,7 @@ struct S_or_D_array< Containee, Dynamic_dimension_tag, true >
     {}
     void* fcc_;
     void*   for_compact_container() const { return fcc_; }
-    void* & for_compact_container()       { return fcc_; }
+    void    for_compact_container(void* p)       { fcc_ = p; }
 };
 
 } // end of namespace internal

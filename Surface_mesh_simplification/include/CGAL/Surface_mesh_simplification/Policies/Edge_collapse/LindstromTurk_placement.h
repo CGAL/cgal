@@ -9,48 +9,38 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/Lindstrom_Turk_core.h>
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
-namespace Surface_mesh_simplification
-{
-
-  template<class TM_>
+template<class TM_>
 class LindstromTurk_placement
 {
 public:
+  typedef TM_                                                             TM;
+  typedef internal::LindstromTurk_params                                  LindstromTurk_params;
 
-  typedef TM_ TM ;
-
-public:
-
-  LindstromTurk_placement( LindstromTurk_params const& aParams = LindstromTurk_params() ) : mParams(aParams) {}
+  LindstromTurk_placement(const LindstromTurk_params& LT_params = LindstromTurk_params())
+    : m_LT_params(LT_params)
+  {}
 
   template <typename Profile>
-  optional<typename Profile::Point>
-  operator()( Profile const& aProfile) const
+  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
-    return LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_placement() ;
+    return internal::LindstromTurkCore<TM,Profile>(m_LT_params, profile).compute_placement();
   }
 
 private:
-
-  LindstromTurk_params mParams ;
-
+  LindstromTurk_params m_LT_params;
 };
 
-
 } // namespace Surface_mesh_simplification
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H //
-// EOF //
-
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H

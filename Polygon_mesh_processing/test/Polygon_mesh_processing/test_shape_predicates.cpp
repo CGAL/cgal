@@ -24,7 +24,7 @@ void check_edge_degeneracy(const char* fname)
   std::ifstream input(fname);
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
   std::vector<edge_descriptor> all_edges(edges(mesh).begin(), edges(mesh).end());
@@ -44,7 +44,7 @@ void check_triangle_face_degeneracy(const char* fname)
   std::ifstream input(fname);
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
@@ -70,7 +70,7 @@ void test_needles_and_caps(const char* fname)
   std::ifstream input(fname);
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 

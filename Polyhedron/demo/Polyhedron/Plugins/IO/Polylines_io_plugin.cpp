@@ -75,6 +75,12 @@ public:
     return QList<QAction*>()<<actionSplit_polylines
                             <<actionJoin_polylines;
   }
+
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_polylines_item*>(item))
+      return true;
+    return false;
+  }
   protected Q_SLOTS:
   //!Splits the selected Scene_polylines_item in multiple items all containing a single polyline.
   void split();

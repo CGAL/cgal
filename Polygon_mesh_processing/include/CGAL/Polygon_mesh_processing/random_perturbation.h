@@ -74,7 +74,6 @@ namespace internal {
     if(do_project)
     {
       tree.rebuild(faces(tmesh).first, faces(tmesh).second, tmesh);
-      tree.accelerate_distance_queries();
     }
     typename GT::Construct_translated_point_3 translate
       = gt.construct_translated_point_3_object();
@@ -155,11 +154,11 @@ void random_perturbation(VertexRange vertices
 #endif
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, tmesh));
+                                 get_property_map(vertex_point, tmesh));
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,

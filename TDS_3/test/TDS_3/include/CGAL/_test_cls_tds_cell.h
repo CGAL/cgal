@@ -88,11 +88,6 @@ _test_cell_tds_3(const Tds &)
    assert(c2->index(v1)==0);
    assert(c2->index(v2)==1);
    assert(c2->index(v3)==2);
-   //   c2->set_vertices();
-   //   assert(c2->vertex(0)==NULL);
-   //   assert(c2->vertex(1)==NULL);
-   //   assert(c2->vertex(2)==NULL);
-   //   assert(c2->vertex(3)==NULL);
    c2->set_vertices(v0, v1, v2, v3);
    assert(c2->index(v0)==0);
    assert(c2->index(v1)==1);
@@ -107,11 +102,6 @@ _test_cell_tds_3(const Tds &)
    assert(c2->index(n1)==0);
    assert(c2->index(n2)==1);
    assert(c2->index(n3)==2);
-   //   c2->set_neighbors();
-   //   assert(c2->neighbor(0)==NULL);
-   //   assert(c2->neighbor(1)==NULL);
-   //   assert(c2->neighbor(2)==NULL);
-   //   assert(c2->neighbor(3)==NULL);
    c2->set_neighbors(n0, n1, n2, n3);
    assert(c2->index(n0)==0);
    assert(c2->index(n1)==1);

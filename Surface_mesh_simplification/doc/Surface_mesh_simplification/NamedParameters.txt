@@ -38,6 +38,15 @@ is the property map with the points associated to the vertices of the polygon me
 <b>Default:</b> \code boost::get(CGAL::vertex_point, pmesh) \endcode
 \cgalNPEnd
 
+\cgalNPBegin{geom_traits} \anchor SMS_geom_traits
+is the geometric traits instance used for the mesh processing operation.\n
+<b>Type:</b> a Geometric traits class.\n
+<b>Default</b>:
+\code typename CGAL::Kernel_traits<
+        typename boost::property_traits<
+          typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
+\cgalNPEnd
+
 \cgalNPBegin{vertex_index_map} \anchor SMS_vertex_index_map
 is the property map containing the index of each vertex of the input polygon mesh.\n
 <b>Type:</b> a class model of `ReadablePropertyMap` with

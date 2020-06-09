@@ -201,6 +201,15 @@ if(CGAL_DOC_CREATE_LOGS)
   file(MAKE_DIRECTORY "${CGAL_DOC_LOG_DIR}")
 endif()
 
+option(CGAL_EXTRACT_ALL_NO_DETAILED_IF_EMPTY "Use CGAL special doxygen setting EXTRACT_ALL_NO_DETAILED_IF_EMPTY." ON)
+if(CGAL_EXTRACT_ALL_NO_DETAILED_IF_EMPTY)
+  set(CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY "EXTRACT_ALL_NO_DETAILED_IF_EMPTY = YES")
+else()
+  # The default is NO, so we could leave it out, but it is better to have a commented out placeholder
+  # this will work for versions with and without the setting.
+  set(CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY "#EXTRACT_ALL_NO_DETAILED_IF_EMPTY = NO")
+endif()
+
 #we use two directories for the generation/reading of tag files to prevent issues
 #if the targets are built in parallel
 set(CGAL_DOC_TAG_GEN_DIR "${CMAKE_BINARY_DIR}/doc_gen_tags")

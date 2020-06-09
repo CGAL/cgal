@@ -116,6 +116,8 @@ CGAL_Kernel_pred_RT(Compare_power_distance_2,
                     compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
                     compare_power_distance_3_object)
+CGAL_Kernel_pred(Compare_signed_distance_to_line_2,
+                 compare_signed_distance_to_line_2_object)
 CGAL_Kernel_pred(Compare_slope_2,
                  compare_slope_2_object)
 CGAL_Kernel_pred(Compare_slope_3,
@@ -488,7 +490,7 @@ CGAL_Kernel_pred_RT(Coplanar_orientation_3,
                     coplanar_orientation_3_object)
 CGAL_Kernel_pred_RT(Coplanar_side_of_bounded_circle_3,
                     coplanar_side_of_bounded_circle_3_object)
-CGAL_Kernel_pred(Coplanar_3,
+CGAL_Kernel_pred_RT(Coplanar_3,
                  coplanar_3_object)
 CGAL_Kernel_pred(Counterclockwise_in_between_2,
                  counterclockwise_in_between_2_object)

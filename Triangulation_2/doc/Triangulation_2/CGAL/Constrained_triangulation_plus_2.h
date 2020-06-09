@@ -294,6 +294,30 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
 
 
 /*!
+splits into constraints the graph of subconstraints.
+
+Consider the graph `g={V,E}` where `V` is the set of vertices of the
+triangulation and `E` is the set of all subconstraints of all
+constraints of the triangulation.
+
+This function splits into polylines the graph `g` at vertices of
+degree greater than 2 and at vertices for which
+`is_terminal(v)==true`.
+
+Each computed polyline is stored as a constraint of the triangulation.
+
+\warning all existing constraints will be discarded.
+
+\param is_terminal An optional function returning `true` if the vertex
+`v` of degree 2 is a polyline endpoint and `false` otherwise. If
+omitted, a function always returning `false` will be used, that is no
+degree 2 vertex will be considered as a polyline endpoint.
+
+\sa `split_graph_into_polylines()`
+*/
+void split_subconstraint_graph_into_constraints(const std::function<bool(Vertex_handle)>& is_terminal);
+
+/*!
 removes the constraint `cid`, without removing the points from the triangulation.
 */
 void remove_constraint(Constraint_id cid);

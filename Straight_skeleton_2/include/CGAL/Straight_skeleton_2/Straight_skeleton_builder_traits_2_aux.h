@@ -106,97 +106,22 @@ public:
 
   Exceptionless_filtered_construction() {}
 
-  template <class A1>
+  template <class ... A>
   result_type
-  operator()(const A1 &a1) const
+  operator()(A&& ... a) const
   {
     try
     {
       Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1));
+      FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
       if ( fr )
         return From_Filtered(fr);
     }
     catch (Uncertain_conversion_exception&) {}
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1)) ;
+    EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...) ;
     return From_Exact(er);
-  }
-
-  template <class A1, class A2>
-  result_type
-  operator()(const A1 &a1, const A2 &a2) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2)) ;
-    return From_Exact(er);
-  }
-
-  template <class A1, class A2, class A3>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3)) ;
-    return From_Exact(er);
-
-  }
-
-  template <class A1, class A2, class A3, class A4>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3),To_Filtered(a4));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4)) ;
-    return From_Exact(er);
-
-  }
-
-  template <class A1, class A2, class A3, class A4, class A5>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4, const A5 &a5) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3),To_Filtered(a4),To_Filtered(a5));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4), To_Exact(a5)) ;
-    return From_Exact(er);
-
   }
 };
 

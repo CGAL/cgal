@@ -238,6 +238,9 @@ public Q_SLOTS:
   //! If b is true, faces will be ligted from both internal and external side.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   virtual void setTwoSides(bool b) = 0;
+  //! If b is true, then a special color mask is applied to points and meshes to differenciate
+  //! front-faced and back-faced elements.
+  virtual void setBackFrontShading(bool b) =0;
   //! \brief Sets the fast drawing mode
   //! @see inFastDrawing()
   virtual void setFastDrawing(bool b) = 0;

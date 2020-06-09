@@ -80,28 +80,15 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 
     // add convex hull as new polyhedron
     SMesh *pConvex_hull  = new SMesh;
-    typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type Vpmap;
-    typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
     if(selection_item) {
       SMesh* pMesh = selection_item->polyhedron();
-      Vpmap vpm = get(CGAL::vertex_point,*pMesh);
-
-      Vpmap_fct v2p(vpm);
       CGAL::convex_hull_3(
-        boost::make_transform_iterator(selection_item->selected_vertices.begin(), v2p),
-        boost::make_transform_iterator(selection_item->selected_vertices.end(), v2p),
-        *pConvex_hull);
+            *pMesh,
+            *pConvex_hull);
     }
     else if ( sm_item ){
       SMesh* pMesh = sm_item->polyhedron();
-      Vpmap vpm = get(CGAL::vertex_point,*pMesh);
-
-      Vpmap_fct v2p(vpm);
-      boost::graph_traits<SMesh>::vertex_iterator b,e;
-      boost::tie(b,e) = vertices(*pMesh);
-
-      CGAL::convex_hull_3(boost::make_transform_iterator(b,v2p),
-                          boost::make_transform_iterator(e,v2p),
+      CGAL::convex_hull_3(*pMesh,
                           *pConvex_hull);
 
     }

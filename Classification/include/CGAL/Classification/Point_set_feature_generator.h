@@ -90,10 +90,8 @@ template <typename GeomTraits,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
           typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-          typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-          typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
 #if defined(DOXYGEN_RUNNING)
           typename DiagonalizeTraits>
@@ -163,9 +161,9 @@ private:
       CGAL::Real_timer t;
       t.start();
       if (lower_grid == nullptr)
-        neighborhood = new Neighborhood (input, point_map);
+        neighborhood = new Neighborhood (input, point_map, ConcurrencyTag());
       else
-        neighborhood = new Neighborhood (input, point_map, voxel_size);
+        neighborhood = new Neighborhood (input, point_map, voxel_size, ConcurrencyTag());
       t.stop();
 
       if (lower_grid == nullptr)

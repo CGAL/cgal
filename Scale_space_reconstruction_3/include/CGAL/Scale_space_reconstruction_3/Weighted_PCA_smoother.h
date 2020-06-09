@@ -55,21 +55,17 @@ namespace Scale_space_reconstruction_3
  *  that case, an overload using `Eigen_diagonalize_traits` is
  *  provided.
  *  \tparam ConcurrencyTag indicates whether to use concurrent
- *  processing. It can be omitted: if TBB (or greater) is available
+ *  processing. It can be omitted: if \ref thirdpartyTBB is available
  *  and `CGAL_LINKED_WITH_TBB` is defined then `Parallel_tag` is
  *  used. Otherwise, `Sequential_tag` is used.
  */
 template <typename Geom_traits,
 #ifdef DOXYGEN_RUNNING
-          typename DiagonalizeTraits, typename ConcurrencyTag>
+          typename DiagonalizeTraits,
+          typename ConcurrencyTag>
 #else // DOXYGEN_RUNNING
-          typename DiagonalizeTraits
-          = CGAL::Default_diagonalize_traits<typename Geom_traits::FT, 3>,
-#ifdef CGAL_LINKED_WITH_TBB
-          typename ConcurrencyTag = CGAL::Parallel_tag>
-#else
-          typename ConcurrencyTag = CGAL::Sequential_tag>
-#endif // CGAL_LINKED_WITH_TBB
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<typename Geom_traits::FT, 3>,
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag>
 #endif // DOXYGEN_RUNNING
 class Weighted_PCA_smoother
 {

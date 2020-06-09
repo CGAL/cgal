@@ -93,6 +93,7 @@ class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
   typedef Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_> Self;
 
 public:
+  typedef typename Tds::Concurrency_tag                     Concurrency_tag;
   typedef Triangulation_3<Gt, Tds, Lock_data_structure_>    Tr_Base;
 
   typedef Tds                                               Triangulation_data_structure;
@@ -349,7 +350,7 @@ public:
 
     size_type n = number_of_vertices();
     std::vector<Point> points(first, last);
-    spatial_sort(points.begin(), points.end(), geom_traits());
+    spatial_sort<Concurrency_tag>(points.begin(), points.end(), geom_traits());
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -425,8 +426,8 @@ private:
     typedef typename Pointer_property_map<Point>::type Pmap;
     typedef Spatial_sort_traits_adapter_3<Geom_traits,Pmap> Search_traits;
 
-    spatial_sort(indices.begin(), indices.end(),
-                 Search_traits(make_property_map(points),geom_traits()));
+    spatial_sort<Concurrency_tag>(indices.begin(), indices.end(),
+                                  Search_traits(make_property_map(points),geom_traits()));
 
 #ifdef CGAL_LINKED_WITH_TBB
     if(this->is_parallel())
@@ -887,11 +888,6 @@ protected:
     : m_dt(dt), m_points(points), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point(const Insert_point& ip)
-    : m_dt(ip.m_dt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -967,12 +963,6 @@ protected:
       m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info& ip)
-      : m_dt(ip.m_dt), m_points(ip.m_points), m_infos(ip.m_infos),
-      m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1044,12 +1034,6 @@ protected:
                  tbb::concurrent_vector<Vertex_handle>& vertices_to_remove_sequentially)
     : m_dt(dt), m_vertices(vertices),
       m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
-    {}
-
-    // Constructor
-    Remove_point(const Remove_point& rp)
-    : m_dt(rp.m_dt), m_vertices(rp.m_vertices),
-      m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
     {}
 
     // operator()

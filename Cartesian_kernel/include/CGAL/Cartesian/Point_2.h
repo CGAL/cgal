@@ -50,6 +50,15 @@ public:
   PointC2(const FT &hx, const FT &hy, const FT &hw)
     : base(hx, hy, hw) {}
 
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Vector_2_>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
+
   const FT& x() const
   {
       return base.x();

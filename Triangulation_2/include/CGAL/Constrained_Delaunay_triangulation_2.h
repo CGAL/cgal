@@ -179,6 +179,19 @@ public:
   virtual ~Constrained_Delaunay_triangulation_2() {}
 
 
+  // Ensure rule-of-five: define the copy- and move- constructors
+  // as well as the copy- and move- assignment operators.
+  Constrained_Delaunay_triangulation_2(
+      const Constrained_Delaunay_triangulation_2 &) = default;
+  Constrained_Delaunay_triangulation_2(
+      Constrained_Delaunay_triangulation_2 &&) = default;
+
+  Constrained_Delaunay_triangulation_2 &
+  operator=(const Constrained_Delaunay_triangulation_2 &) = default;
+
+  Constrained_Delaunay_triangulation_2 &
+  operator=(Constrained_Delaunay_triangulation_2 &&) = default;
+
   // FLIPS
   bool is_flipable(Face_handle f, int i, bool perturb = true) const;
   void flip(Face_handle& f, int i);

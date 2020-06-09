@@ -138,6 +138,8 @@ public Q_SLOTS:
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
 
+  QString write_string_to_file(const QString &str, const QString& filename);
+
   /*! Reloads an item. Expects to be called by a QAction with the
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
@@ -447,6 +449,7 @@ public:
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
+  void on_actionLoad_a_Scene_from_a_Script_File_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
@@ -494,4 +497,5 @@ protected:
 private:
   bool is_main;
 };
+
 #endif // ifndef MAINWINDOW_H

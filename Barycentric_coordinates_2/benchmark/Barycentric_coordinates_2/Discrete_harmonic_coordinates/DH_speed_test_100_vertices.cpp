@@ -2,6 +2,7 @@
 // We test speed of discrete harmonic coordinates on a set of automatically generated
 // points inside a regular polygon with 100 vertices. We use inexact kernel.
 
+#include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
@@ -28,12 +29,11 @@ void generate_regular_polygon(const int number_of_vertices, const double polygon
 {
     const int n = number_of_vertices;
     const double r =  polygon_radius;
-    const double number_pi = 3.14159;
 
     vertices.resize(n);
 
     for(int i = 0; i < n; ++i)
-        vertices[i] = Point(Scalar(r*sin((number_pi / n) + ((i * 2.0 * number_pi) / n))), Scalar(-r*cos((number_pi / n) + ((i * 2.0 * number_pi) / n))));
+        vertices[i] = Point(Scalar(r*sin((CGAL_PI / n) + ((i * 2.0 * CGAL_PI) / n))), Scalar(-r*cos((CGAL_PI / n) + ((i * 2.0 * CGAL_PI) / n))));
 }
 
 int main()

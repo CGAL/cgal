@@ -22,28 +22,28 @@ namespace CGAL {
 template <class Sort>
 class Multiscale_sort
 {
-    Sort _sort;
-    std::ptrdiff_t _threshold;
-    double _ratio;
+  Sort _sort;
+  std::ptrdiff_t _threshold;
+  double _ratio;
 
 public:
-    Multiscale_sort (const Sort &sort = Sort(), std::ptrdiff_t threshold = 1, double ratio = 0.5)
-        : _sort (sort), _threshold (threshold), _ratio (ratio)
-    {
-        CGAL_precondition (0. <= ratio && ratio <= 1.);
-    }
+  Multiscale_sort (const Sort &sort = Sort(), std::ptrdiff_t threshold = 1, double ratio = 0.5)
+    : _sort (sort), _threshold (threshold), _ratio (ratio)
+  {
+    CGAL_precondition (0. <= ratio && ratio <= 1.);
+  }
 
-    template <class RandomAccessIterator>
-    void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
-    {
-        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
-        RandomAccessIterator middle = begin;
-        if (end - begin >= _threshold) {
-            middle = begin + difference_type (double(end - begin) * _ratio);
-            this->operator() (begin, middle);
-        }
-        _sort (middle, end);
+  template <class RandomAccessIterator>
+  void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
+  {
+    typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
+    RandomAccessIterator middle = begin;
+    if (end - begin >= _threshold) {
+      middle = begin + difference_type (double(end - begin) * _ratio);
+      this->operator() (begin, middle);
     }
+    _sort (middle, end);
+  }
 };
 
 } // namespace CGAL

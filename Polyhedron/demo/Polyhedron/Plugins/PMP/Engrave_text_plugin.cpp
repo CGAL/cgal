@@ -105,11 +105,11 @@ struct Top
 
 typedef EPICK                                                        Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt>                        Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt >    Fbb;
+typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt >     Fbb;
 typedef CGAL::Constrained_triangulation_face_base_2<Gt,Fbb>          Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                TDS;
-typedef CGAL::No_intersection_tag                                   Tag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>    CDT;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                 TDS;
+typedef CGAL::No_constraint_intersection_requiring_constructions_tag Tag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>     CDT;
 
 //Parameterization and text displaying
 class ParamItem : public QGraphicsItem

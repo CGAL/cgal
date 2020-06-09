@@ -18,14 +18,14 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
 #include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>

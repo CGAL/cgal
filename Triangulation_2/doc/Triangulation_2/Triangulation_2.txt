@@ -152,6 +152,17 @@ Therefore, each edge of the triangulation
 is incident to exactly two faces
 and the set of faces of a triangulation is topologically
 equivalent to a two-dimensional sphere.
+
+Note that
+the *infinite vertex* has no significant
+coordinates and that no geometric predicate can be applied on it
+nor on an infinite face.
+
+\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.png}
+Infinite vertex and infinite faces
+\cgalFigureEnd
+
+
 This extends to lower dimensional triangulations
 arising in degenerate cases or when the triangulations
 as less than three vertices.
@@ -162,15 +173,14 @@ topologically equivalent to a \f$ 1\f$-sphere.
 A zero dimensional triangulation, whose domain is reduced to a
 single point, is represented by two vertices that is
 topologically equivalent to a \f$ 0\f$-sphere.
+This is illustrated in \cgalFigureRef{Triangulation_2D_Fig_low_dimensional}
+and the example \ref Triangulation_2/low_dimensional.cpp
+shows how to traverse a low dimensional triangulation.
 
-Note that
-the *infinite vertex* has no significant
-coordinates and that no geometric predicate can be applied on it
-nor on an infinite face.
-
-\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.png}
-Infinite vertex and infinite faces
+\cgalFigureBegin{Triangulation_2D_Fig_low_dimensional,low_dimensional.svg}
+Triangulations with zero, one, and two finite vertices.
 \cgalFigureEnd
+
 
 \subsection Triangulation_2ARepresentationBasedonFaces A Representation Based on Faces and Vertices
 
@@ -842,10 +852,15 @@ The third parameter `Itag` is the intersection tag
 which serves to choose how intersecting constraints
 are dealt with. This parameter has to be instantiated
 by one of the following classes:
-- `No_intersection_tag` when input constraints do not
-intersect
+- `No_constraint_intersection_tag` if intersections of
+input constraints are disallowed, except for the configuration of a single common extremity;
+- `No_constraint_intersection_requiring_constructions_tag` if intersections of
+input constraints are disallowed, except if no actual construction is needed to represent the intersection.
+For example, if two constraints intersect in a 'T'-like junction, the intersection point is one of
+the constraints' extremity and as such, no construction is in fact needed. Other similar configurations include
+overlapping segments, common extremities, or equal constraints;
 - `Exact_predicates_tag` if the geometric traits class provides
-exact predicates but approximate constructions
+exact predicates but approximate constructions;
 - `Exact_intersections_tag` when exact predicates
 and exact constructions are provided.
 
@@ -941,9 +956,8 @@ As in the case of constrained triangulations, the third parameter
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
-classes: `No_intersection_tag`,
-`Exact_predicates_tag`,
-`Exact_intersections_tag`
+classes: `No_constraint_intersection_tag`, `No_constraint_intersection_requiring_constructions_tag`,
+`Exact_predicates_tag`, or `Exact_intersections_tag`
 (see Section \ref Section_2D_Triangulations_Constrained).
 
 A constrained Delaunay triangulation is not a Delaunay
@@ -1119,6 +1133,22 @@ through the edge.
 
 
 \cgalExample{Triangulation_2/polylines_triangulation.cpp}
+
+\subsection Triangulation_2ExampleBuildingFromSoup Example: Building a Triangulated Arrangement of Polylines from a Segment Soup
+
+The `Constrained_triangulation_plus_2` structure is initialized by a
+set of polylines. As users may only be able to provide a disconnected
+segment soup as input, a member function \link
+Constrained_triangulation_plus_2::split_subconstraint_graph_into_constraints()
+`split_subconstraint_graph_into_constraints()` \endlink is provided:
+this function identifies the polylines by connecting segments until a
+vertex whose degree is different from 2 is reached.
+
+The following code shows how a "blind" insertion of disconnected
+segments can be processed into a set of well-defined polyline
+constraints in a `Constrained_triangulation_plus_2`:
+
+\cgalExample{Triangulation_2/segment_soup_to_polylines.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy
 
@@ -1335,4 +1365,3 @@ Julia Fl&ouml;totto, Monique Teillaud and Mariette Yvinec.
 
 */
 } /* namespace CGAL */
-

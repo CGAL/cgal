@@ -51,12 +51,12 @@ public:
   typedef typename Get_type<Kbase, Point_tag>::type      Rep;
   //typedef typename CGAL::decay<typename boost::result_of<CPI(Rep,Begin_tag)>::type>::type Cartesian_const_iterator;
 
-  const Rep& rep() const
+  const Rep& rep() const noexcept
   {
     return *this;
   }
 
-  Rep& rep()
+  Rep& rep() noexcept
   {
     return *this;
   }
@@ -101,6 +101,14 @@ public:
   Point_d(Origin&& v)
     : Rep(CPBase()(std::move(v))) {}
 
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+    {
+      using std::swap;
+      swap(a.rep(), b.rep());
+    }
 
   decltype(auto) cartesian(int i)const{
           return CCBase()(rep(),i);

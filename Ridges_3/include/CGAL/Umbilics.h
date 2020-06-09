@@ -13,15 +13,17 @@
 
 #include <CGAL/license/Ridges_3.h>
 
+#include <CGAL/basic.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/PolyhedralSurf_neighbors.h>
+#include <CGAL/Kernel/global_functions_3.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <list>
 #include <vector>
 #include <math.h>
-#include <CGAL/basic.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/PolyhedralSurf_neighbors.h>
-#include <CGAL/Kernel/global_functions_3.h>
-#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -230,7 +232,6 @@ compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
   double cosinus, angle=0, angleSum=0;
-  const double  pi=3.141592653589793;
   vertex_descriptor v;
   typename std::list<halfedge_descriptor>::const_iterator itb = umb.contour_list().begin(),
     itlast = --umb.contour_list().end();
@@ -266,9 +267,9 @@ compute_type(Umbilic& umb)
   else angle = -acos(cosinus);
   angleSum += angle;
 
-  if ((angleSum > (pi/2)) && (angleSum < (3*pi/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
-  else if ((angleSum < (-pi/2)) && (angleSum > (-3*pi/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
-  else if ((angleSum <= (pi/2)) && (angleSum >= (-pi/2))) return 0;//is not considered as an umbilic
+  if ((angleSum > (CGAL_PI/2)) && (angleSum < (3*CGAL_PI/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
+  else if ((angleSum < (-CGAL_PI/2)) && (angleSum > (-3*CGAL_PI/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
+  else if ((angleSum <= (CGAL_PI/2)) && (angleSum >= (-CGAL_PI/2))) return 0;//is not considered as an umbilic
   else umb.umbilic_type() = NON_GENERIC_UMBILIC;
   return 1;
 }

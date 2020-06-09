@@ -51,6 +51,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
+
 // give a halfedge and a target edge length, put in `out` points
 // which the edge equally spaced such that splitting the edge
 // using the sequence of points make the edges shorter than
@@ -903,13 +904,8 @@ private:
     double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
                                    + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
                                    + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-    double log = std::log10(diago_length);
-    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log)+3);
 
-    ui.edgeLength_dspinbox->setDecimals(nb_decimals);
-    ui.edgeLength_dspinbox->setSingleStep(1e-3);
-    ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
-                                     2.   * diago_length);//max
+
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
 
     std::ostringstream oss;

@@ -182,7 +182,11 @@ public:
     }
 
     Dereference_type&
-    dereference() const { return const_cast<Dereference_type&>((*point)[idx]); }
+    dereference() const
+    {
+      // Point::operator[] takes an int as parameter...
+      return const_cast<Dereference_type&>((*point)[static_cast<int>(idx)]);
+    }
 
   };
 
@@ -269,7 +273,6 @@ public:
 template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
-  typedef typename Base_distance::FT FT;
 
 public:
 
@@ -279,6 +282,7 @@ public:
 
   using Base_distance::transformed_distance;
 
+  typedef typename Base_distance::FT FT;
   typedef Point_with_info Point_d;
   typedef typename Base_distance::Query_item Query_item;
 

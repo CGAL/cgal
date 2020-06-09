@@ -29,8 +29,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
+#include <CGAL/Time_stamper.h>
 
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 

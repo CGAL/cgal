@@ -157,19 +157,19 @@ public:
     return (temp);
   }
 
-  bool operator==(const Self& other)
+  bool operator==(const Self& other) const
   {
     CGAL_precondition(m_container == other.m_container);
     return (m_index == other.m_index);
   }
 
-  bool operator!=(const Self& other)
+  bool operator!=(const Self& other) const
   {
     CGAL_precondition(m_container == other.m_container);
     return !(*this == other);
   }
 
-  unsigned int operator-(const Self& other)
+  unsigned int operator-(const Self& other) const
   {
     CGAL_precondition(m_container == other.m_container);
     return (m_index - other.m_index);

@@ -22,12 +22,12 @@ namespace internal {
 
 template <class RandomAccessIterator, class Kernel, class Policy>
 void hilbert_sort_on_sphere (RandomAccessIterator begin,
-                   RandomAccessIterator end,
-       const Kernel &k,
-                   Policy,
-                   typename Kernel::Point_3 *,
-                   double sq_r,
-                   const typename Kernel::Point_3 &p)
+                             RandomAccessIterator end,
+                             const Kernel &k,
+                             Policy,
+                             typename Kernel::Point_3 *,
+                             double sq_r,
+                             const typename Kernel::Point_3 &p)
 {
   typedef std::iterator_traits<RandomAccessIterator> ITraits;
   typedef typename ITraits::difference_type Diff_t;
@@ -41,62 +41,63 @@ void hilbert_sort_on_sphere (RandomAccessIterator begin,
 
 template <class RandomAccessIterator>
 void hilbert_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
-  double sq_r = 1.0,
-  const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
-            typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0))
+                             double sq_r = 1.0,
+                             const typename CGAL::Kernel_traits<
+                               typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
+                             typename CGAL::Kernel_traits<
+                               typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0))
 {
 
-    typedef std::iterator_traits<RandomAccessIterator> ITraits;
-    typedef typename ITraits::value_type               value_type;
-    typedef CGAL::Kernel_traits<value_type>            KTraits;
-    typedef typename KTraits::Kernel                   Kernel;
+  typedef std::iterator_traits<RandomAccessIterator> ITraits;
+  typedef typename ITraits::value_type               value_type;
+  typedef CGAL::Kernel_traits<value_type>            KTraits;
+  typedef typename KTraits::Kernel                   Kernel;
 
-    internal::hilbert_sort_on_sphere(begin, end, Kernel(), Hilbert_sort_median_policy(),
-                                  static_cast<value_type *> (0), sq_r, p);
-
+  internal::hilbert_sort_on_sphere(begin, end, Kernel(), Hilbert_sort_median_policy(), static_cast<value_type *> (0), sq_r, p);
 }
 
 template <class RandomAccessIterator>
 void hilbert_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end, Hilbert_sort_median_policy policy,
-  double sq_r = 1.0,
-  const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
-    typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0))
+                             double sq_r = 1.0,
+                             const typename CGAL::Kernel_traits<
+                               typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
+                             typename CGAL::Kernel_traits<
+                               typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0))
 {
-    typedef std::iterator_traits<RandomAccessIterator> ITraits;
-    typedef typename ITraits::value_type               value_type;
-    typedef CGAL::Kernel_traits<value_type>            KTraits;
-    typedef typename KTraits::Kernel                   Kernel;
+  typedef std::iterator_traits<RandomAccessIterator> ITraits;
+  typedef typename ITraits::value_type               value_type;
+  typedef CGAL::Kernel_traits<value_type>            KTraits;
+  typedef typename KTraits::Kernel                   Kernel;
 
-    internal::hilbert_sort_on_sphere(begin, end, Kernel(), policy,
-                                  static_cast<value_type *> (0), sq_r, p);
+  internal::hilbert_sort_on_sphere(begin, end, Kernel(), policy, static_cast<value_type *> (0), sq_r, p);
 }
-
 
 template <class RandomAccessIterator>
 void hilbert_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end, Hilbert_sort_middle_policy policy,
-  double sq_r = 1.0,
-  const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
-    typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0))
+                             double sq_r = 1.0,
+                             const typename CGAL::Kernel_traits<
+                               typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
+                             typename CGAL::Kernel_traits<
+                               typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0))
 {
-    typedef std::iterator_traits<RandomAccessIterator> ITraits;
-    typedef typename ITraits::value_type               value_type;
-    typedef CGAL::Kernel_traits<value_type>            KTraits;
-    typedef typename KTraits::Kernel                   Kernel;
+  typedef std::iterator_traits<RandomAccessIterator> ITraits;
+  typedef typename ITraits::value_type               value_type;
+  typedef CGAL::Kernel_traits<value_type>            KTraits;
+  typedef typename KTraits::Kernel                   Kernel;
 
-    internal::hilbert_sort_on_sphere(begin, end, Kernel(), policy,
-                                  static_cast<value_type *> (0), sq_r, p);
+  internal::hilbert_sort_on_sphere(begin, end, Kernel(), policy, static_cast<value_type *> (0), sq_r, p);
 }
 
-
 template <class RandomAccessIterator, class Kernel, class Policy>
-void hilbert_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end, const Kernel &k, Policy policy,
-        double sq_r = 1.0, const typename Kernel::Point_3 &p = typename Kernel::Point_3(0,0,0))
+void hilbert_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
+                             const Kernel &k, Policy policy,
+                             double sq_r = 1.0,
+                             const typename Kernel::Point_3 &p = typename Kernel::Point_3(0,0,0))
 {
-    typedef std::iterator_traits<RandomAccessIterator> ITraits;
-    typedef typename ITraits::value_type               value_type;
+  typedef std::iterator_traits<RandomAccessIterator> ITraits;
+  typedef typename ITraits::value_type               value_type;
 
-    internal::hilbert_sort_on_sphere(begin, end,
-                           k, policy, static_cast<value_type *> (0), sq_r, p);
+  internal::hilbert_sort_on_sphere(begin, end, k, policy, static_cast<value_type *> (0), sq_r, p);
 }
 
 } // end of namespace CGAL

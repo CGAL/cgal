@@ -493,17 +493,13 @@ LOOKUP_CACHE_SIZE      = 0
 
 EXTRACT_ALL            = YES
 
-#---------------------------------------------------------------------------
-# Build related configuration options
-#---------------------------------------------------------------------------
-
 # When the EXTRACT_ALL tag is set to YES and a member or class as no
 # documentation, no detailed section will be produced if the
 # EXTRACT_ALL_NO_DETAILED_IF_EMPTY tag is set to YES. This tag has no effect if
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
 
-EXTRACT_ALL_NO_DETAILED_IF_EMPTY                                        = YES
+${CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY}
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
@@ -1587,7 +1583,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath \
 # example see the documentation.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
-MATHJAX_CODEFILE       =
+MATHJAX_CODEFILE       = ${CGAL_DOC_RESOURCE_DIR}/CGAL_mathjax.js
 
 # When the SEARCHENGINE tag is enabled doxygen will generate a search box for
 # the HTML output. The underlying search engine uses javascript and DHTML and

@@ -9,18 +9,15 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 namespace CGAL {
-
-namespace Surface_mesh_simplification
-{
+namespace Surface_mesh_simplification {
 
 //*******************************************************************************************************************
 //                                -= stopping condition predicate =-
@@ -30,42 +27,34 @@ namespace Surface_mesh_simplification
 //
 //*******************************************************************************************************************
 
-//
 // Stops when the ratio of initial to current vertex pairs is below some value.
-//
 template<class TM_>
 class Count_ratio_stop_predicate
 {
 public:
+  typedef TM_                                                 TM;
+  typedef typename boost::graph_traits<TM>::edges_size_type   size_type;
 
-  typedef TM_ TM ;
-
-  typedef Edge_profile<TM> Profile ;
-
-  typedef typename boost::graph_traits<TM>::edge_descriptor edge_descriptor ;
-  typedef typename boost::graph_traits<TM>::edges_size_type size_type ;
-
-  Count_ratio_stop_predicate( double aRatio ) : mRatio(aRatio) {}
-
-  template <typename F>
-  bool operator()( F const&       // aCurrentCost
-                 , Profile const& // aEdgeProfile
-                 , size_type         aInitialCount
-                 , size_type         aCurrentCount
-                 ) const
+  Count_ratio_stop_predicate(const double ratio)
+    : m_ratio(ratio)
   {
-    return ( static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount) ) < mRatio ;
+    CGAL_warning(0. < ratio && ratio <= 1.);
+  }
+
+  template <typename F, typename Profile>
+  bool operator()(const F& /*current_cost*/,
+                  const Profile& /*profile*/,
+                  size_type initial_edge_count,
+                  size_type current_edge_count) const
+  {
+    return (static_cast<double>(current_edge_count) / static_cast<double>(initial_edge_count)) < m_ratio;
   }
 
 private:
-
-  double mRatio ;
+  double m_ratio;
 };
 
 } // namespace Surface_mesh_simplification
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H //
-// EOF //
-
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H

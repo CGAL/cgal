@@ -1,4 +1,3 @@
-
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
@@ -10,40 +9,39 @@ which computes the collapse cost as the squared length of the edge.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-
 \cgalModels `GetCost`
 
 */
-template< typename TriangleMesh >
-class Edge_length_cost {
+template <typename TriangleMesh>
+class Edge_length_cost
+{
 public:
 
-/// \name Creation
-/// @{
+  /// \name Creation
+  /// @{
 
-/*!
-Default constructor
-*/
-Edge_length_cost<TriangleMesh>();
+  /*!
+  %Default constructor
+  */
+  Edge_length_cost();
 
-/// @}
+  /// @}
 
-/// \name Operations
-/// @{
+  /// \name Operations
+  /// @{
 
-/*!
-Returns the <I>collapse cost</I> as the squared distance between the points
-of the source and target vertices (that is, `profile.p0()` and `profile.p1()`.
+  /*!
+  Returns the <I>collapse cost</I> as the squared distance between the points
+  of the source and target vertices (that is, `profile.p0()` and `profile.p1()`.
 
-The `placement` argument is ignored.
+  The argument `placement` is unused.
+  */
+  boost::optional<typename Edge_profile::FT> operator()(const Edge_profile& profile,
+                                                        const boost::optional<typename Edge_profile::Point>& placement) const;
 
-*/
-template <typename Profile, typename T>
-optional<typename Profile::FT> operator()( Profile const& profile
-, T const& placement ) const;
+  /// @}
 
-/// @}
+};
 
-}; /* end Surface_mesh_simplification::Edge_length_cost */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+} // namespace Surface_mesh_simplification
+} // namespace CGAL

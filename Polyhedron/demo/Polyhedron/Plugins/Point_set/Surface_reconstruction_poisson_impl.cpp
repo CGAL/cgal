@@ -25,14 +25,8 @@
 #include "SMesh_type.h"
 #include "Scene_points_with_normal_item.h"
 
-
-
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 template <typename Triangulation>
 class Marching_tets
@@ -358,7 +352,6 @@ SMesh* poisson_reconstruct(Point_set& points,
   // Constructs AABB tree and computes internal KD-tree
   // data structure to accelerate distance queries
   AABB_tree tree(faces(*mesh).first, faces(*mesh).second, *mesh);
-  tree.accelerate_distance_queries();
 
   // Computes distance from each input point to reconstructed mesh
   double max_distance = DBL_MIN;

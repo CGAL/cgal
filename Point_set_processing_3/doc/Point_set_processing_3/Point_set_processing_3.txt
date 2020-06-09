@@ -7,7 +7,7 @@
 
 \cgalAutoToc
 
-\authors Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu
+\authors Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu, Necip Fazil Yildiran
 
 \section Point_set_processing_3Introduction Introduction
 
@@ -23,8 +23,8 @@ In the context of surface reconstruction we can position the elements
 of this component along the common surface reconstruction pipeline
 (\cgalFigureRef{Point_set_processing_3figpipeline}) which involves the
 following steps:
--# Scanning and scan alignment to produce a set of
-points or points with normals (alignment is not covered in \cgal);
+-# Scanning and scan registration to produce a set of
+points or points with normals;
 -# Outlier removal;
 -# Simplification to reduce the number of input points;
 -# Smoothing to reduce noise in the input data;
@@ -272,7 +272,7 @@ number of points (or the minimal local range) such that the subset of
 points has the appearance of a curve in 2D or a surface in 3D
 \cgalCite{cgal:gcsa-nasr-13}.
 
-\cgal provides 2 functions that automatically estimate the scale of a
+\cgal provides two functions that automatically estimate the scale of a
 2D point set sampling a curve or a 3D point set sampling a surface:
 
 - `estimate_global_k_neighbor_scale()`
@@ -285,7 +285,7 @@ K neighbor scale or a range scale.
 
 In some specific cases, the scale of a point set might not be
 homogeneous (for example if the point set contains variable
-noise). \cgal also provides 2 functions that automatically estimate
+noise). \cgal also provides two functions that automatically estimate
 the scales of a point set at a set of user-defined query points:
 
 - `estimate_local_k_neighbor_scales()`
@@ -314,15 +314,341 @@ points in the domain.
 
 \cgalExample{Point_set_processing_3/scale_estimation_2d_example.cpp}
 
+\section Point_set_processing_3Registration Registration
 
+\cgal provides two functions as wrapper for the \ref thirdpartyOpenGR library
+\cgalCite{cgal:m-ogr-17}, and two functions as wrapper for the \ref thirdpartylibpointmatcher
+library :
+
+- `CGAL::OpenGR::compute_registration_transformation()` computes the
+registration of one point set w.r.t. another in the form of a
+`CGAL::Aff_transformation_3` object, using the Super4PCS algorithm
+\cgalCite{cgal:mam-sffgp-14};
+
+- `CGAL::OpenGR::register_point_sets()` computes the registration of
+one point set w.r.t. another and directly aligns it to it;
+
+- `CGAL::pointmatcher::compute_registration_transformation()` computes the
+registration of one point set w.r.t. another in the form of a
+`CGAL::Aff_transformation_3` object, using the ICP (Iterative Closest Point)
+algorithm;
+
+- `CGAL::pointmatcher::register_point_sets()` computes the registration of
+one point set w.r.t. another and directly aligns it to it.
+
+\subsection Point_set_processing_3Examples_registration_OpenGR OpenGR Example
+
+The following example reads two point sets and aligns them using the
+\ref thirdpartyOpenGR library, using the Super4PCS algorithm:
+\cgalExample{Point_set_processing_3/registration_with_OpenGR.cpp}
+
+\cgalFigureRef{Point_set_processing_3tableRegistrationRegistration_visualization_table} demonstrates
+visualization of a scan data before and after different registration methods are applied,
+including the %OpenGR registration method. To obtain the results for %OpenGR registration
+in the visualization table, above-mentioned example was used.
+
+\subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_number_of_samples Parameter: number_of_samples
+
+Input clouds are sub-sampled prior exploration, to ensure fast computations.
+Super4PCS has a linear complexity w.r.t. the number of input samples, allowing
+to use larger values than 4PCS.
+Simple geometry with large overlap can be matched with only 200 samples.
+However, with Super4PCS, smaller details can be used during the process by using
+up to thousands of points. There is no theoretical limit to this parameter;
+however, using too large values leads to very a large congruent set,
+which requires more time and memory to be explored.
+
+Using a large number of samples is recommended when:
+
+- geometrical details are required to perform the matching, for instance to disambiguate
+between several similar configurations,
+
+- the clouds have a very low overlap: using a too sparse sampling can result in
+an empty overlapping area, causing the algorithm to fail,
+
+- the clouds are very noisy, and require a dense sampling.
+
+Note that Super4PCS is a global registration algorithm, which finds a good approximate
+of the rigid transformation aligning two clouds. Increasing the number of samples
+in order to get a fine registration is not optimal: it is usually faster to use
+fewer samples, and refine the transformation using a local algorithm, like the ICP,
+or its variant SparseICP.
+
+\subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_accuracy Parameter: accuracy
+
+This parameter controls the registration accuracy: setting a small value means that
+the two clouds need to be very close to be considered as well aligned. It is expressed in scene units.
+
+A simple way to understand its impact is to consider the computation of the Largest Common Pointset (LCP),
+the metric used to verify how aligned the clouds are. For each transformation matrix produced
+by Super4PCS, OpenGR computes the LCP measure by considering a shell around the reference cloud, and
+count the percentage of points of the target cloud lying in the shell. The thickness of the shell is
+defined by the parameter delta (accuracy).
+
+Using too wide values will slow down the algorithm by increasing the size of the congruent set,
+while using to small values prevents to find a solution. This parameter impacts other steps of
+the algorithm, see the paper \cgalCite{cgal:mam-sffgp-14} for more details.
+
+\subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_normal Parameter: maximum normal deviation
+
+This parameter sets an angle threshold above which two pairs of points are discarded as candidates
+for matching. It is expressed in degrees.
+
+The default value is 90° (no filtering). Decreasing this value allows to decrease the computation
+time by being more selective on candidates. Using too small values might result in ignoring
+candidates that should indeed have been matched and may thus result in a quality decrease.
+
+\subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_overlap Parameter: overlap
+
+Ratio of expected overlap between the two point sets: it is ranging between 0 (no overlap) to 1 (100% overlap).
+
+The overlap parameter controls the size of the basis used for registration, as shown below:
+
+\cgalFigureBegin{Point_set_processing_3figOpenGR_parameter_overlap,super4PCS_overlap.png}
+The effect of varying overlap parameter on the size of the basis used for registration. The overlap is smaller for left (a) than right (b).
+\cgalFigureEnd
+
+Usually, the larger the overlap, the faster the algorithm.
+When the overlap is unknown, a simple way to set this parameter is to start from
+100% overlap, and decrease the value until obtaining a good result.
+Using too small values will slow down the algorithm, and
+reduce the accuracy of the result.
+
+\subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_maximum_running_time Parameter: maximum_running_time
+
+Maximum number of seconds after which the algorithm stops. Super4PCS explores the
+transformation space to align the two input clouds. Since the exploration is performed
+randomly, it is recommended to use a large time value to explore the whole space.
+
+\subsection Point_set_processing_3Examples_registration_PointMatcher PointMatcher Example
+
+The following example reads two point sets and aligns them using the
+\ref thirdpartylibpointmatcher library, using the ICP algorithm. It also shows how
+to customize ICP algorithm by using possible configurations:
+\cgalExample{Point_set_processing_3/registration_with_pointmatcher.cpp}
+
+\cgalFigureRef{Point_set_processing_3tableRegistrationRegistration_visualization_table} demonstrates
+visualization of a scan data before and after different registration methods are applied,
+including the PointMatcher registration method. To obtain the results for PointMatcher registration
+in the visualization table, above-mentioned example was used.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_point_set_filters Parameter: point_set_filters
+
+The chain of filters to be applied to the point cloud. The
+point cloud is processed into an intermediate point cloud with the given chain
+of filters to be used in the alignment procedure. The chain is organized with
+the forward traversal order of the point set filters range.
+
+The chain of point set filters are applied only once at the beginning of the
+ICP procedure, i.e., before the first iteration of the ICP algorithm.
+
+The filters can have several purposes, including but not limited to:
+
+- removal of noisy points which render alignment of point clouds difficult,
+
+- removal of redundant points so as to speed up alignment,
+
+- addition of descriptive information to the points such as a surface normal vector or the direction from the point to the sensor.
+
+In registration, there are two point clouds in consideration, one of which is the reference point
+cloud while the other one is the point cloud to register. The point set filters corresponds to `readingDataPointsFilters` configuration module of \ref thirdpartylibpointmatcher
+library while it corresponds to the `referenceDataPointsFilters` for the other point cloud.
+The filters should be chosen and set from possible components of those configuration modules.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_matcher Parameter: matcher
+
+The method used for matching (linking) the points from to the points in the reference cloud.
+
+Corresponds to `matcher` configuration module of \ref thirdpartylibpointmatcher
+library. The matcher should be chosen and set from possible components of
+the `matcher` configuration module.
+See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
+for possible configurations.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_outlier_filters Parameter: outlier_filters
+
+The chain of filters to be applied to the matched (linked) point clouds after
+each processing iteration of the ICP algorithm to remove the links which do not
+correspond to true point correspondences. The outliers are rejected. Points
+with no link are ignored in the subsequent error minimization step.
+The chain is organized with the forward traversal order of the outlier filters
+range.
+
+Corresponds to `outlierFilters` configuration module of \ref thirdpartylibpointmatcher
+library. The filters should be chosen and set from possible components of
+the `outlierFilters` configuration module.
+See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
+for possible configurations.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_error_minimizer Parameter: error_minimizer
+
+The error minimizer that computes a transformation matrix such as to minimize
+the error between the point sets.
+
+Corresponds to `errorMinimizer` configuration module of \ref thirdpartylibpointmatcher
+library. The error minimizer should be chosen and set from possible components of
+the `errorMinimizer` configuration module.
+See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
+for possible configurations.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_inspector Parameter: inspector
+
+The inspector allows to log data at different steps for analysis. Inspectors
+typically provide deeper scrutiny than the logger.
+
+Corresponds to `inspector` configuration module of \ref thirdpartylibpointmatcher
+library. The inspector should be chosen and set from possible components of
+the `inspector` configuration module.
+See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
+for possible configurations.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_logger Parameter: logger
+
+The method for logging information regarding the registration process outputted
+by \ref thirdpartylibpointmatcher library. The logs generated by CGAL library
+does not get effected by this configuration.
+
+Corresponds to `logger` configuration module of \ref thirdpartylibpointmatcher
+library. The logger should be chosen and set from possible components of
+the `logger` configuration module.
+See <a href="https://libpointmatcher.readthedocs.io/en/latest/Configuration/#configuration-of-an-icp-chain">libpointmatcher documentation</a>
+for possible configurations.
+
+\subsubsection Point_set_processing_3Examples_registration_PointMatcher_parameter_transformation Parameter: transformation
+
+The affine transformation that is used as the initial transformation for the reference point cloud.
+
+\subsection Point_set_processing_3Examples_registration_OpenGR_PointMatcher_Pipeline OpenGR/PointMatcher Pipeline Example
+
+The following example reads two point sets and aligns them by using both
+\ref thirdpartyOpenGR and \ref thirdpartylibpointmatcher libraries, respectively.
+It depicts a use case where a coarse estimation of a registration transformation
+is done using the Super4PCS algorithm. Then, a fine registration from this coarse
+registration using the ICP algorithm.
+\cgalExample{Point_set_processing_3/registration_with_opengr_pointmatcher_pipeline.cpp}
+
+\cgalFigureRef{Point_set_processing_3tableRegistrationRegistration_visualization_table} demonstrates
+visualization of a scan data before and after different registration methods are applied,
+including the pipeline of %OpenGR and PointMatcher registration methods. To obtain the results
+for the pipeline of %OpenGR and PointMatcher registration methods in the visualization table,
+above-mentioned example was used.
+
+\cgalFigureAnchor{Point_set_processing_3tableRegistrationRegistration_visualization_table}
+<table>
+<tr>
+  <th>       </th>
+  <th>Scan 1 </th>
+  <th>Scan 1 (possibly transformed, green) and Scan 2 (the reference, red)</th>
+</tr>
+<tr>
+  <th>Unregistered</th>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationUnregistered_hippo2_view1, registration_view1_hippo2_unregistered.png}
+    \cgalFigureEnd
+  </td>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationUnregistered_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_unregistered.png}
+    \cgalFigureEnd
+  </td>
+</tr>
+<tr>
+  <th>
+    Registered
+    using
+    %OpenGR
+  </th>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationOpenGR_hippo2_view1, registration_view1_hippo2_opengr.png}
+    \cgalFigureEnd
+  </td>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationOpenGR_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_opengr.png}
+    \cgalFigureEnd
+  </td>
+</tr>
+<tr>
+  <th>
+    Registered
+    using
+    PointMatcher
+  </th>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationPointMatcher_hippo2_view1, registration_view1_hippo2_pointmatcher.png}
+    \cgalFigureEnd
+  </td>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationPointMatcher_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_pointmatcher.png}
+    \cgalFigureEnd
+  </td>
+</tr>
+<tr>
+  <th>
+    Registered
+    using
+    OpenGR+PointMatcher
+    Pipeline
+  </th>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationPipeline_hippo2_view1, registration_view1_hippo2_opengr_pointmatcher_pipeline.png}
+    \cgalFigureEnd
+  </td>
+  <td>
+    \cgalFigureBegin{Point_set_processing_3figRegistrationPipeline_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_opengr_pointmatcher_pipeline.png}
+    \cgalFigureEnd
+  </td>
+</tr>
+</table>
+\cgalFigureCaptionBegin{Point_set_processing_3tableRegistrationRegistration_visualization_table}
+Visualization of registered hippo scans with different registration methods.
+Two scans are used: red as the reference, green as the one for which the transformation
+is computed and applied. To obtain the results, the example code given in
+\ref Point_set_processing_3Examples_registration_OpenGR ,
+\ref Point_set_processing_3Examples_registration_PointMatcher ,
+\ref Point_set_processing_3Examples_registration_OpenGR_PointMatcher_Pipeline
+were applied, respectively. The parameters of the algorithms used to obtain those
+results are not optimized for the shown scans; therefore, better parameter choice
+might result in better results in terms of registration accuracy for each algorithm
+individually.
+\cgalFigureCaptionEnd
+
+
+\section Point_set_processing_3Clustering Clustering
+
+If an input point set represents several objects which are spatially
+separated, a clustering algorithm can be applied to identify connected
+components on a nearest neighbor graph built using a query sphere of
+fixed radius centered on each point.
+
+The clustering is stored in a cluster map which associates each input
+point with the index of the cluster it belongs to: users can then use
+this map however they find it relevant to their use case, for example
+segmenting the input point set into one point set per
+cluster. \cgalFigureRef{Point_set_processing_3figclustering} shows
+different clustering outputs.
+
+\cgalFigureBegin{Point_set_processing_3figclustering,clustering.png}
+Point Set Clustering outputs (one color per cluster). Top: input point
+set and clustering using a neighbor radius of 1.5 (147 clusters
+extracted). Bottom: clustering with neighbor radius 3.0 (37 clusters
+extracted), and with neighbor radius 6.0 (5 clusters extracted).
+\cgalFigureEnd
+
+
+\subsection Point_set_processing_3Example_clustering Example
+
+In the following example, clusters (and adjacencies between them) are
+computed and stored as colors in a PLY file:
+
+\cgalExample{Point_set_processing_3/clustering_example.cpp}
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
-Function `remove_outliers()` deletes a user-specified fraction
-of outliers from an input point set. More specifically, it sorts the
-input points in increasing order of average squared distances to their
-nearest neighbors and deletes the points with largest value. The user
-can either specify a fixed number of nearest neighbors or a fixed
+Function `remove_outliers()` deletes a user-specified fraction of
+outliers from an input point set. More specifically, it partitions the
+input points with respect to the average squared distances to their
+nearest neighbors and deletes the points with largest value, either
+partitionning with a threshold or removing a fixed percentage. The
+user can either specify a fixed number of nearest neighbors or a fixed
 spherical neighborhood radius.
 
 \subsection Point_set_processing_3Example_outlier_removal Example
@@ -664,7 +990,9 @@ Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and C
 Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introduced the computation of the Voronoi covariance measure of a point set,
 as well as the normal and feature edge estimation functions based on it.
 Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
+Started from GSoC'2019, Necip Fazil Yildiran with the help of Nicolas Mellado and Simon Giraudot introduced the wrappers for OpenGR and PointMatcher
+libraries that perform registration on two point sets.
+
 
 */
 } /* namespace CGAL */
-

@@ -105,47 +105,6 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 }  // end namespace details
 }  // end namespace Mesh_3
 
-namespace Mesh_3 {
-namespace internal {
-
-template <typename Polyhedron_type,
-          bool = CGAL::graph_has_property<Polyhedron_type,
-                                           CGAL::face_index_t>::value>
-class Get_face_index_pmap {
-public:
-  typedef typename boost::property_map<Polyhedron_type,
-                                       CGAL::face_index_t>::const_type Pmap;
-  Get_face_index_pmap(const Polyhedron_type&) {}
-  Pmap operator()(const Polyhedron_type& polyhedron) {
-    return get(CGAL::face_index, polyhedron);
-  }
-};
-
-template <typename Polyhedron_type>
-class Get_face_index_pmap<Polyhedron_type, false> {
-  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
-                                                              face_descriptor;
-  typedef std::map<face_descriptor, int> Map;
-public:
-  Get_face_index_pmap(const Polyhedron_type& polyhedron) {
-    int id = 0;
-    for(face_descriptor f : faces(polyhedron))
-    {
-      face_ids[f] = id++;
-    }
-  }
-  typedef boost::associative_property_map<Map> Pmap;
-
-  Pmap operator()(const Polyhedron_type&) {
-    return Pmap(face_ids);
-  }
-private:
-  Map face_ids;
-};
-
-} // end namespace internal
-} // end namespace Mesh_3
-
 /**
  * @class Polyhedral_mesh_domain_3
  *
@@ -206,7 +165,7 @@ public:
   struct Primitive_type {
       //setting OneFaceGraphPerTree to false transforms the id type into
       //std::pair<FD, const FaceGraph*>.
-    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::type, CGAL::Tag_false> type;
+    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::const_type, CGAL::Tag_false> type;
 
     static
     typename IGT_::Triangle_3 datum(const typename type::Id primitive_id) {

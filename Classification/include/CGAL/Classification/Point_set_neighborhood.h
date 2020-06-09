@@ -81,7 +81,7 @@ class Point_set_neighborhood
   typedef Search_traits_adapter <boost::uint32_t, My_point_property_map, SearchTraits_3> Search_traits;
   typedef Sliding_midpoint<Search_traits> Splitter;
   typedef Distance_adapter<boost::uint32_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
-  typedef Kd_tree<Search_traits, Splitter, Tag_true> Tree;
+  typedef Kd_tree<Search_traits, Splitter, Tag_true, Tag_true> Tree;
   typedef Fuzzy_sphere<Search_traits> Sphere;
   typedef Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree> Knn;
 
@@ -173,12 +173,32 @@ public:
   /*!
     \brief Constructs a neighborhood object based on the input range.
 
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Sequential_tag`, `Parallel_tag`,
+    and `Parallel_if_available_tag`. If no tag is provided,
+    `Parallel_if_available_tag` is used.
+
     \param input point range.
     \param point_map property map to access the input points.
   */
+  template <typename ConcurrencyTag>
   Point_set_neighborhood (const PointRange& input,
-                          PointMap point_map)
+                          PointMap point_map,
+                          const ConcurrencyTag&)
     : m_tree (nullptr)
+  {
+    init<ConcurrencyTag> (input, point_map);
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  Point_set_neighborhood (const PointRange& input, PointMap point_map)
+    : m_tree (nullptr)
+  {
+    init<Parallel_if_available_tag> (input, point_map);
+  }
+
+  template <typename ConcurrencyTag>
+  void init (const PointRange& input, PointMap point_map)
   {
     My_point_property_map pmap (&input, point_map);
     m_tree = new Tree (boost::counting_iterator<boost::uint32_t> (0),
@@ -186,8 +206,9 @@ public:
                        Splitter(),
                        Search_traits (pmap));
     m_distance = Distance (pmap);
-    m_tree->build();
+    m_tree->template build<ConcurrencyTag>();
   }
+  /// \endcond
 
   /*!
     \brief Constructs a simplified neighborhood object based on the input range.
@@ -197,14 +218,36 @@ public:
     present in one cell, only the point closest to the centroid of
     this subset is used.
 
+    \tparam ConcurrencyTag enables sequential versus parallel
+    algorithm. Possible values are `Sequential_tag`, `Parallel_tag`,
+    and `Parallel_if_available_tag`. If no tag is provided,
+    `Parallel_if_available_tag` is used.
+
     \param input input range.
     \param point_map property map to access the input points.
     \param voxel_size size of the cells of the 3D grid used for simplification.
   */
+  template <typename ConcurrencyTag>
+  Point_set_neighborhood (const PointRange& input,
+                          PointMap point_map,
+                          float voxel_size,
+                          const ConcurrencyTag&)
+    : m_tree (nullptr)
+  {
+    init<ConcurrencyTag> (input, point_map, voxel_size);
+  }
+
+  /// \cond SKIP_IN_MANUAL
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map,
                           float voxel_size)
     : m_tree (nullptr)
+  {
+    init<Parallel_if_available_tag> (input, point_map, voxel_size);
+  }
+
+  template <typename ConcurrencyTag>
+  void init (const PointRange& input, PointMap point_map, float voxel_size)
   {
     // First, simplify
     std::vector<boost::uint32_t> indices;
@@ -215,8 +258,9 @@ public:
                        Splitter(),
                        Search_traits (pmap));
     m_distance = Distance (pmap);
-    m_tree->build();
+    m_tree->template build<ConcurrencyTag>();
   }
+  /// \endcond
 
   /// @}
 

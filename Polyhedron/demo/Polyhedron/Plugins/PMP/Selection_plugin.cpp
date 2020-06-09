@@ -1,5 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
@@ -17,6 +18,10 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
+
+#include <QMultipleInputDialog.h>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
 
 #include <map>
 
@@ -127,6 +132,12 @@ public:
       return res;
   }
 
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_polyhedron_selection_item*>(item))
+      return true;
+    return false;
+  }
+
   bool applicable(QAction* action) const override {
     if(action == actionSelfIntersection)
       return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
@@ -181,6 +192,7 @@ public:
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
     connect(ui_widget.Select_boundaryButton,  SIGNAL(clicked()), this, SLOT(on_Select_boundaryButton_clicked()));
     connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
+    connect(ui_widget.Regularize_button,  SIGNAL(clicked()), this, SLOT(on_Regularize_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
     connect(ui_widget.Inverse_selection_button,  SIGNAL(clicked()), this, SLOT(on_Inverse_selection_button_clicked()));
@@ -362,6 +374,81 @@ public Q_SLOTS:
 
     selection_item->add_to_selection();
     filter_operations();
+  }
+  // Regularize selection using graph cut
+  void on_Regularize_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+
+    QMultipleInputDialog dialog ("Regularize Selection Border", mw);
+    QDoubleSpinBox* weight = dialog.add<QDoubleSpinBox> ("Weight:");
+    weight->setDecimals (6);
+    weight->setRange (0., 0.999999); // [0;1[
+    weight->setValue (0.5);
+
+    QCheckBox* prevent_unselection = dialog.add<QCheckBox> ("Prevent unselection");
+
+    if (dialog.exec() != QDialog::Accepted)
+      return;
+
+    boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+    for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
+    {
+      if(selection_item->selected_facets.find(fh)
+         == selection_item->selected_facets.end())
+        is_selected_map[fh]=false;
+      else
+      {
+        is_selected_map[fh]=true;
+      }
+    }
+
+    auto border_length =
+      [&]() -> double
+      {
+        double out = 0.;
+        for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : edges(*selection_item->polyhedron()))
+        {
+          fg_face_descriptor f0 = face (halfedge (ed, *selection_item->polyhedron()),
+                                        *selection_item->polyhedron());
+          fg_face_descriptor f1 = face (opposite(halfedge (ed, *selection_item->polyhedron()),
+                                                 *selection_item->polyhedron()),
+                                        *selection_item->polyhedron());
+          if (is_selected_map[f0] == is_selected_map[f1])
+            continue;
+
+          fg_vertex_descriptor esource = source(ed, *selection_item->polyhedron());
+          fg_vertex_descriptor etarget = target(ed, *selection_item->polyhedron());
+
+          out += std::sqrt(CGAL::squared_distance (get (get(CGAL::vertex_point,*selection_item->polyhedron()), esource),
+                                                   get (get(CGAL::vertex_point,*selection_item->polyhedron()), etarget)));
+        }
+        return out;
+      };
+
+    std::cerr << "[Selection Regularization] Weight = " << weight->value() << std::endl;
+
+    std::cerr << "Length of border before regularization = " << border_length() << std::endl;
+
+    CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
+                                             boost::make_assoc_property_map(is_selected_map),
+                                             weight->value(),
+                                             CGAL::parameters::prevent_unselection (prevent_unselection->isChecked()));
+
+    std::cerr << "Length of border after regularization = " << border_length() << std::endl;
+
+    selection_item->selected_facets.clear();
+
+    for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
+    {
+      if (is_selected_map[fh])
+        selection_item->selected_facets.insert(fh);
+    }
+    selection_item->invalidateOpenGLBuffers();
+    selection_item->itemChanged();
   }
   // Clear selection
   void on_Clear_button_clicked() {

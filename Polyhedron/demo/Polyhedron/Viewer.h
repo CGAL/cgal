@@ -95,12 +95,14 @@ public:
 Q_SIGNALS:
   void sendMessage(QString);
   void doneInitGL(CGAL::Three::Viewer_interface*);
+  void socketClosed();
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
   //! If b is true, facets will be ligted from both internal and external sides.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   void setTwoSides(bool b) Q_DECL_OVERRIDE;
+  void setBackFrontShading(bool b) Q_DECL_OVERRIDE;
   void SetOrthoProjection( bool b) Q_DECL_OVERRIDE;
   //! If b is true, some items are displayed in a simplified version when moving the camera.
   //! If b is false, items display is never altered, even when moving.
@@ -127,8 +129,14 @@ public Q_SLOTS:
   }
 
   void setLighting();
+  void setBackFrontColors();
 
   void messageLogged(QOpenGLDebugMessage);
+#ifdef CGAL_USE_WEBSOCKETS
+  void setShareCam(bool, QString);
+  void onSocketConnected();
+  void onTextMessageSocketReceived(QString message);
+#endif
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;

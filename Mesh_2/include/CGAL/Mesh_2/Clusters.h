@@ -89,7 +89,7 @@ public:
 
     /**
      * The following map tells what vertices are in the cluster and if
-     * the corresponding segment has been splitted once.
+     * the corresponding segment has been split once.
      */
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;

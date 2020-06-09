@@ -40,15 +40,15 @@
 
 namespace CGAL {
 
-namespace Polygon_mesh_processing {
-
-// workaround for area(face_range,tm) overload
+// workaround for area(face_range, tm) overload
 template<typename CGAL_PMP_NP_TEMPLATE_PARAMETERS, typename NP>
 class GetGeomTraits<CGAL_PMP_NP_CLASS, NP>
 {
 public:
   struct type{};
 };
+
+namespace Polygon_mesh_processing {
 
 /**
   * \ingroup measure_grp
@@ -326,7 +326,8 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
 
-  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   return approximate_sqrt(traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
                                                                  get(vpm, target(hd, tmesh)),
@@ -500,7 +501,7 @@ volume(const TriangleMesh& tmesh,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_const_property_map(CGAL::vertex_point, tmesh));
   typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3 origin(0, 0, 0);
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -577,11 +578,11 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_const_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor h = halfedge(f, tmesh);
 
-  Geom_traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Geom_traits());
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
 #if 0
   const FT sq_triangle_area = gt.compute_squared_area_3_object()(get(vpm, source(h, tmesh)),
@@ -679,7 +680,7 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 
   typedef typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_const_property_map(CGAL::vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
   typedef typename Kernel::Point_3                                      Point_3;

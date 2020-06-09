@@ -16,6 +16,11 @@
 #include <QApplication>
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
+#include <QAction>
+#include <QRegularExpressionMatch>
+#ifdef CGAL_USE_WEBSOCKETS
+#include <QtWebSockets/QWebSocket>
+#endif
 
 #include <CGAL/Three/Three.h>
 
@@ -40,6 +45,7 @@ public:
   bool inDrawWithNames;
   bool clipping;
   bool projection_is_ortho;
+  bool cam_sharing;
   GLfloat gl_point_size;
   QVector4D clipbox[6];
   QPainter *painter;
@@ -50,6 +56,10 @@ public:
   QVector4D diffuse;
   QVector4D specular;
   float spec_power;
+
+  //Back and Front Colors
+  QColor front_color;
+  QColor back_color;
 
   // M e s s a g e s
   QString message;
@@ -107,6 +117,12 @@ public:
   {
     return shader_programs;
   }
+#ifdef CGAL_USE_WEBSOCKETS
+  QWebSocket m_webSocket;
+#endif
+  bool is_connected;
+  QString session;
+  QUrl m_url;
 };
 
 class LightingDialog :
@@ -124,23 +140,23 @@ public:
                                .arg(d->position.y())
                                .arg(d->position.z()));
     QPalette palette;
-    ambient=QColor(255*d->ambient.x(),
-                   255*d->ambient.y(),
-                   255*d->ambient.z());
+    ambient=QColor::fromRgbF(d->ambient.x(),
+                             d->ambient.y(),
+                             d->ambient.z());
     palette.setColor(QPalette::Button,ambient);
     ambientButton->setPalette(palette);
     ambientButton->setStyle(QStyleFactory::create("Fusion"));
 
-    diffuse=QColor(255*d->diffuse.x(),
-                   255*d->diffuse.y(),
-                   255*d->diffuse.z());
+    diffuse=QColor::fromRgbF(d->diffuse.x(),
+                             d->diffuse.y(),
+                             d->diffuse.z());
     palette.setColor(QPalette::Button,diffuse);
     diffuseButton->setPalette(palette);
     diffuseButton->setStyle(QStyleFactory::create("Fusion"));
 
-    specular=QColor(255*d->specular.x(),
-                    255*d->specular.y(),
-                    255*d->specular.z());
+    specular=QColor::fromRgbF(d->specular.x(),
+                              d->specular.y(),
+                              d->specular.z());
     palette.setColor(QPalette::Button,specular);
     specularButton->setPalette(palette);
     specularButton->setStyle(QStyleFactory::create("Fusion"));
@@ -251,11 +267,23 @@ void Viewer::doBindings()
                           specular.split(",").at(2).toFloat(),
                           1.0f);
 
+  QString front_color = viewer_settings.value("front_color", QString("1.0,0.0,0.0")).toString();
+  d->front_color= QColor::fromRgbF(front_color.split(",").at(0).toFloat(),
+                                   front_color.split(",").at(1).toFloat(),
+                                   front_color.split(",").at(2).toFloat(),
+                         1.0f);
+  QString back_color = viewer_settings.value("back_color", QString("0.0,0.0,1.0")).toString();
+  d->back_color= QColor::fromRgbF( back_color.split(",").at(0).toFloat(),
+                                   back_color.split(",").at(1).toFloat(),
+                                   back_color.split(",").at(2).toFloat(),
+                         1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
+  d->cam_sharing = false;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("back_front_shading", false);
   d->macro_mode = false;
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
@@ -263,6 +291,7 @@ void Viewer::doBindings()
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
+  d->is_connected = false;
 
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -333,6 +362,7 @@ Viewer::Viewer(QWidget* parent,
   is_sharing = true;
   d->antialiasing = antialiasing;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("back_front_shading", false);
   this->setProperty("helpText", QString("This is a sub-viewer. It displays the scene "
                                         "from another point of view. \n "));
   is_ogl_4_3 = sharedWidget->is_ogl_4_3;
@@ -367,6 +397,17 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    viewer_settings.setValue("front_color",
+                             QString("%1,%2,%3")
+                             .arg(d->front_color.redF())
+                             .arg(d->front_color.greenF())
+                             .arg(d->front_color.blueF()));
+    viewer_settings.setValue("back_color",
+                             QString("%1,%2,%3")
+                             .arg(d->back_color.redF())
+                             .arg(d->back_color.greenF())
+                             .arg(d->back_color.blueF()));
+
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
@@ -397,6 +438,13 @@ void Viewer::setTwoSides(bool b)
 {
   this->setProperty("draw_two_sides", b);
   d->twosides = b;
+  update();
+}
+
+
+void Viewer::setBackFrontShading(bool b)
+{
+  this->setProperty("back_front_shading", b);
   update();
 }
 
@@ -589,7 +637,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
       d->showDistance(event->pos());
       event->accept();
   }
-  else {
+  else{
     makeCurrent();
     CGAL::QGLViewer::mousePressEvent(event);
   }
@@ -947,7 +995,10 @@ void Viewer::attribBuffers(int program_name) const {
         program->setUniformValue("light_spec", d->specular);
         program->setUniformValue("light_amb", d->ambient);
         program->setUniformValue("spec_power", d->spec_power);
+        program->setUniformValue("front_color", d->front_color);
+        program->setUniformValue("back_color", d->back_color);
         program->setUniformValue("is_two_side", d->twosides);
+        program->setUniformValue("back_front_shading", this->property("back_front_shading").toBool());
         break;
     }
     switch(program_name)
@@ -1639,6 +1690,12 @@ void Viewer::setTotalPass(int p)
 
 void Viewer::messageLogged(QOpenGLDebugMessage msg)
 {
+  //filter out useless warning
+  // From those two links, we decided we didn't care for this warning:
+  // https://community.khronos.org/t/vertex-shader-in-program-2-is-being-recompiled-based-on-gl-state/76019
+  // https://stackoverflow.com/questions/12004396/opengl-debug-context-performance-warning
+  if(msg.message().contains("is being recompiled"))
+    return;
   QString error;
 
   // Format based on severity
@@ -1733,7 +1790,7 @@ void Viewer::setLighting()
       msgBox->exec();
       return;
     }
-    double coords[3];
+    float coords[3];
     for(int j=0; j<3; ++j)
     {
       bool ok;
@@ -1755,9 +1812,9 @@ void Viewer::setLighting()
   //set ambient
   connect(dialog, &LightingDialog::s_ambient_changed,
           [this, dialog](){
-    d->ambient=QVector4D(dialog->ambient.redF(),
-                         dialog->ambient.greenF(),
-                         dialog->ambient.blueF(),
+    d->ambient=QVector4D((float)dialog->ambient.redF(),
+                         (float)dialog->ambient.greenF(),
+                         (float)dialog->ambient.blueF(),
                          1.0f);
     update();
   });
@@ -1765,18 +1822,18 @@ void Viewer::setLighting()
   //set diffuse
   connect(dialog, &LightingDialog::s_diffuse_changed,
           [this, dialog](){
-    d->diffuse=QVector4D(dialog->diffuse.redF(),
-                         dialog->diffuse.greenF(),
-                         dialog->diffuse.blueF(),
+    d->diffuse=QVector4D((float)dialog->diffuse.redF(),
+                         (float)dialog->diffuse.greenF(),
+                         (float)dialog->diffuse.blueF(),
                          1.0f);
     update();
   });
   //set specular
   connect(dialog, &LightingDialog::s_specular_changed,
           [this, dialog](){
-    d->specular=QVector4D(dialog->specular.redF() ,
-                         dialog->specular.greenF(),
-                         dialog->specular.blueF() ,
+    d->specular=QVector4D((float)dialog->specular.redF(),
+                          (float)dialog->specular.greenF(),
+                          (float)dialog->specular.blueF(),
                          1.0f);
     update();
 
@@ -1786,8 +1843,8 @@ void Viewer::setLighting()
   connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
           [this](){
     d->position = QVector4D(0,0,1,1);
-    d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
-    d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
+    d->ambient=QVector4D(77.0f/255,77.0f/255,77.0f/255, 1.0);
+    d->diffuse=QVector4D(204.0f/255,204.0f/255,204.0f/255,1.0);
     d->specular=QVector4D(0,0,0,1.0);
     d->spec_power = 51;
     update();
@@ -1801,6 +1858,65 @@ void Viewer::setLighting()
     d->ambient = prev_ambient;
     d->diffuse = prev_diffuse;
     d->specular = prev_spec_color;
+    return;
+  }
+}
+
+void Viewer::setBackFrontColors()
+{
+
+  //save current settings;
+
+  QColor prev_front_color = d->front_color;
+  QColor prev_back_color = d->back_color;
+  QDialog *dialog = new QDialog(this);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                   | QDialogButtonBox::Cancel, dialog);
+
+  connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
+  connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+
+  QGridLayout* layout = new QGridLayout(dialog);
+  layout->addWidget(new QLabel("Front color: ",dialog),0,0);
+  QPalette front_palette;
+  front_palette.setColor(QPalette::Button, d->front_color);
+  QPushButton* frontButton = new QPushButton(dialog);
+  frontButton->setPalette(front_palette);
+  QPalette back_palette;
+  back_palette.setColor(QPalette::Button, d->back_color);
+  QPushButton* backButton = new QPushButton(dialog);
+  backButton->setPalette(back_palette);
+  layout->addWidget(frontButton,0,1);
+  layout->addWidget(new QLabel("Back color: ",dialog),1,0);
+  layout->addWidget(backButton,1,1);
+  layout->addWidget(buttonBox);
+  dialog->setLayout(layout);
+  connect(frontButton, &QPushButton::clicked,
+          [this, dialog, frontButton](){
+    QColorDialog *color_dial = new QColorDialog(dialog);
+    color_dial->exec();
+    QColor front_color = color_dial->selectedColor();
+    QPalette palette;
+    palette.setColor(QPalette::Button, front_color);
+    frontButton->setPalette(palette);
+    d->front_color= front_color;
+  });
+  connect(backButton, &QPushButton::clicked,
+          [this, dialog, backButton](){
+    QColorDialog *color_dial = new QColorDialog(dialog);
+    color_dial->exec();
+    QColor back_color = color_dial->selectedColor();
+    QPalette palette;
+    palette.setColor(QPalette::Button, back_color);
+    backButton->setPalette(palette);
+    d->back_color= back_color;
+
+  });
+  if(!dialog->exec())
+  {
+    //restore previous settings
+    d->front_color= prev_front_color;
+    d->back_color= prev_back_color;
     return;
   }
 }
@@ -1835,6 +1951,87 @@ bool Viewer::isClipping() const
 {
   return d->clipping;
 }
+#ifdef CGAL_USE_WEBSOCKETS
+void Viewer::setShareCam(bool b, QString session)
+{
+  static bool init = false;
+  if(b)
+  {
+    d->cam_sharing = b;
+    d->session = session;
+    QString ws_url
+        = CGAL::Three::Three::mainWindow()->property("ws_url").toString();
+    if(ws_url.isEmpty())
+    {
+      QMessageBox::warning(this, "Error", "No Server configured. Please go to Edit->Preferences->Network Settings and fill the \"Camera Synchronization Server\" Field.");
+    }
+    else{
+      if(!init)
+      {
+        connect(&d->m_webSocket, &QWebSocket::connected, this, &Viewer::onSocketConnected);
+        connect(&d->m_webSocket, &QWebSocket::disconnected, this,[this]()
+        {
+          d->is_connected = false;
+          Viewer::socketClosed();
+        });
+        init = true;
+      }
+      d->m_webSocket.open(QUrl(ws_url));
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      QTimer::singleShot(1000, this, [this](){
+        QApplication::restoreOverrideCursor();
+        if(!d->is_connected){
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(),
+                               "Connection failure",
+                               "The requested server was not found.");
+          setShareCam(false, "");
+        }
+      });
+    }
+  }
+  else
+  {
+    QAction* action = findChild<QAction*>("actionShareCamera");
+    action->setChecked(false);
+    d->m_webSocket.close();
+  }
+}
 
+void Viewer::onSocketConnected()
+{
+  connect(&d->m_webSocket, &QWebSocket::textMessageReceived,
+          this, &Viewer::onTextMessageSocketReceived);
+  connect(camera()->frame(), &CGAL::qglviewer::ManipulatedCameraFrame::manipulated,
+          this, [this](){
+    if(d->cam_sharing){
+      QString cam_state = QString("[%1] %2").arg(d->session).arg(dumpCameraCoordinates());
+      //send to server
+      d->m_webSocket.sendTextMessage(cam_state);
+    }
+  });
+  d->is_connected = true;
+}
+
+void Viewer::onTextMessageSocketReceived(QString message)
+{
+  QString session;
+  QString position;
+  QRegularExpression re("\\[(.*)\\] (.*)");
+  QRegularExpressionMatch match = re.match(message);
+  session = match.captured(1);
+  position = match.captured(2);
+  if(session != d->session){
+    return;
+  }
+  QStringList sl = position.split(" ");
+  if(sl.size() != 7)
+    return;
+
+  CGAL::qglviewer::Vec pos(sl[0].toDouble(),sl[1].toDouble(),sl[2].toDouble());
+  CGAL::qglviewer::Quaternion q(sl[3].toDouble(),sl[4].toDouble(),
+      sl[5].toDouble(),sl[6].toDouble());
+  camera()->frame()->setPositionAndOrientation(pos, q);
+  update();
+}
+#endif
 #include "Viewer.moc"
-

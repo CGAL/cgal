@@ -14,13 +14,28 @@ It defaults to `Sliding_midpoint<Traits>`.
 \tparam UseExtendedNode must be  `Tag_true`, if the
 tree shall be built with extended nodes, and `Tag_false` otherwise.
 
+\tparam EnablePointsCache can be `Tag_true` or `Tag_false`.
+Not storing the points coordinates inside the tree usually generates a
+lot of cache misses, leading to non-optimal performance. This is the case
+for example when indices are stored inside the tree,
+or to a lesser extent when the points coordinates are stored
+in a dynamically allocated array (e.g., `Epick_d` with dynamic
+dimension) &mdash; we says "to a lesser extent" because the points
+are re-created by the kd-tree in a cache-friendly order after its construction,
+so the coordinates are more likely to be stored in a near-optimal order on the
+heap. When `EnablePointsCache` is set to `Tag_true`, the points
+coordinates will be cached in an optimal way. This will
+increase memory consumption but provide better search performance.
+See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
+additional requirements when using such a cache.
+
 \sa `CGAL::Kd_tree_node<Traits>`
 \sa `CGAL::Search_traits_2<Kernel>`
 \sa `CGAL::Search_traits_3<Kernel>`
 \sa `CGAL::Search_traits<FT_,Point,CartesianIterator,ConstructCartesianIterator>`
 
 */
-template< typename Traits, typename Splitter, typename UseExtendedNode >
+template< typename Traits, typename Splitter, typename UseExtendedNode, typename EnablePointsCache >
 class Kd_tree {
 public:
 
@@ -100,7 +115,17 @@ at the first call to a query or removal member function. You can call
 `build()` explicitly to ensure that the next call to
 query functions will not trigger the reconstruction of the
 data structure.
+
+\tparam ConcurrencyTag enables sequential versus parallel
+algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and
+`Parallel_if_available_tag`. This template parameter is optional:
+calling `build()` without specifying the concurrency tag will result
+in `Sequential_tag` being used. If `build()` is not called by the user
+but called implicitly at the first call to a query or removal member
+function, `Sequential_tag` is also used.
+
 */
+template <typename ConcurrencyTag>
 void build();
 
 /*!
@@ -132,14 +157,14 @@ template <class InputIterator> void insert(InputIterator first, InputIterator be
 /*!
 Removes the point `p` from the `k-d` tree. It uses `equal_to_p` to identify
 the point after locating it, which can matter in particular when 2 points are
-in the same place. `Identify_point` is a unary functor that takes a `Point_d`
+in the same place. `IdentifyPoint` is a unary functor that takes a `Point_d`
 and returns a `bool`.  This is a limited and naive implementation that does not
 rebalance the tree. On the other hand, the tree remains valid and ready for
 queries. If the internal data structure is not already built, for instance
 because the last operation was an insertion, it first calls `build()`.
 */
-template<class Identify_point>
-void remove(Point_d p, Identify_point equal_to_p);
+template<class IdentifyPoint>
+void remove(Point_d p, IdentifyPoint identify_point);
 
 /*!
 Removes point `p`, calling the 2-argument function `remove()` with a functor
