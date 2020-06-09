@@ -4,6 +4,8 @@
 #include <cassert>
 #include <string>
 
+#define CGAL_NO_CDT_2_WARNING
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

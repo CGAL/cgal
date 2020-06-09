@@ -701,9 +701,9 @@ OutputIterator triangulate_hole_with_cdt_2(
   const P_traits p_traits(avg_normal);
   const bool is_simple =
     is_simple_2(polyline_3d.begin(), polyline_3d.end(), p_traits);
-  if (!is_simple)
-    return triangulate_hole(
-      pmesh, border_halfedge, out, np);
+  // if (!is_simple) // temporarily removed
+  //   return triangulate_hole(
+  //     pmesh, border_halfedge, out, np);
 
   // Adding the new face.
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -718,7 +718,15 @@ OutputIterator triangulate_hole_with_cdt_2(
   internal::Triangulate_modifier<PolygonMesh, VPM, Traits> modifier(vpm, traits);
   const bool success_with_cdt_2 =
     modifier.triangulate_face(new_face, pmesh, use_cdt, out);
-  CGAL_assertion(success_with_cdt_2);
+
+  if (!success_with_cdt_2) {
+    remove_face(new_face, pmesh);
+    do {
+      set_face(*circ, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
+    } while (++circ != done);
+    return triangulate_hole(
+      pmesh, border_halfedge, out, np);
+  }
 
   #endif
   return out;
