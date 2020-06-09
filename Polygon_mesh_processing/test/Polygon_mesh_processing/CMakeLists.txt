@@ -118,14 +118,14 @@ if(OpenMesh_FOUND)
   target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
-# find_package(Ceres QUIET)
-# if(TARGET ceres)
-#   target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-#   target_link_libraries( test_mesh_smoothing PRIVATE ceres )
+find_package(Ceres QUIET)
+if(TARGET ceres)
+  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( test_mesh_smoothing PRIVATE ceres )
 
-# #  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-# #  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
-# endif(TARGET ceres)
+#  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+#  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
+endif(TARGET ceres)
 
 if(BUILD_TESTING)
   set_tests_properties(
