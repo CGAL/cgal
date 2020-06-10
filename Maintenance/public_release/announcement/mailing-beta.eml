@@ -60,8 +60,8 @@ Tutorials
 
 Point Set Processing
 
--   Added wrapper functions for registration, using the Super4PCS
-    algorithm implemented in the third party libraries OpenGRand
+-   Added wrapper functions for registration, using the Super4PCS and
+    ICP algorithms implemented in the third party libraries OpenGR and
     libpointmatcher.
 
 
