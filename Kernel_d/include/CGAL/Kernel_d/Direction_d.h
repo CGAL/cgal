@@ -62,6 +62,10 @@ class Direction_d : public pR::Direction_d_base
   { return Base::operator==(w); }
   bool operator!=(const Self& w) const
   { return Base::operator!=(w); }
+  bool operator==(const Base& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Base& w) const
+  { return Base::operator!=(w); }
 };
 
 } //namespace CGAL
