@@ -2,6 +2,7 @@
 #define CGAL_TRACE_STREAM std::cerr
 
 #include <CGAL/Octree.h>
+#include <CGAL/Octree/IO.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
@@ -22,6 +23,8 @@ int main(void) {
   auto normal_map = points.normal_map();
 
   Octree octree(points, point_map, normal_map);
+
+  std::cout << *octree.root();
 
   return 0;
 }

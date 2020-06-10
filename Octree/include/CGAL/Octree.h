@@ -52,8 +52,6 @@
 #include <vector>
 #include <math.h>
 
-#endif // CGAL_OCTREE_3_H
-
 namespace CGAL {
 
   struct HashIntPoint_3 {
@@ -520,3 +518,5 @@ namespace CGAL {
   }; // end class Octree
 
 } // namespace CGAL
+
+#endif // CGAL_OCTREE_3_H
