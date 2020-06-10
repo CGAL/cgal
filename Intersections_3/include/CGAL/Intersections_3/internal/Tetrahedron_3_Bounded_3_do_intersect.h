@@ -175,13 +175,13 @@ inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
   using Tr = CGAL::Triangle_3<K>;
   typename K::Boolean result = do_intersect(aabb, Tr(tet[0], tet[1], tet[2]), k);
   if (certainly(result)) return result;
-  result = result || do_intersect(aabb, Tr(tet[1], tet[2], tet[3]), k);
+  result = result | do_intersect(aabb, Tr(tet[1], tet[2], tet[3]), k);
   if (certainly(result)) return result;
-  result = result || do_intersect(aabb, Tr(tet[2], tet[3], tet[0]), k);
+  result = result | do_intersect(aabb, Tr(tet[2], tet[3], tet[0]), k);
   if (certainly(result)) return result;
-  result = result || do_intersect(aabb, Tr(tet[3], tet[0], tet[1]), k);
+  result = result | do_intersect(aabb, Tr(tet[3], tet[0], tet[1]), k);
   if (certainly(result)) return result;
-  result = result ||
+  result = result |
            k.has_on_bounded_side_3_object()(
                tet, typename K::Point_3(aabb.xmin(), aabb.ymin(), aabb.zmin()));
   return result;
