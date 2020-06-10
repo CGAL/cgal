@@ -31,6 +31,8 @@
 #include <unordered_map>
 #include <queue>
 #include <iostream>
+#include <boost/intrusive/rbtree.hpp>
+#include <boost/intrusive/link_mode.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -47,6 +49,52 @@ struct Minimal_quadrangulation_local_map_items
     typedef CGAL::Cell_attribute<CMap, int32_t> Vertex_attribute;
     typedef CGAL::cpp11::tuple<Vertex_attribute, void, void> Attributes;
   };
+};
+
+struct Minimal_quadrangulation_simplicity_testing_rbtree_node
+{
+  Minimal_quadrangulation_simplicity_testing_rbtree_node(std::size_t i)
+      : m_idx(i) {}
+
+  Minimal_quadrangulation_simplicity_testing_rbtree_node *m_parent, *m_left, *m_right;
+  int m_color;
+  std::size_t m_idx;
+};
+
+struct Minimal_quadrangulation_simplicity_testing_rbtree_node_traits
+{
+  typedef Minimal_quadrangulation_simplicity_testing_rbtree_node                node;
+  typedef Minimal_quadrangulation_simplicity_testing_rbtree_node*               node_ptr;
+  typedef const Minimal_quadrangulation_simplicity_testing_rbtree_node*         const_node_ptr;
+  typedef int                                                                   color;
+
+  static node_ptr get_parent(const_node_ptr n) { return n->m_parent; }
+  static void set_parent(node_ptr n, node_ptr parent) { n->m_parent = parent; }
+  static node_ptr get_left(const_node_ptr n) { return n->m_left; }
+  static void set_left(node_ptr n, node_ptr left) { n->m_left = left; }
+  static node_ptr get_right(const_node_ptr n) { return n->m_right; }
+  static void set_right(node_ptr n, node_ptr right) { n->m_right = right; }
+  static color get_color(const_node_ptr n) { return n->m_color; }
+  static void set_color(node_ptr n, color color) { n->m_color = color; }
+  static color black() { return color(0); }
+  static color red() { return color(1); }
+};
+
+struct Minimal_quadrangulation_simplicity_testing_rbtree_value_traits
+{
+  typedef Minimal_quadrangulation_simplicity_testing_rbtree_node_traits         node_traits;
+  typedef node_traits::node                                                     value_type;
+  typedef node_traits::node_ptr                                                 node_ptr;
+  typedef node_traits::const_node_ptr                                           const_node_ptr;
+  typedef value_type*                                                           pointer;
+  typedef value_type const*                                                     const_pointer;
+
+  static const boost::intrusive::link_mode_type link_mode = boost::intrusive::link_mode_type::normal_link;
+
+  static node_ptr to_nodeptr(value_type &value) { return &value; }
+  static const_node_ptr to_nodeptr(const value_type &value) { return &value; }
+  static pointer to_value_ptr(node_ptr n) { return n; }
+  static const_pointer to_value_ptr(const_node_ptr n) { return n; }
 };
 
 template<typename Mesh_>
@@ -515,7 +563,7 @@ public:
       int p = count_edges_of_path_on_cylinder(pt);
       res=(std::abs(p) <= 1);
     }
-	else if (is_contractible())
+	else if (is_contractible(p))
     {
       // genus > 1 and contractible
       res=true;
@@ -527,18 +575,52 @@ public:
           pt=transform_original_path_into_quad_surface_with_rle(p);
       pt.canonize();
       // Use non-rle path from now on
-      Path_on_surface<Self> ps(pt);
+      Path_on_surface<Local_map> ps(pt);
       auto factorization=ps.factorize();
-      if (factorization.first > 1) {
+      Path_on_surface<Local_map>& pr = factorization.first;
+      if (factorization.second > 1) {
         // If the curve is not primitive, there must be at least
         // one self intersection
         res=false;
       }
-      // Label the switchable arcs
-      std::vector<bool> switchables = compute_switchable(ps);
-      // Compute the backward cyclic KMP failure table for the curve
-      std::vector<std::size_t> suffix_len = compute_common_circular_suffix(ps);
 
+      /// TODO: remove debug output
+      pr.display();
+      std::cout << std::endl;
+      pr.display_pos_and_neg_turns();
+      std::cout << std::endl;
+
+
+      // Label the switchable arcs
+      std::vector<bool> switchables = compute_switchable(pr);
+      // Compute the backward cyclic KMP failure table for the curve
+      std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
+
+      std::size_t num_sides = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
+
+      // Mark outoging darts to represent an edge of both directions
+      auto markoutgoing=get_local_map().get_new_mark();
+      auto it = get_local_map().darts().begin();
+      Dart_const_handle dh = it;
+      do {
+        get_local_map().mark(dh, markoutgoing);
+        dh=get_local_map().template beta<0,2>(dh);
+      } while(dh != it);
+
+      typedef boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
+              boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
+      std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
+      rb_nodes.reserve(pr.length());
+
+      for (std::size_t i = 0; i < pr.length(); ++i) {
+        auto dart_order = get_local_map().is_marked(pr[i], markoutgoing) ?
+                          get_local_map().info(pr[i]) :
+                          get_local_map().info(get_local_map().template beta<2>(pr[1]));
+        std::cout << dart_order << ' ';
+        rb_nodes.emplace_back(i);
+      }
+
+      get_local_map().free_mark(markoutgoing);
     }
 
     if (display_time)
@@ -1689,23 +1771,26 @@ protected:
   }
 
   /// Compute whether each darts is switchable in the path
-  std::vector<bool> compute_switchable(const Path_on_surface<Self>& p) {
+  std::vector<bool> compute_switchable(const Path_on_surface<Local_map>& p) const {
     std::vector<bool> switchables(p.length(), false);
     std::vector<std::size_t> turns = p.compute_positive_turns();
     /// Skip the last dart since it can never be switched, nor can it
     /// be the second last dart of a switch
-    std::size_t i = p.length() - 2;
-    while (i >= 0) {
-      if (turns[i] == 1) {
+    std::size_t i = 1;
+    while (i < p.length()) {
+      std::size_t idx = p.length() - 1 - i;
+      if (turns[idx] == 1) {
         /// This is the end of a possible switchbale subpath
-        --i;
-        while (i >= 0 && turns[i] == 2) {
-          switchables[i].flip();
-          --i;
+        ++i;
+        idx = p.length() - 1 - i;
+        while (i < p.length() && turns[idx] == 2) {
+          switchables[idx].flip();
+          ++i;
+          idx = p.length() - 1 - i;
         }
       }
       else {
-        --i;
+        ++i;
       }
     }
     return switchables;
@@ -1713,26 +1798,27 @@ protected:
 
   /// Compute the longest common suffix of a path against all of it circular shifts
   /// Based on a modification of Knuth-Morris-Pratt algorithm
-  std::vector<std::size_t> compute_common_circular_suffix(const Path_on_surface<Self>& p) {
-    Path_on_surface<Self> q(p);
+  std::vector<std::size_t> compute_common_circular_suffix(const Path_on_surface<Local_map>& p) const {
+    Path_on_surface<Local_map> q(p);
     q += p;
     std::vector<std::size_t> suffix_len(q.length());
-    std::size_t match_begin = q.length() - 1,
-                match_end = q.length() - 1;
+    std::size_t match_begin = 0,
+                match_end = 0;
     suffix_len.back() = q.length();
-    for (std::size_t i = q.length() - 2; i >= 0; --i) {
-      if (i <= match_end || i - suffix_len[i + q.length() - match_begin - 1] <= match_end) {
+    for (std::size_t i = 1; i < q.length(); ++i) {
+      std::size_t match_idx = q.length() - 1 - i;
+      if (i >= match_end || i + suffix_len[match_idx + match_begin] >= match_end) {
         match_begin = i;
-        if (i <= match_end) {
+        if (i >= match_end) {
           match_end = i;
         }
-        while (match_end >= 0 && q[match_end] == q[match_end + q.elngth() - i - 1]) {
-          --match_end;
+        while (match_end < q.length() && q[q.length() - 1 - match_end] == q[q.length() - 1 - (match_end - i)]) {
+          ++match_end;
         }
-        suffix_len[i] = match_begin - match_end;
+        suffix_len[match_idx] = match_end - match_begin;
       }
       else {
-        suffix_len[i] = suffix_len[i + q.length() - match_begin - 1];
+        suffix_len[match_idx] = suffix_len[match_idx + match_begin];
       }
     }
 
