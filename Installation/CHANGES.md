@@ -6,6 +6,12 @@ Release History
 
 Release date: July 2020
 
+### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
+
+-   This package implements a tetrahedral isotropic remeshing algorithm,
+    that improves the quality of tetrahedra in terms of dihedral angles,
+    while targeting a given edge length.
+
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
 -   This package enables the computation of some topological invariants of surfaces, such as:
@@ -24,12 +30,6 @@ Release date: July 2020
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
 
-### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
-
--   This package implements a tetrahedral isotropic remeshing algorithm,
-    that improves the quality of tetrahedra in terms of dihedral angles,
-    while targeting a given edge length.
-
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 
 -   Two new, detailed tutorials have been added:
@@ -38,7 +38,7 @@ Release date: July 2020
     - [Geographic Information Systems (GIS)](https://doc.cgal.org/5.1/Manual/tuto_gis.html),
       which demonstrates usage of CGAL data structures and algorithms in the context of a typical GIS application.
 
-    In both tutorials, complete code is provided.
+    Both tutorials provide complete code.
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.1/Manual/packages.html#PkgKernel23)
 
