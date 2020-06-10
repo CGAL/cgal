@@ -71,7 +71,7 @@ namespace CGAL {
     const uint32_t &z() const { return m_coords[2]; }
 
     uint32_t &operator[](int i) {
-      assert(i < 0 || i > 2);
+      assert(!(i < 0 || i > 2));
       return m_coords[i];
     }
 
