@@ -523,6 +523,22 @@ public:
     else
     {
       // TODO: genus > 1 and not contractible, perform unzip algorithm
+      internal::Path_on_surface_with_rle<Self>
+          pt=transform_original_path_into_quad_surface_with_rle(p);
+      pt.canonize();
+      // Use non-rle path from now on
+      Path_on_surface<Self> ps(pt);
+      auto factorization=ps.factorize();
+      if (factorization.first > 1) {
+        // If the curve is not primitive, there must be at least
+        // one self intersection
+        res=false;
+      }
+      // Label the switchable arcs
+      std::vector<bool> switchables = compute_switchable(ps);
+      // Compute the backward cyclic KMP failure table for the curve
+      std::vector<std::size_t> suffix_len = compute_common_circular_suffix(ps);
+
     }
 
     if (display_time)
@@ -1670,6 +1686,61 @@ protected:
     }
 
     return res;
+  }
+
+  /// Compute whether each darts is switchable in the path
+  std::vector<bool> compute_switchable(const Path_on_surface<Self>& p) {
+    std::vector<bool> switchables(p.length(), false);
+    std::vector<std::size_t> turns = p.compute_positive_turns();
+    /// Skip the last dart since it can never be switched, nor can it
+    /// be the second last dart of a switch
+    std::size_t i = p.length() - 2;
+    while (i >= 0) {
+      if (turns[i] == 1) {
+        /// This is the end of a possible switchbale subpath
+        --i;
+        while (i >= 0 && turns[i] == 2) {
+          switchables[i].flip();
+          --i;
+        }
+      }
+      else {
+        --i;
+      }
+    }
+    return switchables;
+  }
+
+  /// Compute the longest common suffix of a path against all of it circular shifts
+  /// Based on a modification of Knuth-Morris-Pratt algorithm
+  std::vector<std::size_t> compute_common_circular_suffix(const Path_on_surface<Self>& p) {
+    Path_on_surface<Self> q(p);
+    q += p;
+    std::vector<std::size_t> suffix_len(q.length());
+    std::size_t match_begin = q.length() - 1,
+                match_end = q.length() - 1;
+    suffix_len.back() = q.length();
+    for (std::size_t i = q.length() - 2; i >= 0; --i) {
+      if (i <= match_end || i - suffix_len[i + q.length() - match_begin - 1] <= match_end) {
+        match_begin = i;
+        if (i <= match_end) {
+          match_end = i;
+        }
+        while (match_end >= 0 && q[match_end] == q[match_end + q.elngth() - i - 1]) {
+          --match_end;
+        }
+        suffix_len[i] = match_begin - match_end;
+      }
+      else {
+        suffix_len[i] = suffix_len[i + q.length() - match_begin - 1];
+      }
+    }
+
+    std::vector<std::size_t> result(suffix_len.begin() + p.length(), suffix_len.end());
+    for (std::size_t i = 0; i < result.size(); ++i) {
+      result[i] = std::min(result[i], p.length());
+    }
+    return result;
   }
 
 protected:
