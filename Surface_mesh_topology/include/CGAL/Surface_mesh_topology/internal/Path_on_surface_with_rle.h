@@ -1500,9 +1500,10 @@ public:
   }
 
   /// Factorize the path into primitive
-  Self factorize(int& power) {
+  std::pair<Self, int> factorize() {
     Path_on_surface<Map> p(*this);
-    return Self(m_MQ, p.factorize(power), m_use_only_positive, m_use_only_negative);
+    auto result = p.factorize();
+    return std::make_pair(Self(m_MQ, result.first, m_use_only_positive, m_use_only_negative), result.second);
   }
 
   void display_positive_turns()
