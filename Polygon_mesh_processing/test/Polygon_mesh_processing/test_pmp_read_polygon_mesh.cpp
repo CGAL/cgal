@@ -8,58 +8,68 @@
 #include <fstream>
 #include <vector>
 
+typedef CGAL::Simple_cartesian<double>                       Kernel;
+
+template<class Mesh>
+struct Custom_VPM
+{
+  typedef Custom_VPM<Mesh>                                      Self;
+
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
+  typedef vertex_descriptor                                     key_type;
+  typedef Kernel::Point_3                                       value_type;
+  typedef value_type&                                           reference;
+  typedef boost::lvalue_property_map_tag                        category;
+
+  Custom_VPM(std::map<key_type, value_type>& points) : points(points) { }
+
+  friend void put(const Self& m, const key_type& k, const value_type& v) { m.points[k] = value_type(v.x(), v.y(), v.z()); }
+  friend reference get(const Self& m, const key_type& k) { return m.points[k]; }
+
+  std::map<key_type, value_type>& points;
+};
+
 
 template< class Mesh>
 void do_test()
 {
-  std::vector<std::string> filenames = {
-    //"data_degeneracies/degtri_2dt_1edge_split_twice.off",
-    //"data_degeneracies/degtri_four.off",
-    //"data_degeneracies/degtri_four-2.off",
-    //"data_degeneracies/degtri_on_border.off",
-    //"data_degeneracies/degtri_three.off",
-    //"data_degeneracies/degtri_single.off",
-    //"data_degeneracies/degtri_nullface.off",
-    //"data_degeneracies/trihole.off",
-    //"data_degeneracies/degtri_sliding.off",
-    //"data_degeneracies/fused_vertices.off",
-    //"data_degeneracies/small_ccs.off",
-    "data_polygon_soup/bad_cube.off",
-    "data_polygon_soup/incompatible_orientation.off",
-    "data_polygon_soup/isolated_singular_vertex_one_cc.off",
-    "data_polygon_soup/isolated_vertices.off",
-    "data_polygon_soup/nm_vertex_and_edge.off",
-    "data_polygon_soup/one_duplicated_edge.off",
-    "data_polygon_soup/one_duplicated_edge_sharing_vertex.off",
-    "data_polygon_soup/partial_overlap.off"
-  };
-  for(const std::string& name : filenames)
-  {
-    Mesh g;
-    CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g));
-    CGAL_assertion(is_valid(g));
-  }
-  for(const std::string& name : filenames)
-  {
-    Mesh g;
-    CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g, CGAL::parameters::repair_polygon_soup(false)));
-    CGAL_assertion(is_valid(g));
-  }
+  std::string name = "data_polygon_soup/bad_cube.off";
+  Mesh g;
+  CGAL_assertion(!CGAL::read_polygon_mesh(name, g));
+  CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g));
+  CGAL_assertion(is_valid(g));
+  typedef typename boost::property_map<Mesh,CGAL::vertex_point_t>::type VertexPointMap;
+
+  VertexPointMap vpm = get(CGAL::vertex_point, g);
+
+  std::map<typename boost::graph_traits<Mesh>::vertex_descriptor, Kernel::Point_3> cpoints;
+  Custom_VPM<Mesh> cvpm(cpoints);
+  //test pmap param
+  Mesh g2;
+  CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g2, CGAL::parameters::vertex_point_map(cvpm)));
+  CGAL_assertion(num_vertices(g2)==12);
+
+  auto it = vertices(g2).begin(),
+      it2 = vertices(g).begin();
+
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+  CGAL_assertion(get(cvpm, *(it++)) == get(vpm, *(it2++)));
+
 }
-//
- //*   \cgalParamBegin{vertex_point_map}
- //*     a model of `WritablePropertyMap`, the property map with the points associated to the vertices of `out`.
- //*     If this parameter is omitted, an internal property map for
- //*     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
- //*   \cgalParamEnd
- //* \cgalNamedParamsEnd
- //*  `repair_polygon_soup` a boolean that decides if the soup should be repaired or not. Default is `true`; \n
- //*  named parameters used for `CGAL::Polygon_mesh_processing::repair_polygon_soup()` can also be used with this function.
- //*
 
 int main()
 {
-  typedef CGAL::Simple_cartesian<double>                       Kernel;
   typedef Kernel::Point_3                                      Point;
 
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
