@@ -7,10 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel <efif@post.tau.ac.il>
-//                 Ron Wein  <wein@post.tau.ac.il>
-//                 Dror Atariah <dror.atariah@fu-berlin.de>
-//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+// Author(s): Efi Fogel <efif@post.tau.ac.il>
+//            Ron Wein  <wein@post.tau.ac.il>
+//            Dror Atariah <dror.atariah@fu-berlin.de>
+//            Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_POLYCURVE_TRAITS_2_H
 #define CGAL_ARR_POLYCURVE_TRAITS_2_H
@@ -160,10 +160,8 @@ public:
 #ifndef DOXYGEN_RUNNING
   class Push_back_2;
 #endif
-  /*! \class
-   * A functor that divides an arc into x-monotone arcs. That are, arcs that
-   * do not cross the identification arc.
-   */
+
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
   protected:
     typedef Arr_polycurve_traits_2<Subcurve_traits_2>     Polycurve_traits_2;
@@ -176,14 +174,14 @@ public:
       m_poly_traits(traits)
     {}
 
-    /*! Cut the given curve into x-monotone sub-curves and insert them into the
-     * given output iterator.
+    /*! Subdivide a given curve into x-monotone sub-curves and insert them into
+     * a given output iterator.
      *
      * \pre if `cv` is not empty then it must be continuous and well-oriented.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The output
-     *           object is a wrapper of a X_monotone_curve_2.
-     * \return The past-the-end iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
   private:
     template <typename OutputIterator>
@@ -476,7 +474,8 @@ public:
       x_seg_objects.clear();
       return oi;
     }
-public:
+
+  public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { return operator_impl(cv, oi, Are_all_sides_oblivious_tag()); }

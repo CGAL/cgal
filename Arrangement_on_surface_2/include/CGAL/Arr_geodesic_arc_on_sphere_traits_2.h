@@ -1358,8 +1358,8 @@ public:
   /// \name Functor definitions for supporting intersections.
   //@{
 
-  /*! A functor that divides an arc into x-monotone arcs. That are, arcs that
-   * do not cross the identification arc.
+  /*! Subdivide an arc into x-monotone arcs, that are, arcs that do not cross
+   * the identification arc.
    */
   class Make_x_monotone_2 {
   protected:
@@ -1376,13 +1376,12 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
-    /*! Cut the given curve into x-monotone subcurves and insert them into the
-     * given output iterator. As spherical_arcs are always x_monotone, only one
-     * object will be contained in the iterator.
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As spherical_arcs are always x_monotone, only
+     * one object will be contained in the iterator.
      * \param xc the curve.
-     * \param oi the output iterator, whose value-type is Object. The output
-     *           object is a wrapper of either an X_monotone_curve_2, or - in
-     *           case the input spherical_arc is degenerate - a Point_2 object.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return the past-the-end iterator.
      */
     template<typename OutputIterator>

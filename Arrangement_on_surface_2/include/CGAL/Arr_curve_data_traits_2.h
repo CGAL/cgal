@@ -101,6 +101,10 @@ public:
   /// \name Overriden functors.
   //@{
 
+  //! \name Intersections & subdivisions
+  //@{
+
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
   private:
     const Base_traits_2& m_base;
@@ -109,12 +113,13 @@ public:
     /*! Constructor. */
     Make_x_monotone_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Cut the given curve into x-monotone subcurves and insert them to the
-     * given output iterator. As segments are always x_monotone, only one
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As segments are always x_monotone, only one
      * x-monotone curve will be contained in the iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is X_monotone_curve_2.
-     * \return The past-the-end iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
     template<typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
@@ -358,6 +363,8 @@ public:
 
   /*! Obtain a Merge_2 functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
+
+  //@}
 
   class Construct_x_monotone_curve_2 {
   private:

@@ -448,24 +448,24 @@ public:
   }
   //@}
 
-  /// \name Functor definitions for supporting intersections.
+  /// \name Intersections, subdivisions, and mergings
   //@{
 
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2
   {
     typedef Arr_conic_traits_2 <Rat_kernel_, Alg_kernel_, Nt_traits_>    Self;
-  public:
 
-    /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+  public:
+    /*! Subdivide a given conic curve (or conic arc) into x-monotone subcurves
+     * and insert them to a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.

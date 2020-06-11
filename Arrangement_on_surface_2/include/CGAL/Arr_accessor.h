@@ -22,6 +22,7 @@
  */
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 
 namespace CGAL {
 
@@ -99,12 +100,15 @@ public:
    *         This object may wrap a Face_const_handle (the general case),
    *         or a Halfedge_const_handle (in case of an overlap).
    */
-  CGAL::Object locate_curve_end(const X_monotone_curve_2& cv,
-                                Arr_curve_end ind,
-                                Arr_parameter_space ps_x,
-                                Arr_parameter_space ps_y) const
+  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
+  typename Pl_result::type locate_curve_end(const X_monotone_curve_2& cv,
+                                            Arr_curve_end ind,
+                                            Arr_parameter_space ps_x,
+                                            Arr_parameter_space ps_y) const
   {
     CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
+
+    typedef Arr_point_location_result<Arrangement_2>    Pl_result;
 
     // Use the topology traits to locate the unbounded curve end.
     CGAL::Object obj =
@@ -113,19 +117,19 @@ public:
     // Return a handle to the DCEL feature.
     DFace* f;
     if (CGAL::assign(f, obj))
-      return (CGAL::make_object(p_arr->_const_handle_for(f)));
+      return (Pl_result::make_result(p_arr->_const_handle_for(f)));
 
     DHalfedge* he;
     if (CGAL::assign(he, obj))
-      return (CGAL::make_object(p_arr->_const_handle_for(he)));
+      return (Pl_result::make_result(p_arr->_const_handle_for(he)));
 
     DVertex* v;
     if (CGAL::assign(v, obj))
-      return (CGAL::make_object(p_arr->_const_handle_for(v)));
+      return (Pl_result::make_result(p_arr->_const_handle_for(v)));
 
     // We should never reach here:
     CGAL_error();
-    return Object();
+    return Pl_result::make_result(Vertex_const_handle());
   }
 
   /*!

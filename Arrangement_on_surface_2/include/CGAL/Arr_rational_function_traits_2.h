@@ -808,37 +808,34 @@ public:
     return Equal_2(this);
   }
 
+  //! \name Intersections & subdivisions
+  //@{
+
   /*! A functor that divides a curve into continues (x-monotone) curves. */
   class Make_x_monotone_2
   {
   public:
 
-    /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given rational-function curve into x-monotone subcurves
+     * and insert them to a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Make the rational arc continuous.
-      std::list<X_monotone_curve_2>                           arcs;
+      std::list<X_monotone_curve_2> arcs;
 
       cv.make_continuous(std::back_inserter(arcs));
 
       // Create objects.
-      typename std::list<X_monotone_curve_2>::const_iterator  iter;
+      for (auto it = arcs.begin(); it != arcs.end(); ++it)
+        *oi++ = make_object(*it);
 
-      for (iter = arcs.begin(); iter != arcs.end(); ++iter)
-      {
-        *oi = make_object (*iter);
-        ++oi;
-      }
-
-      return (oi);
+      return oi;
     }
   };
 
@@ -974,6 +971,8 @@ public:
   {
     return Merge_2(this);
   }
+
+  //@}
 
   /// \name Functor definitions to handle boundaries
   //@{

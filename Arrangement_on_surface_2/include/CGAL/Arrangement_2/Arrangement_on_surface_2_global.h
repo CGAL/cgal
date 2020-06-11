@@ -32,6 +32,7 @@
 #include <CGAL/Arrangement_2/Arr_compute_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_do_intersect_zone_visitor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Arr_insertion_ss_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_no_intersection_insertion_ss_visitor.h>
@@ -89,7 +90,6 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   // Break the input curve into x-monotone subcurves and isolated points.
   std::list<CGAL::Object> x_objects;
-  std::list<CGAL::Object>::const_iterator obj_iter;
   const typename Gt2::X_monotone_curve_2* x_curve;
   const typename Gt2::Point_2* iso_p;
 
@@ -97,9 +97,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     make_x_monotone_2_object()(c, std::back_inserter(x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter) {
+  for (auto it = x_objects.begin(); it != x_objects.end(); ++it) {
     // Act according to the type of the current object.
-    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
+    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*it));
 
     if (x_curve != nullptr) {
       // Inserting an x-monotone curve:
@@ -118,7 +118,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
       arr_access.notify_after_global_change();
     }
     else {
-      iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
+      iso_p = object_cast<typename Gt2::Point_2>(&(*it));
       CGAL_assertion(iso_p != nullptr);
 
       // Inserting a point into the arrangement:
@@ -658,6 +658,7 @@ insert_non_intersecting_curve
                                                         Traits_adaptor_2;
   typedef typename Arr::Vertex_const_handle             Vertex_const_handle;
   typedef typename Arr::Halfedge_const_handle           Halfedge_const_handle;
+  typedef typename Arr::Face_const_handle               Face_const_handle;
   CGAL_USE_TYPE(Halfedge_const_handle);
 
   const Traits_adaptor_2* geom_traits =
@@ -666,13 +667,13 @@ insert_non_intersecting_curve
 
   // Check whether the left end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Arr_parameter_space bx1 =
-    geom_traits->parameter_space_in_x_2_object()(c, ARR_MIN_END);
-  const Arr_parameter_space by1 =
-    geom_traits->parameter_space_in_y_2_object()(c, ARR_MIN_END);
-  CGAL::Object obj1;
+  auto bx1 = geom_traits->parameter_space_in_x_2_object()(c, ARR_MIN_END);
+  auto by1 = geom_traits->parameter_space_in_y_2_object()(c, ARR_MIN_END);
   const Vertex_const_handle* vh1 = nullptr;
 
+  typedef Arr_point_location_result<Arr>        Pl_result;
+
+  typename Pl_result::type obj1;
   if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
     // We have a normal left endpoint with no boundary conditions:
     // use a point-location query.
@@ -680,33 +681,26 @@ insert_non_intersecting_curve
 
     // The endpoint must not lie on an existing edge, but may coincide with
     // and existing vertex vh1.
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj1) == nullptr,
-       "The curve must not intersect an existing edge.");
+    CGAL_precondition_msg(boost::get<Halfedge_const_handle>(&obj1) == nullptr,
+                          "The curve must not intersect an existing edge.");
 
-    vh1 = object_cast<Vertex_const_handle>(&obj1);
   }
   else {
     // We have a left end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
     obj1 = arr_access.locate_curve_end(c, ARR_MIN_END, bx1, by1);
-
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj1) == nullptr,
-       "The curve must not overlap an existing edge.");
-
-    vh1 = object_cast<Vertex_const_handle>(&obj1);
+    CGAL_precondition_msg(boost::get<Halfedge_const_handle>(&obj1) == nullptr,
+                          "The curve must not overlap an existing edge.");
   }
+  vh1 = Pl_result::template assign<Vertex_const_handle>(&obj1);
 
   // Check whether the right end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Arr_parameter_space  bx2 =
-    geom_traits->parameter_space_in_x_2_object()(c, ARR_MAX_END);
-  const Arr_parameter_space  by2 =
-    geom_traits->parameter_space_in_y_2_object()(c, ARR_MAX_END);
-  CGAL::Object obj2;
+  auto bx2 = geom_traits->parameter_space_in_x_2_object()(c, ARR_MAX_END);
+  auto by2 = geom_traits->parameter_space_in_y_2_object()(c, ARR_MAX_END);
   const Vertex_const_handle* vh2 = nullptr;
 
+  typename Pl_result::type obj2;
   if ((bx2 == ARR_INTERIOR) && (by2 == ARR_INTERIOR)) {
     // We have a normal right endpoint with no boundary conditions:
     // use a point-location query.
@@ -714,11 +708,8 @@ insert_non_intersecting_curve
 
     // The endpoint must not lie on an existing edge, but may coincide with
     // and existing vertex vh2.
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj2) == nullptr,
-       "The curve must not intersect an existing edge.");
-
-    vh2 = object_cast<Vertex_const_handle>(&obj2);
+    CGAL_precondition_msg(boost::get<Halfedge_const_handle>(&obj2) == nullptr,
+                          "The curve must not intersect an existing edge.");
   }
   else {
     // We have a right end with boundary conditions. Use the accessor to locate
@@ -728,13 +719,10 @@ insert_non_intersecting_curve
     //           << ", by2: " << by2
     //           << std::endl;
     obj2 = arr_access.locate_curve_end(c, ARR_MAX_END, bx2, by2);
-
-    CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle>(&obj2) == nullptr,
-       "The curve must not overlap an existing edge.");
-
-    vh2 = object_cast<Vertex_const_handle>(&obj2);
+    CGAL_precondition_msg(boost::get<Halfedge_const_handle>(&obj2) == nullptr,
+                          "The curve must not overlap an existing edge.");
   }
+  vh2 = Pl_result::template assign<Vertex_const_handle>(&obj2);
 
   // Notify the arrangement observers that a global operation is about to
   // take place.
@@ -776,10 +764,8 @@ insert_non_intersecting_curve
       // we must insert the curve in the interior of a face.
       // In this case insert_in_face_interior() already returns a halfedge
       // directed from left to right.
-      const typename Arr::Face_const_handle* fh1 =
-        object_cast<typename Arr::Face_const_handle>(&obj1);
-      const typename Arr::Face_const_handle* fh2 =
-        object_cast<typename Arr::Face_const_handle>(&obj2);
+      const Face_const_handle* fh1 = boost::get<Face_const_handle>(&obj1);
+      const Face_const_handle* fh2 = boost::get<Face_const_handle>(&obj2);
 
       // std::cout << arr << std::endl;
       // std::cout << "(*fh1)->number_of_outer_ccbs(): "
@@ -1147,7 +1133,7 @@ insert_point(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   typename Arr::Vertex_handle vh_for_p;
 
   // Locate the given point in the arrangement.
-  CGAL::Object obj = pl.locate (p);
+  CGAL::Object obj = pl.locate(p);
 
   // Notify the arrangement observers that a global operation is about to
   // take place.
@@ -1615,28 +1601,27 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
 
   std::list<CGAL::Object> x_objects;
-  std::list<CGAL::Object>::const_iterator obj_iter;
   const typename Gt2::X_monotone_curve_2* x_curve;
   const typename Gt2::Point_2* iso_p;
 
   traits->make_x_monotone_2_object()(c, std::back_inserter(x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter) {
+  for (auto it = x_objects.begin(); it != x_objects.end(); ++it) {
     // Act according to the type of the current object.
-    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
+    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*it));
     if (x_curve != nullptr) {
       // Check if the x-monotone subcurve intersects the arrangement.
       if (do_intersect(arr, *x_curve, pl) == true)
         return true;
     }
     else {
-      iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
+      iso_p = object_cast<typename Gt2::Point_2>(&(*it));
       CGAL_assertion(iso_p != nullptr);
 
       // Check whether the isolated point lies inside a face (otherwise,
       // it conincides with a vertex or an edge).
-      CGAL::Object  obj = pl.locate (*iso_p);
+      auto obj = pl.locate(*iso_p);
 
       return (object_cast<typename Arr::Face_const_handle>(&obj) != nullptr);
     }

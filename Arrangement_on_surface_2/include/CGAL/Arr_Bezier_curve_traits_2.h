@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
-//                 Iddo Hanniel <iddoh@cs.technion.ac.il>
-//                 Waqar Khan   <wkhan@mpi-inf.mpg.de>
+// Author(s): Ron Wein     <wein@post.tau.ac.il>
+//            Iddo Hanniel <iddoh@cs.technion.ac.il>
+//            Waqar Khan   <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
@@ -163,7 +163,7 @@ public:
   }
   //@}
 
-  /// \name Functor definitions for the arrangement traits.
+  /// \name Basic functor definitions for the arrangement traits
   //@{
 
   /*! \class Compare_x_2
@@ -473,31 +473,33 @@ public:
   {
     return (Equal_2 (p_cache));
   }
+  //@}
+
+  //! \name Intersections, subdivisions, and mergings
+  //@{
 
   /*! \class Make_x_monotone_2
-   * The Make_x_monotone_2 functor.
+   * A functor for subdividing curves into x-monotone curves.
    */
   class Make_x_monotone_2
   {
   private:
-    Bezier_cache         *p_cache;
+    Bezier_cache* p_cache;
 
   public:
-
     /*! Constructor. */
     Make_x_monotone_2 (Bezier_cache *cache) :
       p_cache (cache)
     {}
 
-    /*!
-     * Cut the given Bezier curve into x-monotone subcurves and insert them
-     * into the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given Bezier curve into x-monotone subcurves and insert them
+     * into a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
-    template<class OutputIterator>
+    template <class OutputIterator>
     OutputIterator operator() (const Curve_2& B, OutputIterator oi) const
     {
       typedef typename Bounding_traits::Vertical_tangency_point
@@ -756,7 +758,6 @@ public:
   {
     return Merge_2(this);
   }
-
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.

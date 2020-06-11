@@ -609,16 +609,18 @@ public:
   Equal_2 equal_2_object() const { return Equal_2(*this); }
   //@}
 
-  /// \name Functor definitions for supporting intersections.
+  //! \name Intersections, subdivisions, and mergings
   //@{
 
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
   public:
-    /*! Cut the given curve into x-monotone subcurves and insert them into the
-     * given output iterator. As segments are always x_monotone, only one
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As segments are always x_monotone, only one
      * object will be contained in the iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is variant<....
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>

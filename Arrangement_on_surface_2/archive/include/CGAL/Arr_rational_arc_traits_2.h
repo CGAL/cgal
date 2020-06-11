@@ -80,7 +80,7 @@ public:
   Arr_rational_arc_traits_2 ()
   {}
 
-  /// \name Functor definitions.
+  /// \name Basic functor definitions.
   //@{
 
   /*! A functor that compares the x-coordinates of two points */
@@ -381,19 +381,22 @@ public:
   {
     return Equal_2();
   }
+  //@}
+
+  //! \name Intersections, subdivisions, and mergings
+  //@{
 
   /*! A functor that divides a curve into continues (x-monotone) curves. */
   class Make_x_monotone_2
   {
   public:
 
-    /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given rational arc into x-monotone subcurves and insert them
+     * into a given output iterator.
+     * \param cv the arc.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi)

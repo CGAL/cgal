@@ -122,10 +122,10 @@ public:
     /*! Cut the given segment into x-monotone subcurves and insert them into
      * the given output iterator. As segments are always x_monotone, only one
      * x-monotone curve is inserted into the output iterator.
-     * \param cv The segment.
-     * \param oi The output iterator, whose value-type is Object. The output
-     *           object is a wrapper of an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+     * \param cv the segment.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const

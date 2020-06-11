@@ -504,7 +504,10 @@ public:
     }
   };
 
-  /*! A functor that divides a curve into x-monotone curves. */
+  //! \name Intersections & subdivisions
+  //@{
+
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -516,12 +519,12 @@ public:
       m_object(base->make_x_monotone_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param cv the curve
-     * \param oi an output iterator that contains the result. It's value
-     * type is CGAL::Object, which wraps either an x-monotone curve or a point
-     * \return the output iterator
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or X_monotone_curve_2 objects.
+     * \return the output iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
     {
       if (!m_enabled) return m_object(cv, oi);

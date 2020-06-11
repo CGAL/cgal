@@ -378,9 +378,10 @@ public:
   }
   //@}
 
-  /// \name Functor definitions for supporting intersections.
+  /// \name Intersections, subdivisions, and mergings
   //@{
 
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2
   {
   private:
@@ -389,35 +390,29 @@ public:
     bool m_use_cache;
 
   public:
+    Make_x_monotone_2(bool use_cache = false) : m_use_cache(use_cache) {}
 
-    Make_x_monotone_2(bool use_cache = false) : m_use_cache(use_cache)
-    {}
-
-    /*!
-     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects are all wrcv.is_in_x_range (p)appers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given circular arc or line segment into x-monotone subcurves
+     * and insert them to a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
+    template <typename OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      unsigned int  index = 0;
-      if(m_use_cache)
-        index = Self::get_index();
+      unsigned int index = 0;
+      if (m_use_cache) index = Self::get_index();
 
-      if (cv.orientation() == COLLINEAR)
-      {
+      if (cv.orientation() == COLLINEAR) {
         // The curve is a line segment.
-        *oi = make_object (X_monotone_curve_2 (cv.supporting_line(),
+        *oi++ = make_object(X_monotone_curve_2(cv.supporting_line(),
                                                cv.source(), cv.target(),
                                                index));
-        ++oi;
-        return (oi);
+        return oi;
       }
 
       // Check the case of a degenrate circle (a point).
@@ -425,12 +420,10 @@ public:
       CGAL::Sign   sign_rad = CGAL::sign (circ.squared_radius());
       CGAL_precondition (sign_rad != NEGATIVE);
 
-      if (sign_rad == ZERO)
-      {
+      if (sign_rad == ZERO) {
         // Create an isolated point.
-        *oi = make_object (Point_2 (circ.center().x(), circ.center().y()));
-        ++oi;
-        return (oi);
+        *oi++ = make_object(Point_2 (circ.center().x(), circ.center().y()));
+        return oi;
       }
 
       // The curve is circular: compute the to vertical tangency points
@@ -438,76 +431,63 @@ public:
       Point_2         vpts[2];
       unsigned int    n_vpts = cv.vertical_tangency_points (vpts);
 
-      if (cv.is_full())
-      {
+      if (cv.is_full()) {
         CGAL_assertion (n_vpts == 2);
 
         // Subdivide the circle into two arcs (an upper and a lower half).
-        *oi = make_object (X_monotone_curve_2 (circ,
+        *oi++ = make_object(X_monotone_curve_2(circ,
                                                vpts[0], vpts[1],
                                                cv.orientation(),
                                                index));
-        ++oi;
 
-        *oi = make_object (X_monotone_curve_2 (circ,
+        *oi++ = make_object(X_monotone_curve_2(circ,
                                                vpts[1], vpts[0],
                                                cv.orientation(),
                                                index));
-        ++oi;
       }
-      else
-      {
+      else {
         // Act according to the number of vertical tangency points.
-        if (n_vpts == 2)
-        {
+        if (n_vpts == 2) {
           // Subdivide the circular arc into three x-monotone arcs.
-          *oi = make_object (X_monotone_curve_2 (circ,
+          *oi++ = make_object(X_monotone_curve_2(circ,
                                                  cv.source(), vpts[0],
                                                  cv.orientation(),
                                                  index));
-          ++oi;
 
-          *oi = make_object (X_monotone_curve_2 (circ,
+          *oi++ = make_object(X_monotone_curve_2(circ,
                                                  vpts[0], vpts[1],
                                                  cv.orientation(),
                                                  index));
-          ++oi;
 
-          *oi = make_object (X_monotone_curve_2 (circ,
+          *oi++ = make_object(X_monotone_curve_2(circ,
                                                  vpts[1], cv.target(),
                                                  cv.orientation(),
                                                  index));
-          ++oi;
         }
-        else if (n_vpts == 1)
-        {
+        else if (n_vpts == 1) {
           // Subdivide the circular arc into two x-monotone arcs.
-          *oi = make_object (X_monotone_curve_2 (circ,
+          *oi++ = make_object(X_monotone_curve_2(circ,
                                                  cv.source(), vpts[0],
                                                  cv.orientation(),
                                                  index));
-          ++oi;
 
-          *oi = make_object (X_monotone_curve_2 (circ,
+          *oi++ = make_object(X_monotone_curve_2(circ,
                                                  vpts[0], cv.target(),
                                                  cv.orientation(),
                                                  index));
-          ++oi;
         }
-        else
-        {
-          CGAL_assertion (n_vpts == 0);
+        else {
+          CGAL_assertion(n_vpts == 0);
 
           // The arc is already x-monotone:
-          *oi = make_object (X_monotone_curve_2 (circ,
+          *oi++ = make_object(X_monotone_curve_2(circ,
                                                  cv.source(), cv.target(),
                                                  cv.orientation(),
                                                  index));
-          ++oi;
         }
       }
 
-      return (oi);
+      return oi;
     }
   };
 

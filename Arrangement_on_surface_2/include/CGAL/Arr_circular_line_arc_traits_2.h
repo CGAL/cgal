@@ -259,6 +259,7 @@ namespace CGAL {
     };
 
 
+    //! A functor for subdividing curves into x-monotone curves.
     template <class CircularKernel, class Arc1, class Arc2>
     class Make_x_monotone_2
     {

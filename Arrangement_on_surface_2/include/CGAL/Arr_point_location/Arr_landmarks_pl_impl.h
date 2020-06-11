@@ -56,15 +56,15 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   const Vertex_const_handle*   vh;
   const Halfedge_const_handle* hh;
   const Face_const_handle*     fh;
-  if ( ( vh = Result().template assign<Vertex_const_handle>(lm_location_obj) ) )
+  if ( ( vh = Result().template assign<Vertex_const_handle>(&lm_location_obj) ) )
     out_obj = _walk_from_vertex(*vh, p, crossed_edges);
-  else if ( ( hh = Result().template assign<Halfedge_const_handle>(lm_location_obj) ) )
+  else if ( ( hh = Result().template assign<Halfedge_const_handle>(&lm_location_obj) ) )
     out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
-  else if ( ( fh =  Result().template assign<Face_const_handle>(lm_location_obj) ) )
+  else if ( ( fh =  Result().template assign<Face_const_handle>(&lm_location_obj) ) )
     out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
 
-  if ( ( fh = Result().template assign<Face_const_handle>(out_obj) ) ) {
+  if ( ( fh = Result().template assign<Face_const_handle>(&out_obj) ) ) {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
     // face.
@@ -159,7 +159,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
     if (new_vertex) {
       // We found a vertex closer to p; Continue using this vertex.
       const Vertex_const_handle* p_vh =
-        Result().template assign<Vertex_const_handle>(obj);
+        Result().template assign<Vertex_const_handle>(&obj);
       CGAL_assertion(p_vh != nullptr);
       vh = *p_vh;
       continue;
@@ -167,11 +167,12 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
 
     // If p is located on an edge or on a vertex, return the object
     // that wraps this arrangement feature.
-    if (Result().template assign<Halfedge_const_handle>(obj) ||
-        Result().template assign<Vertex_const_handle>(obj))
+    if (Result().template assign<Halfedge_const_handle>(&obj) ||
+        Result().template assign<Vertex_const_handle>(&obj))
       return obj;
 
-    const Face_const_handle* p_fh = Result().template assign<Face_const_handle>(obj);
+    const Face_const_handle* p_fh =
+      Result().template assign<Face_const_handle>(&obj);
     if (p_fh)
       // Walk to p from the face we have located:
       return _walk_from_face(*p_fh, vh->point(), p, crossed_edges);

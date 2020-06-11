@@ -308,15 +308,15 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that contains the curve end.
    */
-  CGAL::Object place_boundary_vertex(Face*,
-                                     const X_monotone_curve_2&,
-                                     Arr_curve_end,
-                                     Arr_parameter_space /* ps_x */,
-                                     Arr_parameter_space /* ps_y */)
+   CGAL::Object place_boundary_vertex(Face*,
+                                      const X_monotone_curve_2&,
+                                      Arr_curve_end,
+                                      Arr_parameter_space /* ps_x */,
+                                      Arr_parameter_space /* ps_y */)
   {
     // This function should never be called:
     CGAL_error();
-    return Object();
+    return CGAL::Object();
   }
 
   /*! Locate the predecessor halfedge for the given curve around a given
