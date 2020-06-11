@@ -108,7 +108,7 @@ protected:
   }
   void wheelEvent(QWheelEvent *event)
   {
-   if(event->delta() >0)
+   if(event->angleDelta().y() >0)
      translation[2] *= 1.2;
    else
     translation[2] /= 1.2;

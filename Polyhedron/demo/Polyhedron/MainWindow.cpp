@@ -765,7 +765,11 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
+           #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
                env_path.split(separator, QString::SkipEmptyParts)) {
+           #else
+               env_path.split(separator, Qt::SkipEmptyParts)) {
+           #endif
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
