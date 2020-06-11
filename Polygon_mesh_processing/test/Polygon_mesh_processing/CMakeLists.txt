@@ -31,22 +31,24 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+include(CGAL_Eigen_support)
 
 find_package( TBB )
+include(CGAL_TBB_support)
 
-if (EIGEN3_FOUND)
+if (TARGET CGAL::Eigen_support)
   # Creating entries for all .cpp/.C files with "main" routine
   # ##########################################################
   create_single_source_cgal_program("fairing_test.cpp")
-  CGAL_target_use_Eigen(fairing_test)
+  target_link_libraries(fairing_test PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
-  CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_no_delaunay_test)
+  target_link_libraries(triangulate_hole_Polyhedron_3_no_delaunay_test PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
-  CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_test)
+  target_link_libraries(triangulate_hole_Polyhedron_3_test PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
-  CGAL_target_use_Eigen(test_shape_smoothing)
+  target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen_support)
 
-endif(EIGEN3_FOUND)
+endif()
 
 find_package( OpenMesh QUIET )
 if ( OpenMesh_FOUND )
@@ -103,11 +105,10 @@ endif()
   create_single_source_cgal_program("test_remove_caps_needles.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
-  if( TBB_FOUND )
-    include(CGAL_target_use_TBB)
-    CGAL_target_use_TBB(test_pmp_distance)
-    CGAL_target_use_TBB(orient_polygon_soup_test)
-    CGAL_target_use_TBB(self_intersection_surface_mesh_test)
+  if( TARGET CGAL::TBB_support )
+    target_link_libraries(test_pmp_distance PUBLIC CGAL::TBB_support)
+    target_link_libraries(orient_polygon_soup_test PUBLIC CGAL::TBB_support)
+    target_link_libraries(self_intersection_surface_mesh_test PUBLIC CGAL::TBB_support)
   else()
     message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
   endif()

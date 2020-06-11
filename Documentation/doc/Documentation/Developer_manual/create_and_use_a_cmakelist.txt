@@ -18,7 +18,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 target_link_libraries(my_executable CGAL::CGAL CGAL::CGAL_Core)
 \endcode
 
-There are also some cmake macros to link with \cgal dependencies that can be found in
+There are also imported targets to link with \cgal dependencies that can be found in
 the section \subpage thirdparty.
 
 \note The \cgal targets define the following compiler flags:

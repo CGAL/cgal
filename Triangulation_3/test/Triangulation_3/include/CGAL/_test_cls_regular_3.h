@@ -15,12 +15,19 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <type_traits>
 #include <CGAL/use.h>
 template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
 {
   typedef Triangulation                       Cls;
+
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
+
   typedef typename Triangulation::Geom_traits Gt;
   CGAL_USE_TYPE(Gt);
 

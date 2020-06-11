@@ -3,5 +3,4 @@
 
 add_definitions(-DCGAL_LINKED_WITH_LASLIB)
 
-message(DEPRECATION "This file UseLASLIB.cmake is deprecated, and the function `CGAL_target_use_LASLIB` from CGAL_target_use_LASLIB.cmake should be used instead.")
-
+message(DEPRECATION "This file UseLASLIB.cmake is deprecated, and the imported target `CGAL::TBB_support` from CGAL_LASLIB_support.cmake should be used instead.")

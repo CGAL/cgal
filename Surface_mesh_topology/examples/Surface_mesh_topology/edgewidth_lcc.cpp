@@ -14,7 +14,8 @@ double cycle_length(const LCC_3& lcc, const Path_on_surface& cycle)
   double res=0;
   for (std::size_t i=0; i<cycle.length(); ++i)
   { res+=std::sqrt
-        (CGAL::squared_distance(lcc.point(cycle.get_next_dart(i)), lcc.point(cycle[i]))); }
+      (CGAL::squared_distance(lcc.point(cycle[i]),
+                              lcc.point(lcc.other_extremity(cycle[i])))); }
   return res;
 }
 

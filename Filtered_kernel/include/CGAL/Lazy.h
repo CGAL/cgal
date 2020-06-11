@@ -718,17 +718,17 @@ public :
 
   Lazy(Self_rep *r)
   {
-    PTR.p = r;
+    PTR = r;
   }
 
   Lazy(const ET& e)
   {
-    PTR.p = new Lazy_rep_0<AT,ET,E2A>(e);
+    PTR = new Lazy_rep_0<AT,ET,E2A>(e);
   }
 
   Lazy(ET&& e)
   {
-    PTR.p = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
+    PTR = new Lazy_rep_0<AT,ET,E2A>(std::move(e));
   }
 
   friend void swap(Lazy& a, Lazy& b) noexcept
@@ -768,7 +768,7 @@ public :
     return z;
   }
 
-  Self_rep * ptr() const { return (Self_rep*) PTR.p; }
+  Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
 
 // The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>

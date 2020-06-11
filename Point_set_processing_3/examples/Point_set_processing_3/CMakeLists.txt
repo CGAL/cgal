@@ -31,112 +31,99 @@ if ( CGAL_FOUND )
          "Enable concurrency"
          OFF)
 
+  set(CGAL_libs CGAL::CGAL)
   if( CGAL_ACTIVATE_CONCURRENT_PSP3 OR ENV{CGAL_ACTIVATE_CONCURRENT_PSP3} )
     find_package( TBB REQUIRED )
+    include(CGAL_TBB_support)
+    if (TARGET CGAL::TBB_support)
+      set(CGAL_TBB_target ${CGAL_libs} CGAL::TBB_support)
+    endif()
   endif()
 
   # Executables that do *not* require EIGEN
-  create_single_source_cgal_program( "average_spacing_example.cpp" )
-  create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
-  create_single_source_cgal_program( "grid_simplification_example.cpp" )
-  create_single_source_cgal_program( "grid_simplify_indices.cpp" )
-  create_single_source_cgal_program( "property_map.cpp" )
-  create_single_source_cgal_program( "random_simplification_example.cpp" )
-  create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
-  create_single_source_cgal_program( "remove_outliers_example.cpp" )
-  create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
-  create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
-  create_single_source_cgal_program( "structuring_example.cpp" )
-
-  create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
-  create_single_source_cgal_program( "write_ply_points_example.cpp" )
+  foreach(target
+      average_spacing_example
+      bilateral_smooth_point_set_example
+      grid_simplification_example
+      grid_simplify_indices
+      property_map
+      random_simplification_example
+      read_write_xyz_point_set_example
+      remove_outliers_example
+      wlop_simplify_and_regularize_point_set_example
+      edge_aware_upsample_point_set_example
+      structuring_example
+      read_ply_points_with_colors_example
+      write_ply_points_example)
+    add_executable(${target} "${target}.cpp")
+    target_link_libraries(${target} ${CGAL_libs})
+  endforeach()
 
   find_package(LASLIB)
-  if (LASLIB_FOUND)
-    create_single_source_cgal_program( "read_las_example.cpp" )
-    CGAL_target_use_LASLIB(read_las_example)
+  include(CGAL_LASLIB_support)
+  if (TARGET CGAL::LASLIB_support)
+    add_executable( read_las_example "read_las_example.cpp" )
+    target_link_libraries(read_las_example ${CGAL_libs} CGAL::LASLIB_support)
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (TARGET CGAL::Eigen_support)
+    set(CGAL_libs ${CGAL_libs} CGAL::Eigen_support)
+
     # Executables that require Eigen
-    create_single_source_cgal_program( "jet_smoothing_example.cpp" )
-    CGAL_target_use_Eigen(jet_smoothing_example)
-
-    create_single_source_cgal_program( "normal_estimation.cpp" )
-    CGAL_target_use_Eigen(normal_estimation)
-
-    create_single_source_cgal_program( "edges_example.cpp" )
+    foreach(target
+        jet_smoothing_example
+        normal_estimation
+        clustering_example
+        edges_example
+        callback_example
+        scale_estimation_example
+        scale_estimation_2d_example
+        hierarchy_simplification_example
+        normals_example)
+      add_executable(${target} "${target}.cpp")
+      target_link_libraries(${target} ${CGAL_libs})
+    endforeach()
 
     # Executables that require libpointmatcher
     find_package(libpointmatcher QUIET)
-    if (libpointmatcher_FOUND)
-      create_single_source_cgal_program( "registration_with_pointmatcher.cpp" )
-      CGAL_target_use_pointmatcher(registration_with_pointmatcher)
-      CGAL_target_use_Eigen(registration_with_pointmatcher)
+    include(CGAL_pointmatcher_support)
+    if (TARGET CGAL::pointmatcher_support)
+      add_executable(registration_with_pointmatcher "registration_with_pointmatcher.cpp")
+      target_link_libraries(registration_with_pointmatcher
+        ${CGAL_libs} CGAL::pointmatcher_support)
     else()
       message(STATUS "NOTICE : the registration_with_pointmatcher test requires libpointmatcher and will not be compiled.")
     endif()
 
     # Executables that require OpenGR
     find_package(OpenGR QUIET)
-    if (OpenGR_FOUND)
-      create_single_source_cgal_program( "registration_with_OpenGR.cpp" )
-      CGAL_target_use_OpenGR(registration_with_OpenGR)
-      CGAL_target_use_Eigen(registration_with_OpenGR)
+    include(CGAL_OpenGR_support)
+    if (TARGET CGAL::OpenGR_support)
+      add_executable(registration_with_OpenGR "registration_with_OpenGR.cpp" )
+      target_link_libraries(registration_with_OpenGR
+        ${CGAL_libs} CGAL::OpenGR_support)
     else()
       message(STATUS "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled.")
     endif()
 
     # Executables that require both libpointmatcher and OpenGR
-    if (libpointmatcher_FOUND AND OpenGR_FOUND)
-      create_single_source_cgal_program( "registration_with_opengr_pointmatcher_pipeline.cpp" )
-      CGAL_target_use_OpenGR(registration_with_opengr_pointmatcher_pipeline)
-      CGAL_target_use_pointmatcher(registration_with_opengr_pointmatcher_pipeline)
-      CGAL_target_use_Eigen(registration_with_opengr_pointmatcher_pipeline)
+    if (TARGET CGAL::pointmatcher_support AND
+        TARGET CGAL::OpenGR_support)
+      add_executable(registration_with_opengr_pointmatcher_pipeline
+        "registration_with_opengr_pointmatcher_pipeline.cpp" )
+      target_link_libraries(registration_with_opengr_pointmatcher_pipeline
+        ${CGAL_libs} CGAL::pointmatcher_support CGAL::OpenGR_support)
     else()
       message(STATUS "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
     endif()
 
-    CGAL_target_use_Eigen(edges_example)
-
-    create_single_source_cgal_program( "callback_example.cpp" )
-    CGAL_target_use_Eigen(callback_example)
-
-    create_single_source_cgal_program( "scale_estimation_example.cpp" )
-    CGAL_target_use_Eigen(scale_estimation_example)
-
-    create_single_source_cgal_program( "scale_estimation_2d_example.cpp" )
-    CGAL_target_use_Eigen(scale_estimation_2d_example)
-
-    create_single_source_cgal_program( "hierarchy_simplification_example.cpp" )
-    CGAL_target_use_Eigen(hierarchy_simplification_example)
-
-    create_single_source_cgal_program( "normals_example.cpp" )
-    CGAL_target_use_Eigen(normals_example)
-
   else()
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
-  endif()
-
-  if (TBB_FOUND)
-    foreach(target
-        scale_estimation_example
-        wlop_simplify_and_regularize_point_set_example
-        bilateral_smooth_point_set_example
-        edge_aware_upsample_point_set_example
-        average_spacing_example
-        normals_example
-        jet_smoothing_example
-        normal_estimation
-        callback_example)
-      if(TARGET ${target})
-        CGAL_target_use_TBB(${target})
-      endif()
-    endforeach()
   endif()
 
 else()

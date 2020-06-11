@@ -92,6 +92,16 @@ template <class Triang>
 void
 _test_cls_constrained_triangulation(const Triang &)
 {
+  // The following assertion is commented, because, in CT_plus_2,
+  // one uses `std::set` and `std::map`, and their move-constructors
+  // may throw.
+  //
+  // static_assert(std::is_nothrow_move_constructible<Triang>::value,
+  //               "move cstr is missing");
+
+  static_assert(std::is_nothrow_move_assignable<Triang>::value,
+                "move assignment is missing");
+
   // typedef Triangulation                       Cls;
   typedef typename Triang::Geom_traits          Gt;
 

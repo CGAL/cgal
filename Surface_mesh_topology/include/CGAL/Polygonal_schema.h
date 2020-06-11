@@ -62,22 +62,22 @@ namespace Surface_mesh_topology {
                        std::unordered_map<std::string, Dart_handle>&
                        edge_label_to_dart)
       {
-        if (dart_same_label!=nullptr && dart_opposite_label!=nullptr)
+        if (dart_same_label!=CMap::null_handle && dart_opposite_label!=CMap::null_handle)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
                    <<" and "<<internal::opposite_label(s)
                    <<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
-          return nullptr;
+          return CMap::null_handle;
         }
 
-        if (dart_same_label!=nullptr)
+        if (dart_same_label!=CMap::null_handle)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"label "<<s
                    <<" is already added in the surface."
                    <<" Since the surface is orientable, this label can "
                    <<"not be use anymore."<<std::endl;
-          return nullptr;
+          return CMap::null_handle;
         }
 
         Dart_handle res=cmap.create_dart();
@@ -87,7 +87,7 @@ namespace Surface_mesh_topology {
         if (prev_dart!=cmap.null_handle)
         { cmap.template link_beta<1>(prev_dart, res); }
 
-        if (dart_opposite_label!=nullptr)
+        if (dart_opposite_label!=CMap::null_handle)
         { cmap.template link_beta<2>(res, dart_opposite_label); }
 
         return res;
@@ -111,13 +111,13 @@ namespace Surface_mesh_topology {
                        std::unordered_map<std::string, Dart_handle>&
                        edge_label_to_dart)
       {
-        if (dart_same_label!=nullptr && dart_opposite_label!=nullptr)
+        if (dart_same_label!=GMap::null_handle && dart_opposite_label!=GMap::null_handle)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
                    <<" and "<<internal::opposite_label(s)
                    <<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
-          return nullptr;
+          return GMap::null_handle;
         }
 
         Dart_handle res=gmap.create_dart();
@@ -127,8 +127,8 @@ namespace Surface_mesh_topology {
         if (prev_dart!=gmap.null_handle)
         { gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart)); }
 
-        if (dart_same_label!=nullptr)
-        { // Here dart_same_label!=nullptr
+        if (dart_same_label!=GMap::null_handle)
+        { // Here dart_same_label!=GMap::null_handle
           std::string s2=internal::opposite_label(s);
           edge_label_to_dart[s2]=dh2;
           gmap.info(dh2).m_label=s2;
@@ -136,11 +136,11 @@ namespace Surface_mesh_topology {
           gmap.template sew<2>(res, dart_same_label);
         }
         else
-        { // Here either dart_opposite_label!=nullptr, or both are nullptr
+        { // Here either dart_opposite_label!=GMap::null_handle, or both are GMap::null_handle
           edge_label_to_dart[s]=res;
           gmap.info(res).m_label=s;
 
-          if (dart_opposite_label!=nullptr)
+          if (dart_opposite_label!=GMap::null_handle)
           {
             std::string s2=internal::opposite_label(s);
             edge_label_to_dart[s2]=res;
@@ -304,7 +304,7 @@ namespace Surface_mesh_topology {
         std::cerr<<"Polygonal_schema ERROR: "
                  <<"you try to end a facet"
                  <<" but the facet is not yet started."<<std::endl;
-        return nullptr;
+        return Map::null_handle;
       }
       CGAL_assertion( first_dart!=this->null_handle &&
                                   prev_dart!=this->null_handle );
@@ -314,12 +314,12 @@ namespace Surface_mesh_topology {
       return first_dart;
     }
 
-    /// @return dart with the given label, nullptr if this dart does not exist.
+    /// @return dart with the given label, Map::null_handle if this dart does not exist.
     Dart_handle get_dart_labeled(const std::string& s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
-      { return nullptr; }
+      { return Map::null_handle; }
 
       return ite->second;
     }

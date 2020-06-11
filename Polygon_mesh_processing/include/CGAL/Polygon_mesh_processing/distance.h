@@ -29,7 +29,7 @@
 #include <CGAL/spatial_sort.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/parallel_for.h>
+#include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 #include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
@@ -81,21 +81,27 @@ struct Distance_computation{
   const AABB_tree& tree;
   const PointRange& sample_points;
   Point_3 initial_hint;
-  std::atomic<double>* distance;
-
+  double distance;
+  //constructor
   Distance_computation(
           const AABB_tree& tree,
           const Point_3& p,
-          const PointRange& sample_points,
-          std::atomic<double>* d)
+          const PointRange& sample_points)
     : tree(tree)
     , sample_points(sample_points)
     , initial_hint(p)
-    , distance(d)
+    , distance(-1)
+  {}
+  //split constructor
+  Distance_computation(Distance_computation& s, tbb::split )
+    : tree(s.tree)
+    , sample_points(s.sample_points)
+    , initial_hint(s.initial_hint)
+    , distance(-1)
   {}
 
   void
-  operator()(const tbb::blocked_range<std::size_t>& range) const
+  operator()(const tbb::blocked_range<std::size_t>& range)
   {
     Point_3 hint = initial_hint;
     double hdist = 0;
@@ -107,15 +113,11 @@ struct Distance_computation{
       if(d > hdist)
         hdist=d;
     }
-
-    // update max value stored in distance
-    double current_value = *distance;
-    while( current_value < hdist )
-    {
-      if(distance->compare_exchange_weak(current_value, hdist))
-        current_value = hdist;
-    }
+    if(hdist > distance)
+      distance = hdist;
   }
+
+  void join( Distance_computation& rhs ) {distance = (std::max)(rhs.distance, distance); }
 };
 #endif
 
@@ -136,9 +138,9 @@ double approximate_Hausdorff_distance_impl(
   {
     std::atomic<double> distance;
     distance=0;
-    Distance_computation<AABBTree, PointRange> f(tree, hint, sample_points, &distance);
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
-    return distance;
+    Distance_computation<AABBTree, PointRange> f(tree, hint, sample_points);
+    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
+    return f.distance;
   }
   else
 #endif

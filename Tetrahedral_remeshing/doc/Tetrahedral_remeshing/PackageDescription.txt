@@ -1,0 +1,52 @@
+// Tetrahedral Remeshing
+
+/// \defgroup PkgTetrahedralRemeshingRef Tetrahedral Remeshing Reference
+/// \defgroup PkgTetrahedralRemeshingConcepts Concepts
+/// \ingroup PkgTetrahedralRemeshingRef
+
+/// \defgroup PkgTetrahedralRemeshingClasses Classes
+/// \ingroup PkgTetrahedralRemeshingRef
+
+/*!
+\addtogroup PkgTetrahedralRemeshingRef
+
+\cgalPkgDescriptionBegin{Tetrahedral Remeshing,PkgTetrahedralRemeshing}
+\cgalPkgPicture{bimba_back_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Jane Tournois, Noura Faraj}
+\cgalPkgDesc{
+The package provides a function for remeshing tetrahedral meshes,
+targetting high quality meshes with respect to dihedral angles.}
+\cgalPkgManuals{Chapter_Tetrahedral_Remeshing,PkgTetrahedralRemeshingRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.1}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{faraj2016mvr}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `RemeshingTriangulationTraits_3`
+- `RemeshingVertexBase_3`
+- `RemeshingCellBase_3`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`
+- `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
+- `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
+
+\cgalCRPSection{Function Templates}
+
+- `CGAL::tetrahedral_isotropic_remeshing()`
+
+*/

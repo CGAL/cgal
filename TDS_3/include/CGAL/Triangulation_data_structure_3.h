@@ -231,6 +231,15 @@ public:
     copy_tds(tds);
   }
 
+  Triangulation_data_structure_3(Tds && tds)
+    noexcept(noexcept(Cell_range(std::move(tds._cells))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))))
+    : _dimension(std::exchange(tds._dimension, -2))
+    , _cells(std::move(tds._cells))
+    , _vertices(std::move(tds._vertices))
+  {
+  }
+
   Tds & operator= (const Tds & tds)
   {
     if (&tds != this) {
@@ -239,6 +248,17 @@ public:
     }
     return *this;
   }
+
+  Tds & operator= (Tds && tds)
+    noexcept(noexcept(Tds(std::move(tds))))
+  {
+    _cells = std::move(tds._cells);
+    _vertices = std::move(tds._vertices);
+    _dimension = std::exchange(tds._dimension, -2);
+    return *this;
+  }
+
+  ~Triangulation_data_structure_3() = default; // for the rule-of-five
 
   size_type number_of_vertices() const { return vertices().size(); }
 
@@ -917,12 +937,6 @@ public:
         *output++ = e;
         return *this;
       }
-      Facet_it& operator=(const Facet_it& f) {
-        output = f.output;
-        filter = f.filter;
-        return *this;
-      }
-      Facet_it(const Facet_it&)=default;
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);
@@ -1046,6 +1060,15 @@ public:
         }
       }
     }
+
+    // Implement the rule-of-five, to please the diagnostic
+    // `cppcoreguidelines-special-member-functions` of clang-tidy.
+    // Instead of defaulting those special member functions, let's
+    // delete them, to prevent any misuse.
+    Vertex_extractor(const Vertex_extractor&) = delete;
+    Vertex_extractor(Vertex_extractor&&) = delete;
+    Vertex_extractor& operator=(const Vertex_extractor&) = delete;
+    Vertex_extractor& operator=(Vertex_extractor&&) = delete;
 
     ~Vertex_extractor()
     {
