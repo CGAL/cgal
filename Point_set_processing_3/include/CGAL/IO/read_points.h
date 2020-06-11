@@ -54,20 +54,21 @@ bool read_points(const std::string& fname,
                     OutputIterator output,
                     const NamedParameters& np)
 {
-  if (fname.find(".xyz") != std::string::npos) {
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if (ext == "xyz") {
     return read_XYZ<OutputIteratorValueType>(fname, output, np);
   }
 
-  if (fname.find(".off") != std::string::npos) {
+  if (ext == "off") {
     return read_OFF<OutputIteratorValueType>(fname, output, np);
   }
 
-  if (fname.find(".ply") != std::string::npos) {
+  if (ext == "ply") {
     return read_PLY<OutputIteratorValueType>(fname, output, np);
   }
 
 #ifdef CGAL_LINKED_WITH_LASLIB
-  if (fname.find(".las") != std::string::npos) {
+  if (ext == "las") {
     return read_LAS<OutputIteratorValueType>(fname, output, np);
   }
 #endif

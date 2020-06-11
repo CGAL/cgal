@@ -139,11 +139,11 @@ void test_bgl_OFF(const char* filename)
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.off", fg);
+    ok = CGAL::write_polygon_mesh("tmp.obj.off", fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.off", fg2);
+    ok = CGAL::read_polygon_mesh("tmp.obj.off", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -896,4 +896,3 @@ int main(int argc, char** argv)
 #endif
   return EXIT_SUCCESS;
 }
-//@todo add some tests for read_polygon_mesh"XXX.off.obj"

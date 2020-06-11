@@ -14,6 +14,7 @@
 
 #include <string>
 #include <CGAL/Point_set_3/IO.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 
 namespace CGAL {
@@ -26,20 +27,22 @@ template <typename Point,
 bool read_point_set(const std::string& fname,
                     CGAL::Point_set_3<Point, Vector>& ps)
 {
-  if (fname.find(".xyz") != std::string::npos) {
+  const std::string ext = IO::internal::get_file_extension(fname);
+
+  if (ext=="xyz") {
     return read_XYZ(fname, ps);
   }
 
-  if (fname.find(".off") != std::string::npos) {
+  if (ext == "off") {
     return read_OFF(fname, ps);
   }
 
-  if (fname.find(".ply") != std::string::npos) {
+  if (ext =="ply") {
     return read_PLY(fname, ps);
   }
 
 #ifdef CGAL_LINKED_WITH_LASLIB
-  if (fname.find(".las") != std::string::npos) {
+  if (ext == "las") {
     return read_LAS(fname, ps);
   }
 #endif
@@ -63,20 +66,21 @@ template <typename Point,
 bool write_point_set(const std::string& fname,
                     CGAL::Point_set_3<Point, Vector>& ps)
 {
-  if (fname.find(".xyz") != std::string::npos) {
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if (ext == "xyz") {
     return write_XYZ(fname, ps);
   }
 
-  if (fname.find(".off") != std::string::npos) {
+  if (ext == "off") {
     return write_OFF(fname, ps);
   }
 
-  if (fname.find(".ply") != std::string::npos) {
+  if (ext == "ply") {
     return write_PLY(fname, ps);
   }
 
 #ifdef CGAL_LINKED_WITH_LASLIB
-  if (fname.find(".las") != std::string::npos) {
+  if (ext == "las") {
     return write_LAS(fname, ps);
   }
 #endif

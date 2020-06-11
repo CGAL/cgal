@@ -62,20 +62,21 @@ bool write_points(const std::string& fname,
                     const CGAL_BGL_NP_CLASS& np)
                 #endif
                 {
-  if (fname.find(".xyz") != std::string::npos) {
+  const std::string ext = IO::internal::get_file_extension(fname);
+  if (ext == "xyz") {
     return write_XYZ(fname, points, np);
   }
 
-  if (fname.find(".off") != std::string::npos) {
+  if (ext == "off") {
     return write_OFF(fname, points, np);
   }
 
-  if (fname.find(".ply") != std::string::npos) {
+  if (ext == "ply") {
     return write_PLY(fname, points, np);
   }
 
 #ifdef CGAL_LINKED_WITH_LASLIB
-  if (fname.find(".las") != std::string::npos) {
+  if (ext == "las") {
     return write_LAS(fname, points, np);
   }
 #endif
