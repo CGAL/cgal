@@ -9,6 +9,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
@@ -401,6 +402,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
                                                 objectValue);
     }
   }
+  filterOperations(true);
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
 }
@@ -413,10 +415,14 @@ void addActionToMenu(QAction* action, QMenu* menu)
     QString atxt = action->text().remove("&"),
         btxt = it->text().remove("&");
     int i = 0;
-    while(atxt[i] == btxt[i]
-          && i < atxt.size()
-          && i < btxt.size())
+    if(atxt.isEmpty() || btxt.isEmpty())
+      continue;
+    while(i < atxt.size()
+          && i < btxt.size()
+          && atxt[i] == btxt[i])
       ++i;
+    if(i == atxt.size() || i == btxt.size())
+      continue;
     bool res = (atxt[i] < btxt[i]);
     if (res)
     {
@@ -490,12 +496,12 @@ void MainWindow::filterOperations(bool)
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
     addActionToMenu(action, menu);
   }
-
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
@@ -765,11 +771,7 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
-           #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-               env_path.split(separator, QString::SkipEmptyParts)) {
-           #else
-               env_path.split(separator, Qt::SkipEmptyParts)) {
-           #endif
+               env_path.split(separator, SkipEmptyParts)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;

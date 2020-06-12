@@ -250,7 +250,7 @@ protected:
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
       QPointF old_pos = v->mapToScene(event->pos());
-      if(event->delta() <0)
+      if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
       else
         v->scale(0.8, 0.8);

@@ -15,6 +15,7 @@
 #include "Scene_polylines_item.h"
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Basic_generator_widget.h"
 
 class GeneratorWidget :
@@ -350,11 +351,7 @@ void Basic_generator_plugin::generateCube()
 
     for(int i=0; i<8; ++i)
     {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-      QStringList list = point_texts[i].split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-      QStringList list = point_texts[i].split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+      QStringList list = point_texts[i].split(QRegExp("\\s+"), SkipEmptyParts);
       if (list.isEmpty()) return;
       if (list.size()!=3){
         QMessageBox *msgBox = new QMessageBox;
@@ -395,11 +392,7 @@ void Basic_generator_plugin::generateCube()
   else
   {
     QString text = dock_widget->extremaEdit->text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-    QStringList list = text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+    QStringList list = text.split(QRegExp("\\s+"), SkipEmptyParts);
     if (list.isEmpty()) return;
     if (list.size()!=6){
       QMessageBox *msgBox = new QMessageBox;
@@ -450,11 +443,7 @@ void Basic_generator_plugin::generatePrism()
   bool is_closed = dock_widget->prismCheckBox->isChecked();
 
   QString text = dock_widget->prism_lineEdit->text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-  QStringList list = text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+  QStringList list = text.split(QRegExp("\\s+"), SkipEmptyParts);
   if (list.isEmpty()) return;
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
@@ -501,11 +490,7 @@ void Basic_generator_plugin::generatePyramid()
   bool is_closed = dock_widget->pyramidCheckBox->isChecked();
 
   QString text = dock_widget->pyramid_lineEdit->text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-  QStringList list = text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+  QStringList list = text.split(QRegExp("\\s+"), SkipEmptyParts);
   if (list.isEmpty()) return;
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
@@ -548,11 +533,7 @@ void Basic_generator_plugin::generateSphere()
 {
   int precision = dock_widget->SphereSpinBox->value();
   QString text = dock_widget->center_radius_lineEdit->text();
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-  QStringList list = text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+  QStringList list = text.split(QRegExp("\\s+"), SkipEmptyParts);
   if (list.isEmpty()) return;
   if (list.size()!=4){
     QMessageBox *msgBox = new QMessageBox;
@@ -601,11 +582,7 @@ void Basic_generator_plugin::generateTetrahedron()
 
   for(int i=0; i<4; ++i)
   {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QStringList list = point_texts[i].split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-    QStringList list = point_texts[i].split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+    QStringList list = point_texts[i].split(QRegExp("\\s+"), SkipEmptyParts);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;
@@ -646,11 +623,7 @@ void Basic_generator_plugin::generatePoints()
 {
   QString text = dock_widget->point_textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-  QStringList list = text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+  QStringList list = text.split(QRegExp("\\s+"), SkipEmptyParts);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -709,11 +682,7 @@ void Basic_generator_plugin::generateLines()
   std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
   QStringList polylines_metadata;
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-  QStringList list = text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+  QStringList list = text.split(QRegExp("\\s+"), SkipEmptyParts);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -813,11 +782,7 @@ void Basic_generator_plugin::generateGrid()
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  QStringList list = points_text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-#else
-  QStringList list = points_text.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
-#endif
+  QStringList list = points_text.split(QRegExp("\\s+"), SkipEmptyParts);
   if (list.isEmpty()) return;
   if (list.size()!=6){
     QMessageBox *msgBox = new QMessageBox;

@@ -29,8 +29,15 @@
 #  define THREE_EXPORT Q_DECL_IMPORT
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#define SkipEmptyParts QString::SkipEmptyParts
+#else
+#define SkipEmptyParts ::Qt::SkipEmptyParts
+#endif
+
 namespace CGAL{
 namespace Three{
+//define enum depending on Qt version
 class Polyhedron_demo_plugin_interface;
 class THREE_EXPORT Three{
 public:
