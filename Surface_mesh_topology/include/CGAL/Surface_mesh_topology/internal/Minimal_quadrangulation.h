@@ -53,7 +53,7 @@ struct Minimal_quadrangulation_local_map_items
 
 struct Minimal_quadrangulation_simplicity_testing_rbtree_node
 {
-  Minimal_quadrangulation_simplicity_testing_rbtree_node(std::size_t i)
+  Minimal_quadrangulation_simplicity_testing_rbtree_node(std::size_t i=0)
       : m_idx(i) {}
 
   Minimal_quadrangulation_simplicity_testing_rbtree_node *m_parent, *m_left, *m_right;
@@ -91,8 +91,8 @@ struct Minimal_quadrangulation_simplicity_testing_rbtree_value_traits
 
   static const boost::intrusive::link_mode_type link_mode = boost::intrusive::link_mode_type::normal_link;
 
-  static node_ptr to_nodeptr(value_type &value) { return &value; }
-  static const_node_ptr to_nodeptr(const value_type &value) { return &value; }
+  static node_ptr to_node_ptr(value_type &value) { return &value; }
+  static const_node_ptr to_node_ptr(const value_type &value) { return &value; }
   static pointer to_value_ptr(node_ptr n) { return n; }
   static const_pointer to_value_ptr(const_node_ptr n) { return n; }
 };
@@ -583,6 +583,8 @@ public:
         // one self intersection
         res=false;
       }
+      /// TODO: very messy if not using RLE. Need to redo and make
+      // use of RLE
 
       /// TODO: remove debug output
       pr.display();
@@ -600,24 +602,75 @@ public:
 
       // Mark outoging darts to represent an edge of both directions
       auto markoutgoing=get_local_map().get_new_mark();
-      auto it = get_local_map().darts().begin();
-      Dart_const_handle dh = it;
-      do {
-        get_local_map().mark(dh, markoutgoing);
-        dh=get_local_map().template beta<0,2>(dh);
-      } while(dh != it);
+      {
+        auto it = get_local_map().darts().begin();
+        Dart_const_handle dh = it;
+        do {
+          std::cout << get_local_map().info(dh) << ' ';
+          get_local_map().mark(dh, markoutgoing);
+          dh=get_local_map().template beta<0,2>(dh);
+        } while(dh != it);
+        //TODO: remove debug output
+        std::cout << std::endl;
+      }
 
-      typedef boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
-              boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
+      typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
+              typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
       std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
       rb_nodes.reserve(pr.length());
+      std::vector<rbtree> trees(num_sides);
 
+      std::size_t outoging_parity = get_local_map().is_marked(pr[0], markoutgoing) ? 0 : 1;
       for (std::size_t i = 0; i < pr.length(); ++i) {
-        auto dart_order = get_local_map().is_marked(pr[i], markoutgoing) ?
-                          get_local_map().info(pr[i]) :
-                          get_local_map().info(get_local_map().template beta<2>(pr[1]));
-        std::cout << dart_order << ' ';
+        Dart_const_handle dh = pr[i];
+        auto is_outgoing = i % 2 == outoging_parity;
+        auto dart_id = is_outgoing ?
+                          get_local_map().info(dh) :
+                          get_local_map().info(get_local_map().opposite2(dh));
+        //TODO: remove debug output
+        std::cout << dart_id << ' ';
         rb_nodes.emplace_back(i);
+        auto& node = rb_nodes.back();
+
+        // Check whether current darts needs to be switched
+        if (bool(switchables[i])) {
+          // Look at the t-1 turn of [i-1, i, i + 1]
+          Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
+          auto left_order = is_outgoing ?
+                            get_local_map().info(dleft) :
+                            get_local_map().info(get_local_map().opposite2(dh));
+          // Binary search within potential switch trigger
+          // TODO: apply the optimization Francis mentioned by only look at the largest one
+          auto orientation_start = get_local_map().info(dh);
+          auto to_order = [i, &pr, this] (const std::size_t& j) -> decltype(get_local_map().info(dh)) {
+            auto is_outgoing_wrt_cur_dart = (j % 2) == (i % 2);
+            /// Choose the correct predecessor/successor and make sure they are pointing the same direction as [i, i+1]
+            if (j == 0 && is_outgoing_wrt_cur_dart) {
+              return this->get_local_map().info(pr[0]);
+            }
+            Dart_const_handle dneighbor = is_outgoing_wrt_cur_dart ? this->get_local_map().template beta<0, 2>(pr[j - 1]) : pr[j + 1];
+            return this->get_local_map().info(dneighbor);
+          };
+          auto comparator = [to_order, orientation_start, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+            std::size_t order_b = to_order(b.m_idx);
+            order_b += (order_b > orientation_start) ? num_sides : 2 * num_sides;
+            return key > order_b;
+          };
+          auto comparator_wrapper = [&comparator] () -> decltype(comparator) {
+            return comparator;
+          };
+          std::size_t target_order = to_order(i);
+          target_order += (target_order > orientation_start) ? num_sides : 2 * num_sides;
+          auto it_trigger = trees[left_order].upper_bound(target_order, comparator);
+          if (it_trigger != trees[left_order].end()) {
+            // Switch the edge
+
+          }
+        }
+        // Insert current darts
+        if (trees[dart_id].empty()) {
+          trees[dart_id].push_back(node);
+        }
       }
 
       get_local_map().free_mark(markoutgoing);
@@ -1781,6 +1834,7 @@ protected:
       std::size_t idx = p.length() - 1 - i;
       if (turns[idx] == 1) {
         /// This is the end of a possible switchbale subpath
+        switchables[idx].flip();
         ++i;
         idx = p.length() - 1 - i;
         while (i < p.length() && turns[idx] == 2) {
@@ -1793,6 +1847,7 @@ protected:
         ++i;
       }
     }
+    switchables[0] = false;
     return switchables;
   }
 
