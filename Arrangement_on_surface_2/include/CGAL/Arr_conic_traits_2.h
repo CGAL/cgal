@@ -464,119 +464,109 @@ public:
      *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return the past-the-end iterator.
      */
-    template<class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      unsigned int  index = Self::get_index();
-      Conic_id      conic_id (index);
+      auto index = Self::get_index();
+      Conic_id conic_id(index);
 
       // Find the points of vertical tangency to cv and act accordingly.
-      typename Curve_2::Point_2  vtan_ps[2];
-      int                        n_vtan_ps;
+      typename Curve_2::Point_2 vtan_ps[2];
+      int n_vtan_ps;
 
-      n_vtan_ps = cv.vertical_tangency_points (vtan_ps);
+      n_vtan_ps = cv.vertical_tangency_points(vtan_ps);
 
-      if (n_vtan_ps == 0)
-      {
+      if (n_vtan_ps == 0) {
         // In case the given curve is already x-monotone:
-        *oi = make_object (X_monotone_curve_2 (cv, conic_id));
-        ++oi;
-        return (oi);
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv, conic_id));
+        return oi;
       }
 
       // Split the conic arc into x-monotone sub-curves.
-      if (cv.is_full_conic())
-      {
+      if (cv.is_full_conic()) {
         // Make sure we have two vertical tangency points.
         CGAL_assertion(n_vtan_ps == 2);
 
         // In case the curve is a full conic, split it into two x-monotone
         // arcs, one going from ps[0] to ps[1], and the other from ps[1] to
         // ps[0].
-        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], vtan_ps[1],
-                                               conic_id));
-        ++oi;
-        *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[1], vtan_ps[0],
-                                               conic_id));
-        ++oi;
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv, vtan_ps[0],
+                                                          vtan_ps[1],
+                                                          conic_id));
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv, vtan_ps[1],
+                                                          vtan_ps[0],
+                                                          conic_id));
       }
-      else
-      {
-        if (n_vtan_ps == 1)
-        {
+      else {
+        if (n_vtan_ps == 1) {
           // Split the arc into two x-monotone sub-curves: one going from the
           // arc source to ps[0], and the other from ps[0] to the target.
-          *oi = make_object (X_monotone_curve_2 (cv, cv.source(), vtan_ps[0],
-                                                 conic_id));
-          ++oi;
-          *oi = make_object (X_monotone_curve_2 (cv, vtan_ps[0], cv.target(),
-                                                 conic_id));
-          ++oi;
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv, cv.source(),
+                                                            vtan_ps[0],
+                                                            conic_id));
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv, vtan_ps[0],
+                                                            cv.target(),
+                                                            conic_id));
         }
-        else
-        {
-          CGAL_assertion (n_vtan_ps == 2);
+        else {
+          CGAL_assertion(n_vtan_ps == 2);
 
           // Identify the first point we encounter when going from cv's source
           // to its target, and the second point we encounter. Note that the
           // two endpoints must both be below the line connecting the two
           // tangnecy points (or both lies above it).
-          int                   ind_first = 0;
-          int                   ind_second = 1;
-          Alg_kernel_           ker;
-          typename Alg_kernel_::Line_2  line =
-            ker.construct_line_2_object() (vtan_ps[0], vtan_ps[1]);
-          const Comparison_result       start_pos =
+          int ind_first = 0;
+          int ind_second = 1;
+          Alg_kernel_ ker;
+          typename Alg_kernel_::Line_2 line =
+            ker.construct_line_2_object()(vtan_ps[0], vtan_ps[1]);
+          const Comparison_result start_pos =
             ker.compare_y_at_x_2_object() (cv.source(), line);
-          const Comparison_result       order_vpts =
-            ker.compare_x_2_object() (vtan_ps[0], vtan_ps[1]);
+          const Comparison_result order_vpts =
+            ker.compare_x_2_object()(vtan_ps[0], vtan_ps[1]);
 
-          CGAL_assertion (start_pos != EQUAL &&
-                          ker.compare_y_at_x_2_object() (cv.target(),
-                                                         line) == start_pos);
-          CGAL_assertion (order_vpts != EQUAL);
+          CGAL_assertion(start_pos != EQUAL &&
+                         ker.compare_y_at_x_2_object()(cv.target(),
+                                                       line) == start_pos);
+          CGAL_assertion(order_vpts != EQUAL);
 
-          if ((cv.orientation() == COUNTERCLOCKWISE &&
-               start_pos == order_vpts) ||
-              (cv.orientation() == CLOCKWISE &&
-               start_pos != order_vpts))
+          if (((cv.orientation() == COUNTERCLOCKWISE) &&
+               (start_pos == order_vpts)) ||
+              ((cv.orientation() == CLOCKWISE) && (start_pos != order_vpts)))
           {
             ind_first = 1;
             ind_second = 0;
           }
 
           // Split the arc into three x-monotone sub-curves.
-          *oi = make_object (X_monotone_curve_2 (cv,
-                                                 cv.source(),
-                                                 vtan_ps[ind_first],
-                                                 conic_id));
-          ++oi;
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv, cv.source(),
+                                                            vtan_ps[ind_first],
+                                                            conic_id));
 
-          *oi = make_object (X_monotone_curve_2 (cv,
-                                                 vtan_ps[ind_first],
-                                                 vtan_ps[ind_second],
-                                                 conic_id));
-          ++oi;
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv,
+                                                            vtan_ps[ind_first],
+                                                            vtan_ps[ind_second],
+                                                            conic_id));
 
-          *oi = make_object (X_monotone_curve_2 (cv,
-                                                 vtan_ps[ind_second],
-                                                 cv.target(),
-                                                 conic_id));
-          ++oi;
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv,
+                                                            vtan_ps[ind_second],
+                                                            cv.target(),
+                                                            conic_id));
         }
       }
 
-      return (oi);
+      return oi;
     }
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
-  {
-    return Make_x_monotone_2();
-  }
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return Make_x_monotone_2(); }
 
   class Split_2
   {

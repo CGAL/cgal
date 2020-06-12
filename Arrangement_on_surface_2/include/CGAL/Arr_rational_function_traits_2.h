@@ -811,7 +811,7 @@ public:
   //! \name Intersections & subdivisions
   //@{
 
-  /*! A functor that divides a curve into continues (x-monotone) curves. */
+  //! A functor for subdividing a curve into continues x-monotone curves.
   class Make_x_monotone_2
   {
   public:
@@ -826,24 +826,22 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       // Make the rational arc continuous.
       std::list<X_monotone_curve_2> arcs;
-
       cv.make_continuous(std::back_inserter(arcs));
 
       // Create objects.
-      for (auto it = arcs.begin(); it != arcs.end(); ++it)
-        *oi++ = make_object(*it);
-
+      for (const auto& arc : arcs) *oi++ = Make_x_monotone_result(arc);
       return oi;
     }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
-  {
-    return Make_x_monotone_2();
-  }
+  { return Make_x_monotone_2(); }
 
   /*! A functor that splits a curve at a point. */
   class Split_2

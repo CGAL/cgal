@@ -104,7 +104,7 @@ public:
   //! \name Intersections & subdivisions
   //@{
 
-  //! A functor for subdividing curves into x-monotone curves.
+  //! A functor for subdividing a curve into x-monotone curves.
   class Make_x_monotone_2 {
   private:
     const Base_traits_2& m_base;
@@ -114,36 +114,36 @@ public:
     Make_x_monotone_2(const Base_traits_2& base) : m_base(base) {}
 
     /*! Subdivide a given curve into x-monotone subcurves and insert them into
-     * a given output iterator. As segments are always x_monotone, only one
-     * x-monotone curve will be contained in the iterator.
+     * a given output iterator.
      * \param cv the curve.
      * \param oi an output iterator for the result. Its value type is a variant
      *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return the past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, Base_x_monotone_curve_2>
+        Base_make_x_monotone_result;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       // Make the original curve x-monotone.
-      std::list<CGAL::Object> base_objects;
+      std::list<Base_make_x_monotone_result> base_objects;
       m_base.make_x_monotone_2_object()(cv, std::back_inserter(base_objects));
 
       // Attach the data to each of the resulting x-monotone curves.
-      const Base_x_monotone_curve_2* base_x_curve;
       X_monotone_curve_data xdata = Convert()(cv.data());
-      for (typename std::list<CGAL::Object>::const_iterator it =
-             base_objects.begin(); it != base_objects.end(); ++it)
-      {
-        base_x_curve = object_cast<Base_x_monotone_curve_2>(&(*it));
-        if (base_x_curve != nullptr) {
-          // Current object is an x-monotone curve: Attach data to it.
-          *oi++ = make_object(X_monotone_curve_2(*base_x_curve, xdata));
+      for (const auto& base_obj : base_objects) {
+        const Base_x_monotone_curve_2* base_xcv =
+          boost::get<Base_x_monotone_curve_2>(&base_obj);
+        if (base_xcv != nullptr) {
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(*base_xcv, xdata));
+          continue;
         }
-        else {
-          // Current object is an isolated point: Leave it as is.
-          CGAL_assertion(object_cast<Point_2>(&(*it)) != nullptr);
-          *oi++ = *it;
-        }
+        // Current object is an isolated point: Leave it as is.
+        CGAL_assertion(boost::get<Point_2>(&base_obj) != nullptr);
+        *oi++ = base_obj;
       }
 
       return oi;

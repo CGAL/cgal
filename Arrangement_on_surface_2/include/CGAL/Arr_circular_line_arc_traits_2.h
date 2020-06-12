@@ -47,43 +47,26 @@ namespace CGAL {
     object_to_object_variant(const std::vector<CGAL::Object>& res1,
                              OutputIterator res2)
     {
-      for (std::vector<CGAL::Object>::const_iterator it = res1.begin();
-          it != res1.end(); ++it ) {
-        if (const Arc1 *arc = CGAL::object_cast< Arc1 >(&*it)){
-          boost::variant< Arc1, Arc2 > v =  *arc;
-          *res2++ = make_object(v);
+      typedef typename CK::Circular_arc_point_2         Point_2;
+      typedef boost::variant<Arc1, Arc2>                X_monotone_curve_2;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_2_result;
+
+      for (auto it = res1.begin(); it != res1.end(); ++it) {
+        if (const Arc1* arc = CGAL::object_cast<Arc1>(&*it)) {
+          boost::variant<Arc1, Arc2> v =  *arc;
+          *res2++ = Make_x_monotone_2_result(v);
         }
-        else if (const Arc2 *line = CGAL::object_cast< Arc2 >(&*it)){
-          boost::variant< Arc1, Arc2 > v =  *line;
-          *res2++ = make_object(v);
+        else if (const Arc2* line = CGAL::object_cast<Arc2>(&*it)) {
+          boost::variant<Arc1, Arc2> v =  *line;
+          *res2++ = Make_x_monotone_2_result(v);
         }
-        else{
-          *res2++ = *it;
+        else if (const Point_2* p = CGAL::object_cast<Point_2>(&*it)) {
+          *res2++ = Make_x_monotone_2_result(*p);
         }
+        else CGAL_error();
       }
       return res2;
-    }
-
-    template <class CK, class Arc,
-              class IntersectionPoint, class XMonotoneCurve,
-              class InternaType, class OutputIterator>
-    OutputIterator
-    object_to_object_variant1(const std::vector<InternaType>& res,
-                              OutputIterator oi)
-    {
-      typedef IntersectionPoint                         Intersection_point;
-      typedef XMonotoneCurve                            X_monotone_curve_2;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
-
-      for (auto it = res.begin(); it != res.end(); ++it) {
-        if (const Arc* arc = boost::get<Arc>(&*it)) {
-          X_monotone_curve_2 cv = *arc;
-          *oi++ = Intersection_result(cv);
-        }
-        else *oi++ = Intersection_result(*it);
-      }
-      return oi;
     }
 
     template <class CircularKernel, class Arc1, class Arc2>
@@ -269,20 +252,21 @@ namespace CGAL {
 
       template < class OutputIterator,class Not_X_Monotone >
       OutputIterator
-      operator()(const boost::variant<Arc1, Arc2, Not_X_Monotone> &A, OutputIterator res) const
+      operator()(const boost::variant<Arc1, Arc2, Not_X_Monotone> &A,
+                 OutputIterator res) const
       {
-        if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ){
+        if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ) {
           std::vector<CGAL::Object> container;
-          CircularKernel()
-            .make_x_monotone_2_object()(*arc1,std::back_inserter(container));
+          CircularKernel().
+            make_x_monotone_2_object()(*arc1,std::back_inserter(container));
           return object_to_object_variant<CircularKernel, Arc1, Arc2>
                                           (container, res);
         }
         else {
           const Arc2* arc2 = boost::get<Arc2>( &A );
           std::vector<CGAL::Object> container;
-          CircularKernel()
-            .make_x_monotone_2_object()(*arc2,std::back_inserter(container));
+          CircularKernel().
+            make_x_monotone_2_object()(*arc2,std::back_inserter(container));
           return object_to_object_variant<CircularKernel, Arc1, Arc2>
                                           (container, res);
         }

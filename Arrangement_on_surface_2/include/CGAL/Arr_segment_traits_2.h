@@ -612,7 +612,7 @@ public:
   //! \name Intersections, subdivisions, and mergings
   //@{
 
-  //! A functor for subdividing curves into x-monotone curves.
+  //! A functor for subdividing a curve into x-monotone curves.
   class Make_x_monotone_2 {
   public:
     /*! Subdivide a given curve into x-monotone subcurves and insert them into
@@ -626,8 +626,10 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      // Wrap the segment with an object.
-      *oi++ = make_object(cv);
+      // Wrap the segment with a variant.
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+      *oi++ = Make_x_monotone_result(cv);
       return oi;
     }
   };

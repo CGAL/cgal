@@ -188,7 +188,9 @@ public:
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
                                  Arr_all_sides_oblivious_tag) const
     {
-       typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+      typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
@@ -228,7 +230,7 @@ public:
         if (cmp_seg_endpts(x_seg) == LARGER)
           x_seg = ctr_seg_opposite(x_seg);
 #endif
-        *oi++ = make_object(ctr_x_curve(x_seg));
+        *oi++ = Make_x_monotone_result(ctr_x_curve(x_seg));
         x_seg_objects.clear();
         return oi;
       }
@@ -291,7 +293,7 @@ public:
             (is_seg_vertical(x_seg) != is_start_vertical))
         {
             // Construct an x-monotone curve from the sub-range which was found
-          *oi++ = make_object(x_polycurve);
+          *oi++ = Make_x_monotone_result(x_polycurve);
           is_start_vertical = is_seg_vertical(x_seg);
           start_dir = cmp_seg_endpts(x_seg);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
@@ -314,14 +316,17 @@ public:
 
       } // for loop
       if (x_polycurve.number_of_subcurves() != 0)
-        *oi++ = make_object(x_polycurve);
+        *oi++ = Make_x_monotone_result(x_polycurve);
       x_seg_objects.clear();
       return oi;
     }
+
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
                                  Arr_not_all_sides_oblivious_tag) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
       typedef typename Curve_2::Subcurve_const_iterator const_seg_iterator;
 
       // If the polycurve is empty, return.
@@ -367,7 +372,7 @@ public:
         if (cmp_seg_endpts(x_seg) == LARGER)
           x_seg = ctr_seg_opposite(x_seg);
 #endif
-        *oi++ = make_object(ctr_x_curve(x_seg));
+        *oi++ = Make_x_monotone_result(ctr_x_curve(x_seg));
         x_seg_objects.clear();
         return oi;
       }
@@ -437,7 +442,7 @@ public:
             (is_seg_vertical(x_seg) != is_start_vertical))
         {
             // Construct an x-monotone curve from the sub-range which was found
-          *oi++ = make_object(x_polycurve);
+          *oi++ = Make_x_monotone_result(x_polycurve);
           is_start_vertical = is_seg_vertical(x_seg);
           start_dir = cmp_seg_endpts(x_seg);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
@@ -449,7 +454,7 @@ public:
                  ARR_INTERIOR ||
                  ps_x(x_seg, seg_source) != ARR_INTERIOR)
         {
-          *oi++ = make_object(x_polycurve);
+          *oi++ = Make_x_monotone_result(x_polycurve);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
           if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
 #endif
@@ -470,7 +475,7 @@ public:
         }
       } // for loop
       if (x_polycurve.number_of_subcurves() != 0)
-        *oi++ = make_object(x_polycurve);
+        *oi++ = Make_x_monotone_result(x_polycurve);
       x_seg_objects.clear();
       return oi;
     }

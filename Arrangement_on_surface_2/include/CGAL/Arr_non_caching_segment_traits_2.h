@@ -114,13 +114,12 @@ public:
   typedef X_monotone_curve_2                    Curve_2;
 
   /*! \class
-   * A functor for splitting curves into x-monotone pieces.
+   * A functor for subdividing a curve into x-monotone curves.
    */
   class Make_x_monotone_2 {
   public:
-
-    /*! Cut the given segment into x-monotone subcurves and insert them into
-     * the given output iterator. As segments are always x_monotone, only one
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As segments are always x_monotone, only one
      * x-monotone curve is inserted into the output iterator.
      * \param cv the segment.
      * \param oi an output iterator for the result. Its value type is a variant
