@@ -88,7 +88,6 @@ namespace CGAL {
     uint8_t m_max_depth_reached = 0;  /* octree actual highest depth reached */
     PointRange &m_ranges;              /* input point range */
     PointMap m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
-    NormalMap m_normals_map;              /* property map: `value_type of InputIterator` -> `Vector` (Normal) */
     Point m_bbox_min;                  /* input bounding box min value */
     FT m_bbox_side;              /* input bounding box side length (cube) */
     std::vector<FT> m_side_per_depth;      /* side length per node's depth */
@@ -98,11 +97,9 @@ namespace CGAL {
     Octree(
             PointRange &pwn,
             PointMap &point_map,
-            NormalMap &normal_map,
             const FT enlarge_ratio = 1.2) :
             m_ranges(pwn),
-            m_points_map(point_map),
-            m_normals_map(normal_map) {
+            m_points_map(point_map) {
       // compute bbox
       Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
                                                    (m_ranges.begin(),
@@ -491,10 +488,8 @@ namespace CGAL {
 
       for (InputIterator pwn_it = ranges.cbegin(); pwn_it != ranges.cend(); pwn_it++) {
         const Point &point = get(m_points_map, *pwn_it);
-        const Vector &normal = get(m_normals_map, *pwn_it);
 
-        out_file << point[0] << " " << point[1] << " " << point[2]
-                 << " " << normal[0] << " " << normal[1] << " " << normal[2] << "\n";
+        out_file << point[0] << " " << point[1] << " " << point[2] << "\n";
       }
     }
 

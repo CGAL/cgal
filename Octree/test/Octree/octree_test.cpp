@@ -17,14 +17,21 @@ typedef CGAL::Octree
 int main(void) {
 
   Point_set points;
-  points.insert({0, 0, 1});
+  points.insert({-1, -1, -1});
+  points.insert({1, -1, -1});
+  points.insert({-1, 1, -1});
+  points.insert({1, 1, -1});
+  points.insert({-1, -1, 1});
+  points.insert({1, -1, 1});
+  points.insert({-1, 1, 1});
+  points.insert({1, 1, 1});
 
   auto point_map = points.point_map();
-  auto normal_map = points.normal_map();
 
-  Octree octree(points, point_map, normal_map);
+  Octree octree(points, point_map);
+  octree.refine(1, 1);
 
-  std::cout << *octree.root();
+  std::cout << (*octree.root());
 
   return 0;
 }
