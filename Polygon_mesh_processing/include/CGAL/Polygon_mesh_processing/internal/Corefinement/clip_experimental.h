@@ -301,6 +301,8 @@ bool clip_single_self_intersecting_cc(const FacePairRange& self_intersecting_fac
 #endif
 
   // 3. ------------------------------
+  CGAL::expand_face_selection_for_removal(si_faces, cc, CGAL::make_boolean_property_map(si_faces));
+
   for(const face_descriptor fd : si_faces)
     CGAL::Euler::remove_face(halfedge(fd, cc), cc);
 
