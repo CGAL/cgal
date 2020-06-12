@@ -97,7 +97,7 @@ inline VRML_2_ostream& operator<<(VRML_2_ostream& os,
 inline VRML_2_ostream& operator<<(VRML_2_ostream& os,
                                   const double& d)
 {
-  os.os() << d;
+  os.os() << oformat(d);
   return os;
 }
 
@@ -129,21 +129,21 @@ operator<<(VRML_2_ostream& os,
         "                            coord Coordinate {\n"
         "                                point [ \n"
      << Indent << "  "
-     << CGAL::to_double(t[0].x()) << " "
-     << CGAL::to_double(t[0].y()) << " "
-     << CGAL::to_double(t[0].z()) << " ,\n"
+     << oformat(CGAL::to_double(t[0].x())) << " "
+     << oformat(CGAL::to_double(t[0].y())) << " "
+     << oformat(CGAL::to_double(t[0].z())) << " ,\n"
      << Indent << "  "
-     << CGAL::to_double(t[1].x()) << " "
-     << CGAL::to_double(t[1].y()) << " "
-     << CGAL::to_double(t[1].z()) << " ,\n"
+     << oformat(CGAL::to_double(t[1].x())) << " "
+     << oformat(CGAL::to_double(t[1].y())) << " "
+     << oformat(CGAL::to_double(t[1].z())) << " ,\n"
      << Indent << "  "
-     << CGAL::to_double(t[2].x()) << " "
-     << CGAL::to_double(t[2].y()) << " "
-     << CGAL::to_double(t[2].z()) << " ,\n"
+     << oformat(CGAL::to_double(t[2].x())) << " "
+     << oformat(CGAL::to_double(t[2].y())) << " "
+     << oformat(CGAL::to_double(t[2].z())) << " ,\n"
      << Indent << "  "
-     << CGAL::to_double(t[3].x()) << " "
-     << CGAL::to_double(t[3].y()) << " "
-     << CGAL::to_double(t[3].z()) <<
+     << oformat(CGAL::to_double(t[3].x())) << " "
+     << oformat(CGAL::to_double(t[3].y())) << " "
+     << oformat(CGAL::to_double(t[3].z())) <<
      "\n                                ]\n"
      "                            }\n"
      "                            solid   FALSE\n"

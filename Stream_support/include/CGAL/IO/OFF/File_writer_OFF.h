@@ -75,7 +75,7 @@ public:
     }
     else
     {
-      out() << '\n' << x << ' ' << y << ' ' << z;
+      out() << '\n' << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z);
     }
   }
 
@@ -89,7 +89,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << x << ' ' << y << ' ' << z;
+      out() << ' ' << ' ' << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z);
     }
   }
 
@@ -103,7 +103,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << r << ' ' << g << ' ' << b;
+      out() << ' ' << ' ' << oformat(r) << ' ' << oformat(g) << ' ' << oformat(b);
     }
   }
 
@@ -116,7 +116,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << tx << ' ' << ty;
+      out() << ' ' << ' ' << oformat(tx) << ' ' << oformat(ty);
     }
   }
 

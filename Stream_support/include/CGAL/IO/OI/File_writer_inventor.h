@@ -57,7 +57,7 @@ public:
 
   void write_vertex( const double x, const double y, const double z)
   {
-    out() << "            " << x << ' ' << y << ' ' << z << ',' <<'\n';
+    out() << "            " << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z) << ',' <<'\n';
   }
 
   void write_facet_header() const
