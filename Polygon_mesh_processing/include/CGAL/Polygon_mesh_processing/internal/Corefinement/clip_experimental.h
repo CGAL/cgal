@@ -484,6 +484,8 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
   if(!does_self_intersect(tm, np_tm))
     return clip(tm, clipper, np_tm, np_c);
 
+  duplicate_non_manifold_vertices(tm, np_tm);
+
   // Splitting connected components avoids having to treat a lot of "easy" self-intersections
   // (for example from two spheres intersecting)
   PatchIDMap pidmap = get(Patch_ID(), tm);
