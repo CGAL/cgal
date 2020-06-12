@@ -1214,6 +1214,15 @@ public:
     return is_next_flat_can_be_extended_at_beginning(it, dh, dummy1, dummy2);
   }
 
+  /// @return true iff the flat 'it' forms a switchable subpath (aka left-L-shape)
+  bool is_switchable(const List_iterator& it)
+  {
+    CGAL_assertion(is_valid_iterator(it));
+    if (it == m_path.begin() || std::next(it) == m_path.end()) { return false; }
+    std::size_t t=next_positive_turn(it);
+    return (t==1 && flat_length(it) >= 0);
+  }
+
   /// Add the given dart 'dh' before the flat 'it'.
   void add_dart_before(const List_iterator& it, Dart_const_handle dh,
                        Set_of_it& modified_flats)
@@ -1450,6 +1459,27 @@ public:
     m_length-=2;
 
     it1=merge_modified_flats_when_possible(modified_flats);
+  }
+
+  /// Switch the left-L-shape of the subpath starting at 'it'
+  void switch_flat(List_iterator& it)
+  {
+    CGAL_assertion(is_switchable(it));
+    Set_of_it modified_flats;
+    /// Need to switch to t1-1 turn
+    List_iterator it_next = next_iterator(it);
+    Dart_const_handle d_new_first_dart = get_map().template beta<0, 2>(begin_of_flat(it));
+    Dart_const_handle d_new_flat_begin = get_map().template beta<2, 0>(d_new_first_dart);
+    Dart_const_handle d_new_flat_end = get_map().template beta<1, 2>(begin_of_flat(it_next));
+
+    add_dart_before(it, d_new_first_dart, modified_flats);
+    set_begin_of_flat(it, d_new_flat_begin, modified_flats);
+    set_end_of_flat(it, d_new_flat_end, modified_flats);
+    flat_modified(it, modified_flats);
+    reduce_flat_from_beginning(it_next, modified_flats);
+    flat_modified(it_next, modified_flats);
+
+    it=merge_modified_flats_when_possible(modified_flats);
   }
 
   /// Right push the path, if all all l-shape are pushed, otherwise only one.
