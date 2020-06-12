@@ -56,11 +56,13 @@ bool read_OBJ(std::istream& is,
   set_ascii_mode(is); // obj is ASCII only
 
   int mini(1), maxi(-1);
+  bool first_o = true;
   std::string s;
   Point p;
 
   std::string line;
   bool tex_found(false), norm_found(false);
+  std::size_t offset_idx=0;
   while(getline(is, line))
   {
     if(line.empty())
@@ -69,6 +71,32 @@ bool read_OBJ(std::istream& is,
     std::istringstream iss(line);
     if(!(iss >> s))
       continue; // can't read anything on the line, whitespace only?
+    if(s == "o")
+    {
+      if(!first_o)
+      {
+        if(maxi == offset_idx -1 && mini == offset_idx + 1)
+        {
+          if(verbose)
+            std::cerr << "No face detected." << std::endl;
+          return false;
+        }
+
+        if(maxi > static_cast<int>(points.size()-offset_idx) || mini < -static_cast<int>(points.size()-offset_idx))
+        {
+          if(verbose)
+            std::cerr << "a face index is invalid " << std::endl;
+          return false;
+        }
+        mini = 1;
+        maxi = -1;
+      }
+      else
+      {
+        first_o = false;
+      }
+      offset_idx = points.size();
+    }
 
     if(s == "v")
     {
@@ -97,13 +125,13 @@ bool read_OBJ(std::istream& is,
       {
         if(i < 1)
         {
-          faces.back().push_back(points.size() + i); // negative indices are relative references
+          faces.back().push_back(points.size()+offset_idx + i); // negative indices are relative references
           if(i < mini)
             mini = i;
         }
         else
         {
-          faces.back().push_back(i-1);
+          faces.back().push_back(i+offset_idx-1);
           if(i-1 > maxi)
             maxi = i-1;
         }
@@ -126,15 +154,14 @@ bool read_OBJ(std::istream& is,
     std::cout<<"WARNING: normals were found in this file, but were discarded."<<std::endl;
   if(tex_found && verbose)
     std::cout<<"WARNING: textures were found in this file, but were discarded."<<std::endl;
-
-  if(maxi == -1 && mini == 1)
+  if(maxi == offset_idx -1 && mini == offset_idx + 1)
   {
     if(verbose)
       std::cerr << "No face detected." << std::endl;
     return false;
   }
 
-  if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
+  if(maxi > static_cast<int>(points.size()-offset_idx) || mini < -static_cast<int>(points.size()-offset_idx))
   {
     if(verbose)
       std::cerr << "a face index is invalid " << std::endl;

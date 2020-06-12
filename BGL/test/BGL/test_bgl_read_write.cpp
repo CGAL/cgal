@@ -374,7 +374,7 @@ void test_bgl_OBJ(const std::string filename)
   std::ifstream is(filename);
   bool ok = CGAL::read_OBJ(is, fg);
   assert(ok);
-  assert(filename != "data/sphere.obj" || (num_vertices(fg) == 162 && num_faces(fg) == 320));
+  assert(filename != "data/sphere.obj" || (num_vertices(fg) == 324 && num_faces(fg) == 640));
 
   // write with OBJ
   {
@@ -404,7 +404,7 @@ void test_bgl_OBJ(const std::string filename)
   clear(fg);
   ok = CGAL::read_OBJ("data/sphere.obj", fg);
   assert(ok);
-  assert(num_vertices(fg) == 162 && num_faces(fg) == 320);
+  assert(num_vertices(fg) == 324 && num_faces(fg) == 640);
 
   // write with OBJ
   {
