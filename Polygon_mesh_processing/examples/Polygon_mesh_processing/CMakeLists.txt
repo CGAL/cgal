@@ -90,6 +90,7 @@ create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
 create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 create_single_source_cgal_program( "locate_example.cpp")
 create_single_source_cgal_program( "orientation_pipeline_example.cpp")
+create_single_source_cgal_program( "clip_with_self_intersections.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
 
