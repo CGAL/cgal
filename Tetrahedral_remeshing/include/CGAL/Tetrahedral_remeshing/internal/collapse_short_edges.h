@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois, Noura Faraj
+// Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
 #ifndef CGAL_INTERNAL_COLLAPSE_SHORT_EDGES_H
 #define CGAL_INTERNAL_COLLAPSE_SHORT_EDGES_H
