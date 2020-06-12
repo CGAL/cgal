@@ -30,7 +30,7 @@
 #
 # ::
 #
-#   SEAPI_ROOT                 - Preferred installation path for Intel® Single Event API (Intel® SEAPI)
+#   SEAPI_ROOT                 - Preferred installation path for IntelÂ® Single Event API (IntelÂ® SEAPI)
 #                                (https://github.com/intel/IntelSEAPI)
 #   ITT_ROOT/
 #   CMAKE_ITT_HOME             - Preferred installation path for standalone ITT library
