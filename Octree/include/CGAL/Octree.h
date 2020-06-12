@@ -190,26 +190,6 @@ namespace CGAL {
       return Point(bary[0], bary[1], bary[2]);
     }
 
-    IntPoint get_corner_location(Node *node, size_t corner_idx) const {
-      size_t size = m_unit_per_depth[node->depth()];
-      IntPoint loc;
-      for (int i = 0; i < 3; i++)
-        loc[i] = (node->location()[i] + ((corner_idx >> i) & 1)) * size;
-      return loc;
-    }
-
-    Point compute_corner_position(const IntPoint &corner_loc) const {
-      FT size = m_side_per_depth[m_max_depth_reached];
-      FT corner_pos[3];
-      for (int i = 0; i < 3; i++)
-        corner_pos[i] = (FT) (corner_loc[i] * size) + m_bbox_min[i];
-      return Point(corner_pos[0], corner_pos[1], corner_pos[2]);
-    }
-
-    Vector compute_weighted_normal(const Point &corner_loc, const InputIterator &pwn_it) const {
-      return pwn_it->second; // simple case for now, will be replaced by a generic functor
-    }
-
     void refine_recurse(Node *node, size_t dist_to_max_depth, size_t max_pts_num) {
       if (dist_to_max_depth == 0 || node->num_points() <= max_pts_num) {
         if (m_max_depth_reached < node->depth()) m_max_depth_reached = node->depth();
