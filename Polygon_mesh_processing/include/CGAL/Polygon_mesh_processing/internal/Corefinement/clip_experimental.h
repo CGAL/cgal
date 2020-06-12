@@ -65,7 +65,7 @@ template <typename TriangleMesh, typename EVPM,
           typename NamedParameters1, typename NamedParameters2>
 bool clip_mesh_exactly(TriangleMesh& cc,
                        EVPM cc_evpm,
-                       TriangleMesh clipper, // intentional copy
+                       TriangleMesh& clipper,
                        const NamedParameters1& np_cc,
                        const NamedParameters2& np_c)
 {
@@ -99,24 +99,29 @@ bool clip_mesh_exactly(TriangleMesh& cc,
   Clipper_VPM clipper_vpm = choose_parameter(get_parameter(np_c, internal_np::vertex_point),
                                              get_property_map(CGAL::vertex_point, clipper));
 
+  std::unordered_map<vertex_descriptor, vertex_descriptor> v2v;
+  TriangleMesh clipper_copy;
+  CGAL::copy_face_graph(clipper, clipper_copy,
+                        parameters::vertex_to_vertex_output_iterator(std::inserter(v2v, v2v.end())));
+
   C2E to_exact;
-  EVPM clipper_evpm = get(EP_property_tag(), clipper);
-  for(vertex_descriptor vd : vertices(clipper))
-    put(clipper_evpm, vd, to_exact(get(clipper_vpm, vd)));
+  EVPM clipper_copy_evpm = get(EP_property_tag(), clipper_copy);
+  for(vertex_descriptor v : vertices(clipper))
+    put(clipper_copy_evpm, v2v[v], to_exact(get(clipper_vpm, v)));
 
 #ifdef CGAL_DEBUG_CLIPPING
-  const bool valid_input = is_valid(cc) && is_valid(clipper) &&
+  const bool valid_input = is_valid_polygon_mesh(cc) && is_valid_polygon_mesh(clipper_copy) &&
                            !does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)) &&
-                           !does_self_intersect(clipper, parameters::vertex_point_map(clipper_evpm)) &&
-                           does_bound_a_volume(clipper, parameters::vertex_point_map(clipper_evpm));
+                           !does_self_intersect(clipper_copy, parameters::vertex_point_map(clipper_copy_evpm)) &&
+                           does_bound_a_volume(clipper_copy, parameters::vertex_point_map(clipper_copy_evpm));
   if(!valid_input)
   {
     std::cerr << "Invalid input for clip()" << std::endl;
     std::cerr << "is cc valid: " << is_valid(cc) << std::endl;
-    std::cerr << "is clipper valid: " << clipper.is_valid() << std::endl;
+    std::cerr << "is clipper valid: " << clipper_copy.is_valid() << std::endl;
     std::cerr << "does part self intersect? " << does_self_intersect(cc, parameters::vertex_point_map(cc_evpm)) << std::endl;
-    std::cerr << "does clipper self intersect? " << does_self_intersect(clipper, parameters::vertex_point_map(clipper_evpm)) << std::endl;
-    std::cerr << "clipper bounds a volume? " << does_bound_a_volume(clipper) << std::endl;
+    std::cerr << "does clipper self intersect? " << does_self_intersect(clipper_copy, parameters::vertex_point_map(clipper_copy_evpm)) << std::endl;
+    std::cerr << "clipper bounds a volume? " << does_bound_a_volume(clipper_copy) << std::endl;
     return false;
   }
   else
@@ -132,12 +137,12 @@ bool clip_mesh_exactly(TriangleMesh& cc,
   clip_volume = false;
   use_compact_clipper = false;
 
-  bool res = clip(cc, clipper,
+  bool res = clip(cc, clipper_copy,
                   parameters::vertex_point_map(cc_evpm)
                              .clip_volume(clip_volume)
                              .use_compact_clipper(use_compact_clipper)
                              .throw_on_self_intersection(true),
-                  parameters::vertex_point_map(clipper_evpm));
+                  parameters::vertex_point_map(clipper_copy_evpm));
 
 #ifdef CGAL_DEBUG_CLIPPING
   std::cout << "Done clipping, check output" << std::endl;
@@ -154,8 +159,8 @@ bool clip_mesh_exactly(TriangleMesh& cc,
 
   CGAL_postcondition(cc.is_valid());
   CGAL_postcondition(is_valid_polygon_mesh(cc));
-  CGAL_postcondition(clipper.is_valid());
-  CGAL_postcondition(is_valid_polygon_mesh(clipper));
+  CGAL_postcondition(clipper_copy.is_valid());
+  CGAL_postcondition(is_valid_polygon_mesh(clipper_copy));
 #endif
 
   return res;
@@ -521,7 +526,7 @@ bool clip_self_intersecting_mesh(TriangleMesh& tm,
     faces_size_type cc_id = ordered_cc_ids[1+i]; // extract all but the largest CC, so start at '1'
     CGAL_assertion(cc_id < num_cc);
 
-    cc_vpms[i] = get(P_property_tag(), ccs[i]);
+    cc_vpms[i] = get(P_property_tag(), ccs[i]); // ccs only contains the extracted CCs, so it starts at 0
     CGAL::Face_filtered_graph<TriangleMesh> tm_cc(tm, cc_id, pidmap);
 
     CGAL_assertion(tm_cc.is_selection_valid());
