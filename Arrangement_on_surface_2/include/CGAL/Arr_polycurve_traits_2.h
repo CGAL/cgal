@@ -349,8 +349,8 @@ public:
         m_poly_traits.subcurve_traits_2()->construct_opposite_2_object();
 #endif
 
-      // Convert the input polycurve to a sequence of CGAL objects, such
-      // that each Object wraps an x-monotone subcurve.
+      // Convert the input polycurve to a sequence of objects, such that
+      // each object wraps an x-monotone subcurve.
       std::vector<Make_x_monotone_subresult> x_seg_objects;
       for (auto its = cv.subcurves_begin(); its != cv.subcurves_end(); ++its)
         make_seg_x_monotone(*its, std::back_inserter(x_seg_objects));
