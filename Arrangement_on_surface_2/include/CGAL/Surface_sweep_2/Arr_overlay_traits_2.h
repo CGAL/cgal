@@ -26,7 +26,6 @@
 #include <boost/optional.hpp>
 
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 

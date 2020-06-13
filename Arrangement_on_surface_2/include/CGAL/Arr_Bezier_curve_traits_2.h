@@ -481,8 +481,7 @@ public:
   /*! \class Make_x_monotone_2
    * A functor for subdividing a curve into x-monotone curves.
    */
-  class Make_x_monotone_2
-  {
+  class Make_x_monotone_2 {
   private:
     Bezier_cache* p_cache;
 

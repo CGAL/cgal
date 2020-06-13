@@ -451,16 +451,17 @@ public:
   /// \name Intersections, subdivisions, and mergings
   //@{
 
-  //! A functor for subdividing curves into x-monotone curves.
-  class Make_x_monotone_2
-  {
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing curves into x-monotone curves.
+   */
+  class Make_x_monotone_2 {
     typedef Arr_conic_traits_2 <Rat_kernel_, Alg_kernel_, Nt_traits_>    Self;
 
   public:
     /*! Subdivide a given conic curve (or conic arc) into x-monotone subcurves
      * and insert them to a given output iterator.
      * \param cv the curve.
-     * \param oi an output iterator for the result. Its value type is a variant
+     * \param oi the output iterator for the result. Its value type is a variant
      *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return the past-the-end iterator.
      */

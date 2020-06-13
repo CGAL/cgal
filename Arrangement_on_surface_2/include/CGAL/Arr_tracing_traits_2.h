@@ -507,7 +507,9 @@ public:
   //! \name Intersections & subdivisions
   //@{
 
-  //! A functor for subdividing curves into x-monotone curves.
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing curves into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -604,14 +606,14 @@ public:
     Intersect_2(const Base* base, bool enabled = true) :
       m_object(base->intersect_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! Compute the intersections of the two given curves and insert them into
+     * a given output iterator.
      * \param xcv1 the first curve
      * \param xcv2 the ssecond curve
-     * \param oi an output iterator that contains the result. It's value
-     * type is CGAL::Object, which wraps either an x-monotone overlapping
-     * curve or pair that consists of an intersection point and its
-     * multiplicity
-     * \return the output iterator
+     * \param oi the output iterator for the result. It value type is a variant
+     *           that wraps an x-monotone overlapping curve or a pair that
+     *           consists of the intersection point and its multiplicity
+     * \return the past-the-end output iterator.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xcv1,

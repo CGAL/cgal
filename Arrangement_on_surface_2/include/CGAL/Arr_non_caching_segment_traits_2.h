@@ -113,7 +113,7 @@ public:
   // Traits types:
   typedef X_monotone_curve_2                    Curve_2;
 
-  /*! \class
+  /*! \class Make_x_monotone_2
    * A functor for subdividing a curve into x-monotone curves.
    */
   class Make_x_monotone_2 {
@@ -122,14 +122,17 @@ public:
      * a given output iterator. As segments are always x_monotone, only one
      * x-monotone curve is inserted into the output iterator.
      * \param cv the segment.
-     * \param oi an output iterator for the result. Its value type is a variant
+     * \param oi the output iterator for the result. Its value type is a variant
      *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return the past-the-end iterator.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      *oi++ = make_object(cv);
+      // Wrap the segment with a variant.
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+      *oi++ = Make_x_monotone_result(cv);
       return oi;
     }
   };

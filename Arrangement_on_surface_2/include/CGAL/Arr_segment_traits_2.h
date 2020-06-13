@@ -612,16 +612,18 @@ public:
   //! \name Intersections, subdivisions, and mergings
   //@{
 
-  //! A functor for subdividing a curve into x-monotone curves.
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing a curve into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   public:
     /*! Subdivide a given curve into x-monotone subcurves and insert them into
-     * a given output iterator. As segments are always x_monotone, only one
-     * object will be contained in the iterator.
+     * a given output iterator. As segments are always x_monotone a single
+     * object is inserted.
      * \param cv the curve.
-     * \param oi an output iterator for the result. Its value type is a variant
+     * \param oi the output iterator for the result. Its value type is a variant
      *           that wraps Point_2 or an X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+     * \return The past-the-end output iterator.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const

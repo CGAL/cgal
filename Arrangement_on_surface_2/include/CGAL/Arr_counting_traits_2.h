@@ -403,7 +403,9 @@ public:
     { ++m_counter; return m_object(xc1, xc2, p); }
   };
 
-  //! A functor that subdivides a curve into x-monotone curves.
+  /*! \class Make_x_monotone_2
+   * A functor that subdivides a curve into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -417,7 +419,7 @@ public:
     /*! Subdivide a given curve into x-monotone subcurves and insert them into
      * a given output iterator.
      * \param cv the curve.
-     * \param oi an output iterator for the result. Its value type is a variant
+     * \param oi the output iterator for the result. Its value type is a variant
      *           that wraps Point_2 or an X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
