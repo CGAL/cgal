@@ -8,9 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_NO_INTERSECTION_INSERTION_SS_VISITOR_H
 #define CGAL_ARR_NO_INTERSECTION_INSERTION_SS_VISITOR_H

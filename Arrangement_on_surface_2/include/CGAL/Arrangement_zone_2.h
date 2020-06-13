@@ -28,6 +28,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 
 #include <list>
 #include <map>
@@ -113,6 +114,9 @@ protected:
   typedef std::set<const X_monotone_curve_2*>           Curves_set;
   typedef typename Curves_set::iterator                 Curves_set_iterator;
 
+  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
+  typedef typename Pl_result::Type                      Pl_result_type;
+
   // Data members:
   Arrangement_2& m_arr;                 // The associated arrangement.
   const Traits_adaptor_2* m_geom_traits; // Its associated geometry traits.
@@ -127,7 +131,7 @@ protected:
 
   X_monotone_curve_2 m_cv;              // The current portion of the
                                         // inserted curve.
-  CGAL::Object m_obj;                   // The location of the left endpoint.
+  Pl_result_type m_obj;                 // The location of the left endpoint.
   bool m_has_left_pt;                   // Is the left end of the curve bounded.
   bool m_left_on_boundary;              // Is the left point on the boundary.
   Point_2 m_left_pt;                    // Its current left endpoint.

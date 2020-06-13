@@ -7,9 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 Efi Fogel  <efif@post.tau.ac.il>
+// Author(s): Ron Wein   <wein@post.tau.ac.il>
+//            Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
@@ -308,11 +307,12 @@ public:
    * \return An object that contains the curve end.
    *         In our case this object always wraps a fictitious edge.
    */
-  CGAL::Object place_boundary_vertex(Face* f,
-                                     const X_monotone_curve_2& cv,
-                                     Arr_curve_end ind,
-                                     Arr_parameter_space ps_x,
-                                     Arr_parameter_space ps_y);
+  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  place_boundary_vertex(Face* f,
+                        const X_monotone_curve_2& cv,
+                        Arr_curve_end ind,
+                        Arr_parameter_space ps_x,
+                        Arr_parameter_space ps_y);
 
   /*! Locate the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
@@ -346,10 +346,11 @@ public:
    *         In our case this object may either wrap an unbounded face,
    *         or an edge with an end-vertex at infinity (in case of an overlap).
    */
-  CGAL::Object locate_curve_end(const X_monotone_curve_2& cv,
-                                Arr_curve_end ind,
-                                Arr_parameter_space ps_x,
-                                Arr_parameter_space ps_y);
+  boost::variant<Vertex*, Halfedge*, Face*>
+  locate_curve_end(const X_monotone_curve_2& cv,
+                   Arr_curve_end ind,
+                   Arr_parameter_space ps_x,
+                   Arr_parameter_space ps_y);
 
   /*! Split a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).

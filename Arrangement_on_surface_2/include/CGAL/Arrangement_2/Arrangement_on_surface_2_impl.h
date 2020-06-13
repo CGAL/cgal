@@ -7,16 +7,15 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Efi Fogel         <efif@post.tau.ac.il>
-//                 Eric Berberich    <eric.berberich@cgal.org>
-//                 (based on old version by: Iddo Hanniel,
-//                                           Eyal Flato,
-//                                           Oren Nechushtan,
-//                                           Ester Ezra,
-//                                           Shai Hirsch,
-//                                           and Eugene Lipovetsky)
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
+//            Eric Berberich    <eric.berberich@cgal.org>
+//            (based on old version by: Iddo Hanniel,
+//                                      Eyal Flato,
+//                                      Oren Nechushtan,
+//                                      Ester Ezra,
+//                                      Shai Hirsch,
+//                                      and Eugene Lipovetsky)
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
@@ -31,6 +30,8 @@
  * Member-function definitions for the Arrangement_2<GeomTraits, TopTraits>
  * class-template.
  */
+
+#include <boost/variant.hpp>
 
 #include <CGAL/function_objects.h>
 #include <CGAL/use.h>
@@ -2193,18 +2194,34 @@ _place_and_set_curve_end(DFace* f,
                          Arr_parameter_space ps_x, Arr_parameter_space ps_y,
                          DHalfedge** p_pred)
 {
+  typedef boost::variant<DVertex*, DHalfedge*>  Non_optional_result;
+  typedef boost::optional<Non_optional_result>  Result;
   // Use the topology traits to locate the DCEL feature that contains the
   // given curve end.
-  CGAL::Object obj =
-    m_topol_traits.place_boundary_vertex(f, cv, ind, ps_x, ps_y);
-  DVertex* v;
-  DHalfedge* fict_he;
-
+  auto obj = m_topol_traits.place_boundary_vertex(f, cv, ind, ps_x, ps_y);
   // Act according to the result type.
-  if (CGAL::assign(fict_he, obj)) {
+
+  if (! obj) {
+    // We have to create a new vertex that reprsents the given curve end.
+    DVertex* v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, cv, ind, ps_x, ps_y);
+
+    // There are no edges incident to v, therefore no predecessor halfedge.
+    *p_pred = nullptr;
+
+    // Return the vertex that represents the curve end.
+    return v;
+  }
+
+  DHalfedge** fict_he_p = boost::get<DHalfedge*>(&*obj);
+  if (fict_he_p != nullptr) {
+    DHalfedge* fict_he = *fict_he_p;
+    CGAL_assertion(fict_he != nullptr);
     // The curve end is located on a fictitious edge. We first create a new
     // vertex that corresponds to the curve end.
-    v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
+    DVertex* v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
 
     // Split the fictitious halfedge at the newly created vertex.
     // The returned halfedge is the predecessor for the insertion of the curve
@@ -2216,29 +2233,16 @@ _place_and_set_curve_end(DFace* f,
 
     _notify_after_split_fictitious_edge(Halfedge_handle(*p_pred),
                                         Halfedge_handle((*p_pred)->next()));
+    return v;
   }
-  else if (CGAL::assign(v, obj)) {
-    // In this case we are given an existing vertex that represents the curve
-    // end. We now have to locate the predecessor edge for the insertion of cv
-    // around this vertex.
-    *p_pred =
-      m_topol_traits.locate_around_boundary_vertex(v, cv, ind, ps_x, ps_y);
-  }
-  else {
-    CGAL_assertion(obj.is_empty());
-
-    // In this case we have to create a new vertex that reprsents the given
-    // curve end.
-    v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
-
-    // Notify the topology traits on the creation of the boundary vertex.
-    m_topol_traits.notify_on_boundary_vertex_creation(v, cv, ind, ps_x, ps_y);
-
-    // There are no edges incident to v, therefore no predecessor halfedge.
-    *p_pred = nullptr;
-  }
-
-  // Return the vertex that represents the curve end.
+  DVertex** v_p = boost::get<DVertex*>(&*obj);
+  CGAL_assertion(v_p != nullptr);
+  DVertex* v = *v_p;
+  CGAL_assertion(v != nullptr);
+  // In this case we are given an existing vertex that represents the curve
+  // end. We now have to locate the predecessor edge for the insertion of cv
+  // around this vertex.
+  *p_pred = m_topol_traits.locate_around_boundary_vertex(v, cv, ind, ps_x, ps_y);
   return v;
 }
 

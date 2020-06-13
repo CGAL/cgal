@@ -61,6 +61,9 @@ private:
   typedef typename Arrangement_2::DInner_ccb            DInner_ccb;
   typedef typename Arrangement_2::DIso_vertex           DIso_vertex;
 
+  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
+  typedef typename Pl_result::Type                      Pl_result_type;
+
 private:
   Arrangement_2* p_arr;           // The associated arrangement.
 
@@ -100,32 +103,25 @@ public:
    *         This object may wrap a Face_const_handle (the general case),
    *         or a Halfedge_const_handle (in case of an overlap).
    */
-  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
-  typename Pl_result::type locate_curve_end(const X_monotone_curve_2& cv,
-                                            Arr_curve_end ind,
-                                            Arr_parameter_space ps_x,
-                                            Arr_parameter_space ps_y) const
+  Pl_result_type locate_curve_end(const X_monotone_curve_2& cv,
+                                  Arr_curve_end ind,
+                                  Arr_parameter_space ps_x,
+                                  Arr_parameter_space ps_y) const
   {
     CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
 
-    typedef Arr_point_location_result<Arrangement_2>    Pl_result;
-
     // Use the topology traits to locate the unbounded curve end.
-    CGAL::Object obj =
-      p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
+    auto obj = p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
-    DFace* f;
-    if (CGAL::assign(f, obj))
-      return (Pl_result::make_result(p_arr->_const_handle_for(f)));
+    DFace** f_p = boost::get<DFace*>(&obj);
+    if (f_p) return (Pl_result::make_result(p_arr->_const_handle_for(*f_p)));
 
-    DHalfedge* he;
-    if (CGAL::assign(he, obj))
-      return (Pl_result::make_result(p_arr->_const_handle_for(he)));
+    DHalfedge** he_p = boost::get<DHalfedge*>(&obj);
+    if (he_p) return (Pl_result::make_result(p_arr->_const_handle_for(*he_p)));
 
-    DVertex* v;
-    if (CGAL::assign(v, obj))
-      return (Pl_result::make_result(p_arr->_const_handle_for(v)));
+    DVertex** v_p = boost::get<DVertex*>(&obj);
+    if (v_p) return (Pl_result::make_result(p_arr->_const_handle_for(*v_p)));
 
     // We should never reach here:
     CGAL_error();
