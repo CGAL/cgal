@@ -47,6 +47,7 @@
 
 namespace CGAL {
 
+  // TODO: Replace with std::array?
   struct IntPoint_3 {
     uint32_t m_coords[3] = {0, 0, 0};
 

@@ -209,6 +209,8 @@ namespace CGAL {
       for (const InputIterator &pwn_it : node->points()) {
         const Point &point = get(m_points_map, *pwn_it);
 
+        // TODO: Could this use std::bitset?
+
         int is_right = barycenter[0] < point[0];
         int is_up = barycenter[1] < point[1];
         int is_front = barycenter[2] < point[2];

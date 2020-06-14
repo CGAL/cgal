@@ -32,9 +32,7 @@ void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &nod
 template<class Kernel, class PointRange>
 ostream &operator<<(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node) {
 
-  //os << "[ Center: (" << node.location().x() << ", " << node.location().y() << ", " << node.location().z() << ") ]";
   writeToStream(os, node);
-
   return os;
 }
 
