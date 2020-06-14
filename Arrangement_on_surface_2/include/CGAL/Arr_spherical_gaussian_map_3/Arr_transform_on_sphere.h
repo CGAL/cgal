@@ -35,6 +35,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
   typedef typename Arrangement::Geometry_traits_2         Geometry_traits_2;
   typedef typename Arrangement::Topology_traits           Topology_traits;
 
+  typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::Curve_2             Curve_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
@@ -45,6 +46,8 @@ void Arr_transform_on_sphere(Arrangement & arr,
   typedef typename Arrangement::Halfedge_around_vertex_circulator
     Halfedge_around_vertex_circulator;
 
+  typedef boost::variant<Point_2, X_monotone_curve_2>     Make_x_monotone_result;
+
   const Geometry_traits_2 * geom_traits = arr.geometry_traits();
   Topology_traits * topol_traits = arr.topology_traits();
 
@@ -53,8 +56,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
   // Preprocessing loop - merge all the edges that were splited
   // (meaning have a common endpoint that lies on the boundary and their degree
   // is 2) on the identification curve.
-  for (Vertex_handle vi1 = arr.vertices_begin() ; vi1 != arr.vertices_end() ;)
-  {
+  for (auto vi1 = arr.vertices_begin(); vi1 != arr.vertices_end(); ) {
     Vertex_handle v_temp = vi1;
     ++vi1;
 
@@ -63,9 +65,9 @@ void Arr_transform_on_sphere(Arrangement & arr,
     Arr_parameter_space by =
       geom_traits->parameter_space_in_y_2_object()(v_temp->point());
 
-    // use vertex->parameter_space_in_x() != interior || vertex->parameter_space_in_y() != interior)
-    if ((bx != ARR_INTERIOR || by != ARR_INTERIOR) && (v_temp->degree() == 2))
-    {
+    // use vertex->parameter_space_in_x() != interior ||
+    //     vertex->parameter_space_in_y() != interior)
+    if ((bx != ARR_INTERIOR || by != ARR_INTERIOR) && (v_temp->degree() == 2)) {
       Curve_2 merged_cv;
       Halfedge_around_vertex_circulator havc = v_temp->incident_halfedges();
       Halfedge_around_vertex_circulator havc_next = havc;
@@ -80,16 +82,13 @@ void Arr_transform_on_sphere(Arrangement & arr,
       // Compare the direction of the edges.
       bool eq_direction = havc->direction() == havc_next->twin()->direction();
 
-      if (point_eq1 && normal_eq1 && eq_direction)
-      {
-        if (havc->source()->point() == havc->curve().source())
-        {
+      if (point_eq1 && normal_eq1 && eq_direction) {
+        if (havc->source()->point() == havc->curve().source()) {
           merged_cv = Curve_2(havc->source()->point(),
                               havc_next->twin()->target()->point(),
                               havc->curve().normal());
         }
-        else if (havc->source()->point() == havc->curve().target())
-        {
+        else if (havc->source()->point() == havc->curve().target()) {
           merged_cv = Curve_2(havc_next->twin()->target()->point(),
                               havc->source()->point(),
                               havc->curve().normal());
@@ -111,20 +110,17 @@ void Arr_transform_on_sphere(Arrangement & arr,
   }
 
   //Rotate all the vertices.
-  for (Vertex_handle vi1 = arr.vertices_begin(); vi1 != arr.vertices_end() ;
-       ++vi1)
-  {
+  for (auto vi1 = arr.vertices_begin(); vi1 != arr.vertices_end(); ++vi1) {
     m_arr_access.modify_vertex_ex(vi1, aff.transform(vi1->point()));
   }
 
-  unsigned int num_of_edges = arr.number_of_edges();
+  size_t num_of_edges = arr.number_of_edges();
   Edge_iterator ei1 = arr.edges_begin();
 
   // Rotate all the halfedges.
   // The loop is over the initial edges , since new edges are created and
   // added to the edges list.
-  for (unsigned int i=0 ; i < num_of_edges ; ++i)
-  {
+  for (size_t i = 0; i < num_of_edges; ++i) {
     Curve_2 new_cv;
 
     Halfedge_handle hei1 = ei1;
@@ -133,8 +129,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
     // Take only the halfedge that its source is equal to the source of
     // the curve.
     bool eq1 = hei1->source()->point() == aff.transform(hei1->curve().source());
-    if (!eq1)
-    {
+    if (!eq1) {
       hei1 = hei1->twin();
       eq1 = hei1->source()->point() == aff.transform(hei1->curve().source());
     }
@@ -150,31 +145,28 @@ void Arr_transform_on_sphere(Arrangement & arr,
     // Modify the edge with the new curve.
     m_arr_access.modify_edge_ex(hei1, new_cv);
 
-    std::list<CGAL::Object> objects;
+    std::list<Make_x_monotone_result> objects;
     // Try to split the curve into x_monotone pieces.
     geom_traits->make_x_monotone_2_object()(new_cv , std::back_inserter(objects));
 
     // If the curve is not x-monotone - split it into 2 x_monotone parts.
     // Since the curves were x_monotone before , can assume that it will be
     // splited into 2 parts max.
-    if (objects.size() == 2)
-    {
-      typename std::list<CGAL::Object>::iterator it = objects.begin();
+    if (objects.size() == 2) {
+      auto it = objects.begin();
 
       // The curve that its left vertex lies on the identification curve
-      const X_monotone_curve_2 * sub_cv1 =
-        object_cast<X_monotone_curve_2>(&(*it));
+      const auto* sub_cv1 = boost::get<X_monotone_curve_2>(&(*it));
       ++it;
       //The curve that its rigth vertex lies on the identification curve
-      const X_monotone_curve_2 * sub_cv2 =
-        object_cast<X_monotone_curve_2>(&(*it));
+      const auto* sub_cv2 = boost::get<X_monotone_curve_2>(&(*it));
 
       bool eq1 = (*sub_cv1).source() == hei1->source()->point();
       bool eq2 = (*sub_cv2).target() == hei1->target()->point();
 
       if (eq1 && eq2)
-        m_arr_access.split_edge_ex (hei1, (*sub_cv1).target(), *sub_cv1,
-                                    *sub_cv2);
+        m_arr_access.split_edge_ex(hei1, (*sub_cv1).target(), *sub_cv1,
+                                   *sub_cv2);
       else
         CGAL_error_msg
           ("The new curve endpoints should be equal to the original ones");
@@ -183,25 +175,20 @@ void Arr_transform_on_sphere(Arrangement & arr,
 
   // Update all the vertices that located on the boundary after the rotation
   // with boundary conditions
-  for (Vertex_handle vi = arr.vertices_begin() ; vi != arr.vertices_end() ;
-       ++vi)
-  {
+  for (auto vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi) {
     Arr_parameter_space bx =
       geom_traits->parameter_space_in_x_2_object()(vi->point());
     Arr_parameter_space by =
       geom_traits->parameter_space_in_y_2_object()(vi->point());
 
-    if (bx != ARR_INTERIOR || by != ARR_INTERIOR)
-    {
+    if (bx != ARR_INTERIOR || by != ARR_INTERIOR) {
       // The target of the Halfedge_around_vertex_circulator is the relevant
       // point.
       Halfedge_around_vertex_circulator havc = vi->incident_halfedges();
 
-      Arr_curve_end ind;
-          if (geom_traits->construct_min_vertex_2_object()(havc->curve()) == vi->point())
-                ind = ARR_MIN_END;
-          else
-                ind = ARR_MAX_END;
+      Arr_curve_end ind =
+        (geom_traits->construct_min_vertex_2_object()(havc->curve()) ==
+             vi->point()) ? ARR_MIN_END : ARR_MAX_END;
 
       // Check if it was already added.
       if (topol_traits->discontinuity_vertex(havc->curve(), ind)== nullptr &&
@@ -219,7 +206,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
   }
 
   // Transform the faces with the suitable transformation traits.
-  for(Face_handle f1 = arr.faces_begin() ; f1 != arr.faces_end() ; ++f1)
+  for (auto f1 = arr.faces_begin(); f1 != arr.faces_end(); ++f1)
     tran_tr.rotate_face(f1, aff);
 }
 
