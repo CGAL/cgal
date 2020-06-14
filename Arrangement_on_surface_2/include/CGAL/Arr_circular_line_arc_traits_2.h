@@ -39,9 +39,8 @@
 namespace CGAL {
   namespace VariantFunctors{
 
-    // Takes an iterator range of Object(Line/Circular_arc),
-    // returns an Object(Variant(Line/Circular_arc)).
-    // Do nothing for Object(Endpoint).
+    // Takes an iterator range of Object(Line/Circular_arc/Point),
+    // returns a variant of Line, Circular_arc, and Point_2.
     template <class CK, class Arc1, class Arc2, class OutputIterator>
     OutputIterator
     object_to_object_variant(const std::vector<CGAL::Object>& res1,
