@@ -7,9 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 Efi Fogel  <efif@post.tau.ac.il>
+// Author(s): Ron Wein   <wein@post.tau.ac.il>
+//            Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H

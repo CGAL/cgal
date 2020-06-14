@@ -7,9 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efifogel@gmail.com>
+// Author(s): Ron Wein <wein@post.tau.ac.il>
+//            Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_VERT_DECOMP_SS_VISITOR_H
 #define CGAL_ARR_VERT_DECOMP_SS_VISITOR_H
@@ -166,8 +165,7 @@ after_handle_event(Event* event,
   else {
     // We have a valid subcurve above the event: get its halfedge handle
     // and associate it with the vertex.
-    obj_above =
-      CGAL::make_object((*above)->last_curve().halfedge_handle());
+    obj_above = CGAL::make_object((*above)->last_curve().halfedge_handle());
   }
 
   // Check if the previous vertex we handled has the same x-coordinate
