@@ -35,6 +35,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <unordered_map>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
