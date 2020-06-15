@@ -575,9 +575,11 @@ public:
           pt=transform_original_path_into_quad_surface_with_rle(p);
       pt.canonize();
       // Use non-rle path from now on
-      Path_on_surface<Local_map> ps(pt);
-      auto factorization=ps.factorize();
-      Path_on_surface<Local_map>& pr = factorization.first;
+      auto factorization=pt.factorize();
+      internal::Path_on_surface_with_rle<Self>& pr_rle = factorization.first;
+      Path_on_surface<Local_map> pr(pr_rle);
+      std::vector<Dart_const_handle> p_visited;
+      pr.simplify_flips();
       if (factorization.second > 1) {
         // If the curve is not primitive, there must be at least
         // one self intersection
@@ -585,16 +587,16 @@ public:
       }
       /// TODO: very messy if not using RLE. Need to redo and make
       // use of RLE
-
       /// TODO: remove debug output
       pr.display();
       std::cout << std::endl;
       pr.display_pos_and_neg_turns();
       std::cout << std::endl;
+      pr_rle.display();
+      std::cout << std::endl;
+      pr_rle.display_pos_and_neg_turns();
+      std::cout << std::endl;
 
-
-      // Label the switchable arcs
-      std::vector<bool> switchables = compute_switchable(pr);
       // Compute the backward cyclic KMP failure table for the curve
       std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
 
@@ -621,8 +623,9 @@ public:
       std::vector<rbtree> trees(num_sides);
 
       std::size_t outoging_parity = get_local_map().is_marked(pr[0], markoutgoing) ? 0 : 1;
-      for (std::size_t i = 0; i < pr.length(); ++i) {
-        Dart_const_handle dh = pr[i];
+      std::size_t i = 0;
+      for (auto it_dart = pr_rle.begin(); it_dart != pr_rle.end(); ++it_dart, ++i) {
+        Dart_const_handle dh = *it_dart;
         auto is_outgoing = i % 2 == outoging_parity;
         auto dart_id = is_outgoing ?
                           get_local_map().info(dh) :
@@ -633,7 +636,7 @@ public:
         auto& node = rb_nodes.back();
 
         // Check whether current darts needs to be switched
-        if (bool(switchables[i])) {
+        if (pr_rle.is_switchable(it_dart)) {
           // Look at the t-1 turn of [i-1, i, i + 1]
           Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
           auto left_order = is_outgoing ?
@@ -642,6 +645,7 @@ public:
           // Binary search within potential switch trigger
           // TODO: apply the optimization Francis mentioned by only look at the largest one
           auto orientation_start = get_local_map().info(dh);
+          // Convert a dart to a circular ordering index
           auto to_order = [i, &pr, this] (const std::size_t& j) -> decltype(get_local_map().info(dh)) {
             auto is_outgoing_wrt_cur_dart = (j % 2) == (i % 2);
             /// Choose the correct predecessor/successor and make sure they are pointing the same direction as [i, i+1]
@@ -664,13 +668,19 @@ public:
           auto it_trigger = trees[left_order].upper_bound(target_order, comparator);
           if (it_trigger != trees[left_order].end()) {
             // Switch the edge
-
+            pr_rle.switch_dart(it_dart);
+            dh = *it_dart;
           }
         }
         // Insert current darts
         if (trees[dart_id].empty()) {
           trees[dart_id].push_back(node);
         }
+        else {
+          /// TODO: first check overlap of prceeding edge
+        }
+
+        p_visited.push_back(dh);
       }
 
       get_local_map().free_mark(markoutgoing);
