@@ -47,6 +47,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QDragEnterEvent>
+#include <QWheelEvent>
 #include <QDropEvent> 
 #include <QPainter>
 #include <QSlider>
@@ -108,15 +109,12 @@
 #include "QT5/BezierCurves.h"
 #include "QT5/GraphicsViewBezierPolygonInput.h"
 
-
-
 #include "ui_Boolean_set_operations_2.h"
 
 #include "Typedefs.h"
 
 // Forward Declarations
 void show_warning(std::string aS);
-bool show_warning_check();
 void show_error(std::string aS);
 void error(std::string aS);
 void error_handler(char const* what, char const* expr, char const* file,
@@ -143,28 +141,6 @@ typedef CGAL::Qt::Linear_set_graphics_item<Linear_polygon_set, Linear_traits>
 void show_warning(std::string aS)
 { QMessageBox::warning(NULL, "Warning", QString(aS.c_str())); }
 
-bool show_warning_check()
-{
-  QMessageBox msgBox;
-  msgBox.setText("One or More Buckets selected for the operation are Empty!!!");
-  msgBox.setIcon(QMessageBox::Warning);
-  msgBox.addButton(QMessageBox::Ok);
-  QCheckBox dontShowCheckBox("don't show this message again");
-  dontShowCheckBox.blockSignals(true);
-  msgBox.addButton(&dontShowCheckBox, QMessageBox::ResetRole);                
-  int32_t userReply = msgBox.exec();
-  if(userReply == QMessageBox::Ok)
-  {
-      if(dontShowCheckBox.checkState() == Qt::Checked)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-  }
-}
 
 void show_error(std::string aS)
 { QMessageBox::critical(NULL, "Critical Error", QString(aS.c_str())); }
@@ -178,17 +154,33 @@ void error(std::string aS)
 void error_handler(char const* what, char const* expr, char const* file,
                    int line, char const* msg)
 {
-  std::ostringstream ss;
+    std::ostringstream ss;
 
-  ss << "CGAL error: " << what << " violation!" << std::endl
-     << "Expr: " << expr << std::endl
-     << "File: " << file << std::endl
-     << "Line: " << line << std::endl;
-  if (msg != 0)
-    ss << "Explanation:" << msg << std::endl;
+    ss << "CGAL error: " << what << " violation!" << std::endl
+       << "Expr: " << expr << std::endl
+       << "File: " << file << std::endl
+       << "Line: " << line << std::endl;
+    if (msg != 0 || msg !="")
+    {
+      ss << "Explanation:" << msg << std::endl;
+    }
+    if( expr == "is_simple_2(first, last, traits)")
+    {
+      ss<< "\n\tCompleting Polygon from this point!!!" << std::endl;
+    }
+    if( msg == "The outer boundary self intersects at edges.")
+    {
+      ss<< "\n\tDeleting Polygon causing Error!!!" << std::endl;
+    }
 
-  error(ss.str());
+    error(ss.str());
 }
+
+// CGAL error: assertion violation!
+// Expr: _inc_to_right != cv._inc_to_right
+// File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Arr_geometry_traits/Bezier_x_monotone_2.h
+// Line: 1122
+// Explanation:
 //****************************************************
 
 //A way to maintain 3 set of polygons namely red,blue and result for all
@@ -410,7 +402,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   
@@ -422,7 +414,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   
@@ -434,7 +426,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   
@@ -446,7 +438,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   
@@ -458,7 +450,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   
@@ -470,7 +462,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   
@@ -482,7 +474,7 @@ public:
     } 
     catch(...)
     {
-      show_error("Exception thrown during boolean operation");
+      //show_error("Exception thrown during boolean operation");
     } 
   }
   static Self const& cast( Rep_base const& aOther ) { return dynamic_cast<Self const&>(aOther); }
@@ -831,18 +823,12 @@ public slots:
   void processInput(CGAL::Object o);
   void on_actionNew_triggered();
   void on_actionRecenter_triggered();
-  void on_actionComplement_triggered();
   void on_actionComplementH_toggled(bool aChecked);
   void on_actionUnionH_toggled(bool aChecked);
-  void on_actionUnion_triggered();
   void on_actionIntersectionH_toggled(bool aChecked);
-  void on_actionIntersection_triggered();
   void on_actionDifferenceH_toggled(bool aChecked);
-  void on_actionDifference_triggered();
   void on_actionSymmetric_DifferenceH_toggled(bool aChecked);
-  void on_actionSymmetric_Difference_triggered();
   void on_actionMinkowski_SumH_toggled(bool aChecked);
-  void on_actionMinkowski_Sum_triggered();
   void get_MinkowskiSum_result(Polygon_with_holes_2 polygon);
   void on_actionInsertLinear_toggled(bool aChecked);
   void on_actionInsertCircular_toggled(bool aChecked);
@@ -859,6 +845,8 @@ public slots:
   void on_actionCopy_triggered();
   void on_actionMove_triggered();
   void on_actionPaste_triggered();
+
+  void show_not_empty_warning();
 
 
   void on_showBlue_toggled  (bool a_check);
@@ -931,13 +919,10 @@ public slots:
   void on_drawMagenta_toggled (bool a_check);
   void on_drawAqua_toggled (bool a_check);
 
-  //void outputResultSelectorColor();
-  void buildUniversalPolygon();
-  void throwEmptyWarn();
+  void exception_handler();
 
-  void on_actionDeleteResult_triggered();
+  void on_actionDeleteResult();
   void on_actionDeleteAll_triggered();
-  void on_actionClearResult_triggered();
   void on_actionClearH_toggled(bool aChecked);
   void on_actionPAN_toggled(bool aChecked);
 
@@ -1255,8 +1240,10 @@ MainWindow::MainWindow() :
   //radiusOffIn->setValidator(new QDoubleValidator(0.0, 100.0, 2,this));
 
   // setting color rows to setVisible-> False 
-  {CGAL::set_error_handler  (error_handler);
+{
+  CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
+  CGAL::set_error_behaviour (CGAL::CONTINUE);
 
   setupUi(this);  
 
@@ -1281,10 +1268,12 @@ MainWindow::MainWindow() :
   m_scene.setSceneRect(-100, -100, 100, 100);
   this->graphicsView->setScene(&m_scene);
   this->graphicsView->setMouseTracking(true);
+  this->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   //this->on_actionInsertLinear_triggered();
 
   // Turn the vertical axis upside down
-  this->graphicsView->scale(1, -1);
+  this->graphicsView->scale(0.1, -0.1);
 
   //adding basic setups
 
@@ -1314,8 +1303,12 @@ MainWindow::MainWindow() :
                    SLOT(processInput(CGAL::Object)));
   QObject::connect(m_bezier_input, SIGNAL(generate(CGAL::Object)), this,
                    SLOT(processInput(CGAL::Object)));
-  //QObject::connect(m_mink_input, SIGNAL(generate(CGAL::Object)), this,
-                  // SLOT(processInput(CGAL::Object)));
+  // QObject::connect(m_linear_input , SIGNAL(generate(CGAL::Object)), this,
+  //                 SLOT(buildUniversalPolygon(CGAL::Object)));
+  // QObject::connect(m_circular_input , SIGNAL(generate(CGAL::Object)), this,
+  //                 SLOT(buildUniversalPolygon(CGAL::Object)));
+  // QObject::connect(m_bezier_input , SIGNAL(generate(CGAL::Object)), this,
+  //                 SLOT(buildUniversalPolygon(CGAL::Object)));
 
   QObject::connect(actionComplementH, SIGNAL(toggled(bool)), this,
                    SLOT(on_actionComplementH_toggled(bool)));
@@ -1493,6 +1486,8 @@ MainWindow::MainWindow() :
   m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
   m_linear_input -> mLinearGI -> setPen(sPens[0]);
   m_linear_input -> mHandleGI -> setPen(sPens[0]);
+
+  blue_set().clear();red_set().clear();black_set().clear();brown_set().clear();yellow_set().clear();magenta_set().clear();aqua_set().clear();
 }
 
 void MainWindow::on_showBlue_toggled(bool a_check)
@@ -1928,12 +1923,10 @@ void MainWindow::on_showBlueDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -1949,12 +1942,10 @@ void MainWindow::on_showBlueDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
 
@@ -1974,12 +1965,10 @@ void MainWindow::on_showRedDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -1995,12 +1984,10 @@ void MainWindow::on_showRedDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
 
@@ -2020,12 +2007,10 @@ void MainWindow::on_showBlackDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -2041,12 +2026,10 @@ void MainWindow::on_showBlackDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
 
@@ -2066,12 +2049,10 @@ void MainWindow::on_showBrownDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -2087,12 +2068,10 @@ void MainWindow::on_showBrownDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
 
@@ -2112,12 +2091,10 @@ void MainWindow::on_showYellowDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -2133,12 +2110,10 @@ void MainWindow::on_showYellowDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
 
@@ -2158,12 +2133,10 @@ void MainWindow::on_showMagentaDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -2179,12 +2152,10 @@ void MainWindow::on_showMagentaDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);	
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     	
     }
@@ -2205,12 +2176,10 @@ void MainWindow::on_showAquaDiff_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
     else
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
   }
@@ -2226,12 +2195,10 @@ void MainWindow::on_showAquaDiff_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionDifference->setEnabled(true);
     	actionDifferenceH->setEnabled(true);
     }
     else
     {
-    	actionDifference->setEnabled(false);
     	actionDifferenceH->setEnabled(false);
     }
 
@@ -2339,12 +2306,10 @@ void MainWindow::on_showBlueMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2360,12 +2325,10 @@ void MainWindow::on_showBlueMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2385,12 +2348,10 @@ void MainWindow::on_showRedMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2406,12 +2367,10 @@ void MainWindow::on_showRedMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2430,12 +2389,10 @@ void MainWindow::on_showBlackMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2451,12 +2408,10 @@ void MainWindow::on_showBlackMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2476,12 +2431,10 @@ void MainWindow::on_showBrownMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2497,12 +2450,10 @@ void MainWindow::on_showBrownMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2521,12 +2472,10 @@ void MainWindow::on_showYellowMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2542,12 +2491,10 @@ void MainWindow::on_showYellowMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2566,12 +2513,10 @@ void MainWindow::on_showMagentaMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2587,12 +2532,10 @@ void MainWindow::on_showMagentaMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2612,12 +2555,10 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 
     if (count >= 2 or count == 0)
     {
-    	actionMinkowski_Sum->setEnabled(false);
     	actionMinkowski_SumH->setEnabled(false);
     }
     else
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
   }
@@ -2633,12 +2574,10 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 
     if (count == 2)
     {
-    	actionMinkowski_Sum->setEnabled(true);
     	actionMinkowski_SumH->setEnabled(true);
     }
     else
     {
-    	actionMinkowski_Sum -> setEnabled(false);
     	actionMinkowski_SumH -> setEnabled(false);
     }
   }
@@ -2998,6 +2937,13 @@ void MainWindow::on_actionNew_triggered()
   if (pathItem7_exists) m_scene.removeItem(pathItem7);
 
   result_set().clear();
+  blue_set().clear();
+  black_set().clear();
+  brown_set().clear();
+  red_set().clear();
+  yellow_set().clear();
+  magenta_set().clear();
+  aqua_set().clear();
 
   blue_circular_sources().clear();
   red_circular_sources().clear();
@@ -3033,12 +2979,12 @@ void MainWindow::on_actionNew_triggered()
   SetViewAqua (true);
   SetViewResult(true);
 
-  actionClearResult -> setVisible(true);
   actionAddColor -> setEnabled(true);
   actionMinusColor -> setEnabled(false);
   
   m_circular_active = false;
   m_bezier_active = false;
+  // empty_warn = true;
 
   m_linear_input->Reset();
   m_circular_input->Reset();
@@ -3061,12 +3007,7 @@ void MainWindow::on_actionNew_triggered()
   showConsole -> setChecked(true);
   showInfo -> setChecked(true);
 
-  actionComplement -> setChecked(false);
-  actionUnion -> setChecked(false);
-  actionIntersection -> setChecked(false);
-  actionDifference -> setChecked(false);
-  actionSymmetric_Difference -> setChecked(false);
-  actionMinkowski_Sum -> setChecked(false);
+
   actionCopy->setChecked(false);
   actionMove->setChecked(false);
   actionPaste->setChecked(false);
@@ -3083,8 +3024,6 @@ void MainWindow::on_actionNew_triggered()
   actionInsertBezier -> setChecked(false); 
   actionMinkowski_SumH -> setEnabled(true);
   actionDifferenceH -> setEnabled(true);
-  actionMinkowski_Sum -> setEnabled(true);
-  actionDifference -> setEnabled(true);
 
   m_color_complement = 111; //default
   m_blue_int = true; //default
@@ -3294,7 +3233,7 @@ void MainWindow::on_actionDeleteAll_triggered()
     magenta_set().clear();magenta_circular_sources().clear();magenta_bezier_sources().clear();magenta_linear_sources().clear();
     aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();
 
-    on_actionDeleteResult_triggered();
+    on_actionDeleteResult();
   }
   lDone = true;
 
@@ -3303,7 +3242,7 @@ void MainWindow::on_actionDeleteAll_triggered()
 
 
 
-void MainWindow::on_actionDeleteResult_triggered()
+void MainWindow::on_actionDeleteResult()
 {
     bool lDone  = false;
     bool lProceed;
@@ -3414,83 +3353,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 	}
 }
 
-void MainWindow::on_actionClearResult_triggered()
-{
-	bool lDone = false;
-	bool lProceed;
-
-	if(clearBlue -> isChecked()) 
-	{
-		blue_set().clear();
-		blue_linear_sources().clear();
-		blue_circular_sources().clear();
-		blue_bezier_sources().clear();
-		if (pathItem0_exists) m_scene.removeItem(pathItem0);
-	}
-
-	if(clearBlack -> isChecked()) 
-	{
-		black_set().clear();
-		black_linear_sources().clear();
-		black_circular_sources().clear();
-		black_bezier_sources().clear();
-		if (pathItem2_exists) m_scene.removeItem(pathItem2);
-	}
-
-	if(clearRed -> isChecked()) 
-	{
-		red_set().clear();
-		red_linear_sources().clear();
-		red_circular_sources().clear();
-		red_bezier_sources().clear();
-		if (pathItem1_exists) m_scene.removeItem(pathItem1);
-	}
-
-	if(clearBrown -> isChecked()) 
-	{
-		brown_set().clear();
-		brown_linear_sources().clear();
-		brown_circular_sources().clear();
-		brown_bezier_sources().clear();
-		if (pathItem3_exists) m_scene.removeItem(pathItem3);
-	}
-
-	if(clearYellow -> isChecked()) 
-	{
-		yellow_set().clear();
-		yellow_linear_sources().clear();
-		yellow_circular_sources().clear();
-		yellow_bezier_sources().clear();
-		if (pathItem4_exists) m_scene.removeItem(pathItem4);
-	}
-
-	if(clearMagenta -> isChecked()) 
-	{
-		magenta_set().clear();
-		magenta_linear_sources().clear();
-		magenta_circular_sources().clear();
-		magenta_bezier_sources().clear();
-		if (pathItem5_exists) m_scene.removeItem(pathItem5);
-	}
-
-	if(clearAqua -> isChecked()) 
-	{
-		aqua_set().clear();
-		aqua_linear_sources().clear();
-		aqua_circular_sources().clear();
-		aqua_bezier_sources().clear();
-		if (pathItem6_exists) m_scene.removeItem(pathItem6);
-	}
-
-	if(!(clearBlue -> isChecked()) && !(clearRed -> isChecked()) && !(clearBlack -> isChecked()) && !(clearBrown -> isChecked()) && !(clearYellow -> isChecked()) && !(clearMagenta -> isChecked()) && !(clearAqua -> isChecked()))
-	{
-		show_error("Please select color bucket to be cleaned!!!");
-	}
-
-	lDone = true;
-
-	if (lDone) modelChanged();
-}
 
 
 
@@ -4309,29 +4171,6 @@ void MainWindow::open(QString fileName)
 }
 
 
-
-/*void MainWindow::on_actionInsertConicCircle_triggered()
-{}
-void MainWindow::on_actionInsertConicEclipse_triggered()
-{}*/
-
-
-/*void MainWindow::on_actionInsertMink_Polygon_toggled(bool aChecked)
-{
-  if(aChecked)
-  {
-    this->graphicsView->setDragMode(QGraphicsView::NoDrag);
-    if(ensure_mink_mode())
-    {
-      actionPAN->setChecked(false);
-        actionInsertLinear->setChecked( false );
-        actionInsertCircular->setChecked( false );
-      actionInsertBezier->setChecked( false );
-      //m_scene.installEventFilter(m_mink_input);
-    }
-  }
-}*/
-
 void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
 {
   if(aChecked)
@@ -4344,8 +4183,7 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
     actionInsertBezier->setChecked( false ); 
     //actionInsertMink_Polygon -> setChecked(false);
       m_scene.installEventFilter(m_circular_input);
-        on_actionDeleteResult_triggered();
-        actionMinkowski_Sum -> setEnabled(false);
+        on_actionDeleteResult();
         actionMinkowski_SumH -> setEnabled(false);
 
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
@@ -4374,8 +4212,8 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
     actionInsertCircular->setChecked( false );
     //actionInsertMink_Polygon -> setChecked(false);
       m_scene.installEventFilter(m_bezier_input);
-      on_actionDeleteResult_triggered();
-        actionMinkowski_Sum -> setEnabled(false);
+      on_actionDeleteResult();
+
         actionMinkowski_SumH -> setEnabled(false);
 
         m_bezier_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
@@ -4402,8 +4240,8 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
       actionInsertBezier->setChecked( false ); 
     //actionInsertMink_Polygon -> setChecked(false);
       m_scene.installEventFilter(m_linear_input);
-      on_actionDeleteResult_triggered();
-        actionMinkowski_Sum -> setEnabled(true);
+      on_actionDeleteResult();
+
         actionMinkowski_SumH -> setEnabled(true);
     }
     else
@@ -4420,13 +4258,6 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
 	  bool lDone = false;
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
-	  //actionComplement->setChecked(false);
-	  actionComplement->setChecked(true);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
 	  actionUnionH->setChecked(false);
 	  actionIntersectionH->setChecked(false);
 	  actionDifferenceH->setChecked(false); 
@@ -4437,280 +4268,137 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
   	  actionPaste->setChecked(false);
 
 	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
-	  switch(m_color_active)
-	    {
-	      case 0:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	          case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	          case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	          case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(result_set());
-	        blue_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	        case 1:switch(m_color_complement)
-	        { 
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	          case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	          case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	          case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	              
-	      }
-	        result_set().difference(red_set());
-	        red_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	      case 2:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(black_set());
-	        black_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	        case 3:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	          }
-	        result_set().difference(brown_set());
-	        brown_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	          case 4:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(yellow_set());
-	        yellow_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	        
-	        case 5:switch(m_color_complement)
-	        {   
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(magenta_set());
-	        magenta_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	          case 6:switch(m_color_complement)
-	          {       
-	            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	          case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	          case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	          case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	        }
-	          result_set().difference(aqua_set());
-	          aqua_set().join(result_set());
-	          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	          break;
-	    
+    result_linear_sources().clear();
+    result_circular_sources().clear();
+    result_bezier_sources().clear();
 
-	        default : break;  
-	  }
-	  
+    
+    // m_linear_input -> get_BoundingRect();
+    
+    // if(!active_set().is_empty())
+    // {
+    //   if(empty_warn)
+    //   {
+    //     show_not_empty_warning();
+    //   }
+    // }
 
-	  lDone = true;
+    switch(m_color_active)
+      {
+        case 0:switch(m_color_complement)
+          {
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+        }
 
-	  this->setCursor(old);
-	  if (lDone) modelChanged();
-	}
-	else{
-		actionComplement->setChecked(false);
-	}
-}
+          blue_set().join(result_set());
+          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          break;
+      
+          case 1:switch(m_color_complement)
+          { 
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+                
+        }
 
-void MainWindow::on_actionComplement_triggered()
-{
-	if(actionComplement->isChecked())
-	{
-	  bool lDone = false;
-	  QCursor old = this->cursor();
-	  this->setCursor(Qt::WaitCursor);
-	  //actionComplement->setChecked(false);
-	  actionComplementH->setChecked(true);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
-	  actionUnionH->setChecked(false);
-	  actionIntersectionH->setChecked(false);
-	  actionDifferenceH->setChecked(false); 
-	  actionSymmetric_DifferenceH->setChecked(false); 
-	  actionMinkowski_SumH->setChecked(false);
-	  actionCopy->setChecked(false);
-	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
+          red_set().join(result_set());
+          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          break;
+      
+        case 2:switch(m_color_complement)
+          {
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+        }
+          black_set().join(result_set());
+          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          break;
+      
+          case 3:switch(m_color_complement)
+          {
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            }
 
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
-	  switch(m_color_active)
-	    {
-	      case 0:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	          case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	          case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	          case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(result_set());
-	        blue_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	        case 1:switch(m_color_complement)
-	        { 
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	          case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	          case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	          case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	              
-	      }
-	        result_set().difference(red_set());
-	        red_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	      case 2:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(black_set());
-	        black_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	        case 3:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	          }
-	        result_set().difference(brown_set());
-	        brown_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	          case 4:switch(m_color_complement)
-	        {
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(yellow_set());
-	        yellow_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	        
-	        case 5:switch(m_color_complement)
-	        {   
-	          case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	      }
-	        result_set().difference(magenta_set());
-	        magenta_set().join(result_set());
-	        result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	        break;
-	    
-	          case 6:switch(m_color_complement)
-	          {       
-	            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-	          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-	          case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-	          case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-	          case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-	          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-	          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
-	        }
-	          result_set().difference(aqua_set());
-	          aqua_set().join(result_set());
-	          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	          break;
-	    
+          brown_set().join(result_set());
+          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          break;
+      
+            case 4:switch(m_color_complement)
+          {
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+        }
 
-	        default : break;  
-	  }
-	  
+          yellow_set().join(result_set());
+          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          break;
+          
+          case 5:switch(m_color_complement)
+          {   
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+        }
 
-	  lDone = true;
+          magenta_set().join(result_set());
+          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          break;
+      
+            case 6:switch(m_color_complement)
+            {       
+            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+          }
 
-	  this->setCursor(old);
-	  if (lDone) modelChanged();
-	}
-	else
-	{
-		actionComplementH->setChecked(false);
+            aqua_set().join(result_set());
+            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+            break;
+      
+
+          default : break;  
+    }
+    
+
+    lDone = true;
+    // m_linear_input -> setBoundRectBool(false); 
+    this->setCursor(old);
+    if (lDone) modelChanged();
 	}
 }
 
@@ -4722,15 +4410,9 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
 
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(true);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
 	  actionCopy->setChecked(false);
 	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
+  	actionPaste->setChecked(false);
 	  actionComplementH->setChecked(false);
 	  actionUnionH->setChecked(false);
 	  actionDifferenceH->setChecked(false); 
@@ -4742,6 +4424,14 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	  result_linear_sources().clear();
 	  result_circular_sources().clear();
 	  result_bezier_sources().clear();
+
+    // if(!active_set().is_empty())
+    // {
+    //   if(empty_warn)
+    //   {
+    //     show_not_empty_warning();
+    //   }
+    // }
 
 	  switch(m_color_active) {
 	        case 0:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
@@ -4907,228 +4597,20 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
 	  this->setCursor(old);
 	  if (lDone) modelChanged();
 	}
-	else
-	{
-		actionIntersection->setChecked(false);
-	}
-
 }
 
-void MainWindow::on_actionIntersection_triggered()
-{
-	if(actionIntersection->isChecked())
-	{
-	  bool lDone = false;
-	  QCursor old = this->cursor();
-	  this->setCursor(Qt::WaitCursor);
-
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(false);
-	  actionIntersectionH->setChecked(true);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
-	  actionCopy->setChecked(false);
-	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
-	  actionComplementH->setChecked(false);
-	  actionUnionH->setChecked(false);
-	  actionDifferenceH->setChecked(false); 
-	  actionSymmetric_DifferenceH->setChecked(false); 
-	  actionMinkowski_SumH->setChecked(false);
-
-	  
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
-
-	  switch(m_color_active) {
-	        case 0:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 1:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-	            
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	        
-
-	      case 2:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-
-	          result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 3:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 4:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-	            
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 5:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-	            
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	        case 6:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
-
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
-
-
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      default: break;
-	  } 
-
-
-	  lDone = true;
-	  this->setCursor(old);
-	  if (lDone) modelChanged();
-	}
-	else
-	{
-		actionIntersectionH->setChecked(false);
-	}
-}
 
 //blue - red
 //no idea
 void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 {
+
 	if(actionDifferenceH->isChecked())
 	{
 	  bool lDone = false;
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
 
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(true); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
 	  actionCopy->setChecked(false);
 	  actionMove->setChecked(false);
   	  actionPaste->setChecked(false);
@@ -5192,6 +4674,14 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	  result_linear_sources().clear();
 	  result_circular_sources().clear();
 	  result_bezier_sources().clear();
+
+    // if(!active_set().is_empty())
+    // {
+    //   if(empty_warn)
+    //   {
+    //     show_not_empty_warning();
+    //   }
+    // }
 
 	  switch(m_color_active){  
 	      case 0:if(color1 == 0) result_set().assign(blue_set());
@@ -5342,245 +4832,10 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	  this->setCursor(old);
 	  if (lDone) modelChanged();
 	}
-	else
-	{
-		actionDifference->setChecked(false);
-	}
 }
 
 
-void MainWindow::on_actionDifference_triggered()
-{
-	if(actionDifference->isChecked())
-	{
-	  bool lDone = false;
-	  QCursor old = this->cursor();
-	  this->setCursor(Qt::WaitCursor);
-	  
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(false);
-	  actionDifferenceH->setChecked(true); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
-	  actionCopy->setChecked(false);
-	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
-	  actionComplementH->setChecked(false);
-	  actionUnionH->setChecked(false);
-	  actionIntersectionH->setChecked(false);
-	  actionSymmetric_DifferenceH->setChecked(false); 
-	  actionMinkowski_SumH->setChecked(false);
 
-	  size_t count = 0;
-	  if (showBlueDiff ->isChecked()) count++;
-	  if (showRedDiff->isChecked()) count++;
-	  if (showBlackDiff->isChecked()) count++;
-	  if (showBrownDiff->isChecked()) count++;
-	  if (showYellowDiff->isChecked()) count++;
-	  if (showMagentaDiff->isChecked()) count++;
-	  if (showAquaDiff->isChecked()) count++;
-
-	  if(count == 2)
-	  {
-	  size_t color1 = 111;
-	  size_t color2 = 1111;
-
-	  if (showBlueDiff -> isChecked()) color1 = 0;
-	  if (showRedDiff -> isChecked()) 
-	  {
-	      if(color1 < 1) color2 = 1;
-	      else color1 = 1;
-	  }
-	  if (showBlackDiff -> isChecked()) 
-	  {
-	      if(color1 < 2) color2 = 2;
-	      else color1 = 2;
-	  }
-
-	  if (showBrownDiff -> isChecked()) 
-	  {
-	      if(color1 < 3) color2 = 3;
-	      else color1 = 3;
-	  }
-
-	  if (showYellowDiff -> isChecked()) 
-	  {
-	      if(color1 < 4) color2 = 4;
-	      else color1 = 4;
-	  }
-
-	  if (showMagentaDiff -> isChecked()) 
-	  {
-	      if(color1 < 5) color2 = 5;
-	      else color1 = 5;
-	  }
-
-	  if (showAquaDiff -> isChecked())
-	  {
-	      if(color1 < 6) color2 = 6;
-	      else color1 = 6;
-	  }
-
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
-
-	  switch(m_color_active){  
-	      case 0:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-	            else if(color1 == 6) result_set().assign(aqua_set());
-	          
-	        if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 1:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-
-	      case 2:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 3:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 4:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 5:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 6:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-	      
-	  }
-
-	  lDone = true;
-	  }
-
-	  else 
-	  {
-	    ask_user_ok("Difference Operation Error", "Operation valid for 2 colored polygon set\n");
-	  }
-
-
-	  this->setCursor(old);
-	  if (lDone) modelChanged();
-	}
-	else
-	{
-		actionDifferenceH->setChecked(false);
-	}
-}
 
 void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 {
@@ -5590,12 +4845,7 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
 
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(true); 
-	  actionMinkowski_Sum->setChecked(false);
+	  
 	  actionCopy->setChecked(false);
 	  actionMove->setChecked(false);
   	  actionPaste->setChecked(false);
@@ -5605,10 +4855,19 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	  actionDifferenceH->setChecked(false); 
 	  actionMinkowski_SumH->setChecked(false);
 
+
 	  result_set().clear();
 	  result_linear_sources().clear(); 
 	  result_circular_sources().clear();
 	  result_bezier_sources().clear();
+    
+    // if(!active_set().is_empty())
+    // {
+    //   if(empty_warn)
+    //   {
+    //     show_not_empty_warning();
+    //   }
+    // }
 	  
 	  switch(m_color_active)
 	  {
@@ -5752,207 +5011,18 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	 
 	    this->setCursor(old);
 	    if (lDone) modelChanged();
-	}
-	else
-	{
-		actionSymmetric_Difference ->setChecked(false);
-	}
-}
-
-void MainWindow::on_actionSymmetric_Difference_triggered()
-{
-	if(actionSymmetric_Difference->isChecked())
-	{
-	  bool lDone = false;
-	  QCursor old = this->cursor();
-	  this->setCursor(Qt::WaitCursor);
-
-	 
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(false);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_DifferenceH->setChecked(true); 
-	  actionMinkowski_Sum->setChecked(false);
-	  actionCopy->setChecked(false);
-	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
-	  actionComplementH->setChecked(false);
-	  actionUnionH->setChecked(false);
-	  actionIntersectionH->setChecked(false);
-	  actionDifferenceH->setChecked(false); 
-	  actionMinkowski_SumH->setChecked(false);
-
-	  
-
-	  result_set().clear();
-	  result_linear_sources().clear(); 
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
-	  
-	  switch(m_color_active)
-	  {
-
-	        case 0:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	        else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	        else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	        else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	        else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	        else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	        else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	        if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	        if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	        if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	        if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	        if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	        if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	          case 1:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	          case 2:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 3:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());\
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 4:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-
-	      case 5:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 6:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
-
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-	  }
-
-	    lDone = true;
-	 
-	    this->setCursor(old);
-	    if (lDone) modelChanged();
-	}
-	else
-	{
-		actionSymmetric_DifferenceH ->setChecked(false);
 	}
 }
 
 void MainWindow::on_actionUnionH_toggled(bool aChecked)
 {
-	if(actionUnionH->isChecked())
+  if(actionUnionH->isChecked())
 	{
 	  bool lDone = false;
 	  QCursor old = this->cursor();
 	  this->setCursor(Qt::WaitCursor);
 
-	  actionComplement->setChecked(false);
-	  actionUnion->setChecked(true);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
+	  
 	  actionComplementH->setChecked(false);
 	  //actionUnion->setChecked(false);
 	  actionIntersectionH->setChecked(false);
@@ -5961,12 +5031,20 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
 	  actionMinkowski_SumH->setChecked(false);
 	  actionCopy->setChecked(false);
 	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
+  	actionPaste->setChecked(false);
 
 	  result_set().clear();
 	  result_linear_sources().clear();
 	  result_circular_sources().clear();
 	  result_bezier_sources().clear();
+    
+    // if(!active_set().is_empty())
+    // {
+    //   if(empty_warn)
+    //   {
+    //     show_not_empty_warning();
+    //   }
+    // }
 
 	  switch(m_color_active)  
 	  {
@@ -6067,163 +5145,19 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
 	  this->setCursor(old);
 
 	  if (lDone) modelChanged();
-	}
-	else
-	{
-		actionUnion->setChecked(false);
-	}
-}
-
-void MainWindow::on_actionUnion_triggered()
-{
-	if(actionUnion->isChecked())
-	{
-	  bool lDone = false;
-	  QCursor old = this->cursor();
-	  this->setCursor(Qt::WaitCursor);
-
-	  actionComplement->setChecked(false);
-	  actionUnionH->setChecked(true);
-	  actionIntersection->setChecked(false);
-	  actionDifference->setChecked(false); 
-	  actionSymmetric_Difference->setChecked(false); 
-	  actionMinkowski_Sum->setChecked(false);
-	  actionComplementH->setChecked(false);
-	  //actionUnion->setChecked(false);
-	  actionIntersectionH->setChecked(false);
-	  actionDifferenceH->setChecked(false); 
-	  actionSymmetric_DifferenceH->setChecked(false); 
-	  actionMinkowski_SumH->setChecked(false);
-	  actionCopy->setChecked(false);
-	  actionMove->setChecked(false);
-  	  actionPaste->setChecked(false);
-
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
-
-	  switch(m_color_active)  
-	  {
-	      case 0:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 1:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 2:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	        case 3:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	        case 4:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 5:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-
-	      case 6:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
-
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
-	  }
-	  
-	  lDone = true;
-
-	  this->setCursor(old);
-
-	  if (lDone) modelChanged();
-	}
-	else
-	{
-		actionUnionH->setChecked(false);
 	}
 }
 
 
 void MainWindow::on_actionCopy_triggered()
 {
+
 	if(actionCopy->isChecked())
 	{
 		bool lDone = false;
 	  	QCursor old = this->cursor();
 	  	this->setCursor(Qt::WaitCursor);
 
-		actionComplement->setChecked(false);
-	  	actionUnion->setChecked(false);
-	  	actionIntersection->setChecked(false);
-	  	actionDifference->setChecked(false); 
-	  	actionSymmetric_Difference->setChecked(false); 
-	  	actionMinkowski_Sum->setChecked(false);
 	  	actionMove->setChecked(false);
 	  	actionPaste->setChecked(false);
 
@@ -6231,7 +5165,7 @@ void MainWindow::on_actionCopy_triggered()
 	  	result_linear_sources().clear();
 	  	result_circular_sources().clear();
 	  	result_bezier_sources().clear();
-
+    
 	  	switch(m_color_active)
 	  	{
 	  		case 0: if(!blue_set().is_empty()) result_set().assign(blue_set());break;
@@ -6252,18 +5186,14 @@ void MainWindow::on_actionCopy_triggered()
 
 void MainWindow::on_actionMove_triggered()
 {
+
 	if(actionMove->isChecked())
 	{
 		bool lDone = false;
 	  	QCursor old = this->cursor();
 	  	this->setCursor(Qt::WaitCursor);
 
-		actionComplement->setChecked(false);
-	  	actionUnion->setChecked(false);
-	  	actionIntersection->setChecked(false);
-	  	actionDifference->setChecked(false); 
-	  	actionSymmetric_Difference->setChecked(false); 
-	  	actionMinkowski_Sum->setChecked(false);
+		
 	  	actionCopy->setChecked(false);
 	  	actionPaste->setChecked(false);
 
@@ -6272,16 +5202,17 @@ void MainWindow::on_actionMove_triggered()
 	  	result_linear_sources().clear();
 	  	result_circular_sources().clear();
 	  	result_bezier_sources().clear();
+      
 
 	  	switch(m_color_active)
 	  	{
-	  		case 0: if(!blue_set().is_empty()) { result_set().assign(blue_set()); m_color_move=0; blue_set().change_brush_color(QBrush(QColor(255,0,0,30)));} break;
-	  		case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); m_color_move=1; red_set().change_brush_color(QBrush(QColor(0,0,0,30)));} break;
-	  		case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); m_color_move=2; black_set().change_brush_color(QBrush(QColor(0,0,255,30)));} break;
-	  		case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); m_color_move=3; brown_set().change_brush_color(QBrush(QColor(210,105,30,30)));} break;
-	  		case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); m_color_move=4; yellow_set().change_brush_color(QBrush(QColor(255,255,0,30)));} break;
-	  		case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); m_color_move=5; magenta_set().change_brush_color(QBrush(QColor(255,0,255,30)));} break;
-	  		case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); m_color_move=6; aqua_set().change_brush_color(QBrush(QColor(0,255,255,30)));} break;
+	  		case 0: if(!blue_set().is_empty()) { result_set().assign(blue_set()); m_color_move=0; } break;
+	  		case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); m_color_move=1; } break;
+	  		case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); m_color_move=2; } break;
+	  		case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); m_color_move=3; } break;
+	  		case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); m_color_move=4; } break;
+	  		case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); m_color_move=5; } break;
+	  		case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); m_color_move=6; } break;
 	  	}
 
 	  	lDone = true;
@@ -6299,105 +5230,111 @@ void MainWindow::on_actionPaste_triggered()
 	  	QCursor old = this->cursor();
 	  	this->setCursor(Qt::WaitCursor);
 
-		actionComplement->setChecked(false);
-	  	actionUnion->setChecked(false);
-	  	actionIntersection->setChecked(false);
-	  	actionDifference->setChecked(false); 
-	  	actionSymmetric_Difference->setChecked(false); 
-	  	actionMinkowski_Sum->setChecked(false);
-	  	actionCopy->setChecked(false);
-	  	actionMove->setChecked(false);
+    actionCopy->setChecked(false);
+    actionMove->setChecked(false);
 
-	  	switch(m_color_active)
-	  	{
-	  		case 0: if(m_color_cm==0) 
-	  				{	
-	  					blue_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					blue_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(255,0,0,75));
-	  				}
-	  				break;
+  	if(!result_set().is_empty())
+    {
+        
+        // if(!active_set().is_empty())
+        // {
+        //   if(empty_warn)
+        //   {
+        //     show_not_empty_warning();
+        //   }
+        // }
+      
 
-	  		case 1: if(m_color_cm==0) 
-	  				{	
-	  					red_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					red_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(0,0,0,75));
-	  				}
-	  				break;
-	  		case 2: if(m_color_cm==0) 
-	  				{	
-	  					black_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					black_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(0,0,255,75));
-	  				}
-	  				break;
-	  		case 3: if(m_color_cm==0) 
-	  				{	
-	  					brown_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					brown_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(210,105,30,75));
-	  				}
-	  				break;
-	  		case 4: if(m_color_cm==0) 
-	  				{	
-	  					yellow_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					yellow_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(255,255,0,75));
-	  				}
-	  				break;
-	  		case 5: if(m_color_cm==0) 
-	  				{	
-	  					magenta_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					magenta_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(255,0,255,75));
-	  				}
-	  				break;
-	  		case 6: if(m_color_cm==0) 
-	  				{	
-	  					aqua_set().join(result_set());
-	  				}
-	  				else if(m_color_cm==1)
-	  				{
-	  					aqua_set().join(result_set());
-	  					move_set().clear();
-	  					m_curve_sets[move_group()].m_brush = QBrush(QColor(0,255,255,75));
-	  				}
-	  				break;
-	  	}
+  	  	switch(m_color_active)
+  	  	{
+  	  		case 0: if(m_color_cm==0) 
+  	  				{	
+  	  					blue_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					blue_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
 
-	  	
-	  	result_set().clear();
-	  	result_linear_sources().clear();
-	  	result_circular_sources().clear();
-	  	result_bezier_sources().clear();
+  	  		case 1: if(m_color_cm==0) 
+  	  				{	
+  	  					red_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					red_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
+  	  		case 2: if(m_color_cm==0) 
+  	  				{	
+  	  					black_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					black_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
+  	  		case 3: if(m_color_cm==0) 
+  	  				{	
+  	  					brown_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					brown_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
+  	  		case 4: if(m_color_cm==0) 
+  	  				{	
+  	  					yellow_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					yellow_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
+  	  		case 5: if(m_color_cm==0) 
+  	  				{	
+  	  					magenta_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					magenta_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
+  	  		case 6: if(m_color_cm==0) 
+  	  				{	
+  	  					aqua_set().join(result_set());
+  	  				}
+  	  				else if(m_color_cm==1)
+  	  				{
+  	  					aqua_set().join(result_set());
+  	  					move_set().clear();
+  	  				}
+  	  				break;
+  	  	}
+
+  	  	
+  	  	result_set().clear();
+  	  	result_linear_sources().clear();
+  	  	result_circular_sources().clear();
+  	  	result_bezier_sources().clear();
+    }
+    else
+    {
+      show_warning("Cannot copy or move from empty Bucket!!!");
+      actionCopy->setChecked(false);
+      actionMove->setChecked(false);
+    }
 
 	  	lDone = true;
-	  	m_color_cm = 1; //copy
+	  	m_color_cm = 0; //copy
 		this->setCursor(old);
 		if (lDone) modelChanged();
 	}
@@ -6529,19 +5466,23 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 
 	  if(!m_circular_active && !m_bezier_active)
 	  {
-	    actionComplement->setChecked(false);
-	    actionUnion->setChecked(false);
-	    actionIntersection->setChecked(false);
-	    actionDifference->setChecked(false); 
-	    actionSymmetric_Difference->setChecked(false); 
 	    actionCopy->setChecked(false);
 	    actionMove->setChecked(false);
-	    actionMinkowski_Sum->setChecked(true);
+	    //actionMinkowski_Sum->setChecked(true);
 	    actionComplementH->setChecked(false);
 	    actionUnionH->setChecked(false);
 	    actionIntersectionH->setChecked(false);
 	    actionDifferenceH->setChecked(false); 
 	    actionSymmetric_DifferenceH->setChecked(false); 
+
+      // if(!active_set().is_empty())
+      // {
+      //   if(empty_warn)
+      //   {
+      //     show_not_empty_warning();
+      //   }
+      // }
+    
 
 	    size_t count = 0;
 	    if (showBlueMink_Sum -> isChecked()) count++;
@@ -6664,163 +5605,7 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 	    modelChanged();
 	  }
 	}
-	else
-	{
-		actionMinkowski_Sum->setChecked(false);
-	}
 }
-
-void MainWindow::on_actionMinkowski_Sum_triggered()
-{
-	if(actionMinkowski_Sum->isChecked())
-	{
-	  bool lDone = false;
-	  QCursor old = this->cursor();
-	  this->setCursor(Qt::WaitCursor);
-
-	  if(!m_circular_active && !m_bezier_active)
-	  {
-	    actionComplement->setChecked(false);
-	    actionUnion->setChecked(false);
-	    actionIntersection->setChecked(false);
-	    actionDifference->setChecked(false); 
-	    actionSymmetric_Difference->setChecked(false); 
-	    actionCopy->setChecked(false);
-	    actionMove->setChecked(false);
-	    actionMinkowski_SumH->setChecked(true);
-	    actionComplementH->setChecked(false);
-	    actionUnionH->setChecked(false);
-	    actionIntersectionH->setChecked(false);
-	    actionDifferenceH->setChecked(false); 
-	    actionSymmetric_DifferenceH->setChecked(false); 
-
-	    size_t count = 0;
-	    if (showBlueMink_Sum -> isChecked()) count++;
-	    if (showRedMink_Sum->isChecked()) count++;
-	    if (showBlackMink_Sum->isChecked()) count++;
-	    if (showBrownMink_Sum->isChecked()) count++;
-	    if (showYellowMink_Sum->isChecked()) count++;
-	    if (showMagentaMink_Sum->isChecked()) count++;
-	    if (showAquaMink_Sum->isChecked()) count++;
-
-	    if(count == 2)
-	    {
-	      size_t color1 = 111;
-	      size_t color2 = 1111;
-
-	      if (showBlueMink_Sum -> isChecked()) color1 = 0;
-	      if (showRedMink_Sum -> isChecked()) 
-	      {
-	        if(color1 < 1) color2 = 1;
-	        else color1 = 1;
-	      }
-	      if (showBlackMink_Sum -> isChecked()) 
-	      {
-	        if(color1 < 2) color2 = 2;
-	        else color1 = 2;
-	      }
-
-	      if (showBrownMink_Sum -> isChecked()) 
-	      {
-	        if(color1 < 3) color2 = 3;
-	        else color1 = 3;
-	      }
-
-	      if (showYellowMink_Sum -> isChecked()) 
-	      {
-	        if(color1 < 4) color2 = 4;
-	        else color1 = 4;
-	      }
-
-	      if (showMagentaMink_Sum -> isChecked()) 
-	      {
-	        if(color1 < 5) color2 = 5;
-	        else color1 = 5;
-	      }
-
-	      if (showAquaMink_Sum -> isChecked())
-	      {
-	        color2 = 6;
-	      }
-
-	      
-
-
-	      typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-	      typedef Kernel::Point_2                            Point_2;
-	        typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
-	        typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
-	      typedef std::list<Polygon_with_holes_2>            Pgn_with_holes_2_container;
-
-	        Polygon_2 lp1,lp2;
-
-	      if(color1 == 0 && !blue_set().is_empty()) 
-	      {
-	        if(color2 == 1 && !red_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);
-	      else if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p2);
-	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p3);
-	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p6);
-	      }
-	      else if(color1 == 1 && !red_set().is_empty()) 
-	      {
-	       if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p2);
-	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p3);
-	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p6);
-	      }
-	      else if(color1 == 2 && !black_set().is_empty()) 
-	      {
-	        if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p3);
-	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p6);
-	      }
-	      else if(color1 == 3 && !brown_set().is_empty()) 
-	      {
-	       if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3,p6);
-	      }
-	      else if(color1 == 4 && !yellow_set().is_empty())
-	      {
-	        if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p6);
-	      }
-	      else if(color1 == 5 && !magenta_set().is_empty())
-	      {
-	        if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p5, p6);
-	      }
-	      
-	      //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
-	      if (!mink_sum_res.is_unbounded()) 
-	      {
-	        get_MinkowskiSum_result(mink_sum_res);
-	      }
-	      else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
-	        lDone = true;
-	        minkowksi_sum_operated = true;
-	    }
-	    else
-	    {
-	       ask_user_ok("Minkowski Sum Operation Error", "Function supports 2 polygon as input\n");  
-	    }
-	   }
-
-	  this->setCursor(old);
-	  if (lDone){ 
-	    zoomToFit();
-	    modelChanged();
-	  }
-	}
-	else
-	{
-		actionMinkowski_SumH->setChecked(false);
-	}
-}
-
 
 //to change which polygons to see on the screen
 void MainWindow::ToogleView(size_t aGROUP, bool a_check) 
@@ -6833,15 +5618,16 @@ void MainWindow::on_actionPAN_toggled(bool aChecked)
 {
   if(aChecked)
   {
+
     if (!m_circular_active && !m_bezier_active) 
       {
         //m_scene.removeEventFilter(m_mink_input);
         m_scene.removeEventFilter(m_linear_input); 
         m_scene.removeEventFilter(m_bezier_input);
         m_scene.removeEventFilter(m_circular_input);
-      m_linear_input->Reset();
-      m_circular_input->Reset();
-      m_bezier_input->Reset();
+        m_linear_input->Reset();
+        m_circular_input->Reset();
+        m_bezier_input->Reset();
       //m_mink_input->Reset();
         actionInsertLinear->setChecked( false );
         this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
@@ -6858,7 +5644,7 @@ void MainWindow::on_actionPAN_toggled(bool aChecked)
       m_bezier_input->Reset();
       //m_mink_input->Reset();
         actionInsertCircular->setChecked( false );
-        this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag); 
+        this->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
         //m_scene.installEventFilter(m_circular_input);
       }
     else 
@@ -6876,6 +5662,23 @@ void MainWindow::on_actionPAN_toggled(bool aChecked)
         //m_scene.installEventFilter(m_bezier_input);
       }
   }
+  else
+  {
+
+    if(! (m_circular_active || m_bezier_active) )
+    {
+      actionInsertLinear->setChecked(true);
+    }
+    else if(m_circular_active)
+    {
+      actionInsertCircular ->setChecked(true);
+    }
+    else
+    {
+      actionInsertBezier ->setChecked(true);
+    }
+  }
+  modelChanged();
   
 }
 
@@ -6956,121 +5759,54 @@ void MainWindow::zoomToFit()
   }
 }
 
-void MainWindow::buildUniversalPolygon()
+
+void MainWindow::show_not_empty_warning()
 {
-  // std::pair<Bezier_polygon,Bezier_boundary_source>     lBI ;
-  // Linear_polygon lLI;
-  // Circular_polygon lCI; 
-
-  //   if(CGAL::assign(lBI, o))
-  //   {
-  //     if ( ensure_bezier_mode() )
-  //     {
-  //       CGAL::Orientation o = lBI.first.orientation();
-  //       if ( o == CGAL::CLOCKWISE )
-  //         lBI.first.reverse_orientation();
-          
-  //       active_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
-        
-  //       Bezier_region_source br ; 
-
-  //       br.push_back (lBI.second);
-        
-  //       active_bezier_sources().push_back(br);
-        
-  //     }
-  //   }
-
-  //   if (CGAL::assign(lLI, o)) 
-  //   {
-  //     if (ensure_linear_mode()) 
-  //     {
-  //       CGAL::Orientation orient = lLI.orientation();
-  //       if (orient == CGAL::CLOCKWISE) 
-  //       {
-  //         lLI.reverse_orientation();
-  //       }
-  //       Linear_polygon_with_holes lCPWH(lLI);
-  //       active_set().linear().join(lCPWH);
-  //       active_linear_sources().push_back(lCPWH);
-  //       switch(m_color_active)
-  //       {
-  //           case 0: p0 = m_linear_input -> getMinkPolygon();  
-  //                   m_linear_input -> clearMinkPolygon(); 
-  //                   if (p0.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p0.reverse_orientation();
-  //                   }
-  //                   break;
-  //           case 1: p1 = m_linear_input -> getMinkPolygon();  
-  //                   m_linear_input -> clearMinkPolygon(); 
-  //                   if (p1.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p1.reverse_orientation();
-  //                   }
-  //                   break;
-  //           case 2: p2 = m_linear_input -> getMinkPolygon();  
-  //                   m_linear_input -> clearMinkPolygon(); 
-  //                   if (p2.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p2.reverse_orientation();
-  //                   }
-  //                   break;
-  //           case 3: p3 = m_linear_input -> getMinkPolygon();
-  //                   m_linear_input -> clearMinkPolygon(); 
-  //                   if (p3.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p3.reverse_orientation();
-  //                   }
-  //                   break;
-  //           case 4: p4 = m_linear_input -> getMinkPolygon();
-  //                   m_linear_input -> clearMinkPolygon();
-  //                   if (p4.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p4.reverse_orientation();
-  //                   }
-  //                   break;
-  //           case 5: p5 = m_linear_input -> getMinkPolygon();
-  //                   m_linear_input -> clearMinkPolygon();  
-  //                   if (p5.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p5.reverse_orientation();
-  //                   }
-  //                   break;
-  //           case 6: p6 = m_linear_input -> getMinkPolygon();
-  //                   m_linear_input -> clearMinkPolygon(); 
-  //                   if (p6.orientation() == CGAL::CLOCKWISE) 
-  //                   { 
-  //                     p6.reverse_orientation();
-  //                   }
-  //                   break;
-  //       }
-  //     }
-  //   }
-
-  //   else if ( CGAL::assign(lCI, o) )
-  //   {
-  //     if ( ensure_circular_mode() )
-  //     {
-  //       CGAL::Orientation o = lCI.orientation();
-  //       if ( o == CGAL::CLOCKWISE )
-  //         lCI.reverse_orientation();
-          
-  //       Circular_polygon_with_holes lCPWH(lCI);
-  //       active_set().circular().join(lCPWH) ;  
-        
-  //       active_circular_sources().push_back(lCPWH);
-  //     }
-  //   }
-  // modelChanged();  
-
+  empty_warn = ask_user_yesno("Bucket Not Empty Warning","Selected Bucket is Not Empty!!!\n Do you want to see this warning again?");
 }
 
-void MainWindow::throwEmptyWarn()
+
+void MainWindow::exception_handler()
 {
-  if(empty_warn)
+  try
   {
-     empty_warn = show_warning_check();
+    // if(!(m_circular_active||m_bezier_active))
+    // {
+    //   m_linear_input -> RemoveLastPiece();
+    //   m_linear_input -> mink_polygon.erase(m_linear_input -> mink_polygon.vertices_end());
+    //   m_linear_input -> mState = (m_linear_input -> mLinearPolygonPieces.size() > 0) ? m_linear_input -> PieceEnded : m_linear_input -> Start;
+    // }
+    // else if (m_circular_active)
+    // {
+    //   m_circular_input -> RemoveLastPiece();
+    //   m_circular_input -> mState = (m_circular_input -> mCircularPolygonPieces.size() > 0) ? m_circular_input -> PieceEnded : m_circular_input -> Start;
+    // }
+    // else
+    // {
+    //   m_bezier_input -> RemoveLastPiece();
+    //   m_bezier_input -> mState   = ( m_bezier_input -> mBezierPolygonPieces.size() > 0 )? m_bezier_input -> PieceEnded : m_bezier_input -> Start ;
+    // }
+    if(ensure_linear_mode())
+    {
+      m_linear_input -> Reset();
+      m_linear_input -> mink_polygon.clear();
+      m_linear_input -> mState = m_linear_input -> Start;
+    }
+    else if(ensure_circular_mode())
+    {
+      m_circular_input -> Reset();
+      m_circular_input -> mState = m_circular_input -> Start;
+    }
+    else
+    {
+      m_bezier_input -> Reset();
+      m_bezier_input -> mState = m_bezier_input -> Start ;
+    }
+  }
+  catch(const std::exception& e)
+  {
+
+    
   }
 }
 
@@ -7081,108 +5817,129 @@ void MainWindow::processInput(CGAL::Object o)
     Linear_polygon lLI;
     Circular_polygon lCI; 
 
-    if(CGAL::assign(lBI, o))
+    try
     {
-      if ( ensure_bezier_mode() )
+      if(CGAL::assign(lBI, o))
       {
-        CGAL::Orientation o = lBI.first.orientation();
-        if ( o == CGAL::CLOCKWISE )
-          lBI.first.reverse_orientation();
+        if ( ensure_bezier_mode() )
+        {
+          CGAL::Orientation o = lBI.first.orientation();
+          if ( o == CGAL::CLOCKWISE )
+            lBI.first.reverse_orientation();
+            
+          active_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
           
-        active_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
-        
-        Bezier_region_source br ; 
+          Bezier_region_source br ; 
 
-        br.push_back (lBI.second);
-        
-        active_bezier_sources().push_back(br);
-        
+          br.push_back (lBI.second);
+          
+          active_bezier_sources().push_back(br);
+          
+        }
+      }
+
+      if (CGAL::assign(lLI, o)) 
+      {
+        if (ensure_linear_mode()) 
+        {
+          if(!m_linear_input->isboundingRect())
+          {
+            CGAL::Orientation orient = lLI.orientation();
+            if (orient == CGAL::CLOCKWISE) 
+            {
+              lLI.reverse_orientation();
+            }
+            Linear_polygon_with_holes lCPWH(lLI);
+            active_set().linear().join(lCPWH);
+            active_linear_sources().push_back(lCPWH);
+            switch(m_color_active)
+            {
+                case 0: p0 = m_linear_input -> getMinkPolygon();  
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p0.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p0.reverse_orientation();
+                        }
+                        break;
+                case 1: p1 = m_linear_input -> getMinkPolygon();  
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p1.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p1.reverse_orientation();
+                        }
+                        break;
+                case 2: p2 = m_linear_input -> getMinkPolygon();  
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p2.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p2.reverse_orientation();
+                        }
+                        break;
+                case 3: p3 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p3.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p3.reverse_orientation();
+                        }
+                        break;
+                case 4: p4 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon();
+                        if (p4.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p4.reverse_orientation();
+                        }
+                        break;
+                case 5: p5 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon();  
+                        if (p5.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p5.reverse_orientation();
+                        }
+                        break;
+                case 6: p6 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p6.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p6.reverse_orientation();
+                        }
+                        break;
+            }
+          }
+          else
+          {
+            if (lLI.orientation() == CGAL::CLOCKWISE) 
+            { 
+               lLI.reverse_orientation();
+            }
+            Linear_polygon_with_holes lCPWH(lLI);
+            blue_set().linear().join(lCPWH);
+            blue_linear_sources().push_back(lCPWH);
+          }
+        }
+      }
+
+      else if ( CGAL::assign(lCI, o) )
+      {
+        if ( ensure_circular_mode() )
+        {
+          CGAL::Orientation o = lCI.orientation();
+          if ( o == CGAL::CLOCKWISE )
+            lCI.reverse_orientation();
+            
+          Circular_polygon_with_holes lCPWH(lCI);
+          active_set().circular().join(lCPWH) ;  
+          
+          active_circular_sources().push_back(lCPWH);
+        }
       }
     }
 
-    if (CGAL::assign(lLI, o)) 
+    catch(const std::exception& e)
     {
-      if (ensure_linear_mode()) 
-      {
-        CGAL::Orientation orient = lLI.orientation();
-        if (orient == CGAL::CLOCKWISE) 
-        {
-          lLI.reverse_orientation();
-        }
-        Linear_polygon_with_holes lCPWH(lLI);
-        active_set().linear().join(lCPWH);
-        active_linear_sources().push_back(lCPWH);
-        switch(m_color_active)
-        {
-            case 0: p0 = m_linear_input -> getMinkPolygon();  
-                    m_linear_input -> clearMinkPolygon(); 
-                    if (p0.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p0.reverse_orientation();
-                    }
-                    break;
-            case 1: p1 = m_linear_input -> getMinkPolygon();  
-                    m_linear_input -> clearMinkPolygon(); 
-                    if (p1.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p1.reverse_orientation();
-                    }
-                    break;
-            case 2: p2 = m_linear_input -> getMinkPolygon();  
-                    m_linear_input -> clearMinkPolygon(); 
-                    if (p2.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p2.reverse_orientation();
-                    }
-                    break;
-            case 3: p3 = m_linear_input -> getMinkPolygon();
-                    m_linear_input -> clearMinkPolygon(); 
-                    if (p3.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p3.reverse_orientation();
-                    }
-                    break;
-            case 4: p4 = m_linear_input -> getMinkPolygon();
-                    m_linear_input -> clearMinkPolygon();
-                    if (p4.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p4.reverse_orientation();
-                    }
-                    break;
-            case 5: p5 = m_linear_input -> getMinkPolygon();
-                    m_linear_input -> clearMinkPolygon();  
-                    if (p5.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p5.reverse_orientation();
-                    }
-                    break;
-            case 6: p6 = m_linear_input -> getMinkPolygon();
-                    m_linear_input -> clearMinkPolygon(); 
-                    if (p6.orientation() == CGAL::CLOCKWISE) 
-                    { 
-                      p6.reverse_orientation();
-                    }
-                    break;
-        }
-      }
-    }
-
-    else if ( CGAL::assign(lCI, o) )
-    {
-      if ( ensure_circular_mode() )
-      {
-        CGAL::Orientation o = lCI.orientation();
-        if ( o == CGAL::CLOCKWISE )
-          lCI.reverse_orientation();
-          
-        Circular_polygon_with_holes lCPWH(lCI);
-        active_set().circular().join(lCPWH) ;  
-        
-        active_circular_sources().push_back(lCPWH);
-      }
+      //std::string s = e.what();
+      //exception_handler();
     }
   modelChanged();  
-
 
 }
 

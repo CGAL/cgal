@@ -67,7 +67,19 @@
      <addaction name="actionNew"/>
      <addaction name="actionCopy"/>
      <addaction name="actionMove"/>
+     <addaction name="actionPaste"/>
      <addaction name="actionDeleteAll"/>
+   </widget>
+   <widget class="QMenu" name="menuOperations">
+    <property name="title">
+     <string>Operations</string>
+    </property>
+    <addaction name="actionInsertLinear"/> 
+    <addaction name="actionInsertCircular"/>
+    <addaction name="actionInsertBezier" />
+    <addaction name="separator"/>
+    <addaction name="actionAddColor" />
+    <addaction name="actionMinusColor" />
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -79,21 +91,6 @@
     <addaction name="showColorBucket"/>
     <addaction name="showConsole"/>
     <addaction name="showInfo"/>
-   </widget>
-   <widget class="QMenu" name="menuOperations">
-    <property name="title">
-     <string>Operations</string>
-    </property>
-    <addaction name="actionInsertLinear"/> 
-    <addaction name="actionInsertCircular"/>
-    <addaction name="actionInsertBezier" />
-    <addaction name="separator"/>
-    <addaction name="actionComplement"/>
-    <addaction name="actionIntersection"/>
-    <addaction name="actionUnion"/>
-    <addaction name="actionDifference"/>
-    <addaction name="actionSymmetric_Difference"/>
-    <addaction name="actionMinkowski_Sum" />
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -2495,105 +2492,6 @@
     <string>Ctrl+V</string>
    </property>
   </action>
-  <action name="actionComplement">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/comp_P.bmp</normaloff>:/cgal/icons/resources/comp_P.bmp</iconset>
-   </property>
-   <property name="text">
-    <string>Complement</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+C</string>
-   </property>
-  </action>
-  <action name="actionIntersection">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/intersection.bmp</normaloff>:/cgal/icons/resources/intersection.bmp</iconset>
-   </property>
-   <property name="text">
-    <string>Intersection</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+I</string>
-   </property>
-  </action>
-  <action name="actionUnion">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/union.bmp</normaloff>:/cgal/icons/resources/union.bmp</iconset>
-   </property>
-   <property name="text">
-    <string>Union</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+U</string>
-   </property>
-  </action>
-  <action name="actionDifference">
-  <property name="enabled">
-    <bool>true</bool>
-  </property>
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2rc">
-     <normaloff>:/cgal/icons/resources/diff_PQ.bmp</normaloff>:/cgal/icons/resources/diff_PQ.bmp</iconset>
-   </property>
-   <property name="text">
-    <string>Difference</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="actionSymmetric_Difference">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/symm_diff.bmp</normaloff>:/cgal/icons/resources/symm_diff.bmp</iconset>
-   </property>
-   <property name="text">
-    <string>Symmetric Difference</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionMinkowski_Sum">
-  <property name="enabled">
-    <bool>true</bool>
-  </property>
-    <property name="Visible">
-      <bool>true</bool>
-    </property>
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/mink_sum.bmp</normaloff>:/cgal/icons/resources/mink_sum.bmp</iconset>
-   </property>
-   <property name="text">
-    <string>Minkowski Sum</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
-   </property>
-  </action>
   <action name="actionHelp">
    <property name="text">
     <string>&amp;About</string>
@@ -2709,15 +2607,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
-   </property>
-  </action>
-  <action name="actionClearResult">
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/clear.png</normaloff>:/cgal/icons/resources/clear.png</iconset>
-   </property> 
-   <property name="text">
-    <string>Clear Selected Buckets</string>
    </property>
   </action>
   <action name="actionOpenDXF" >
