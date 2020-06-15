@@ -47,7 +47,6 @@
 
 namespace CGAL {
 
-  // TODO: Replace with std::array?
   struct IntPoint_3 {
     uint32_t m_coords[3] = {0, 0, 0};
 
@@ -111,9 +110,14 @@ namespace CGAL {
     typedef typename std::list<InputIterator> IterList;
 
   private: // members :
+
+    // TODO: Replace with pointer to fixed size array, or std::optional<std::array<Node, 8>> ?
     Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
+
     Node *m_parent;    /* pointer the the single parent node. Root if NULL */
+
     IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
+
     uint8_t m_depth;    /* current depth inside the octree */
     IterList m_points;   /* list of iterators of the input pwn contained in the node */
 

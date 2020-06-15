@@ -18,9 +18,8 @@ void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &nod
   }
 
   // Print out this node
-  os << "Node at coordinates (" << node.location().x() << ", " << node.location().y() << ", " << node.location().z()
-     << ") "
-     << "containing " << node.num_points() << " points \n";
+  os << node.location().x() << node.location().y() << node.location().z()
+     << " contains " << node.num_points() << " points \n";
 
   // Print out this node's children
   if (!node.is_leaf()) {
