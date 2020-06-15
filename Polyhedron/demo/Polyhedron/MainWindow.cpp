@@ -771,7 +771,7 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
-               env_path.split(separator, SkipEmptyParts)) {
+               env_path.split(separator, CGAL_QT_SKIP_EMPTY_PARTS)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;

@@ -30,9 +30,9 @@
 #endif
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#define SkipEmptyParts QString::SkipEmptyParts
+#define CGAL_QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
 #else
-#define SkipEmptyParts ::Qt::SkipEmptyParts
+#define CGAL_QT_SKIP_EMPTY_PARTS ::Qt::SkipEmptyParts
 #endif
 
 namespace CGAL{
