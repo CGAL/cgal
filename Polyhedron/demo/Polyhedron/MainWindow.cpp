@@ -410,20 +410,22 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 void addActionToMenu(QAction* action, QMenu* menu)
 {
   bool added = false;
+  QString atxt = action->text().remove("&");
+  if(atxt.isEmpty())
+    return;
   for(QAction* it : menu->actions())
   {
-    QString atxt = action->text().remove("&"),
-        btxt = it->text().remove("&");
+    QString btxt = it->text().remove("&");
     int i = 0;
-    if(atxt.isEmpty() || btxt.isEmpty())
+    if(btxt.isEmpty())
+    {
       continue;
+    }
     while(i < atxt.size()
           && i < btxt.size()
           && atxt[i] == btxt[i])
       ++i;
-    if(i == atxt.size() || i == btxt.size())
-      continue;
-    bool res = (atxt[i] < btxt[i]);
+    bool res = (i == atxt.size() || i == btxt.size() || atxt[i] < btxt[i]);
     if (res)
     {
       menu->insertAction(it, action);
