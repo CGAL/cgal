@@ -125,7 +125,7 @@ namespace Qt {
       return rHandled ;  
     }
     
-  protected:
+  public:
 
     enum State { Start, PieceOrFirstHandleStarted, PieceOngoing, FirstHandleOngoing, HandleOngoing, PieceEnded, CurveEnded } ;
     

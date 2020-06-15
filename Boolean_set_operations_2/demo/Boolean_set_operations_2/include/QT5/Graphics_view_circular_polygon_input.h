@@ -117,7 +117,7 @@ public:
     return rHandled;
   }
 
-protected:
+public:
   //a set of all states of drawing a circular polygon
   enum State {
     Start, PieceStarted, PieceOngoing, HandleOngoing, PieceEnded, CurveEnded
@@ -240,6 +240,8 @@ protected:
   }
 
 public:
+  
+  
   Circular_curve const* ongoing_piece() const
   { return (mOngoingPieceCtr.size() == 1) ? &mOngoingPieceCtr[0] : NULL; }
 

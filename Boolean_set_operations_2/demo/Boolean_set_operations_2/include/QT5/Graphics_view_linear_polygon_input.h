@@ -79,7 +79,8 @@ public:
     mLinearPolygonPen(QColor(0, 255, 0)),
     mOngoingCurvePen(QColor(255, 215, 0)),
     mHandlePen(QColor(255, 165, 0)),
-    mState(Start)
+    mState(Start),
+    m_bound_rect(true)
   {
     mOngoingPieceGI->setPen(mOngoingCurvePen);
     mHandleGI->setPen(mHandlePen);
@@ -121,7 +122,7 @@ public:
     return rHandled;
   }
 
-protected:
+public:
   enum State {
     Start, PieceStarted, PieceOngoing, HandleOngoing, PieceEnded, CurveEnded
   };
@@ -130,6 +131,7 @@ protected:
 
   bool mousePressEvent(QGraphicsSceneMouseEvent *aEvent)
   {
+    m_bound_rect = false;
     bool rHandled = false;
     Point lP = cvt(aEvent->scenePos());
     if (aEvent->button() == ::Qt::LeftButton) {
@@ -209,6 +211,7 @@ protected:
       switch (mState) {
        case PieceOngoing:
         //cout<<"hello in Graphics_view_linear_polygon"<<endl;
+        m_bound_rect = false;
         CommitCurrLinearPolygon();
         ReStart();
         rHandled = true;
@@ -245,6 +248,7 @@ protected:
   }
 
 public:
+
   Polygon_2 getMinkPolygon()
   { 
     return mink_polygon; 
@@ -300,7 +304,7 @@ public:
   void CommitOngoingPiece(Point const& aP)
   {
     if (ongoing_piece()) {
-      mLinearPolygonPieces.push_back( *ongoing_piece());
+      mLinearPolygonPieces.push_back(*ongoing_piece());
       mLinearGI->modelChanged();
       mOngoingPieceCtr.clear();
       mOngoingPieceGI->modelChanged();
@@ -381,6 +385,73 @@ public:
     }
   }
 
+
+  void get_BoundingRect()
+  {
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-1000,-1000),Point(-1000,1000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-1000,1000),Point(1000,1000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(1000,1000),Point(1000,-1000)));
+
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[0]);
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[1]);
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[2]);
+
+      // m_bound_rect = true;
+      // CommitCurrLinearPolygon();
+      // ReStart();
+
+      m_bound_rect = true;
+
+      mP0 = Point(-1000,-1000);
+      mState = PieceStarted;
+      mState = PieceOngoing;
+
+      mP1 = Point(-1000,1000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(-1000,1000);
+      mState = HandleOngoing;
+      HideHandle();
+      CommitOngoingPiece(Point(-1000,1000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+
+      mP1 = Point(1000,1000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(1000,1000);
+      mState = HandleOngoing;
+      HideHandle();
+      CommitOngoingPiece(Point(1000,1000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+
+      mP1 = Point(1000,-1000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(1000,-1000);
+      mState = HandleOngoing;
+      HideHandle();
+      CommitOngoingPiece(Point(1000,-1000));
+      mState   = PieceEnded;
+
+      CommitCurrLinearPolygon();
+      ReStart();
+
+  }
+
+  bool isboundingRect()
+  {
+    return m_bound_rect;
+  }
+
+  void setBoundRectBool(bool check)
+  {
+    m_bound_rect = check;
+  }
+
 public:
   QGraphicsScene* mScene;
   GI* mLinearGI;
@@ -392,9 +463,12 @@ public:
   QPen mHandlePen;
 
   Linear_curve_vector mLinearPolygonPieces;
+  Linear_curve_vector mLinearPolygonPieces_boundR;
   Linear_curve_vector mOngoingPieceCtr;
 
   int mState;
+
+  bool m_bound_rect;
   
   Polygon_2 mink_polygon;
 

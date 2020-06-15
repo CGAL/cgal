@@ -860,7 +860,6 @@ public slots:
   void on_VisibleHeader_toggled  (bool a_check);
   void on_showClear_toggled  (bool a_check);
 
-
   //To be added again in GSoC2020
 
   void on_showBlueComp_toggled(bool aCheck);
@@ -1296,6 +1295,8 @@ MainWindow::MainWindow() :
   m_circular_input = new CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>(this, &m_scene);
   //m_mink_input = new CGAL::Qt::Graphics_view_minkowski_input<Kernel>(this,&m_scene);
 
+  //m_linear_input -> get_BoundingRect();
+
   //connecting GUI and the code base
   QObject::connect(m_linear_input, SIGNAL(generate(CGAL::Object)), this,
                    SLOT(processInput(CGAL::Object)));
@@ -1303,12 +1304,6 @@ MainWindow::MainWindow() :
                    SLOT(processInput(CGAL::Object)));
   QObject::connect(m_bezier_input, SIGNAL(generate(CGAL::Object)), this,
                    SLOT(processInput(CGAL::Object)));
-  // QObject::connect(m_linear_input , SIGNAL(generate(CGAL::Object)), this,
-  //                 SLOT(buildUniversalPolygon(CGAL::Object)));
-  // QObject::connect(m_circular_input , SIGNAL(generate(CGAL::Object)), this,
-  //                 SLOT(buildUniversalPolygon(CGAL::Object)));
-  // QObject::connect(m_bezier_input , SIGNAL(generate(CGAL::Object)), this,
-  //                 SLOT(buildUniversalPolygon(CGAL::Object)));
 
   QObject::connect(actionComplementH, SIGNAL(toggled(bool)), this,
                    SLOT(on_actionComplementH_toggled(bool)));
@@ -4271,9 +4266,6 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
     result_linear_sources().clear();
     result_circular_sources().clear();
     result_bezier_sources().clear();
-
-    
-    // m_linear_input -> get_BoundingRect();
     
     // if(!active_set().is_empty())
     // {
@@ -4287,13 +4279,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       {
         case 0:switch(m_color_complement)
           {
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
         }
 
           blue_set().join(result_set());
@@ -4302,13 +4294,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       
           case 1:switch(m_color_complement)
           { 
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
                 
         }
 
@@ -4318,13 +4310,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       
         case 2:switch(m_color_complement)
           {
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
         }
           black_set().join(result_set());
           result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
@@ -4332,13 +4324,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       
           case 3:switch(m_color_complement)
           {
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
             }
 
           brown_set().join(result_set());
@@ -4347,13 +4339,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       
             case 4:switch(m_color_complement)
           {
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
         }
 
           yellow_set().join(result_set());
@@ -4362,13 +4354,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
           
           case 5:switch(m_color_complement)
           {   
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
         }
 
           magenta_set().join(result_set());
@@ -4377,13 +4369,13 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       
             case 6:switch(m_color_complement)
             {       
-            case 0: if(!blue_set().is_empty()) {result_set().assign(blue_set()); result_set().complement();} break;
-          case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); result_set().complement();} break;
-            case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); result_set().complement();} break;
-            case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); result_set().complement();} break;
-            case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); result_set().complement();} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); result_set().complement();} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); result_set().complement();} break;
+            case 0: if(!blue_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(blue_set());} break;
+          case 1: if(!red_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(red_set());} break;
+            case 2: if(!black_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(black_set());} break;
+            case 3: if(!brown_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(brown_set());} break;
+            case 4: if(!yellow_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(yellow_set());} break;
+          case 5: if(!magenta_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(magenta_set());} break;
+          case 6: if(!aqua_set().is_empty()) {result_set().assign(comp_set()); result_set().difference(aqua_set());} break;
           }
 
             aqua_set().join(result_set());
@@ -4396,7 +4388,6 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
     
 
     lDone = true;
-    // m_linear_input -> setBoundRectBool(false); 
     this->setCursor(old);
     if (lDone) modelChanged();
 	}
@@ -5805,10 +5796,9 @@ void MainWindow::exception_handler()
   }
   catch(const std::exception& e)
   {
-
-    
   }
 }
+
 
 
 void MainWindow::processInput(CGAL::Object o)
@@ -5842,7 +5832,7 @@ void MainWindow::processInput(CGAL::Object o)
       {
         if (ensure_linear_mode()) 
         {
-          if(!m_linear_input->isboundingRect())
+          if(m_linear_input->m_bound_rect == false)
           {
             CGAL::Orientation orient = lLI.orientation();
             if (orient == CGAL::CLOCKWISE) 
@@ -5905,15 +5895,15 @@ void MainWindow::processInput(CGAL::Object o)
                         break;
             }
           }
-          else
+          if(m_linear_input->m_bound_rect == true)
           {
-            if (lLI.orientation() == CGAL::CLOCKWISE) 
-            { 
-               lLI.reverse_orientation();
-            }
-            Linear_polygon_with_holes lCPWH(lLI);
-            blue_set().linear().join(lCPWH);
-            blue_linear_sources().push_back(lCPWH);
+            // if (lLI.orientation() == CGAL::CLOCKWISE) 
+            // { 
+            //    lLI.reverse_orientation();
+            // }
+            // Linear_polygon_with_holes lCPWH(lLI);
+            // blue_set().linear().join(lCPWH);
+            // blue_linear_sources().push_back(lCPWH);
           }
         }
       }
