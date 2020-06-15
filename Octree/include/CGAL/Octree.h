@@ -86,10 +86,14 @@ namespace CGAL {
   private: // data members :
     Node m_root;                      /* root node of the octree */
     uint8_t m_max_depth_reached = 0;  /* octree actual highest depth reached */
+
     PointRange &m_ranges;              /* input point range */
     PointMap m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
+
+    // TODO: Would it hurt performance to just store the Iso_cuboid directly?
     Point m_bbox_min;                  /* input bounding box min value */
     FT m_bbox_side;              /* input bounding box side length (cube) */
+
     std::vector<FT> m_side_per_depth;      /* side length per node's depth */
     std::vector<size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
 
@@ -141,10 +145,13 @@ namespace CGAL {
 
     // template < typename CellCriteria, typename NormalCriteria > // or other useful criterion
     void refine(size_t max_depth, size_t max_pts_num) {
+
+      // Make sure arguments are valid
       if (max_depth < 0 || max_pts_num < 1) {
         CGAL_TRACE_STREAM << "wrong octree refinement criteria\n";
         return;
       }
+
       for (int i = 0; i <= (int) max_depth; i++)
         m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 
@@ -183,44 +190,72 @@ namespace CGAL {
   private: // functions :
 
     Point compute_barycenter_position(Node *node) const {
+
+      // Determine the side length of this node
       FT size = m_side_per_depth[node->depth()];
+
+      // Determine the location this node should be split
+      // TODO: I think Point_3 has a [] operator, so using an array here might not be necessary!
       FT bary[3];
       for (int i = 0; i < 3; i++)
         bary[i] = node->location()[i] * size + (size / 2.0) + m_bbox_min[i];
+
+      // Convert that location into a point
       return Point(bary[0], bary[1], bary[2]);
     }
 
     void refine_recurse(Node *node, size_t dist_to_max_depth, size_t max_pts_num) {
+
+      // Check if the depth limit is reached, or if the node isn't filled
       if (dist_to_max_depth == 0 || node->num_points() <= max_pts_num) {
+
+        // If this node is the deepest in the tree, record its depth
         if (m_max_depth_reached < node->depth()) m_max_depth_reached = node->depth();
+
+        // Don't split this node
         return;
       }
 
+      // Create child nodes
       node->split();
+
+      // Distribute this nodes points among its children
       reassign_points(node);
+
+      // Repeat this process for all children (recursive)
       for (int child_id = 0; child_id < 8; child_id++) {
         refine_recurse(node->child(child_id), dist_to_max_depth - 1, max_pts_num);
       }
     }
 
     void reassign_points(Node *node) {
+
+      // Find the position of this node's split
       Point barycenter = compute_barycenter_position(node);
 
+      // Check each point contained by this node
       for (const InputIterator &pwn_it : node->points()) {
         const Point &point = get(m_points_map, *pwn_it);
 
+        // Determine which octant a point falls in
         // TODO: Could this use std::bitset?
-
         int is_right = barycenter[0] < point[0];
         int is_up = barycenter[1] < point[1];
         int is_front = barycenter[2] < point[2];
 
+        // Check if a point is very close to the edge
         bool equal_right = std::abs(barycenter[0] - point[0]) < 1e-6;
         bool equal_up = std::abs(barycenter[1] - point[1]) < 1e-6;
         bool equal_front = std::abs(barycenter[2] - point[2]) < 1e-6;
 
+        // Generate a 3-bit code representing a point's octant
         int child_id = (is_front << 2) | (is_up << 1) | is_right;
+
+        // Get the child node using that code, and add the point
         node->child(child_id)->add_point(pwn_it);
+
+        // Edge cases get special treatment when selecting an octant
+        // TODO: Why is this?
 
         if (equal_right) {
           int sym_child_id = (is_front << 2) | (is_up << 1) | (!is_right);
@@ -236,10 +271,8 @@ namespace CGAL {
           int sym_child_id = (!is_front << 2) | (is_up << 1) | (!is_right);
           node->child(sym_child_id)->add_point(pwn_it);
         }
-
       }
     }
-
   }; // end class Octree
 
 } // namespace CGAL

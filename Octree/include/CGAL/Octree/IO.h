@@ -5,6 +5,7 @@
 #include <CGAL/Octree.h>
 
 #include <iostream>
+#include <ostream>
 
 using std::ostream;
 

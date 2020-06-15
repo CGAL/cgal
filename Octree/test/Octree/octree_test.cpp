@@ -26,6 +26,16 @@ int main(void) {
   points.insert({-1, 1, 1});
   points.insert({1, 1, 1});
 
+  points.insert({-1, -1, -1.1});
+  points.insert({-1, -1, -1.2});
+  points.insert({-1, -1, -1.3});
+  points.insert({-1, -1, -1.4});
+  points.insert({-1, -1, -1.5});
+  points.insert({-1, -1, -1.6});
+  points.insert({-1, -1, -1.7});
+  points.insert({-1, -1, -1.8});
+  points.insert({-1, -1, -1.9});
+
   auto point_map = points.point_map();
 
   Octree octree(points, point_map);
