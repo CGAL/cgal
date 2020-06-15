@@ -5791,7 +5791,7 @@ void MainWindow::exception_handler()
     else
     {
       m_bezier_input -> Reset();
-      m_bezier_input -> mState = m_bezier_input -> Start ;
+      m_bezier_input -> mState = m_bezier_input -> Start;
     }
   }
   catch(const std::exception& e)
@@ -5897,13 +5897,13 @@ void MainWindow::processInput(CGAL::Object o)
           }
           if(m_linear_input->m_bound_rect == true)
           {
-            // if (lLI.orientation() == CGAL::CLOCKWISE) 
-            // { 
-            //    lLI.reverse_orientation();
-            // }
-            // Linear_polygon_with_holes lCPWH(lLI);
-            // blue_set().linear().join(lCPWH);
-            // blue_linear_sources().push_back(lCPWH);
+            if (lLI.orientation() == CGAL::CLOCKWISE) 
+            { 
+               lLI.reverse_orientation();
+            }
+            Linear_polygon_with_holes lCPWH(lLI);
+            blue_set().linear().join(lCPWH);
+            blue_linear_sources().push_back(lCPWH);
           }
         }
       }
@@ -5927,7 +5927,7 @@ void MainWindow::processInput(CGAL::Object o)
     catch(const std::exception& e)
     {
       //std::string s = e.what();
-      //exception_handler();
+      exception_handler();
     }
   modelChanged();  
 
