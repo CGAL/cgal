@@ -1600,6 +1600,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   typedef typename Gt2::Point_2                         Point_2;
   typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+  typedef typename Arr::Face_const_handle               Face_const_handle;
 
   const Traits_adaptor_2* traits =
     static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
@@ -1624,7 +1625,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     // it conincides with a vertex or an edge).
     auto obj = pl.locate(*iso_p);
     //! \todo: EF, this is suspicious. Shouldn't we continue if false?
-    return (boost::get<typename Arr::Face_const_handle>(&x_obj) != nullptr);
+    if (boost::get<Face_const_handle>(&x_obj) != nullptr) return true;
   }
 
   // If we reached here, the curve does not intersect the arrangement.
