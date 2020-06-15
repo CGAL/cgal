@@ -113,7 +113,7 @@ namespace CGAL {
   private: // members :
     Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
     Node *m_parent;    /* pointer the the single parent node. Root if NULL */
-    IntPoint m_location;    /* integer location of current node (x,y,z) on the current detph grid */
+    IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
     uint8_t m_depth;    /* current depth inside the octree */
     IterList m_points;   /* list of iterators of the input pwn contained in the node */
 
