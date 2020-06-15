@@ -3,7 +3,7 @@
 
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/partition.h>
-#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #include <fstream>
 #include <iostream>
@@ -13,16 +13,11 @@ typedef CGAL::Surface_mesh<K::Point_3>                           SM;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/blobby.off");
+  const char* filename = (argc>1)?argv[1]:"data/blobby.off";
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
-  if(!in) {
-    std::cerr << "Error: could not read input file" << std::endl;
-    return EXIT_FAILURE;
-  }
-
   SM sm;
-  CGAL::read_OFF(in, sm);
+  CGAL::read_polygon_mesh(filename, sm);
 
   // The vertex <--> partition_id property map
   typedef SM::Property_map<SM::Vertex_index, std::size_t>          Vertex_id_map;

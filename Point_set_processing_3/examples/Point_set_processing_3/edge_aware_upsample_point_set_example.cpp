@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/edge_aware_upsample_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <vector>
@@ -25,10 +25,7 @@ int main(int argc, char* argv[])
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<PointVectorPair> points;
-  std::ifstream stream(input_filename);
-
-  if (!stream ||
-      !CGAL::read_XYZ(stream,
+  if (!CGAL::read_points(input_filename,
                         std::back_inserter(points),
                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                         normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))

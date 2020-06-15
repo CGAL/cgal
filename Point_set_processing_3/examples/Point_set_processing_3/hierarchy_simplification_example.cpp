@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/hierarchy_simplify_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -17,9 +17,7 @@ int main(int argc, char*argv[])
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
-  std::ifstream stream(fname);
-  if (!stream ||
-      !CGAL::read_XYZ(stream, std::back_inserter(points)))
+  if (!CGAL::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

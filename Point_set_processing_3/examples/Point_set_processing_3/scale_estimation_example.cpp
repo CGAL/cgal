@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <CGAL/estimate_scale.h>
 #include <CGAL/jet_smooth_point_set.h>
@@ -27,11 +27,9 @@ int main (int argc, char** argv)
   CGAL::Timer task_timer;
 
   std::vector<Point_3> points;
-  std::ifstream stream(fname);
 
   // read input
-  if (!(stream
-        && CGAL::read_XYZ(stream, std::back_inserter(points))))
+  if (!CGAL::read_points(fname, std::back_inserter(points)))
     {
       std::cerr << "Error: can't read input file" << std::endl;
       return EXIT_FAILURE;

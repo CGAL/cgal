@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <vector>
@@ -21,9 +21,8 @@ int main(int argc, char** argv)
 
   // Reads a .xyz point set file in points[]
   std::vector<Point> points;
-  std::ifstream stream(input_filename);
 
-  if (!stream || !CGAL::read_XYZ(stream, std::back_inserter(points)))
+  if (!CGAL::read_points(input_filename, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << input_filename  << std::endl;
 

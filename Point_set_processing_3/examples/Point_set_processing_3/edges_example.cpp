@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/vcm_estimate_edges.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <utility> // defines std::pair
 #include <vector>
@@ -22,9 +22,7 @@ typedef std::array<double,6> Covariance;
 int main (int , char**) {
     // Reads a .xyz point set file in points[].
     std::list<PointVectorPair> points;
-    std::ifstream stream("data/fandisk.off");
-    if (!stream ||
-        !CGAL::read_OFF(stream,
+    if (!CGAL::read_points("data/fandisk.off",
                         std::back_inserter(points),
                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {

@@ -113,7 +113,7 @@ public:
 
     Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
 
-    template <class Point, class Polygon>
+    template <class Point, typename Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
 
     template <class Point, class Polygon>

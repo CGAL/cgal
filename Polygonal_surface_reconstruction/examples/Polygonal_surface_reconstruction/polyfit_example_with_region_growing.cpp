@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
@@ -96,12 +96,12 @@ int main()
     std::cerr << "Failed open file \'" << input_file << "\'" << std::endl;
     return EXIT_FAILURE;
   }
+  input_stream.close();
   std::cout << "Loading point cloud: " << input_file << "...";
 
   CGAL::Timer t;
   t.start();
-  if (!input_stream ||
-      !CGAL::read_XYZ(input_stream,
+  if (!CGAL::read_points(input_file.c_str(),
                       std::back_inserter(points),
                       CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
 

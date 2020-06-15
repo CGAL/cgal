@@ -20,7 +20,7 @@
 #include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
@@ -185,12 +185,11 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       // Reads the point set file in points[].
-      // Note: read_XYZ() requires an iterator over points
+      // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
-      std::ifstream stream(input_filename.c_str());
       if (!stream ||
-          !CGAL::read_XYZ(
-            stream,
+          !CGAL::read_points(
+            input_filename.c_str(),
             std::back_inserter(points),
             CGAL::parameters::point_map
             (CGAL::make_first_of_pair_property_map(Point_with_normal())).

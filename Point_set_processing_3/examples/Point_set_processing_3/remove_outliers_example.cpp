@@ -2,7 +2,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/remove_outliers.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <vector>
 #include <fstream>
@@ -18,10 +18,8 @@ int main(int argc, char*argv[])
   // Reads a .xyz point set file in points[].
   // The Identity_property_map property map can be omitted here as it is the default value.
   std::vector<Point> points;
-  std::ifstream stream(fname);
-  if (!stream ||
-      !CGAL::read_XYZ(stream, std::back_inserter(points),
-                      CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
+  if (!CGAL::read_points(fname, std::back_inserter(points),
+                         CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
