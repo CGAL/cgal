@@ -5809,6 +5809,7 @@ void MainWindow::processInput(CGAL::Object o)
 
     try
     {
+
       if(CGAL::assign(lBI, o))
       {
         if ( ensure_bezier_mode() )
@@ -5927,7 +5928,7 @@ void MainWindow::processInput(CGAL::Object o)
     catch(const std::exception& e)
     {
       //std::string s = e.what();
-      exception_handler();
+      //exception_handler();
     }
   modelChanged();  
 
