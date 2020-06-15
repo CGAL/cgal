@@ -27,6 +27,10 @@
  * Arrangement_2 package, which it is now part of. It contains a traits
  * class for the arrangement package that handles circular and linear curves.
  * It is based on the circular kernel.
+ *
+ * \todo Fix the circular-kernel make-x-monotone functor to use modern variant
+ *       instead of the legacy CGAL::Object. Then, eliminate the special
+ *       implementation here and directly use the kernel functor instead.
  */
 
 #include <vector>
