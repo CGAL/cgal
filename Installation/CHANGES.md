@@ -1,18 +1,29 @@
 Release History
 ===============
 
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.2)
+-----------
+
+Release date: December 2020
+
+### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
+
+ -   Changed make-x-monotone return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+     to modern `boost::variant` in all traits concepts and models.
+     As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
+     new code is backward compatible. However, it is recommended that all calls
+     to the make-x-monotone functions are fixed to use the new return type.
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
 Release date: July 2020
 
-### [2D Arrangements](https://doc.cgal.org/5.1/Manual/packages.html#PkgArrangementOnSurface2)
+### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
 
- -   Changed make-x-monotone return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
-     to modern `boost::variant` in all traits concepts and models.
-     As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
-     new code is backward compatible. However, it is recommended that all calls
-     to the make-x-monotone functions are fixed to use the new return type.
+-   This package implements a tetrahedral isotropic remeshing algorithm,
+    that improves the quality of tetrahedra in terms of dihedral angles,
+    while targeting a given edge length.
 
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
@@ -32,12 +43,6 @@ Release date: July 2020
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
 
-### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
-
--   This package implements a tetrahedral isotropic remeshing algorithm,
-    that improves the quality of tetrahedra in terms of dihedral angles,
-    while targetting a given edge length.
-
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 
 -   Two new, detailed tutorials have been added:
@@ -46,7 +51,7 @@ Release date: July 2020
     - [Geographic Information Systems (GIS)](https://doc.cgal.org/5.1/Manual/tuto_gis.html),
       which demonstrates usage of CGAL data structures and algorithms in the context of a typical GIS application.
 
-    In both tutorials, complete code is provided.
+    Both tutorials provide complete code.
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.1/Manual/packages.html#PkgKernel23)
 
