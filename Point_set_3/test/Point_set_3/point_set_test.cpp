@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
+#include <CGAL/Point_set_3/point_set_io.h>
 #include <CGAL/grid_simplify_point_set.h>
 
 #include <fstream>
@@ -36,10 +36,8 @@ int main (int, char**)
   point_set.add_normal_map();
   test (point_set.has_normal_map(), "point set should have normals.");
 
-  std::ifstream f ("data/oni.pwn");
-  CGAL::read_XYZ(f, point_set);
-
-  f.close ();
+  const char* fname ("data/oni.pwn");
+  CGAL::read_point_set(fname, point_set);
 
   Point_set::iterator
     first_to_remove = CGAL::grid_simplify_point_set (point_set,

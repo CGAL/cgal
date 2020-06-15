@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <utility> // defines std::pair
@@ -20,16 +20,14 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
     // Reads a .xyz point set file in points[].
-    // Note: read_XYZ() requires an output iterator
+    // Note: read_points() requires an output iterator
     // over points and as well as property maps to access each
     // point position and normal.
     std::vector<Pwn> points;
-    std::ifstream in(fname);
-    if (!in ||
-        !CGAL::read_XYZ(
-          in,std::back_inserter(points),
-          CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
-          normal_map (CGAL::Second_of_pair_property_map<Pwn>())))
+    if (!CGAL::read_points(fname,
+                           std::back_inserter(points),
+                           CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
+                           normal_map (CGAL::Second_of_pair_property_map<Pwn>())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;

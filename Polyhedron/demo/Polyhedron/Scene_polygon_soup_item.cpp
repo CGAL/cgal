@@ -661,7 +661,7 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   d->soup->polygons.push_back(new_polygon);
 }
 
-template <class Point, class Polygon>
+template <class Point, typename Polygon>
 void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
 {
     if(!d->soup)

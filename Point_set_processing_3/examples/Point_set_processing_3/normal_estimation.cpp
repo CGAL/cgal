@@ -20,8 +20,7 @@
 #include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <utility> // defines std::pair
@@ -252,9 +251,7 @@ int main(int argc, char * argv[])
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      std::ifstream stream(input_filename.c_str());
-      success = stream &&
-          CGAL::read_OFF(stream,
+      success = CGAL::read_points(input_filename.c_str(),
                          std::back_inserter(points),
                          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
@@ -262,9 +259,7 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
-      std::ifstream stream(input_filename.c_str());
-      success = stream &&
-                CGAL::read_XYZ(stream,
+      success = CGAL::read_points(input_filename.c_str(),
                                       std::back_inserter(points),
                                       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }

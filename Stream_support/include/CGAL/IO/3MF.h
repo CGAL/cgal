@@ -475,7 +475,7 @@ bool write_triangle_soups_to_3mf(const std::string& fname,
 }
 
 // convenience
-template<typename PointRanges, typename PolygonRanges>
+template<typename PointRange, typename PolygonRange>
 bool write_triangle_soup_to_3mf(const std::string& fname,
                                 const PointRange& points,
                                 const PolygonRange& polygons,
@@ -488,7 +488,7 @@ bool write_triangle_soup_to_3mf(const std::string& fname,
   return write_triangle_soups_to_3mf(fname, all_points, all_polygons, names);
 }
 
-template<typename PointRanges, typename PolygonRanges>
+template<typename PointRange, typename PolygonRange>
 bool write_3MF(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons)

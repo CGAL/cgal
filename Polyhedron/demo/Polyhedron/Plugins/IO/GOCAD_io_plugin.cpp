@@ -57,7 +57,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
     ok = false;
     return QList<Scene_item*>();
   }
-
+  in.close();
 
   CGAL::Timer t;
   t.start();

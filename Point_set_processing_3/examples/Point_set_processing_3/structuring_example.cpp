@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/property_map.h>
 
@@ -30,10 +30,8 @@ int main (int argc, char** argv)
   Pwn_vector points;
 
   // Loading point set from a file.
-  std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
-  if (!stream ||
-    !CGAL::read_XYZ(stream,
+  if (!CGAL::read_points((argc>1 ? argv[1] : "data/cube.pwn"),
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map())))

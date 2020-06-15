@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/compute_average_spacing.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <vector>
 #include <fstream>
@@ -26,10 +26,8 @@ int main(int argc, char*argv[])
     // we use a property map that accesses the 1st element of the tuple.
 
     std::vector<IndexedPointWithColorTuple> points;
-    std::ifstream stream(fname);
-    if (!stream ||
-        !CGAL::read_XYZ(
-          stream, std::back_inserter(points),
+    if (!CGAL::read_points(
+          fname, std::back_inserter(points),
           CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;

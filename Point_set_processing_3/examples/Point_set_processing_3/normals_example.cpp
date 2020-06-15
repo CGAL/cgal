@@ -3,7 +3,7 @@
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <utility> // defines std::pair
 #include <list>
@@ -25,9 +25,7 @@ int main(int argc, char*argv[])
   const char* fname = (argc>1)?argv[1]:"data/sphere_1k.xyz";
     // Reads a .xyz point set file in points[].
     std::list<PointVectorPair> points;
-    std::ifstream stream(fname);
-    if (!stream ||
-        !CGAL::read_XYZ(stream,
+    if (!CGAL::read_points(fname,
                         std::back_inserter(points),
                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {

@@ -14,12 +14,12 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  std::ifstream f (argc > 1 ? argv[1] : "data/oni.xyz");
+  const char* fname (argc > 1 ? argv[1] : "data/oni.xyz");
 
   Point_set point_set;
 
   // Reading input in XYZ format
-  if (!f || !CGAL::read_XYZ(f, point_set))
+  if (!CGAL::read_point_set(fname, point_set))
     {
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;
