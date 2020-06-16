@@ -170,7 +170,7 @@ private:
   OutputBuilder& output_builder;
   EdgeMarkMapBind marks_on_edges;
   bool input_with_coplanar_faces;
-  bool refine_tm2;
+  TriangleMesh* const_mesh_ptr;
 
   template <class Ecm1, class Ecm2>
   void call_put(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
@@ -201,13 +201,13 @@ private:
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
-    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm, bool refine_tm2=true)
+    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm, TriangleMesh* const_mesh_ptr=nullptr)
     : number_coplanar_vertices(0)
     , user_visitor(uv)
     , output_builder(o)
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
-    , refine_tm2(refine_tm2)
+    , const_mesh_ptr(const_mesh_ptr)
   {}
 
   template<class Graph_node>
@@ -334,33 +334,36 @@ public:
 
     //forward to the visitor
 //    user_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar); // NODE_VISITOR_TAG
-    switch(type)
-    {
-      case ON_FACE: //Face intersected by an edge
-        on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
-      break;
-      case ON_EDGE: //Edge intersected by an edge
+    if (tm2_ptr!=const_mesh_ptr)
+      switch(type)
       {
-        on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
-      //   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+	case ON_FACE: //Face intersected by an edge
+	  on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
+	break;
+	case ON_EDGE: //Edge intersected by an edge
+	{
+	  on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
+	//   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+	}
+	break;
+	case ON_VERTEX:
+	{
+	  //grab original vertex that is on commom intersection
+	  mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
+	  Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
+	  if (node_id_to_vertex.size()<=node_id)
+	    node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
+	  node_id_to_vertex[node_id]=target(h_2,tm2);
+	  all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
+	//   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
+	  output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
+	}
+	break;
+	default:
+	return;
       }
-      break;
-      case ON_VERTEX:
-      {
-        //grab original vertex that is on commom intersection
-        mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
-        Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
-        if (node_id_to_vertex.size()<=node_id)
-          node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-        node_id_to_vertex[node_id]=target(h_2,tm2);
-        all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
-      //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
-        output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
-      }
-      break;
-      default:
-      return;
-    }
+
+    if (tm1_ptr==const_mesh_ptr) return;
 
     CGAL_assertion(!is_target_coplanar || !is_source_coplanar); //coplanar edge are not forwarded
 
@@ -626,7 +629,7 @@ public:
           ++it)
     {
       TriangleMesh& tm=*it->first;
-      if (!refine_tm2 && tm2_ptr==&tm) continue;
+      CGAL_assertion(&tm!=const_mesh_ptr);
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;
@@ -696,7 +699,7 @@ public:
       it=on_edge.begin(); it!=on_edge.end(); ++it)
     {
       TriangleMesh& tm=*it->first;
-      if (!refine_tm2 && tm2_ptr==&tm) continue;
+      CGAL_assertion(&tm!=const_mesh_ptr);
       const VertexPointMap& vpm=vpms[&tm];
       On_edge_map& on_edge_map=it->second;
       On_face_map& on_face_map=on_face[&tm];
@@ -792,7 +795,7 @@ public:
       it=on_face.begin(); it!=on_face.end(); ++it)
     {
       TriangleMesh& tm=*it->first;
-      if (!refine_tm2 && tm2_ptr==&tm) continue;
+      CGAL_assertion(&tm!=const_mesh_ptr);
       const VertexPointMap& vpm=vpms[&tm];
       On_face_map& on_face_map=it->second;
       Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
