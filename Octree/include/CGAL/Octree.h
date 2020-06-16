@@ -104,7 +104,8 @@ namespace CGAL {
             const FT enlarge_ratio = 1.2) :
             m_ranges(pwn),
             m_points_map(point_map) {
-      // compute bbox
+
+      // compute bounding box that encloses all points
       Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
                                                    (m_ranges.begin(),
                                                     CGAL::Property_map_to_unary_function<PointMap>(
@@ -114,12 +115,13 @@ namespace CGAL {
                                                     CGAL::Property_map_to_unary_function<PointMap>(
                                                             m_points_map)));
 
+      // Find the center point of the box
       Point bbox_centroid = midpoint(bbox.min(), bbox.max());
 
-      // scale bbox
+      // scale bounding box to add padding
       bbox = bbox.transform(Aff_transformation_3<Kernel>(SCALING, enlarge_ratio));
 
-      // use isotrope bbox
+      // Convert the bounding box into a cube
       FT x_len = bbox.xmax() - bbox.xmin();
       FT y_len = bbox.ymax() - bbox.ymin();
       FT z_len = bbox.zmax() - bbox.zmin();
@@ -127,12 +129,13 @@ namespace CGAL {
       max_len = (max_len < z_len) ? z_len : max_len;
       bbox = Iso_cuboid(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
 
-      // translate bbox back to initial centroid
+      // Shift the squared box to make sure it's centered in the original place
       Point bbox_transformed_centroid = midpoint(bbox.min(), bbox.max());
       Vector diff_centroid = bbox_centroid - bbox_transformed_centroid;
       bbox = bbox.transform(Aff_transformation_3<Kernel>(TRANSLATION, diff_centroid));
 
       // save octree attributes
+      // TODO: can we just save the whole box?
       m_bbox_min = bbox.min();
       m_bbox_side = bbox.max()[0] - m_bbox_min[0];
       for (InputIterator it = pwn.begin(); it != pwn.end(); it++)
@@ -232,8 +235,7 @@ namespace CGAL {
         // Get the child node using that code, and add the point
         node->child(child_id)->add_point(pwn_it);
 
-        // Edge cases get special treatment when selecting an octant
-        // TODO: Why is this?
+        // Edge cases get special treatment to prevent extremely deep trees
 
         if (equal_right) {
           int sym_child_id = (is_front << 2) | (is_up << 1) | (!is_right);
