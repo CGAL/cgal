@@ -47,56 +47,6 @@
 
 namespace CGAL {
 
-  struct IntPoint_3 {
-    uint32_t m_coords[3] = {0, 0, 0};
-
-    IntPoint_3() {}
-
-    IntPoint_3(int x, int y, int z) {
-      m_coords[0] = x;
-      m_coords[1] = y;
-      m_coords[2] = z;
-    }
-
-    uint32_t &x() { return m_coords[0]; }
-
-    const uint32_t &x() const { return m_coords[0]; }
-
-    uint32_t &y() { return m_coords[1]; }
-
-    const uint32_t &y() const { return m_coords[1]; }
-
-    uint32_t &z() { return m_coords[2]; }
-
-    const uint32_t &z() const { return m_coords[2]; }
-
-    uint32_t &operator[](int i) {
-      assert(!(i < 0 || i > 2));
-      return m_coords[i];
-    }
-
-    const uint32_t &operator[](int i) const {
-      assert(i < 0 || i > 2);
-      return m_coords[i];
-    }
-
-    bool operator==(const IntPoint_3 &other) const {
-      return m_coords[0] == other.x() &&
-             m_coords[1] == other.y() &&
-             m_coords[2] == other.z();
-    }
-
-    bool operator<(const IntPoint_3 &other) const {
-      if (x() != other.x()) {
-        return (x() < other.x());
-      }
-      if (y() != other.y()) {
-        return (y() < other.y());
-      }
-      return (z() < other.z());
-    }
-  };
-
   template<class Kernel,
           class PointRange>
   class Octree_node {

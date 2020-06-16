@@ -54,20 +54,6 @@
 
 namespace CGAL {
 
-  struct HashIntPoint_3 {
-    uint64_t operator()(const IntPoint_3 &pt) const {
-      return ((std::hash<uint64_t>()(static_cast<uint64_t>(pt.x())) ^
-               (std::hash<uint64_t>()(static_cast<uint64_t>(pt.y())) << 1)) >> 1)
-             ^ (std::hash<uint64_t>()(static_cast<uint64_t>(pt.z())) << 1);
-    }
-  };
-
-  enum DebugOctreeVisuType {
-    SHOW_ALL_LEAFS = 0,
-    SHOW_NON_EMPTY_LEAFS = 1,
-    SHOW_NON_EMPTY_NODES = 2
-  };
-
   template<class Kernel,
           class PointRange,
           class PointMap,
@@ -77,7 +63,6 @@ namespace CGAL {
     typedef Octree_node<Kernel, PointRange> Node;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
-    typedef IntPoint_3 IntPoint;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
     typedef typename PointRange::const_iterator InputIterator;
