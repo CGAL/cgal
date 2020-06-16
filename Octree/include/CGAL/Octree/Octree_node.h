@@ -104,11 +104,11 @@ namespace CGAL {
     typedef Octree_node<Kernel, PointRange> Node;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
-    typedef IntPoint_3 IntPoint;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename PointRange::const_iterator InputIterator;
     typedef typename std::list<InputIterator> IterList;
 
+    typedef std::array<uint32_t, 3> IntPoint;
     typedef std::array<Node, 8> ChildList;
 
   private: // members :
@@ -125,7 +125,7 @@ namespace CGAL {
     Octree_node() :
             //m_children(NULL),
             m_parent(NULL),
-            m_location(IntPoint(0, 0, 0)),
+            m_location(IntPoint{0, 0, 0}),
             m_depth(0) {}
 
     ~Octree_node() {
