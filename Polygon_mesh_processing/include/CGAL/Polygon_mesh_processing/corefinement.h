@@ -626,6 +626,9 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
  *      will be thrown if at least one is found (`np1` only).
  *   \cgalParamEnd
+ *   \cgalParamBegin{do_not_modify} if `true`, the corresponding mesh will not be updated. The default value is `false`.
+ *                                  Obviously if this parameter is set to `true` for both meshes nothing will be done.
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -641,8 +644,18 @@ corefine(      TriangleMesh& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
+  {
+    if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
+      return;
+    return corefine(tm2,tm1, np2, np1);
+  }
+
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
+
+  const bool modify_tm2 =
+    !choose_parameter(get_parameter(np2, internal_np::do_not_modify), false);
 
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh,
@@ -700,7 +713,7 @@ corefine(      TriangleMesh& tm1,
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,modify_tm2));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 

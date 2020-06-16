@@ -170,6 +170,7 @@ private:
   OutputBuilder& output_builder;
   EdgeMarkMapBind marks_on_edges;
   bool input_with_coplanar_faces;
+  bool refine_tm2;
 
   template <class Ecm1, class Ecm2>
   void call_put(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
@@ -200,12 +201,13 @@ private:
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
-    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm)
+    UserVisitor& uv, OutputBuilder& o, const EdgeMarkMapBind& emm, bool refine_tm2=true)
     : number_coplanar_vertices(0)
     , user_visitor(uv)
     , output_builder(o)
     , marks_on_edges(emm)
     , input_with_coplanar_faces(false)
+    , refine_tm2(refine_tm2)
   {}
 
   template<class Graph_node>
@@ -624,6 +626,7 @@ public:
           ++it)
     {
       TriangleMesh& tm=*it->first;
+      if (!refine_tm2 && tm2_ptr==&tm) continue;
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;
@@ -693,6 +696,7 @@ public:
       it=on_edge.begin(); it!=on_edge.end(); ++it)
     {
       TriangleMesh& tm=*it->first;
+      if (!refine_tm2 && tm2_ptr==&tm) continue;
       const VertexPointMap& vpm=vpms[&tm];
       On_edge_map& on_edge_map=it->second;
       On_face_map& on_face_map=on_face[&tm];
@@ -788,6 +792,7 @@ public:
       it=on_face.begin(); it!=on_face.end(); ++it)
     {
       TriangleMesh& tm=*it->first;
+      if (!refine_tm2 && tm2_ptr==&tm) continue;
       const VertexPointMap& vpm=vpms[&tm];
       On_face_map& on_face_map=it->second;
       Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
