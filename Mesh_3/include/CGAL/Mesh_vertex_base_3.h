@@ -92,9 +92,9 @@ protected:
 // Adds information to Vb about the localization of the vertex in regards
 // to the 3D input complex.
 template<class GT,
-         class MD,
+         class Index_,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
-class Mesh_vertex_base_3
+class Mesh_vertex_3
 : public Vb,
   public Mesh_vertex_base_3_base<
     typename Vb::Triangulation_data_structure::Concurrency_tag>
@@ -103,19 +103,12 @@ public:
   typedef Vb Cmvb3_base;
   typedef typename Vb::Vertex_handle  Vertex_handle;
 
-  // To get correct vertex type in TDS
-  template < class TDS3 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Mesh_vertex_base_3 <GT, MD, Vb3> Other;
-  };
-
   // Types
-  typedef typename MD::Index                      Index;
-  typedef typename GT::FT                         FT;
+  typedef Index_                      Index;
+  typedef typename GT::FT             FT;
 
   // Constructor
-  Mesh_vertex_base_3()
+  Mesh_vertex_3()
     : Vb()
     , number_of_incident_facets_(0)
     , number_of_components_(0)
@@ -248,56 +241,72 @@ private:
   Vertex_handle previous_intrusive_;
 #endif
   std::size_t time_stamp_;
+public:
 
-};  // end class Mesh_vertex_base_3
+  friend std::istream& operator>>(std::istream &is, Mesh_vertex_3& v)
+  {
+    is >> static_cast<Cmvb3_base&>(v);
+    int dimension;
+    if(is_ascii(is)) {
+      is >> dimension;
+
+    } else {
+      CGAL::read(is, dimension);
+    }
+    v.set_dimension(dimension);
+    CGAL_assertion(v.in_dimension() >= -1);
+    CGAL_assertion(v.in_dimension() < 4);
+    Index index =
+      Mesh_3::internal::Read_write_index<Index>()(is, v.in_dimension());
+    v.set_index(index);
+    return is;
+  }
+
+  friend std::ostream& operator<<(std::ostream &os, const Mesh_vertex_3& v)
+  {
+    os << static_cast<const Cmvb3_base&>(v);
+    if(is_ascii(os)) {
+      os << " " << v.in_dimension()
+         << " ";
+    } else {
+      CGAL::write(os, v.in_dimension());
+    }
+    Mesh_3::internal::Read_write_index<Index>()(os,
+                                                v.in_dimension(),
+                                                v.index());
+    return os;
+  }
+};  // end class Mesh_vertex_3
 
 template<class GT,
          class MD,
-         class Vb>
-inline
-std::istream&
-operator>>(std::istream &is, Mesh_vertex_base_3<GT,MD,Vb>& v)
-{
-  typedef Mesh_vertex_base_3<GT,MD,Vb> Vertex;
-  typedef typename Vertex::Cmvb3_base Cmvb3_base;
-  is >> static_cast<Cmvb3_base&>(v);
-  int dimension;
-  if(is_ascii(is)) {
-    is >> dimension;
+         class Vb = Regular_triangulation_vertex_base_3<GT> >
+struct Mesh_vertex_base_3 {
+  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
+  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
+  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
 
-  } else {
-    CGAL::read(is, dimension);
-  }
-  v.set_dimension(dimension);
-  CGAL_assertion(v.in_dimension() >= -1);
-  CGAL_assertion(v.in_dimension() < 4);
-  typename Vertex::Index index =
-    Mesh_3::internal::Read_mesh_domain_index<MD>()(v.in_dimension(), is);
-  v.set_index(index);
-  return is;
-}
+  template < class TDS3 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
+    typedef Mesh_vertex_3 <GT, typename MD::Index, Vb3> Other;
+  };
+};
 
 template<class GT,
-         class MD,
-         class Vb>
-inline
-std::ostream&
-operator<<(std::ostream &os, const Mesh_vertex_base_3<GT,MD,Vb>& v)
-{
-  typedef Mesh_vertex_base_3<GT,MD,Vb> Vertex;
-  typedef typename Vertex::Cmvb3_base Cmvb3_base;
-  os << static_cast<const Cmvb3_base&>(v);
-  if(is_ascii(os)) {
-    os << " " << v.in_dimension()
-       << " ";
-  } else {
-    CGAL::write(os, v.in_dimension());
-  }
-  Mesh_3::internal::Write_mesh_domain_index<MD>()(os,
-                                                  v.in_dimension(),
-                                                  v.index());
-  return os;
-}
+         class Index,
+         class Vb = Regular_triangulation_vertex_base_3<GT> >
+struct Mesh_vertex_generator_3 {
+  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
+  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
+  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
+
+  template < class TDS3 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
+    typedef Mesh_vertex_3 <GT, Index, Vb3> Other;
+  };
+};
 
 }  // end namespace CGAL
 

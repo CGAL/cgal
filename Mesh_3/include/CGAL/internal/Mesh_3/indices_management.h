@@ -23,7 +23,9 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/variant.hpp>
+#include <boost/variant/variant.hpp>
+#include <boost/variant/get.hpp>
+#include <boost/variant/apply_visitor.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/IO/io.h>
 
@@ -244,6 +246,57 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
   }
 }; // end template partial specialization
    // Write_mesh_domain_index<Mesh_domain, false>
+
+template <typename Index>
+struct Read_write_index {
+  void operator()(std::ostream& os, int, Index index) const {
+    if(is_ascii(os)) os << oformat(index);
+    else CGAL::write(os, index);
+  }
+  Index operator()(std::istream& is, int) const {
+    Index index;
+    if(is_ascii(is)) is >> iformat(index);
+    else CGAL::read(is, index);
+    return index;
+  }
+};
+
+struct Variant_write_visitor {
+  std::ostream& os;
+  template <typename T>
+  void operator()(T v) const {
+    if(is_ascii(os)) os << CGAL::oformat(v);
+    else CGAL::write(os, v);
+  }
+};
+
+template <typename... Args>
+struct Variant_read_visitor {
+  std::istream& is;
+  boost::variant<Args...>& variant;
+  template <typename T>
+  void operator()(T) const {
+    T v;
+    if(is_ascii(is)) is >> CGAL::iformat(v);
+    else CGAL::read(is, v);
+    variant = v;
+  }
+};
+template <typename... Args>
+struct Read_write_index<boost::variant<Args...>> {
+  using Index = boost::variant<Args...>;
+  void operator()(std::ostream& os, int, Index index) const {
+    Variant_write_visitor visitor{os};
+    apply_visitor(visitor, index);
+  }
+  Index operator()(std::istream& is, int dimension) const {
+    static const Index variants[] = { Args{}... };
+    Index index  = variants[dimension];
+    Variant_read_visitor<Args...> visitor{is, index};
+    apply_visitor(visitor, index);
+    return index;
+  }
+};
 
 } // end namespace internal
 } // end namespace Mesh_3
