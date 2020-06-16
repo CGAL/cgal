@@ -114,7 +114,6 @@ namespace CGAL {
     }
 
     Node *parent() { return m_parent; }
-
     const Node *parent() const { return m_parent; }
 
     void set_parent(Node *parent) { m_parent = parent; }
