@@ -1335,6 +1335,14 @@ bool remove_self_intersections_with_hole_filling(std::vector<typename boost::gra
   out.close();
 #endif
 
+  if(!is_simple_3(cc_border_hedges, tmesh, vpm, gt))
+  {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+    std::cout << "Hole filling cannot handle non-simple border" << std::endl;
+#endif
+    return false;
+  }
+
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTIONS_NO_CONSTRAINTS_IN_HOLE_FILLING
   // Do not try to impose sharp edge constraints if we are not doing local-only self intersections removal
   local_self_intersection_removal = false;
