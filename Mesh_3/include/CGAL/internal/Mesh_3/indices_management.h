@@ -29,6 +29,8 @@
 #include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/IO/io.h>
 
+#include <tuple>
+
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
@@ -50,6 +52,26 @@ struct Index_generator<T, T>
   typedef T       Index;
   typedef Index   type;
 };
+
+template <typename MD, bool has_feature = Has_features<MD>::value>
+struct Indices_tuple_generator
+{
+  using type = std::tuple<typename MD::Subdomain_index,
+                          typename MD::Surface_patch_index,
+                          typename MD::Curve_index,
+                          typename MD::Corner_index
+                          >;
+};
+
+template <typename MD>
+struct Indices_tuple_generator<MD, false>
+{
+  using type = std::tuple<typename MD::Subdomain_index,
+                          typename MD::Surface_patch_index>;
+};
+
+template <typename MD>
+using Indices_tuple_t = typename Indices_tuple_generator<MD>::type;
 
 // Nasty meta-programming to get a boost::variant of four types that
 // may not be all different.
@@ -247,7 +269,7 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
 }; // end template partial specialization
    // Write_mesh_domain_index<Mesh_domain, false>
 
-template <typename Index>
+template <typename, typename Index>
 struct Read_write_index {
   void operator()(std::ostream& os, int, Index index) const {
     if(is_ascii(os)) os << oformat(index);
@@ -270,10 +292,10 @@ struct Variant_write_visitor {
   }
 };
 
-template <typename... Args>
+template <typename Index>
 struct Variant_read_visitor {
   std::istream& is;
-  boost::variant<Args...>& variant;
+  Index& variant;
   template <typename T>
   void operator()(T) const {
     T v;
@@ -282,17 +304,25 @@ struct Variant_read_visitor {
     variant = v;
   }
 };
-template <typename... Args>
-struct Read_write_index<boost::variant<Args...>> {
+
+template <typename Indices_types, typename... Args>
+struct Read_write_index<Indices_types, boost::variant<Args...>> {
   using Index = boost::variant<Args...>;
+  using index_seq = std::make_index_sequence<sizeof...(Args)>;
+
+  template <std::size_t... Is>
+  Index get_index(int dimension, std::index_sequence<Is...>) const{
+    static const Index variants[] = { std::tuple_element_t<Is, Indices_types>{}... };
+    return variants[3-dimension];
+  }
+
   void operator()(std::ostream& os, int, Index index) const {
     Variant_write_visitor visitor{os};
     apply_visitor(visitor, index);
   }
   Index operator()(std::istream& is, int dimension) const {
-    static const Index variants[] = { Args{}... };
-    Index index  = variants[dimension];
-    Variant_read_visitor<Args...> visitor{is, index};
+    Index index = get_index(dimension, index_seq{});
+    Variant_read_visitor<Index> visitor{is, index};
     apply_visitor(visitor, index);
     return index;
   }

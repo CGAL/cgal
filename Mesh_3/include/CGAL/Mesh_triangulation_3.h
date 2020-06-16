@@ -131,26 +131,29 @@ template<class MD, class K_, class Concurrency_tag,
 struct Mesh_triangulation_3
 {
 private:
-  typedef typename Default::Lazy_get<K_, Kernel_traits<MD> >::type K;
+  using K = typename Default::Lazy_get<K_, Kernel_traits<MD> >::type;
 
-  typedef typename details::Mesh_geom_traits_generator<K>::type      Geom_traits;
+  using Geom_traits = typename details::Mesh_geom_traits_generator<K>::type;
 
-  typedef typename Default::Get<
+  using Indices_tuple = Mesh_3::internal::Indices_tuple_t<MD>;
+  using Vertex_base = typename Default::Get<
     Vertex_base_,
-    Mesh_vertex_generator_3<Geom_traits, typename MD::Index> >::type Vertex_base;
-  typedef typename Default::Get<
+    Mesh_vertex_generator_3<Geom_traits,
+                            Indices_tuple,
+                            typename MD::Index> >::type;
+  using Cell_base = typename Default::Get<
     Cell_base_,
     Compact_mesh_cell_generator_3<Geom_traits,
                                   typename MD::Subdomain_index,
                                   typename MD::Surface_patch_index,
-                                  typename MD::Index> >::type        Cell_base;
+                                  typename MD::Index> >::type;
 
   struct Tds : public Triangulation_data_structure_3<Vertex_base,Cell_base> {};
-  typedef Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds> Triangulation;
+  using Triangulation = Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;;
 
 public:
-  typedef Triangulation type;
-  typedef type Type;
+  using type = Triangulation;
+  using Type = type;;
 };  // end struct Mesh_triangulation_3
 }  // end namespace CGAL
 

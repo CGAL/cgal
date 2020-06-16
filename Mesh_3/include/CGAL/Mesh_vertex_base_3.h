@@ -24,7 +24,7 @@
 
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
-#include <CGAL/internal/Mesh_3/get_index.h>
+#include <CGAL/internal/Mesh_3/indices_management.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
@@ -92,8 +92,9 @@ protected:
 // Adds information to Vb about the localization of the vertex in regards
 // to the 3D input complex.
 template<class GT,
+         class Indices_tuple,
          class Index_,
-         class Vb = Regular_triangulation_vertex_base_3<GT> >
+         class Vb>
 class Mesh_vertex_3
 : public Vb,
   public Mesh_vertex_base_3_base<
@@ -257,7 +258,8 @@ public:
     CGAL_assertion(v.in_dimension() >= -1);
     CGAL_assertion(v.in_dimension() < 4);
     Index index =
-      Mesh_3::internal::Read_write_index<Index>()(is, v.in_dimension());
+      Mesh_3::internal::Read_write_index<Indices_tuple,
+                                         Index>()(is, v.in_dimension());
     v.set_index(index);
     return is;
   }
@@ -271,7 +273,8 @@ public:
     } else {
       CGAL::write(os, v.in_dimension());
     }
-    Mesh_3::internal::Read_write_index<Index>()(os,
+    Mesh_3::internal::Read_write_index<Indices_tuple,
+                                       Index>()(os,
                                                 v.in_dimension(),
                                                 v.index());
     return os;
@@ -282,29 +285,32 @@ template<class GT,
          class MD,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
 struct Mesh_vertex_base_3 {
-  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
+  using Triangulation_data_structure = internal::Dummy_tds_3;
+  using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
+  using Cell_handle = typename Triangulation_data_structure::Cell_handle;
 
   template < class TDS3 >
   struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Mesh_vertex_3 <GT, typename MD::Index, Vb3> Other;
+    using Vb3 = typename Vb::template Rebind_TDS<TDS3>::Other;
+    using Other = Mesh_vertex_3 <GT,
+                                 Mesh_3::internal::Indices_tuple_t<MD>,
+                                 typename MD::Index, Vb3>;
   };
 };
 
 template<class GT,
+         class Indices_tuple,
          class Index,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
 struct Mesh_vertex_generator_3 {
-  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
+  using Triangulation_data_structure = internal::Dummy_tds_3;
+  using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
+  using Cell_handle = typename Triangulation_data_structure::Cell_handle;
 
   template < class TDS3 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Mesh_vertex_3 <GT, Index, Vb3> Other;
+    typedef Mesh_vertex_3 <GT, Indices_tuple, Index, Vb3> Other;
   };
 };
 
