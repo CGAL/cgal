@@ -24,7 +24,7 @@ void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &nod
   // Print out this node's children
   if (!node.is_leaf()) {
     for (int i = 0; i < 8; ++i) {
-      writeToStream(os, (*node.children())[i], depth + 1);
+      writeToStream(os, *node.child(i), depth + 1);
     }
   }
 }

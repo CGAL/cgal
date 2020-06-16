@@ -106,10 +106,6 @@ namespace CGAL {
 
     bool is_leaf() const { return (m_children == NULL); }
 
-    Node *children() { return m_children; }
-
-    const ChildList *children() const { return m_children.get(); }
-
     Node *child(const unsigned int index) const {
       if (m_children == NULL || index > 7)
         return NULL;
