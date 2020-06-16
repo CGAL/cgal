@@ -337,30 +337,30 @@ public:
     if (tm2_ptr!=const_mesh_ptr)
       switch(type)
       {
-	case ON_FACE: //Face intersected by an edge
-	  on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
-	break;
-	case ON_EDGE: //Edge intersected by an edge
-	{
-	  on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
-	//   check_node_on_non_manifold_edge(node_id,h_2,tm2);
-	}
-	break;
-	case ON_VERTEX:
-	{
-	  //grab original vertex that is on commom intersection
-	  mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
-	  Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
-	  if (node_id_to_vertex.size()<=node_id)
-	    node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-	  node_id_to_vertex[node_id]=target(h_2,tm2);
-	  all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
-	//   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
-	  output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
-	}
-	break;
-	default:
-	return;
+        case ON_FACE: //Face intersected by an edge
+          on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
+        break;
+        case ON_EDGE: //Edge intersected by an edge
+        {
+          on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
+        //   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+        }
+        break;
+        case ON_VERTEX:
+        {
+          //grab original vertex that is on commom intersection
+          mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
+          Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
+          if (node_id_to_vertex.size()<=node_id)
+            node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
+          node_id_to_vertex[node_id]=target(h_2,tm2);
+          all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
+        //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
+          output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
+        }
+        break;
+        default:
+        return;
       }
 
     if (tm1_ptr==const_mesh_ptr) return;
