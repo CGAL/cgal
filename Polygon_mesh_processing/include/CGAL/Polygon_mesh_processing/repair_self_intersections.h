@@ -30,6 +30,7 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/box_intersection_d.h>
 #include <CGAL/utility.h>
 
 #include <array>
@@ -1223,6 +1224,94 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     working_face_range.erase(f);
 
   working_face_range.insert(new_faces.begin(), new_faces.end());
+
+  return true;
+}
+
+template <class Box, class TM, class VPM, class GT, class OutputIterator>
+struct Strict_intersect_edges // "strict" as in "not sharing a vertex"
+{
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor               halfedge_descriptor;
+  typedef typename GT::Segment_3                                              Segment;
+
+  mutable OutputIterator m_iterator;
+  const TM& m_tmesh;
+  const VPM m_vpmap;
+
+  typename GT::Construct_segment_3 m_construct_segment;
+  typename GT::Do_intersect_3 m_do_intersect;
+
+  Strict_intersect_edges(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
+    :
+      m_iterator(it),
+      m_tmesh(tmesh),
+      m_vpmap(vpmap),
+      m_construct_segment(gt.construct_segment_3_object()),
+      m_do_intersect(gt.do_intersect_3_object())
+  {}
+
+  void operator()(const Box* b, const Box* c) const
+  {
+    const halfedge_descriptor h = b->info();
+    const halfedge_descriptor g = c->info();
+
+    if(source(h, m_tmesh) == target(g, m_tmesh) || target(h, m_tmesh) == source(g, m_tmesh))
+      return;
+
+    const Segment s1 = m_construct_segment(get(m_vpmap, source(h, m_tmesh)), get(m_vpmap, target(h, m_tmesh)));
+    const Segment s2 = m_construct_segment(get(m_vpmap, source(g, m_tmesh)), get(m_vpmap, target(g, m_tmesh)));
+
+    if(m_do_intersect(s1, s2))
+      *m_iterator++ = std::make_pair(b->info(), c->info());
+  }
+};
+
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+bool is_simple_3(const std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
+                 const TriangleMesh& tmesh,
+                 VertexPointMap vpm,
+                 const GeomTraits& gt)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor                       halfedge_descriptor;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference                            Point_ref;
+
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS                                         Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
+
+  std::vector<Box> boxes;
+  boxes.reserve(cc_border_hedges.size());
+
+  for(halfedge_descriptor h : cc_border_hedges)
+  {
+    const Point_ref p = get(vpm, source(h, tmesh));
+    const Point_ref q = get(vpm, target(h, tmesh));
+    CGAL_assertion(!gt.equal_3_object()(p, q));
+
+    boxes.emplace_back(p.bbox() + q.bbox(), h);
+  }
+
+  // generate box pointers
+  std::vector<const Box*> box_ptr;
+  box_ptr.reserve(boxes.size());
+
+  for(Box& b : boxes)
+    box_ptr.push_back(&b);
+
+  typedef boost::function_output_iterator<CGAL::internal::Throw_at_output>          Throwing_output_iterator;
+  typedef internal::Strict_intersect_edges<Box, TriangleMesh, VertexPointMap,
+                                           GeomTraits, Throwing_output_iterator>    Throwing_filter;
+  Throwing_filter throwing_filter(tmesh, vpm, gt, Throwing_output_iterator());
+
+  try
+  {
+    const std::ptrdiff_t cutoff = 2000;
+    CGAL::box_self_intersection_d<Parallel_if_available_tag>(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
+  }
+  catch(CGAL::internal::Throw_at_output_exception&)
+  {
+    return false;
+  }
 
   return true;
 }
