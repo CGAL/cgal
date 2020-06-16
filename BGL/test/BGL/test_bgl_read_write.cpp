@@ -24,15 +24,12 @@
 
 
 typedef CGAL::Simple_cartesian<double>                                                   Kernel;
-typedef Kernel::Point_2                                                                  Point_2;
-typedef Kernel::Point_3                                                                  Point;
-typedef Kernel::Vector_3                                                                 Vector;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                              EPICK;
 
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>                     Polyhedron;
 
-typedef CGAL::Surface_mesh<Point>                                                        SM;
+typedef CGAL::Surface_mesh<Kernel::Point_3>                                              SM;
 
 typedef CGAL::Linear_cell_complex_traits<3, Kernel>                                      MyTraits;
 typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, MyTraits>::type LCC;
@@ -115,7 +112,7 @@ bool are_equal_meshes(const Mesh& fg1, const Mesh& fg2)
   return are_equal_meshes(fg1, get(CGAL::vertex_point, fg1), fg2, get(CGAL::vertex_point, fg2), vim1, vim2);
 }
 
-template<typename Mesh>
+template<typename Mesh, typename K>
 void test_bgl_OFF(const char* filename)
 {
   // read with OFF
@@ -148,7 +145,10 @@ void test_bgl_OFF(const char* filename)
     assert(are_equal_meshes(fg, fg2));
   }
 
+
   // Test [STCN]OFF
+  typedef typename K::Point_2                                                                Point_2;
+  typedef typename K::Vector_3                                                               Vector;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::Color> >::type VertexColorMap;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Point_2> >::type VertexTextureMap;
@@ -156,7 +156,7 @@ void test_bgl_OFF(const char* filename)
 
   // COFF
   {
-    clear(fg);
+    CGAL::clear(fg);
     VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
     FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
 
@@ -212,7 +212,7 @@ void test_bgl_OFF(const char* filename)
 
   // NOFF
   {
-    clear(fg);
+    CGAL::clear(fg);
     VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
 
     ok = CGAL::read_OFF("data/mesh_with_normals.off", fg, CGAL::parameters::vertex_normal_map(vnm));
@@ -257,7 +257,7 @@ void test_bgl_OFF(const char* filename)
 
   // STCNOFF
   {
-    clear(fg);
+    CGAL::clear(fg);
     std::ifstream is("data/full.off");
 
     VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
@@ -366,7 +366,7 @@ void test_bgl_OFF(const char* filename)
   std::cerr<<"No more error text from here."<<std::endl;
 }
 
-template<typename Mesh>
+template<typename Mesh, typename K>
 void test_bgl_OBJ(const std::string filename)
 {
   Mesh fg;
@@ -399,9 +399,10 @@ void test_bgl_OBJ(const std::string filename)
     assert(are_equal_meshes(fg, fg2));
   }
   // Test NPs
+  typedef typename K::Vector_3                                                               Vector;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
 
-  clear(fg);
+  CGAL::clear(fg);
   ok = CGAL::read_OBJ("data/sphere.obj", fg);
   assert(ok);
   assert(num_vertices(fg) == 324 && num_faces(fg) == 640);
@@ -479,7 +480,7 @@ void test_bgl_PLY(const std::string filename,
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::Color> >::type VertexColorMap;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<CGAL::Color> >::type FaceColorMap;
 
-  clear(fg);
+  CGAL::clear(fg);
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
   FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
 
@@ -594,7 +595,7 @@ void test_bgl_STL(const std::string filename)
   ok = CGAL::write_STL("tmp.stl", fg);
   assert(ok);
 
-  clear(fg);
+  CGAL::clear(fg);
 
   std::map<typename boost::graph_traits<Mesh>::vertex_descriptor, EPICK::Point_3> cpoints;
   Custom_VPM<Mesh> cvpm(cpoints);
@@ -655,7 +656,7 @@ void test_bgl_GOCAD(const char* filename)
 
   is.seekg(0);
   fg.clear();
-  clear(fg);
+  CGAL::clear(fg);
   std::pair<std::string, std::string> name_and_color;
   ok = CGAL::read_GOCAD(is, name_and_color, fg);
   assert(ok);
@@ -723,7 +724,7 @@ void test_bgl_GOCAD(const char* filename)
 }
 
 #ifdef CGAL_USE_VTK
-template<typename Mesh>
+template<typename Mesh, typename K>
 void test_bgl_VTP(const char* filename, // @fixme not finished
                   const bool binary = false)
 {
@@ -761,9 +762,10 @@ void test_bgl_VTP(const char* filename, // @fixme not finished
   }
 
   // Test NPs
+  typedef typename K::Vector_3 Vector;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
 
-  clear(fg);
+  CGAL::clear(fg);
   VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
 
   ok = CGAL::read_VTP("data/bones.vtp", fg, CGAL::parameters::vertex_normal_map(vnm));
@@ -839,20 +841,19 @@ int main(int argc, char** argv)
 
   // OFF
   const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
-  test_bgl_OFF<Polyhedron>(off_file);
-  test_bgl_OFF<SM>(off_file);
-  test_bgl_OFF<LCC>(off_file);
+  test_bgl_OFF<Polyhedron, Kernel>(off_file);
+  test_bgl_OFF<SM, Kernel>(off_file);
+  test_bgl_OFF<LCC, Kernel>(off_file);
 #ifdef CGAL_USE_OPENMESH
-  test_bgl_OFF<OMesh>(off_file);
+  test_bgl_OFF<OMesh, EPICK>(off_file);
 #endif
-
   // OBJ
   const char* obj_file = (argc > 2) ? argv[2] : "data/sphere.obj";
-  test_bgl_OBJ<Polyhedron>(obj_file);
-  test_bgl_OBJ<SM>(obj_file);
-  test_bgl_OBJ<LCC>(obj_file);
+  test_bgl_OBJ<Polyhedron, Kernel>(obj_file);
+  test_bgl_OBJ<SM, Kernel>(obj_file);
+  test_bgl_OBJ<LCC, Kernel>(obj_file);
 #ifdef CGAL_USE_OPENMESH
-  test_bgl_OBJ<OMesh>(obj_file);
+  test_bgl_OBJ<OMesh, EPICK>(obj_file);
 #endif
 
   // PLY
@@ -886,13 +887,19 @@ int main(int argc, char** argv)
 #ifdef CGAL_USE_VTK
   const char* vtp_file = (argc > 6) ? argv[6] : "data/bones.vtp";
 
-  test_bgl_VTP<Polyhedron>(vtp_file, false);
-  test_bgl_VTP<SM>(vtp_file, false);
-  test_bgl_VTP<LCC>(vtp_file, false);
+  test_bgl_VTP<Polyhedron, Kernel>(vtp_file, false);
+  test_bgl_VTP<SM, Kernel>(vtp_file, false);
+  test_bgl_VTP<LCC, Kernel>(vtp_file, false);
 
-  test_bgl_VTP<Polyhedron>(vtp_file, true);
-  test_bgl_VTP<SM>(vtp_file, true);
-  test_bgl_VTP<LCC>(vtp_file, true);
+  test_bgl_VTP<Polyhedron, Kernel>(vtp_file, true);
+  test_bgl_VTP<SM, Kernel>(vtp_file, true);
+  test_bgl_VTP<LCC, Kernel>(vtp_file, true);
+
+#ifdef CGAL_USE_OPENMESH
+  test_bgl_VTP<OMesh, EPICK>(vtp_file, false);
+  test_bgl_VTP<OMesh, EPICK>(vtp_file, true);
 #endif
+#endif
+
   return EXIT_SUCCESS;
 }
