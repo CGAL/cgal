@@ -177,12 +177,13 @@ namespace CGAL {
 
       // Determine the location this node should be split
       // TODO: I think Point_3 has a [] operator, so using an array here might not be necessary!
+
       FT bary[3];
       for (int i = 0; i < 3; i++)
         bary[i] = node->location()[i] * size + (size / 2.0) + m_bbox_min[i];
 
       // Convert that location into a point
-      return Point(bary[0], bary[1], bary[2]);
+      return {bary[0], bary[1], bary[2]};
     }
 
     void refine_recurse(Node *node, size_t dist_to_max_depth, size_t max_pts_num) {
