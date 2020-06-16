@@ -63,6 +63,7 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+static int unsolved_self_intersections = 0;
 static int self_intersections_solved_by_constrained_smoothing = 0;
 static int self_intersections_solved_by_unconstrained_smoothing = 0;
 static int self_intersections_solved_by_constrained_hole_filling = 0;
@@ -1394,7 +1395,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
   std::set<face_descriptor> faces_to_remove_copy = faces_to_remove;
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::cout << "DEBUG: running remove_self_intersections_one_step, step " << step
+  std::cout << "##### running remove_self_intersections_one_step, step " << step
             << " with " << faces_to_remove.size() << " intersecting faces\n";
 #endif
 
@@ -1407,8 +1408,11 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::cout << "  DEBUG: is_valid in one_step(tmesh)? ";
   std::cout.flush();
-  std::cout << is_valid_polygon_mesh(tmesh) << "\n";
+
+  unsolved_self_intersections = 0;
 #endif
+
+  CGAL_precondition(is_valid_polygon_mesh(tmesh));
 
   while(!faces_to_remove.empty())
   {
@@ -1605,6 +1609,8 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       topology_issue = true;
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
       std::cout << "  DEBUG: CC not handled due to the presence at least one non-manifold vertex\n";
+
+      ++unsolved_self_intersections;
 #endif
 
       continue; // cannot replace a patch containing a nm vertex by a disk
@@ -1630,7 +1636,12 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     }
 
     if(cc_faces.size() == 1) // it is a triangle nothing better can be done
+    {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+     ++unsolved_self_intersections;
+#endif
       continue;
+    }
 
     working_face_range.insert(cc_faces.begin(), cc_faces.end());
 
@@ -1733,8 +1744,9 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       if(nb_cycles > (only_border_edges ? 1 : 0))
       {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-        std::cout << "  DEBUG: CC not handled due to the presence of  "
+        std::cout << "  DEBUG: CC not handled due to the presence of "
                   << nb_cycles << " of boundary edges\n";
+     ++unsolved_self_intersections;
 #endif
 
         topology_issue = true;
@@ -1746,6 +1758,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
           std::cout << "  DEBUG: CC not handled because it is not a topological disk (preserve_genus=true)\n";
+          ++unsolved_self_intersections;
 #endif
 
           all_fixed = false;
@@ -1781,6 +1794,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
           std::cout << "  DEBUG: CC not handled because it is not a topological disk("
                     << nbc << " boundary cycles)\n";
+          ++unsolved_self_intersections;
 #endif
 
           all_fixed = false;
@@ -1802,6 +1816,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
       std::cout << "  DEBUG: Failed to fill hole\n";
+      ++unsolved_self_intersections;
 #endif
 
       all_fixed = false;
@@ -1931,6 +1946,7 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::cout << "solved by unconstrained smoothing: " << internal::self_intersections_solved_by_unconstrained_smoothing << std::endl;
   std::cout << "solved by constrained hole-filling: " << internal::self_intersections_solved_by_constrained_hole_filling << std::endl;
   std::cout << "solved by unconstrained hole-filling: " << internal::self_intersections_solved_by_unconstrained_hole_filling << std::endl;
+  std::cout << "unsolved: " << internal::unsolved_self_intersections << std::endl;
 #endif
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
