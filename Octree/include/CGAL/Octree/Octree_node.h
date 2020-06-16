@@ -109,21 +109,21 @@ namespace CGAL {
     typedef typename PointRange::const_iterator InputIterator;
     typedef typename std::list<InputIterator> IterList;
 
+    typedef std::array<Node, 8> ChildList;
+
   private: // members :
 
-    // TODO: Replace with pointer to fixed size array, or std::optional<std::array<Node, 8>> ?
-    Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
+    //Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
+    std::shared_ptr<ChildList> m_children;
 
     Node *m_parent;    /* pointer the the single parent node. Root if NULL */
-
     IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
-
     uint8_t m_depth;    /* current depth inside the octree */
     IterList m_points;   /* list of iterators of the input pwn contained in the node */
 
   public: // functions :
     Octree_node() :
-            m_children(NULL),
+            //m_children(NULL),
             m_parent(NULL),
             m_location(IntPoint(0, 0, 0)),
             m_depth(0) {}
@@ -135,36 +135,37 @@ namespace CGAL {
     void unsplit() {
       if (m_children != NULL) {
         for (int i = 0; i < 8; i++)
-          m_children[i].unsplit();
+          (*m_children)[i].unsplit();
 
-        delete[] m_children;
-        m_children = NULL;
+        //delete m_children;
+        m_children.reset();
       }
     }
 
     void split() {
-      m_children = new Node[8];
+      ChildList children;
       for (int child_id = 0; child_id < 8; child_id++) {
-        m_children[child_id].set_parent(this);
-        m_children[child_id].depth() = m_depth + 1;
+        children[child_id].set_parent(this);
+        children[child_id].depth() = m_depth + 1;
 
         for (int j = 0; j < 3; j++) {
-          m_children[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
+          children[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
         }
       }
+      m_children = std::make_shared<ChildList>(children);
     }
 
     bool is_leaf() const { return (m_children == NULL); }
 
     Node *children() { return m_children; }
 
-    const Node *children() const { return m_children; }
+    std::shared_ptr<ChildList> children() const { return m_children; }
 
     Node *child(const unsigned int index) const {
       if (m_children == NULL || index > 7)
         return NULL;
       else
-        return &(m_children[index]);
+        return &((*m_children)[index]);
     }
 
     Node *parent() { return m_parent; }
