@@ -64,7 +64,7 @@ namespace CGAL {
   private: // members :
 
     //Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
-    std::shared_ptr<ChildList> m_children;
+    std::unique_ptr<ChildList> m_children;
 
     Node *m_parent;    /* pointer the the single parent node. Root if NULL */
     IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
@@ -93,23 +93,22 @@ namespace CGAL {
     }
 
     void split() {
-      ChildList children;
+      m_children = std::make_unique<ChildList>();
       for (int child_id = 0; child_id < 8; child_id++) {
-        children[child_id].set_parent(this);
-        children[child_id].depth() = m_depth + 1;
+        (*m_children)[child_id].set_parent(this);
+        (*m_children)[child_id].depth() = m_depth + 1;
 
         for (int j = 0; j < 3; j++) {
-          children[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
+          (*m_children)[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
         }
       }
-      m_children = std::make_shared<ChildList>(children);
     }
 
     bool is_leaf() const { return (m_children == NULL); }
 
     Node *children() { return m_children; }
 
-    std::shared_ptr<ChildList> children() const { return m_children; }
+    const ChildList *children() const { return m_children.get(); }
 
     Node *child(const unsigned int index) const {
       if (m_children == NULL || index > 7)
@@ -135,98 +134,13 @@ namespace CGAL {
     bool is_empty() const { return (m_points.size() == 0); }
 
     IntPoint &location() { return m_location; }
-
     const IntPoint &location() const { return m_location; }
 
     uint8_t &depth() { return m_depth; }
-
     const uint8_t &depth() const { return m_depth; }
 
     bool is_sibling(Node *neighbor) const {
       return (m_parent == neighbor->parent());
-    }
-
-    // dir: LEFT = 000, RIGHT = 001, DOWN = 010, UP = 011, BACK = 100, FRONT= 101
-    Node *find_greater_or_equal_neighbor(int dir) const {
-      if (m_parent == NULL) return NULL;
-
-      unsigned int dir_axis = dir & 1;  // 0, 1, 0, 1, 0, 1
-      unsigned int bit_axis = dir >> 1; // 0, 0, 1, 1, 2, 2
-      unsigned int dir_idx_offset = 1;  // -1, 1, -2, 2, -4, 4
-      dir_idx_offset <<= bit_axis;
-      if (!dir_axis) dir_idx_offset = -dir_idx_offset;
-
-      for (int child_id = 0; child_id < 8; child_id++) {
-        // is 'this' an opposite 'dir' child?
-        if (((child_id >> bit_axis) & 1) != dir_axis && m_parent->child(child_id) == this) {
-          // return 'dir' sibling child
-          return m_parent->child(child_id + dir_idx_offset);
-        }
-      }
-
-      Node *parent_neighbor = m_parent->find_greater_or_equal_neighbor(dir);
-      if (parent_neighbor == NULL || parent_neighbor->is_leaf()) return parent_neighbor;
-      for (int child_id = 0; child_id < 8; child_id++) {
-        // 'this' is guaranted to be a 'dir' child
-        if (((child_id >> bit_axis) & 1) == dir_axis && m_parent->child(child_id) == this) {
-          // return opposite 'dir' neighbor child
-          return parent_neighbor->child(child_id - dir_idx_offset);
-        }
-      }
-
-      return NULL;
-    }
-
-    // dir: LEFT = 000, RIGHT = 001, DOWN = 010, UP = 011, BACK = 100, FRONT= 101
-    std::list<Node *> find_smaller_neighbors(Node *ge_neighbor, int dir) const {
-      std::list<Node *> le_neighbors;
-      unsigned int dir_axis = dir & 1;  // 0, 1, 0, 1, 0, 1
-      unsigned int bit_axis = dir >> 1; // 0, 0, 1, 1, 2, 2
-
-      std::queue<Node *> possible_neighbors;
-      if (ge_neighbor != NULL) possible_neighbors.push(ge_neighbor);
-      while (!possible_neighbors.empty()) {
-        Node *node = possible_neighbors.front();
-
-        if (node->is_leaf()) {
-          le_neighbors.push_back(node);
-        } else {
-          for (int child_id = 0; child_id < 8; child_id++) {
-            if (((child_id >> bit_axis) & 1) != dir_axis) {
-              // add to queue the opposite 'dir' neighbor child
-              possible_neighbors.push(node->child(child_id));
-            }
-          }
-        }
-        possible_neighbors.pop();
-      }
-      return le_neighbors;
-    }
-
-    bool is_balanced() const {
-      for (int dir = 0; dir < 6; dir++) {
-        Node *ge_neighbor = find_greater_or_equal_neighbor(dir);
-        std::list<Node *> neighbors = find_smaller_neighbors(ge_neighbor, dir);
-        for (Node *neighbor : neighbors) {
-          if (neighbor != NULL && !is_sibling(neighbor)
-              && (std::abs(this->depth() - neighbor->depth()) > 1)) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-
-    std::list<Node *> find_unbalanced_neighbors_to_split() const {
-      std::list<Node *> neighbors_to_split;
-      for (int dir = 0; dir < 6; dir++) {
-        Node *neighbor = find_greater_or_equal_neighbor(dir);
-        if (neighbor != NULL && !is_sibling(neighbor) && neighbor->is_leaf()
-            && ((this->depth() - neighbor->depth()) > 1)) {
-          neighbors_to_split.push_back(neighbor);
-        }
-      }
-      return neighbors_to_split;
     }
 
   }; // end class Octree_node

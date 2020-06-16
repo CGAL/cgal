@@ -75,7 +75,6 @@ namespace CGAL {
     PointRange &m_ranges;              /* input point range */
     PointMap m_points_map;          /* property map: `value_type of InputIterator` -> `Point` (Position) */
 
-    // TODO: Would it hurt performance to just store the Iso_cuboid directly?
     Point m_bbox_min;                  /* input bounding box min value */
     FT m_bbox_side;              /* input bounding box side length (cube) */
 
@@ -120,7 +119,6 @@ namespace CGAL {
       bbox = bbox.transform(Aff_transformation_3<Kernel>(TRANSLATION, diff_centroid));
 
       // save octree attributes
-      // TODO: can we just save the whole box?
       m_bbox_min = bbox.min();
       m_bbox_side = bbox.max()[0] - m_bbox_min[0];
       for (InputIterator it = pwn.begin(); it != pwn.end(); it++)
