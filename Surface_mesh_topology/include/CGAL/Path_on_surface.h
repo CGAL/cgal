@@ -1224,6 +1224,68 @@ public:
     return true;
   }
 
+  /// Compute whether each dart is switchable
+  void compute_switchable()
+  {
+    m_switchable.clear();
+    m_switchable.resize(length(), false);
+    std::vector<std::size_t> turns = compute_positive_turns();
+    /// Skip the last dart since it can never be switched, nor can it
+    /// be the second last dart of a switch
+    std::size_t i = 1;
+    while (i < length())
+    {
+      std::size_t idx = length() - 1 - i;
+      if (turns[idx] == 1)
+      {
+        /// This is the end of a possible switchbale subpath
+        m_switchable[idx].flip();
+        ++i;
+        idx = length() - 1 - i;
+        while (i < length() && turns[idx] == 2)
+        {
+          m_switchable[idx].flip();
+          ++i;
+          idx = length() - 1 - i;
+        }
+      } else
+      {
+        ++i;
+      }
+    }
+    m_switchable[0] = false;
+  }
+
+  /// Report whether 'i'-th dart is switchable, needs to compute switchable first
+  bool is_switchable(std::size_t i) const
+  {
+    CGAL_assertion(m_switchable.size() == length());
+    return i < length() && m_switchable[i];
+  }
+
+  /// Perform a switch starting at 'i'-th dart
+  void switch_dart(std::size_t i)
+  {
+    CGAL_assertion(is_switchable(i));
+    m_path[i] = get_map().template beta<0, 2>(m_path[i]);
+    m_path[i + 1] = get_map().template beta<2, 0, 2>(m_path[i]);
+    m_switchable[i] = false;
+    /// It is guarantee that the last dart is not switchable
+    std::size_t j = i + 2;
+    for(; is_switchable(j - 1); ++j)
+    {
+      m_path[j] = get_map().template beta<2, 0, 2, 0, 2>(m_path[j - 1]);
+      m_switchable[j - 1] = false;
+    }
+    /// Last dart may become switchable
+    if ((is_switchable(j) && next_positive_turn(j - 1) == 2) ||
+        next_positive_turn(j - 1) == 1)
+    {
+      m_switchable[j - 1] = true;
+    }
+    CGAL_assertion(is_valid());
+  }
+
   bool same_turns(const char* turns) const
   {
     std::vector<std::size_t> resplus=compute_positive_turns();
@@ -1279,6 +1341,13 @@ public:
      { std::cout<<" c "; } //<<m_map.darts().index(get_ith_dart(0)); }
   }
 
+  void display_switchable() const
+  {
+    CGAL_assertion(m_switchable.size() == length());
+    for (std::size_t i=0; i<m_switchable.size(); ++i)
+    { std::cout<<(m_switchable[i]?'T':'F')<<(i<m_switchable.size()-1?" ":""); }
+  }
+
   friend std::ostream& operator<<(std::ostream& os, const Self& p)
   {
     p.display();
@@ -1290,6 +1359,7 @@ protected:
   std::vector<Dart_const_handle> m_path; /// The sequence of darts
   bool m_is_closed;                      /// True iff the path is a cycle
   std::vector<bool> m_flip;              /// The sequence of flips
+  std::vector<bool> m_switchable;        /// True iff the correspondent dart is switchable
 };
 
 } // namespace Surface_mesh_topology

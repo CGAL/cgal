@@ -1833,37 +1833,10 @@ protected:
     return res;
   }
 
-  /// Compute whether each darts is switchable in the path
-  std::vector<bool> compute_switchable(const Path_on_surface<Local_map>& p) const {
-    std::vector<bool> switchables(p.length(), false);
-    std::vector<std::size_t> turns = p.compute_positive_turns();
-    /// Skip the last dart since it can never be switched, nor can it
-    /// be the second last dart of a switch
-    std::size_t i = 1;
-    while (i < p.length()) {
-      std::size_t idx = p.length() - 1 - i;
-      if (turns[idx] == 1) {
-        /// This is the end of a possible switchbale subpath
-        switchables[idx].flip();
-        ++i;
-        idx = p.length() - 1 - i;
-        while (i < p.length() && turns[idx] == 2) {
-          switchables[idx].flip();
-          ++i;
-          idx = p.length() - 1 - i;
-        }
-      }
-      else {
-        ++i;
-      }
-    }
-    switchables[0] = false;
-    return switchables;
-  }
-
   /// Compute the longest common suffix of a path against all of it circular shifts
   /// Based on a modification of Knuth-Morris-Pratt algorithm
-  std::vector<std::size_t> compute_common_circular_suffix(const Path_on_surface<Local_map>& p) const {
+  std::vector<std::size_t> compute_common_circular_suffix(const Path_on_surface<Local_map>& p) const
+  {
     Path_on_surface<Local_map> q(p);
     q += p;
     std::vector<std::size_t> suffix_len(q.length());
