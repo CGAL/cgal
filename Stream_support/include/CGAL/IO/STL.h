@@ -126,6 +126,18 @@ bool read_STL(std::istream& is,
  *
  * reads the content of `is` into `points` and `facets`, in the STL format.
  *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
+ *
+ * \param is the input stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
  * \see \ref IOStreamSTL
  */
 template <typename PointRange, typename TriangleRange>
@@ -153,6 +165,18 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *
  * reads the content of a file named `fname` into `points` and `facets`, in the STL format.
  *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
+ *
+ * \param fname the path to the input file
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
  * \see \ref IOStreamSTL
  */
 template <typename PointRange, typename TriangleRange>
@@ -171,13 +195,6 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
 
-/*!
- * \ingroup StlIoFuncs
- *
- * writes the content of `points` and `facets` in `os`, in the STL format.
- *
- * \see \ref IOStreamSTL
- */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const PointRange& points,
@@ -243,19 +260,31 @@ bool write_STL(std::ostream& os,
   return !os.fail();
 }
 
+/*!
+ * \ingroup StlIoFuncs
+ *
+ * writes the content of `points` and `facets` in `os`, in the STL format.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
+ *
+ * \param os the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
+ * \see \ref IOStreamSTL
+ */
 template <typename PointRange, typename TriangleRange>
 bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets)
 {
   return write_STL(os, points, facets, parameters::all_default());
 }
 
-/*!
- * \ingroup StlIoFuncs
- *
- * writes the content of `points` and `facets` in a file named `fname`, in the STL format.
- *
- * \see \ref IOStreamSTL
- */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets,
                const CGAL_BGL_NP_CLASS& np)
@@ -264,6 +293,25 @@ bool write_STL(const char* fname, const PointRange& points, const TriangleRange&
   return write_STL(os, points, facets, np);
 }
 
+/*!
+ * \ingroup StlIoFuncs
+ *
+ * writes the content of `points` and `facets` in a file named `fname`, in the STL format.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
+ *
+ * \param fname the path to the output file
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
+ * \see \ref IOStreamSTL
+ */
 template <typename PointRange, typename TriangleRange>
 bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets)
 {

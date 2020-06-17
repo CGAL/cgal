@@ -278,12 +278,18 @@ bool read_PLY(std::istream& is,
  *
  * reads the content of `is` into `points` and `polygons`, in the PLY format.
  *
- * `PointRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
  *
- * `PolygonRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ * \param is the input stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
  *
+ * \returns `true` if the reading was successful, `false` otherwise.
  * \see \ref IOStreamPLY
  */
 template <class PointRange, class PolygonRange>
@@ -395,12 +401,18 @@ bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons,
  *
  * reads the content of `fname` into `points` and `polygons`, in the PLY format.
  *
- * `PointRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
- *
- * `PolygonRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
 
+ *
+ * \param fname the path to the input file
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
  * \see \ref IOStreamPLY
  */
 template <typename PointRange, typename PolygonRange>
@@ -498,11 +510,18 @@ bool write_PLY(std::ostream& out,
  *
  * writes the content of `points` and `polygons` in `out`, in the PLY format.
  *
- * `PointRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
  *
- * `PolygonRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ * \param os the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
  * \see \ref IOStreamPLY
  */
 template <class PointRange, class PolygonRange>
@@ -535,13 +554,18 @@ bool write_PLY(const char* fname,
 /*!
  * \ingroup PlyIoFuncs
  *
- * writes the content of `points` and `polygons` in the file `fname`, in the PLY format.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
  *
- * `PointRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ * \param fname the path to the output file
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
  *
- * `PolygonRange` is a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ * \return `true` if the writing was successful, `false` otherwise.
  * \see \ref IOStreamPLY
  */
 template <class PointRange, class PolygonRange>

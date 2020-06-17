@@ -128,6 +128,18 @@ bool read_VTP(const std::string& fname,
  *
  * reads the content of `is` into `points` and `polygons`, in the VTPformat.
  *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+
+ *
+ * \param fname the path to the input file
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
  * \see \ref IOStreamVTK
  */
 template <typename PointRange, typename PolygonRange>
@@ -349,8 +361,39 @@ void write_soup_polys_points(std::ostream& os,
 
 } // namespace internal
 } // namespace IO
+/*!
+ * \ingroup VtpIoFuncs
+ *
+ * writes the content of `points` and `polygons` in `out`, in the VTP format.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+ *
+ * \param os the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+ *    data should be written in binary (`true`, the default) or in ASCII (`false`).
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
+
+ * \return `true` if the writing was successful, `false` otherwise.
+ * \see \ref IOStreamVTK
+ */
+template <typename PointRange, typename PolygonRange,
+#ifndef DOXYGEN_RUNNING
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+#else
+          typename NamedParameters
+#endif
+          >
 bool write_VTP(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
@@ -398,18 +441,6 @@ bool write_VTP(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
-/*!
- * \ingroup VtpIoFuncs
- *
- * writes the content of `points` and `polygons` in `out`, in the VTP format.
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
- *    data should be written in binary (`true`, the default) or in ASCII (`false`).
- *    \cgalParamEnd
- * \cgalNamedParamsEnd
- * \see \ref IOStreamVTK
- */
 template <typename PointRange, typename PolygonRange>
 bool write_VTP(std::ostream& os,
                const PointRange& points,
@@ -418,6 +449,32 @@ bool write_VTP(std::ostream& os,
   return write_VTP(os, points, polygons, parameters::all_default());
 }
 
+/*!
+ * \ingroup VtpIoFuncs
+ *
+ * writes the content of `points` and `polygons` in a file named `fname`, in the VTP format.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+
+ *
+ * \param os the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+ *    data should be written in binary (`true`, the default) or in ASCII (`false`).
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
+
+ * \return `true` if the writing was successful, `false` otherwise.
+ * \see \ref IOStreamVTK
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const char* fname,
                const PointRange& points,
@@ -428,18 +485,6 @@ bool write_VTP(const char* fname,
   return write_VTP(out, points, polygons, np);
 }
 
-/*!
- * \ingroup VtpIoFuncs
- *
- * writes the content of `points` and `polygons` in a file named `fname`, in the VTP format.
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
- *    data should be written in binary (`true`, the default) or in ASCII (`false`).
- *    \cgalParamEnd
- * \cgalNamedParamsEnd
- * \see \ref IOStreamVTK
- */
 template <typename PointRange, typename PolygonRange>
 bool write_VTP(const char* fname,
                const PointRange& points,
