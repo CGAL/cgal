@@ -108,13 +108,6 @@ namespace CGAL {
 
     bool is_leaf() const { return (m_children == NULL); }
 
-    Node *child(const unsigned int index) const {
-      if (m_children == NULL || index > 7)
-        return NULL;
-      else
-        return &((*m_children)[index]);
-    }
-
     Node &operator[](int index) {
       return (*m_children)[index];
     }
