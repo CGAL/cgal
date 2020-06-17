@@ -158,7 +158,9 @@ namespace CGAL {
         // Check all the children
         for (int i = 0; i < 8; ++i) {
 
-          // TODO
+          // If any child cell is different, they're not the same
+          if (!((*m_children)[i] == rhs[i]))
+            return false;
         }
       }
 
