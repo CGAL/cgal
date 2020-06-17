@@ -16,9 +16,9 @@ TESTSUITE_LDFLAGS=""
 
 CURRENTDIR=`pwd`
 ERRORFILE=${CURRENTDIR}/error.txt
-if [ -n "$CGAL_TEST_PLATFORM" ]; then 
+if [ -n "$CGAL_TEST_PLATFORM" ]; then
     PLATFORM=$CGAL_TEST_PLATFORM
-else 
+else
     PLATFORM=no-platform
 fi
 if [ -n "${CGAL_TIMEOUT_PROG+x}" ]; then
@@ -39,9 +39,9 @@ process_tree()
   local pid=$1
   local result=
   echo $pid
-  ps -a | awk '!/^ +PID/ {print $1 " " $2}' | { 
-      while read apid appid; do 
-	  if [ "$appid" = "$pid" ]; then 
+  ps -a | awk '!/^ +PID/ {print $1 " " $2}' | {
+      while read apid appid; do
+	  if [ "$appid" = "$pid" ]; then
 	      process_tree $apid
 	  fi
       done
@@ -58,11 +58,11 @@ wait_for_process()
     period=$3
     while [ $cycles -ne 0 ]
     do
-        cycles=`expr $cycles - 1`  
+        cycles=`expr $cycles - 1`
 # send SIGCONT to the process and check the exit value of kill.
 # If the process still exists, the call to kill succeeds (and the signal is
 # ignored).
-        
+
         kill -CONT $pid 2>kill_output 1>/dev/null;   terminated=$?
 # But under CYGWIN the exit status is not to be trusted.
 	if [ $terminated -eq 0 ]; then
@@ -94,7 +94,7 @@ wait_for_process()
 	    # Bash, the Bash manual states that it ignores SIGTERM.
 	    # However, it does not catch SIGHUP. That is why the first
 	    # signal send is SIGHUP.
-	    case "`uname`" in 
+	    case "`uname`" in
 		CYGWIN*)
 		    pids=`process_tree $pid`;;
 		*) pids=$pid;;
@@ -104,7 +104,7 @@ wait_for_process()
 	    # If SIGHUP was not enough, SIGKILL will finish the job, 10s after.
 	    for p in $pids; do kill -KILL $p 2>/dev/null; done
 	fi
-        return 1  
+        return 1
     fi
     return 0
 }
@@ -136,8 +136,8 @@ test_directory()
 {
   cd "$CURRENTDIR"
   if [ -d $1 ] ; then
-    echo "DIRECTORY $1:"                
-    echo                                
+    echo "DIRECTORY $1:"
+    echo
 
     echo "DIRECTORY $1:"                 >> "$ERRORFILE"
     echo                                 >> "$ERRORFILE"
@@ -202,7 +202,7 @@ test_directory()
       printf "      # Running time: %s (seconds)\n\n" "$DURATION" >> "$ERROR_OUTPUT"
       cat current_compiler_output >> "$COMPILER_OUTPUT"
       cat current_compiler_output
-      rm -f current_compiler_output 
+      rm -f current_compiler_output
 
       if [ -f error.txt ] ; then
         cat error.txt >> "$ERRORFILE"
@@ -227,18 +227,18 @@ test_directory()
 
 run_testsuite()
 {
-  
+
   echo "---------------------------------------------------------------"
-  echo "- Testing platform $PLATFORM"                         
+  echo "- Testing platform $PLATFORM"
   echo "---------------------------------------------------------------"
-  echo                                                                  
+  echo
 
   echo "---------------------------------------------------------------" >> "$ERRORFILE"
   echo "- TEST RESULTS FROM PLATFORM $PLATFORM"                          >> "$ERRORFILE"
   echo "---------------------------------------------------------------" >> "$ERRORFILE"
   echo                                                                   >> "$ERRORFILE"
 
-  case "`uname`" in 
+  case "`uname`" in
       CYGWIN*)
           PATH=`cygpath "$CGAL_DIR"`/bin:`cygpath "$CGAL_DIR"`/lib:$PATH
           export PATH
@@ -258,4 +258,3 @@ else
 fi
 
 run_testsuite
-
