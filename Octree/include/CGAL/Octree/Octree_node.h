@@ -75,7 +75,7 @@ namespace CGAL {
 
   public: // functions :
     Octree_node() :
-            //m_children(NULL),
+    //m_children(NULL),
             m_parent(NULL),
             m_location(IntPoint{0, 0, 0}),
             m_depth(0) {}
@@ -115,8 +115,16 @@ namespace CGAL {
         return &((*m_children)[index]);
     }
 
+    Node &operator[](int index) {
+      return (*m_children)[index];
+    }
+
+    const Node &operator[](int index) const {
+      return (*m_children)[index];
+    }
 
     Node *parent() { return m_parent; }
+
     const Node *parent() const { return m_parent; }
 
     void set_parent(Node *parent) { m_parent = parent; }
@@ -132,9 +140,11 @@ namespace CGAL {
     bool is_empty() const { return (m_points.size() == 0); }
 
     IntPoint &location() { return m_location; }
+
     const IntPoint &location() const { return m_location; }
 
     uint8_t &depth() { return m_depth; }
+
     const uint8_t &depth() const { return m_depth; }
 
     bool is_sibling(Node *neighbor) const {
