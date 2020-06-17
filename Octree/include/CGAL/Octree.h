@@ -161,7 +161,7 @@ namespace CGAL {
         return false;
 
       // If all else is equal, recursively compare the trees themselves
-      return true; //rhs.m_root == m_root;
+      return rhs.m_root == m_root;
     }
 
   private: // functions :

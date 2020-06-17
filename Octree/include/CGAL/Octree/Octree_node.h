@@ -115,6 +115,7 @@ namespace CGAL {
         return &((*m_children)[index]);
     }
 
+
     Node *parent() { return m_parent; }
     const Node *parent() const { return m_parent; }
 
@@ -138,6 +139,30 @@ namespace CGAL {
 
     bool is_sibling(Node *neighbor) const {
       return (m_parent == neighbor->parent());
+    }
+
+    bool operator==(Node &rhs) {
+
+      // Compare the points they contain
+
+      // If one node is a leaf, and the other isn't, they're not the same
+      if (is_leaf() != rhs.is_leaf())
+        return false;
+
+      // If both nodes are non-leaf nodes
+      if (!is_leaf()) {
+
+        // Check all the children
+        for (int i = 0; i < 8; ++i) {
+
+          // TODO
+        }
+      }
+
+      // If both nodes are leaf nodes they must be identical (no check necessary)
+
+      // If all other checks pass, the two trees are identical
+      return true;
     }
 
   }; // end class Octree_node
