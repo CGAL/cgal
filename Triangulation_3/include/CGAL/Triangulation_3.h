@@ -4229,19 +4229,21 @@ make_canonical(Vertex_triple& t) const
   Vertex_handle tmp;
   switch(i)
   {
-    case 0: return;
+    case 0: break;
     case 1:
       tmp = t.first;
       t.first = t.second;
       t.second = t.third;
       t.third = tmp;
-      return;
+      break;
     default:
       tmp = t.first;
       t.first = t.third;
       t.third = t.second;
       t.second = tmp;
   }
+
+  CGAL_assertion(t.first < t.second && t.first < t.third);
 }
 
 template < class GT, class Tds, class Lds >
