@@ -308,7 +308,7 @@ struct Variant_read_visitor {
 template <typename Indices_types, typename... Args>
 struct Read_write_index<Indices_types, boost::variant<Args...>> {
   using Index = boost::variant<Args...>;
-  using index_seq = std::make_index_sequence<sizeof...(Args)>;
+  using index_seq = std::make_index_sequence<std::tuple_size<Indices_types>::value>;
 
   template <std::size_t... Is>
   Index get_index(int dimension, std::index_sequence<Is...>) const{
