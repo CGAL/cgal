@@ -576,45 +576,24 @@ public:
       pt.canonize();
       // Use non-rle path from now on
       auto factorization=pt.factorize();
-      internal::Path_on_surface_with_rle<Self>& pr_rle = factorization.first;
-      Path_on_surface<Local_map> pr(pr_rle);
-      std::vector<Dart_const_handle> p_visited;
+      Path_on_surface<Local_map> pr(factorization.first);
       pr.simplify_flips();
+      Path_on_surface<Local_map> p_original(pr);
       if (factorization.second > 1) {
         // If the curve is not primitive, there must be at least
         // one self intersection
-        res=false;
+        return false;
       }
-      /// TODO: very messy if not using RLE. Need to redo and make
-      // use of RLE
+
       /// TODO: remove debug output
       pr.display();
       std::cout << std::endl;
       pr.display_pos_and_neg_turns();
       std::cout << std::endl;
-      pr_rle.display();
-      std::cout << std::endl;
-      pr_rle.display_pos_and_neg_turns();
-      std::cout << std::endl;
 
       // Compute the backward cyclic KMP failure table for the curve
       std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
-
       std::size_t num_sides = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
-
-      // Mark outoging darts to represent an edge of both directions
-      auto markoutgoing=get_local_map().get_new_mark();
-      {
-        auto it = get_local_map().darts().begin();
-        Dart_const_handle dh = it;
-        do {
-          std::cout << get_local_map().info(dh) << ' ';
-          get_local_map().mark(dh, markoutgoing);
-          dh=get_local_map().template beta<0,2>(dh);
-        } while(dh != it);
-        //TODO: remove debug output
-        std::cout << std::endl;
-      }
 
       typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
               typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
@@ -622,54 +601,51 @@ public:
       rb_nodes.reserve(pr.length());
       std::vector<rbtree> trees(num_sides);
 
-      std::size_t outoging_parity = get_local_map().is_marked(pr[0], markoutgoing) ? 0 : 1;
-      std::size_t i = 0;
-      for (auto it_dart = pr_rle.begin(); it_dart != pr_rle.end(); ++it_dart, ++i) {
-        Dart_const_handle dh = *it_dart;
-        auto is_outgoing = i % 2 == outoging_parity;
-        auto dart_id = is_outgoing ?
-                          get_local_map().info(dh) :
-                          get_local_map().info(get_local_map().opposite2(dh));
+      for (std::size_t i = 0; i < pr.length(); ++i)
+      {
+        Dart_const_handle dh = pr[i];
+        auto dart_id = get_dart_id_relative_to(pr[i], pr[0]);
         //TODO: remove debug output
         std::cout << dart_id << ' ';
         rb_nodes.emplace_back(i);
         auto& node = rb_nodes.back();
 
         // Check whether current darts needs to be switched
-        if (pr_rle.is_switchable(it_dart)) {
+        if (pr.is_switchable(i))
+        {
           // Look at the t-1 turn of [i-1, i, i + 1]
           Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
-          auto left_order = is_outgoing ?
-                            get_local_map().info(dleft) :
-                            get_local_map().info(get_local_map().opposite2(dh));
+          auto dleft_id = get_dart_id_relative_to(dleft, pr[0]);
           // Binary search within potential switch trigger
           // TODO: apply the optimization Francis mentioned by only look at the largest one
-          auto orientation_start = get_local_map().info(dh);
           // Convert a dart to a circular ordering index
-          auto to_order = [i, &pr, this] (const std::size_t& j) -> decltype(get_local_map().info(dh)) {
-            auto is_outgoing_wrt_cur_dart = (j % 2) == (i % 2);
-            /// Choose the correct predecessor/successor and make sure they are pointing the same direction as [i, i+1]
-            if (j == 0 && is_outgoing_wrt_cur_dart) {
-              return this->get_local_map().info(pr[0]);
+          auto to_order = [this, &pr, &dleft, num_sides] (const std::size_t& j) -> size_type
+          {
+            Dart_const_handle dprev = this->get_previous_relative_to(pr, j, dleft);
+            return this->get_order_relative_to(dprev, dleft, num_sides);
+          };
+          size_type key_val = get_order_relative_to(pr[i - 1], dleft, num_sides);
+          if (get_local_map().template belong_to_same_cell<0>(dh, pr[0]))
+          {
+            auto comparator = [&to_order, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+              return key > to_order(b.m_idx);
+            };
+            auto it_trigger = trees[dleft_id].upper_bound(key_val, comparator);
+            if (it_trigger != trees[dleft_id].end() && !get_local_map().template belong_to_same_cell<1>(pr[it_trigger->m_idx], dh))
+            {
+              pr.switch_dart(i);
             }
-            Dart_const_handle dneighbor = is_outgoing_wrt_cur_dart ? this->get_local_map().template beta<0, 2>(pr[j - 1]) : pr[j + 1];
-            return this->get_local_map().info(dneighbor);
-          };
-          auto comparator = [to_order, orientation_start, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
-            std::size_t order_b = to_order(b.m_idx);
-            order_b += (order_b > orientation_start) ? num_sides : 2 * num_sides;
-            return key > order_b;
-          };
-          auto comparator_wrapper = [&comparator] () -> decltype(comparator) {
-            return comparator;
-          };
-          std::size_t target_order = to_order(i);
-          target_order += (target_order > orientation_start) ? num_sides : 2 * num_sides;
-          auto it_trigger = trees[left_order].upper_bound(target_order, comparator);
-          if (it_trigger != trees[left_order].end()) {
-            // Switch the edge
-            pr_rle.switch_dart(it_dart);
-            dh = *it_dart;
+          }
+          else
+          {
+            auto comparator = [&to_order, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+              return key < to_order(b.m_idx);
+            };
+            auto it_trigger = trees[dleft_id].upper_bound(0, comparator);
+            if (it_trigger != trees[dleft_id].end() && to_order(it_trigger->m_idx) < key_val)
+            {
+              pr.switch_dart(i);
+            }
           }
         }
         // Insert current darts
@@ -679,11 +655,7 @@ public:
         else {
           /// TODO: first check overlap of prceeding edge
         }
-
-        p_visited.push_back(dh);
       }
-
-      get_local_map().free_mark(markoutgoing);
     }
 
     if (display_time)
