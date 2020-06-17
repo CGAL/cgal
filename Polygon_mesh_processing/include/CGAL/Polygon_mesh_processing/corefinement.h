@@ -628,8 +628,8 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamEnd
  *   \cgalParamBegin{do_not_modify} if `true`, the corresponding mesh will not be updated. The default value is `false`.
  *                                  Obviously if this parameter is set to `true` for both meshes nothing will be done.
- *                                  An interesting property of this option is that if set to `true` for one mesh,
- *                                  it removes the self-intersection free pre-condition on the other mesh that is modified.
+ *                                  An interesting property of this option is that when set to `true` for one mesh,
+ *                                  the other mesh is no longer required to be without self-intersection.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -654,8 +654,10 @@ corefine(      TriangleMesh& tm1,
     const_mesh_ptr=&tm1;
   }
   else
+  {
     if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
       const_mesh_ptr=&tm2;
+  }
 
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);

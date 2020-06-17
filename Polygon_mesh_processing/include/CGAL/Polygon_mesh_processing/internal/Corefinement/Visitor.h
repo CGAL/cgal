@@ -335,6 +335,7 @@ public:
     //forward to the visitor
 //    user_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar); // NODE_VISITOR_TAG
     if (tm2_ptr!=const_mesh_ptr)
+    {
       switch(type)
       {
         case ON_FACE: //Face intersected by an edge
@@ -362,6 +363,7 @@ public:
         default:
         return;
       }
+    }
 
     if (tm1_ptr==const_mesh_ptr) return;
 
