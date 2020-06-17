@@ -1867,16 +1867,16 @@ protected:
     return result;
   }
 
-  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref, size_type num_sides)
+  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref, size_type num_sides) const
   {
-    size_type ref_order = get_dart_id(ref, ref),
-              x_order = get_dart_id(x, ref);
+    size_type ref_order = get_dart_id_relative_to(ref, ref),
+              x_order = get_dart_id_relative_to(x, ref);
     return x_order <= ref_order ? (x_order + num_sides - ref_order - 1) : (x_order - ref_order - 1);
   }
 
   int get_previous_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
   {
-    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? static_cast<int>(i) - 1, static_cast<int>(i) + 1;
+    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? (static_cast<int>(i) - 1) : (static_cast<int>(i) + 1);
   }
 
   bool has_previous_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
@@ -1897,7 +1897,7 @@ protected:
 
   int get_next_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
   {
-    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? static_cast<int>(i) + 1, static_cast<int>(i) - 1;
+    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? (static_cast<int>(i) + 1) : (static_cast<int>(i) - 1);
   }
 
   bool has_next_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
@@ -1916,7 +1916,7 @@ protected:
     return p[j];
   }
 
-  size_type get_dart_id(Dart_const_handle x, Dart_const_handle ref)
+  size_type get_dart_id_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
     return get_local_map().template belong_to_same_cell<0>(x, ref) ?
            get_local_map().info(x) :
