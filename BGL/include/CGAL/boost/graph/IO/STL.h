@@ -263,6 +263,9 @@ bool write_STL(std::ostream& os,
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
  \cgalNamedParamsBegin
+   \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+      data should be written in binary (`true`, the default) or in ASCII (`false`).
+   \cgalParamEnd
    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
      If this parameter is omitted, an internal property map for
      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
@@ -278,6 +281,9 @@ template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+    CGAL::set_mode(os, CGAL::IO::BINARY);
   return write_STL(os, g, np);
 }
 

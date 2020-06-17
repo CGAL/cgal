@@ -946,11 +946,14 @@ public:
 
       //if the value is of float type, convert it into an int
       if(is_float)
+      {
+        const char* s = color_info.c_str();
         rgb[index] = static_cast<unsigned char>(atof(color_info.c_str())*255);
+      }
+
       //else stores the value
       else
         rgb[index] = static_cast<unsigned char>(atoi(color_info.c_str()));
-      //position += (color_info.length()+ index)*sizeof(char); //index indicates the number of whitespaces read.
       ++index;
       if(index == 3)
         break;
@@ -958,11 +961,13 @@ public:
     CGAL::Color color;
     //if there were only one number, fetch the color in the color map
     if(index < 2)
+    {
       color = get_indexed_color(rgb[0]);
-    //else create the color with the 3 values;
-    else
+      //else create the color with the 3 values;
+    }
+    else{
       color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
-
+    }
     std::streampos ss_pos = iss.tellg();
     if(ss_pos != -1)
     {

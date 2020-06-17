@@ -32,8 +32,6 @@ int& code_to_call_before_creation_of_QCoreApplication(int& i) {
   QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 #endif
 
-  //We set the locale to avoid any trouble with VTK
-  std::setlocale(LC_ALL, "C");
   return i;
 }
 
@@ -49,6 +47,8 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   , d_ptr_is_initialized(false)
   , d_ptr(new Polyhedron_demo_impl)
 {
+  //We set the locale to avoid any trouble with VTK
+  std::setlocale(LC_ALL, "C");
   d_ptr_is_initialized = true;
   std::cerr.precision(17);
   std::cout.precision(17);

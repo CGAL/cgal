@@ -456,8 +456,8 @@ bool write_VTP(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
- *    data should be written in binary (`true`, the default) or in ASCII (`false`).
- *     \cgalParamEnd
+ *       data should be written in binary (`true`, the default) or in ASCII (`false`).
+ *    \cgalParamEnd
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to
  * the vertices of `g`. If this parameter is omitted, an internal property map for
  *       `CGAL::vertex_Point` must be available in `FaceGraph`.

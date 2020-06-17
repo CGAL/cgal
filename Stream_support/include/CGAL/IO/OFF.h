@@ -149,6 +149,7 @@ bool read_OFF(std::istream& is,
       unsigned char r=0, g=0, b=0;
       scanner.scan_color(r,g,b);
       *fc_out++ = Color(r,g,b);
+
     }
   }
 

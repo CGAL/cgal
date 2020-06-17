@@ -368,6 +368,9 @@ bool write_PLY(std::ostream& os,
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
  \cgalNamedParamsBegin
+  \cgalParamBegin{use_binary_mode} a Boolean indicating if the
+     data should be written in binary (`true`, the default) or in ASCII (`false`).
+   \cgalParamEnd
    \cgalParamBegin{vertex_point_map}
      the property map with the points associated to the vertices of `g` .
      If this parameter is omitted, an internal property map for
@@ -391,6 +394,10 @@ bool write_PLY(const char* fname,
                const NamedParameters& np)
 {
   std::ofstream os(fname);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+
   return write_PLY(os, g, comments, np);
 }
 
