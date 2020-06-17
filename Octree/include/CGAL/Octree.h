@@ -236,6 +236,7 @@ namespace CGAL {
         }
       }
     }
+
   }; // end class Octree
 
 } // namespace CGAL

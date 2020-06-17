@@ -52,6 +52,7 @@ namespace CGAL {
           class PointRange>
   class Octree_node {
   public: // types :
+
     typedef Octree_node<Kernel, PointRange> Node;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
@@ -65,7 +66,7 @@ namespace CGAL {
   private: // members :
 
     //Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
-    std::unique_ptr<ChildList> m_children;
+    std::unique_ptr<ChildList> m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
 
     Node *m_parent;    /* pointer the the single parent node. Root if NULL */
     IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */

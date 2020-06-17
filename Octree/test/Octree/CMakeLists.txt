@@ -7,4 +7,5 @@ project( Octree )
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
 create_single_source_cgal_program( "octree_test.cpp" )
+create_single_source_cgal_program( "test_equality.cpp" )
 
