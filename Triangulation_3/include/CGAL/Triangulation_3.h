@@ -2139,6 +2139,12 @@ public:
   }
 
   template <class OutputIterator>
+  OutputIterator adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices) const
+  {
+    return _tds.adjacent_vertices_threadsafe(v, vertices);
+  }
+
+  template <class OutputIterator>
   OutputIterator adjacent_vertices_and_cells_3(Vertex_handle v, OutputIterator vertices,
                                                std::vector<Cell_handle>& cells) const
   {

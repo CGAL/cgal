@@ -1711,7 +1711,7 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   while(true)
   {
     Vertex_handle tmp = nearest;
-    adjacent_vertices(nearest, std::back_inserter(vs));
+    adjacent_vertices_threadsafe(nearest, std::back_inserter(vs));
     for(typename std::vector<Vertex_handle>::const_iterator
          vsit = vs.begin(); vsit != vs.end(); ++vsit)
       tmp = nearest_power_vertex(p, tmp, *vsit);

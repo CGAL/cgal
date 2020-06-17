@@ -1297,6 +1297,52 @@ public:
     return adjacent_vertices<False_filter>(v, vertices);
   }
 
+  template <class OutputIterator>
+  OutputIterator
+  adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices) const
+  {
+    return adjacent_vertices_threadsafe<False_filter>(v, vertices);
+  }
+
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices,
+                               Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition(v != Vertex_handle());
+    CGAL_triangulation_precondition(dimension() >= -1);
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
+    CGAL_triangulation_expensive_precondition(is_valid());
+
+    if (dimension() == -1)
+      return vertices;
+
+    if (dimension() == 0) {
+      Vertex_handle v1 = v->cell()->neighbor(0)->vertex(0);
+      if (!f(v1)) *vertices++ = v1;
+      return vertices;
+    }
+
+    if (dimension() == 1) {
+      CGAL_triangulation_assertion(number_of_vertices() >= 3);
+      Cell_handle n0 = v->cell();
+      const int index_v_in_n0 = n0->index(v);
+      CGAL_assume(index_v_in_n0 <= 1);
+      Cell_handle n1 = n0->neighbor(1 - index_v_in_n0);
+      const int index_v_in_n1 = n1->index(v);
+      CGAL_assume(index_v_in_n1 <= 1);
+      Vertex_handle v1 = n0->vertex(1 - index_v_in_n0);
+      Vertex_handle v2 = n1->vertex(1 - index_v_in_n1);
+      if (!f(v1)) *vertices++ = v1;
+      if (!f(v2)) *vertices++ = v2;
+      return vertices;
+    }
+    return visit_incident_cells_threadsafe<
+      Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, OutputIterator, Filter,
+                       internal::Has_member_visited<Vertex>::value>,
+      OutputIterator>(v, vertices, f);
+  }
+
   template <class Visitor, class OutputIterator, class Filter>
   OutputIterator
   visit_incident_cells(Vertex_handle v, OutputIterator output, Filter f) const
