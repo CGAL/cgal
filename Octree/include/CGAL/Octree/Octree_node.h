@@ -44,6 +44,7 @@
 #include <queue>
 #include <vector>
 #include <math.h>
+#include <bitset>
 
 namespace CGAL {
 

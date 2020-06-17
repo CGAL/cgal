@@ -56,8 +56,7 @@ namespace CGAL {
 
   template<class Kernel,
           class PointRange,
-          class PointMap,
-          class NormalMap>
+          class PointMap>
   class Octree {
   public: // types :
     typedef Octree_node<Kernel, PointRange> Node;
