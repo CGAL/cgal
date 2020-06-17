@@ -69,6 +69,7 @@ std::string get_file_extension(const std::string fname)
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
+ * \param verbose: if `true`, will output warnings and error messages. Default is `false`.
  *
  * \return `true` if reading was successful, `false` otherwise.
  *
@@ -130,6 +131,7 @@ bool read_polygon_soup(const std::string& fname,
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
+ * \param verbose: if `true`, will output warnings and error messages. Default is `false`.
  *
  * \return `true` if writing was successful, `false` otherwise.
  *

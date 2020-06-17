@@ -107,11 +107,21 @@ public:
 /// \returns `true` if the resulting mesh is valid.
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
 bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
-                const CGAL_BGL_NP_CLASS& np,
+                #ifndef DOXYGEN_RUNNING
+                                const CGAL_BGL_NP_CLASS& np,
+                #else
+                                const NamedParameters& np,
+                #endif
                 bool verbose = true)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
@@ -166,12 +176,22 @@ bool read_GOCAD(std::istream& is,
 ///
 /// \pre The data must represent a 2-manifold
 ///
-/// \see \ref IOStreamGOCAD
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+/// \see \ref IOStreamGocad
+template <typename FaceGraph,
+#ifndef DOXYGEN_RUNNING
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+#else
+          typename NamedParameters
+#endif
+          >
 bool read_GOCAD(const char* fname,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
+#ifndef DOXYGEN_RUNNING
                 const CGAL_BGL_NP_CLASS& np,
+#else
+                const NamedParameters& np,
+#endif
                 bool verbose = true)
 {
   std::ifstream is(fname);
@@ -222,7 +242,13 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 /// \cgalNamedParamsEnd
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
 bool write_GOCAD(std::ostream& os,
                  const char* name,
                  const FaceGraph& g,
@@ -309,17 +335,34 @@ bool write_GOCAD(std::ostream& os,
 ///
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
 ///
-/// \see \ref IOStreamGOCAD
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+/// \see \ref IOStreamGocad
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
 bool write_GOCAD(const char* fname,
                  const FaceGraph& g,
-                 const CGAL_BGL_NP_CLASS& np)
+                 #ifndef DOXYGEN_RUNNING
+                                 const CGAL_BGL_NP_CLASS& np
+                 #else
+                                 const NamedParameters& np
+                 #endif
+                 )
 {
   std::ofstream os(fname);
   return write_GOCAD(os, fname, g, np);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
 bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_GOCAD(fname.c_str(), g, np);
@@ -345,8 +388,20 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
 /// \cgalNamedParamsEnd
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
+bool write_GOCAD(std::ostream& os, const FaceGraph& g,
+                 #ifndef DOXYGEN_RUNNING
+                                 const CGAL_BGL_NP_CLASS& np
+                 #else
+                                 const NamedParameters& np
+                 #endif
+                 )
 {
   return write_GOCAD(os, "anonymous", g, np);
 }

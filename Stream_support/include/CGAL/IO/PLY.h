@@ -288,6 +288,7 @@ bool read_PLY(std::istream& is,
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param verbose: if `true`, will output warnings and error messages. Default is `false`.
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  * \see \ref IOStreamPLY
@@ -516,7 +517,7 @@ bool write_PLY(std::ostream& out,
  *                      whose value_type is an integer type.
 
  *
- * \param os the output stream
+ * \param out the output stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.

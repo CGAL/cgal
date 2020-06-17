@@ -205,7 +205,7 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 
 //! \ingroup ObjIoFuncs
 //!
-/// reads the content of `is` into `points` and `faces`, using the `OBJ` format.
+/// reads the content of `is` into `points` and `polygons`, using the `OBJ` format.
 ///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -221,14 +221,14 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 /// \returns `true` if the reading was successful, `false` otherwise.
 /// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
-bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& faces)
+bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons)
 {
-  return read_OBJ(is, points, faces, parameters::all_default());
+  return read_OBJ(is, points, polygons, parameters::all_default());
 }
 
 //! \ingroup ObjIoFuncs
 //!
-/// reads the content of the file `fname` into `points` and `faces`, using the `OBJ` format.
+/// reads the content of the file `fname` into `points` and `polygons`, using the `OBJ` format.
 ///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -244,9 +244,9 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& faces)
 /// \returns `true` if the reading was successful, `false` otherwise.
 /// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
-bool read_OBJ(const char* fname, PointRange& points, PolygonRange& faces)
+bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons)
 {
-  return read_OBJ(fname, points, faces, parameters::all_default());
+  return read_OBJ(fname, points, polygons, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange>

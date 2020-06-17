@@ -97,10 +97,10 @@ bool read_OFF_BGL(std::istream& is,
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+     `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+     `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+     `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+     `face_color_map` the property map with the colors associated to the faces of `g`.
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -113,8 +113,20 @@ bool read_OFF_BGL(std::istream& is,
 
   \see \ref IOStreamOFF
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
+bool read_OFF(std::istream& is, FaceGraph& g,
+              #ifndef DOXYGEN_RUNNING
+              const CGAL_BGL_NP_CLASS& np
+              #else
+              const NamedParameters& np
+              #endif
+              , bool verbose = true)
 {
   return IO::internal::read_OFF_BGL(is, g, np, verbose);
 }
@@ -137,11 +149,11 @@ bool read_OFF(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
   \cgalNamedParamsEnd
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+    `face_color_map` the property map with the colors associated to the faces of `g`.
 
   \pre The data must represent a 2-manifold
 
@@ -152,9 +164,20 @@ bool read_OFF(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamOFF
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
+bool read_OFF(const char* fname, FaceGraph& g,
+              #ifndef DOXYGEN_RUNNING
+              const CGAL_BGL_NP_CLASS& np
+              #else
+              const NamedParameters& np
+              #endif
+              ,bool verbose = true)
 {
   std::ifstream is(fname);
   return read_OFF(is, g, np, verbose);
@@ -215,10 +238,10 @@ bool write_OFF_BGL(std::ostream& os,
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+    `face_color_map` the property map with the colors associated to the faces of `g`.
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -226,11 +249,23 @@ bool write_OFF_BGL(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamOFF
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
-               typename boost::disable_if<
-                 typename boost::has_range_const_iterator<FaceGraph>::type
-               >::type* =0)
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
+bool write_OFF(std::ostream& os, const FaceGraph& g,
+#ifndef DOXYGEN_RUNNING
+               const CGAL_BGL_NP_CLASS& np
+               ,typename boost::disable_if<
+               typename boost::has_range_const_iterator<FaceGraph>::type
+               >::type* =0
+#else
+               const NamedParameters& np
+#endif
+               )
 {
   return IO::internal::write_OFF_BGL(os, g, np);
 }
@@ -251,10 +286,10 @@ bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalParamBegin{vertex_normal_map} the property map with the normals associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_texture_map} the property map with the textures associated to the vertices of `g`.\cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
+    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
+    `face_color_map` the property map with the colors associated to the faces of `g`.
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -262,11 +297,23 @@ bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamOFF
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+template <typename FaceGraph,
+          #ifndef DOXYGEN_RUNNING
+                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          #else
+                    typename NamedParameters
+          #endif
+          >
+bool write_OFF(const char* fname, const FaceGraph& g,
+#ifndef DOXYGEN_RUNNING
+               const CGAL_BGL_NP_CLASS& np,
                typename boost::disable_if<
-                 typename boost::has_range_const_iterator<FaceGraph>::type
-               >::type* =0)
+               typename boost::has_range_const_iterator<FaceGraph>::type
+               >::type* =0
+#else
+               const NamedParameters& np
+#endif
+               )
 {
   std::ofstream os(fname);
   if(!os)
