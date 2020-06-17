@@ -150,6 +150,20 @@ namespace CGAL {
 
     const Node *root() const { return &m_root; }
 
+    bool operator==(Octree<Kernel, PointRange, PointMap> &rhs) {
+
+      // Identical trees should have the same bounding box
+      if (rhs.m_bbox_min != m_bbox_min || rhs.m_bbox_side != m_bbox_side)
+        return false;
+
+      // Identical trees should have the same depth
+      if (rhs.m_max_depth_reached != m_max_depth_reached)
+        return false;
+
+      // If all else is equal, recursively compare the trees themselves
+      return true; //rhs.m_root == m_root;
+    }
+
   private: // functions :
 
     Point compute_barycenter_position(Node *node) const {
