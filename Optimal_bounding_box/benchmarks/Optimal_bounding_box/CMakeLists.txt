@@ -16,10 +16,11 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
 
 create_single_source_cgal_program("bench_obb.cpp")
-CGAL_target_use_Eigen(bench_obb)
+target_link_libraries(bench_obb PUBLIC CGAL::Eigen_support)

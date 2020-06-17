@@ -49,8 +49,8 @@ int main (int argc, char** argv){
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      CGAL_assertion(cit->info() >= 0);
-      c3t3.add_to_complex(cit, cit->info());
+      CGAL_assertion(cit->subdomain_index() >= 0);
+      c3t3.add_to_complex(cit, cit->subdomain_index());
       for(int i=0; i < 4; ++i)
       {
         if(cit->surface_patch_index(i)>0)

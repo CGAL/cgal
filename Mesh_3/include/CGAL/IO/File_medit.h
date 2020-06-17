@@ -14,7 +14,7 @@
 #ifndef CGAL_IO_FILE_MEDIT_H
 #define CGAL_IO_FILE_MEDIT_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -754,7 +754,7 @@ output_to_medit(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Point; //can be weighted or not
 
   const Tr& tr = c3t3.triangulation();
 
@@ -783,7 +783,7 @@ output_to_medit(std::ostream& os,
        ++vit)
   {
     V[vit] = inum++;
-    Weighted_point p = tr.point(vit);
+    Point p = tr.point(vit);
     os << CGAL::to_double(p.x()) << ' '
        << CGAL::to_double(p.y()) << ' '
        << CGAL::to_double(p.z()) << ' '

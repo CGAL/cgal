@@ -40,7 +40,12 @@ struct Epick_d_help1
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
-  Cartesian_static_filters<Dim,Epick_d_help1<Dim>,Epick_d_help2<Dim> >
+  Cartesian_filter_K< \
+    Epick_d_help1<Dim>, \
+    Cartesian_base_d<Interval_nt_advanced, Dim>, \
+    Cartesian_base_d<internal::Exact_ring_selector<double>::Type, Dim>, \
+    typename Functors_without_division<Dim>::type \
+  >
 template<class Dim>
 struct Epick_d_help2
 : CGAL_BASE
@@ -50,9 +55,20 @@ struct Epick_d_help2
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
+  Cartesian_static_filters<Dim,Epick_d_help2<Dim>,Epick_d_help3<Dim> >
+
+template<class Dim>
+struct Epick_d_help3
+: CGAL_BASE
+{
+  constexpr Epick_d_help3(){}
+  constexpr Epick_d_help3(int d):CGAL_BASE(d){}
+};
+#undef CGAL_BASE
+#define CGAL_BASE \
   Kernel_d_interface< \
     Cartesian_wrap< \
-      Epick_d_help2<Dim>, \
+      Epick_d_help3<Dim>, \
       Epick_d<Dim> > >
 template<class Dim>
 struct Epick_d

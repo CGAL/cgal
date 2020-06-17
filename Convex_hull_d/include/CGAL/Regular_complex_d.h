@@ -87,7 +87,7 @@ public:
 
   void* pp;
   void*   for_compact_container() const { return pp; }
-  void* & for_compact_container()       { return pp; }
+  void for_compact_container(void *p) { pp = p; }
 
 #ifdef CGAL_USE_LEDA
   LEDA_MEMORY(RC_vertex_d)
@@ -153,7 +153,7 @@ public:
 
   void* pp;
   void*   for_compact_container() const { return pp; }
-  void* & for_compact_container()       { return pp; }
+  void for_compact_container(void *p) { pp = p; }
 
   #if 0
   struct Point_const_iterator {

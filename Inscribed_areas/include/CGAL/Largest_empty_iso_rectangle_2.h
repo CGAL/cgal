@@ -233,12 +233,11 @@ public:
   ~Largest_empty_iso_rectangle_2();
 
   //! An operator=
-  Largest_empty_iso_rectangle_2<T>&
-    operator =(const Largest_empty_iso_rectangle_2<T>& ler);
+  Largest_empty_iso_rectangle_2&
+    operator =(const Largest_empty_iso_rectangle_2& ler);
 
   //! A copy constructor
-  Largest_empty_iso_rectangle_2<T>(
-               const Largest_empty_iso_rectangle_2<T>& ler);
+  Largest_empty_iso_rectangle_2(const Largest_empty_iso_rectangle_2& ler);
 
   struct Internal_point {
     Point_2 x_part;// the x coordinate of the point
