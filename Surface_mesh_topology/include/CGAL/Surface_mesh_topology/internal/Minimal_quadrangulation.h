@@ -1867,6 +1867,63 @@ protected:
     return result;
   }
 
+  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref, size_type num_sides)
+  {
+    size_type ref_order = get_dart_id(ref, ref),
+              x_order = get_dart_id(x, ref);
+    return x_order <= ref_order ? (x_order + num_sides - ref_order - 1) : (x_order - ref_order - 1);
+  }
+
+  int get_previous_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
+  {
+    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? static_cast<int>(i) - 1, static_cast<int>(i) + 1;
+  }
+
+  bool has_previous_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    int j = get_previous_idx_relative_to(p, i, ref);
+    return j >= 0 && j < p.length();
+  }
+
+  Dart_const_handle get_previous_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    int j = get_previous_idx_relative_to(p, i, ref);
+    if (j < 0) { j += p.length(); }
+    else if (j >= p.length()) { j -= p.length(); }
+    return p[j];
+  }
+
+  int get_next_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
+  {
+    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? static_cast<int>(i) + 1, static_cast<int>(i) - 1;
+  }
+
+  bool has_next_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    int j = get_next_idx_relative_to(p, i, ref);
+    return j >= 0 && j < p.length();
+  }
+
+  Dart_const_handle get_next_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    int j = get_next_idx_relative_to(p, i, ref);
+    if (j < 0) { j += p.length(); }
+    else if (j >= p.length()) { j -= p.length(); }
+    return p[j];
+  }
+
+  size_type get_dart_id(Dart_const_handle x, Dart_const_handle ref)
+  {
+    return get_local_map().template belong_to_same_cell<0>(x, ref) ?
+           get_local_map().info(x) :
+           get_local_map().info(get_local_map().opposite2(x));
+  }
+  }
+
 protected:
   /// The original map (the mesh seen as a 2-map)
   const typename Get_map<Mesh, Mesh>::storage_type m_original_map;
