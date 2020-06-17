@@ -3070,10 +3070,11 @@ move_point(const Vertex_handle& old_vertex,
     lock_outdated_cells();
     std::copy(incident_cells_.begin(),incident_cells_.end(),
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
-    unlock_outdated_cells();
 
     Vertex_handle new_vertex =
       move_point_no_topo_change(old_vertex, move, new_position);
+
+    unlock_outdated_cells();
 
     // Don't "unlock_all_elements" here, the caller may need it to do it himself
     return new_vertex;
