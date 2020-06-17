@@ -649,11 +649,28 @@ public:
           }
         }
         // Insert current darts
-        if (trees[dart_id].empty()) {
+        if (trees[dart_id].empty())
+        {
           trees[dart_id].push_back(node);
         }
-        else {
-          /// TODO: first check overlap of prceeding edge
+        else
+        {
+          size_type prev_dart_id = get_dart_id_relative_to(pr[i - 1], pr[0]);
+          auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
+          if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
+          {
+            auto it_after = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::prev(it_prev)->m_idx, pr[i - 1])]);
+            trees[dart_id].insert_before(it_after, node);
+          }
+          else if (std::next(it_prev) != trees[prev_dart_id].end() && is_same_corner(pr, std::next(it_prev)->m_idx, i - 1))
+          {
+            auto it_before = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::next(it_prev)->m_idx, pr[i-1])]);
+            trees[dart_id].insert_before(std::next(it_before), node);
+          }
+          else
+          {
+            // TODO: insert into the tree guaranteed no same corner instance
+          }
         }
       }
     }
@@ -1894,6 +1911,14 @@ protected:
            get_local_map().info(x) :
            get_local_map().info(get_local_map().opposite2(x));
   }
+
+  bool is_same_corner(const Path_on_surface<Local_map>& p, std::size_t j, std::size_t ref) const
+  {
+    if (!has_next_relative_to(p, j, p[ref]))
+    {
+      return false;
+    }
+    return get_local_map().template belong_to_same_cell<1>(get_next_relative_to(p, j, p[ref]), p[ref + 1]);
   }
 
 protected:
