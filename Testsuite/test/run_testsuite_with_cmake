@@ -25,6 +25,7 @@ if [ -n "${CGAL_TIMEOUT_PROG+x}" ]; then
     TIMEOUT=$CGAL_TIMEOUT_PROG
 else
     TIMEOUT=`which timeout`
+    [ -z "$TIMEOUT" ] && TIMEOUT=`which gtimeout`
 fi
 
 #clear the error file
