@@ -369,6 +369,13 @@ and make the operation impossible with the current version of the code.
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{do_not_modify} \anchor PMP_do_not_modify
+Parameter used in `corefine()` function to prevent the refinement of one of the two input meshes.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
 \cgalNPBegin{clip_volume} \anchor PMP_clip_volume
 Parameter used in `clip()` functions to clip a volume rather than a surface.
 \n
