@@ -41,7 +41,7 @@ int main(void) {
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
-  std::cout << (*octree.root());
+  std::cout << octree.root();
 
   return 0;
 }

@@ -146,9 +146,9 @@ namespace CGAL {
         m_unit_per_depth.push_back(1 << (m_max_depth_reached - i));
     }
 
-    Node *root() { return &m_root; }
+    Node &root() { return m_root; }
 
-    const Node *root() const { return &m_root; }
+    const Node &root() const { return m_root; }
 
     bool operator==(Octree<Kernel, PointRange, PointMap> &rhs) {
 
