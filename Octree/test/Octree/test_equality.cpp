@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <CGAL/Octree.h>
+#include <CGAL/Octree/IO.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
@@ -44,6 +45,8 @@ int test_identical_trees() {
   } else {
     failures++;
     std::cout << "[FAIL]" << std::endl;
+    std::cout << a.root() << std::endl;
+    std::cout << b.root() << std::endl;
   }
 
   return failures;
@@ -71,7 +74,7 @@ int test_different_trees() {
 
   // Refine both trees using different criteria
   a.refine(10, 1);
-  b.refine(10, 4);
+  b.refine(10, 9);
 
   // Check if those trees are considered equal
   std::cout << "test equality: different octrees" << std::endl;
@@ -80,6 +83,8 @@ int test_different_trees() {
   } else {
     failures++;
     std::cout << "[FAIL]" << std::endl;
+    std::cout << a.root() << std::endl;
+    std::cout << b.root() << std::endl;
   }
 
   return failures;
