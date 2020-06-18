@@ -77,12 +77,6 @@
 #include "Color_map.h"
 
 
-#ifdef CGAL_USE_WEBSOCKETS
-#include <QWebSocketServer>
-#include <QWebSocket>
-#include <QNetworkInterface>
-#endif
-
 using namespace CGAL::Three;
 QScriptValue
 myScene_itemToScriptValue(QScriptEngine *engine,
@@ -1033,7 +1027,7 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist/bbox_diag) > 13.0 )
+  if((std::log2)(l_dist/bbox_diag) > 11.0 )
     for(int i=0; i<3; ++i)
     {
       offset[i] = -bbox_center[i];
@@ -2940,25 +2934,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   bool do_upload = false;
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
-  QString pass;
   if(!user.isEmpty())
   {
     QMessageBox::StandardButton doyou =
         QMessageBox::question(this, tr("Upload ?"), tr("Do you wish to upload the scene"
                                                        " using the SSH preferences ?"));
-    bool ok;
     do_upload = (doyou == QMessageBox::Yes);
-    if(do_upload)
-    {
-      pass = QInputDialog::getText(this, "SSH Password",
-                                   "Enter ssh key password:",
-                                   QLineEdit::Password,
-                                   tr(""),
-                                   &ok);
-      if(!ok)
-        return;
-      pass = pass.trimmed();
-    }
   }
 #endif
 
@@ -3109,12 +3090,31 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
       path.prepend("Polyhedron_demo_");
     try{
       ssh_session session;
-      bool res = establish_ssh_session(session,
-                            user.toStdString().c_str(),
-                            server.toStdString().c_str(),
-                            pk.toStdString().c_str(),
-                            privK.toStdString().c_str(),
-                            pass.toStdString().c_str());
+      bool res = establish_ssh_session_from_agent(session,
+                                                  user.toStdString().c_str(),
+                                                  server.toStdString().c_str(),
+                                                  pk.toStdString().c_str());
+
+      if(!res)
+      {
+        bool ok;
+        QString pass;
+        pass = QInputDialog::getText(this, "SSH Password",
+                                     "Enter ssh key password:",
+                                     QLineEdit::Password,
+                                     tr(""),
+                                     &ok);
+        if(!ok)
+          return;
+        pass = pass.trimmed();
+        res = establish_ssh_session(session,
+                                    user.toStdString().c_str(),
+                                    server.toStdString().c_str(),
+                                    pk.toStdString().c_str(),
+                                    privK.toStdString().c_str(),
+                                    pass.toStdString().c_str());
+      }
+
       if(!res)
       {
         QMessageBox::warning(this,
@@ -3590,25 +3590,13 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
-  QString pass;
+
   if(!user.isEmpty())
   {
     QMessageBox::StandardButton doyou =
         QMessageBox::question(this, tr("Download ?"), tr("Do you wish to download the scene"
                                                          " using the SSH preferences ?"));
-    bool ok;
     do_download= (doyou == QMessageBox::Yes);
-    if(do_download)
-    {
-      pass = QInputDialog::getText(this, "SSH Password",
-                                   "Enter ssh key password:",
-                                   QLineEdit::Password,
-                                   tr(""),
-                                   &ok);
-      if(!ok)
-        return;
-      pass = pass.trimmed();
-    }
   }
 #endif
 
@@ -3623,22 +3611,30 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     server = server.trimmed();
     pk = pk.trimmed();
     privK=privK.trimmed();
-    QString path;
-    path = QInputDialog::getText(this,
-                                 "",
-                                 tr("Enter the name of the scene file."));
-    if(path.isEmpty())
-      return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+
     try{
       ssh_session session;
-      bool res = establish_ssh_session(session,
-                            user.toStdString().c_str(),
-                            server.toStdString().c_str(),
-                            pk.toStdString().c_str(),
-                            privK.toStdString().c_str(),
-                            pass.toStdString().c_str());
+      bool res = establish_ssh_session_from_agent(session,
+                                                  user.toStdString().c_str(),
+                                                  server.toStdString().c_str(),
+                                                  pk.toStdString().c_str());
+      if(!res){
+        bool ok;
+        QString pass= QInputDialog::getText(this, "SSH Password",
+                                     "Enter ssh key password:",
+                                     QLineEdit::Password,
+                                     tr(""),
+                                     &ok);
+        if(!ok)
+          return;
+        pass = pass.trimmed();
+        res = establish_ssh_session(session,
+                                    user.toStdString().c_str(),
+                                    server.toStdString().c_str(),
+                                    pk.toStdString().c_str(),
+                                    privK.toStdString().c_str(),
+                                    pass.toStdString().c_str());
+      }
       if(!res)
       {
         QMessageBox::warning(this,
@@ -3646,7 +3642,22 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                              "The SSH session could not be started.");
         return;
       }
+      QStringList names;
+      if(!CGAL::ssh_internal::explore_the_galaxy(session, names))
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "Could not find remote directory.");
+      }
+      QString path;
+      path = QInputDialog::getItem(this,
+                                   "Choose a file",
+                                   tr("Choose the scene file."),
+                                   names);
       filename = QString("%1/load_scene.js").arg(QDir::tempPath());
+      if(path.isEmpty())
+        return;
+      path.prepend("Polyhedron_demo_");
       path = tr("/tmp/%2").arg(path);
       res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
       if(!res)
@@ -3681,90 +3692,3 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     tmp_file.remove();
   }
 }
-
-#ifdef CGAL_USE_WEBSOCKETS
-void MainWindow::on_action_Start_a_Session_triggered()
-{
-  QAction * action= findChild<QAction*>("action_Start_a_Session");
-  static EchoServer *server =nullptr;
-  if(action->isChecked()){
-     server = new EchoServer(1234);
-    QObject::connect(server, &EchoServer::closed, server,&EchoServer::deleteLater);
-  }
-  else
-  {
-    server->deleteLater();
-  }
-}
-
-EchoServer::EchoServer(quint16 port) :
-    QObject(CGAL::Three::Three::mainWindow()),
-    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
-                                            QWebSocketServer::NonSecureMode, this))
-{
-    if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
-        connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
-                this, &EchoServer::onNewConnection);
-        connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &EchoServer::closed);
-    }
-    QHostAddress local_host("0.0.0.0");
-
-    //to avoid printing 127.0.0.1. Not realy sure it won't ever print the external ipv4 though.
-    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
-      if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
-      {
-        local_host= address;
-        break;
-      }
-    }
-    QMessageBox mb(QMessageBox::NoIcon, "WS Server",
-                   tr("WebSockets Server started.\nEnter the following address in\nyour Network Preferences to be able to join it :\n"
-                      "ws://%1:%2").arg(local_host.toString()).arg(port), QMessageBox::Ok, CGAL::Three::Three::mainWindow());
-    mb.setTextInteractionFlags(Qt::TextSelectableByMouse);
-    mb.exec();
-}
-
-EchoServer::~EchoServer()
-{
-    m_pWebSocketServer->close();
-    qDeleteAll(m_clients.begin(), m_clients.end());
-}
-
-void EchoServer::onNewConnection()
-{
-    QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-
-    connect(pSocket, &QWebSocket::textMessageReceived, this, &EchoServer::processTextMessage);
-    connect(pSocket, &QWebSocket::binaryMessageReceived, this, &EchoServer::processBinaryMessage);
-    connect(pSocket, &QWebSocket::disconnected, this, &EchoServer::socketDisconnected);
-
-    m_clients << pSocket;
-}
-
-void EchoServer::processTextMessage(QString message)
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    for(auto *client : m_clients) {
-      if(client != pClient)
-        client->sendTextMessage(message);
-    }
-}
-
-void EchoServer::processBinaryMessage(QByteArray message)
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (pClient) {
-        pClient->sendBinaryMessage(message);
-    }
-}
-
-void EchoServer::socketDisconnected()
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (pClient) {
-        m_clients.removeAll(pClient);
-        pClient->deleteLater();
-    }
-}
-#endif

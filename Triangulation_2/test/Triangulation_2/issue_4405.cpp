@@ -9,13 +9,43 @@ typedef CGAL::Epick Kernel;
 typedef Kernel::FT FieldNumberType;
 typedef Kernel::Point_2 Point2;
 typedef Kernel::Point_3 Point3;
+
+template <typename Vb>
+class My_vertex_base : public Vb {
+  std::size_t time_stamp_;
+public:
+  My_vertex_base() : Vb(), time_stamp_(-1) {
+  }
+
+  My_vertex_base(const My_vertex_base& other) :
+    Vb(other),
+    time_stamp_(other.time_stamp_)
+  {}
+
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+
+  template < class TDS >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS>::Other Vb2;
+    typedef My_vertex_base<Vb2> Other;
+  };
+};
+
 struct FaceInfo2
 {
   unsigned long long m_id;
 };
 typedef CGAL::Projection_traits_xy_3<Kernel> TriangulationTraits;
 typedef CGAL::Triangulation_vertex_base_with_id_2<TriangulationTraits> VertexBaseWithId;
-typedef CGAL::Triangulation_vertex_base_2<TriangulationTraits, VertexBaseWithId> VertexBase;
+typedef My_vertex_base<VertexBaseWithId> Vb2;
+typedef CGAL::Triangulation_vertex_base_2<TriangulationTraits, Vb2> VertexBase;
 typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2, Kernel> FaceBaseWithInfo;
 typedef CGAL::Constrained_triangulation_face_base_2<TriangulationTraits, FaceBaseWithInfo> FaceBase;
 typedef CGAL::Triangulation_data_structure_2<VertexBase, FaceBase> TriangulationData;

@@ -1127,6 +1127,8 @@ public:
   }
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
+    ///
+    /// After calling this method, the object is the same as a newly constructed object. The additional properties (such as normal vectors) are also removed and must thus be re-added if needed.
     void clear();
 
 

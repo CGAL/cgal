@@ -245,8 +245,12 @@ public Q_SLOTS:
     {
       for(int i = 0; i < children.size(); ++i)
       {
-        if(children[i] >= removed_id)
+        if(children[i] > removed_id)
           --children[i];
+        else if(children[i] == removed_id)//child has been removed from the scene, it doesn't exist anymore.
+        {
+          children.removeAll(removed_id);
+        }
       }
     }
 private:

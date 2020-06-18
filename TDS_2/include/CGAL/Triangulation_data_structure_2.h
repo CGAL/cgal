@@ -104,8 +104,13 @@ protected:
 public:
   Triangulation_data_structure_2();
   Triangulation_data_structure_2(const Tds &tds);
+  Triangulation_data_structure_2(Triangulation_data_structure_2&& tds)
+    noexcept(noexcept(Face_range(std::move(tds._faces))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))));
+
   ~Triangulation_data_structure_2();
   Tds& operator= (const Tds &tds);
+  Tds& operator= (Tds&& tds) noexcept(noexcept(Tds(std::move(tds))));
   void swap(Tds &tds);
 
   //ACCESS FUNCTIONS
@@ -641,9 +646,6 @@ public:
 
   Triangulation_default_data_structure_2(const Geom_traits& = Geom_traits())
     : Tds() {}
-
-  Triangulation_default_data_structure_2(const Tdds &tdds)
-    : Tds(tdds) {}
 };
 
 //for backward compatibility
@@ -656,8 +658,6 @@ public:
   typedef Triangulation_data_structure_using_list_2<Vb,Fb>  Tdsul;
 
   Triangulation_data_structure_using_list_2(): Tds() {}
-  Triangulation_data_structure_using_list_2(const Tdsul &tdsul)
-    : Tds(tdsul) {}
 };
 
 
@@ -676,18 +676,41 @@ Triangulation_data_structure_2(const Tds &tds)
 
 template < class Vb, class Fb>
 Triangulation_data_structure_2<Vb,Fb> ::
+Triangulation_data_structure_2(Tds &&tds)
+    noexcept(noexcept(Face_range(std::move(tds._faces))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))))
+  : _dimension(std::exchange(tds._dimension, -2))
+  , _faces(std::move(tds._faces))
+  , _vertices(std::move(tds._vertices))
+{
+}
+
+template < class Vb, class Fb>
+Triangulation_data_structure_2<Vb,Fb> ::
 ~Triangulation_data_structure_2()
 {
   clear();
 }
 
-//assignement
+//copy-assignment
 template < class Vb, class Fb>
 Triangulation_data_structure_2<Vb,Fb>&
 Triangulation_data_structure_2<Vb,Fb> ::
 operator= (const Tds &tds)
 {
   copy_tds(tds);
+  return *this;
+}
+
+//move-assignment
+template < class Vb, class Fb>
+Triangulation_data_structure_2<Vb,Fb>&
+Triangulation_data_structure_2<Vb,Fb> ::
+operator= (Tds &&tds) noexcept(noexcept(Tds(std::move(tds))))
+{
+  _faces = std::move(tds._faces);
+  _vertices = std::move(tds._vertices);
+  _dimension = std::exchange(tds._dimension, -2);
   return *this;
 }
 
@@ -798,7 +821,7 @@ is_edge(Vertex_handle va, Vertex_handle vb,
 {
   Face_handle fc = va->face();
   Face_handle start = fc;
-  if (fc == 0) return false;
+  if (fc == nullptr) return false;
   int inda, indb;
   do {
     inda=fc->index(va);
@@ -1031,7 +1054,9 @@ insert_dim_up(Vertex_handle w,  bool orient)
 
       for ( ; lfit != faces_list.end() ; ++lfit) {
         f = * lfit;
-        g = create_face(f); //calls copy constructor of face
+        g = create_face(f->vertex(0),f->vertex(1),f->vertex(2),
+                        f->neighbor(0),f->neighbor(1),f->neighbor(2));
+
         f->set_vertex(dim,v);
         g->set_vertex(dim,w);
         set_adjacency(f, dim, g, dim);

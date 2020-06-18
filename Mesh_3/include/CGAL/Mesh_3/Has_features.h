@@ -13,7 +13,7 @@
 #ifndef CGAL_MESH_3_HAS_FEATURES_H
 #define CGAL_MESH_3_HAS_FEATURES_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <boost/mpl/has_xxx.hpp>

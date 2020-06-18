@@ -544,7 +544,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
 template<typename MultiPoint,
          typename MultiLineString,
          typename MultiPolygon>
-std::istream& read_WKT(std::istream& is,
+bool read_WKT(std::istream& is,
                        MultiPoint& points,
                        MultiLineString& polylines,
                        MultiPolygon& polygons)

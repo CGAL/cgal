@@ -13,6 +13,7 @@ if ( CGAL_FOUND )
 include(${CGAL_USE_FILE})
 
 find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
+include(CGAL_Eigen_support)
 
   include_directories (BEFORE "include")
 
@@ -45,7 +46,7 @@ find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
       nn3nanoflan
       sizeof
       deque)
-    CGAL_target_use_Eigen(${target})
+    target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
   endforeach()
 
 else()
@@ -53,4 +54,3 @@ else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-
