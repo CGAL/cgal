@@ -141,6 +141,10 @@ namespace CGAL {
 
     size_t num_points() const { return m_points.size(); }
 
+    size_t _num_points() const {
+      return std::distance(_m_points_begin, _m_points_end);
+    }
+
     bool is_empty() const { return (m_points.size() == 0); }
 
     IntPoint &location() { return m_location; }
