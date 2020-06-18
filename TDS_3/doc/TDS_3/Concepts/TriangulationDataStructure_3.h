@@ -91,6 +91,11 @@ typedef unspecified_type Vertex;
 typedef unspecified_type Cell;
 
 /*!
+A model of the concept `CellData`.
+*/
+typedef unspecified_type Cell_data;
+
+/*!
 Size type (unsigned integral type) 
 */ 
 typedef unspecified_type size_type; 
