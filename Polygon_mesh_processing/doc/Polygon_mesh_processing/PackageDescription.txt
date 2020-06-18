@@ -98,8 +98,7 @@ ranging from basic operations on simplices, to complex geometry processing algor
 
 Optional parameters of the functions of this package
 are implemented as \ref BGLNamedParameters.
-The page \ref pmp_namedparameters "Named Parameters" describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 
 \cgalCRPSection{Meshing Functions}
 - `CGAL::Polygon_mesh_processing::fair()`

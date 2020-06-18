@@ -29,8 +29,7 @@ The API is flexible and can be extended to user-defined proxies and error metric
 \cgalCRPSection{Parameters}
 Optional parameters of the functions of this package
 are implemented as BGL named parameters.
-The page \ref vsa_namedparameters describes their usage
-and provides the list of parameters used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \cgalCRPSection{Concepts}
 - `ErrorMetricProxy`

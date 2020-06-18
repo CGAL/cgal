@@ -58,10 +58,7 @@ takes only two required parameters: the input triangulation, and the desired edg
 which drives the remeshing process.
 
 \ref BGLNamedParameters are used to deal with optional parameters.
-The page \ref Remeshing_namedparameters provides a description
-of their usage, and of all the available parameters for tuning
-the remeshing process and results.
-
+The page \ref bgl_namedparameters describes their usage.
 
 \section secTetRemeshingExamples Examples
 

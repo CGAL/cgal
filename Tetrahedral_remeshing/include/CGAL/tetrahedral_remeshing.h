@@ -85,29 +85,57 @@ namespace CGAL
 *          among the ones listed below
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the full
-*     sequence of atomic operations
-*     performed (listed in the above description)
-*  \cgalParamEnd
-*  \cgalParamBegin{remesh_boundaries} If `false`, none of the input volume boundaries
-*     can be modified.
-*     Otherwise, the topology is preserved, but atomic operations can be performed on the
-*     surfaces, and along feature polylines, such that boundaries are remeshed.
-*  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
-*    constrained - or - not status of each edge of `tr`. A constrained edge can be split
-*    or collapsed, but not flipped.
-*  \cgalParamEnd
-*  \cgalParamBegin{facet_is_constrained_map} a property map containing the
-*    constrained - or - not status of each facet of `tr`. A constrained facet can be split
-*    or collapsed, but not flipped.
-*  \cgalParamEnd
-*  \cgalParamBegin{cell_is_selected_map} a property map containing the
-*    selected - or - not status for each cell of `tr` for remeshing.
-*    Only selected cells are modified (and possibly their neighbors if surfaces are
-*    modified) by remeshing.
-*    By default, all cells with a non-zero `Subdomain_index` are selected.
-*  \cgalParamEnd
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{the number of iterations for the full sequence of atomic operations
+*                           performed (listed in the above description)}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`1`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{remesh_boundaries}
+*     \cgalParamDescription{If `false`, none of the input volume boundaries can be modified.
+*                           Otherwise, the topology is preserved, but atomic operations
+*                           can be performed on the surfaces, and along feature polylines,
+*                           such that boundaries are remeshed.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*     \cgalParamExtra{Boundaries are between the exterior and the interior,
+*                     between two subdomains, between the areas selected or not for remeshing
+*                     (cf \ref Remeshing_cell_is_selected_map), or defined
+*                     by \ref Remeshing_edge_is_constrained_map
+*                     and \ref Remeshing_facet_is_constrained_map.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tr`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped.}
+*     \cgalParamExtra{The pairs must be ordered to ensure consistency.}
+*     \cgalParamExtra{During the meshing process, the set of constrained edges evolves consistently
+*                     with edge splits and collapses, so the property map must be writable.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{facet_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each facet of `tr`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `Triangulation_3::Facet`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no facet is constrained}
+*     \cgalParamExtra{A constrained facet can be split or collapsed, but not flipped.}
+*     \cgalParamExtra{This map, contrary to the others, is not updated throughout the remeshing process.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{cell_is_selected_map}
+*     \cgalParamDescription{a property map containing the selected - or - not status for each cell of `tr` for remeshing.
+*                           Only selected cells are modified (and possibly their neighbors if surfaces are modified) by remeshing.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `Triangulation_3::Cell_handle`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where all cells of the domain
+*                       (i.e. with a non-zero `Subdomain_index`) are selected.}
+*     \cgalParamExtra{During the meshing process, the set of selected cells evolves consistently with
+*                     the atomic operations that are performed, so the property map must be writable.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`

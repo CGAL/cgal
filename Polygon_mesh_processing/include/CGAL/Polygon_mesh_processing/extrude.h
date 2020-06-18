@@ -103,6 +103,7 @@ struct Identity_functor
 
 /**
  * \ingroup PMP_meshing_grp
+ *
  * \brief performs a generalized extrusion of `input` and puts it in `output`.
  *
  * This function extrudes the open surface mesh `input` and puts the result in `output`. The mesh generated is a closed
@@ -112,11 +113,13 @@ struct Identity_functor
  * vertices of the bottom and top part are first initialized to the same value as the corresponding
  * vertices of `input`. Then for each vertex, a call to `bot` and `top` is done for the vertices of the
  * bottom part and the top part, respectively.
+ *
  * \attention `output` may be self intersecting.
+ *
  * @tparam InputMesh a model of `FaceListGraph`
  * @tparam OutputMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor providing
  * \code {.cpp}
  * void operator()`(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)
@@ -124,30 +127,36 @@ struct Identity_functor
  *  where `output_v` is the copy of `input_v` from `input` into the bottom part of `output`.
  *
  * @tparam TopFunctor a functor providing a similar `operator()` as `BottomFunctor`.
+ *
  * @param input an open surface mesh to extrude.
  * @param output a surface mesh that will contain the result of the extrusion.
  * @param bot functor that will transform all points copied from
  * `input` in order to shape the bottom part of the extrusion.
  * @param top functor that will transform all points copied from
  * `input` in order to shape the top part of the extrusion.
- * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- * \cgalParamBegin{vertex_point_map}
- *   the property map that contains the points associated to the vertices of `input`.
- *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *   should be available for the vertices of `input`
- * \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `input`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<InputMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, input)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `input`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- * \cgalParamBegin{vertex_point_map}
- *   the property map that will contain the points associated to the vertices of `output`.
- *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *   should be available for the vertices of `output`
- * \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `ouput`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<OutputMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, ouput)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `ouput`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,
@@ -228,36 +237,46 @@ void extrude_mesh(const InputMesh& input,
 
 /**
  * \ingroup PMP_meshing_grp
+ *
  * fills `output` with a closed mesh bounding the volume swept by `input` when translating its
  * vertices by `v`. The mesh is oriented so that the faces corresponding to `input`
  * in `output` have the same orientation.
+ *
  * \attention `output` may be self intersecting.
+ *
  * @tparam InputMesh a model of the concept `FaceListGraph`
  * @tparam OutputMesh a model of the concept `FaceListGraph` and `MutableFaceGraph`
  * @tparam Vector_3 vector type from the same CGAL kernel as the point of the vertex point map used for `OutputMesh`.
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
+ *
  * @param input an open surface mesh to extrude.
  * @param output a surface mesh that will contain the result of the extrusion.
  * @param v the vector defining the direction of the extrusion
- * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- * \cgalParamBegin{vertex_point_map}
- *   the property map that contains the points associated to the vertices of `input`.
- *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *   should be available for the vertices of `input`
- * \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `input`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<InputMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, input)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `input`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- * \cgalParamBegin{vertex_point_map}
- *   the property map that will contain the points associated to the vertices of `output`.
- *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *   should be available for the vertices of `output`
- * \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `output`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<OutputMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, output)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `output`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,

@@ -400,18 +400,28 @@ public:
 * \ingroup PMP_meshing_grp
 * triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param f face to be triangulated
 * @param pmesh the polygon mesh to which the face to be triangulated belongs
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-*
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return `true` if the face has been triangulated.
@@ -455,20 +465,32 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
           model of `Range`.
           Its iterator type is `InputIterator`.
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param face_range the range of faces to be triangulated
 * @param pmesh the polygon mesh to be triangulated
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return `true` if all the faces have been triangulated.
+*
 * @see triangulate_face()
 */
 template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
@@ -505,19 +527,31 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 * \ingroup PMP_meshing_grp
 * triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh the polygon mesh to be triangulated
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-*   If this parameter is omitted, an internal property map for
-*   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @return `true` if all the faces have been triangulated.
+*
 * @see triangulate_face()
 */
 template <typename PolygonMesh, typename NamedParameters>

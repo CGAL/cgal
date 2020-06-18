@@ -36,25 +36,31 @@ namespace Polygon_mesh_processing {
     holding `boost::graph_traits<TriangleMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
     holding `boost::graph_traits<TriangleMesh>::%vertex_descriptor` for patch vertices
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param tmesh triangle mesh with patches to be refined
   @param faces the range of faces defining the patches to refine
   @param faces_out output iterator into which descriptors of new faces are recorded
   @param vertices_out output iterator into which descriptors of new vertices are recorded
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`
-      Instance of a class model of `ReadWritePropertyMap`.
-      If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-     \cgalParamEnd
-    \cgalParamBegin{density_control_factor} factor to control density of the output mesh,
-      where larger values lead to denser refinements.
-      The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.` \cgalParamEnd
-  \cgalNamedParamsEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `TriangleMesh`.}
+    \cgalParamNEnd
 
+    \cgalParamNBegin{density_control_factor}
+      \cgalParamDescription{a factor to control density of the output mesh, where larger values lead to denser refinements}
+      \cgalParamType{double}
+      \cgalParamDefault{\f$ \sqrt{2}\f$}
+      \cgalParamExtra{The density of vertices of `faces_out` is this factor times higher than the vertices of `faces`.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   @return pair of `faces_out` and `vertices_out`
 

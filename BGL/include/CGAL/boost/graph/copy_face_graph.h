@@ -246,58 +246,97 @@ inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
           and `boost::graph_traits<SourceMesh>::%face_descriptor` must be
           models of `Hashable`.
   \tparam TargetMesh a model of `FaceListGraph`
-  \tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
-  \tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  \tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  \tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
 
   The types `sm_vertex_descriptor` and `sm_face_descriptor` must be models of the concept `Hashable`.
 
   \param sm the source mesh
   \param tm the target mesh
-  \param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `sm` .
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `SourceMesh`
-    \cgalParamEnd
-    \cgalParamBegin{vertex_to_vertex_output_iterator} an `OutputIterator` containing the
-      pairs source-vertex, target-vertex. If this parameter is given, then
-      `vertex_to_vertex_map` cannot be used.
-    \cgalParamEnd
-    \cgalParamBegin{halfedge_to_halfedge_output_iterator} an `OutputIterator` containing the
-      pairs source-halfedge, target-halfedge. If this parameter is given, then
-      `halfedge_to_halfedge_map` cannot be used.
-    \cgalParamEnd
-    \cgalParamBegin{face_to_face_output_iterator} an `OutputIterator` containing the
-      pairs source-face, target-face. If this parameter is given, then
-      `face_to_face_map` cannot be used.
-    \cgalParamEnd
-    \cgalParamBegin{vertex_to_vertex_map} a `ReadWritePropertyMap` containing the
-      pairs source-vertex, target-vertex.
-    \cgalParamEnd
-    \cgalParamBegin{halfedge_to_halfedge_map} a `ReadWritePropertyMap` containing the
-      pairs source-halfedge, target-halfedge.
-    \cgalParamEnd
-    \cgalParamBegin{face_to_face_map} a `ReadWritePropertyMap` containing the
-      pairs source-face, target-face.
-    \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `sm`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<SourceMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, sm)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `SourceMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_to_vertex_output_iterator}
+      \cgalParamDescription{an `OutputIterator` containing the pairs source-vertex, target-vertex.}
+      \cgalParamType{a class model of `OutputIterator` accepting
+                     `std::pair<`boost::graph_traits<SourceMesh>::%vertex_descriptor, `boost::graph_traits<TargetMesh>::%vertex_descriptor>`}
+      \cgalParamDefault{`Emptyset_iterator`}
+      \cgalParamExtra{If this parameter is given, then `vertex_to_vertex_map` cannot be used.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{halfedge_to_halfedge_output_iterator}
+      \cgalParamDescription{an `OutputIterator` containing the pairs source-halfedge, target-halfedge.}
+      \cgalParamType{a class model of `OutputIterator` accepting
+                     `std::pair<`boost::graph_traits<SourceMesh>::%halfedge_descriptor, `boost::graph_traits<TargetMesh>::%halfedge_descriptor>`}
+      \cgalParamDefault{`Emptyset_iterator`}
+      \cgalParamExtra{If this parameter is given, then `halfedge_to_halfedge_map` cannot be used.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_to_face_output_iterator}
+      \cgalParamDescription{an `OutputIterator` containing the pairs source-face, target-face.}
+      \cgalParamType{a class model of `OutputIterator` accepting
+                     `std::pair<`boost::graph_traits<SourceMesh>::%face_descriptor, `boost::graph_traits<TargetMesh>::%face_descriptor>`}
+      \cgalParamDefault{`Emptyset_iterator`}
+      \cgalParamExtra{If this parameter is given, then `face_to_face_map` cannot be used.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_to_vertex_map}
+      \cgalParamDescription{a property map storing for each vertex of a source mesh the corresponding vertex of another mesh}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with
+                     `boost::graph_traits<SourceMesh>::%vertex_descriptor` as key type and
+                     `boost::graph_traits<TargetMesh>::%vertex_descriptor` as value type.}
+      \cgalParamDefault{unused}
+      \cgalParamExtra{A typical use case is mapping the vertices from a source mesh
+                      to its copy's after a `copy_face_graph()` operation.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{halfedge_to_halfedge_map}
+      \cgalParamDescription{a property map storing for each halfedge of a source mesh the corresponding halfedge of another mesh}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with
+                     `boost::graph_traits<SourceMesh>::%halfedge_descriptor` as key type and
+                     `boost::graph_traits<TargetMesh>::%halfedge_descriptor` as value type}
+      \cgalParamDefault{unused}
+      \cgalParamExtra{A typical use case is mapping the halfedges from a source mesh to its copy's
+                      after a `copy_face_graph()`operation.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_to_face_map}
+      \cgalParamDescription{a property map storing for each face of a source mesh the corresponding face of another mesh}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with
+                     `boost::graph_traits<SourceMesh>::%face_descriptor` as key type and
+                     `boost::graph_traits<TargetMesh>::%face_descriptor` as value type}
+      \cgalParamDefault{unused}
+      \cgalParamExtra{A typical use case is mapping the faces from a source mesh to its copy's
+                      after a `copy_face_graph()` operation}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `tm`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `TargetMesh`
-    \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tm`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TargetMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `TargetMesh`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   The points from `sm` to `tm` are converted using
   `CGAL::Cartesian_converter<SourceKernel, TargetKernel>`.
   `SourceKernel` and `TargetKernel` are deduced using `CGAL::Kernel_traits`
-  from the value types of the vertex_point_maps.
+  from the value types of the vertex point maps.
 
   Other properties are not copied.
 */

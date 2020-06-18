@@ -33,8 +33,7 @@ any class model of the concept `FaceGraph`. Each function or class of this packa
 details the requirements on the input polygon mesh.
 
 \ref BGLNamedParameters are used to deal with optional parameters.
-The page \ref pmp_namedparameters describes their usage
-and provides a list of the parameters that are used in this package.
+The page \ref bgl_namedparameters describes their usage.
 
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:

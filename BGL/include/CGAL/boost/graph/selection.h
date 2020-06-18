@@ -464,20 +464,38 @@ reduce_face_selection(
   unselects everything so that the length of the border of the
   selection is 0)
 
-  \param np optional sequence of named parameters among the ones listed below
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{face_index_map}
-      the property map with the indices associated to the faces of `mesh`
-    \cgalParamEnd
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `mesh`
-    \cgalParamEnd
-    \cgalParamBegin{prevent_unselection}
-      if `true` only new faces can be selected, if `false` (default) some
-      faces can be unselected
-    \cgalParamEnd
-    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tm`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `TriangleMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_index_map}
+      \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+                     as key type and `std::size_t` as value type}
+      \cgalParamDefault{an automatically indexed internal map}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{prevent_unselection}
+      \cgalParamDescription{Boolean used to indicate if selection can be only extended or if it can also be shrinked.}
+      \cgalParamType{`bool`}
+      \cgalParamDefault{`false`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 */
 template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters>
