@@ -29,7 +29,6 @@ More information can be found in Section \ref TDS3secdesign.
 
 \sa `TriangulationDSVertexBase_3` 
 \sa `TriangulationVertexBase_3` 
-\sa `TriangulationHierarchyVertexBase_3` 
 \sa `TriangulationCellBase_3` 
 
 */
