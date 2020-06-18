@@ -94,10 +94,14 @@ public:
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-///    If this parameter is omitted, an internal property map for
-///    `CGAL::vertex_point_t` should be available in `FaceGraph`
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `g`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `FaceGraph`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \pre The data must represent a 2-manifold
@@ -108,20 +112,11 @@ public:
 ///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
-                #ifndef DOXYGEN_RUNNING
-                                const CGAL_BGL_NP_CLASS& np,
-                #else
-                                const NamedParameters& np,
-                #endif
+                const CGAL_BGL_NP_CLASS& np,
                 bool verbose = true)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
@@ -145,9 +140,7 @@ bool read_GOCAD(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, boo
 }
 
 template <typename FaceGraph>
-bool read_GOCAD(std::istream& is,
-                std::pair<std::string, std::string>& name_and_color,
-                FaceGraph& g)
+bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_color, FaceGraph& g)
 {
   return read_GOCAD(is, name_and_color, g, parameters::all_default());
 }
@@ -166,10 +159,14 @@ bool read_GOCAD(std::istream& is,
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `FaceGraph`
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `g`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `FaceGraph`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
@@ -178,20 +175,11 @@ bool read_GOCAD(std::istream& is,
 ///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph,
-#ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-#else
-          typename NamedParameters
-#endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname,
                 std::pair<std::string, std::string>& name_and_color,
                 FaceGraph& g,
-#ifndef DOXYGEN_RUNNING
                 const CGAL_BGL_NP_CLASS& np,
-#else
-                const NamedParameters& np,
-#endif
                 bool verbose = true)
 {
   std::ifstream is(fname);
@@ -235,20 +223,19 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `FaceGraph`
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `g`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `FaceGraph`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
                  const char* name,
                  const FaceGraph& g,
@@ -307,9 +294,7 @@ bool write_GOCAD(std::ostream& os,
 }
 
 template <typename FaceGraph>
-bool write_GOCAD(std::ostream& os,
-                 const char* name,
-                 const FaceGraph& g)
+bool write_GOCAD(std::ostream& os, const char* name, const FaceGraph& g)
 {
   return write_GOCAD(os, name, g, parameters::all_default());
 }
@@ -327,42 +312,30 @@ bool write_GOCAD(std::ostream& os,
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `FaceGraph`
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `g`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `FaceGraph`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
 ///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(const char* fname,
                  const FaceGraph& g,
-                 #ifndef DOXYGEN_RUNNING
-                                 const CGAL_BGL_NP_CLASS& np
-                 #else
-                                 const NamedParameters& np
-                 #endif
-                 )
+                 const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_GOCAD(os, fname, g, np);
 }
 
-template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_GOCAD(fname.c_str(), g, np);
@@ -381,27 +354,22 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` should be available in `FaceGraph`
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `g`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `FaceGraph`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \see \ref IOStreamGocad
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
-bool write_GOCAD(std::ostream& os, const FaceGraph& g,
-                 #ifndef DOXYGEN_RUNNING
-                                 const CGAL_BGL_NP_CLASS& np
-                 #else
-                                 const NamedParameters& np
-                 #endif
-                 )
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(std::ostream& os,
+                 const FaceGraph& g,
+                 const CGAL_BGL_NP_CLASS& np)
 {
   return write_GOCAD(os, "anonymous", g, np);
 }

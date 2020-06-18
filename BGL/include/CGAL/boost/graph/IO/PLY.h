@@ -21,6 +21,11 @@
 #include <fstream>
 #include <string>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,16 +91,35 @@ bool read_PLY_BGL(std::istream& is,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `g` .
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`
-    \cgalParamEnd
-    \cgalParamBegin{vertex_index_map}
-      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
-    \cgalParamEnd
-    `face_color_map` the property map with the colors associated to the faces of `g`.
-    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+   \cgalParamNBegin{vertex_index_map}
+     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index}
+     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                    as key type and `std::size_t` as value type}
+     \cgalParamDefault{vertex indices that may exist in the input will be ignored}
+   \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{vertex colors that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{face colors that may exist in the input will be ignored}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -124,16 +148,35 @@ bool read_PLY(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `g` .
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`
-    \cgalParamEnd
-    \cgalParamBegin{vertex_index_map}
-      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
-    \cgalParamEnd
-  `face_color_map` the property map with the colors associated to the faces of `g`.
-  `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+   \cgalParamNBegin{vertex_index_map}
+     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index}
+     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                    as key type and `std::size_t` as value type}
+     \cgalParamDefault{vertex indices that may exist in the input will be ignored}
+   \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{vertex colors that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{face colors that may exist in the input will be ignored}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -195,16 +238,35 @@ bool read_PLY(const std::string& fname, FaceGraph& g)
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
  \cgalNamedParamsBegin
-   \cgalParamBegin{vertex_point_map}
-     the property map with the points associated to the vertices of `g` .
-     If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` should be available in `FaceGraph`
-   \cgalParamEnd
-   \cgalParamBegin{vertex_index_map}
-     is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
-   \cgalParamEnd
-   `face_color_map` the property map with the colors associated to the faces of `g`.
-   `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+   \cgalParamNBegin{vertex_index_map}
+     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index}
+     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                    as key type and `std::size_t` as value type}
+     \cgalParamDefault{vertex indices that may exist in the input will be ignored}
+   \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{vertex colors that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{face colors that may exist in the input will be ignored}
+    \cgalParamNEnd
  \cgalNamedParamsEnd
 
  \returns `true` if writing was successful.
@@ -368,19 +430,41 @@ bool write_PLY(std::ostream& os,
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
  \cgalNamedParamsBegin
-  \cgalParamBegin{use_binary_mode} a Boolean indicating if the
-     data should be written in binary (`true`, the default) or in ASCII (`false`).
-   \cgalParamEnd
-   \cgalParamBegin{vertex_point_map}
-     the property map with the points associated to the vertices of `g` .
-     If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` should be available in `FaceGraph`
-   \cgalParamEnd
-   \cgalParamBegin{vertex_index_map}
-     is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
-   \cgalParamEnd
-   `face_color_map` the property map with the colors associated to the faces of `g`.
-   `vertex_color_map` the property map with the colors associated to the vertices of `g`.
+    \cgalParamNBegin{use_binary_mode}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+   \cgalParamNBegin{vertex_index_map}
+     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                    as key type and `std::size_t` as value type}
+     \cgalParamDefault{no vertex indices in the output}
+   \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{no vertex color in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{no face color in the output}
+    \cgalParamNEnd
  \cgalNamedParamsEnd
 
  \returns `true` if writing was successful.

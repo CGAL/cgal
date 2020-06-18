@@ -24,9 +24,11 @@
 #include <iostream>
 #include <string>
 
-// @todo reintroduce deprecated versions of the functions using lower case file formats
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
-//documentation in doc/ directory
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,12 +97,42 @@ bool read_OFF_BGL(std::istream& is,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-     `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
-     `vertex_color_map` the property map with the colors associated to the vertices of `g`.
-     `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
-     `face_color_map` the property map with the colors associated to the faces of `g`.
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{vertex normals that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{vertex colors that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_texture_map}
+      \cgalParamDescription{a property map associating textures to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_2` as value type}
+      \cgalParamDefault{vertex textures that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{face colors that may exist in the input will be ignored}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -110,23 +142,14 @@ bool read_OFF_BGL(std::istream& is,
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
-bool read_OFF(std::istream& is, FaceGraph& g,
-              #ifndef DOXYGEN_RUNNING
-              const CGAL_BGL_NP_CLASS& np
-              #else
-              const NamedParameters& np
-              #endif
-              , bool verbose = true)
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(std::istream& is,
+              FaceGraph& g,
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   return IO::internal::read_OFF_BGL(is, g, np, verbose);
 }
@@ -146,14 +169,43 @@ bool read_OFF(std::istream& is, FaceGraph& g,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{vertex normals that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{vertex colors that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_texture_map}
+      \cgalParamDescription{a property map associating textures to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_2` as value type}
+      \cgalParamDefault{vertex textures that may exist in the input will be ignored}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{face colors that may exist in the input will be ignored}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
-    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
-    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
-    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
-    `face_color_map` the property map with the colors associated to the faces of `g`.
 
   \pre The data must represent a 2-manifold
 
@@ -165,19 +217,11 @@ bool read_OFF(std::istream& is, FaceGraph& g,
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
-bool read_OFF(const char* fname, FaceGraph& g,
-              #ifndef DOXYGEN_RUNNING
-              const CGAL_BGL_NP_CLASS& np
-              #else
-              const NamedParameters& np
-              #endif
-              ,bool verbose = true)
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const char* fname,
+              FaceGraph& g,
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream is(fname);
   return read_OFF(is, g, np, verbose);
@@ -194,7 +238,7 @@ template <typename FaceGraph>
 bool read_OFF(std::istream& is, FaceGraph& g,
               typename boost::disable_if<
                 typename boost::has_range_const_iterator<FaceGraph>::type
-              >::type* =0)
+              >::type* = nullptr)
 {
   return read_OFF(is, g, parameters::all_default());
 }
@@ -235,13 +279,42 @@ bool write_OFF_BGL(std::ostream& os,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
-    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
-    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
-    `face_color_map` the property map with the colors associated to the faces of `g`.
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{no vertex normals in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{no vertex colors in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_texture_map}
+      \cgalParamDescription{a property map associating textures to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_2` as value type}
+      \cgalParamDefault{no vertex textures in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{no face colors in the output}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -250,20 +323,14 @@ bool write_OFF_BGL(std::ostream& os,
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
-bool write_OFF(std::ostream& os, const FaceGraph& g,
-#ifndef DOXYGEN_RUNNING
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(std::ostream& os,
+               const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np
-               ,typename boost::disable_if<
-               typename boost::has_range_const_iterator<FaceGraph>::type
-               >::type* =0
-#else
-               const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::disable_if<
+                   typename boost::has_range_const_iterator<FaceGraph>::type
+                 >::type* = nullptr
 #endif
                )
 {
@@ -283,13 +350,42 @@ bool write_OFF(std::ostream& os, const FaceGraph& g,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    `vertex_normal_map` the property map with the normals associated to the vertices of `g`.
-    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
-    `vertex_texture_map` the property map with the textures associated to the vertices of `g`.
-    `face_color_map` the property map with the colors associated to the faces of `g`.
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{no vertex normals in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_color_map}
+      \cgalParamDescription{a property map associating colors to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{no vertex colors in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_texture_map}
+      \cgalParamDescription{a property map associating textures to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_2` as value type}
+      \cgalParamDefault{no vertex textures in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{face_color_map}
+      \cgalParamDescription{a property map associating colors to the faces of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+                     as key type and `CGAL::Color` as value type}
+      \cgalParamDefault{no face colors in the output}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -298,20 +394,14 @@ bool write_OFF(std::ostream& os, const FaceGraph& g,
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-                    typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-                    typename NamedParameters
-          #endif
-          >
-bool write_OFF(const char* fname, const FaceGraph& g,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const char* fname,
+               const FaceGraph& g,
+               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               const CGAL_BGL_NP_CLASS& np,
-               typename boost::disable_if<
-               typename boost::has_range_const_iterator<FaceGraph>::type
-               >::type* =0
-#else
-               const NamedParameters& np
+               , typename boost::disable_if<
+                   typename boost::has_range_const_iterator<FaceGraph>::type
+                 >::type* = nullptr
 #endif
                )
 {
@@ -326,18 +416,14 @@ bool write_OFF(const char* fname, const FaceGraph& g,
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
-               typename boost::disable_if<
-                 typename boost::has_range_const_iterator<FaceGraph>::type
-               >::type* =0)
+               typename boost::disable_if<typename boost::has_range_const_iterator<FaceGraph>::type>::type* = nullptr)
 {
   return write_OFF(fname.c_str(), g, np);
 }
 
 template <typename FaceGraph>
 bool write_OFF(std::ostream& os, const FaceGraph& g,
-               typename boost::disable_if<
-                 typename boost::has_range_const_iterator<FaceGraph>::type
-               >::type* =0)
+               typename boost::disable_if<typename boost::has_range_const_iterator<FaceGraph>::type>::type* = nullptr)
 {
   return write_OFF(os, g, parameters::all_default());
 }

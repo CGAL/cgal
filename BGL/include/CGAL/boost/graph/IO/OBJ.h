@@ -28,6 +28,11 @@
 #include <utility>
 #include <vector>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,9 +86,14 @@ public:
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -96,20 +106,11 @@ public:
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-          typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               FaceGraph& g,
-              #ifndef DOXYGEN_RUNNING
-              const CGAL_BGL_NP_CLASS& np
-              #else
-              const NamedParameters& np
-              #endif
-              ,bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
@@ -133,9 +134,14 @@ bool read_OBJ(std::istream& is,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -148,20 +154,11 @@ bool read_OBJ(std::istream& is,
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-          typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const char* fname,
               FaceGraph& g,
-              #ifndef DOXYGEN_RUNNING
-              const CGAL_BGL_NP_CLASS& np
-              #else
-              const NamedParameters& np
-              #endif
-              ,bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true)
 {
   std::ifstream in(fname);
   return read_OBJ(in, g, np, verbose);
@@ -200,9 +197,14 @@ bool read_OBJ(const std::string& fname, FaceGraph& g) { return read_OBJ(fname, g
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -211,20 +213,10 @@ bool read_OBJ(const std::string& fname, FaceGraph& g) { return read_OBJ(fname, g
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-          typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(std::ostream& os,
                const FaceGraph& g,
-               #ifndef DOXYGEN_RUNNING
-               const CGAL_BGL_NP_CLASS& np
-               #else
-               const NamedParameters& np
-               #endif
-               )
+               const CGAL_BGL_NP_CLASS& np)
 {
   IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_wavefront> printer(os);
   return printer(g, np);
@@ -243,9 +235,14 @@ bool write_OBJ(std::ostream& os,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -254,20 +251,10 @@ bool write_OBJ(std::ostream& os,
   \see \ref IOStreamOBJ
 */
 template <typename FaceGraph,
-          #ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #else
-          typename NamedParameters
-          #endif
-          >
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const char* fname,
                const FaceGraph& g,
-               #ifndef DOXYGEN_RUNNING
-               const CGAL_BGL_NP_CLASS& np
-               #else
-               const NamedParameters& np
-               #endif
-               )
+               const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_OBJ(os, g, np);

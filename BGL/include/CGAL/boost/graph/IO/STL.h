@@ -23,6 +23,11 @@
 #include <iostream>
 #include <string>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,8 +80,14 @@ public:
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -115,8 +126,14 @@ bool read_STL(std::istream& is,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -167,9 +184,14 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The graph must contain only triangle faces.
@@ -263,12 +285,20 @@ bool write_STL(std::ostream& os,
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
  \cgalNamedParamsBegin
-   \cgalParamBegin{use_binary_mode} a Boolean indicating if the
-      data should be written in binary (`true`, the default) or in ASCII (`false`).
-   \cgalParamEnd
-   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-     If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalParamNBegin{use_binary_mode}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
  \cgalNamedParamsEnd
 
  \pre The graph must contain only triangle faces.

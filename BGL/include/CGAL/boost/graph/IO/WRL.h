@@ -14,10 +14,13 @@
 
 #include <CGAL/IO/VRML.h>
 
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
+
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
+#include <string>
 
 namespace CGAL {
 
@@ -38,10 +41,14 @@ namespace CGAL {
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`
-    \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `FaceGraph`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
