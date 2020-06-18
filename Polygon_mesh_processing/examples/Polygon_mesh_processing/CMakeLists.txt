@@ -38,6 +38,7 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+include(CGAL_Eigen_support)
 
 
 # Creating entries for all .cpp/.C files with "main" routine
@@ -45,18 +46,18 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
 
-if (EIGEN3_FOUND)
+if (TARGET CGAL::Eigen_support)
   create_single_source_cgal_program( "hole_filling_example.cpp" )
-  CGAL_target_use_Eigen(hole_filling_example)
+  target_link_libraries(hole_filling_example PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
-  CGAL_target_use_Eigen(hole_filling_example_SM)
+  target_link_libraries(hole_filling_example_SM PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program( "refine_fair_example.cpp")
-  CGAL_target_use_Eigen(refine_fair_example)
+  target_link_libraries(refine_fair_example PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program( "shape_smoothing_example.cpp")
-  CGAL_target_use_Eigen(shape_smoothing_example)
+  target_link_libraries(shape_smoothing_example PUBLIC CGAL::Eigen_support)
   create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
-  CGAL_target_use_Eigen(hole_filling_example_LCC)
-endif(EIGEN3_FOUND)
+  target_link_libraries(hole_filling_example_LCC PUBLIC CGAL::Eigen_support)
+endif()
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
@@ -98,10 +99,9 @@ if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
 target_link_libraries( compute_normals_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
-if (EIGEN3_FOUND)
+if (TARGET CGAL::Eigen_support)
   create_single_source_cgal_program( "hole_filling_example_OM.cpp" )
-  target_link_libraries( hole_filling_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
-  CGAL_target_use_Eigen( hole_filling_example_OM )
+  target_link_libraries( hole_filling_example_OM PRIVATE CGAL::Eigen_support ${OPENMESH_LIBRARIES} )
 endif()
 
 create_single_source_cgal_program( "point_inside_example_OM.cpp")
@@ -118,9 +118,10 @@ target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES
 endif(OpenMesh_FOUND)
 
 find_package( TBB )
-if( TBB_FOUND )
-  CGAL_target_use_TBB(self_intersections_example)
-  CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
+include(CGAL_TBB_support)
+if( TARGET CGAL::TBB_support )
+  target_link_libraries(self_intersections_example PUBLIC CGAL::TBB_support)
+  target_link_libraries(hausdorff_distance_remeshing_example PUBLIC CGAL::TBB_support)
 else()
   message( STATUS "NOTICE: Intel TBB was not found. Sequential code will be used." )
 endif()

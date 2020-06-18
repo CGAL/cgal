@@ -29,7 +29,7 @@
 #include <CGAL/spatial_sort.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include "tbb/parallel_reduce.h"
+#include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 #include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
@@ -82,7 +82,7 @@ struct Distance_computation{
   const PointRange& sample_points;
   Point_3 initial_hint;
   double distance;
-  //constro
+  //constructor
   Distance_computation(
           const AABB_tree& tree,
           const Point_3& p,
@@ -92,7 +92,7 @@ struct Distance_computation{
     , initial_hint(p)
     , distance(-1)
   {}
-  //split constro
+  //split constructor
   Distance_computation(Distance_computation& s, tbb::split )
     : tree(s.tree)
     , sample_points(s.sample_points)
@@ -117,7 +117,7 @@ struct Distance_computation{
       distance = hdist;
   }
 
-  void join( Distance_computation& rhs ) {distance = std::max(rhs.distance, distance); }
+  void join( Distance_computation& rhs ) {distance = (std::max)(rhs.distance, distance); }
 };
 #endif
 
