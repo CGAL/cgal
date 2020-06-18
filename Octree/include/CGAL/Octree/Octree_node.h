@@ -56,9 +56,6 @@ namespace CGAL {
     typedef Octree_node<Kernel, PointRange> Node;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
-    typedef typename PointRange::const_iterator InputIterator;
-    typedef typename std::list<InputIterator> IterList;
 
     typedef std::array<uint32_t, 3> IntPoint;
     typedef std::array<Node, 8> ChildList;
@@ -76,9 +73,6 @@ namespace CGAL {
     Node *m_parent;    /* pointer the the single parent node. Root if NULL */
     IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
     uint8_t m_depth;    /* current depth inside the octree */
-    IterList m_points;   /* list of iterators of the input pwn contained in the node */
-
-    // New members :
 
   public: // functions :
 
@@ -133,13 +127,11 @@ namespace CGAL {
 
     void set_parent(Node *parent) { m_parent = parent; }
 
-    void add_point(InputIterator point) { m_points.push_back(point); }
-
     size_t num_points() const {
       return std::distance(_m_points_begin, _m_points_end);
     }
 
-    bool is_empty() const { return (m_points.size() == 0); }
+    bool is_empty() const { return (num_points() == 0); }
 
     IntPoint &location() { return m_location; }
 

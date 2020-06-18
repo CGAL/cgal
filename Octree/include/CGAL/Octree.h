@@ -64,8 +64,6 @@ namespace CGAL {
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
-    typedef typename PointRange::const_iterator InputIterator;
-    typedef typename std::list<InputIterator> IterList;
 
     // New Types :
     typedef typename PointRange::iterator Range_iterator;
@@ -125,10 +123,6 @@ namespace CGAL {
       // save octree attributes
       m_bbox_min = bbox.min();
       m_bbox_side = bbox.max()[0] - m_bbox_min[0];
-      for (InputIterator it = pwn.begin(); it != pwn.end(); it++)
-        m_root.add_point(it);
-
-      // New
       m_root._m_points_begin = pwn.begin();
       m_root._m_points_end = pwn.end();
     }
@@ -181,8 +175,6 @@ namespace CGAL {
       FT size = m_side_per_depth[node.depth()];
 
       // Determine the location this node should be split
-      // TODO: I think Point_3 has a [] operator, so using an array here might not be necessary!
-
       FT bary[3];
       for (int i = 0; i < 3; i++)
         bary[i] = node.location()[i] * size + (size / 2.0) + m_bbox_min[i];
