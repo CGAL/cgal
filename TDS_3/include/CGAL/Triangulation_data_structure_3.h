@@ -1225,7 +1225,7 @@ public:
     return visit_incident_cells_threadsafe<
       Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
                        OutputIterator, Filter,
-                       internal::Has_member_visited<Vertex>::value>,
+                       false>,
       OutputIterator>(v, edges, f);
   }
 
