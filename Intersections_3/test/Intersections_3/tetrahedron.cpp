@@ -24,30 +24,30 @@ int main()
   Point p2(1,1,1), q2(20,20,20), r2(0,0,20);
   Tetrahedron tet(p,q,r,s);
   Sphere sp(p2,1.0);
-  
+
   CGAL::do_intersect(tet,Triangle(p2,q2,r2));
   CGAL::do_intersect(tet,Segment(p2,q2));
   CGAL::do_intersect(tet,Iso_cuboid(p2,q2));
   CGAL::do_intersect(tet,sp);
   CGAL::do_intersect(tet,Plane(p2,q2,r2));
   CGAL::do_intersect(tet,Line(p2,q2));
-  CGAL::do_intersect(tet,Ray(p2,q2));  
+  CGAL::do_intersect(tet,Ray(p2,q2));
   CGAL::do_intersect(tet,tet);
   CGAL::do_intersect(tet,sp.bbox());
   CGAL::do_intersect(sp, Line(p2,q2));
   CGAL::do_intersect(sp, Ray(p2,q2));
   CGAL::do_intersect(sp, Segment(p2,q2));
-  
-  
+
+
   CGAL::do_intersect(Triangle(p2,q2,r2), tet);
   CGAL::do_intersect(Segment(p2,q2), tet);
   CGAL::do_intersect(Iso_cuboid(p2,q2), tet);
   CGAL::do_intersect(sp, tet);
   CGAL::do_intersect(Plane(p2,q2,r2), tet);
   CGAL::do_intersect(Line(p2,q2), tet);
-  CGAL::do_intersect(Ray(p2,q2), tet);  
+  CGAL::do_intersect(Ray(p2,q2), tet);
   CGAL::do_intersect(sp.bbox(), tet);
-  
+
   CGAL::do_intersect(Line(p2,q2), sp);
   CGAL::do_intersect(Ray(p2,q2), sp);
   CGAL::do_intersect(Segment(p2,q2), sp);

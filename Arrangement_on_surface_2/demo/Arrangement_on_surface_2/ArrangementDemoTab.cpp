@@ -32,7 +32,7 @@ ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
 }
 
 ArrangementDemoTabBase::~ArrangementDemoTabBase( )
-{ 
+{
 }
 
 void ArrangementDemoTabBase::setupUi( )

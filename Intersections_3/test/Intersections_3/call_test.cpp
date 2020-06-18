@@ -19,6 +19,8 @@ typedef CGAL::Iso_cuboid_3< K >     Cub;
 typedef CGAL::Sphere_3< K >         Sph;
 typedef CGAL::Circle_3< K >         C;
 
+typedef CGAL::Tetrahedron_3< K >    T;
+
 typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
@@ -52,11 +54,13 @@ void call_do_intersect_with_kernel(const A& a, const B& b, const K&) {
 }
 
 
-int main()
+int main(int argc, char**)
 {
   CGAL::Interval_nt_advanced::Protector p;
   CGAL_USE(p);
-  try {
+  //we only want to check compilation
+  if(argc > 666 )
+  {
     call_intersection_global(S(), S());
     call_intersection_global(S(), L());
     call_intersection_global(S(), Pl());
@@ -80,7 +84,7 @@ int main()
 
     // special
     CGAL::cpp11::result_of<K::Intersect_3(Pl, Pl, Pl)>::type plplpl = CGAL::intersection(Pl(), Pl(), Pl());
-    
+
     call_intersection_global(Tr(), S());
     call_intersection_global(Tr(), L());
     call_intersection_global(Tr(), Pl());
@@ -101,13 +105,19 @@ int main()
     // call_intersection_global(Cub(), Tr());
     call_intersection_global(Cub(), R());
     call_intersection_global(Cub(), Cub());
+//    call_intersection_global(Cub(), Bbox_3());
 
     call_intersection_global(Bbox_3(), L());
     call_intersection_global(Bbox_3(), S());
     call_intersection_global(Bbox_3(), R());
+    call_intersection_global(Bbox_3(), Cub());
+    CGAL::intersection(Bbox_3(), Bbox_3());
+
+    call_intersection_global(T(), L());
+
 
     // with kernel
-  
+
     call_intersection_with_kernel(S(), S(), K());
     call_intersection_with_kernel(S(), L(), K());
     call_intersection_with_kernel(S(), Pl(), K());
@@ -157,14 +167,14 @@ int main()
     call_intersection_with_kernel(Bbox_3(), S(), K());
     call_intersection_with_kernel(Bbox_3(), R(), K());
 
-    // The doc defines calls to do_intersect for these objects 
+    // The doc defines calls to do_intersect for these objects
 
     // Plane_3<Kernel>
     // Line_3<Kernel>
     // Ray_3<Kernel>
     // Segment_3<Kernel>
     // Triangle_3<Kernel>.
-    // Bbox_3. 
+    // Bbox_3.
     call_do_intersect_global(Pl(), Pl());
     call_do_intersect_global(Pl(), L());
     call_do_intersect_global(Pl(), R());
@@ -214,7 +224,7 @@ int main()
     call_do_intersect_global(Bbox_3(), Tr());
     call_do_intersect_global(Bbox_3(), Sph());
     call_do_intersect_global(Bbox_3(), Bbox_3());
-    
+
     // with_kernel
     call_do_intersect_with_kernel(Pl(), Pl(), K());
     call_do_intersect_with_kernel(Pl(), L(), K());
@@ -264,10 +274,6 @@ int main()
     call_do_intersect_with_kernel(Bbox_3(), S(), K());
     call_do_intersect_with_kernel(Bbox_3(), Sph(), K());
     call_do_intersect_with_kernel(Bbox_3(), Tr(), K());
-    // There is no kernel to call
-    // call_do_intersect_with_kernel(Bbox_3(), Bbox_3(), K());
-  } catch(...) {
-    // as long as this test compiles, it is fine
   }
   return EXIT_SUCCESS;
 }

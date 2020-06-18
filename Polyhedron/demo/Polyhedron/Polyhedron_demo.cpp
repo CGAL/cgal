@@ -63,7 +63,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
 
   QCommandLineParser parser;
   parser.addHelpOption();
-  
+
   QCommandLineOption use_keyword("keyword",
                               tr("Only loads the plugins associated with the following keyword. Can be called multiple times."),
                                  "keyword");
@@ -97,7 +97,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   keywords.append(parser_keywords);
   d_ptr->mainWindow.reset(new MainWindow(keywords, parser.isSet(verbose)));
   MainWindow& mainWindow = *d_ptr->mainWindow;
-  
+
   mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
 

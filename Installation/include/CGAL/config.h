@@ -36,6 +36,10 @@
 #  define WIN64
 #endif
 
+#ifdef BOOST_MSVC
+#define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
+#endif
+
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
@@ -101,6 +105,10 @@
 // <boost/type_traits/detail/has_postfix_operator.hpp> fails as well
 #  define BOOST_TT_HAS_POST_DECREMENT_HPP_INCLUDED
 #  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
+//work around for moc bug : https://bugreports.qt.io/browse/QTBUG-80990
+#if defined(CGAL_LINKED_WITH_TBB)
+#undef CGAL_LINKED_WITH_TBB
+#endif
 #endif
 
 // Macro used by Boost Parameter. Mesh_3 needs at least 12, before the
@@ -546,13 +554,9 @@ using std::max;
 #endif
 
 // Macro to specify a 'noreturn' attribute.
-#if defined(__GNUG__) || __has_attribute(__noreturn__)
-#  define CGAL_NORETURN  __attribute__ ((__noreturn__))
-#elif defined (_MSC_VER)
-#  define CGAL_NORETURN __declspec(noreturn)
-#else
-#  define CGAL_NORETURN
-#endif
+// (This macro existed in CGAL before we switched to C++11. Let's keep
+// the macro defined for backward-compatibility. That cannot harm.)
+#define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
 #if __has_cpp_attribute(no_unique_address)
@@ -739,6 +743,5 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #endif // not BOOST_MSVC
 /// @}
 #include <CGAL/license/lgpl.h>
-
 
 #endif // CGAL_CONFIG_H

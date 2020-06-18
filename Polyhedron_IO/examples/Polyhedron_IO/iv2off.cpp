@@ -255,7 +255,7 @@ int main( int argc, char **argv) {
     }
     if ( !*p_in) {
         cerr << argv[0] << ": error: cannot open file '"<< iname
-	     << "' for reading." <<endl;
+             << "' for reading." <<endl;
         exit( 1);
     }
 

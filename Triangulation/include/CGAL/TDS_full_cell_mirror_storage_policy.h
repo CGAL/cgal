@@ -40,7 +40,7 @@ public:
     : Base(dmax), mirror_vertices_(dmax+1)
     {}
 
-    void set_mirror_index(const int i, const int index) 
+    void set_mirror_index(const int i, const int index)
     {
         mirror_vertices_[i] = index;
     }

@@ -28,6 +28,6 @@ int main (int argc, char** argv)
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;
     }
-  
+
   return EXIT_SUCCESS;
 }

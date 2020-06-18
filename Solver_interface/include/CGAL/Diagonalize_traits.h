@@ -271,7 +271,7 @@ public:
 
       eigen_values[k] = eigen_values[i];
       eigen_values[i] = x;
-      
+
       int jj = index[k];
       index[k] = index[i];
       index[i] = jj;

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -46,7 +46,7 @@ private:
 
 public:
   Boolean   operator()(const Site_2& q, const Site_2& s, const Site_2& r,
-		       const Site_2& t, Sign sgn) const
+                       const Site_2& t, Sign sgn) const
   {
     if ( t.is_segment() ) {
       return false;
@@ -75,12 +75,12 @@ public:
 
     if ( s.is_segment() && r.is_segment() && same_segments(s, r) ) {
       CGAL_assertion( same_points(q, s.source_site()) ||
-		      same_points(q, s.target_site()) );
+                      same_points(q, s.target_site()) );
       Site_2 ss;
       if ( same_points(q, s.source_site()) ) {
-	ss = s.target_site();
+        ss = s.target_site();
       } else {
-	ss = s.source_site();
+        ss = s.source_site();
       }
       // MK::ERROR: write this code using the compare_x_2 and
       //    compare_y_2 predicates instead of computing the inner

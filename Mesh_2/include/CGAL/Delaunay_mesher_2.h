@@ -24,7 +24,7 @@
 namespace CGAL {
 
 template <typename Tr, typename Crit>
-class Delaunay_mesher_2 
+class Delaunay_mesher_2
 {
 
   /** \name \c Tr types */
@@ -69,7 +69,7 @@ public:
   /** \name CONSTRUCTORS */
   Delaunay_mesher_2(Tr& tr_, const Criteria& criteria_ = Criteria())
     : tr(tr_),
-      criteria(criteria_), 
+      criteria(criteria_),
       null_level(),
       null_visitor(),
       clusters_(tr),
@@ -84,7 +84,7 @@ public:
   Delaunay_mesher_2(Tr& tr_, Edges_level& edges_level_,
                     const Criteria& criteria_ = Criteria())
     : tr(tr_),
-      criteria(criteria_), 
+      criteria(criteria_),
       null_level(),
       null_visitor(),
       clusters_(tr),
@@ -102,7 +102,7 @@ public:
   {
     return seeds.begin();
   }
-  
+
   Seeds_const_iterator seeds_end() const
   {
     return seeds.end();
@@ -150,7 +150,7 @@ public:
 
   /** Procedure that marks facets according to a list of seeds. */
   template <typename Seeds_it>
-  static void mark_facets(Tr& tr, 
+  static void mark_facets(Tr& tr,
                           Seeds_it begin,
                           Seeds_it end,
                           bool mark = false)
@@ -169,7 +169,7 @@ public:
             if(fh!=nullptr)
               propagate_marks(fh, mark);
           }
-	propagate_marks(tr.infinite_face(), false);
+        propagate_marks(tr.infinite_face(), false);
       }
     else
       mark_convex_hull(tr);
@@ -226,12 +226,12 @@ public:
                     bool recalculate_bad_faces = true)
   {
     criteria = criteria_;
-    if (recalculate_bad_faces) faces_level.scan_triangulation();  
+    if (recalculate_bad_faces) faces_level.scan_triangulation();
   }
 
-  const Criteria& get_criteria() const 
+  const Criteria& get_criteria() const
   {
-    return criteria;  
+    return criteria;
   }
 
   template <class Fh_it>
@@ -258,7 +258,7 @@ public:
 
   bool is_refinement_done ()
   {
-    return faces_level.is_algorithm_done();  
+    return faces_level.is_algorithm_done();
   }
 
   bool
@@ -274,7 +274,7 @@ public:
 
   /** \name ACCESS FUNCTIONS */
 
-  const Mesh_2::Clusters<Tr>& clusters() const 
+  const Mesh_2::Clusters<Tr>& clusters() const
   {
     return clusters_;
   }
@@ -293,17 +293,17 @@ public:
     return edges_level.is_algorithm_done();
   }
 
-  Edge next_encroached_edge() 
+  Edge next_encroached_edge()
   {
     return edges_level.get_next_element();
   }
 
-  const Face_handle next_bad_face() 
+  const Face_handle next_bad_face()
   {
     return faces_level.get_next_element();
   }
 
-  const Point next_refinement_point() 
+  const Point next_refinement_point()
   {
     if( !edges_level.is_algorithm_done() )
       return edges_level.refinement_point(next_encroached_edge());
@@ -316,7 +316,7 @@ public:
 
   typedef typename Faces_level::Bad_faces_const_iterator
     Bad_faces_const_iterator;
-  
+
   Encroached_edges_const_iterator encroached_edges_begin() const
   {
     return edges_level.begin();
@@ -331,7 +331,7 @@ public:
   {
     return faces_level.begin();
   }
-  
+
   Bad_faces_const_iterator bad_faces_end() const
   {
     return faces_level.end();

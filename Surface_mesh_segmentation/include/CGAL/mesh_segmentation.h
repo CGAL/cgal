@@ -63,7 +63,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
  * \ingroup PkgSurfaceMeshSegmentationRef
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
- * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{shapira2008consistent}.
+ * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{Shapira2008Consistent}.
  * It is possible to compute raw SDF values (without post-processing). In such a case,
  * -1 is used to indicate when no SDF value could be computed for a facet.
  *
@@ -151,7 +151,7 @@ sdf_values_postprocessing(const TriangleMesh& triangle_mesh,
  * A segment is a set of connected facets which are placed under the same cluster (see \cgalFigureRef{Cluster_vs_segment}).
  *
  * \note Log-normalization is applied on `sdf_values_map` before segmentation.
- *       As described in the original paper \cgalCite{shapira2008consistent},
+ *       As described in the original paper \cgalCite{Shapira2008Consistent},
  *       this normalization is done to preserve thin parts of the mesh
  *       by increasing the distance between smaller SDF values and reducing
  *       it between larger ones.
@@ -198,8 +198,7 @@ segmentation_from_sdf_values( const TriangleMesh& triangle_mesh,
                               PointPropertyMap ppmap=PointPropertyMap(),
                               GeomTraits traits=GeomTraits())
 {
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VPMap;
-  internal::Surface_mesh_segmentation<TriangleMesh, GeomTraits, VPMap> algorithm(triangle_mesh, traits, ppmap);
+  internal::Surface_mesh_segmentation<TriangleMesh, GeomTraits, PointPropertyMap> algorithm(triangle_mesh, traits, ppmap);
   return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values_map,
                              segment_ids, !output_cluster_ids);
 }

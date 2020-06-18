@@ -27,7 +27,7 @@ typedef Kernel::Vector_2 Vector_2;
 // the fitting line must be y = 1/2
 void test_1()
 {
-  
+
   std::list<Iso_rectangle_2> Iso_rectangles;
   Iso_rectangles.push_back(Iso_rectangle_2(Point_2(0.0,0.0),Point_2(5.0,4.0)));
   //  Iso_rectangles.push_back(Iso_rectangle_2(Point_2(4.0,0.0),Point_2(5.0,1.0)));
@@ -43,7 +43,7 @@ void test_1()
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality << ") Line: " << line<<std::endl;
 
-  
+
   if(!(line.is_horizontal() && std::abs(line.c()/line.b()- -2) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
@@ -85,7 +85,7 @@ void test_2()
   quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
-  
+
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
@@ -93,7 +93,7 @@ void test_2()
   }
 }
 
-// case with only one rectangle vs two rectangles horizontally splitting the previous one in half 
+// case with only one rectangle vs two rectangles horizontally splitting the previous one in half
 // the fitting line must be the same
 void test_3()
 {
@@ -126,7 +126,7 @@ void test_3()
   quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
-  
+
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;

@@ -110,7 +110,7 @@ void test_linear_intersections()
   test_3d<K1,K2>(segment_3, triangle_3);
   test_3d<K1,K2>(sphere_3, sphere_3);
   test_3d<K1,K2>(triangle_3, triangle_3);
-  
+
   CGAL::Cartesian_converter<K1,K2> convert;
   typename CGAL::cpp11::result_of<typename K1::Intersect_3(Plane_3, Plane_3, Plane_3)>::type res1 =
     CGAL::intersection(plane_3, plane_3, plane_3);

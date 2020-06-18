@@ -1,0 +1,819 @@
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 5.1e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 1.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001005 seconds
+Random seed: 407428646: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 9e-06 seconds
+[TIME] are_freely_homotopic: 0.000968 seconds
+Random seed: 1051319270: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 8e-06 seconds
+[TIME] are_freely_homotopic: 0.001003 seconds
+Random seed: 1723844934: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 8e-06 seconds
+[TIME] are_freely_homotopic: 0.000963 seconds
+Random seed: 1027388982: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 7e-06 seconds
+[TIME] are_freely_homotopic: 0.000966 seconds
+Random seed: 711831886: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 9e-06 seconds
+[TIME] are_freely_homotopic: 0.001177 seconds
+Random seed: 2010793706: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 7e-06 seconds
+[TIME] are_freely_homotopic: 0.000996 seconds
+Random seed: 32114464: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 8e-06 seconds
+[TIME] are_freely_homotopic: 0.001022 seconds
+Random seed: 195228895: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 8e-06 seconds
+[TIME] are_freely_homotopic: 0.000979 seconds
+Random seed: 1929405609: Path1 size: 10 (from 10 darts); Path2 size: 1810 (from 100 deformations).
+[TIME] is_contractible: 7e-06 seconds
+[TIME] are_freely_homotopic: 0.000987 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 5.4e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.8e-05 seconds
+[TIME] are_freely_homotopic: 0.001095 seconds
+Random seed: 1171368432: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.4e-05 seconds
+[TIME] are_freely_homotopic: 0.00105 seconds
+Random seed: 34571897: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001062 seconds
+Random seed: 1247288983: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.7e-05 seconds
+[TIME] are_freely_homotopic: 0.001035 seconds
+Random seed: 178150098: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.3e-05 seconds
+[TIME] are_freely_homotopic: 0.001049 seconds
+Random seed: 1284851902: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.2e-05 seconds
+[TIME] are_freely_homotopic: 0.00101 seconds
+Random seed: 586309868: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.3e-05 seconds
+[TIME] are_freely_homotopic: 0.001002 seconds
+Random seed: 1809343951: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.8e-05 seconds
+[TIME] are_freely_homotopic: 0.001019 seconds
+Random seed: 1595581086: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 2.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001037 seconds
+Random seed: 47612060: Path1 size: 20 (from 20 darts); Path2 size: 1820 (from 100 deformations).
+[TIME] is_contractible: 1.4e-05 seconds
+[TIME] are_freely_homotopic: 0.001149 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 9e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 5.6e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001108 seconds
+Random seed: 374067786: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 1.8e-05 seconds
+[TIME] are_freely_homotopic: 0.001021 seconds
+Random seed: 391456340: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001016 seconds
+Random seed: 1273863045: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2.1e-05 seconds
+[TIME] are_freely_homotopic: 0.001083 seconds
+Random seed: 1519773403: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2e-05 seconds
+[TIME] are_freely_homotopic: 0.001038 seconds
+Random seed: 1799868058: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2e-05 seconds
+[TIME] are_freely_homotopic: 0.001031 seconds
+Random seed: 277235164: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 1.9e-05 seconds
+[TIME] are_freely_homotopic: 0.001087 seconds
+Random seed: 734561593: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001032 seconds
+Random seed: 21414605: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 2e-05 seconds
+[TIME] are_freely_homotopic: 0.001021 seconds
+Random seed: 130317551: Path1 size: 30 (from 30 darts); Path2 size: 1830 (from 100 deformations).
+[TIME] is_contractible: 1.8e-05 seconds
+[TIME] are_freely_homotopic: 0.001027 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 9e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.4e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 6.2e-05 seconds
+[TIME] are_freely_homotopic: 0.001295 seconds
+Random seed: 827721189: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.6e-05 seconds
+[TIME] are_freely_homotopic: 0.001204 seconds
+Random seed: 179817563: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.5e-05 seconds
+[TIME] are_freely_homotopic: 0.001213 seconds
+Random seed: 1778101746: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.9e-05 seconds
+[TIME] are_freely_homotopic: 0.001151 seconds
+Random seed: 328240899: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.5e-05 seconds
+[TIME] are_freely_homotopic: 0.001145 seconds
+Random seed: 241402582: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.9e-05 seconds
+[TIME] are_freely_homotopic: 0.001107 seconds
+Random seed: 773902557: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.7e-05 seconds
+[TIME] are_freely_homotopic: 0.001101 seconds
+Random seed: 225479303: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.7e-05 seconds
+[TIME] are_freely_homotopic: 0.001154 seconds
+Random seed: 950681152: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.3e-05 seconds
+[TIME] are_freely_homotopic: 0.001134 seconds
+Random seed: 380481270: Path1 size: 100 (from 100 darts); Path2 size: 1900 (from 100 deformations).
+[TIME] is_contractible: 5.8e-05 seconds
+[TIME] are_freely_homotopic: 0.001139 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 9e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.9e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.000108 seconds
+[TIME] are_freely_homotopic: 0.001324 seconds
+Random seed: 129634878: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.000127 seconds
+[TIME] are_freely_homotopic: 0.001278 seconds
+Random seed: 452917690: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.000103 seconds
+[TIME] are_freely_homotopic: 0.001273 seconds
+Random seed: 314585648: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.000106 seconds
+[TIME] are_freely_homotopic: 0.001214 seconds
+Random seed: 1198383543: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 9.7e-05 seconds
+[TIME] are_freely_homotopic: 0.001194 seconds
+Random seed: 1500775544: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.000102 seconds
+[TIME] are_freely_homotopic: 0.001204 seconds
+Random seed: 1867790315: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.0001 seconds
+[TIME] are_freely_homotopic: 0.001208 seconds
+Random seed: 317233466: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0.000106 seconds
+[TIME] are_freely_homotopic: 0 seconds
+Random seed: 860485872: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0 seconds
+[TIME] are_freely_homotopic: 0 seconds
+Random seed: 186785431: Path1 size: 200 (from 200 darts); Path2 size: 2000 (from 100 deformations).
+[TIME] is_contractible: 0 seconds
+[TIME] are_freely_homotopic: 0.001102 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 3e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.1e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.00015 seconds
+[TIME] are_freely_homotopic: 0.001414 seconds
+Random seed: 1956175858: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000156 seconds
+[TIME] are_freely_homotopic: 0.001383 seconds
+Random seed: 2005845456: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.00015 seconds
+[TIME] are_freely_homotopic: 0.001383 seconds
+Random seed: 1292528523: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000164 seconds
+[TIME] are_freely_homotopic: 0.001353 seconds
+Random seed: 895083270: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000151 seconds
+[TIME] are_freely_homotopic: 0.001377 seconds
+Random seed: 1540167906: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000148 seconds
+[TIME] are_freely_homotopic: 0.00132 seconds
+Random seed: 562183336: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000189 seconds
+[TIME] are_freely_homotopic: 0.001327 seconds
+Random seed: 421041639: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000153 seconds
+[TIME] are_freely_homotopic: 0.001346 seconds
+Random seed: 1020347916: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000148 seconds
+[TIME] are_freely_homotopic: 0.001338 seconds
+Random seed: 788223553: Path1 size: 300 (from 300 darts); Path2 size: 2100 (from 100 deformations).
+[TIME] is_contractible: 0.000149 seconds
+[TIME] are_freely_homotopic: 0.001316 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.4e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000503 seconds
+[TIME] are_freely_homotopic: 0.00274 seconds
+Random seed: 43424588: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000515 seconds
+[TIME] are_freely_homotopic: 0.00225 seconds
+Random seed: 573264075: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000503 seconds
+[TIME] are_freely_homotopic: 0.002229 seconds
+Random seed: 1527608505: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000487 seconds
+[TIME] are_freely_homotopic: 0.002148 seconds
+Random seed: 836582892: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000506 seconds
+[TIME] are_freely_homotopic: 0.002183 seconds
+Random seed: 1873914203: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.0005 seconds
+[TIME] are_freely_homotopic: 0.002198 seconds
+Random seed: 701716257: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000524 seconds
+[TIME] are_freely_homotopic: 0.002243 seconds
+Random seed: 1041502320: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000476 seconds
+[TIME] are_freely_homotopic: 0.002138 seconds
+Random seed: 453945061: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000519 seconds
+[TIME] are_freely_homotopic: 0.00216 seconds
+Random seed: 1711098650: Path1 size: 1000 (from 1000 darts); Path2 size: 2800 (from 100 deformations).
+[TIME] is_contractible: 0.000508 seconds
+[TIME] are_freely_homotopic: 0.002289 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.5e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001098 seconds
+[TIME] are_freely_homotopic: 0.003557 seconds
+Random seed: 1244268897: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001039 seconds
+[TIME] are_freely_homotopic: 0.003471 seconds
+Random seed: 1196854613: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001114 seconds
+[TIME] are_freely_homotopic: 0.003608 seconds
+Random seed: 371870391: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001052 seconds
+[TIME] are_freely_homotopic: 0.0035 seconds
+Random seed: 1678709996: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001065 seconds
+[TIME] are_freely_homotopic: 0.003567 seconds
+Random seed: 169242704: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001091 seconds
+[TIME] are_freely_homotopic: 0.003504 seconds
+Random seed: 1844556362: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001089 seconds
+[TIME] are_freely_homotopic: 0.003487 seconds
+Random seed: 2053640443: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001035 seconds
+[TIME] are_freely_homotopic: 0.003462 seconds
+Random seed: 1974056470: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001044 seconds
+[TIME] are_freely_homotopic: 0.003641 seconds
+Random seed: 1751977721: Path1 size: 2000 (from 2000 darts); Path2 size: 3800 (from 100 deformations).
+[TIME] is_contractible: 0.001071 seconds
+[TIME] are_freely_homotopic: 0.003581 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 5e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.2e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001588 seconds
+[TIME] are_freely_homotopic: 0.004812 seconds
+Random seed: 1252487160: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001464 seconds
+[TIME] are_freely_homotopic: 0.00467 seconds
+Random seed: 13701413: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001528 seconds
+[TIME] are_freely_homotopic: 0.004638 seconds
+Random seed: 510220869: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001537 seconds
+[TIME] are_freely_homotopic: 0.004624 seconds
+Random seed: 1182277397: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001567 seconds
+[TIME] are_freely_homotopic: 0.004616 seconds
+Random seed: 1096764957: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.0015 seconds
+[TIME] are_freely_homotopic: 0.004668 seconds
+Random seed: 331987761: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001511 seconds
+[TIME] are_freely_homotopic: 0.004656 seconds
+Random seed: 2143485603: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001499 seconds
+[TIME] are_freely_homotopic: 0.004802 seconds
+Random seed: 1248377376: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001506 seconds
+[TIME] are_freely_homotopic: 0.004569 seconds
+Random seed: 519811081: Path1 size: 3000 (from 3000 darts); Path2 size: 4800 (from 100 deformations).
+[TIME] is_contractible: 0.001547 seconds
+[TIME] are_freely_homotopic: 0.004533 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 5.5e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.005356 seconds
+[TIME] are_freely_homotopic: 0.013876 seconds
+Random seed: 1666928446: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.005086 seconds
+[TIME] are_freely_homotopic: 0.013546 seconds
+Random seed: 1181327034: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.005001 seconds
+[TIME] are_freely_homotopic: 0.013021 seconds
+Random seed: 1346202096: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.004986 seconds
+[TIME] are_freely_homotopic: 0.013122 seconds
+Random seed: 828629303: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.005043 seconds
+[TIME] are_freely_homotopic: 0.01331 seconds
+Random seed: 1857214345: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.00499 seconds
+[TIME] are_freely_homotopic: 0.013371 seconds
+Random seed: 164145942: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.005031 seconds
+[TIME] are_freely_homotopic: 0.009351 seconds
+Random seed: 1551241558: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.004947 seconds
+[TIME] are_freely_homotopic: 0.012935 seconds
+Random seed: 1186302198: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.005056 seconds
+[TIME] are_freely_homotopic: 0.013268 seconds
+Random seed: 1147150342: Path1 size: 10000 (from 10000 darts); Path2 size: 11800 (from 100 deformations).
+[TIME] is_contractible: 0.00501 seconds
+[TIME] are_freely_homotopic: 0.012934 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 1e-05 seconds
+[TIME] Simplification in one face: 5e-06 seconds
+[TIME] Face quadrangulation: 2.2e-05 seconds
+[TIME] Total time for computation of reduced map: 6e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945958: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010521 seconds
+[TIME] are_freely_homotopic: 0.028003 seconds
+Random seed: 92918279: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010399 seconds
+[TIME] are_freely_homotopic: 0.02753 seconds
+Random seed: 596408825: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010433 seconds
+[TIME] are_freely_homotopic: 0.027865 seconds
+Random seed: 898032342: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010353 seconds
+[TIME] are_freely_homotopic: 0.023407 seconds
+Random seed: 1328207231: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010198 seconds
+[TIME] are_freely_homotopic: 0.028186 seconds
+Random seed: 2051608229: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010343 seconds
+[TIME] are_freely_homotopic: 0.027859 seconds
+Random seed: 588608644: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010273 seconds
+[TIME] are_freely_homotopic: 0.029628 seconds
+Random seed: 66849970: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010566 seconds
+[TIME] are_freely_homotopic: 0.027236 seconds
+Random seed: 2130416677: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.010242 seconds
+[TIME] are_freely_homotopic: 0.026748 seconds
+Random seed: 1280279108: Path1 size: 20000 (from 20000 darts); Path2 size: 21800 (from 100 deformations).
+[TIME] is_contractible: 0.01086 seconds
+[TIME] are_freely_homotopic: 0.028129 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 9e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.6e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945959: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015946 seconds
+[TIME] are_freely_homotopic: 0.043957 seconds
+Random seed: 1536606275: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015459 seconds
+[TIME] are_freely_homotopic: 0.041385 seconds
+Random seed: 2080252105: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.016125 seconds
+[TIME] are_freely_homotopic: 0.038053 seconds
+Random seed: 1598541528: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015935 seconds
+[TIME] are_freely_homotopic: 0.043414 seconds
+Random seed: 974598622: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015291 seconds
+[TIME] are_freely_homotopic: 0.04098 seconds
+Random seed: 1923233325: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015353 seconds
+[TIME] are_freely_homotopic: 0.042937 seconds
+Random seed: 1140340946: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.017732 seconds
+[TIME] are_freely_homotopic: 0.045088 seconds
+Random seed: 1573867023: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015587 seconds
+[TIME] are_freely_homotopic: 0.041879 seconds
+Random seed: 1467028679: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.015839 seconds
+[TIME] are_freely_homotopic: 0.041111 seconds
+Random seed: 1979862163: Path1 size: 30000 (from 30000 darts); Path2 size: 31800 (from 100 deformations).
+[TIME] is_contractible: 0.016299 seconds
+[TIME] are_freely_homotopic: 0.045976 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 0 seconds
+[TIME] Simplification in one face: 0 seconds
+[TIME] Face quadrangulation: 0 seconds
+[TIME] Total time for computation of reduced map: 0 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945960: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.056463 seconds
+[TIME] are_freely_homotopic: 0.17237 seconds
+Random seed: 579143103: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.054943 seconds
+[TIME] are_freely_homotopic: 0.180977 seconds
+Random seed: 1329965305: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.055873 seconds
+[TIME] are_freely_homotopic: 0.171254 seconds
+Random seed: 46115850: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.053753 seconds
+[TIME] are_freely_homotopic: 0.171383 seconds
+Random seed: 1372864308: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.055899 seconds
+[TIME] are_freely_homotopic: 0.171538 seconds
+Random seed: 824893981: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.054506 seconds
+[TIME] are_freely_homotopic: 0.178545 seconds
+Random seed: 87947492: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.05419 seconds
+[TIME] are_freely_homotopic: 0.171793 seconds
+Random seed: 1798052437: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.055006 seconds
+[TIME] are_freely_homotopic: 0.185616 seconds
+Random seed: 1637566832: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.055066 seconds
+[TIME] are_freely_homotopic: 0.174076 seconds
+Random seed: 228920755: Path1 size: 100000 (from 100000 darts); Path2 size: 101800 (from 100 deformations).
+[TIME] is_contractible: 0.055227 seconds
+[TIME] are_freely_homotopic: 0.189212 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 1.7e-05 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 6.5e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945963: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.113193 seconds
+[TIME] are_freely_homotopic: 0.251366 seconds
+Random seed: 474217776: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.053804 seconds
+[TIME] are_freely_homotopic: 0.188959 seconds
+Random seed: 225712445: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.065313 seconds
+[TIME] are_freely_homotopic: 0.319781 seconds
+Random seed: 558926877: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.11272 seconds
+[TIME] are_freely_homotopic: 0.339641 seconds
+Random seed: 489485133: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.112057 seconds
+[TIME] are_freely_homotopic: 0.347156 seconds
+Random seed: 1250371909: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.109281 seconds
+[TIME] are_freely_homotopic: 0.340843 seconds
+Random seed: 1461432881: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.108663 seconds
+[TIME] are_freely_homotopic: 0.344816 seconds
+Random seed: 900599167: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.12226 seconds
+[TIME] are_freely_homotopic: 0.366892 seconds
+Random seed: 332938818: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.116914 seconds
+[TIME] are_freely_homotopic: 0.375243 seconds
+Random seed: 1170036586: Path1 size: 200000 (from 200000 darts); Path2 size: 201800 (from 100 deformations).
+[TIME] is_contractible: 0.109202 seconds
+[TIME] are_freely_homotopic: 0.342457 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 1.2e-05 seconds
+[TIME] Simplification in one face: 6e-06 seconds
+[TIME] Face quadrangulation: 3.2e-05 seconds
+[TIME] Total time for computation of reduced map: 8.6e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945969: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.165865 seconds
+[TIME] are_freely_homotopic: 0.524276 seconds
+Random seed: 1226891914: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.161986 seconds
+[TIME] are_freely_homotopic: 0.52858 seconds
+Random seed: 1375369512: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.164922 seconds
+[TIME] are_freely_homotopic: 0.531664 seconds
+Random seed: 457873843: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.166501 seconds
+[TIME] are_freely_homotopic: 0.529451 seconds
+Random seed: 1433095951: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.165578 seconds
+[TIME] are_freely_homotopic: 0.532124 seconds
+Random seed: 1454564469: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.166458 seconds
+[TIME] are_freely_homotopic: 0.537297 seconds
+Random seed: 1770807796: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.165786 seconds
+[TIME] are_freely_homotopic: 0.532855 seconds
+Random seed: 1798074289: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.165027 seconds
+[TIME] are_freely_homotopic: 0.55081 seconds
+Random seed: 138710538: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.166903 seconds
+[TIME] are_freely_homotopic: 0.535346 seconds
+Random seed: 1787667944: Path1 size: 300000 (from 300000 darts); Path2 size: 301800 (from 100 deformations).
+[TIME] is_contractible: 0.16556 seconds
+[TIME] are_freely_homotopic: 0.542188 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 1.2e-05 seconds
+[TIME] Simplification in one face: 6e-06 seconds
+[TIME] Face quadrangulation: 3.1e-05 seconds
+[TIME] Total time for computation of reduced map: 8.2e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574945979: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.565789 seconds
+[TIME] are_freely_homotopic: 1.7571 seconds
+Random seed: 644792205: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.555874 seconds
+[TIME] are_freely_homotopic: 1.73021 seconds
+Random seed: 602587674: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.545865 seconds
+[TIME] are_freely_homotopic: 1.78313 seconds
+Random seed: 581717819: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.567576 seconds
+[TIME] are_freely_homotopic: 1.75944 seconds
+Random seed: 1562933709: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.584859 seconds
+[TIME] are_freely_homotopic: 1.77367 seconds
+Random seed: 196412346: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.525251 seconds
+[TIME] are_freely_homotopic: 1.71673 seconds
+Random seed: 872074059: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.568166 seconds
+[TIME] are_freely_homotopic: 1.64886 seconds
+Random seed: 721079285: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.538682 seconds
+[TIME] are_freely_homotopic: 1.71856 seconds
+Random seed: 169285406: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.575029 seconds
+[TIME] are_freely_homotopic: 1.67964 seconds
+Random seed: 417147589: Path1 size: 1000000 (from 1000000 darts); Path2 size: 1001800 (from 100 deformations).
+[TIME] is_contractible: 0.548759 seconds
+[TIME] are_freely_homotopic: 1.75386 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 3e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.4e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574946010: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.07172 seconds
+[TIME] are_freely_homotopic: 3.30467 seconds
+Random seed: 370928264: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.00794 seconds
+[TIME] are_freely_homotopic: 3.21761 seconds
+Random seed: 527719483: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.04292 seconds
+[TIME] are_freely_homotopic: 3.43482 seconds
+Random seed: 1799719226: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.10887 seconds
+[TIME] are_freely_homotopic: 3.44661 seconds
+Random seed: 1931996536: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.10033 seconds
+[TIME] are_freely_homotopic: 3.49517 seconds
+Random seed: 2105171859: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.10725 seconds
+[TIME] are_freely_homotopic: 3.48497 seconds
+Random seed: 1990690710: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.13176 seconds
+[TIME] are_freely_homotopic: 3.46857 seconds
+Random seed: 993120350: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.11183 seconds
+[TIME] are_freely_homotopic: 3.52759 seconds
+Random seed: 886380626: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.12338 seconds
+[TIME] are_freely_homotopic: 3.41028 seconds
+Random seed: 157399348: Path1 size: 2000000 (from 2000000 darts); Path2 size: 2001800 (from 100 deformations).
+[TIME] is_contractible: 1.0625 seconds
+[TIME] are_freely_homotopic: 3.4078 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 9e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.6e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574946072: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.61675 seconds
+[TIME] are_freely_homotopic: 5.23394 seconds
+Random seed: 1590578674: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.76362 seconds
+[TIME] are_freely_homotopic: 5.39348 seconds
+Random seed: 472245139: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.70443 seconds
+[TIME] are_freely_homotopic: 5.38821 seconds
+Random seed: 429234277: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.79035 seconds
+[TIME] are_freely_homotopic: 5.44008 seconds
+Random seed: 1271064050: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.79136 seconds
+[TIME] are_freely_homotopic: 5.56954 seconds
+Random seed: 1099653011: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.7848 seconds
+[TIME] are_freely_homotopic: 5.48245 seconds
+Random seed: 1494765157: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.7496 seconds
+[TIME] are_freely_homotopic: 5.512 seconds
+Random seed: 22424818: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.72438 seconds
+[TIME] are_freely_homotopic: 5.4148 seconds
+Random seed: 1046116947: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.65999 seconds
+[TIME] are_freely_homotopic: 5.21928 seconds
+Random seed: 782410053: Path1 size: 3000000 (from 3000000 darts); Path2 size: 3001800 (from 100 deformations).
+[TIME] is_contractible: 1.59595 seconds
+[TIME] are_freely_homotopic: 4.85017 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 8e-06 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2e-05 seconds
+[TIME] Total time for computation of reduced map: 5.7e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574946169: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.66762 seconds
+[TIME] are_freely_homotopic: 17.7623 seconds
+Random seed: 1473356665: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.35138 seconds
+[TIME] are_freely_homotopic: 17.0192 seconds
+Random seed: 1977994873: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.6751 seconds
+[TIME] are_freely_homotopic: 17.2393 seconds
+Random seed: 1879243257: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.67143 seconds
+[TIME] are_freely_homotopic: 16.4106 seconds
+Random seed: 1229375161: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.66773 seconds
+[TIME] are_freely_homotopic: 17.6798 seconds
+Random seed: 1461417625: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.63388 seconds
+[TIME] are_freely_homotopic: 16.511 seconds
+Random seed: 468007748: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.64777 seconds
+[TIME] are_freely_homotopic: 17.7845 seconds
+Random seed: 448609289: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.57198 seconds
+[TIME] are_freely_homotopic: 16.1655 seconds
+Random seed: 1489170401: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.58956 seconds
+[TIME] are_freely_homotopic: 17.3209 seconds
+Random seed: 1788684157: Path1 size: 10000000 (from 10000000 darts); Path2 size: 10001800 (from 100 deformations).
+[TIME] is_contractible: 5.61045 seconds
+[TIME] are_freely_homotopic: 16.1997 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 9e-06 seconds
+[TIME] Simplification in one face: 5e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 5.7e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574946480: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 11.2896 seconds
+[TIME] are_freely_homotopic: 33.2624 seconds
+Random seed: 99584895: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.8629 seconds
+[TIME] are_freely_homotopic: 32.7729 seconds
+Random seed: 912045122: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.6456 seconds
+[TIME] are_freely_homotopic: 32.64 seconds
+Random seed: 595863310: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.7267 seconds
+[TIME] are_freely_homotopic: 32.7883 seconds
+Random seed: 1309255323: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.7952 seconds
+[TIME] are_freely_homotopic: 33.4828 seconds
+Random seed: 1248795693: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.8942 seconds
+[TIME] are_freely_homotopic: 33.3988 seconds
+Random seed: 2034370714: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 11.1634 seconds
+[TIME] are_freely_homotopic: 33.8661 seconds
+Random seed: 1340254186: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.8488 seconds
+[TIME] are_freely_homotopic: 32.7967 seconds
+Random seed: 803460071: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.805 seconds
+[TIME] are_freely_homotopic: 32.5927 seconds
+Random seed: 2000292971: Path1 size: 20000000 (from 20000000 darts); Path2 size: 20001800 (from 100 deformations).
+[TIME] is_contractible: 10.6542 seconds
+[TIME] are_freely_homotopic: 33.3069 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============
+Initial map: #Darts=20, #0-cells=1, #1-cells=10, #2-cells=1, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 1e-05 seconds
+[TIME] Simplification in one face: 4e-06 seconds
+[TIME] Face quadrangulation: 2.1e-05 seconds
+[TIME] Total time for computation of reduced map: 6e-05 seconds
+Reduced map: #Darts=40, #0-cells=2, #1-cells=20, #2-cells=10, #ccs=1, valid=1
+Random seed: 1574947086: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.8741 seconds
+[TIME] are_freely_homotopic: 51.2028 seconds
+Random seed: 1043134997: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.4561 seconds
+[TIME] are_freely_homotopic: 50.1288 seconds
+Random seed: 439762399: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.031 seconds
+[TIME] are_freely_homotopic: 51.1833 seconds
+Random seed: 1662380910: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.4791 seconds
+[TIME] are_freely_homotopic: 51.4586 seconds
+Random seed: 185618813: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.5506 seconds
+[TIME] are_freely_homotopic: 49.4669 seconds
+Random seed: 652798972: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.4287 seconds
+[TIME] are_freely_homotopic: 50.4364 seconds
+Random seed: 2005222812: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 17.0067 seconds
+[TIME] are_freely_homotopic: 51.1537 seconds
+Random seed: 1669933756: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.4827 seconds
+[TIME] are_freely_homotopic: 51.8852 seconds
+Random seed: 485850944: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 17.0735 seconds
+[TIME] are_freely_homotopic: 51.4021 seconds
+Random seed: 325794698: Path1 size: 30000000 (from 30000000 darts); Path2 size: 30001800 (from 100 deformations).
+[TIME] is_contractible: 16.1387 seconds
+[TIME] are_freely_homotopic: 51.3036 seconds
+All the 10 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 0 among 10 (i.e. 0%).
+==============

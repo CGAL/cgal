@@ -43,7 +43,7 @@ class Verticality : public Feature_base
   const typename GeomTraits::Vector_3 vertical;
   std::vector<compressed_float> verticality_feature;
   const Local_eigen_analysis* eigen;
-  
+
 public:
   /*!
     \brief Constructs the feature using local eigen analysis.

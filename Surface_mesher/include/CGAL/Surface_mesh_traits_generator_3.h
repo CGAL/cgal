@@ -26,7 +26,7 @@ class Sphere_3;
  *  Partial specialization will be in other headers
 */
 template <typename Surface>
-struct Surface_mesh_traits_generator_3 
+struct Surface_mesh_traits_generator_3
 {
   typedef typename Surface::Surface_mesher_traits_3 Type;
   typedef Type type; // for Boost compatiblity (meta-programming)

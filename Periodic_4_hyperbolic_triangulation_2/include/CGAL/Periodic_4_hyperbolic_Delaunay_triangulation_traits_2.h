@@ -55,7 +55,7 @@ public:
 #else
   result_type operator()(const Point& p0, const Point& p1) const
   {
-	  return Predicate()(p0, p1);
+          return Predicate()(p0, p1);
   }
   result_type operator()(const Point& p0, const Point& p1, const Point& p2) const
   {
@@ -126,7 +126,7 @@ private:
 
 public:
   typedef Point                                           result_type;
- 
+
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Construct_point_base::operator();
 #else
@@ -135,7 +135,7 @@ public:
     return Construct_point_base()(x,y);
   }
 #endif
-  
+
   Periodic_4_construct_hyperbolic_point_2() { }
 
   Point operator()(const Point& pt, const Hyperbolic_translation& tr) const
@@ -618,7 +618,7 @@ class Side_of_original_octagon
   };
 
 
-} // end namespace internal 
+} // end namespace internal
 
 
 template <typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt,

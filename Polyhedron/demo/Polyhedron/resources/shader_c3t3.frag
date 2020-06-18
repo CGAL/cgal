@@ -42,7 +42,10 @@ void main(void) {
       vec3 V = -fP.xyz; 
       vec3 N; 
       if(fN == vec3(0.0,0.0,0.0))
-          N = vec3(0.0,0.0,0.0); 
+      {
+        out_color = my_color;
+        return;
+      }
       else 
           N = normalize(fN); 
       L = normalize(L); 

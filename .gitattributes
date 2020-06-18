@@ -18,7 +18,6 @@
 *.js text
 *.hmtl text
 *.bib text
-*.sh text
 *.css text
 *.ui text
 *.qrc text
@@ -36,6 +35,7 @@
 *.pdb text
 
 # Declare files that will always have LF line endings on checkout.
+*.sh text eol=lf
 Documentation/Doxyfile text eol=lf
 Documentation/pkglist_filter text eol=lf
 Installation/update_CHANGES text eol=lf

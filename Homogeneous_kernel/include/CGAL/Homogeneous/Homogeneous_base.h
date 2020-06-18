@@ -1,16 +1,16 @@
-// Copyright (c) 1999-2004  
+// Copyright (c) 1999-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
 
@@ -145,7 +145,7 @@ struct Homogeneous_base
     typedef const RT_&                              Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
-    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2; 
+    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2;
     // Functors types and access functions.
 #define CGAL_Kernel_pred(Y,Z) typedef HomogeneousKernelFunctors::Y<Kernel> Y; \
                               Y Z() const { return Y(); }

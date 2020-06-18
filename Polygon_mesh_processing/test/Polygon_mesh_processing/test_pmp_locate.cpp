@@ -605,7 +605,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
 
     typedef typename K::FT                                                     FT;
     typedef typename K::Ray_3                                                  Ray_3;
-    
+
     typedef typename boost::graph_traits<G>::vertex_descriptor                 vertex_descriptor;
     typedef typename boost::graph_traits<G>::halfedge_descriptor               halfedge_descriptor;
     typedef typename boost::graph_traits<G>::face_descriptor                   face_descriptor;

@@ -108,7 +108,7 @@ public:
   //! \param shared_widget the main viewer of the Application. This will share the
   //!  context and allow synchronized rendering of multiple views.
   //!
-  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget) 
+  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget)
     : QGLViewer(shared_widget->context(),parent){}
   virtual ~Viewer_interface() {}
 
@@ -118,7 +118,7 @@ public:
   //!
   //! @returns true if the antialiasing is activated.
   virtual bool antiAliasing() const = 0;
-  
+
   // Those two functions are defined in Viewer.cpp
   //! \brief Sets the position and orientation of a frame using a QString.
   //! \param s is usually gotten by dumpFrame() and is of the form "Px Py Pz O1 O2 O3 O4 ", with
@@ -264,7 +264,7 @@ public Q_SLOTS:
   //!
   virtual void SetOrthoProjection( bool b) =0;
 public:
-  
+
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
@@ -277,7 +277,7 @@ public:
   virtual void setCurrentPass(int pass) = 0;
   virtual void setDepthWriting(bool writing_depth) = 0;
   virtual void setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) = 0;
-  
+
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;

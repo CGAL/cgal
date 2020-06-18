@@ -444,7 +444,14 @@ private:
       if(dim == 0) msg << "corner (";
       else msg << "point (";
       msg << p << ")";
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+      CGAL_error_msg(([this, str = msg.str()](){
+        dump_c3t3(this->c3t3_, "dump-bug");
+        return str.c_str();
+      }()));
+#else // not CGAL_MESH_3_PROTECTION_DEBUG & 4
       CGAL_error_msg(msg.str().c_str());
+#endif
     }
     return s;
   }
@@ -730,7 +737,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
     FT sq_d = sq_distance(p, cp(tr.point(nearest_vh)));
 
-#if CGAL_MESH_3_PROTECTION_DEBUG & 2
+#if CGAL_MESH_3_PROTECTION_DEBUG & 16
     std::cerr << "Nearest power vertex of (" << p << ") is "
               << &*nearest_vh << " (" << c3t3_.triangulation().point(nearest_vh) << ") "
               << "at distance: " << sq_d << std::endl;
@@ -1247,8 +1254,17 @@ insert_balls(const Vertex_handle& vp,
     norm_step_size = step_size;
   } else {
     CGAL_assertion_code(using boost::math::float_prior);
-    CGAL_assertion(n==0 ||
-                   dleft_frac >= float_prior(float_prior(1.)));
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+    CGAL_assertion_msg(n==0 ||
+                       dleft_frac >= float_prior(float_prior(1.)),
+                       ([this](){
+                         CGAL_USE(this);
+                         dump_c3t3(this->c3t3_, "dump-bug");
+                         return "the sampling of protecting balls is not possible";
+                       }()));
+#else
+    CGAL_assertion(n==0 || dleft_frac >= float_prior(float_prior(1.)));
+#endif
   }
 
   // Launch balls
@@ -1304,7 +1320,7 @@ void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 refine_balls()
 {
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+#if CGAL_MESH_3_PROTECTION_DEBUG & 8
   dump_c3t3(c3t3_, "dump-before-refine_balls");
   dump_c3t3_edges(c3t3_, "dump-before-refine_balls");
 #endif
@@ -1418,7 +1434,7 @@ refine_balls()
       }
     }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
+#if CGAL_MESH_3_PROTECTION_DEBUG & 8
     dump_c3t3(c3t3_, "dump-before-check_and_repopulate_edges");
     dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
 #endif

@@ -41,7 +41,7 @@ namespace CGAL {
       typedef Previous_level Previous_visitor;
 
       Edges_level_visitor(Surface_mesher* surface_mesher_,
-	      Previous_visitor* p)
+              Previous_visitor* p)
         : surface_mesher(surface_mesher_), previous(p) {}
 
       template <typename E, typename P>
@@ -52,12 +52,12 @@ namespace CGAL {
                             const Point& p,
                             Zone zone)
       {
-	surface_mesher->remove_edges(p, zone);
+        surface_mesher->remove_edges(p, zone);
       }
 
       void after_insertion(const Vertex_handle& v)
       {
-	surface_mesher->after_insertion_impl(v);
+        surface_mesher->after_insertion_impl(v);
       }
 
       template <typename E, typename P, typename Z>

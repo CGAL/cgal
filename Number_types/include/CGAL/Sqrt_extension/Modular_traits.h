@@ -24,9 +24,9 @@ namespace CGAL {
 
 template< class COEFF, class ROOT, class ACDE_TAG, class FP_TAG>
 class Modular_traits< Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> > {
-    
+
 private:
-  typedef Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> EXT; 
+  typedef Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> EXT;
     typedef Modular_traits<COEFF> MT_COEFF;
     typedef Modular_traits<ROOT>  MT_ROOT;
     typedef typename MT_COEFF::Residue_type Residue_type_coeff;
@@ -35,7 +35,7 @@ public:
     typedef EXT NT;
     typedef typename MT_COEFF::Is_modularizable Is_modularizable;
     typedef Sqrt_extension<Residue_type_coeff, Residue_type_root, ACDE_TAG,FP_TAG> Residue_type;
-    
+
     struct Modular_image{
         Residue_type operator()(const EXT& a){
             typename MT_ROOT::Modular_image mod_image_root;
@@ -55,7 +55,7 @@ public:
         NT operator()(const Residue_type& a){
             typename MT_ROOT::Modular_image_representative mod_image_inv_root;
             typename MT_COEFF::Modular_image_representative mod_image_inv_coeff;
-            
+
             if(a.is_extended()){
                 return NT(
                         mod_image_inv_coeff(a.a0()),

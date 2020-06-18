@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -20,7 +20,7 @@
 #include <CGAL/Origin.h>
 
 namespace CGAL {
- 
+
 template <class pR>
   class Direction_d;
 
@@ -60,8 +60,8 @@ class Vector_d : public pR::Vector_d_base
   Vector_d (int d, InputIterator first, InputIterator last, const RT& D)
     : Base (d, first, last, D) {}
 
-  Vector_d(const Base& v) : Base(v) {}  
-  
+  Vector_d(const Base& v) : Base(v) {}
+
   Direction_d<R> direction() const { return Base::direction(); }
 
   FT operator* (const Self& w) const
@@ -70,36 +70,36 @@ class Vector_d : public pR::Vector_d_base
   { return Base::operator+(w); }
   Self operator-(const Self& w) const
   { return Base::operator-(w); }
-  Self operator-() const 
+  Self operator-() const
   { return Base::operator-(); }
 
-  template <class NT> 
+  template <class NT>
   Self operator/(const NT& n) const { return Base::operator/(n); }
 
-  Self& operator+=(const Self& w) 
+  Self& operator+=(const Self& w)
   { return static_cast<Self&>(Base::operator+=(w)); }
-  Self& operator-=(const Self& w) 
+  Self& operator-=(const Self& w)
   { return static_cast<Self&>(Base::operator-=(w)); }
-  template <class NT> 
-  Self& operator*=(const NT& n) 
+  template <class NT>
+  Self& operator*=(const NT& n)
   { return static_cast<Self&>(Base::operator*=(n)); }
-  template <class NT> 
-  Self& operator/=(const NT& n) 
+  template <class NT>
+  Self& operator/=(const NT& n)
   { return static_cast<Self&>(Base::operator/=(n)); }
 
   bool operator==(const Self& w) const
   { return Base::operator==(w); }
   bool operator!=(const Self& w) const
   { return Base::operator!=(w); }
-  
+
 };
 
-template <class R> Point_d<R> 
+template <class R> Point_d<R>
 operator+ (const Origin& o, const Vector_d<R>& v)
 { return Point_d<R>( o + static_cast<const typename Vector_d<R>::Base&>(v) ); }
 
 template <class NT, class R>
-Vector_d<R> operator*(const NT& n, const Vector_d<R>& v) 
+Vector_d<R> operator*(const NT& n, const Vector_d<R>& v)
 { return Vector_d<R>( n * static_cast<const typename Vector_d<R>::Base&>(v) ); }
 
 } //namespace CGAL

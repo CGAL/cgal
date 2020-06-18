@@ -6,11 +6,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -37,9 +37,9 @@ QRectF mapToScene(const QGraphicsView* v, const QRect rect)
   QPointF size = v->mapToScene(rect.bottomRight());
   size -= top_left;
   return QRectF(top_left.x(),
-		top_left.y(),
-		size.x(),
-		size.y());
+                top_left.y(),
+                size.x(),
+                size.y());
 }
 
 CGAL_INLINE_FUNCTION

@@ -18,16 +18,16 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/IO/io.h>
- 
+
 namespace CGAL {
 
-/*! 
+/*!
  * oformat flag for parentheses if needed for a coefficient
  */
 class Parens_as_product_tag {};
 
 /*! \ingroup NiX_io_parens
- *  \brief Decides whether this number requires parentheses 
+ *  \brief Decides whether this number requires parentheses
  *  in case it appears within a produkt.
  */
 template <class NT>
@@ -36,7 +36,7 @@ struct Needs_parens_as_product{
 };
 
 /*! \ingroup NiX_io_parens
- *  \brief Decides whether this number requires parentheses 
+ *  \brief Decides whether this number requires parentheses
  *  in case it appears within a produkt.
  */
 template <class NT>
@@ -54,7 +54,7 @@ class Output_rep<T, Parens_as_product_tag> {
     const T& t;
 public:
     Output_rep(const T& tt) : t(tt) {}
-    std::ostream& operator () (std::ostream& out) const { 
+    std::ostream& operator () (std::ostream& out) const {
         if ( needs_parens_as_product(t)) {
             return out << "(" << oformat(t) << ")";
         } else {
@@ -66,29 +66,29 @@ public:
 
 // built-in number types:
 template <> struct Needs_parens_as_product<short>{
-    bool operator()(const short& x){return x < short(0);} 
+    bool operator()(const short& x){return x < short(0);}
 };
 template <> struct Needs_parens_as_product<int>{
-    bool operator()(const int& x){return x < int(0);} 
+    bool operator()(const int& x){return x < int(0);}
 };
 template <> struct Needs_parens_as_product<long>{
-    bool operator()(const long& x){return x < long(0);} 
+    bool operator()(const long& x){return x < long(0);}
 };
 
 #ifdef CGAL_USE_LONG_LONG
 template <> struct Needs_parens_as_product<long long>{
-    bool operator()(const long long& x){return x < (long long)(0);} 
+    bool operator()(const long long& x){return x < (long long)(0);}
 };
 #endif
 
 template <> struct Needs_parens_as_product<float>{
-    bool operator()(const float& x){return x < float(0);} 
+    bool operator()(const float& x){return x < float(0);}
 };
 template <> struct Needs_parens_as_product<double>{
-    bool operator()(const double& x){return x < double(0);} 
+    bool operator()(const double& x){return x < double(0);}
 };
 template <> struct Needs_parens_as_product<long double>{
-    bool operator()(const long double& x){return x < (long double)(0);} 
+    bool operator()(const long double& x){return x < (long double)(0);}
 };
 
 } //namespace CGAL

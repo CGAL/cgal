@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ilker O. Yaz
 
@@ -91,7 +91,7 @@ namespace internal {
     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required \cgalParamEnd
     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
   \cgalNamedParamsEnd
-  
+
   @return `true` if fairing is successful, otherwise no vertices are relocated
 
   @pre `is_triangle_mesh(tmesh)`
@@ -137,18 +137,21 @@ namespace internal {
 #endif
 
     typedef typename GetVertexPointMap < TriangleMesh, NamedParameters>::type VPMap;
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
+
+    // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
+    // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
+    // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing_secure<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                get_property_map(vertex_point, tmesh));
+                                    get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver)),
       choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
-      vpmap_
-      );
+      vpmap_);
   }
 
   template<typename TriangleMesh, typename VertexRange>

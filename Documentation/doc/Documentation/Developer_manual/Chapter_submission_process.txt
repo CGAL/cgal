@@ -16,7 +16,7 @@ in the library.  This means that they assure that new contributions
 </UL>
 
 Software specifications and implementations should be submitted to the
-editorial board for approval. The process is described in the 
+editorial board for approval. The process is described in the
 <A HREF="https://www.cgal.org/review_process_rules.html">submission
   and review rules</A>.
 
@@ -28,7 +28,7 @@ due to the recommendations of the board.
 Only after approval by the board will packages be included in new
 public releases and then only if they pass the test suite, of course.
 
-The current list of members of the editorial board can be found on the 
+The current list of members of the editorial board can be found on the
 <A HREF="https://www.cgal.org/people.html">web site</A>.
 
 */

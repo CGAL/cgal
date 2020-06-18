@@ -1,16 +1,16 @@
-// Copyright (c) 1997, 1998, 1999, 2000  
+// Copyright (c) 1997, 1998, 1999, 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
@@ -35,7 +35,7 @@ namespace internal {
 // We give the vector container class a class based iterator implementation.
 // It ensures that iterator_traits work on compilers not supporting
 // partial specializations and it guarantees that default initialization
-// initializes the internal pointer to 0. Allows explicit construction 
+// initializes the internal pointer to 0. Allows explicit construction
 // from a pointer.
 
 template < class T, class Ref, class Ptr>
@@ -134,7 +134,7 @@ public:
 };
 
 template < class T, class Ref, class Ptr> inline
-vector_iterator<T,Ref,Ptr> 
+vector_iterator<T,Ref,Ptr>
 operator+( std::ptrdiff_t n, vector_iterator<T,Ref,Ptr> i) {
     return i += n;
 }
@@ -178,11 +178,11 @@ protected:
     void construct( iterator i, const T& x) {
       std::allocator_traits<Allocator>::construct(alloc,&*i, x);
     }
-  
+
     void destroy( iterator i) {
       std::allocator_traits<Allocator>::destroy(alloc,&*i);
     }
-  
+
     void destroy( iterator first, iterator last) {
         // destroy in reverse order than construction
         while ( last != first) {
@@ -277,7 +277,7 @@ public:
         range_initialize( first, last, iterator_category());
     }
 
-    ~vector() { 
+    ~vector() {
         destroy( start_, finish);
         deallocate();
     }
@@ -387,7 +387,7 @@ public:
     }
 
     void resize( size_type new_size, const T& x) {
-        if (new_size < size()) 
+        if (new_size < size())
             erase( begin() + new_size, end());
         else
             insert( end(), new_size - size(), x);
@@ -411,7 +411,7 @@ protected:
             std::uninitialized_fill_n( &*result, n, x);
             return result;
         }
-        catch(...) { 
+        catch(...) {
             alloc.deallocate( &*result, n);
             throw;
         }
@@ -426,7 +426,7 @@ protected:
             std::uninitialized_copy( first, last, &*result);
             return result;
         }
-        catch(...) { 
+        catch(...) {
             alloc.deallocate( &*result, n);
             throw;
         }
@@ -493,11 +493,11 @@ protected:
                 iterator new_start = iterator( alloc.allocate(len));
                 iterator new_finish = new_start;
                 try {
-                    new_finish = iterator( 
+                    new_finish = iterator(
                         std::uninitialized_copy(start_, position,&*new_start));
                     new_finish = iterator(
                         std::uninitialized_copy( first, last, &*new_finish));
-                    new_finish = iterator( 
+                    new_finish = iterator(
                         std::uninitialized_copy(position,finish,&*new_finish));
                 }
                 catch(...) {
@@ -544,7 +544,7 @@ void vector<T, Alloc>::insert_aux( iterator position, const T& x) {
                 std::uninitialized_copy(position,finish,&*new_finish));
         }
         catch(...) {
-            destroy( new_start, new_finish); 
+            destroy( new_start, new_finish);
             alloc.deallocate( &*new_start, len);
             throw;
         }
@@ -577,7 +577,7 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
                 std::fill(position, old_finish, x_copy);
             }
         } else {
-            const size_type old_size = size();        
+            const size_type old_size = size();
             const size_type len = old_size + (std::max)(old_size, n);
             iterator new_start = iterator( alloc.allocate(len));
             iterator new_finish = new_start;
@@ -586,7 +586,7 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
                     std::uninitialized_copy( start_, position, &*new_start));
                 std::uninitialized_fill_n( &*new_finish, n, x);
                 new_finish += n;
-                new_finish = iterator( 
+                new_finish = iterator(
                     std::uninitialized_copy( position, finish, &*new_finish));
             }
             catch(...) {

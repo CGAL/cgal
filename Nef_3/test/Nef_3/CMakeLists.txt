@@ -32,8 +32,8 @@ if ( CGAL_FOUND )
       PROPERTIES RESOURCE_LOCK Nef_3_Tests_IO)
   endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

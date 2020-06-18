@@ -34,11 +34,11 @@ struct Spherical_sizing_field
   typedef ::FT FT;
   typedef Point Point_3;
   typedef Mesh_domain::Index Index;
-  
+
   FT operator()(const Point_3& p, const int, const Index&) const
   {
     FT sq_d_to_origin = CGAL::squared_distance(p, Point(CGAL::ORIGIN));
-    return CGAL::abs( CGAL::sqrt(sq_d_to_origin)-0.5 ) / 5. + 0.025; 
+    return CGAL::abs( CGAL::sqrt(sq_d_to_origin)-0.5 ) / 5. + 0.025;
   }
 };
 
@@ -63,7 +63,7 @@ int main()
   Spherical_sizing_field size;
   Mesh_criteria criteria(facet_angle=30, facet_size=0.1, facet_distance=0.025,
                          cell_radius_edge_ratio=2, cell_size=size);
-  
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
 

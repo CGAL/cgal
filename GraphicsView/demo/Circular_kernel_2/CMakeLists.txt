@@ -22,7 +22,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
-  
+
   #--------------------------------
   # The demo: Circular_kernel_2
   #--------------------------------
@@ -33,7 +33,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Circular_kernel_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
- 
+
 
   # The executable itself.
   add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})

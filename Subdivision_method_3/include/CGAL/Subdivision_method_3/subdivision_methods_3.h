@@ -92,7 +92,7 @@ CGAL_DEPRECATED_MSG("you are using the deprecated API of CatmullClark_subdivisio
 void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
   PQQ(pmesh, CatmullClark_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)), step);
 }
-#endif  
+#endif
 #endif
 
 /*!
@@ -121,7 +121,8 @@ template <class PolygonMesh, class NamedParameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -147,7 +148,7 @@ CGAL_DEPRECATED_MSG("you are using the deprecated API of Loop_subdivision(), ple
 void Loop_subdivision(PolygonMesh& pmesh, int step) {
   PTQ(pmesh, Loop_mask_3<PolygonMesh>(&pmesh, get(vertex_point,pmesh)) , step);
 }
-#endif  
+#endif
 #endif
 
 /*!
@@ -174,7 +175,8 @@ template <class PolygonMesh, class NamedParameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -227,7 +229,8 @@ template <class PolygonMesh, class NamedParameters>
 void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -237,7 +240,7 @@ void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   for(unsigned int i = 0; i < step; i++)
     internal::DQQ_1step(pmesh, vpm, mask);
 }
-  
+
 template <class PolygonMesh>
 void DooSabin_subdivision(PolygonMesh& pmesh)
 {
@@ -285,7 +288,8 @@ template <class PolygonMesh, class NamedParameters>
 void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -295,7 +299,7 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   for(unsigned int i = 0; i < step; i++)
     internal::Sqrt3_1step(pmesh, vpm, mask, (i%2==1));
 }
-  
+
 template <class PolygonMesh>
 void Sqrt3_subdivision(PolygonMesh& pmesh)
 {

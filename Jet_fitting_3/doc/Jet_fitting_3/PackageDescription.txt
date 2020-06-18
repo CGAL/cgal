@@ -33,7 +33,7 @@
 
 
 \cgalCRPSection{Global Functions}
-The insert operator (operator<< ) is overloaded for the class \link CGAL::Monge_via_jet_fitting::Monge_form `Monge_form` \endlink. 
+The insert operator (operator<< ) is overloaded for the class \link CGAL::Monge_via_jet_fitting::Monge_form `Monge_form` \endlink.
 
 */
 

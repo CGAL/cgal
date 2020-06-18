@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations
 \anchor chapconvexhulld
 \authors Susan Hert and Michael Seel
@@ -20,13 +20,13 @@ polytope with vertices in \f$ P\f$. A point in \f$ P\f$ is an extreme point
 (with respect to \f$ P\f$) if it is a vertex of
 the convex hull of \f$ P\f$. A set of points is said to be strongly convex if it consist of only extreme points.
 
-This chapter describes the class provided in \cgal for producing convex 
-hull in arbitrary dimensions. There is an intimate relationship between 
-the Delaunay triangulation of a point set \f$ S\f$ and the convex hull of 
+This chapter describes the class provided in \cgal for producing convex
+hull in arbitrary dimensions. There is an intimate relationship between
+the Delaunay triangulation of a point set \f$ S\f$ and the convex hull of
 `lift(S)`: The nearest site
 Delaunay triangulation is the projection of the lower hull and the
-furthest site Delaunay triangulation is the upper hull. Here we also 
-describe the companion class to the convex hull class that computes 
+furthest site Delaunay triangulation is the upper hull. Here we also
+describe the companion class to the convex hull class that computes
 nearest and furthest site Delaunay triangulations.
 
 \section Convex_hull_ddD dD Convex Hull
@@ -37,10 +37,10 @@ supports incremental construction of hulls, and provides a rich
 interface for exploration. There are also output routines for hulls
 of dimension 2 and 3.
 
-The convex hull class is parameterized by a traits class that provides 
-\f$ d\f$-dimensional data types and predicates. The class 
-`Convex_hull_d_traits_3` adapts any low-dimensional standard kernel 
-model <I>e.g.</I>, `Homogeneous<RT>` or `Cartesian<FT>` for use 
+The convex hull class is parameterized by a traits class that provides
+\f$ d\f$-dimensional data types and predicates. The class
+`Convex_hull_d_traits_3` adapts any low-dimensional standard kernel
+model <I>e.g.</I>, `Homogeneous<RT>` or `Cartesian<FT>` for use
 with `Convex_hull_d`, where the dimension is fixed to three.
 The validity of the computed convex hull can be checked using the
 member function `Convex_hull_d::is_valid`, which implements the algorithm
@@ -59,10 +59,10 @@ simplicial complexes in arbitrary higher dimension. The class
 `Delaunay_d<R, Lifted_R>`C provides an
 implementation via the lifting map to higher dimensional
 convex hulls.lifting map, dD.
-The class supports incremental construction of Delaunay triangulations 
+The class supports incremental construction of Delaunay triangulations
 and various kind of query operations (in particular, nearest and furthest
 neighbor queries and range queries with spheres and simplices).
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -27,8 +27,8 @@ class SCENE_MOVABLE_SM_ITEM_EXPORT Scene_movable_sm_item
     : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
-  
-public: 
+
+public:
   Scene_movable_sm_item(const CGAL::qglviewer::Vec& pos, SMesh *sm,
                         const QString name);
   Scene_item* clone() const{return nullptr;}
@@ -41,7 +41,7 @@ public:
   bool manipulatable() const { return true;}
   ManipulatedFrame* manipulatedFrame();
   const CGAL::qglviewer::Vec& center() const;
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Flat 
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Flat
         || m==Wireframe; }
   virtual void invalidateOpenGLBuffers();
   void setFMatrix(const GLdouble matrix[16]);
@@ -51,7 +51,7 @@ public:
 protected:
   friend struct Scene_movable_sm_item_priv;
   Scene_movable_sm_item_priv* d;
-  
+
 Q_SIGNALS:
   void stop();
   void killed();

@@ -42,7 +42,7 @@ int main()
   // 5) Thanks to the mark, we know which darts come from the first tetrahedron.
   unsigned int res=0;
   for (CMap_3::Dart_range::iterator it(cm.darts().begin()),
-	 itend(cm.darts().end()); it!=itend; ++it)
+         itend(cm.darts().end()); it!=itend; ++it)
   {
     if ( cm.is_marked(it, amark) )
       ++res;

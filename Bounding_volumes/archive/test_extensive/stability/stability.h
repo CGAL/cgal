@@ -71,7 +71,7 @@ public: // construction:
     assert(r >= 0);
     std::copy(first,first+d,c);
   }
-  
+
 public: // access:
   // Returns the radius.
   const Number& radius() const {
@@ -81,7 +81,7 @@ public: // access:
   const Number *center() const {
     return c;
   }
-  
+
   // Returns the i-th coordinate for 0<=i<d.
   const Number& operator[](int i) const {
     assert(0<=i && i<d);
@@ -92,21 +92,21 @@ public: // access:
 // The following is a traits class to make the Miniball package work
 // with balls of the type Ball<d> defined above:
 template<int d,
-	 typename StorageNumberType,
-	 typename NumberType,
-	 typename Sqrt>
+         typename StorageNumberType,
+         typename NumberType,
+         typename Sqrt>
 struct BallTraits {
   // constants:
   static const int D = d;
-  
+
   // types:
   typedef Ball<StorageNumberType,d> Sphere;
   typedef NumberType FT;
   typedef CGAL::Default_algorithm Algorithm;
   typedef Sqrt Use_square_roots;
   typedef FunctorIterator< const StorageNumberType *,
-			   fromDouble<NumberType> > Cartesian_const_iterator;
-  
+                           fromDouble<NumberType> > Cartesian_const_iterator;
+
   // routines:
   inline static Cartesian_const_iterator
     center_cartesian_begin(const Sphere& b) {
@@ -147,10 +147,10 @@ enum Perturbation {
 // the variable balls.
 template<int d,int D,typename Number>
 void readConfiguration(const std::string& name, // name of the configuration
-		       Perturbation perturb,    // amount of perturbation
-		       double magnitude,        // magnitude of perturbation
-		       int copies,              // number of copies
-		       std::vector< Ball<Number,D> >& balls) {
+                       Perturbation perturb,    // amount of perturbation
+                       double magnitude,        // magnitude of perturbation
+                       int copies,              // number of copies
+                       std::vector< Ball<Number,D> >& balls) {
   // clear set and open data file:
   balls.clear();
   std::ifstream data(name.c_str());
@@ -163,7 +163,7 @@ void readConfiguration(const std::string& name, // name of the configuration
   // read number of input balls:
   int n;
   data >> n;
-  
+
   for (int i=0; i<n; ++i) {
     // read coordinate and radius of the i-th ball:
     Number r,c[d];
@@ -176,10 +176,10 @@ void readConfiguration(const std::string& name, // name of the configuration
       // embed and perturb:
       Number ce[D];
       for (int j=0; j<d; ++j)
-	ce[j] = c[j] + (rng.next()-0.5)*amount;
+        ce[j] = c[j] + (rng.next()-0.5)*amount;
       for (int j=d; j<D; ++j)
-	ce[j] = (rng.next()-0.5)*amount;
-      
+        ce[j] = (rng.next()-0.5)*amount;
+
       // add to set:
       balls.push_back(Ball<Number,D>(ce,r));
     }
@@ -208,17 +208,17 @@ struct BuildFlag {};
 
 template<int d,int D>
 void atomicTest(const int,const std::string&,Perturbation,
-		const std::vector< Ball<double,D> >& S,RunFlag);
+                const std::vector< Ball<double,D> >& S,RunFlag);
 template<int d,int D>
 void atomicTest(const int,const std::string&,Perturbation,
-		const std::vector< Ball<double,D> >& S,BuildFlag);
+                const std::vector< Ball<double,D> >& S,BuildFlag);
 
 // (See routine basicTest() below.)
 int from = 0, to = 1000, curr = -1;
 
 template<int d,int D,typename Flag>
 void basicTest(const std::string& name,double magnitude,
-	       Perturbation perturb,int copies) {
+               Perturbation perturb,int copies) {
   // decide whether to do the test or not:
   ++curr;
   if (curr < from || curr > to)
@@ -264,7 +264,7 @@ void test(const std::string& f,double magnitude) {
   basicTest<d,d,Flag>(f,magnitude,Medium,1);
   basicTest<d,d,Flag>(f,magnitude,Large,1);
   cout << endl;
-    
+
   cout << "  Multiset (d): ";
   basicTest<d,d,Flag>(f,magnitude,None,10);
   basicTest<d,d,Flag>(f,magnitude,Tiny,10);
@@ -272,7 +272,7 @@ void test(const std::string& f,double magnitude) {
   basicTest<d,d,Flag>(f,magnitude,Medium,10);
   basicTest<d,d,Flag>(f,magnitude,Large,10);
   cout << endl;
-  
+
   cout << "  Set (D):      ";
   basicTest<d,2*d,Flag>(f,magnitude,None,1);
   basicTest<d,2*d,Flag>(f,magnitude,Tiny,1);
@@ -280,7 +280,7 @@ void test(const std::string& f,double magnitude) {
   basicTest<d,2*d,Flag>(f,magnitude,Medium,1);
   basicTest<d,2*d,Flag>(f,magnitude,Large,1);
   cout << endl;
-  
+
   cout << "  Multiset (D): ";
   basicTest<d,2*d,Flag>(f,magnitude,None,10);
   basicTest<d,2*d,Flag>(f,magnitude,Tiny,10);
@@ -296,22 +296,22 @@ template<typename Flag>
 void mainTest() {
   test<2,Flag>("data/cocircular_points_small_radius_2.data",1e8);
   test<2,Flag>("data/cocircular_points_large_radius_2.data",1e9);
-  
+
   test<3,Flag>("data/almost_cospherical_points_3.data",1);
   test<10,Flag>("data/almost_cospherical_points_10.data",1);
-  
+
   test<3,Flag>("data/longitude_latitude_model_3.data",1);
-  
+
   test<3,Flag>("data/random_points_3.data",1);
   test<5,Flag>("data/random_points_5.data",1);
   test<10,Flag>("data/random_points_10.data",1);
 
   test<10,Flag>("data/simplex_10.data",1);
   test<15,Flag>("data/simplex_15.data",1);
-  
+
   test<10,Flag>("data/cube_10.data",1);
   test<12,Flag>("data/cube_12.data",1);
-  
+
   test<2,Flag>("data/balls_on_boundary_2.data",1);
   test<3,Flag>("data/balls_on_boundary_3.data",1);
 }

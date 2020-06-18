@@ -6,7 +6,7 @@
 int main ()
 {
   std::cout << "Sorry, this example needs CORE, LEDA, or GMP+MPFI ..."
-	    << std::endl;
+            << std::endl;
   return 0;
 }
 #else
@@ -114,7 +114,7 @@ int main() {
       (CGAL::make_object(construct_point(Integer(1),Integer(5))));
     isolated_points.push_back
       (CGAL::make_object(construct_point(Algebraic_real_1(-1),
-					 Algebraic_real_1(5))));
+                                         Algebraic_real_1(5))));
 
     CGAL::insert(arr,isolated_points.begin(), isolated_points.end());
 

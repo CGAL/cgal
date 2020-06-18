@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Michael Hemmer   <hemmer@informatik.uni-mainz.de>  
+// Author(s)     : Michael Hemmer   <hemmer@informatik.uni-mainz.de>
 
 #ifndef CGAL_POLYNOMIAL_GCD_IMPLEMENTATIONS_H
 #define CGAL_POLYNOMIAL_GCD_IMPLEMENTATIONS_H
@@ -22,7 +22,7 @@
 #include <CGAL/Polynomial/polynomial_gcd.h>
 
 
-namespace CGAL {  
+namespace CGAL {
 namespace internal {
 
 template <class NT>
@@ -57,11 +57,11 @@ Polynomial<NT> gcd_utcf_UFD(
     Polynomial<NT> q, r;
 
     NT g = NT(1), h = NT(1);
-    for (;;) { 
+    for (;;) {
         Polynomial<NT>::pseudo_division(p1, p2, q, r, dummy);
         if (r.is_zero()) { break; }
-        
-        if (r.degree() == 0) { 
+
+        if (r.degree() == 0) {
             return CGAL::canonicalize(Polynomial<NT>(gcdcont));
         }
         int delta = p1.degree() - p2.degree();
@@ -75,7 +75,7 @@ Polynomial<NT> gcd_utcf_UFD(
     p2 /= p2.content() * p2.unit_part();
 
     // combine both parts to proper gcd
-    p2 *= gcdcont; 
+    p2 *= gcdcont;
 
     return CGAL::canonicalize(p2);
 }
@@ -98,7 +98,7 @@ Polynomial<NT> gcd_Euclidean_ring(
     }
 
     Polynomial<NT> q, r;
-    while (!p2.is_zero()) { 
+    while (!p2.is_zero()) {
         Polynomial<NT>::euclidean_division(p1, p2, q, r);
         p1 = p2; p2 = r;
     }
@@ -122,17 +122,17 @@ NT content_utcf_(const Polynomial<NT>& p)
         if (cont == NT(1)) break;
         if (*it != NT(0)) cont = internal::gcd_utcf_(cont, *it);
     }
-    
+
     return cont;
 }
 
 
 template <class NT>
-inline 
+inline
 Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
   // std::cout<<" gcd_utcf_Integral_domain"<<std::endl;
-  typedef Polynomial<NT> POLY; 
-  
+  typedef Polynomial<NT> POLY;
+
   // handle trivial cases
     if (p1.is_zero()){
       if (p2.is_zero()){
@@ -148,37 +148,37 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     if (p2.degree() > p1.degree()) {
         Polynomial<NT> p3 = p1; p1 = p2; p2 = p3;
     }
-    
+
     // remove redundant scalar factors
     p1=CGAL::canonicalize(p1);
-    p2=CGAL::canonicalize(p2); 
+    p2=CGAL::canonicalize(p2);
 
     // compute content of p1 and p2
     NT p1c = internal::content_utcf_(p1);
     NT p2c = internal::content_utcf_(p2);
-    
-   
+
+
     // compute gcd of content
     NT gcdcont = internal::gcd_utcf_(p1c, p2c);
 
     // compute gcd of primitive parts
-    p1 = integral_division_up_to_constant_factor(p1, POLY(p1c)); 
-    p2 = integral_division_up_to_constant_factor(p2, POLY(p2c)); 
+    p1 = integral_division_up_to_constant_factor(p1, POLY(p1c));
+    p2 = integral_division_up_to_constant_factor(p2, POLY(p2c));
 
- 
+
     Polynomial<NT> q, r;
-    
-    // TODO measure preformance of both methodes with respect to 
+
+    // TODO measure preformance of both methodes with respect to
     // univariat polynomials on Integeres
     // univariat polynomials on Sqrt_extension<Integer,Integer>
     // multivariat polynomials
-    // May write specializations for different cases 
+    // May write specializations for different cases
 #if 0
     // implemented using the subresultant algorithm for gcd computation
     // with respect to constant scalar factors
     // see [Cohen, 1993], algorithm 3.3.1
     NT g = NT(1), h = NT(1), dummy;
-    for (;;) { 
+    for (;;) {
         Polynomial<NT>::pseudo_division(p1, p2, q, r, dummy);
         if (r.is_zero()) { break; }
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
@@ -194,13 +194,13 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     // but performed much better as the one by Cohen
     // (for univariat polynomials with Sqrt_extension coeffs )
     NT dummy;
-    for (;;) { 
-        Polynomial<NT>::pseudo_division(p1, p2, q, r, dummy);    
+    for (;;) {
+        Polynomial<NT>::pseudo_division(p1, p2, q, r, dummy);
         if (r.is_zero()) { break; }
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         p1 = p2;
         p2 = r ;
-        p2=CGAL::canonicalize(p2);   
+        p2=CGAL::canonicalize(p2);
     }
 #endif
 
@@ -209,11 +209,11 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     // combine both parts to proper gcd
     p2 *= gcdcont;
 
-    Polynomial<NT> result; 
-    
+    Polynomial<NT> result;
+
     // make poly unique
     result = CGAL::canonicalize(p2);
-    return result; 
+    return result;
 }
 
 

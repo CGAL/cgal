@@ -42,7 +42,7 @@ int main()
     return 1;
   }
 
-  // Use set_target_position() to set the constained position 
+  // Use set_target_position() to set the constained position
   // of control_1. control_2 remains at the last assigned positions
   Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);

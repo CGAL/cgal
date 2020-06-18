@@ -50,7 +50,7 @@ class Cell_radius_edge_criterion
 public:
   // Constructor
   Cell_radius_edge_criterion(const FT& radius_edge_bound)
-    : sq_radius_edge_bound_(radius_edge_bound*radius_edge_bound) 
+    : sq_radius_edge_bound_(radius_edge_bound*radius_edge_bound)
   {}
 
   // Destructor
@@ -120,7 +120,7 @@ private:
 };  // end class Cell_radius_edge_criterion
 
 
-  
+
 template <typename Tr, typename Visitor_>
 class Cell_size_criterion
   : public Abstract_criterion<Tr, Visitor_>
@@ -207,34 +207,34 @@ class Cell_variable_size_criterion
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Geom_traits::FT  FT;
   typedef typename Tr::Vertex::Index    Index;
-  
+
   typedef Abstract_criterion<Tr, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
-  
+
   typedef Cell_variable_size_criterion<Tr, Visitor_, SizingField> Self;
   typedef SizingField Sizing_field;
-  
+
 public:
   // Constructor
   Cell_variable_size_criterion(const Sizing_field& s)
     : size_(s)   {}
-  
+
   // Destructor
   ~Cell_variable_size_criterion() {}
-  
+
 protected:
   virtual void do_accept(Visitor_& v) const
   {
     v.visit(*this);
   }
-  
+
   virtual Self* do_clone() const
   {
     // Call copy ctor on this
     return new Self(*this);
   }
-  
+
   virtual Is_bad do_is_bad(const Tr& tr, const Cell_handle& ch) const
   {
     typedef typename Tr::Geom_traits      Geom_traits;
@@ -258,7 +258,7 @@ protected:
     const FT size = sq_radius(p, q, r, s);
     const FT sq_bound = CGAL::square( size_(tr.dual(ch), 3,
                                             Index(ch->subdomain_index())) );
-    
+
     if ( size > sq_bound )
     {
 #ifdef CGAL_MESH_3_DEBUG_CELL_CRITERIA
@@ -270,10 +270,10 @@ protected:
     else
       return Is_bad();
   }
-  
+
 private:
   Sizing_field size_;
-  
+
 };  // end class Cell_variable_size_criterion
 
 /// New cell criterion that disallows a cell to have points on different
@@ -323,9 +323,9 @@ protected:
     const Vertex_handle vr = ch->vertex(2);
     const Vertex_handle vs = ch->vertex(3);
 
-    if(vp->in_dimension() != 2 || 
-       vq->in_dimension() != 2 || 
-       vr->in_dimension() != 2 || 
+    if(vp->in_dimension() != 2 ||
+       vq->in_dimension() != 2 ||
+       vr->in_dimension() != 2 ||
        vs->in_dimension() != 2)
       return Is_bad();
 
@@ -377,7 +377,7 @@ class Cell_criteria_visitor_with_features
 {
   typedef Criterion_visitor<Tr, typename Tr::Cell_handle> Base;
   typedef Cell_criteria_visitor_with_features<Tr> Self;
-  
+
 
   typedef Abstract_criterion<Tr, Self>                  Criterion;
   typedef Mesh_3::Cell_size_criterion<Tr, Self>         Cell_size_criterion;
@@ -386,14 +386,14 @@ class Cell_criteria_visitor_with_features
   typedef typename Tr::Geom_traits    Gt;
   typedef typename Gt::FT             FT;
   typedef typename Tr::Weighted_point Weighted_point;
-  
-  
-public:  
+
+
+public:
   typedef typename Base::Quality  Cell_quality;
   typedef typename Base::Is_bad   Is_cell_bad;
   typedef typename Base::Handle   Handle;
   typedef Handle                  Cell_handle;
-  
+
   // Constructor
   Cell_criteria_visitor_with_features(const Tr& tr, const Cell_handle& ch)
     : Base(tr, ch)
@@ -413,7 +413,7 @@ public:
     int k2 = 1;
     int k3 = 2;
     int k4 = 3;
-    
+
     // Get number of weighted points, and ensure that they will be accessible
     // using k1...ki, if i is the number of weighted points.
     const Weighted_point& wpk1 = tr.point(ch, k1);
@@ -445,12 +445,12 @@ public:
       if ( 2 == wp_nb_ ) { std::swap(k3,k4); }
       ++wp_nb_;
     }
-    
+
     const Weighted_point& p1 = tr.point(ch, k1);
     const Weighted_point& p2 = tr.point(ch, k2);
     const Weighted_point& p3 = tr.point(ch, k3);
     const Weighted_point& p4 = tr.point(ch, k4);
-    
+
     switch ( wp_nb_ )
     {
       case 1:
@@ -462,7 +462,7 @@ public:
         ratio_ = r / cw(p1);
         break;
       }
-        
+
       case 2:
       {
         FT r13 = sq_radius(p1,p3);
@@ -472,31 +472,31 @@ public:
         FT r24 = sq_radius(p2,p4);
         FT r2 = (std::max)(r23,r24) / cw(p2);
         ratio_ = (std::max)(r1,r2);
-        
+
         do_spheres_intersect_ = (compare(p1,p2,FT(0)) != CGAL::LARGER);
         break;
       }
-        
+
       case 3:
       {
         FT r14 = sq_radius(p1,p4) / cw(p1);
         FT r24 = sq_radius(p2,p4) / cw(p2);
         FT r34 = sq_radius(p3,p4) / cw(p3);
         ratio_ = (std::max)((std::max)(r14,r24),r34);
-        
+
         do_spheres_intersect_ = (compare(p1,p2,p3,FT(0)) != CGAL::LARGER);
         break;
       }
-        
+
       case 4:
         do_spheres_intersect_ = (compare(p1,p2,p3,p4,FT(0)) != CGAL::LARGER);
         break;
-        
+
       default:
         break;
     }
   }
-  
+
   // Destructor
   ~Cell_criteria_visitor_with_features() {}
 
@@ -509,10 +509,10 @@ public:
       Base::increment_counter();
       return;
     }
-    
+
     Base::do_visit(criterion);
   }
-  
+
   void visit(const Cell_radius_edge_criterion& criterion)
   {
     if (   (wp_nb_ >= 2 && do_spheres_intersect_)
@@ -521,7 +521,7 @@ public:
       Base::increment_counter();
       return;
     }
-    
+
     Base::do_visit(criterion);
   }
 
@@ -536,9 +536,9 @@ private:
   FT ratio_;
   FT size_ratio_;
 };  // end class Cell_criterion_visitor
-  
-  
-  
+
+
+
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL

@@ -41,9 +41,7 @@ namespace Polygon_mesh_processing {
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
-*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one must be initialized
+*
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -139,6 +137,7 @@ void isotropic_remeshing(const FaceRange& faces
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
@@ -154,15 +153,14 @@ void isotropic_remeshing(const FaceRange& faces
     parameters::is_default_parameter(get_parameter(np, internal_np::projection_functor));
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                                 get_property_map(vertex_point, pmesh));
 
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                           get_property_map(face_index, pmesh));
+  typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
+  FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
@@ -332,15 +330,14 @@ void split_long_edges(const EdgeRange& edges
   using parameters::get_parameter;
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                                 get_property_map(vertex_point, pmesh));
 
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                             get_property_map(face_index, pmesh));
+  typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
+  FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def <
         internal_np::edge_is_constrained_t,
@@ -349,7 +346,7 @@ void split_long_edges(const EdgeRange& edges
       > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Constant_property_map<edge_descriptor, bool>(false));
-  
+
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
     Constant_property_map<vertex_descriptor, bool>, // no constraint pmap
     internal::Connected_components_pmap<PM, FIMap>,

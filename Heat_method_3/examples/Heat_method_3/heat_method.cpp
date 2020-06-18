@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 {
   Triangle_mesh tm;
   const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
-  std::ifstream input(filename);  
+  std::ifstream input(filename);
   if (!input || !(input >> tm) || tm.is_empty()) {
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   Vertex_distance_map vertex_distance = tm.add_property_map<vertex_descriptor, double>("v:distance", 0).first;
 
   vertex_descriptor source = *(vertices(tm).first);
-  
+
   CGAL::Heat_method_3::estimate_geodesic_distances(tm, vertex_distance, source) ;
 
   std::cout << "Source vertex " << source << " at: " << tm.point(source) << std::endl;

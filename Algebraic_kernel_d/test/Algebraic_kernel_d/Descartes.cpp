@@ -5,9 +5,9 @@
 //
 // $URL:$
 // $Id: $
-// 
 //
-// Author(s)     :  
+//
+// Author(s)     :
 //
 // ============================================================================
 
@@ -34,21 +34,21 @@ void test_descartes(){
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;
     {
-        typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type 
+        typedef typename CGAL::Polynomial_type_generator<Integer,1>::Type
             Polynomial;
         typedef ::CGAL::internal::Descartes<Polynomial,Rational> Isolator;
-        
+
         // general test of concept RealRootIsolator
         CGAL::internal::test_real_root_isolator<Isolator>();
     }{
-        typedef typename CGAL::Polynomial_type_generator<Rational,1>::Type 
+        typedef typename CGAL::Polynomial_type_generator<Rational,1>::Type
             Polynomial;
         typedef ::CGAL::internal::Descartes<Polynomial,Rational> Isolator;
         // general test of concept RealRootIsolator
         CGAL::internal::test_real_root_isolator<Isolator>();
-    }    
+    }
 }
-    
+
 int main(){
 #ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
   std::cout << " TEST AK1 USING LEDA " << std::endl;

@@ -17,7 +17,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_epic;
 typedef Kernel_epic::Plane_3 Plane_3;
 
-class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
+class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item
   : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
@@ -84,9 +84,9 @@ public Q_SLOTS:
   virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
   void setPosition(float x, float y, float z);
-  
+
   void setPosition(double x, double y, double z);
-  
+
   void setNormal(float x, float y, float z);
 
   void setNormal(double x, double y, double z);

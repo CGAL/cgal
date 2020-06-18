@@ -59,7 +59,7 @@ int main()
             const Output_type  dh_result = discrete_harmonic_coordinates(point, dh_coordinates);
 
             assert(tri_coordinates[count + 0] - dh_coordinates[count + 0] == Scalar(0) &&
-                   tri_coordinates[count + 1] - dh_coordinates[count + 1] == Scalar(0) && 
+                   tri_coordinates[count + 1] - dh_coordinates[count + 1] == Scalar(0) &&
                    tri_coordinates[count + 2] - dh_coordinates[count + 2] == Scalar(0) );
 
             if( tri_coordinates[count + 0] - dh_coordinates[count + 0] != Scalar(0) ||
@@ -74,6 +74,6 @@ int main()
     }
 
     cout << endl << "DH_triangle_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
@@ -17,7 +17,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 
 
 namespace CGAL_triangulation{
@@ -44,7 +44,7 @@ const std::string Hmsg[] = {
   "Draw a regular triangulation of a set of weighted points (circles, points)"
 };
 
-class triangulationIpelet 
+class triangulationIpelet
   : public CGAL::Ipelet_base<Kernel,6>{
 public:
   triangulationIpelet()
@@ -55,7 +55,7 @@ public:
 
 void triangulationIpelet::protected_run(int fn)
 {
-  
+
   if (fn==5) {
     show_help();
     return;
@@ -65,7 +65,7 @@ void triangulationIpelet::protected_run(int fn)
   std::list<Segment_2> sg_list;
   std::list<Circle_2> cir_list;
   std::list<Polygon_2> pol_list;
-  
+
   read_active_objects(
     CGAL::dispatch_or_drop_output<Point_2,Polygon_2,Circle_2,Segment_2>(
       std::back_inserter(pt_list),
@@ -74,12 +74,12 @@ void triangulationIpelet::protected_run(int fn)
       std::back_inserter(sg_list)
     )
   );
-  
+
   Delaunay dt;
   CDTplus Cdt;
   Regular rt;
-  
-  
+
+
   switch(fn){
     case 0://Delaunay
       if (pt_list.empty()) {
@@ -108,12 +108,12 @@ void triangulationIpelet::protected_run(int fn)
         print_error_message("Invalid constrained triangulation");
         return;
       }
-      
+
       if (!Cdt.number_of_vertices()) {
         print_error_message("No mark nor polygon selected");
         return;
       }
-      
+
       if (fn==2) CGAL::make_conforming_Delaunay_2(Cdt);
       if (fn==3) CGAL::make_conforming_Gabriel_2(Cdt);
       draw_in_ipe(Cdt);

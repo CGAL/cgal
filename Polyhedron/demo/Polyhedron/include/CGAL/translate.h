@@ -5,7 +5,7 @@
 
 template <class Polyhedron, class Kernel>
 void translate(Polyhedron& polyhedron,
-	       const typename Kernel::Vector_3& translate)
+               const typename Kernel::Vector_3& translate)
 {
   typename Polyhedron::Vertex_iterator v;
   for(v = polyhedron.vertices_begin();

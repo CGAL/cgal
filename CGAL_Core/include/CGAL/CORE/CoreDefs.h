@@ -12,7 +12,7 @@
  *       For each parameter, we provide corresponding methods to
  *       modify or examine the values.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -33,14 +33,14 @@
 #include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_HEADER_ONLY
-  
+
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
     inline TYPE & get_static_##NAME()               \
     {                                               \
       static TYPE NAME(VALUE);                      \
       return NAME;                                  \
     }
-  
+
 #else // CGAL_HEADER_ONLY
 
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
@@ -52,7 +52,7 @@
 
 #endif // CGAL_HEADER_ONLY
 
-namespace CORE { 
+namespace CORE {
 
 //////////////////////////////////////////////////////////////
 // defined constants
@@ -115,10 +115,10 @@ CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 
 /// default # of decimal digits for conversion from a BF to string.
 /** This value cannot be CORE_INFTY.
-    See also defOutputDigits. 
+    See also defOutputDigits.
     */
 /*  QUESTION: the following comment seems to contradict the above comment:
-	"controls the printout precision of std::cout for BigFloat"
+        "controls the printout precision of std::cout for BigFloat"
     Perhaps, we should merge defOutputDigits and defBigFloatOutputDigits?
     */
 #ifdef CGAL_NO_ATOMIC
@@ -133,7 +133,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 
 /// controls the printout precision of std::cout for Real and Expr
 /** This value cannot be CORE_INFTY
-    See also defBigFloatOutputDigits. 
+    See also defBigFloatOutputDigits.
     (it really should be an int, as in std::cout.setprecision(int)). */
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
@@ -205,8 +205,8 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defInitialProgressivePrec, 64)
 
 //////////////////////////////////////////////////////////////
 // methods for setting global precision parameters
-// 	including: scientific vs. positional format
-//	All the set methods return the previous global value if any
+//         including: scientific vs. positional format
+//        All the set methods return the previous global value if any
 //////////////////////////////////////////////////////////////
 
 /// set default composite precision [defAbsPrec, defRelPrec]
@@ -304,9 +304,9 @@ inline bool setRationalReduceFlag(bool f) {
 
 /// CORE_init(..) is the CORE initialization function.
 /** We recommend calling it before anything else.  Originally motivated
-    by need to get around gnu's compiler bug in which the variable 
+    by need to get around gnu's compiler bug in which the variable
     "defAbsPrec" was not properly initialized.  But it has other uses,
-    e.g., overriding the default std::cout precision (most systems 
+    e.g., overriding the default std::cout precision (most systems
     initializes this value to 6) to our own */
 inline void CORE_init(long d) {
   get_static_defAbsPrec() = CORE_posInfty;

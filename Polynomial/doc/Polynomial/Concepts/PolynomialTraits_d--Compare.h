@@ -3,15 +3,15 @@
 \ingroup PkgPolynomialConcepts
 \cgalConcept
 
-This `AdaptableBinaryFunction` compares two polynomials, with respect to the lexicographic 
-order with preference to the outermost variable. 
+This `AdaptableBinaryFunction` compares two polynomials, with respect to the lexicographic
+order with preference to the outermost variable.
 
-This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is 
-`RealEmbeddable`. 
+This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is
+`RealEmbeddable`.
 
-\cgalRefines `AdaptableBinaryFunction` 
-\cgalRefines `CopyConstructible` 
-\cgalRefines `DefaultConstructible` 
+\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines `CopyConstructible`
+\cgalRefines `DefaultConstructible`
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
@@ -21,34 +21,34 @@ This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type`
 class PolynomialTraits_d::Compare {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef CGAL::Comparison_result result_type; 
+*/
+typedef CGAL::Comparison_result result_type;
 
 /*!
 
-*/ 
-typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
+*/
+typedef PolynomialTraits_d::Polynomial_d first_argument_type;
 
 /*!
 
-*/ 
-typedef PolynomialTraits_d::Polynomial_d second_argument_type; 
+*/
+typedef PolynomialTraits_d::Polynomial_d second_argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Compares two polynomials. 
-*/ 
-result_type operator()(first_argument_type f, 
-second_argument_type g); 
+Compares two polynomials.
+*/
+result_type operator()(first_argument_type f,
+second_argument_type g);
 
 /// @}
 

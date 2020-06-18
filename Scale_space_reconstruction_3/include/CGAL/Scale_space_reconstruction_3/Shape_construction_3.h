@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-// provides a generalized constructor for the shape of a set of points. 
+// provides a generalized constructor for the shape of a set of points.
 /* \ingroup PkgScaleSpaceReconstruction3Classes
  *  The shape of a set of points is ill-defined. Specifically,
  *  because a set of points has no inherent notion of connectivity,
@@ -73,8 +73,8 @@ class Shape_construction_3
 public:
 /// \name Types
 /// \{
-	typedef typename GeomTraits::FT                                         FT;                 ///< defines the number field type.
-	typedef typename GeomTraits::Point_3                                    Point;              ///< defines the point type.
+        typedef typename GeomTraits::FT                                         FT;                 ///< defines the number field type.
+        typedef typename GeomTraits::Point_3                                    Point;              ///< defines the point type.
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                  Triangulation_data_structure;                     ///< defines the triangulation data structure type.
     typedef Delaunay_triangulation_3< GeomTraits, Triangulation_data_structure >    Triangulation;  ///< defines the triangulation type.
@@ -112,7 +112,7 @@ public:
         if( shape ) return new Shape( *shape, squared_radius, Shape::GENERAL );
         else return new Shape( squared_radius, Shape::GENERAL );
     }
-    
+
     /// constructs a new shape.
     /** Important note: Shape_construction_3 does not take responsibility for destroying
      *  the object after use.
@@ -163,11 +163,11 @@ public:
     typedef Delaunay_triangulation_3< GeomTraits, Tds >                     Triangulation;
     typedef Fixed_alpha_shape_3< Triangulation >                            Shape;
 
-	typedef typename GeomTraits::FT                                         FT;
-	typedef typename GeomTraits::Point_3                                    Point;
+        typedef typename GeomTraits::FT                                         FT;
+        typedef typename GeomTraits::Point_3                                    Point;
 private:
     typedef internal::Auto_count<Point>                                     PointIndex;
-       
+
 public:
     Shape_construction_3() {}
 
@@ -179,7 +179,7 @@ public:
         if( shape ) return new Shape( *shape, squared_radius );
         else return new Shape( squared_radius );
     }
-    
+
     //  Construct a new shape.
     /*  Note: Shape_construction_3 does not take responsibility for destroying
      *  the object after use.

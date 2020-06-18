@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>

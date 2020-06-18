@@ -1,4 +1,4 @@
-#include <CGAL/convex_hull_3.h> 
+#include <CGAL/convex_hull_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Nef_3/Nary_union.h>
@@ -18,9 +18,9 @@ namespace CGAL {
 
 template <typename pIt, class InpIt, class ForIt, class OutIt, class AdBiFct>
   OutIt fold_indices_polyhedron( const pIt points, InpIt first1, InpIt beyond1,
-				 ForIt first2, ForIt beyond2,
-				 OutIt result,
-				 AdBiFct fct) {
+                                 ForIt first2, ForIt beyond2,
+                                 OutIt result,
+                                 AdBiFct fct) {
   for ( ; first1 != beyond1; ++first1) {
     for ( ForIt i = first2; i != beyond2; ++i) {
       *result++ = fct( *(points+(*first1)), i->point());
@@ -39,7 +39,7 @@ struct Add_points {
 
 template<typename Nef_polyhedron>
 class Trunk_offset {
-  
+
   typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
@@ -55,7 +55,7 @@ class Trunk_offset {
   typedef typename Nef_polyhedron::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Nef_polyhedron::Halffacet_const_iterator Halffacet_const_iterator;
   typedef typename Nef_polyhedron::Halffacet_const_handle Halffacet_const_handle;
-  typedef typename Nef_polyhedron::SHalfedge_around_facet_const_circulator 
+  typedef typename Nef_polyhedron::SHalfedge_around_facet_const_circulator
     SHalfedge_around_facet_const_circulator;
   typedef typename Box_intersection_d::Box_d<double,3> Box;
   typedef Bounding_box_3<typename Kernel::Kernel_tag, Kernel> EBox;
@@ -63,7 +63,7 @@ class Trunk_offset {
   typedef Relabel_volume<Nef_polyhedron> Relabel_volume;
   typedef Mark_bounded_volumes<Nef_polyhedron> Mark_bounded_volumes;
 
-  
+
   bool has_two_unmarked_volumes(Nef_polyhedron& N) {
     std::cerr << "number of volumes " << N.number_of_volumes() << std::endl;
     int argc = 0;
@@ -85,9 +85,9 @@ class Trunk_offset {
 
   template<typename p_it, typename f_it>
     Nef_polyhedron operator()(p_it pbegin, p_it pend,
-			      f_it fbegin, f_it fend,
-			      const Polyhedron& P) {
-    
+                              f_it fbegin, f_it fend,
+                              const Polyhedron& P) {
+
     Polyhedron Ptemp;
     Add_points add;
     NUBQ nary_union;
@@ -95,21 +95,21 @@ class Trunk_offset {
     for(f_it f = fbegin; f != fend; ++f) {
       std::vector<Point> points;
       fold_indices_polyhedron( pbegin,
-			       f->first, f->second,
-			       P.vertices_begin(), P.vertices_end(),
-			       back_inserter( points),
-			       add);
-      convex_hull_3( points.begin(), points.end(), Ptemp); 
+                               f->first, f->second,
+                               P.vertices_begin(), P.vertices_end(),
+                               back_inserter( points),
+                               add);
+      convex_hull_3( points.begin(), points.end(), Ptemp);
       nary_union.add_polyhedron(Nef_polyhedron(Ptemp));
     }
-    
+
     Nef_polyhedron result = nary_union.get_union();
     CGAL_assertion_msg(result.number_of_volumes() == 3,
-		       "not implemented, yet");
+                       "not implemented, yet");
     Relabel_volume rv;
     result.delegate(rv);
     CGAL_assertion_msg(result.number_of_volumes() == 2,
-		       "not implemented, yet");
+                       "not implemented, yet");
     result = (!result).closure();
     return result;
   }

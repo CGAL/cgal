@@ -71,7 +71,7 @@ void TestDegenerateCases()
 int main()
 {
   TestDegenerateCases();
-  
+
   bool all_correct = true;
   all_correct &= TestSimplicity("data/simple1.dat");
   all_correct &= TestSimplicity("data/simple2.dat");

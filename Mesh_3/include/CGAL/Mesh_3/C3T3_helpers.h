@@ -47,7 +47,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
-# include <tbb/mutex.h>
+# include <mutex>
 #endif
 
 #include <functional>
@@ -595,7 +595,7 @@ public:
 protected:
   Lock_data_structure *m_lock_ds;
 
-  typedef tbb::mutex  Mutex_type;
+  typedef std::mutex  Mutex_type;
   mutable Mutex_type  m_mut_outdated_cells;
   mutable Mutex_type  m_mut_moving_vertices;
   mutable Mutex_type  m_mut_vertex_to_proj;
@@ -1373,7 +1373,6 @@ private:
 
     std::size_t vertex_id(const std::size_t& i) const
     {
-      CGAL_precondition(i >= 0);
       CGAL_precondition((infinite_ && i < 3) || i < 4);
       return vertices_[i];
     }

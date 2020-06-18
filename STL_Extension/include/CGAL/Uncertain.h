@@ -112,7 +112,7 @@ public:
     if (is_certain())
       return _i;
     CGAL_PROFILER(std::string("Uncertain_conversion_exception thrown for CGAL::Uncertain< ")
-		  + typeid(T).name() + " >");
+                  + typeid(T).name() + " >");
     throw Uncertain_conversion_exception(
                   "Undecidable conversion of CGAL::Uncertain<T>");
   }
@@ -208,20 +208,20 @@ Uncertain<T>::indeterminate()
 
 namespace internal {
 
-	// helper class
-	template < typename T >
-	struct Indeterminate_helper {
-		typedef T result_type;
-		result_type operator()() const
-		{ return T(); }
-	};
+        // helper class
+        template < typename T >
+        struct Indeterminate_helper {
+                typedef T result_type;
+                result_type operator()() const
+                { return T(); }
+        };
 
-	template < typename T >
-	struct Indeterminate_helper< Uncertain<T> > {
-		typedef Uncertain<T> result_type;
-		result_type operator()() const
-		{ return Uncertain<T>::indeterminate(); }
-	};
+        template < typename T >
+        struct Indeterminate_helper< Uncertain<T> > {
+                typedef Uncertain<T> result_type;
+                result_type operator()() const
+                { return Uncertain<T>::indeterminate(); }
+        };
 
 } // namespace internal
 
@@ -602,14 +602,14 @@ template < typename T >
 inline
 Uncertain<T> operator*(T a, Uncertain<T> b)
 {
-	return Uncertain<T>(a) * b;
+        return Uncertain<T>(a) * b;
 }
 
 template < typename T >
 inline
 Uncertain<T> operator*(Uncertain<T> a, T b)
 {
-	return a * Uncertain<T>(b);
+        return a * Uncertain<T>(b);
 }
 
 // enum_cast overload

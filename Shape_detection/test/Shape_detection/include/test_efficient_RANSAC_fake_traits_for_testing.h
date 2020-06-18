@@ -39,29 +39,29 @@ namespace CGAL {
   struct Efficient_RANSAC_traits {
 
     typedef Efficient_RANSAC_traits<Gt, InputRange, InputPointMap, InputNormalMap> Self;
-    
+
     typedef double FT;
     typedef Point__3 Point_3;
     typedef Vector__3 Vector_3;
-    
+
     struct Sphere_3 {};
-    
+
     struct Line_3 {};
-    
+
     struct Circle_2 {};
-    
+
     struct Vector_2 {};
-    
+
     struct Plane_3 {};
-    
+
     struct Point_2 {};
-    
+
     typedef InputRange Input_range;
-    
+
     typedef InputPointMap Point_map;
-    
+
     typedef InputNormalMap Normal_map;
-    
+
     class Search_traits {
 
     public:
@@ -78,7 +78,7 @@ namespace CGAL {
         typedef std::ptrdiff_t                  difference_type;
         typedef const value_type*               pointer;
         typedef const value_type&               reference;
-        
+
         self& operator++() { return *this; }
         self  operator++(int) { return *this; }
         self& operator--() { return *this; }
@@ -114,12 +114,12 @@ namespace CGAL {
       struct Construct_center_d{};
       struct Compute_squared_radius_d{};
       typedef typename Self::FT FT;
-  
+
       Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
          return Construct_cartesian_const_iterator_d();
       }
     };
-    
+
     struct Construct_point_3
     {
       Point_3 operator()(FT, FT, FT) { return Point_3(); }
@@ -133,7 +133,7 @@ namespace CGAL {
     };
     Construct_point_2 construct_point_2_object() const
     { return Construct_point_2(); }
-    
+
     struct Construct_vector_3
     {
       Vector_3 operator()(Null_vector const&) { return NULL_VECTOR; }
@@ -165,14 +165,14 @@ namespace CGAL {
     };
     Construct_circle_2 construct_circle_2_object() const
     { return Construct_circle_2(); }
-    
+
     struct Construct_line_3
     {
       Line_3 operator()(Point_3 const&, Vector_3 const&) { return Line_3(); }
     };
     Construct_line_3 construct_line_3_object() const
     { return Construct_line_3(); }
-    
+
     struct Construct_point_on_3
     {
       Point_3 operator()(Line_3 const&, int) { return Point_3(); }
@@ -182,40 +182,40 @@ namespace CGAL {
 
     struct Compute_x_2
     {
-      FT operator()(Point_2 const&) const { return 0; } 
-      FT operator()(Vector_2 const&) const { return 0; } 
+      FT operator()(Point_2 const&) const { return 0; }
+      FT operator()(Vector_2 const&) const { return 0; }
     };
     Compute_x_2 compute_x_2_object() const
     { return Compute_x_2(); }
 
     struct Compute_y_2
     {
-      FT operator()(Point_2 const&) const { return 0; } 
-      FT operator()(Vector_2 const&) const { return 0; } 
+      FT operator()(Point_2 const&) const { return 0; }
+      FT operator()(Vector_2 const&) const { return 0; }
     };
     Compute_y_2 compute_y_2_object() const
     { return Compute_y_2(); }
 
     struct Compute_x_3
     {
-      FT operator()(Point_3 const&) const { return 0; } 
-      FT operator()(Vector_3 const&) const { return 0; } 
+      FT operator()(Point_3 const&) const { return 0; }
+      FT operator()(Vector_3 const&) const { return 0; }
     };
     Compute_x_3 compute_x_3_object() const
     { return Compute_x_3(); }
 
     struct Compute_y_3
     {
-      FT operator()(Point_3 const&) const { return 0; } 
-      FT operator()(Vector_3 const&) const { return 0; } 
+      FT operator()(Point_3 const&) const { return 0; }
+      FT operator()(Vector_3 const&) const { return 0; }
     };
     Compute_y_3 compute_y_3_object() const
     { return Compute_y_3(); }
-    
+
     struct Compute_z_3
     {
-      FT operator()(Point_3 const&) const { return 0; } 
-      FT operator()(Vector_3 const&) const { return 0; } 
+      FT operator()(Point_3 const&) const { return 0; }
+      FT operator()(Vector_3 const&) const { return 0; }
     };
 
     Compute_z_3 compute_z_3_object() const
@@ -230,15 +230,15 @@ namespace CGAL {
     { FT operator()(Vector_2 const&) const { return 0; } };
     Compute_squared_length_2 compute_squared_length_2_object() const
     { return Compute_squared_length_2(); }
-    
-    struct Construct_scaled_vector_3 
+
+    struct Construct_scaled_vector_3
     {
       Vector_3 operator()(Vector_3 const&, FT) { return Vector_3(); }
     };
     Construct_scaled_vector_3 construct_scaled_vector_3_object() const
     { return Construct_scaled_vector_3(); }
-    
-    struct Construct_sum_of_vectors_3 
+
+    struct Construct_sum_of_vectors_3
     {
       Vector_3 operator()(Vector_3 const&, Vector_3 const&) { return Vector_3(); }
     };
@@ -249,17 +249,17 @@ namespace CGAL {
     { Point_3 operator()(Point_3 const&, Vector_3 const&) const { return Point_3(); } };
     Construct_translated_point_3 construct_translated_point_3_object() const
     { return Construct_translated_point_3(); }
-    
+
     struct Compute_scalar_product_3
     { FT operator()(Vector_3 const&, Vector_3 const&) const { return 0; } };
     Compute_scalar_product_3 compute_scalar_product_3_object() const
     { return Compute_scalar_product_3(); }
-    
+
     struct Construct_cross_product_vector_3
     { Vector_3 operator()(Vector_3 const&, Vector_3 const&) const { return Vector_3(); } };
     Construct_cross_product_vector_3 construct_cross_product_vector_3_object() const
     { return Construct_cross_product_vector_3(); }
-    
+
     struct Construct_center_3
     { Point_3 operator()(Sphere_3 const&) const { return Point_3(); } };
     Construct_center_3 construct_center_3_object() const
@@ -281,13 +281,13 @@ namespace CGAL {
     { return Construct_center_2(); }
 
     struct Collinear_2
-    { 
+    {
       bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
-      { return false; } 
+      { return false; }
     };
     Collinear_2 collinear_2_object() const
     { return Collinear_2(); }
-    
+
     /* struct Compute_squared_distance_3
     { FT operator()(Point_3 const&, Point_3 const&) const { return 0; } };
     Compute_squared_distance_3 compute_squared_distance_3_object() const
@@ -299,7 +299,7 @@ namespace CGAL {
   private:
     Gt m_gt;
   };
-} 
+}
 
 }
 

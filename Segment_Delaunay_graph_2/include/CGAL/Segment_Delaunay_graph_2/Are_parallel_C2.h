@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -44,7 +44,7 @@ private:
 private:
   Boolean   predicate(const Site_2& p, const Site_2& q) const {
     CGAL_precondition( p.is_segment() && q.is_segment() );
-    
+
     Segment_2 s1 = p.segment();
     Segment_2 s2 = q.segment();
 
@@ -58,7 +58,7 @@ private:
       y4 = s2.target().y();
 
     FT det = determinant<FT>(x2 - x1, x4 - x3,
-			     y2 - y1, y4 - y3);
+                             y2 - y1, y4 - y3);
 
     return ( CGAL::sign(det) == CGAL::ZERO );
   }

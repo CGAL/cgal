@@ -147,15 +147,15 @@ public:
 
 class Trim_2{
 public:
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
 Trims the given x-monotone curve to an from src to tgt.
-\ pre `src` and `tgt` lies on the curve 
-*/ 
+\ pre `src` and `tgt` lies on the curve
+*/
 
-X_monotone_curve_2(const X_monotone_curve_2& xcv, 
+X_monotone_curve_2(const X_monotone_curve_2& xcv,
                                 const Point_2& src,
                                 const Point_2& tgt)const
 /// @}

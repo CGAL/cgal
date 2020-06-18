@@ -4,7 +4,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/algorithm.h>
@@ -134,9 +136,70 @@ int test_orient(const bool save_oriented) {
   return 0;
 }
 
+
+template <class K, class Tag>
+int test_pipeline()
+{
+  typedef typename K::Point_3 Point_3;
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+
+  std::vector<Point_3> points;
+  std::vector< std::vector<std::size_t> > polygons;
+  Polyhedron ref1;
+
+  shuffle_off("data/elephant.off", "elephant-shuffled.off");
+  std::ifstream input("elephant-shuffled.off");
+  if ( !input || !read_soup<K>(input, points, polygons)){
+    std::cerr << "Error: can not shuffled file.\n";
+    return 1;
+  }
+  input.close();
+  input.open("data/elephant.off");
+  if ( !input || !(input >> ref1)){
+    std::cerr << "Error: can not read reference file.\n";
+    return 1;
+  }
+  input.close();
+  CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh<Tag>(ref1, points, polygons);
+
+  CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup(points, polygons);
+
+  Polyhedron poly;
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
+        points, polygons, poly);
+  typedef typename boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<std::size_t> >::type Fccmap;
+  Fccmap fim = get(CGAL::dynamic_face_property_t<std::size_t>(), poly);
+  std::size_t id =0;
+  for(auto f : faces(poly))
+  {
+    put(fim, f, id++);
+  }
+  CGAL::Polygon_mesh_processing::
+      merge_reversible_connected_components(poly,
+                                            CGAL::parameters::face_index_map(fim));
+
+  Fccmap fccmap = get(CGAL::dynamic_face_property_t<std::size_t>(), poly);
+
+  assert(CGAL::Polygon_mesh_processing::
+         connected_components(poly, fccmap,
+                              CGAL::parameters::face_index_map(fim)) == 1);
+  return 0;
+}
+
 int main()
 {
   assert(test_orient<Epic>(false) == 0);
   assert(test_orient<Epec>(false) == 0);
+
+  int res = test_pipeline<Epic, CGAL::Sequential_tag>();
+  assert(res == 0);
+  res = test_pipeline<Epec, CGAL::Sequential_tag>();
+  assert(res == 0);
+#if defined(CGAL_LINKED_WITH_TBB)
+  res = test_pipeline<Epic, CGAL::Parallel_tag>();
+  assert(res == 0);
+  //res = test_pipeline<Epec, CGAL::Parallel_tag>();
+  //assert(res == 0);
+#endif
   return 0;
 }

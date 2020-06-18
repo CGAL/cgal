@@ -32,7 +32,7 @@ namespace CGAL {
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).
 
-   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A> 
+   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A>
          of the output stream might not be sufficient depending on the data to be written.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
@@ -66,15 +66,15 @@ write_off_points(
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
 
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-  
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
   if(!stream)
@@ -112,7 +112,7 @@ write_off_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
@@ -214,7 +214,7 @@ write_off_points(
      CGAL::parameters::point_map (point_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")

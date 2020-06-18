@@ -12,17 +12,17 @@ class AlgebraicKernelForSpheres::ConstructPolynomial_1_3 {
 public:
 
 /// \name Operations
-/// A model of this concept must provide: 
+/// A model of this concept must provide:
 /// @{
 
 /*!
-Constructs polynomial `ax+by+cz+d`. 
-*/ 
-AlgebraicKernelForSpheres::Polynomial_1_3 
-operator()(const AlgebraicKernelForSpheres::RT &a, 
-const AlgebraicKernelForSpheres::RT &b, 
-const AlgebraicKernelForSpheres::RT &c, 
-const AlgebraicKernelForSpheres::RT &d); 
+Constructs polynomial `ax+by+cz+d`.
+*/
+AlgebraicKernelForSpheres::Polynomial_1_3
+operator()(const AlgebraicKernelForSpheres::RT &a,
+const AlgebraicKernelForSpheres::RT &b,
+const AlgebraicKernelForSpheres::RT &c,
+const AlgebraicKernelForSpheres::RT &d);
 
 /// @}
 

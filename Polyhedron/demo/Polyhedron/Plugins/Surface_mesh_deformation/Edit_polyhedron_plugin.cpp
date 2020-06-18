@@ -17,7 +17,7 @@
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 
 using namespace CGAL::Three;
-class Polyhedron_demo_edit_polyhedron_plugin : 
+class Polyhedron_demo_edit_polyhedron_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -26,7 +26,7 @@ class Polyhedron_demo_edit_polyhedron_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  Polyhedron_demo_edit_polyhedron_plugin() 
+  Polyhedron_demo_edit_polyhedron_plugin()
     : Polyhedron_demo_plugin_helper(), dock_widget(NULL)
   { }
   ~Polyhedron_demo_edit_polyhedron_plugin()
@@ -50,12 +50,12 @@ public Q_SLOTS:
   void on_PrevCtrlVertPushButton_clicked();
   void on_NextCtrlVertPushButton_clicked();
   void on_SelectAllVerticesPushButton_clicked();
-  void on_DeleteCtrlVertPushButton_clicked();  
+  void on_DeleteCtrlVertPushButton_clicked();
   void on_ApplyAndClosePushButton_clicked();
   void on_DiscardChangesPushButton_clicked();
   void on_ClearROIPushButton_clicked();
   void on_ShowROICheckBox_stateChanged(int state);
-  void on_ShowAsSphereCheckBox_stateChanged(int state);  
+  void on_ShowAsSphereCheckBox_stateChanged(int state);
   void on_ActivatePivotingCheckBox_stateChanged(int state);
   void on_ActivateFixedPlaneCheckBox_stateChanged(int state);
   void on_OverwritePushButton_clicked();
@@ -89,7 +89,7 @@ private:
 QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
   return QList<QAction*>() << actionDeformation;
 }
-bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const { 
+bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const {
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id i, scene->selectionIndices())
   {
     if(qobject_cast<Scene_facegraph_item*>(scene->item(i)))
@@ -130,7 +130,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
         , mw);
   dock_widget->setVisible(false); // do not show at the beginning
 
-  ui_widget.setupUi(dock_widget); 
+  ui_widget.setupUi(dock_widget);
   dock_widget->setWindowTitle(tr(
                                   "Surface Mesh Deformation"
                                 ));
@@ -146,7 +146,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   connect(ui_widget.DiscardChangesPushButton, SIGNAL(clicked()), this, SLOT(on_DiscardChangesPushButton_clicked()));
   connect(ui_widget.ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
   connect(ui_widget.ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
-  connect(ui_widget.ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
+  connect(ui_widget.ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));
   connect(ui_widget.ActivateFixedPlaneCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivateFixedPlaneCheckBox_stateChanged(int)));
   connect(ui_widget.ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
   connect(ui_widget.OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
@@ -165,7 +165,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
-{  
+{
   // dock widget should be constructed in init()
   if(dock_widget->isVisible()) { dock_widget->hide(); }
   else                         { dock_widget->show(); dock_widget->raise();}
@@ -175,7 +175,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
 // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
 void Polyhedron_demo_edit_polyhedron_plugin::on_AddCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -183,7 +184,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_AddCtrlVertPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_PrevCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+ int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -193,7 +194,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_PrevCtrlVertPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_NextCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -203,7 +204,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_NextCtrlVertPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -213,7 +214,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clic
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -224,7 +225,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -238,7 +239,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ApplyAndClosePushButton_clicked(
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_DiscardChangesPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if (!edit_item) return;                             // the selected item is not of the right type
 
@@ -252,8 +253,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(!edit_item) { continue; }
-    scene->itemChanged(edit_item);  // just for redraw   
-  }  
+    scene->itemChanged(edit_item);  // just for redraw
+  }
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int state)
 {
@@ -265,8 +266,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChange
       edit_item->ShowAsSphere(false);
     else
       edit_item->ShowAsSphere(true);
-    scene->itemChanged(edit_item);  // just for redraw   
-  }  
+    scene->itemChanged(edit_item);  // just for redraw
+  }
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateChanged(int state)
 {
@@ -274,14 +275,14 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateCh
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(!edit_item) { continue; }
-    
+
     if(state == Qt::Checked) {
       edit_item->pivoting_begin();
     }
     else {
       edit_item->pivoting_end();
     }
-    scene->itemChanged(edit_item);     
+    scene->itemChanged(edit_item);
   }
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ActivateFixedPlaneCheckBox_stateChanged(int)
@@ -297,18 +298,18 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivateFixedPlaneCheckBox_state
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_OverwritePushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->overwrite_deform_object();
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_button_clicked() {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  boost::optional<std::size_t> minimum = 
+  boost::optional<std::size_t> minimum =
     edit_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
   if(minimum) {
     ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
@@ -316,7 +317,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -328,29 +329,29 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
-  if(!edit_item) return;  
+  if(!edit_item) return;
 
-  QString fileName = QFileDialog::getSaveFileName(mw, "Save", 
+  QString fileName = QFileDialog::getSaveFileName(mw, "Save",
       "roi.txt", "Text (*.txt)");
   if(fileName.isNull()) { return; }
 
-  edit_item->save_roi(fileName.toLocal8Bit().data());  
+  edit_item->save_roi(fileName.toLocal8Bit().data());
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
-  if(!edit_item) return;  
+  if(!edit_item) return;
 
-  QString fileName = QFileDialog::getOpenFileName(mw, "Read", 
+  QString fileName = QFileDialog::getOpenFileName(mw, "Read",
     "roi.txt", "Text (*.txt)");
   if(fileName.isNull()) { return; }
 
   edit_item->read_roi(fileName.toLocal8Bit().data());
   edit_item->invalidateOpenGLBuffers();
-  scene->itemChanged(edit_item); 
+  scene->itemChanged(edit_item);
 }
 
 
@@ -425,7 +426,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
 
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_ROIRadioButton_toggled(bool value) {
-  int k_ring = value ? ui_widget.BrushSpinBoxRoi->value() : 
+  int k_ring = value ? ui_widget.BrushSpinBoxRoi->value() :
                        ui_widget.BrushSpinBoxCtrlVert->value();
   for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {

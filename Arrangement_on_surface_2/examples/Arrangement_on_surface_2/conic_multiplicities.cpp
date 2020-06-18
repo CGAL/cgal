@@ -7,7 +7,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
 #else
@@ -28,7 +28,7 @@ typedef Rat_kernel::Point_2                           Rat_point_2;
 typedef Rat_kernel::Segment_2                         Rat_segment_2;
 typedef Rat_kernel::Circle_2                          Rat_circle_2;
 typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, 
+typedef CGAL::Arr_conic_traits_2<Rat_kernel,
                                  Alg_kernel,
                                  Nt_traits>           Traits_2;
 typedef Traits_2::Point_2                             Point_2;
@@ -56,7 +56,7 @@ int main ()
   Point_2        ps2 (-Rational(1,2), Rational(1,2));
   Point_2        pt2 (Rational(1,2), Rational(1,2));
   Conic_arc_2    cv2 (circ2, CGAL::COUNTERCLOCKWISE, ps2, pt2);
-  
+
   insert (arr, cv2, pl);
 
   // Print the resulting arrangement.

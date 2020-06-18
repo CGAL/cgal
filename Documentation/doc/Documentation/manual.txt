@@ -21,7 +21,7 @@ links to precompiled demo programs for the Windows platform.
 
 The manual further has a class index, as well as a search box in the upper right of
 each page.
-The scope of the search box is the package you currently look at and the 
+The scope of the search box is the package you currently look at and the
 packages it depends on, or  it is the whole manual when you are in
 a top level page such as the package overview.
 
@@ -36,7 +36,7 @@ The reference manual has pages for concepts and for models,
 and just as classes can be derived from other classes, concepts
 can \em refine other concepts, by adding requirements.
 
-When a class is a model of a concept, its reference manual 
+When a class is a model of a concept, its reference manual
 page has a link to the concept, and the API is mainly documented
 on the reference manual page of the concept.  As a concept
 may refine another concept, the full API of a class is sometimes
@@ -50,19 +50,19 @@ Models and concepts.
 \cgalFigureEnd
 
 The class `CGAL::Triangulation_vertex_base_3` derives from
-the class `CGAL::Triangulation_ds_vertex_base_3`. 
+the class `CGAL::Triangulation_ds_vertex_base_3`.
 The two classes are models of the concepts `TriangulationVertexBase_3`
 and `TriangulationDSVertexBase_3`, respectively.
 The former concept refines the latter.
 
 In the reference manual pages of these concepts and models
-only the methods and types which are not greyed in 
+only the methods and types which are not greyed in
 \cgalFigureRef{Manual_Fig_concept_model} are documented.
 Inherited methods are only documented in the base class.
 And methods that must be implemented in order to be a
 model of a concept are only documented in the concept.
 
-As pointed out in Section \ref intro_concept "Concepts and Models" 
+As pointed out in Section \ref intro_concept "Concepts and Models"
 the notion of a \em concept is about requirements,
 and it can be a required global function or a required traits class.
 

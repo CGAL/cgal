@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -56,9 +56,9 @@ enum  Bounded_side
 
 enum  Angle
       {
-	  OBTUSE = -1,
-	  RIGHT,
-	  ACUTE
+          OBTUSE = -1,
+          RIGHT,
+          ACUTE
       };
 
 
@@ -98,7 +98,7 @@ enum Box_parameter_space_2
         INTERIOR,
         EXTERIOR
      };
-    
+
 
 
 #ifdef CGAL_CFG_MATCHING_BUG_5

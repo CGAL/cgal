@@ -72,7 +72,7 @@ void Volume_plane_intersection_priv::computeElements()
 
    item->_bbox =  Scene_item::Bbox( tx, ty, tz,
                   tz+x, ty+y, tz+z);
-   
+
    item->getEdgeContainer(0)->allocate(Ec::Vertices,
                                        a_vertex.data(),
                                        static_cast<int>(a_vertex.size()*sizeof(float)));
@@ -90,19 +90,19 @@ void Volume_plane_intersection_priv::computeElements()
 
 void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)const
 {
-  
+
   item->getEdgeContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(0)->setFlatDataSize(a_size);
   item->getEdgeContainer(1)->initializeBuffers(viewer);
   item->getEdgeContainer(1)->setFlatDataSize(b_size);
   item->getEdgeContainer(2)->initializeBuffers(viewer);
   item->getEdgeContainer(2)->setFlatDataSize(c_size);
-  
+
   a_vertex.clear();
   a_vertex.shrink_to_fit();
-  b_vertex.clear();        
+  b_vertex.clear();
   b_vertex.shrink_to_fit();
-  c_vertex.clear();        
+  c_vertex.clear();
   c_vertex.shrink_to_fit();
 }
 
@@ -121,7 +121,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
     initializeBuffers(viewer);
   }
   viewer->glDepthRangef(0.00001f, 0.99999f);
-  
+
   QVector2D vp(viewer->width(), viewer->height());
   if(d->b && d->c) {
     GLdouble mat[16];
@@ -202,17 +202,17 @@ Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z,
   setColor(QColor(255, 128, 0));
   setName("Volume plane intersection");
   setEdgeContainer(2, new Ec(
-                     Three::mainViewer()->isOpenGL_4_3() 
+                     Three::mainViewer()->isOpenGL_4_3()
                      ? Vi::PROGRAM_SOLID_WIREFRAME
                      : Vi::PROGRAM_NO_SELECTION,
                      false));
   setEdgeContainer(1, new Ec(
-                     Three::mainViewer()->isOpenGL_4_3() 
+                     Three::mainViewer()->isOpenGL_4_3()
                      ? Vi::PROGRAM_SOLID_WIREFRAME
                      : Vi::PROGRAM_NO_SELECTION,
                      false));
   setEdgeContainer(0, new Ec(
-                     Three::mainViewer()->isOpenGL_4_3() 
+                     Three::mainViewer()->isOpenGL_4_3()
                      ? Vi::PROGRAM_SOLID_WIREFRAME
                      : Vi::PROGRAM_NO_SELECTION,
                      false));
@@ -234,7 +234,7 @@ void Volume_plane_intersection::planeRemoved(Volume_plane_interface* i) {
 void Volume_plane_intersection::invalidateOpenGLBuffers()
 {
   setBuffersFilled(false);
-  
+
   for(int i=0; i<3; ++i)
     getEdgeContainer(i)->reset_vbos(ALL);
 }

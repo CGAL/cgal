@@ -16,12 +16,7 @@ typedef Kernel::Point_3 Point;
 typedef boost::tuple<int, Point, int, int, int> IndexedPointWithColorTuple;
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
@@ -29,7 +24,7 @@ int main(int argc, char*argv[])
     // Reads a .xyz point set file in points.
     // As the point is the second element of the tuple (that is with index 1)
     // we use a property map that accesses the 1st element of the tuple.
-    
+
     std::vector<IndexedPointWithColorTuple> points;
     std::ifstream stream(fname);
     if (!stream ||

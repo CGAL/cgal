@@ -25,13 +25,13 @@ namespace CGAL {
 #ifdef CGAL_EIGEN3_ENABLED
 const int UNKNOWN_DIMENSION=Eigen::Dynamic;
 #else
-const int UNKNOWN_DIMENSION=std::numeric_limits<int>::max();
+const int UNKNOWN_DIMENSION=(std::numeric_limits<int>::max)();
 #endif
 
 // Check that dimension d1 is fine for a kernel of dimension d2.
 // If d2 is unknown, any d1 is fine.
 inline bool check_dimension_eq(int d1, int d2){
-	return d2==UNKNOWN_DIMENSION || d1==d2;
+        return d2==UNKNOWN_DIMENSION || d1==d2;
 }
 
 // These tag classes help dispatching functions based on a geometric dimension.
@@ -95,18 +95,18 @@ template<int d1,int d2>struct Product_dimension<Dimension_tag<d1>,Dimension_tag<
 #ifdef CGAL_EIGEN3_ENABLED
 // Convert to Eigen's notion of dimension
 template <class Dim_> struct Eigen_dimension {
-	enum { value=Eigen::Dynamic };
+        enum { value=Eigen::Dynamic };
 };
 template <int d> struct Eigen_dimension<Dimension_tag<d> > {
-	enum { value=d };
+        enum { value=d };
 };
 
 // and convert back
 template <int d> struct Dimension_eigen {
-	typedef Dimension_tag<d> type;
+        typedef Dimension_tag<d> type;
 };
 template <> struct Dimension_eigen<Eigen::Dynamic> {
-	typedef Dynamic_dimension_tag type;
+        typedef Dynamic_dimension_tag type;
 };
 #endif
 

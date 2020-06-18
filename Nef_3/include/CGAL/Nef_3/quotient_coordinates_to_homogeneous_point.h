@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
@@ -21,23 +21,23 @@ namespace CGAL {
 template <typename Homogeneous>
 typename Homogeneous::Point_3
 quotient_coordinates_to_homogeneous_point(
-				  typename Homogeneous::FT x,
-				  typename Homogeneous::FT y,
-				  typename Homogeneous::FT z) {
+                                  typename Homogeneous::FT x,
+                                  typename Homogeneous::FT y,
+                                  typename Homogeneous::FT z) {
   typedef typename Homogeneous::Point_3 Point_3;
-  if( (x.denominator() == y.denominator()) && 
+  if( (x.denominator() == y.denominator()) &&
       (x.denominator() == z.denominator())) {
     Point_3 p( x.numerator(),
-	       y.numerator(),
-	       z.numerator(),
-	       x.denominator());
+               y.numerator(),
+               z.numerator(),
+               x.denominator());
     return normalized(p);
   }
   else {
     Point_3 p( x.numerator()   * y.denominator() * z.denominator(),
-	       x.denominator() * y.numerator()   * z.denominator(),
-	       x.denominator() * y.denominator() * z.numerator(),
-	       x.denominator() * y.denominator() * z.denominator());
+               x.denominator() * y.numerator()   * z.denominator(),
+               x.denominator() * y.denominator() * z.numerator(),
+               x.denominator() * y.denominator() * z.denominator());
     return normalized(p);
   }
 }

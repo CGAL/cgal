@@ -81,7 +81,7 @@ public:
   template<class OutputIterator>
   struct Selection_visitor
   {
-    Selection_visitor(std::size_t threshold_size, OutputIterator out) 
+    Selection_visitor(std::size_t threshold_size, OutputIterator out)
       : threshold_size(threshold_size), out(out), any_inserted(false) { }
 
     template<class Descriptor>
@@ -111,15 +111,15 @@ public:
   */
   // NOTE: prior to call this function, id fields should be updated
   template<class Descriptor, class InputIterator, class IsSelected, class Visitor>
-  void travel(InputIterator begin, 
-              InputIterator end, 
-              std::size_t size, 
-              const IsSelected& selection, 
+  void travel(InputIterator begin,
+              InputIterator end,
+              std::size_t size,
+              const IsSelected& selection,
               Visitor& visitor)
   {
     std::vector<bool> mark(size, false);
 
-    for(; begin != end; ++begin) 
+    for(; begin != end; ++begin)
     {
       Descriptor h = *begin;
 

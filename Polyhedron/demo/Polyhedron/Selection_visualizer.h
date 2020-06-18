@@ -7,7 +7,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <QPainter>
 
-// Class for visualizing selection 
+// Class for visualizing selection
 // provides mouse selection functionality
 class Q_DECL_EXPORT Selection_visualizer
 {
@@ -20,13 +20,13 @@ class Q_DECL_EXPORT Selection_visualizer
   typedef std::vector<Point_2> Polyline_2;
   typedef std::vector<Polyline_2> Polylines;
   typedef CGAL::Three::Scene_item::Bbox Bbox;
-  
+
   bool rectangle;
   std::vector<Point_2> contour_2d;
   Polylines* polyline;
   Bbox point_set_bbox;
   Polygon_2 domain_freeform;
-  
+
 public:
   CGAL::Bbox_2 domain_rectangle;
 
@@ -68,17 +68,17 @@ public:
 
   Polyline_2& poly() const
   { return polyline->front(); }
-  
+
   bool update_polyline () const
   {
     if (contour_2d.size() < 2 ||
         (!(poly().empty()) && contour_2d.back () == poly().back()))
       return false;
-    
+
     if (rectangle)
       {
-	poly().clear();
-	
+        poly().clear();
+
         poly().push_back ( Point_2 (domain_rectangle.xmin(),
                                 domain_rectangle.ymin()));
         poly().push_back ( Point_2 (domain_rectangle.xmax(),
@@ -94,26 +94,26 @@ public:
     else
       {
         if (!(poly().empty()) && contour_2d.back () == poly().back())
-	  return false;
+          return false;
 
-	poly().clear();
+        poly().clear();
 
-	for (unsigned int i = 0; i < contour_2d.size (); ++ i)
+        for (unsigned int i = 0; i < contour_2d.size (); ++ i)
           poly().push_back (contour_2d[i]);
       }
     return true;
   }
 
-  
+
   void sample_mouse_path(QImage& image)
   {
     CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-    
+
     if (rectangle && contour_2d.size () == 2)
       {
-	contour_2d[1] = Point_2 (p.x (), p.y ());
-	domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
+        contour_2d[1] = Point_2 (p.x (), p.y ());
+        domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
       }
     else
       contour_2d.push_back (Point_2 (p.x (), p.y ()));
@@ -128,7 +128,7 @@ public:
   void apply_path()
   {
     update_polyline ();
-    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());    
+    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
     if (!rectangle)
       domain_freeform = Polygon_2 (contour_2d.begin (), contour_2d.end ());
   }
@@ -136,12 +136,12 @@ public:
   bool is_selected (CGAL::qglviewer::Vec& p)
   {
     if (domain_rectangle.xmin () < p.x &&
-	p.x < domain_rectangle.xmax () &&
-	domain_rectangle.ymin () < p.y &&
-	p.y < domain_rectangle.ymax ())
+        p.x < domain_rectangle.xmax () &&
+        domain_rectangle.ymin () < p.y &&
+        p.y < domain_rectangle.ymax ())
       {
-	if (rectangle)
-	  return true;
+        if (rectangle)
+          return true;
 /*
  * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
  * However, it works very well even if the polygon is not simple, so we use this instead to avoid

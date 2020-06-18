@@ -30,9 +30,9 @@
 int main(int argc, char* argv[]) {
 {
   typedef CGAL::Exact_rational                                  Number_type;
-  typedef CGAL::Cartesian<Number_type> 							Kernel;
+  typedef CGAL::Cartesian<Number_type>                                                         Kernel;
   typedef CGAL::Arr_segment_traits_2<Kernel>                    Traits_2;
-  typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
+  typedef CGAL::Arrangement_2<Traits_2>                                                        Arrangement_2;
   typedef CGAL::Simple_polygon_visibility_2<
                 Arrangement_2, CGAL::Tag_false>     Simple_polygon_visibility_2;
 

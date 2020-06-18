@@ -203,7 +203,7 @@ public:
     }
 };
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template<>
 class Benchmark_rep< CORE::BigRat > {
     const CORE::BigRat& t;
@@ -211,11 +211,11 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
+    std::ostream& operator()( std::ostream& out) const {
             out << "Rational(" << numerator(t) << "," << denominator(t) << ")";
             return out;
     }
-    
+
     static std::string get_benchmark_name() {
         return "Rational";
     }

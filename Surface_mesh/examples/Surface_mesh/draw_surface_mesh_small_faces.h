@@ -31,7 +31,7 @@ class SimpleSurfaceMeshWithSmallFacesViewerQt : public CGAL::Basic_viewer_qt
   typedef typename SM::Edge_index edge_descriptor;
   typedef typename SM::Halfedge_index halfedge_descriptor;
   typedef typename Kernel::FT FT;
-  
+
 public:
   /// Construct the viewer.
   /// @param amesh the surface mesh to view
@@ -48,7 +48,7 @@ public:
     setKeyDescription(Qt::Key_I, "Increment threshold for small faces");
     setKeyDescription(Qt::Key_D, "Decrement threshold for small faces");
     setKeyDescription(Qt::Key_S, "Draw small faces only , big faces only, both");
-    
+
     if (sm.faces().begin()!=sm.faces().end())
     {
       bool exist;
@@ -59,7 +59,7 @@ public:
       m_min_size=faces_size[*(sm.faces().begin())];
       m_max_size=m_min_size;
       FT cur_size;
-      
+
       for (typename SM::Face_range::iterator f=sm.faces().begin(); f!=sm.faces().end(); ++f)
       {
         cur_size=faces_size[*f];
@@ -76,7 +76,7 @@ protected:
   {
     // [Face creation]
     bool issmall=false;
-    
+
     // Default color of faces
     CGAL::Color c(75,160,255);
 
@@ -95,7 +95,7 @@ protected:
 
     if ((issmall && !m_draw_small_faces) || (!issmall && !m_draw_big_faces))
     { return; }
-    
+
     // Add the color of the face, then all its points.
     face_begin(c);
     halfedge_descriptor hd=sm.halfedge(fh);
@@ -116,7 +116,7 @@ protected:
     add_segment(sm.point(sm.source(sm.halfedge(e))),
                 sm.point(sm.target(sm.halfedge(e))));
     /// [Edge creation]
-  } 
+  }
 
   void compute_vertex(vertex_descriptor vh)
   {
@@ -135,7 +135,7 @@ protected:
       if (*f!=boost::graph_traits<SM>::null_face())
       { compute_face(*f); }
     }
-    
+
     for (typename SM::Edge_range::iterator e=sm.edges().begin();
          e!=sm.edges().end(); ++e)
     { compute_edge(*e); }
@@ -190,7 +190,7 @@ protected:
         m_draw_small_faces=true;
         msg=QString("Draw small and big faces.");
       }
-      
+
       displayMessage(msg);
       compute_elements();
       redraw();
@@ -220,7 +220,7 @@ protected:
     assert(nb>0);
     return (typename Kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
-  
+
   typename Kernel::Vector_3 get_vertex_normal(halfedge_descriptor he)
   {
     typename Kernel::Vector_3 normal=CGAL::NULL_VECTOR;
@@ -235,11 +235,11 @@ protected:
       he=sm.next(sm.opposite(he));
     }
     while (he!=end);
-    
+
     if (!typename Kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
     { normal=(typename Kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-    
+
     return normal;
   }
 
@@ -259,7 +259,7 @@ void draw_surface_mesh_with_small_faces(CGAL::Surface_mesh<K>& amesh)
 #else
   bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-  
+
   if (!cgal_test_suite)
   {
     int argc=1;

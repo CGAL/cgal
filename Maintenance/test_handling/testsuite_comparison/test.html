@@ -1,0 +1,51 @@
+<!doctype html>
+<html style='height: 100%'>
+<head>
+	<meta charset="utf-8">
+	<title>Combo Box Test</title>
+	<script type="text/javascript" src="diff_testsuites.js"></script>
+
+<body style='background-color: #C0C0D0; min-height: 100%;'>
+
+<button type="button" id='button'>
+    Wait 1s.
+</button>
+
+<script type="text/javascript">
+
+
+function prendDuTemps(onSuccess) {
+    setTimeout(
+        function() {
+            if(onSuccess) {
+                onSuccess()
+            }
+        },
+    100);
+}
+
+function boucleSynchrone(i) {
+    if(i<10) {
+        prendDuTemps(
+            function(){
+                console.log("blah"+i);
+                boucleSynchrone(i+1);
+            }
+        );
+    }
+    else
+    {
+      document.body.style.cursor = 'default';
+    }
+
+}
+function clickDiv() {
+  document.body.style.cursor = 'wait';
+  boucleSynchrone(0);
+}
+
+  var button = document.getElementById('button');
+  button.onclick=clickDiv;
+</script>
+</body>
+</html>

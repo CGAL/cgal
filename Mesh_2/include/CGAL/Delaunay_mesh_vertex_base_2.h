@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Jane Tournois
 
@@ -56,7 +56,7 @@ public:
   {}
 
   void set_sizing_info(const FT& s)
-  { 
+  {
     sizing_info_ = s;
   }
   const FT& sizing_info() const { return sizing_info_; }

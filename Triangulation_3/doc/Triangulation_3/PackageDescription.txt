@@ -21,6 +21,9 @@
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
 
+/// \defgroup PkgIOTriangulation3 I/O for a Triangulation 3
+/// \ingroup PkgTriangulation3Ref
+
 /*!
 \addtogroup PkgTriangulation3Ref
 \cgalPkgDescriptionBegin{3D Triangulations,PkgTriangulation3}
@@ -32,7 +35,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}
-\cgalPkgDependsOn{\ref PkgTDS3} 
+\cgalPkgDependsOn{\ref PkgTDS3}
 \cgalPkgBib{cgal:pt-t3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgDemo{3D Triangulations,triangulation_3.zip}
@@ -121,5 +124,8 @@ is opposite to the vertex with the same index. See
 
 - \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
 
+\cgalCRPSection{I/O}
+ - \link PkgIOTriangulation3 CGAL:Triangulation_3::file_input<Tr_src, ConvertVertex, ConvertCell>()\endlink
+ - \link PkgIOTriangulation3 CGAL::file_input<Tr_src, Tr_tgt, ConvertVertex, ConvertCell>()\endlink
 */
 

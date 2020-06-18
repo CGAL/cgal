@@ -61,7 +61,7 @@ struct Scene_edit_box_item_priv{
     P_Faces,
     Nbf
   };
-  
+
   enum Line_containers{
     Edges = 0,
     S_Edges,
@@ -270,25 +270,25 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
   d = new Scene_edit_box_item_priv(scene_interface, this);
 
   are_buffers_filled = false;
-  
+
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
     v->setMouseTracking(true);
   }
   connect(Three::mainWindow(), SIGNAL(newViewerCreated(QObject*)),
           this, SLOT(connectNewViewer(QObject*)));
-  
+
   setTriangleContainer(Priv::P_Faces  , new Tc(Vi::PROGRAM_NO_SELECTION, false));
   setTriangleContainer(Priv::Faces , new Tc(Vi::PROGRAM_WITH_LIGHT, false));
   setTriangleContainer(Priv::S_Faces , new Tc(Vi::PROGRAM_WITH_LIGHT, false));
   setTriangleContainer(Priv::Spheres  , new Tc(Vi::PROGRAM_SPHERES, false));
   setTriangleContainer(Priv::S_Spheres, new Tc(Vi::PROGRAM_SPHERES, false));
   setTriangleContainer(Priv::P_Spheres, new Tc(Vi::PROGRAM_DARK_SPHERES, false));
-  
-  
+
+
   for(int i=Priv::Nbe-1; i>=0; --i)
   {
-    setEdgeContainer(i, 
+    setEdgeContainer(i,
                      new Ec(Three::mainViewer()->isOpenGL_4_3()
                             ? Vi::PROGRAM_SOLID_WIREFRAME
                             : Vi::PROGRAM_NO_SELECTION,
@@ -345,7 +345,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   }
 
   drawSpheres(viewer, f_matrix);
-  
+
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
@@ -378,7 +378,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
   ec->setFrameMatrix(f_matrix);
   ec->setColor(QColor(Qt::black));
   ec->draw(viewer, true);
-  
+
   if(renderingMode() == Wireframe)
   {
     drawSpheres(viewer, f_matrix);
@@ -392,16 +392,16 @@ void Scene_edit_box_item::compute_bbox() const
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
 
-  QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
-  QVector3D max(d->pool[3], d->pool[4], d->pool[5]);
+  QVector3D vmin(d->pool[0], d->pool[1], d->pool[2]);
+  QVector3D vmax(d->pool[3], d->pool[4], d->pool[5]);
 
   for(int i=0; i< 3; ++i)
   {
-    min[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
-    max[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    vmin[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    vmax[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
   }
 
-  setBbox(Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z()));
+  setBbox(Scene_item::Bbox(vmin.x(),vmin.y(),vmin.z(),vmax.x(),vmax.y(),vmax.z()));
 }
 
 
@@ -605,24 +605,24 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
             Tc::Flat_vertices,
             d->vertex_spheres.data(),
             static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
-      
+
       tc->allocate(
             Tc::Flat_normals,
             d->normal_spheres.data(),
             static_cast<int>(d->normal_spheres.size()*sizeof(float)));
-      
+
       tc->allocate(
             Tc::Facet_centers,
             d->hl_vertex.data(),
             static_cast<int>(d->hl_vertex.size()*sizeof(float)));
-      
+
       tc->setFlatDataSize(d->vertex_spheres.size());
       tc->setCenterSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::VERTEX;
       Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
       {
-        CGAL::Three::Viewer_interface* viewer = 
+        CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
         tc->initializeBuffers(viewer);
       }
@@ -651,7 +651,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       d->hl_type = Scene_edit_box_item_priv::EDGE;
       Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
       {
-        CGAL::Three::Viewer_interface* viewer = 
+        CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
         ec->initializeBuffers(viewer);
       }
@@ -679,7 +679,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
             Tc::Flat_vertices,
             d->hl_vertex.data(),
             static_cast<int>(d->hl_vertex.size()*sizeof(float)));
-      
+
       tc->allocate(
             Tc::Flat_normals,
             d->hl_normal.data(),
@@ -689,7 +689,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       d->hl_type = Scene_edit_box_item_priv::FACE;
       Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
       {
-        CGAL::Three::Viewer_interface* viewer = 
+        CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
         tc->initializeBuffers(viewer);
       }
@@ -716,14 +716,14 @@ void Scene_edit_box_item::clearHL()
 
   Tc* tc = getTriangleContainer(Priv::S_Spheres);
   tc->reset_vbos(ALL);
-  tc->allocate(Tc::Flat_vertices, d->vertex_spheres.data(), 
+  tc->allocate(Tc::Flat_vertices, d->vertex_spheres.data(),
                static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
-  tc->allocate(Tc::Flat_normals, 
+  tc->allocate(Tc::Flat_normals,
                d->normal_spheres.data(),
                static_cast<int>(d->normal_spheres.size()*sizeof(float)));
-  
+
   tc->allocate(Tc::Facet_centers, nullptr, 0);
-  
+
   tc->initializeBuffers(viewer);
   tc->setFlatDataSize(0);
   tc->setCenterSize(0);
@@ -733,7 +733,7 @@ void Scene_edit_box_item::clearHL()
   ec->allocate(Ec::Vertices, nullptr, 0);
   ec->initializeBuffers(viewer);
   ec->setFlatDataSize(0);
-  
+
   tc = getTriangleContainer(Priv::S_Faces);
   tc->reset_vbos(ALL);
   tc->allocate(Tc::Flat_vertices, nullptr, 0);
@@ -897,7 +897,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   for (int i=0; i<16; ++i)
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
-  
+
 
   if(item->renderingMode() == FlatPlusEdges)
   {
@@ -921,7 +921,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   Ec* ec = item->getEdgeContainer(P_Edges);
   if(viewer->isOpenGL_4_3())
   {
-   
+
     QVector2D vp(viewer->width(), viewer->height());
     ec->setViewport(vp);
     ec->setWidth(6.0f);
@@ -1101,11 +1101,11 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
   if(d->hl_type == Scene_edit_box_item_priv::VERTEX)
   {
     Tc* tc = getTriangleContainer(Priv::S_Spheres);
-    
+
     tc->setFrameMatrix(f_matrix);
     tc->setMvMatrix(mv_mat);
     tc->setColor(QColor(Qt::yellow));
-    
+
     double radius =std::sqrt(
         (point(6,0) - point(0,0)) * (point(6,0) - point(0,0)) +
         (point(6,1) - point(0,1)) * (point(6,1) - point(0,1)) +
@@ -1129,7 +1129,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     ec->setFrameMatrix(f_matrix);
     ec->setColor(QColor(Qt::yellow));
     ec->draw(viewer, true);
-    
+
   }
   else if(d->hl_type == Scene_edit_box_item_priv::FACE)
   {
@@ -1141,7 +1141,7 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     tc->setMvMatrix(mv_mat);
     tc->setFrameMatrix(f_matrix);
     tc->setClipping(false);
-    
+
     tc->setColor(QColor(Qt::yellow));
     tc->setAlpha(0.5);
     tc->draw(viewer, true);
@@ -1177,7 +1177,7 @@ void Scene_edit_box_item::drawTransparent(CGAL::Three::Viewer_interface*viewer)c
   for (int i=0; i<16; ++i)
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
-  
+
   viewer->glEnable(GL_BLEND);
   viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   Tc* tc = getTriangleContainer(Priv::Faces);
@@ -1214,28 +1214,28 @@ void Scene_edit_box_item::computeElements() const
         Ec::Vertices,
         d->vertex_edges.data(),
         static_cast<GLsizei>(d->vertex_edges.size()*sizeof(float)));
-  
+
   ec->allocate(
         Ec::Colors,
         d->color_edges.data(),
         static_cast<GLsizei>(d->color_edges.size()*sizeof(float)));
-  
-  
+
+
   Tc* tc = getTriangleContainer(Priv::Spheres);
   tc->allocate(
         Tc::Flat_vertices,
         d->vertex_spheres.data(),
         static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
-  
+
   tc->allocate(
-        Tc::Flat_normals, 
+        Tc::Flat_normals,
         d->normal_spheres.data(),
         static_cast<int>(d->normal_spheres.size()*sizeof(float)));
   tc->allocate(
         Tc::Facet_centers,
         d->center_spheres.data(),
         static_cast<int>(d->center_spheres.size()*sizeof(float)));
-  
+
   tc = getTriangleContainer(Priv::P_Spheres);
   tc->allocate(
         Tc::Flat_vertices,
@@ -1246,18 +1246,18 @@ void Scene_edit_box_item::computeElements() const
         Tc::Facet_centers,
         d->center_spheres.data(),
         static_cast<int>(d->center_spheres.size()*sizeof(float)));
-  
+
   tc->allocate(
         Tc::FColors,
         d->color_spheres.data(),
         static_cast<int>(d->color_spheres.size()*sizeof(float)));
-  
+
   tc = getTriangleContainer(Priv::Faces);
   tc->allocate(
         Tc::Flat_vertices,
         d->vertex_faces.data(),
         static_cast<int>(d->vertex_faces.size()*sizeof(float)));
-  
+
   tc->allocate(
         Tc::Flat_normals,
         d->normal_faces.data(),
@@ -1276,27 +1276,27 @@ void Scene_edit_box_item::computeElements() const
 
 void Scene_edit_box_item::initializeBuffers(Viewer_interface *v) const
 {
-  
+
   getTriangleContainer(Priv::Faces)->initializeBuffers(v);
   getTriangleContainer(Priv::P_Faces)->initializeBuffers(v);
-  
+
   getTriangleContainer(Priv::Spheres)->initializeBuffers(v);
   getTriangleContainer(Priv::Spheres)->initializeBuffers(v);
   getTriangleContainer(Priv::P_Spheres)->initializeBuffers(v);
   getTriangleContainer(Priv::P_Spheres)->initializeBuffers(v);
-  
+
   getEdgeContainer(Priv::Edges)->initializeBuffers(v);
   getEdgeContainer(Priv::P_Edges)->initializeBuffers(v);
 
-  
+
   getTriangleContainer(Priv::Faces)->setFlatDataSize(d->vertex_faces.size());
   getTriangleContainer(Priv::P_Faces)->setFlatDataSize(d->vertex_faces.size());
-  
+
   getTriangleContainer(Priv::Spheres)->setFlatDataSize(d->vertex_spheres.size());
   getTriangleContainer(Priv::Spheres)->setCenterSize(d->center_spheres.size());
   getTriangleContainer(Priv::P_Spheres)->setFlatDataSize(d->vertex_spheres.size());
   getTriangleContainer(Priv::P_Spheres)->setCenterSize(d->center_spheres.size());
-  
+
   getEdgeContainer(Priv::Edges)->setFlatDataSize(d->vertex_edges.size());
   getEdgeContainer(Priv::P_Edges)->setFlatDataSize(d->vertex_edges.size());
 }

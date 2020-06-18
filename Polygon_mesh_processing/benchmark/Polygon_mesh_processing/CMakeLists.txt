@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -21,7 +21,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -29,10 +29,7 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  # Executables that require Eigen 3.2
-  include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
+include(CGAL_Eigen_support)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
@@ -41,4 +38,7 @@ create_single_source_cgal_program( "polygon_mesh_slicer.cpp" )
 
 create_single_source_cgal_program( "hole_filling.cpp" )
 
-
+if (TARGET CGAL::Eigen_support)
+  target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen_support)
+  target_link_libraries(hole_filling PUBLIC CGAL::Eigen_support)
+endif()

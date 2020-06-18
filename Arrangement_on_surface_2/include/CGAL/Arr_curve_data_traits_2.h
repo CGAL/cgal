@@ -6,9 +6,9 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Efi Fogel         <efifogel@gmail.com>
+//
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_CURVE_DATA_TRAITS_2_H
 #define CGAL_ARR_CURVE_DATA_TRAITS_2_H
@@ -22,6 +22,8 @@
  */
 
 #include <list>
+
+#include <boost/variant.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -193,35 +195,40 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi) const
     {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+        Intersection_base_result;
+
       // Use the base functor to obtain all intersection objects.
-      std::list<CGAL::Object> base_objects;
+      std::list<Intersection_base_result> base_objects;
       m_base.intersect_2_object()(cv1, cv2, std::back_inserter(base_objects));
 
       // Stop if the list is empty:
       if (base_objects.empty()) return oi;
 
       // Go over all intersection objects and prepare the output.
-      const Base_x_monotone_curve_2* base_cv;
-      for (typename std::list<CGAL::Object>::const_iterator it =
-             base_objects.begin(); it != base_objects.end(); ++it)
-      {
-        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*it))) != nullptr) {
+      for (const auto& item : base_objects) {
+        const Base_x_monotone_curve_2* base_cv =
+          boost::get<Base_x_monotone_curve_2>(&item);
+        if (base_cv != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
-          X_monotone_curve_2 cv(*base_cv, Merge() (cv1.data(), cv2.data()));
-          *oi++ = make_object(cv);
+          X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
+          *oi++ = Intersection_result(cv);
+          continue;
         }
-        else {
-          // The current intersection object is an intersection point:
-          // Copy it as is.
-          *oi++ = *it;
-        }
+        // The current intersection object is an intersection point:
+        // Copy it as is.
+        const Intersection_point* ip = boost::get<Intersection_point>(&item);
+        *oi++ = Intersection_result(*ip);
       }
 
       return oi;

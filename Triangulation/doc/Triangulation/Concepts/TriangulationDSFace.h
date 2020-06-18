@@ -3,16 +3,16 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-A `TriangulationDSFace` describes a face `f` with dimension `k` 
+A `TriangulationDSFace` describes a face `f` with dimension `k`
 (a `k`-face) in a triangulation.
 It gives access to a handle to a full cell `c` containing the face
 `f` in its boundary, as well as the indices of the vertices of `f` in
 `c`. It must hold that `f` is a <I>proper</I> face of full cell
 `c`, i.e., the dimension of `f` is strictly less than
 the dimension of `c`.
-The dimension of a face is implicitely set when 
-`TriangulationDSFace::set_index` is called. For example, if 
-`TriangulationDSFace::set_index` is called two times to set the 
+The dimension of a face is implicitely set when
+`TriangulationDSFace::set_index` is called. For example, if
+`TriangulationDSFace::set_index` is called two times to set the
 first two vertices (`i = 0` and `i = 1`), then the dimension is 1.
 
 \cgalHasModel `CGAL::Triangulation_face<TriangulationDataStructure_>`

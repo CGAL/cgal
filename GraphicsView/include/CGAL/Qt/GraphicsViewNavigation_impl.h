@@ -6,11 +6,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -59,7 +59,7 @@ namespace Qt {
   }
 
   CGAL_INLINE_FUNCTION
-  bool 
+  bool
   GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
@@ -73,7 +73,7 @@ namespace Qt {
         return false;
       }
     }
-    switch(event->type()) 
+    switch(event->type())
     {
     case QEvent::KeyPress: {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -181,12 +181,12 @@ namespace Qt {
       QString xy = QString(" ") + QString::number(pos.x(),'g', 6) + " , " + QString::number(pos.y(),'g', 6) + " ";
       Q_EMIT mouseCoordinates(xy);
       if(rectItem->isVisible()) {
-	QPointF size = v->mapToScene(mouseEvent->pos());
-	size = size - rect_first_point;
+        QPointF size = v->mapToScene(mouseEvent->pos());
+        size = size - rect_first_point;
         rectItem->setRect(rect_first_point.x(),
-			  rect_first_point.y(),
-			  size.x(),
-			  size.y());
+                          rect_first_point.y(),
+                          size.x(),
+                          size.y());
       }
       if( dragging )
       {
@@ -233,7 +233,7 @@ namespace Qt {
 
 
   CGAL_INLINE_FUNCTION
-  void 
+  void
   GraphicsViewNavigation::scaleView(QGraphicsView* v, qreal scaleFactor)
   {
     QPointF center = v->mapToScene(v->viewport()->rect().center());
@@ -271,11 +271,11 @@ namespace Qt {
     int horizontalScrollBarValue = v->horizontalScrollBar()->value();
     int verticalScrollBarValue = v->verticalScrollBar()->value();
 
-    if( (horizontalScrollBarValue + dx <= 
+    if( (horizontalScrollBarValue + dx <=
          v->horizontalScrollBar()->maximum()) &&
         (horizontalScrollBarValue + dx >=
          v->horizontalScrollBar()->minimum()) &&
-        (verticalScrollBarValue + dy <= 
+        (verticalScrollBarValue + dy <=
          v->verticalScrollBar()->maximum()) &&
         (verticalScrollBarValue + dy >=
          v->verticalScrollBar()->minimum()) )
@@ -307,7 +307,7 @@ namespace Qt {
   CGAL_INLINE_FUNCTION
   void GraphicsViewNavigation::display_parameters(QGraphicsView* v)
   {
-    std::cerr << 
+    std::cerr <<
       boost::format("matrix translation=(%1%, %2%)\n"
                     "       rotation=(%3% - %4% )\n"
                     "                (%5% - %6% )\n")
@@ -334,10 +334,10 @@ namespace Qt {
       % vp_top_left.y() % vp_bottom_right.y();
     std::cerr <<
       boost::format("scrollbars=(%1% <= %2% <= %3%) x (%4% <= %5% <= %6%)\n")
-      % v->horizontalScrollBar()->minimum() 
+      % v->horizontalScrollBar()->minimum()
       % v->horizontalScrollBar()->value()
       % v->horizontalScrollBar()->maximum()
-      % v->verticalScrollBar()->minimum() 
+      % v->verticalScrollBar()->minimum()
       % v->verticalScrollBar()->value()
       % v->verticalScrollBar()->maximum();
   }

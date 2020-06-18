@@ -29,7 +29,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
     :g_(NULL)
   {}
 
-  Constraint(G& g, double bound) 
+  Constraint(G& g, double bound)
     : g_(&g), bound_(bound)
   {}
 
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 
   std::cerr << "Connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
-  
+
   // Instead of writing the faces into a container, you can set a face property to true
   typedef Mesh::Property_map<face_descriptor, bool> F_select_map;
   F_select_map fselect_map =
@@ -116,12 +116,12 @@ int main(int argc, char* argv[])
               << " is made of " << cc.second << " faces" << std::endl;
   }
 
-  std::cerr << "- We keep only components which have at least 4 faces" << std::endl; 
+  std::cerr << "- We keep only components which have at least 4 faces" << std::endl;
   PMP::keep_large_connected_components(mesh,
       4,
       PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
-  std::cerr << "- We keep the two largest components" << std::endl; 
+  std::cerr << "- We keep the two largest components" << std::endl;
   PMP::keep_largest_connected_components(mesh,
       2,
       PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));

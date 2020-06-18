@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Bounding_Volumes
 \anchor chapBoundingVolumes
 \cgalAutoToc
@@ -19,10 +19,10 @@ then we obtain the smallest enclosing sphere problem already mentioned
 above.
 
 In the following example a smallest enclosing circle
-(`Min_circle_2<Traits>`) is constructed from points 
+(`Min_circle_2<Traits>`) is constructed from points
 on a line and written to standard output. The example
-shows that it is advisable to switch on random shuffling 
-in order to deal with a <i>bad</i> order of the input points. 
+shows that it is advisable to switch on random shuffling
+in order to deal with a <i>bad</i> order of the input points.
 
 \cgalExample{Min_circle_2/min_circle_2.cpp}
 
@@ -83,6 +83,6 @@ three boxes; the center points are shown in red.
 \image html pcenter.png
 \image latex pcenter.png
 
-*/ 
+*/
 } /* namespace CGAL */
 

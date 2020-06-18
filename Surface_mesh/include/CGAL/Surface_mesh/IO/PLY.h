@@ -68,7 +68,7 @@ private:
     std::string prefix(Edge_index) const { return "e:"; }
     std::string prefix(Halfedge_index) const { return "h:"; }
   };
-  
+
   Surface_mesh& m_mesh;
   std::vector<Vertex_index> m_map_v2v;
   bool m_use_floats;
@@ -86,7 +86,7 @@ private:
   std::vector<Abstract_ply_property_to_surface_mesh_property*> m_halfedge_properties;
 
 public:
-  
+
   Surface_mesh_filler (Surface_mesh& mesh)
     : m_mesh (mesh), m_use_floats (false), m_normals(0), m_vcolors(0), m_fcolors(0)
   { }
@@ -155,7 +155,7 @@ public:
         m_fcolor_map = m_mesh.template add_property_map<Face_index, CGAL::Color>("f:color").first;
       return true;
     }
-    
+
     return false;
   }
 
@@ -180,22 +180,22 @@ public:
     m_map_v2v.reserve(element.number_of_items());
     instantiate_properties<Vertex_index> (element, m_vertex_properties);
   }
-  
+
   void instantiate_face_properties (PLY_element& element)
   {
     instantiate_properties<Face_index> (element, m_face_properties);
   }
-  
+
   void instantiate_edge_properties (PLY_element& element)
   {
     instantiate_properties<Edge_index> (element, m_edge_properties);
   }
-  
+
   void instantiate_halfedge_properties (PLY_element& element)
   {
     instantiate_properties<Halfedge_index> (element, m_halfedge_properties);
   }
-  
+
   template <typename Simplex>
   void instantiate_properties  (PLY_element& element,
                                 std::vector<Abstract_ply_property_to_surface_mesh_property*>& properties)
@@ -206,9 +206,9 @@ public:
 
       if (has_simplex_specific_property (property, Simplex()))
         continue;
-      
+
       const std::string& name = property->name();
-      
+
       if (dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
       {
         properties.push_back
@@ -263,7 +263,7 @@ public:
   void process_vertex_line (PLY_element& element)
   {
     Vertex_index vi;
-    
+
     if (m_use_floats)
       process_line<float>(element, vi);
     else
@@ -284,7 +284,7 @@ public:
     Point point (x, y, z);
     vi = m_mesh.add_vertex(point);
     m_map_v2v.push_back(vi);
-    
+
     if (m_normals == 3)
     {
       element.assign (nx, "nx");
@@ -375,7 +375,7 @@ public:
                                         m_map_v2v[std::size_t(v1)]);
     if (hi == m_mesh.null_halfedge())
       return;
-    
+
     ei = m_mesh.edge (hi);
   }
 
@@ -423,7 +423,7 @@ bool fill_simplex_specific_header
   typedef typename SMesh::template Property_map<VIndex, Point> Point_map;
   typedef typename SMesh::template Property_map<VIndex, Vector> Vector_map;
   typedef typename SMesh::template Property_map<VIndex, Color> Vcolor_map;
-  
+
   if (prop == "v:connectivity" ||
       prop == "v:removed")
     return true;
@@ -445,7 +445,7 @@ bool fill_simplex_specific_header
     printers.push_back (new Property_printer<VIndex,Point_map>(sm.points()));
     return true;
   }
-      
+
   bool okay = false;
   if (prop == "v:normal")
   {
@@ -469,7 +469,7 @@ bool fill_simplex_specific_header
       return true;
     }
   }
-      
+
   if (prop == "v:color")
   {
     Vcolor_map pmap;
@@ -485,7 +485,7 @@ bool fill_simplex_specific_header
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -498,11 +498,11 @@ bool fill_simplex_specific_header
   typedef Surface_mesh<Point> SMesh;
   typedef typename SMesh::Face_index FIndex;
   typedef typename SMesh::template Property_map<FIndex, Color> Fcolor_map;
-  
+
   if (prop == "f:connectivity" ||
       prop == "f:removed")
     return true;
-      
+
   bool okay = false;
   if (prop == "f:color")
   {
@@ -596,12 +596,12 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
   typedef typename SMesh::template Property_map<Simplex, float> Float_map;
   typedef typename SMesh::template Property_map<Simplex, double> Double_map;
   std::vector<std::string> prop = sm.template properties<Simplex>();
-  
+
   for (std::size_t i = 0; i < prop.size(); ++ i)
   {
     if (fill_simplex_specific_header(os, sm, printers, prop[i]))
       continue;
-    
+
     // Cut the "v:" prefix
     std::string name = get_property_raw_name<Point> (prop[i], Simplex());
 

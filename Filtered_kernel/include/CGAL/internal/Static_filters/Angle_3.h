@@ -80,7 +80,7 @@ public:
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
         fit_in_double(get_approx(q).z(), qz) &&
         fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
-        fit_in_double(get_approx(r).z(), rz) )      
+        fit_in_double(get_approx(r).z(), rz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
@@ -137,14 +137,14 @@ public:
     //   ((t1 - t1) * (t1 - t1));
     F t1 = F(1, F::ulp()/2);         // First translation
     F f = t1*t1 + t1*t1 + t1*t1;
-      
+
     double err = f.error();
     err += err * 2 * F::ulp(); // Correction due to "eps * m * m ".
     std::cerr << "*** epsilon for Angle_3(Point_3, Point_3, Point_3) = "
               << err << std::endl;
     std::cerr << "\n"
               << "Now for underflow/overflows...\n"
-              << "       min_double/eps  = " 
+              << "       min_double/eps  = "
               << (std::numeric_limits<double>::min)() / err << std::endl
               << "  sqrt(min_double/eps) = "
               << CGAL::sqrt((std::numeric_limits<double>::min)() / err) << std::endl

@@ -14,7 +14,7 @@ typedef CGAL::Apollonius_site_2<K>   Site_2;
 int usage (int argc, char **argv)
 {
     std::cerr << "usage: " << argv[0]
-	      << " <number of points> <max radius> [seed]" << std::endl;
+              << " <number of points> <max radius> [seed]" << std::endl;
     return 2;
 }
 

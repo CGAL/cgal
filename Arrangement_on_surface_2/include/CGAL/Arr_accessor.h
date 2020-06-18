@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -144,7 +144,7 @@ public:
       Arr_traits_basic_adaptor_2<typename Arrangement_2::Geometry_traits_2>
       Traits_adaptor_2;
 
-    const Traits_adaptor_2* m_traits = 
+    const Traits_adaptor_2* m_traits =
       static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
 
     Arr_curve_end ind = ARR_MIN_END;
@@ -197,8 +197,8 @@ public:
    * Compute the distance (in halfedges) between two halfedges.
    * \param e1 A handle for the source halfedge.
    * \param e2 A handle for the destination halfedge.
-   * \return In case e1 and e2 belong to the same connected component, the 
-   *         function returns number of boundary halfedges between the two 
+   * \return In case e1 and e2 belong to the same connected component, the
+   *         function returns number of boundary halfedges between the two
    *         halfedges. Otherwise, it returns (-1).
    */
   int halfedge_distance(Halfedge_const_handle e1,
@@ -207,7 +207,7 @@ public:
     // If the two halfedges do not belong to the same component, return (-1).
     const DHalfedge* he1 = p_arr->_halfedge(e1);
     const DHalfedge* he2 = p_arr->_halfedge(e2);
-    
+
     if (he1 == he2) return (0);
 
     const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
@@ -299,7 +299,7 @@ public:
     CGAL_assertion(v != nullptr);
     return (p_arr->_handle_for (v));
   }
-  
+
   /*!
    * Create a new boundary vertex.
    * \param cv The curve incident to the boundary.
@@ -378,7 +378,7 @@ public:
    *         In case a new face has been created, it is given as the incident
    *         face of this halfedge.
    */
-  Halfedge_handle insert_at_vertices_ex(Halfedge_handle he_to, 
+  Halfedge_handle insert_at_vertices_ex(Halfedge_handle he_to,
                                         const X_monotone_curve_2& cv,
                                         Arr_halfedge_direction cv_dir,
                                         Halfedge_handle he_away,
@@ -412,7 +412,7 @@ public:
    */
   Halfedge_handle insert_from_vertex_ex(Halfedge_handle he_to,
                                         const X_monotone_curve_2& cv,
-                                        Arr_halfedge_direction cv_dir, 
+                                        Arr_halfedge_direction cv_dir,
                                         Vertex_handle v)
   {
     DVertex* p_v = p_arr->_vertex(v);
@@ -448,7 +448,7 @@ public:
    */
   Halfedge_handle insert_in_face_interior_ex(Face_handle f,
                                              const X_monotone_curve_2& cv,
-                                             Arr_halfedge_direction cv_dir, 
+                                             Arr_halfedge_direction cv_dir,
                                              Vertex_handle v1,
                                              Vertex_handle v2)
   {
@@ -478,7 +478,7 @@ public:
 
     CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
-  
+
   }
 
   /*!
@@ -488,7 +488,7 @@ public:
    */
   void insert_isolated_vertex(Face_handle f, Vertex_handle v)
   { p_arr->_insert_isolated_vertex(p_arr->_face (f), p_arr->_vertex(v)); }
-  
+
   /*!
    * Relocate all holes and isolated vertices to their proper position,
    * immediately after a face has split due to the insertion of a new halfedge.
@@ -534,7 +534,7 @@ public:
     p_arr->_move_inner_ccb(p_arr->_face(from_face), p_arr->_face(to_face),
                            p_arr->_halfedge(ccb));
   }
-  
+
   /*!
    * Move an isolated vertex from one face to another.
    * \param from_face The source face.
@@ -571,7 +571,7 @@ public:
     p_arr->_modify_vertex(p_arr->_vertex(v), p);
     return v;
   }
-        
+
   /*!
    * Modify the x-monotone curve associated with a given edge. The curve may be
    * geometrically different than the one currently associated with the edge.
@@ -585,7 +585,7 @@ public:
     p_arr->_modify_edge(p_arr->_halfedge (e), cv);
     return e;
   }
-          
+
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
@@ -599,7 +599,7 @@ public:
    *         source of e, and whose target is the split point.
    */
   Halfedge_handle split_edge_ex(Halfedge_handle e, const Point_2& p,
-                                const X_monotone_curve_2& cv1, 
+                                const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2)
   {
     DHalfedge* he = p_arr->_split_edge (p_arr->_halfedge(e), p, cv1, cv2);
@@ -641,7 +641,7 @@ public:
   Halfedge_handle split_fictitious_edge(Halfedge_handle e, Vertex_handle v)
   {
     CGAL_precondition(e->is_fictitious());
-    DHalfedge* he =  
+    DHalfedge* he =
       p_arr->topology_traits()->split_fictitious_edge(p_arr->_halfedge(e),
                                                       p_arr->_vertex(v));
     return (p_arr->_handle_for(he));
@@ -654,7 +654,7 @@ public:
    *                      becomes isolated (true by default).
    * \param remove_target Should the target vertex of e be removed if it
    *                      becomes isolated (true by default).
-   * \pre In case the removal causes the creation of a new hole, e should 
+   * \pre In case the removal causes the creation of a new hole, e should
    *      point at this hole.
    * \return A handle for the remaining face.
    */
@@ -713,20 +713,20 @@ public:
 
   /*! Get an iterator for the first valid arrangement vertex. */
   Valid_vertex_iterator valid_vertices_begin()
-  { 
+  {
     return (Valid_vertex_iterator
             (p_arr->topology_traits()->dcel().vertices_begin(),
              p_arr->topology_traits()->dcel().vertices_end(),
-             Is_valid_vertex (p_arr->topology_traits()))); 
+             Is_valid_vertex (p_arr->topology_traits())));
   }
 
   /*! Get a past-the-end iterator for the valid arrangement vertices. */
   Valid_vertex_iterator valid_vertices_end()
-  { 
+  {
     return (Valid_vertex_iterator
             (p_arr->topology_traits()->dcel().vertices_end(),
              p_arr->topology_traits()->dcel().vertices_end(),
-             Is_valid_vertex (p_arr->topology_traits()))); 
+             Is_valid_vertex (p_arr->topology_traits())));
   }
 
   /*! Get the number of valid arrangement vertices. */

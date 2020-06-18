@@ -34,7 +34,7 @@ int main (int argc, char** argv)
   Point_set::Property_map<boost::int32_t> label_prop;
   bool found = false;
   boost::tie (label_prop, found)  = point_set.property_map<boost::int32_t> ("label");
-  
+
   if (found)
     {
       std::cerr << "Point set has an integer \"label\" property with values:" << std::endl;
@@ -55,6 +55,6 @@ int main (int argc, char** argv)
     out.precision(17); // Use sufficient precision in ASCII
     CGAL::write_ply_point_set (out, point_set); // same as `out << point_set`
   }
-  
+
   return 0;
 }

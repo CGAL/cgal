@@ -23,7 +23,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/property_map.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -341,7 +341,7 @@ public Q_SLOTS:
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
@@ -383,9 +383,9 @@ public Q_SLOTS:
             {
               QApplication::restoreOverrideCursor();
               //If facets are selected, splitting edges will add facets that won't be selected, and it will mess up the rest.
-              //If there is only edges, it will work fine because new edges are dealt with in the code, so we can directly 
+              //If there is only edges, it will work fine because new edges are dealt with in the code, so we can directly
               //split and continue.
-              // Possibility todo: check if the barycenter of a new face is inside an old selected face to 
+              // Possibility todo: check if the barycenter of a new face is inside an old selected face to
               //select it again.
               if(!selection_item->selected_facets.empty())
               {
@@ -398,7 +398,7 @@ public Q_SLOTS:
               else if(QMessageBox::question(mw, tr("Error"),
                                             tr("Isotropic remeshing : protect_constraints cannot be set to"
                                                " true with constraints larger than 4/3 * target_edge_length."
-                                               " Do you wish to split the constrained edges ?")) != 
+                                               " Do you wish to split the constrained edges ?")) !=
                       QMessageBox::Yes)
               {
                 return;
@@ -460,7 +460,7 @@ public Q_SLOTS:
                   .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
             }
         }
-        
+
         SMesh mesh_ = *selection_item->polyhedron();
         std::vector<bool> are_edges_removed;
         are_edges_removed.resize(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
@@ -472,11 +472,11 @@ public Q_SLOTS:
           if(!are_edges_removed[i])
             are_edges_constrained[i] = get(selection_item->constrained_edges_pmap(), SMesh::Edge_index(static_cast<int>(i)));
         }
-        
-        
+
+
         int i0, i1,
             nE(mesh_.number_of_edges()+mesh_.number_of_removed_edges());
-        
+
         //get constrained values in order.
         if (nE > 0)
         {
@@ -487,7 +487,7 @@ public Q_SLOTS:
             while (!are_edges_removed[i0] && i0 < i1) ++i0;
             while ( are_edges_removed[i1] && i0 < i1) --i1;
             if (i0 >= i1) break;
-            
+
             // swap
             std::swap(are_edges_constrained[i0], are_edges_constrained[i1]);
             std::swap(are_edges_removed[i0], are_edges_removed[i1]);
@@ -506,7 +506,7 @@ public Q_SLOTS:
         {
           selection_item->polyhedron_item()->setItemIsMulticolor(false);
         }
-        
+
         selection_item->polyhedron_item()->polyhedron()->collect_garbage();
         //fix constrained_edges_map
         for(int i=0; i< nE; ++i)
@@ -515,7 +515,7 @@ public Q_SLOTS:
               pmap = selection_item->constrained_edges_pmap();
           put(pmap, SMesh::Edge_index(i), are_edges_constrained[i]);
         }
-        
+
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
         selection_item->changed_with_poly_item();
@@ -564,7 +564,7 @@ public Q_SLOTS:
           if (preserve_duplicates)
           {
             detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-           
+
           }
           Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
           for(edge_descriptor e : edges(pmesh))
@@ -612,7 +612,6 @@ public Q_SLOTS:
         }
         if (fpmap_valid)
         {
-          PMP::connected_components(pmesh, fpmap, PMP::parameters::edge_is_constrained_map(eif));
           poly_item->setItemIsMulticolor(true);
           poly_item->show_feature_edges(true);
         }
@@ -699,7 +698,7 @@ public Q_SLOTS:
       detect_and_split_duplicates(selection, edges_to_protect, target_length);
 
 #ifdef CGAL_LINKED_WITH_TBB
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
       tbb::parallel_for(
@@ -715,7 +714,7 @@ public Q_SLOTS:
       target_length, nb_iter, protect, smooth_features);
     for(Scene_facegraph_item* poly_item : selection)
     {
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       remesher(poly_item, edges_to_protect[poly_item->polyhedron()]);

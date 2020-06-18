@@ -14,7 +14,7 @@ int main()
   outer_polygon.push_back(Point(0,0)); outer_polygon.push_back(Point(9,0));
   outer_polygon.push_back(Point(6,8)); outer_polygon.push_back(Point(5,3));
   outer_polygon.push_back(Point(2,8)); outer_polygon.push_back(Point(0,8));
-  
+
   std::vector<Polygon_2> holes(3);
   holes[0].push_back(Point(6,2)); holes[0].push_back(Point(7,1));
   holes[0].push_back(Point(7,3)); holes[0].push_back(Point(6,3));
@@ -23,7 +23,7 @@ int main()
   holes[1].push_back(Point(2,1)); holes[1].push_back(Point(3,1));
   holes[1].push_back(Point(3,3)); holes[1].push_back(Point(2,2));
   holes[1].push_back(Point(1,2));
-  
+
   holes[2].push_back(Point(1,4)); holes[2].push_back(Point(2,4));
   holes[2].push_back(Point(2,5)); holes[2].push_back(Point(3,5));
   holes[2].push_back(Point(3,6)); holes[2].push_back(Point(1,6));

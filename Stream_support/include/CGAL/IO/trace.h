@@ -38,7 +38,7 @@ inline void CGAL_print_stderr(const char *fmt, ...)
   #define CGAL_TRACE  if (false) CGAL_print_stderr
 #endif
 
-// CGAL_TRACE_STREAM = C++ stream that prints to std::cerr 
+// CGAL_TRACE_STREAM = C++ stream that prints to std::cerr
 // if DEBUG_TRACE is defined (ignored otherwise)
 #ifdef DEBUG_TRACE
   #define CGAL_TRACE_STREAM  std::cerr

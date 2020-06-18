@@ -109,10 +109,10 @@ QRectF ArrangementDemoGraphicsView::getViewportRect( ) const
   QPointF p1 = this->mapToScene( 0, 0 );
   QPointF p2 = this->mapToScene( this->width( ), this->height( ) );
 
-  double xmin = std::min( p1.x( ), p2.x( ) );
-  double xmax = std::max( p1.x( ), p2.x( ) );
-  double ymin = std::min( p1.y( ), p2.y( ) );
-  double ymax = std::max( p1.y( ), p2.y( ) );
+  double xmin = (std::min)( p1.x( ), p2.x( ) );
+  double xmax = (std::max)( p1.x( ), p2.x( ) );
+  double ymin = (std::min)( p1.y( ), p2.y( ) );
+  double ymax = (std::max)( p1.y( ), p2.y( ) );
 
   QRectF res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
 

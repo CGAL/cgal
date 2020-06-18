@@ -85,10 +85,10 @@ int main()
 
   // Perturbation (maximum cpu time: 10s, targeted dihedral angle: default)
   CGAL::perturb_mesh_3(c3t3, domain, time_limit = 10);
-  
+
   // Exudation
   CGAL::exude_mesh_3(c3t3,12);
-  
+
   // Output
   std::ofstream medit_file("out_cubes_intersection.mesh");
   CGAL::output_to_medit(medit_file, c3t3);

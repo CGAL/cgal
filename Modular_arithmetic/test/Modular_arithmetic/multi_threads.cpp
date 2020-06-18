@@ -12,9 +12,9 @@
 // Use ,e.g. , gcc-4.3.1 with -fopenmp and -lgomp
 int main ()  {
   int tid;
-  
+
   //Beginning of parallel section. Fork a team of threads.
-  //Specify variable scoping   
+  //Specify variable scoping
 #pragma omp parallel private(tid)
   {
     // Enforce IEEE double precision and rounding mode to nearest
@@ -25,12 +25,12 @@ int main ()  {
     assert(CGAL::Residue::get_current_prime() == old_prime);
     CGAL::Residue::set_current_prime(new_prime);
     assert(CGAL::Residue::get_current_prime() == new_prime);
-    
+
     typedef CGAL::Residue NT;
     typedef CGAL::Field_tag Tag;
     typedef CGAL::Tag_true Is_exact;
-    CGAL::test_algebraic_structure<NT,Tag, Is_exact>();    
-  }  
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
+  }
 }
 #else
 int main (){}

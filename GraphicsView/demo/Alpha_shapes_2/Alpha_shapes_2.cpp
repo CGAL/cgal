@@ -25,7 +25,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Alpha_shapes_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -48,12 +48,12 @@ class MainWindow :
   public Ui::Alpha_shapes_2
 {
   Q_OBJECT
-  
-private:  
+
+private:
   double alpha;
   std::vector<Point_2> points;
-  Alpha_shape_2 as; 
-  QGraphicsScene scene;  
+  Alpha_shape_2 as;
+  QGraphicsScene scene;
 
   CGAL::Qt::AlphaShapeGraphicsItem<Alpha_shape_2> * agi;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -93,7 +93,7 @@ MainWindow::MainWindow()
   agi = new CGAL::Qt::AlphaShapeGraphicsItem<Alpha_shape_2>(&as);
 
   QObject::connect(this, SIGNAL(changed()),
-		   agi, SLOT(modelChanged()));
+                   agi, SLOT(modelChanged()));
 
   agi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   agi->setEdgesPen(QPen(Qt::lightGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -102,30 +102,30 @@ MainWindow::MainWindow()
   agi->setRegularFacesBrush(QBrush(Qt::cyan));
   scene.addItem(agi);
 
-  // 
+  //
   // Manual handling of actions
   //
 
 
-  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
-		   this, SLOT(alphaChanged(int)));
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)),
+                   this, SLOT(alphaChanged(int)));
 
   QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
-		   this, SLOT(alphaChanged(int)));
+                   this, SLOT(alphaChanged(int)));
 
-  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
-		   this->alphaBox, SLOT(setValue(int)));
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)),
+                   this->alphaBox, SLOT(setValue(int)));
 
-  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)), 
-		   this->alphaSlider, SLOT(setValue(int)));
+  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
+                   this->alphaSlider, SLOT(setValue(int)));
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 1, false); // inputs a list with one point
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-   
+                   this, SLOT(processInput(CGAL::Object)));
+
   scene.installEventFilter(pi);
   //this->actionShowAlphaShape->setChecked(true);
 
@@ -139,7 +139,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -151,7 +151,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -189,10 +189,10 @@ void MainWindow::alphaChanged(int i)
   Q_EMIT( changed());
 }
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -212,20 +212,20 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  CGAL::Qt::Converter<K> convert;  
+  CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
 
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
+                             100,
+                             0,
+                             (std::numeric_limits<int>::max)(),
+                             1,
+                             &ok);
 
   if(!ok) {
     return;
@@ -250,7 +250,7 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
+                                                  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
@@ -292,7 +292,7 @@ MainWindow::open(QString fileName)
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
   Q_EMIT( changed());
-    
+
 }
 
 
@@ -302,7 +302,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(agi->boundingRect());
-  this->graphicsView->fitInView(agi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(agi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

@@ -13,11 +13,7 @@
 
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
 typedef CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Kernel> ScaleSpaceAFM;
@@ -27,7 +23,7 @@ typedef CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother<Kernel> ScaleS
 
 void scale_space (const Point_set& points,
                   std::vector<Scene_polygon_soup_item*>& items,
-                  bool jet_smoother, 
+                  bool jet_smoother,
                   unsigned int iterations,
                   unsigned int neighbors, unsigned int fitting, unsigned int monge,
                   unsigned int neighborhood_size, unsigned int samples,
@@ -51,7 +47,7 @@ void scale_space (const Point_set& points,
     ScaleSpaceWPS smoother(neighborhood_size, samples);
     reconstruct.increase_scale(iterations, smoother);
     squared_radius = smoother.squared_radius();
-      
+
   }
 
   if (advancing_front_mesher)
@@ -76,7 +72,7 @@ void scale_space (const Point_set& points,
 
     std::map<std::size_t, std::size_t> map_i2i;
     std::size_t current_index = 0;
-    
+
     for (ScaleSpace::Facet_iterator it = reconstruct.facets_begin();
          it != reconstruct.facets_end(); ++ it)
     {
@@ -87,7 +83,7 @@ void scale_space (const Point_set& points,
           map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
           Point_3 p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
           new_item->new_vertex (p.x (), p.y (), p.z ());
-            
+
           if (generate_smooth)
           {
             p = *(reconstruct.points_begin() + (*it)[ind]);
@@ -102,7 +98,7 @@ void scale_space (const Point_set& points,
         smooth_item->new_triangle( map_i2i[(*it)[0]],
                                    map_i2i[(*it)[1]],
                                    map_i2i[(*it)[2]] );
-              
+
     }
 
     items.push_back(new_item);
@@ -133,7 +129,7 @@ void scale_space (const Point_set& points,
 
       std::map<unsigned int, unsigned int> map_i2i;
       unsigned int current_index = 0;
-    
+
       for (ScaleSpaceASM::Facet_iterator it = mesher.shell_begin (sh);
            it != mesher.shell_end (sh); ++ it)
       {
@@ -144,7 +140,7 @@ void scale_space (const Point_set& points,
             map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
             Point_3 p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
             new_item->new_vertex (p.x (), p.y (), p.z ());
-                    
+
             if (generate_smooth)
             {
               p = *(reconstruct.points_begin() + (*it)[ind]);
@@ -159,7 +155,7 @@ void scale_space (const Point_set& points,
           smooth_item->new_triangle( map_i2i[(*it)[0]],
                                      map_i2i[(*it)[1]],
                                      map_i2i[(*it)[2]] );
-              
+
       }
 
       items.push_back (new_item);
@@ -200,7 +196,7 @@ void scale_space (const Point_set& points,
             map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
             Point_3 p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
             new_item->new_vertex (p.x (), p.y (), p.z ());
-                    
+
             if (generate_smooth)
             {
               p = *(reconstruct.points_begin() + (*it)[ind]);

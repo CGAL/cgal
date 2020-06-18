@@ -33,7 +33,7 @@ int main()
 {
    Polygon_2             polygon;
    Polygon_list          partition_polys;
-  
+
    make_polygon(polygon);
    CGAL::optimal_convex_partition_2(polygon.vertices_begin(),
                                     polygon.vertices_end(),

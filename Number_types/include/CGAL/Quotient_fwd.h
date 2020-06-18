@@ -17,10 +17,10 @@
 namespace CGAL{
   template < typename NT >
   struct Split_double;
-  
+
   template <class NT_>
   class Quotient;
-  
+
 } //namespace CGAL
 
 #endif //CGAL_QUOTIENT_FWD_H

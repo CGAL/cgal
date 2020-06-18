@@ -22,16 +22,16 @@ int main(void)
     distributions.push_back(boost::normal_distribution<double>(0.7, 0.1));
     distributions.push_back(boost::normal_distribution<double>(0.9, 0.05));
     distributions.push_back(boost::normal_distribution<double>(1.0, 0.05));
-    
-    std::vector<double> data;    
+
+    std::vector<double> data;
     for(std::vector< boost::normal_distribution<double> >::iterator it = distributions.begin();
       it != distributions.end(); ++it)
     {
         boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> > var_nor(engine, *it);
-        
+
         for(std::size_t i = 0; i < 300; ++i) { data.push_back(var_nor()); }
     }
-    
+
     // calculate closest center (using above gauissians) for each generated points
     // we will compare it with gmm fitting results
     // also we might want to compute mixing coef for each center and select centers according to mixing_coef * prob(data)
@@ -39,20 +39,20 @@ int main(void)
     for(std::vector<double>::iterator it = data.begin(); it != data.end(); ++it)
     {
         std::size_t center_id = (std::numeric_limits<std::size_t>::max)(), center_counter = 0;;
-        double min_distance = (std::numeric_limits<double>::max)();        
+        double min_distance = (std::numeric_limits<double>::max)();
         for(std::vector< boost::normal_distribution<double> >::iterator dis_it = distributions.begin();
           dis_it != distributions.end(); ++dis_it, ++center_counter)
         {
-            double distance = std::abs(*it - dis_it->mean());            
-            if(min_distance > distance) 
+            double distance = std::abs(*it - dis_it->mean());
+            if(min_distance > distance)
             {
                 min_distance = distance;
                 center_id = center_counter;
-            }            
+            }
         }
         data_centers.push_back(center_id);
     }
-    
+
     // apply gmm fitting clustering
     typedef CGAL::internal::Expectation_maximization E_M;
     std::vector<E_M> gmm_fitters;
@@ -66,7 +66,7 @@ int main(void)
     {
         it->fill_with_center_ids(*calc_centers_it);
     }
-    
+
     std::cout << "Compare results of EM with 'expected' (but be aware, it is not optimal result in terms of likelihood)" << std::endl;
     std::cout << "Another words a clustering which has higher likelihood can result in worse score in here" << std::endl;
     for(std::vector< std::vector<std::size_t> >::iterator calc_centers_it = calculated_centers.begin();

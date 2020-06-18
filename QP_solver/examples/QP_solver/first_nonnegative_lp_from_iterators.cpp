@@ -1,5 +1,5 @@
 // example: construct a nonnegative linear program from given iterators
-// the LP below is the first nonnegative linear program example 
+// the LP below is the first nonnegative linear program example
 // in the user manual
 #include <iostream>
 
@@ -20,7 +20,7 @@ typedef CGAL::Nonnegative_linear_program_from_iterators
 <int**,                                                // for A
  int*,                                                 // for b
  CGAL::Const_oneset_iterator<CGAL::Comparison_result>, // for r
- int*>                                                 // for c 
+ int*>                                                 // for c
 Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
@@ -29,7 +29,7 @@ int main() {
   int  Ay[] = {1,  2};                        // column for y
   int*  A[] = {Ax, Ay};                       // A comes columnwise
   int   b[] = {7, 4};                         // right-hand side
-  CGAL::Const_oneset_iterator<CGAL::Comparison_result> 
+  CGAL::Const_oneset_iterator<CGAL::Comparison_result>
         r(    CGAL::SMALLER);                 // constraints are "<="
   int   c[] = {0, -32};
 

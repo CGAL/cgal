@@ -4,7 +4,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
 #else
@@ -38,11 +38,11 @@ int main (int argc, char *argv[])
   Bezier_traits_2                         bezier_traits;
   Bezier_polycurve_traits                 poly_traits;
 
-  //vectors required for polylines 
+  //vectors required for polylines
   std::vector<Rat_point_2>                points_vector;
   std::vector<Bezier_curve>               curves_vector;
   std::vector<Bezier_x_monotone_curve>    x_curves_vector;
-  
+
   //creating a bezier curve
   points_vector.push_back( Rat_point_2(0,0) );
   //points_vector.push_back( Rat_point_2(500,200) );
@@ -50,7 +50,7 @@ int main (int argc, char *argv[])
   points_vector.push_back( Rat_point_2(500,200) );
   points_vector.push_back( Rat_point_2(900,0) );
   Bezier_curve curve_1 (points_vector.begin(), points_vector.end());
-  
+
   std::vector<CGAL::Object> obj_vector;
 
   //creating x-mono bezier
@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
   curves_vector.push_back(curve_2);
   x_curves_vector.push_back(x_curve_1);
   x_curves_vector.push_back(x_curve_2);
-  
+
   //create polycurves
   Polycurve_bezier polycurve_1 = poly_traits.construct_curve_2_object()(curves_vector.begin(), curves_vector.end());
   X_polycurve_bezier x_polycurve_1 = poly_traits.construct_x_monotone_curve_2_object()(x_curves_vector.begin(), x_curves_vector.end());

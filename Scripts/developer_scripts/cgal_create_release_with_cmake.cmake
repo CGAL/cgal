@@ -79,7 +79,7 @@ if (NOT EXISTS ${GIT_REPO}/Installation/include/CGAL/version.h)
 endif()
 
 file(READ "${GIT_REPO}/Installation/include/CGAL/version.h" version_file_content)
-string(REGEX MATCH "define CGAL_VERSION (.*)\n#define CGAL_VERSION_NR" CGAL_VERSION_FOUND "${version_file_content}")
+string(REGEX MATCH "define CGAL_VERSION ([^\n]*)\n" CGAL_VERSION_FOUND "${version_file_content}")
 
 if (CGAL_VERSION_FOUND)
   set(CGAL_VERSION_INPUT "${CMAKE_MATCH_1}")
@@ -171,12 +171,12 @@ if(EXISTS ${GIT_REPO}/.git)
     RESULT_VARIABLE RESULT_VAR
     OUTPUT_VARIABLE OUT_VAR
     )
-  string(REPLACE "CGAL_GIT_HASH abcdef\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
+  string(REGEX REPLACE "CGAL_GIT_HASH [^\n]*\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
 endif()
 #  update CGAL_RELEASE_DATE
 string(TIMESTAMP TODAY "%Y%m%d")
 string(TIMESTAMP TODAY_FOR_MANPAGES "%B %Y")
-string(REPLACE "CGAL_RELEASE_DATE 20170101" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
+string(REGEX REPLACE "CGAL_RELEASE_DATE [^\n]*" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
 #  update CGAL_VERSION
 string(REPLACE "CGAL_VERSION ${CGAL_VERSION_INPUT}" "CGAL_VERSION ${CGAL_VERSION}" file_content "${file_content}")
 #  update CGAL_VERSION_NR

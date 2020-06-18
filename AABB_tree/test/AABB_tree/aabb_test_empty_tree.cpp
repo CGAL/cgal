@@ -38,7 +38,7 @@ int main()
     tree.all_intersected_primitives(triangle_query, devnull);
     assert(!tree.any_intersected_primitive(triangle_query));
     assert(!tree.any_intersection(triangle_query));
-    //Cannot call tree.bbox(); 
+    //Cannot call tree.bbox();
     tree.build();
     tree.clear();
     //Cannot call tree.closest_*(...)

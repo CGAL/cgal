@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Andreas Fabri
- 
+
 
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_3_PLANE_3_H
 #define CGAL__TEST_FURTHER_FCT_POINT_3_PLANE_3_H
@@ -58,7 +58,7 @@ _test_further_fct_point_plane_3(const R& )
 
  assert( CGAL::compare_signed_distance_to_plane(hxyz, q1,q2) == CGAL::LARGER );
  assert( CGAL::compare_signed_distance_to_plane(px, py, pz, q1, q2) == CGAL::LARGER );
- 
+
  assert( CGAL::compare_signed_distance_to_plane(hxy, q2, q3) == CGAL::EQUAL );
  assert( CGAL::compare_signed_distance_to_plane(p0, px, py, q2, q3) == CGAL::EQUAL );
 

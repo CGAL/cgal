@@ -18,15 +18,15 @@ void constructors_test()
 }
 
 template<typename Iterator>
-void test_iterator(Iterator begin, Iterator end, 
-                   typename std::iterator_traits<Iterator>::difference_type distance) 
+void test_iterator(Iterator begin, Iterator end,
+                   typename std::iterator_traits<Iterator>::difference_type distance)
 {
   assert(begin != end);
   assert(begin == begin);
   assert(std::distance(begin, end) == distance);
 }
 
-void standard_iterators() 
+void standard_iterators()
 {
   Surface_fixture f;
 
@@ -47,15 +47,15 @@ void standard_iterators()
   test_iterator(fb, fe, 3);
 }
 
-void test_descriptors() 
+void test_descriptors()
 {
   Sm::Vertex_index v;
   Sm::Halfedge_index h;
   CGAL_USE(v < v);
-  CGAL_USE(h == h); 
+  CGAL_USE(h == h);
 }
 
-void test_remove_edge () 
+void test_remove_edge ()
 {
   Surface_fixture f;
   Sm::Halfedge_index wv, uw, wx, xv, vu;
@@ -114,9 +114,9 @@ void memory_reuse_test()
   for(boost::tie(vb, ve) = f.m.vertices(); vb != ve; ++vb) {
     f.m.set_halfedge(*vb, Sm::Halfedge_index());
   }
-  
+
   // remove all faces
-  std::size_t old_face_size = f.m.number_of_faces(); 
+  std::size_t old_face_size = f.m.number_of_faces();
   std::size_t old_removed_face_size = f.m.number_of_removed_faces();
   boost::range::for_each(f.m.faces(), boost::bind(&Sm::remove_face, boost::ref(f.m), _1));
   assert(f.m.number_of_faces()== 0);
@@ -124,8 +124,8 @@ void memory_reuse_test()
   // remove all edges
   std::size_t old_edge_size = f.m.number_of_edges();
   std::size_t old_removed_edge_size = f.m.number_of_removed_edges();
-  boost::range::for_each(f.m.edges(), 
-                         boost::bind(static_cast<void (Sm::*)(Sm::Edge_index)>(&Sm::remove_edge), 
+  boost::range::for_each(f.m.edges(),
+                         boost::bind(static_cast<void (Sm::*)(Sm::Edge_index)>(&Sm::remove_edge),
                                      boost::ref(f.m), _1));
   assert(f.m.number_of_faces() == 0);
   assert(f.m.number_of_removed_edges()== old_edge_size + old_removed_edge_size);
@@ -135,14 +135,14 @@ void memory_reuse_test()
     Sm::Face_index fd = f.m.add_face(*it);
     assert(fd.is_valid());
     f.m.set_vertex_halfedge_to_border_halfedge(f.m.halfedge(fd));
-    for(VecFace::iterator it2 = it->begin(); it2 != it->end(); ++it2) { 
+    for(VecFace::iterator it2 = it->begin(); it2 != it->end(); ++it2) {
 
       Sm::Halfedge_index h = f.m.halfedge(*it2);
       Sm::Face_index fa = f.m.face(h);
       CGAL_USE(fa);
     }
   }
-  
+
   assert(f.m.number_of_edges() == old_edge_size);
   assert(f.m.number_of_faces() == old_face_size);
 
@@ -172,7 +172,7 @@ void test_validate()
   Surface_fixture_3 f3;
   assert(cf.m.is_valid());
   assert(f1.m.is_valid());
-  assert(f2.m.is_valid());  
+  assert(f2.m.is_valid());
   assert(f3.m.is_valid());
 }
 
@@ -223,7 +223,7 @@ void point_position_accessor ()
 
 void properties () {
   Surface_fixture f;
-  
+
 
   Sm::Property_map<Sm::Vertex_index, int> prop;
   bool created = false;

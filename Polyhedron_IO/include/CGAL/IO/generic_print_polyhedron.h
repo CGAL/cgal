@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -28,7 +28,7 @@ namespace CGAL {
 
 template <class Polyhedron, class Writer, class Vpm>
 void
-generic_print_polyhedron( std::ostream&     out, 
+generic_print_polyhedron( std::ostream&     out,
                           const Polyhedron& P,
                           Writer&           writer,
                           const Vpm& vpm ) {
@@ -67,9 +67,9 @@ generic_print_polyhedron( std::ostream&     out,
 
 template <class Polyhedron, class Writer>
 void
-generic_print_polyhedron( std::ostream&     out, 
+generic_print_polyhedron( std::ostream&     out,
                           const Polyhedron& P,
-                          Writer&           writer) 
+                          Writer&           writer)
 {
   generic_print_polyhedron(out, P, writer,
                            get(CGAL::vertex_point, P));

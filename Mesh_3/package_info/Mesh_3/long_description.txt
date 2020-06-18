@@ -1,4 +1,4 @@
-The Mesh_3  package  generates 3 dimensional 
+The Mesh_3  package  generates 3 dimensional
 isotropic simplicial meshes. The discretized region
 may be a monodomain, i.e. a single connected component,
  or  a multidomain subdivided

@@ -42,7 +42,7 @@ static unsigned int ambient_dimension;
 /// @{
 
 /// Traits class, a model of the `LinearCellComplexTraits` concept.
-typedef unspecified_type Traits;  
+typedef unspecified_type Traits;
 
 /*!
 */

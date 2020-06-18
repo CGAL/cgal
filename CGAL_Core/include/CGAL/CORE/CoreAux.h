@@ -9,7 +9,7 @@
  * Synopsis:
  *      Auxilliary functions
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -29,7 +29,7 @@
 #include <fstream>
 #include "CGAL/CORE/Impl.h"
 
-namespace CORE { 
+namespace CORE {
 
 #ifndef LONG_BIT // such as in Linux
   #define LONG_BIT (sizeof(long) * 8)
@@ -39,13 +39,13 @@ namespace CORE {
 // NOTES:
 // (1) CORE_EPS is used in our Floating Point Filter (Filter.h)
 // (2) 2^{-53} is called "unit roundoff" and
-// 	is the roundoff error for numbers in the range [1,2).
-//  	"Machine epsilon" is 2*CORE_EPS = 2^{-52}.  It is the
-//  	smallest gap between two normal machine numbers  --Chee 8/2003
+//         is the roundoff error for numbers in the range [1,2).
+//          "Machine epsilon" is 2*CORE_EPS = 2^{-52}.  It is the
+//          smallest gap between two normal machine numbers  --Chee 8/2003
 //
 // const double eps = (ldexp(1.0, -53)); // fails to link on SunPro
 #define CORE_EPS ((1.0/(1<<30))/(1<<23))
-// 
+//
 #define CORE_MACHINE_EPS ((1.0/(1<<30))/(1<<22))
 
 /// relEps is relative error for IEEE standard double, 1+2^{-52}.
@@ -157,16 +157,16 @@ CGAL_CORE_EXPORT double IntMantissa(double d);
 CGAL_CORE_EXPORT int IntExponent(double d);
 
 /// Writes out an error or warning message in the local file CORE_DIAGFILE
-/** If last argument (err) is TRUE, then this is considered an error 
+/** If last argument (err) is TRUE, then this is considered an error
  *  (not just warning).  In this case, the message is also printed in
- *  std::cerr, using std::perror(). 
+ *  std::cerr, using std::perror().
  *  */
 CGAL_CORE_EXPORT void core_error(std::string msg, std::string file, int lineno, bool err);
 
 /// This is for debugging messages
 inline void core_debug(std::string msg){
   std::cout << __FILE__ << "::" << __LINE__ << ": " << msg
-	    << std::endl;
+            << std::endl;
 }
 
 

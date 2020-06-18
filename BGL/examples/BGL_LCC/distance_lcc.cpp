@@ -21,21 +21,21 @@ int main(int argc, char** argv)
   CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
 
   // This is the vector where the distance gets written to
-  std::vector<int> distance(lcc.vertex_attributes().size());  
+  std::vector<int> distance(lcc.vertex_attributes().size());
 
-  // Here we start at an arbitrary vertex 
+  // Here we start at an arbitrary vertex
   // Any other vertex could be the starting point
   vertex_iterator vb, ve;
   boost::tie(vb,ve)=vertices(lcc);
   vertex_descriptor  vd = *vb;
-  
+
   std::cout << "We compute distances to " << vd->point() << std::endl;
 
   // bfs = breadth first search explores the graph
-  // Just as the distance_recorder there is a way to record the predecessor of a vertex  
+  // Just as the distance_recorder there is a way to record the predecessor of a vertex
   boost::breadth_first_search(lcc,
-			      vd,
-			      visitor(boost::make_bfs_visitor
+                              vd,
+                              visitor(boost::make_bfs_visitor
                                       (boost::record_distances
                                        (make_iterator_property_map
                                         (distance.begin(),
@@ -48,6 +48,6 @@ int main(int argc, char** argv)
     vd = *vb;
     std::cout<<vd->point()<<"  is "<<distance[vd->id()]<<" hops away."<<std::endl;
   }
-  
+
   return 0;
 }

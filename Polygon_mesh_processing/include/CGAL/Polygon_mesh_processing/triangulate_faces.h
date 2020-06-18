@@ -431,7 +431,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-  Kernel traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Kernel());
+  Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
@@ -486,7 +486,7 @@ bool triangulate_faces(FaceRange face_range,
 
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-  Kernel traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Kernel());
+  Kernel traits = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);

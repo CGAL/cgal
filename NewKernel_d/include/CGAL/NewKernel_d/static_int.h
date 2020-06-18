@@ -15,10 +15,10 @@
 
 namespace CGAL {
 template <class NT> struct static_zero {
-	operator NT() const { return constant<NT,0>(); }
+        operator NT() const { return constant<NT,0>(); }
 };
 template <class NT> struct static_one {
-	operator NT() const { return constant<NT,1>(); }
+        operator NT() const { return constant<NT,1>(); }
 };
 
 template <class NT> static_zero<NT> operator-(static_zero<NT>) { return static_zero<NT>(); }

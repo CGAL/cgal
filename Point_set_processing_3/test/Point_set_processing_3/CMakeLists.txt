@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
   # Executables that do *not* require Eigen
   create_single_source_cgal_program( "read_test.cpp" )
@@ -40,34 +41,46 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  include(CGAL_Eigen_support)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
     # Executables that require Eigen
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
+    target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen_support)
+
     create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
+    target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen_support)
+
     create_single_source_cgal_program( "smoothing_test.cpp" )
+    target_link_libraries(smoothing_test PUBLIC CGAL::Eigen_support)
+
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
+    target_link_libraries(vcm_plane_test PUBLIC CGAL::Eigen_support)
+
     create_single_source_cgal_program( "vcm_all_test.cpp" )
+    target_link_libraries(vcm_all_test PUBLIC CGAL::Eigen_support)
+
     create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
+    target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen_support)
   else()
     message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
   endif()
 
-  foreach(target
-      analysis_test
-      smoothing_test
-      bilateral_smoothing_test
-      wlop_simplify_and_regularize_test
-      edge_aware_upsample_test
-      normal_estimation_test)
-    if(TBB_FOUND AND TARGET ${target})
-      CGAL_target_use_TBB(${target})
-    endif()
-  endforeach()
+  if (TARGET CGAL::TBB_support)
+    foreach(target
+        analysis_test
+        smoothing_test
+        bilateral_smoothing_test
+        wlop_simplify_and_regularize_test
+        edge_aware_upsample_test
+        normal_estimation_test)
+      if(TARGET ${target})
+        target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      endif()
+    endforeach()
+  endif()
 
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

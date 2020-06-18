@@ -1,0 +1,52 @@
+/// \defgroup PkgSurfaceMeshTopology Surface Mesh Topology Reference
+
+/// \defgroup PkgSurfaceMeshTopologyConcepts Concepts
+/// \ingroup PkgSurfaceMeshTopology
+
+/// \defgroup PkgSurfaceMeshTopologyClasses Classes
+/// \ingroup PkgSurfaceMeshTopology
+
+/*!
+  \code
+   #include <CGAL/draw_face_graph_with_paths.h>
+  \endcode
+*/
+/// \defgroup PkgDrawFaceGraphWithPaths Draw a Mesh with Paths
+/// \ingroup PkgSurfaceMeshTopology
+
+
+/*!
+\addtogroup PkgSurfaceMeshTopology
+\cgalPkgDescriptionBegin{Surface Mesh Topology,PkgSurfaceMeshTopologySummary}
+\cgalPkgPicture{surface-mesh-topology-logo.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}
+\cgalPkgDesc{This package provides a toolbox for manipulating curves on a combinatorial surface from the topological point of view. Two main functionalities are proposed. One is the computation of shortest curves that cannot be continuously deformed to a point. This includes the computation of the so-called edge width and face width of the vertex-edge graph of a combinatorial surface. The other functionality is the homotopy test for deciding if two given curves on a combinatorial surface can be continuously deformed one into the other.}
+\cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.1}
+\cgalPkgBib{cgal:dl-smtopology}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `PolygonalSchema`
+- `PolygonalSchemaItems`
+- `WeightFunctor`
+
+\cgalCRPSection{Classes}
+- `CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>`
+- `CGAL::Surface_mesh_topology::Path_on_surface<Mesh>`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`
+- `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`
+- `CGAL::Surface_mesh_topology::Unit_weight_functor`
+- `CGAL::Surface_mesh_topology::Euclidean_length_weight_functor<Mesh>`
+
+\cgalCRPSubsection{Draw a Mesh with Paths}
+- \link PkgDrawFaceGraphWithPaths CGAL::draw<Mesh>() \endlink
+*/

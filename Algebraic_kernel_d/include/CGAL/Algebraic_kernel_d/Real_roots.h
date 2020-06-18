@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
@@ -17,7 +17,7 @@
 
 
 /*! \file NiX/Real_roots.h
-    \brief This file defines the class NiX::Real_roots. 
+    \brief This file defines the class NiX::Real_roots.
 */
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_REAL_ROOTS_H
@@ -31,17 +31,17 @@
 #include <queue>
 
 
-namespace CGAL { 
+namespace CGAL {
 
 namespace internal {
-    
+
 /*! \ingroup NiX_Real_roots
  *  \brief This class provides operators for a comfortable construction of
- *  AlgebraicReal from Polynomials using a specific RealRootIsolator.  
+ *  AlgebraicReal from Polynomials using a specific RealRootIsolator.
  *
- *  A valid template argument for AlgebraicReal is NiX::Algebraic_real. 
+ *  A valid template argument for AlgebraicReal is NiX::Algebraic_real.
  */
-template < class AlgebraicReal , 
+template < class AlgebraicReal ,
            class RealRootIsolator  >
 class Real_roots{
 public:
@@ -49,29 +49,29 @@ public:
     typedef Real_roots<AlgebraicReal,RealRootIsolator> Self;
     //! First template argument.
     typedef AlgebraicReal Algebraic_real;
-    //! Second template argument. 
+    //! Second template argument.
     typedef RealRootIsolator  Real_root_isolator;
     //! The Polnomial type used by Algebraic_real and the Real_root_isolator.
     typedef typename Algebraic_real::Polynomial_1 Polynomial;
 
 private:
-    typedef typename AlgebraicReal::Coefficient Coefficient;    
-    typedef typename AlgebraicReal::Rational    Rational; 
-private: 
+    typedef typename AlgebraicReal::Coefficient Coefficient;
+    typedef typename AlgebraicReal::Rational    Rational;
+private:
 template < class PolynomialIterator,
            class IntIterator,
-           class AlgebraicRealOutputIterator,              
+           class AlgebraicRealOutputIterator,
            class IntOutputIterator>
 int gen_agebraic_reals_with_mults( PolynomialIterator           fac,
                                    PolynomialIterator           fac_end,
                                    IntIterator                  mul,
                                    IntIterator                  CGAL_precondition_code(mul_end),
                                    AlgebraicRealOutputIterator  oi_root,
-                                   IntOutputIterator            oi_mult){   
-    
+                                   IntOutputIterator            oi_mult){
+
     Self real_roots;
     typedef std::pair<Algebraic_real, int> PAIR;
-    
+
     // find zeroes of each factor and sort them in ascending order
     std::priority_queue< PAIR,std::vector<PAIR>,std::greater<PAIR> > pqueue;
     std::vector<Algebraic_real>                    tmp;
@@ -86,7 +86,7 @@ int gen_agebraic_reals_with_mults( PolynomialIterator           fac,
         fac++;
         mul++;
     }
-    
+
     // output factors and multiplicities
     int n = 0;
     while (!pqueue.empty()) {
@@ -123,45 +123,45 @@ void write_factors_by_multiplicity(PolynomialConstIterator  fac,
 public:
 /*! \brief computes all roots of the square free polynomial P in
  * ascending order and returns the number of real roots.
- */   
+ */
 template <class AlgebraicRealOutputIterator>
-int operator()(const Polynomial&        poly , 
-               AlgebraicRealOutputIterator it){        
-    
+int operator()(const Polynomial&        poly ,
+               AlgebraicRealOutputIterator it){
+
     CGAL_precondition_msg( typename CGAL::Polynomial_traits_d< Polynomial >::Is_square_free()(poly), "P not square free.");
     return (*this)(Real_root_isolator(poly),it);
 }
-   
+
 
 public:
 /*! \brief computes all roots of the polynomial P in ascending order
  * and their multiplicity and returns the number of real roots.
  *
  *  This operator returns the number \e n of distinct real roots of \c poly.
- *  Each root is represented as an object of an instance AlgebraicReal. 
+ *  Each root is represented as an object of an instance AlgebraicReal.
  *  The operator writes these \e n real zeroes in ascending order to \c
- *  oi_root. 
+ *  oi_root.
  *  It writes the multiplicities of the zeroes in the same order to
- *  \c oi_mult .   
+ *  \c oi_mult .
  */
-template <class AlgebraicRealOutputIterator, 
+template <class AlgebraicRealOutputIterator,
           class IntOutputIterator>
 int operator()(const Polynomial&           poly,
                AlgebraicRealOutputIterator oi_root,
-               IntOutputIterator           oi_mult){  
+               IntOutputIterator           oi_mult){
     CGAL_precondition(CGAL::degree(poly) >= 0);
-    // fast exit 
-    if (CGAL::degree(poly) == 0) 
+    // fast exit
+    if (CGAL::degree(poly) == 0)
         return (poly.is_zero())?-1:0;
-          
+
     std::list<Polynomial>       sqffac;
     std::list<int>              facmul;
-    
+
     filtered_square_free_factorize_utcf(poly,
-					    std::back_inserter(sqffac), 
-					    std::back_inserter(facmul));
-    
-    
+                                            std::back_inserter(sqffac),
+                                            std::back_inserter(facmul));
+
+
     int number_of_real_roots=
         gen_agebraic_reals_with_mults(sqffac.begin(),sqffac.end(),
                                       facmul.begin(),facmul.end(),
@@ -169,15 +169,15 @@ int operator()(const Polynomial&           poly,
                                       oi_mult);
     return number_of_real_roots;
 }
-         
-public:     
+
+public:
 /*! \brief computes all roots defined by the Real_root_isolator object in
- * ascending order 
+ * ascending order
  */
 template <class AlgebraicRealOutputIterator>
-int operator()(const Real_root_isolator&    isolator, 
-               AlgebraicRealOutputIterator  it){ 
-    
+int operator()(const Real_root_isolator&    isolator,
+               AlgebraicRealOutputIterator  it){
+
     Polynomial poly = isolator.polynomial();
     //cout << "P: "<<poly<<endl;
     // take out exact known roots out of Poly
@@ -192,12 +192,12 @@ int operator()(const Real_root_isolator&    isolator,
             decomp(root,num,denom);
             Polynomial linear_factor(Coefficient(-num),
                                      Coefficient(denom));
-            poly=CGAL::integral_division(poly,linear_factor);                
+            poly=CGAL::integral_division(poly,linear_factor);
         }
-    }   
-    //cout << "P_without_exact: "<<poly<<endl;        
+    }
+    //cout << "P_without_exact: "<<poly<<endl;
     std::vector<AlgebraicReal> conjugated_roots;
-    std::back_insert_iterator<std::vector<AlgebraicReal> > con_it 
+    std::back_insert_iterator<std::vector<AlgebraicReal> > con_it
         = std::back_inserter(conjugated_roots);
     // construct AlgebraicReal
     for(int j = 0 ; j < isolator.number_of_real_roots(); j++){
@@ -207,7 +207,7 @@ int operator()(const Real_root_isolator&    isolator,
             CGAL::simplify(root);
             *it++=AlgebraicReal(root);
         }else{
-            // other roots 
+            // other roots
             Rational left = isolator.left_bound(j);
             Rational right= isolator.right_bound(j);
             CGAL::simplify(left);
@@ -215,8 +215,8 @@ int operator()(const Real_root_isolator&    isolator,
             AlgebraicReal tmp(poly,left,right);
             *it++=tmp;
             *con_it++=tmp;
-        } 
-    }   
+        }
+    }
     AlgebraicReal::conjugate(conjugated_roots.begin(),
                              conjugated_roots.end());
     return isolator.number_of_real_roots();
@@ -230,11 +230,11 @@ int operator()(const Real_root_isolator&    isolator,
  *  their respective multiplicities.
  *
  *  This operator returns the number \e n of distinct real roots of \c poly .
- *  Each root is represented as an object of an instance AlgebraicReal. 
+ *  Each root is represented as an object of an instance AlgebraicReal.
  *  The operator writes these \e n real zeroes in ascending order to \c
- *  oi_root. 
+ *  oi_root.
  *  It writes the multiplicities of the roots in the same order to
- *  \c oi_mult .                                                              
+ *  \c oi_mult .
  *  Finally, it writes the square-free factors of \c p
  *  to \c oi_poly such that the factor #<I>k</I> written is the factor
  *  with exponent \e k in the square-free factorization of \c p , or
@@ -244,45 +244,45 @@ int operator()(const Real_root_isolator&    isolator,
  *
  *  The data types involved are determined the \c AlgebraicReal
  *  template argument. In particular, \c p must be of type
- *  \c NiX::Polynomial<AlgebraicReal::Coefficient>, as are its factors; 
- *  the roots are of type \c AlgebraicReal ; and the multiplicities are 
+ *  \c NiX::Polynomial<AlgebraicReal::Coefficient>, as are its factors;
+ *  the roots are of type \c AlgebraicReal ; and the multiplicities are
  *  of type \c int .
  *
  */
 template <class AlgebraicRealOutputIterator,
-          class IntOutputIterator, 
+          class IntOutputIterator,
           class PolynomialOutputIterator>
-int operator()( const Polynomial&           poly, 
+int operator()( const Polynomial&           poly,
                 AlgebraicRealOutputIterator oi_root,
-                IntOutputIterator           oi_mult, 
+                IntOutputIterator           oi_mult,
                 PolynomialOutputIterator    oi_poly) {
-    
+
     CGAL_precondition(CGAL::degree(poly) >= 0);
-    
-    // fast exit 
-    if (CGAL::degree(poly) == 0) 
+
+    // fast exit
+    if (CGAL::degree(poly) == 0)
         return (poly.is_zero())?-1:0;
-          
-    
+
+
     std::list<Polynomial>       sqffac;
     std::list<int>              facmul;
-    
+
     filtered_square_free_factorize_utcf(poly,
-					    std::back_inserter(sqffac),
-					    std::back_inserter(facmul));
-    
+                                            std::back_inserter(sqffac),
+                                            std::back_inserter(facmul));
+
     write_factors_by_multiplicity(sqffac.begin(),sqffac.end(),
                                   facmul.begin(),facmul.end(),
                                   oi_poly);
-    
+
     int numer_of_real_roots =
       gen_agebraic_reals_with_mults(sqffac.begin(),sqffac.end(),
-				    facmul.begin(),facmul.end(),
-				    oi_root,
-				    oi_mult);
+                                    facmul.begin(),facmul.end(),
+                                    oi_root,
+                                    oi_mult);
     return numer_of_real_roots;
-	  }
-	   };
+          }
+           };
 
 } // namespace internal
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Kaspar Fischer
 
@@ -48,8 +48,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     template<>
       struct Selector<float> {
-	typedef float Result;
-	typedef Tag_false Is_exact;
+        typedef float Result;
+        typedef Tag_false Is_exact;
       };
 
     template<>
@@ -167,7 +167,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     public: // modification:
       void reset();
       bool pivot(std::vector<const typename Traits::Sphere *>& l,
-  	       int& e,const int d);
+                 int& e,const int d);
 
     private: // modification:
       bool push(const Sphere& ball);

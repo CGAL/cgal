@@ -35,7 +35,7 @@ qt5_add_resources ( CD_RES_FILE Constrained_Delaunay_triangulation_2.qrc)
 qt5_wrap_ui( CD_UI_FILES Constrained_Delaunay_triangulation_2.ui)
 # The executable itself.
 add_executable( Constrained_Delaunay_triangulation_2
-  Constrained_Delaunay_triangulation_2.cpp ${CD_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} 
+  Constrained_Delaunay_triangulation_2.cpp ${CD_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES}
   ${CD_RES_FILE})
 target_link_libraries( Constrained_Delaunay_triangulation_2
   PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)

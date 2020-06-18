@@ -611,7 +611,7 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
 
   VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get_const_property_map(boost::vertex_point, tm));
-  Geom_traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Geom_traits());
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   halfedge_descriptor hd = halfedge(loc.first, tm);
   const Point_reference p0 = get(vpm, source(hd, tm));
@@ -1126,7 +1126,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 
   VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get_const_property_map(boost::vertex_point, tm));
-  Geom_traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Geom_traits());
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), 0);
 

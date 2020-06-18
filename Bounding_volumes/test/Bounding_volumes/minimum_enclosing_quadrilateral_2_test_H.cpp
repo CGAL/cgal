@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
@@ -62,7 +62,7 @@ int main()
   cout << "Min_strip:\n" << lines[0] << "\n" << lines[1] << endl;
 
   return 0;
-} 
+}
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

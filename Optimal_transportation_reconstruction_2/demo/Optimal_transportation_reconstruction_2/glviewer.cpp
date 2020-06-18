@@ -32,7 +32,7 @@ GlViewer::GlViewer(QWidget *pParent)
   setAutoFillBackground(false);
 }
 
-void GlViewer::resizeGL(int width, int height) 
+void GlViewer::resizeGL(int width, int height)
 {
   glViewport(0, 0, width, height);
   double aspect_ratio = double(height) / double(width);
@@ -45,7 +45,7 @@ void GlViewer::resizeGL(int width, int height)
   glLoadIdentity();
 }
 
-void GlViewer::initializeGL() 
+void GlViewer::initializeGL()
 {
   QOpenGLWidget::initializeGL();
   initializeOpenGLFunctions();
@@ -55,7 +55,7 @@ void GlViewer::initializeGL()
   glEnable(GL_SMOOTH);
 }
 
-void GlViewer::paintGL() 
+void GlViewer::paintGL()
 {
 
   glClear(GL_COLOR_BUFFER_BIT);
@@ -84,7 +84,7 @@ void GlViewer::paintGL()
   glPopMatrix();
 }
 
-void GlViewer::wheelEvent(QWheelEvent *event) 
+void GlViewer::wheelEvent(QWheelEvent *event)
 {
   if (!m_scene) return;
   m_scale += 0.05 * (event->delta() / 120);
@@ -92,7 +92,7 @@ void GlViewer::wheelEvent(QWheelEvent *event)
   update();
 }
 
-void GlViewer::mousePressEvent(QMouseEvent *event) 
+void GlViewer::mousePressEvent(QMouseEvent *event)
 {
   if (!m_scene) return;
   m_mouse_click = event->pos();
@@ -127,7 +127,7 @@ void GlViewer::mouseMoveEvent(QMouseEvent *event)
   update();
 }
 
-void GlViewer::mouseReleaseEvent(QMouseEvent *event) 
+void GlViewer::mouseReleaseEvent(QMouseEvent *event)
 {
   if (!m_scene) return;
   m_mouse_move = event->pos();

@@ -29,69 +29,69 @@ public:
 
     // divers
     connect(s, SIGNAL(message(const QString&, int)),
-	    ui->statusBar, SLOT(showMessage(const QString&, int)));
+            ui->statusBar, SLOT(showMessage(const QString&, int)));
 
     // File menu:
     connect(ui->actionLoad_Points, SIGNAL(triggered()),
-	    s, SLOT(load_points()));
+            s, SLOT(load_points()));
 
     // Init menu:
     connect(ui->actionEmpty_scene, SIGNAL(triggered()),
-	    s, SLOT(init_scene_empty()));
+            s, SLOT(init_scene_empty()));
     connect(ui->actionSingle_Point, SIGNAL(triggered()),
-	    s, SLOT(init_scene_single()));
+            s, SLOT(init_scene_single()));
     connect(ui->actionRandom_Point_Set, SIGNAL(triggered()),
-	    s, SLOT(init_scene_random()));
+            s, SLOT(init_scene_random()));
     connect(ui->actionRandom_Points_in_Plane, SIGNAL(triggered()),
-	    s, SLOT(init_scene_plane()));
+            s, SLOT(init_scene_plane()));
     connect(ui->actionPoint_grid, SIGNAL(triggered()),
-	    s, SLOT(init_scene_grid()));
+            s, SLOT(init_scene_grid()));
 
     // Actions menu:
     connect(ui->actionFlying_ball, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_flying_ball(bool)));
+            s, SLOT(toggle_flying_ball(bool)));
     connect(ui->actionPause, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_pause(bool)));
+            s, SLOT(toggle_pause(bool)));
 
     connect(ui->actionInsert_point, SIGNAL(triggered()),
-	    s, SLOT(insert_mp()));
+            s, SLOT(insert_mp()));
     connect(ui->actionInsert_random_point, SIGNAL(triggered()),
-	    s, SLOT(insert_random()));
+            s, SLOT(insert_random()));
 
     connect(ui->actionGrab_image, SIGNAL(triggered()),
             s, SLOT(grab_image()));
-    
+
     // Features menu:
     connect(ui->actionPoint_location, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_dlocate(bool)));
+            s, SLOT(toggle_dlocate(bool)));
     connect(ui->actionConflict_region, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_dconflict(bool)));
+            s, SLOT(toggle_dconflict(bool)));
 
     // Options menu:
     connect(ui->actionWireframe, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_wireframe(bool)));
+            s, SLOT(toggle_wireframe(bool)));
     connect(ui->actionPlanar_triangulation, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_in_plane(bool)));
+            s, SLOT(toggle_in_plane(bool)));
 
     connect(ui->actionDraw_1_sheeted_covering, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_force_1cover(bool)));
+            s, SLOT(toggle_force_1cover(bool)));
     connect(ui->actionDraw_bordering_cells_multiply, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_multiple_cells(bool)));
+            s, SLOT(toggle_multiple_cells(bool)));
 
     connect(ui->actionDraw_segments, SIGNAL(triggered()),
-	    s, SLOT(trigger_draw_type_segment()));
+            s, SLOT(trigger_draw_type_segment()));
     connect(ui->actionDraw_triangles, SIGNAL(triggered()),
-	    s, SLOT(trigger_draw_type_triangle()));
+            s, SLOT(trigger_draw_type_triangle()));
     connect(ui->actionDraw_tetrahedra, SIGNAL(triggered()),
-	    s, SLOT(trigger_draw_type_tetrahedron()));
+            s, SLOT(trigger_draw_type_tetrahedron()));
 
     connect(ui->actionDraw_cube_square, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_ddomain(bool)));
+            s, SLOT(toggle_ddomain(bool)));
 
     connect(ui->actionClip_along_the_cube_square, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_cube_clipping(bool)));
+            s, SLOT(toggle_cube_clipping(bool)));
     connect(ui->action2_color_clipping, SIGNAL(toggled(bool)),
-	    s, SLOT(toggle_two_color_clipping(bool)));
+            s, SLOT(toggle_two_color_clipping(bool)));
 
     // Help menu:
     connect(ui->actionDemo_Help, SIGNAL(triggered()),
@@ -127,7 +127,7 @@ public Q_SLOTS:
     process->start(app, args);
     if (!process->waitForStarted()) {
       QMessageBox::critical(this, tr("Remote Control"),
-	  tr("Could not start Qt Assistant from %1.").arg(app));
+          tr("Could not start Qt Assistant from %1.").arg(app));
       return;
     }
   }
@@ -145,10 +145,10 @@ private:
     QFile textFile(fileName);
     textFile.open(QIODevice::ReadOnly);
     QMessageBox mb(QMessageBox::NoIcon,
-	title,
-	QTextStream(&textFile).readAll(),
-	QMessageBox::Ok,
-	this);
+        title,
+        QTextStream(&textFile).readAll(),
+        QMessageBox::Ok,
+        this);
     mb.exec();
   }
 

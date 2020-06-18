@@ -9,8 +9,8 @@
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 template <class SK>
@@ -52,10 +52,10 @@ void _test_spherical_kernel_compute(SK sk)
   Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
   Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
   (void)/* Compute_area_divided_by_pi_3 theCompute_area_divided_by_pi_3 = */ sk.compute_area_divided_by_pi_3_object();
-  (void)/* Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = */ 
+  (void)/* Compute_squared_length_divided_by_pi_square_3 theCompute_squared_length_divided_by_pi_square_3 = */
     sk.compute_squared_length_divided_by_pi_square_3_object();
   (void)/* Compute_approximate_area_3 theCompute_approximate_area_3 = */ sk.compute_approximate_area_3_object();
-  Compute_approximate_squared_length_3 theCompute_approximate_squared_length_3 = 
+  Compute_approximate_squared_length_3 theCompute_approximate_squared_length_3 =
     sk.compute_approximate_squared_length_3_object();
   Compute_approximate_angle_3 theCompute_approximate_angle_3 = sk.compute_approximate_angle_3_object();
 
@@ -73,14 +73,14 @@ void _test_spherical_kernel_compute(SK sk)
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
 
-  Circular_arc_point_3 cp[8]; 
+  Circular_arc_point_3 cp[8];
   for(int i=0; i<8; i++) {
     cp[i] = theConstruct_circular_arc_point_3(rt[i]);
   }
 
   const double pi = CGAL_PI;
 
-  const Polynomials_for_circle_3 pcc_test = 
+  const Polynomials_for_circle_3 pcc_test =
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
                      Polynomial_1_3(0,0,1,0));
   Circle_3 cc = theConstruct_circle_3(pcc_test);

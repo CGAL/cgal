@@ -66,6 +66,6 @@ add_executable(performance_2
 target_link_libraries(performance_2
   ${CGAL_LIBRARIES}
   surface_mesh
-  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} 
+  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES}
   ${OPENMESH_LIBRARIES}
 )

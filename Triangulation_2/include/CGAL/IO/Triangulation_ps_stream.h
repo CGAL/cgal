@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Carine Bonetto
 //                 Mariette Yvinec
@@ -34,11 +34,11 @@ PS_Stream& operator << (PS_Stream& ps, const Triangulation_2<Gt,Tds> &t)
 #ifdef CGAL_DELAUNAY_TRIANGULATION_2_H
 namespace CGAL {
 template < class Gt, class Tds >
-PS_Stream& operator << (PS_Stream& ps, 
-			const Delaunay_triangulation_2<Gt,Tds> &t)
+PS_Stream& operator << (PS_Stream& ps,
+                        const Delaunay_triangulation_2<Gt,Tds> &t)
 {
  t.draw_triangulation(ps);
- return ps; 
+ return ps;
 }
 } //namespace CGAL
 #endif // CGAL_DELAUNAY_TRIANGULATION_2_H
@@ -47,7 +47,7 @@ PS_Stream& operator << (PS_Stream& ps,
 namespace CGAL {
 template < class Gt, class Tds>
 PS_Stream& operator<<(PS_Stream& ps,
-		      const Constrained_triangulation_2<Gt,Tds> &t)
+                      const Constrained_triangulation_2<Gt,Tds> &t)
 {
 
  t.draw_triangulation(ps);
@@ -60,8 +60,8 @@ PS_Stream& operator<<(PS_Stream& ps,
 #ifdef CGAL_REGULAR_TRIANGULATION_2_H
 namespace CGAL {
 template < class Gt, class Tds >
-PS_Stream& operator << (PS_Stream& ps, 
-			Regular_triangulation_2<Gt,Tds> &t)
+PS_Stream& operator << (PS_Stream& ps,
+                        Regular_triangulation_2<Gt,Tds> &t)
 {
   t.draw_triangulation(ps);
   return ps;
@@ -73,4 +73,4 @@ PS_Stream& operator << (PS_Stream& ps,
 
 
 
-	
+

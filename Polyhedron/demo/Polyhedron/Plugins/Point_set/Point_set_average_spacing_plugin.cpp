@@ -20,11 +20,7 @@
 #include "run_with_qprogressdialog.h"
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 struct Compute_average_spacing_functor
   : public Functor_with_signal_callback
@@ -57,7 +53,7 @@ class Polyhedron_demo_point_set_average_spacing_plugin :
 
 private:
   QAction* actionAverageSpacing;
-  
+
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
@@ -71,7 +67,7 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionAverageSpacing;
   }
-  
+
   //! Applicable if the currently selected item is a
   //! points_with_normal_item.
   bool applicable(QAction*) const {
@@ -108,9 +104,9 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
                                1000, // max
                                1, // step
                                &ok);
-    if(!ok) 
+    if(!ok)
       return;
-    
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
     CGAL::Real_timer task_timer; task_timer.start();
@@ -119,15 +115,15 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
     // Computes average spacing
     Compute_average_spacing_functor functor (points, nb_neighbors);
     run_with_qprogressdialog (functor, "Computing average spacing...", mw);
-    
+
     double average_spacing = *functor.result;
 
     // Print result
     Kernel::Sphere_3 bsphere = points->bounding_sphere();
     double radius = std::sqrt(bsphere.squared_radius());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Average spacing = " << average_spacing 
-              << " = " << average_spacing/radius << " * point set radius (" 
+    std::cerr << "Average spacing = " << average_spacing
+              << " = " << average_spacing/radius << " * point set radius ("
               << task_timer.time() << " seconds, "
               << (memory>>20) << " Mb allocated)"
               << std::endl;

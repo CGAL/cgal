@@ -15,7 +15,7 @@ int main()
   points.push_back(Point(3.0,4.0));
   points.push_back(Point(5.0,6.0));
 
-  // fit line 
+  // fit line
   Line line;
   linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
 

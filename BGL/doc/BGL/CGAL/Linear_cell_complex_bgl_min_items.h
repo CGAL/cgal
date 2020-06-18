@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup BGLGraphExternalIndices
 
 The class `Linear_cell_complex_bgl_min_items` defines `void` as the information associated with darts, darts have ids and 0- and 2-attributes are enabled and have ids.
 

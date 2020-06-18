@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s) : Jane Tournois, Pierre Alliez
 //
@@ -27,7 +27,7 @@ namespace CGAL
 
 template <typename Tr>
 class Sizing_field_2 // pure virtual class
-{    
+{
 public:
   typedef typename Tr::Geom_traits::Point_2 Point_2;
   typedef typename Tr::Geom_traits::FT      FT;

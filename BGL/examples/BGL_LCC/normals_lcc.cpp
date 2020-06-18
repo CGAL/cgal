@@ -14,12 +14,12 @@ typedef CGAL::Linear_cell_complex_traits<3, Kernel> LCC_traits;
 typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
           <2, 3, LCC_traits>::type LCC;
 
-template<typename HalfedgeGraph, 
-         typename PointMap, 
+template<typename HalfedgeGraph,
+         typename PointMap,
          typename NormalMap>
-void calculate_face_normals(const HalfedgeGraph& g, 
-                            PointMap pm, 
-                            NormalMap nm) 
+void calculate_face_normals(const HalfedgeGraph& g,
+                            PointMap pm,
+                            NormalMap nm)
 {
   typedef boost::graph_traits<HalfedgeGraph> GraphTraits;
   typedef typename GraphTraits::face_iterator face_iterator;
@@ -39,7 +39,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
     edg = next(edg, g);
     point p2 = pm[target(edg, g)];
     edg = next(edg, g);
-      
+
     if(edg == edgb) {
       // triangle
       nm[*fb] = CGAL::unit_normal(p1, p2, p0);
@@ -51,11 +51,11 @@ void calculate_face_normals(const HalfedgeGraph& g,
         n = n + CGAL::normal(p1, p2, p0);
         p0 = p1;
         p1 = p2;
-        
+
         edg = next(edg, g);
         p2 = pm[target(edg, g)];
       } while(edg != edgb);
-      
+
       nm[*fb] = n / CGAL::sqrt(n.squared_length());
     }
   }
@@ -68,12 +68,12 @@ int main(int argc, char** argv)
 
   LCC lcc;
   CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
-  
+
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
   // http://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
-  boost::vector_property_map<Vector, Face_index_map> 
+  boost::vector_property_map<Vector, Face_index_map>
     normals(get(CGAL::face_index, lcc));
 
   calculate_face_normals(
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
   std::cout << "Normals" << std::endl;
   for(LCC::Attribute_range<2>::type::iterator it=lcc.attributes<2>().begin();
       it!=lcc.attributes<2>().end(); ++it)
-  { 
+  {
     // Facet_iterator is a face_descriptor, so we can use it as the
     // key here
     std::cout << normals[it] << std::endl;

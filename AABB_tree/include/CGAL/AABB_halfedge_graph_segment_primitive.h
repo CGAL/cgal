@@ -47,7 +47,7 @@ namespace CGAL {
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
  *
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
- *   as key type and a \cgal Kernel `Point_3` as value type. 
+ *   as key type and a \cgal Kernel `Point_3` as value type.
  * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`.
  *                         The default is `typename boost::property_map< HalfedgeGraph,vertex_point_t>::%const_type`.
  * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
@@ -141,7 +141,7 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor edge_descriptor;
 
   /*!
-  Constructs a primitive.
+  constructs a primitive.
   \tparam Iterator is an input iterator with `Id` as value type.
   This \ref AABB_tree/AABB_halfedge_graph_edge_example.cpp "example" gives a way to call this constructor
   using the insert-by-range method of the class `AABB_tree<Traits>`.
@@ -156,7 +156,7 @@ public:
   {}
 
   /*!
-  Constructs a primitive.
+  constructs a primitive.
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */

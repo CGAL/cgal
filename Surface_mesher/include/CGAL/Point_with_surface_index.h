@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -34,7 +34,7 @@ public:
   Point_with_surface_index() : Point(), index(0) {}
 
   Point_with_surface_index(const Point& p) : Point(p), index(0) {}
-			   
+
   Point_with_surface_index(const FT& x, const FT& y, const FT& z, const FT& w = FT(1))
     : Point(Point_traits().point(Bare_point(x, y, z, w))), index(0) {}
 

@@ -1,7 +1,7 @@
 Min_quadrilateral_2
 -------------------
 Algorithms to compute the minimum enclosing rectangle/parallelogram
-(arbitrary orientation) and the minimum enclosing strip of a convex 
+(arbitrary orientation) and the minimum enclosing strip of a convex
 point set.
 
 Min_sphere_of_spheres_d

@@ -1,0 +1,101 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Tetrahedral_Remeshing
+\anchor userchaptertetrahedralremeshing
+
+\cgalAutoToc
+\authors Jane Tournois, Noura Faraj
+
+\image html bimba_back.png
+\image latex bimba_back.png
+<BR>
+
+\section secTetRemeshing Multi-Material Isotropic Tetrahedral Remeshing
+
+This package implements an algorithm for quality tetrahedral remeshing,
+introduced by N.Faraj et al in \cgalCite{faraj2016mvr}.
+This practical iterative remeshing algorithm is designed to remesh
+multi-material tetrahedral meshes, by iteratively performing a sequence of
+elementary operations such as edge splits, edge collapses, edge flips,
+and vertex relocations following a Laplacian smoothing.
+The algorithm results in high-quality uniform isotropic meshes,
+with the desired mesh density,
+while preserving the input geometric curve and surface features.
+
+Specific remeshing rules have been designed to satisfy the following criteria.
+First, the algorithm preserves the geometric complex topology, including
+multi-material surface patches and polyline features. Polyline features
+can be defined as intersections between more than two subdomains, or listed by
+the user. Second, it has been made possible to remesh only a selection of cells,
+instead of remeshing the whole domain, while preserving or remeshing the
+interface surfaces between the preserved and the remeshed tetrahedra.
+
+All the local atomic operations that are performed by the algorithm
+preserve the input topology of the geometric complex.
+
+The tetrahedral remeshing algorithm improves the quality of dihedral angles,
+while targeting the user-defined uniform sizing field and preserving the
+topology of the feature complex, as highlighted by Figure \cgalFigureRef{Remesh_liver}.
+
+\cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
+Tetrahedral mesh, improved by the uniform tetrahedral remeshing algorithm.
+(Left) Before remeshing, dihedral angles were in the interval [0.7; 178.9].
+(Right) After remeshing and keeping the same density,
+dihedral angles are the interval [12,7; 157.7].
+\cgalFigureEnd
+
+Experimental evidence shows that a higher number of remeshing iterations
+leads to a mesh with a improved fidelity to the sizing criterion,
+and higher quality dihedral angles.
+
+\section secTetRemeshingAPI API
+
+The tetrahedral remeshing algorithm is implemented as a single free function
+`CGAL::tetrahedral_isotropic_remeshing()` that
+takes only two required parameters: the input triangulation, and the desired edge length,
+which drives the remeshing process.
+
+\ref BGLNamedParameters are used to deal with optional parameters.
+The page \ref Remeshing_namedparameters provides a description
+of their usage, and of all the available parameters for tuning
+the remeshing process and results.
+
+
+\section secTetRemeshingExamples Examples
+
+\subsection ssecEx1 Tetrahedral Remeshing Example
+
+The following example shows the simplest use of the tetrahedral remeshing function.
+The only required parameter is a given target edge length that drives the remeshing process
+towards a high-quality tetrahedral mesh with improved dihedral angles, and a more
+uniform mesh, with edge lengths getting closer to the input parameter value.
+
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_example.cpp }
+
+
+\subsection ssecEx2 Tetrahedral Remeshing of A Selection
+
+Optional BGL named parameters offer more precise
+control on the remeshing process. In this example, a triangulation with two subdomains
+(defined by indices stored in cells) is given as input, but only one
+(defined by the `Subdomain_index` 2)
+of its subdomains is remeshed.
+
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_of_one_subdomain.cpp }
+
+
+\subsection ssecEx3 Tetrahedral Remeshing With Polyline Features
+
+Optional BGL named parameters offer more precise
+control on the remeshing process. In this example, a triangulation
+with polyline features that should be preserved - though resampled -
+during the remeshing process, is given as input.
+Preserving all surfaces exactly could also be achieved by
+setting the named parameter `remesh_boundaries` to `false`.
+
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
+
+*/
+} /* namespace CGAL */

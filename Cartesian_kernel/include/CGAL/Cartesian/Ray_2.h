@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -36,11 +36,11 @@ class RayC2
 public:
   typedef R_                                     R;
 
-  RayC2() 
+  RayC2()
   {}
 
   RayC2(const Point_2 &sp, const Point_2 &secondp)
-    : base(CGAL::make_array(sp, secondp)) 
+    : base(CGAL::make_array(sp, secondp))
   {}
 
 

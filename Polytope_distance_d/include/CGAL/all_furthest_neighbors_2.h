@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -114,9 +114,9 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 
   // output result:
   return transform(v.begin(),
-		   v.end(),
-		   o,
-		   boost::bind(modulus<int>(), _1, number_of_points));
+                   v.end(),
+                   o,
+                   boost::bind(modulus<int>(), _1, number_of_points));
 } // all_furthest_neighbors_2( ... )
 
 

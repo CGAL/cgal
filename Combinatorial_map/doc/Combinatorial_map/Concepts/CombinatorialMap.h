@@ -181,5 +181,5 @@ void reverse_orientation();
 void reverse_orientation_connected_component(Dart_handle adart);
 
 /// @}
-  
+
 }; /* end CombinatorialMap */

@@ -97,11 +97,11 @@ void smooth_shape(const FaceRange& faces,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_property_map(CGAL::vertex_point, tmesh));
+                                          get_property_map(CGAL::vertex_point, tmesh));
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>(false));
+                                 Constant_property_map<vertex_descriptor, bool>(false));
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -132,7 +132,7 @@ void smooth_shape(const FaceRange& faces,
   typedef typename Sparse_solver::Matrix                                          Eigen_matrix;
   typedef typename Sparse_solver::Vector                                          Eigen_vector;
 
-  Sparse_solver solver = choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver());
+  Sparse_solver solver = choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver));
 
   std::size_t n = vertices(tmesh).size();
   Eigen_matrix A(n, n);
@@ -149,7 +149,7 @@ void smooth_shape(const FaceRange& faces,
 
   for(unsigned int iter=0; iter<nb_iterations; ++iter)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "iteration #" << iter << std::endl;
 #endif
 
@@ -161,7 +161,7 @@ void smooth_shape(const FaceRange& faces,
     }
     else
     {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
       std::cerr << "Failed to solve system!" << std::endl;
 #endif
       break;

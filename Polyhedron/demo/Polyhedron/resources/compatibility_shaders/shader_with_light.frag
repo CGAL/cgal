@@ -50,16 +50,19 @@ void main(void) {
     highp vec3 L = light_pos.xyz - fP.xyz;
     highp vec3 V = -fP.xyz;
     highp vec3 N;
-    if(fN == vec3(0.0,0.0,0.0))
-      N = vec3(0.0,0.0,0.0);
-    else
-      N = normalize(fN);
+    highp vec4 my_color = highp vec4(color.xyz, 1.0);
+    if(fN ==  vec3(0.0,0.0,0.0))
+    {
+      out_color = my_color;
+      return;
+    }
+    N = normalize(fN);
     L = normalize(L);
     V = normalize(V);
     highp vec3 R = reflect(-L, N);
     highp vec4 diffuse;
     float dot_prod = dot(N,L);
-    highp vec4 my_color;
+    
     if(back_front_shading)
     {
       if (dot_prod > 0)
@@ -67,10 +70,7 @@ void main(void) {
       else
         my_color = back_color;
     }
-    else
-    {
-      my_color = highp vec4(color.xyz, 1.0);
-    }
+    
     if(is_two_side == 1)
       diffuse = abs(dot(N,L)) * light_diff * color;
     else

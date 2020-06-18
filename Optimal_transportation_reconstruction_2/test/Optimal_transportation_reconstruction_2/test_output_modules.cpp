@@ -47,7 +47,7 @@ void test_index_output(Otr_2& otr2)
   std::vector<std::size_t> isolated_points;
   std::vector<std::pair<std::size_t,std::size_t> > edges;
   otr2.indexed_output(
-      std::back_inserter(points), 
+      std::back_inserter(points),
       std::back_inserter(isolated_points),
       std::back_inserter(edges));
 
@@ -57,13 +57,13 @@ void test_index_output(Otr_2& otr2)
       " 0 " << edges.size()  << std::endl;
 
   for (std::vector<Point>::iterator it = points.begin();
-       it != points.end(); it++) 
+       it != points.end(); it++)
   {
     sstr << *it << std::endl;
   }
 
-  for (std::vector<std::pair<std::size_t,std::size_t> >::iterator 
-       it = edges.begin() ; it != edges.end() ; it++) 
+  for (std::vector<std::pair<std::size_t,std::size_t> >::iterator
+       it = edges.begin() ; it != edges.end() ; it++)
   {
     sstr << "2 " << it->first << " " << it->second << std::endl;
   }
@@ -92,7 +92,7 @@ void test_index_output(Otr_2& otr2)
   }
 }
 
-void test_list_output(Otr_2& otr2) 
+void test_list_output(Otr_2& otr2)
 {
   std::cout <<"(-------------List OUTPUT---------- )" << std::endl;
 

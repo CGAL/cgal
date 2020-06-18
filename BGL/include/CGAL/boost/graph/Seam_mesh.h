@@ -124,8 +124,8 @@ public:
   /// The type for the objects used to identify halfedges in the underlying mesh.
   typedef typename boost::graph_traits<TM>::halfedge_descriptor   TM_halfedge_descriptor;
 
- /// The type for the iterators that traverse through the complete halfedge set of the underlying mesh.
- typedef typename boost::graph_traits<TM>::halfedge_iterator     TM_halfedge_iterator;
+  /// The type for the iterators that traverse through the complete halfedge set of the underlying mesh.
+  typedef typename boost::graph_traits<TM>::halfedge_iterator     TM_halfedge_iterator;
 
   /// The type for the objects used to identify edges in the underlying mesh.
   typedef typename boost::graph_traits<TM>::edge_descriptor       TM_edge_descriptor;
@@ -432,12 +432,17 @@ public:
 
     friend bool operator==(edge_descriptor e1, edge_descriptor e2)
     {
-      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd)); 
+      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd));
     }
 
     friend bool operator!=(edge_descriptor e1, edge_descriptor e2)
     {
       return ! (e1 == e2);
+    }
+
+    friend std::size_t hash_value(const edge_descriptor& ed)
+    {
+      return hash_value((std::min)(ed.hd, ed.mesh_->opposite(ed.hd)));
     }
   };
 

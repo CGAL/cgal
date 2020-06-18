@@ -37,7 +37,7 @@ struct MySpatialSortingTraits {
 
   typedef MyLessX Less_x_2;
   typedef MyLessY Less_y_2;
-  
+
   Less_x_2 less_x_2_object() const
   {
     return Less_x_2();
@@ -58,15 +58,15 @@ int main()
   points.push_back(MyPoint(414,2, 5));
   points.push_back(MyPoint(4,21 , 1));
   points.push_back(MyPoint(7,74 , 2));
-  points.push_back(MyPoint(74,4 , 4));  
-  
+  points.push_back(MyPoint(74,4 , 4));
+
   MySpatialSortingTraits sst;
   CGAL::spatial_sort(points.begin(), points.end(), sst);
 
   for (std::vector< MyPoint >::iterator it=points.begin();it!=points.end();++it)
     std::cout << it->color << " ";
-  std::cout << "\n";  
-  
+  std::cout << "\n";
+
   std::cerr << "done" << std::endl;
   return 0;
 }

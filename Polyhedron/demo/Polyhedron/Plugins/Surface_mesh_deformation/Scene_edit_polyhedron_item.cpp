@@ -10,7 +10,7 @@
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Qt/constraint.h>
 #include <algorithm>
-#include <QTime>
+#include <QElapsedTimer>
 
 #include <QApplication>
 
@@ -99,7 +99,6 @@ struct Scene_edit_polyhedron_item_priv
   mutable std::vector<GLfloat> color_lines;
   mutable std::vector<GLfloat> ROI_points;
   mutable std::vector<GLfloat> control_points;
-  mutable std::vector<GLfloat> ROI_color;
   mutable std::vector<GLfloat> control_color;
   mutable std::vector<GLfloat> normals;
   mutable std::vector<GLfloat> pos_bbox;
@@ -170,7 +169,7 @@ struct Facegraph_selector
   }
 
   ////ctrl_groups/////
-  
+
   Ctrl_vertices_sm_group_data_list::iterator& get_active_group(SMesh*)
   {
     return d->sm_active_group;
@@ -193,7 +192,7 @@ struct Facegraph_selector
     return d->sm_ctrl_vertex_frame_map;
   }
 
-  
+
   Ctrl_vertices_sm_group_data_list::iterator& get_active_group(SMesh*, Scene_edit_polyhedron_item_priv* d)const
   {
     return d->sm_active_group;
@@ -360,14 +359,11 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
             {
               CGAL::Color c(0,255,0);
               EPICK::Point_3 point(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
-              spheres->add_sphere(EPICK::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), c);
+              spheres->add_sphere(EPICK::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), 0, c);
             }
         }
 
     }
-    ROI_color.assign(ROI_points.size(),0);
-    for(std::size_t i=0; i<ROI_color.size()/3; i++)
-      ROI_color[3*i+1]=1.0;
 
     for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh).begin(); hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
     {
@@ -400,7 +396,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
               EPICK::Point_3 center(p.x()+offset.x,
                                      p.y()+offset.y,
                                      p.z()+offset.z);
-              spheres_ctrl->add_sphere(EPICK::Sphere_3(center, length_of_axis/15.0*length_of_axis/15.0), c);
+              spheres_ctrl->add_sphere(EPICK::Sphere_3(center, length_of_axis/15.0*length_of_axis/15.0), 0, c);
             }
         }
     }
@@ -431,7 +427,7 @@ void Scene_edit_polyhedron_item::deform()
 {
 
   if(!is_there_any_ctrl_vertices()) { return; }
-  
+
   d->deform(d->sm_item->polyhedron());
   d->sm_item->invalidate_aabb_tree();
   Q_EMIT itemChanged();
@@ -909,6 +905,8 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   // check state changes between old and current state
   bool ctrl_pressed_now = d->state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !d->state.ctrl_pressing && old_state.ctrl_pressing;
+  if(ctrl_released_now) //to avoid moving the control vertices next time ctrl is pressed
+    d->state.left_button_pressing = false;
   if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove)
   {// activate a handle manipulated frame
     CGAL::QGLViewer* viewer = Three::mainViewer();
@@ -1048,9 +1046,9 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
   viewer->setGlPointSize(5);
   //Draw the points
   if(d->ui_widget->ShowROICheckBox->isChecked()) {
-    
+
     if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->isExtensionFound()) {
-      
+
       Pc* pc = getPointContainer(Priv::Roi_points);
       pc->setColor(QColor(0,255,0));
       pc->draw(viewer, true);
@@ -1068,7 +1066,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
       Scene_group_item::draw(viewer);
     }
   }
-  
+
     if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->isExtensionFound()) {
         Pc* pc = getPointContainer(Priv::Control_points);
         pc->draw(viewer, false);
@@ -1090,17 +1088,17 @@ void Scene_edit_polyhedron_item_priv::compute_bbox(const CGAL::Three::Scene_inte
     pos_bbox[3]=bb.xmax(); pos_bbox[4]=bb.ymin(); pos_bbox[5]=bb.zmin();
     pos_bbox[6]=bb.xmin(); pos_bbox[7]=bb.ymin(); pos_bbox[8]=bb.zmin();
     pos_bbox[9]=bb.xmin(); pos_bbox[10]=bb.ymax(); pos_bbox[11]=bb.zmin();
-    
+
     pos_bbox[12]=bb.xmin(); pos_bbox[13]=bb.ymin(); pos_bbox[14]=bb.zmin();
     pos_bbox[15]=bb.xmin(); pos_bbox[16]=bb.ymin(); pos_bbox[17]=bb.zmax();
     pos_bbox[18]= bb.xmax(); pos_bbox[19]=bb.ymin(); pos_bbox[20]=bb.zmin();
     pos_bbox[21]= bb.xmax(); pos_bbox[22]=bb.ymax(); pos_bbox[23]=bb.zmin();
-    
+
     pos_bbox[24]= bb.xmax(); pos_bbox[25]=bb.ymin(); pos_bbox[26]=bb.zmin();
     pos_bbox[27]= bb.xmax(); pos_bbox[28]=bb.ymin(); pos_bbox[29]=bb.zmax();
     pos_bbox[30]=bb.xmin(); pos_bbox[31]=bb.ymax(); pos_bbox[32]=bb.zmin();
     pos_bbox[33]=bb.xmax(); pos_bbox[34]=bb.ymax(); pos_bbox[35]=bb.zmin();
-    
+
     pos_bbox[36]=bb.xmin(); pos_bbox[37]=bb.ymax(); pos_bbox[38]=bb.zmin();
     pos_bbox[39]=bb.xmin(); pos_bbox[40]=bb.ymax(); pos_bbox[41]=bb.zmax();
     pos_bbox[42]=bb.xmin(); pos_bbox[43]=bb.ymin(); pos_bbox[44]=bb.zmax();
@@ -1115,7 +1113,7 @@ void Scene_edit_polyhedron_item_priv::compute_bbox(const CGAL::Three::Scene_inte
     pos_bbox[63]=bb.xmax(); pos_bbox[64]=bb.ymin(); pos_bbox[65]=bb.zmax();
     pos_bbox[66]=bb.xmax(); pos_bbox[67]=bb.ymax(); pos_bbox[68]=bb.zmax();
     pos_bbox[69]=bb.xmax(); pos_bbox[70]=bb.ymax(); pos_bbox[71]=bb.zmin();
-    
+
 }
 
 void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
@@ -1165,7 +1163,7 @@ QString Scene_edit_polyhedron_item::toolTip() const
 {
   if(!d->sm_item->polyhedron())
     return QString();
-  
+
   return QObject::tr("<p>Surface Mesh <b>%1</b> (mode: %5, color: %6)</p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
@@ -1249,7 +1247,7 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
 
 void Scene_edit_polyhedron_item::update_frame_plane()
 {
-  
+
   for(Ctrl_vertices_sm_group_data_list::iterator hgb_data = d->sm_ctrl_vertex_frame_map.begin();
       hgb_data != d->sm_ctrl_vertex_frame_map.end(); ++hgb_data)
   {
@@ -1271,7 +1269,7 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
   {
     if(!d->spheres)
     {
-      d->spheres = new Scene_spheres_item(this, false);
+      d->spheres = new Scene_spheres_item(this, 0, false, false);
       d->spheres->setName("ROI spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
@@ -1283,7 +1281,7 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
     }
     if(!d->spheres_ctrl)
     {
-      d->spheres_ctrl = new Scene_spheres_item(this, false);
+      d->spheres_ctrl = new Scene_spheres_item(this, false, false);
       d->spheres_ctrl->setName("Control spheres");
       d->spheres_ctrl->setRenderingMode(Gouraud);
       connect(d->spheres_ctrl, &QObject::destroyed, this, Reset_spheres_ctrl(d) );
@@ -1420,7 +1418,7 @@ void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
   Control_vertices_data<SMesh> hgd(d->deform_sm_mesh, new_frame);
   d->sm_ctrl_vertex_frame_map.push_back(hgd);
   hgd.refresh(surface_mesh());
-  
+
   d->sm_active_group = --d->sm_ctrl_vertex_frame_map.end();
 
   invalidateOpenGLBuffers();
@@ -1547,7 +1545,7 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
   // save control vertices
   out << d->sm_ctrl_vertex_frame_map.size() << std::endl; // control vertices count
   for(Ctrl_vertices_sm_group_data_list::const_iterator hgb = d->sm_ctrl_vertex_frame_map.begin(); hgb != d->sm_ctrl_vertex_frame_map.end(); ++hgb) {
-    
+
     out << hgb->ctrl_vertices_group.size() << std::endl;
     for(std::vector<sm_vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
     {
@@ -1654,7 +1652,7 @@ bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices()
 {
   Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
   if(!is_there_any_ctrl_vertices_group(hgb, hge)) { return false; } // there isn't any group of control vertices
-  
+
   for(; hgb != hge; ++hgb) // check inside groups of control vertices
   {
     if(!hgb->ctrl_vertices_group.empty()) { return true; }
@@ -1742,7 +1740,7 @@ void Scene_edit_polyhedron_item::update_normals() {
     d->normals[id*3] = n.x();
     d->normals[id*3+1] = n.y();
     d->normals[id*3+2] = n.z();
-    
+
   }
 }
 
@@ -1776,6 +1774,10 @@ Scene_surface_mesh_item* Scene_edit_polyhedron_item::sm_item()const
 void Scene_edit_polyhedron_item::computeElements() const
 {
   d->compute_normals_and_vertices(sm_item()->face_graph());
+  if(d->spheres)
+    d->spheres->computeElements();
+  if(d->spheres_ctrl)
+    d->spheres_ctrl->computeElements();
   std::vector<GLfloat> vertices;
   std::vector<GLfloat> *vertices_ptr;
   const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
@@ -1800,16 +1802,16 @@ void Scene_edit_polyhedron_item::computeElements() const
           vertices_ptr->data(),
           static_cast<int>(vertices_ptr->size()*sizeof(float)));
     tc->allocate(
-          Tc::Smooth_normals, 
+          Tc::Smooth_normals,
           d->normals.data(),
           static_cast<int>(d->normals.size()*sizeof(float)));
     tc->allocate(
-          Tc::Vertex_indices, 
+          Tc::Vertex_indices,
           d->tris.data(),
           static_cast<int>(d->tris.size()*sizeof(float)));
   }
   //vao for the ROI points
-  {  
+  {
     Pc* pc = getPointContainer(Priv::Roi_points);
     pc->allocate(
           Pc::Vertices,
@@ -1835,7 +1837,7 @@ void Scene_edit_polyhedron_item::computeElements() const
     ec->allocate(Ec::Vertices,
                  d->pos_bbox.data(),
                  static_cast<int>(d->pos_bbox.size()*sizeof(float)));
-    
+
     d->nb_bbox = d->pos_bbox.size();
   }
   //vao for the control points
@@ -1844,12 +1846,12 @@ void Scene_edit_polyhedron_item::computeElements() const
     pc->allocate(Pc::Vertices,
                  d->control_points.data(),
                  static_cast<int>(d->control_points.size()*sizeof(float)));
-    
+
     pc->allocate(Pc::Colors,
                  d->control_color.data(),
                  static_cast<int>(d->control_color.size()*sizeof(float)));
-    
-    
+
+
     d->nb_control = d->control_points.size();
   }
   //vao for the axis
@@ -1863,11 +1865,11 @@ void Scene_edit_polyhedron_item::computeElements() const
                  d->color_lines.data(),
                  static_cast<int>(d->color_lines.size()*sizeof(float)));
     d->nb_axis = d->pos_axis.size();
-    
+
   }
   //vao for the frame plane
   {
-    
+
     Tc* tc = getTriangleContainer(Priv::Frame_plane);
     tc->allocate(Tc::Smooth_vertices,
                  d->pos_frame_plane.data(),
@@ -1888,7 +1890,7 @@ void Scene_edit_polyhedron_item::initializeBuffers(Viewer_interface *v) const
   getEdgeContainer(Priv::BBox)->initializeBuffers(v);
   getPointContainer(Priv::Roi_points)->initializeBuffers(v);
   getPointContainer(Priv::Control_points)->initializeBuffers(v);
-  
+
   getTriangleContainer(Priv::Facets)->setIdxSize(d->tris.size());
   getTriangleContainer(Priv::Frame_plane)->setIdxSize(d->plane_idx.size());
   getEdgeContainer(Priv::Edges)->setIdxSize(d->_edges.size());
@@ -1896,7 +1898,7 @@ void Scene_edit_polyhedron_item::initializeBuffers(Viewer_interface *v) const
   getEdgeContainer(Priv::BBox)->setFlatDataSize(d->nb_bbox);
   getPointContainer(Priv::Roi_points)->setFlatDataSize(d->nb_ROI);
   getPointContainer(Priv::Control_points)->setFlatDataSize(d->nb_control);
-  
+
   d->pos_axis.resize(0);
   d->pos_axis.shrink_to_fit();
   d->color_lines.resize(0);

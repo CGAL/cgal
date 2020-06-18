@@ -5,7 +5,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 template<class Datum, class Polyhedron, class Kernel>
-struct CModifierTriangleSoupVertexMapper 
+struct CModifierTriangleSoupVertexMapper
 { };
 
 template<class Polyhedron, class Kernel>

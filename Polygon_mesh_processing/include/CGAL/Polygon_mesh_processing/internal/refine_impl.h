@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Jane Tournois
 
@@ -52,7 +52,7 @@ class Refine_Polyhedron_3 {
 private:
   PolygonMesh& pmesh;
   VertexPointMap vpmap;
-  
+
   bool flippable(halfedge_descriptor h) {
     // this check is added so that edge flip does not break manifoldness
     // it might happen when there is an edge where flip_edge(h) will be placed (i.e. two edges collide after flip)
@@ -62,7 +62,7 @@ private:
     do {
       if(target(opposite(*v_cir, pmesh),pmesh) == v_tip_1) { return false; }
     } while(++v_cir != v_end);
-    
+
     // also eliminate collinear triangle generation
     if( CGAL::collinear(get(vpmap, v_tip_0), get(vpmap, v_tip_1), get(vpmap, target(h, pmesh))) ||
         CGAL::collinear(get(vpmap, v_tip_0), get(vpmap, v_tip_1), get(vpmap, target(opposite(h, pmesh),pmesh))) ) {
@@ -95,7 +95,7 @@ private:
            class FaceRange>
   bool subdivide(const FaceRange& faces,
                  const std::set<halfedge_descriptor>& border_edges,
-                 std::map<vertex_descriptor, double>& scale_attribute, 
+                 std::map<vertex_descriptor, double>& scale_attribute,
                  VertexOutputIterator& vertex_out,
                  FaceOutputIterator& facet_out,
                  std::vector<face_descriptor>& new_faces,
@@ -125,12 +125,12 @@ private:
           scale_attribute[target(h,pmesh)] = sac;
           *vertex_out++ = target(h,pmesh);
 
-          // collect 2 new facets for next round 
+          // collect 2 new facets for next round
           face_descriptor h1 = face(opposite(next(h,pmesh),pmesh),pmesh);
           face_descriptor h2 = face(opposite(h,pmesh),pmesh);
           new_faces.push_back(h1); new_faces.push_back(h2);
           *facet_out++ = h1;    *facet_out++ = h2;
-          // relax edges of the  patching mesh 
+          // relax edges of the  patching mesh
           halfedge_descriptor e_ij = prev(h,pmesh);
           halfedge_descriptor e_ik = next(opposite(h,pmesh),pmesh);
           halfedge_descriptor e_jk = prev(opposite(next(h,pmesh),pmesh),pmesh);
@@ -156,7 +156,7 @@ private:
   {
     int flips = 0;
     std::list<halfedge_descriptor> interior_edges;
-    std::set<halfedge_descriptor> included_map; 
+    std::set<halfedge_descriptor> included_map;
 
     collect_interior_edges(faces, border_edges, interior_edges, included_map);
     collect_interior_edges(new_faces, border_edges, interior_edges, included_map);
@@ -190,7 +190,7 @@ private:
       do {
         halfedge_descriptor h = *circ;
         if (border_edges.find(h) == border_edges.end()){
-          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
+          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) }
           // which will change the order of edges from run to run
           halfedge_descriptor oh = opposite(h, pmesh);
           halfedge_descriptor h_rep = (h < oh) ? h : oh; // AF: was &*h < &*oh
@@ -203,7 +203,7 @@ private:
   }
 
   double average_length(vertex_descriptor vh,
-                        const std::set<face_descriptor>& interior_map, 
+                        const std::set<face_descriptor>& interior_map,
                         bool accept_internal_facets)
   {
     const Point_3& vp = get(vpmap, vh);
@@ -231,14 +231,14 @@ private:
   void calculate_scale_attribute(const FaceRange& faces,
                                  const std::set<face_descriptor>& interior_map,
                                  std::map<vertex_descriptor, double>& scale_attribute,
-                                 bool accept_internal_facets) 
+                                 bool accept_internal_facets)
   {
     for(face_descriptor fd : faces)
     {
       Halfedge_around_face_circulator<PolygonMesh> circ(halfedge(fd,pmesh),pmesh), done(circ);
       do {
         vertex_descriptor v = target(*circ,pmesh);
-        std::pair<typename std::map<vertex_descriptor, double>::iterator, bool> v_insert 
+        std::pair<typename std::map<vertex_descriptor, double>::iterator, bool> v_insert
           = scale_attribute.insert(std::make_pair(v, 0));
         if(!v_insert.second) { continue; } // already calculated
         v_insert.first->second = average_length(v, interior_map, accept_internal_facets);
@@ -262,7 +262,7 @@ private:
           if(interior_map.find(f) == interior_map.end() || interior_map.find(f_op) == interior_map.end()) {
             internal_v = false;
             break;
-          } 
+          }
         } while(++circ_v != done_v);
 
         if(internal_v) { return true; }
@@ -287,7 +287,7 @@ public:
       // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<face_descriptor> interior_map(boost::begin(faces), boost::end(faces));
 
-    // store boundary edges - to be used in relax 
+    // store boundary edges - to be used in relax
     std::set<halfedge_descriptor> border_edges;
     for(face_descriptor f : faces)
     {

@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_FILE_BINARY_MESH_3_H
 #define CGAL_IO_FILE_BINARY_MESH_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <iostream>
@@ -55,12 +55,15 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
   }
   if (s != "CGAL" ||
       !(is >> s) ||
-      s != "c3t3") 
+      s != "c3t3")
   {
     return false;
   }
   std::getline(is, s);
-  if(s != "") {
+  if(!s.empty()) {
+    if(s[s.size()-1] == '\r') { // deal with Windows EOL
+      s.resize(s.size() - 1);
+    }
     if(s != std::string(" ") + CGAL::Get_io_signature<C3T3>()()) {
       std::cerr << "load_binary_file:"
                 << "\n  expected format: " << CGAL::Get_io_signature<C3T3>()()
