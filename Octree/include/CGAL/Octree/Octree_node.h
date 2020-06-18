@@ -133,10 +133,6 @@ namespace CGAL {
 
     void set_parent(Node *parent) { m_parent = parent; }
 
-    IterList &points() { return m_points; }
-
-    const IterList &points() const { return m_points; }
-
     void add_point(InputIterator point) { m_points.push_back(point); }
 
     size_t num_points() const {
