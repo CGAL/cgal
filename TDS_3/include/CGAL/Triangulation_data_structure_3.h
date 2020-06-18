@@ -1339,7 +1339,7 @@ public:
     }
     return visit_incident_cells_threadsafe<
       Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, OutputIterator, Filter,
-                       internal::Has_member_visited<Vertex>::value>,
+                       false>,
       OutputIterator>(v, vertices, f);
   }
 

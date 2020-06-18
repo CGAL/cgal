@@ -147,6 +147,7 @@ public:
   using Tr_Base::geom_traits;
 #endif
   using Tr_Base::adjacent_vertices;
+  using Tr_Base::adjacent_vertices_threadsafe;
   using Tr_Base::cw;
   using Tr_Base::ccw;
   using Tr_Base::construct_point;
