@@ -305,6 +305,16 @@ ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
 
 ALIASES+= "cgalPackageSection{2}=\htmlonly <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 \n \htmlonly </div>\endhtmlonly"
 
+ALIASES+= "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">"
+ALIASES+= "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">"
+ALIASES+= "cgalNamedParamsEnd=</table> </dd> </dl>"
+ALIASES+= "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button> <div class=\"content\">\endhtmlonly<ul>"
+ALIASES+= "cgalParamDescription{1}=<li>\1</li>"
+ALIASES+= "cgalParamType{1}=<li><b>Type: </b>\1</li>"
+ALIASES+= "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>"
+ALIASES+= "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>"
+ALIASES+= "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>"
+
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
 # "class=itcl::class" will allow you to use the command class in the
