@@ -77,38 +77,38 @@ struct Texture_writer<internal_np::Param_not_found>
   void operator()(Writer&, const VD) const { }
 };
 
-template <typename Stream, typename FaceGraph, typename FileWriter>
+template <typename Stream, typename Graph, typename FileWriter>
 class Generic_facegraph_printer
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor                   vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type                  vertices_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                     face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor                   vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertices_size_type                  vertices_size_type;
+  typedef typename boost::graph_traits<Graph>::face_descriptor                     face_descriptor;
 
 public:
   Generic_facegraph_printer(Stream& os) : m_os(os) { }
   Generic_facegraph_printer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
   template <typename NamedParameters>
-  bool operator()(const FaceGraph& g,
+  bool operator()(const Graph& g,
                   const NamedParameters& np)
   {
-    typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type         VPM;
-    typedef typename boost::property_traits<VPM>::reference                            Point_ref;
+    typedef typename GetVertexPointMap<Graph, NamedParameters>::const_type         VPM;
+    typedef typename boost::property_traits<VPM>::reference                        Point_ref;
 
-    typedef CGAL::Color                                                                Color;
+    typedef CGAL::Color                                                            Color;
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_color_map_t, NamedParameters,
-      Constant_property_map<vertex_descriptor, Color> >::type                          VCM;
+      Constant_property_map<vertex_descriptor, Color> >::type                      VCM;
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::face_color_map_t, NamedParameters,
-      Constant_property_map<face_descriptor, Color> >::type                            FCM;
+      Constant_property_map<face_descriptor, Color> >::type                        FCM;
 
     // No default because value_type is unknown, but the pmap is only used if provided via NP
     typedef typename internal_np::Get_param<
-      typename NamedParameters::base, internal_np::vertex_normal_map_t>::type          VNM;
+      typename NamedParameters::base, internal_np::vertex_normal_map_t>::type      VNM;
     typedef typename internal_np::Get_param<
-      typename NamedParameters::base, internal_np::vertex_texture_map_t>::type         VTM;
+      typename NamedParameters::base, internal_np::vertex_texture_map_t>::type     VTM;
 
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
@@ -164,8 +164,8 @@ public:
     m_writer.write_facet_header();
     for(const face_descriptor f : faces(g))
     {
-      CGAL::Halfedge_around_face_circulator<FaceGraph> hc(halfedge(f, g), g);
-      CGAL::Halfedge_around_face_circulator<FaceGraph> hc_end = hc;
+      CGAL::Halfedge_around_face_circulator<Graph> hc(halfedge(f, g), g);
+      CGAL::Halfedge_around_face_circulator<Graph> hc_end = hc;
 
       const std::size_t n = circulator_size(hc);
       CGAL_assertion(n >= 3);
@@ -191,7 +191,7 @@ public:
     return m_os.good();
   }
 
-  bool operator()(const FaceGraph& g) { return operator()(g, parameters::all_default()); }
+  bool operator()(const Graph& g) { return operator()(g, parameters::all_default()); }
 
 protected:
   Stream& m_os;

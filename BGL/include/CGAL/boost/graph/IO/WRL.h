@@ -33,7 +33,7 @@ namespace CGAL {
 
   writes the graph `g` in the wrl format (VRML 2.0).
 
-  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
@@ -43,11 +43,11 @@ namespace CGAL {
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      must be available in `FaceGraph`.}
+                      must be available in `Graph`.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -55,27 +55,27 @@ namespace CGAL {
 
   \see \ref IOStreamWRL
 */
-template <typename FaceGraph, typename NamedParameters>
+template <typename Graph, typename NamedParameters>
 bool write_WRL(std::ostream& os,
-               const FaceGraph& g,
+               const Graph& g,
                const NamedParameters& np)
 {
-  IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_VRML_2> printer(os);
+  IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_VRML_2> printer(os);
   return printer(g, np);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_WRL(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_WRL(fname.c_str(), g, np);
 }
 
-template <typename FaceGraph>
-bool write_WRL(std::ostream& os, const FaceGraph& g) { return write_WRL(os, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool write_WRL(const char* fname, const FaceGraph& g) { return write_WRL(fname, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool write_WRL(const std::string& fname, const FaceGraph& g) { return write_WRL(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool write_WRL(std::ostream& os, const Graph& g) { return write_WRL(os, g, parameters::all_default()); }
+template <typename Graph>
+bool write_WRL(const char* fname, const Graph& g) { return write_WRL(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool write_WRL(const std::string& fname, const Graph& g) { return write_WRL(fname, g, parameters::all_default()); }
 
 } // namespace CGAL
 

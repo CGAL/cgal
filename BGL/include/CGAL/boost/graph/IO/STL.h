@@ -38,12 +38,12 @@ namespace IO {
 namespace internal {
 
 // Use CRTP to gain access to the protected members without getters/setters.
-template <typename FaceGraph, typename Point>
+template <typename Graph, typename Point>
 class STL_builder
-  : public Generic_facegraph_builder<FaceGraph, Point, STL_builder<FaceGraph, Point> >
+  : public Generic_facegraph_builder<Graph, Point, STL_builder<Graph, Point> >
 {
-  typedef STL_builder<FaceGraph, Point>                                         Self;
-  typedef Generic_facegraph_builder<FaceGraph, Point, Self>                     Base;
+  typedef STL_builder<Graph, Point>                                             Self;
+  typedef Generic_facegraph_builder<Graph, Point, Self>                         Base;
 
   typedef typename Base::Point_container                                        Point_container;
   typedef typename Base::Face                                                   Face;
@@ -71,7 +71,7 @@ public:
 
   reads the graph `g` from data in the STL format.
 
-  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param is the input stream
@@ -82,11 +82,11 @@ public:
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      must be available in `FaceGraph`.}
+                      must be available in `Graph`.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -99,16 +99,16 @@ public:
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamSTL
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
-              FaceGraph& g,
+              Graph& g,
               const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::STL_builder<FaceGraph, Point> builder(is, verbose);
+  IO::internal::STL_builder<Graph, Point> builder(is, verbose);
   return builder(g, np);
 }
 
@@ -117,7 +117,7 @@ bool read_STL(std::istream& is,
 
   reads the graph `g` from the file `fname` in the STL format.
 
-  \tparam FaceGraph a model of `MutableFaceGraph`
+  \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the name of the input file
@@ -128,11 +128,11 @@ bool read_STL(std::istream& is,
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      must be available in `FaceGraph`.}
+                      must be available in `Graph`.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -145,27 +145,27 @@ bool read_STL(std::istream& is,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
   \see \ref IOStreamSTL
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
   std::ifstream is(fname);
   return read_STL(is, g, np, verbose);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np,
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_STL(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
 {
   return read_STL(fname.c_str(), g, np, verbose);
 }
 
-template <typename FaceGraph>
-bool read_STL(std::istream& is, FaceGraph& g) { return read_STL(is, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool read_STL(const char* fname, FaceGraph& g) { return read_STL(fname, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::all_default()); }
+template <typename Graph>
+bool read_STL(const char* fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
 
   writes the graph `g` in the stream `os` in the STL format.
 
-  \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
@@ -186,11 +186,11 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      must be available in `FaceGraph`.}
+                      must be available in `Graph`.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -200,18 +200,18 @@ bool read_STL(const std::string& fname, FaceGraph& g) { return read_STL(fname, g
 
   \see \ref IOStreamSTL
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
-               const FaceGraph& g,
+               const Graph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor                  halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                      face_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;
 
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::const_type    VPM;
-  typedef typename boost::property_traits<VPM>::reference                               Point_ref;
-  typedef typename boost::property_traits<VPM>::value_type                              Point;
-  typedef typename Kernel_traits<Point>::Kernel::Vector_3                               Vector;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type    VPM;
+  typedef typename boost::property_traits<VPM>::reference                           Point_ref;
+  typedef typename boost::property_traits<VPM>::value_type                          Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3                           Vector;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -277,7 +277,7 @@ bool write_STL(std::ostream& os,
 
  writes the graph `g` in the STL format into a file named `fname`.
 
- \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+ \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  \param fname the name of the output stream
@@ -293,11 +293,11 @@ bool write_STL(std::ostream& os,
 
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-                      must be available in `FaceGraph`.}
+                      must be available in `Graph`.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
 
@@ -307,8 +307,8 @@ bool write_STL(std::ostream& os,
 
  \see \ref IOStreamSTL
 */
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
@@ -317,18 +317,18 @@ bool write_STL(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& n
   return write_STL(os, g, np);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_STL(fname.c_str(), g, np);
 }
 
-template <typename FaceGraph>
-bool write_STL(std::ostream& os, const FaceGraph& g) { return write_STL(os, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool write_STL(const char* fname, const FaceGraph& g) { return write_STL(fname, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool write_STL(const std::string& fname, const FaceGraph& g) { return write_STL(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool write_STL(std::ostream& os, const Graph& g) { return write_STL(os, g, parameters::all_default()); }
+template <typename Graph>
+bool write_STL(const char* fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
 
 } // namespace CGAL
 

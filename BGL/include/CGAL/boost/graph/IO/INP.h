@@ -20,19 +20,19 @@
 
 namespace CGAL {
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(std::ostream& os,
                const std::string& name,
                const std::string& type,
-               const FaceGraph& g,
+               const Graph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor                  vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                    face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type                 vertices_size_type;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor                    face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertices_size_type                 vertices_size_type;
 
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::const_type  VPM;
-  typedef typename boost::property_traits<VPM>::reference                             Point_ref;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename boost::property_traits<VPM>::reference                         Point_ref;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -69,24 +69,24 @@ bool write_INP(std::ostream& os,
   return os.good();
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(const char* fname,
                const std::string& type,
-               const FaceGraph& g,
+               const Graph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_INP(os, fname, type, g, np);
 }
 
-template <typename FaceGraph>
-bool write_INP(std::ostream& os, const std::string& name, const std::string& type, const FaceGraph& g)
+template <typename Graph>
+bool write_INP(std::ostream& os, const std::string& name, const std::string& type, const Graph& g)
 {
   return write_INP(os, name, type, g, parameters::all_default());
 }
 
-template <typename FaceGraph>
-bool write_INP(const char* fname, const std::string& type, const FaceGraph& g)
+template <typename Graph>
+bool write_INP(const char* fname, const std::string& type, const Graph& g)
 {
   return write_INP(fname, type, g, parameters::all_default());
 }

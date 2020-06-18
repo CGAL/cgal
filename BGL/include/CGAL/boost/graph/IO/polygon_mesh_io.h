@@ -21,9 +21,9 @@ namespace CGAL {
 
 //not for now.
 /*
-template <class FaceGraph, typename NamedParameters>
+template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(std::istream& is,
-                       FaceGraph& g,
+                       Graph& g,
                        const NamedParameters& np)
 {
   bool ok = false;
@@ -55,9 +55,9 @@ bool read_polygon_mesh(std::istream& is,
   return ok;
 }
 
-template <class FaceGraph>
+template <class Graph>
 bool read_polygon_mesh(std::istream& is,
-                       FaceGraph& g)
+                       Graph& g)
 {
   return read_polygon_mesh(is, g, parameters::all_default());
 }
@@ -68,7 +68,7 @@ bool read_polygon_mesh(std::istream& is,
  *
  * \brief reads a polygon mesh from a file.
  *
- * \tparam FaceGraph a model of `MutableFaceGraph`
+ * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param fname the name of the file. Its extension must be one of the following :
@@ -82,11 +82,11 @@ bool read_polygon_mesh(std::istream& is,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `FaceGraph`.}
+ *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -96,9 +96,9 @@ bool read_polygon_mesh(std::istream& is,
  *
  * \return `true` if reading was successful, `false` otherwise.
 */
-template <class FaceGraph, typename NamedParameters>
+template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
-                       FaceGraph& g,
+                       Graph& g,
                        const NamedParameters& np,
                        const bool verbose = false)
 {
@@ -134,20 +134,20 @@ bool read_polygon_mesh(const std::string& fname,
   return false;
 }
 
-template <class FaceGraph>
-bool read_polygon_mesh(const std::string& fname, FaceGraph& g)
+template <class Graph>
+bool read_polygon_mesh(const std::string& fname, Graph& g)
 {
   return read_polygon_mesh(fname, g, parameters::all_default());
 }
 
-template <class FaceGraph, typename NamedParameters>
-bool read_polygon_mesh(const char* fname, FaceGraph& g, const NamedParameters& np)
+template <class Graph, typename NamedParameters>
+bool read_polygon_mesh(const char* fname, Graph& g, const NamedParameters& np)
 {
   return read_polygon_mesh(std::string(fname), g, np);
 }
 
-template <class FaceGraph>
-bool read_polygon_mesh(const char* fname, FaceGraph& g)
+template <class Graph>
+bool read_polygon_mesh(const char* fname, Graph& g)
 {
   return read_polygon_mesh(fname, g, parameters::all_default());
 }
@@ -161,7 +161,7 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
  *
  * \brief writes a polygon mesh in a file.
  *
- * \tparam FaceGraph a model of `FaceListGraph` and `HalfedgeListGraph`
+ * \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param fname the name of the file. Its extension must be one of the following :
@@ -175,11 +175,11 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `FaceGraph`.}
+ *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -187,9 +187,9 @@ bool read_polygon_mesh(const char* fname, FaceGraph& g)
  *
  * \return `true` if writing was successful, `false` otherwise.
  */
-template <class FaceGraph, typename NamedParameters>
+template <class Graph, typename NamedParameters>
 bool write_polygon_mesh(const std::string& fname,
-                        FaceGraph& g,
+                        Graph& g,
                         const NamedParameters& np,
                         const bool verbose = false)
 {
@@ -225,20 +225,20 @@ bool write_polygon_mesh(const std::string& fname,
   return false;
 }
 
-template <class FaceGraph>
-bool write_polygon_mesh(const std::string& fname, FaceGraph& g)
+template <class Graph>
+bool write_polygon_mesh(const std::string& fname, Graph& g)
 {
   return write_polygon_mesh(fname, g, parameters::all_default());
 }
 
-template <class FaceGraph, typename NamedParameters>
-bool write_polygon_mesh(const char* fname, FaceGraph& g, const NamedParameters& np)
+template <class Graph, typename NamedParameters>
+bool write_polygon_mesh(const char* fname, Graph& g, const NamedParameters& np)
 {
   return write_polygon_mesh(std::string(fname), g, np);
 }
 
-template <class FaceGraph>
-bool write_polygon_mesh(const char* fname, FaceGraph& g)
+template <class Graph>
+bool write_polygon_mesh(const char* fname, Graph& g)
 {
   return write_polygon_mesh(fname, g, parameters::all_default());
 }

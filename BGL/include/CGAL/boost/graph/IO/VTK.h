@@ -42,15 +42,15 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename FaceGraph, typename NameddParameters>
+template <typename Graph, typename NameddParameters>
 bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
-                                 FaceGraph& g,
+                                 Graph& g,
                                  const NameddParameters& np)
 {
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, NameddParameters>::type      VPM;
-  typedef typename boost::property_traits<VPM>::value_type                         Point;
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor               vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                 face_descriptor;
+  typedef typename CGAL::GetVertexPointMap<Graph, NameddParameters>::type      VPM;
+  typedef typename boost::property_traits<VPM>::value_type                     Point;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor               vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor                 face_descriptor;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -96,7 +96,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
     }
 
     face_descriptor f = CGAL::Euler::add_face(vr, g);
-    if(f == boost::graph_traits<FaceGraph>::null_face())
+    if(f == boost::graph_traits<Graph>::null_face())
       return false;
   }
 
@@ -111,7 +111,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \brief reads a PolyData in the VTP format into a triangulated surface mesh.
  *
- * \tparam FaceGraph a model of `MutableFaceGraph`
+ * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the file that will be read
@@ -121,11 +121,11 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `FaceGraph`.}
+ *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
@@ -139,10 +139,10 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \see \ref IOStreamVTK
 */
-template<typename FaceGraph,
+template<typename Graph,
          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_VTP(const char* fname,
-              FaceGraph& g,
+              Graph& g,
               const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream test(fname);
@@ -162,15 +162,15 @@ bool read_VTP(const char* fname,
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 
-template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_VTP(const std::string& fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_VTP(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return read_VTP(fname.c_str(), g, np);
 }
-template<typename FaceGraph>
-bool read_VTP(const char* fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
-template<typename FaceGraph>
-bool read_VTP(const std::string& fname, FaceGraph& g) { return read_VTP(fname, g, parameters::all_default()); }
+template<typename Graph>
+bool read_VTP(const char* fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
+template<typename Graph>
+bool read_VTP(const std::string& fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,15 +180,15 @@ namespace IO {
 namespace internal {
 
 // writes the polys appended data at the end of the .vtp file
-template <typename FaceGraph, typename NamedParameters>
+template <typename Graph, typename NamedParameters>
 void write_polys(std::ostream& os,
-                 const FaceGraph& g,
+                 const Graph& g,
                  const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor         vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor           face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor           face_descriptor;
 
-  typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type Vimap;
+  typedef typename CGAL::GetInitializedVertexIndexMap<Graph, NamedParameters>::const_type Vimap;
   Vimap V = CGAL::get_initialized_vertex_index_map(g, np);
 
   std::vector<std::size_t> connectivity_table;
@@ -211,17 +211,17 @@ void write_polys(std::ostream& os,
 }
 
 //todo use named params for maps
-template <typename FaceGraph, typename NamedParameters>
+template <typename Graph, typename NamedParameters>
 void write_polys_tag(std::ostream& os,
-                     const FaceGraph& g,
+                     const Graph& g,
                      bool binary,
                      std::size_t& offset,
                      const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor         vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor           face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor           face_descriptor;
 
-  typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type Vimap;
+  typedef typename CGAL::GetInitializedVertexIndexMap<Graph, NamedParameters>::const_type Vimap;
   Vimap V = CGAL::get_initialized_vertex_index_map(g, np);
 
   std::string formatattribute = binary ? " format=\"appended\"" : " format=\"ascii\"";
@@ -302,16 +302,16 @@ void write_polys_tag(std::ostream& os,
 
 //todo : use namedparams for points and ids
 //overload for facegraph
-template <typename FaceGraph, typename NamedParameters>
+template <typename Graph, typename NamedParameters>
 void write_points_tag(std::ostream& os,
-                      const FaceGraph& g,
+                      const Graph& g,
                       bool binary,
                       std::size_t& offset,
                       const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor               vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor               vertex_descriptor;
 
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::const_type VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::const_type     VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                              Gt;
   typedef typename Gt::FT                                                          FT;
@@ -346,14 +346,14 @@ void write_points_tag(std::ostream& os,
 }
 
 // writes the points appended data at the end of the .vtp file
-template <typename FaceGraph, typename NamedParameters>
+template <typename Graph, typename NamedParameters>
 void write_polys_points(std::ostream& os,
-                        const FaceGraph& g,
+                        const Graph& g,
                         const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor               vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor                   vertex_descriptor;
 
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::const_type VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::const_type     VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                              Gt;
   typedef typename Gt::FT                                                          FT;
@@ -383,7 +383,7 @@ void write_polys_points(std::ostream& os,
  *
  * \brief writes a triangulated surface mesh in the `PolyData` XML format.
  *
- * \tparam FaceGraph a model of `FaceListGraph`
+ * \tparam Graph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -399,11 +399,11 @@ void write_polys_points(std::ostream& os,
  *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `FaceGraph`.}
+ *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  *
  *  \cgalParamNBegin{vertex_index_map}
@@ -418,9 +418,9 @@ void write_polys_points(std::ostream& os,
  *
  * \see \ref IOStreamVTK
  */
-template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
-               const FaceGraph& g,
+               const Graph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
   using parameters::get_parameter;
@@ -470,7 +470,7 @@ bool write_VTP(std::ostream& os,
  *
  * \brief writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
  *
- * \tparam FaceGraph a model of `FaceListGraph`
+ * \tparam Graph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param fname the name of the output file
@@ -487,11 +487,11 @@ bool write_VTP(std::ostream& os,
  *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `FaceGraph`.}
+ *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  *
  *  \cgalParamNBegin{vertex_index_map}
@@ -506,21 +506,21 @@ bool write_VTP(std::ostream& os,
  *
  * \see \ref IOStreamVTK
  */
-template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_VTP(os, g, np);
 }
 
-template<typename FaceGraph>
-bool write_VTP(std::ostream& os, const FaceGraph& g) { return write_VTP(os, g, CGAL::parameters::all_default()); }
-template<typename FaceGraph>
-bool write_VTP(const char* fname, const FaceGraph& g) { return write_VTP(fname, g, parameters::all_default()); }
-template<typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np) { return write_VTP(fname.c_str(), g, np); }
-template<typename FaceGraph>
-bool write_VTP(const std::string& fname, const FaceGraph& g) { return write_VTP(fname, g, parameters::all_default()); }
+template<typename Graph>
+bool write_VTP(std::ostream& os, const Graph& g) { return write_VTP(os, g, CGAL::parameters::all_default()); }
+template<typename Graph>
+bool write_VTP(const char* fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
+template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np) { return write_VTP(fname.c_str(), g, np); }
+template<typename Graph>
+bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
 
 } // namespace CGAL
 

@@ -23,7 +23,7 @@ namespace CGAL{
 namespace IO {
 namespace internal {
 
-template <typename FaceGraph, typename Point, typename Derived>
+template <typename Graph, typename Point, typename Derived>
 class Generic_facegraph_builder
 {
 protected:
@@ -32,21 +32,21 @@ protected:
   typedef std::vector<std::size_t>                                                     Face;
   typedef std::vector<Face>                                                            Face_container;
 
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor                   vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                     face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor                       vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor                         face_descriptor;
 
 public:
   Generic_facegraph_builder(std::istream& in_, bool verbose) : m_is(in_), m_verbose(verbose) { }
 
   template <typename NamedParameters>
-  bool operator()(FaceGraph& g, const NamedParameters& np)
+  bool operator()(Graph& g, const NamedParameters& np)
   {
-    typedef typename GetK<FaceGraph, NamedParameters>::Kernel                          Kernel;
+    typedef typename GetK<Graph, NamedParameters>::Kernel                              Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;
     typedef typename Kernel::Point_2                                                   Texture;
     typedef CGAL::Color                                                                Color;
 
-    typedef typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::type         VPM;
+    typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 
     CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
                                         typename boost::property_traits<VPM>::value_type>::value));
@@ -139,7 +139,7 @@ public:
         face[j] = vertices[m_faces[i][j]];
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
-      if(f == boost::graph_traits<FaceGraph>::null_face())
+      if(f == boost::graph_traits<Graph>::null_face())
       {
         clear(g);
         return false; // @fixme clear the graph?
@@ -152,7 +152,7 @@ public:
     return is_valid(g);
   }
 
-  bool operator()(FaceGraph& g) { return operator()(g, parameters::all_default()); }
+  bool operator()(Graph& g) { return operator()(g, parameters::all_default()); }
 
 protected:
   std::istream& m_is;

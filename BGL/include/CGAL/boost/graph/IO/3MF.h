@@ -27,10 +27,10 @@ namespace CGAL {
  *
  * \brief writes the triangle meshes contained in `gs` into the 3mf file `file_name`.
  *
- * \tparam FaceGraphRange a model of the concepts `RandomAccessContainer`
- *                        and `BackInsertionSequence` whose `value type` is
- *                        a model of the concepts `FaceGraph` and `HalfedgeListGraph`
- *                        that has only triangle faces.
+ * \tparam GraphRange a model of the concepts `RandomAccessContainer`
+ *                    and `BackInsertionSequence` whose `value type` is
+ *                    a model of the concepts `FaceGraph` and `HalfedgeListGraph`
+ *                    that has only triangle faces.
  *
  * \param file_name the name of the 3mf file to write.
  * \param gs a container of triangle meshes to write. An internal property map for `CGAL::vertex_point_t`
@@ -40,12 +40,12 @@ namespace CGAL {
  *
  * \return `true` if the writing is successful, `false` otherwise.
  */
-template<typename FaceGraphRange>
+template<typename GraphRange>
 bool write_triangle_meshes_to_3mf(const std::string& file_name,
-                                  const FaceGraphRange& gs,
+                                  const GraphRange& gs,
                                   const std::vector<std::string>& names)
 {
-  typedef typename FaceGraphRange::value_type                                   FaceGraph;
+  typedef typename GraphRange::value_type                                       FaceGraph;
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 

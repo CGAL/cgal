@@ -40,12 +40,12 @@ namespace IO {
 namespace internal {
 
 // Use CRTP to gain access to the protected members without getters/setters.
-template <typename FaceGraph, typename Point>
+template <typename Graph, typename Point>
 class GOCAD_builder
-  : public Generic_facegraph_builder<FaceGraph, Point, GOCAD_builder<FaceGraph, Point> >
+  : public Generic_facegraph_builder<Graph, Point, GOCAD_builder<Graph, Point> >
 {
-  typedef GOCAD_builder<FaceGraph, Point>                                       Self;
-  typedef Generic_facegraph_builder<FaceGraph, Point, Self>                     Base;
+  typedef GOCAD_builder<Graph, Point>                                           Self;
+  typedef Generic_facegraph_builder<Graph, Point, Self>                         Base;
 
   typedef typename Base::Point_container                                        Point_container;
   typedef typename Base::Face                                                   Face;
@@ -84,7 +84,7 @@ public:
 ///
 /// reads the graph `g` from the input stream in the TS format.
 ///
-/// \tparam FaceGraph a model of `MutableFaceGraph`
+/// \tparam Graph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param is the input stream
@@ -96,11 +96,11 @@ public:
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `FaceGraph`.}
+///                     must be available in `Graph`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -111,18 +111,18 @@ public:
 /// \returns `true` if the resulting mesh is valid.
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph,
+template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
-                FaceGraph& g,
+                Graph& g,
                 const CGAL_BGL_NP_CLASS& np,
                 bool verbose = true)
 {
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type     VPM;
   typedef typename boost::property_traits<VPM>::value_type                     Point;
 
-  IO::internal::GOCAD_builder<FaceGraph, Point> builder(is, verbose);
+  IO::internal::GOCAD_builder<Graph, Point> builder(is, verbose);
   if(!builder(g, np))
     return false;
 
@@ -132,15 +132,15 @@ bool read_GOCAD(std::istream& is,
   return is_valid(g); // @fixme keep validity check?
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(is, dummy, g, np, verbose);
 }
 
-template <typename FaceGraph>
-bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_color, FaceGraph& g)
+template <typename Graph>
+bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_color, Graph& g)
 {
   return read_GOCAD(is, name_and_color, g, parameters::all_default());
 }
@@ -149,7 +149,7 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 ///
 /// reads the graph `g` from the file `fname` in the TS format.
 ///
-/// \tparam FaceGraph a model of `MutableFaceGraph`
+/// \tparam Graph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param fname the name of the input file
@@ -161,11 +161,11 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `FaceGraph`.}
+///                     must be available in `Graph`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -174,11 +174,11 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 /// \pre The data must represent a 2-manifold
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph,
+template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname,
                 std::pair<std::string, std::string>& name_and_color,
-                FaceGraph& g,
+                Graph& g,
                 const CGAL_BGL_NP_CLASS& np,
                 bool verbose = true)
 {
@@ -186,25 +186,25 @@ bool read_GOCAD(const char* fname,
   return read_GOCAD(is, name_and_color, g, np, verbose);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(fname, dummy, g, np, verbose);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname, FaceGraph& g, CGAL_BGL_NP_CLASS np, bool verbose = true)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(const std::string& fname, Graph& g, CGAL_BGL_NP_CLASS np, bool verbose = true)
 {
   return read_GOCAD(fname.c_str(), g, np, verbose);
 }
 
-template <typename FaceGraph>
-bool read_GOCAD(std::istream& is, FaceGraph& g) { return read_GOCAD(is, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool read_GOCAD(const char* fname, FaceGraph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool read_GOCAD(std::istream& is, Graph& g) { return read_GOCAD(is, g, parameters::all_default()); }
+template <typename Graph>
+bool read_GOCAD(const char* fname, Graph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 ///
 /// writes the graph `g` in the TS format into `os`.
 ///
-/// \tparam FaceGraph a model of `FaceListGraph`
+/// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param os the stream into which `g` is dumped
@@ -225,31 +225,31 @@ bool read_GOCAD(const std::string& fname, FaceGraph& g) { return read_GOCAD(fnam
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `FaceGraph`.}
+///                     must be available in `Graph`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph,
+template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
                  const char* name,
-                 const FaceGraph& g,
+                 const Graph& g,
                  const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor      face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type   vertices_size_type;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor      face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertices_size_type   vertices_size_type;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::const_type
+  typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, g));
 
@@ -293,8 +293,8 @@ bool write_GOCAD(std::ostream& os,
   return os.good();
 }
 
-template <typename FaceGraph>
-bool write_GOCAD(std::ostream& os, const char* name, const FaceGraph& g)
+template <typename Graph>
+bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
 {
   return write_GOCAD(os, name, g, parameters::all_default());
 }
@@ -304,7 +304,7 @@ bool write_GOCAD(std::ostream& os, const char* name, const FaceGraph& g)
 /// writes the graph `g` in the TS format into a file named `fname`. In this overload,
 /// `fname` is used as the name of the graph within the file.
 ///
-/// \tparam FaceGraph a model of `FaceListGraph`
+/// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param fname the name of the output file
@@ -314,29 +314,29 @@ bool write_GOCAD(std::ostream& os, const char* name, const FaceGraph& g)
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `FaceGraph`.}
+///                     must be available in `Graph`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph,
+template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(const char* fname,
-                 const FaceGraph& g,
+                 const Graph& g,
                  const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream os(fname);
   return write_GOCAD(os, fname, g, np);
 }
 
-template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_GOCAD(fname.c_str(), g, np);
 }
@@ -346,7 +346,7 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
 /// writes the graph `g` in the TS format into `os`. The name
 /// assigned to `g`in the output is `anonymous`.
 ///
-/// \tparam FaceGraph a model of `FaceListGraph`
+/// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param os the output stream
@@ -356,33 +356,33 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `FaceGraph`.}
+///                     must be available in `Graph`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \see \ref IOStreamGocad
-template <typename FaceGraph,
+template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
-                 const FaceGraph& g,
+                 const Graph& g,
                  const CGAL_BGL_NP_CLASS& np)
 {
   return write_GOCAD(os, "anonymous", g, np);
 }
-template <typename FaceGraph>
-bool write_GOCAD(std::ostream& os, const FaceGraph& g)
+template <typename Graph>
+bool write_GOCAD(std::ostream& os, const Graph& g)
 {
   return write_GOCAD(os, "anonymous", g, parameters::all_default());
 }
 
-template <typename FaceGraph>
-bool write_GOCAD(const char* fname, const FaceGraph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
-template <typename FaceGraph>
-bool write_GOCAD(const std::string& fname, const FaceGraph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool write_GOCAD(const char* fname, const Graph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
+template <typename Graph>
+bool write_GOCAD(const std::string& fname, const Graph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
 
 } // namespace CGAL
 
