@@ -137,24 +137,6 @@ namespace CGAL {
       m_root.unsplit();
     }
 
-    // template < typename CellCriteria, typename NormalCriteria > // or other useful criterion
-    void refine(size_t max_depth, size_t max_pts_num) {
-
-      // Make sure arguments are valid
-      if (max_depth < 0 || max_pts_num < 1) {
-        CGAL_TRACE_STREAM << "wrong octree refinement criteria\n";
-        return;
-      }
-
-      for (int i = 0; i <= (int) max_depth; i++)
-        m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
-
-      refine_recurse(m_root, max_depth, max_pts_num);
-
-      for (int i = 0; i <= (int) m_max_depth_reached; i++)
-        m_unit_per_depth.push_back(1 << (m_max_depth_reached - i));
-    }
-
     void _refine(size_t max_depth, size_t max_pts_num) {
 
       // Make sure arguments are valid
@@ -209,30 +191,6 @@ namespace CGAL {
       return {bary[0], bary[1], bary[2]};
     }
 
-    void refine_recurse(Node &node, size_t dist_to_max_depth, size_t max_pts_num) {
-
-      // Check if the depth limit is reached, or if the node isn't filled
-      if (dist_to_max_depth == 0 || node.num_points() <= max_pts_num) {
-
-        // If this node is the deepest in the tree, record its depth
-        if (m_max_depth_reached < node.depth()) m_max_depth_reached = node.depth();
-
-        // Don't split this node
-        return;
-      }
-
-      // Create child nodes
-      node.split();
-
-      // Distribute this nodes points among its children
-      reassign_points(node);
-
-      // Repeat this process for all children (recursive)
-      for (int child_id = 0; child_id < 8; child_id++) {
-        refine_recurse(node[child_id], dist_to_max_depth - 1, max_pts_num);
-      }
-    }
-
     void _refine_recurse(Node &node, size_t dist_to_max_depth, size_t max_pts_num) {
 
       // Check if the depth limit is reached, or if the node isn't filled
@@ -254,51 +212,6 @@ namespace CGAL {
       // Repeat this process for all children (recursive)
       for (int child_id = 0; child_id < 8; child_id++) {
         _refine_recurse(node[child_id], dist_to_max_depth - 1, max_pts_num);
-      }
-    }
-
-    void reassign_points(Node &node) {
-
-      // Find the position of this node's split
-      Point barycenter = compute_barycenter_position(node);
-
-      // Check each point contained by this node
-      for (const InputIterator &pwn_it : node.points()) {
-        const Point &point = get(m_points_map, *pwn_it);
-
-        // Determine which octant a point falls in
-        // TODO: Could this use std::bitset?
-        int is_right = barycenter[0] < point[0];
-        int is_up = barycenter[1] < point[1];
-        int is_front = barycenter[2] < point[2];
-
-        // Check if a point is very close to the edge
-        bool equal_right = std::abs(barycenter[0] - point[0]) < 1e-6;
-        bool equal_up = std::abs(barycenter[1] - point[1]) < 1e-6;
-        bool equal_front = std::abs(barycenter[2] - point[2]) < 1e-6;
-
-        // Generate a 3-bit code representing a point's octant
-        int child_id = (is_front << 2) | (is_up << 1) | is_right;
-
-        // Get the child node using that code, and add the point
-        node[child_id].add_point(pwn_it);
-
-        // Edge cases get special treatment to prevent extremely deep trees
-
-        if (equal_right) {
-          int sym_child_id = (is_front << 2) | (is_up << 1) | (!is_right);
-          node[sym_child_id].add_point(pwn_it);
-        }
-
-        if (equal_up) {
-          int sym_child_id = (is_front << 2) | (!is_up << 1) | is_right;
-          node[sym_child_id].add_point(pwn_it);
-        }
-
-        if (equal_front) {
-          int sym_child_id = (!is_front << 2) | (is_up << 1) | (!is_right);
-          node[sym_child_id].add_point(pwn_it);
-        }
       }
     }
 

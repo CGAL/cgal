@@ -139,8 +139,6 @@ namespace CGAL {
 
     void add_point(InputIterator point) { m_points.push_back(point); }
 
-    size_t num_points() const { return m_points.size(); }
-
     size_t _num_points() const {
       return std::distance(_m_points_begin, _m_points_end);
     }
