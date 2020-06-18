@@ -52,7 +52,19 @@ public:
   and calling insert(first, last).
   */
   template <class InputIterator>
-  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator last, Traits gt = Traits());
+  Delaunay_triangulation_on_sphere_2(InputIterator first, InputIterator last, const Traits& gt = Traits());
+
+  /// @}
+
+public:
+  /// \name Predicates
+  ///
+  /// @{
+
+  /*!
+  Returns the side of `p` with respect to the circle circumscribing the triangle associated with `f`.
+  */
+  Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
 
   /// @}
 
@@ -60,7 +72,7 @@ public:
   /// \name Insertion and Removal
   ///
   /// Methods for the insertion and removal of points on the sphere.
-  /// In the degenerate case when there are co-circular points, the Delaunay triangulation is known
+  /// In the degenerate setting of co-circular points, the Delaunay triangulation is known
   /// not to be uniquely defined. In this case, \cgal chooses a particular Delaunay triangulation
   /// using a symbolic perturbation scheme \cgalCite{cgal:dt-pvr3d-03}.
   ///
@@ -93,7 +105,7 @@ public:
   std::ptrdiff_t insert(PointInputIterator first, PointInputIterator last);
 
   /*!
-  Removes the vertex from the triangulation.
+  Removes the vertex `v` from the triangulation.
   */
   void remove(Vertex_handle v);
 
@@ -116,7 +128,7 @@ public:
 
   \pre `dimension()==2`.
   */
-  template <class OutputItFaces, class OutputItBoundaryEdges>
+  template <typename OutputItFaces, typename OutputItBoundaryEdges>
   std::pair<OutputItFaces, OutputItBoundaryEdges>
   get_conflicts_and_boundary(const Point& p,
                              OutputItFaces fit,
@@ -127,44 +139,55 @@ public:
 
   /// \name Voronoi Diagram
   ///
-  /// The following member functions provide the elements of the dual
-  /// Voronoi diagram.
+  /// The following member functions provide the elements of the dual Voronoi diagram.
+  /// Two different embeddings are possible: a "straight" embedding, using line segment living
+  /// in Euclidean 3D sphere, and a "curved" embedding, using arc segments on the sphere.
   ///
   /// @{
 
-  /*!
-  Returns the center of the circle circumscribed to face `f`.
-
-  @todo should it project on the sphere?
-  */
-  Point dual(const Face_handle &f) const;
+  // Straight
 
   /*!
-  Returns a segment supported by the bisector of the endpoints of `e`, with endpoints the circumcenters
-  of the faces incident to the edge `e`.
+  Returns the center of the circle circumscribed to face `f`
   */
-  Object dual(const Edge &e) const;
+  Point_3 dual(const Face_handle f) const;
+
+  /*!
+  Returns the line segment with endpoints the circumcenters of the faces incident to the edge `e`.
+  */
+  Segment_3 dual(const Edge& e) const;
 
   /*!
   Same as above.
   */
-  Object dual(const Edge_circulator& ec) const;
+  Segment_3 dual(const Edge_circulator ec) const;
 
   /*!
   Same as above.
   */
-  Object dual(const All_edges_iterator& ei) const;
+  Segment_3 dual(const All_edges_iterator ei) const;
 
-  /// @}
-
-  /// \name Predicates
-  ///
-  /// @{
+  // Curved
 
   /*!
-  Returns the side of `p` with respect to the circle circumscribing the triangle associated with `f`.
+  Returns the intersection of the dual of the face `f` and the sphere
   */
-  Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
+  Point dual_on_sphere(const Face_handle f) const;
+
+  /*!
+  Returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `e`.
+  */
+  Arc_segment arc_dual(const Edge& e) const;
+
+  /*!
+  Same as above.
+  */
+  Arc_segment arc_dual(const Edge_circulator ec) const;
+
+  /*!
+  Same as above.
+  */
+  Arc_segment arc_dual(const All_edges_iterator ei) const;
 
   /// @}
 

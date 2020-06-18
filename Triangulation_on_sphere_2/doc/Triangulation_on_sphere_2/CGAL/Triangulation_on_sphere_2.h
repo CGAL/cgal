@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
 The class `Triangulation_on_sphere_2` is the basic class designed to handle triangulations
-of set of points \f$ \mathcal{S}\f$ on the sphere : it has vertices at the points of \f$ \mathcal{S}\f$
+of set of points \f$ \mathcal{S}\f$ on the sphere: it has vertices at the points of \f$ \mathcal{S}\f$
 and its domain covers the convex hull of \f$ \mathcal{S}\f$.
 
 \warning This triangulation supports neither the insertion nor the removal of vertices,
@@ -25,9 +25,10 @@ not ghost-faces are called <i>solid</i> faces.
 
 \tparam Traits is the geometric traits, which must be a model of the concept `TriangulationOnSphereTraits_2`.
 
-\tparam TDS is the triangulation data structure, which must be a model of the concept `TriangulationDataStructure_2`.
-        By default, the triangulation data structure is instantiated by
-        `Triangulation_data_structure_2 < Triangulation_on_sphere_vertex_base_2<Gt>, Triangulation_on_sphere_face_base_2<Gt> >`.
+\tparam TDS is the triangulation data structure, which must be a model of the concept `TriangulationDataStructure_2`,
+        whose vertex base must be a model of `TriangulationOnSphereVertexBase_2` and whose face base
+        must be a model of `TriangulationOnSphereFaceBase_2`. By default, the triangulation data structure
+        is instantiated by `Triangulation_data_structure_2<Triangulation_on_sphere_vertex_base_2<Gt>, Triangulation_on_sphere_face_base_2<Gt> >`.
 
 \sa `CGAL::Delaunay_triangulation_on_sphere_2<Traits, TDS>`
 */
@@ -51,6 +52,11 @@ public:
   typedef TDS Triangulation_data_structure;
 
   /*!
+  Size type (an unsigned integral type).
+  */
+  typedef Triangulation_data_structure::size_type size_type;
+
+  /*!
   The number type.
   */
   typedef Traits::FT FT;
@@ -61,9 +67,24 @@ public:
   typedef Traits::Point_on_sphere_2 Point;
 
   /*!
+  An arc of a great circle, used to represent a curved segment (Voronoi or Delaunay edge).
+  */
+  typedef Traits::Arc_on_sphere_2 Arc_segment;
+
+  /*!
   The 3D point type.
   */
   typedef Traits::Point_3 Point_3;
+
+  /*!
+  The 3D segment type.
+  */
+  typedef Traits::Segment_3 Segment_3;
+
+  /*!
+  The 3D triangle type.
+  */
+  typedef Traits::Triangle_3 Triangle_3;
 
 public:
   /*!
@@ -89,7 +110,7 @@ public:
   /// of the concept `Handle` which basically offers the two dereference
   /// operators `.` and `->`. The handles are also model of the concepts
   ///  `LessThanComparable` and `Hashable`, that is they can be used as keys
-  /// in containers such as `std::map` and `boost::unordered_map`.
+  /// in containers such as `std::map` and `std::unordered_map`.
   /// The iterators and circulators are all bidirectional and non-mutable.
   /// The circulators and iterators are convertible to handles with the same value type,
   /// so that whenever a handle appear in the parameter list of a function,
@@ -195,9 +216,19 @@ public:
   /// @{
 
   /*!
-  Returns the dimension of the convex hull.
+  Returns the dimension of the convex hull (on the sphere) of the vertices.
   */
   int dimension() const;
+
+  /*!
+  Returns a const reference to the triangulation traits object.
+  */
+  const Geom_traits& geom_traits() const;
+
+  /*!
+  Returns a const reference to the triangulation data structure.
+  */
+  const Triangulation_data_structure& tds() const;
 
   /*!
   Returns the number of vertices.
@@ -214,15 +245,10 @@ public:
   */
   size_type number_of_ghost_faces() const;
 
-  /*!
-  Returns a const reference to the triangulation traits object.
-  */
-  const Geom_traits& geom_traits() const;
+  /// @}
 
-  /*!
-  Returns a const reference to the triangulation data structure.
-  */
-  const Triangulation_data_structure& tds() const;
+  /// \name Geometric Access Functions
+  /// @{
 
   /*!
   Returns the geometric position of the vertex `*v`.
@@ -233,6 +259,36 @@ public:
   Returns the geometric position of the `i`-th vertex of the face `*f`.
   */
   const Point& point(const Face_handle f, const int i);
+
+  /*!
+  Returns the 3D line segment formed by the vertices of `e`.
+  \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite.
+  */
+  Segment_3 segment(const Edge& e) const;
+
+  /*!
+  Returns the 3D line segment formed by the vertices of the edge `(f, i)`.
+  \pre `t.dimension()` \f$ \geq1\f$.
+  */
+  Segment_3 segment(Face_handle f, int i) const;
+
+  /*!
+  Returns the great circle arc formed by the vertices of the edge `e`.
+  \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite.
+  */
+  Arc_segment arc_segment(const Edge& e) const;
+
+  /*!
+  Returns the great circle arc formed by the vertices of the edge `(f, i)`.
+  \pre `t.dimension()` \f$ \geq1\f$.
+  */
+  Arc_segment arc_segment(Face_handle f, int i) const;
+
+  /*!
+  Returns the 3D triangle formed by the three vertices of face `f`.
+  \pre `t.dimension()` \f$ \geq2\f$.
+  */
+  Triangle_3 triangle(const Face_handle f) const;
 
   /// @}
 
@@ -310,15 +366,15 @@ public:
   /// @{
 
   /*!
-  Starts at an arbitrary vertex incident to `v`.
+  Starts at an arbitrary vertex adjacent to `v`.
   */
-  Vertex_circulator incident_vertices(Vertex_handle v) const;
+  Vertex_circulator adjacent_vertices(Vertex_handle v) const;
 
   /*!
   Starts at the first vertex of `f` adjacent to `v` in counterclockwise order around `v`.
   \pre Face `f` is incident to vertex `v`.
   */
-  Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f);
+  Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f);
 
   /*!
   Starts at an arbitrary edge incident to `v`.
@@ -386,26 +442,25 @@ public:
 
   /*!
   Specifies which case occurs when locating a point in the triangulation.
-  @todo contour type is awkward
   */
   enum Locate_type { VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
                      EDGE, /*!< when the point is in the relative interior of an edge */
-                     FACE, /*!< when the point is in the interior of a facet */
+                     FACE, /*!< when the point is in the interior of a face */
                      OUTSIDE_CONVEX_HULL, /*!< when the point is outside the convex hull but in the affine hull of the current triangulation */
                      OUTSIDE_AFFINE_HULL, /*!< when the point is outside the affine hull of the current triangulation. */
-                     CONTOUR, /*!< when the face that contains the point is a ghost face, but it is in conflict with a neighboring face*/
                      NOT_ON_SPHERE, /*!< when the point is not on the sphere */
-                     TOO_CLOSE /*!< when the point is too close to a vertex of the triangulation */
+                     TOO_CLOSE /*!< when the point is too close to a vertex of the triangulation (see `TriangulationOnSphereTraits_2` for more details) */
                    };
 
   /*!
   Locates the point in the triangulation, and returns information on this location.
 
-  If the point is outside the affine hull, or if the point is (according to the traits) not
-  on the sphere or too close to an existing vertex, then the returned `Face_handle` is `nullptr`.
+  If the point is (according to the traits) not on the sphere or is too close to an existing vertex,
+  or if the dimension is not 2, or if the point is outside the affine hull, then the returned
+  `Face_handle` is `nullptr`.
 
-  Otherwise, a face such that the orientation test of the three vertices of the face and `query`
-  is positive is returned.
+  Otherwise, a face intersected by the ray spawned from the center of the sphere
+  and passing through the point is returned.
 
   The optional `Face_handle` argument, if provided, is used as a hint
   of where the locate process should start its search.
@@ -429,7 +484,7 @@ public:
   /// @{
 
   /*!
-  tests the validity of the triangulation as a `Triangulation_on_sphere_2`
+  Tests the validity of the triangulation as a `Triangulation_on_sphere_2`
   This method is mainly useful for debugging Delaunay triangulation algorithms designed by the user.
   */
   bool is_valid(bool verbose = false, int level = 0) const;

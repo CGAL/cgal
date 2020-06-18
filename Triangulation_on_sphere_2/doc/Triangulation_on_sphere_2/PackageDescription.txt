@@ -15,15 +15,15 @@
 /*!
 \addtogroup PkgTriangulationOnSphere2Ref
 
-\cgalPkgDescriptionBegin{2D Triangulations on sphere,PkgTriangulationOnSphere2}
+\cgalPkgDescriptionBegin{2D Triangulations on Sphere,PkgTriangulationOnSphere2}
 \cgalPkgPicture{triangulation_on_sphere.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
-\cgalPkgDesc{This package allows to build and handle triangulations on the 2-sphere.}
+\cgalPkgDesc{This package enables the construction and manipulation of triangulations on the 2-sphere.}
 \cgalPkgManuals{Chapter_2D_Triangulations_on_sphere,PkgTriangulationOnSphere2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.1}
+\cgalPkgSince{5.2}
 \cgalPkgDependsOn{\ref PkgTDS2}
 \cgalPkgBib{cgal:rtw-tos2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
@@ -35,9 +35,9 @@ A triangulation is a 2-dimensional simplicial complex which is pure,
 connected, and without singularities. It can be viewed as a collection of triangular faces,
 such that two faces either have an empty intersection or share an edge or a vertex.
 
-This package handles triangulations of points on the (2-)sphere, and is thus tightly linked
+This package handles triangulations of points on the 2-sphere, and is thus tightly linked
 to the package \ref PkgTriangulation2, which handles triangulations of points in Euclidean 2D space,
-as both domains are 2-manifolds. Concepts and classes are therefore similar
+since both domains are 2-manifolds. Concepts and classes are therefore similar
 to those of the package \ref PkgTriangulation2.
 
 The basic elements of the representation are vertices and faces.
@@ -66,18 +66,19 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `TriangulationOnSphereFaceBase_2`
 - `TriangulationOnSphereVertexBase_2`
 
-\cgalCRPSection{Classes}
-- `CGAL::Triangulation_on_sphere_2<Traits, TDS>`
-- `CGAL::Delaunay_triangulation_on_sphere_2<Traits, TDS>`
-- `CGAL::Geographical_coordinates_traits_2<K>`
+\cgalCRPSection{Traits Classes}
 - `CGAL::Geographical_coordinates<K>`
-- `CGAL::Delaunay_triangulation_sphere_traits_2<K>`
-- `CGAL::Projection_sphere_traits_3<K>`
+- `CGAL::Geographical_coordinates_traits_2<K, SK>`
+- `CGAL::Delaunay_triangulation_sphere_traits_2<K, SK>`
+- `CGAL::Projection_sphere_traits_3<K, SK>`
+
+\cgalCRPSection{Triangulation Classes}
 - `CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>`
 - `CGAL::Triangulation_on_sphere_vertex_base_2<Traits, Vb>`
+- `CGAL::Triangulation_on_sphere_2<Traits, TDS>`
+- `CGAL::Delaunay_triangulation_on_sphere_2<Traits, TDS>`
 
 \cgalCRPSection{Enum}
 - \link CGAL::Triangulation_on_sphere_2::Locate_type `CGAL::Triangulation_on_sphere_2<Traits,TDS>::Locate_type` \endlink
-
 
 */

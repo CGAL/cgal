@@ -2,6 +2,8 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
+\cgalRefines SpatialSortingTraits_2
+
 The concept `TriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
 parameter of the class `CGAL::Triangulation_on_sphere_2<Traits, Tds>`.
@@ -11,10 +13,11 @@ triangulation and some function object types for the required predicates on thos
 In particular, the traits class is expected to contain information about the sphere (center and radius)
 on which the points of the triangulation lie, as well as to provide means to change this information.
 
-\cgalHasModel `CGAL::Delaunay_triangulation_sphere_traits_2<K>`
-\cgalHasModel `CGAL::Geographical_coordinates_traits_2<K>`
-\cgalHasModel `CGAL::Projection_sphere_traits_3<K>`
+\cgalHasModel `CGAL::Delaunay_triangulation_sphere_traits_2`
+\cgalHasModel `CGAL::Projection_sphere_traits_3`
+\cgalHasModel `CGAL::Geographical_coordinates_traits_2`
 
+\sa `DelaunayTriangulationOnSphereTraits_2`
 */
 class TriangulationOnSphereTraits_2
 {
@@ -33,12 +36,30 @@ public:
   typedef unspecified_type Point_on_sphere_2;
 
   /*!
+  An arc of a great circle, used to represent a curved segment (Voronoi or Delaunay edge).
+  */
+  typedef unspecified_type Arc_on_sphere_2;
+
+  /*!
   The 3D point type.
   */
   typedef unspecified_type Point_3;
 
+  /*!
+  The 3D segment type.
+  */
+  typedef unspecified_type Segment_3;
+
+  /*!
+  The 3D triangle type.
+  */
+  typedef unspecified_type Triangle_3;
+
+  /// @}
+
 public:
-  // Predicates and constructions
+  /// \name Predicates
+  /// @{
 
   /// Predicate object type. Must provide the operator:
   ///
@@ -51,37 +72,70 @@ public:
   ///
   /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
   ///
-  /// which returns `true` if and only if `p` and `q` are equal.
+  /// which returns `true` if, and only if, `p` and `q` are equal.
   typedef unspecified_type Equal_on_sphere_2;
 
   /// Predicate object type. Must provide the operator:
-  ///
-  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
-  ///
-  /// which returns `true` if `r` strictly lies inside the cone defined by the center of the sphere,
-  /// `p` and `q`.
-  typedef unspecified_type Inside_cone_2;
-
-  /// Predicate object type. Must provide the operator:
-  ///
-  /// `Orientation operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r, Point_on_sphere_2 s)`
-  ///
-  /// which returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented plane `h`
-  /// defined by `p`, `q`, and `r`; returns `CGAL::NEGATIVE` if `s` lies on the negative side of `h`;
-  /// and returns `CGAL::COPLANAR` if `s` lies on `h`.
-  typedef unspecified_type Orientation_3;
-
-  /// Predicate object type. Must provide the operators:
   ///
   /// `Orientation operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
   /// which returns `CGAL::POSITIVE`, if `r` lies on the positive side of the oriented plane `h`
   /// defined by the center of the sphere, `p`, and `q`; returns `CGAL::NEGATIVE` if `r`
   /// lies on the negative side of `h`; and returns `CGAL::COPLANAR` if `r` lies on `h`.
-  ///
-  /// \note This is distinguished from `Orientation_3` because the center of the sphere has type
-  /// `Point_3`, which might not be equivalent or convertible to `Point_on_sphere_2`.
   typedef unspecified_type Orientation_on_sphere_2;
+
+  /// Predicate object type. Must provide the operator:
+  ///
+  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r, Point_on_sphere_2 s)`
+  ///
+  /// which returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented plane `h`
+  /// defined by `p`, `q`, and `r`; returns `CGAL::NEGATIVE` if `s` lies on the negative side of `h`;
+  /// and returns `CGAL::COPLANAR` if `s` lies on `h`.
+  typedef unspecified_type Side_of_oriented_circle_2;
+
+  /// Predicate object type. Must provide the operator:
+  ///
+  /// `bool operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
+  ///
+  /// which returns `true` if `r` strictly lies between `p` and `q` on the great circle passing
+  /// through `p` and `q`.
+  typedef unspecified_type Collinear_are_strictly_ordered_on_great_circle_2;
+
+  /// @}
+
+  /// \name Constructions
+  ///
+  /// @{
+
+  /// Construction object. Must provide the operator:
+  ///
+  /// `Arc_on_sphere_2 operator()(Point_on_sphere_2 p, Point_on_sphere_2 q)`
+  ///
+  /// which introduces an arc of great circle, with source `p` and target `q`.
+  typedef unspecified_type Construct_arc_on_sphere_2;
+
+  /// Construction object. Must provide the operator:
+  ///
+  /// `Point_3 operator()(Point_on_sphere_2 p)`,
+  ///
+  /// which expresses a point on the sphere in the embedding 3D space.
+  typedef unspecified_type Construct_point_3;
+
+  /// Construction object. Must provide the operator:
+  ///
+  /// `Segment_3 operator()(Point_3 p, Point_3 q)`,
+  ///
+  /// which constructs a segment from two 3D points.
+  typedef unspecified_type Construct_segment_3;
+
+  /// Construction object. Must provide the operator:
+  ///
+  /// `Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r)`,
+  ///
+  /// which constructs a triangle from three 3D points.
+  typedef unspecified_type Construct_triangle_3;
+
+  /// @}
 
 public:
   /// \name Operations
@@ -90,6 +144,8 @@ public:
   ///
   /// @{
 
+  // Predicates
+
   ///
   Compare_on_sphere_2 compare_on_sphere_2_object();
 
@@ -97,13 +153,27 @@ public:
   Equal_on_sphere_2 equal_on_sphere_2_object();
 
   ///
-  Inside_cone_2 inside_cone_2_object();
-
-  ///
-  Orientation_3 orientation_3_object();
-
-  ///
   Orientation_on_sphere_2 orientation_on_sphere_2_object();
+
+  ///
+  Side_of_oriented_circle_2 side_of_oriented_circle_2_object();
+
+  ///
+  Collinear_are_strictly_ordered_on_great_circle_2 collinear_are_strictly_ordered_on_great_circle_2_object();
+
+  // Constructions
+
+  ///
+  Construct_arc_on_sphere_2 construct_arc_on_sphere_2_object();
+
+  ///
+  Construct_point_3 construct_point_3_object();
+
+  ///
+  Construct_segment_3 construct_segment_3_object();
+
+  ///
+  Construct_triangle_3 construct_triangle_3_object();
 
   /// @}
 
@@ -143,8 +213,8 @@ public:
   /// a model-defined \f$ \delta \f$ the distance to the sphere is smaller than \f$ \delta \f$,
   /// and if the distance between two points is greater than \f$ 2 \sqrt{R\delta} \f$.
   /// It is also of course possible to construct traits classes with arbitrary precision or
-  /// with a representation that ensures that points are exactly on the sphere (see for
-  /// example `CGAL::Geographical_coordinates_traits_2`) and in this case,
+  /// with a representation that ensures that points are exactly on the sphere (such
+  /// as `CGAL::Geographical_coordinates_traits_2`) and in this case,
   /// \f$ \delta = 0 \f$ can be chosen and the predicates below are trivial.
   ///
   /// \sa `CGAL::Delaunay_triangulation_sphere_traits_2`

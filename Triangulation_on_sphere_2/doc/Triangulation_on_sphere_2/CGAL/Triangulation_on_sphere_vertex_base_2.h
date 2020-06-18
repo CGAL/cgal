@@ -3,6 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationOnSphere2VertexFaceClasses
 
+\cgalModels `TriangulationOnSphereVertexBase_2`
+
 The class `Triangulation_on_sphere_vertex_base_2` is the default model
 for the concept `TriangulationOnSphereVertexBase_2`.
 
@@ -18,8 +20,6 @@ the triangulation.
 
 \tparam Vb must be a model of the concept `TriangulationDSVertexBase_2`
 By default this parameter is instantiated by `Triangulation_ds_vertex_base_2<>`.
-
-\cgalModels `TriangulationOnSphereVertexBase_2`
 
 \sa `CGAL::Triangulation_ds_vertex_base_2<Tds>`
 \sa `CGAL::Triangulation_on_sphere_face_base_2<Traits,Fb>`
