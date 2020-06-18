@@ -34,6 +34,7 @@
 namespace CGAL {
 namespace internal{
 namespace IO{
+
 template<typename PolygonMesh,
          typename K,
          typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >

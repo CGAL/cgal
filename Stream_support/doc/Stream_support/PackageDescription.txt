@@ -61,12 +61,12 @@ the printing mode.
 - `CGAL::oformat()`
 
 \cgalCRPSection{File I/O Functions}
-- \link StlIoFuncs I/O on STL files (`CGAL::write_STL()`and `CGAL::read_STL()`)\endlink
-- \link PlyIoFuncs I/O on PLY files (`CGAL::write_PLY()`and `CGAL::read_PLY()`)\endlink
-- \link ObjIoFuncs I/O on OBJ files (`CGAL::write_OBJ()`and `CGAL::read_OBJ()`)\endlink
-- \link OffIoFuncs I/O on OFF files (`CGAL::write_OFF()`and `CGAL::read_OFF()`)\endlink
-- \link GocadIoFuncs I/O on GOCAD files (`CGAL::write_GOCAD()`and `CGAL::read_GOCAD()`)\endlink
-- \link VtpIoFuncs I/O on VTP files (`CGAL::write_VTP()`and `CGAL::read_VTP()`)\endlink
+- \link StlIoFuncs I/O for STL files (`CGAL::write_STL()`and `CGAL::read_STL()`)\endlink
+- \link PlyIoFuncs I/O for PLY files (`CGAL::write_PLY()`and `CGAL::read_PLY()`)\endlink
+- \link ObjIoFuncs I/O for OBJ files (`CGAL::write_OBJ()`and `CGAL::read_OBJ()`)\endlink
+- \link OffIoFuncs I/O for OFF files (`CGAL::write_OFF()`and `CGAL::read_OFF()`)\endlink
+- \link GocadIoFuncs I/O for GOCAD files (`CGAL::write_GOCAD()`and `CGAL::read_GOCAD()`)\endlink
+- \link VtpIoFuncs I/O for VTP files (`CGAL::write_VTP()`and `CGAL::read_VTP()`)\endlink
 - `GCAL::read_polygon_soup()`
 - `GCAL::write_polygon_soup()`
 - `GCAL::read_WKT()`
