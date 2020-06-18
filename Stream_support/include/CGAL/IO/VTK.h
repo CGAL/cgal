@@ -370,14 +370,14 @@ void write_soup_polys_points(std::ostream& os,
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  *
  * \param os the output stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
- * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
  *    data should be written in binary (`true`, the default) or in ASCII (`false`).
@@ -458,14 +458,14 @@ bool write_VTP(std::ostream& os,
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  *
  * \param os the output stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
- * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
  *    data should be written in binary (`true`, the default) or in ASCII (`false`).

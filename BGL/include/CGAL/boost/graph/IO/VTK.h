@@ -384,11 +384,11 @@ void write_polys_points(std::ostream& os,
  * \brief writes a triangulated surface mesh in the `PolyData` XML format.
  *
  * \tparam Graph a model of `FaceListGraph`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
  * \param g the triangle mesh to be output
- * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
@@ -471,11 +471,11 @@ bool write_VTP(std::ostream& os,
  * \brief writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
  *
  * \tparam Graph a model of `FaceListGraph`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the name of the output file
  * \param g the triangle mesh to be output
- * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the
  * ones listed below
  *
  * \cgalNamedParamsBegin

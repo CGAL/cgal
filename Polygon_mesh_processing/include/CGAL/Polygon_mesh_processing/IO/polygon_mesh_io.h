@@ -41,7 +41,7 @@ namespace IO {
  * into a `FaceGraph`.
  * \param fname the name of the input file.
  * \param g the FaceGraph.
- * \param np sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * \param np sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
