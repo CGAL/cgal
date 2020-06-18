@@ -94,8 +94,8 @@ bool read_PLY_BGL(std::istream& is,
     \cgalParamBegin{vertex_index_map}
       is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
     \cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+    `face_color_map` the property map with the colors associated to the faces of `g`.
+    `vertex_color_map` the property map with the colors associated to the vertices of `g`.
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -132,8 +132,8 @@ bool read_PLY(std::istream& is, FaceGraph& g, const CGAL_BGL_NP_CLASS& np, bool 
     \cgalParamBegin{vertex_index_map}
       is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
     \cgalParamEnd
-    \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-    \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+  `face_color_map` the property map with the colors associated to the faces of `g`.
+  `vertex_color_map` the property map with the colors associated to the vertices of `g`.
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -203,8 +203,8 @@ bool read_PLY(const std::string& fname, FaceGraph& g)
    \cgalParamBegin{vertex_index_map}
      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
    \cgalParamEnd
-   \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-   \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+   `face_color_map` the property map with the colors associated to the faces of `g`.
+   `vertex_color_map` the property map with the colors associated to the vertices of `g`.
  \cgalNamedParamsEnd
 
  \returns `true` if writing was successful.
@@ -376,8 +376,8 @@ bool write_PLY(std::ostream& os,
    \cgalParamBegin{vertex_index_map}
      is a property map containing for each vertex of `g` a unique index between `0` and `num_vertices(g)-1`.
    \cgalParamEnd
-   \cgalParamBegin{face_color_map} the property map with the colors associated to the faces of `g`.\cgalParamEnd
-   \cgalParamBegin{vertex_color_map} the property map with the colors associated to the vertices of `g`.\cgalParamEnd
+   `face_color_map` the property map with the colors associated to the faces of `g`.
+   `vertex_color_map` the property map with the colors associated to the vertices of `g`.
  \cgalNamedParamsEnd
 
  \returns `true` if writing was successful.

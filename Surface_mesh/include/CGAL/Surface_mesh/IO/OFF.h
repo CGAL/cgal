@@ -114,6 +114,165 @@ public:
     DefaultMap_const
     > ::type  const_type;
 };
+
+
+template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF_with_or_without_fcolors(std::istream& is,
+                                      Surface_mesh<Point>& sm,
+                                      const CGAL::File_scanner_OFF& scanner,
+                                      const CGAL_BGL_NP_CLASS& np)
+{
+  typedef Surface_mesh<Point>                                            Mesh;
+  typedef typename Mesh::Face_index                                      Face_index;
+  typedef CGAL::Color                                                    Color;
+
+  typedef typename
+  CGAL::internal::IO::GetFaceColorMap<Mesh, CGAL_BGL_NP_CLASS>::type        FCM;
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+  bool created;
+  typename Mesh::template Property_map<Face_index, Color> fcm;
+  bool is_fcm_requested =
+      !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+
+  if(!is_fcm_requested && scanner.has_colors())
+  {
+    std::tie(fcm, created) =
+        sm.template add_property_map<Face_index, Color>("f:color", Color(0,0,0));
+    CGAL_assertion(created);
+    is_fcm_requested = true;
+  }
+
+  if(is_fcm_requested)
+  {
+    FCM fcolors = choose_parameter(get_parameter(np, internal_np::face_color_map),
+                                   fcm);
+    return CGAL::IO::internal::read_OFF_BGL(is, sm, np.face_color_map(fcolors));
+  }
+  else
+    return CGAL::IO::internal::read_OFF_BGL(is, sm, np);
+}
+
+template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF_with_or_without_vtextures(std::istream& is,
+                                        Surface_mesh<Point>& sm,
+                                        const CGAL::File_scanner_OFF& scanner,
+                                        const CGAL_BGL_NP_CLASS& np)
+{
+  typedef Surface_mesh<Point>                                            Mesh;
+  typedef typename Mesh::Vertex_index                                    Vertex_index;
+
+  typedef typename GetK<Surface_mesh<Point>, CGAL_BGL_NP_CLASS>::Kernel  K;
+  typedef typename K::Point_2                                            Texture;
+  typedef typename
+  CGAL::internal::IO::GetVertexTextureMap<Mesh, K, CGAL_BGL_NP_CLASS>::type VTM;
+
+  typename Mesh::template Property_map<Vertex_index, Texture> vtextures;
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+
+  bool created;
+  typename Mesh::template Property_map<Vertex_index, Texture> vtm;
+
+  bool is_vtm_requested =
+      !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
+
+
+  if(!is_vtm_requested && scanner.has_textures())
+  {
+    std::tie(vtm, created) =
+        sm.template add_property_map<Vertex_index, Texture>("v:texcoord");
+    CGAL_assertion(created);
+    is_vtm_requested = true;
+  }
+  if(is_vtm_requested)
+  {
+    VTM vtextures = choose_parameter(get_parameter(np, internal_np::vertex_texture_map),
+                                     vtm);
+    return read_OFF_with_or_without_fcolors(is, sm, scanner, np.vertex_texture_map(vtextures));
+  }
+  else
+    return read_OFF_with_or_without_fcolors(is, sm, scanner, np);
+}
+
+template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF_with_or_without_vcolors(std::istream& is,
+                                      Surface_mesh<Point>& sm,
+                                      const CGAL::File_scanner_OFF& scanner,
+                                      const CGAL_BGL_NP_CLASS& np)
+{
+  typedef Surface_mesh<Point>                                            Mesh;
+  typedef typename Mesh::Vertex_index                                    Vertex_index;
+  typedef CGAL::Color                                                    Color;
+
+  typename Mesh::template Property_map<Vertex_index, Color> vcolors;
+  typedef typename
+  CGAL::internal::IO::GetVertexColorMap<Mesh, CGAL_BGL_NP_CLASS>::type      VCM;
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+
+  bool created;
+  bool is_vcm_requested =
+      !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
+  typename Mesh::template Property_map<Vertex_index, Color> vcm;
+  if(!is_vcm_requested && scanner.has_colors())
+  {
+    std::tie(vcm, created) =
+        sm.template add_property_map<Vertex_index, Color>("v:color", Color(0,0,0));
+    CGAL_assertion(created);
+    is_vcm_requested = true;
+  }
+  if(is_vcm_requested)
+  {
+    VCM vcolors = choose_parameter(get_parameter(np, internal_np::vertex_color_map),
+                                   vcm);
+    return read_OFF_with_or_without_vtextures(is, sm, scanner, np.vertex_color_map(vcolors));
+  }
+  else
+    return read_OFF_with_or_without_vtextures(is, sm, scanner, np);
+}
+
+template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF_with_or_without_vnormals(std::istream& is,
+                                       Surface_mesh<Point>& sm,
+                                       const CGAL::File_scanner_OFF& scanner,
+                                       const CGAL_BGL_NP_CLASS& np)
+{
+  typedef Surface_mesh<Point>                                            Mesh;
+  typedef typename Mesh::Vertex_index                                    Vertex_index;
+
+  typedef typename GetK<Surface_mesh<Point>, CGAL_BGL_NP_CLASS>::Kernel  K;
+  typedef typename K::Vector_3                                           Normal;
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+  typedef typename
+  CGAL::internal::IO::GetVertexNormalMap<Mesh, K, CGAL_BGL_NP_CLASS>::type  VNM;
+
+  bool is_vnm_requested =
+      !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
+  bool created;
+  typename Mesh::template Property_map<Vertex_index, Normal> vnm;
+
+  if(!is_vnm_requested && scanner.has_normals())
+  {
+    std::tie(vnm, created) =
+        sm.template add_property_map<Vertex_index, Normal>("v:normal");
+    CGAL_assertion(created);
+    is_vnm_requested = true;
+  }
+  if(is_vnm_requested){
+    VNM vnormals = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
+                                    vnm);
+    return read_OFF_with_or_without_vcolors(is, sm, scanner, np.vertex_normal_map(vnormals));
+  }
+  else
+    return read_OFF_with_or_without_vcolors(is, sm, scanner, np);
+}
+
 }//end IO
 }// end internal
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,72 +314,13 @@ bool read_OFF(std::istream& is,
 
 
   typedef typename CGAL::GetVertexPointMap<Mesh, CGAL_BGL_NP_CLASS>::type   VPM;
-  typedef typename
-  CGAL::internal::IO::GetVertexNormalMap<Mesh, K, CGAL_BGL_NP_CLASS>::type  VNM;
-typedef typename
-  CGAL::internal::IO::GetVertexColorMap<Mesh, CGAL_BGL_NP_CLASS>::type      VCM;
-  typedef typename
-  CGAL::internal::IO::GetVertexTextureMap<Mesh, K, CGAL_BGL_NP_CLASS>::type VTM;
-  typedef typename
-  CGAL::internal::IO::GetFaceColorMap<Mesh, CGAL_BGL_NP_CLASS>::type        FCM;
-
-  const bool is_vnm_requested =
-      !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
-  const bool is_vcm_requested =
-      !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
-  const bool is_vtm_requested =
-      !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
-  const bool is_fcm_requested =
-      !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
-
-  bool created;
-  typename Mesh::template Property_map<Vertex_index, Normal> vnm;
-  typename Mesh::template Property_map<Vertex_index, Color> vcm;
-  typename Mesh::template Property_map<Vertex_index, Texture> vtm;
-  typename Mesh::template Property_map<Face_index, Color> fcm;
-
-  if(!is_vnm_requested)
-  {
-    std::tie(vnm, created) =
-        sm.template add_property_map<Vertex_index, Normal>("v:normal");
-    CGAL_assertion(created);
-  }
-  if(!is_vcm_requested)
-  {
-    std::tie(vcm, created) =
-        sm.template add_property_map<Vertex_index, Color>("v:color", Color(0,0,0));
-    CGAL_assertion(created);
-  }
-  if(!is_vtm_requested)
-  {
-    std::tie(vtm, created) =
-        sm.template add_property_map<Vertex_index, Texture>("v:texcoord");
-    CGAL_assertion(created);
-  }
-  if(!is_fcm_requested)
-  {
-    std::tie(fcm, created) =
-        sm.template add_property_map<Face_index, Color>("f:color", Color(0,0,0));
-    CGAL_assertion(created);
-  }
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(CGAL::vertex_point, sm));
-  VNM vnormals = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
-                                  vnm);
-  VCM vcolors = choose_parameter(get_parameter(np, internal_np::vertex_color_map),
-                                 vcm);
-  VTM vtextures = choose_parameter(get_parameter(np, internal_np::vertex_texture_map),
-                                   vtm);
-  FCM fcolors = choose_parameter(get_parameter(np, internal_np::face_color_map),
-                                 fcm);
-
-  bool res =  IO::internal::read_OFF_BGL(is, sm, CGAL::parameters::vertex_point_map(vpm)
-                                         .vertex_normal_map(vnormals)
-                                         .vertex_color_map(vcolors)
-                                         .vertex_texture_map(vtextures)
-                                         .face_color_map(fcolors),
-                                         verbose);
+  std::streampos pos = is.tellg();
+  CGAL::File_scanner_OFF scanner(is, false);
+  is.seekg(pos);
+  bool res =  internal::IO::read_OFF_with_or_without_vnormals(is, sm, scanner, np);
   if(!res)
     sm.clear();
   return res;

@@ -21,6 +21,26 @@ namespace CGAL {
 
 /*!
   \ingroup PkgPointSet3IO
+  \brief Reads the point set from an input file that can be either:
+
+  - XYZ
+  - OFF
+  - PLY
+  - LAS
+
+  The format is detected from the extension. If the file contains
+  normal vectors, the normal map is added to the point set. For PLY
+  input, all point properties found in the header are added.
+  \relates Point_set_3
+
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the input file
+  \param ps the point set.
+
+  \return `true` if the reading was successful, `false` otherwise.
  */
 template <typename Point,
           typename Vector>
@@ -59,8 +79,27 @@ bool read_point_set(const char* fname,
 }
 
 /*!
+
   \ingroup PkgPointSet3IO
- */
+
+  \brief Inserts the point set in an output filethat can be either:
+
+  - XYZ
+  - OFF
+  - PLY
+  - LAS
+
+  The format is detected from the extension.
+  \relates Point_set_3
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the output file
+  \param ps the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
+*/
 template <typename Point,
           typename Vector>
 bool write_point_set(const std::string& fname,

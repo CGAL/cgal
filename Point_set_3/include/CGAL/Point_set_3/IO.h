@@ -213,12 +213,21 @@ public:
 
 /*!
   \ingroup PkgPointSet3IO
+  reads the content of an intput stream in the XYZ format into a point set.
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the input stream
+  \param point_set the point set.
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamXYZ
  */
 template <typename Point, typename Vector>
 bool
 read_XYZ(
-    std::istream& stream, ///< input stream.
-    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream,
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   point_set.add_normal_map();
 
@@ -243,6 +252,19 @@ read_XYZ(
   return out;
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+  reads the content of an  input XYZ file in a point set.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the input file.
+  \param point_set the point set.
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamXYZ
+*/
 template <typename Point, typename Vector>
 bool
 read_XYZ(
@@ -264,12 +286,21 @@ read_XYZ(
 
 /*!
   \ingroup PkgPointSet3IO
+  reads the content of an intput stream in the OFF format into a point set.
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the input stream
+  \param point_set the point set.
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamOFF
  */
 template <typename Point, typename Vector>
 bool
 read_OFF(
-    std::istream& stream, ///< input stream.
-    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream,
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   point_set.add_normal_map();
 
@@ -294,6 +325,19 @@ read_OFF(
   return out;
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+  reads the content of an  input OFF file in a point set.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the input file.
+  \param point_set the point set.
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamOFF
+*/
 template <typename Point, typename Vector>
 bool
 read_OFF(
@@ -360,13 +404,23 @@ read_PLY(
   used to store the potential comments found in the PLY
   header. Each line starting by "comment " in the header is
   appended to the `comments` string (without the "comment " word).
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the input stream
+  \param point_set the point set.
+  \param comments optional PLY comments.
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamPLY
  */
 template <typename Point, typename Vector>
 bool
 read_PLY(
-    std::istream& stream, ///< input stream.
-    CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
-    std::string& comments) ///< PLY comments.
+    std::istream& stream,
+    CGAL::Point_set_3<Point, Vector>& point_set,
+    std::string& comments)
 {
   if(!stream)
   {
@@ -427,13 +481,23 @@ read_PLY(
   If provided, the `comments` string is included line by line in
   the header of the PLY stream (each line will be precedeed by
   "comment ").
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the path to the input file.
+  \param point_set the point set.
+  \param comments optional PLY comments
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamPLY
  */
 template <typename Point, typename Vector>
 bool
 write_PLY(
-    std::ostream& stream, ///< output stream.
-    const CGAL::Point_set_3<Point, Vector>& point_set,  ///< point set.
-    const std::string& comments = std::string()) ///< PLY comments.
+    std::ostream& stream,
+    const CGAL::Point_set_3<Point, Vector>& point_set,
+    const std::string& comments = std::string())
 {
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::Index Index;
@@ -670,12 +734,20 @@ void check_if_property_is_used (PointSet& point_set,
 
 /*!
   \ingroup PkgPointSet3IO
+  reads the content of an intput stream in the LAS format into a point set.
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the input stream
+  \param point_set the point set.
+
+  \return `true` if the reading was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
 bool
 read_LAS(
-    std::istream& stream, ///< input stream.
-    CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+    std::istream& stream,
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   if(!stream)
   {
@@ -773,14 +845,24 @@ read_LAS(
   return read_LAS(fname.c_str(), point_set);
 }
 
+
 /*!
   \ingroup PkgPointSet3IO
+  writes the content of a point set into an output stream in the LAS format.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the output stream
+  \param point_set the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
 bool
 write_LAS(
-    std::ostream& stream, ///< output stream.
-    CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream,
+    CGAL::Point_set_3<Point, Vector>& point_set)
 {
   if(!stream)
   {
@@ -948,6 +1030,18 @@ write_LAS(
   return okay;
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+  writes the content of a point set into an output file in the XYZ format.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the output file
+  \param point_set the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
+ */
 template <typename Point, typename Vector>
 bool
 write_LAS(
@@ -971,12 +1065,22 @@ write_LAS(
 
 /*!
   \ingroup PkgPointSet3IO
+  writes the content of a point set into an output stream in the XYZ format.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the output stream
+  \param point_set the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
+  \see \ref IOStreamXYZ
  */
 template <typename Point, typename Vector>
 bool
 write_XYZ(
-    std::ostream& stream, ///< output stream.
-    const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   if (point_set.has_normal_map())
     return CGAL::write_XYZ
@@ -989,6 +1093,19 @@ write_XYZ(
        CGAL::parameters::point_map(point_set.point_map()));
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+  writes the content of a point set into an output file in the XYZ format.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the output file
+  \param point_set the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
+  \see \ref IOStreamXYZ
+ */
 template <typename Point, typename Vector>
 bool
 write_XYZ(
@@ -1007,14 +1124,25 @@ write_XYZ(
 {
   return write_XYZ(fname.c_str(), point_set);
 }
+
 /*!
   \ingroup PkgPointSet3IO
+  writes the content of a point set into an output stream in the OFF format.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param stream the output stream
+  \param point_set the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
+  \see \ref IOStreamOFF
  */
 template <typename Point, typename Vector>
 bool
 write_OFF(
-    std::ostream& stream, ///< output stream.
-    const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
+    std::ostream& stream,
+    const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   if (point_set.has_normal_map())
     return CGAL::write_OFF
@@ -1027,6 +1155,19 @@ write_OFF(
        CGAL::parameters::point_map(point_set.point_map()));
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+  writes the content of a point set into an output file in the OFF format.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the output file
+  \param point_set the point set.
+
+  \return `true` if the writing was successful, `false` otherwise.
+  \see \ref IOStreamOFF
+ */
 template <typename Point, typename Vector>
 bool
 write_OFF(
@@ -1061,6 +1202,15 @@ write_OFF(
   normal vectors, the normal map is added to the point set. For PLY
   input, all point properties found in the header are added.
   \relates Point_set_3
+
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param is the input stream
+  \param ps the point set.
+
+  \return `is`
 */
 template <typename Point, typename Vector>
 std::istream& operator>>(std::istream& is,
@@ -1094,6 +1244,14 @@ std::istream& operator>>(std::istream& is,
   format. All properties are inserted in their instantiation order.
 
   \relates Point_set_3
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param os the output stream
+  \param ps the point set.
+
+  \return `os`
 */
 template <typename Point, typename Vector>
 std::ostream& operator<<(std::ostream& os,

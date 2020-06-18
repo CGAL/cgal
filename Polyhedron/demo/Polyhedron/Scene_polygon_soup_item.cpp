@@ -700,8 +700,8 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 }
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
-template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<std::array<double, 3>, std::array<int, 3> >
-(const std::vector<std::array<double, 3> >& points, const std::vector<std::array<int, 3> >& polygons);
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
+(const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >

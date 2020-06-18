@@ -205,7 +205,8 @@ namespace CGAL {
         import_from_halfedge_graph(heg, default_point_converter,
                                    origin_to_copy, copy_to_origin);
       }
-      using Base::clear;
+
+      void clear() { Base::clear(); } //need explicit definition for Has_member_clear in bgl helpers
     };
 
 } // namespace CGAL
