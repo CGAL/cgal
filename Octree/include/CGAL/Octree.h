@@ -67,6 +67,11 @@ namespace CGAL {
     typedef typename PointRange::const_iterator InputIterator;
     typedef typename std::list<InputIterator> IterList;
 
+    // New Types :
+    typedef typename PointRange::iterator Range_iterator;
+    typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+    // TODO: Kernel can be deduced from the point map
+
   private: // data members :
     Node m_root;                      /* root node of the octree */
     uint8_t m_max_depth_reached = 0;  /* octree actual highest depth reached */
@@ -122,6 +127,10 @@ namespace CGAL {
       m_bbox_side = bbox.max()[0] - m_bbox_min[0];
       for (InputIterator it = pwn.begin(); it != pwn.end(); it++)
         m_root.add_point(it);
+
+      // New
+      m_root._m_points_begin = pwn.begin();
+      m_root._m_points_end = pwn.end();
     }
 
     ~Octree() {
@@ -146,6 +155,10 @@ namespace CGAL {
         m_unit_per_depth.push_back(1 << (m_max_depth_reached - i));
     }
 
+    void refine() {
+
+    }
+
     Node &root() { return m_root; }
 
     const Node &root() const { return m_root; }
@@ -163,6 +176,73 @@ namespace CGAL {
       // If all else is equal, recursively compare the trees themselves
       return rhs.m_root == m_root;
     }
+
+
+    std::array<Range_iterator, 9> partition_around_point(Range_iterator begin, Range_iterator end, Point point) {
+
+      auto partitions = std::array<Range_iterator, 9>();
+
+      partitions[0] = begin;
+      partitions[8] = end;
+
+      // Split on x
+      partitions[4] = std::partition(partitions[0], partitions[8],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[0] < point[0]);
+                                     });
+
+      // Split on y, to the left of x
+      partitions[2] = std::partition(partitions[0], partitions[4],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[1] < point[1]);
+                                     });
+
+      // Split on y, to the right of x
+      partitions[6] = std::partition(partitions[4], partitions[8],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[1] < point[1]);
+                                     });
+
+      // Split on z, to the left of y and the left of x
+      partitions[1] = std::partition(partitions[0], partitions[2],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[2] < point[2]);
+                                     });
+
+      // Split on z, to the right of y and the left of x
+      partitions[3] = std::partition(partitions[2], partitions[4],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[2] < point[2]);
+                                     });
+
+      // Split on z, to the left of y and the right of x
+      partitions[5] = std::partition(partitions[4], partitions[6],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[2] < point[2]);
+                                     });
+
+      // Split on z, to the right of y and the right of x
+      partitions[7] = std::partition(partitions[6], partitions[8],
+                                     [&](const Range_type &a) -> bool {
+                                       return (get(m_points_map, a)[2] < point[2]);
+                                     });
+
+      return partitions;
+    }
+
+    void distribute_points(Node &node, Point center) {
+
+      if (node.is_leaf()) return;
+
+      auto partitions = partition_around_point(node._m_points_begin, node._m_points_end, center);
+      for (int i = 0; i < 8; ++i) {
+        for (auto it = partitions[i]; it != partitions[i+1]; ++it)
+          std::cout << *it << ", ";
+
+        std::cout << std::endl;
+      }
+    }
+
 
   private: // functions :
 

@@ -63,6 +63,11 @@ namespace CGAL {
     typedef std::array<uint32_t, 3> IntPoint;
     typedef std::array<Node, 8> ChildList;
 
+    // New Types :
+    typedef typename PointRange::iterator Range_iterator;
+    typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+    // TODO: Kernel can be deduced from the point map
+
   private: // members :
 
     //Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
@@ -73,9 +78,15 @@ namespace CGAL {
     uint8_t m_depth;    /* current depth inside the octree */
     IterList m_points;   /* list of iterators of the input pwn contained in the node */
 
+    // New members :
+
   public: // functions :
+
+    // TODO: temporarily public
+    Range_iterator _m_points_begin, _m_points_end;
+
     Octree_node() :
-    //m_children(NULL),
+            m_children(),
             m_parent(NULL),
             m_location(IntPoint{0, 0, 0}),
             m_depth(0) {}
@@ -147,6 +158,7 @@ namespace CGAL {
     bool operator==(Node &rhs) {
 
       // Compare the points they contain
+      // TODO
 
       // If one node is a leaf, and the other isn't, they're not the same
       if (is_leaf() != rhs.is_leaf())
