@@ -312,19 +312,19 @@ namespace CGAL {
       // Split on x
       partitions[4] = std::partition(partitions[0], partitions[8],
                                      [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[0] < point[0] + 1e-6);
+                                       return (get(m_points_map, a)[0] < point[0]);
                                      });
 
       // Split on y, to the left of x
       partitions[2] = std::partition(partitions[0], partitions[4],
                                      [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[1] < point[1] + 1e-6);
+                                       return (get(m_points_map, a)[1] < point[1]);
                                      });
 
       // Split on y, to the right of x
       partitions[6] = std::partition(partitions[4], partitions[8],
                                      [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[1] < point[1] + 1e-6);
+                                       return (get(m_points_map, a)[1] < point[1]);
                                      });
 
       // Split on z, to the left of y and the left of x

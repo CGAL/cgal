@@ -20,8 +20,8 @@ void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &nod
   // Print out this node
   os << "(" << node.location()[0] << "," << node.location()[1] << "," << node.location()[2] << ")";
 
-  if (node.num_points() > 0)
-    os << " [" << node.num_points() << " points]";
+  if (node._num_points() > 0)
+    os << " [" << node._num_points() << " points]";
 
   os << std::endl;
 
