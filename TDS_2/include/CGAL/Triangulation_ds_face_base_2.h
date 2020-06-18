@@ -30,6 +30,7 @@ public:
   typedef TDS                          Triangulation_data_structure;
   typedef typename TDS::Vertex_handle  Vertex_handle;
   typedef typename TDS::Face_handle    Face_handle;
+  typedef typename TDS::Face_data       TDS_data;
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_face_base_2<TDS2> Other; }; 

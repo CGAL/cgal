@@ -50,6 +50,7 @@ These refining concepts and their models are described in Chapter
 
 \cgalClassifedRefPages
 \cgalCRPSection{Concepts}
+- `FaceData`
 - `TriangulationDataStructure_2`
 - `TriangulationDataStructure_2::Face`
 - `TriangulationDataStructure_2::Vertex`

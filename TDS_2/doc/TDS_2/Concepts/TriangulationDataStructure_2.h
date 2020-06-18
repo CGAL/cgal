@@ -99,6 +99,11 @@ The face type, requirements for this type are described in concept `Triangulatio
 typedef unspecified_type Face;
 
 /*!
+A model of the concept `FaceData`.
+*/
+typedef unspecified_type Face_data;
+
+/*!
 Handle to a vertex.
 \cgalModels `Handle`
 */ 
