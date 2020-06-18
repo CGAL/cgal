@@ -94,7 +94,6 @@ namespace CGAL {
         for (int i = 0; i < 8; i++)
           (*m_children)[i].unsplit();
 
-        //delete m_children;
         m_children.reset();
       }
     }
