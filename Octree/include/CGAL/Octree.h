@@ -137,7 +137,7 @@ namespace CGAL {
       m_root.unsplit();
     }
 
-    void _refine(size_t max_depth, size_t max_pts_num) {
+    void refine(size_t max_depth, size_t max_pts_num) {
 
       // Make sure arguments are valid
       if (max_depth < 0 || max_pts_num < 1) {
@@ -148,7 +148,7 @@ namespace CGAL {
       for (int i = 0; i <= (int) max_depth; i++)
         m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 
-      _refine_recurse(m_root, max_depth, max_pts_num);
+      refine_recurse(m_root, max_depth, max_pts_num);
 
       for (int i = 0; i <= (int) m_max_depth_reached; i++)
         m_unit_per_depth.push_back(1 << (m_max_depth_reached - i));
@@ -191,10 +191,10 @@ namespace CGAL {
       return {bary[0], bary[1], bary[2]};
     }
 
-    void _refine_recurse(Node &node, size_t dist_to_max_depth, size_t max_pts_num) {
+    void refine_recurse(Node &node, size_t dist_to_max_depth, size_t max_pts_num) {
 
       // Check if the depth limit is reached, or if the node isn't filled
-      if (dist_to_max_depth == 0 || node._num_points() <= max_pts_num) {
+      if (dist_to_max_depth == 0 || node.num_points() <= max_pts_num) {
 
         // If this node is the deepest in the tree, record its depth
         if (m_max_depth_reached < node.depth()) m_max_depth_reached = node.depth();
@@ -207,11 +207,11 @@ namespace CGAL {
       node.split();
 
       // Distribute this nodes points among its children
-      _reassign_points(node);
+      reassign_points(node);
 
       // Repeat this process for all children (recursive)
       for (int child_id = 0; child_id < 8; child_id++) {
-        _refine_recurse(node[child_id], dist_to_max_depth - 1, max_pts_num);
+        refine_recurse(node[child_id], dist_to_max_depth - 1, max_pts_num);
       }
     }
 
@@ -267,7 +267,7 @@ namespace CGAL {
       return partitions;
     }
 
-    void _reassign_points(Node &node) {
+    void reassign_points(Node &node) {
 
       Point center = compute_barycenter_position(node);
 
