@@ -23,7 +23,7 @@ struct State{
 class UVProjector:public QWidget
 {
 public:
-  UVProjector(QWidget* parent = 0, Qt::WindowFlags flags =0)
+  UVProjector(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowType(0))
     :QWidget(parent,flags)
   {
     setMouseTracking(true);
