@@ -15,25 +15,9 @@ if (NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: Debug Release" FORCE)
 endif()
 
-find_package(Qt5 COMPONENTS Gui Widgets)
-if (NOT Qt5_FOUND)
-  message(FATAL_ERROR "This demo requires Qt5, and will not be compiled.")
-endif()
-
-find_package(CGAL COMPONENTS Core Qt5)
+find_package(Qt5 REQUIRED COMPONENTS Gui Widgets)
+find_package(CGAL REQUIRED COMPONENTS Core Qt5)
 include(${CGAL_USE_FILE})
-
-if (NOT CGAL_FOUND)
-  message(FATAL_ERROR "This demo requires CGAL, and will not be compiled.")
-endif()
-
-if (NOT CGAL_Core_FOUND)
-  message(FATAL_ERROR "This demo requires CGAL_Core, and will not be compiled.")
-endif()
-
-if (NOT CGAL_Qt5_FOUND)
-  message(FATAL_ERROR "This demo requires CGAL_Qt5, and will not be compiled.")
-endif()
 
 add_definitions(-DQT_NO_KEYWORDS)
 
@@ -73,7 +57,7 @@ add_executable(arrangement_2
                EnvelopeCallback.cpp
                SplitEdgeCallback.cpp
                FillFaceCallback.cpp
-               GraphicsViewSegmentInput.cpp
+               MergeEdgeCallback.cpp
                Utils.cpp
                NewTabDialog.cpp
                OverlayDialog.cpp
@@ -90,13 +74,22 @@ add_executable(arrangement_2
                ArrangementPainterOstream.cpp
                GraphicsViewCurveInput.cpp
                AlgebraicCurveParser.cpp
+               GraphicsSceneMixin.cpp
                ${CGAL_Qt5_MOC_FILES}
                ${arrangement_2_uis}
                ${CGAL_Qt5_RESOURCE_FILES})
 
-qt5_use_modules(arrangement_2 Core Gui Widgets Script)
+qt5_use_modules(arrangement_2 Core Gui Widgets)
 target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
 
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
 cgal_add_compilation_test(arrangement_2)
+
+# compiler warnings
+if(MSVC)
+  target_compile_options(arrangement_2 PRIVATE /W4 /WX)
+else()
+  target_compile_options(arrangement_2 PRIVATE -Wall)
+endif()
+

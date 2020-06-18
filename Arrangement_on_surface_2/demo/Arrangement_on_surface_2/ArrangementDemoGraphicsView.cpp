@@ -28,17 +28,15 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   gridColor( ::Qt::black ),
   backgroundColor( ::Qt::white )
 {
-  QTransform m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
-  this->setTransform( m );
+  this->resetTransform();
   this->setBackgroundBrush( QBrush( backgroundColor ) );
   this->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
   this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-}
-
-void ArrangementDemoGraphicsView::wheelEvent(QWheelEvent* event)
-{
-  // std::cout<<"In ArrangementDemoGraphicsView wheelEvent\n";
-  // this->centerOn(this->mapToScene(event->pos()));
+  this->setMouseTracking( true );
+  this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  // TODO: Make options menu work
+  this->setRenderHint(QPainter::Antialiasing);
 }
 
 //! Member function to display the grid
@@ -68,10 +66,6 @@ void ArrangementDemoGraphicsView::setGridSize( int size )
   this->gridSize = size;
 }
 
-//! Member function to create the user screen
-/*!
-  \return The screen to be manipulated
-*/
 int ArrangementDemoGraphicsView::getGridSize( ) const
 {
   return this->gridSize;
@@ -120,7 +114,7 @@ QColor ArrangementDemoGraphicsView::getBackgroundColor( ) const
 void ArrangementDemoGraphicsView::drawForeground( QPainter* painter,
                                                   const QRectF& /* rect */)
 {
-  QRectF viewportRect = this->getViewportRect( );
+  QRectF viewportRect = this->viewportRect( );
   if ( this->showGrid )
   {
     // compute integer-spaced grid lines
@@ -154,21 +148,35 @@ void ArrangementDemoGraphicsView::drawForeground( QPainter* painter,
   }
 }
 
-//! Member function to create the user screen
-/*!
-  \return The screen to be manipulated
-*/
-QRectF ArrangementDemoGraphicsView::getViewportRect( ) const
+QRectF ArrangementDemoGraphicsView::viewportRect() const
 {
-  QPointF p1 = this->mapToScene( 0, 0 );
-  QPointF p2 = this->mapToScene( this->width( ), this->height( ) );
+  return ArrangementDemoGraphicsView::viewportRect(this);
+}
 
-  double xmin = (std::min)( p1.x( ), p2.x( ) );
-  double xmax = (std::max)( p1.x( ), p2.x( ) );
-  double ymin = (std::min)( p1.y( ), p2.y( ) );
-  double ymax = (std::max)( p1.y( ), p2.y( ) );
+void ArrangementDemoGraphicsView::resetTransform()
+{
+  this->setTransform({1.0, 0.0, 0.0, -1.0, 0.0, 0.0});
+}
 
-  QRectF res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
+QRectF
+ArrangementDemoGraphicsView::viewportRect(const QGraphicsView* view)
+{
+  QPointF p1 = view->mapToScene(0, 0);
+  QPointF p2 = view->mapToScene(view->width(), view->height());
+  // we also need those because view might rotate
+  // rotation of rectangle is a parallelogram
+  QPointF p3 = view->mapToScene(view->width(), 0);
+  QPointF p4 = view->mapToScene(0, view->height());
 
+  double xmin =
+    (std::min)((std::min)(p1.x(), p2.x()), (std::min)(p3.x(), p4.x()));
+  double xmax =
+    (std::max)((std::max)(p1.x(), p2.x()), (std::max)(p3.x(), p4.x()));
+  double ymin =
+    (std::min)((std::min)(p1.y(), p2.y()), (std::min)(p3.y(), p4.y()));
+  double ymax =
+    (std::max)((std::max)(p1.y(), p2.y()), (std::max)(p3.y(), p4.y()));
+
+  QRectF res = QRectF(QPointF(xmin, ymin), QPointF(xmax, ymax));
   return res;
 }

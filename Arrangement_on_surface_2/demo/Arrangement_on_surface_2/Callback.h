@@ -13,10 +13,8 @@
 #define CGAL_QT_CALLBACK_H
 
 #include <QObject>
+#include "GraphicsSceneMixin.h"
 
-#include "Utils.h"
-
-class QRectF;
 class QEvent;
 class QKeyEvent;
 class QGraphicsScene;
@@ -32,9 +30,6 @@ Q_OBJECT
 public:
   Callback( QObject* parent );
   virtual void reset( );
-  virtual void partialReset(){};
-  virtual std::string toString(){ return ""; }
-  virtual void changeDeleteMode(){}
 
 public Q_SLOTS:
   virtual void slotModelChanged( );

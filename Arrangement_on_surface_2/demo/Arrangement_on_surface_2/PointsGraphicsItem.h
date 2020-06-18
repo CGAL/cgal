@@ -28,9 +28,11 @@ class PointsGraphicsItem: public CGAL::Qt::GraphicsItem
 public:
   PointsGraphicsItem( );
 
-  virtual void paint( QPainter* painter,
-					  const QStyleOptionGraphicsItem* option, QWidget* widget );
-  virtual QRectF boundingRect( ) const;				//!< virtual function for the bounding box
+  void paint(
+    QPainter* painter, const QStyleOptionGraphicsItem* option = nullptr,
+    QWidget* widget = nullptr) override;
+
+  QRectF boundingRect( ) const override;				//!< virtual function for the bounding box
 
   /** Template type
      *  adds the points to the vector

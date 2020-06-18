@@ -10,8 +10,34 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "GraphicsViewCurveInput.h"
+#include "ArrangementTypes.h"
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/CORE/BigRat.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Qt/Converter.h>
+#include <QEvent>
 
 #include <QGraphicsView>
+
+// TODO(Ahmed Essam): move these somewhere else!
+template <std::size_t I = 0, typename FuncT, typename... Tp>
+inline typename std::enable_if<I == sizeof...(Tp), void>::type
+for_each(std::tuple<Tp...>&, FuncT)
+{
+}
+
+template <std::size_t I = 0, typename FuncT, typename... Tp>
+  inline typename std::enable_if <
+  I<sizeof...(Tp), void>::type for_each(std::tuple<Tp...>& t, FuncT f)
+{
+  f(std::get<I>(t));
+  for_each<I + 1, FuncT, Tp...>(t, f);
+}
 
 namespace CGAL
 {
@@ -21,9 +47,17 @@ namespace Qt
 GraphicsViewCurveInputBase::GraphicsViewCurveInputBase(
   QObject* parent, QGraphicsScene* scene) :
     GraphicsViewInput(parent),
-    QGraphicsSceneMixin(scene),
-    inputMethod(nullptr)
+    QGraphicsSceneMixin(scene), inputMethod(nullptr)
 {
+}
+
+void GraphicsViewCurveInputBase::reset()
+{
+  if (this->inputMethod)
+  {
+    this->inputMethod->resetInput_();
+    this->inputMethod = nullptr;
+  }
 }
 
 void GraphicsViewCurveInputBase::setSnappingEnabled(bool b)
@@ -72,10 +106,10 @@ void GraphicsViewCurveInputBase::setColor(QColor c)
   this->inputMethod->setColor(c);
 }
 
-CurveInputMethod::CurveInputMethod(CurveType type_, int num_points_) :
-    QGraphicsSceneMixin(), type{type_}, num_points{num_points_}
+CurveInputMethod::CurveInputMethod(CurveType type_, int numPoints_) :
+    QGraphicsSceneMixin(), numPoints{numPoints_}, type{type_}, itemsAdded{false}
 {
-  if (num_points > 0) clickedPoints.reserve(num_points);
+  if (numPoints > 0) clickedPoints.reserve(numPoints);
   this->pointsGraphicsItem.setZValue(100);
 }
 
@@ -105,7 +139,7 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
   {
     QPointF clickedPoint = this->snapPoint(event);
     this->clickedPoints.push_back(clickedPoint);
-    if (this->clickedPoints.size() < this->num_points)
+    if (this->clickedPoints.size() < static_cast<size_t>(this->numPoints))
     {
       if (this->clickedPoints.size() == 1) this->beginInput_();
       this->pointsGraphicsItem.insert(clickedPoint);
@@ -119,7 +153,7 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
   }
   else
   {
-    if (this->num_points == -1)
+    if (this->numPoints == -1)
       curveGenerator->generate(this->clickedPoints, this->type);
     this->resetInput_();
   }
@@ -128,6 +162,7 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
 void CurveInputMethod::beginInput_()
 {
   this->beginInput();
+  this->itemsAdded = true;
   this->getScene()->addItem(&(this->pointsGraphicsItem));
   for (auto& item : items) this->getScene()->addItem(item);
 }
@@ -137,8 +172,12 @@ void CurveInputMethod::resetInput_()
   this->resetInput();
   this->clickedPoints.clear();
   this->pointsGraphicsItem.clear();
-  this->getScene()->removeItem(&(this->pointsGraphicsItem));
-  for (auto& item : items) this->getScene()->removeItem(item);
+  if (this->itemsAdded)
+  {
+    this->getScene()->removeItem(&(this->pointsGraphicsItem));
+    for (auto& item : items) this->getScene()->removeItem(item);
+    this->itemsAdded = false;
+  }
 }
 
 void CurveInputMethod::resetInput() { }
@@ -365,7 +404,7 @@ GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
 template <typename ArrTraits>
 void GraphicsViewCurveInput<ArrTraits>::setCurveType(CurveType type)
 {
-  this->inputMethod = nullptr;
+  this->reset();
   for_each(inputMethods, [&](auto&& it) {
     if (it.curveType() == type)
       this->inputMethod = static_cast<CurveInputMethod*>(&it);
@@ -467,7 +506,7 @@ boost::optional<CGAL::Object>
 CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
   const std::vector<QPointF>& clickedPoints)
 {
-  Converter<Kernel> convert;
+  Converter<Kernel_> convert;
   auto p0 = convert(clickedPoints[0]);
   auto p1 = convert(clickedPoints[1]);
   Curve_2 res(p0, p1);
@@ -557,8 +596,8 @@ CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   double x2 = (std::max)(points[0].x(), points[1].x());
   double y2 = (std::max)(points[0].y(), points[1].y());
 
-  Rat_FT a = CORE::abs(Rat_FT(x1) - Rat_FT(x2)) / 2;
-  Rat_FT b = CORE::abs(Rat_FT(y1) - Rat_FT(y2)) / 2;
+  Rat_FT a = CGAL::abs(Rat_FT(x1) - Rat_FT(x2)) / 2;
+  Rat_FT b = CGAL::abs(Rat_FT(y1) - Rat_FT(y2)) / 2;
   Rat_FT a_sq = a * a;
   Rat_FT b_sq = b * b;
   Rat_FT x0 = (x2 + x1) / 2;

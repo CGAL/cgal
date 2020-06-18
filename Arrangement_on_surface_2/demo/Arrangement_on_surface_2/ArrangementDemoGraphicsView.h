@@ -28,12 +28,12 @@ public:
   QColor getGridColor( ) const;
   void setBackgroundColor( QColor color );
   QColor getBackgroundColor( ) const;
-
+  QRectF viewportRect() const;
+  static QRectF viewportRect(const QGraphicsView* view);
+  void resetTransform();
 
 protected:
-  void wheelEvent(QWheelEvent* event);
   void drawForeground( QPainter* painter, const QRectF& rect );     //!< drawing on the screen
-  QRectF getViewportRect( ) const;                                  //!< get current screen size
 
   bool showGrid;            /*!< displaying grid toggle */
   int gridSize;              /*!< an integer value for the grid size */

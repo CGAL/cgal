@@ -5,13 +5,15 @@
 template <typename Arr_>
 DeleteCurveCallback<Arr_>::DeleteCurveCallback(
 	Arrangement* arr_, QObject* parent_) :
-	CGAL::Qt::Callback(parent_),
+	DeleteCurveCallbackBase(parent_),
 	scene(NULL), highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()),
-	arr(arr_), deleteOriginatingCurve(false)
+	arr(arr_)
 {
 	QObject::connect(
 		this, SIGNAL(modelChanged()), this->highlightedCurve,
 		SLOT(modelChanged()));
+
+  this->setDeleteMode(DeleteMode::DeleteOriginatingCuve);
 }
 
 //! Setter Function.
@@ -44,19 +46,6 @@ void DeleteCurveCallback<Arr_>::reset()
 {
 	this->highlightedCurve->clear();
 	this->removableHalfedge = Halfedge_handle();
-	this->deleteOriginatingCurve = false;
-	Q_EMIT modelChanged();
-
-	QGraphicsView* view = this->scene->views().first();
-	view->scale(1.01, 1.01);
-	view->scale(1 / 1.01, 1 / 1.01);
-}
-
-template <typename Arr_>
-void DeleteCurveCallback<Arr_>::partialReset()
-{
-	this->highlightedCurve->clear();
-	this->removableHalfedge = Halfedge_handle();
 	Q_EMIT modelChanged();
 }
 
@@ -69,7 +58,7 @@ void DeleteCurveCallback<Arr_>::mousePressEvent(
 		return;
 	}
 
-	if (this->deleteOriginatingCurve)
+	if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
 	{
 		Originating_curve_iterator it =
 			this->arr->originating_curves_begin(this->removableHalfedge);
@@ -88,12 +77,7 @@ void DeleteCurveCallback<Arr_>::mousePressEvent(
 		// CGAL::remove_edge( *(this->arr), this->removableHalfedge->curve( ) );
 		this->arr->remove_edge(this->removableHalfedge);
 	}
-
-	this->partialReset();
-
-	QGraphicsView* view = this->scene->views().first();
-	view->scale(1.01, 1.01);
-	view->scale(1 / 1.01, 1 / 1.01);
+	this->reset();
 }
 
 template <typename Arr_>
@@ -125,7 +109,7 @@ void DeleteCurveCallback<Arr_>::highlightNearestCurve(
 
 	// create a curve graphics item and add it to the scene
 	this->highlightedCurve->clear();
-	if (this->deleteOriginatingCurve)
+	if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
 	{ // highlight the originating curve
 		Originating_curve_iterator ocit, temp;
 		ocit = this->arr->originating_curves_begin(this->removableHalfedge);

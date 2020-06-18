@@ -14,7 +14,6 @@
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
-#include <QGraphicsScene>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -22,117 +21,11 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 
+#include "ArrangementDemoGraphicsView.h"
 #include "ArrangementTypes.h"
+#include "GraphicsSceneMixin.h"
 
 class QGraphicsScene;
-
-class QGraphicsSceneMixin
-{
-public:
-  /*! Costructor */
-  QGraphicsSceneMixin(QGraphicsScene* scene_=nullptr) : scene{scene_} { }
-
-  /*! Destructor (virtual) */
-  virtual ~QGraphicsSceneMixin() {}
-
-  virtual void setScene( QGraphicsScene* scene_ ) { this->scene = scene_; }
-
-  virtual QGraphicsScene* getScene( ) const { return this->scene; }
-
-  virtual QRectF viewportRect( ) const
-  {
-    // std::cout<<"In QGraphicsSceneMixin viewportRect\n";
-    QRectF res;
-    if ( this->scene == NULL )
-    {
-      return res;
-    }
-
-    QList< QGraphicsView* > views = this->scene->views( );
-    if ( views.size( ) == 0 )
-    {
-      // std::cout<<"Return: views.size( ) == 0\n";
-      return res;
-    }
-    // assumes the first view is the right one
-    QGraphicsView* viewport = views.first( );
-    QPointF p1 = viewport->mapToScene( 0, 0 );
-    QPointF p2 = viewport->mapToScene(viewport->width(), viewport->height());
-
-    double xmin = (std::min)(p1.x(), p2.x());
-    double xmax = (std::max)(p1.x(), p2.x());
-    double ymin = (std::min)(p1.y(), p2.y());
-    double ymax = (std::max)(p1.y(), p2.y());
-
-    res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
-
-    // std::cout<<"Return: OKAY\n";
-    return res;
-  }
-
-  QPoint fromScene( QPointF p, bool* ok = 0 )
-  {
-    QPoint res;
-    if ( this->scene == NULL )
-    {
-      if ( ok ) { *ok = false; }
-      return res;
-    }
-    QList< QGraphicsView* > views = this->scene->views( );
-    if ( views.size( ) == 0 )
-    {
-      if ( ok ) { *ok = false; }
-      return res;
-    }
-
-    // assumes the first view is the right one
-    QGraphicsView* viewport = views.first( );
-
-    if ( ok ) { *ok = true; }
-    res = viewport->mapFromScene( p );
-    return res;
-  }
-
-  QPointF toScene( QPoint p, bool* ok = 0 )
-  {
-    QPointF res;
-    if ( this->scene == NULL )
-    {
-      if ( ok ) { *ok = false; }
-      return res;
-    }
-    QList< QGraphicsView* > views = this->scene->views( );
-    if ( views.size( ) == 0 )
-    {
-      if ( ok ) { *ok = false; }
-      return res;
-    }
-
-    // assumes the first view is the right one
-    QGraphicsView* viewport = views.first( );
-
-    if ( ok ) { *ok = true; }
-    res = viewport->mapToScene( p );
-    return res;
-  }
-
-  int fromScene( double d, bool* ok = 0 )
-  {
-    QPointF p( d, 0 );
-    QPoint pp = this->fromScene( p, ok );
-    return pp.x( );
-  }
-
-  double toScene( int i, bool* ok = 0 )
-  {
-    QPoint p( i, 0 );
-    QPointF pp = this->toScene( p, ok );
-    return pp.x( );
-  }
-
-protected: // fields
-  QGraphicsScene* scene;
-};
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF( Approximate_2 )
 
@@ -986,21 +879,5 @@ protected: // member fields
   Point_curve_distance pointCurveDistance;
   Point_location_strategy pointLocationStrategy;
 }; // class Find_nearest_edge
-
-
-// TODO(Ahmed Essam): move these somewhere else!
-template <std::size_t I = 0, typename FuncT, typename... Tp>
-inline typename std::enable_if<I == sizeof...(Tp), void>::type
-for_each(std::tuple<Tp...>&, FuncT)
-{
-}
-
-template <std::size_t I = 0, typename FuncT, typename... Tp>
-  inline typename std::enable_if <
-  I<sizeof...(Tp), void>::type for_each(std::tuple<Tp...>& t, FuncT f)
-{
-  f(std::get<I>(t));
-  for_each<I + 1, FuncT, Tp...>(t, f);
-}
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

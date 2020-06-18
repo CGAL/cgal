@@ -15,6 +15,11 @@
 #include "PropertyValueDelegate.h"
 #include "DeleteCurveMode.h"
 #include "ArrangementDemoGraphicsView.h"
+#include "VerticalRayShootCallback.h"
+#include "ArrangementGraphicsItem.h"
+#include "ArrangementDemoTab.h"
+#include "EnvelopeCallback.h"
+
 
 ArrangementDemoPropertiesDialog::
 ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_,
@@ -125,7 +130,7 @@ void ArrangementDemoPropertiesDialog::updateUi( )
   {
 	return;
   }
-  ArrangementDemoTabBase* currentTab = this->parent->getCurrentTab( );
+  ArrangementDemoTabBase* currentTab = this->parent->getActiveTab().first;
   if ( currentTab == NULL )
   {
 	return;
@@ -136,7 +141,8 @@ void ArrangementDemoPropertiesDialog::updateUi( )
 	return;
   }
 
-  ArrangementDemoGraphicsView* view = currentTab->getView( );
+  ArrangementDemoGraphicsView* view =
+    dynamic_cast<ArrangementDemoGraphicsView*>(currentTab->getView());
   EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback( );
   VerticalRayShootCallbackBase* verticalRayShootCallback =
 	currentTab->getVerticalRayShootCallback( );

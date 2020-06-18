@@ -21,13 +21,32 @@
 #include "Callback.h"
 #include "CurveGraphicsItem.h"
 
+
+enum class DeleteMode
+{
+  DeleteOriginatingCuve,
+  DeleteEdge,
+};
+
 /**
    Handles deletion of arrangement curves selected from the scene.
 
    The template parameter is a CGAL::Arrangement_with_history_2 of some type.
 */
+class DeleteCurveCallbackBase : public CGAL::Qt::Callback
+{
+public:
+  using CGAL::Qt::Callback::Callback;
+
+  void setDeleteMode(DeleteMode deleteMode_) { this->deleteMode = deleteMode_; }
+  DeleteMode getDeleteMode() { return this->deleteMode; }
+
+protected:
+  DeleteMode deleteMode;
+};
+
 template < typename Arr_ >
-class DeleteCurveCallback : public CGAL::Qt::Callback
+class DeleteCurveCallback : public DeleteCurveCallbackBase
 {
 public:
   typedef Arr_ Arrangement;
@@ -47,17 +66,7 @@ public:
   DeleteCurveCallback( Arrangement* arr_, QObject* parent_ );
   void setScene( QGraphicsScene* scene_ );
   QGraphicsScene* getScene( ) const;
-  void reset( );
-  virtual void partialReset();
-  virtual std::string toString()
-  {
-    return ( this->deleteOriginatingCurve ) ?  "Delete Curve" : "Delete Edge";
-  }
-
-  virtual void changeDeleteMode()
-  {
-    this->deleteOriginatingCurve = !this->deleteOriginatingCurve;
-  }
+  void reset() override;
 
 protected:
   void mousePressEvent( QGraphicsSceneMouseEvent *event );
@@ -70,7 +79,6 @@ protected:
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve;
   Arrangement* arr;
   Halfedge_handle removableHalfedge;
-  bool deleteOriginatingCurve;
 }; // class DeleteCurveCallback
 
 #endif // DELETE_CURVE_CALLBACK_H

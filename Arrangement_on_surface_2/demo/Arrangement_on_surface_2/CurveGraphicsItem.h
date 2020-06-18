@@ -13,7 +13,8 @@
 #define CGAL_QT_CURVE_GRAPHICS_ITEM_H
 
 #include "ArrangementPainterOstream.h"
-#include "Utils.h"
+#include "PointsGraphicsItem.h"
+#include "GraphicsSceneMixin.h"
 
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsItem.h>
@@ -67,13 +68,13 @@ protected: // fields
   CGAL::Qt::Converter< Kernel > convert;
   ArrangementPainterOstream< Traits > painterOstream;
   std::vector< X_monotone_curve_2 > curves;
-  std::vector< Point_2 > points;
   CGAL::Bbox_2 boundingBox;
 
   QColor m_edgeColor;
   int m_edgeWidth;
   QColor m_vertexColor;
   int m_vertexRadius;
+  PointsGraphicsItem pointsGraphicsItem;
 
 }; // class CurveGraphicsItem
 

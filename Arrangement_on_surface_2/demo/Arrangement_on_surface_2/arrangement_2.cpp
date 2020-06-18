@@ -12,15 +12,14 @@
 #include "ArrangementDemoWindow.h"
 #include <QApplication>
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
+  QCoreApplication::setOrganizationName("CGAL");
+  QCoreApplication::setApplicationName("2D Arrangements Demo");
 
-  // Forcing the menu bar to be platform independent 
-  // app.setAttribute(Qt::AA_DontUseNativeMenuBar);
+  ArrangementDemoWindow demoWindow;
+  demoWindow.show();
 
-  ArrangementDemoWindow *demoWindow = ArrangementDemoWindow::getInstance();
-  demoWindow->show( );
-
-  return app.exec( );
+  return app.exec();
 }

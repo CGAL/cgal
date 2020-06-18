@@ -11,22 +11,17 @@
 #define CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
 
 #include <CGAL/Bbox_2.h>
-//#include <CGAL/apply_to_range.h>
-// TODO: should be included in PainterOstream.h
-//#include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
 #include <QGraphicsScene>
-#include <QApplication>
 #include <QKeyEvent>
 #include <QPainter>
-//#include <QStyleOption>
 
 #include "ArrangementPainterOstream.h"
-#include "Utils.h"
+#include "GraphicsSceneMixin.h"
 
 #include <iostream>
 #include <limits>
@@ -36,12 +31,8 @@
 #include <math.h>
 #include "ui_ArrangementDemoWindow.h"
 #include "ArrangementDemoGraphicsView.h"
+#include "PointsGraphicsItem.h"
 
-class QGraphicsScene;
-class QApplication;
-
-extern Ui::ArrangementDemoWindow* getCurrentDemoWindowUi();
-extern ArrangementDemoGraphicsView* getCurrentView();
 
 namespace CGAL {
 namespace Qt {
@@ -57,12 +48,12 @@ public:
     visible_edges( true ),
     visible_vertices( true ),
     scene( NULL ),
-    backgroundColor( ::Qt::white ),
-    scalingFactor(1.0)
+    backgroundColor( ::Qt::white )
   {
     this->verticesPen.setCosmetic( true );
     this->verticesPen.setCapStyle( ::Qt::SquareCap );
     this->edgesPen.setCosmetic( true );
+    this->pointsGraphicsItem.setParentItem(this);
   }
 
   const QPen& getVerticesPen( ) const
@@ -155,9 +146,8 @@ protected:
   bool visible_vertices;
 
   QGraphicsScene* scene;
-
   QColor backgroundColor;
-  double scalingFactor;
+  PointsGraphicsItem pointsGraphicsItem;
 
 }; // class ArrangementGraphicsItemBase
 
@@ -202,6 +192,7 @@ public:
                      QWidget* widget) override;
 
 protected:
+  void updatePointsItem();
 
   template < typename TTraits >
   void paint( QPainter* painter, TTraits traits );
@@ -215,22 +206,9 @@ protected:
   template < typename TTraits>
   void updateBoundingBox(TTraits traits );
 
-  template < typename Kernel_>
-  void updateBoundingBox(CGAL::Arr_linear_traits_2<Kernel_> traits);
-
-  template < typename RatKernel, class AlgKernel, class NtTraits >
-  void updateBoundingBox(CGAL::Arr_Bezier_curve_traits_2<
-                         RatKernel,
-                         AlgKernel,
-                         NtTraits > traits);
-  template < typename Coefficient_>
-  void updateBoundingBox(CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
-                         traits);
-
   Arrangement* arr;
   ArrangementPainterOstream< Traits > painterostream;
   CGAL::Qt::Converter< Kernel > convert;
-  std::map< Curve_iterator, CGAL::Bbox_2 > curveBboxMap;
 
   void paintFaces( QPainter* painter )
   {
@@ -391,7 +369,7 @@ protected:
             for ( x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR )
             {
               //= COORD_SCALE)
-              curr_x = this->toScene( x );
+              curr_x = this->toScene(QPoint{x, 0}).x();
               Alg_kernel   ker;
               Arr_conic_point_2 curr_p(curr_x, 0);
 
@@ -414,7 +392,7 @@ protected:
           {
             for ( x = x_max; x > x_min; x-=DRAW_FACTOR )
             {
-              curr_x = this->toScene( x );
+              curr_x = this->toScene(QPoint{x, 0}).x();
               Alg_kernel   ker;
               Arr_conic_point_2 curr_p(curr_x, 0);
               if (!(ker.compare_x_2_object() (curr_p, c.left()) !=
@@ -533,7 +511,7 @@ protected:
             for ( x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR )
             {
               //= COORD_SCALE)
-              curr_x = this->toScene( x );
+              curr_x = this->toScene(QPoint{x, 0}).x();
               Alg_kernel   ker;
               Bezier_point curr_p(curr_x, 0);
 
@@ -556,7 +534,7 @@ protected:
           {
             for ( x = x_max; x > x_min; x-=DRAW_FACTOR )
             {
-              curr_x = this->toScene( x );
+              curr_x = this->toScene(QPoint{x, 0}).x();
               Alg_kernel   ker;
               Bezier_point curr_p(curr_x, 0);
               if (!(ker.compare_x_2_object() (curr_p, c.left()) !=

@@ -12,6 +12,7 @@ CurveGraphicsItem<ArrTraits>::CurveGraphicsItem() :
 	m_vertexColor(::Qt::red), m_vertexRadius(1)
 {
 	this->setZValue(4);
+    this->pointsGraphicsItem.setParentItem(this);
 }
 
 template <class ArrTraits>
@@ -31,14 +32,6 @@ void CurveGraphicsItem<ArrTraits>::paint(
 	for (auto& curve : this->curves)
 	{
 		this->painterOstream << curve;
-	}
-
-	// draw the points
-	QPen verticesPen(this->m_vertexColor, this->m_vertexRadius);
-	painter->setPen(verticesPen);
-	for (auto point : this->points)
-	{
-		this->painterOstream << point;
 	}
 }
 
@@ -60,8 +53,7 @@ void CurveGraphicsItem<ArrTraits>::insert(const X_monotone_curve_2& curve)
 template <class ArrTraits>
 void CurveGraphicsItem<ArrTraits>::insert(const Point_2& point)
 {
-	this->points.push_back(point);
-
+	this->pointsGraphicsItem.insert(point);
 	this->updateBoundingBox();
 }
 
@@ -69,7 +61,7 @@ template <class ArrTraits>
 void CurveGraphicsItem<ArrTraits>::clear()
 {
 	this->curves.clear();
-	this->points.clear();
+	this->pointsGraphicsItem.clear();
 
 	this->updateBoundingBox();
 }
@@ -148,25 +140,19 @@ static Bbox_2 remove_infs(const Bbox_2& box, const QRectF& rect) {
 template <class ArrTraits>
 void CurveGraphicsItem<ArrTraits>::updateBoundingBox()
 {
-	this->prepareGeometryChange();
+  this->prepareGeometryChange();
 
-	this->boundingBox = {};
-	for (auto& curve : this->curves)
-	{
-		// some algebraic curves throw exceptions when asking about their bbox
-		try
-		{
-			this->boundingBox += curve.bbox();
-		}
-		catch (...) { }
-	}
+  this->boundingBox = {};
+  for (auto& curve : this->curves)
+  {
+    // some algebraic curves throw exceptions when asking about their bbox
+    try
+    {
+      this->boundingBox += curve.bbox();
+    }
+    catch (...) { }
+  }
 
-	for (auto& pt : this->points)
-	{
-		double x = CGAL::to_double(pt.x());
-		double y = CGAL::to_double(pt.y());
-		this->boundingBox += CGAL::Bbox_2{x, y, x, y};
-	}
   this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
 }
 

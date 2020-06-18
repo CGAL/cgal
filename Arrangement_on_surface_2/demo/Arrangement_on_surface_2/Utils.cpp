@@ -13,6 +13,8 @@
 #include "ArrangementTypes.h"
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 
+#include <QScrollBar>
+
 template <typename Kernel_>
 double
 Compute_squared_distance_2<CGAL::Arr_segment_traits_2<Kernel_>>::operator()(
@@ -239,30 +241,50 @@ double
 Compute_squared_distance_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 operator()(const Point_2& p, const X_monotone_curve_2& c) const
 {
+  // TODO: this should probably be cached!
+  // this is the same as ArrangementPainterOstream::setupFacade
+  // TODO: refactor it
   typedef CGAL::Curve_renderer_facade<CKvA_2> Facade;
-  std::list<Coord_vec_2> points;
-  boost::optional < Coord_2 > p1, p2;
-
-  QGraphicsView* view = this->scene->views( ).first( );
-  QPoint p_viewport =
-	  view->mapFromScene(QPointF{p.x().doubleValue(), p.y().doubleValue()});
+  QGraphicsView* view = this->getView();
   QRectF viewport = this->viewportRect( );
   CGAL::Bbox_2 bbox = CGAL::Qt::Converter<Kernel>{}(viewport).bbox( );
-
   Facade::setup(bbox, view->width(), view->height());
-  Facade::instance().draw( c, points, &p1, &p2 );
 
-  double minDist(std::numeric_limits<double>::max());
+  // this is the same as ArrangementPainterOstream::remapFacadePainter
+  // TODO: refactor it
 
-  const Coord_vec_2& vec = points.front();
-  typename Coord_vec_2::const_iterator vit = vec.begin();
+  // this is equivalent to QPainter::worldTransform
+  QTransform worldTransform;
+  worldTransform.translate(
+    -view->horizontalScrollBar()->value(), -view->verticalScrollBar()->value());
+  worldTransform = view->transform() * worldTransform;
 
-  while ( vit != vec.end() )
+  QPointF dxdy = worldTransform.map(viewport.topLeft());
+  QPointF p1 = worldTransform.map(viewport.topRight());
+  QPointF p2 = worldTransform.map(viewport.bottomLeft());
+  float dx = dxdy.x();
+  float dy = dxdy.y();
+  float m11 = (p1.x() - dx) / view->width();
+  float m21 = (p2.x() - dx) / view->height();
+  float m22 = (p2.y() - dy) / view->height();
+  float m12 = (p1.y() - dy) / view->width();
+  auto facadeToViewport = QTransform{m11, m12, m21, m22, dx, dy};
+  
+  std::list<Coord_vec_2> points;
+  Facade::instance().draw(c, points);
+
+  QPoint p_viewport =
+	  view->mapFromScene(QPointF{p.x().doubleValue(), p.y().doubleValue()});
+
+  double minDist = std::numeric_limits<double>::max();
+  for (auto& vec : points)
   {
-    QPoint coord(vit->first, view->height() - vit->second);
-    float curDist = QLineF{coord, p_viewport}.length();
-    minDist = curDist < minDist ? curDist : minDist;
-    vit++;
+    for (auto vit = vec.begin(); vit != vec.end(); ++vit)
+    {
+      QPoint coord(vit->first, vit->second);
+      float curDist = QLineF{facadeToViewport.map(coord), p_viewport}.length();
+      minDist = curDist < minDist ? curDist : minDist;
+    }
   }
 
   return minDist;

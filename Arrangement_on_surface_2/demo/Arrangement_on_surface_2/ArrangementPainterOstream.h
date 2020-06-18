@@ -21,6 +21,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include "GraphicsSceneMixin.h"
 #include "Utils.h"
 
 class QPainter;
@@ -137,8 +138,6 @@ public:
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
 
-  ArrangementPainterOstream& operator<<( const Point_2& p );
-
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
@@ -178,9 +177,6 @@ public:
 
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
-
-  // cloned from segtraits painter
-  ArrangementPainterOstream& operator<<( const Point_2& p );
 
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
@@ -248,9 +244,6 @@ public:
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
 
-  // cloned from segtraits painter
-  ArrangementPainterOstream& operator<<( const Point_2& p );
-
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
@@ -312,9 +305,6 @@ public:
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
 
-  // cloned from segtraits painter
-  ArrangementPainterOstream& operator<<( const Point_2& p );
-
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
@@ -352,8 +342,6 @@ public:
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
 
-  ArrangementPainterOstream& operator<<( const Point_2& p );
-
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
   {
@@ -389,8 +377,6 @@ public:
 public: // methods
 
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
-
-  ArrangementPainterOstream& operator<<( const Point_2& p );
 
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )

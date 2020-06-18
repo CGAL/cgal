@@ -10,6 +10,7 @@ ArrangementGraphicsItem( Arrangement* arr_ ):
   arr( arr_ ),
   painterostream( 0 )
 {
+  this->updatePointsItem();
   this->updateBoundingBox( );
   this->setZValue( 3 );
 }
@@ -19,11 +20,23 @@ QRectF
 ArrangementGraphicsItem< Arr_, ArrTraits >::
 boundingRect( ) const
 {
-  QRectF rect = this->convert( this->bb );
-  if (!rect.isValid() || std::isinf(rect.width()) || std::isinf(rect.height()))
-    return this->viewportRect();
-  else
-    return rect;
+  double xmin = -std::numeric_limits<double>::max() / 4;
+  double ymin = -std::numeric_limits<double>::max() / 4;
+  double xmax = std::numeric_limits<double>::max() / 4;
+  double ymax = std::numeric_limits<double>::max() / 4;
+  if (this->bb.xmin() > xmin) xmin = this->bb.xmin();
+  if (this->bb.ymin() > ymin) ymin = this->bb.ymin();
+  if (this->bb.xmax() < xmax) xmax = this->bb.xmax();
+  if (this->bb.ymax() < ymax) ymax = this->bb.ymax();
+  if (xmin > xmax || ymin > ymax)
+  {
+    xmin = 0;
+    xmax = 0;
+    ymin = 0;
+    ymax = 0;
+  }
+  QRectF rect = this->convert(Bbox_2{xmin, ymin, xmax, ymax});
+  return rect;
 }
 
 template < typename Arr_, typename ArrTraits >
@@ -48,16 +61,6 @@ paint(QPainter* painter, TTraits /* traits */)
   this->painterostream =
     ArrangementPainterOstream< Traits >( painter, this->boundingRect( ) );
   this->painterostream.setScene( this->scene );
-
-  // QRectF rect = this->boundingRect( );
-
-  for ( Vertex_iterator it = this->arr->vertices_begin( );
-        it != this->arr->vertices_end( ); ++it )
-  {
-    Point_2 p = it->point( );
-    Kernel_point_2 pt( p.x( ), p.y( ) );
-    this->painterostream << pt;
-  }
 
   painter->setPen( this->edgesPen );
   for ( Edge_iterator it = this->arr->edges_begin( );
@@ -87,14 +90,6 @@ paint(QPainter* painter,
     ArrangementPainterOstream< Traits >( painter, clipRect );
   this->painterostream.setScene( this->scene );
 
-
-  for ( Vertex_iterator it = this->arr->vertices_begin( );
-        it != this->arr->vertices_end( ); ++it )
-  {
-    Point_2 p = it->point( );
-    this->painterostream << p;
-  }
-
   painter->setPen( this->edgesPen );
   for ( Edge_iterator it = this->arr->edges_begin( );
         it != this->arr->edges_end( ); ++it )
@@ -104,8 +99,6 @@ paint(QPainter* painter,
   }
 }
 
-// We let the bounding box only grow, so that when vertices get removed
-// the maximal bbox gets refreshed in the GraphicsView
 template < typename Arr_, typename ArrTraits >
 void ArrangementGraphicsItem< Arr_, ArrTraits >::updateBoundingBox( )
 {
@@ -118,277 +111,35 @@ void ArrangementGraphicsItem< Arr_, ArrTraits >::
 updateBoundingBox(TTraits /* traits */)
 {
   this->prepareGeometryChange( );
-  if ( this->arr->number_of_vertices( ) == 0 )
+
+  this->bb = {};
+  for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
-    this->bb = Bbox_2( 0, 0, 0, 0 );
-    return;
+    // can throws "CGAL::internal::Zero_resultant_exception"
+    try {
+      this->bb += it->curve().bbox();
+    } catch(...) {}
   }
-  else
-  {
-    this->bb = this->arr->vertices_begin( )->point( ).bbox( );
-  }
-
-  for ( Curve_iterator it = this->arr->curves_begin( );
-        it != this->arr->curves_end( );
-        ++it )
-  {
-    if ( this->curveBboxMap.count( it ) == 0 )
-    {
-      this->curveBboxMap[ it ] = it->bbox( );
-    }
-    this->bb = this->bb + this->curveBboxMap[ it ];
-  }
-}
-
-template <typename Arr_, typename ArrTraits >
-template < typename RatKernel, class AlgKernel, class NtTraits >
-void
-ArrangementGraphicsItem< Arr_, ArrTraits >::
-updateBoundingBox(CGAL::Arr_Bezier_curve_traits_2<
-                  RatKernel,
-                  AlgKernel,
-                  NtTraits > /* traits */) {
-  this->prepareGeometryChange( );
-  QRectF clipRect = this->viewportRect( );
-  this->convert = Converter<Kernel>( clipRect );
-
-  if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )
-  {
-    this->bb = Bbox_2( 0, 0, 0, 0 );
-    return;
-  }
-  else
-  {
-    this->bb = this->convert( clipRect ).bbox( );
-  }
-
-//  int curve_cnt = 0;
-//  for ( Edge_iterator it = this->arr->edges_begin( );
-//        it != this->arr->edges_end( ); ++it )
-//  {
-//    X_monotone_curve_2 curve = it->curve( );
-//    this->bb = this->bb + curve.bbox( );
-//    curve_cnt++;
-//  }
-#if 0
-  for ( Curve_iterator it = this->arr->curves_begin( );
-        it != this->arr->curves_end( );
-        ++it )
-  {
-    if ( it->is_segment( ) )
-    {
-      this->bb = this->bb + it->segment( ).bbox( );
-    }
-    else if ( it->is_ray( ) )
-    {
-      QLineF qclippedRay = this->convert( it->ray( ) );
-      Segment_2 clippedRay = this->convert( qclippedRay );
-      this->bb = this->bb + clippedRay.bbox( );
-    }
-    else // ( it->is_line( ) )
-    {
-      QLineF qclippedLine = this->convert( it->line( ) );
-      Segment_2 clippedLine = this->convert( qclippedLine );
-      this->bb = this->bb + clippedLine.bbox( );
-    }
-  }
-#endif
-}
-
-template < typename Arr_, typename ArrTraits >
-template < typename Kernel_ >
-void
-ArrangementGraphicsItem< Arr_, ArrTraits >::
-updateBoundingBox(CGAL::Arr_linear_traits_2< Kernel_ > /* traits */)
-{
-  this->prepareGeometryChange( );
-  QRectF clipRect = this->viewportRect( );
-  this->convert = Converter<Kernel>( clipRect );
-
-  if ( ! clipRect.isValid( ) /*|| this->arr->number_of_vertices( ) == 0*/ )
-  {
-    this->bb = Bbox_2( 0, 0, 0, 0 );
-    return;
-  }
-  else
-  {
-    this->bb = this->convert( clipRect ).bbox( );
-  }
-
-  for ( Curve_iterator it = this->arr->curves_begin( );
-        it != this->arr->curves_end( ); ++it )
-  {
-    if ( it->is_segment( ) )
-    {
-      this->bb = this->bb + it->segment( ).bbox( );
-    }
-    else if ( it->is_ray( ) )
-    {
-      QLineF qclippedRay = this->convert( it->ray( ) );
-      Segment_2 clippedRay = this->convert( qclippedRay );
-      this->bb = this->bb + clippedRay.bbox( );
-    }
-    else // ( it->is_line( ) )
-    {
-      QLineF qclippedLine = this->convert( it->line( ) );
-      Segment_2 clippedLine = this->convert( qclippedLine );
-      this->bb = this->bb + clippedLine.bbox( );
-    }
-  }
-}
-
-template <typename Traits>
-static const std::vector<typename Traits::X_monotone_curve_2> &get_xy_curves() {
-  static std::vector<typename Traits::X_monotone_curve_2> xy_curves;
-  if (xy_curves.empty()) {
-    Traits traits{};
-    typedef typename Traits::Polynomial_2 Polynomial_2;
-    typedef typename Traits::Curve_2 Curve_2;
-    typename Traits::Construct_curve_2 construct_curve =
-        traits.construct_curve_2_object();
-    typename Traits::Make_x_monotone_2 make_x_monotone =
-        traits.make_x_monotone_2_object();
-
-    Polynomial_2 x = CGAL::shift(Polynomial_2(1), 1, 0);
-    Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
-    Curve_2 x_cv = construct_curve(x);
-    Curve_2 y_cv = construct_curve(y);
-
-    std::vector<CGAL::Object> arcs;
-    make_x_monotone(x_cv, std::back_inserter(arcs));
-    make_x_monotone(y_cv, std::back_inserter(arcs));
-    for (auto& arc_obj : arcs)
-    {
-      typename Traits::X_monotone_curve_2 arc;
-      CGAL::assign(arc, arc_obj);
-      xy_curves.push_back(arc);
-    }
-  }
-  return xy_curves;
-}
-
-static bool is_finite(const CGAL::Bbox_2 &box) {
-  return !std::isinf(box.xmin()) && !std::isinf(box.xmax()) &&
-         !std::isinf(box.ymin()) && !std::isinf(box.ymax());
-}
-
-static CGAL::Bbox_2 make_finite(const CGAL::Bbox_2 &box) {
-  double xmin = std::numeric_limits<double>::infinity();
-  double ymin = std::numeric_limits<double>::infinity();
-  double xmax = -std::numeric_limits<double>::infinity();
-  double ymax = -std::numeric_limits<double>::infinity();
-  if (!std::isinf(box.xmin()))
-    xmin = box.xmin();
-  if (!std::isinf(box.ymin()))
-    ymin = box.ymin();
-  if (!std::isinf(box.xmax()))
-    xmax = box.xmax();
-  if (!std::isinf(box.ymax()))
-    ymax = box.ymax();
-  return CGAL::Bbox_2{xmin, ymin, xmax, ymax};
 }
 
 template <typename Arr_, typename ArrTraits>
-template <typename Coefficient_>
-void ArrangementGraphicsItem<Arr_, ArrTraits>::updateBoundingBox(
-    CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits) {
-
-  this->prepareGeometryChange();
-
-  // we start with an empty box
-  this->bb = {};
-
-  // include vertices (intersections & finite x-monototne subcurve boundaries)
-  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++) {
-    auto xy = it->point().to_double();
-    this->bb += make_finite({xy.first, xy.second, xy.first, xy.second});
+void ArrangementGraphicsItem<Arr_, ArrTraits>::updatePointsItem()
+{
+  this->pointsGraphicsItem.clear();
+  for (auto it = this->arr->vertices_begin(); it != this->arr->vertices_end();
+       ++it)
+  {
+    Point_2 p = it->point();
+    this->pointsGraphicsItem.insert(p);
   }
-
-  // include finite bounds of edges
-  for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it) {
-    // can throws "CGAL::internal::Zero_resultant_exception"
-    try {
-      this->bb += make_finite(it->curve().bbox());
-    } catch(...) {}
-  }
-
-  // we didn't find any "interesting" point to include in the bounding box
-  // we find intersections with x and y axis and add those instead
-  if (!is_finite(this->bb)) {
-    std::vector<CGAL::Object> intersections;
-    for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it) {
-      for (auto &arc : get_xy_curves<ArrTraits>()) {
-        if (arc.is_vertical() != it->curve().is_vertical()) {
-          it->curve().intersections(arc, std::back_inserter(intersections));
-        }
-      }
-    }
-    for (auto it = intersections.begin(); it != intersections.end(); it++) {
-      std::pair<typename Traits::Point_2, unsigned int> point_multiplicity;
-      CGAL::assign(point_multiplicity, *it);
-      auto &point = point_multiplicity.first;
-      if (point.location() == CGAL::ARR_INTERIOR) {
-        auto xy = point.to_double();
-        this->bb += make_finite({xy.first, xy.second, xy.first, xy.second});
-      } else {
-        // the curve is probably the x or y axis
-        this->bb += {0, 0, 0, 0};
-      }
-    }
-  }
-
-  // this should happen only if the arrangement is empty
-  if (!is_finite(this->bb))
-    this->bb += {0, 0, 0, 0};
-
-  // add margin to bounding box
-  float x_margin;
-  float y_margin;
-  if (this->bb.xmin() == this->bb.xmax() ||
-      this->bb.ymin() == this->bb.ymax()) {
-    static constexpr float const_margin = 10;
-    x_margin = const_margin;
-    y_margin = const_margin;
-  } else {
-    static constexpr float prop_margin = 0.10;
-    x_margin = (this->bb.xmax() - this->bb.xmin()) * prop_margin;
-    y_margin = (this->bb.ymax() - this->bb.ymin()) * prop_margin;
-  }
-  this->bb = Bbox_2{this->bb.xmin() - x_margin, this->bb.ymin() - y_margin,
-                    this->bb.xmax() + x_margin, this->bb.ymax() + y_margin};
 }
 
 template < typename Arr_, typename ArrTraits >
 void ArrangementGraphicsItem< Arr_, ArrTraits >::modelChanged( )
 {
+  this->updatePointsItem();
   this->updateBoundingBox( );
-  QList< QGraphicsView* > views = this->scene->views( );
-  if ( views.size( ) != 0 )
-  {
-    QGraphicsView* viewport = views.first( );
-    viewport->setSceneRect(this->boundingRect());
-  }
   this->update( );
-}
-
-template <>
-void ArrangementGraphicsItem<Alg_seg_arr>::modelChanged()
-{
-  auto oldBoundingRect = this->boundingRect();
-  this->updateBoundingBox( );
-  QList< QGraphicsView* > views = this->scene->views( );
-  if ( views.size( ) != 0 )
-  {
-    QGraphicsView* viewport = views.first( );
-    auto newBoundingRect = this->boundingRect();
-    if (oldBoundingRect != newBoundingRect) {
-      // calling fitInView while moving the mouse causes the program to crash
-      // this happens with the curve erasing tool
-      viewport->setSceneRect(newBoundingRect);
-      viewport->fitInView(this, ::Qt::KeepAspectRatio);
-    }
-  }
-  this->update();
 }
 
 template < typename Arr_, typename ArrTraits >
@@ -521,18 +272,18 @@ paintFace( Face_handle f, QPainter* painter,
 
     // Obtain a polyline traits class and construct the needed functors
     Arr_poly_traits poly_tr;
-    Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
-    Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
-    Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
+    // Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
+    // Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
+    // Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
 
     // Construct needed functors from the segment traits
     typedef typename Arr_poly_traits::Subcurve_traits_2      Subcurve_traits;
     typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
     typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
-    Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
-      construct_min_vertex_2_object();
-    Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
-      construct_max_vertex_2_object();
+    // Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
+    //   construct_min_vertex_2_object();
+    // Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
+    //   construct_max_vertex_2_object();
 
     // Iterator of the segments of an x-monotone polyline
     typename X_monotone_curve_2::Subcurve_const_iterator seg_it;

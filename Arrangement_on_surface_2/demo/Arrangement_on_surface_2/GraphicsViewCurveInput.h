@@ -13,33 +13,42 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_CURVE_INPUT_H
 
-#include <CGAL/Arr_Bezier_curve_traits_2.h>
-#include <CGAL/Arr_algebraic_segment_traits_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
-#include <QDebug>
-#include <QEvent>
 #include <QGraphicsLineItem>
 #include <QGraphicsSceneMouseEvent>
-#include <QMessageBox>
 #include <tuple>
 #include <type_traits>
 
-#include "AlgebraicCurveParser.h"
 #include "Callback.h"
+#include "GraphicsSceneMixin.h"
 #include "ISnappable.h"
 #include "PointsGraphicsItem.h"
 
+class QEvent;
+
+namespace CORE
+{
+class BigRat;
+} // namespace CORE
+
 namespace CGAL
 {
+
+template <typename T>
+class Arr_segment_traits_2;
+template <typename T>
+class Arr_polyline_traits_2;
+template <typename T, typename U, typename I>
+class Arr_conic_traits_2;
+template <typename T>
+class Arr_linear_traits_2;
+template <typename T>
+class Arr_algebraic_segment_traits_2;
+template <typename T>
+class Rational_traits;
+
 namespace Qt
 {
-
 enum class CurveType
 {
   Segment,
@@ -50,6 +59,7 @@ enum class CurveType
   Ellipse,
   ThreePointCircularArc,
   FivePointConicArc,
+  AlgebraicEquation,
 };
 
 class CurveGeneratorBase : public QObject
@@ -176,9 +186,7 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
   using Coefficient = Coefficient_;
   using ArrTraits = CGAL::Arr_algebraic_segment_traits_2<Coefficient>;
   using X_monotone_curve_2 = typename ArrTraits::X_monotone_curve_2;
-  using Kernel = typename ArrTraitsAdaptor<ArrTraits>::Kernel;
   using Point_2 = typename ArrTraits::Point_2;
-  using Kernel_point_2 = typename Kernel::Point_2;
   using Polynomial_2 = typename ArrTraits::Polynomial_2;
   using Curve_2 = typename ArrTraits::Curve_2;
   using Rational = CORE::BigRat; // FIX: should probably query rational type
@@ -200,7 +208,7 @@ private:
 class CurveInputMethod : public QGraphicsSceneMixin
 {
 public:
-  CurveInputMethod(CurveType, int num_points_ = -1);
+  CurveInputMethod(CurveType, int numPoints_ = -1);
   virtual ~CurveInputMethod() { }
 
   void setCurveGenerator(CurveGeneratorBase*);
@@ -210,12 +218,6 @@ public:
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
   void beginInput_();
   void resetInput_();
-  virtual void beginInput();
-  virtual void resetInput();
-  virtual void updateVisualGuideNewPoint(const std::vector<QPointF>&);
-  virtual void
-  updateVisualGuideMouseMoved(const std::vector<QPointF>&, const QPointF&);
-  void appendGraphicsItem(QGraphicsItem* item);
 
   void setColor(QColor);
 
@@ -223,15 +225,24 @@ public:
   virtual QPointF snapPoint(QGraphicsSceneMouseEvent* event);
 
 protected:
+  virtual void beginInput();
+  virtual void resetInput();
+  virtual void updateVisualGuideNewPoint(const std::vector<QPointF>&);
+  virtual void
+  updateVisualGuideMouseMoved(const std::vector<QPointF>&, const QPointF&);
+  void appendGraphicsItem(QGraphicsItem* item);
+
+protected:
   QColor color;
 
 private:
-  const int num_points;
+  const int numPoints;
   std::vector<QPointF> clickedPoints;
   PointsGraphicsItem pointsGraphicsItem;
   CurveGeneratorBase* curveGenerator;
   const CurveType type;
   std::vector<QGraphicsItem*> items;
+  bool itemsAdded;
 };
 
 class SegmentInputMethod : public CurveInputMethod
@@ -340,6 +351,12 @@ public:
   FivePointConicInputMethod();
 };
 
+class AlgebraicEquationInputMethod : public CurveInputMethod
+{
+public:
+  AlgebraicEquationInputMethod();
+};
+
 class GraphicsViewCurveInputBase :
     public GraphicsViewInput,
     public ISnappable,
@@ -351,6 +368,7 @@ public:
   void setSnappingEnabled(bool b);
   void setSnapToGridEnabled(bool b);
   void setColor(QColor c);
+  void reset();
   virtual void setCurveType(CurveType type) = 0;
 
 protected:
@@ -361,8 +379,8 @@ protected:
 
   bool snappingEnabled;
   bool snapToGridEnabled;
-  CurveInputMethod* inputMethod;
-}; // class GraphicsViewCurveInputBase
+  CurveInputMethod* inputMethod; // active input method
+};                               // class GraphicsViewCurveInputBase
 
 template <typename ArrTraits>
 struct GraphicsViewCurveInputTypeHelper

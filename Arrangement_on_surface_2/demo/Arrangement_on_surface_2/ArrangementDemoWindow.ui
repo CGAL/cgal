@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>2D Arrangement Demo</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -49,6 +49,7 @@
    <addaction name="separator"/>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoomOut"/>
+   <addaction name="actionZoomReset"/>
    <addaction name="separator"/>
    <addaction name="actionSnapMode"/>
    <addaction name="actionGridSnapMode"/>
@@ -56,11 +57,12 @@
    <addaction name="actionLowerEnvelope"/>
    <addaction name="actionUpperEnvelope"/>
    <addaction name="separator"/>
-   <addaction name="actionConicSegment"/>
-   <addaction name="actionCurveRay"/>
-   <addaction name="actionCurveLine"/>
-   <addaction name="actionConicCircle"/>
-   <addaction name="actionConicEllipse"/>
+   <addaction name="actionSegment"/>
+   <addaction name="actionPolyline"/>
+   <addaction name="actionRay"/>
+   <addaction name="actionLine"/>
+   <addaction name="actionCircle"/>
+   <addaction name="actionEllipse"/>
    <addaction name="actionConicThreePoint"/>
    <addaction name="actionConicFivePoint"/>
    <addaction name="actionAddAlgebraicCurve"/>
@@ -129,9 +131,6 @@
   </action>
   <action name="actionInsert">
    <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="icon">
@@ -262,21 +261,6 @@
     <string>Snap to grid</string>
    </property>
   </action>
-  <action name="actionSegment">
-   <property name="text">
-    <string>Segment</string>
-   </property>
-  </action>
-  <action name="actionPolyline">
-   <property name="text">
-    <string>Polyline</string>
-   </property>
-  </action>
-  <action name="actionConic">
-   <property name="text">
-    <string>Conic</string>
-   </property>
-  </action>
   <action name="actionNewTab">
    <property name="text">
     <string>New tab</string>
@@ -327,7 +311,7 @@
     <string>Upper envelope</string>
    </property>
   </action>
-  <action name="actionConicSegment">
+  <action name="actionSegment">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -338,8 +322,26 @@
    <property name="text">
     <string>Segment</string>
    </property>
+   <property name="toolTip">
+    <string>Segment</string>
+   </property>
   </action>
-  <action name="actionConicCircle">
+  <action name="actionPolyline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_segment.xpm</normaloff>:/icons/demo_conic_segment.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Polyline</string>
+   </property>
+   <property name="toolTip">
+    <string>Polyline</string>
+   </property>
+  </action>
+  <action name="actionCircle">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -350,8 +352,11 @@
    <property name="text">
     <string>Circle</string>
    </property>
+   <property name="toolTip">
+    <string>Circle</string>
+   </property>
   </action>
-  <action name="actionConicEllipse">
+  <action name="actionEllipse">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -360,6 +365,9 @@
      <normaloff>:/icons/demo_conic_ellipse.xpm</normaloff>:/icons/demo_conic_ellipse.xpm</iconset>
    </property>
    <property name="text">
+    <string>Ellipse</string>
+   </property>
+   <property name="toolTip">
     <string>Ellipse</string>
    </property>
   </action>
@@ -374,6 +382,9 @@
    <property name="text">
     <string>Three Point Conic</string>
    </property>
+   <property name="toolTip">
+    <string>Three Point Conic</string>
+   </property>
   </action>
   <action name="actionConicFivePoint">
    <property name="checkable">
@@ -386,15 +397,18 @@
    <property name="text">
     <string>Five Point Conic</string>
    </property>
+   <property name="toolTip">
+    <string>Five Point Conic</string>
+   </property>
   </action>
   <action name="actionAddAlgebraicCurve">
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Add Curve</string>
-     </property>
-    </action>
+   <property name="text">
+    <string>Add Curve</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Algebraic Curve Equation</string>
+   </property>
+  </action>
   <action name="actionCloseTab">
    <property name="text">
     <string>Close Tab</string>
@@ -432,6 +446,9 @@
    <property name="text">
     <string>Zoom In</string>
    </property>
+   <property name="toolTip">
+    <string>Zoom In</string>
+   </property>
   </action>
   <action name="actionZoomOut">
    <property name="icon">
@@ -441,8 +458,23 @@
    <property name="text">
     <string>Zoom Out</string>
    </property>
+   <property name="toolTip">
+    <string>Zoom Out</string>
+   </property>
   </action>
-  <action name="actionCurveRay">
+  <action name="actionZoomReset">
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_zoomreset.xpm</normaloff>:/icons/demo_zoomreset.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom Reset</string>
+   </property>
+  </action>
+  <action name="actionRay">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -453,8 +485,11 @@
    <property name="text">
     <string>Ray</string>
    </property>
+   <property name="toolTip">
+    <string>Ray</string>
+   </property>
   </action>
-  <action name="actionCurveLine">
+  <action name="actionLine">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -463,6 +498,9 @@
      <normaloff>:/icons/demo_conic_line.xpm</normaloff>:/icons/demo_conic_line.xpm</iconset>
    </property>
    <property name="text">
+    <string>Line</string>
+   </property>
+   <property name="toolTip">
     <string>Line</string>
    </property>
   </action>

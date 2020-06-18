@@ -18,6 +18,8 @@
 #include <list>
 #include <string>
 
+#include <CGAL/Bbox_2.h>
+
 template <typename Traits>
 class Conic_reader
 {
@@ -41,16 +43,15 @@ public:
       \return success of reading the file
     */
 	template<class OutputIterator>
-	int read_data(const char * filename, OutputIterator curves_out,
+	int read_data(std::ifstream & inp, OutputIterator curves_out,
 								CGAL::Bbox_2 & bbox)
 	{
 
 		Curve_2 cv;
 		char dummy[256];
 
-		std::ifstream inp(filename);
 		if (!inp.is_open()) {
-			std::cerr << "Cannot open file " << filename << "!" << std::endl;
+			std::cerr << "File is not open!" << std::endl;
 			return -1;
 		}
 		int count;
@@ -242,6 +243,54 @@ public:
 			if (one_line[0] != '#') break;
 		}
 	}
+
+  // should probably change class name since it reads and writes
+  template <typename InputIterator>
+  int write_data(std::ofstream & ofs, InputIterator begin_, InputIterator end_)
+  {
+    ofs << std::distance(begin_, end_) << std::endl;
+    for (auto it = begin_; it != end_; ++it)
+    {
+      if (it->is_full_conic())
+      {
+        ofs << "F ";
+        ofs << it->r() << " ";
+        ofs << it->s() << " ";
+        ofs << it->t() << " ";
+        ofs << it->u() << " ";
+        ofs << it->v() << " ";
+        ofs << it->w() << " ";
+        ofs << std::endl;
+      }
+      else if (it->orientation() == CGAL::COLLINEAR)
+      {
+        ofs << "S ";
+        ofs << it->source() << " ";
+        ofs << it->target() << " ";
+        ofs << std::endl;
+      }
+      else
+      {
+        ofs << "A ";
+        ofs << it->r() << " ";
+        ofs << it->s() << " ";
+        ofs << it->t() << " ";
+        ofs << it->u() << " ";
+        ofs << it->v() << " ";
+        ofs << it->w() << " ";
+        if (it->orientation() == CGAL::COUNTERCLOCKWISE)
+          ofs << "1 ";
+        else if (it->orientation() == CGAL::CLOCKWISE)
+          ofs << "-1 ";
+        else
+          ofs << "0 ";
+        ofs << it->source() << " ";
+        ofs << it->target() << " ";
+        ofs << std::endl;
+      }
+    }
+    return 0;
+  }
 };
 
 #endif
