@@ -67,9 +67,7 @@ kruskal(const Polyhedron& P)
                "     }\n"
     "      coordIndex [\n";
 
-  for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it)
-  {
-    edge_descriptor e = *it ;
+  for(edge_descriptor e : mst){
     vertex_descriptor s = source(e,P);
     vertex_descriptor t = target(e,P);
     std::cout << "      " << vertex_index_pmap[s] << ", " << vertex_index_pmap[t] <<  ", -1\n";
