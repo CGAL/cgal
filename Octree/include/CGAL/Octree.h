@@ -123,8 +123,8 @@ namespace CGAL {
       // save octree attributes
       m_bbox_min = bbox.min();
       m_bbox_side = bbox.max()[0] - m_bbox_min[0];
-      m_root._m_points_begin = pwn.begin();
-      m_root._m_points_end = pwn.end();
+      m_root.begin() = pwn.begin();
+      m_root.end() = pwn.end();
     }
 
     ~Octree() {
@@ -263,12 +263,12 @@ namespace CGAL {
 
       Point center = compute_barycenter_position(node);
 
-      auto partitions = partition_around_point(node._m_points_begin, node._m_points_end, center);
+      auto partitions = partition_around_point(node.begin(), node.end(), center);
 
       for (int i = 0; i < 8; ++i) {
 
-        node[i]._m_points_begin = partitions[i];
-        node[i]._m_points_end = partitions[i + 1];
+        node[i].begin() = partitions[i];
+        node[i].end() = partitions[i + 1];
       }
     }
 

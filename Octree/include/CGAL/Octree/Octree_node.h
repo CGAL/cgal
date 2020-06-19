@@ -74,10 +74,9 @@ namespace CGAL {
     IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
     uint8_t m_depth;    /* current depth inside the octree */
 
-  public: // functions :
+    Range_iterator m_points_begin, m_points_end;
 
-    // TODO: temporarily public
-    Range_iterator _m_points_begin, _m_points_end;
+  public: // functions :
 
     Octree_node() :
             m_children(),
@@ -120,6 +119,14 @@ namespace CGAL {
       return (*m_children)[index];
     }
 
+    Range_iterator &begin() { return m_points_begin; }
+
+    const Range_iterator &begin() const { return m_points_begin; }
+
+    Range_iterator &end() { return m_points_end; }
+
+    const Range_iterator &end() const { return m_points_end; }
+
     Node *parent() { return m_parent; }
 
     const Node *parent() const { return m_parent; }
@@ -127,7 +134,7 @@ namespace CGAL {
     void set_parent(Node *parent) { m_parent = parent; }
 
     size_t num_points() const {
-      return std::distance(_m_points_begin, _m_points_end);
+      return std::distance(m_points_begin, m_points_end);
     }
 
     bool is_empty() const { return (num_points() == 0); }
