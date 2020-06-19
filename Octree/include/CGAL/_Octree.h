@@ -27,7 +27,7 @@
  */
 //#include <CGAL/license/Implicit_surface_reconstruction_3.h>
 
-#include <CGAL/Octree/Octree_node.h>
+#include <CGAL/Octree/_Octree_node.h>
 
 #include <CGAL/bounding_box.h>
 #include <boost/iterator/transform_iterator.hpp>
@@ -70,8 +70,7 @@ namespace CGAL {
 
   template<class Kernel,
           class PointRange,
-          class PointMap,
-          class NormalMap>
+          class PointMap>
   class Octree {
   public: // types :
     typedef Octree_node<Kernel, PointRange> Node;
