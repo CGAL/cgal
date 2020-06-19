@@ -12,23 +12,24 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
-  if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-  endif()
-  
+  include(CGAL_Eigen_support)
+
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
     if(NOT (${cppfile} STREQUAL "random_points_in_tetrahedral_mesh_3.cpp")
         OR NOT (${cppfile} STREQUAL "random_points_on_tetrahedral_mesh_3.cpp")
-        OR EIGEN3_FOUND)
+        OR TARGET CGAL::Eigen_support)
       create_single_source_cgal_program( "${cppfile}" )
+      if (TARGET CGAL::Eigen_support)
+        get_filename_component(target ${cppfile} NAME_WE)
+        target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+      endif()
     endif()
   endforeach()
 
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+
+endif()

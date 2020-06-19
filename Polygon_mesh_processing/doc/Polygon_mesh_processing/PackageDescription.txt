@@ -4,8 +4,8 @@
 
 /// \defgroup keep_connected_components_grp Connected Components
 ///
-/// Two faces are in the same <em>connected component</em> if there is a path 
-/// of adjacent faces such that all edges between two consecutive faces of the 
+/// Two faces are in the same <em>connected component</em> if there is a path
+/// of adjacent faces such that all edges between two consecutive faces of the
 /// path are not marked as constrained.
 ///
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -65,10 +65,10 @@
 /// \ingroup PkgPolygonMeshProcessingRef
 /*!
 \addtogroup PkgPolygonMeshProcessingRef
- 
+
 \cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessing}
 \cgalPkgPicture{hole_filling_ico.png}
- 
+
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz}
 \cgalPkgDesc{This package provides
@@ -76,7 +76,7 @@ a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.}
 \cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessingRef}
 \cgalPkgSummaryEnd
- 
+
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
 \cgalPkgDependsOn{documented for each function; \ref PkgSolverInterface}
@@ -84,7 +84,7 @@ ranging from basic operations on simplices, to complex geometry processing algor
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
- 
+
 \cgalPkgDescriptionEnd
 
 
@@ -136,9 +136,14 @@ and provides a list of the parameters that are used in this package.
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::orient()`
+- `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 - `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
+- `CGAL::Polygon_mesh_processing::volume_connected_components()`
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
+- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
+- `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
 
 \cgalCRPSection{Combinatorial Repairing Functions}
 - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`
@@ -150,11 +155,13 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::stitch_borders()`
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+- `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+- `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`
 
 \cgalCRPSection{Normal Computation Functions}
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
@@ -168,6 +175,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
+- `CGAL::Polygon_mesh_processing::split_connected_components()`
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
@@ -179,7 +187,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::clip()`
-- `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
+- `CGAL::Polygon_mesh_processing::split()`
 
 \cgalCRPSection{Geometric Measure Functions}
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
@@ -195,6 +203,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set()`
 - `CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
+- `CGAL::Polygon_mesh_processing::sample_triangle_soup()`
 
 \cgalCRPSection{Feature Detection Functions}
 - `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`

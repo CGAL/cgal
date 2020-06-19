@@ -88,7 +88,7 @@ class Constraints_loader {
     typedef typename Points_container::const_iterator Points_iterator;
     typedef std::vector<Points_iterator> Indices;
     typedef std::vector<typename CDT::Vertex_handle> Vertices;
-    
+
     Sort_traits_2<typename CDT::Geom_traits, Points_iterator> sort_traits;
 
     Indices indices;
@@ -106,7 +106,7 @@ class Constraints_loader {
     Vertices vertices;
     vertices.resize(points.size());
     typename CDT::Vertex_handle hint;
-    for(typename Indices::const_iterator 
+    for(typename Indices::const_iterator
           pt_it_it = indices.begin(), end = indices.end();
         pt_it_it != end; ++pt_it_it) {
       typename CDT::Vertex_handle vh = cdt.insert(**pt_it_it, hint);
@@ -117,12 +117,12 @@ class Constraints_loader {
     std::cerr << " done (" << timer.time() << "s)\n";
 
     std::cerr << "Inserting constraints...\n";
-    boost::progress_display show_progress(constraints.size(), 
+    boost::progress_display show_progress(constraints.size(),
                                           std::cerr,
                                           "");
     timer.reset();
     timer.start();
-    for(typename Constraints_container::const_iterator 
+    for(typename Constraints_container::const_iterator
           cit = constraints.begin(), end = constraints.end();
         cit != end; ++cit) {
       ++show_progress;

@@ -68,17 +68,17 @@ int main(int argc, char** argv)
   assert(f.size()<=number_of_elements);
 
   std::cerr << "Assignment f2=f...\n";
-  f2 = f; // check the assignment 
+  f2 = f; // check the assignment
   std::cerr << "Auto-assignment f=f...\n";
-  f2 = (Map&)f2; // check the auto-assignment 
+  f2 = (Map&)f2; // check the auto-assignment
   std::cerr << "Copy-construction...\n";
   Map f3(f); // check the copy constructor
 
   std::cerr << "Check sizes: "
-	    << "f.size()=" << f.size()
-	    << " ,f2.size()=" << f2.size()
-	    << " ,f3.size()=" << f3.size()
-	    << "\n";
+            << "f.size()=" << f.size()
+            << " ,f2.size()=" << f2.size()
+            << " ,f3.size()=" << f3.size()
+            << "\n";
   assert(f.size() == f2.size());
   assert(f.size() == f3.size());
 
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 #endif
       f2.erase(i);
 #ifndef NDEBUG
-    bool i_is_in_f3 = 
+    bool i_is_in_f3 =
 #endif
       f3.erase(i);
     assert( i_is_in_f2 );
@@ -114,10 +114,10 @@ int main(int argc, char** argv)
   }
 
   std::cerr << "Check sizes: "
-	    << "f.size()=" << f.size()
-	    << " ,f2.size()=" << f2.size()
-	    << " ,f3.size()=" << f3.size()
-	    << "\n";
+            << "f.size()=" << f.size()
+            << " ,f2.size()=" << f2.size()
+            << " ,f3.size()=" << f3.size()
+            << "\n";
   assert(f.size()==0);
   assert(f2.empty());
   assert(f3.empty());
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
   }
 
   std::cerr << "Check size: "
-	    << "f.size()=" << f.size() << "\n";
+            << "f.size()=" << f.size() << "\n";
   assert(f.size()==number_of_elements);
 
   std::cerr << "Emptying f...\n";
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
   }
 
   std::cerr << "Check size: "
-	    << "f.size()=" << f.size() << "\n";
+            << "f.size()=" << f.size() << "\n";
   assert(f.size()==0);
   assert(counter==number_of_elements);
 
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
   std::cerr << "f.clear()...\n";
   f.clear();
   std::cerr << "Check size: "
-	    << "f.size()=" << f.size() << "\n";
+            << "f.size()=" << f.size() << "\n";
   assert(f.size()==0);
 
   return 0;

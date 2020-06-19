@@ -13,16 +13,16 @@ if ( CGAL_FOUND )
 
 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if(EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
+  include(CGAL_Eigen_support)
+  if(TARGET CGAL::Eigen_support)
     create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
-  else(EIGEN3_FOUND)
+    target_link_libraries(extensive_parameterization_test PUBLIC CGAL::Eigen_support)
+  else()
     message(STATUS "NOTICE: The tests require Eigen 3.1 (or greater) and will not be compiled.")
-  endif(EIGEN3_FOUND)
+  endif()
 
 else()
 
   message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

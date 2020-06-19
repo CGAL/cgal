@@ -41,12 +41,12 @@ private:
 };
 
 template <typename K>
-class Two_spheres 
+class Two_spheres
 {
 public:
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
-  
+
   Two_spheres(Sphere<K> sphere1, Sphere<K> sphere2)
     :  sphere1(sphere1), sphere2(sphere2)
   {
@@ -60,7 +60,7 @@ private:
   Sphere<K> sphere1;
   Sphere<K> sphere2;
 };
-  
+
 
 enum Flag { DEFAULT, DO_NOT_RUN};
 
@@ -75,7 +75,7 @@ struct Test_with_kernel {
 
     typedef typename K::Sphere_3 Sphere_3;
     typedef typename K::Point_3 Point_3;
-    
+
     using CGAL::make_surface_mesh;
 
     Tr tr;
@@ -122,11 +122,11 @@ struct Test_with_kernel {
                       Sphere_3(CGAL::ORIGIN, 1.),
                       criteria,
                       Tag(),
-                      initial_number_of_points);  
+                      initial_number_of_points);
     timer.stop();
-    std::cout << "Final number of points: " << tr_2.number_of_vertices() 
+    std::cout << "Final number of points: " << tr_2.number_of_vertices()
               << "  (elasped time: " << timer.time() << ")\n\n";
-  
+
     typedef CGAL::Implicit_surface_3<K, Two_spheres<K> > Surface2;
     typedef typename CGAL::Surface_mesh_traits_generator_3<Surface>::Type Surface_mesh_traits;
     // initial points for a Sphere<K>
@@ -140,7 +140,7 @@ struct Test_with_kernel {
 
     // trick: insert in tr_3 the initial points for sphere2
     Surface surface_of_sphere_2(sphere2, Sphere_3(Point_3(0.5, 0., 0.), 2.));
-    
+
     Surface_mesh_traits().construct_initial_points_object()
       (surface_of_sphere_2, CGAL::inserter(tr_3), initial_number_of_points);
 
@@ -153,9 +153,9 @@ struct Test_with_kernel {
                       Tag(),
                       initial_number_of_points);
     timer.stop();
-    std::cout << "Final number of points: " << tr_3.number_of_vertices() 
+    std::cout << "Final number of points: " << tr_3.number_of_vertices()
               << "  (elasped time: " << timer.time() << ")\n\n";
-    
+
 
   }
 };

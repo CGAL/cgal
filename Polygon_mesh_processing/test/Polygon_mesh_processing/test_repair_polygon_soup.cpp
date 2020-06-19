@@ -19,7 +19,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_3                                              Point_3;
 
 typedef CGAL::Surface_mesh<Point_3>                             Mesh;
-typedef std::vector<std::size_t>                                Polygon;
+typedef std::vector<std::size_t>                                CGAL_polygon;
 
 void test_polygon_canonicalization(const bool verbose = false)
 {
@@ -34,8 +34,8 @@ void test_polygon_canonicalization(const bool verbose = false)
   points.push_back(Point_3(1,1,-2)); // #5
 
   // empty
-  Polygon polygon;
-  Polygon canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  CGAL_polygon polygon;
+  CGAL_polygon canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
   assert(canonical_polygon.empty());
 
   // 1 point
@@ -76,7 +76,7 @@ void test_polygon_canonicalization(const bool verbose = false)
   // all cyclic permutations
   for(std::size_t i=0, end=polygon.size(); i<end; ++i)
   {
-    Polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    CGAL_polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
     if(verbose)
     {
       std::cout << "Input polygon:";
@@ -93,7 +93,7 @@ void test_polygon_canonicalization(const bool verbose = false)
   std::reverse(polygon.begin(), polygon.end());
   for(std::size_t i=0, end=polygon.size(); i<end; ++i)
   {
-    Polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    CGAL_polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
     if(verbose)
     {
       std::cout << "Input polygon:";
@@ -112,7 +112,7 @@ void test_merge_duplicate_points(const bool /*verbose*/ = false)
   std::cout << "test merge duplicate points... " << std::endl;
 
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_polygon> polygons;
 
   // empty
   std::size_t res = PMP::merge_duplicate_points_in_polygon_soup(points, polygons);
@@ -126,7 +126,7 @@ void test_merge_duplicate_points(const bool /*verbose*/ = false)
   points.push_back(Point_3(1,1,0)); // #5 // identical to #2
   points.push_back(Point_3(0,0,0)); // #6 // idental to #0
 
-  Polygon polygon;
+  CGAL_polygon polygon;
   polygon.push_back(0); polygon.push_back(1); polygon.push_back(2);
   polygons.push_back(polygon);
 
@@ -146,7 +146,7 @@ void test_merge_duplicate_points(const bool /*verbose*/ = false)
 
   for(std::size_t i=0, psn=polygons.size(); i<psn; ++i)
   {
-    const Polygon& polygon = polygons[i];
+    const CGAL_polygon& polygon = polygons[i];
     for(std::size_t j=0, pn=polygon.size(); j<pn; ++j)
     {
       assert(polygon[j] < points.size());
@@ -159,7 +159,7 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
   std::cout << "test duplicate polygons merging..." << std::endl;
 
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_polygon> polygons;
 
   points.push_back(Point_3(0,0,0)); // #0
   points.push_back(Point_3(1,0,0)); // #1
@@ -180,7 +180,7 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
 
   // -------------------------------------------------------
   // 1 polygon
-  Polygon polygon;
+  CGAL_polygon polygon;
   polygon.push_back(0); polygon.push_back(1); polygon.push_back(2);
   polygons.push_back(polygon);
 
@@ -257,7 +257,7 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
     assert(all_duplicate_polygons[0].size() == 2 && all_duplicate_polygons[1].size() == 3);
 
   // Keep one for each duplicate
-  std::vector<Polygon> polygons_copy(polygons);
+  std::vector<CGAL_polygon> polygons_copy(polygons);
   res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
                                                       params::all_default());
   assert(res == 3 && polygons_copy.size() == 3);
@@ -281,7 +281,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   std::cout << "test simplify_polygons... " << std::endl;
 
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_polygon> polygons;
 
   points.push_back(Point_3(0,0,0)); // #0
   points.push_back(Point_3(1,2,0)); // #1
@@ -292,7 +292,7 @@ void test_simplify_polygons(const bool /*verbose*/ = false)
   points.push_back(Point_3(0,0,0)); // #6
 
   // ------
-  Polygon polygon;
+  CGAL_polygon polygon;
   polygon.push_back(0); polygon.push_back(2); polygon.push_back(4);
   polygons.push_back(polygon);
 
@@ -355,13 +355,13 @@ void test_remove_invalid_polygons(const bool /*verbose*/ = false)
 
   // points are not actually needed since only the size of the polygons is considered
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_polygon> polygons;
 
   std::size_t res = PMP::internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
   assert(res == 0 && polygons.size() == 0);
 
   // non-trivial polygon
-  Polygon polygon;
+  CGAL_polygon polygon;
   polygon.push_back(0); polygon.push_back(2); polygon.push_back(4);
   polygons.push_back(polygon);
 
@@ -431,7 +431,7 @@ void test_remove_isolated_points(const bool verbose = false)
   std::cout << "test remove_isolated_points... " << std::endl;
 
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_polygon> polygons;
 
   // everything empty
   std::size_t res = test_remove_isolated_points_data_set(points, polygons, verbose);
@@ -449,7 +449,7 @@ void test_remove_isolated_points(const bool verbose = false)
   res = test_remove_isolated_points_data_set(points_copy, polygons, verbose);
   assert(res == 6 && points_copy.empty() && polygons.empty());
 
-  Polygon polygon;
+  CGAL_polygon polygon;
   polygon.push_back(0); polygon.push_back(2); polygon.push_back(4);
   polygons.push_back(polygon);
 
@@ -467,7 +467,7 @@ void test_slit_pinched_polygons(const bool /*verbose*/ = false)
   std::cout << "test split_pinched_polygons... " << std::endl;
 
   std::vector<Point_3> points;
-  std::vector<Polygon> polygons;
+  std::vector<CGAL_polygon> polygons;
 
   // everything empty
   std::size_t res = PMP::internal::split_pinched_polygons_in_polygon_soup<K>(points, polygons);
@@ -481,7 +481,7 @@ void test_slit_pinched_polygons(const bool /*verbose*/ = false)
   points.push_back(Point_3(1,1,0)); // #5
 
   // no pinch
-  Polygon polygon;
+  CGAL_polygon polygon;
   polygon.push_back(0); polygon.push_back(2); polygon.push_back(4);
   polygons.push_back(polygon);
 

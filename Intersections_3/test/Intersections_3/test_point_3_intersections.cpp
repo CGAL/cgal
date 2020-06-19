@@ -93,10 +93,10 @@ void test_P_Tet()
 
   assert(CGAL::do_intersect(p,t));
   assert(CGAL::do_intersect(t,p));
-  
+
   assert(CGAL::do_intersect(q0,t));
   assert(CGAL::do_intersect(t,q0));
-  
+
   assert(! CGAL::do_intersect(q1,t));
   assert(! CGAL::do_intersect(t,q1));
 }
@@ -119,7 +119,7 @@ int main()
 
   test_P_Pl<Epick>();
   test_P_Pl<Epeck>();
-  
+
   test_P_Tet<Epick>();
   test_P_Tet<Epeck>();
 }

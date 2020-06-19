@@ -27,7 +27,7 @@ namespace CGAL {
 template <class T>
 void test_fraction_traits(){
 
-    typedef CGAL::Fraction_traits<T> FT;    
+    typedef CGAL::Fraction_traits<T> FT;
     typedef typename FT::Type Type;
     typedef typename FT::Is_fraction  Is_fraction;
     typedef typename FT::Numerator_type  Num;
@@ -42,18 +42,18 @@ void test_fraction_traits(){
     CGAL_static_assertion(!(::boost::is_same<Common_factor,Null_functor>::value));
     CGAL_static_assertion(!(::boost::is_same<Decompose,Null_functor>::value));
     CGAL_static_assertion(!(::boost::is_same<Compose,Null_functor>::value));
-    
-    
+
+
     // Decompose
     Type frac = Type(7) / Type (5);
-    Num num; 
+    Num num;
     Den den;
     Decompose()(frac,num,den);
     assert(num == Num(7));
     assert(den == Num(5));
     assert(frac == Compose()(num,den));
-    
-    // almost the same as gcd 
+
+    // almost the same as gcd
     Common_factor common_factor;
     assert(common_factor(Den(0),Den(0)) == Den(0));
     assert(common_factor(Den(1),Den(0)) == Den(1));
@@ -62,7 +62,7 @@ void test_fraction_traits(){
     assert(common_factor(Den(12),Den(15)) == Den(3));
     assert(common_factor(Den(-12),Den(15)) == Den(3));
     assert(common_factor(Den(12),Den(-15)) == Den(3));
-    assert(common_factor(Den(-12),Den(-15)) == Den(3));    
+    assert(common_factor(Den(-12),Den(-15)) == Den(3));
 }
 
 } //namespace CGAL

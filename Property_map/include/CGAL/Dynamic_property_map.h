@@ -13,11 +13,13 @@
 #define CGAL_DYNAMIC_PROPERTY_MAP_H
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/property_map.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 
@@ -60,7 +62,7 @@ struct Dynamic_property_map {
     (*(m.map_))[k] = v;
   }
 
-  
+
   const V& default_value() const
   {
     return default_value_;
@@ -72,7 +74,7 @@ struct Dynamic_property_map {
   V default_value_;
 };
 
-  
+
 template <typename M, typename PM>
 struct Dynamic_property_map_deleter {
   M& mesh;
@@ -101,22 +103,22 @@ struct Dynamic {
   Dynamic()
     : map_()
   {}
-  
+
   Dynamic(const Mesh& mesh, PM* pm)
     : map_(pm, Deleter(mesh))
   {}
-             
+
   friend reference get(const Dynamic& m, const key_type& k)
   {
     return get(*(m.map_), k);
   }
-    
+
 
   friend void put(const Dynamic& m, const key_type& k, const value_type& v)
   {
     put(*(m.map_), k, v);
   }
-   
+
   boost::shared_ptr<PM> map_;
 };
 

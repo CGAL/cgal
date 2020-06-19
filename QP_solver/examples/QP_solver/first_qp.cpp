@@ -21,10 +21,10 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
   // by default, we have a nonnegative QP with Ax <= b
-  Program qp (CGAL::SMALLER, true, 0, false, 0); 
-  
-  // now set the non-default entries: 
-  const int X = 0; 
+  Program qp (CGAL::SMALLER, true, 0, false, 0);
+
+  // now set the non-default entries:
+  const int X = 0;
   const int Y = 1;
   qp.set_a(X, 0,  1); qp.set_a(Y, 0, 1); qp.set_b(0, 7);  //  x + y  <= 7
   qp.set_a(X, 1, -1); qp.set_a(Y, 1, 2); qp.set_b(1, 4);  // -x + 2y <= 4
@@ -38,6 +38,6 @@ int main() {
   assert (s.solves_quadratic_program(qp));
 
   // output solution
-  std::cout << s; 
+  std::cout << s;
   return 0;
 }

@@ -32,17 +32,19 @@ endif(Qt5_FOUND)
 option(CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3
   "Activate parallelism in Triangulation_3"
   OFF)
-  
+
 # And add -DCGAL_CONCURRENT_TRIANGULATION_3 if that option is ON
 if( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   add_definitions( -DCGAL_CONCURRENT_TRIANGULATION_3 )
   find_package( TBB REQUIRED )
+  include(CGAL_TBB_support)
 else( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   option( LINK_WITH_TBB
     "Link with TBB anyway so we can use TBB timers for profiling"
     ON)
   if( LINK_WITH_TBB )
     find_package( TBB )
+    include(CGAL_TBB_support)
   endif( LINK_WITH_TBB )
 endif()
 
@@ -67,8 +69,8 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   target_link_libraries( T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
   target_link_libraries( T3_demo PRIVATE Qt5::OpenGL Qt5::Xml)
-  if(TBB_FOUND)
-    CGAL_target_use_TBB(T3_demo)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
   endif()
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
@@ -83,13 +85,13 @@ else( CGAL_FOUND AND Qt5_FOUND)
 
   if(NOT CGAL_Qt5_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "the CGAL Qt5 library, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif()      	   
+  endif()
 
   if(NOT Qt5_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif()      	   
+  endif()
 
-  
+
   message(STATUS "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled.")
 
 endif( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND  )

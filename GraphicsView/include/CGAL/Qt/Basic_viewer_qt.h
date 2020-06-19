@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -96,15 +96,15 @@ const char fragment_source_color[] =
     "void main(void) { \n"
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
     "   highp vec3 V = -fP.xyz; \n"
-    
+
     "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
-    
+
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "   gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
@@ -143,14 +143,14 @@ const char vertex_source_color_comp[] =
     "attribute highp vec4 vertex;\n"
     "attribute highp vec3 normal;\n"
     "attribute highp vec3 color;\n"
-    
+
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
-    
+
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
-    
+
     "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
@@ -176,20 +176,20 @@ const char fragment_source_color_comp[] =
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform highp float spec_power ; \n"
-    
+
     "void main(void) { \n"
-    
+
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
     "   highp vec3 V = -fP.xyz; \n"
-    
+
     "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
-    
+
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    
+
     "gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
@@ -372,7 +372,7 @@ public:
   bool has_zero_x() const
   {
     return
-      m_buffer_for_mono_points.has_zero_x() && 
+      m_buffer_for_mono_points.has_zero_x() &&
       m_buffer_for_colored_points.has_zero_x() &&
       m_buffer_for_mono_segments.has_zero_x() &&
       m_buffer_for_colored_segments.has_zero_x() &&
@@ -382,12 +382,12 @@ public:
       m_buffer_for_colored_rays.has_zero_x() &&
       m_buffer_for_mono_lines.has_zero_x() &&
       m_buffer_for_colored_lines.has_zero_x();
-  }  
+  }
 
   bool has_zero_y() const
   {
     return
-      m_buffer_for_mono_points.has_zero_y() && 
+      m_buffer_for_mono_points.has_zero_y() &&
       m_buffer_for_colored_points.has_zero_y() &&
       m_buffer_for_mono_segments.has_zero_y() &&
       m_buffer_for_colored_segments.has_zero_y() &&
@@ -398,11 +398,11 @@ public:
       m_buffer_for_mono_lines.has_zero_y() &&
       m_buffer_for_colored_lines.has_zero_y();
   }
-  
+
   bool has_zero_z() const
   {
     return
-      m_buffer_for_mono_points.has_zero_z() && 
+      m_buffer_for_mono_points.has_zero_z() &&
       m_buffer_for_colored_points.has_zero_z() &&
       m_buffer_for_mono_segments.has_zero_z() &&
       m_buffer_for_colored_segments.has_zero_z() &&
@@ -413,7 +413,7 @@ public:
       m_buffer_for_mono_lines.has_zero_z() &&
       m_buffer_for_colored_lines.has_zero_z();
   }
-  
+
   template<typename KPoint>
   void add_point(const KPoint& p)
   { m_buffer_for_mono_points.add_point(p); }
@@ -585,19 +585,19 @@ protected:
     }
 
     // Vertices and segments shader
-    
-    const char* source_ = isOpenGL_4_3() 
+
+    const char* source_ = isOpenGL_4_3()
         ? vertex_source_p_l
         : vertex_source_p_l_comp;
-    
+
     QOpenGLShader *vertex_shader_p_l = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3() 
+    source_ = isOpenGL_4_3()
         ? fragment_source_p_l
         : fragment_source_p_l_comp;
-    
+
     QOpenGLShader *fragment_shader_p_l= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
@@ -610,19 +610,19 @@ protected:
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
     // Faces shader
-    
-    source_ = isOpenGL_4_3() 
+
+    source_ = isOpenGL_4_3()
             ? vertex_source_color
             : vertex_source_color_comp;
-    
+
     QOpenGLShader *vertex_shader_face = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3() 
+    source_ = isOpenGL_4_3()
             ? fragment_source_color
             : fragment_source_color_comp;
-    
+
     QOpenGLShader *fragment_shader_face= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
@@ -1179,7 +1179,7 @@ protected:
       if (has_zero_x())      { cx=1.; }
       else if (has_zero_y()) { cy=1.; }
       else                   { cz=1.; }
-    
+
       camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
       constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
       camera()->frame()->setConstraint(&constraint);
@@ -1194,7 +1194,7 @@ protected:
           (CGAL::qglviewer::Vec(std::get<0>(m_texts[i]).x(),
                                 std::get<0>(m_texts[i]).y(),
                                 std::get<0>(m_texts[i]).z()));
-        
+
         drawText((int)screenPos[0], (int)screenPos[1], std::get<1>(m_texts[i]));
       }
       glEnable(GL_LIGHTING);
@@ -1218,12 +1218,13 @@ protected:
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
-    setKeyDescription(::Qt::Key_F, "Toggles faces display");
-    setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_T, "Toggles text display");
+    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
+    setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
@@ -1243,7 +1244,7 @@ protected:
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 
     compile_shaders();
-      
+
     CGAL::Bbox_3 bb;
     if (bb==bounding_box()) // Case of "empty" bounding box
     {
@@ -1277,13 +1278,8 @@ protected:
       m_draw_edges=!m_draw_edges;
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
-    }else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_faces=!m_draw_faces;
-      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
-      update();
     }
-    else if ((e->key()==::Qt::Key_G) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_S) && (modifiers==::Qt::NoButton))
     {
       m_flatShading=!m_flatShading;
       if (m_flatShading)
@@ -1311,10 +1307,40 @@ protected:
       displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
       update();
     }
+    else if ((e->key()==::Qt::Key_U) && (modifiers==::Qt::NoButton))
+    {
+      if (is_two_dimensional())
+      {
+        displayMessage(QString("Move camera direction upside down."));
+        /* CGAL::qglviewer::Vec cur=camera()->viewDirection();
+        double cx=cur.x, cy=cur.y, cz=cur.z;
+        if (has_zero_x())      { cx=-cx; }
+        else if (has_zero_y()) { cy=-cy; }
+        else                   { cz=-cz; }
+        double cx=0., cy=0., cz=0.;
+        if (has_zero_x())      { cx=(cur.x<0?-1.:1); }
+        else if (has_zero_y()) { cy=(cur.y<0?-1.:1); }
+        else                   { cz=(cur.z<0?-1.:1); }*/
+
+        camera()->setUpVector(-camera()->upVector());
+        //camera()->frame()->setConstraint(NULL);
+        // camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
+        //constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
+        //camera()->frame()->setConstraint(&constraint);
+        //update();
+        redraw();
+      }
+    }
     else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
     {
       m_draw_vertices=!m_draw_vertices;
       displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
+      update();
+    }
+    else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_faces=!m_draw_faces;
+      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
       update();
     }
     else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
@@ -1462,7 +1488,7 @@ protected:
   bool m_use_mono_color;
   bool m_inverse_normal;
   bool m_draw_text;
-  
+
   double m_size_points;
   double m_size_edges;
   double m_size_rays;
@@ -1560,7 +1586,7 @@ namespace CGAL
 
   template<class T>
   void draw(const T&, const char* ="", bool=false)
-  { 
+  {
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
 

@@ -9,7 +9,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Timer.h>
 
-// Domain 
+// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
@@ -56,7 +56,7 @@ int main(int argc, char*argv[])
   Mesh_criteria criteria(edge_size = 0.025,
                          facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
                          cell_radius_edge_ratio = 3, cell_size = 0.05);
-  
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       no_perturb(), no_exude());

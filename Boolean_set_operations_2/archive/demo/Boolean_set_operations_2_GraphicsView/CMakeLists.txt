@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.15)
-project( Boolean_set_operations_2_GraphicsView_Demo ) 
+project( Boolean_set_operations_2_GraphicsView_Demo )
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -26,7 +26,7 @@ set(CMAKE_AUTOMOC ON)
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  
+
 
   # The executable itself.
   add_executable  ( boolean_operations_2 ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.cpp ${CGAL_Qt5_MOC_FILES} ${CDT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} )

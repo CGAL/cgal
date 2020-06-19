@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -17,6 +17,7 @@
 
 
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
+#include <CGAL/Has_timestamp.h>
 
 namespace CGAL {
 
@@ -41,17 +42,17 @@ protected:
 public:
   Delaunay_mesh_face_base_2(): Fb(), in_domain(false) {}
 
-  Delaunay_mesh_face_base_2(Vertex_handle v0, 
-			    Vertex_handle v1, 
-			    Vertex_handle v2)
+  Delaunay_mesh_face_base_2(Vertex_handle v0,
+                            Vertex_handle v1,
+                            Vertex_handle v2)
     : Fb(v0,v1,v2), in_domain(false) {}
 
-  Delaunay_mesh_face_base_2(Vertex_handle v0, 
-			    Vertex_handle v1, 
-			    Vertex_handle v2,
-			    Face_handle n0, 
-			    Face_handle n1, 
-			    Face_handle n2)
+  Delaunay_mesh_face_base_2(Vertex_handle v0,
+                            Vertex_handle v1,
+                            Vertex_handle v2,
+                            Face_handle n0,
+                            Face_handle n1,
+                            Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2), in_domain(false) {}
 
   inline
@@ -67,6 +68,14 @@ public:
   /** compatibility with CGAL-3.2 */
   inline
   void set_marked(const bool b) { in_domain=b; }
+
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const { return time_stamp_; }
+
+  void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
+
+  std::size_t time_stamp_;
 };
 
 } // namespace CGAL

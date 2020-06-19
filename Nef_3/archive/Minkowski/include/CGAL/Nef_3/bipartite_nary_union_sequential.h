@@ -21,9 +21,9 @@
 namespace CGAL {
 
 template<typename Nef_polyhedron>
-Nef_polyhedron 
-bipartite_nary_union_sequential(Nef_polyhedron& N0,  
-				 Nef_polyhedron& N1) {
+Nef_polyhedron
+bipartite_nary_union_sequential(Nef_polyhedron& N0,
+                                 Nef_polyhedron& N1) {
 
   typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Nef_polyhedron::Volume_const_iterator  Volume_const_iterator;
@@ -66,13 +66,13 @@ bipartite_nary_union_sequential(Nef_polyhedron& N0,
     --shells;
     if(c1->mark() == false) continue;
     Gausian_map G(N1, c1);
-    
+
     int maps = GM.size()+1;
     typename std::list<Gausian_map>::const_iterator gi;
     for(gi = GM.begin(); gi != GM.end(); ++gi) {
       std::cerr << "noch "
-		<< shells << ", " 
-		<< --maps << " convex sums" << std::endl;
+                << shells << ", "
+                << --maps << " convex sums" << std::endl;
       Gausian_map GcG;
       GcG.minkowski_sum(G,*gi);
       Nef_polyhedron Ntmp;

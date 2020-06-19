@@ -29,11 +29,10 @@ endif()
 
 # Use Eigen (for PCA)
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
-else()
-  include( ${EIGEN3_USE_FILE} )
 endif()
 
 
@@ -43,21 +42,28 @@ endif()
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "vsa_class_interface_test.cpp" )
+target_link_libraries(vsa_class_interface_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_correctness_test.cpp" )
+target_link_libraries(vsa_correctness_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_error_decrease_test.cpp" )
+target_link_libraries(vsa_error_decrease_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_kernel_test.cpp" )
+target_link_libraries(vsa_kernel_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_approximation_test.cpp" )
+target_link_libraries(vsa_approximation_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_segmentation_test.cpp" )
+target_link_libraries(vsa_segmentation_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_meshing_manifold_test.cpp" )
+target_link_libraries(vsa_meshing_manifold_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_metric_test.cpp" )
+target_link_libraries(vsa_metric_test PUBLIC CGAL::Eigen_support)
 
 create_single_source_cgal_program( "vsa_teleportation_test.cpp" )
-
-
+target_link_libraries(vsa_teleportation_test PUBLIC CGAL::Eigen_support)

@@ -33,7 +33,7 @@ void Point_container::initGL(Viewer_interface *viewer)
   if(viewer->isSharing())
   {
     if(!getVao(viewer))
-      setVao(viewer, new Vao(getVao(Three::mainViewer()), 
+      setVao(viewer, new Vao(getVao(Three::mainViewer()),
                              viewer->getShaderProgram(getProgram())));
   }
   else
@@ -75,7 +75,7 @@ void Point_container::initGL(Viewer_interface *viewer)
       }
       getVao(viewer)->addVbo(getVbo(Vertices));
       getVao(viewer)->addVbo(getVbo(Colors));
-      
+
     }
   }
   setGLInit(viewer, true);

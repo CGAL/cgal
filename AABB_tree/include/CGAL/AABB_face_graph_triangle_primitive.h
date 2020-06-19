@@ -96,7 +96,7 @@ class AABB_face_graph_triangle_primitive
   {
     return std::make_pair(fd, &fg);
   }
-  
+
 public:
   #ifdef DOXYGEN_RUNNING
   /// \name Types
@@ -115,7 +115,7 @@ public:
   - `std::pair<boost::graph_traits<FaceGraph>::%face_descriptor, FaceGraph>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
   */
   unspecified_type Id;
-  
+
   /// @}
 
   /*!
@@ -130,7 +130,7 @@ public:
   // constructors
   /*!
     \tparam Iterator an input iterator with `Id` as value type.
-    Constructs a primitive.
+    constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `get(vertex_point, graph)`.
   */
@@ -142,7 +142,7 @@ public:
   {}
 
   /*!
-    Constructs a primitive.
+    constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
     is available with `vppm` set to `get(vertex_point, graph)`.
   */

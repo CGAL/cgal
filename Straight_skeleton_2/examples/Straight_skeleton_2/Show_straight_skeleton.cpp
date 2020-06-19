@@ -25,18 +25,39 @@ typedef boost::shared_ptr<Straight_skeleton> Straight_skeleton_ptr ;
 int main( int argc, char* argv[] )
 {
   Polygon_with_holes input ;
-  
+
   if ( argc > 1 )
   {
     std::string name = argv[1] ;
-  
+
     std::cout << "Input file: " << name << std::endl ;
-      
+
     std::ifstream is(name.c_str()) ;
     if ( is )
     {
       is >> input ;
-      
+
+      //check the validity of the input and fix orientation
+      if (!input.outer_boundary().is_simple())
+      {
+        std::cerr << "ERROR: outer boundary is not simple.";
+        return 1;
+      }
+      if ( input.outer_boundary().is_clockwise_oriented() )
+        input.outer_boundary().reverse_orientation();
+      int k=0;
+      for (Polygon_with_holes::Hole_iterator it = input.holes_begin();
+                                             it!=input.holes_end(); ++it, ++k)
+      {
+        if (!it->is_simple())
+        {
+          std::cerr << "ERROR: hole "<< k << " is not simple.\n";
+          return 1;
+        }
+        if (it->is_counterclockwise_oriented())
+          it->reverse_orientation();
+      }
+
       Straight_skeleton_ptr ss = CGAL::create_interior_straight_skeleton_2(input);
       if ( ss )
       {
@@ -44,9 +65,9 @@ int main( int argc, char* argv[] )
         if ( argc > 2  )
              eps_name = argv[2];
         else eps_name = name + ".skeleton.eps" ;
-        
+
         std::ofstream eps(eps_name.c_str()) ;
-        if ( eps )  
+        if ( eps )
         {
           std::cerr << "Result: " << eps_name << std::endl ;
           dump_to_eps(input,*ss,eps);
@@ -54,27 +75,27 @@ int main( int argc, char* argv[] )
         else
         {
           std::cerr << "Could not open result file: " << eps_name << std::endl ;
-        }  
+        }
       }
       else
       {
         std::cerr << "ERROR creating interior straight skeleton" << std::endl ;
       }
-    }  
+    }
     else
     {
       std::cerr << "Could not open input file: " << name << std::endl ;
-    }  
+    }
   }
   else
   {
-    std::cerr << "Computes the straight skeleton in the interior of a polygon with holes and draws it in an EPS file." << std::endl 
-              << std::endl 
-              << "Usage: show_straight_skeleton <intput_file> [output_eps_file]" << std::endl 
-              << std::endl 
+    std::cerr << "Computes the straight skeleton in the interior of a polygon with holes and draws it in an EPS file." << std::endl
+              << std::endl
+              << "Usage: show_straight_skeleton <intput_file> [output_eps_file]" << std::endl
+              << std::endl
               << "       intput_file  Text file describing the input polygon with holes." << std::endl
               << "         (See input_file_format.txt for details)" << std::endl
-              << "       output_file     [default='innput_file.skeleton.eps']" << std::endl ; 
+              << "       output_file     [default='innput_file.skeleton.eps']" << std::endl ;
   }
 
   return 0;

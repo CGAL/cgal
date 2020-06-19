@@ -38,7 +38,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3() 
+  Triangulation_ds_cell_base_3()
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     mark = -1;
@@ -160,10 +160,10 @@ public:
   void set_neighbors(Cell_handle n0, Cell_handle n1,
                      Cell_handle n2, Cell_handle n3)
   {
-    CGAL_triangulation_precondition( this != &*n0 );
-    CGAL_triangulation_precondition( this != &*n1 );
-    CGAL_triangulation_precondition( this != &*n2 );
-    CGAL_triangulation_precondition( this != &*n3 );
+    CGAL_triangulation_precondition( this != n0.operator->() );
+    CGAL_triangulation_precondition( this != n1.operator->() );
+    CGAL_triangulation_precondition( this != n2.operator->() );
+    CGAL_triangulation_precondition( this != n3.operator->() );
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
@@ -180,12 +180,12 @@ public:
 
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container(); }
+  void for_compact_container(void* p) { N[0].for_compact_container(p); }
 
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
-  
+
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
   int mark;
   int mark2;

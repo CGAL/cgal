@@ -20,11 +20,11 @@ typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mea
 using std::cout; using std::endl; using std::string;
 
 int main()
-{    
+{
     // Construct a star-shaped polygon.
     const int number_of_vertices = 10;
     Point_vector vertices(number_of_vertices);
-    
+
     vertices[0] = Point(0.0, 0.0); vertices[1] = Point(0.1, -0.8); vertices[2] = Point(0.3, 0.0); vertices[3] = Point(0.6, -0.5); vertices[4]  = Point(0.6 , 0.1);
     vertices[5] = Point(1.1, 0.6); vertices[6] = Point(0.3,  0.2); vertices[7] = Point(0.1, 0.8); vertices[8] = Point(0.1,  0.2); vertices[9] = Point(-0.7, 0.0);
 

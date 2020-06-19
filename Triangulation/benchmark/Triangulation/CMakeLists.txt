@@ -13,12 +13,14 @@ if ( CGAL_FOUND )
 
   include(${CGAL_USE_FILE})
 
-  find_package(Eigen3 3.1.0) 
-  if (EIGEN3_FOUND) 
-    include( ${EIGEN3_USE_FILE} ) 
+  find_package(Eigen3 3.1.0)
+  include(CGAL_Eigen_support)
+  if (TARGET CGAL::Eigen_support)
     include_directories (BEFORE "include")
     create_single_source_cgal_program( "delaunay.cpp" )
+    target_link_libraries(delaunay PUBLIC CGAL::Eigen_support)
     create_single_source_cgal_program( "Td_vs_T2_and_T3.cpp" )
+    target_link_libraries(Td_vs_T2_and_T3 PUBLIC CGAL::Eigen_support)
 
   else()
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
@@ -27,4 +29,3 @@ if ( CGAL_FOUND )
 else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 endif()
-

@@ -27,7 +27,7 @@
 
 #include <CGAL/bounding_box.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 
 #include <QAction>
 #include <QMainWindow>
@@ -745,7 +745,7 @@ private:
     default:
       break;
     }
-    
+
     Tc* tc = getTriangleContainer(0);
     tc->allocate(Tc::Flat_vertices,
                  positions_quad.data(),
@@ -755,8 +755,8 @@ private:
           tex_map.data(),
           static_cast<int>(tex_map.size()*sizeof(float)));
     tc->getTexture()->setData(texture->getData());
-    
-    
+
+
     tc = getTriangleContainer(1);
     tc->allocate(Tc::Flat_vertices,
                  positions_quad.data(),
@@ -767,7 +767,7 @@ private:
           positions_lines.data(),
           static_cast<int>(positions_lines.size()*sizeof(float)));
     setBuffersFilled(true);
-    
+
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
@@ -858,6 +858,12 @@ public:
     if(ok)
       items.pop_front();
     return ok;
+  }
+
+  bool isDefaultLoader(const Scene_item* item) const Q_DECL_OVERRIDE{
+    if(qobject_cast<const Scene_edges_item*>(item))
+      return true;
+    return false;
   }
 
   using Polyhedron_demo_io_plugin_interface::init;
@@ -1241,7 +1247,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
   //std::cerr << plane << std::endl;
   edges_item->edges.clear();
-  QTime time;
+  QElapsedTimer time;
   time.start();
   bool does_intersect = false;
   for(Facet_sm_trees::iterator it = facet_sm_trees.begin(); it != facet_sm_trees.end(); ++it)

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 
@@ -52,11 +52,11 @@ public:
   /// \name Type definitions for the intersection-point mapping.
   //@{
 
-  /*! \struct Intersection_point_2
+  /*! \struct Intersection_point
    * Representation of an intersection point (in both parameter and physical
    * spaces).
    */
-  struct Intersection_point_2
+  struct Intersection_point
   {
     Algebraic          s;      // The parameter for the first curve.
     Algebraic          t;      // The parameter for the second curve.
@@ -64,7 +64,7 @@ public:
     Algebraic          y;      // The y-coordinate.
 
     /*! Constructor. */
-    Intersection_point_2 (const Algebraic& _s, const Algebraic& _t,
+    Intersection_point (const Algebraic& _s, const Algebraic& _t,
                           const Algebraic& _x, const Algebraic& _y) :
       s(_s), t(_t),
       x(_x), y(_y)
@@ -73,12 +73,12 @@ public:
 
   typedef std::pair<Curve_id, Curve_id>              Curve_pair;
   typedef std::pair<Algebraic, Algebraic>            Parameter_pair;
-  typedef std::list<Intersection_point_2>            Intersection_list;
+  typedef std::list<Intersection_point>            Intersection_list;
   typedef
     typename Intersection_list::const_iterator       Intersection_iter;
 
   //@}
-  
+
 private:
 
   typedef std::map<Curve_id,
@@ -300,7 +300,7 @@ _Bezier_cache<NtTraits>::get_vertical_tangencies
   // such that X'(t) = 0, and store them in the cache.
   Vertical_tangency_list&  vert_tang_list = vert_tang_map[id];
   const Polynomial&        polyX_der = nt_traits.derive (polyX);
-  
+
   nt_traits.compute_polynomial_roots (polyX_der, 0, 1,
                                       std::back_inserter(vert_tang_list));
   return (vert_tang_list);
@@ -378,7 +378,7 @@ _Bezier_cache<NtTraits>::get_intersections
             CGAL::compare (nt_traits.evaluate_at (polyY_1, *t_it),
                            y) == EQUAL)
         {
-          info.first.push_back (Intersection_point_2 (*s_it, *t_it,
+          info.first.push_back (Intersection_point (*s_it, *t_it,
                                                       x / denX, y / denY));
         }
       }
@@ -414,7 +414,7 @@ _Bezier_cache<NtTraits>::get_intersections
   // s-values and t-values reported lie in the range [0,1]. We have
   // to pair them together. Note that the numbers of s-values and t-values
   //can be different as a s-value in [0,1] may correspond to a t-values
-  //outside this range. To make the pairing correct, we choose the one with 
+  //outside this range. To make the pairing correct, we choose the one with
   //less values and look amongst other values the correct one (thus the swapt below).
 
   // Compute all points on (X_1, Y_1) that match an s-value from the list.
@@ -463,7 +463,7 @@ _Bezier_cache<NtTraits>::get_intersections
   bool swapt=pts1.size() > pts2.size();
   if (swapt)
     std::swap(pts1_ptr,pts2_ptr);
-  
+
   for (pit1 = pts1_ptr->begin(); pit1 != pts1_ptr->end(); ++pit1)
   {
     // Construct a vector of distances from the current point to all other
@@ -479,9 +479,9 @@ _Bezier_cache<NtTraits>::get_intersections
 
       dist_vec[k] = Distance_iter (dx*dx + dy*dy, pit2);
     }
-      
+
     // Sort the vector according to the distances from *pit1.
-    std::sort (dist_vec.begin(), dist_vec.end(), 
+    std::sort (dist_vec.begin(), dist_vec.end(),
                Less_distance_iter());
 
     // Go over the vector entries, starting from the most distant from *pit1
@@ -534,11 +534,9 @@ _Bezier_cache<NtTraits>::get_intersections
     // Check that  s- and t-values both lie in the legal range of [0,1].
     CGAL_assertion(CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
                    CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER);
-    
-    if (!swapt)
-      info.first.push_back (Intersection_point_2 (s, t,pit1->x, pit1->y));
-    else
-      info.first.push_back (Intersection_point_2 (t, s,pit1->x, pit1->y));
+
+    if (!swapt) info.first.push_back(Intersection_point(s, t,pit1->x, pit1->y));
+    else info.first.push_back(Intersection_point(t, s,pit1->x, pit1->y));
   }
 
   info.second = false;
@@ -614,7 +612,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   // Consruct the bivariate polynomial that corresponds to Equation II.
   const int                degY_2 = nt_traits.degree (polyY_2);
   std::vector<Polynomial>  coeffsY_st (degY_2 < 0 ? 1 : (degY_2 + 1));
-    
+
   for (k = degY_2; k >= 0; k--)
   {
     coeff = nt_traits.get_coefficient (polyY_2, k) * normY_1;
@@ -684,9 +682,9 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   // Consruct the bivariate polynomial that corresponds to Equation II.
   const int                degY = nt_traits.degree (polyY);
   CGAL_assertion(degY > 0);
-  if (degY <= 0) return; //no self intersection if Y is constant  
+  if (degY <= 0) return; //no self intersection if Y is constant
   std::vector<Polynomial>  coeffsY_st (degY);
-    
+
   coeffs = new Integer [degY];
 
   for (i = 0; i < degY; i++)
@@ -732,25 +730,25 @@ _Bezier_cache<NtTraits>::_compute_resultant
 
   std::vector<std::vector<Polynomial> >  mat (dim);
   std::vector <std::size_t>                      exp_fact (dim);
-  
+
   for (i = 0; i < dim; i++)
   {
     mat[i].resize (dim);
     exp_fact[i] = 0;
-    
+
     for (j = 0; j < dim; j++)
       mat[i][j] = zero_poly;
   }
-  
+
   // Initialize it with copies of the two bivariate polynomials.
   for (i = 0; i < n; i++)
     for (j = 0; j <= m; ++j)
       mat[i][i + j] = bp1[j];
-  
+
   for (i = 0; i < m; i++)
     for (j = 0; j <= n;++j)
       mat[n + i][i + j] = bp2[j];
-  
+
   // Perform Gaussian elimination on the Sylvester matrix. The goal is to
   // reach an upper-triangular matrix, whose diagonal elements are mat[0][0]
   // to mat[dim-1][dim-1], such that the determinant of the original matrix
@@ -780,7 +778,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
       // If the current diagonal value is a zero polynomial, try to replace
       // the current i'th row with a row with a higher index k, such that
       // mat[k][i] is not a zero polynomial.
-      
+
       found_row = false;
       for (k = i + 1; k < dim; k++)
       {
@@ -790,7 +788,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
           break;
         }
       }
-      
+
       if (found_row)
       {
         // Swap the i'th and the k'th rows (note that we start from the i'th
@@ -802,7 +800,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
           mat[i][j] = mat[k][j];
           mat[k][j] = value;
         }
-        
+
         // Swapping two rows should change the sign of the determinant.
         // We therefore swap the sign of the normalization factor.
         sign_fact = -sign_fact;
@@ -814,7 +812,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
         return (mat[i][i]);
       }
     }
-    
+
     // Zero the whole i'th column of the following rows.
     for (k = i + 1; k < dim; k++)
     {
@@ -822,12 +820,12 @@ _Bezier_cache<NtTraits>::_compute_resultant
       {
         value = mat[k][i];
         mat[k][i] = zero_poly;
-        
+
         for (j = i + 1; j < dim; j++)
         {
-          mat[k][j] = mat[k][j] * mat[i][i] - mat[i][j] * value; 
+          mat[k][j] = mat[k][j] * mat[i][i] - mat[i][j] * value;
         }
-        
+
         // We multiplied the current row by the i'th diagonal entry, thus
         // multipling the determinant value by it. We therefore increment
         // the exponent of mat[i][i] in the normalization factor.
@@ -841,7 +839,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
   const Integer    sgn (sign_fact);
   Polynomial       det_factor = nt_traits.construct_polynomial (&sgn, 0);
   Polynomial       diag_prod = mat[dim - 1][dim - 1];
-  
+
   CGAL_assertion (exp_fact [dim - 1] == 0);
   for (i = 0; i+2 <= dim; ++i)
   {
@@ -856,20 +854,20 @@ _Bezier_cache<NtTraits>::_compute_resultant
     {
       diag_prod *= mat[i][i];
     }
-    
+
     for (j = 0; j < exp_fact[i]; j++)
       det_factor *= mat[i][i];
   }
-  
+
   // In case of a trivial normalization factor, just return the product
   // of diagonal elements.
   if (nt_traits.degree(det_factor) == 0)
     return (diag_prod);
-  
+
   // Divide the product of diagonal elements by the normalization factor
   // and obtain the determinant (note that we should have no remainder).
   Polynomial       det, rem;
-  
+
   det = nt_traits.divide (diag_prod, det_factor, rem);
 
   CGAL_assertion (nt_traits.degree(rem) < 0);

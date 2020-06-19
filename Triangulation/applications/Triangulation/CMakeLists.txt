@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -21,14 +21,12 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
-find_package(Eigen3 3.1.0) 
-if (EIGEN3_FOUND) 
-  include( ${EIGEN3_USE_FILE} ) 
-endif()
+find_package(Eigen3 3.1.0)
+include(CGAL_Eigen_support)
 
 # include for local directory
 include_directories( BEFORE include )
@@ -39,6 +37,6 @@ include_directories( BEFORE include )
 # ##########################################################
 
 create_single_source_cgal_program( "points_to_RT_to_off.cpp" )
+target_link_libraries(points_to_RT_to_off PUBLIC CGAL::Eigen_support)
 create_single_source_cgal_program( "points_to_DT_to_off.cpp" )
-
-
+target_link_libraries(points_to_DT_to_off PUBLIC CGAL::Eigen_support)

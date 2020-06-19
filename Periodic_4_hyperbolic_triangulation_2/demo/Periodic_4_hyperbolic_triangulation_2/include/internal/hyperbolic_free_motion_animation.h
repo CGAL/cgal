@@ -13,7 +13,7 @@
 //   1. Chooses two points `source` and `target` at random
 //   2. Chooses a `time` parameter for which the point on the segment [source, target] lies inside the octagon
 //   3. Locates this point in the triangulation and keeps the location face and translation
-void 
+void
 MainWindow::initialize_animation_parameters() {
 
   poincare = Circle_2(Point(0,0),1);
@@ -120,12 +120,12 @@ MainWindow::get_image(Point src, Point tgt, double time) {
   Segment_2 seg = Construct_hyperbolic_segment_2()(src, tgt);
   Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
   Circle_2 crc = carc->supporting_circle();
-  
+
   double sx = CGAL::to_double(((src.x()) - crc.center().x())/sqrt(crc.squared_radius()));
   double sy = CGAL::to_double(((src.y()) - crc.center().y())/sqrt(crc.squared_radius()));
   double tx = CGAL::to_double(((tgt.x()) - crc.center().x())/sqrt(crc.squared_radius()));
   double ty = CGAL::to_double(((tgt.y()) - crc.center().y())/sqrt(crc.squared_radius()));
-  
+
   double dot = CGAL::to_double(sx*tx + sy*ty);
   double n1 = sqrt(sx*sx+sy*sy);
   double n2 = sqrt(tx*tx+ty*ty);
@@ -133,7 +133,7 @@ MainWindow::get_image(Point src, Point tgt, double time) {
 
   double x = sin((1.0-time)*theta)/sin(theta)*sx + sin(time*theta)/sin(theta)*tx;
   double y = sin((1.0-time)*theta)/sin(theta)*sy + sin(time*theta)/sin(theta)*ty;
-  
+
   x = CGAL::to_double(x*sqrt(crc.squared_radius()) + crc.center().x());
   y = CGAL::to_double(y*sqrt(crc.squared_radius()) + crc.center().y());
 
@@ -145,7 +145,7 @@ MainWindow::get_image(Point src, Point tgt, double time) {
 
 // Updated the `time` so that the corresponding point on the segment [source, target]
 // lies inside the octagon.
-double 
+double
 MainWindow::updateTime() {
   //std::cout << "  ..updating time "; std::cout.flush();
   double t = 0.1;
@@ -161,12 +161,12 @@ MainWindow::updateTime() {
 // Main animation function.
 void
 MainWindow::animate() {
-  
+
   Point p = get_image(source, target, time);
 
   Side_of_original_octagon check;
 
-  // If the point is inside the octagon, just increment the time, compute the point 
+  // If the point is inside the octagon, just increment the time, compute the point
   // corresponding to that time, update everything, and continue.
   //std::cout << "  ..updating time "; std::cout.flush();
   if(check(p) == CGAL::ON_BOUNDED_SIDE) {
@@ -177,16 +177,16 @@ MainWindow::animate() {
     dgi->setMovingPoint(p);
     dgi->setSource(source);
     dgi->setTarget(target);
-    
+
     time += timestep;
 
-  } 
-  // If the point is not inside the octagon, we must find the translation that puts 
+  }
+  // If the point is not inside the octagon, we must find the translation that puts
   // it inside the octagon. We apply the same translation to the `source` and `target`.
-  else { 
+  else {
     //std::cout << "  OUTSIDE!" << std::endl;
 
-    Hyperbolic_translation o; 
+    Hyperbolic_translation o;
 
     bool found = false;
 
@@ -229,7 +229,7 @@ MainWindow::animate() {
     //std::cout << "  ..making points..." << std::endl;
     source = dt.construct_point(source,o);
     target = dt.construct_point(target,o);
-    
+
     // Correct in case of wrong orientation.
     //std::cout << "  ..making line..." << std::endl;
     Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
@@ -260,7 +260,7 @@ MainWindow::animate() {
     // std::stringstream ss;
     // ss << "/Users/iordanov/Desktop/shots/sshot" << (idx++) << ".png"; // <--- use your own path here!
     // sshot.save(QString(ss.str().c_str()));
-    
+
     // Recursive call
     animate();
   }

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -94,11 +94,11 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);

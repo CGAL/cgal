@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 #define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -41,7 +41,7 @@
 
 
 #ifdef CGAL_LINKED_WITH_TBB
-  #include <tbb/atomic.h>
+  #include <atomic>
   #include <tbb/concurrent_hash_map.h>
 
 namespace CGAL {
@@ -88,12 +88,12 @@ namespace Mesh_3 {
       // computes and return an ordered pair of Vertex
       Pair_of_vertices
       make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
-	if (vh1 < vh2) {
-	  return std::make_pair(vh1, vh2);
-	}
-	else {
-	  return std::make_pair(vh2, vh1);
-	}
+        if (vh1 < vh2) {
+          return std::make_pair(vh1, vh2);
+        }
+        else {
+          return std::make_pair(vh2, vh1);
+        }
       }
 
       // same from an Edge
@@ -174,7 +174,7 @@ public:
     , manifold_info_initialized_(false) //TODO: parallel!
   {
     // We don't put it in the initialization list because
-    // tbb::atomic has no contructors
+    // std::atomic has no contructors
     number_of_facets_ = 0;
     number_of_cells_ = 0;
   }
@@ -186,8 +186,9 @@ public:
     , edge_facet_counter_(rhs.edge_facet_counter_)
     , manifold_info_initialized_(rhs.manifold_info_initialized_)
   {
-    number_of_facets_ = rhs.number_of_facets_;
-    number_of_cells_ = rhs.number_of_cells_;
+    Init_number_of_elements<Concurrency_tag> init;
+    init(number_of_facets_, rhs.number_of_facets_);
+    init(number_of_cells_, rhs.number_of_cells_);
   }
 
   /// Destructor
@@ -267,7 +268,7 @@ public:
     int number_of_boundary_incident_edges = 0; // could be a bool
     for (typename std::vector<Edge>::iterator
            eit=edges.begin(), end = edges.end();
-	 eit != end; eit++)
+         eit != end; eit++)
     {
       switch( face_status(*eit) )
       {
@@ -317,7 +318,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     typename Edge_facet_counter::const_accessor accessor;
     if(!edge_facet_counter_.find(accessor,
-				 this->make_ordered_pair(edge)))
+                                 this->make_ordered_pair(edge)))
       return NOT_IN_COMPLEX;
     switch(accessor->second)
 #else // not CGAL_LINKED_WITH_TBB
@@ -442,7 +443,7 @@ public:
     // Call global function
     CGAL::output_to_medit(os,*this,rebind,show_patches);
   }
-  
+
   /// Outputs the mesh to maya
   void output_to_maya(std::ofstream& os,
                       bool surfaceOnly = true) const
@@ -505,9 +506,10 @@ public:
   /// Swaps this & rhs
   void swap(Self& rhs)
   {
-    std::swap(rhs.number_of_facets_, number_of_facets_);
+    Swap_elements<Concurrency_tag> swapper;
+    swapper(rhs.number_of_facets_, number_of_facets_);
     tr_.swap(rhs.tr_);
-    std::swap(rhs.number_of_cells_, number_of_cells_);
+    swapper(rhs.number_of_cells_, number_of_cells_);
   }
 
   /// Returns bbox
@@ -572,12 +574,12 @@ private:
 #ifndef CGAL_LINKED_WITH_TBB
           ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
 #else // CGAL_LINKED_WITH_TBB
-	  {
-	    typename Edge_facet_counter::accessor accessor;
-	    edge_facet_counter_.insert(accessor,
-				       this->make_ordered_pair(edge_va, edge_vb));
-	    ++accessor->second;
-	  }
+          {
+            typename Edge_facet_counter::accessor accessor;
+            edge_facet_counter_.insert(accessor,
+                                       this->make_ordered_pair(edge_va, edge_vb));
+            ++accessor->second;
+          }
 #endif // CGAL_LINKED_WITH_TBB
 
           const std::size_t n = edge_va->cached_number_of_incident_facets();
@@ -602,9 +604,9 @@ private:
     { // fill the union find
       std::vector<Facet> non_filtered_facets;
       if(tr_.is_parallel()) {
-	tr_.incident_facets_threadsafe(v, std::back_inserter(non_filtered_facets));
+        tr_.incident_facets_threadsafe(v, std::back_inserter(non_filtered_facets));
       } else {
-	tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+        tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
       }
 
       for(typename std::vector<Facet>::iterator
@@ -630,15 +632,15 @@ private:
       const Cell_handle& ch = (*it).first;
       const int& i = (*it).second;
       for(int j=0; j < 3; ++j) {
-	const Vertex_handle w = ch->vertex(tr_.vertex_triple_index(i,j));
-	if(w != v){
-	  Vertex_set_map_iterator vsm_it = vsmap.find(w);
-	  if(vsm_it != vsmap.end()){
-	    facets.unify_sets(vsm_it->second, it);
-	  } else {
-	    vsmap.insert(std::make_pair(w, it));
-	  }
-	}
+        const Vertex_handle w = ch->vertex(tr_.vertex_triple_index(i,j));
+        if(w != v){
+          Vertex_set_map_iterator vsm_it = vsmap.find(w);
+          if(vsm_it != vsmap.end()){
+            facets.unify_sets(vsm_it->second, it);
+          } else {
+            vsmap.insert(std::make_pair(w, it));
+          }
+        }
       }
     }
     const std::size_t nb_components = facets.number_of_sets();
@@ -647,7 +649,7 @@ private:
     v->set_c2t3_cache(n, nb_components);
     return nb_components;
   }
-  
+
   //-------------------------------------------------------
   // Traversal
   //-------------------------------------------------------
@@ -850,12 +852,55 @@ private:
   {
     typedef size_type type;
   };
+
+  template<typename Concurrency_tag2, typename dummy = void>
+  struct Init_number_of_elements
+  {
+    template<typename T>
+    void operator()(T& a, const T& b)
+    {
+      a = b;
+    }
+  };
+
+  template<typename Concurrency_tag2, typename dummy = void>
+  struct Swap_elements
+  {
+    template<typename T>
+    void operator()(T& a, T& b)
+    {
+      std::swap(a, b);
+    }
+  };
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel: atomic
   template<typename dummy>
   struct Number_of_elements<Parallel_tag, dummy>
   {
-    typedef tbb::atomic<size_type> type;
+    typedef std::atomic<size_type> type;
+  };
+
+  template<typename dummy>
+  struct Init_number_of_elements<Parallel_tag, dummy>
+  {
+    template<typename T>
+    void operator()(T& a, const T& b)
+    {
+      a = b.load();
+    }
+  };
+
+  template<typename dummy>
+  struct Swap_elements<Parallel_tag, dummy>
+  {
+    template<typename T>
+    void operator()(T& a, T& b)
+    {
+      T tmp;
+      tmp.exchange(a);
+      a.exchange(b);
+      b.exchange(tmp);
+    }
   };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -901,12 +946,12 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
         Vertex_handle edge_va = cell->vertex(edge_index_va);
         Vertex_handle edge_vb = cell->vertex(edge_index_vb);
 #ifdef CGAL_LINKED_WITH_TBB
-	{
-	  typename Edge_facet_counter::accessor accessor;
-	  edge_facet_counter_.insert(accessor,
-				     this->make_ordered_pair(edge_va, edge_vb));
-	  ++accessor->second;
-	}
+        {
+          typename Edge_facet_counter::accessor accessor;
+          edge_facet_counter_.insert(accessor,
+                                     this->make_ordered_pair(edge_va, edge_vb));
+          ++accessor->second;
+        }
 #else // not CGAL_LINKED_WITH_TBB
         ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
 #endif // not CGAL_LINKED_WITH_TBB
@@ -951,12 +996,12 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
 #ifdef CGAL_LINKED_WITH_TBB
-	{
-	  typename Edge_facet_counter::accessor accessor;
-	  edge_facet_counter_.insert(accessor,
-				     this->make_ordered_pair(edge_va, edge_vb));
-	  --accessor->second;
-	}
+        {
+          typename Edge_facet_counter::accessor accessor;
+          edge_facet_counter_.insert(accessor,
+                                     this->make_ordered_pair(edge_va, edge_vb));
+          --accessor->second;
+        }
 #else // not CGAL_LINKED_WITH_TBB
         --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
 #endif // not CGAL_LINKED_WITH_TBB

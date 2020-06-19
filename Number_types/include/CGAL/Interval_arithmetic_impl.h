@@ -25,8 +25,8 @@ double init_min_double()
     double d = 1;
     double e = 1;
     do {
-	d = e;
-	e = CGAL_IA_FORCE_TO_DOUBLE(e/2);
+        d = e;
+        e = CGAL_IA_FORCE_TO_DOUBLE(e/2);
     } while (e != 0);
     return d;
 }

@@ -16,9 +16,8 @@ endif()
 find_package(CGAL COMPONENTS Qt5 Core)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -43,7 +42,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # qrc files (resources files, that contain icons, at least)
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Polygon_2.qrc )
 
-#  add_library( CGAL SHARED IMPORTED ) 
+#  add_library( CGAL SHARED IMPORTED )
 #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
 
   # The executable itself.
@@ -52,7 +51,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polygon_2 )
 
   target_link_libraries( Polygon_2 PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
+    CGAL::CGAL CGAL::CGAL_Qt5 CGAL::Eigen_support Qt5::Gui )
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Polygon_2)

@@ -12,40 +12,35 @@ if ( CGAL_FOUND )
 
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  include(CGAL_Eigen_support)
 
-  if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
+  if (TARGET CGAL::Eigen_support)
     create_single_source_cgal_program( "singular_value_decomposition.cpp" )
+    target_link_libraries(singular_value_decomposition PUBLIC CGAL::Eigen_support)
     create_single_source_cgal_program( "sparse_solvers.cpp" )
+    target_link_libraries(sparse_solvers PUBLIC CGAL::Eigen_support)
+    create_single_source_cgal_program( "diagonalize_matrix.cpp" )
+    target_link_libraries(diagonalize_matrix PUBLIC CGAL::Eigen_support)
   endif()
 
-  create_single_source_cgal_program( "diagonalize_matrix.cpp" )
   create_single_source_cgal_program( "mixed_integer_program.cpp" )
 
   find_package( SCIP QUIET)
+  include(CGAL_SCIP_support)
 
-  if (SCIP_FOUND)
+  if (TARGET CGAL::SCIP_support)
 
-    include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
-
-    target_link_libraries( mixed_integer_program PRIVATE ${SCIP_LIBRARIES} )
-
-    target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_SCIP)
-
+    target_link_libraries(mixed_integer_program PUBLIC CGAL::SCIP_support)
     message("SCIP found and used")
 
   else()
 
-      find_package( GLPK QUIET)
+    find_package( GLPK QUIET)
+    include(CGAL_GLPK_support)
 
-      if (GLPK_FOUND)
+      if (TARGET CGAL::GLPK_support)
 
-        include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
-
-        target_link_libraries( mixed_integer_program PRIVATE ${GLPK_LIBRARIES} )
-
-        target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_GLPK)
-
+        target_link_libraries(mixed_integer_program PUBLIC CGAL::GLPK_support)
         message("GLPK found and used")
 
       else()
@@ -58,8 +53,7 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
-    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
+
+endif()

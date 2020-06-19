@@ -11,16 +11,12 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/bounding_box.h>
-
+#include <CGAL/tags.h>
 #include <CGAL/IO/read_ply_points.h>
 
 #include <CGAL/Real_timer.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -78,7 +74,7 @@ int main (int argc, char** argv)
 
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Features]
 
@@ -91,7 +87,7 @@ int main (int argc, char** argv)
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
 #endif
-  
+
   Feature_handle distance_to_plane = features.add<Distance_to_plane> (pts, Pmap(), eigen);
   Feature_handle dispersion = features.add<Dispersion> (pts, Pmap(), grid,
                                                         radius_neighbors);
@@ -101,7 +97,7 @@ int main (int argc, char** argv)
 #ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
 #endif
-  
+
   //! [Features]
   ///////////////////////////////////////////////////////////////////
 
@@ -115,7 +111,7 @@ int main (int argc, char** argv)
 
   //! [Labels]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Weights]
 
@@ -124,12 +120,12 @@ int main (int argc, char** argv)
   classifier.set_weight (distance_to_plane, 6.75e-2f);
   classifier.set_weight (dispersion, 5.45e-1f);
   classifier.set_weight (elevation, 1.47e1f);
-  
+
   std::cerr << "Setting effects" << std::endl;
   classifier.set_effect (ground, distance_to_plane, Classifier::NEUTRAL);
   classifier.set_effect (ground, dispersion, Classifier::NEUTRAL);
   classifier.set_effect (ground, elevation, Classifier::PENALIZING);
-  
+
   classifier.set_effect (vegetation, distance_to_plane,  Classifier::FAVORING);
   classifier.set_effect (vegetation, dispersion, Classifier::FAVORING);
   classifier.set_effect (vegetation, elevation, Classifier::NEUTRAL);
@@ -147,7 +143,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Classify]
   std::vector<int> label_indices (pts.size(), -1);
-    
+
   CGAL::Real_timer t;
   t.start();
   Classification::classify<Concurrency_tag> (pts, labels, classifier, label_indices);
@@ -156,7 +152,7 @@ int main (int argc, char** argv)
   t.reset();
   //! [Classify]
   ///////////////////////////////////////////////////////////////////
-  
+
   ///////////////////////////////////////////////////////////////////
   //! [Smoothing]
   t.start();
@@ -181,7 +177,7 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut performed in " << t.time() << " second(s)" << std::endl;
   //! [Graph_cut]
   ///////////////////////////////////////////////////////////////////
-  
+
   // Save the output in a colored PLY format
 
   std::ofstream f ("classification.ply");
@@ -195,11 +191,11 @@ int main (int argc, char** argv)
     << "property uchar green" << std::endl
     << "property uchar blue" << std::endl
     << "end_header" << std::endl;
-  
+
   for (std::size_t i = 0; i < pts.size(); ++ i)
   {
     f << pts[i] << " ";
-      
+
     Label_handle label = labels[std::size_t(label_indices[i])];
     if (label == ground)
       f << "245 180 0" << std::endl;
@@ -213,7 +209,7 @@ int main (int argc, char** argv)
       std::cerr << "Error: unknown classification label" << std::endl;
     }
   }
-  
+
   std::cerr << "All done" << std::endl;
   return EXIT_SUCCESS;
 }

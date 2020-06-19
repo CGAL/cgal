@@ -23,23 +23,24 @@ if ( CGAL_FOUND )
 
   # Find Eigen3 (requires 3.1.0 or greater)
   find_package(Eigen3 3.1.0)
-  if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-  endif()
-  
-  if (EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (TARGET CGAL::Eigen_support)
     # Executables that require Eigen 3
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
+    target_link_libraries(poisson_reconstruction_example PUBLIC CGAL::Eigen_support)
     create_single_source_cgal_program( "poisson_reconstruction.cpp" )
+    target_link_libraries(poisson_reconstruction PUBLIC CGAL::Eigen_support)
     create_single_source_cgal_program( "poisson_reconstruction_function.cpp" )
+    target_link_libraries(poisson_reconstruction_function PUBLIC CGAL::Eigen_support)
+    create_single_source_cgal_program( "tutorial_example.cpp" )
+    target_link_libraries(tutorial_example PUBLIC CGAL::Eigen_support)
   else()
     message(STATUS "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
   endif()
 
-  
+
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

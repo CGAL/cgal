@@ -31,7 +31,7 @@ test_triangulate_faces()
     std::cerr << "Not a valid off file." << std::endl;
     return false;
   }
-  
+
   bool success = CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
   assert(CGAL::is_triangle_mesh(mesh));
 
@@ -230,10 +230,8 @@ test_dual_with_various_faces()
   // copy dual to a sm
   Surface_mesh sm_dual;
   CGAL::copy_face_graph(dual, sm_dual,
-                        CGAL::Emptyset_iterator(),
-                        CGAL::Emptyset_iterator(),
-                        CGAL::Emptyset_iterator(),
-                        Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap));
+                        CGAL::parameters::vertex_point_map(
+                          Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap)));
 
   for(typename boost::graph_traits<Surface_mesh>::face_descriptor fit : faces(sm_dual))
   {

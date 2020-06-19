@@ -46,9 +46,9 @@ int main(int argc, char* argv[]) {
   Mesher mesher( smoother.squared_radius(),
                  false, // Do not separate shells
                  true // Force manifold output
-               );                 
+               );
   reconstruct.reconstruct_surface( mesher );
-  
+
   std::cerr << "Reconstruction done in " << t.time() << " sec." << std::endl;
   t.reset();
   std::ofstream out ("out.off");

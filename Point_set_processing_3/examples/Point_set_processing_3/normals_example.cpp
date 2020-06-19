@@ -18,11 +18,7 @@ typedef Kernel::Vector_3 Vector;
 typedef std::pair<Point, Vector> PointVectorPair;
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
@@ -67,7 +63,7 @@ int main(int argc, char*argv[])
          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
          normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
     }
-    
+
     // Orients normals.
     // Note: mst_orient_normals() requires a range of points
     // as well as property maps to access each point's position and normal.

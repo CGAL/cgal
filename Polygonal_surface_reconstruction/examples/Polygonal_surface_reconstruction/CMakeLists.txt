@@ -12,7 +12,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "NOTICE: This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -27,7 +27,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "NOTICE: This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -36,58 +36,38 @@ endif()
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+include(CGAL_Eigen_support)
+if(NOT TARGET CGAL::Eigen_support)
+  message(STATUS "NOTICE: This project requires Eigen 3.1 (or greater) and will not be compiled.")
+  return()
+endif()
+
+find_package(SCIP QUIET)
+include(CGAL_SCIP_support)
+if (NOT TARGET CGAL::SCIP_support )
+  find_package( GLPK QUIET)
+  include(CGAL_GLPK_support)
+  if (NOT TARGET CGAL::GLPK_support )
+    message( STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled.")
+    return()
+  endif()
+endif()
+
 create_single_source_cgal_program( "polyfit_example_without_input_planes.cpp" )
 create_single_source_cgal_program( "polyfit_example_user_provided_planes.cpp" )
 create_single_source_cgal_program( "polyfit_example_model_complexty_control.cpp" )
 create_single_source_cgal_program( "polyfit_example_with_region_growing.cpp" )
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if(EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-
-  find_package( SCIP QUIET)
-
-  if ( NOT SCIP_FOUND )
-      find_package( GLPK QUIET)
-
-      if ( NOT GLPK_FOUND )
-        message( STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
-                        "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
-      else()
-        
-
-          include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
-
-          target_link_libraries( polyfit_example_without_input_planes PRIVATE ${GLPK_LIBRARIES} )
-          target_compile_definitions(polyfit_example_without_input_planes PRIVATE -DCGAL_USE_GLPK)
-          target_link_libraries( polyfit_example_user_provided_planes PRIVATE ${GLPK_LIBRARIES} )
-          target_compile_definitions(polyfit_example_user_provided_planes PRIVATE -DCGAL_USE_GLPK)
-          target_link_libraries( polyfit_example_model_complexty_control PRIVATE ${GLPK_LIBRARIES} )
-          target_compile_definitions(polyfit_example_model_complexty_control PRIVATE -DCGAL_USE_GLPK)
-          target_link_libraries( polyfit_example_with_region_growing PRIVATE ${GLPK_LIBRARIES} )
-          target_compile_definitions(polyfit_example_with_region_growing PRIVATE -DCGAL_USE_GLPK)
-
-          message("GLPK found and used")
-
-      endif()
-
+foreach(target
+    polyfit_example_without_input_planes
+    polyfit_example_user_provided_planes
+    polyfit_example_model_complexty_control
+    polyfit_example_with_region_growing)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+  if (TARGET CGAL::SCIP_support)
+    target_link_libraries(${target} PUBLIC CGAL::SCIP_support)
   else()
-
-      include_directories( BEFORE ${SCIP_INCLUDE_DIRS} )
-
-      target_link_libraries( polyfit_example_without_input_planes PRIVATE ${SCIP_LIBRARIES} )
-      target_compile_definitions(polyfit_example_without_input_planes PRIVATE -DCGAL_USE_SCIP)
-      target_link_libraries( polyfit_example_user_provided_planes PRIVATE ${SCIP_LIBRARIES} )
-      target_compile_definitions(polyfit_example_user_provided_planes PRIVATE -DCGAL_USE_SCIP)
-      target_link_libraries( polyfit_example_model_complexty_control PRIVATE ${SCIP_LIBRARIES} )
-      target_compile_definitions(polyfit_example_model_complexty_control PRIVATE -DCGAL_USE_SCIP)
-      target_link_libraries( polyfit_example_with_region_growing PRIVATE ${SCIP_LIBRARIES} )
-      target_compile_definitions(polyfit_example_with_region_growing PRIVATE -DCGAL_USE_SCIP)
-
-      message("SCIP found and used")
-
+    target_link_libraries(${target} PUBLIC CGAL::GLPK_support)
   endif()
-
-else()
-  message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
-endif()
+endforeach()

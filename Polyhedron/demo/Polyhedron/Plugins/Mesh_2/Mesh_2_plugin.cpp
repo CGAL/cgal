@@ -35,7 +35,7 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -264,14 +264,14 @@ private:
     typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>                      Criteria;
     typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                        Mesher;
 
-    QTime time; // global timer
+    QElapsedTimer time; // global timer
     time.start();
 
     std::cout << " Building Constrained_Delaunay_triangulation_2..."
               << std::flush;
     CDT cdt;
 
-    QTime ltime; //local timer
+    QElapsedTimer ltime; //local timer
     ltime.start();
     double constant_coordinate =
       polylines_items.back()->polylines.back().back()[constant_coordinate_index];
@@ -346,7 +346,7 @@ private:
                        constant_coordinate);
     scene->addItem(poly_item);
     poly_item->invalidateOpenGLBuffers();
-    
+
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();

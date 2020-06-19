@@ -15,11 +15,11 @@
  *      Level i representation of a number n is just i iterations
  *      of log_2 applied to n.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
@@ -37,7 +37,7 @@
 
 #include <CGAL/CORE/extLong.h>
 
-namespace CORE { 
+namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const extLong& extLong::getNaNLong() {
@@ -125,9 +125,9 @@ extLong& extLong::operator*= (const extLong& y) {
     if (std::fabs(d - p) <= std::fabs(d) * relEps) {
       val = p;
       flag = 0;
-    } else if (d > EXTLONG_MAX) {
+    } else if (d > static_cast<double>(EXTLONG_MAX)) {
       *this = CORE_posInfty;
-    } else if (d < EXTLONG_MIN) {
+    } else if (d < static_cast<double>(EXTLONG_MIN)) {
       *this = CORE_negInfty;
     } else {
 #ifdef CORE_DEBUG

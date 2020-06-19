@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner, Sylvain Pion
 
@@ -25,7 +25,7 @@
 #  pragma warning(push)
 #  pragma warning(disable: 4003)
 #endif
-#include <boost/lexical_cast.hpp> 
+#include <boost/lexical_cast.hpp>
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
@@ -41,8 +41,8 @@ namespace CGAL {
     \brief <tt>\#include <CGAL/basic.h></tt> for pre- and postconditions,
     assertions, warnings, and error handler.
 
-    \c CGAL/basic.h provides macros for pre- and postconditions, assertions, 
-    warnings, and errors that are active by default. There are variants 
+    \c CGAL/basic.h provides macros for pre- and postconditions, assertions,
+    warnings, and errors that are active by default. There are variants
     for expensive checks that are inactive by default.
 
     A failed precondition, postcondition or assertion is a fatal error
@@ -50,7 +50,7 @@ namespace CGAL {
     the program continues to run. Both can be changed with the respective
     \c error_behavior or \c warning_behavior, or with the corresponding
     \c error_handler or \c warning_handler.
-    
+
     However, if the checks are disabled with corresponding
     preprocessor symbols or \c NDEBUG, none of this error handling
     will happen and the program execution continues with potentially
@@ -60,8 +60,8 @@ namespace CGAL {
     the production version of the program, keeping in mind that they
     should not cost too much runtime overhead, maybe 10%.
 
-    \see \c CGAL_test for checks that cannot be disabled and 
-         \c CGAL_error_msg for an unconditional error message that cannot 
+    \see \c CGAL_test for checks that cannot be disabled and
+         \c CGAL_error_msg for an unconditional error message that cannot
          be disabled with macros.
 */
 
@@ -107,7 +107,7 @@ public:
 
     //! source code filename where the failure was detected.
     std::string      filename() const { return m_file; }
-    
+
     //! line number in source code file where the failure was detected.
     int              line_number() const { return m_line; }
 
@@ -185,7 +185,19 @@ public:
                              "warning condition failed") {}
 };
 
+namespace internal {
 
+// The following classes are useful to create output iterators (with the help
+// of boost::function_output_iterator) that will throw as soon as something is being written.
+class Throw_at_output_exception : public std::exception { };
+
+struct Throw_at_output
+{
+  template<class T>
+  void operator()(const T& /* t */) const { throw Throw_at_output_exception(); }
+};
+
+} // namespace internal
 } //namespace CGAL
 
 #endif // CGAL_EXCEPTIONS_H

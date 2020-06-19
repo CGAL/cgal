@@ -1,7 +1,7 @@
 \namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Triangulation_Data_Structure
 \anchor chapterTDS3
 
@@ -19,7 +19,7 @@ triangulation of a set of points in \f$ \mathbb{R}^d\f$, \f$ d\leq 3\f$ is a par
 whole space \f$ \mathbb{R}^d\f$ into cells having \f$ d+1\f$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
 infinity to each facet of the convex hull of the points (see
-Section \ref Triangulation3secintro). 
+Section \ref Triangulation3secintro).
 The underlying combinatorial graph of such a triangulation
 without boundary of \f$ \mathbb{R}^d\f$ can be seen as a triangulation of the
 topological sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$.
@@ -29,7 +29,7 @@ maintain the combinatorial information for 3D-geometric
 triangulations. The reader interested in geometric triangulations of
 \f$ \mathbb{R}^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations".
 
-\section TDS3secintro Representation 
+\section TDS3secintro Representation
 
 In \cgal, a 3D triangulation data structure is a
 container of cells (\f$ 3\f$-faces) and vertices (\f$ 0\f$-faces).
@@ -46,7 +46,7 @@ cells, which is sufficient to retrieve all the incident cells when
 needed.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3. The
-neighbors of a cell are also indexed with 0, 1, 2, 3 
+neighbors of a cell are also indexed with 0, 1, 2, 3
 in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex
 with the same index (see \cgalFigureRef{TDS3figrepres}).
 
@@ -72,9 +72,9 @@ Thus, a 3D-triangulation data structure can store a triangulation of a
 topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.
 
 Let us give, for each dimension, the example corresponding to the
-triangulation data structure having a minimal number of vertices, i.e.\ a 
+triangulation data structure having a minimal number of vertices, i.e.\ a
 simplex. These examples are illustrated by presenting their usual
-geometric embedding. 
+geometric embedding.
 <UL>
 <LI><I>dimension 3.</I> The triangulation data structure consists of
 the boundary of a 4-dimensional simplex, which has 5 vertices. A
@@ -114,7 +114,7 @@ combinatorially equivalent to the boundary of a 1-dimensional simplex
 (an edge), which consists of 2 vertices. One of them becomes infinite
 in the geometric embedding, and there is only one finite vertex
 remaining. The two vertices are adjacent.
-<LI><I>dimension -1.</I> This dimension is a convention to represent a 
+<LI><I>dimension -1.</I> This dimension is a convention to represent a
 0-dimensional simplex, that is a sole vertex, which will be
 geometrically embedded as an "empty" triangulation, having only one
 infinite vertex.
@@ -140,13 +140,13 @@ dimension 1, each cell has one edge \f$ (0,1)\f$.
 
 <b>Validity</b>
 
-A 3D combinatorial triangulation is said to be `locally valid` 
+A 3D combinatorial triangulation is said to be `locally valid`
 iff the following is true:
 
 <B>(a)</B> When a cell \f$ c\f$ has a neighbor pointer to another cell \f$ c'\f$,
 then reciprocally this cell \f$ c'\f$ has a neighbor pointer to \f$ c\f$, and
 \f$ c\f$ and \f$ c'\f$ have three vertices in common. These cells are called
-adjacent. 
+adjacent.
 
 <B>(b)</B> The cells have a coherent orientation: if two cells \f$ c_1\f$
 and \f$ c_2\f$ are adjacent and share a facet with vertices \f$ u,v,w\f$, then
@@ -171,7 +171,7 @@ Coherent orientations of two cells (3-dimensional case).
 The method `Triangulation_data_structure_3::is_valid()` method checks
 the local validity of a given triangulation data structure.
 
-\section TDS3secdesign Software Design 
+\section TDS3secdesign Software Design
 
 The 3D-triangulation data structure class of \cgal,
 `Triangulation_data_structure_3`, is designed to be used as a combinatorial
@@ -225,7 +225,7 @@ the geometric versions typically used by the geometric layer,
 concepts `TriangulationCellBase_3` and `TriangulationVertexBase_3`.
 </UL>
 
-\subsection tds3cyclic Cyclic Dependency 
+\subsection tds3cyclic Cyclic Dependency
 
 Since adjacency relations are stored in the vertices and cells, it means that
 the vertex and cell base classes have to be able to store handles (an entity
@@ -303,13 +303,13 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 
 \subsection tds3parallel Parallel Operations
 
-The third template parameter of `Triangulation_data_structure_3` is 
-`Concurrency_tag`. It enables the use of a concurrent
-container (`Concurrent_compact_container`) to store vertices and cells. 
-If it is `Parallel_tag`, then `create_vertex`, `create_cell`, `delete_vertex` 
-and `delete_cell` can be called concurrently.
+The third template parameter of `Triangulation_data_structure_3` is
+`ConcurrencyTag`. It enables the use of a concurrent
+container (`Concurrent_compact_container`) to store vertices and cells.
+If it is `Parallel_tag`, then `create_vertex()`, `create_cell()`, `delete_vertex()`
+and `delete_cell()` can be called concurrently.
 
-\section TDS3secexamples Examples 
+\section TDS3secexamples Examples
 
 \subsection TDS_3IncrementalConstruction Incremental Construction
 
@@ -336,6 +336,6 @@ regarding the memory management.
 
 In 2013, Clément Jamin added the ability to create/delete vertices and cells
 in parallel. This feature is used by the parallel triangulation.
-*/ 
+*/
 } /* namespace CGAL */
 

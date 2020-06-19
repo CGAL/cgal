@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_SEGMENT_NEW_2_H
 #define CGAL__TEST_CLS_SEGMENT_NEW_2_H
@@ -122,7 +122,7 @@ _test_cls_segment_new_2(const R& )
 
  assert( Segment_2( p3, p3).is_degenerate() );
 
- 
+
  std::cout << "done" << std::endl;
  return true;
 }

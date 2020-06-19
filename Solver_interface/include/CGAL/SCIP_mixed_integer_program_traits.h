@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverInterfaceRef
 ///
 /// This class provides an interface for formulating and solving
 /// constrained or unconstrained mixed integer programs using

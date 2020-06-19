@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -57,7 +57,7 @@ public:
                const Point_3& far_,   const Point_3& close);
 
   Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
-               const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+               const RT& max_hx, const RT& max_hy, const RT& max_hz,
                const RT& hw);
 
   Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
@@ -97,7 +97,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Iso_cuboidH3<R>::
 Iso_cuboidH3(const typename Iso_cuboidH3<R>::Point_3& p,
-	     const typename Iso_cuboidH3<R>::Point_3& q)
+             const typename Iso_cuboidH3<R>::Point_3& q)
 {
   bool px_k_qx = ( p.hx()*q.hw() < q.hx()*p.hw() );
   bool py_k_qy = ( p.hy()*q.hw() < q.hy()*p.hw() );
@@ -181,7 +181,7 @@ template < class R >
 CGAL_KERNEL_LARGE_INLINE
 Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
-             const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+             const RT& max_hx, const RT& max_hy, const RT& max_hz,
              const RT& hw)
   : base(CGAL::make_array(Point_3(min_hx, min_hy, min_hz, hw),
                            Point_3(max_hx, max_hy, max_hz, hw)))
@@ -253,7 +253,7 @@ template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::min_coord(int i) const
-{ 
+{
    CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
    if ( i == 0 )
        return xmin();
@@ -266,7 +266,7 @@ template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::max_coord(int i) const
-{ 
+{
    CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
    if ( i == 0 )
       return xmax();
@@ -290,17 +290,17 @@ Iso_cuboidH3<R>::vertex(int i) const
   {
     case 0: return (this->min)();
     case 1: return Point_3( (this->max)().hx(), (this->min)().hy(),
-		                   (this->min)().hz(), (this->min)().hw() );
+                                   (this->min)().hz(), (this->min)().hw() );
     case 2: return Point_3( (this->max)().hx(), (this->max)().hy(),
-		                   (this->min)().hz(), (this->min)().hw() );
+                                   (this->min)().hz(), (this->min)().hw() );
     case 3: return Point_3( (this->min)().hx(), (this->max)().hy(),
-		                   (this->min)().hz(), (this->min)().hw() );
+                                   (this->min)().hz(), (this->min)().hw() );
     case 4: return Point_3( (this->min)().hx(), (this->max)().hy(),
-		                   (this->max)().hz(), (this->min)().hw() );
+                                   (this->max)().hz(), (this->min)().hw() );
     case 5: return Point_3( (this->min)().hx(), (this->min)().hy(),
-		                   (this->max)().hz(), (this->min)().hw() );
+                                   (this->max)().hz(), (this->min)().hw() );
     case 6: return Point_3( (this->max)().hx(), (this->min)().hy(),
-		                   (this->max)().hz(), (this->min)().hw() );
+                                   (this->max)().hz(), (this->min)().hw() );
     default: /*case 7:*/ return (this->max)();
   }
 }

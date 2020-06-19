@@ -161,7 +161,7 @@ public:
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Event> Event_alloc;
   typedef typename Allocator_traits::template rebind_alloc<Subcurve> Subcurve_alloc;
-  
+
 protected:
   /*! \struct
    * An auxiliary functor for comparing event pointers.
@@ -280,7 +280,7 @@ public:
   /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range
    * of action event points (if a curve passed through an action point, it will
    * be split) and a range of query points (if a curve passed through a
-   * query point,it will not be splitted).
+   * query point,it will not be split).
    * \param curves_begin An iterator for the first x-monotone curve in the
    *                     range.
    * \param curves_end A past-the-end iterator for this range.
