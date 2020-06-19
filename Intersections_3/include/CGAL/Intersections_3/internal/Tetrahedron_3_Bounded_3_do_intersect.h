@@ -163,7 +163,7 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
 template <class K>
 inline typename K::Boolean do_intersect(const typename K::Tetrahedron_3 &tet,
                                         const CGAL::Bbox_3 &bb, const K &k) {
-  // Swap arguments. 
+  // Swap arguments.
   return do_intersect(bb, tet, k);
 }
 
