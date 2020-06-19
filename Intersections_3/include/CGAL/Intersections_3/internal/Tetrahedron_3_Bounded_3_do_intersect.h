@@ -167,13 +167,16 @@ inline typename K::Boolean do_intersect(const typename K::Tetrahedron_3 &tet,
   return do_intersect(bb, tet, k);
 }
 
-// BBox_3 sphecific code since it's ok for BBox_3 to degenerate.
+// BBox_3 sphecific code since its ok for BBox_3 to degenerate.
 template <class K>
 inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
                                         const typename K::Tetrahedron_3 &tet,
                                         const K &k) {
   using Tr = CGAL::Triangle_3<K>;
-  typename K::Boolean result = do_intersect(aabb, Tr(tet[0], tet[1], tet[2]), k);
+  using Boolean = typename K::Boolean;
+  Boolean result = false;
+
+  result = result | do_intersect(aabb, Tr(tet[0], tet[1], tet[2]), k);
   if (certainly(result)) return result;
   result = result | do_intersect(aabb, Tr(tet[1], tet[2], tet[3]), k);
   if (certainly(result)) return result;
@@ -181,10 +184,10 @@ inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
   if (certainly(result)) return result;
   result = result | do_intersect(aabb, Tr(tet[3], tet[0], tet[1]), k);
   if (certainly(result)) return result;
-  result = result |
-           k.has_on_bounded_side_3_object()(
-               tet, typename K::Point_3(aabb.xmin(), aabb.ymin(), aabb.zmin()));
-  return result;
+
+  return result |
+         k.has_on_bounded_side_3_object()(
+             tet, typename K::Point_3(aabb.xmin(), aabb.ymin(), aabb.zmin()));
 }
 
 } // namespace internal
