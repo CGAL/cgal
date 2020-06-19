@@ -28,6 +28,7 @@
 //#include <CGAL/license/Implicit_surface_reconstruction_3.h>
 
 #include <CGAL/Octree/Octree_node.h>
+#include <CGAL/Octree/Criterion.h>
 
 #include <CGAL/bounding_box.h>
 #include <boost/iterator/transform_iterator.hpp>
