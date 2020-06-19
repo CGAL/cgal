@@ -15,20 +15,22 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-
-#include <stack>
-
 #include <CGAL/Surface_mesh/Properties.h>
 
-#include <CGAL/demangle.h>
+#include <CGAL/Point_set_3/IO.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/demangle.h>
 
+#include <algorithm>
+#include <iterator>
+#include <sstream>
+#include <stack>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
-
-
 
 /*!
 

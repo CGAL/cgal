@@ -8,6 +8,31 @@
 /// \defgroup PkgDrawPointSet3D Draw a 3D Point Set
 /// \ingroup PkgPointSet3Ref
 
+/// \defgroup PkgPointSet3IO Input/Output
+/// \ingroup PkgPointSet3Ref
+///
+/// This module offers convenience overloads of input/ouput
+/// functions available in the \ref PkgPointSetProcessing3 package.
+/// These overloads, available after including `CGAL/Point_set_3/IO.h`,
+/// allow the user to call point set processing algorithms without having
+/// to handle manually property maps and iterators.
+///
+/// Input functions instanciate all the necessary property maps:
+///
+/// - if found in the input, normal vectors are stored in the usual
+/// `CGAL::Point_set_3` property `normal` with template type `Vector`
+///
+/// - for PLY and LAS input, other properties are stored as properties in
+/// the `CGAL::Point_set_3` class with the name and type given by the PLY
+/// header or by the LAS standard.
+///
+/// For a complete documentation of these functions, please refer to the
+/// \ref PkgPointSetProcessing3Ref manual.
+
+/// \defgroup PkgPointSet3IODeprecated Input/Output (Deprecated)
+/// \ingroup PkgPointSet3IO
+/// These I/O functions are deprecated and newer versions should be used.
+
 /*!
 \addtogroup PkgPointSet3Ref
 
@@ -28,31 +53,28 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Class}
+\cgalCRPSection{Classes}
 - `CGAL::Point_set_3<Point,Vector>`
 
-\cgalCRPSection{Draw a 3D Point Set}
-- \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
+\cgalCRPSection{Visualization}
+- \link PkgDrawPointSet3D `CGAL::draw<PS>()` \endlink
 
-\defgroup PkgPointSet3IO Input/Output
-\ingroup PkgPointSet3Ref
-
-\brief This module offers convenience overloads of input/ouput
-functions available in the \ref PkgPointSetProcessing3 package.
+\cgalCRPSection{I/O Functions}
+This package offers convenience overloads for the class `CGAL::Point_set_3`
+of the input/ouput functions available in the \ref PkgPointSetProcessing3 package.
 These overloads, available after including `CGAL/Point_set_3/IO.h`,
 allow the user to call point set processing algorithms without having
 to handle manually property maps and iterators.
 
-Input functions instanciate all the necessary property maps:
-
-- if found in the input, normal vectors are stored in the usual
-`CGAL::Point_set_3` property `normal` with template type `Vector`
-
-- for PLY and LAS input, other properties are stored as properties in
-the `CGAL::Point_set_3` class with the name and type given by the PLY
-header or by the LAS standard.
-
-For a complete documentation of these functions, please refer to the
-\ref PkgPointSetProcessing3Ref manual.
+- `CGAL::read_point_set()`
+- `CGAL::write_point_set()`
+- \link PkgPointSet3IO `CGAL::read_LAS()` \endlink
+- \link PkgPointSet3IO `CGAL::write_LAS()` \endlink
+- \link PkgPointSet3IO `CGAL::read_OFF()` \endlink
+- \link PkgPointSet3IO `CGAL::write_OFF()` \endlink
+- \link PkgPointSet3IO `CGAL::read_PLY()` \endlink
+- \link PkgPointSet3IO `CGAL::write_PLY()` \endlink
+- \link PkgPointSet3IO `CGAL::read_XYZ()` \endlink
+- \link PkgPointSet3IO `CGAL::write_XYZ()` \endlink
 
 */
