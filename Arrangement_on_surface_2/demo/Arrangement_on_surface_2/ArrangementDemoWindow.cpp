@@ -154,6 +154,8 @@ void ArrangementDemoWindow::addTab(
 
   this->ui->tabWidget->addTab(demoTab, tabLabel);
   this->ui->tabWidget->setCurrentWidget(demoTab);
+  // TODO: This causes memory leak because of the existence of multiple tabs
+  // fix it
   this->addNavigation(demoTab->getView());
 }
 
@@ -383,6 +385,7 @@ void ArrangementDemoWindow::on_actionPointLocation_toggled(bool checked)
   if (!checked)
   {
     this->resetCallbackState();
+    return;
   }
   auto activeTab = this->getActiveTab().first;
   if (activeTab)
@@ -679,12 +682,6 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
 
 void ArrangementDemoWindow::on_actionOpen_triggered()
 {
-  int index = this->ui->tabWidget->currentIndex();
-  if (index == -1)
-  {
-    QMessageBox::information(this, "Oops", "Create a new tab first");
-    return;
-  }
   QString filename = QFileDialog::getOpenFileName(
     this, tr("Open file"), "", "Arrangement files (*.arr)");
   if (filename.isNull()) return;
@@ -702,14 +699,6 @@ void ArrangementDemoWindow::on_actionOpen_triggered()
 
 ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 {
-  auto tab_tt = this->getActiveTab();
-  auto activeTab = tab_tt.first;
-  auto tt = tab_tt.second;
-  if (!activeTab)
-  {
-    QMessageBox::information(this, "Oops", "Create a new tab first");
-    return nullptr;
-  }
   if (filename.isNull()) return nullptr;
 
   QByteArray filename_ba = filename.toLocal8Bit();

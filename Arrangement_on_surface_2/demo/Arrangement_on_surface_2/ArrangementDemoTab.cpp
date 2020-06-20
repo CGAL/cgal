@@ -23,6 +23,9 @@
 
 #include <QGridLayout>
 
+static constexpr double MAX_WIDTH =
+  std::numeric_limits<double>::max() / 1048576;
+
 ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   QWidget( parent ),
   graphicsView( new ArrangementDemoGraphicsView( this ) ),
@@ -52,8 +55,8 @@ void ArrangementDemoTabBase::setupUi( )
   this->layout->addWidget( this->graphicsView, 0, 0 );
   this->graphicsView->setScene( this->scene );
   // TODO: Find suitable values
-  double xymin = -std::numeric_limits<double>::max() / 1048576;
-  double wh = std::numeric_limits<double>::max() / 524288;
+  double xymin = -MAX_WIDTH / 2;
+  double wh = MAX_WIDTH;
   this->scene->setSceneRect(xymin, xymin, wh, wh);
 }
 
@@ -468,11 +471,13 @@ void ArrangementDemoTab<Arr_>::adjustViewport()
 
   this->graphicsView->resetTransform();
   // TODO: Find suitable values
-  double xmin = viewportRect.x() - std::numeric_limits<double>::max() / 1048576;
-  double ymin = viewportRect.y() - std::numeric_limits<double>::max() / 1048576;
-  double wh = std::numeric_limits<double>::max() / 524288;
+  double xmin = viewportRect.x() - MAX_WIDTH / 2;
+  double ymin = viewportRect.y() - MAX_WIDTH / 2;
+  double wh = MAX_WIDTH;
   this->scene->setSceneRect(xmin, ymin, wh, wh);
   this->graphicsView->fitInView(viewportRect, Qt::KeepAspectRatio);
+
+  Q_EMIT modelChanged();
 }
 
 template class ArrangementDemoTab<Seg_arr>;
