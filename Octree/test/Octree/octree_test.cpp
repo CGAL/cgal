@@ -39,7 +39,7 @@ int main(void) {
   auto point_map = points.point_map();
 
   Octree octree(points, point_map);
-  octree._refine(10, 1);
+  octree.refine(10, 1);
 
   std::cout << octree.root();
 
