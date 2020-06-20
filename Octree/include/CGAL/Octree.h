@@ -22,13 +22,9 @@
 #ifndef CGAL_OCTREE_3_H
 #define CGAL_OCTREE_3_H
 
-/*
- * Not present or relevant for benchmarking
- */
-//#include <CGAL/license/Implicit_surface_reconstruction_3.h>
-
 #include <CGAL/Octree/Octree_node.h>
 #include <CGAL/Octree/Criterion.h>
+#include <CGAL/Octree/IO.h>
 
 #include <CGAL/bounding_box.h>
 #include <boost/iterator/transform_iterator.hpp>
@@ -47,6 +43,7 @@
 #include <boost/bind.hpp>
 #include <iostream>
 #include <fstream>
+#include <ostream>
 
 #include <stack>
 #include <queue>
@@ -132,6 +129,42 @@ namespace CGAL {
       m_root.unsplit();
     }
 
+    void _refine(size_t max_depth, size_t max_pts_num) {
+
+      // create a side length map
+      for (int i = 0; i <= (int) 10; i++)
+        m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
+
+      // Initialize a queue of nodes that need to be refined
+      std::queue<Node*> todo;
+      todo.push(&m_root);
+
+      // Process items in the queue until it's consumed fully
+      while (!todo.empty()) {
+
+        // Get the next element
+        auto current = todo.front();
+        todo.pop();
+        int depth = current->depth();
+
+        // Check if this node needs to be processed
+        if (current->num_points() > max_pts_num && current->depth() < max_depth) {
+
+          // Split this node
+          current->split();
+
+          // Redistribute its points
+          reassign_points((*current));
+
+          // Process each of its children
+          for (int i = 0; i < 8; ++i)
+            todo.push(&(*current)[i]);
+
+        }
+      }
+
+    }
+
     void refine(size_t max_depth, size_t max_pts_num) {
 
       // Make sure arguments are valid
@@ -147,6 +180,7 @@ namespace CGAL {
 
       for (int i = 0; i <= (int) m_max_depth_reached; i++)
         m_unit_per_depth.push_back(1 << (m_max_depth_reached - i));
+
     }
 
     Node &root() { return m_root; }
@@ -165,6 +199,7 @@ namespace CGAL {
 
       // If all else is equal, recursively compare the trees themselves
       return rhs.m_root == m_root;
+
     }
 
 

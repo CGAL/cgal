@@ -2,24 +2,26 @@
 #ifndef OCTREE_CRITERION_H
 #define OCTREE_CRITERION_H
 
+#include <CGAL/Octree.h>
 #include <CGAL/Octree/Octree_node.h>
 
-/*
-
-typedef Octree_node<Kernel, PointRange> Node;
 
 // Possible criterions
+template <class Node>
 struct Stop_at_max_depth {
+
   std::size_t max_depth;
 
-  Stop_at_max_depth(const std::size_t &max_depth) : max_depth(max_depth) {}
+  Stop_at_max_depth(std::size_t max_depth) : max_depth(max_depth) {}
 
-  bool operator()(const Node &n) const {
-    return n.depth() == max_depth; // not sure you can know that from node only,
+  bool operator()(Node n) const {
+    return n->depth() == max_depth; // not sure you can know that from node only,
     // otherwise your criterion could also take a
     // reference to the full octree as parameter
   }
 };
+
+ /*
 
 struct Stop_at_max_number_of_points {
   std::size_t max_nb_points;
