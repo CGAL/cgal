@@ -129,7 +129,48 @@ namespace CGAL {
       m_root.unsplit();
     }
 
+    void refine(std::function<bool(Node *)> stop_criterion) {
+
+      // create a side length map
+      for (int i = 0; i <= (int) 10; i++)
+        m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
+
+      // Initialize a queue of nodes that need to be refined
+      std::queue<Node*> todo;
+      todo.push(&m_root);
+
+      // Process items in the queue until it's consumed fully
+      while (!todo.empty()) {
+
+        // Get the next element
+        auto current = todo.front();
+        todo.pop();
+        int depth = current->depth();
+
+        // Check if this node needs to be processed
+        if (!stop_criterion(current)) {
+
+          // Split this node
+          current->split();
+
+          // Redistribute its points
+          reassign_points((*current));
+
+          // Process each of its children
+          for (int i = 0; i < 8; ++i)
+            todo.push(&(*current)[i]);
+
+        }
+      }
+    }
+
     void refine(size_t max_depth, size_t max_pts_num) {
+
+      refine([&](Node *n) -> bool {
+        return (n->num_points() <= max_pts_num || n->depth() == max_depth);
+      });
+
+      /*
 
       // create a side length map
       for (int i = 0; i <= (int) 10; i++)
@@ -163,6 +204,7 @@ namespace CGAL {
         }
       }
 
+       */
     }
 
     Node &root() { return m_root; }
