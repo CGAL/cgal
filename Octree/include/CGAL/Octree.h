@@ -23,7 +23,7 @@
 #define CGAL_OCTREE_3_H
 
 #include <CGAL/Octree/Octree_node.h>
-#include <CGAL/Octree/Stop_criterion.h>
+#include <CGAL/Octree/Split_criterion.h>
 
 #include <CGAL/bounding_box.h>
 #include <boost/iterator/transform_iterator.hpp>
@@ -128,7 +128,7 @@ namespace CGAL {
       m_root.unsplit();
     }
 
-    void refine(std::function<bool(const Node &)> stop_criterion) {
+    void refine(std::function<bool(const Node &)> split_criterion) {
 
       // create a side length map
       for (int i = 0; i <= (int) 10; i++)
@@ -147,7 +147,7 @@ namespace CGAL {
         int depth = current->depth();
 
         // Check if this node needs to be processed
-        if (!stop_criterion(*current)) {
+        if (split_criterion(*current)) {
 
           // Split this node
           current->split();
@@ -164,7 +164,7 @@ namespace CGAL {
     }
 
     void refine(size_t max_depth, size_t bucket_size) {
-      refine(Stop_at_max_depth_or_bucket_size(max_depth, bucket_size));
+      refine(Split_to_max_depth_or_bucket_size(max_depth, bucket_size));
     }
 
     Node &root() { return m_root; }
