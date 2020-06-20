@@ -12,8 +12,8 @@ namespace CGAL {
             m_max_depth(max_depth), m_bucket_size(bucket_size) {}
 
     template<class Node>
-    bool operator()(Node n) const {
-      return (n->num_points() <= m_bucket_size || n->depth() == m_max_depth);
+    bool operator()(const Node &n) const {
+      return (n.num_points() <= m_bucket_size || n.depth() == m_max_depth);
     }
   };
 
@@ -24,8 +24,8 @@ namespace CGAL {
     Stop_at_max_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
 
     template<class Node>
-    bool operator()(Node n) const {
-      return n->depth() == m_max_depth;
+    bool operator()(const Node &n) const {
+      return n.depth() == m_max_depth;
     }
   };
 

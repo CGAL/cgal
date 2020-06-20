@@ -128,7 +128,7 @@ namespace CGAL {
       m_root.unsplit();
     }
 
-    void refine(std::function<bool(const Node *)> stop_criterion) {
+    void refine(std::function<bool(const Node &)> stop_criterion) {
 
       // create a side length map
       for (int i = 0; i <= (int) 10; i++)
@@ -147,7 +147,7 @@ namespace CGAL {
         int depth = current->depth();
 
         // Check if this node needs to be processed
-        if (!stop_criterion(current)) {
+        if (!stop_criterion(*current)) {
 
           // Split this node
           current->split();
