@@ -14,6 +14,8 @@
 
 #include <CGAL/IO/3MF.h>
 
+#include <CGAL/boost/graph/iterator.h>
+
 #include <boost/property_map/property_map.hpp>
 
 #include <string>
