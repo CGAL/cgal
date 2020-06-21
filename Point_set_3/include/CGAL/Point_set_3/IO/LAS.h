@@ -65,16 +65,16 @@ void check_if_property_is_used(PointSet& point_set,
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
-  \param stream the input stream
-  \param point_set the point set.
+  \param is the input stream
+  \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
-bool read_LAS(std::istream& stream,
+bool read_LAS(std::istream& is,
               CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  if(!stream)
+  if(!is)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -108,7 +108,7 @@ bool read_LAS(std::istream& stream,
 
   bool okay
       = read_LAS_with_properties
-      (stream, point_set.index_back_inserter(),
+      (is, point_set.index_back_inserter(),
        make_las_point_reader(point_set.point_push_map()),
        std::make_pair(point_set.push_property_map(intensity), LAS_property::Intensity()),
        std::make_pair(point_set.push_property_map(return_number), LAS_property::Return_number()),
@@ -172,10 +172,10 @@ bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_LAS()` should be used instead.
  */
 template <typename Point, typename Vector>
-CGAL_DEPRECATED bool read_las_point_set(std::istream& stream, ///< input stream.
+CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
-  return read_LAS(stream, point_set);
+  return read_LAS(is, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -191,21 +191,35 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& stream, ///< input stream.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param stream the output stream
-  \param point_set the point set.
+  \param os the output stream
+  \param point_set the point set
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename Point, typename Vector>
-bool write_LAS(std::ostream& stream,
-               CGAL::Point_set_3<Point, Vector>& point_set)
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_LAS(std::ostream& os,
+               CGAL::Point_set_3<Point, Vector>& point_set,
+               const CGAL_BGL_NP_CLASS& np)
 {
-  if(!stream)
+  if(!os)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
+
+  const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
 
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::template Property_map<float> Float_map;
@@ -324,7 +338,7 @@ bool write_LAS(std::ostream& stream,
 
   bool okay
       = write_LAS_with_properties
-      (stream, point_set,
+      (os, point_set,
        make_las_point_writer(point_set.point_map()),
        std::make_pair(intensity, LAS_property::Intensity()),
        std::make_pair(return_number, LAS_property::Return_number()),
@@ -367,6 +381,12 @@ bool write_LAS(std::ostream& stream,
   return okay;
 }
 
+template <typename Point, typename Vector>
+bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_LAS(os, point_set, parameters::all_default());
+}
+
 /*!
   \ingroup PkgPointSet3IO
 
@@ -374,23 +394,46 @@ bool write_LAS(std::ostream& stream,
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the output file
-  \param point_set the point set.
+  \param point_set the point set
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
  */
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  return write_LAS(os, point_set, np);
+}
+
 template <typename Point, typename Vector>
 bool write_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname);
-  return write_LAS(os, point_set);
+  return write_LAS(os, point_set, parameters::all_default());
+}
+
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_LAS(fname.c_str(), point_set, np);
 }
 
 template <typename Point, typename Vector>
 bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return write_LAS(fname.c_str(), point_set);
+  return write_LAS(fname.c_str(), point_set, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -401,10 +444,10 @@ bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_LAS()` should be used instead.
  */
 template <typename Point, typename Vector>
-CGAL_DEPRECATED bool write_las_point_set(std::ostream& stream, ///< output stream.
+CGAL_DEPRECATED bool write_las_point_set(std::ostream& os, ///< output stream.
                                          CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
-  return write_LAS(stream, point_set);
+  return write_LAS(os, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

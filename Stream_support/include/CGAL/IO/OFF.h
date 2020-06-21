@@ -13,7 +13,7 @@
 
 #include <CGAL/IO/OFF/File_scanner_OFF.h>
 #include <CGAL/IO/OFF/File_writer_OFF.h>
-#include <CGAL/IO/reader_helpers.h>
+#include <CGAL/IO/helpers.h>
 #include <CGAL/IO/Generic_writer.h>
 
 #include <CGAL/array.h>

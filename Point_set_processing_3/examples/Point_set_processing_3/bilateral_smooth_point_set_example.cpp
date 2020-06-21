@@ -1,8 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/property_map.h>
-#include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+
 #include <CGAL/bilateral_smooth_point_set.h>
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_points.h>
+#include <CGAL/property_map.h>
 #include <CGAL/tags.h>
 
 #include <utility> // defines std::pair
@@ -26,10 +27,9 @@ int main(int argc, char*argv[])
 
   // Reads a .xyz point set file in points[] * with normals *.
   std::vector<PointVectorPair> points;
-  if (!CGAL::read_points(input_filename,
-                      std::back_inserter(points),
-                     CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                     normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+  if (!CGAL::read_points(input_filename, std::back_inserter(points),
+                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                          .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
      std::cerr << "Error: cannot read file " << input_filename << std::endl;
      return EXIT_FAILURE;
@@ -56,11 +56,9 @@ int main(int argc, char*argv[])
   //// Save point set.
   std::ofstream out(output_filename);
   out.precision(17);
-  if (!out ||
-      !CGAL::write_XYZ(
-      out, points,
-      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-      normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+  if (!out || !CGAL::write_XYZ(out, points,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
     return EXIT_FAILURE;
   }

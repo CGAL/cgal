@@ -120,7 +120,7 @@ is .pwn for points with normals.)
 
 \subsection IOStreamZYZInput Reading XYZ files
 Objects represented in the `.XYZ` or `.PWN` format can be imported into \cgal's working environment
-using the CGAL::Point_set_3 and the function read_xyz_point_set().
+using the `CGAL::Point_set_3` and the function `CGAL::read_point_set()`.
 
 \subsection IOStreamXYZOutput Writing XYZ files
 The CGAL::Point_set_3 can be exported into a `XYZ` or a `PWN` file using the function

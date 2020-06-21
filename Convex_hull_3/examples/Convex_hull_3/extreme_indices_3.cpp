@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
-#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <boost/iterator/counting_iterator.hpp>
 
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
   }
 
   std::vector<Point_3> points;
-  CGAL::read_off_points(in, std::back_inserter(points));
+  CGAL::read_points(in, std::back_inserter(points));
 
   //This will contain the extreme vertices
   std::vector<std::size_t> extreme_point_indices;

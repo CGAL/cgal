@@ -26,6 +26,7 @@
 
 namespace CGAL {
 namespace internal {
+
 BOOST_MPL_HAS_XXX_TRAIT_DEF(iterator_category)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(value_type)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(difference_type)

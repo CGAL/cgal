@@ -202,7 +202,7 @@ public:
   template <typename Type>
   Type read(std::istream& stream) const
   {
-    if(m_format == 0) // Ascii
+    if(m_format == 0) // ASCII
     {
       Type t;
       read_ascii(stream, t);

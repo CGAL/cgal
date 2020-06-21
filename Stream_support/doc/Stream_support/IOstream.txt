@@ -10,26 +10,262 @@ namespace CGAL {
 
 \section IOstreamIntro Introduction
 
-CGAL algorithms and data structures are usually part of a pipeline of algorithms.
-Everything is not entirely self-contained.
-Need a way to import and export data to known file formats.
-Can in addition enhance the existing stream system coming with the STL.
+An algorithm is the application of a serie of steps to convert some input data into output data.
+As such, it is necessary to have a way to input and output external data into \cgal data structures.
+This is achieved using <em>input-output (IO) streams</em> of data, which enables reading and writing
+to and from files, the console, or other custom structures.
 
-We first explain which file formats are supported for various types of structures in CGAL.
-Then we explain how to customize your stream to read and write objects that do not necessarily already
-have an existing overload.
+\subsection PMPOutline Outline
 
-Supported file formats are listed on the \link IOStreamSupportedFileFormats following page\endlink.
+- \ref IOstreamIO : the most essential data structures of \cgal, its kernel objects, all provide
+                    adapted input and output operators. In addition, \cgal provides tools to enhance
+                    the existing stream system of the STL to easily read and write classes external to \cgal.
+- \ref IOstreamSupportedFormats : a number of traditional data structures such as point sets or
+                                  polygon meshes have well-established standards specifying
+                                  a particular data format to facilitate data exchanges. Formats
+                                  supported for \cgal data structures are detailed in this section.
+                                  The page \ref IOStreamSupportedFileFormats offers the reversed viewpoint
+                                  (file format to \cgal data structure).
 
-\section IOstreamSupportedFormats Importing and Exporting Data
+\section IOstreamIO Reading and Writing Data With Streams
 
-CGAL algorithms work on different types of data structures, such as \ref Chapter_Point_Set_3 "point sets",
- \ref PolygonSoups "polygon soups", or \ref PMPDef "polygon meshes".
+All classes in the \cgal kernel provide input and output operators for
+%IO streams. Classes external to \cgal are also supported, by means of `oformat()`
+(Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
+The basic task of such an operator is to produce a
+representation of an object that can be written as a sequence of
+characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii,
+a raw binary, and a pretty printing format.
+
+\code{.cpp}
+enum Mode {ASCII = 0, BINARY, PRETTY};
+\endcode
+
+In `ASCII` mode, objects are written as
+a set of numbers, e.g. the coordinates of a point or
+the coefficients of a line, in a machine independent format.
+In `BINARY` mode,
+data are written in a binary format, e.g. a double is represented
+as a sequence of four byte. The format depends on the machine.
+The mode `PRETTY`
+serves mainly for debugging as the type of the geometric
+object is written, as well as the data defining the object. For example
+for a point at the origin with Cartesian double coordinates, the output
+would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
+provide input operations for pretty printed data. By default a stream
+is in <span class="textsc">Ascii</span> mode.
+
+\cgal provides the following functions to modify the mode of an IO stream.
+
+\code{.cpp}
+IO::Mode set_mode(std::ios& s, IO::Mode m);
+IO::Mode set_ascii_mode(std::ios& s);
+IO::Mode set_binary_mode(std::ios& s);
+IO::Mode set_pretty_mode(std::ios& s);
+\endcode
+
+The following functions enable testing whether a stream is in a certain mode:
+\code{.cpp}
+IO::Mode get_mode(std::ios& s);
+bool is_ascii(std::ios& s);
+bool is_binary(std::ios& s);
+bool is_pretty(std::ios& s);
+\endcode
+
+\subsection IOstreamInput Input Operator
+
+\cgal defines input operators for classes that are derived
+from the class `istream`. This allows to read from istreams
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
+Let `is` be an input stream.
+
+\code{.cpp}
+// Extracts object `c` from the stream `is`. Returns `is`.
+istream& operator>>(istream& is, Class c);
+\endcode
+
+\code{.cpp}
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> > Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment;
+
+int
+main()
+{
+  Point p, q;
+  Segment s;
+
+  CGAL::set_ascii_mode(std::cin);
+  std::cin >> p >> q;
+
+  std::ifstream f("data.txt");
+  CGAL::set_binary_mode(f);
+  f >> s >> p;
+
+  return 1;
+}
+\endcode
+
+\subsection IOstreamOutput Output Operator
+
+\cgal defines output operators for classes that are derived
+from the class `ostream`. This allows to write to ostreams
+as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
+and `std::ofstream`.
+The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` (see
+Section \ref IOstreamColors) as well.
+Let `os` be an output stream.
+
+\code{.cpp}
+// Inserts object `c` in the stream `os`. Returns `os`.
+ostream& operator<<(ostream& os, Class c);
+\endcode
+
+\code{.cpp}
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> > Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment;
+
+int main()
+{
+  Point p(0,1), q(2,2);
+  Segment s(p,q);
+
+  CGAL::set_pretty_mode(std::cout);
+  std::cout << p << std::endl << q << std::endl;
+
+  std::ofstream f("data.txt");
+  CGAL::set_binary_mode(f);
+  f << s << p ;
+
+  return 1;
+}
+\endcode
+
+\subsection seciofornoncgaltypes IO for Non-CGAL Types
+
+\subsubsection IOstreamUsingOutputFormatting Using Output Formatting
+
+To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used.
+For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
+will be called by `oformat()`. Otherwise, the stream output operator will be called.
+
+\code{.cpp}
+std::cout << CGAL::oformat( myobject );
+\endcode
+
+Optionally, you can provide a second template parameter `F` as a formatting tag:
+\code{.cpp}
+std::cout << CGAL::oformat( myobject, My_formatting_tag() );
+\endcode
+
+For a list of formatting tags supported by the type `T`, please
+refer to the documentation of the respective type.
+
+\subsubsection IOstreamCustomizingOutputFormatting Customizing Output Formatting
+
+In some situations, you want to control the output formatting for a
+type `T`. For external types (third party libraries etc.),
+there might be problems if their stream output operator does not
+respect `IO::Mode`. The purpose of `Output_rep` is to provide a way to
+control output formatting that works independently of the object's
+stream output operator.
+
+Instead of putting `T` directly into an output stream,
+`T` is wrapped into an output representation `Output_rep`. For
+convenience, a function `oformat()` exists, which constructs an instance
+of `Output_rep`.
+
+If you do not specialize `Output_rep` for `T`, `T`'s
+stream output operator is called from within `Output_rep`, by
+default. If you want another behaviour for your type `T`, you
+have to provide a specialization for that type. Furthermore, you can
+provide specializations with a second template parameter (a formatting
+tag). The second template parameter defaults to `Null_tag` and means
+<I>default behaviour</I>.
+
+For example, specializing `Output_rep` for `CORE::BigRat` (without a
+formatting tag parameter) could look like this:
+
+\code{.cpp}
+template <class F>
+class Output_rep< ::CORE::BigRat, F> {
+  const ::CORE::BigRat& t;
+public:
+  Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
+
+  std::ostream& operator()( std::ostream& out) const {
+    switch (get_mode(out)) {
+    case IO::PRETTY:{
+      if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
+        return out <<CGAL_CORE_NUMERATOR(t);
+      else
+        return out << CGAL_CORE_NUMERATOR(t)
+                   << "/"
+                   << CGAL_CORE_DENOMINATOR(t);
+      break;
+    }
+
+    default:
+      return out << CGAL_CORE_NUMERATOR(t)
+                 << "/"
+                 << CGAL_CORE_DENOMINATOR(t);
+    }
+  }
+};
+\endcode
+
+\subsection IOstreamColors Colors
+
+An object of the class `Color` is a color available
+for drawing operations in many \cgal output streams.
+
+Each color is defined by a triple of integers `(r,g,b)` with
+0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
+There are a 11 predefined `Color` constants available:
+`BLACK`, `WHITE`, `GRAY`, `RED`, `GREEN`,
+`DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
+and `YELLOW`.
+
+\subsection IOstreamStream Stream Support
+
+Three classes are provided by \cgal as adaptors to input and output stream
+iterators. The class `Istream_iterator` is an input iterator adaptor and
+is particularly useful for classes that are similar but not compatible to
+`std::istream`. Similarly, the class `Ostream_iterator` is an output
+iterator adaptor. The class `Verbose_ostream` can be used as an output
+stream. The stream
+output operator `<<` is defined for any type. The class
+stores in an internal state a stream and whether the
+output is active or not. If the state is active, the stream output
+operator `<<` uses the internal stream to output its argument. If
+the state is inactive, nothing happens.
+
+\section IOstreamSupportedFormats Importing and Exporting Data using Standard Formats
+
+Although there is a large number of different types of input data structures in \cgal algorithms,
+some common data structures such as point sets or polygon meshes appear more often. These
+traditional data structures have long been used and specific standards have been created
+to facilite information exchange. In the following section, supported file formats are listed
+for the most common data structures used in \cgal. A reverse viewpoint, listing the data structures
+which can be used for a specific file format is available on \ref IOStreamSupportedFileFormats.
 
 \subsection IOstreamPointSetIO Point Set IO
-The CGAL::Point_set_3 is a vector based data structure that contains
-a default property (named point) for the coordinates of the points,
-and is able to work with dynamic properties.
+The class `CGAL::Point_set_3` is the data structure used in \cgal to represent point sets.
+It is a vector-based data structure that contains a default property (named point)
+for the coordinates of the points, and is able to work with dynamic properties.
+The file formats supported for `CGAL::Point_set_3` are detailed in the table below.
 
 <table class="iotable">
     <tr>
@@ -96,7 +332,7 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
 
 \subsection IOstreamPolygonMeshIO Polygon Mesh IO
 A Polygon Mesh is a 3D structure that refines the concept of `FaceGraph`
-with some other restrictions. A more precise definition can be found \ref PMPDef "here".
+with some additional restrictions; a more precise definition can be found \ref PMPDef "here".
 
 <table class="iotable">
     <tr>
@@ -211,231 +447,6 @@ which might look as follows:
 \endcode
 
 \cgalExample{Stream_support/read_xml.cpp}
-
-\section IOstreamIO IO Streams
-
-All classes in the \cgal kernel provide input and output operators for
-%IO streams. Classes external to \cgal are also supported, by means of `oformat()`
-(Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
-The basic task of such an operator is to produce a
-representation of an object that can be written as a sequence of
-characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii,
-a raw binary, and a pretty printing format.
-
-\code{.cpp}
-enum Mode {ASCII = 0, BINARY, PRETTY};
-\endcode
-
-In `ASCII` mode, objects are written as
-a set of numbers, e.g. the coordinates of a point or
-the coefficients of a line, in a machine independent format.
-In `BINARY` mode,
-data are written in a binary format, e.g. a double is represented
-as a sequence of four byte. The format depends on the machine.
-The mode `PRETTY`
-serves mainly for debugging as the type of the geometric
-object is written, as well as the data defining the object. For example
-for a point at the origin with Cartesian double coordinates, the output
-would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
-provide input operations for pretty printed data. By default a stream
-is in <span class="textsc">Ascii</span> mode.
-
-\cgal provides the following functions to modify the mode of an IO stream.
-
-\code{.cpp}
-IO::Mode set_mode(std::ios& s, IO::Mode m);
-IO::Mode set_ascii_mode(std::ios& s);
-IO::Mode set_binary_mode(std::ios& s);
-IO::Mode set_pretty_mode(std::ios& s);
-\endcode
-
-The following functions enable testing whether a stream is in a certain mode:
-\code{.cpp}
-IO::Mode get_mode(std::ios& s);
-bool is_ascii(std::ios& s);
-bool is_binary(std::ios& s);
-bool is_pretty(std::ios& s);
-\endcode
-
-\subsection IOstreamOutput Output Operator
-
-\cgal defines output operators for classes that are derived
-from the class `ostream`. This allows to write to ostreams
-as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
-and `std::ofstream`.
-The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` (see
-Section \ref IOstreamColors) as well.
-Let `os` be an output stream.
-
-\code{.cpp}
-// Inserts object `c` in the stream `os`. Returns `os`.
-ostream& operator<<(ostream& os, Class c);
-\endcode
-
-\code{.cpp}
-#include <iostream>
-#include <fstream>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
-
-typedef CGAL::Point_2< CGAL::Cartesian<double> > Point;
-typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment;
-
-int main()
-{
-  Point p(0,1), q(2,2);
-  Segment s(p,q);
-
-  CGAL::set_pretty_mode(std::cout);
-  std::cout << p << std::endl << q << std::endl;
-
-  std::ofstream f("data.txt");
-  CGAL::set_binary_mode(f);
-  f << s << p ;
-
-  return 1;
-}
-\endcode
-
-\subsection IOstreamInput Input Operator
-
-\cgal defines input operators for classes that are derived
-from the class `istream`. This allows to read from istreams
-as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
-The input operator is defined for all classes in the \cgal `Kernel`.
-Let `is` be an input stream.
-
-\code{.cpp}
-// Extracts object `c` from the stream `is`. Returns `is`.
-istream& operator>>(istream& is, Class c);
-\endcode
-
-\code{.cpp}
-#include <iostream>
-#include <fstream>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Segment_2.h>
-
-typedef CGAL::Point_2< CGAL::Cartesian<double> > Point;
-typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment;
-
-int
-main()
-{
-  Point p, q;
-  Segment s;
-
-  CGAL::set_ascii_mode(std::cin);
-  std::cin >> p >> q;
-
-  std::ifstream f("data.txt");
-  CGAL::set_binary_mode(f);
-  f >> s >> p;
-
-  return 1;
-}
-\endcode
-
-\subsection seciofornoncgaltypes IO for Non-CGAL Types
-
-\subsubsection IOstreamUsingOutputFormatting Using Output Formatting
-
-To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used.
-For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
-will be called by `oformat()`. Otherwise, the stream output operator will be called.
-
-\code{.cpp}
-std::cout << CGAL::oformat( myobject );
-\endcode
-
-Optionally, you can provide a second template parameter `F` as a formatting tag:
-\code{.cpp}
-std::cout << CGAL::oformat( myobject, My_formatting_tag() );
-\endcode
-
-For a list of formatting tags supported by the type `T`, please
-refer to the documentation of the respective type.
-
-\subsubsection IOstreamCustomizingOutputFormatting Customizing Output Formatting
-
-In some situations, you want to control the output formatting for a
-type `T`. For external types (third party libraries etc.),
-there might be problems if their stream output operator does not
-respect `IO::Mode`. The purpose of `Output_rep` is to provide a way to
-control output formatting that works independently of the object's
-stream output operator.
-
-Instead of putting `T` directly into an output stream,
-`T` is wrapped into an output representation `Output_rep`. For
-convenience, a function `oformat()` exists, which constructs an instance
-of `Output_rep`.
-
-If you do not specialize `Output_rep` for `T`, `T`'s
-stream output operator is called from within `Output_rep`, by
-default. If you want another behaviour for your type `T`, you
-have to provide a specialization for that type. Furthermore, you can
-provide specializations with a second template parameter (a formatting
-tag). The second template parameter defaults to `Null_tag` and means
-<I>default behaviour</I>.
-
-For example, specializing `Output_rep` for `CORE::BigRat` (without a
-formatting tag parameter) could look like this:
-
-\code{.cpp}
-template <class F>
-class Output_rep< ::CORE::BigRat, F> {
-  const ::CORE::BigRat& t;
-public:
-  Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
-
-  std::ostream& operator()( std::ostream& out) const {
-    switch (get_mode(out)) {
-    case IO::PRETTY:{
-      if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
-        return out <<CGAL_CORE_NUMERATOR(t);
-      else
-        return out << CGAL_CORE_NUMERATOR(t)
-                   << "/"
-                   << CGAL_CORE_DENOMINATOR(t);
-      break;
-    }
-
-    default:
-      return out << CGAL_CORE_NUMERATOR(t)
-                 << "/"
-                 << CGAL_CORE_DENOMINATOR(t);
-    }
-  }
-};
-\endcode
-
-\subsection IOstreamColors Colors
-
-An object of the class `Color` is a color available
-for drawing operations in many \cgal output streams.
-
-Each color is defined by a triple of integers `(r,g,b)` with
-0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
-There are a 11 predefined `Color` constants available:
-`BLACK`, `WHITE`, `GRAY`, `RED`, `GREEN`,
-`DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
-and `YELLOW`.
-
-\subsection IOstreamStream Stream Support
-
-Three classes are provided by \cgal as adaptors to input and output stream
-iterators. The class `Istream_iterator` is an input iterator adaptor and
-is particularly useful for classes that are similar but not compatible to
-`std::istream`. Similarly, the class `Ostream_iterator` is an output
-iterator adaptor. The class `Verbose_ostream` can be used as an output
-stream. The stream
-output operator `<<` is defined for any type. The class
-stores in an internal state a stream and whether the
-output is active or not. If the state is active, the stream output
-operator `<<` uses the internal stream to output its argument. If
-the state is inactive, nothing happens.
 
 */
 } /* namespace CGAL */

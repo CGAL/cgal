@@ -13,7 +13,7 @@
 #define CGAL_IO_STL_STL_READER_H
 
 #include <CGAL/IO/io.h>
-#include <CGAL/IO/reader_helpers.h>
+#include <CGAL/IO/helpers.h>
 
 #include <boost/cstdint.hpp>
 #include <boost/range/value_type.hpp>

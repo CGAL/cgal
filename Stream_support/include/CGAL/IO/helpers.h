@@ -8,20 +8,20 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef CGAL_IO_READER_HELPERS_H
-#define CGAL_IO_READER_HELPERS_H
+#ifndef CGAL_STREAM_SUPPORT_HELPERS_H
+#define CGAL_STREAM_SUPPORT_HELPERS_H
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/Point_3.h>
+#include <CGAL/is_iterator.h>
 
 #include <boost/mpl/logical.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <CGAL/Container_helper.h>
-#include <CGAL/Point_3.h>
+#include <boost/mpl/has_xxx.hpp>
 
-namespace CGAL{
+namespace CGAL {
 namespace IO {
 namespace internal {
 
@@ -42,8 +42,32 @@ void fill_point(const double x, const double y, const double z, const double w, 
   pt[0] = x/w; pt[1] = y/w; pt[2] = z/w;
 }
 
+// Functions like 'write_OFF' can take :
+// - write_OFF(stream, point_set)
+// - write_OFF(stream, pointrange)
+// - write_OFF(stream, polygon_mesh)
+// so a way to distinguish is needed
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Point_set)
+
+template <typename T>
+struct is_Point_set_3 : has_Point_set<T> { };
+
+// Point_set_3 also functions as range, so it needs to be excluded
+template <typename T>
+struct is_Range
+  : public boost::mpl::and_<
+             boost::has_range_const_iterator<T>,
+             boost::mpl::not_<is_Point_set_3<T> > >
+{ };
+
+// For polygon meshes
+template <typename T>
+struct is_Point_set_or_Range_or_Iterator
+  : public boost::mpl::or_<is_Point_set_3<T>, is_Range<T>, is_iterator<T> >
+{ };
+
 } // end namespace internal
 } // end namespace IO
 } // namespace CGAL
 
-#endif // CGAL_IO_READER_HELPERS_H
+#endif // CGAL_STREAM_SUPPORT_HELPERS_H

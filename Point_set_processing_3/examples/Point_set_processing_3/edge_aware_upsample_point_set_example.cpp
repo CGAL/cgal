@@ -1,7 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/edge_aware_upsample_point_set.h>
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/IO/write_points.h>
 
 #include <vector>
 #include <fstream>

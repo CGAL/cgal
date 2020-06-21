@@ -1,17 +1,14 @@
-
-#include <fstream>
-#include <iostream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Scale_space_reconstruction_3/Advancing_front_mesher.h>
 #include <CGAL/Scale_space_reconstruction_3/Jet_smoother.h>
 
-#include <CGAL/IO/read_off_points.h>
 #include <CGAL/Timer.h>
+
+#include <fstream>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 

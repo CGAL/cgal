@@ -20,8 +20,7 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <vector>
 #include <string>
@@ -322,12 +321,9 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream &&
-          CGAL::read_XYZ(stream,
-                         std::back_inserter(points),
-                         CGAL::parameters::normal_map
-                         (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
-                         );
+      success = stream && CGAL::read_XYZ(stream,
+                                         std::back_inserter(points),
+                                         CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
     }
     if (success)
     {

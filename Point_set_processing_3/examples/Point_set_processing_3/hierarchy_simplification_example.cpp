@@ -1,9 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/hierarchy_simplify_point_set.h>
+
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/Timer.h>
+#include <CGAL/IO/write_points.h>
+#include <CGAL/hierarchy_simplify_point_set.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/Timer.h>
 
 #include <vector>
 #include <fstream>

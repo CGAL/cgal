@@ -16,7 +16,7 @@ int main (int argc, char** argv)
   Point_set point_set;
 
   // Reading input in XYZ format
-  if (!f || !CGAL::read_XYZ (f, point_set))
+  if (!f || !CGAL::read_point_set(f, point_set))
   {
     std::cerr<<"Can't read input file "
              <<(argc > 1 ? argv[1] : "data/oni.xyz")<< std::endl;

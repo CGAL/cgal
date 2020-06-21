@@ -902,7 +902,7 @@ bool write_PLY(std::ostream& os,
   return true;
 }
 
-/// Extracts the surface mesh from an input stream in Ascii or
+/// Extracts the surface mesh from an input stream in ASCII or
 /// Binary PLY format and appends it to the surface mesh `sm`.
 ///
 /// - the operator reads the vertex `point` property and the face

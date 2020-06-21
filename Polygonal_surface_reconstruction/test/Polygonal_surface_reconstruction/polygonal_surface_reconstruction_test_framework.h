@@ -1,8 +1,7 @@
 #ifndef POLYFIT_TEST_FRAMEWORK_H_
 #define POLYFIT_TEST_FRAMEWORK_H_
 
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>

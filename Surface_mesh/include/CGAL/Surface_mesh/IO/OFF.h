@@ -283,7 +283,7 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 /// \relates Surface_mesh
 /// \ingroup PkgSurfaceMeshIOFunc
 ///
-/// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF
+/// Extracts the surface mesh from an input stream in ASCII OFF, COFF, NOFF, CNOFF
 /// format and appends it to the surface mesh `sm`.
 ///
 /// The operator reads the point property as well as "v:normal", "v:color", `"v:texcoord"`, and "f:color".

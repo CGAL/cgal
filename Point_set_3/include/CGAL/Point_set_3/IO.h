@@ -72,7 +72,7 @@ std::istream& operator>>(std::istream& is,
     CGAL::read_PLY(is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if(line.find("LASF") == 0)
-    CGAL::read_las_points(is, ps);
+    CGAL::read_LAS(is, ps);
 #endif // LAS
   else
     CGAL::read_XYZ(is, ps);
@@ -171,28 +171,38 @@ std::ostream& operator<<(std::ostream& os,
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the output file
-  \param ps the point set.
+  \param ps the point set
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
 */
-template <typename Point,
-          typename Vector>
-bool write_point_set(const std::string& fname,
-                    CGAL::Point_set_3<Point, Vector>& ps)
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_point_set(const char* fname,
+                     CGAL::Point_set_3<Point, Vector>& ps,
+                     const CGAL_BGL_NP_CLASS& np)
 {
   const std::string ext = IO::internal::get_file_extension(fname);
 
   if(ext == "xyz")
-    return write_XYZ(fname, ps);
+    return write_XYZ(fname, ps, np);
   else if(ext == "off")
-    return write_OFF(fname, ps);
+    return write_OFF(fname, ps, np);
   else if(ext == "ply")
-    return write_PLY(fname, ps);
+    return write_PLY(fname, ps, np);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if(ext == "las")
-    return write_LAS(fname, ps);
+    return write_LAS(fname, ps, np);
 #endif
 
   return false;
@@ -201,7 +211,19 @@ bool write_point_set(const std::string& fname,
 template <typename Point, typename Vector>
 bool write_point_set(const char* fname, CGAL::Point_set_3<Point, Vector>& ps)
 {
-  return write_point_set(std::string(fname), ps);
+  return write_point_set(fname, ps, parameters::all_default());
+}
+
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_point_set(fname.c_str(), ps, np);
+}
+
+template <typename Point, typename Vector>
+bool write_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
+{
+  return write_point_set(fname.c_str(), ps, parameters::all_default());
 }
 
 } // namespace CGAL

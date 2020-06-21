@@ -7,7 +7,7 @@
 #include <CGAL/Classification.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/tags.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <CGAL/Real_timer.h>
 
@@ -52,8 +52,7 @@ int main (int argc, char** argv)
   std::vector<Point> pts;
 
   std::cerr << "Reading input" << std::endl;
-  if (!in
-      || !(CGAL::read_PLY (in, std::back_inserter (pts))))
+  if (!in || !(CGAL::read_points(in, std::back_inserter(pts))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

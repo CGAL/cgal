@@ -38,7 +38,7 @@ int run(const char* filename) {
   Pwn_vector points;
 
   // Load a point set from a file.
-  // read_XYZ takes an OutputIterator for storing the points
+  // read_points takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
 
   if (!CGAL::read_points(filename,

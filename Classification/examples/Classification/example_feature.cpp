@@ -3,14 +3,14 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Classification.h>
+#include <CGAL/IO/read_points.h>
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classification.h>
-#include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -71,8 +71,7 @@ int main (int argc, char** argv)
   std::vector<Point> pts;
 
   std::cerr << "Reading input" << std::endl;
-  if (!in
-      || !(CGAL::read_PLY (in, std::back_inserter (pts))))
+  if (!in || !(CGAL::read_points(in, std::back_inserter(pts))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

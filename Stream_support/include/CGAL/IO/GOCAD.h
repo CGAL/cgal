@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_GOCAD_H
 #define CGAL_IO_GOCAD_H
 
-#include <CGAL/IO/reader_helpers.h>
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>

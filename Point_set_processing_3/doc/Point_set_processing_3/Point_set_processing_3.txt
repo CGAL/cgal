@@ -160,14 +160,16 @@ not handle normals and requires the \ref thirdpartyLASlib library.
 
 The following functions are available:
 
-- `read_xyz_points()`
-- `read_off_points()`
-- `read_ply_points()`
-- `read_las_points()`
-- `write_xyz_points()`
-- `write_off_points()`
-- `write_ply_points()`
-- `write_las_points()`
+- `read_points()`
+- `read_XYZ()`
+- `read_OFF()`
+- `read_PLY()`
+- `read_LAS()`
+- `write_points()`
+- `write_XYZ()`
+- `write_OFF()`
+- `write_PLY()`
+- `write_LAS()`
 
 All of these functions (with the exception of the LAS format) can read
 and write either points alone or points with normals (depending on
@@ -196,8 +198,8 @@ any structure the user needs. Handling of %LAS files works similarly
 with the difference that the property names and types are fixed and
 defined by the %LAS standard.
 
-Functions `read_ply_points_with_properties()` and
-`read_las_points_with_properties()` allow the user to read any
+Functions `read_PLY_with_properties()` and
+`read_LAS_with_properties()` allow the user to read any
 property needed. The user must provide a set of property handlers that
 are used to instantiate number types and complex objects from %PLY/%LAS
 properties. This handlers are either:
@@ -223,7 +225,7 @@ object, users need to provide an overload of `CGAL::Output_rep`.
 \subsubsection Point_set_processing_3Example_ply_read PLY Reading Example
 
 The following example shows how to call
-`read_ply_points_with_properties()` to read a point set with points,
+`read_PLY_with_properties()` to read a point set with points,
 normals, RGB colors and intensity and stores these attributes in a
 user-defined container.
 
@@ -232,7 +234,7 @@ user-defined container.
 \subsubsection Point_set_processing_3Example_las_read LAS Reading Example
 
 The following example shows how to call
-`read_las_points_with_properties()` to read a point set with points
+`read_LAS_with_properties()` to read a point set with points
 and RGBI colors and stores these attributes in a user-defined
 container.
 

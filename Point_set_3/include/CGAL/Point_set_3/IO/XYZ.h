@@ -15,11 +15,18 @@
 
 #include <CGAL/Point_set_3.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <fstream>
 #include <string>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 
@@ -38,7 +45,7 @@ class Point_set_3;
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
-  \param stream the input stream
+  \param is the input stream
   \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
@@ -46,15 +53,14 @@ class Point_set_3;
   \see \ref IOStreamXYZ
  */
 template <typename Point, typename Vector>
-bool read_XYZ(std::istream& stream,
+bool read_XYZ(std::istream& is,
               CGAL::Point_set_3<Point, Vector>& point_set)
 {
   point_set.add_normal_map();
 
-  bool out = CGAL::read_xyz_points(stream,
-                                   point_set.index_back_inserter(),
-                                   CGAL::parameters::point_map(point_set.point_push_map())
-                                                    .normal_map(point_set.normal_push_map()));
+  bool out = CGAL::read_XYZ(is, point_set.index_back_inserter(),
+                            CGAL::parameters::point_map(point_set.point_push_map())
+                                             .normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for(typename CGAL::Point_set_3<Point, Vector>::const_iterator it=point_set.begin(); it!=point_set.end(); ++it)
@@ -108,10 +114,9 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_XYZ()` should be used instead.
  */
 template <typename Point, typename Vector>
-CGAL_DEPRECATED bool read_xyz_point_set(std::istream& stream, ///< input stream.
-                                        CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
+CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return read_XYZ(stream, point_set);
+  return read_XYZ(is, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -127,24 +132,41 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& stream, ///< input stream.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param stream the output stream
-  \param point_set the point set.
+  \param os the output stream
+  \param point_set the point set
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
 
   \see \ref IOStreamXYZ
  */
-template <typename Point, typename Vector>
-bool write_XYZ(std::ostream& stream,
-               const CGAL::Point_set_3<Point, Vector>& point_set)
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ(std::ostream& os,
+               const CGAL::Point_set_3<Point, Vector>& point_set,
+               const CGAL_BGL_NP_CLASS& np)
 {
   if(point_set.has_normal_map())
-    return CGAL::write_XYZ(stream, point_set,
-                           CGAL::parameters::point_map(point_set.point_map())
-                                            .normal_map(point_set.normal_map()));
+    return Point_set_processing_3::internal::write_XYZ_PSP(os, point_set,
+                                                           np.point_map(point_set.point_map())
+                                                             .normal_map(point_set.normal_map()));
 
-  return CGAL::write_XYZ(stream, point_set, CGAL::parameters::point_map(point_set.point_map()));
+  return Point_set_processing_3::internal::write_XYZ_PSP(os, point_set, np.point_map(point_set.point_map()));
+}
+
+template <typename Point, typename Vector>
+bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_XYZ(os, point_set, parameters::all_default());
 }
 
 /*!
@@ -154,25 +176,48 @@ bool write_XYZ(std::ostream& stream,
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the output file
-  \param point_set the point set.
+  \param point_set the point set
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
 
   \see \ref IOStreamXYZ
  */
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  return write_XYZ(os, point_set, np);
+}
+
 template <typename Point, typename Vector>
 bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname);
-  return write_XYZ(os, point_set);
+  return write_XYZ(os, point_set, parameters::all_default());
+}
+
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_XYZ(fname.c_str(), point_set, np);
 }
 
 template <typename Point, typename Vector>
 bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return write_XYZ(fname.c_str(), point_set);
+  return write_XYZ(fname.c_str(), point_set, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -183,10 +228,9 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_XYZ()` should be used instead.
  */
 template <typename Point, typename Vector>
-CGAL_DEPRECATED bool write_xyz_point_set(std::ostream& stream,
-                                         const CGAL::Point_set_3<Point, Vector>& point_set)
+CGAL_DEPRECATED bool write_xyz_point_set(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return write_XYZ(stream, point_set);
+  return write_XYZ(os, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
