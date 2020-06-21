@@ -334,6 +334,12 @@ bool write_OFF_BGL(std::ostream& os,
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{no face colors in the output}
     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
@@ -409,6 +415,12 @@ bool write_OFF(std::ostream& os, const Graph& g,
       \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{no face colors in the output}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
