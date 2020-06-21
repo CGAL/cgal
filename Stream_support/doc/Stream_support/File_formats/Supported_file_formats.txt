@@ -88,7 +88,7 @@ The following \cgal data structures can be exported into the `PLY` file format:
 - CGAL::Point_set_3 (operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&))
 
 
-\section IOStreamSTL Standard Triangle Language (STL)
+\section IOStreamSTL Standard Triangle Language (STL) File Format
   STL is a file format native to the stereolithography CAD software created by
   3D Systems.STL files describe the surface geometry of a three-dimensional object.
   A precise specification of those formats is available at
@@ -112,7 +112,7 @@ Polygon soups can also be exported using the function \link IOstreamFunctions `C
 Note that the STL file format exports triangular faces as geometric triangles and thus
 lose combinatorial information.
 
-\section IOStreamXYZ XYZ (or PWN)
+\section IOStreamXYZ XYZ (or PWN) File Format
 The `XYZ` format is a non standard format regularly used to described point sets.
 each line represent a point, and is composed of its coordinates and other properties.
 We only support coordinates and normals (in that case the standard extension in CGAL
@@ -126,7 +126,7 @@ using the `CGAL::Point_set_3` and the function `CGAL::read_point_set()`.
 The CGAL::Point_set_3 can be exported into a `XYZ` or a `PWN` file using the function
 write_xyz_point_set().
 
-\section IOStreamVTK VTK Formats (VTU VTP)
+\section IOStreamVTK VTK (VTU / VTP) File Formats
 The VTK libraries use different file formats to handle data structures, but we only support two:
 - The `VTU` format can be used to store am unordered collection of 3D cells, like tetrahedra,
   but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>,
@@ -163,7 +163,7 @@ The following \cgal data structures can be exported into the `.VTU` file format:
 - CGAL::Constrained_Delaunay_triangulation_2 using the function \ref CGAL::write_vtu()
 
 
-\section IOStreamAvizo Avizo Format
+\section IOStreamAvizo Avizo File Format
 The `.am` files are used by Avizo to read 3D geometry.
 
 \subsection IOStreamtAvizoOutput Writing Avizo files
@@ -171,7 +171,7 @@ Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be e
 This can be done using the function \ref CGAL::output_to_avizo()
 
 
-\section IOStreamMedit Medit Format
+\section IOStreamMedit Medit File Format
 The `.mesh` Medit file format is a format used by the Medit software. In CGAL,
 it is mostly used to represent 3D meshes.
 A precise specification of the format is available <a href="https://hal.inria.fr/inria-00069921/document"> in this report</a>,
@@ -182,7 +182,7 @@ Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be e
 This can be done using the function \ref CGAL::output_to_medit()
 
 
-\section IOStreamTetgen Tetgen Format
+\section IOStreamTetgen Tetgen File Format
 The `Tetgen` file formatscan be used to represent lists of nodes, edges, faces, ...
 A precise specification of the format is available at <a href="https://wias-berlin.de/software/tetgen/fformats.html"> wias-berlin.de</a>.
 
@@ -191,7 +191,7 @@ Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be e
 naming `.node`, `.ele` and `.face`
 This can be done using the function \ref CGAL::output_to_tetgen()
 
-\section IOStreamGocad GOCAD Format (TS)
+\section IOStreamGocad GOCAD (TS) File Formt
 The `.ts` format is an ASCII file format that allows a range of primitive types to be imported into the GOCAD package.
 A precise specification of the format is available <a href="http://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
 
@@ -203,8 +203,7 @@ using any structure that is a model of the concept `FaceGraph`, and the function
  Any structure that is a model of the concept `FaceGraph` can be exported into the `.ts` file format
  using the function `write_GOCAD()`
 
-
-\section IOStreamWRL Virtual Reality Modeling Language (VRML)
+\section IOStreamWRL Virtual Reality Modeling Language (VRML) File Format
 
 File format often used by browser plug-ins to display virtual reality environments.
 VRML files are known as “worlds,” which is what WRL stands for.

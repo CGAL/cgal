@@ -40,7 +40,7 @@ class Point_set_3;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
+// Read
 
 namespace internal {
 
@@ -60,7 +60,7 @@ void check_if_property_is_used(PointSet& point_set,
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads the content of an intput stream in the LAS format into a point set.
+  \brief Reads the content of an intput stream in the LAS format into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -169,7 +169,8 @@ bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_LAS()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::read_LAS()` \endlink should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
@@ -182,12 +183,12 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
+// Write
 
 /*!
   \ingroup PkgPointSet3IO
 
-  Writes the content of a point set into an output stream in the LAS format.
+  \brief Writes the content of a point set into an output stream in the LAS format.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -390,7 +391,7 @@ bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
 /*!
   \ingroup PkgPointSet3IO
 
-  Writes the content of a point set into an output file in the LAS format.
+  \brief Writes the content of a point set into an output file in the LAS format.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -441,7 +442,8 @@ bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_LAS()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::write_LAS()` \endlink should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_las_point_set(std::ostream& os, ///< output stream.

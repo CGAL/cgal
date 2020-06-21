@@ -30,17 +30,17 @@ namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
+// Read
 
 /*!
   \ingroup PkgPointSet3IO
 
   \brief Reads the point set from an input stream that can be either:
 
-  - XYZ
-  - OFF
-  - PLY
-  - LAS
+  - \link IOStreamXYZ XYZ \endlink
+  - \link IOStreamOFF OFF \endlink
+  - \link IOStreamPLY PLY \endlink
+  - \link IOStreamLAS LAS \endlink
 
   The format is detected from the stream. If the stream contains
   normal vectors, the normal map is added to the point set. For PLY
@@ -85,10 +85,10 @@ std::istream& operator>>(std::istream& is,
 
   \brief Reads the point set from an input file that can be either:
 
-  - XYZ
-  - OFF
-  - PLY
-  - LAS
+  - \link IOStreamXYZ XYZ \endlink
+  - \link IOStreamOFF OFF \endlink
+  - \link IOStreamPLY PLY \endlink
+  - \link IOStreamLAS LAS \endlink
 
   The format is detected from the filename extension. If the file contains
   normal vectors, the normal map is added to the point set. For PLY
@@ -131,13 +131,13 @@ bool read_point_set(const char* fname, CGAL::Point_set_3<Point, Vector>& ps)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
+// Write
 
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Inserts the point set in an output stream in ASCII PLY
-  format. All properties are inserted in their instantiation order.
+  \brief Inserts the point set in an output stream in ASCII PLY format.
+         All properties are inserted in their instantiation order.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -162,10 +162,10 @@ std::ostream& operator<<(std::ostream& os,
 
   \brief Inserts the point set in an output file that can be either:
 
-  - XYZ
-  - OFF
-  - PLY
-  - LAS
+  - \link IOStreamXYZ XYZ \endlink
+  - \link IOStreamOFF OFF \endlink
+  - \link IOStreamPLY PLY \endlink
+  - \link IOStreamLAS LAS \endlink
 
   The format is detected from the filename extension.
 

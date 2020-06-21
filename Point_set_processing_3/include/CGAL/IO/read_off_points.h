@@ -469,7 +469,8 @@ bool read_off_points(std::istream& is, ///< input stream.
 /*!
  \ingroup PkgPointSetProcessing3IODeprecated
 
- \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_OFF()` should be used instead.
+ \deprecated This function is deprecated since \cgal 5.2,
+             \link PkgPointSetProcessing3IOOff `CGAL::read_OFF()` \endlink should be used instead.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,

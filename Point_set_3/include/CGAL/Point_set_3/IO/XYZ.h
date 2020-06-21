@@ -35,12 +35,12 @@ class Point_set_3;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
+// Read
 
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads the content of an intput stream in the XYZ format into a point set.
+  \brief Reads the content of an intput stream in the XYZ format into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -81,7 +81,7 @@ bool read_XYZ(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads the content of an input XYZ file in a point set.
+  \brief Reads the content of an input XYZ file in a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -111,7 +111,8 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_XYZ()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::read_XYZ()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
@@ -123,12 +124,12 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
+// Write
 
 /*!
   \ingroup PkgPointSet3IO
 
-  Writes the content of a point set into an output stream in the XYZ format.
+  \brief Writes the content of a point set into an output stream in the XYZ format.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -172,7 +173,7 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  Writes the content of a point set into an output file in the XYZ format.
+  \brief Writes the content of a point set into an output file in the XYZ format.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -225,7 +226,8 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_XYZ()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::write_XYZ()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_xyz_point_set(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)

@@ -219,12 +219,12 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
+// Read
 
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads a point set with properties from an input stream in ASCII or Binary PLY format.
+  \brief Reads a point set with properties from an input stream in ASCII or Binary PLY format.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -324,9 +324,10 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_PLY()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::read_PLY()` \endlink  should be used instead.
 
-  Reads a point set with properties from an input stream in ASCII or Binary PLY format.
+  \brief Reads a point set with properties from an input stream in ASCII or Binary PLY format.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -359,12 +360,12 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
+// Write
 
 /*!
   \ingroup PkgPointSet3IO
 
-  Writes a point set with properties in an output stream in PLY format.
+  \brief Writes a point set with properties in an output stream in PLY format.
 
   If found, the normal map is inserted to the stream. All other
   properties with simple types are inserted in the stream.
@@ -686,7 +687,8 @@ bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_PLY()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::write_PLY()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_ply_point_set(std::ostream& os,

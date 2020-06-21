@@ -36,12 +36,12 @@ class Point_set_3;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Read
+// Read
 
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads the content of an intput stream in the OFF format into a point set
+  \brief Reads the content of an intput stream in the OFF format into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -82,7 +82,7 @@ bool read_OFF(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads the content of an input OFF file in a point set.
+  \brief Reads the content of an input OFF file in a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -112,7 +112,8 @@ bool read_OFF(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_OFF()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::read_OFF()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
@@ -125,12 +126,12 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Write
+// Write
 
 /*!
   \ingroup PkgPointSet3IO
 
-  writes the content of a point set into an output stream in the OFF format.
+  \brief Writes the content of a point set into an output stream in the OFF format.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -175,7 +176,7 @@ bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  writes the content of a point set into an output file in the OFF format.
+  \brief Writes the content of a point set into an output file in the OFF format.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -228,7 +229,8 @@ bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_OFF()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2,
+              \link PkgPointSet3IO `CGAL::write_OFF()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_off_point_set(std::ostream& os, ///< output stream.
