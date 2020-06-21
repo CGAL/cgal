@@ -362,7 +362,8 @@ bool write_ply_points(std::ostream& os, ///< output stream.
 /**
 \ingroup PkgPointSetProcessing3IODeprecated
 
-\deprecated This function is deprecated since \cgal 5.2, `CGAL::write_PLY_with_properties()` should be used instead.
+\deprecated This function is deprecated since \cgal 5.2,
+            \link PkgPointSetProcessing3IOPly `CGAL::write_PLY_with_properties()` \endlink should be used instead.
 */
 template <typename PointRange,
           typename ... PropertyHandler>
@@ -376,7 +377,8 @@ CGAL_DEPRECATED bool write_ply_points_with_properties(std::ostream& os, ///< out
 /**
 \ingroup PkgPointSetProcessing3IODeprecated
 
-\deprecated This function is deprecated since \cgal 5.2, `CGAL::write_PLY()` should be used instead.
+\deprecated This function is deprecated since \cgal 5.2,
+            \link PkgPointSetProcessing3IOPly `CGAL::write_PLY()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)

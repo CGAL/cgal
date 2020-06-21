@@ -27,16 +27,16 @@ A precise specification of the format is available at <a href="http://www.geomvi
 
 \subsection IOStreamOFFInput Reading OFF files
 Objects represented in the `.OFF` format can be imported into \cgal's working environment
-using the following data structures and functions.
+using the following data structures and functions:
 
-- CGAL::Surface_mesh (\link PkgSurfaceMeshIOFunc read_OFF(std::istream&, Surface_mesh<Point>& sm, const NamedParameters&)\endlink), a halfedge data structure allowing to represent polyhedral surfaces
+- `CGAL::Surface_mesh` (\link PkgSurfaceMeshIOFunc read_OFF(std::istream&, Surface_mesh<Point>& sm, const NamedParameters&)\endlink), a halfedge data structure allowing to represent polyhedral surfaces
 
 - CGAL::Polyhedron_3 (\ref read_OFF( std::istream&, Polyhedron_3<PolyhedronTraits_3>&)), a halfedge data structure, which restricts the class of representable surfaces
   to orientable 2-manifolds.
 
 - Any structure that is a model of the concept `FaceGraph` ( \link PkgBGLIOFct read_OFF(std::istream&,FaceGraph&,NamedParameters)\endlink)
 
-- CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)
+- `CGAL::Point_set_3` (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)
 
 Polygon soups can also be imported using the function read_OFF().
 
@@ -46,9 +46,9 @@ and it is only supported for the CGAL::Surface_mesh.
 \subsection IOStreamOFFOutput Writing OFF files
 The following \cgal data structures can be exported into the `OFF` file format:
 
-- CGAL::Surface_mesh (\link PkgSurfaceMeshIOFunc write_OFF(std::ostream&, const Surface_mesh<P>&, const NamedParameters&)\endlink)
+- `CGAL::Surface_mesh` (\link PkgSurfaceMeshIOFunc write_OFF(std::ostream&, const Surface_mesh<P>&, const NamedParameters&)\endlink)
 - Any structure that is a model of the concept `FaceGraph` (\link PkgBGLIOFct write_OFF(std::ostream&,const FaceGraph&,const NamedParameters&)\endlink)
-- CGAL::Point_set_3 (\ref write_off_point_set())
+- `CGAL::Point_set_3` (\ref write_off_point_set())
 
 Polygon soups can also be exported using the function write_OFF().
 Note that we only support OFF, and COFF for CGAL::Surface_mesh.
@@ -126,6 +126,7 @@ using the `CGAL::Point_set_3` and the function `CGAL::read_point_set()`.
 The CGAL::Point_set_3 can be exported into a `XYZ` or a `PWN` file using the function
 write_xyz_point_set().
 
+
 \section IOStreamVTK VTK (VTU / VTP) File Formats
 The VTK libraries use different file formats to handle data structures, but we only support two:
 - The `VTU` format can be used to store am unordered collection of 3D cells, like tetrahedra,
@@ -142,14 +143,12 @@ A precise specification of those formats is available at
 
 \subsection IOStreamVTKInput Reading VTK files
 Objects represented in the `VTP` format can be imported into \cgal's working environment
-using the following data structures and functions.
+using the following data structures and functions:
 - CGAL::Surface_mesh
 - CGAL::Polyhedron_3
 
 using the function \link PkgBGLIOFct CGAL::read_VTP()\endlink, in the condition that CGAL has been configured
 with the VTK libraries.
-
-
 
 \subsection IOStreamVTKOutput Writing VTK files
 The following \cgal data structures can be exported into the `.VTP` file format:
@@ -191,6 +190,7 @@ Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be e
 naming `.node`, `.ele` and `.face`
 This can be done using the function \ref CGAL::output_to_tetgen()
 
+
 \section IOStreamGocad GOCAD (TS) File Formt
 The `.ts` format is an ASCII file format that allows a range of primitive types to be imported into the GOCAD package.
 A precise specification of the format is available <a href="http://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
@@ -202,6 +202,7 @@ using any structure that is a model of the concept `FaceGraph`, and the function
 \subsection IOStreamGocadOutput Writing Gocad files
  Any structure that is a model of the concept `FaceGraph` can be exported into the `.ts` file format
  using the function `write_GOCAD()`
+
 
 \section IOStreamWRL Virtual Reality Modeling Language (VRML) File Format
 
@@ -215,5 +216,6 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
 \subsection IOStreamtWRLOutput Writing WRL files
 Any structure that is a model of the concept `FaceGraph` can be exported into the `.wrl` file format
 using the `write_WRL()` function.
+
 
 */

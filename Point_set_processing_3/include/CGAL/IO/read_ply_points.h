@@ -468,7 +468,8 @@ bool read_ply_points(std::istream& is, ///< input stream.
 /**
  \ingroup PkgPointSetProcessing3IODeprecated
 
- \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_PLY_with_properties()` should be used instead.
+ \deprecated This function is deprecated since \cgal 5.2,
+             \link PkgPointSetProcessing3IOPly `CGAL::read_PLY_with_properties()` \endlink should be used instead.
   */
 template <typename OutputIteratorValueType, typename OutputIterator, typename ... PropertyHandler>
 CGAL_DEPRECATED bool read_ply_points_with_properties(std::istream& is, OutputIterator output, PropertyHandler&& ... properties)
@@ -479,7 +480,8 @@ CGAL_DEPRECATED bool read_ply_points_with_properties(std::istream& is, OutputIte
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
 
-   \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_PLY()` should be used instead.
+   \deprecated This function is deprecated since \cgal 5.2,
+               \link PkgPointSetProcessing3IOPly `CGAL::read_PLY()` \endlink should be used instead.
   */
 template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_ply_points(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
