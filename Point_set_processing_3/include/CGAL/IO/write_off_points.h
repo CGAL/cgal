@@ -9,26 +9,84 @@
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
-#ifndef CGAL_WRITE_OFF_POINTS_H
-#define CGAL_WRITE_OFF_POINTS_H
+#ifndef CGAL_POINT_SET_PROCESSING_WRITE_OFF_POINTS_H
+#define CGAL_POINT_SET_PROCESSING_WRITE_OFF_POINTS_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/IO/helpers.h>
+#include <CGAL/IO/OFF.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Iterator_range.h>
-#include <boost/range/value_type.hpp>
-
 
 #include <boost/utility/enable_if.hpp>
 
 #include <iostream>
+#include <fstream>
+#include <fstream>
 #include <iterator>
 
-namespace CGAL {
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
+namespace CGAL {
+namespace Point_set_processing_3 {
+namespace internal {
+
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF_PSP(std::ostream& os,
+                   const PointRange& points,
+                   const CGAL_BGL_NP_CLASS& np)
+{
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+
+  // basic geometric types
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type                         PointMap;
+  typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type      NormalMap;
+
+  bool has_normals = !(std::is_same<NormalMap,
+                                    typename Point_set_processing_3::GetNormalMap<
+                                      PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
+
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+
+  CGAL_point_set_processing_precondition(points.begin() != points.end());
+
+  if(!os)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
+
+  // Write header
+  os << "NOFF" << std::endl;
+  os << points.size() << " 0 0" << std::endl;
+
+  // Write positions + normals
+  for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
+  {
+    os << get(point_map, *it);
+    if (has_normals)
+      os << " " << get(normal_map, *it);
+    os << std::endl;
+  }
+
+  return !os.fail();
+}
+
+} // namespace internal
+} // namespace Point_set_processing_3
 
 /**
    \ingroup PkgPointSetProcessing3IOOff
@@ -41,8 +99,9 @@ namespace CGAL {
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param stream output stream.
+   \param os output stream.
    \param points input point range.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
@@ -64,303 +123,186 @@ namespace CGAL {
        \cgalParamType{a model of `Kernel`}
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return `true` on success.
 */
-template <typename PointRange,
-          typename NamedParameters
->
-bool
-write_OFF(
-  std::ostream& stream,
-  const PointRange& points,
-  const NamedParameters& np
-    #ifndef DOXYGEN_RUNNING
-    ,typename boost::enable_if<
-      typename boost::has_range_const_iterator<PointRange>::type
-    >::type* =0
-    #endif
-    )
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(std::ostream& os,
+               const PointRange& points,
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+#endif
+               )
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-
-  bool has_normals = !(boost::is_same<NormalMap,
-                       typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
-
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
-
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
-
-  if(!stream)
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
-    return false;
-  }
-
-  // Write header
-  stream << "NOFF" << std::endl;
-  stream << points.size() << " 0 0" << std::endl;
-
-  // Write positions + normals
-  for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
-  {
-    stream << get(point_map, *it);
-    if (has_normals)
-      stream << " " << get(normal_map, *it);
-    stream << std::endl;
-  }
-
-  return ! stream.fail();
+  return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);
 }
 
+/// \cond SKIP_IN_MANUAL
 
-template <typename PointRange,
-          typename NamedParameters>
-bool
-write_OFF(
-    const char* fname,
-    const PointRange& points,
-    const NamedParameters& np
-    ,typename boost::disable_if<
-    typename boost::has_range_const_iterator<NamedParameters>::type
-    >::type* =0)
+template <typename PointRange>
+bool write_OFF(std::ostream& os, const PointRange& points,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+{
+  return write_OFF(os, points, parameters::all_default());
+}
+
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(fname);
   return write_OFF(os, points, np);
 }
 
-template <typename PointRange,
-          typename NamedParameters>
-bool
-write_OFF(
-    const std::string& fname,
-    const PointRange& points,
-    const NamedParameters& np
-    ,typename boost::disable_if<
-    typename boost::has_range_const_iterator<NamedParameters>::type
-    >::type* =0)
+template <typename PointRange>
+bool write_OFF(const char* fname, const PointRange& points,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+{
+  std::ofstream os(fname);
+  return write_OFF(os, points, parameters::all_default());
+}
+
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const std::string& fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_OFF(fname.c_str(), points, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
-namespace internal{
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Point_set)
-}
-// variant with default NP
 template <typename PointRange>
-bool
-write_OFF(
-    std::ostream& stream, ///< output stream.
-    const PointRange& points
-    ,typename boost::enable_if<
-    typename boost::has_range_const_iterator<PointRange>::type
-    >::type* =0,
-    typename std::enable_if<
-    !internal::has_Point_set<PointRange>::value
-    >::type* =0
-    )
+bool write_OFF(const std::string& fname, const PointRange& points,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_OFF
-    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return write_OFF(fname, points, parameters::all_default());
 }
 
-
-template <typename PointRange>
-bool
-write_OFF(
-    std::ostream& stream, ///< output stream.
-    const PointRange& points,
-    typename boost::enable_if<
-    typename boost::has_range_const_iterator<PointRange>::type
-    >::type* =0)
-{
-  return write_OFF
-      (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-
-template <typename PointRange>
-bool
-write_OFF(
-    const char* fname,
-    const PointRange& points,
-    typename boost::enable_if<
-    typename boost::has_range_const_iterator<PointRange>::type
-    >::type* =0)
-{
-  std::ofstream os(fname);
-  return write_OFF(os, points, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-
-template <typename PointRange>
-bool
-write_OFF(
-    const std::string& fname,
-    const PointRange& points
-    ,typename boost::enable_if<
-    typename boost::has_range_const_iterator<PointRange>::type
-    >::type* =0)
-{
-  return write_OFF(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
+
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
-          typename Kernel
->
+          typename Kernel>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points_and_normals(), please update your code")
-bool
-write_off_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-  const Kernel& /*kernel*/) ///< geometric traits.
+bool write_off_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first,  ///< iterator over the first input point.
+                                  ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                                  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
+                                  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
+                                  const Kernel& /*kernel*/) ///< geometric traits.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_off_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     geom_traits(Kernel()));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return write_off_points(os, points,
+                          CGAL::parameters::point_map(point_map)
+                                           .normal_map(normal_map)
+                                           .geom_traits(Kernel()));
 }
 
-// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points_and_normals(), please update your code")
-bool
-write_off_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
-  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
+bool write_off_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first, ///< first input point.
+                                  ForwardIterator beyond, ///< past-the-end input point.
+                                  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
+                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_off_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return write_off_points(os, points,
+                          parameters::point_map(point_map)
+                                     .normal_map(normal_map));
 }
 
-// deprecated API
 template <typename ForwardIterator,
-          typename NormalMap
->
+          typename NormalMap>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points_and_normals(), please update your code")
-bool
-write_off_points_and_normals(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
+bool write_off_points_and_normals(std::ostream& os, ///< output stream.
+                                  ForwardIterator first, ///< first input point.
+                                  ForwardIterator beyond, ///< past-the-end input point.
+                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_off_points
-    (stream, points,
-     CGAL::parameters::normal_map (normal_map));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return write_off_points(os, points, parameters::normal_map (normal_map));
 }
 
-// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
-          typename Kernel
->
+          typename Kernel>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")
-bool
-write_off_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-  const Kernel& ) ///< geometric traits.
+bool write_off_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first,  ///< iterator over the first input point.
+                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                      PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
+                      const Kernel&) ///< geometric traits.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_off_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     geom_traits (Kernel()));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return write_off_points(os, points,
+                          parameters::point_map(point_map)
+                                     .geom_traits(Kernel()));
 }
 
-// deprecated API
 template <typename ForwardIterator,
-          typename PointMap
->
+          typename PointMap>
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")
-bool
-write_off_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
+bool write_off_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond, ///< past-the-end input point.
+                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_off_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map));
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return write_off_points(os, points, parameters::point_map (point_map));
 }
 
-// deprecated API
 template <typename ForwardIterator
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")
-bool
-write_off_points(
-  std::ostream& stream, ///< output stream.
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond) ///< past-the-end input point.
+bool write_off_points(std::ostream& os, ///< output stream.
+                      ForwardIterator first, ///< first input point.
+                      ForwardIterator beyond) ///< past-the-end input point.
 {
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_off_points
-    (stream, points);
+  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
+  return write_off_points(os, points);
 }
+
 #endif // CGAL_NO_DEPRECATED_CODE
+
 /// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
 /**
-   \ingroup PkgPointSetProcessing3IOOff
-  @todo update version
-  \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_OFF()` should be used instead.
+  \ingroup PkgPointSetProcessing3IODeprecated
+
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_OFF()` should be used instead.
 */
-template <typename PointRange,
-          typename NamedParameters
->
-CGAL_DEPRECATED bool
-write_off_points(
-  std::ostream& stream,
-  const PointRange& points,
-  const NamedParameters& np)
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
 {
-  return write_OFF(stream, points, np);
+  return write_OFF(os, points, np);
 }
 
 /// \cond SKIP_IN_MANUAL
+
 // variant with default NP
 template <typename PointRange>
-CGAL_DEPRECATED bool
-write_off_points(
-  std::ostream& stream, ///< output stream.
-  const PointRange& points)
+CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points)
 {
-  return write_OFF
-    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return write_OFF(os, points, parameters::all_default());
 }
-/// \endcond
-#endif // CGAL_NO_DEPRECATED_CODE
-} //namespace CGAL
 
-#endif // CGAL_WRITE_OFF_POINTS_H
+/// \endcond
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
+} // namespace CGAL
+
+#endif // CGAL_POINT_SET_PROCESSING_WRITE_OFF_POINTS_H

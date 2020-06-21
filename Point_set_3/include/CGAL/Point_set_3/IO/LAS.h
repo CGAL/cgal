@@ -15,6 +15,9 @@
 
 #include <CGAL/Point_set_3.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
@@ -22,6 +25,11 @@
 
 #include <fstream>
 #include <string>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 #if defined(CGAL_LINKED_WITH_LASLIB) || defined(DOXYGEN_RUNNING)
 

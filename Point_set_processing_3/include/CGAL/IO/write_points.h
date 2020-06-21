@@ -9,100 +9,121 @@
 //
 // Author(s) : Maxime Gimeno
 
-#ifndef CGAL_WRITE_POINTS_H
-#define CGAL_WRITE_POINTS_H
+#ifndef CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
+#define CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
 
+#include <CGAL/IO/helpers.h>
 
-#ifdef CGAL_LINKED_WITH_LASLIB
-#include <CGAL/IO/write_las_points.h>
-#endif
 #include <CGAL/IO/write_off_points.h>
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/IO/write_xyz_points.h>
+#ifdef CGAL_LINKED_WITH_LASLIB
+#include <CGAL/IO/write_las_points.h>
+#endif
+
+#include <CGAL/IO/polygon_soup_io.h>
+
+#include <iostream>
+#include <fstream>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
+
 /**
   \ingroup PkgPointSetProcessing3IO
-   Saves the range of `points` with properties to a
-   file that can be either:
+
+   Saves the range of `points` with properties to a file that can be either:
   - XYZ
   - OFF
   - PLY
   - LAS
+
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the name of the input file.
   \param points the range of points that will be written.
   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{point_map} a model of `WritablePropertyMap` with value type `geom_traits::Point_3`.
-    If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-    \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
-    `geom_traits::Vector_3`. If this parameter is omitted, normals in the input stream are
-    ignored.\cgalParamEnd
-    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+    \cgalParamNBegin{point_map}
+      \cgalParamDescription{a property map associating points to the elements of the point range}
+      \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+      \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{normal_map}
+      \cgalParamDescription{a property map associating normals to the elements of the poing range}
+      \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+      \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
-   \return true on success.
+   \return `true` on success.
 */
-template <typename PointRange,
-          #ifdef DOXYGEN_RUNNING
-          typename NamedParameters
-          #else
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-          #endif
-          >
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_points(const std::string& fname,
                   const PointRange& points,
-                    #ifdef DOXYGEN_RUNNING
-                    const NamedParameters& np)
-                #else
-                    const CGAL_BGL_NP_CLASS& np)
-                #endif
-                {
+                  const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                  , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+#endif
+                  )
+{
   const std::string ext = IO::internal::get_file_extension(fname);
-  if (ext == "xyz") {
+
+  if(ext == "xyz")
     return write_XYZ(fname, points, np);
-  }
-
-  if (ext == "off") {
+  else if(ext == "off")
     return write_OFF(fname, points, np);
-  }
-
-  if (ext == "ply") {
+  else if(ext == "ply")
     return write_PLY(fname, points, np);
-  }
-
 #ifdef CGAL_LINKED_WITH_LASLIB
-  if (ext == "las") {
+  else if(ext == "las")
     return write_LAS(fname, points, np);
-  }
+
 #endif
   return false;
 }
 
-template <typename PointRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_points(const char* fname,
-                  const PointRange& points,
-                    const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_points(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
+                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_points(std::string(fname), points, np);
 }
 
 template <typename PointRange>
-bool write_points(const std::string& fname,const PointRange& points)
+bool write_points(const std::string& fname,const PointRange& points,
+                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_points(fname, points, parameters::all_default());
 }
 
 template <typename PointRange>
-bool write_points(const char* fname,const PointRange& points)
+bool write_points(const char* fname,const PointRange& points,
+                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_points(fname, points, parameters::all_default());
 }
 
-}//end CGAL
-#endif // CGAL_WRITE_POINTS_H
+} // namespace CGAL
+
+#endif // CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H

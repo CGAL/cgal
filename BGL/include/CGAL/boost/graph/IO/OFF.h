@@ -12,6 +12,7 @@
 #define CGAL_BGL_IO_OFF_H
 
 #include <CGAL/IO/OFF.h>
+#include <CGAL/IO/helpers.h>
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
@@ -19,6 +20,8 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/utility/enable_if.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -149,9 +152,20 @@ template <typename Graph,
 bool read_OFF(std::istream& is,
               Graph& g,
               const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+              bool verbose = true
+#ifndef DOXYGEN_RUNNING
+              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+              )
 {
   return IO::internal::read_OFF_BGL(is, g, np, verbose);
+}
+
+template <typename Graph>
+bool read_OFF(std::istream& is, Graph& g,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_OFF(is, g, parameters::all_default());
 }
 
 /*!
@@ -221,10 +235,21 @@ template <typename Graph,
 bool read_OFF(const char* fname,
               Graph& g,
               const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+              bool verbose = true
+#ifndef DOXYGEN_RUNNING
+              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+              )
 {
   std::ifstream is(fname);
   return read_OFF(is, g, np, verbose);
+}
+
+template <typename Graph>
+bool read_OFF(const char* fname, Graph& g,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_OFF(fname, g, parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -235,17 +260,11 @@ bool read_OFF(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
 }
 
 template <typename Graph>
-bool read_OFF(std::istream& is, Graph& g,
-              typename boost::disable_if<
-                typename boost::has_range_const_iterator<Graph>::type
-              >::type* = nullptr)
+bool read_OFF(const std::string& fname, Graph& g,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return read_OFF(is, g, parameters::all_default());
+  return read_OFF(fname, g, parameters::all_default());
 }
-template <typename Graph>
-bool read_OFF(const char* fname, Graph& g) { return read_OFF(fname, g, parameters::all_default()); }
-template <typename Graph>
-bool read_OFF(const std::string& fname, Graph& g) { return read_OFF(fname, g, parameters::all_default()); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,13 +347,18 @@ bool write_OFF(std::ostream& os,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<
-                   typename boost::has_range_const_iterator<Graph>::type
-                 >::type* = nullptr
+               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {
   return IO::internal::write_OFF_BGL(os, g, np);
+}
+
+template <typename Graph>
+bool write_OFF(std::ostream& os, const Graph& g,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_OFF(os, g, parameters::all_default());
 }
 
 /*!
@@ -399,9 +423,7 @@ bool write_OFF(const char* fname,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<
-                   typename boost::has_range_const_iterator<Graph>::type
-                 >::type* = nullptr
+               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {
@@ -414,23 +436,26 @@ bool write_OFF(const char* fname,
   return write_OFF(os, g, np);
 }
 
+template <typename Graph>
+bool write_OFF(const char* fname, const Graph& g,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_OFF(fname, g, parameters::all_default());
+}
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
-               typename boost::disable_if<typename boost::has_range_const_iterator<Graph>::type>::type* = nullptr)
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_OFF(fname.c_str(), g, np);
 }
 
 template <typename Graph>
-bool write_OFF(std::ostream& os, const Graph& g,
-               typename boost::disable_if<typename boost::has_range_const_iterator<Graph>::type>::type* = nullptr)
+bool write_OFF(const std::string& fname, const Graph& g,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_OFF(os, g, parameters::all_default());
+  return write_OFF(fname.c_str(), g, parameters::all_default());
 }
-template <typename Graph>
-bool write_OFF(const char* fname, const Graph& g) { return write_OFF(fname, g, parameters::all_default()); }
-template <typename Graph>
-bool write_OFF(const std::string& fname, const Graph& g) { return write_OFF(fname, g, parameters::all_default()); }
 
 } // namespace CGAL
 

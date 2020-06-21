@@ -56,6 +56,10 @@
 #  pragma warning(pop)
 #endif
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 
@@ -415,10 +419,10 @@ bool read_LAS_with_properties(std::istream& is,
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
    It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param stream input stream.
+   \param is input stream.
    \param output output iterator over points.
-
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -435,25 +439,14 @@ bool read_LAS_with_properties(std::istream& is,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return true on success.
-
-   \cgalRequiresCPP11
+   \return `true` on success.
 */
-template < typename OutputIteratorValueType,
-           typename OutputIterator,
-           #ifdef DOXYGEN_RUNNING
-           typename NamedParameters
-           #else
-           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-           #endif
-           >
-bool read_LAS(std::istream& stream,
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(std::istream& is,
               OutputIterator output,
-              #ifdef DOXYGEN_RUNNING
-              const NamedParameters& np)
-#else
               const CGAL_BGL_NP_CLASS& np)
-#endif
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -463,237 +456,184 @@ bool read_LAS(std::istream& stream,
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
-  return read_LAS_with_properties (stream, output,
-                                   make_las_point_reader (point_map));
+  return read_LAS_with_properties(is, output, make_las_point_reader(point_map));
 }
 
 /// \cond SKIP_IN_MANUAL
+
 // variants with default NP
-template <typename OutputIteratorValueType,
-          typename OutputIterator>
-bool
-read_LAS(
-    std::istream& stream, ///< input stream.
-    OutputIterator output) ///< output iterator over points.
+template <typename OutputIteratorValueType, typename OutputIterator>
+bool read_LAS(std::istream& is, OutputIterator output)
 {
-  return read_LAS<OutputIteratorValueType>
-      (stream, output, CGAL::parameters::all_default());
+  return read_LAS<OutputIteratorValueType>(is, output, CGAL::parameters::all_default());
 }
 
-template < typename OutputIteratorValueType,
-           typename OutputIterator>
-bool read_LAS(const std::string& fname,
-              OutputIterator output)
+template <typename OutputIteratorValueType, typename OutputIterator>
+bool read_LAS(const std::string& fname, OutputIterator output)
 {
   return read_LAS<OutputIteratorValueType>(fname, output, parameters::all_default());
 }
 
-template < typename OutputIteratorValueType,
-           typename OutputIterator>
-bool read_LAS(const char* fname,
-              OutputIterator output)
+template <typename OutputIteratorValueType, typename OutputIterator>
+bool read_LAS(const char* fname, OutputIterator output)
 {
   return read_LAS<OutputIteratorValueType>(fname, output, parameters::all_default());
 }
 
 // variants with default output iterator value type
-template <typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool
-read_LAS(
-    std::istream& stream, ///< input stream.
-    OutputIterator output,
-    const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_LAS<typename value_type_traits<OutputIterator>::type>
-      (stream, output, np);
+  return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const char* fname,
-              OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+bool read_LAS(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(fname);
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname,
-              OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(fname.c_str(), output, np);
 }
 
 // variants with default NP and output iterator value type
 template <typename OutputIterator>
-bool
-read_LAS(
-    std::istream& stream, ///< input stream.
-    OutputIterator output,
-    typename std::enable_if<
-      CGAL::is_iterator<OutputIterator>::value
-    >::type* =0
-    )
+bool read_LAS(std::istream& is,
+              OutputIterator output,
+              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
-  return read_LAS<typename value_type_traits<OutputIterator>::type>
-      (stream, output, CGAL::parameters::all_default());
+  return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
 }
 
-template < typename OutputIterator>
-bool read_LAS(const std::string& fname,
-              OutputIterator output)
+template <typename OutputIterator>
+bool read_LAS(const std::string& fname, OutputIterator output)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
 template <typename OutputIterator>
-bool read_LAS(const char* fname,
-              OutputIterator output)
+bool read_LAS(const char* fname, OutputIterator output)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
-
 /**
    \ingroup PkgPointSetProcessing3IOLas
+
    Reads points (position only) from a .las or .laz file.
    Potential additional properties are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
    It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param stream input stream.
+   \param is input stream.
    \param output output iterator over points.
 
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `WritablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return true on success.
-
-   \cgalRequiresCPP11
+   \return `true` on success.
 */
-template < typename OutputIteratorValueType,
-           typename OutputIterator,
-           #ifdef DOXYGEN_RUNNING
-           typename NamedParameters
-           #else
-           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-           #endif
-           >
-bool read_LAS(const char* fname,
-              OutputIterator output,
-              #ifdef DOXYGEN_RUNNING
-              const NamedParameters& np)
-#else
-              const CGAL_BGL_NP_CLASS& np)
-#endif
+template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(fname);
   return read_LAS(is, output, np);
 }
 
-template < typename OutputIteratorValueType,
-           typename OutputIterator,
-           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname,
-              OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
   return read_LAS(fname.c_str(), output, np);
 }
 
-
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template < typename OutputIteratorValueType,
-           typename OutputIterator,
-           typename PointMap >
+
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename PointMap >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_las_points(), please update your code")
-bool read_las_points(std::istream& stream, ///< input stream.
+bool read_las_points(std::istream& is, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_las_points<OutputIteratorValueType>
-      (stream, output,
-       CGAL::parameters::point_map (point_map));
+  return read_las_points<OutputIteratorValueType>(is, output, CGAL::parameters::point_map (point_map));
 }
 
-// deprecated API
-template < typename OutputIterator,
-           typename PointMap >
+template <typename OutputIterator,
+          typename PointMap >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_las_points(), please update your code")
-bool read_las_points(std::istream& stream, ///< input stream.
+bool read_las_points(std::istream& is, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_las_points<typename value_type_traits<OutputIterator>::type>
-      (stream, output,
-       CGAL::parameters::point_map (point_map));
+  return read_las_points<typename value_type_traits<OutputIterator>::type>(is, output,
+                                                                           CGAL::parameters::point_map(point_map));
 }
+
 #endif //CGAL_NO_DEPRECATED_CODE
-/// \endcond
 
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /**
-   \ingroup PkgPointSetProcessing3IOLas
-   @todo update version
-   \deprecated This function is deprecated since \cgal 5.1, `CGAL::read_LAS_with_properties()` should be used instead.
+ \ingroup PkgPointSetProcessing3IODeprecated
+
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_LAS_with_properties()` should be used instead.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ... PropertyHandler>
-CGAL_DEPRECATED bool read_las_points_with_properties (std::istream& stream,
-                                                      OutputIterator output,
-                                                      PropertyHandler&& ... properties)
+CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
+                                                     OutputIterator output,
+                                                     PropertyHandler&& ... properties)
 {
-  return read_LAS(stream, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS(is, output, std::forward<PropertyHandler>(properties)...);
 }
-
 
 /// \cond SKIP_IN_MANUAL
 template <typename OutputIterator,
           typename ... PropertyHandler>
-CGAL_DEPRECATED bool read_las_points_with_properties (std::istream& stream,
-                                                      OutputIterator output,
-                                                      PropertyHandler&& ... properties)
+CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
+                                                     OutputIterator output,
+                                                     PropertyHandler&& ... properties)
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
 
-  return read_LAS<OutputValueType>
-      (stream, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 /// \endcond
 
 /**
-   \ingroup PkgPointSetProcessing3IOLas
-   @todo update version
-   \deprecated This function is deprecated since \cgal 5.1, `CGAL::read_LAS()` should be used instead.
+ \ingroup PkgPointSetProcessing3IODeprecated
 
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_LAS()` should be used instead.
 */
-template < typename OutputIteratorValueType,
-           typename OutputIterator,
-           #ifdef DOXYGEN_RUNNING
-           typename NamedParameters
-           #else
-           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-           #endif
-           >
-CGAL_DEPRECATED bool read_las_points(std::istream& stream,
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_las_points(std::istream& is,
                                      OutputIterator output,
-                                     #ifdef DOXYGEN_RUNNING
-                                     const NamedParameters& np)
-#else
                                      const CGAL_BGL_NP_CLASS& np)
-#endif
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -703,48 +643,36 @@ CGAL_DEPRECATED bool read_las_points(std::istream& stream,
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
-  return read_LAS (stream, output,
-                   make_las_point_reader (point_map));
+  return read_LAS(is, output, make_las_point_reader(point_map));
 }
 
 /// \cond SKIP_IN_MANUAL
+
 // variant with default NP
-template <typename OutputIteratorValueType,
-          typename OutputIterator>
-CGAL_DEPRECATED bool
-read_las_points(
-    std::istream& stream, ///< input stream.
-    OutputIterator output) ///< output iterator over points.
+template <typename OutputIteratorValueType, typename OutputIterator>
+CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
 {
-  return read_LAS<OutputIteratorValueType>
-      (stream, output, CGAL::parameters::all_default());
+  return read_LAS<OutputIteratorValueType>(is, output, CGAL::parameters::all_default());
 }
 
 // variant with default output iterator value type
-template <typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool
-read_las_points(
-    std::istream& stream, ///< input stream.
-    OutputIterator output,
-    const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_LAS<typename value_type_traits<OutputIterator>::type>
-      (stream, output, np);
+  return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 // variant with default NP and output iterator value type
 template <typename OutputIterator>
-CGAL_DEPRECATED bool
-read_las_points(
-    std::istream& stream, ///< input stream.
-    OutputIterator output)
+CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
 {
-  return read_LAS<typename value_type_traits<OutputIterator>::type>
-      (stream, output, CGAL::parameters::all_default());
+  return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, CGAL::parameters::all_default());
 }
-/// \endcond
-#endif // CGAL_NO_DEPRECATED_CODE
-} //namespace CGAL
 
-#endif // CGAL_READ_LAS_POINTS_H
+/// \endcond
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
+} // namespace CGAL
+
+#endif // CGAL_POINT_SET_PROCESSING_READ_LAS_POINTS_H
