@@ -35,7 +35,6 @@ int main (int, char**)
   for (std::size_t i = 0; i < nb_pts; ++ i)
     point_set.insert (*(generator ++));
 
-
   // Add normal property and estimate normal values
   point_set.add_normal_map();
   CGAL::jet_estimate_normals<CGAL::Sequential_tag>
@@ -43,7 +42,6 @@ int main (int, char**)
      12, // Number of neighbors
      point_set.parameters(). // Named parameters provided by Point_set_3
      degree_fitting(2));     // additional named parameter specific to jet_estimate_normals
-
 
   // Simplify point set
   CGAL::grid_simplify_point_set

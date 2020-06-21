@@ -20,15 +20,15 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char* argv[])
 {
-  const char* input_filename = (argc>1)?argv[1]:"data/before_upsample.xyz";
-  const char* output_filename = (argc>2)?argv[2]:"data/before_upsample_UPSAMPLED.xyz";
+  const char* input_filename = (argc>1) ? argv[1] : "data/before_upsample.xyz";
+  const char* output_filename = (argc>2) ? argv[2] : "data/before_upsample_UPSAMPLED.xyz";
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<PointVectorPair> points;
-  if (!CGAL::read_points(input_filename,
-                         std::back_inserter(points),
-                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                          .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+  if(!CGAL::read_points(input_filename,
+                        std::back_inserter(points),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
     std::cerr << "Error: cannot read file " << input_filename << std::endl;
     return EXIT_FAILURE;
@@ -52,14 +52,11 @@ int main(int argc, char* argv[])
     number_of_output_points(number_of_output_points));
 
   // Saves point set.
-  std::ofstream out(output_filename);
-  out.precision(17);
-  if (!out || !CGAL::write_XYZ(out, points,
-                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
-  {
+  if(!CGAL::write_points(output_filename, points,
+                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                          .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
+                                          .stream_precision(17)))
     return EXIT_FAILURE;
-  }
 
   return EXIT_SUCCESS;
 }

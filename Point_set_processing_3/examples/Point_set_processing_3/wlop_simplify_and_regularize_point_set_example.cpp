@@ -1,7 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/IO/write_points.h>
 
 #include <vector>
 #include <fstream>
@@ -22,10 +23,9 @@ int main(int argc, char** argv)
   // Reads a .xyz point set file in points[]
   std::vector<Point> points;
 
-  if (!CGAL::read_points(input_filename, std::back_inserter(points)))
+  if(!CGAL::read_points(input_filename, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << input_filename  << std::endl;
-
     return EXIT_FAILURE;
   }
 
@@ -40,17 +40,8 @@ int main(int argc, char** argv)
      CGAL::parameters::select_percentage(retain_percentage).
      neighbor_radius (neighbor_radius));
 
-  std::ofstream out(output_filename);
-  out.precision(17);
-  if (!out || !CGAL::write_XYZ(
-        out, output))
-  {
+  if(!CGAL::write_points(output_filename, output, CGAL::parameters::stream_precision(17)))
     return EXIT_FAILURE;
-  }
 
   return EXIT_SUCCESS;
 }
-
-
-
-

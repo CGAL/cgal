@@ -32,8 +32,7 @@ void print_point_set (const Point_set& ps, const char* msg)
 {
   Point_set::Property_map<int> intensity;
   bool has_intensity;
-  boost::tie (intensity, has_intensity)
-    = ps.property_map<int>("intensity");
+  boost::tie (intensity, has_intensity) = ps.property_map<int>("intensity");
 
   std::cerr << msg << std::endl;
   for (Point_set::const_iterator it = ps.begin(); it != ps.end(); ++ it)
@@ -46,7 +45,6 @@ void print_point_set (const Point_set& ps, const char* msg)
     std::cerr << std::endl;
   }
 }
-
 
 int main (int, char**)
 {

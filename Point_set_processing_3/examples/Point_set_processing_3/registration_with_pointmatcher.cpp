@@ -28,17 +28,17 @@ int main(int argc, const char** argv)
   const char* fname2 = (argc>2)?argv[2]:"data/hippo2.ply";
 
   std::vector<Pwn> pwns1, pwns2;
-  if (!CGAL::read_points(fname1, std::back_inserter(pwns1),
-                         CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
-                         normal_map (Normal_map())))
+  if(!CGAL::read_points(fname1, std::back_inserter(pwns1),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                         .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname1 << std::endl;
     return EXIT_FAILURE;
   }
 
-  if (!CGAL::read_points(fname2, std::back_inserter(pwns2),
-                         CGAL::parameters::point_map (Point_map()).
-                         normal_map (Normal_map())))
+  if(!CGAL::read_points(fname2, std::back_inserter(pwns2),
+                        CGAL::parameters::point_map(Point_map())
+                                         .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname2 << std::endl;
     return EXIT_FAILURE;
@@ -89,64 +89,59 @@ int main(int argc, const char** argv)
 
   // EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2
   std::pair<K::Aff_transformation_3, bool> res =
-  CGAL::pointmatcher::compute_registration_transformation
-    (pwns1, pwns2,
-     params::point_map(Point_map()).normal_map(Normal_map())
-     .point_set_filters(point_set_1_filters)
-     .matcher(matcher)
-     .outlier_filters(outlier_filters)
-     .error_minimizer(error_minimizer)
-     .transformation_checkers(transformation_checkers)
-     .inspector(inspector)
-     .logger(logger),
-     params::point_map(Point_map()).normal_map(Normal_map())
-     .point_set_filters(point_set_2_filters)
-     .transformation(identity_transform) /* initial transform for pwns2.
-                                          * default value is already identity transform.
-                                          * a proper initial transform could be given, for example,
-                                          * a transform returned from a coarse registration algorithm.
-                                          * */
-     );
+    CGAL::pointmatcher::compute_registration_transformation
+      (pwns1, pwns2,
+       params::point_map(Point_map()).normal_map(Normal_map())
+                                     .point_set_filters(point_set_1_filters)
+                                     .matcher(matcher)
+                                     .outlier_filters(outlier_filters)
+                                     .error_minimizer(error_minimizer)
+                                     .transformation_checkers(transformation_checkers)
+                                     .inspector(inspector)
+                                     .logger(logger),
+       params::point_map(Point_map()).normal_map(Normal_map())
+                                     .point_set_filters(point_set_2_filters)
+                                     .transformation(identity_transform) /* initial transform for pwns2.
+                                                                          * default value is already identity transform.
+                                                                          * a proper initial transform could be given, for example,
+                                                                          * a transform returned from a coarse registration algorithm.
+                                                                          * */
+       );
 
   // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
   bool converged =
-  CGAL::pointmatcher::register_point_sets
-    (pwns1, pwns2,
-     params::point_map(Point_map()).normal_map(Normal_map())
-     .point_set_filters(point_set_1_filters)
-     .matcher(matcher)
-     .outlier_filters(outlier_filters)
-     .error_minimizer(error_minimizer)
-     .transformation_checkers(transformation_checkers)
-     .inspector(inspector)
-     .logger(logger),
-     params::point_map(Point_map()).normal_map(Normal_map())
-     .point_set_filters(point_set_2_filters)
-     .transformation(res.first) /* pass the above computed transformation as initial transformation.
-                                * as a result, the registration will require less iterations to converge.
-                                * */
+    CGAL::pointmatcher::register_point_sets
+      (pwns1, pwns2,
+       params::point_map(Point_map()).normal_map(Normal_map())
+                                     .point_set_filters(point_set_1_filters)
+                                     .matcher(matcher)
+                                     .outlier_filters(outlier_filters)
+                                     .error_minimizer(error_minimizer)
+                                     .transformation_checkers(transformation_checkers)
+                                     .inspector(inspector)
+                                     .logger(logger),
+       params::point_map(Point_map()).normal_map(Normal_map())
+                                     .point_set_filters(point_set_2_filters)
+                                     .transformation(res.first) /* pass the above computed transformation as initial transformation.
+                                                                * as a result, the registration will require less iterations to converge.
+                                                                * */
      );
 
-  if (converged)
+  if(converged)
+  {
     std::cerr << "Success" << std::endl;
+  }
   else
   {
     std::cerr << "Failure" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::ofstream out("pwns2_aligned.ply");
-  if (!out ||
-      !CGAL::write_PLY(
-        out, pwns2,
-        CGAL::parameters::point_map(Point_map()).
-        normal_map(Normal_map())))
-  {
+  if(!CGAL::write_points("pwns2_aligned.ply", pwns2,
+                         CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
     return EXIT_FAILURE;
-  }
 
-  std::cout << "Transformed version of " << fname2
-            << " written to pwn2_aligned.ply.\n";
+  std::cout << "Transformed version of " << fname2 << " written to pwn2_aligned.ply.\n";
 
   return EXIT_SUCCESS;
 }

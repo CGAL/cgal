@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/remove_outliers.h>
@@ -15,11 +16,12 @@ typedef Kernel::Point_3 Point;
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
-  // Reads a .xyz point set file in points[].
+
+  // Reads a point set file in points[].
   // The Identity_property_map property map can be omitted here as it is the default value.
   std::vector<Point> points;
-  if (!CGAL::read_points(fname, std::back_inserter(points),
-                         CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
+  if(!CGAL::read_points(fname, std::back_inserter(points),
+                        CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
@@ -30,8 +32,7 @@ int main(int argc, char*argv[])
   const int nb_neighbors = 24; // considers 24 nearest neighbor points
 
   // Estimate scale of the point set with average spacing
-  const double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
-    (points, nb_neighbors);
+  const double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, nb_neighbors);
 
   //////////////////
   // FIRST OPTION //

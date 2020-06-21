@@ -210,13 +210,13 @@ descriptor
 - a tuple consisting of a property map, a functor to construct the
 objects wanted and multiple %PLY/%LAS property descriptors
 
-Output functions `write_ply_points_with_properties()` and
-`write_las_points_with_properties()` work similarly.
+Output functions `write_PLY_with_properties()` and
+`write_LAS_with_properties()` work similarly.
 
 \subsubsection Point_set_processing_3Example_ply_write PLY Writing Example
 
 The following example shows how to call
-`write_ply_points_with_properties()` to write a point set with points,
+`write_PLY_with_properties()` to write a point set with points,
 RGB colors and intensity. Notice that in order to write a complex
 object, users need to provide an overload of `CGAL::Output_rep`.
 

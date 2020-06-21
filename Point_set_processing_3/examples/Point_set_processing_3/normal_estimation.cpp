@@ -9,26 +9,25 @@
 //----------------------------------------------------------
 // normal_estimation file_in file_out [options]
 
-// CGAL
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Memory_sizer.h>
-#include <CGAL/Timer.h>
-
 // This package
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_points.h>
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_points.h>
+
+// CGAL
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Memory_sizer.h>
+#include <CGAL/Timer.h>
 
 #include <utility> // defines std::pair
 #include <vector>
 #include <string>
 #include <fstream>
 #include <iostream>
-
 
 // ----------------------------------------------------------------------------
 // Types
@@ -68,7 +67,6 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
      nb_neighbors_pca_normals,
      CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
      normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
-
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -247,21 +245,8 @@ int main(int argc, char * argv[])
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If OFF file format
-    bool success = false;
-    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
-    if (extension == ".off" || extension == ".OFF")
-    {
-      success = CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
-                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
-    }
-    // If XYZ file format
-    else if (extension == ".xyz" || extension == ".XYZ" ||
-             extension == ".pwn" || extension == ".PWN")
-    {
-      success = CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
-                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
-    }
-    if (!success)
+    if(!CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
+                          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
@@ -278,7 +263,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    if (nb_points == 0)
+    if(nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       return EXIT_FAILURE;
@@ -306,25 +291,13 @@ int main(int argc, char * argv[])
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
-    // If XYZ file format
-    /*std::string*/ extension = output_filename.substr(output_filename.find_last_of('.'));
-    if (extension == ".xyz" || extension == ".XYZ" ||
-        extension == ".pwn" || extension == ".PWN")
+    if(!CGAL::write_points(output_filename, points,
+                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                            .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
+                                            .stream_precision(17)))
     {
-      std::ofstream stream(output_filename.c_str());
-      stream.precision(17);
-      if (!stream || !CGAL::write_XYZ(stream, points,
-                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                                       .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
-      {
-        std::cerr << "Error: cannot write file " << output_filename << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-    else
-    {
-        std::cerr << "Error: cannot write file " << output_filename << std::endl;
-        return EXIT_FAILURE;
+      std::cerr << "Error: cannot write file " << output_filename << std::endl;
+      return EXIT_FAILURE;
     }
 
     // Returns accumulated fatal error

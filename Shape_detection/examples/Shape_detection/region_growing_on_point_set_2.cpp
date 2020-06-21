@@ -1,12 +1,3 @@
-// STL includes.
-#include <string>
-#include <vector>
-#include <utility>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <iterator>
-
 // CGAL includes.
 #include <CGAL/array.h>
 #include <CGAL/property_map.h>
@@ -15,6 +6,15 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+
+// STL includes.
+#include <string>
+#include <vector>
+#include <utility>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <iterator>
 
 // Type declarations.
 using Kernel = CGAL::Simple_cartesian<double>;

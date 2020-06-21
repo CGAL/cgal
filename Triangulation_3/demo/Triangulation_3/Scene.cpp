@@ -6,8 +6,7 @@
 
 #include <CGAL/IO/OFF.h>
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_off_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/IO/write_points.h>
 
 #include <CGAL/Iterator_range.h>
 

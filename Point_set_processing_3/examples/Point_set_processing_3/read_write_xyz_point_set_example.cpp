@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <utility> // defines std::pair
@@ -24,10 +24,10 @@ int main(int argc, char*argv[])
     // over points and as well as property maps to access each
     // point position and normal.
     std::vector<Pwn> points;
-    if (!CGAL::read_points(fname,
-                           std::back_inserter(points),
-                           CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
-                           normal_map (CGAL::Second_of_pair_property_map<Pwn>())))
+    if(!CGAL::read_XYZ(fname,
+                       std::back_inserter(points),
+                       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                        .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
     {
       std::cerr << "Error: cannot read file " << fname << std::endl;
       return EXIT_FAILURE;
@@ -36,16 +36,11 @@ int main(int argc, char*argv[])
     // Saves point set.
     // Note: write_XYZ() requires property maps to access each
     // point position and normal.
-    std::ofstream out("oni_copy.xyz");
-    out.precision(17);
-    if (!out ||
-        !CGAL::write_XYZ(
-          out, points,
-          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()).
-          normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
-    {
+    if(!CGAL::write_XYZ("oni_copy.xyz", points,
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                         .normal_map(CGAL::Second_of_pair_property_map<Pwn>())
+                                         .stream_precision(17)))
       return EXIT_FAILURE;
-    }
 
     return EXIT_SUCCESS;
 }
