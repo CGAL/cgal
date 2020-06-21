@@ -9,14 +9,12 @@
 //
 // Author(s) : Simon Giraudot
 
-#ifndef CGAL_READ_LAS_POINTS_H
-#define CGAL_READ_LAS_POINTS_H
+#ifndef CGAL_POINT_SET_PROCESSING_READ_LAS_POINTS_H
+#define CGAL_POINT_SET_PROCESSING_READ_LAS_POINTS_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-
-#include <tuple>
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
@@ -31,8 +29,10 @@
 #include <boost/cstdint.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
+#include <tuple>
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
@@ -59,12 +59,10 @@
 
 namespace CGAL {
 
-
 /// \cond SKIP_IN_MANUAL
-namespace LAS_property
-{
-namespace Id
-{
+namespace LAS_property {
+namespace Id {
+
 enum Id
 {
   X,
@@ -89,7 +87,8 @@ enum Id
   B,
   I
 };
-}
+
+} // namespace Id
 
 template <typename T, Id::Id id>
 struct Base
@@ -121,22 +120,21 @@ typedef Base<unsigned short, Id::I> I;
 }
 /// \endcond
 
-
 /**
-     \ingroup PkgPointSetProcessing3IOLas
+   \ingroup PkgPointSetProcessing3IOLas
 
-     Generates a %LAS property handler to read 3D points. Points are
-     constructed from the input the using 3 %LAS properties
-     `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
+   Generates a %LAS property handler to read 3D points. Points are
+   constructed from the input the using 3 %LAS properties
+   `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
 
-     \sa `read_LAS_with_properties()`
+   \tparam PointMap the property map used to store points.
 
-     \tparam PointMap the property map used to store points.
-  */
+   \sa `read_LAS_with_properties()`
+*/
 template <typename PointMap>
 std::tuple<PointMap,
-typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-LAS_property::X, LAS_property::Y, LAS_property::Z >
+           typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
+           LAS_property::X, LAS_property::Y, LAS_property::Z >
 make_las_point_reader(PointMap point_map)
 {
   return std::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
@@ -284,7 +282,6 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
                       std::forward<PropertyMapBinders>(properties)...);
 }
 
-
 template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
 void process_properties (const LASpoint& reader, OutputValueType& new_element,
                          std::pair<PropertyMap, LAS_property::Base<T,id> >&& current)
@@ -309,12 +306,9 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
 }
 
 } // namespace LAS
-
 } // namespace internal
 
-
 /// \endcond
-
 
 /**
    \ingroup PkgPointSetProcessing3IOLas
@@ -363,30 +357,28 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    - `LAS_property::B` with type `unsigned short`
    - `LAS_property::I` with type `unsigned short`
 
-   \cgalRequiresCPP11
-
-   \sa `make_las_point_reader()`
-
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
    It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
    \tparam PropertyHandler handlers to recover properties.
 
    \return `true` on success.
+
+   \sa `make_las_point_reader()`
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ... PropertyHandler>
-bool read_LAS_with_properties (std::istream& stream,
-                               OutputIterator output,
-                               PropertyHandler&& ... properties)
+bool read_LAS_with_properties(std::istream& is,
+                              OutputIterator output,
+                              PropertyHandler&& ... properties)
 {
   typedef OutputIteratorValueType Enriched_point;
 
   LASreaderLAS lasreader;
-  lasreader.open(stream);
+  lasreader.open(is);
 
-  while (lasreader.read_point())
+  while(lasreader.read_point())
   {
     const LASpoint& laspoint = lasreader.point;
     Enriched_point new_point;
@@ -402,18 +394,16 @@ bool read_LAS_with_properties (std::istream& stream,
 
 }
 
-
 /// \cond SKIP_IN_MANUAL
 template <typename OutputIterator,
           typename ... PropertyHandler>
-bool read_LAS_with_properties (std::istream& stream,
-                               OutputIterator output,
-                               PropertyHandler&& ... properties)
+bool read_LAS_with_properties(std::istream& is,
+                              OutputIterator output,
+                              PropertyHandler&& ... properties)
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
 
-  return read_LAS_with_properties<OutputValueType>
-      (stream, output, std::forward<PropertyHandler>(properties)...);
+  return read_LAS_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
 /// \endcond
 

@@ -251,17 +251,15 @@ int main(int argc, char * argv[])
     std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
-      success = CGAL::read_points(input_filename.c_str(),
-                         std::back_inserter(points),
-                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
+      success = CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
+                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
-      success = CGAL::read_points(input_filename.c_str(),
-                                      std::back_inserter(points),
-                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
+      success = CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
+                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
     if (!success)
     {
@@ -315,11 +313,9 @@ int main(int argc, char * argv[])
     {
       std::ofstream stream(output_filename.c_str());
       stream.precision(17);
-      if (!stream ||
-          !CGAL::write_XYZ(stream,
-                           points,
-                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                           normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+      if (!stream || !CGAL::write_XYZ(stream, points,
+                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                       .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

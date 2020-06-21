@@ -80,8 +80,8 @@ bool read_XYZ(std::istream& stream,
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
-  \param fname the path to the input file.
-  \param point_set the point set.
+  \param fname the path to the input file
+  \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
 

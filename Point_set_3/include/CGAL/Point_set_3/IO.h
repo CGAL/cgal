@@ -50,7 +50,7 @@ namespace CGAL {
   \tparam Vector a `CGAL::Vector_3`
 
   \param is the input stream
-  \param ps the point set.
+  \param ps the point set
 
   \return `is`
 
@@ -98,7 +98,7 @@ std::istream& operator>>(std::istream& is,
   \tparam Vector a `CGAL::Vector_3`
 
   \param fname the path to the input file
-  \param ps the point set.
+  \param ps the point set
 
   \return `true` if the reading was successful, `false` otherwise.
  */
@@ -143,7 +143,7 @@ bool read_point_set(const char* fname, CGAL::Point_set_3<Point, Vector>& ps)
   \tparam Vector a `CGAL::Vector_3`
 
   \param os the output stream
-  \param ps the point set.
+  \param ps the point set
 
   \return `os`
 
@@ -160,7 +160,7 @@ std::ostream& operator<<(std::ostream& os,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Inserts the point set in an output filethat can be either:
+  \brief Inserts the point set in an output file that can be either:
 
   - XYZ
   - OFF

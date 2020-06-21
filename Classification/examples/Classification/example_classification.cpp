@@ -3,11 +3,6 @@
                               // converts 64 to 32 bits integers
 #endif
 
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/bounding_box.h>
@@ -15,6 +10,11 @@
 #include <CGAL/IO/read_ply_points.h>
 
 #include <CGAL/Real_timer.h>
+
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 

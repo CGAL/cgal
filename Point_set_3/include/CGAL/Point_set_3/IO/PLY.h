@@ -217,7 +217,7 @@ public:
 /*!
   \ingroup PkgPointSet3IO
 
-  Reads a point set with properties from an input stream in Ascii or Binary PLY format.
+  Reads a point set with properties from an input stream in ASCII or Binary PLY format.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -233,8 +233,8 @@ public:
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
-  \param stream the input stream
-  \param point_set the point set.
+  \param is the input stream
+  \param point_set the point set
   \param comments optional PLY comments.
 
   \return `true` if the reading was successful, `false` otherwise.
@@ -319,7 +319,7 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_PLY()` should be used instead.
 
-  Reads a point set with properties from an input stream in Ascii or Binary PLY format.
+  Reads a point set with properties from an input stream in ASCII or Binary PLY format.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -357,10 +357,9 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& stream, ///< input stream.
 /*!
   \ingroup PkgPointSet3IO
 
-  Writes a point set with properties in an output stream in PLY
-  format.
+  Writes a point set with properties in an output stream in PLY format.
 
-  If found, the normal map is inserted to the stream.  All other
+  If found, the normal map is inserted to the stream. All other
   properties with simple types are inserted in the stream.
 
   If provided, the `comments` string is included line by line in

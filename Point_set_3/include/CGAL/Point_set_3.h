@@ -360,7 +360,7 @@ public:
   /*!
     \brief Changes size of the point set.
 
-    \param s Target size of the point set.
+    \param s Target size of the point set
 
     \note If the given size is larger than the current size, the
     capacity of the internal container is extended. If there are
