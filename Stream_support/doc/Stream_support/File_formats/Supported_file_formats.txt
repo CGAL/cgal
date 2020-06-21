@@ -18,6 +18,7 @@ this specific format.
 - \ref IOStreamTetgen
 - \ref IOStreamGocad
 - \ref IOStreamWRL
+- \ref IOStreamLAS
 
 \section IOStreamOFF Object File Format (OFF)
 The `OFF` file format can be used to represent collections of planar polygons with possibly shared vertices.
@@ -70,24 +71,6 @@ Any structure that is a model of the concept `FaceGraph` can be exported into th
 using the function `write_OBJ()`.
 
 
-\section IOStreamPLY Polygon File Format (PLY)
-Conceived to store the data obtained during 3D scans, the `PLY` file format stores objects
-as a simple list of polygons, etc.
-A precise specification of those formats is available at
-<a href="http://paulbourke.net/dataformats/ply/"> paulbourke.net</a>.
-
-\subsection IOStreamPLYInput Reading PLY files
-Objects represented in the `.PLY` format can be imported into \cgal's working environment
-using the following data structures and functions.
-- CGAL::Surface_mesh (read_PLY())
-- CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)) a collection of points with dynamically associated properties
-
-\subsection IOStreamPLYOutput Writing PLY files
-The following \cgal data structures can be exported into the `PLY` file format:
-- CGAL::Surface_mesh (write_PLY())
-- CGAL::Point_set_3 (operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&))
-
-
 \section IOStreamSTL Standard Triangle Language (STL) File Format
   STL is a file format native to the stereolithography CAD software created by
   3D Systems.STL files describe the surface geometry of a three-dimensional object.
@@ -111,6 +94,40 @@ Polygon soups can also be exported using the function \link IOstreamFunctions `C
 
 Note that the STL file format exports triangular faces as geometric triangles and thus
 lose combinatorial information.
+
+
+\section IOStreamPLY Polygon File Format (PLY)
+Conceived to store the data obtained during 3D scans, the `PLY` file format stores objects
+as a simple list of polygons, etc.
+A precise specification of those formats is available at
+<a href="http://paulbourke.net/dataformats/ply/"> paulbourke.net</a>.
+
+\subsection IOStreamPLYInput Reading PLY files
+Objects represented in the `.PLY` format can be imported into \cgal's working environment
+using the following data structures and functions:
+- `CGAL::Surface_mesh` (`CGAL::read_PLY()`)
+- `CGAL::Point_set_3` (`operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)`) a collection of points with dynamically associated properties
+
+\subsection IOStreamPLYOutput Writing PLY files
+The following \cgal data structures can be exported into the `PLY` file format:
+- `CGAL::Surface_mesh` (write_PLY())
+- `CGAL::Point_set_3` (operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&))
+
+\section IOStreamLAS LAS (Lidar) File Format
+https://www.loc.gov/preservation/digital/formats/fdd/fdd000418.shtml
+Similar to the \ref IOStreamPLY, but this format does not handle normals and requires the \ref thirdpartyLASlib library.
+
+\subsection IOStreamLASInput Reading LAS files
+Objects represented in the `.LAS` format can be imported into \cgal's working environment
+using the following data structures and functions:
+- `CGAL::Point_set_3 (`CGAL::read_LAS`) a collection of points with dynamically associated properties
+- Point ranges
+
+\subsection IOStreamLASOutput Writing LAS files
+@todo also add to data structures --> formats
+The following \cgal data structures can be exported into the `LAS` file format:
+- `CGAL::Point_set_3 (`CGAL::write_LAS`) a collection of points with dynamically associated properties
+- Point ranges
 
 \section IOStreamXYZ XYZ (or PWN) File Format
 The `XYZ` format is a non standard format regularly used to described point sets.
