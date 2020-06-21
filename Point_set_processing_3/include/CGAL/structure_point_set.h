@@ -161,7 +161,7 @@ public:
     \tparam PlaneRange is a model of `ConstRange`. The value type of
     its iterator is the key type of the named parameter `plane_map`.
 
-    \param points input point range.
+    \param points input point range
     \param planes input plane range.
     \param epsilon size parameter.
     \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -1507,7 +1507,7 @@ private:
    <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
-   \param points input point range.
+   \param points input point range
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.

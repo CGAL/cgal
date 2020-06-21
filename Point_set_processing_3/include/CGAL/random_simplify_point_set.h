@@ -42,7 +42,7 @@ namespace CGAL {
 
    \tparam PointRange is a model of `Range`.
 
-   \param points input point range.
+   \param points input point range
    \param removed_percentage percentage of points to remove.
 
    \return iterator over the first point to remove.

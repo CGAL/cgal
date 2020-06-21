@@ -119,9 +119,9 @@ make_ply_normal_reader(VectorMap normal_map);
   second element of the tuple should be a functor that constructs
   the value type of `PropertyMap` from N objects of types `T`.
 
-  \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-  It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-  \tparam OutputIterator iterator over output points.
+  \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+  It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+  \tparam PointOutputIterator iterator over output points.
   \tparam PropertyHandler handlers to recover properties.
 
   \return `true` on success.
@@ -130,13 +130,13 @@ make_ply_normal_reader(VectorMap normal_map);
   \sa `make_ply_normal_reader()`
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename ... PropertyHandler>
 bool read_PLY_with_properties(std::istream& is,
-                              OutputIterator output,
+                              PointOutputIterator output,
                               PropertyHandler&& ... properties)
 {
-  typedef typename value_type_traits<OutputIterator>::type OutputValueType;
+  typedef typename value_type_traits<PointOutputIterator>::type OutputValueType;
 
   if(!is)
   {
@@ -179,7 +179,6 @@ bool read_PLY_with_properties(std::istream& is,
   return true;
 }
 
-/// \cond SKIP_IN_MANUAL
 template <typename OutputIterator,
           typename ... PropertyHandler>
 bool read_PLY_with_properties(std::istream& is,
@@ -190,7 +189,6 @@ bool read_PLY_with_properties(std::istream& is,
 
   return read_PLY_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
@@ -198,9 +196,9 @@ bool read_PLY_with_properties(std::istream& is,
    stream (ASCII or binary).
    Potential additional point properties and faces are ignored.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-   \tparam OutputIterator iterator over output points.
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param is input stream.
@@ -230,13 +228,13 @@ bool read_PLY_with_properties(std::istream& is,
    \return `true` on success.
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
-              OutputIterator output,
+              PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr
+              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
               )
 {
@@ -269,9 +267,9 @@ bool read_PLY(std::istream& is,
    file (ASCII or binary).
    Potential additional point properties and faces are ignored.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-   \tparam OutputIterator iterator over output points.
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param fname input file name.
@@ -301,13 +299,13 @@ bool read_PLY(std::istream& is,
    \return `true` on success.
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const char* fname,
-              OutputIterator output,
+              PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr
+             , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
              )
 {

@@ -251,8 +251,8 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
    its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param os output stream.
-   \param points input point range.
+   \param os output stream
+   \param points input point range
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -304,21 +304,59 @@ bool write_LAS(std::ostream& os,
   return write_LAS_with_properties(os, points, make_las_point_writer(point_map));
 }
 
-/// \cond SKIP_IN_MANUAL
+/**
+   \ingroup PkgPointSetProcessing3IOLas
 
+   Saves the range of `points` (positions only) to a .las stream.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename the path the output file
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \return `true` on success.
+*/
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_LAS(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+bool write_LAS(const char* filename,
+               const PointRange& points,
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+#endif
+               )
 {
-  std::ofstream os(fname);
+  std::ofstream os(filename);
   return write_LAS(os, points, np);
 }
 
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_LAS(const std::string& fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
+bool write_LAS(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_LAS(fname.c_str(), points, np);
+  return write_LAS(filename.c_str(), points, np);
 }
 
 // variant with default NP
@@ -330,18 +368,18 @@ bool write_LAS(std::ostream& os, const PointRange& points,
 }
 
 template <typename PointRange>
-bool write_LAS(const char* fname, const PointRange& points,
+bool write_LAS(const char* filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  std::ofstream os(fname);
+  std::ofstream os(filename);
   return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points)());
 }
 
 template <typename PointRange>
-bool write_LAS(const std::string& fname, const PointRange& points,
+bool write_LAS(const std::string& filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_LAS(fname, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return write_LAS(filename, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -369,8 +407,6 @@ bool write_las_points(std::ostream& os, ///< output stream.
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
-
-/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

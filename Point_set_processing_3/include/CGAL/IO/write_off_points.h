@@ -101,8 +101,8 @@ bool write_OFF_PSP(std::ostream& os,
    its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param os output stream.
-   \param points input point range.
+   \param os output stream
+   \param points input point range
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -145,8 +145,6 @@ bool write_OFF(std::ostream& os,
   return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
 template <typename PointRange>
 bool write_OFF(std::ostream& os, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -154,34 +152,85 @@ bool write_OFF(std::ostream& os, const PointRange& points,
   return write_OFF(os, points, parameters::all_default());
 }
 
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+/**
+   \ingroup PkgPointSetProcessing3IOOff
+   Saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
+   The function writes for each point a line with the x y z position
+   followed by the nx ny nz normal (if available).
+
+   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A>
+         of the output stream might not be sufficient depending on the data to be written.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename the path to the output file
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \return `true` on success.
+*/
+template <typename PointRange,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const char* filename,
+               const PointRange& points,
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+#endif
+               )
 {
-  std::ofstream os(fname);
+  std::ofstream os(filename);
   return write_OFF(os, points, np);
 }
 
 template <typename PointRange>
-bool write_OFF(const char* fname, const PointRange& points,
+bool write_OFF(const char* filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  std::ofstream os(fname);
+  std::ofstream os(filename);
   return write_OFF(os, points, parameters::all_default());
 }
 
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
+bool write_OFF(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_OFF(fname.c_str(), points, np);
+  return write_OFF(filename.c_str(), points, np);
 }
 
 template <typename PointRange>
-bool write_OFF(const std::string& fname, const PointRange& points,
+bool write_OFF(const std::string& filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_OFF(fname, points, parameters::all_default());
+  return write_OFF(filename, points, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -274,8 +323,6 @@ bool write_off_points(std::ostream& os, ///< output stream.
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
-
-/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

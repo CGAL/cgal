@@ -299,6 +299,40 @@ bool read_PLY(std::istream& is,
   return !is.bad();
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+
+  \brief Reads a point set with properties from an input stream in ASCII or Binary PLY format.
+
+  - the operator reads the vertex `point` property;
+  - if three PLY properties `nx`, `ny` and `nz` with type `float`
+     or `double` are found, the normal map is added;
+  - if any other PLY property is found, a "[name]" property map is
+    added, where `[name]` is the name of the PLY property.
+
+  The `comments` parameter can be omitted. If provided, it will be
+  used to store the potential comments found in the PLY
+  header. Each line starting by "comment " in the header is
+  appended to the `comments` string (without the "comment " word).
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the input file
+  \param point_set the point set
+  \param comments optional PLY comments.
+
+  \return `true` if the reading was successful, `false` otherwise.
+
+  \see \ref IOStreamPLY
+*/
+template <typename Point, typename Vector>
+bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
+{
+  std::ifstream is(fname);
+  return read_PLY(is, point_set, comments);
+}
+
 template <typename Point, typename Vector>
 bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 {
@@ -309,8 +343,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 template <typename Point, typename Vector>
 bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  std::ifstream is(fname);
-  return read_PLY(is, point_set);
+  return read_PLY(fname, point_set, std::string());
 }
 
 template <typename Point, typename Vector>
@@ -378,7 +411,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
   \tparam Vector a `CGAL::Vector_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param os the path to the input file
+  \param os the output stream
   \param point_set the point set
   \param comments optional PLY comments
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -393,7 +426,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 
   \return `true` if the reading was successful, `false` otherwise.
   \see \ref IOStreamPLY
- */
+*/
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
@@ -628,6 +661,38 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   return write_PLY(os, point_set, std::string(), parameters::all_default());
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+
+  \brief Writes a point set with properties in an output stream in PLY format.
+
+  If found, the normal map is inserted to the stream. All other
+  properties with simple types are inserted in the stream.
+
+  If provided, the `comments` string is included line by line in
+  the header of the PLY stream (each line will be precedeed by
+  "comment ").
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the path to the output file
+  \param point_set the point set
+  \param comments optional PLY comments
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+   \cgalParamNBegin{stream_precision}
+     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+    \cgalParamDefault{`6`}
+   \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  \return `true` if the reading was successful, `false` otherwise.
+  \see \ref IOStreamPLY
+*/
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments, const CGAL_BGL_NP_CLASS& np)

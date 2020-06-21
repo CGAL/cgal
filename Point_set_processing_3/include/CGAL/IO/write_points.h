@@ -36,15 +36,16 @@ namespace CGAL {
 /**
   \ingroup PkgPointSetProcessing3IO
 
-   Saves the range of `points` with properties to a file that can be either:
-  - XYZ
-  - OFF
-  - PLY
-  - LAS
+  Saves the range of `points` with properties to a file that can be either:
 
-   \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
-   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  - \link IOStreamXYZ XYZ \endlink
+  - \link IOStreamOFF OFF \endlink
+  - \link IOStreamPLY PLY \endlink
+  - \link IOStreamLAS LAS \endlink
+
+  \tparam PointRange is a model of `ConstRange`. The value type of
+  its iterator is the key type of the named parameter `point_map`.
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the name of the input file.
   \param points the range of points that will be written.
@@ -76,7 +77,7 @@ namespace CGAL {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-   \return `true` on success.
+  \return `true` on success.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_points(const std::string& fname,

@@ -34,14 +34,14 @@ namespace CGAL {
 
   Reads the point set from an input file that can be either:
 
-  - XYZ
-  - OFF
-  - PLY
-  - LAS
+  - \link IOStreamXYZ XYZ \endlink
+  - \link IOStreamOFF OFF \endlink
+  - \link IOStreamPLY PLY \endlink
+  - \link IOStreamLAS LAS \endlink
 
-  \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-  It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-  \tparam OutputIterator iterator over output points.
+  \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+  It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+  \tparam PointOutputIterator iterator over output points.
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the name of the input file.
@@ -71,10 +71,10 @@ namespace CGAL {
   \return `true` on success.
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename NamedParameters>
 bool read_points(const std::string& fname,
-                 OutputIterator output,
+                 PointOutputIterator output,
                  const NamedParameters& np)
 {
   const std::string ext = IO::internal::get_file_extension(fname);

@@ -289,7 +289,7 @@ update_new_point(
    <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
-   \param points input point range.
+   \param points input point range
    \param output iterator where output points and normals are put.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 

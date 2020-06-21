@@ -47,9 +47,9 @@ namespace CGAL {
    optionally followed by the nx ny nz normal.
    Faces are ignored.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-   \tparam OutputIterator iterator over output points.
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param is input stream.
@@ -79,13 +79,13 @@ namespace CGAL {
    \return `true` on success.
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
-              OutputIterator output,
+              PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr
+              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
               )
 {
@@ -202,9 +202,9 @@ bool read_OFF(std::istream& is,
    optionally followed by the nx ny nz normal.
    Faces are ignored.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-   \tparam OutputIterator iterator over output points.
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param fname input file name.
@@ -234,13 +234,13 @@ bool read_OFF(std::istream& is,
    \return `true` on success.
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname,
-              OutputIterator output,
+              PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr
+              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
               )
 {
@@ -254,8 +254,6 @@ bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_BGL_NP
 {
   return read_OFF<OutputIteratorValueType>(fname.c_str(), output, np);
 }
-
-/// \cond SKIP_IN_MANUAL
 
 // variants with default NP
 template <typename OutputIteratorValueType,
@@ -462,8 +460,6 @@ bool read_off_points(std::istream& is, ///< input stream.
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
-
-/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /*!

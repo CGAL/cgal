@@ -71,7 +71,7 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
    \tparam ClusterMap is a model of `ReadWritePropertyMap` with value
    type `std::size_t`.
 
-   \param points input point range.
+   \param points input point range
    \param cluster_map maps each point to the index of the cluster it belongs to.
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 

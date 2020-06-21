@@ -398,7 +398,6 @@ bool read_LAS_with_properties(std::istream& is,
 
 }
 
-/// \cond SKIP_IN_MANUAL
 template <typename OutputIterator,
           typename ... PropertyHandler>
 bool read_LAS_with_properties(std::istream& is,
@@ -409,20 +408,20 @@ bool read_LAS_with_properties(std::istream& is,
 
   return read_LAS_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOLas
-   Reads points (position only) from a .las or .laz stream.
+
+   \brief Reads points (position only) from a .las or .laz stream.
    Potential additional properties are ignored.
 
-   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-   \tparam OutputIterator iterator over output points.
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-   \param is input stream.
-   \param output output iterator over points.
+   \param is input stream
+   \param output output iterator over points
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -442,10 +441,10 @@ bool read_LAS_with_properties(std::istream& is,
    \return `true` on success.
 */
 template <typename OutputIteratorValueType,
-          typename OutputIterator,
+          typename PointOutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(std::istream& is,
-              OutputIterator output,
+              PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np)
 {
   using parameters::choose_parameter;
@@ -459,7 +458,47 @@ bool read_LAS(std::istream& is,
   return read_LAS_with_properties(is, output, make_las_point_reader(point_map));
 }
 
-/// \cond SKIP_IN_MANUAL
+/**
+   \ingroup PkgPointSetProcessing3IOLas
+
+   \brief Reads points (position only) from a .las or .laz stream.
+   Potential additional properties are ignored.
+
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename the name of the input file
+   \param output output iterator over points
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \return `true` on success.
+*/
+template <typename OutputIteratorValueType,
+          typename PointOutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(const char* filename,
+              PointOutputIterator output,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream is(filename);
+  return read_LAS<OutputIteratorValueType>(filename, output, np);
+}
 
 // variants with default NP
 template <typename OutputIteratorValueType, typename OutputIterator>
@@ -592,8 +631,6 @@ bool read_las_points(std::istream& is, ///< input stream.
 
 #endif //CGAL_NO_DEPRECATED_CODE
 
-/// \endcond
-
 #ifndef CGAL_NO_DEPRECATED_CODE
 /**
  \ingroup PkgPointSetProcessing3IODeprecated
@@ -646,8 +683,6 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is,
   return read_LAS(is, output, make_las_point_reader(point_map));
 }
 
-/// \cond SKIP_IN_MANUAL
-
 // variant with default NP
 template <typename OutputIteratorValueType, typename OutputIterator>
 CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
@@ -668,8 +703,6 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, CGAL::parameters::all_default());
 }
-
-/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

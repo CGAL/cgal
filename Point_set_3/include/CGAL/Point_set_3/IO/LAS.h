@@ -151,6 +151,19 @@ bool read_LAS(std::istream& is,
   return okay;
 }
 
+/*!
+  \ingroup PkgPointSet3IO
+
+  \brief Reads the content of an intput stream in the LAS format into a point set.
+
+  \tparam Point a `CGAL::Point_3`
+  \tparam Vector a `CGAL::Vector_3`
+
+  \param fname the path to the input file
+  \param point_set the point set
+
+  \return `true` if the reading was successful, `false` otherwise.
+*/
 template <typename Point, typename Vector>
 bool read_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
