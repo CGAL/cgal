@@ -59,10 +59,10 @@ namespace CGAL {
 
   \returns `true` if writing was successful.
 */
-template <typename Graph, typename NamedParameters>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_WRL(std::ostream& os,
                const Graph& g,
-               const NamedParameters& np)
+               const CGAL_BGL_NP_CLASS& np)
 {
   IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_VRML_2> printer(os);
   return printer(g, np);

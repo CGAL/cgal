@@ -294,11 +294,11 @@ bool read_PLY(const std::string& fname, Graph& g,
 
  \returns `true` if writing was successful.
 */
-template <typename Graph, typename NamedParameters>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const Graph& g,
                const std::string& comments,
-               const NamedParameters& np
+               const CGAL_BGL_NP_typename& np
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -308,18 +308,18 @@ bool write_PLY(std::ostream& os,
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                        halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                            face_descriptor;
 
-  typedef typename CGAL::GetInitializedVertexIndexMap<Graph, NamedParameters>::const_type VIMap;
-  typedef typename GetVertexPointMap<Graph, NamedParameters>::const_type                  Vpm;
-  typedef typename boost::property_traits<Vpm>::reference                                 Point_3;
-  typedef CGAL::Color                                                                     Color;
+  typedef typename CGAL::GetInitializedVertexIndexMap<Graph, CGAL_BGL_NP_typename>::const_type VIMap;
+  typedef typename GetVertexPointMap<Graph, CGAL_BGL_NP_typename>::const_type                  Vpm;
+  typedef typename boost::property_traits<Vpm>::reference                                      Point_3;
+  typedef CGAL::Color                                                                          Color;
   typedef typename internal_np::Lookup_named_param_def<
                      internal_np::vertex_color_map_t,
-                     NamedParameters,
-                     Constant_property_map<vertex_descriptor, Color> >::type              VCM;
+                     CGAL_BGL_NP_typename,
+                     Constant_property_map<vertex_descriptor, Color> >::type                   VCM;
   typedef typename internal_np::Lookup_named_param_def<
                      internal_np::face_color_map_t,
-                     NamedParameters,
-                     Constant_property_map<face_descriptor, Color> >::type                FCM;
+                     CGAL_BGL_NP_typename,
+                     Constant_property_map<face_descriptor, Color> >::type                     FCM;
 
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -498,11 +498,11 @@ bool write_PLY(std::ostream& os, const Graph& g,
 
  \returns `true` if writing was successful.
 */
-template <typename Graph, typename NamedParameters>
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* fname,
                const Graph& g,
                const std::string& comments,
-               const NamedParameters& np
+               const CGAL_BGL_NP_typename& np
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -537,8 +537,8 @@ bool write_PLY(const char* fname, const Graph& g,
   return write_PLY(fname, g, "", parameters::all_default());
 }
 
-template <typename Graph, typename NamedParameters>
-bool write_PLY(const std::string& fname, const Graph& g, const std::string& comments, const NamedParameters& np,
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& fname, const Graph& g, const std::string& comments, const CGAL_BGL_NP_typename& np,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_PLY(fname.c_str(), g, comments, np);
