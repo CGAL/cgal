@@ -10,8 +10,12 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_SURFACE_MESH_IO_PLY
-#define CGAL_SURFACE_MESH_IO_PLY
+#ifndef CGAL_SURFACE_MESH_IO_PLY_H
+#define CGAL_SURFACE_MESH_IO_PLY_H
+
+#include <CGAL/license/Surface_mesh.h>
+
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
@@ -1034,4 +1038,4 @@ bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
 
 #endif // !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
-#endif // CGAL_SURFACE_MESH_IO_PLY
+#endif // CGAL_SURFACE_MESH_IO_PLY_H
