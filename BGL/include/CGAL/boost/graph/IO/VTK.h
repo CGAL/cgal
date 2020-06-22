@@ -404,12 +404,18 @@ void write_polys_points(std::ostream& os,
  *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  *
- *  \cgalParamNBegin{vertex_index_map}
- *    \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
- *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
- *                   as key type and `std::size_t` as value type}
- *    \cgalParamDefault{no vertex indices in the output}
- *  \cgalParamNEnd
+ *   \cgalParamNBegin{vertex_index_map}
+ *     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{no vertex indices in the output}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre `g` contains only triangular faces
@@ -421,6 +427,12 @@ bool write_VTP(std::ostream& os,
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
+
+  if(!os.good())
+    return false;
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
 
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";
@@ -490,12 +502,18 @@ bool write_VTP(std::ostream& os,
  *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  *
- *  \cgalParamNBegin{vertex_index_map}
- *    \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
- *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
- *                   as key type and `std::size_t` as value type}
- *    \cgalParamDefault{no vertex indices in the output}
- *  \cgalParamNEnd
+ *   \cgalParamNBegin{vertex_index_map}
+ *     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{no vertex indices in the output}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre `g` contains only triangular faces

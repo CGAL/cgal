@@ -11,7 +11,10 @@
 #define CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
 
 #include <CGAL/boost/graph/io.h>
-#include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/IO/helpers.h>
+
+#include <fstream>
+#include <string>
 
 namespace CGAL {
 
@@ -180,6 +183,12 @@ bool read_polygon_mesh(const char* fname, Graph& g)
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `Graph`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

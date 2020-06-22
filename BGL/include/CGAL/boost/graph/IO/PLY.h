@@ -335,10 +335,10 @@ bool write_PLY(std::ostream& os,
                              get_const_property_map(boost::vertex_point, g));
 
   if(!os.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
 
   // Write header
   os << "ply" << std::endl

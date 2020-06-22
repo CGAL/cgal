@@ -190,6 +190,12 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{`6`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The graph must contain only triangle faces.
@@ -217,6 +223,9 @@ bool write_STL(std::ostream& os,
 
   if(!os.good())
     return false;
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
 
   if(get_mode(os) == IO::BINARY)
   {
@@ -247,7 +256,7 @@ bool write_STL(std::ostream& os,
   }
   else
   {
-    os << "solid"<<std::endl;;
+    os << "solid" << std::endl;
     for(const face_descriptor f : faces(g))
     {
       halfedge_descriptor h = halfedge(f, g);
@@ -260,9 +269,9 @@ bool write_STL(std::ostream& os,
       os << "vertex " << p << "\n";
       os << "vertex " << q << "\n";
       os << "vertex " << r << "\n";
-      os << "endloop\nendfacet"<<std::endl;
+      os << "endloop\nendfacet" << std::endl;
     }
-    os << "endsolid"<<std::endl;;
+    os << "endsolid" << std::endl;
   }
 
   return os.good();
@@ -295,6 +304,12 @@ bool write_STL(std::ostream& os,
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+       \cgalParamType{int}
+       \cgalParamDefault{`6`}
+    \cgalParamNEnd
  \cgalNamedParamsEnd
 
  \pre The graph must contain only triangle faces.
@@ -308,6 +323,7 @@ bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
     CGAL::set_mode(os, CGAL::IO::BINARY);
+
   return write_STL(os, g, np);
 }
 

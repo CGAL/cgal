@@ -31,16 +31,17 @@ typedef std::vector<CGAL::Color> ColorRange;
 int main(int argc, char** argv)
 {
 #ifdef CGAL_LINKED_WITH_3MF
-  const char* file_name=(argc == 2) ? argv[1] : "data/test.3mf";
+  const char* filname = (argc == 2) ? argv[1] : "data/test.3mf";
 
   std::vector<PointRange> all_points;
   std::vector<PolygonRange> all_polygons;
   std::vector<ColorRange> all_colors;
   std::vector<std::string> names;
   std::vector<Mesh> meshes;
+
   //testing reading functions.
-  int nb_meshes =
-      CGAL::read_3mf(file_name, meshes);
+  int nb_meshes = CGAL::read_3mf(filename, meshes);
+
   if(nb_meshes <0)
     return 1;
   for(int i = 0; i< nb_meshes; ++i)
