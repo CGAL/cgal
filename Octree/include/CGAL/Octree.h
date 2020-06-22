@@ -51,14 +51,20 @@
 
 namespace CGAL {
 
-  template<class Kernel,
-          class PointRange,
+  template<class PointRange,
           class PointMap>
   class Octree {
-  public: // types :
+  public: // types
+
+    // Deduce the kernel
+    typedef typename boost::property_traits<PointMap>::value_type Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+
+    // Define the Node based on this kernel
     typedef Octree_node<Kernel, PointRange> Node;
+
+    // Some other useful types
     typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
@@ -171,7 +177,7 @@ namespace CGAL {
 
     const Node &root() const { return m_root; }
 
-    bool operator==(Octree<Kernel, PointRange, PointMap> &rhs) {
+    bool operator==(Octree<PointRange, PointMap> &rhs) {
 
       // Identical trees should have the same bounding box
       if (rhs.m_bbox_min != m_bbox_min || rhs.m_bbox_side != m_bbox_side)

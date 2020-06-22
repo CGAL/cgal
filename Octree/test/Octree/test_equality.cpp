@@ -11,7 +11,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::Octree
-        <Kernel, Point_set, typename Point_set::Point_map>
+        <Point_set, typename Point_set::Point_map>
         Octree;
 
 int test_identical_trees() {
