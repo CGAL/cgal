@@ -26,46 +26,14 @@
 #include <CGAL/Has_conversion.h>
 #include <CGAL/property_map.h>
 
+#include <fstream>
 #include <iostream>
 
 namespace CGAL {
 
-template < class Traits,
-           class Items,
-           template < class T, class I, class A> class HDS,
-           class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(std::ostream& out,
-               const Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-               const CGAL_BGL_NP_CLASS& np)
-{
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-  using parameters::is_default_parameter;
-  if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)))
-     ||!(is_default_parameter(get_parameter(np, internal_np::face_color_map)))
-     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)))
-     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
-  {
-    return CGAL::IO::internal::write_OFF_BGL(out, P, np);
-  }
-
-  // writes P to `out' in PRETTY, ASCII or BINARY format as the stream indicates.
-  File_header_OFF header(is_binary(out), ! is_pretty(out), false);
-  typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>, CGAL_BGL_NP_CLASS>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, P));
-
-  return CGAL::print_polyhedron_with_header_OFF(out, P, header, vpm);
-}
-
-template <class Traits,
-          class Items,
-          template < class T, class I, class A> class HDS,
-          class Alloc>
-bool write_OFF(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
-{
-  return write_OFF(out, P, parameters::all_default());
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Read
 
 template <class Traits,
           class Items,
@@ -93,10 +61,10 @@ bool read_OFF(std::istream& in,
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
-  if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)))
-     ||!(is_default_parameter(get_parameter(np, internal_np::face_color_map)))
-     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)))
-     ||!(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
+  if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map))) ||
+     !(is_default_parameter(get_parameter(np, internal_np::face_color_map))) ||
+     !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map))) ||
+     !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
   {
     return CGAL::IO::internal::read_OFF_BGL(in, P, np, verbose);
   }
@@ -128,22 +96,64 @@ bool read_OFF(std::istream& in, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 
 template <class Traits,
           class Items,
-          template < class T, class I, class A>
-          class HDS, class Alloc>
-std::ostream& operator<<(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
-{
-  write_OFF(out, P);
-  return out;
-}
-
-template <class Traits,
-          class Items,
           template < class T, class I, class A> class HDS,
           class Alloc>
 std::istream& operator>>(std::istream& in, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
   read_OFF(in, P);
   return in;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Write
+
+template < class Traits,
+           class Items,
+           template < class T, class I, class A> class HDS,
+           class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(std::ostream& out,
+               const Polyhedron_3<Traits, Items, HDS, Alloc>& P,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::is_default_parameter;
+
+  if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map))) ||
+     !(is_default_parameter(get_parameter(np, internal_np::face_color_map))) ||
+     !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map))) ||
+     !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
+  {
+    return CGAL::IO::internal::write_OFF_BGL(out, P, np);
+  }
+
+  // writes P to `out' in PRETTY, ASCII or BINARY format as the stream indicates.
+  File_header_OFF header(is_binary(out), ! is_pretty(out), false);
+  typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>, CGAL_BGL_NP_CLASS>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, P));
+
+  return CGAL::print_polyhedron_with_header_OFF(out, P, header, vpm);
+}
+
+template <class Traits,
+          class Items,
+          template < class T, class I, class A> class HDS,
+          class Alloc>
+bool write_OFF(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
+{
+  return write_OFF(out, P, parameters::all_default());
+}
+
+template <class Traits,
+          class Items,
+          template < class T, class I, class A>
+          class HDS, class Alloc>
+std::ostream& operator<<(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
+{
+  write_OFF(out, P);
+  return out;
 }
 
 } // namespace CGAL

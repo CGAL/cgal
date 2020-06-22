@@ -11,9 +11,6 @@ appends it to the polyhedral surface \f$ P\f$. Only the point coordinates
 and facets from the input stream are used to build the polyhedral
 surface. Neither normal vectors nor color attributes are evaluated.
 
-\note Before \cgal 5.0 this function has set the `ios::badbit` of the input stream `in`
-when the file contained 0 vertices.
-
 For OFF an ASCII and a binary format exist. The stream detects the
 format automatically and can read both.
 
@@ -21,7 +18,7 @@ format automatically and can read both.
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)`\endlink
 
-This function overloads the generic function \link PkgBGLIOFct `read_off(std::istream&,FaceGraph)`\endlink.
+This function overloads the generic function \link PkgBGLIOFct `read_OFF(std::istream&, FaceGraph)`\endlink.
 
 \cgalHeading{Implementation}
 
@@ -31,9 +28,20 @@ class, which allows the construction in a single, efficient scan pass
 of the input and handles also all the possible flexibility of the
 polyhedral surface.
 
+\note Before \cgal 5.0 this function has set the `ios::badbit` of the input stream `in`
+when the file contained 0 vertices.
+
 */
 template <class PolyhedronTraits_3>
 bool read_OFF( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
+
+/*!
+\relates Polyhedron_3
+\deprecated This function is deprecated since \cgal 5.2,
+            \link PkgPolyhedronIOFunc `CGAL::read_OFF(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)` \endlink should be used instead.
+*/
+template <class PolyhedronTraits_3>
+bool read_off( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
 
 /*!
 \relates Polyhedron_3
@@ -61,7 +69,7 @@ to allow for (a few) structuring comments in the output. Otherwise,
 the output would be free of comments. The default for writing is ASCII
 without comments.
 
-This function overloads the generic function \link PkgBGLIOFct `write_off(std::istream&,FaceGraph)` \endlink.
+This function overloads the generic function \link PkgBGLIOFct `write_OFF(std::istream&,FaceGraph)` \endlink.
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
@@ -70,6 +78,13 @@ This function overloads the generic function \link PkgBGLIOFct `write_off(std::i
 template <class PolyhedronTraits_3>
 bool write_OFF( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
 
+/*!
+\relates Polyhedron_3
+\deprecated This function is deprecated since \cgal 5.2,
+            \link PkgPolyhedronIOFunc `CGAL::write_OFF(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)` \endlink should be used instead.
+*/
+template <class PolyhedronTraits_3>
+bool write_off( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
 
 /*!
 \relates Polyhedron_3
@@ -80,6 +95,4 @@ template <class PolyhedronTraits_3>
 std::ostream& operator<<( std::ostream& out, Polyhedron_3<PolyhedronTraits_3>& P);
 
 } /* namespace CGAL */
-
-
 

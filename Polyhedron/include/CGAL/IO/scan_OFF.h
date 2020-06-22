@@ -19,6 +19,7 @@
 
 #include <CGAL/IO/Polyhedron_scan_OFF.h>
 
+#include <fstream>
 #include <iostream>
 
 namespace CGAL {
