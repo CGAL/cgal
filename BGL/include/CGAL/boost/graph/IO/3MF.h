@@ -22,7 +22,13 @@
 #include <unordered_map>
 #include <vector>
 
+#if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+
 namespace CGAL {
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Write
 
 /*!
  * \ingroup PkgBGLIOFct
@@ -95,5 +101,7 @@ bool write_3MF(const std::string& filename,
 }
 
 } // namespace CGAL
+
+#endif // CGAL_LINKED_WITH_3MF
 
 #endif // CGAL_BGL_IO_3MF_H
