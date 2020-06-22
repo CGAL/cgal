@@ -14,6 +14,22 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 
+bool generate_input(const std::size_t& n,
+                    const char* filename)
+{
+  typedef Remeshing_triangulation::Point Point;
+  Remeshing_triangulation tr;
+
+  CGAL::Random rng;
+  while (tr.number_of_vertices() < n)
+    tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+
+  std::ofstream oFileT(filename, std::ios::out);
+  // writing file output;
+  oFileT << tr;
+
+  return (!oFileT.bad());
+}
 
 int main(int argc, char* argv[])
 {
