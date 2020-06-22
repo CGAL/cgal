@@ -720,30 +720,27 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::write_triangle_meshes_to_3mf()`
-- `CGAL::read_GOCAD()`
-- `CGAL::write_GOCAD()`
-- `CGAL::write_INP()`
-- `CGAL::read_OBJ()`
-- `CGAL::write_OBJ()`
+- `CGAL::read_polygon_mesh()`
+- `CGAL::write_polygon_mesh()`
 - `CGAL::read_OFF()`
 - `CGAL::write_OFF()`
+- `CGAL::read_OBJ()`
+- `CGAL::write_OBJ()`
 - `CGAL::read_STL()`
 - `CGAL::write_STL()`
 - `CGAL::read_VTP()`
 - `CGAL::write_VTP()`
+- `CGAL::read_GOCAD()`
+- `CGAL::write_GOCAD()`
+- `CGAL::write_3MF()`
+- `CGAL::write_INP()`
 - `CGAL::write_WRL()`
 
-- `CGAL::read_polygon_mesh()`
-- `CGAL::write_polygon_mesh()`
 */
 
 /*!
 \addtogroup PkgBGLEulerOperations
 
-We call high level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
-
+We call high-level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
 
 */
-
-

@@ -43,9 +43,9 @@ namespace CGAL {
  * \return `true` if the writing is successful, `false` otherwise.
  */
 template<typename GraphRange>
-bool write_triangle_meshes_to_3mf(const std::string& file_name,
-                                  const GraphRange& gs,
-                                  const std::vector<std::string>& names)
+bool write_3MF(const std::string& file_name,
+               const GraphRange& gs,
+               const std::vector<std::string>& names)
 {
   typedef typename GraphRange::value_type                                       FaceGraph;
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type  VPM;
