@@ -91,7 +91,7 @@ void test_no_modifications(const char* f1, const char* f2)
 
   std::size_t nb_v_before1 = vertices(sm1).size();
   std::size_t nb_v_before2 = vertices(sm2).size();
- 
+
   CGAL::Polygon_mesh_processing::corefine(sm1, sm2,
     CGAL::parameters::visitor(sm_v),
     CGAL::parameters::do_not_modify(true));
@@ -102,7 +102,7 @@ void test_no_modifications(const char* f1, const char* f2)
   assert(sm1.is_valid());
   assert(sm2.is_valid());
   assert(nb_v_after2==nb_v_before2);
-  
+
   assert((*(sm_v.i) != 0) == (nb_v_before1!=nb_v_after1));
 
   std::cout << "  with Polyhedron_3\n";
