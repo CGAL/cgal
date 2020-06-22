@@ -733,7 +733,6 @@ user might encounter.
 - `CGAL::read_GOCAD()`
 - `CGAL::write_GOCAD()`
 - `CGAL::write_3MF()`
-- `CGAL::write_INP()`
 - `CGAL::write_WRL()`
 
 */
