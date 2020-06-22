@@ -1055,7 +1055,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 ///   \cgalParamNBegin{geom_traits}
 ///     \cgalParamDescription{an instance of a geometric traits class}
 ///     \cgalParamType{The traits class must provide the nested functors `Less_xyz_3` and `Equal_3`
-///                    to respectivelycompare lexicographically two points and to check if 2 points
+///                    to respectivelycompare lexicographically two points and to check if two points
 ///                    are identical. For each functor `Foo`, a function `Foo foo_object()` must be provided.}
 ///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}

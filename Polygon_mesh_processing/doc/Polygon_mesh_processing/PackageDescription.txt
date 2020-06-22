@@ -10,7 +10,6 @@
 ///
 /// \ingroup PkgPolygonMeshProcessingRef
 
-
 /// \defgroup hole_filling_grp Hole Filling
 /// Functions to fill holes given as a range of halfedges or as range of points.
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -38,7 +37,6 @@
 /// \defgroup PMP_repairing_grp Combinatorial Repairing
 /// Functions to repair polygon soups and polygon meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
-
 
 /// \defgroup PMP_distance_grp Distance Functions
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
@@ -226,6 +224,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 - `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::transform()`
-- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink
+
+\cgalCRPSection{I/O Functions}
+- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink
 
 */

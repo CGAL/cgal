@@ -98,6 +98,8 @@ bool read_polygon_mesh(std::istream& is,
  * \pre The data must represent a 2-manifold
  *
  * \return `true` if reading was successful, `false` otherwise.
+ *
+ * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink if the data is not 2-manifold
 */
 template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
