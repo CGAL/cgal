@@ -87,7 +87,7 @@ bool write_XYZ_PSP(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   Saves the range of `points` (positions + normals, if available) to a .xyz ASCII stream.
+   \brief Saves the range of `points` (positions + normals, if available) to a .xyz ASCII stream.
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).
 
@@ -126,6 +126,8 @@ bool write_XYZ_PSP(std::ostream& os,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamXYZ
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(std::ostream& os,
@@ -149,7 +151,8 @@ bool write_XYZ(std::ostream& os, const PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   Saves the range of `points` (positions + normals, if available) to a .xyz ASCII stream.
+   \brief Saves the range of `points` (positions + normals, if available) to a .xyz ASCII stream.
+
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).
 
@@ -188,6 +191,8 @@ bool write_XYZ(std::ostream& os, const PointRange& points,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamXYZ
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(const char* filename,

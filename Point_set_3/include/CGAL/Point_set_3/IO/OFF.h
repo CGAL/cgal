@@ -41,7 +41,7 @@ class Point_set_3;
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an intput stream in the OFF format into a point set.
+  \brief Reads the content of an intput stream in the \ref IOStreamOFF into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -50,8 +50,6 @@ class Point_set_3;
   \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
-
-  \see \ref IOStreamOFF
  */
 template <typename Point, typename Vector>
 bool read_OFF(std::istream& is,
@@ -82,7 +80,7 @@ bool read_OFF(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an input OFF file in a point set.
+  \brief Reads the content of an input file in the \ref IOStreamOFF into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -91,8 +89,6 @@ bool read_OFF(std::istream& is,
   \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
-
-  \see \ref IOStreamOFF
 */
 template <typename Point, typename Vector>
 bool read_OFF(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
@@ -131,7 +127,7 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output stream in the OFF format.
+  \brief Writes the content of a point set into an output stream in the \ref IOStreamOFF.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -150,8 +146,6 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
   \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
-
-  \see \ref IOStreamOFF
  */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
@@ -176,7 +170,7 @@ bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output file in the OFF format.
+  \brief Writes the content of a point set into an output file in the \ref IOStreamOFF.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -195,9 +189,7 @@ bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
-
-  \see \ref IOStreamOFF
- */
+*/
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {

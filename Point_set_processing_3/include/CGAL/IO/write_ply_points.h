@@ -51,6 +51,7 @@ namespace CGAL {
      \tparam PointMap the property map used to store points.
 
      \sa `write_PLY_with_properties()`
+     \sa \ref IOStreamPLY
   */
   template <typename PointMap>
   std::tuple<PointMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
@@ -67,6 +68,7 @@ namespace CGAL {
      \tparam VectorMap the property map used to store vectors.
 
      \sa `write_PLY_with_properties()`
+     \sa \ref IOStreamPLY
   */
   template <typename VectorMap>
   std::tuple<VectorMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
@@ -76,9 +78,9 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   Saves the range of `points` with properties to a
-   .ply stream. %PLY is either ASCII or binary depending on the value
-   of `CGAL::get_mode(os)`.
+   \brief Saves the range of `points` with properties to a .ply stream.
+
+   %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
    Properties are handled through a variadic list of property
    handlers. A `PropertyHandler` can either be:
@@ -100,6 +102,7 @@ namespace CGAL {
 
    \return `true` on success.
 
+   \sa \ref IOStreamPLY
    \sa `make_ply_point_writer()`
    \sa `make_ply_normal_writer()`
 */
@@ -137,9 +140,9 @@ template <typename PointRange,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   Saves the range of `points` (positions + normals, if available) to
-   a .ply stream. %PLY is either ASCII or binary depending on the
-   value of `CGAL::get_mode(os)`.
+   \brief Saves the range of `points` (positions + normals, if available) to a .ply stream.
+
+    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -221,9 +224,9 @@ bool write_PLY(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   Saves the range of `points` (positions + normals, if available) to
-   a .ply stream. %PLY is either ASCII or binary depending on the
-   value of `CGAL::get_mode(os)`.
+   \brief Saves the range of `points` (positions + normals, if available) to a .ply stream.
+
+   %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -260,6 +263,8 @@ bool write_PLY(std::ostream& os,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamPLY
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* filename,

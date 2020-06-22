@@ -66,13 +66,14 @@
 namespace CGAL {
 
 /**
-   \ingroup PkgPointSetProcessing3IOLas
+ \ingroup PkgPointSetProcessing3IOLas
 
-   Generates a %LAS property handler to write 3D points.
+ Generates a %LAS property handler to write 3D points.
 
-   \tparam PointMap the property map used to store points.
+ \tparam PointMap the property map used to store points.
 
-   \sa `write_LAS()`
+ \sa `write_LAS()`
+ \sa \ref IOStreamLAS
 */
 template <typename PointMap>
 std::tuple<PointMap, LAS_property::X, LAS_property::Y, LAS_property::Z >
@@ -180,6 +181,7 @@ namespace LAS {
    \return `true` on success.
 
    \sa `make_las_point_writer()`
+   \sa \ref IOStreamLAS
 */
 template <typename PointRange,
           typename PointMap,
@@ -276,6 +278,8 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamLAS
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(std::ostream& os,
@@ -338,6 +342,8 @@ bool write_LAS(std::ostream& os,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamLAS
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(const char* filename,

@@ -224,7 +224,7 @@ public:
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads a point set with properties from an input stream in ASCII or Binary PLY format.
+  \brief Reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -245,8 +245,6 @@ public:
   \param comments optional PLY comments.
 
   \return `true` if the reading was successful, `false` otherwise.
-
-  \see \ref IOStreamPLY
  */
 template <typename Point, typename Vector>
 bool read_PLY(std::istream& is,
@@ -302,7 +300,7 @@ bool read_PLY(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads a point set with properties from an input stream in ASCII or Binary PLY format.
+  \brief Reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -323,8 +321,6 @@ bool read_PLY(std::istream& is,
   \param comments optional PLY comments.
 
   \return `true` if the reading was successful, `false` otherwise.
-
-  \see \ref IOStreamPLY
 */
 template <typename Point, typename Vector>
 bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
@@ -398,7 +394,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes a point set with properties in an output stream in PLY format.
+  \brief Writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
   If found, the normal map is inserted to the stream. All other
   properties with simple types are inserted in the stream.
@@ -664,7 +660,7 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes a point set with properties in an output stream in PLY format.
+  \brief Writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
   If found, the normal map is inserted to the stream. All other
   properties with simple types are inserted in the stream.
@@ -691,7 +687,6 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \cgalNamedParamsEnd
 
   \return `true` if the reading was successful, `false` otherwise.
-  \see \ref IOStreamPLY
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set,

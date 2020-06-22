@@ -39,7 +39,8 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   Reads points (positions + normals, if available) from a .xyz ASCII stream.
+   \brief Reads points (positions + normals, if available) from a .xyz ASCII stream.
+
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
    The first line may contain the number of points in the file.
@@ -75,6 +76,8 @@ namespace CGAL {
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamXYZ
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -184,7 +187,8 @@ bool read_XYZ(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   Reads points (positions + normals, if available) from a .xyz ASCII file.
+   \brief Reads points (positions + normals, if available) from a .xyz ASCII file.
+
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
    The first line may contain the number of points in the file.
@@ -220,6 +224,8 @@ bool read_XYZ(std::istream& is,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamXYZ
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,

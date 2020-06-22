@@ -42,7 +42,8 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   Reads points (positions + normals, if available) from a .off ASCII stream.
+   \brief Reads points (positions + normals, if available) from a .off ASCII stream.
+
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
    Faces are ignored.
@@ -77,6 +78,8 @@ namespace CGAL {
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamOFF
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -197,7 +200,8 @@ bool read_OFF(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   Reads points (positions + normals, if available) from a .off ASCII file.
+   \brief Reads points (positions + normals, if available) from a .off ASCII file.
+
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
    Faces are ignored.
@@ -232,6 +236,8 @@ bool read_OFF(std::istream& is,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamOFF
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,

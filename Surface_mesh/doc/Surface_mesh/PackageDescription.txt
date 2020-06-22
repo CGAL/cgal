@@ -34,8 +34,6 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 
 \cgalClassifedRefPages
 
-
-
 \cgalCRPSection{Classes}
 
 - `CGAL::Surface_mesh<P>`

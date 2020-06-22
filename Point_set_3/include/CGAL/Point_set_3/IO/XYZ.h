@@ -40,7 +40,7 @@ class Point_set_3;
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an intput stream in the XYZ format into a point set.
+  \brief Reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -49,8 +49,6 @@ class Point_set_3;
   \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
-
-  \see \ref IOStreamXYZ
  */
 template <typename Point, typename Vector>
 bool read_XYZ(std::istream& is,
@@ -81,7 +79,7 @@ bool read_XYZ(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an input XYZ file in a point set.
+  \brief Reads the content of an input file in the the \ref IOStreamXYZ into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -90,8 +88,6 @@ bool read_XYZ(std::istream& is,
   \param point_set the point set
 
   \return `true` if the reading was successful, `false` otherwise.
-
-  \see \ref IOStreamXYZ
 */
 template <typename Point, typename Vector>
 bool read_XYZ(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
@@ -129,7 +125,7 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output stream in the XYZ format.
+  \brief Writes the content of a point set into an output stream in the \ref IOStreamXYZ.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -148,8 +144,6 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
   \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
-
-  \see \ref IOStreamXYZ
  */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(std::ostream& os,
@@ -173,7 +167,7 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output file in the XYZ format.
+  \brief Writes the content of a point set into an output file in the \ref IOStreamXYZ.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -192,8 +186,6 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
-
-  \see \ref IOStreamXYZ
  */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)

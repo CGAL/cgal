@@ -47,6 +47,8 @@ namespace CGAL {
  *              will appear in the output.
  *
  * \return `true` if the writing is successful, `false` otherwise.
+ *
+ * \sa `read_3MF()`
  */
 template<typename GraphRange>
 bool write_3MF(const std::string& filename,

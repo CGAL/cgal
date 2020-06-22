@@ -69,6 +69,7 @@ struct PLY_property
    \tparam PointMap the property map used to store points.
 
    \sa `read_PLY_with_properties()`
+   \sa \ref IOStreamPLY
 */
 template <typename PointMap>
 std::tuple<PointMap,
@@ -88,6 +89,7 @@ make_ply_point_reader(PointMap point_map);
    \tparam VectorMap the property map used to store vectors.
 
    \sa `read_PLY_with_properties()`
+   \sa \ref IOStreamPLY
 */
 template <typename VectorMap>
 std::tuple<VectorMap,
@@ -100,8 +102,8 @@ make_ply_normal_reader(VectorMap normal_map);
 /**
   \ingroup PkgPointSetProcessingIOPly
 
-  Reads user-selected points properties from a .ply stream (ASCII or
-  binary).
+  \brief Reads user-selected points properties from a .ply stream (ASCII or binary).
+
   Potential additional point properties and faces are ignored.
 
   Properties are handled through a variadic list of property
@@ -128,6 +130,7 @@ make_ply_normal_reader(VectorMap normal_map);
 
   \sa `make_ply_point_reader()`
   \sa `make_ply_normal_reader()`
+  \sa \ref IOStreamPLY
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -192,8 +195,9 @@ bool read_PLY_with_properties(std::istream& is,
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
-   Reads points (positions + normals, if available) from a .ply
-   stream (ASCII or binary).
+
+   \brief Reads points (positions + normals, if available) from a .ply stream (ASCII or binary).
+
    Potential additional point properties and faces are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
@@ -263,8 +267,9 @@ bool read_PLY(std::istream& is,
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
-   Reads points (positions + normals, if available) from a .ply
-   file (ASCII or binary).
+
+   \brief Reads points (positions + normals, if available) from a .ply file (ASCII or binary).
+
    Potential additional point properties and faces are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
@@ -297,6 +302,8 @@ bool read_PLY(std::istream& is,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
+   \sa \ref IOStreamPLY
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,

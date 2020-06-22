@@ -134,6 +134,7 @@ typedef Base<unsigned short, Id::I> I;
    \tparam PointMap the property map used to store points.
 
    \sa `read_LAS_with_properties()`
+   \sa \ref IOStreamLAS
 */
 template <typename PointMap>
 std::tuple<PointMap,
@@ -317,7 +318,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Reads user-selected points properties from a .las or .laz stream.
+   \brief Reads user-selected points properties from a .las or .laz stream.
    Potential additional properties are ignored.
 
    Properties are handled through a variadic list of property
@@ -369,6 +370,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    \return `true` on success.
 
    \sa `make_las_point_reader()`
+   \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -413,6 +415,7 @@ bool read_LAS_with_properties(std::istream& is,
    \ingroup PkgPointSetProcessing3IOLas
 
    \brief Reads points (position only) from a .las or .laz stream.
+
    Potential additional properties are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
@@ -439,6 +442,7 @@ bool read_LAS_with_properties(std::istream& is,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+   \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -462,6 +466,7 @@ bool read_LAS(std::istream& is,
    \ingroup PkgPointSetProcessing3IOLas
 
    \brief Reads points (position only) from a .las or .laz stream.
+
    Potential additional properties are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
@@ -488,6 +493,7 @@ bool read_LAS(std::istream& is,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+   \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -563,7 +569,8 @@ bool read_LAS(const char* fname, OutputIterator output)
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Reads points (position only) from a .las or .laz file.
+   \brief Reads points (position only) from a .las or .laz file.
+
    Potential additional properties are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
@@ -591,6 +598,7 @@ bool read_LAS(const char* fname, OutputIterator output)
    \cgalNamedParamsEnd
 
    \return `true` on success.
+   \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)

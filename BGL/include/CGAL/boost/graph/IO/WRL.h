@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
   \ingroup PkgBGLIOFct
 
-  \brief Writes the graph `g` in the \ref IOStreamWRL (VRML 2.0).
+  \brief Writes the graph `g` into the output stream, using the \ref IOStreamWRL (VRML 2.0).
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
