@@ -109,7 +109,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 /*!
  * \ingroup PkgBGLIOFct
  *
- * \brief reads a PolyData in the VTP format into a triangulated surface mesh.
+ * \brief Reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
  *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -136,8 +136,6 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  * \attention The graph `g` is not cleared, and the data from the stream is added.
  *
  * \returns `true` if reading was successful
- *
- * \see \ref IOStreamVTK
 */
 template<typename Graph,
          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -381,7 +379,7 @@ void write_polys_points(std::ostream& os,
 
 /*! \ingroup PkgBGLIOFct
  *
- * \brief writes a triangulated surface mesh in the `PolyData` XML format.
+ * \brief Writes a triangulated surface mesh in the `PolyData` XML format (\ref IOStreamVTK).
  *
  * \tparam Graph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -415,8 +413,6 @@ void write_polys_points(std::ostream& os,
  * \cgalNamedParamsEnd
  *
  * \pre `g` contains only triangular faces
- *
- * \see \ref IOStreamVTK
  */
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
@@ -463,12 +459,12 @@ bool write_VTP(std::ostream& os,
   }
   os << "</VTKFile>\n";
 
-  return true;
+  return os.good();
 }
 
 /*! \ingroup PkgBGLIOFct
  *
- * \brief writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format.
+ * \brief Writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format (\ref IOStreamVTK).
  *
  * \tparam Graph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -503,8 +499,6 @@ bool write_VTP(std::ostream& os,
  * \cgalNamedParamsEnd
  *
  * \pre `g` contains only triangular faces
- *
- * \see \ref IOStreamVTK
  */
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)

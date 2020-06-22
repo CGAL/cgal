@@ -208,7 +208,7 @@ naming `.node`, `.ele` and `.face`
 This can be done using the function \ref CGAL::output_to_tetgen()
 
 
-\section IOStreamGocad GOCAD (TS) File Formt
+\section IOStreamGocad GOCAD (TS) File Format
 The `.ts` format is an ASCII file format that allows a range of primitive types to be imported into the GOCAD package.
 A precise specification of the format is available <a href="http://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
 

@@ -82,7 +82,9 @@ public:
 
 /// \ingroup PkgBGLIOFct
 ///
-/// reads the graph `g` from the input stream in the TS format.
+/// \brief Reads the graph `g` from the input stream in the \ref IOStreamGocad.
+///
+/// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
 /// \tparam Graph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -106,11 +108,8 @@ public:
 ///
 /// \pre The data must represent a 2-manifold
 ///
-/// \attention The graph `g` is not cleared, and the data from the stream is added.
-///
 /// \returns `true` if the resulting mesh is valid.
 ///
-/// \see \ref IOStreamGocad
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
@@ -147,7 +146,9 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 
 /// \ingroup PkgBGLIOFct
 ///
-/// reads the graph `g` from the file `fname` in the TS format.
+/// \brief Reads the graph `g` from the file `fname` in the \ref IOStreamGocad.
+///
+/// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
 /// \tparam Graph a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -173,7 +174,6 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 ///
 /// \pre The data must represent a 2-manifold
 ///
-/// \see \ref IOStreamGocad
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname,
@@ -212,13 +212,13 @@ bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g
 
 /// \ingroup PkgBGLIOFct
 ///
-/// writes the graph `g` in the TS format into `os`.
+/// \brief Writes the graph `g` in the \ref IOStreamGocad into `os`.
 ///
 /// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param os the stream into which `g` is dumped
-/// \param name the name that will be assigned to `g` in the file
+/// \param os the output stream
+/// \param name the name that will be assigned to `g` in the output file
 /// \param g the graph to be output
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
@@ -233,7 +233,6 @@ bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-/// \see \ref IOStreamGocad
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
@@ -301,8 +300,9 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
 
 /// \ingroup PkgBGLIOFct
 ///
-/// writes the graph `g` in the TS format into a file named `fname`. In this overload,
-/// `fname` is used as the name of the graph within the file.
+/// \brief Writes the graph `g` in the  \ref IOStreamGocad into a file named `fname`.
+///
+/// In this overload, `fname` is used as the name of the graph within the file.
 ///
 /// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -320,11 +320,16 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 ///                     must be available in `Graph`.}
 ///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{stream_precision}
+///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+///     \cgalParamType{int}
+///     \cgalParamDefault{`6`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
 ///
-/// \see \ref IOStreamGocad
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(const char* fname,
@@ -343,8 +348,9 @@ bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLA
 
 /// \ingroup PkgBGLIOFct
 ///
-/// writes the graph `g` in the TS format into `os`. The name
-/// assigned to `g`in the output is `anonymous`.
+/// \brief Writes the graph `g` in the  \ref IOStreamGocad into `os`.
+///
+/// The name assigned to `g`in the output is `anonymous`.
 ///
 /// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -364,7 +370,6 @@ bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLA
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-/// \see \ref IOStreamGocad
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,

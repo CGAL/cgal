@@ -74,8 +74,11 @@ public:
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from the stream `in` in the OBJ format. Ignores comment lines which start with a hash,
-  and lines with whitespace.
+  \brief Reads the graph `g` from the stream `in` in the \ref IOStreamOBJ.
+
+  Ignores comment lines which start with a hash, and lines with whitespace.
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -98,12 +101,9 @@ public:
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
-
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOBJ
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -122,8 +122,11 @@ bool read_OBJ(std::istream& is,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the OBJ format. Ignores comment lines which start with a hash,
-  and lines with whitespace.
+  \brief Reads the graph `g` from data in the \ref IOStreamOBJ.
+
+  Ignores comment lines which start with a hash, and lines with whitespace.
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -146,12 +149,9 @@ bool read_OBJ(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
-
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOBJ
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -187,7 +187,7 @@ bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, pa
 /*!
  \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the OBJ format.
+  \brief Writes the graph `g` in the \ref IOStreamOBJ.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -210,7 +210,6 @@ bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, pa
   \returns `true` if writing was successful.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOBJ
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -225,7 +224,7 @@ bool write_OBJ(std::ostream& os,
 /*!
 \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the OBJ format into a file named `fname`.
+  \brief Writes the graph `g` in the \ref IOStreamOBJ into a file named `fname`.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -248,7 +247,6 @@ bool write_OBJ(std::ostream& os,
   \returns `true` if writing was successful.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOBJ
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

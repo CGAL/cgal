@@ -88,8 +88,11 @@ bool read_OFF_BGL(std::istream& is,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash,
-  and lines with whitespace.
+  \brief Reads the graph `g` from data in the \ref IOStreamOFF.
+
+  Ignores comment lines which start with a hash, and lines with whitespace.
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -140,12 +143,9 @@ bool read_OFF_BGL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
-
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOFF
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -171,8 +171,11 @@ bool read_OFF(std::istream& is, Graph& g,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from `fname`, a file in the OFF format. Ignores comment lines which start with a hash,
-  and lines with whitespace.
+  \brief Reads the graph `g` from `fname`, a file in the \ref IOStreamOFF.
+
+  Ignores comment lines which start with a hash, and lines with whitespace.
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -223,12 +226,9 @@ bool read_OFF(std::istream& is, Graph& g,
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
-
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOFF
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -288,7 +288,7 @@ bool write_OFF_BGL(std::ostream& os,
 /*!
   \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the OFF format.
+  \brief Writes the graph `g` in the \ref IOStreamOFF.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -345,7 +345,6 @@ bool write_OFF_BGL(std::ostream& os,
   \returns `true` if writing was successful.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOFF
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -370,7 +369,7 @@ bool write_OFF(std::ostream& os, const Graph& g,
 /*!
   \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the file `fname`, in the OFF format.
+  \brief Writes the graph `g` in the file `fname`, in the \ref IOStreamOFF.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -427,7 +426,6 @@ bool write_OFF(std::ostream& os, const Graph& g,
   \returns `true` if writing was successful.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamOFF
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

@@ -83,7 +83,7 @@ bool read_PLY_BGL(std::istream& is,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the PLY format.
+  \brief Reads the graph `g` from data in the \ref IOStreamPLY.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -128,8 +128,6 @@ bool read_PLY_BGL(std::istream& is,
   \pre The data must represent a 2-manifold
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \see \ref IOStreamPLY
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -155,7 +153,7 @@ bool read_PLY(std::istream& is, Graph& g,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from a file named `fname`, in the PLY format.
+  \brief Reads the graph `g` from a file named `fname`, in the \ref IOStreamPLY.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -200,8 +198,6 @@ bool read_PLY(std::istream& is, Graph& g,
   \pre The data must represent a 2-manifold
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \see \ref IOStreamPLY
 */
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -248,7 +244,7 @@ bool read_PLY(const std::string& fname, Graph& g,
 /*!
  \ingroup PkgBGLIOFct
 
- writes the graph in an output stream in PLY format.
+ \brief Writes the graph in an output stream in \ref IOStreamPLY.
 
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -297,8 +293,6 @@ bool read_PLY(const std::string& fname, Graph& g,
  \cgalNamedParamsEnd
 
  \returns `true` if writing was successful.
-
- \see \ref IOStreamPLY
 */
 template <typename Graph, typename NamedParameters>
 bool write_PLY(std::ostream& os,
@@ -446,9 +440,9 @@ bool write_PLY(std::ostream& os, const Graph& g,
 }
 
 /*!
-  \ingroup PkgBGLIOFct
+ \ingroup PkgBGLIOFct
 
-  writes the graph in the output file `fname` in PLY format.
+ \brief Writes the graph in the output file `fname` in the \ref IOStreamPLY.
 
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -503,8 +497,6 @@ bool write_PLY(std::ostream& os, const Graph& g,
  \cgalNamedParamsEnd
 
  \returns `true` if writing was successful.
-
- \see \ref IOStreamPLY
 */
 template <typename Graph, typename NamedParameters>
 bool write_PLY(const char* fname,

@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
   \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the wrl format (VRML 2.0).
+  \brief Writes the graph `g` in the \ref IOStreamWRL (VRML 2.0).
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -52,8 +52,6 @@ namespace CGAL {
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful.
-
-  \see \ref IOStreamWRL
 */
 template <typename Graph, typename NamedParameters>
 bool write_WRL(std::ostream& os,

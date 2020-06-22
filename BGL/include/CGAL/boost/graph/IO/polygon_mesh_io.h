@@ -19,7 +19,7 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
-//not for now.
+//not for now : some readers will return "ok" despite not managing to read anything
 /*
 template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(std::istream& is,

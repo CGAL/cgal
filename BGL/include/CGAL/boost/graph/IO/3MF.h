@@ -27,14 +27,14 @@ namespace CGAL {
 /*!
  * \ingroup PkgBGLIOFct
  *
- * \brief writes the triangle meshes contained in `gs` into the 3mf file `file_name`.
+ * \brief Writes the triangle meshes contained in `gs` into the 3mf file `filename`.
  *
  * \tparam GraphRange a model of the concepts `RandomAccessContainer`
  *                    and `BackInsertionSequence` whose `value type` is
  *                    a model of the concepts `FaceGraph` and `HalfedgeListGraph`
  *                    that has only triangle faces.
  *
- * \param file_name the name of the 3mf file to write.
+ * \param filename the name of the 3mf file to write.
  * \param gs a container of triangle meshes to write. An internal property map for `CGAL::vertex_point_t`
  *           must be available for each mesh.
  * \param names a range of `std::string` associating a name to each mesh to be written out, which
@@ -43,7 +43,7 @@ namespace CGAL {
  * \return `true` if the writing is successful, `false` otherwise.
  */
 template<typename GraphRange>
-bool write_3MF(const std::string& file_name,
+bool write_3MF(const std::string& filename,
                const GraphRange& gs,
                const std::vector<std::string>& names)
 {
@@ -91,7 +91,7 @@ bool write_3MF(const std::string& file_name,
     all_polygons.push_back(triangles);
   }
 
-  return write_triangle_soups_to_3mf(file_name, all_points, all_polygons, names);
+  return write_triangle_soups_to_3mf(filename, all_points, all_polygons, names);
 }
 
 } // namespace CGAL

@@ -69,7 +69,9 @@ public:
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from data in the STL format.
+  \brief Reads the graph `g` from data in the \ref IOStreamSTL.
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -92,12 +94,9 @@ public:
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
-
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamSTL
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
@@ -115,7 +114,9 @@ bool read_STL(std::istream& is,
 /*!
   \ingroup PkgBGLIOFct
 
-  reads the graph `g` from the file `fname` in the STL format.
+  \brief Reads the graph `g` from the file `fname` in the \ref IOStreamSTL.
+
+  \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -138,12 +139,9 @@ bool read_STL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream is added.
-
   \returns `true` if the resulting mesh is valid.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
-  \see \ref IOStreamSTL
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
@@ -174,7 +172,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 /*!
   \ingroup PkgBGLIOFct
 
-  writes the graph `g` in the stream `os` in the STL format.
+  \brief Writes the graph `g` in the stream `os` in the \ref IOStreamSTL.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -197,8 +195,6 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
   \pre The graph must contain only triangle faces.
 
   \returns `true` if writing was successful.
-
-  \see \ref IOStreamSTL
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
@@ -275,7 +271,7 @@ bool write_STL(std::ostream& os,
 /*!
 \ingroup PkgBGLIOFct
 
- writes the graph `g` in the STL format into a file named `fname`.
+ \brief Writes the graph `g` in the \ref IOStreamSTL into a file named `fname`.
 
  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -304,8 +300,6 @@ bool write_STL(std::ostream& os,
  \pre The graph must contain only triangle faces.
 
  \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
- \see \ref IOStreamSTL
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
