@@ -13,15 +13,17 @@
 #ifndef CGAL_SURFACE_MESH_IO_3MF_H
 #define CGAL_SURFACE_MESH_IO_3MF_H
 
-#ifdef CGAL_LINKED_WITH_3MF
+#include <CGAL/license/Surface_mesh.h>
 
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/IO/3MF.h>
 
 #include <iostream>
 #include <string>
 #include <vector>
+
+#if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
 namespace CGAL {
 
@@ -119,6 +121,6 @@ int read_3mf(const std::string& file_name,
 
 } // namespace CGAL
 
-#endif // CGAL_LINKED_WITH_3MF
+#endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_SURFACE_MESH_IO_3MF_H

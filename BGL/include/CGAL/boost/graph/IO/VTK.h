@@ -19,6 +19,10 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <fstream>
+#include <string>
+#include <vector>
+
 #ifdef CGAL_USE_VTK
 #include <vtkCell.h>
 #include <vtkXMLPolyDataReader.h>

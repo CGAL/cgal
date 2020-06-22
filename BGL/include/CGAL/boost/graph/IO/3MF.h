@@ -104,6 +104,6 @@ bool write_3MF(const std::string& filename,
 
 } // namespace CGAL
 
-#endif // CGAL_LINKED_WITH_3MF
+#endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_BGL_IO_3MF_H

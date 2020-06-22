@@ -19,9 +19,8 @@
 
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-#include <CGAL/Kernel_traits.h>
-
 #include <CGAL/IO/Color.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <iostream>
 #include <tuple>

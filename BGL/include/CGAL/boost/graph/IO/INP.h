@@ -18,6 +18,9 @@
 
 #include <boost/container/flat_map.hpp>
 
+#include <fstream>
+#include <string>
+
 namespace CGAL {
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

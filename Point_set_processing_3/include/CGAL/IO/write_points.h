@@ -12,6 +12,8 @@
 #ifndef CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
 #define CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/IO/write_off_points.h>
@@ -20,8 +22,6 @@
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/write_las_points.h>
 #endif
-
-#include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>
 #include <fstream>
