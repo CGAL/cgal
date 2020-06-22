@@ -366,13 +366,6 @@ Section \ref sectionPolyIntro.
 For more information, you can see the \ref IOstreamPolygonMeshIO
 section.
 
-Some example programs around the different file formats are provided
-in the distribution under <TT>examples/Polyhedron_IO/</TT> and
-<TT>demo/Polyhedron_IO/</TT>. We show an example converting OFF input
-into VRML 1.0 output.
-
-\cgalExample{Polyhedron/polyhedron2vrml.cpp}
-
 \section PolyhedronExtending Extending Vertices, Halfedges, and Facets
 
 \anchor sectionPolyExtend

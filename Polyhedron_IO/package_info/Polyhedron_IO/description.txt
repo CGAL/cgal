@@ -1,3 +1,0 @@
-File IO for CGAL::Polyhedron_3.
-
-This package is fully deprecated in favor of I/O functions in the packages BGL, Polyhedron, and Stream_support.
