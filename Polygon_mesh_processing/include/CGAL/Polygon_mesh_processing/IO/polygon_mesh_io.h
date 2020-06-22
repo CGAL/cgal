@@ -35,7 +35,7 @@ namespace IO {
 
 
 /*!
-  \ingroup pmp_io_grp
+  \ingroup PMP_IO_grp
 
  * \brief read a file as a polygon soup, and then repair and orient it before trying to convert it
  * into a `FaceGraph`.
