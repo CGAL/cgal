@@ -5,10 +5,9 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno
-
 
 #ifndef CGAL_SURFACE_MESH_IO_3MF_H
 #define CGAL_SURFACE_MESH_IO_3MF_H
@@ -27,15 +26,24 @@
 
 namespace CGAL {
 
+// @todo generalize it to any model of `FaceGraph` and put it in BGL/IO (see read_OFF for the face color map)
+
 /*!
- * Extracts the surface meshes from an input 3mf file and appends it to `output`.
- *\tparam  Point the Point type of the output meshes.
- * \param file_name the path to the 3mf file.
- * \param output a `std::vector` containing the `CGAL::Surface_mesh`s that will be filled by this function.
- * \return the number of extracted meshes.
+ * \ingroup PkgSurfaceMeshIOFunc
+ *
+ * \brief Extracts the surface meshes from an input 3mf file and appends it to `output`.
+ *
+ * \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
+ *               besides being default constructible and assignable.
+ *               In typical use cases it will be a 2D or 3D point type.
+ *
+ * \param filename the path to the 3mf file
+ * \param output a `std::vector` containing the `CGAL::Surface_mesh`s that will be filled by this function
+ *
+ * \return the number of extracted meshes
  */
 template<typename Point>
-int read_3mf(const std::string& file_name,
+int read_3MF(const std::string& filename,
              std::vector<CGAL::Surface_mesh<Point> >& output)
 {
   typedef std::vector<Point>                                  PointRange;
@@ -51,7 +59,7 @@ int read_3mf(const std::string& file_name,
   std::vector<std::vector<CGAL::Color> > all_colors;
   int result = 0;
 
-  int nb_meshes = CGAL::read_triangle_soups_from_3mf(file_name, all_points, all_polygons, all_colors, names);
+  int nb_meshes = CGAL::read_triangle_soups_from_3mf(filename, all_points, all_polygons, all_colors, names);
   if(nb_meshes < 0)
   {
     std::cerr << "Error in reading meshes." << std::endl;
@@ -118,6 +126,19 @@ int read_3mf(const std::string& file_name,
 
   return result;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_3MF()` should be used instead.
+*/
+template<typename Point>
+CGAL_DEPRECATED int read_3mf(const std::string& filename, std::vector<CGAL::Surface_mesh<Point> >& output)
+{
+  return read_3MF(filename, output);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

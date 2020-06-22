@@ -17,9 +17,18 @@
 
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
 #include <CGAL/IO/PLY.h>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 namespace IO {
@@ -702,23 +711,195 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 } // namespace internal
 } // namespace IO
 
-/// \relates Surface_mesh
-/// Inserts the surface mesh in an output stream in PLY format.
-/// If found, "v:normal", "v:color" and "f:color" are inserted in the stream.
+/// \ingroup PkgSurfaceMeshIOFunc
+///
+/// \brief Extracts the surface mesh from an input stream in ASCII or Binary PLY format
+///        and appends it to the surface mesh `sm`.
+///
+/// - the operator reads the vertex `point` property and the face
+///   `vertex_index` (or `vertex_indices`) property;
+/// - if three PLY properties `nx`, `ny` and `nz` with type `float`
+///   or `double` are found for vertices, a "v:normal" vertex
+///   property map is added;
+/// - if three PLY properties `red`, `green` and `blue` with type
+///   `uchar` are found for vertices, a "v:color" vertex property
+///   map is added;
+/// - if three PLY properties `red`, `green` and `blue` with type
+///   `uchar` are found for faces, a "f:color" face property map is
+///   added;
+/// - if any other PLY property is found, a "[s]:[name]" property map is
+///   added, where `[s]` is `v` for vertex and `f` for face, and
+///   `[name]` is the name of the PLY property.
+///
+/// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
+///               besides being default constructible and assignable.
+///               In typical use cases it will be a 2D or 3D point type.
+///
+/// \param is the input stream
+/// \param sm the surface mesh to be constructed
+/// \param comments a string used to store the potential comments found in the PLY header.
+///        Each line starting by "comment " in the header is appended to the `comments` string
+///        (without the "comment " word).
+/// \param verbose whether extra information is printed when an incident occurs during reading
+///
+/// \pre The data in the stream must represent a two-manifold. If this is not the case
+///      the `failbit` of `is` is set and the mesh cleared.
+///
+/// \return `true` on success.
+template <typename P>
+bool read_PLY(std::istream& is,
+              Surface_mesh<P>& sm,
+              std::string& comments,
+              bool verbose = true)
+{
+  typedef typename Surface_mesh<P>::size_type size_type;
+
+  if(!is.good())
+  {
+    if(verbose)
+      std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
+
+  IO::internal::PLY_reader reader(verbose);
+  IO::internal::Surface_mesh_filler<P> filler(sm);
+
+  if(!(reader.init(is)))
+  {
+    is.setstate(std::ios::failbit);
+    return false;
+  }
+
+  comments = reader.comments();
+
+  for(std::size_t i = 0; i < reader.number_of_elements(); ++ i)
+  {
+    IO::internal::PLY_element& element = reader.element(i);
+
+    bool is_vertex =(element.name() == "vertex" || element.name() == "vertices");
+    bool is_face = false;
+    bool is_edge = false;
+    bool is_halfedge = false;
+    if(is_vertex)
+    {
+      sm.reserve(sm.number_of_vertices() + size_type(element.number_of_items()),
+                 sm.number_of_edges(),
+                 sm.number_of_faces());
+      filler.instantiate_vertex_properties(element);
+    }
+    else
+      is_face =(element.name() == "face" || element.name() == "faces");
+
+    if(is_face)
+    {
+      sm.reserve(sm.number_of_vertices(),
+                 sm.number_of_edges(),
+                 sm.number_of_faces() + size_type(element.number_of_items()));
+      filler.instantiate_face_properties(element);
+    }
+    else
+      is_edge =(element.name() == "edge");
+
+    if(is_edge)
+      filler.instantiate_edge_properties(element);
+    else
+      is_halfedge =(element.name() == "halfedge");
+
+    if(is_halfedge)
+      filler.instantiate_halfedge_properties(element);
+
+    for(std::size_t j = 0; j < element.number_of_items(); ++ j)
+    {
+      for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
+      {
+        IO::internal::PLY_read_number* property = element.property(k);
+        property->get(is);
+        if(is.fail())
+          return false;
+      }
+
+      if(is_vertex)
+        filler.process_vertex_line(element);
+      else if(is_face)
+      {
+        if(!filler.process_face_line(element))
+        {
+          is.setstate(std::ios::failbit);
+          return false;
+        }
+      }
+      else if(is_edge)
+        filler.process_edge_line(element);
+      else if(is_halfedge)
+        filler.process_halfedge_line(element);
+    }
+  }
+
+  return true;
+}
+
+template <typename P>
+bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
+{
+  std::string dummy;
+  return read_PLY(is, sm, dummy);
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
+*/
+
+template <typename P>
+bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
+{
+  return read_PLY(is, sm, comments);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Write
+
+/// \ingroup PkgSurfaceMeshIOFunc
+///
+/// \brief Inserts the surface mesh in an output stream in PLY format.
+///
+/// If found, internal property maps with names "v:normal", "v:color" and "f:color" are inserted in the stream.
+///
 /// All other vertex and face properties with simple types are inserted in the stream.
 /// Edges are only inserted in the stream if they have at least one
 /// property with simple type: if they do, all edge properties with
 /// simple types are inserted in the stream. The halfedges follow
 /// the same behavior.
 ///
-/// If provided, the `comments` string is included line by line in
-/// the header of the PLY stream (each line will be precedeed by
-/// "comment ").
+/// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
+///               besides being default constructible and assignable.
+///               In typical use cases it will be a 2D or 3D point type.
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-template <typename P>
+/// \param os the output stream
+/// \param sm the surface mesh to be output
+/// \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment ")
+/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{stream_precision}
+///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+///     \cgalParamType{int}
+///     \cgalParamDefault{`6`}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
+///
+/// \returns `true` if writing was successful.
+template <typename P,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const Surface_mesh<P>& sm,
-               const std::string& comments = std::string())
+               const std::string& comments,
+               const CGAL_BGL_NP_CLASS& np)
 {
   typedef Surface_mesh<P> SMesh;
   typedef typename SMesh::Vertex_index VIndex;
@@ -726,8 +907,14 @@ bool write_PLY(std::ostream& os,
   typedef typename SMesh::Edge_index EIndex;
   typedef typename SMesh::Halfedge_index HIndex;
 
+  if(!os.good())
+    return false;
+
+  const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
+
   os << "ply" << std::endl
-     <<((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
+     << ((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
      << "comment Generated by the CGAL library" << std::endl;
 
   if(comments != std::string())
@@ -906,133 +1093,39 @@ bool write_PLY(std::ostream& os,
   return true;
 }
 
-/// Extracts the surface mesh from an input stream in ASCII or
-/// Binary PLY format and appends it to the surface mesh `sm`.
-///
-/// - the operator reads the vertex `point` property and the face
-///   `vertex_index` (or `vertex_indices`) property;
-/// - if three PLY properties `nx`, `ny` and `nz` with type `float`
-///   or `double` are found for vertices, a "v:normal" vertex
-///   property map is added;
-/// - if three PLY properties `red`, `green` and `blue` with type
-///   `uchar` are found for vertices, a "v:color" vertex property
-///   map is added;
-/// - if three PLY properties `red`, `green` and `blue` with type
-///   `uchar` are found for faces, a "f:color" face property map is
-///   added;
-/// - if any other PLY property is found, a "[s]:[name]" property map is
-///   added, where `[s]` is `v` for vertex and `f` for face, and
-///   `[name]` is the name of the PLY property.
-///
-/// The `comments` parameter can be omitted. If provided, it will be
-/// used to store the potential comments found in the PLY
-/// header. Each line starting by "comment " in the header is
-/// appended to the `comments` string (without the "comment " word).
-///
-/// \pre The data in the stream must represent a two-manifold. If this is not the case
-///      the `failbit` of `is` is set and the mesh cleared.
-/// \relates Surface_mesh
-
 template <typename P>
-bool read_PLY(std::istream& is,
-              Surface_mesh<P>& sm,
-              std::string& comments,
-              bool verbose = true)
+bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments)
 {
-  typedef typename Surface_mesh<P>::size_type size_type;
-
-  if(!is.good())
-  {
-    if(verbose)
-      std::cerr << "Error: cannot open file" << std::endl;
-    return false;
-  }
-
-  IO::internal::PLY_reader reader(verbose);
-  IO::internal::Surface_mesh_filler<P> filler(sm);
-
-  if(!(reader.init(is)))
-  {
-    is.setstate(std::ios::failbit);
-    return false;
-  }
-
-  comments = reader.comments();
-
-  for(std::size_t i = 0; i < reader.number_of_elements(); ++ i)
-  {
-    IO::internal::PLY_element& element = reader.element(i);
-
-    bool is_vertex =(element.name() == "vertex" || element.name() == "vertices");
-    bool is_face = false;
-    bool is_edge = false;
-    bool is_halfedge = false;
-    if(is_vertex)
-    {
-      sm.reserve(sm.number_of_vertices() + size_type(element.number_of_items()),
-                 sm.number_of_edges(),
-                 sm.number_of_faces());
-      filler.instantiate_vertex_properties(element);
-    }
-    else
-      is_face =(element.name() == "face" || element.name() == "faces");
-
-    if(is_face)
-    {
-      sm.reserve(sm.number_of_vertices(),
-                 sm.number_of_edges(),
-                 sm.number_of_faces() + size_type(element.number_of_items()));
-      filler.instantiate_face_properties(element);
-    }
-    else
-      is_edge =(element.name() == "edge");
-
-    if(is_edge)
-      filler.instantiate_edge_properties(element);
-    else
-      is_halfedge =(element.name() == "halfedge");
-
-    if(is_halfedge)
-      filler.instantiate_halfedge_properties(element);
-
-    for(std::size_t j = 0; j < element.number_of_items(); ++ j)
-    {
-      for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
-      {
-        IO::internal::PLY_read_number* property = element.property(k);
-        property->get(is);
-        if(is.fail())
-          return false;
-      }
-
-      if(is_vertex)
-        filler.process_vertex_line(element);
-      else if(is_face)
-      {
-        if(!filler.process_face_line(element))
-        {
-          is.setstate(std::ios::failbit);
-          return false;
-        }
-      }
-      else if(is_edge)
-        filler.process_edge_line(element);
-      else if(is_halfedge)
-        filler.process_halfedge_line(element);
-    }
-  }
-
-  return true;
+  return write_PLY(os, sm, comments, parameters::all_default());
 }
 
-/// \cond SKIP_IN_MANUAL
-template <typename P>
-bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
+template <typename P, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_BGL_NP_CLASS& np)
 {
-  std::string dummy;
-  return read_PLY(is, sm, dummy);
+  std::string unused_comment;
+  return write_PLY(os, sm, unused_comment, np);
 }
-/// \endcond
+
+template <typename P>
+bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm)
+{
+  std::string unused_comment;
+  return write_PLY(os, sm, unused_comment, parameters::all_default());
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
+*/
+
+template <typename P>
+bool write_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
+{
+  return write_PLY(is, sm, comments);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

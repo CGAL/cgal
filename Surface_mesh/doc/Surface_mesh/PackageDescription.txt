@@ -7,6 +7,7 @@
 */
 /// \defgroup PkgDrawSurfaceMesh Draw a Surface Mesh
 /// \ingroup PkgSurface_mesh
+
 /// \defgroup PkgSurfaceMeshIOFunc I/O Functions
 /// \ingroup PkgSurface_mesh
 
@@ -31,7 +32,6 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-
 \cgalClassifedRefPages
 
 \cgalCRPSection{Classes}
@@ -42,8 +42,11 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 
 - \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
 
-
-- \link PkgSurfaceMeshIOFunc `write_OFF()` \endlink
+\cgalCRPSection{I/O Functions}
+- `read_3MF()`
 - \link PkgSurfaceMeshIOFunc `read_OFF()` \endlink
+- \link PkgSurfaceMeshIOFunc `write_OFF()` \endlink
+- \link PkgSurfaceMeshIOFunc `read_PLY()` \endlink
+- \link PkgSurfaceMeshIOFunc `write_PLY()` \endlink
 */
 
