@@ -128,7 +128,7 @@ bool read_GOCAD(std::istream& is,
   name_and_color.first = builder.name;
   name_and_color.second = builder.color;
 
-  return is_valid(g); // @fixme keep validity check?
+  return true;
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
