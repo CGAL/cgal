@@ -11,6 +11,9 @@
 /// \defgroup PkgSurfaceMeshIOFunc I/O Functions
 /// \ingroup PkgSurface_mesh
 
+/// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgSurfaceMeshIOFunc
+
 /*!
 \addtogroup PkgSurface_mesh
 \cgalPkgDescriptionBegin{Surface Mesh,PkgSurfaceMesh}

@@ -130,6 +130,7 @@ int read_3MF(const std::string& filename,
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
+  \ingroup PkgSurfaceMeshIOFuncDeprecated
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_3MF()` should be used instead.
 */
 template<typename Point>
