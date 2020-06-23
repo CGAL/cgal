@@ -1299,7 +1299,7 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
   QCursor tmp_cursor(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   QList<Scene_item*> result = loader->load(fileinfo, ok, add_to_scene);
-  if(result.empty() || !ok)
+  if(!ok)
   {
     QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, tr("Error"),
@@ -2971,6 +2971,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   std::vector<QColor> colors;
   std::vector<int> rendering_modes;
   QStringList not_saved;
+  Polyhedron_demo_io_plugin_interface* camera_plugin = nullptr;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
@@ -2978,6 +2979,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     QString ext;
     for(Polyhedron_demo_io_plugin_interface* iop : io_plugins)
     {
+      if(iop->name() == "camera_positions_plugin")
+        camera_plugin = iop;
       if(iop->isDefaultLoader(item))
       {
         QString sf = iop->saveNameFilters().split(";;").first();
@@ -3006,6 +3009,23 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     loaders.push_back(std::make_pair(loader, ext));
     colors.push_back(item->color());
     rendering_modes.push_back(item->renderingMode());
+  }
+  bool has_camera_positions = false;
+  if(camera_plugin)
+  {
+    QString fullpath = make_fullpath("camera_tmp.camera.txt");
+    QList<Scene_item*> dummy;
+    if(camera_plugin->save(QFileInfo(fullpath), dummy))
+    {
+      QByteArray item = file_to_string(fullpath.toStdString().c_str());
+      os << "var camera_positions= [\'";
+      os<<qCompress(item, 9).toBase64().toStdString().c_str();
+      os << "\']\n" ;
+      //delete temp file
+      QFile tmp_file(fullpath);
+      tmp_file.remove();
+      has_camera_positions =true;
+    }
   }
   if(loaders.empty())
     return;
@@ -3069,6 +3089,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "        it.setRenderingMode(rendering_modes[index]);\n";
   os << "});\n";
   os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
+  if(has_camera_positions)
+  {
+    os<<"  var path=\"cams.camera.txt\";\n";
+    os<<"  var fullpath = main_window.write_string_to_file(camera_positions, path);\n";
+    os<<"  main_window.open(fullpath,\'camera_positions_plugin\');\n";
+  }
   os.close();
   if(!not_saved.empty())
     QMessageBox::warning(this,

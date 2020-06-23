@@ -31,8 +31,11 @@ public:
     return QList<Scene_item*>();
   }
 
-  bool canSave(const Scene_item*) override { return false; }
-  bool save(QFileInfo,QList<CGAL::Three::Scene_item*>& ) override {return false; }
+  bool canSave(const Scene_item*) override { return true; }
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override
+  {
+    return cpl->save(fileinfo.filePath());
+  }
 private:
   Camera_positions_list* cpl;
 };
