@@ -13,6 +13,8 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_FUNCTIONS_H
 
+#include <CGAL/license/Hyperbolic_triangulation_2.h>
+
 #include <CGAL/Origin.h>
 #include <CGAL/enum.h>
 
