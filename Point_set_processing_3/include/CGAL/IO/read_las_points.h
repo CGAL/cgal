@@ -381,6 +381,9 @@ bool read_LAS_with_properties(std::istream& is,
 {
   typedef OutputIteratorValueType Enriched_point;
 
+  if(!is)
+    return false;
+
   LASreaderLAS lasreader;
   lasreader.open(is);
 

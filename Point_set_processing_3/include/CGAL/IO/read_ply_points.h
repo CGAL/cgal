@@ -142,10 +142,7 @@ bool read_PLY_with_properties(std::istream& is,
   typedef typename value_type_traits<PointOutputIterator>::type OutputValueType;
 
   if(!is)
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
 
   IO::internal::PLY_reader reader(true);
 
