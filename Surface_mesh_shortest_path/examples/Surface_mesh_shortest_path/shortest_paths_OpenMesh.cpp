@@ -1,24 +1,21 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <OpenMesh/Core/IO/MeshIO.hh>
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
+#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
+
+#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
+#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
+#include <CGAL/Random.h>
+#include <CGAL/boost/graph/iterator.h>
+
+#include <boost/lexical_cast.hpp>
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <iterator>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Random.h>
-
-#include <OpenMesh/Core/IO/MeshIO.hh>
-#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
-
-#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
-
-#include <CGAL/boost/graph/iterator.h>
-
-#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
-#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
-
-#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -38,6 +35,12 @@ int main(int argc, char** argv)
   // read the input surface mesh
   Triangle_mesh tmesh;
   OpenMesh::IO::read_mesh(tmesh, (argc>1)?argv[1]:"data/elephant.off");
+
+  if(!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // pick up a random face
   const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;

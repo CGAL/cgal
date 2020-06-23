@@ -14,7 +14,8 @@ typedef CGAL::Fair<Traits> Fair;
 typedef CGAL::Orthogonal_k_neighbor_search<Traits,Distance,Fair> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
-int main() {
+int main()
+{
   const unsigned int N = 1000;
   // generator for random data points in the square ( (-1,-1), (1,1) )
   Random_points_iterator rpit( 1.0);
@@ -32,8 +33,8 @@ int main() {
 
   // report the N nearest neighbors and their distance
   // This should sort all N points by increasing distance from origin
-  for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it){
+  for(Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
     std::cout << it->first << " "<< std::sqrt(it->second) << std::endl;
-  }
+
   return 0;
 }

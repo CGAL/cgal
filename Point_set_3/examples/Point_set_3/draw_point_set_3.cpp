@@ -14,8 +14,8 @@ typedef CGAL::Point_set_3<Point> Point_set;
 int main (int argc, char** argv)
 {
   const char* filename = argc > 1 ? argv[1] : "data/oni.xyz";
-  Point_set point_set;
 
+  Point_set point_set;
   if(!CGAL::read_point_set(filename, point_set))
   {
     std::cerr << "Can't read input file " << filename << std::endl;

@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/utility.h>
 
@@ -6,7 +7,7 @@
 #include <iterator>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
+typedef Kernel::Point_3                                     Point;
 
 int main()
 {
@@ -41,9 +42,8 @@ int main()
   polyline_collinear.push_back(Point(4.,0.,0.));
 
   std::vector<Triangle_int> patch_will_be_empty;
-  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-          polyline_collinear,
-          back_inserter(patch_will_be_empty));
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(polyline_collinear,
+                                                           back_inserter(patch_will_be_empty));
   CGAL_assertion(patch_will_be_empty.empty());
 
   return 0;

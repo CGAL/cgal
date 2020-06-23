@@ -152,7 +152,7 @@ template <typename Point, typename Vector>
 std::ostream& operator<<(std::ostream& os,
                          const CGAL::Point_set_3<Point, Vector>& ps)
 {
-  write_ply_point_set(os, ps);
+  write_PLY(os, ps);
   return os;
 }
 

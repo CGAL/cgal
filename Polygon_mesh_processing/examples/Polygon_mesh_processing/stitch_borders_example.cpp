@@ -3,21 +3,24 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Polyhedron_3<K>                                 Polyhedron;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/full_border_quads.off";
-  std::ifstream input(filename);
 
   Polyhedron mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if(!PMP::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
@@ -26,7 +29,7 @@ int main(int argc, char* argv[])
   std::cout << "\t Number of halfedges :\t" << mesh.size_of_halfedges() << std::endl;
   std::cout << "\t Number of facets    :\t" << mesh.size_of_facets() << std::endl;
 
-  CGAL::Polygon_mesh_processing::stitch_borders(mesh);
+  PMP::stitch_borders(mesh);
 
   std::cout << "Stitching done : " << std::endl;
   std::cout << "\t Number of vertices  :\t" << mesh.size_of_vertices() << std::endl;

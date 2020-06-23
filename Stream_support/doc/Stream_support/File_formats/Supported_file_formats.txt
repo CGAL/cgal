@@ -48,8 +48,8 @@ and it is only supported for the CGAL::Surface_mesh.
 The following \cgal data structures can be exported into the `OFF` file format:
 
 - `CGAL::Surface_mesh` (\link PkgSurfaceMeshIOFunc write_OFF(std::ostream&, const Surface_mesh<P>&, const NamedParameters&)\endlink)
-- Any structure that is a model of the concept `FaceGraph` (\link PkgBGLIOFct write_OFF(std::ostream&,const FaceGraph&,const NamedParameters&)\endlink)
-- `CGAL::Point_set_3` (\ref write_off_point_set())
+- Any structure that is a model of the concept `FaceGraph` (\link PkgBGLIOFct write_OFF(std::ostream&, const FaceGraph&,const NamedParameters&)\endlink)
+- `CGAL::Point_set_3` (\ref write_OFF())
 
 Polygon soups can also be exported using the function write_OFF().
 Note that we only support OFF, and COFF for CGAL::Surface_mesh.

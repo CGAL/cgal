@@ -48,7 +48,7 @@ int main (int argc, char** argv)
     std::ofstream out ("out.ply",
                        std::ios_base::binary); // Mandatory on Windows
     CGAL::set_binary_mode (out); // Select binary mode (ASCII is default)
-    out << point_set; // same as `CGAL::write_ply_point_set (out, point_set)`
+    out << point_set; // same as `CGAL::write_PLY(out, point_set)`
   }
   else // ASCII output
   {

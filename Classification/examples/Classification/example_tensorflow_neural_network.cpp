@@ -36,15 +36,11 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 
 int main (int argc, char** argv)
 {
-  std::string filename = "data/b9_training.ply";
-
-  if (argc > 1)
-    filename = argv[1];
-
-  std::ifstream in (filename.c_str(), std::ios::binary);
-  Point_set pts;
+  std::string filename = (argc > 1) ? argv[1] : "data/b9_training.ply";
 
   std::cerr << "Reading input" << std::endl;
+  std::ifstream in (filename.c_str(), std::ios::binary);
+  Point_set pts;
   in >> pts;
 
   Imap label_map;

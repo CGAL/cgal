@@ -1,16 +1,13 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/Surface_mesh_shortest_path.h>
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <iterator>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Random.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Surface_mesh_shortest_path.h>
-
-
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Triangle_mesh;
@@ -24,11 +21,15 @@ typedef Graph_traits::face_descriptor face_descriptor;
 
 int main(int argc, char** argv)
 {
-  // read input tmesh
+  const char* filename = (argc>1) ? argv[1] : "data/elephant.off";
+
   Triangle_mesh tmesh;
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  input >> tmesh;
-  input.close();
+  if(!CGAL::read_polygon_mesh(filename, tmesh) ||
+     !CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // pick up some source points inside faces,
   const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;

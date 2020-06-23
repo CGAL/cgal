@@ -283,7 +283,7 @@ private:
     namespace SMS = CGAL::Surface_mesh_simplification ;
 
     mesh.clear();
-    bool b = CGAL::read_off(mesh, _filename);
+    bool b = CGAL::read_OFF(_filename, mesh);
     SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
     int r = SMS::edge_collapse(mesh, stop);
   }

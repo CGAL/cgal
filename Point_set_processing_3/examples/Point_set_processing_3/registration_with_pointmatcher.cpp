@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/write_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/aff_transformation_tags.h>

@@ -3,16 +3,18 @@
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <boost/function_output_iterator.hpp>
+
 #include <fstream>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor        halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor            edge_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -32,11 +34,11 @@ struct halfedge2edge
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
-  std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
-    std::cerr << "Not a valid input file." << std::endl;
+  if(!PMP::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
@@ -45,24 +47,18 @@ int main(int argc, char* argv[])
 
   std::cout << "Split border...";
 
-    std::vector<edge_descriptor> border;
-    PMP::border_halfedges(faces(mesh),
-      mesh,
-      boost::make_function_output_iterator(halfedge2edge(mesh, border)));
-    PMP::split_long_edges(border, target_edge_length, mesh);
+  std::vector<edge_descriptor> border;
+  PMP::border_halfedges(faces(mesh), mesh, boost::make_function_output_iterator(halfedge2edge(mesh, border)));
+  PMP::split_long_edges(border, target_edge_length, mesh);
 
   std::cout << "done." << std::endl;
 
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  PMP::isotropic_remeshing(
-      faces(mesh),
-      target_edge_length,
-      mesh,
-      PMP::parameters::number_of_iterations(nb_iter)
-      .protect_constraints(true)//i.e. protect border, here
-      );
+  PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
+                           PMP::parameters::number_of_iterations(nb_iter)
+                                           .protect_constraints(true)); //i.e. protect border, here
 
   std::cout << "Remeshing done." << std::endl;
 

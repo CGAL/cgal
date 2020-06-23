@@ -25,7 +25,7 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/sphere_1k.xyz";
 
-  // Reads a .xyz point set file in points[].
+  // Reads a point set file in points[].
   std::list<PointVectorPair> points;
   if(!CGAL::read_points(fname,
                         std::back_inserter(points),

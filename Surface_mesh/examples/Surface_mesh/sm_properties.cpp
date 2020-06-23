@@ -3,7 +3,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef Mesh::Vertex_index vertex_descriptor;
@@ -11,7 +10,6 @@ typedef Mesh::Face_index face_descriptor;
 
 int main()
 {
-
   Mesh m;
   vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
   vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));

@@ -115,10 +115,9 @@ struct Surface_fixture_3 {
 };
 
 
-struct Cube_fixture {
-  Cube_fixture() {
-    CGAL::read_mesh(m, "cube.off");
-  }
+struct Cube_fixture
+{
+  Cube_fixture() { CGAL::read_mesh(m, "cube.off"); }
 
   Sm m;
 

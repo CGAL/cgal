@@ -17,11 +17,10 @@ typedef std::pair<Point, Color> PointWithColor;
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/pig_points.las";
+
   // Reads a .las point set file with normal vectors and colors
-
-  std::vector<PointWithColor> points; // store points
   std::ifstream in(fname, std::ios_base::binary);
-
+  std::vector<PointWithColor> points; // store points
   if(!CGAL::read_LAS_with_properties(in, std::back_inserter (points),
                                      CGAL::make_las_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
                                      std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),

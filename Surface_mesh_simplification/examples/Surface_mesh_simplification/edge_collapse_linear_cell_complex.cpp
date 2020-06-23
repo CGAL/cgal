@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 {
   LCC lcc;
   const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
-  std::ifstream is(filename);
+
   if(!CGAL::read_polygon_mesh(filename, lcc))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 
   lcc.display_characteristics(std::cout) << ", is_valid=" << CGAL::is_valid(lcc) << std::endl;
 
-  CGAL::write_off((argc > 3 ? argv[3] : "out.off"), lcc);
+  CGAL::write_polygon_mesh((argc > 3 ? argv[3] : "out.off"), lcc);
 
   return EXIT_SUCCESS;
 }

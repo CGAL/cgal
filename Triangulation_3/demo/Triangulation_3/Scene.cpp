@@ -127,7 +127,7 @@ void Scene::loadPointsXYZ(const char* filename)
   /* Note: this function reads in points only (normals are ignored) */
   /* Note: this function can NOT omit comments (starting with '#') */
   list<Point_3> pts;
-  if( !CGAL::read_points( filename,  // input ifstream
+  if( !CGAL::read_XYZ( filename,  // input ifstream
                        back_inserter(pts) ) ) {  // output iterator over points
     showError( QObject::tr("Error: cannot read file %1.").arg(filename) );
   }
@@ -201,9 +201,9 @@ void Scene::savePointsXYZ(const char* filename)
 
   /* Use CGAL::write_xyz_points to write out data */
   /* Note: this function writes out points only (normals are ignored) */
-  if( !CGAL::write_xyz_points( fout,  // output ofstream
-                               CGAL::make_range (m_dt.points_begin(),  // first output point
-                                                 m_dt.points_end()) ) ) {  // past-the-end output point
+  if( !CGAL::write_XYZ( fout,  // output ofstream
+                        CGAL::make_range( m_dt.points_begin(),  // first output point
+                                          m_dt.points_end()) ) ) {  // past-the-end output point
     showError( QObject::tr("Error: cannot read file %1.").arg(filename) );
   }
 }

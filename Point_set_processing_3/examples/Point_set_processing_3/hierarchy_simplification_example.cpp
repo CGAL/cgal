@@ -15,9 +15,10 @@ typedef Kernel::Point_3 Point;
 
 int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1) ? argv[1] : "data/oni.xyz";
+
   // Reads a point set file in points[].
   std::vector<Point> points;
-  const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
   if(!CGAL::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;

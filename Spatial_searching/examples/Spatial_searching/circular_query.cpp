@@ -12,14 +12,13 @@ typedef CGAL::Search_traits_2<K>                      Traits;
 typedef CGAL::Fuzzy_sphere<Traits>                    Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits>                         Tree;
 
-int main() {
-
+int main()
+{
   const int N = 30;
   Tree tree;
   Random_points_iterator rpg;
-  for(int i = 0; i < N; i++){
+  for(int i = 0; i < N; i++)
     tree.insert(*rpg++);
-  }
 
   // fuzziness = 0
 

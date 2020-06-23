@@ -25,9 +25,8 @@ int main (int argc, char** argv)
 
   CGAL::Timer task_timer;
 
-  std::vector<Point_3> points;
-
   // read input
+  std::vector<Point_3> points;
   if(!CGAL::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: can't read input file" << std::endl;

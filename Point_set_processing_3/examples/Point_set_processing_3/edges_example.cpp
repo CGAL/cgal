@@ -20,7 +20,7 @@ typedef std::array<double,6> Covariance;
 
 int main (int , char**)
 {
-  // Reads a .xyz point set file in points[].
+  // Reads a polygon mesh file in points[].
   std::list<PointVectorPair> points;
   if(!CGAL::read_points("data/fandisk.off",
                         std::back_inserter(points),

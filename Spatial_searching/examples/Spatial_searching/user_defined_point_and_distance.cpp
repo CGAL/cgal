@@ -12,7 +12,8 @@ typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterat
 typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance> K_neighbor_search;
 typedef K_neighbor_search::Tree Tree;
 
-int main() {
+int main()
+{
   const int N = 1000;
   const unsigned int K = 5;
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
@@ -27,16 +28,20 @@ int main() {
 
   // search K nearest neighbours
   K_neighbor_search search(tree, query, K);
-  for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
+  for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++)
+  {
     std::cout << " d(q, nearest neighbor)=  "
               << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
+
   // search K furthest neighbour searching, with eps=0, search_nearest=false
   K_neighbor_search search2(tree, query, K, 0.0, false);
 
-  for(K_neighbor_search::iterator it = search2.begin(); it != search2.end(); it++){
+  for(K_neighbor_search::iterator it = search2.begin(); it != search2.end(); it++)
+  {
     std::cout << " d(q, furthest neighbor)=  "
               << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
+
   return 0;
 }

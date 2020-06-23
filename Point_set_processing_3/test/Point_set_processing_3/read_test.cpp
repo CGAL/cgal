@@ -1,13 +1,13 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/property_map.h>
-#include <CGAL/IO/read_points.h>
 
 #include <CGAL/config.h>
+#include <CGAL/IO/read_points.h>
+#include <CGAL/property_map.h>
 
-#include <vector>
 #include <cassert>
-#include <string>
 #include <fstream>
+#include <string>
+#include <vector>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
@@ -25,8 +25,7 @@ bool read(std::string s)
 bool read(std::string s,
           std::vector<PointVectorPair>& pv_pairs)
 {
-  return CGAL::read_points(s,
-                           back_inserter(pv_pairs),
+  return CGAL::read_points(s, back_inserter(pv_pairs),
                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
                                             .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
@@ -34,19 +33,17 @@ bool read(std::string s,
 bool read_off(std::string s,
               std::vector<PointVectorPair>& pv_pairs)
 {
-  return CGAL::read_OFF(s,
-                        back_inserter(pv_pairs),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  return CGAL::read_OFF(s, back_inserter(pv_pairs),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
 
 bool read_ply(std::string s,
               std::vector<PointVectorPair>& pv_pairs)
 {
-  return CGAL::read_PLY(s,
-                        back_inserter(pv_pairs),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                        normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  return CGAL::read_PLY(s, back_inserter(pv_pairs),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
 
 int main()

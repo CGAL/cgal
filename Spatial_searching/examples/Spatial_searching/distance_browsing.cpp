@@ -17,8 +17,8 @@ struct X_not_positive {
 // An iterator that only enumerates dD points with positive x-coordinate
 typedef CGAL::Filter_iterator<NN_iterator, X_not_positive> NN_positive_x_iterator;
 
-int main() {
-
+int main()
+{
   Tree tree;
   tree.insert(Point_d(0,0));
   tree.insert(Point_d(1,1));

@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/IO/read_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/write_points.h>
 #include <CGAL/property_map.h>
 
 #include <CGAL/OpenGR/compute_registration_transformation.h>

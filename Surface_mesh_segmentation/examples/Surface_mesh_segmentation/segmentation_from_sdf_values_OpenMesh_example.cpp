@@ -14,23 +14,22 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Mesh;
-
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 int main(int argc, char** argv )
 {
-  Mesh mesh;
-  if (argc==2)
-    OpenMesh::IO::read_mesh(mesh, argv[1]);
-  else
-    OpenMesh::IO::read_mesh(mesh, "data/cactus.off");
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
 
-  if (!CGAL::is_triangle_mesh(mesh)){
+  Mesh mesh;
+  OpenMesh::IO::read_mesh(mesh, filename);
+
+  if (!CGAL::is_triangle_mesh(mesh))
+  {
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
+
   std::cout << "#F : " << num_faces(mesh) << std::endl;
   std::cout << "#H : " << num_halfedges(mesh) << std::endl;
   std::cout << "#V : " << num_vertices(mesh) << std::endl;

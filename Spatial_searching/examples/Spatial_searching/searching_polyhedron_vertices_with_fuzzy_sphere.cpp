@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 {
   Mesh mesh;
   std::ifstream in((argc>1)?argv[1]:"data/tripod.off");
-  in  >> mesh;
+  in >> mesh;
 
   Vertex_point_pmap vppmap = get(CGAL::vertex_point,mesh);
   Traits traits(vppmap);

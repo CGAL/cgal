@@ -3,16 +3,16 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Classification.h>
+#include <CGAL/Real_timer.h>
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classification.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Real_timer.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -31,19 +31,15 @@ typedef Classification::Mesh_feature_generator<Kernel, Mesh, Face_point_map>    
 
 int main (int argc, char** argv)
 {
-  std::string filename = "data/b9_mesh.off";
-  std::string filename_config = "data/b9_mesh_config.gz";
+  std::string filename = (argc>1) ? argv[1] : "data/b9_mesh.off";
+  std::string filename_config = (argc>2) ? argv[2] : "data/b9_mesh_config.gz";
 
-  if (argc > 1)
-    filename = argv[1];
-  if (argc > 2)
-    filename_config = argv[2];
-
-  std::ifstream in (filename.c_str());
   Mesh mesh;
-
-  std::cerr << "Reading input" << std::endl;
-  in >> mesh;
+  if(!CGAL::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;

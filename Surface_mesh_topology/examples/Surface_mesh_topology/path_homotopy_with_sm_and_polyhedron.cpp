@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
   {
     LCC_3_cmap lcc;
-    if (!CGAL::load_off(lcc, file.c_str()))
+    if (!CGAL::read_polygon_mesh(lcc, file.c_str()))
     {
       std::cout<<"ERROR reading file "<<file<<" for linear cell complex."<<std::endl;
       exit(EXIT_FAILURE);
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
   {
     Polyhedron p;
-    if (!CGAL::read_off(file, p))
+    if (!CGAL::read_polygon_mesh(file, p))
     {
       std::cout<<"ERROR reading file "<<file<<" for polyhedron."<<std::endl;
       exit(EXIT_FAILURE);
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
   {
     SM sm;
-    if (!CGAL::read_off(file, sm))
+    if (!CGAL::read_polygon_mesh(file, sm))
     {
       std::cout<<"ERROR reading file "<<file<<" for surface mesh."<<std::endl;
       exit(EXIT_FAILURE);

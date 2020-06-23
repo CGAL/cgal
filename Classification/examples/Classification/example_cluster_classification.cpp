@@ -49,19 +49,16 @@ typedef Classification::Cluster<Point_set, Pmap>                             Clu
 
 int main (int argc, char** argv)
 {
-  std::string filename        = "data/b9.ply";
-  std::string filename_config = "data/b9_clusters_config.gz";
-
-  if (argc > 1)
-    filename = argv[1];
-  if (argc > 2)
-    filename_config = argv[2];
-
-  std::ifstream in (filename.c_str(), std::ios::binary);
-  Point_set pts;
+  std::string filename        = (argc>1) ? argv[1] : "data/b9.ply";
+  std::string filename_config = (argc>2) ? argv[2] : "data/b9_clusters_config.gz";
 
   std::cerr << "Reading input" << std::endl;
-  in >> pts;
+  Point_set pts;
+  if(!(CGAL::read_point_set(filename, pts)))
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   std::cerr << "Estimating normals" << std::endl;
   CGAL::Real_timer t;

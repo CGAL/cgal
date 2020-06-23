@@ -68,9 +68,8 @@ int main()
 
   CGAL::Timer t;
   t.start();
-  if (!CGAL::read_points(input_file.c_str(),
-                      std::back_inserter(points),
-                      CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
+  if (!CGAL::read_points(input_file.c_str(), std::back_inserter(points),
+                         CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -127,8 +126,7 @@ int main()
   }
 
   const std::string& output_file("data/cube_result.off");
-  std::ofstream output_stream(output_file.c_str());
-  if (output_stream && CGAL::write_off(output_stream, model))
+  if (CGAL::write_OFF(output_file, model))
     std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
   else {
     std::cerr << " Failed saving file." << std::endl;
@@ -142,7 +140,7 @@ int main()
   algo.output_candidate_faces(candidate_faces);
   const std::string& candidate_faces_file("data/cube_candidate_faces.off");
   std::ofstream candidate_stream(candidate_faces_file.c_str());
-  if (candidate_stream && CGAL::write_off(candidate_stream, candidate_faces))
+  if (CGAL::write_OFF(candidate_stream, candidate_faces))
     std::cout << "Candidate faces saved to " << candidate_faces_file << "." << std::endl;
 
   return EXIT_SUCCESS;

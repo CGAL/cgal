@@ -1,7 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -14,13 +15,12 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
-  std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty())
+  if(!PMP::read_polygon_mesh(filename, mesh))
   {
-    std::cerr << "Not a valid .off file." << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
   }
 
   const unsigned int nb_iterations = (argc > 2) ? std::atoi(argv[2]) : 10;

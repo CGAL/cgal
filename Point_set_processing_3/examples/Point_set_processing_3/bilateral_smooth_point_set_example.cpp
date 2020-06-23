@@ -25,7 +25,7 @@ int main(int argc, char*argv[])
   const char* input_filename = (argc>1) ? argv[1] : "data/fin90_with_PCA_normals.xyz";
   const char* output_filename = (argc>2) ? argv[2] : "data/fin90_with_PCA_normals_bilateral_smoothed.xyz";
 
-  // Reads a .xyz point set file in points[] * with normals *.
+  // Reads a point set file in points[] * with normals *.
   std::vector<PointVectorPair> points;
   if(!CGAL::read_points(input_filename, std::back_inserter(points),
                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())

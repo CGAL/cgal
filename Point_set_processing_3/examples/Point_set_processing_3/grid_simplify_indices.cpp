@@ -13,10 +13,11 @@ typedef Kernel::Vector_3 Vector;
 
 int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1) ? argv[1] : "data/fin90_with_PCA_normals.xyz";
+
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::vector<Vector> normals;
-  const char* fname = (argc>1) ? argv[1] : "data/fin90_with_PCA_normals.xyz";
   std::ifstream stream(fname);
   Point p;
   Vector v;

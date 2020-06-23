@@ -18,11 +18,11 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
 int main()
 {
   CGAL::Random_points_in_sphere_3<Point_3> gen(100.0);
-  std::list<Point_3>   points;
+  std::list<Point_3> points;
 
   // generate 250 points randomly in a sphere of radius 100.0
   // and insert them into the triangulation
-  std::copy_n(gen, 250, std::back_inserter(points) );
+  std::copy_n(gen, 250, std::back_inserter(points));
   Delaunay T;
   T.insert(points.begin(), points.end());
 

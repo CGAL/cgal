@@ -13,11 +13,15 @@ typedef CGAL::Surface_mesh<K::Point_3>                           SM;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1)?argv[1]:"data/blobby.off";
+  const char* filename = (argc>1) ? argv[1] : "data/blobby.off";
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
   SM sm;
-  CGAL::read_polygon_mesh(filename, sm);
+  if(!CGAL::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   // The vertex <--> partition_id property map
   typedef SM::Property_map<SM::Vertex_index, std::size_t>          Vertex_id_map;

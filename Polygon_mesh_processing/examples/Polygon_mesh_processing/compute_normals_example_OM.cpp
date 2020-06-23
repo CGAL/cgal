@@ -9,16 +9,14 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_3 Point;
-typedef K::Vector_3 Vector;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+typedef K::Point_3                                            Point;
+typedef K::Vector_3                                           Vector;
 
-typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
+typedef OpenMesh::PolyMesh_ArrayKernelT< >                    Mesh;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-
-
+typedef boost::graph_traits<Mesh>::vertex_descriptor          vertex_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 int main(int argc, char* argv[])
 {
@@ -33,26 +31,23 @@ int main(int argc, char* argv[])
   mesh.add_property(vnormals.handle());
 
   Vector v(0, 0, 0);
-  for(vertex_descriptor vd : vertices(mesh)){
-      put(vnormals, vd, v);
-    }
-  for(face_descriptor fd : faces(mesh)){
-      put(fnormals, fd, v);
-    }
-  CGAL::Polygon_mesh_processing::compute_normals
-    (mesh,
-     vnormals,
-     fnormals,
-     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
-     geom_traits(K()));
+  for(vertex_descriptor vd : vertices(mesh))
+    put(vnormals, vd, v);
+
+  for(face_descriptor fd : faces(mesh))
+    put(fnormals, fd, v);
+
+  CGAL::Polygon_mesh_processing::compute_normals(mesh, vnormals, fnormals,
+                                                 CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))
+                                                                  .geom_traits(K()));
 
   std::cout << "Face normals :" << std::endl;
-  for(face_descriptor fd : faces(mesh)){
+  for(face_descriptor fd : faces(mesh))
     std::cout << fnormals[fd] << std::endl;
-  }
+
   std::cout << "Normals at vertices :" << std::endl;
-  for(vertex_descriptor vd : vertices(mesh)){
+  for(vertex_descriptor vd : vertices(mesh))
     std::cout << vnormals[vd] << std::endl;
-  }
+
   return 0;
 }

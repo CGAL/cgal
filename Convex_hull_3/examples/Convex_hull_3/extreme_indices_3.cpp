@@ -8,22 +8,19 @@
 #include <vector>
 #include <fstream>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 typedef K::Point_3                                               Point_3;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in( (argc>1)? argv[1] : "data/star.off");
+  const char* filename = (argc>1) ? argv[1] : "data/star.off";
 
-  if(!in)
+  std::vector<Point_3> points;
+  if(!CGAL::read_points(filename, std::back_inserter(points)))
   {
     std::cerr<< "Cannot open input file." <<std::endl;
     return 1;
   }
-
-  std::vector<Point_3> points;
-  CGAL::read_points(in, std::back_inserter(points));
 
   //This will contain the extreme vertices
   std::vector<std::size_t> extreme_point_indices;
@@ -33,6 +30,7 @@ int main(int argc, char* argv[])
                                           boost::counting_iterator<std::size_t>(points.size())),
                          std::back_inserter(extreme_point_indices),
                          CGAL::make_extreme_points_traits_adapter(CGAL::make_property_map(points)));
+
   //print the number of extreme vertices
   std::cout << "Indices of points on the convex hull are:\n";
   std::copy(extreme_point_indices.begin(), extreme_point_indices.end(), std::ostream_iterator<std::size_t>(std::cout, " "));

@@ -47,12 +47,11 @@ typedef Classification::Feature::Vertical_dispersion<Kernel, Point_range, Pmap> 
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
-  std::ifstream in (filename.c_str());
-  std::vector<Point> pts;
+  const char* filename = (argc > 1) ? argv[1] : "data/b9.ply";
 
   std::cerr << "Reading input" << std::endl;
-  if (!in || !(CGAL::read_points(in, std::back_inserter(pts))))
+  std::vector<Point> pts;
+  if (!(CGAL::read_points(filename, std::back_inserter(pts))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

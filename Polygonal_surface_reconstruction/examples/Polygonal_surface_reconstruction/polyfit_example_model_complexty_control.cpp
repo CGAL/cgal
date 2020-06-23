@@ -50,13 +50,11 @@ int main()
   CGAL::Timer t;
   t.start();
 
-  if (!input_stream ||
-    !CGAL::read_PLY_with_properties(
-      input_stream,
-      std::back_inserter(points),
-      CGAL::make_ply_point_reader(Point_map()),
-      CGAL::make_ply_normal_reader(Normal_map()),
-      std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
+  if (!CGAL::read_PLY_with_properties(input_stream,
+                                      std::back_inserter(points),
+                                      CGAL::make_ply_point_reader(Point_map()),
+                                      CGAL::make_ply_normal_reader(Normal_map()),
+                                      std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -93,8 +91,7 @@ int main()
   }
   else {
        const std::string& output_file = "data/building_result-0.05.off";
-       std::ofstream output_stream(output_file.c_str());
-       if (output_stream && CGAL::write_off(output_stream, model))
+       if (CGAL::write_OFF(output_file, model))
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
        else {
            std::cerr << " Failed saving file." << std::endl;
@@ -111,8 +108,7 @@ int main()
   }
   else {
        const std::string& output_file = "data/building_result-0.5.off";
-       std::ofstream output_stream(output_file.c_str());
-       if (output_stream && CGAL::write_off(output_stream, model))
+       if (CGAL::write_OFF(output_file, model))
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
        else {
            std::cerr << " Failed saving file." << std::endl;
@@ -129,8 +125,7 @@ int main()
   }
   else {
     const std::string& output_file = "data/building_result-0.7.off";
-    std::ofstream output_stream(output_file.c_str());
-    if (output_stream && CGAL::write_off(output_stream, model))
+    if (CGAL::write_OFF(output_file, model))
       std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
     else {
       std::cerr << " Failed saving file." << std::endl;

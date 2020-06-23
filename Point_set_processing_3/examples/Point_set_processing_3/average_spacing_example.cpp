@@ -22,7 +22,7 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
 
-  // Reads a .xyz point set file in points.
+  // Reads a file in points.
   // As the point is the second element of the tuple (that is with index 1)
   // we use a property map that accesses the 1st element of the tuple.
 

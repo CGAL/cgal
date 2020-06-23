@@ -240,11 +240,10 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // Reads a .off or .xyz point set file in points[].
+    // Reads a point set file in points[].
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
-    // If OFF file format
     if(!CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
