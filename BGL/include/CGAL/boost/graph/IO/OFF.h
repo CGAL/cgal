@@ -266,6 +266,32 @@ bool read_OFF(const std::string& fname, Graph& g,
   return read_OFF(fname, g, parameters::all_default());
 }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+ \ingroup PkgBGLIOFctDeprecated
+
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_OFF()` should be used instead.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_off(std::ostream& os, Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_OFF(os, g, np);
+}
+
+/*!
+\ingroup PkgBGLIOFctDeprecated
+
+\deprecated This function is deprecated since \cgal 5.2, `CGAL::read_OFF()` should be used instead.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+ return read_OFF(fname, g, np);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
@@ -466,6 +492,32 @@ bool write_OFF(const std::string& fname, const Graph& g,
 {
   return write_OFF(fname.c_str(), g, parameters::all_default());
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+ \ingroup PkgBGLIOFctDeprecated
+
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_OFF()` should be used instead.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_OFF(os, g, np);
+}
+
+/*!
+\ingroup PkgBGLIOFctDeprecated
+
+\deprecated This function is deprecated since \cgal 5.2, `CGAL::write_OFF()` should be used instead.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+ return write_OFF(fname, g, np);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

@@ -538,6 +538,21 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
 template<typename Graph>
 bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+ \ingroup PkgBGLIOFctDeprecated
+
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_VTP()` should be used instead.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool CGAL::write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_VTP(os, g, np);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
 } // namespace CGAL
 
 #endif // defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)

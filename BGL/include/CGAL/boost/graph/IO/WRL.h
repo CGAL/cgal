@@ -119,6 +119,21 @@ bool write_WRL(const char* fname, const Graph& g) { return write_WRL(fname, g, p
 template <typename Graph>
 bool write_WRL(const std::string& fname, const Graph& g) { return write_WRL(fname, g, parameters::all_default()); }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+ \ingroup PkgBGLIOFctDeprecated
+
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_WRL()` should be used instead.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_wrl(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_WRL(os, g, np);
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
+
 } // namespace CGAL
 
 #endif // CGAL_BGL_IO_WRL_H
