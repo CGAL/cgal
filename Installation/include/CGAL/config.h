@@ -619,6 +619,7 @@ using std::max;
 
 //
 // Compatibility with CGAL-4.14.
+#ifndef CGAL_NO_DEPRECATED_CODE
 //
 // That is temporary, and will be replaced by a namespace alias, as
 // soon as we can remove cpp11::result_of, and <CGAL/atomic.h> and
@@ -655,7 +656,7 @@ namespace CGAL {
   using cpp11::array;
   using cpp11::copy_n;
 } // end of the temporary compatibility with CGAL-4.14
-
+#endif // CGAL_NO_DEPRECATED_CODE
 namespace CGAL {
 
 // Typedef for the type of nullptr.
