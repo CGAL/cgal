@@ -110,6 +110,8 @@ bool read_polygon_mesh(const char* fname,
   if(ok)
     return true;
 
+  clear(g);
+
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
   if(!CGAL::read_polygon_soup(fname, points, faces))
@@ -129,7 +131,6 @@ bool read_polygon_mesh(const char* fname,
   if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
     return false;
 
-  clear(g);
   PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::all_default(), np);
 
   return true;
