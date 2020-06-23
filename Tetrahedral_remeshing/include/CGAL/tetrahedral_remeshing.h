@@ -272,7 +272,7 @@ void tetrahedral_isotropic_remeshing(
 *   - global smoothing by vertex relocations,
 *   - re-projection of boundary vertices to the initial surface.
 *
-* This remeshing function can deal with multi-domains, boundaries, and features,
+* This remeshing function can deal with multi-domains, boundaries, and features
 * that are encoded in the `Mesh_complex_3_in_triangulation_3`
 * and that are given using the named parameters.
 * It preserves the geometry of
