@@ -141,7 +141,7 @@ namespace CGAL {
         m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 
       // Initialize a queue of nodes that need to be refined
-      std::queue<Node*> todo;
+      std::queue<Node *> todo;
       todo.push(&m_root);
 
       // Process items in the queue until it's consumed fully
@@ -256,6 +256,51 @@ namespace CGAL {
                                      [&](const Range_type &a) -> bool {
                                        return (get(m_points_map, a)[2] < point[2]);
                                      });
+
+      return partitions;
+    }
+
+    std::array<Range_iterator, 9> _partition_around_point(Range_iterator begin, Range_iterator end, Point point) {
+
+      auto partitions = std::array<Range_iterator, 9>();
+
+      partitions[0] = begin;
+      partitions[1] = std::partition(partitions[0], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] < point[0] && p[1] < point[1] && p[2] < point[2]);
+                                     });
+      partitions[2] = std::partition(partitions[1], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] < point[0] && p[1] < point[1] && p[2] >= point[2]);
+                                     });
+      partitions[3] = std::partition(partitions[2], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] < point[0] && p[1] >= point[1] && p[2] < point[2]);
+                                     });
+      partitions[4] = std::partition(partitions[3], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] < point[0] && p[1] >= point[1] && p[2] >= point[2]);
+                                     });
+      partitions[5] = std::partition(partitions[4], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] >= point[0] && p[1] < point[1] && p[2] < point[2]);
+                                     });
+      partitions[6] = std::partition(partitions[5], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] >= point[0] && p[1] < point[1] && p[2] >= point[2]);
+                                     });
+      partitions[7] = std::partition(partitions[6], end,
+                                     [&](const Range_type &a) -> bool {
+                                       auto p = get(m_points_map, a);
+                                       return (p[0] >= point[0] && p[1] >= point[1] && p[2] < point[2]);
+                                     });
+      partitions[8] = end;
 
       return partitions;
     }
