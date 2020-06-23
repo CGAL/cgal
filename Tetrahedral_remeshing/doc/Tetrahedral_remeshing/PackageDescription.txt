@@ -14,17 +14,25 @@
 \cgalPkgPicture{bimba_back_small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Jane Tournois, Noura Faraj}
+\cgalPkgAuthors{Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur}
 \cgalPkgDesc{
 The package provides a function for remeshing tetrahedral meshes,
-targetting high quality meshes with respect to dihedral angles.}
+targeting high quality meshes with respect to dihedral angles.
+This practical iterative remeshing algorithm is designed to remesh
+multi-material tetrahedral meshes, by iteratively performing a sequence of
+elementary operations such as edge splits, edge collapses, edge flips,
+and vertex relocations following a Laplacian smoothing.
+The algorithm results in high-quality uniform isotropic meshes,
+with the desired mesh density,
+while preserving the input geometric curve and surface features.
+}
 \cgalPkgManuals{Chapter_Tetrahedral_Remeshing,PkgTetrahedralRemeshingRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.1}
 \cgalPkgDependsOn{\ref PkgTriangulation3}
-\cgalPkgBib{faraj2016mvr}
+\cgalPkgBib{cgal:tftb-tr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
