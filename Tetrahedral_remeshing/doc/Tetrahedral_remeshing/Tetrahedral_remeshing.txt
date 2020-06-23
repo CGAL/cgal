@@ -97,5 +97,17 @@ setting the named parameter `remesh_boundaries` to `false`.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
 
+
+\subsection ssecEx4 Tetrahedral Remeshing After Mesh Generation
+
+The tetrahedral remeshing algorithm is designed as a post-processing for
+mesh generation algorithms. The API allows to generate a tetrahedral mesh
+with `Mesh_3`, the tetrahedral mesh generation package, and
+further improve it with the tetrahedral remeshing algorithm.
+This example shows how to use tetrahedral mesh generation and remeshing in sequence,
+from a polyhedral domain with features.
+
+\cgalExample{Tetrahedral_remeshing/mesh_and_remesh_polyhedral_domain_with_features.cpp}
+
 */
 } /* namespace CGAL */

@@ -289,11 +289,11 @@ void tetrahedral_isotropic_remeshing(
 *            It can be instantiated with any 3D regular triangulation of CGAL provided
 *            that its vertex and cell base classes are models of the concepts
 *            `MeshVertexBase_3` (refined by `RemeshingCellBase_3`)
-*            and `MeshCellBase_3` (refined by RemeshingVertexBase_3`), respectively.
-* @tparam CornerIndex is the type of the indices for corners.
+*            and `MeshCellBase_3` (refined by `RemeshingVertexBase_3`), respectively.
+* @tparam CornerIndex is the type of the indices for feature corners.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
 *            the `Corner_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
-* @tparam CurveIndex is the type of the indices for curves.
+* @tparam CurveIndex is the type of the indices for feature curves.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
 *            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
 * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
