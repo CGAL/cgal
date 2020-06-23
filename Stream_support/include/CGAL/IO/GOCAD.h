@@ -258,10 +258,13 @@ bool write_GOCAD(std::ostream& os,
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
-  set_ascii_mode(os); // GOCAD is ASCII only
-
   if(!os.good())
     return false;
+
+  set_ascii_mode(os); // GOCAD is ASCII only
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
 
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"

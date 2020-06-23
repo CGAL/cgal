@@ -388,6 +388,12 @@ void write_soup_polys_points(std::ostream& os,
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
@@ -406,6 +412,12 @@ bool write_VTP(std::ostream& os,
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
+
+  if(!os.good())
+    return false;
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
 
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";

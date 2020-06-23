@@ -212,6 +212,12 @@ bool write_STL(std::ostream& os,
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
   typedef typename K::Vector_3                                              Vector_3;
 
+  if(!os.good())
+    return false;
+
+  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+  os << std::setprecision(precision);
+
   if(get_mode(os) == IO::BINARY)
   {
     os << "FileType: Binary                                                                ";

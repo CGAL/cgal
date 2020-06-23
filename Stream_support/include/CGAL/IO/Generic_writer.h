@@ -49,6 +49,9 @@ public:
     if(!m_os.good())
       return false;
 
+    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
+    m_os << std::setprecision(precision);
+
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {

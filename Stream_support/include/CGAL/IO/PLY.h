@@ -14,6 +14,7 @@
 
 #include <CGAL/IO/PLY/PLY_reader.h>
 #include <CGAL/IO/PLY/PLY_writer.h>
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/property_map.h>
@@ -475,6 +476,9 @@ bool write_PLY(std::ostream& out,
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
+
+  const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
+  out << std::setprecision(precision);
 
   // Write header
   out << "ply" << std::endl
