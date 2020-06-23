@@ -17,14 +17,11 @@ int main(void)
 {
   std::vector<Pwn> points;
 
-  if (!stream ||
-      !CGAL::read_points(
-        "data/kitten.xyz",
-        std::back_inserter(points),
-        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()).
-        normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
+  if(!CGAL::read_points("data/kitten.xyz", std::back_inserter(points),
+                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                         .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
   {
-    std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
+    std::cerr << "Error: cannot read input file!" << std::endl;
     return EXIT_FAILURE;
   }
 

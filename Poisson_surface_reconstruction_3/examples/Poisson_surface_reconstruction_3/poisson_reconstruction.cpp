@@ -187,15 +187,11 @@ int main(int argc, char * argv[])
       // Reads the point set file in points[].
       // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
-      if (!stream ||
-          !CGAL::read_points(
-            input_filename.c_str(),
-            std::back_inserter(points),
-            CGAL::parameters::point_map
-            (CGAL::make_first_of_pair_property_map(Point_with_normal())).
-            normal_map (CGAL::make_second_of_pair_property_map(Point_with_normal()))))
+      if (!CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
+                             CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
+                                              .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
-        std::cerr << "Error: cannot read file " << input_filename << std::endl;
+        std::cerr << "Error: cannot read input file!" << input_filename << std::endl;
         return EXIT_FAILURE;
       }
     }

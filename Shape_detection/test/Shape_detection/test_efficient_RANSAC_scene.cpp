@@ -33,12 +33,11 @@ bool test_scene(int argc, char** argv) {
   // Load point set from a file.
   // read_points takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream((argc > 1) ? argv[1] : "data/cube.pwn");
+  const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
 
-  if (!stream || !CGAL::read_points(stream,
-                                    std::back_inserter(points),
-                                    CGAL::parameters::point_map(Point_map())
-                                                     .normal_map(Normal_map())))
+  if (!CGAL::read_points(filename, std::back_inserter(points),
+                         CGAL::parameters::point_map(Point_map())
+                                          .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;

@@ -263,7 +263,7 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return IO::internal::read_PLY(is, points, polygons,std::back_inserter(dummy_pui),
+  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(dummy_pui),
                                 choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
                                                  CGAL::Emptyset_iterator()),
                                 choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
@@ -458,10 +458,7 @@ bool write_PLY(std::ostream& out,
   typedef typename boost::range_value<PolygonRange>::type Polygon_3;
 
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
 
   const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
   out << std::setprecision(precision);

@@ -27,7 +27,9 @@
 #include <map>
 
 //todo try to factorize with functors
-namespace CGAL{
+namespace CGAL {
+namespace IO {
+namespace internal {
 
 template <class C3T3>
 void
@@ -347,7 +349,8 @@ void output_to_vtu_with_attributes(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
-
+} // namespace internal
+} // namespace IO
 
 //public API
 template <class C3T3>
@@ -365,11 +368,12 @@ void output_to_vtu(std::ostream& os,
     mids.push_back(v);
   }
 
-  std::vector<std::pair<const char*, Vtu_attributes > > atts;
-  Vtu_attributes v = &mids;
+  std::vector<std::pair<const char*, IO::internal::Vtu_attributes > > atts;
+  IO::internal::Vtu_attributes v = &mids;
   atts.push_back(std::make_pair("MeshDomain", v));
-  output_to_vtu_with_attributes(os, c3t3, atts, mode);
+  IO::internal::output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
 
-} //end CGAL
+} // namespace CGAL
+
 #endif // CGAL_VTK_IO_H

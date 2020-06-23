@@ -1,7 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Surface_mesh/IO/3mf.h>
-#include <CGAL/IO/3MF.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
