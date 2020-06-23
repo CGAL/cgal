@@ -168,7 +168,6 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param fname the path to the input file
  * \param points points of the soup of polygons.

@@ -544,10 +544,13 @@ template<typename MultiPoint,
          typename MultiLineString,
          typename MultiPolygon>
 bool read_WKT(std::istream& is,
-                       MultiPoint& points,
-                       MultiLineString& polylines,
-                       MultiPolygon& polygons)
+              MultiPoint& points,
+              MultiLineString& polylines,
+              MultiPolygon& polygons)
 {
+  if(!is.good())
+    return false;
+
   do
   {
     typedef typename MultiPoint::value_type Point;

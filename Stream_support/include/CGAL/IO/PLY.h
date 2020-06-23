@@ -281,7 +281,6 @@ bool read_PLY(std::istream& is,
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param is the input stream
  * \param points points of the soup of polygons.

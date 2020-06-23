@@ -17,7 +17,7 @@
 
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
-#include <CGAL/Surface_mesh/IO/3mf.h>
+#include <CGAL/Surface_mesh/IO/3MF.h>
 #include <CGAL/Surface_mesh/IO/OFF.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 

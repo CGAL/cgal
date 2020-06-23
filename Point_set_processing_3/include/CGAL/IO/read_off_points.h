@@ -484,8 +484,6 @@ CGAL_DEPRECATED bool read_off_points(std::istream& is,
   return read_OFF(is, output, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
 template <typename OutputIteratorValueType, typename OutputIterator>
 CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output)
 {
@@ -505,8 +503,6 @@ CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output)
 {
   return read_OFF(is, output, CGAL::parameters::all_default());
 }
-
-/// \endcond
 
 #endif //CGAL_NO_DEPRECATED_CODE
 

@@ -208,7 +208,6 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param is the input stream
  * \param points points of the soup of polygons.
@@ -232,7 +231,6 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param fname the path to the input file
  * \param points points of the soup of polygons.
@@ -287,7 +285,6 @@ bool write_OFF(const char* fname,
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param os the output stream
  * \param points points of the soup of polygons.
