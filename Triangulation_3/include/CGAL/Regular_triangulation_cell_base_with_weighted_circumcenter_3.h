@@ -132,7 +132,7 @@ public:
       return *weighted_circumcenter_;
   }
 
-  void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw()
+  void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) noexcept
   {
     std::swap(static_cast<Cb&>(*this), static_cast<Cb&>(other));
     std::swap(weighted_circumcenter_, other.weighted_circumcenter_);
