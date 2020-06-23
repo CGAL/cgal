@@ -43,7 +43,7 @@ class ArrangementDemoPropertiesDialog : public QDialog
   };
 
   ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ = 0,
-                                   Qt::WindowFlags f = 0 );
+                                   Qt::WindowFlags f  = Qt::WindowType(0));
   QVariant property( int index );
 
 protected:

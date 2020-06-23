@@ -20,6 +20,9 @@
 #include <QUrl>
 #include <QLineEdit>
 #include <QDoubleValidator>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#include <QRandomGenerator>
+#endif
 
 Values_delegate::Values_delegate(QWidget* parent) : QItemDelegate(parent) {}
 void Values_delegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -240,7 +243,12 @@ void Values_list::addValue(const double i)
   newItem->setData(Value, Qt::CheckStateRole, Qt::Checked);
   newItem->setData(Value, Qt::DisplayRole, i);
   QStringList colors = QColor::colorNames();
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
   const int color_index = qrand() % colors.size();
+#else
+const int color_index = QRandomGenerator::global()->generate() % colors.size();
+#endif
+
   QColor color = QColor(colors[color_index]);
   newItem->setData(Color, Qt::DisplayRole, color);
   newItem->setData(Name, Qt::DisplayRole, "");

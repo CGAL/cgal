@@ -708,7 +708,7 @@ protected:
       {
         QApplication::setOverrideCursor(Qt::WaitCursor);
         QWheelEvent *mouseEvent = static_cast<QWheelEvent*>(event);
-        int steps = mouseEvent->delta() / 120;
+        int steps = mouseEvent->angleDelta().y() / 120;
         if (steps > 0)
           neighborhood.point_set (point_set_item).expand();
         else
