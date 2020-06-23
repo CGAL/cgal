@@ -298,7 +298,7 @@ void tetrahedral_isotropic_remeshing(
 *            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
 * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
 *
-* @param c3t3 the complex containing the triangulation to be remeshed, of type `Tr`.
+* @param c3t3 the complex containing the triangulation (of type `Tr`) to be remeshed.
 * @param target_edge_length the uniform target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
 * @param np optional sequence of \ref Remeshing_namedparameters "Named Parameters"
