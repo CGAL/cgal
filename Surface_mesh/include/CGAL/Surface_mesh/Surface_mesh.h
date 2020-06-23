@@ -1567,7 +1567,7 @@ public:
     }
 
 
-    /// performs a validity check on a single ede.
+    /// performs a validity check on a single edge.
     bool is_valid(Edge_index e) const {
       Halfedge_index h = halfedge(e);
       return is_valid(h) && is_valid(opposite(h));
