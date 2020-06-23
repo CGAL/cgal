@@ -260,56 +260,11 @@ namespace CGAL {
       return partitions;
     }
 
-    std::array<Range_iterator, 9> _partition_around_point(Range_iterator begin, Range_iterator end, Point point) {
-
-      auto partitions = std::array<Range_iterator, 9>();
-
-      partitions[0] = begin;
-      partitions[1] = std::partition(partitions[0], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] < point[0] && p[1] < point[1] && p[2] < point[2]);
-                                     });
-      partitions[2] = std::partition(partitions[1], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] < point[0] && p[1] < point[1] && p[2] >= point[2]);
-                                     });
-      partitions[3] = std::partition(partitions[2], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] < point[0] && p[1] >= point[1] && p[2] < point[2]);
-                                     });
-      partitions[4] = std::partition(partitions[3], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] < point[0] && p[1] >= point[1] && p[2] >= point[2]);
-                                     });
-      partitions[5] = std::partition(partitions[4], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] >= point[0] && p[1] < point[1] && p[2] < point[2]);
-                                     });
-      partitions[6] = std::partition(partitions[5], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] >= point[0] && p[1] < point[1] && p[2] >= point[2]);
-                                     });
-      partitions[7] = std::partition(partitions[6], end,
-                                     [&](const Range_type &a) -> bool {
-                                       auto p = get(m_points_map, a);
-                                       return (p[0] >= point[0] && p[1] >= point[1] && p[2] < point[2]);
-                                     });
-      partitions[8] = end;
-
-      return partitions;
-    }
-
     void reassign_points(Node &node) {
 
       Point center = compute_barycenter_position(node);
 
-      auto partitions = _partition_around_point(node.begin(), node.end(), center);
+      auto partitions = partition_around_point(node.begin(), node.end(), center);
 
       for (int i = 0; i < 8; ++i) {
 
