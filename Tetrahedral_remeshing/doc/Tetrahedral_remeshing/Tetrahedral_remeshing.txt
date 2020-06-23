@@ -39,13 +39,6 @@ The tetrahedral remeshing algorithm improves the quality of dihedral angles,
 while targeting the user-defined uniform sizing field and preserving the
 topology of the feature complex, as highlighted by Figure \cgalFigureRef{Remesh_liver}.
 
-\cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
-Tetrahedral mesh, improved by the uniform tetrahedral remeshing algorithm.
-(Left) Before remeshing, dihedral angles were in the interval [0.7; 178.9].
-(Right) After remeshing and keeping the same density,
-dihedral angles are the interval [12,7; 157.7].
-\cgalFigureEnd
-
 Experimental evidence shows that a higher number of remeshing iterations
 leads to a mesh with a improved fidelity to the sizing criterion,
 and higher quality dihedral angles.
