@@ -136,7 +136,7 @@ void simple_property_write(std::ostream& stream,
     stream << no_char_character(get(map.first, *it));
   else
   {
-    typename PropertyMap::value_type value = get(map.first, *it);
+    typename boost::property_traits<PropertyMap>::reference value = get(map.first, *it);
     stream.write(reinterpret_cast<char*>(&value), sizeof(value));
   }
 }
@@ -255,7 +255,7 @@ public:
 
 template <typename Index,
           typename PropertyMap,
-          typename Type = typename PropertyMap::value_type>
+          typename Type = typename boost::property_traits<PropertyMap>::value_type>
 class Simple_property_printer
   : public Abstract_property_printer<Index>
 {
@@ -279,8 +279,10 @@ template <typename Index, typename PropertyMap>
 class Char_property_printer
   : public Abstract_property_printer<Index>
 {
-  typedef typename PropertyMap::value_type Type;
+  typedef typename boost::property_traits<PropertyMap>::value_type Type;
+
   PropertyMap m_pmap;
+
 public:
   Char_property_printer(const PropertyMap& pmap) : m_pmap(pmap) { }
 

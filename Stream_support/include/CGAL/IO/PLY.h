@@ -20,6 +20,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 
+#include <boost/range/value_type.hpp>
 #include <boost/utility/enable_if.hpp>
 
 #include <fstream>
@@ -50,12 +51,10 @@ bool read_PLY(std::istream& is,
               ColorOutputIterator vc_out,
               HUVOutputIterator huvs_out,
               bool verbose = true,
-              typename std::enable_if<
-                CGAL::is_iterator<ColorOutputIterator>::value
-              >::type* =0)
+              typename std::enable_if<CGAL::is_iterator<ColorOutputIterator>::value>::type* = nullptr)
 {
-  typedef typename PointRange::value_type Point_3;
-  typedef CGAL::Color                     Color_rgb;
+  typedef typename boost::range_value<PointRange>::type     Point_3;
+  typedef CGAL::Color                                       Color_rgb;
 
   if(!is.good())
   {
@@ -300,7 +299,8 @@ bool read_PLY(std::istream& is,
 #endif
              )
 {
-  typedef typename PointRange::value_type Point_3;
+  typedef typename boost::range_value<PointRange>::type Point_3;
+
   if(!is.good())
   {
     if(verbose)
@@ -454,8 +454,8 @@ bool write_PLY(std::ostream& out,
 #endif
                )
 {
-  typedef typename PointRange::value_type Point_3;
-  typedef typename PolygonRange::value_type Polygon_3;
+  typedef typename boost::range_value<PointRange>::type Point_3;
+  typedef typename boost::range_value<PolygonRange>::type Polygon_3;
 
   if(!out.good())
   {

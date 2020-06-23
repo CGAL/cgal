@@ -17,6 +17,8 @@
 
 #include <CGAL/boost/graph/iterator.h>
 
+#include <boost/range/value_type.hpp>
+
 #ifdef CGAL_LINKED_WITH_3MF
 #include <Model/COM/NMR_DLLInterfaces.h>
 #endif
@@ -406,9 +408,10 @@ int read_triangle_soups_from_3mf(const std::string& fname,
                                  ColorRanges& all_colors,
                                  std::vector<std::string>& names)
 {
-  typedef typename PointRanges::value_type PointRange;
-  typedef typename PolygonRanges::value_type PolygonRange;
-  typedef typename ColorRanges::value_type ColorRange;
+  typedef typename boost::range_value<PointRanges>::type    PointRange;
+  typedef typename boost::range_value<PolygonRanges>::type  PolygonRange;
+  typedef typename boost::range_value<ColorRanges>::type    ColorRange;
+
   return read_from_3mf<PointRanges,PolygonRanges,ColorRanges,
                        PointRange, PolygonRange, ColorRange>
           (fname, all_points, all_polygons, all_colors, names,

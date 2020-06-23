@@ -17,6 +17,7 @@
 #include <CGAL/is_iterator.h>
 
 #include <boost/cstdint.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -71,10 +72,9 @@ template <>            struct Convert_FT<float> { typedef float type;  };
 template <typename PointOrVectorMap>
 struct Get_FT_from_map
 {
-  typedef typename Convert_FT
-  <typename Kernel_traits
-  <typename boost::property_traits
-  <PointOrVectorMap>::value_type>::Kernel::FT>::type type;
+  typedef typename Convert_FT<typename Kernel_traits<
+                                typename boost::property_traits<
+                                  PointOrVectorMap>::value_type>::Kernel::FT>::type type;
 };
 
 template <typename PointMap>
@@ -630,7 +630,8 @@ template <typename OutputValueType,
 void process_properties(PLY_element& element, OutputValueType& new_element,
                         std::tuple<PropertyMap, Constructor, PLY_property<T>...>&& current)
 {
-  typedef typename PropertyMap::value_type PmapValueType;
+  typedef typename boost::property_traits<PropertyMap>::value_type PmapValueType;
+
   std::tuple<T...> values;
   Filler<sizeof...(T)-1>::fill(element, values, current);
   PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
@@ -648,7 +649,8 @@ void process_properties(PLY_element& element, OutputValueType& new_element,
                         NextPropertyBinder&& next,
                         PropertyMapBinders&& ... properties)
 {
-  typedef typename PropertyMap::value_type PmapValueType;
+  typedef typename boost::property_traits<PropertyMap>::value_type PmapValueType;
+
   std::tuple<T...> values;
   Filler<sizeof...(T)-1>::fill(element, values, current);
   PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
@@ -692,8 +694,9 @@ bool read_PLY_faces(std::istream& in,
                       CGAL::is_iterator<ColorOutputIterator>::value
                     >::type* =0)
 {
-  typedef typename PolygonRange::value_type Polygon_3;
-  typedef CGAL::Color Color_rgb;
+  typedef typename boost::range_value<PolygonRange>::type Polygon_3;
+  typedef CGAL::Color                                     Color_rgb;
+
   bool has_colors = false;
   std::string rtag = "r", gtag = "g", btag = "b";
 

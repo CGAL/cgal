@@ -49,9 +49,8 @@ bool read_OBJ(std::istream& is,
       std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
+
   typedef typename boost::range_value<PointRange>::type                               Point;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
-  typedef typename Kernel::Vector_3                                                   Normal;
 
   set_ascii_mode(is); // obj is ASCII only
 

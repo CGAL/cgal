@@ -12,19 +12,24 @@
 #ifndef CGAL_IO_READ_3MF_H
 #define CGAL_IO_READ_3MF_H
 
-#ifdef CGAL_LINKED_WITH_3MF
 
 #include <CGAL/IO/Color.h>
 
 #include <CGAL/Kernel_traits.h>
 
+#include <boost/range/value_type.hpp>
+
+#ifdef CGAL_LINKED_WITH_3MF
 #include <Model/COM/NMR_DLLInterfaces.h>
+#endif
 
 #include <algorithm>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#ifdef CGAL_LINKED_WITH_3MF
 
 namespace CGAL {
 namespace transform_nmr_internal {
@@ -54,9 +59,9 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
                     ColorRange& colors,
                     std::string& name)
 {
-  typedef typename PointRange::value_type Point_3;
-  typedef typename PolygonRange::value_type Polygon;
-  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
+  typedef typename boost::range_value<PointRange>::type      Point_3;
+  typedef typename boost::range_value<PolygonRange>::type    Polygon;
+  typedef typename Kernel_traits<Point_3>::Kernel            Kernel;
 
   HRESULT hResult;
   DWORD nNeededChars;
