@@ -50,6 +50,14 @@ Experimental evidence shows that a higher number of remeshing iterations
 leads to a mesh with a improved fidelity to the sizing criterion,
 and higher quality dihedral angles.
 
+\cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
+Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
+(Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
+(Right) After remeshing and keeping the same density,
+dihedral angles are in the interval [12,7; 157.7].
+\cgalFigureEnd
+
+
 \section secTetRemeshingAPI API
 
 The tetrahedral remeshing algorithm is implemented as a single free function

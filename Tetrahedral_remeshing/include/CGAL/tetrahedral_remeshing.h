@@ -258,16 +258,16 @@ void tetrahedral_isotropic_remeshing(
 
 /*!
 * \ingroup PkgTetrahedralRemeshingRef
-* remeshes a tetrahedral mesh.
+* \brief Remeshes a tetrahedral mesh.
 *
 * This function takes as input a `Mesh_complex_3_in_triangulation_3`
 * and performs a sequence of atomic operations on the underlying triangulation
-* in order to generate as output a high quality mesh with a prescribed
+* in order to generate as output a high-quality mesh with a prescribed
 * uniform density.
 * These atomic operations are performed as follows:
 *   - edge splits, until all edges satisfy a prescribed length criterion,
 *   - edge collapses, until all edges satisfy a prescribed length criterion,
-*   - edge flips, to locally improve dihedral angles, until they can
+*   - edge flips, to locally improve dihedral angles until they can
 *     no longer be improved by flipping,
 *   - global smoothing by vertex relocations,
 *   - re-projection of boundary vertices to the initial surface.
