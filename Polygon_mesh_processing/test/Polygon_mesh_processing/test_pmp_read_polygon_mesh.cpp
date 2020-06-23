@@ -37,7 +37,7 @@ void do_test()
   std::string name = "data_polygon_soup/bad_cube.off";
   Mesh g;
   CGAL_assertion(!CGAL::read_polygon_mesh(name, g));
-  CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g));
+  CGAL_assertion(CGAL::Polygon_mesh_processing::read_polygon_mesh(name, g));
   CGAL_assertion(is_valid(g));
   typedef typename boost::property_map<Mesh,CGAL::vertex_point_t>::type VertexPointMap;
 
@@ -47,7 +47,7 @@ void do_test()
   Custom_VPM<Mesh> cvpm(cpoints);
   //test pmap param
   Mesh g2;
-  CGAL_assertion(CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(name, g2, CGAL::parameters::vertex_point_map(cvpm)));
+  CGAL_assertion(CGAL::Polygon_mesh_processing::read_polygon_mesh(name, g2, CGAL::parameters::vertex_point_map(cvpm)));
   CGAL_assertion(num_vertices(g2)==12);
 
   auto it = vertices(g2).begin(),

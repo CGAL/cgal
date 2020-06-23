@@ -28,13 +28,13 @@ template <class TriangleMesh>
 void run(const char* filename1, const char* filename2, const char* msg)
 {
   TriangleMesh mesh1;
-  if ( !CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename1, mesh1) ) {
+  if ( !CGAL::Polygon_mesh_processing::read_polygon_mesh(filename1, mesh1) ) {
     std::cerr << filename1 << " is not a valid off file.\n";
     exit(1);
   }
 
   TriangleMesh mesh2;
-  if ( !CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename2, mesh2) ) {
+  if ( !CGAL::Polygon_mesh_processing::read_polygon_mesh(filename2, mesh2) ) {
     std::cerr << filename2 << " is not a valid off file.\n";
     exit(1);
   }

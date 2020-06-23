@@ -139,19 +139,19 @@ bool read_polygon_mesh(const char* fname,
 template <typename Graph>
 bool read_polygon_mesh(const char* fname, Graph& g)
 {
-  return CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(fname, g, parameters::all_default());
+  return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
 }
 
 template <typename Graph, typename NamedParameter>
 bool read_polygon_mesh(const std::string& fname, Graph& g, const NamedParameter& np)
 {
-  return CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(fname.c_str(), g, np);
+  return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname.c_str(), g, np);
 }
 
 template <typename Graph>
 bool read_polygon_mesh(const std::string& fname, Graph& g)
 {
-  return CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(fname, g, parameters::all_default());
+  return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing
