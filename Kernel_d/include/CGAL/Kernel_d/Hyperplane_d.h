@@ -75,6 +75,10 @@ public:
   { return Base::operator==(w); }
   bool operator!=(const Self& w) const
   { return Base::operator!=(w); }
+  bool operator==(const Base& w) const
+  { return Base::operator==(w); }
+  bool operator!=(const Base& w) const
+  { return Base::operator!=(w); }
 };
 
 } //namespace CGAL
