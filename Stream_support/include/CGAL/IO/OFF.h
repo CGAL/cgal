@@ -299,12 +299,9 @@ bool write_OFF(const char* fname,
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
-               ,
-               typename boost::enable_if<
-                 typename boost::has_range_const_iterator<PolygonRange>::type
-               >::type* =0
+               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
-    )
+               )
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }
@@ -331,8 +328,7 @@ bool write_OFF(const char* fname,
                const PointRange& points,
                const PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<
-                   typename boost::has_range_const_iterator<PolygonRange>::type>::type* = 0
+               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
@@ -340,17 +336,14 @@ bool write_OFF(const char* fname,
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
 {
   return write_OFF(fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<
-                 typename boost::has_range_const_iterator<PolygonRange>::type
-               >::type* =0)
+               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }

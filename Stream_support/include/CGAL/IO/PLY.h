@@ -232,9 +232,7 @@ bool read_PLY(std::istream& is,
               ColorRange& vcolors,
               HUVRange& huvs,
               bool verbose = true,
-              typename std::enable_if<
-                !CGAL::is_iterator<ColorRange>::value
-              >::type* =0)
+              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return IO::internal::read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs), verbose);
 }
@@ -299,9 +297,7 @@ bool read_PLY(std::istream& is,
               PolygonRange& polygons,
               bool verbose = true
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<
-                  boost::has_value_type<PointRange>::value
-                >::type* =0
+              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
              )
 {
@@ -419,9 +415,7 @@ bool read_PLY(const char* fname,
               PointRange& points,
               PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<
-                  !CGAL::is_iterator<PolygonRange>::value
-                >::type* =0
+              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
              )
 {
@@ -440,9 +434,7 @@ bool read_PLY(const std::string fname,
               PointRange& points,
               PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<
-                  !CGAL::is_iterator<PolygonRange>::value
-                >::type* =0
+              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
 {
@@ -457,14 +449,9 @@ template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PA
 bool write_PLY(std::ostream& out,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS&
+               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<
-                   typename boost::has_range_const_iterator<PointRange>::type
-                 >::type* =0,
-               typename std::enable_if<
-                 boost::has_value_type<PointRange>::value
-               >::type* =0
+               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
@@ -529,12 +516,7 @@ bool write_PLY(std::ostream& out,
                const PointRange& points,
                const PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<
-                   typename boost::has_range_const_iterator<PointRange>::type
-                 >::type* =0,
-               typename std::enable_if<
-                 boost::has_value_type<PointRange>::value
-               >::type* =0
+               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
