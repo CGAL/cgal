@@ -15,14 +15,17 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron> Mesh_domain;
 
-// Triangulation
+// Triangulation for Meshing
 typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, CGAL::Default>::type Tr;
-
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+
+// Triangulation for Remeshing
+typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
+  typename Tr::Triangulation_data_structure> Triangulation_3;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -57,7 +60,7 @@ int main(int argc, char* argv[])
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-  auto tr = CGAL::convert_to_base_triangulation(std::move(c3t3));
+  Triangulation_3 tr = CGAL::convert_to_triangulation_3(c3t3);
 
   const double target_edge_length = 0.1;//coarsen the mesh
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,

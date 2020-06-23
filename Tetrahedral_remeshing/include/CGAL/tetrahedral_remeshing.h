@@ -18,7 +18,6 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
@@ -254,8 +253,11 @@ void tetrahedral_isotropic_remeshing(
 }
 
 /*!
-* Converts the triangulation referenced in the input
-* `Mesh_complex_3_in_triangulation_3`.
+* Converts the triangulation referenced in the input to a `Triangulation_3`.
+* This function should be used to generate a valid triangulation
+* for tetrahedral remeshing remeshing, when the input triangulation is generated with the
+* tetrahedral mesh generation package.
+*
 * @tparam Tr is the underlying triangulation for `Mesh_complex_3_in_triangulation_3`.
 *            It can be instantiated with any 3D regular triangulation of CGAL provided
 *            that its vertex and cell base classes are models of the concepts
@@ -267,19 +269,24 @@ void tetrahedral_isotropic_remeshing(
 * @tparam CurveIndex is the type of the indices for feature curves.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
 *            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
-* @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
 *
-* @param c3t3 the complex containing the triangulation (of type `Tr`) to be remeshed.
-
-* @todo finish this doc
+* @param c3t3 the complex containing the triangulation to be remeshed.
+*
+* @todo mention `std::move(c3t3)`
 */
-template<typename Tr, typename CornerIndex, typename CurveIndex>
-typename Tr::Tr_Base
-convert_to_base_triangulation(
+
+template<typename Tr,
+         typename CornerIndex,
+         typename CurveIndex>
+CGAL::Triangulation_3<typename Tr::Geom_traits,
+                      typename Tr::Triangulation_data_structure>
+convert_to_triangulation_3(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3)
 {
-  using Tr_Base = typename Tr::Tr_Base;
-  Tr_Base tr;
+  using GT   = typename Tr::Geom_traits;
+  using TDS  = typename Tr::Triangulation_data_structure;
+
+  CGAL::Triangulation_3<GT, TDS> tr;
   tr.swap(c3t3.triangulation());
   return tr;
 }
