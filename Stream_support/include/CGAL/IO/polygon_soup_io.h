@@ -54,7 +54,15 @@ std::string get_file_extension(const std::string fname)
 /*!
  * \ingroup IOstreamFunctions
  *
- * \brief reads a polygon soup from a file.
+ * \brief Reads a polygon soup from a file.
+ *
+ * Supported file formats are the following:
+ * - `.off` (\ref IOStreamOFF "OFF file format")
+ * - `.obj` (\ref IOStreamOBJ "OBJ file format")
+ * - `.stl` (\ref IOStreamSTL "STL file format")
+ * - `.ply` (\ref IOStreamPLY "PLY file format")
+ * - `.ts` (\ref IOStreamGocad "GOCAD file format")
+ * - `.vtp` (\ref IOStreamVTK "VTK file format")
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
@@ -62,18 +70,13 @@ std::string get_file_extension(const std::string fname)
  * \tparam PointRange a model of the concept `RandomAccessContainer`
  * whose value type is the point type
  *
- * \param fname the name of the file. Its extension must be one of the following :
- * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
- * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
- * or `.ts` (\ref IOStreamGocad "GOCAD file format").
+ * \param fname the name of the file.
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
- * \param verbose: if `true`, will output warnings and error messages. Default is `false`.
+ * \param verbose: if `true`, will output warnings and error messages.
  *
  * \return `true` if reading was successful, `false` otherwise.
- *
- * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
 bool read_polygon_soup(const std::string& fname,
@@ -116,7 +119,15 @@ bool read_polygon_soup(const std::string& fname,
 /*!
  * \ingroup IOstreamFunctions
  *
- * \brief writes a polygon soup in a file.
+ * \brief Writes the content of `points` and `polygons` in a file.
+ *
+ * Supported file formats are the following:
+ * - `.off` (\ref IOStreamOFF "OFF file format")
+ * - `.obj` (\ref IOStreamOBJ "OBJ file format")
+ * - `.stl` (\ref IOStreamSTL "STL file format")
+ * - `.ply` (\ref IOStreamPLY "PLY file format")
+ * - `.ts` (\ref IOStreamGocad "GOCAD file format")
+ * - `.vtp` (\ref IOStreamVTK "VTK file format")
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
@@ -124,18 +135,13 @@ bool read_polygon_soup(const std::string& fname,
  * \tparam PointRange a model of the concept `RandomAccessContainer`
  * whose value type is the point type
  *
- * \param fname the name of the file. Its extension must be one of the following :
- * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
- * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format")
- * or `.ts` (\ref IOStreamGocad "GOCAD file format").
+ * \param fname the name of the file.
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
- * \param verbose: if `true`, will output warnings and error messages. Default is `false`.
+ * \param verbose: if `true`, will output warnings and error messages.
  *
  * \return `true` if writing was successful, `false` otherwise.
- *
- * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
 bool write_polygon_soup(const std::string& fname,
@@ -166,7 +172,7 @@ bool write_polygon_soup(const std::string& fname,
     return write_VTP(fname, points, polygons);
 #endif
 #ifdef CGAL_LINKED_WITH_3MF
-  else if(ext == "ts")
+  else if(ext == "3mf")
     return write_3MF(fname, points, polygons);
 #endif
 

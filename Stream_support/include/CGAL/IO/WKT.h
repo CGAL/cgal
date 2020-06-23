@@ -60,14 +60,15 @@ void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
 
 } // namespace internal
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `read_point_WKT()` fills a `Point` from a  WKT stream. The first line starting with POINT
-//! in the stream will be used.
+//! \brief Fills a `Point` from a WKT stream.
+//!
+//! The first line starting with POINT in the stream will be used.
 //!
 //! \tparam Point can be a `CGAL::Point_2` or `CGAL::Point_3`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only Cartesian Kernels with double or float as `FT` are supported.
 //! \attention This function is only available with boost versions starting at 1.56.
 //!
 //! \see `CGAL::Point_2`
@@ -108,10 +109,9 @@ bool read_point_WKT(std::istream& in,
   return !in.fail();
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `read_multi_point_WKT()` overwrites the content of a `MultiPoint`
-//! with the first line starting with MULTIPOINT in the stream.
+//! \brief Overwrites the content of a `MultiPoint` with the first line starting with MULTIPOINT in the stream.
 //!
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`,
 //! and have:
@@ -157,9 +157,10 @@ bool read_multi_point_WKT(std::istream& in,
   return !in.fail();
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `read_linestring_WKT()` fills a `Linestring` from a WKT stream.
+//! \brief Fills a `Linestring` from a WKT stream.
+//!
 //! The first line starting with LINESTRING in the stream will be used.
 //!
 //! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2`,
@@ -205,10 +206,9 @@ bool read_linestring_WKT(std::istream& in,
   return !in.fail();
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `read_multi_linestring_WKT()` overwrites the content of a `MultiLineString`
-//! with the first line starting with MULTILINESTRING in the stream.
+//! \brief Overwrites the content of a `MultiLineString` with the first line starting with MULTILINESTRING in the stream.
 //!
 //! \tparam MultiLineString must be a model of `RandomAccessRange` of `Linestring`,
 //! and have:
@@ -265,9 +265,10 @@ bool read_multi_linestring_WKT(std::istream& in,
   return !in.fail();
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `read_polygon_WKT()` fills `polygon` from a WKT stream.
+//! \brief Fills `polygon` from a WKT stream.
+//!
 //! The first line starting with POLYGON in the stream will be used.
 //!
 //! \tparam Polygon is a `CGAL::General_polygon_with_holes_2`.
@@ -312,10 +313,9 @@ bool read_polygon_WKT(std::istream& in,
   return !in.fail();
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `read_multi_polygon_WKT()` overwrites the content of a `MultiPolygon`
-//! with the first line starting with MULTIPOLYGON in the stream.
+//! \brief Overwrites the content of a `MultiPolygon` with the first line starting with MULTIPOLYGON in the stream.
 //!
 //! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`,
 //! and have:
@@ -368,9 +368,9 @@ bool read_multi_polygon_WKT(std::istream& in,
   return !in.fail();
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `write_point_WKT()` writes `point` into a WKT stream.
+//! \brief Writes `point` into a WKT stream.
 //!
 //! \tparam Point is a `CGAL::Point_2`
 //!
@@ -392,11 +392,11 @@ std::ostream& write_point_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `write_polygon_WKT()` writes `poly` into a WKT stream.
+//! \brief Writes `poly` into a WKT stream.
 //!
-//! \tparam Polygon  must be a `CGAL::General_polygon_with_holes_2`
+//! \tparam Polygon must be a `CGAL::General_polygon_with_holes_2`
 //!
 //! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
 //! \attention This function is only available with boost versions starting at 1.56.
@@ -416,9 +416,9 @@ std::ostream& write_polygon_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `write_linestring_WKT()` writes the content of `ls` into a WKT stream.
+//! \brief Writes the content of `ls` into a WKT stream.
 //!
 //! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`.
 //!
@@ -441,9 +441,9 @@ std::ostream& write_linestring_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `write_multi_point_WKT()` writes the content of `mp` into a WKT stream.
+//! \brief Writes the content of `mp` into a WKT stream.
 //!
 //! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`.
 //!
@@ -466,9 +466,9 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `write_multi_polygon_WKT()` writes the content of `polygons` into a WKT stream.
+//! \brief Writes the content of `polygons` into a WKT stream.
 //!
 //! \tparam MultiPolygon must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //!
@@ -491,9 +491,9 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgStreamSupportRef
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief `write_multi_linestring_WKT()` writes the content of `mls` into a WKT stream.
+//! \brief Writes the content of `mls` into a WKT stream.
 //!
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`.
 //!
@@ -527,11 +527,10 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
   return out;
 }
 
-//! \ingroup IOstreamFunctions
+//! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! reads the content of a WKT stream and fills
-//! `points`, `polylines` and `polygons` with all the POINT, MULTIPOINT,
-//! LINESTRING, MULTILINESTRING, POLYGON and MULTIPOLYGON it finds in `input`.
+//! Reads the content of a WKT stream and fills `points`, `polylines` and `polygons`
+//! with all the POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON and MULTIPOLYGON it finds in `input`.
 //!
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //! \tparam MultiLineString must be a `RandomAccessRange` of `Linestring`.
@@ -619,7 +618,8 @@ bool read_WKT(std::istream& is,
   return !is.fail();
 }
 
-} // namespace CGAL CGAL
+} // namespace CGAL
 
 #endif // BOOST VERSION CHECKS
+
 #endif // CGAL_IO_WKT_H

@@ -27,6 +27,14 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+#endif
+
+#if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 namespace IO {
@@ -124,15 +132,14 @@ bool read_VTP(const std::string& fname,
 }
 
 /*!
- * \ingroup VtpIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * reads the content of `is` into `points` and `polygons`, in the VTPformat.
+ * \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamVTK.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param fname the path to the input file
  * \param points points of the soup of polygons.
@@ -140,7 +147,6 @@ bool read_VTP(const std::string& fname,
  *        using the indices of the points in `points`.
  *
  * \returns `true` if the reading was successful, `false` otherwise.
- * \see \ref IOStreamVTK
  */
 template <typename PointRange, typename PolygonRange>
 bool read_VTP(const char* fname,
@@ -358,31 +364,33 @@ void write_soup_polys_points(std::ostream& os,
 
 } // namespace internal
 } // namespace IO
+
 /*!
- * \ingroup VtpIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * writes the content of `points` and `polygons` in `out`, in the VTP format.
+ * \brief Writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
  *
  * \param os the output stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
- *    data should be written in binary (`true`, the default) or in ASCII (`false`).
- *    \cgalParamEnd
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
-
+ *
  * \return `true` if the writing was successful, `false` otherwise.
- * \see \ref IOStreamVTK
  */
 template <typename PointRange, typename PolygonRange,
 #ifndef DOXYGEN_RUNNING
@@ -447,30 +455,31 @@ bool write_VTP(std::ostream& os,
 }
 
 /*!
- * \ingroup VtpIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * writes the content of `points` and `polygons` in a file named `fname`, in the VTP format.
+ * \brief Writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-
  *
  * \param os the output stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{use_binary_mode} a Boolean indicating if the
- *    data should be written in binary (`true`, the default) or in ASCII (`false`).
- *    \cgalParamEnd
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
-
+ *
  * \return `true` if the writing was successful, `false` otherwise.
- * \see \ref IOStreamVTK
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const char* fname,
@@ -508,42 +517,7 @@ bool write_VTP(const std::string& fname,
 }
 
 } // namespace CGAL
-#elif DOXYGEN_RUNNING
 
-/*!
- * \ingroup VtpIoFuncs
- *
- * reads the content of `is` into `points` and `polygons`, in the VTPformat.
- *
- * \see \ref IOStreamVTK
- */
-template <typename PointRange, typename PolygonRange>
-bool read_VTP(const char* fname,
-              PointRange& points,
-              PolygonRange& polygons);
+#endif // defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
 
-/*!
- * \ingroup VtpIoFuncs
- *
- * writes the content of `points` and `polygons` in `out`, in the VTP format.
- * \see \ref IOStreamVTK
- */
-template <typename PointRange, typename PolygonRange>
-bool write_VTP(std::ostream& os,
-               const PointRange& points,
-               const PolygonRange& polygons);
-
-/*!
- * \ingroup VtpIoFuncs
- *
- * writes the content of `points` and `polygons` in a file named `fname`, in the VTP format.
- *
- * \see \ref IOStreamVTK
- */
-template <typename PointRange, typename PolygonRange>
-bool write_VTP(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons);
-
-#endif //CGAL_USE_VTK
 #endif // CGAL_IO_VTK_H

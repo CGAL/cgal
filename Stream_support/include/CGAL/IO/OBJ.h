@@ -203,15 +203,14 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
   return read_OBJ(fname.c_str(), points, polygons, np, verbose);
 }
 
-//! \ingroup ObjIoFuncs
-//!
-/// reads the content of `is` into `points` and `polygons`, using the `OBJ` format.
+/// \ingroup PkgStreamSupportIoFuncsOBJ
+///
+/// \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
 ///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
 ///                      whose value_type is itself a model of the concept `SequenceContainer`
 ///                      whose value_type is an integer type.
-///
 ///
 /// \param is the input stream
 /// \param points points of the soup of polygons.
@@ -219,22 +218,20 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 ///        using the indices of the points in `points`.
 ///
 /// \returns `true` if the reading was successful, `false` otherwise.
-/// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons)
 {
   return read_OBJ(is, points, polygons, parameters::all_default());
 }
 
-//! \ingroup ObjIoFuncs
-//!
-/// reads the content of the file `fname` into `points` and `polygons`, using the `OBJ` format.
+/// \ingroup PkgStreamSupportIoFuncsOBJ
+///
+/// \brief Reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
 ///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
 ///                      whose value_type is itself a model of the concept `SequenceContainer`
 ///                      whose value_type is an integer type.
-///
 ///
 /// \param fname the path to the input file
 /// \param points points of the soup of polygons.
@@ -242,7 +239,6 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons)
 ///        using the indices of the points in `points`.
 ///
 /// \returns `true` if the reading was successful, `false` otherwise.
-/// \see \ref IOStreamOBJ
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons)
 {
@@ -292,15 +288,14 @@ bool write_OBJ(const std::string& fname, const PointRange& points, const Polygon
 }
 
 /*!
- * \ingroup ObjIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsOBJ
  *
- * writes the content of `points` and `polygons` in `os`, in the OBJ format.
+ * \brief Writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOBJ.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param os the output stream
  * \param points points of the soup of polygons.
@@ -308,7 +303,6 @@ bool write_OBJ(const std::string& fname, const PointRange& points, const Polygon
  *        using the indices of the points in `points`.
  *
  * \return `true` if the writing was successful, `false` otherwise.
- * \see \ref IOStreamOBJ
  */
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
@@ -317,15 +311,14 @@ bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& p
 }
 
 /*!
- * \ingroup ObjIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsOBJ
  *
- * writes the content of `points` and `polygons` in a file named `fname`, in the OBJ format.
+ * \brief Writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamOBJ.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param fname the path to the output file
  * \param points points of the soup of polygons.
@@ -333,7 +326,6 @@ bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& p
  *        using the indices of the points in `points`.
  *
  * \return `true` if the writing was successful, `false` otherwise.
- * \see \ref IOStreamOBJ
  */
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& polygons)

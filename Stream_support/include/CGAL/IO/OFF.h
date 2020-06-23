@@ -200,9 +200,9 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 }
 
 /*!
- * \ingroup OffIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * reads the content of `is` into `points` and `polygons`, in the OFF format.
+ * \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -216,7 +216,6 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
  *        using the indices of the points in `points`.
  *
  * \returns `true` if the reading was successful, `false` otherwise.
- * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
 bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
@@ -225,9 +224,9 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
 }
 
 /*!
- * \ingroup OffIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * reads the content of the file `fname` into `points` and `polygons`, in the OFF format.
+ * \brief Reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -241,7 +240,6 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
  *        using the indices of the points in `points`.
  *
  * \returns `true` if the reading was successful, `false` otherwise.
- * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
 bool read_OFF(const char* fname, PointRange& points, PolygonRange& polygons)
@@ -281,9 +279,9 @@ bool write_OFF(const char* fname,
 }
 
 /*!
- * \ingroup OffIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * writes the content of `points` and `polygons` in `os`, in the OFF format.
+ * \brief Writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -297,7 +295,6 @@ bool write_OFF(const char* fname,
  *        using the indices of the points in `points`.
  *
  * \return `true` if the writing was successful, `false` otherwise.
- * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& polygons
@@ -313,15 +310,14 @@ bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& p
 }
 
 /*!
- * \ingroup OffIoFuncs
+ * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * writes the content of `points` and `polygons` in  the file `fname`, in the OFF format.
+ * \brief Writes the content of `points` and `polygons` in the file `fname`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
-
  *
  * \param fname the path to the output file
  * \param points points of the soup of polygons.
@@ -329,19 +325,16 @@ bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& p
  *        using the indices of the points in `points`.
  *
  * \return `true` if the writing was successful, `false` otherwise.
- * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const char* fname,
                const PointRange& points,
                const PolygonRange& polygons
 #ifndef DOXYGEN_RUNNING
-               ,
-               typename boost::enable_if<
-               typename boost::has_range_const_iterator<PolygonRange>::type
-               >::type* =0
+               , typename boost::enable_if<
+                   typename boost::has_range_const_iterator<PolygonRange>::type>::type* = 0
 #endif
-    )
+               )
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }

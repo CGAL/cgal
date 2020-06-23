@@ -11,20 +11,22 @@
 #ifndef CGAL_IO_3MF_H
 #define CGAL_IO_3MF_H
 
-#ifdef CGAL_LINKED_WITH_3MF
-
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/3MF/read_3mf.h>
 #include <CGAL/IO/3MF/write_3mf.h>
 
 #include <CGAL/boost/graph/iterator.h>
 
+#ifdef CGAL_LINKED_WITH_3MF
 #include <Model/COM/NMR_DLLInterfaces.h>
+#endif
 
 #include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
 namespace CGAL {
 
@@ -368,9 +370,9 @@ int read_from_3mf(const std::string& fname,
 }
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup PkgStreamSupportIoFuncs3MF
  *
- * \brief extracts ranges of points and triangles from a 3mf file.
+ * \brief Extracts ranges of points and triangles from a 3mf file.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
  *  `BackInsertionSequence` whose `value type` is
@@ -418,9 +420,9 @@ int read_triangle_soups_from_3mf(const std::string& fname,
 // Write
 
 /*!
- * \ingroup IOstreamFunctions
+ * \ingroup PkgStreamSupportIoFuncs3MF
  *
- * \brief writes the triangle soups contained in `all_points` and
+ * \brief Writes the triangle soups contained in `all_points` and
  *  `all_polygons` into the 3mf file `fname`.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
@@ -498,6 +500,6 @@ bool write_3MF(const std::string& fname,
 
 } // namespace CGAL
 
-#endif // CGAL_LINKED_WITH_3MF
+#endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_IO_3MF_H
