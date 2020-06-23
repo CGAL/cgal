@@ -122,10 +122,8 @@ bool read_point_set(const std::string& filename,
   return false;
 }
 
-template <typename Point,
-          typename Vector>
-bool read_point_set(const char* filename,
-                    CGAL::Point_set_3<Point, Vector>& ps)
+template <typename Point, typename Vector>
+bool read_point_set(const char* filename, CGAL::Point_set_3<Point, Vector>& ps)
 {
   return read_point_set(std::string(filename), ps);
 }
@@ -221,12 +219,6 @@ template <typename Point, typename Vector>
 bool write_point_set(const char* filename, CGAL::Point_set_3<Point, Vector>& ps)
 {
   return write_point_set(filename, ps, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_point_set(const std::string& filename, CGAL::Point_set_3<Point, Vector>& ps, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_point_set(filename.c_str(), ps, np);
 }
 
 template <typename Point, typename Vector>
