@@ -57,8 +57,10 @@ int main(int argc, char* argv[])
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
+  auto tr = CGAL::convert_to_base_triangulation(std::move(c3t3));
+
   const double target_edge_length = 0.1;//coarsen the mesh
-  CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
     CGAL::parameters::number_of_iterations(3));
 
   return EXIT_SUCCESS;

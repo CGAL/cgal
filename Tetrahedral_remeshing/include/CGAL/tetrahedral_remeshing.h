@@ -18,6 +18,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
+#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
@@ -252,39 +253,9 @@ void tetrahedral_isotropic_remeshing(
                                  CGAL::parameters::all_default());
 }
 
-///////////////////////////////////////////////////
-/////// MESH_COMPLEX_3_IN_TRIANGULATION_3 /////////
-///////////////////////////////////////////////////
-
 /*!
-* \ingroup PkgTetrahedralRemeshingRef
-* \brief Remeshes a tetrahedral mesh.
-*
-* This function takes as input a `Mesh_complex_3_in_triangulation_3`
-* and performs a sequence of atomic operations on the underlying triangulation
-* in order to generate as output a high-quality mesh with a prescribed
-* uniform density.
-* These atomic operations are performed as follows:
-*   - edge splits, until all edges satisfy a prescribed length criterion,
-*   - edge collapses, until all edges satisfy a prescribed length criterion,
-*   - edge flips, to locally improve dihedral angles until they can
-*     no longer be improved by flipping,
-*   - global smoothing by vertex relocations,
-*   - re-projection of boundary vertices to the initial surface.
-*
-* This remeshing function can deal with multi-domains, boundaries, and features
-* that are encoded in the `Mesh_complex_3_in_triangulation_3`
-* and that are given using the named parameters.
-* It preserves the geometry of
-* subdomains throughout the remeshing process.
-*
-* Subdomains are defined by indices that
-* are stored in the cells of the input triangulation, following the `MeshCellBase_3`
-* concept.
-* The surfacic, linear, and corner features (constrained edges and vertices)
-* are defined by the complex-or-not status of the simplices of `c3t3`, along with
-* the number of incident subdomains, and the input named parameters extra requirements.
-*
+* Converts the triangulation referenced in the input
+* `Mesh_complex_3_in_triangulation_3`.
 * @tparam Tr is the underlying triangulation for `Mesh_complex_3_in_triangulation_3`.
 *            It can be instantiated with any 3D regular triangulation of CGAL provided
 *            that its vertex and cell base classes are models of the concepts
@@ -299,41 +270,29 @@ void tetrahedral_isotropic_remeshing(
 * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
 *
 * @param c3t3 the complex containing the triangulation (of type `Tr`) to be remeshed.
-* @param target_edge_length the uniform target edge length. This parameter provides a
-*          mesh density target for the remeshing algorithm.
-* @param np optional sequence of \ref Remeshing_namedparameters "Named Parameters"
-*          among the ones listed below
-*
-* \cgalNamedParamsBegin
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the full
-*     sequence of atomic operations
-*     performed (listed in the above description)
-*  \cgalParamEnd
-*  \cgalParamBegin{remesh_boundaries} If `false`, none of the input volume boundaries
-*     can be modified.
-*     Otherwise, the topology is preserved, but atomic operations can be performed on the
-*     surfaces, and along feature polylines, such that boundaries are remeshed.
-*  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map containing the
-*    constrained - or - not status of each edge of `tr`. A constrained edge can be split
-*    or collapsed, but not flipped.
-*  \cgalParamEnd
-*  \cgalParamBegin{facet_is_constrained_map} a property map containing the
-*    constrained - or - not status of each facet of `tr`. A constrained facet can be split
-*    or collapsed, but not flipped.
-*  \cgalParamEnd
-*  \cgalParamBegin{cell_is_selected_map} a property map containing the
-*    selected - or - not status for each cell of `tr` for remeshing.
-*    Only selected cells are modified (and possibly their neighbors if surfaces are
-*    modified) by remeshing.
-*    By default, all cells with a non-zero `Subdomain_index` are selected.
-*  \cgalParamEnd
-* \cgalNamedParamsEnd
-*
-* \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
-*
-* @todo implement non-uniform sizing field instead of uniform target edge length
+
+* @todo finish this doc
 */
+template<typename Tr, typename CornerIndex, typename CurveIndex>
+typename Tr::Tr_Base
+convert_to_base_triangulation(
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3)
+{
+  using Tr_Base = typename Tr::Tr_Base;
+  Tr_Base tr;
+  tr.swap(c3t3.triangulation());
+  return tr;
+}
+
+///////////////////////////////////////////////////
+/////// MESH_COMPLEX_3_IN_TRIANGULATION_3 /////////
+///////////////////////////////////////////////////
+
+///////
+////// Warning with using this version :
+////// the triangulation after remeshing is not regular anymore
+////// the empty-sphere property is not respected
+///////
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
