@@ -68,12 +68,13 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(Point_set)
 template <typename T>
 struct is_Point_set_3 : has_Point_set<T> { };
 
-// Point_set_3 also functions as range, so it needs to be excluded
+// Point_set_3 and strings also functions as ranges, but we want to matches polygon soups here
 template <typename T>
 struct is_Range
   : public boost::mpl::and_<
              boost::has_range_const_iterator<T>,
-             boost::mpl::not_<is_Point_set_3<T> > >
+             boost::mpl::not_<is_Point_set_3<T> >,
+             boost::mpl::not_<boost::is_same<std::string, T> > >
 { };
 
 // For polygon meshes
