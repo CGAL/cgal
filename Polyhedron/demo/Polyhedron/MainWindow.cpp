@@ -1361,7 +1361,8 @@ void MainWindow::selectSceneItems(QList<int> is)
     sceneView->setCurrentIndex(i);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
-    sceneView->scrollTo(s.indexes().first());
+    if(!s.empty())
+      sceneView->scrollTo(s.indexes().first());
   }
 }
 
