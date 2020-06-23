@@ -226,7 +226,7 @@ compare_distance_pssC3(
         }
       }
     }
-    return compare(d1*e2, d2*e1);
+    return CGAL::compare(d1*e2, d2*e1);
 }
 
 template <class K>
@@ -262,7 +262,7 @@ compare_distance_ppsC3(
         }
       }
     }
-    return compare(d1*e2, d2);
+    return CGAL::compare(d1*e2, d2);
 }
 
 
