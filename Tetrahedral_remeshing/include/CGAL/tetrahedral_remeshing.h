@@ -281,7 +281,7 @@ void tetrahedral_isotropic_remeshing(
 * Subdomains are defined by indices that
 * are stored in the cells of the input triangulation, following the `MeshCellBase_3`
 * concept.
-* The surfacic, linear and corner features (constrained edges and vertices)
+* The surfacic, linear, and corner features (constrained edges and vertices)
 * are defined by the complex-or-not status of the simplices of `c3t3`, along with
 * the number of incident subdomains, and the input named parameters extra requirements.
 *
