@@ -109,7 +109,7 @@ namespace CGAL {
      \ingroup PkgPointSetProcessing3Algorithms
 
      Recursively split the point set in smaller clusters until the
-     clusters have less than `size` elements or until their variation
+     clusters have less than `size` elements and until their variation
      factor is below `var_max`.
 
      This method modifies the order of input points so as to pack all remaining points first,
