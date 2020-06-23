@@ -546,7 +546,7 @@ bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fnam
  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_VTP()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool CGAL::write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_VTP(os, g, np);
 }
