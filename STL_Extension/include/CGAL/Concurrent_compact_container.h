@@ -348,17 +348,25 @@ public:
   iterator
   emplace(const Args&... args)
   {
+    typedef CCC_internal::Erase_counter_strategy<
+      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
     new (ret) value_type(args...);
+    EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
     return finalize_insert(ret, fl);
   }
 
   iterator insert(const T &t)
   {
+    typedef CCC_internal::Erase_counter_strategy<
+      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
     std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
+    EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
     return finalize_insert(ret, fl);
   }
 
