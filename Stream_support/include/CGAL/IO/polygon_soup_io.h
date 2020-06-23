@@ -39,12 +39,12 @@ namespace CGAL {
  * \brief Reads a polygon soup from a file.
  *
  * Supported file formats are the following:
- * - `.off` (\ref IOStreamOFF "OFF file format")
- * - `.obj` (\ref IOStreamOBJ "OBJ file format")
- * - `.stl` (\ref IOStreamSTL "STL file format")
- * - `.ply` (\ref IOStreamPLY "PLY file format")
- * - `.ts` (\ref IOStreamGocad "GOCAD file format")
- * - `.vtp` (\ref IOStreamVTK "VTK file format")
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
@@ -104,12 +104,12 @@ bool read_polygon_soup(const std::string& fname,
  * \brief Writes the content of `points` and `polygons` in a file.
  *
  * Supported file formats are the following:
- * - `.off` (\ref IOStreamOFF "OFF file format")
- * - `.obj` (\ref IOStreamOBJ "OBJ file format")
- * - `.stl` (\ref IOStreamSTL "STL file format")
- * - `.ply` (\ref IOStreamPLY "PLY file format")
- * - `.ts` (\ref IOStreamGocad "GOCAD file format")
- * - `.vtp` (\ref IOStreamVTK "VTK file format")
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
