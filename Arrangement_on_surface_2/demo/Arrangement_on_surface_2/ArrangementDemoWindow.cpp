@@ -707,7 +707,7 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
   // read type info
   int tt_int;
   ifs >> tt_int;
-  tt = static_cast<TraitsType>(tt_int);
+  auto tt = static_cast<TraitsType>(tt_int);
 
   ArrangementDemoTabBase* createdTab = nullptr;
   switch (tt)

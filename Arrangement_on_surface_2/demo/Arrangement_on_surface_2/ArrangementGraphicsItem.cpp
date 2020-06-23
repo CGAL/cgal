@@ -266,9 +266,9 @@ paintFace( Face_handle f, QPainter* painter,
   if (!f->is_unbounded())  // f is not the unbounded face
   {
     typedef typename CGAL::Arr_polyline_traits_2<Kernel_> Arr_poly_traits;
-    typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
-    typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
-    typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
+    // typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
+    // typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
+    // typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
 
     // Obtain a polyline traits class and construct the needed functors
     Arr_poly_traits poly_tr;
@@ -278,8 +278,8 @@ paintFace( Face_handle f, QPainter* painter,
 
     // Construct needed functors from the segment traits
     typedef typename Arr_poly_traits::Subcurve_traits_2      Subcurve_traits;
-    typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
-    typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
+    // typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
+    // typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
     // Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
     //   construct_min_vertex_2_object();
     // Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
