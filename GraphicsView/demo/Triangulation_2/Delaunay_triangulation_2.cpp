@@ -171,7 +171,7 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
+  this->graphicsView->transform().scale(1, -1);
 
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView

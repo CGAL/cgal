@@ -9,6 +9,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
@@ -401,6 +402,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
                                                 objectValue);
     }
   }
+  filterOperations(true);
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
 }
@@ -408,16 +410,22 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 void addActionToMenu(QAction* action, QMenu* menu)
 {
   bool added = false;
+  QString atxt = action->text().remove("&");
+  if(atxt.isEmpty())
+    return;
   for(QAction* it : menu->actions())
   {
-    QString atxt = action->text().remove("&"),
-        btxt = it->text().remove("&");
+    QString btxt = it->text().remove("&");
     int i = 0;
-    while(atxt[i] == btxt[i]
-          && i < atxt.size()
-          && i < btxt.size())
+    if(btxt.isEmpty())
+    {
+      continue;
+    }
+    while(i < atxt.size()
+          && i < btxt.size()
+          && atxt[i] == btxt[i])
       ++i;
-    bool res = (atxt[i] < btxt[i]);
+    bool res = (i == atxt.size() || i == btxt.size() || atxt[i] < btxt[i]);
     if (res)
     {
       menu->insertAction(it, action);
@@ -490,12 +498,12 @@ void MainWindow::filterOperations(bool)
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
     addActionToMenu(action, menu);
   }
-
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
@@ -765,7 +773,7 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
-               env_path.split(separator, QString::SkipEmptyParts)) {
+               env_path.split(separator, CGAL_QT_SKIP_EMPTY_PARTS)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
