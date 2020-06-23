@@ -309,7 +309,7 @@ namespace CGAL {
 
       Point center = compute_barycenter_position(node);
 
-      auto partitions = partition_around_point(node.begin(), node.end(), center);
+      auto partitions = _partition_around_point(node.begin(), node.end(), center);
 
       for (int i = 0; i < 8; ++i) {
 
