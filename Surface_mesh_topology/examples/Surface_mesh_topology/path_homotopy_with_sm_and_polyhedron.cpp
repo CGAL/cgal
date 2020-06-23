@@ -1,11 +1,11 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/io.h>
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Face_graph_wrapper.h>
 #include <CGAL/draw_face_graph_with_paths.h>
-
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;

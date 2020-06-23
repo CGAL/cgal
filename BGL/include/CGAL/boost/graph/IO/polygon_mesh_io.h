@@ -7,10 +7,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
+
 #ifndef CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
 #define CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
 
-#include <CGAL/boost/graph/io.h>
+#include <CGAL/boost/graph/IO/3MF.h>
+#include <CGAL/boost/graph/IO/GOCAD.h>
+#include <CGAL/boost/graph/IO/INP.h>
+#include <CGAL/boost/graph/IO/OBJ.h>
+#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/IO/PLY.h>
+#include <CGAL/boost/graph/IO/STL.h>
+#include <CGAL/boost/graph/IO/VTK.h>
+#include <CGAL/boost/graph/IO/WRL.h>
 #include <CGAL/IO/helpers.h>
 
 #include <fstream>

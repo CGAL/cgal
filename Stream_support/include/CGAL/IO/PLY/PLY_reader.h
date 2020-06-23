@@ -692,7 +692,7 @@ bool read_PLY_faces(std::istream& in,
                     const char* vertex_indices_tag,
                     typename std::enable_if<
                       CGAL::is_iterator<ColorOutputIterator>::value
-                    >::type* =0)
+                    >::type* = nullptr)
 {
   typedef typename boost::range_value<PolygonRange>::type Polygon_3;
   typedef CGAL::Color                                     Color_rgb;
@@ -763,14 +763,16 @@ bool read_PLY_faces(std::istream& in,
                     const char* vertex_indices_tag,
                     typename boost::enable_if<
                     typename boost::has_range_const_iterator<ColorRange>::type
-                    >::type* =0)
+                    >::type* = nullptr)
 {
   return read_PLY_faces<Integer>(in, element, polygons, std::back_inserter(fcolors), vertex_indices_tag);
 }
 
 } // namespace PLY
 } // namespace internal
+
 /// \endcond
+
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_PLY_READER_H

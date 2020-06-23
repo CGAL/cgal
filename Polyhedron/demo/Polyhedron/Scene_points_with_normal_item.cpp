@@ -1,9 +1,9 @@
 #define CGAL_data_type float
 #define CGAL_GL_data_type GL_FLOAT
-#include "Scene_points_with_normal_item.h"
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
-#include <CGAL/Point_set_3/IO.h>
+#include "Scene_points_with_normal_item.h"
+
+#include <CGAL/Point_set_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -11,6 +11,8 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Edge_container.h>
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -553,9 +555,7 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = stream &&
-      CGAL::read_LAS (stream, *(d->m_points)) &&
-      !isEmpty();
+  bool ok = CGAL::read_LAS (stream, *(d->m_points)) && !isEmpty();
 
   std::cerr << d->m_points->info();
 
@@ -580,8 +580,7 @@ bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return stream &&
-    CGAL::write_LAS (stream, *(d->m_points));
+  return CGAL::write_LAS(stream, *(d->m_points));
 }
 
 #endif // LAS
@@ -593,9 +592,8 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = stream &&
-      CGAL::read_PLY (stream, *(d->m_points), d->m_comments) &&
-      !isEmpty();
+  bool ok = CGAL::read_PLY(stream, *(d->m_points), d->m_comments) && !isEmpty();
+
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
 
@@ -628,9 +626,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
   if (binary)
     CGAL::set_binary_mode (stream);
 
-  CGAL::write_PLY (stream, *(d->m_points), d->m_comments);
-
-  return true;
+  return CGAL::write_PLY(stream, *(d->m_points), d->m_comments);
 }
 
 // Loads point set from .OFF file
@@ -639,9 +635,8 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   Q_ASSERT(d->m_points != NULL);
 
   d->m_points->clear();
-  bool ok = stream &&
-      CGAL::read_OFF(stream, *(d->m_points)) &&
-      !isEmpty();
+  bool ok = CGAL::read_OFF(stream, *(d->m_points)) && !isEmpty();
+
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
@@ -654,8 +649,7 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return stream &&
-    CGAL::write_OFF (stream, *(d->m_points));
+  return CGAL::write_OFF(stream, *(d->m_points));
 }
 
 // Loads point set from .XYZ file
@@ -665,9 +659,8 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = stream &&
-      CGAL::read_XYZ (stream, *(d->m_points)) &&
-      !isEmpty();
+  bool ok = CGAL::read_XYZ (stream, *(d->m_points)) && !isEmpty();
+
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
@@ -680,8 +673,7 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return stream &&
-    CGAL::write_XYZ (stream, *(d->m_points));
+  return CGAL::write_XYZ(stream, *(d->m_points));
 }
 
 QString
