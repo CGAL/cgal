@@ -31,7 +31,7 @@ namespace CGAL {
 // Write
 
 /*!
- * \ingroup PkgBGLIOFct
+ * \ingroup PkgBGLIOFuncs3MF
  *
  * \brief Writes the triangle meshes contained in `gs` into the 3mf file `filename`.
  *

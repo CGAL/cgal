@@ -111,7 +111,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 } // namespace IO
 
 /*!
- * \ingroup PkgBGLIOFct
+ * \ingroup PkgBGLIoFuncsVTP
  *
  * \brief Reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
  *
@@ -381,7 +381,7 @@ void write_polys_points(std::ostream& os,
 } // namespace internal
 } // namespace IO
 
-/*! \ingroup PkgBGLIOFct
+/*! \ingroup PkgBGLIoFuncsVTP
  *
  * \brief Writes a triangulated surface mesh in the `PolyData` XML format (\ref IOStreamVTK).
  *
@@ -478,7 +478,7 @@ bool write_VTP(std::ostream& os,
   return os.good();
 }
 
-/*! \ingroup PkgBGLIOFct
+/*! \ingroup PkgBGLIoFuncsVTP
  *
  * \brief Writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format (\ref IOStreamVTK).
  *

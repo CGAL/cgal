@@ -72,7 +72,7 @@ public:
 } // namespace IO
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsOBJ
 
   \brief Reads the graph `g` from the stream `in`, using the \ref IOStreamOBJ.
 
@@ -120,7 +120,7 @@ bool read_OBJ(std::istream& is,
 }
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsOBJ
 
   \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamOBJ.
 
@@ -185,7 +185,7 @@ bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, pa
 // Write
 
 /*!
- \ingroup PkgBGLIOFct
+ \ingroup PkgBGLIoFuncsOBJ
 
   \brief Writes the graph `g` into the output stream, using the \ref IOStreamOBJ.
 
@@ -228,7 +228,7 @@ bool write_OBJ(std::ostream& os,
 }
 
 /*!
-\ingroup PkgBGLIOFct
+\ingroup PkgBGLIoFuncsOBJ
 
   \brief Writes the graph `g` into a file named `fname`, using the \ref IOStreamOBJ.
 

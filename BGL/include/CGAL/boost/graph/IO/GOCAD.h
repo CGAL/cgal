@@ -80,7 +80,7 @@ public:
 } // namespace internal
 } // namespace IO
 
-/// \ingroup PkgBGLIOFct
+/// \ingroup PkgBGLIoFuncsGOCAD
 ///
 /// \brief Reads the graph `g` from the input stream, using the \ref IOStreamGocad.
 ///
@@ -144,7 +144,7 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
   return read_GOCAD(is, name_and_color, g, parameters::all_default());
 }
 
-/// \ingroup PkgBGLIOFct
+/// \ingroup PkgBGLIoFuncsGOCAD
 ///
 /// \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamGocad.
 ///
@@ -210,7 +210,7 @@ bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
-/// \ingroup PkgBGLIOFct
+/// \ingroup PkgBGLIoFuncsGOCAD
 ///
 /// \brief Writes the graph `g` into the output stream `os`, using the \ref IOStreamGocad.
 ///
@@ -307,7 +307,7 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
   return write_GOCAD(os, name, g, parameters::all_default());
 }
 
-/// \ingroup PkgBGLIOFct
+/// \ingroup PkgBGLIoFuncsGOCAD
 ///
 /// \brief Writes the graph `g` into a file named `fname`, using the \ref IOStreamGocad.
 ///
@@ -355,7 +355,7 @@ bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLA
   return write_GOCAD(fname.c_str(), g, np);
 }
 
-/// \ingroup PkgBGLIOFct
+/// \ingroup PkgBGLIoFuncsGOCAD
 ///
 /// \brief Writes the graph `g` in the  \ref IOStreamGocad into `os`.
 ///

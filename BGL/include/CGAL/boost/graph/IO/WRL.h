@@ -29,7 +29,7 @@ namespace CGAL {
 // Write
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsWRL
 
   \brief Writes the graph `g` into the output stream, using the \ref IOStreamWRL (VRML 2.0).
 
@@ -66,6 +66,44 @@ bool write_WRL(std::ostream& os,
 {
   IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_VRML_2> printer(os);
   return printer(g, np);
+}
+
+/*!
+  \ingroup PkgBGLIoFuncsWRL
+
+  \brief Writes the graph `g` into the output file, using the \ref IOStreamWRL (VRML 2.0).
+
+  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the output file
+  \param g the graph to be output
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  \returns `true` if writing was successful.
+*/
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_WRL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream is(fname);
+  return write_WRL(is, g, np);
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

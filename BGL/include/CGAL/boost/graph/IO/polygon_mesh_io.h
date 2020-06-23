@@ -71,13 +71,18 @@ bool read_polygon_mesh(std::istream& is,
  *
  * \brief reads a polygon mesh from a file.
  *
+ * Supported file formats are the following:
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
+ *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param fname the name of the file. Its extension must be one of the following :
- * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
- * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
- * `.vtp` (\ref IOStreamVTK "VTP file format")  or `.ts` (\ref IOStreamGocad "GOCAD file format").
+ * \param fname the name of the file
  * \param g the mesh
  * \param verbose whether extra information is printed when an incident occurs during reading
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -166,13 +171,18 @@ bool read_polygon_mesh(const char* fname, Graph& g)
  *
  * \brief writes a polygon mesh in a file.
  *
+ * Supported file formats are the following:
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
+ *
  * \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param fname the name of the file. Its extension must be one of the following :
- * `.off` (\ref IOStreamOFF "OFF file format") , `.obj` (\ref IOStreamOBJ "OBJ file format"),
- * `.stl` (\ref IOStreamSTL "STL file format"), `.ply` (\ref IOStreamPLY "PLY file format"),
- * `.vtp` (\ref IOStreamVTK "VTP file format")  or `.ts` (\ref IOStreamGocad "GOCAD file format").
+ * \param fname the name of the file
  * \param g the mesh to be output
  * \param verbose whether extra information is printed when an incident occurs during writing
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below

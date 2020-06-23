@@ -86,7 +86,7 @@ bool read_OFF_BGL(std::istream& is,
 } // namespace IO
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsOFF
 
   \brief Reads the graph `g` from data in the input stream, using the \ref IOStreamOFF.
 
@@ -169,7 +169,7 @@ bool read_OFF(std::istream& is, Graph& g,
 }
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsOFF
 
   \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamOFF.
 
@@ -286,7 +286,7 @@ bool write_OFF_BGL(std::ostream& os,
 } // namespace IO
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsOFF
 
   \brief Writes the graph `g` in the output stream, using the \ref IOStreamOFF.
 
@@ -367,7 +367,7 @@ bool write_OFF(std::ostream& os, const Graph& g,
 }
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsOFF
 
   \brief Writes the graph `g` in the file `fname`, using the \ref IOStreamOFF.
 

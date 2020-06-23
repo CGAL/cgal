@@ -467,6 +467,25 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLIOFct I/O Functions
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLIoFuncsSTL STL I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIoFuncsPLY PLY I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIoFuncsVTP VTP I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIoFuncsGOCAD GOCAD I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIoFuncsWRL WRL I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIOFuncs3MF 3MF I/O Functions
+/// \ingroup PkgBGLIOFct
+/// \defgroup PkgBGLIOFctDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgBGLIOFct
+
 /*!
 \addtogroup PkgBGLPropertiesDynamic
 The dynamic property tags enable to associate information to simplices of a `FaceGraph` on the fly.

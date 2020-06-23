@@ -14,8 +14,8 @@
 
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/helpers.h>
-#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 
+#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
@@ -81,7 +81,7 @@ bool read_PLY_BGL(std::istream& is,
 } // namespace IO
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsPLY
 
   \brief Reads the graph `g` from the input stream, using the \ref IOStreamPLY.
 
@@ -151,7 +151,7 @@ bool read_PLY(std::istream& is, Graph& g,
 }
 
 /*!
-  \ingroup PkgBGLIOFct
+  \ingroup PkgBGLIoFuncsPLY
 
   \brief Reads the graph `g` from a file named `fname`, using the \ref IOStreamPLY.
 
@@ -242,7 +242,7 @@ bool read_PLY(const std::string& fname, Graph& g,
 // Write
 
 /*!
- \ingroup PkgBGLIOFct
+ \ingroup PkgBGLIoFuncsPLY
 
  \brief Writes the graph in an output stream, using the \ref IOStreamPLY.
 
@@ -440,7 +440,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
 }
 
 /*!
- \ingroup PkgBGLIOFct
+ \ingroup PkgBGLIoFuncsPLY
 
  \brief Writes the graph in the output file `fname`, using the \ref IOStreamPLY.
 
