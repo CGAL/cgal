@@ -337,7 +337,7 @@ bool build_triangulation(Tr& tr,
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
 
   Incident_cells_map incident_cells_map;
-  vertex_handle_vector.resize(points.size() + 1); // id to vertex_handle 
+  vertex_handle_vector.resize(points.size() + 1); // id to vertex_handle
                                         //index 0 is for infinite vertex
                                         // 1 to n for points in `points`
 
