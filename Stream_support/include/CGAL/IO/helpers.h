@@ -42,6 +42,22 @@ void fill_point(const double x, const double y, const double z, const double w, 
   pt[0] = x/w; pt[1] = y/w; pt[2] = z/w;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string get_file_extension(const std::string fname)
+{
+  std::string::size_type dot(fname.rfind("."));
+  if(dot == std::string::npos)
+    return std::string();
+
+  std::string ext = fname.substr(dot+1, fname.length() - dot - 1);
+  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+  return ext;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Functions like 'write_OFF' can take :
 // - write_OFF(stream, point_set)
 // - write_OFF(stream, pointrange)
