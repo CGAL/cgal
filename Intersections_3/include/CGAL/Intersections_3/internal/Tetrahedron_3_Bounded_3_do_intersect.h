@@ -167,7 +167,7 @@ inline typename K::Boolean do_intersect(const typename K::Tetrahedron_3 &tet,
   return do_intersect(bb, tet, k);
 }
 
-// BBox_3 sphecific code since it is ok for BBox_3 to degenerate.
+// BBox_3 specific code since it is ok for BBox_3 to degenerate.
 template <class K>
 inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
                                         const typename K::Tetrahedron_3 &tet,
