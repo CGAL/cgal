@@ -111,13 +111,15 @@ public:
    */
   Mesh_complex_3_in_triangulation_3(const Self& rhs);
 
-  /**
-   * Destructor
-   */
-  virtual ~Mesh_complex_3_in_triangulation_3() {}
+  /// Move constructor
+  Mesh_complex_3_in_triangulation_3(Self&& rhs)
+    : Base(std::move(rhs))
+    , edges_(std::move(rhs.edges_))
+    , corners_(std::move(rhs.corners_))
+  {}
 
   /**
-   * Assignement operator
+   * Assignement operator, also serves as move-assignement
    */
   Self& operator=(Self rhs)
   {

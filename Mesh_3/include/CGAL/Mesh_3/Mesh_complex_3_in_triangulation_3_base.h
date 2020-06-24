@@ -191,6 +191,20 @@ public:
     init(number_of_cells_, rhs.number_of_cells_);
   }
 
+  /// Move constructor
+  Mesh_complex_3_in_triangulation_3_base(Self&& rhs)
+    : Base()
+    , tr_(std::move(rhs.tr_))
+    , edge_facet_counter_(std::move(rhs.edge_facet_counter_))
+    , manifold_info_initialized_(std::exchange(rhs.manifold_info_initialized_, false))
+  {
+    Init_number_of_elements<Concurrency_tag> init;
+    init(number_of_facets_, rhs.number_of_facets_);
+    init(number_of_cells_, rhs.number_of_cells_);
+    init(rhs.number_of_facets_); // set to 0
+    init(rhs.number_of_cells_); // set to 0
+  }
+
   /// Destructor
   ~Mesh_complex_3_in_triangulation_3_base() {}
 
@@ -203,6 +217,13 @@ public:
 
   /// Assignment operator
   Self& operator=(Self rhs)
+  {
+    swap(rhs);
+    return *this;
+  }
+
+  /// Assignment operator, also serves as move-assignment
+  Self& operator=(Self&& rhs)
   {
     swap(rhs);
     return *this;
@@ -861,6 +882,11 @@ private:
     {
       a = b;
     }
+    template<typename T>
+    void operator()(T& a)
+    {
+      a = 0;
+    }
   };
 
   template<typename Concurrency_tag2, typename dummy = void>
@@ -887,6 +913,11 @@ private:
     void operator()(T& a, const T& b)
     {
       a = b.load();
+    }
+    template<typename T>
+    void operator()(T& a)
+    {
+      a = 0;
     }
   };
 
