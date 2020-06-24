@@ -274,6 +274,21 @@ namespace CGAL {
       }
     }
 
+    void _split_node(Node &node,
+                     Range_iterator begin, Range_iterator end,
+                     std::size_t dimension, std::bitset<3> coords,
+                     Point center) {
+
+      // Split the point collection around the center point on this dimension
+      Range_iterator split_point = std::partition(begin, end,
+                                                  [&](const Range_type &a) -> bool {
+                                                    return (get(m_points_map, a)[dimension] < split_point[dimension]);
+                                                  });
+    }
+
+    void _reassign_points(Node &node) {
+
+    }
   }; // end class Octree
 
 } // namespace CGAL
