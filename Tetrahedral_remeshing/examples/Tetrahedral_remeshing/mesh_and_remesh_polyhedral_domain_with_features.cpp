@@ -60,7 +60,13 @@ int main(int argc, char* argv[])
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-  Triangulation_3 tr = CGAL::convert_to_triangulation_3(c3t3);
+  Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3));
+  //note we use the move semantic, with std::move(c3t3),
+  //  to avoid a copy of the triangulation by the function
+  //  `CGAL::convert_to_triangulation_3()`
+  //  After the call to this function, c3t3 is an empty and valid C3t3.
+  //It is possible to use :  CGAL::convert_to_triangulation_3(c3t3),
+  //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
 
   const double target_edge_length = 0.1;//coarsen the mesh
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
