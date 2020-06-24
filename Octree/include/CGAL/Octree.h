@@ -160,7 +160,7 @@ namespace CGAL {
           current->split();
 
           // Redistribute its points
-          _reassign_points((*current));
+          reassign_points((*current));
 
           // Process each of its children
           for (int i = 0; i < 8; ++i)
@@ -209,74 +209,9 @@ namespace CGAL {
       return {bary[0], bary[1], bary[2]};
     }
 
-    std::array<Range_iterator, 9> partition_around_point(Range_iterator begin, Range_iterator end, Point point) {
-
-      auto partitions = std::array<Range_iterator, 9>();
-
-      partitions[0] = begin;
-      partitions[8] = end;
-
-      // Split on x
-      partitions[4] = std::partition(partitions[0], partitions[8],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[0] < point[0]);
-                                     });
-
-      // Split on y, to the left of x
-      partitions[2] = std::partition(partitions[0], partitions[4],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[1] < point[1]);
-                                     });
-
-      // Split on y, to the right of x
-      partitions[6] = std::partition(partitions[4], partitions[8],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[1] < point[1]);
-                                     });
-
-      // Split on z, to the left of y and the left of x
-      partitions[1] = std::partition(partitions[0], partitions[2],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[2] < point[2]);
-                                     });
-
-      // Split on z, to the right of y and the left of x
-      partitions[3] = std::partition(partitions[2], partitions[4],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[2] < point[2]);
-                                     });
-
-      // Split on z, to the left of y and the right of x
-      partitions[5] = std::partition(partitions[4], partitions[6],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[2] < point[2]);
-                                     });
-
-      // Split on z, to the right of y and the right of x
-      partitions[7] = std::partition(partitions[6], partitions[8],
-                                     [&](const Range_type &a) -> bool {
-                                       return (get(m_points_map, a)[2] < point[2]);
-                                     });
-
-      return partitions;
-    }
-
-    void reassign_points(Node &node) {
-
-      Point center = compute_barycenter_position(node);
-
-      auto partitions = partition_around_point(node.begin(), node.end(), center);
-
-      for (int i = 0; i < 8; ++i) {
-
-        node[i].begin() = partitions[i];
-        node[i].end() = partitions[i + 1];
-      }
-    }
-
-    void _split_node(Node &node, Range_iterator begin, Range_iterator end, Point &center,
-                     std::bitset<3> coord = std::bitset<3>(),
-                     std::size_t dimension = 0) {
+    void split_node(Node &node, Range_iterator begin, Range_iterator end, Point &center,
+                    std::bitset<3> coord = std::bitset<3>(),
+                    std::size_t dimension = 0) {
 
       // Root case: reached the last dimension
       if (dimension == 3) {
@@ -296,19 +231,19 @@ namespace CGAL {
       // Further subdivide the first side of the split
       std::bitset<3> coord_left = coord;
       coord_left[dimension] = false;
-      _split_node(node, begin, split_point, center, coord_left, dimension + 1);
+      split_node(node, begin, split_point, center, coord_left, dimension + 1);
 
       // Further subdivide the second side of the split
       std::bitset<3> coord_right = coord;
       coord_right[dimension] = true;
-      _split_node(node, split_point, end, center, coord_right, dimension + 1);
+      split_node(node, split_point, end, center, coord_right, dimension + 1);
 
     }
 
-    void _reassign_points(Node &node) {
+    void reassign_points(Node &node) {
 
       Point center = compute_barycenter_position(node);
-      _split_node(node, node.begin(), node.end(), center);
+      split_node(node, node.begin(), node.end(), center);
     }
   }; // end class Octree
 
