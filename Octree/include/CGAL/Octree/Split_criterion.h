@@ -11,7 +11,7 @@ namespace CGAL {
 
     std::size_t m_bucket_size;
 
-    Split_to_max_depth_or_bucket_size(std::size_t bucket_size) :
+    Split_to_bucket_size(std::size_t bucket_size) :
             m_bucket_size(bucket_size) {}
 
     template<class Node>
