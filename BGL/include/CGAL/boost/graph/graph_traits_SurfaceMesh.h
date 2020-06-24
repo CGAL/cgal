@@ -543,7 +543,7 @@ inline
 boost::graph_traits<SurfaceMesh>::edge_descriptor
 add_edge(SurfaceMesh& sm)
 {
-  return boost::graph_traits<SurfaceMesh>::edge_descriptor(sm.add_edge());
+  return boost::graph_traits<SurfaceMesh>::edge_descriptor(sm.new_edge());
 }
 
 
@@ -615,7 +615,7 @@ inline
 boost::graph_traits<SurfaceMesh>::vertex_descriptor
 add_vertex(SurfaceMesh& sm) {
 
-  return sm.add_vertex();
+  return sm.new_vertex();
 }
 
 
@@ -690,7 +690,7 @@ inline
 boost::graph_traits<SurfaceMesh>::face_descriptor
 add_face(SurfaceMesh& sm)
 {
-  return sm.add_face();
+  return sm.new_face();
 }
 
 
