@@ -124,17 +124,18 @@ if (VTK_FOUND)
       message(STATUS "Tests that use VTK will not be compiled.")
     endif()
   endif()
-  find_path(3MF_INCLUDE_DIR
-    NAMES Model/COM/NMR_DLLInterfaces.h
-    DOC "Path to lib3MF headers"
-    )
-  find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
-  if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
-    include_directories(${3MF_INCLUDE_DIR})
-    create_single_source_cgal_program( test_3mf_to_sm.cpp )
-    target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
-    target_compile_definitions(test_3mf_to_sm PRIVATE -DCGAL_LINKED_WITH_3MF)
-  else()
-    message(STATUS "NOTICE : This program requires the lib3MF library, and will not be compiled.")
-  endif()
 endif() #VTK_FOUND
+
+find_path(3MF_INCLUDE_DIR
+  NAMES Model/COM/NMR_DLLInterfaces.h
+  DOC "Path to lib3MF headers"
+  )
+find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
+if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
+  include_directories(${3MF_INCLUDE_DIR})
+  create_single_source_cgal_program( test_3mf_to_sm.cpp )
+  target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
+  target_compile_definitions(test_3mf_to_sm PRIVATE -DCGAL_LINKED_WITH_3MF)
+else()
+  message(STATUS "NOTICE : This program requires the lib3MF library, and will not be compiled.")
+endif()
