@@ -127,6 +127,8 @@ bool read_PLY_BGL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
@@ -164,6 +166,12 @@ bool read_PLY(std::istream& is, Graph& g,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
+    \cgalParamNBegin{use_binary_mode}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
+
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
@@ -210,31 +218,40 @@ bool read_PLY(const char* fname,
 #endif
               )
 {
-  std::ifstream is(fname);
-  return IO::internal::read_PLY_BGL(is, g, np, verbose);
-}
-
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  std::ifstream is(fname.c_str());
-  return IO::internal::read_PLY_BGL(is, g, np, verbose);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ifstream is(fname, std::ios::binary);
+    CGAL::set_mode(is, CGAL::IO::BINARY);
+    return IO::internal::read_PLY_BGL(is, g, np, verbose);
+  }
+  else
+  {
+    std::ifstream is(fname);
+    CGAL::set_mode(is, CGAL::IO::ASCII);
+    return IO::internal::read_PLY_BGL(is, g, np, verbose);
+  }
 }
 
 template <typename Graph>
 bool read_PLY(const char* fname, Graph& g,
               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  std::ifstream is(fname);
-  return IO::internal::read_PLY_BGL(is, g, parameters::all_default());
+  return read_PLY(fname, g, parameters::all_default());
+}
+
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_PLY(fname.c_str(), g, np, verbose);
 }
 
 template <typename Graph>
 bool read_PLY(const std::string& fname, Graph& g,
               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return IO::internal::read_PLY_BGL(fname.c_str(), g, parameters::all_default());
+  return read_PLY(fname.c_str(), g, parameters::all_default());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,6 +308,8 @@ bool read_PLY(const std::string& fname, Graph& g,
       \cgalParamDefault{`6`}
     \cgalParamNEnd
  \cgalNamedParamsEnd
+
+ \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
  \returns `true` if writing was successful.
 */
@@ -504,7 +523,7 @@ bool write_PLY(const char* fname,
                const std::string& comments,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {

@@ -178,6 +178,8 @@ template <typename PointRange,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
+   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
+
    \return `true` on success.
 */
 template <typename PointRange,
@@ -220,6 +222,13 @@ bool write_PLY(std::ostream& os,
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
 
+template <typename PointRange>
+bool write_PLY(std::ostream& os, const PointRange& points,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+{
+  return write_PLY(os, points, parameters::all_default());
+}
+
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
@@ -237,6 +246,12 @@ bool write_PLY(std::ostream& os,
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+     \cgalParamNEnd
+
      \cgalParamNBegin{point_map}
        \cgalParamDescription{a property map associating points to the elements of the point range}
        \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
@@ -275,8 +290,26 @@ bool write_PLY(const char* filename,
 #endif
                )
 {
-  std::ofstream os(filename);
-  return write_PLY(os, points, np);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ofstream os(filename, std::ios::binary);
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+    return write_PLY(os, points, np);
+  }
+  else
+  {
+    std::ofstream os(filename);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_PLY(os, points, np);
+  }
+}
+
+template <typename PointRange>
+bool write_PLY(const char* filename, const PointRange& points,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+{
+  return write_PLY(filename, points, parameters::all_default());
 }
 
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -286,27 +319,11 @@ bool write_PLY(const std::string& filename, const PointRange& points, const CGAL
   return write_PLY(filename.c_str(), points, np);
 }
 
-// variant with default NP
-template <typename PointRange>
-bool write_PLY(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(os, points, parameters::all_default());
-}
-
-template <typename PointRange>
-bool write_PLY(const char* filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  std::ofstream os(filename);
-  return write_PLY(os, points, parameters::all_default());
-}
-
 template <typename PointRange>
 bool write_PLY(const std::string& filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_PLY(filename, points, parameters::all_default());
+  return write_PLY(filename.c_str(), points, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

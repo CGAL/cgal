@@ -244,6 +244,8 @@ public:
   \param point_set the point set
   \param comments optional PLY comments.
 
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+
   \return `true` if the reading was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
@@ -297,6 +299,13 @@ bool read_PLY(std::istream& is,
   return !is.bad();
 }
 
+template <typename Point, typename Vector>
+bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  std::string dummy;
+  return read_PLY(is, point_set, dummy);
+}
+
 /*!
   \ingroup PkgPointSet3IO
 
@@ -315,37 +324,78 @@ bool read_PLY(std::istream& is,
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the input file
   \param point_set the point set
   \param comments optional PLY comments.
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{use_binary_mode}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector>
-bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const char* fname,
+              CGAL::Point_set_3<Point, Vector>& point_set,
+              const std::string& comments,
+              const CGAL_BGL_NP_CLASS& np)
 {
-  std::ifstream is(fname);
-  return read_PLY(is, point_set, comments);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ifstream is(fname, std::ios::binary);
+    CGAL::set_mode(is, CGAL::IO::BINARY);
+    return read_PLY(is, point_set, comments);
+  }
+  else
+  {
+    std::ifstream is(fname);
+    CGAL::set_mode(is, CGAL::IO::ASCII);
+    return read_PLY(is, point_set, comments);
+  }
 }
 
 template <typename Point, typename Vector>
-bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
+bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
 {
-  std::string dummy;
-  return read_PLY(is, point_set, dummy);
+  return read_PLY(fname, point_set, comments, parameters::all_default());
+}
+
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_PLY(fname, point_set, std::string(), np);
 }
 
 template <typename Point, typename Vector>
 bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return read_PLY(fname, point_set, std::string());
+  return read_PLY(fname, point_set, std::string(), parameters::all_default());
+}
+
+template <typename Point, typename Vector>
+bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
+{
+  return read_PLY(fname.c_str(), point_set, comments, parameters::all_default());
+}
+
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_PLY(fname.c_str(), point_set, std::string(), np);
 }
 
 template <typename Point, typename Vector>
 bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return read_PLY(fname.c_str(), point_set);
+  return read_PLY(fname.c_str(), point_set, std::string(), parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -420,8 +470,9 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
    \cgalParamNEnd
   \cgalNamedParamsEnd
 
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
+
   \return `true` if the reading was successful, `false` otherwise.
-  \see \ref IOStreamPLY
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
@@ -689,32 +740,42 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set,
-               const std::string& comments, const CGAL_BGL_NP_CLASS& np)
+bool write_PLY(const char* fname,
+               const CGAL::Point_set_3<Point, Vector>& point_set,
+               const std::string& comments,
+               const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname);
-  return write_PLY(os, point_set, comments, np);
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::ofstream os(fname);
-  return write_PLY(os, point_set);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ofstream os(fname, std::ios::binary);
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+    return write_PLY(os, point_set, comments, np);
+  }
+  else
+  {
+    std::ofstream os(fname);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_PLY(os, point_set, comments, np);
+  }
 }
 
 template <typename Point, typename Vector>
 bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
 {
-  std::ofstream os(fname);
-  return write_PLY(os, point_set, comments, parameters::all_default());
+  return write_PLY(fname, point_set, comments, parameters::all_default());
 }
 
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname);
-  return write_PLY(os, point_set, std::string(), np);
+  return write_PLY(fname, point_set, std::string(), np);
+}
+
+template <typename Point, typename Vector>
+bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
+{
+  return write_PLY(fname, point_set, std::string(), parameters::all_default());
 }
 
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

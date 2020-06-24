@@ -226,6 +226,8 @@ bool read_PLY_with_properties(std::istream& is,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
+   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+
    \return `true` on success.
 */
 template <typename OutputIteratorValueType,
@@ -279,6 +281,12 @@ bool read_PLY(std::istream& is,
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+     \cgalParamNEnd
+
      \cgalParamNBegin{point_map}
        \cgalParamDescription{a property map associating points to the elements of the point range}
        \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
@@ -309,12 +317,23 @@ bool read_PLY(const char* fname,
               PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
+              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
-             )
+              )
 {
-  std::ifstream is(fname);
-  return read_PLY<OutputIteratorValueType>(is, output, np);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ifstream is(fname, std::ios::binary);
+    CGAL::set_mode(is, CGAL::IO::BINARY);
+    return read_PLY<OutputIteratorValueType>(is, output, np);
+  }
+  else
+  {
+    std::ifstream is(fname);
+    CGAL::set_mode(is, CGAL::IO::ASCII);
+    return read_PLY<OutputIteratorValueType>(is, output, np);
+  }
 }
 
 template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -323,8 +342,6 @@ bool read_PLY(const std::string& fname, OutputIterator output, const CGAL_BGL_NP
 {
   return read_PLY<OutputIteratorValueType>(fname.c_str(), output, np);
 }
-
-/// \cond SKIP_IN_MANUAL
 
 // variants with default NP
 template <typename OutputIteratorValueType, typename OutputIterator>
@@ -360,8 +377,7 @@ template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np,
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
-  std::ifstream is(fname);
-  return read_PLY<typename value_type_traits<OutputIterator>::type>(is, output, np);
+  return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, np);
 }
 
 template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -462,12 +478,6 @@ bool read_ply_points(std::istream& is, ///< input stream.
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(is, output, parameters::point_map(point_map));
 }
-
-#endif // CGAL_NO_DEPRECATED_CODE
-
-/// \endcond
-
-#ifndef CGAL_NO_DEPRECATED_CODE
 
 /**
  \ingroup PkgPointSetProcessing3IODeprecated
