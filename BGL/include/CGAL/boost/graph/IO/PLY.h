@@ -508,12 +508,19 @@ bool write_PLY(const char* fname,
 #endif
                )
 {
-  std::ofstream os(fname);
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
+  {
+    std::ofstream os(fname, std::ios::binary);
     CGAL::set_mode(os, CGAL::IO::BINARY);
-
-  return write_PLY(os, g, comments, np);
+    return write_PLY(os, g, comments, np);
+  }
+  else
+  {
+    std::ofstream os(fname);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_PLY(os, g, comments, np);
+  }
 }
 
 template <typename Graph>

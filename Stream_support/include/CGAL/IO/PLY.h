@@ -445,6 +445,35 @@ bool read_PLY(const std::string fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+// @todo comments
+
+/*!
+ * \ingroup PkgStreamSupportIoFuncsPLY
+ *
+ * writes the content of `points` and `polygons` in `out`, using the \ref IOStreamPLY.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param out the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
+ */
 template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
 bool write_PLY(std::ostream& out,
                const PointRange& points,
@@ -491,6 +520,13 @@ bool write_PLY(std::ostream& out,
   return out.good();
 }
 
+template <class PointRange, class PolygonRange>
+bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& polygons,
+               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+{
+  return write_PLY(out, points, polygons, parameters::all_default());
+}
+
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
@@ -500,34 +536,47 @@ bool write_PLY(std::ostream& out,
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param out the output stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <class PointRange, class PolygonRange>
-bool write_PLY(std::ostream& out,
-               const PointRange& points,
-               const PolygonRange& polygons
-#ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
-#endif
-               )
-{
-  return write_PLY(out, points, polygons, parameters::all_default());
-}
-
 template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
-bool write_PLY(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_PLY(const char* fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  std::ofstream os(fname);
-  return write_PLY(os, points, polygons, np);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ofstream os(fname, std::ios::binary);
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+    return write_PLY(os, points, polygons, np);
+  }
+  else
+  {
+    std::ofstream os(fname);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_PLY(os, points, polygons, np);
+  }
 }
 
 /*!
