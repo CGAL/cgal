@@ -8,6 +8,14 @@ namespace CGAL {
     template<class Node>
     Node *operator()(const Node *n) {
 
+      // Null handler
+      if (nullptr == n)
+        return n;
+
+      // If this node has no parent, it has no siblings
+      if (nullptr == n->parent())
+        return nullptr;
+
       // TODO
     }
   };
@@ -16,6 +24,10 @@ namespace CGAL {
 
     template<class Node>
     Node *operator()(const Node *n) {
+
+      // Null handler
+      if (nullptr == n)
+        return n;
 
       if (n->isLeaf()) {
 
