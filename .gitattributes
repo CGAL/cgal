@@ -33,7 +33,10 @@
 *.rb text
 *.perl text
 *.pdb text
+
+# Nef_3 data files
 *.EH linguist-detectable=false
+*.SH linguist-detectable=false
 
 # Declare files that will always have LF line endings on checkout.
 *.sh text eol=lf
