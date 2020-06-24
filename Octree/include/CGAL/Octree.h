@@ -274,8 +274,9 @@ namespace CGAL {
       }
     }
 
-    void _split_node(Node &node, Range_iterator begin, Range_iterator end, Point center, std::bitset<3> coord,
-                     std::size_t dimension) {
+    void _split_node(Node &node, Range_iterator begin, Range_iterator end, Point &center,
+                     std::bitset<3> coord = std::bitset<3>(),
+                     std::size_t dimension = 0) {
 
       // Root case: reached the last dimension
       if (dimension == 3) {
@@ -307,8 +308,7 @@ namespace CGAL {
     void _reassign_points(Node &node) {
 
       Point center = compute_barycenter_position(node);
-      std::bitset<3> node_coordinate;
-      _split_node(node, node.begin(), node.end(), center, node_coordinate, 0);
+      _split_node(node, node.begin(), node.end(), center);
     }
   }; // end class Octree
 
