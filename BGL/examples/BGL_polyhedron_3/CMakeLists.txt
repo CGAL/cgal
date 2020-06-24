@@ -31,7 +31,6 @@ find_package( OpenMesh QUIET )
 
 if ( OpenMesh_FOUND )
   include( UseOpenMesh )
-  add_definitions( -DCGAL_USE_OPENMESH )
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
@@ -69,6 +68,7 @@ create_single_source_cgal_program( "copy_polyhedron.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( copy_polyhedron PRIVATE ${OPENMESH_LIBRARIES} )
+  target_compile_definitions( copy_polyhedron PRIVATE -DCGAL_USE_OPENMESH )
 endif()
 
 if( METIS_FOUND )
