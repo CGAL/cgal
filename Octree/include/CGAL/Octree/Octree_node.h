@@ -143,6 +143,17 @@ namespace CGAL {
 
     const uint8_t &depth() const { return m_depth; }
 
+    std::bitset<3> index() const {
+
+      std::bitset<3> result {};
+
+      result[0] = location()[0] & 1;
+      result[1] = location()[1] & 1;
+      result[2] = location()[2] & 1;
+
+      return result;
+    }
+
     bool is_sibling(Node *neighbor) const {
       return (m_parent == neighbor->parent());
     }
