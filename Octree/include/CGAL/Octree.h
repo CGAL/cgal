@@ -160,7 +160,7 @@ namespace CGAL {
           current->split();
 
           // Redistribute its points
-          reassign_points((*current));
+          _reassign_points((*current));
 
           // Process each of its children
           for (int i = 0; i < 8; ++i)
@@ -276,18 +276,41 @@ namespace CGAL {
 
     void _split_node(Node &node,
                      Range_iterator begin, Range_iterator end,
-                     std::size_t dimension, std::bitset<3> coords,
+                     std::size_t dimension, std::bitset<3> coord,
                      Point center) {
+
+      // Root case: reached the last dimension
+      if (dimension == 3) {
+
+        node[coord.to_ulong()].begin() = begin;
+        node[coord.to_ulong()].end() = end;
+
+        return;
+      }
 
       // Split the point collection around the center point on this dimension
       Range_iterator split_point = std::partition(begin, end,
                                                   [&](const Range_type &a) -> bool {
-                                                    return (get(m_points_map, a)[dimension] < split_point[dimension]);
+                                                    return (get(m_points_map, a)[dimension] < center[dimension]);
                                                   });
+
+      // Further subdivide the first side of the split
+      std::bitset<3> coord_left = coord;
+      coord_left[dimension] = false;
+      _split_node(node, begin, split_point, dimension + 1, coord_left, center);
+
+      // Further subdivide the second side of the split
+      std::bitset<3> coord_right = coord;
+      coord_right[dimension] = true;
+      _split_node(node, split_point, end, dimension + 1, coord_right, center);
+
     }
 
     void _reassign_points(Node &node) {
 
+      Point center = compute_barycenter_position(node);
+      std::bitset<3> node_coordinate;
+      _split_node(node, node.begin(), node.end(), 0, node_coordinate, center);
     }
   }; // end class Octree
 
