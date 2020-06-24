@@ -254,10 +254,10 @@ void tetrahedral_isotropic_remeshing(
 
 /*!
 * \ingroup PkgTetrahedralRemeshingRef
-* Converts the triangulation referenced in the input to a `Triangulation_3`.
+* Converts the triangulation contained in the input to a `Triangulation_3`.
 *
 * This function should be used to generate a valid triangulation
-* for tetrahedral remeshing remeshing, when the input triangulation is generated with the
+* for tetrahedral remeshing, when the input triangulation is generated with the
 * tetrahedral mesh generation package.
 *
 * @tparam Tr is the underlying triangulation for `Mesh_complex_3_in_triangulation_3`.
@@ -273,8 +273,6 @@ void tetrahedral_isotropic_remeshing(
 *            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
 *
 * @param c3t3 the complex containing the triangulation to be remeshed.
-*
-* @todo mention `std::move(c3t3)`
 */
 
 template<typename Tr,
