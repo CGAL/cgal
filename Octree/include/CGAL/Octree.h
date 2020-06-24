@@ -115,8 +115,7 @@ namespace CGAL {
       FT x_len = bbox.xmax() - bbox.xmin();
       FT y_len = bbox.ymax() - bbox.ymin();
       FT z_len = bbox.zmax() - bbox.zmin();
-      FT max_len = (x_len < y_len) ? y_len : x_len;
-      max_len = (max_len < z_len) ? z_len : max_len;
+      FT max_len = std::max({x_len, y_len, z_len});
       bbox = Iso_cuboid(bbox.min(), bbox.min() + max_len * Vector(1.0, 1.0, 1.0));
 
       // Shift the squared box to make sure it's centered in the original place
@@ -209,9 +208,9 @@ namespace CGAL {
       return {bary[0], bary[1], bary[2]};
     }
 
-    void split_node(Node &node, Range_iterator begin, Range_iterator end, Point &center,
-                    std::bitset<3> coord = std::bitset<3>(),
-                    std::size_t dimension = 0) {
+    void reassign_points(Node &node, Range_iterator begin, Range_iterator end, Point &center,
+                         std::bitset<3> coord = {},
+                         std::size_t dimension = 0) {
 
       // Root case: reached the last dimension
       if (dimension == 3) {
@@ -231,19 +230,19 @@ namespace CGAL {
       // Further subdivide the first side of the split
       std::bitset<3> coord_left = coord;
       coord_left[dimension] = false;
-      split_node(node, begin, split_point, center, coord_left, dimension + 1);
+      reassign_points(node, begin, split_point, center, coord_left, dimension + 1);
 
       // Further subdivide the second side of the split
       std::bitset<3> coord_right = coord;
       coord_right[dimension] = true;
-      split_node(node, split_point, end, center, coord_right, dimension + 1);
+      reassign_points(node, split_point, end, center, coord_right, dimension + 1);
 
     }
 
     void reassign_points(Node &node) {
 
       Point center = compute_barycenter_position(node);
-      split_node(node, node.begin(), node.end(), center);
+      reassign_points(node, node.begin(), node.end(), center);
     }
   }; // end class Octree
 
