@@ -6,16 +6,17 @@
 
 namespace CGAL {
 
-  struct Split_to_max_depth_or_bucket_size {
 
-    std::size_t m_max_depth, m_bucket_size;
+  struct Split_to_bucket_size {
 
-    Split_to_max_depth_or_bucket_size(std::size_t max_depth, std::size_t bucket_size) :
-            m_max_depth(max_depth), m_bucket_size(bucket_size) {}
+    std::size_t m_bucket_size;
+
+    Split_to_max_depth_or_bucket_size(std::size_t bucket_size) :
+            m_bucket_size(bucket_size) {}
 
     template<class Node>
     bool operator()(const Node &n) const {
-      return (n.num_points() > m_bucket_size && n.depth() < m_max_depth);
+      return (n.num_points() > m_bucket_size);
     }
   };
 
@@ -28,6 +29,19 @@ namespace CGAL {
     template<class Node>
     bool operator()(const Node &n) const {
       return n.depth() < m_max_depth;
+    }
+  };
+
+  struct Split_to_max_depth_or_bucket_size {
+
+    std::size_t m_max_depth, m_bucket_size;
+
+    Split_to_max_depth_or_bucket_size(std::size_t max_depth, std::size_t bucket_size) :
+            m_max_depth(max_depth), m_bucket_size(bucket_size) {}
+
+    template<class Node>
+    bool operator()(const Node &n) const {
+      return (n.num_points() > m_bucket_size && n.depth() < m_max_depth);
     }
   };
 }
