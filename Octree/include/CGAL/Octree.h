@@ -274,10 +274,8 @@ namespace CGAL {
       }
     }
 
-    void _split_node(Node &node,
-                     Range_iterator begin, Range_iterator end,
-                     std::size_t dimension, std::bitset<3> coord,
-                     Point center) {
+    void _split_node(Node &node, Range_iterator begin, Range_iterator end, Point center, std::bitset<3> coord,
+                     std::size_t dimension) {
 
       // Root case: reached the last dimension
       if (dimension == 3) {
@@ -297,12 +295,12 @@ namespace CGAL {
       // Further subdivide the first side of the split
       std::bitset<3> coord_left = coord;
       coord_left[dimension] = false;
-      _split_node(node, begin, split_point, dimension + 1, coord_left, center);
+      _split_node(node, begin, split_point, center, coord_left, dimension + 1);
 
       // Further subdivide the second side of the split
       std::bitset<3> coord_right = coord;
       coord_right[dimension] = true;
-      _split_node(node, split_point, end, dimension + 1, coord_right, center);
+      _split_node(node, split_point, end, center, coord_right, dimension + 1);
 
     }
 
@@ -310,7 +308,7 @@ namespace CGAL {
 
       Point center = compute_barycenter_position(node);
       std::bitset<3> node_coordinate;
-      _split_node(node, node.begin(), node.end(), 0, node_coordinate, center);
+      _split_node(node, node.begin(), node.end(), center, node_coordinate, 0);
     }
   }; // end class Octree
 
