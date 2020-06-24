@@ -5,7 +5,7 @@
 # to native line endings on checkout.
 *.cpp text
 *.c text
-*.h text
+*.h text linguist-language=C++
 *.hpp text
 *.tex text
 *.txt text
@@ -28,11 +28,12 @@
 *.xyz text
 *.qhcp text
 *.qhp text
-*.pwn text
+*.pwn text linguist-detectable=false
 *.poly text
 *.rb text
 *.perl text
 *.pdb text
+*.EH linguist-detectable=false
 
 # Declare files that will always have LF line endings on checkout.
 *.sh text eol=lf
