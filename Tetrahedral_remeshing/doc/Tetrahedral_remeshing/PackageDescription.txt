@@ -48,5 +48,6 @@ targetting high quality meshes with respect to dihedral angles.}
 \cgalCRPSection{Function Templates}
 
 - `CGAL::tetrahedral_isotropic_remeshing()`
+- `CGAL::convert_to_triangulation_3()`
 
 */

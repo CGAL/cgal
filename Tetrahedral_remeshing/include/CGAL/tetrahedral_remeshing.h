@@ -37,7 +37,7 @@ namespace CGAL
 ///////////////////////////////////////////////////
 /*!
 * \ingroup PkgTetrahedralRemeshingRef
-* remeshes a tetrahedral mesh.
+* Remeshes a tetrahedral mesh.
 *
 * It is recommended to use `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 * for the first parameter, as it inherits from `Triangulation_3` with a `TDS` suitable for this function.
@@ -253,7 +253,9 @@ void tetrahedral_isotropic_remeshing(
 }
 
 /*!
+* \ingroup PkgTetrahedralRemeshingRef
 * Converts the triangulation referenced in the input to a `Triangulation_3`.
+*
 * This function should be used to generate a valid triangulation
 * for tetrahedral remeshing remeshing, when the input triangulation is generated with the
 * tetrahedral mesh generation package.
