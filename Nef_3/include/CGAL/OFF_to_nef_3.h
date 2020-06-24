@@ -103,7 +103,7 @@ class number_type_converter_nef_3<Cartesian_tag, Kernel> {
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
-#include <CGAL/IO/Scanner_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/normal_vector_newell_3.h>
 
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER

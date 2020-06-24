@@ -385,8 +385,8 @@ bool read_PLY(std::istream& is,
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   std::ifstream is(fname);
   return read_PLY(is, points, polygons, np, verbose);
@@ -412,18 +412,19 @@ bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons,
 template <typename PointRange, typename PolygonRange>
 bool read_PLY(const char* fname,
               PointRange& points,
-              PolygonRange& polygons
+              PolygonRange& polygons,
+              const bool verbose
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
              )
 {
-  return read_PLY(fname, points, polygons, parameters::all_default());
+  return read_PLY(fname, points, polygons, verbose, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+              bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return read_PLY(fname.c_str(), points, polygons, np, verbose);
 }
@@ -547,23 +548,29 @@ bool write_PLY(const char* fname,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <class PointRange, class PolygonRange>
-bool write_PLY(const char* fname, const PointRange& points, const PolygonRange& polygons)
+bool write_PLY(const char* fname, const PointRange& points, const PolygonRange& polygons
+#ifndef DOXYGEN_RUNNING
+               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+#endif
+               )
 {
   return write_PLY(fname, points, polygons, parameters::all_default());
 }
 
 template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS >
-bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_PLY(fname.c_str(), points, polygons, np);
 }
 
 template <class PointRange, class PolygonRange>
-bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
+bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
+               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return write_PLY(fname, points, polygons, parameters::all_default());
+  return write_PLY(fname.c_str(), points, polygons, parameters::all_default());
 }
+
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_H

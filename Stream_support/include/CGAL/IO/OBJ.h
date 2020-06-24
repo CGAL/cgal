@@ -17,8 +17,9 @@
 #include <CGAL/IO/OBJ/File_writer_wavefront.h>
 #include <CGAL/IO/Generic_writer.h>
 
-#include <boost/range/value_type.hpp>
+#include <CGAL/Container_helper.h>
 #include <CGAL/IO/io.h>
+#include <boost/range/value_type.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -124,13 +125,17 @@ bool read_OBJ(std::istream& is,
       {
         if(i < 1)
         {
-          faces.back().push_back(points.size()+offset_idx + i); // negative indices are relative references
+          const std::size_t n = faces.back().size();
+          ::CGAL::internal::resize(faces.back(), n + 1);
+          faces.back()[n] = points.size() + offset_idx + i; // negative indices are relative references
           if(i < mini)
             mini = i;
         }
         else
         {
-          faces.back().push_back(i+offset_idx-1);
+          const std::size_t n = faces.back().size();
+          ::CGAL::internal::resize(faces.back(), n + 1);
+          faces.back()[n] = i + offset_idx - 1;
           if(i-1 > maxi)
             maxi = i-1;
         }

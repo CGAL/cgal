@@ -429,14 +429,14 @@ template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(os, g, "", np);
+  return write_PLY(os, g, std::string(), np);
 }
 
 template <typename Graph>
 bool write_PLY(std::ostream& os, const Graph& g,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(os, g, "", parameters::all_default());
+  return write_PLY(os, g, std::string(), parameters::all_default());
 }
 
 /*!
@@ -527,14 +527,14 @@ template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(fname, g, "", np);
+  return write_PLY(fname, g, std::string(), np);
 }
 
 template <typename Graph>
 bool write_PLY(const char* fname, const Graph& g,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(fname, g, "", parameters::all_default());
+  return write_PLY(fname, g, std::string(), parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -548,21 +548,21 @@ template <typename Graph>
 bool write_PLY(const std::string& fname, const Graph& g, const std::string comments,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(fname, g, comments, parameters::all_default());
+  return write_PLY(fname.c_str(), g, comments, parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(fname, g, "", np);
+  return write_PLY(fname.c_str(), g, std::string(), np);
 }
 
 template <typename Graph>
 bool write_PLY(const std::string& fname, const Graph& g,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_PLY(fname, g, "", parameters::all_default());
+  return write_PLY(fname.c_str(), g, std::string(), parameters::all_default());
 }
 
 } // namespace CGAL

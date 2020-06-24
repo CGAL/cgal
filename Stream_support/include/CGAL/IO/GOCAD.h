@@ -133,7 +133,8 @@ bool read_GOCAD(std::istream& is,
         return false;
       }
 
-      Poly new_face(3);
+      Poly new_face;
+      ::CGAL::internal::resize(new_face, 3);
       new_face[0] = offset + i;
       new_face[1] = offset + j;
       new_face[2] = offset + k;

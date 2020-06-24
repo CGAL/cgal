@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
   {
     LCC_3_cmap lcc;
-    if (!CGAL::read_polygon_mesh(lcc, file.c_str()))
+    if (!CGAL::read_polygon_mesh(file, lcc))
     {
       std::cout<<"ERROR reading file "<<file<<" for linear cell complex."<<std::endl;
       exit(EXIT_FAILURE);
