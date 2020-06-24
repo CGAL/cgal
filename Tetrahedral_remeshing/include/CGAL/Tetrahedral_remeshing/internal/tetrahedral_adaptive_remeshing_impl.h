@@ -186,8 +186,10 @@ public:
     split_long_edges(m_c3t3, emax, m_protect_boundaries,
                      m_cell_selector, m_visitor);
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+#endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
@@ -205,8 +207,10 @@ public:
     collapse_short_edges(m_c3t3, emin, emax, m_protect_boundaries,
                          m_cell_selector, m_visitor);
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+#endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "2-collapse");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
@@ -219,8 +223,10 @@ public:
     flip_edges(m_c3t3, m_protect_boundaries,
                m_cell_selector, m_visitor);
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+#endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "3-flip");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
@@ -232,8 +238,10 @@ public:
   {
     m_vertex_smoother.smooth_vertices(m_c3t3, m_protect_boundaries, m_cell_selector);
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+#endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "4-smooth");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
@@ -297,9 +305,10 @@ public:
       }
     }
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
-
+#endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "99-postprocess");
 #endif
