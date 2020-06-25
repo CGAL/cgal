@@ -318,6 +318,9 @@ private:
     std::size_t nbe = 0;
     std::size_t nbv = 0;
 #endif
+    //update number_of_cells and number_of_facets in c3t3
+    m_c3t3.rescan_after_load_of_triangulation();
+
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
