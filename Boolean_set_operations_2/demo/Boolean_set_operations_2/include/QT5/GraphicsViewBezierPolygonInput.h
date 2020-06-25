@@ -70,6 +70,7 @@ namespace Qt {
       , mOngoingCurvePen ( QColor(255,0,0) )
       , mHandlePen       ( QColor(0,0,255) )
       , mBezierGI        ( 0               )
+      , m_bound_rect     ( true            )
     {
       mOngoingPieceGI = new GI(&mOngoingPieceCtr) ;
       mHandle0GI      = new QGraphicsLineItem();
@@ -133,7 +134,9 @@ namespace Qt {
 
     bool mousePressEvent(QGraphicsSceneMouseEvent *aEvent)
     {
-      bool rHandled = false ;
+      
+      bool rHandled = false;
+      m_bound_rect = false;
       
       Point lP = cvt(aEvent->scenePos());
 
@@ -236,6 +239,7 @@ namespace Qt {
         switch (mState)
         {
           case PieceOngoing: 
+            m_bound_rect = false;
             CloseCurrBundary();
             CommitCurrBezierPolygon();
             ReStart();
@@ -462,6 +466,196 @@ namespace Qt {
         emit(generate(CGAL::make_object( std::make_pair(bp,mBezierPolygonPieces))));
       }  
     }
+
+    void get_BoundingRect()
+    {
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,-10000000),Point(-10000000,10000000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,10000000),Point(10000000,10000000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(10000000,10000000),Point(10000000,-10000000)));
+
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[0]);
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[1]);
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[2]);
+
+      // m_bound_rect = true;
+      // CommitCurrLinearPolygon();
+      // ReStart();
+
+
+
+
+      //press 
+      // case Start: 
+      //         mP0      = lP;
+      //         mState   = PieceOrFirstHandleStarted;
+      //         rHandled = true;
+      //         break;
+
+      //       case PieceOngoing: 
+      //         mP1      = lP;
+      //         mState   = HandleOngoing;
+      //         rHandled = true;
+      //         break;
+
+
+      //move
+      // case PieceOrFirstHandleStarted:
+      //       mState   = FirstHandleOngoing;
+      //       rHandled = true;
+      //       break;
+            
+      //     case PieceOngoing: 
+      //       mP1 = lP;
+      //       UpdateOngoingPiece();
+      //       rHandled = true ;
+      //       break;
+
+      //     case FirstHandleOngoing:
+      //       UpdateVeryFirstHandle(lP);
+      //       rHandled = true ;
+      //       break;
+            
+      //     case HandleOngoing:
+          
+      //       UpdateHandles(lP);
+      //       UpdateOngoingPiece();
+            
+      //       rHandled = true ;
+      //       break;
+            
+      //     case PieceEnded:
+      //       mState   = PieceOngoing;
+      //       rHandled = true;
+      //       break;
+
+
+      //release
+
+      // if ( aEvent->button() == ::Qt::LeftButton )
+      //   {
+      //     switch (mState)
+      //     {
+      //       case PieceOrFirstHandleStarted:
+      //         mState   = PieceOngoing;
+      //         rHandled = true;
+      //         break;
+              
+      //       case FirstHandleOngoing:
+      //         UpdateVeryFirstHandle(lP);
+      //         mPrevH0  = mH1 ;
+      //         mH1      = boost::optional<Point>();
+      //         mState   = PieceOngoing;
+      //         rHandled = true;
+      //         break;
+            
+      //       case HandleOngoing: 
+      //         UpdateHandles(lP);
+      //         CommitOngoingPiece(lP);
+      //         mState   = PieceEnded;
+      //         rHandled = true;
+      //         break;
+      //     }
+      //   }
+      //   else if ( aEvent->button() == ::Qt::RightButton )
+      //   {
+      //     switch (mState)
+      //     {
+      //       case PieceOngoing: 
+      //         m_bound_rect = false;
+      //         CloseCurrBundary();
+      //         CommitCurrBezierPolygon();
+      //         ReStart();
+      //         rHandled = true;
+      //         break;
+      //     }    
+      //   }
+        
+
+
+
+      m_bound_rect = true;
+
+      mP0 = Point(-15500000,-10000000);
+      mState  = PieceOrFirstHandleStarted;
+
+      mState   = PieceOngoing;
+      mP1 = Point(-15500000,10000000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(-15500000,10000000);
+      mState = HandleOngoing;
+      UpdateHandles(Point(-15500000,10000000));
+      CommitOngoingPiece(Point(-15500000,10000000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+      mP1 = Point(15500000,10000000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(15500000,10000000);
+      mState = HandleOngoing;
+      UpdateHandles(Point(15500000,10000000));
+      CommitOngoingPiece(Point(15500000,10000000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+      mP1 = Point(15500000,-10000000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(15500000,-10000000);
+      mState = HandleOngoing;
+      UpdateHandles(Point(15500000,-10000000));
+      CommitOngoingPiece(Point(15500000,-10000000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+      mP1 = Point(-9000000,-9000000);
+      UpdateOngoingPiece();
+
+      CloseCurrBundary();
+      CommitCurrBezierPolygon();
+      ReStart();
+
+      // HideHandle();
+      // CommitOngoingPiece(Point(-10000000,10000000));
+      // mState   = PieceEnded;
+
+      // mState   = PieceOngoing;
+
+      // mP1 = Point(10000000,10000000);
+      // UpdateOngoingPiece();
+
+      // mP1 = Point(10000000,10000000);
+      // mState = HandleOngoing;
+      // HideHandle();
+      // CommitOngoingPiece(Point(10000000,10000000));
+      // mState   = PieceEnded;
+
+      // mState   = PieceOngoing;
+
+      // mP1 = Point(10000000,-10000000);
+      // UpdateOngoingPiece();
+
+      // mP1 = Point(10000000,-10000000);
+      // mState = HandleOngoing;
+      // HideHandle();
+      // CommitOngoingPiece(Point(10000000,-10000000));
+      // mState   = PieceEnded;
+
+      // mState   = PieceOngoing;
+
+      // mP1 = Point(-9000000,-9000000);
+      // UpdateOngoingPiece();
+
+      // CommitCurrCircularPolygon();
+      // ReStart();
+
+    }
+
+    bool isboundingRect()
+    {
+      return m_bound_rect;
+    }
     
   public:
   
@@ -474,6 +668,8 @@ namespace Qt {
     QPen mBezierPolygonPen ;
     QPen mOngoingCurvePen ;
     QPen mHandlePen ;    
+
+    bool m_bound_rect;
     
     Bezier_curve_vector mBezierPolygonPieces ;
     Bezier_curve_vector mOngoingPieceCtr ;  

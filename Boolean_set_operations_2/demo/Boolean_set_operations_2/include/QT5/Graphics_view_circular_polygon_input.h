@@ -73,7 +73,8 @@ public:
     mCircularPolygonPen(QColor(0, 255, 0)),
     mOngoingCurvePen(QColor(255, 215, 0)),
     mHandlePen(QColor(255, 165, 0)),
-    mState(Start)
+    mState(Start),
+    m_bound_rect(true)
   {
     mOngoingPieceGI->setPen(mOngoingCurvePen);
     mHandleGI->setPen(mHandlePen);
@@ -129,6 +130,7 @@ public:
   bool mousePressEvent(QGraphicsSceneMouseEvent* aEvent)
   {
     bool rHandled = false;
+    m_bound_rect = false;
 
     //Point lP = cvt(aEvent->QGraphicsSceneMouseEvent::scenePos());
     Point lP = cvt(aEvent->scenePos());
@@ -207,8 +209,8 @@ public:
       switch (mState) {
        case PieceOngoing:
         //cout<<"hello in Graphics_view_circular_polygon"<<endl;
+        m_bound_rect = false;
         CommitCurrCircularPolygon();
-
         ReStart();
         rHandled = true;
         //cout<<"right click over"<<endl;
@@ -398,6 +400,68 @@ public:
     //cout<<"generated circular polygon"<<endl;
   }
 
+  void get_BoundingRect()
+  {
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,-10000000),Point(-10000000,10000000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,10000000),Point(10000000,10000000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(10000000,10000000),Point(10000000,-10000000)));
+
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[0]);
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[1]);
+      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[2]);
+
+      // m_bound_rect = true;
+      // CommitCurrLinearPolygon();
+      // ReStart();
+
+      m_bound_rect = true;
+
+      mP0 = Point(-15500000,-10000000);
+      mState = PieceStarted;
+
+      mState = PieceOngoing;
+      mP1 = Point(-15500000,10000000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(-15500000,10000000);
+      mState = HandleOngoing;
+      HideHandle();
+      CommitOngoingPiece(Point(-15500000,10000000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+      mP1 = Point(15500000,10000000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(15500000,10000000);
+      mState = HandleOngoing;
+      HideHandle();
+      CommitOngoingPiece(Point(15500000,10000000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+      mP1 = Point(15500000,-10000000);
+      UpdateOngoingPiece();
+
+      mP1 = Point(15500000,-10000000);
+      mState = HandleOngoing;
+      HideHandle();
+      CommitOngoingPiece(Point(15500000,-10000000));
+      mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+      mP1 = Point(-9000000,-9000000);
+      UpdateOngoingPiece();
+
+      CommitCurrCircularPolygon();
+      ReStart();
+  }
+
+  bool isboundingRect()
+  {
+    return m_bound_rect;
+  }
+
 public:
   QGraphicsScene* mScene;
   GI* mCircularGI;
@@ -407,6 +471,8 @@ public:
   QPen mCircularPolygonPen;
   QPen mOngoingCurvePen;
   QPen mHandlePen;
+
+  bool m_bound_rect;
 
   Circular_curve_vector mCircularPolygonPieces;
   Circular_curve_vector mOngoingPieceCtr;

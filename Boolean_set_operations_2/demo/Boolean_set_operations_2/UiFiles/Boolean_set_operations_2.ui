@@ -64,13 +64,20 @@
     <property name="title">
      <string>Edit</string>
     </property>
-     <addaction name="actionNew"/>
-     <addaction name="actionCopy"/>
-     <addaction name="actionMove"/>
-     <addaction name="actionPaste"/>
-     <addaction name="actionDeleteAll"/>
+      <addaction name="actionInsertLinear"/> 
+      <addaction name="actionInsertCircular"/>
+      <addaction name="actionInsertBezier" />
+      <addaction name="separator"/>
+      <addaction name="actionAddColor" />
+      <addaction name="actionMinusColor" />
+      <addaction name="separator"/>
+      <!-- <addaction name="actionCopy"/>
+      <addaction name="actionMove"/>
+      <addaction name="actionPaste"/> -->
+      <addaction name="actionDeleteAll"/>
+      <addaction name="actionNew"/>
    </widget>
-   <widget class="QMenu" name="menuOperations">
+   <!-- <widget class="QMenu" name="menuOperations">
     <property name="title">
      <string>Operations</string>
     </property>
@@ -80,7 +87,7 @@
     <addaction name="separator"/>
     <addaction name="actionAddColor" />
     <addaction name="actionMinusColor" />
-   </widget>
+   </widget> -->
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
@@ -135,7 +142,7 @@
   <widget class="QDockWidget" name="sceneDockWidget">
    <property name="minimumSize" >
     <size>
-      <width>510</width>
+      <width>635</width>
       <height>200</height>
     </size>
    </property>
@@ -152,7 +159,7 @@
     <set>Qt::BottomDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>                                                                            OPERATIONS HANDLER</string>
+    <string>Operations</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -243,7 +250,7 @@
            <addaction name="actionPAN"/>
           </widget>
         </item>
-        <item>
+        <!-- <item>
           <widget class="QToolBar" name="OperationsToolBar3">
            <attribute name="toolBarArea" >
             <enum>TopToolBarArea</enum>
@@ -275,7 +282,7 @@
            </attribute>
            <addaction name="actionPaste"/>
           </widget>
-        </item>
+        </item> -->
         <item>
           <widget class="QToolBar" name="OperationsToolBar32">
            <attribute name="toolBarArea" >
@@ -1424,10 +1431,388 @@
               <bool>false</bool>
              </property>
             </widget>
+
+            <widget class="QCheckBox" name="copyBlue">
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>40</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyRed">
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyBlack">
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+
+
+            <widget class="QCheckBox" name="moveBlue">
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>40</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveRed">
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveBlack">
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+
+
+            <widget class="QCheckBox" name="pasteBlue">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>40</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="pasteRed">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="pasteBlack">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="pasteBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="pasteYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="pasteMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="pasteAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+
             <widget class="QCheckBox" name="clearBlue">
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>40</y>
                <width>101</width>
                <height>22</height>
@@ -1443,7 +1828,7 @@
             <widget class="QCheckBox" name="clearRed">
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>70</y>
                <width>101</width>
                <height>22</height>
@@ -1459,7 +1844,7 @@
             <widget class="QCheckBox" name="clearBlack">
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>100</y>
                <width>101</width>
                <height>22</height>
@@ -1478,7 +1863,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>130</y>
                <width>101</width>
                <height>22</height>
@@ -1497,7 +1882,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>160</y>
                <width>101</width>
                <height>22</height>
@@ -1516,7 +1901,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>190</y>
                <width>101</width>
                <height>22</height>
@@ -1535,7 +1920,7 @@
               </property>
              <property name="geometry">
               <rect>
-               <x>455</x>
+               <x>585</x>
                <y>220</y>
                <width>101</width>
                <height>22</height>
@@ -1687,10 +2072,13 @@
                <enum>Qt::Vertical</enum>
               </property>
             </widget>
-            <widget class="Line" name="line006">
+            <widget class="Line" name="line061">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
               <property name="geometry">
                 <rect>
-                <x>500</x>
+                <x>470</x>
                 <y>0</y>
                 <width>7</width>
                 <height>125</height>
@@ -1700,6 +2088,52 @@
                <enum>Qt::Vertical</enum>
               </property>
             </widget>
+            <widget class="Line" name="line062">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>515</x>
+                <y>0</y>
+                <width>7</width>
+                <height>125</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line063">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>560</x>
+                <y>0</y>
+                <width>7</width>
+                <height>125</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line006">
+              <property name="geometry">
+                <rect>
+                <x>620</x>
+                <y>0</y>
+                <width>7</width>
+                <height>125</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+
             <widget class="Line" name="line07">
               <property name="Visible">
                 <bool>false</bool>
@@ -2175,11 +2609,116 @@
               <string>Ctrl+M</string>
              </property>
             </widget>
+            <widget class="QToolButton" name="actionCopyH">
+              <property name="geometry">
+                <rect>
+                  <x>435</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/copy.png</normaloff>:/cgal/icons/resources/copy.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Copy</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Shift+C</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionMoveH">
+              <property name="geometry">
+                <rect>
+                  <x>480</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/move.png</normaloff>:/cgal/icons/resources/move.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Move</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Shift+M</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionPasteH">
+              <property name="geometry">
+                <rect>
+                  <x>525</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/paste.png</normaloff>:/cgal/icons/resources/paste.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Paste</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Shift+P</string>
+             </property>
+            </widget>
             <widget class="QCheckBox" name="showClear">
              <property name="geometry">
               <rect>
-               <x>430</x>
-               <y>0</y>
+               <x>565</x>
+               <y>5</y>
                <width>140</width>
                <height>22</height>  
               </rect>
@@ -2200,7 +2739,7 @@
             <widget class="QToolButton" name="actionClearH">
               <property name="geometry">
                 <rect>
-                  <x>450</x>
+                  <x>580</x>
                   <y>0</y>
                   <width>33</width>
                   <height>33</height>  
@@ -2280,7 +2819,7 @@
     <set>Qt::LeftDockWidgetArea|Qt::BottomDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Infos</string>
+    <string>Information</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -2366,7 +2905,7 @@
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionCopy">
+  <!-- <action name="actionCopy">
    <property name="checkable" >
     <bool>true</bool>
    </property> 
@@ -2410,7 +2949,7 @@
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
    </property>
-  </action>
+  </action> -->
   <action name="actionRecenter">
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">

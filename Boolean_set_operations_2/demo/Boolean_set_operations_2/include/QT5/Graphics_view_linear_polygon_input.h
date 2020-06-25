@@ -23,6 +23,8 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_LINEAR_POLYGON_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_LINEAR_POLYGON_INPUT_H
 
+#include <limits>
+
 #include <CGAL/auto_link/Qt.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
@@ -243,7 +245,6 @@ public:
       mState = Start;
       rHandled = true;
     }
-
     return rHandled;
   }
 
@@ -388,9 +389,9 @@ public:
 
   void get_BoundingRect()
   {
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(-1000,-1000),Point(-1000,1000)));
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(-1000,1000),Point(1000,1000)));
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(1000,1000),Point(1000,-1000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,-10000000),Point(-10000000,10000000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,10000000),Point(10000000,10000000)));
+      // mOngoingPieceCtr.push_back(Linear_curve(Point(10000000,10000000),Point(10000000,-10000000)));
 
       // mLinearPolygonPieces.push_back(mOngoingPieceCtr[0]);
       // mLinearPolygonPieces.push_back(mOngoingPieceCtr[1]);
@@ -402,40 +403,45 @@ public:
 
       m_bound_rect = true;
 
-      mP0 = Point(-1000,-1000);
+      mP0 = Point(-15500000,-10000000);
       mState = PieceStarted;
       mState = PieceOngoing;
 
-      mP1 = Point(-1000,1000);
+      mP1 = Point(-15500000,10000000);
       UpdateOngoingPiece();
 
-      mP1 = Point(-1000,1000);
+      mP1 = Point(-15500000,10000000);
       mState = HandleOngoing;
       HideHandle();
-      CommitOngoingPiece(Point(-1000,1000));
+      CommitOngoingPiece(Point(-15500000,10000000));
       mState   = PieceEnded;
 
       mState   = PieceOngoing;
 
-      mP1 = Point(1000,1000);
+      mP1 = Point(15500000,10000000);
       UpdateOngoingPiece();
 
-      mP1 = Point(1000,1000);
+      mP1 = Point(15500000,10000000);
       mState = HandleOngoing;
       HideHandle();
-      CommitOngoingPiece(Point(1000,1000));
+      CommitOngoingPiece(Point(15500000,10000000));
       mState   = PieceEnded;
 
       mState   = PieceOngoing;
 
-      mP1 = Point(1000,-1000);
+      mP1 = Point(15500000,-10000000);
       UpdateOngoingPiece();
 
-      mP1 = Point(1000,-1000);
+      mP1 = Point(15500000,-10000000);
       mState = HandleOngoing;
       HideHandle();
-      CommitOngoingPiece(Point(1000,-1000));
+      CommitOngoingPiece(Point(15500000,-10000000));
       mState   = PieceEnded;
+
+      mState   = PieceOngoing;
+
+      mP1 = Point(-9000000,-9000000);
+      UpdateOngoingPiece();
 
       CommitCurrLinearPolygon();
       ReStart();
@@ -445,11 +451,6 @@ public:
   bool isboundingRect()
   {
     return m_bound_rect;
-  }
-
-  void setBoundRectBool(bool check)
-  {
-    m_bound_rect = check;
   }
 
 public:
