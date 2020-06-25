@@ -46,13 +46,17 @@ namespace CGAL {
 
         if (nullptr == next) {
 
-          Node *parent = n->parent();
+          Node *up = n->parent();
 
-          if (nullptr == parent)
-            return nullptr;
+          while (nullptr != up) {
 
-          return next_sibling(parent);
+            if (nullptr != next_sibling(up))
+              return next_sibling(up);
 
+            up = up->parent();
+          }
+
+          return nullptr;
         }
 
         return next;
