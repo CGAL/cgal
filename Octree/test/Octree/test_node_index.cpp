@@ -2,6 +2,7 @@
 
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/IO.h>
+#include <CGAL/Octree/Tree_walker_criterion.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
@@ -40,7 +41,17 @@ int main(void) {
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
-  std::cout << octree.root()[4].index();
+  std::cout << octree.root();
+  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+
+  std::cout << "Node: " << std::endl;
+  std::cout << octree.root()[6];
+  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+
+  std::cout << "Sibling: " << std::endl;
+  auto treeWalker = CGAL::Siblings();
+  std::cout << *treeWalker(&octree.root()[6]);
+
 
   return 0;
 }

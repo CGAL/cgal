@@ -6,7 +6,7 @@ namespace CGAL {
   struct Siblings {
 
     template<class Node>
-    Node *operator()(const Node *n) {
+    Node *operator()(Node *n) {
 
       // Null handler
       if (nullptr == n)
@@ -16,14 +16,22 @@ namespace CGAL {
       if (nullptr == n->parent())
         return nullptr;
 
-      // TODO
+      // Find out which child this is
+      std::size_t index = n->index().to_ulong();
+
+      // Return null if this is the last child
+      if (7 == index)
+        return nullptr;
+
+      // Otherwise, return the next child
+      return &((*n->parent())[index + 1]);
     }
   };
 
   struct Depth_first {
 
     template<class Node>
-    Node *operator()(const Node *n) {
+    Node *operator()(Node *n) {
 
       // Null handler
       if (nullptr == n)

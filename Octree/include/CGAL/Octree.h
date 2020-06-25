@@ -24,7 +24,6 @@
 
 #include <CGAL/Octree/Octree_node.h>
 #include <CGAL/Octree/Split_criterion.h>
-#include <CGAL/Octree/Tree_walker_criterion.h>
 
 #include <CGAL/bounding_box.h>
 #include <boost/iterator/transform_iterator.hpp>
