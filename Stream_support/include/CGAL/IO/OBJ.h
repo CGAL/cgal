@@ -75,7 +75,7 @@ bool read_OBJ(std::istream& is,
     {
       if(!first_o)
       {
-        if(maxi == offset_idx -1 && mini == offset_idx + 1)
+        if(maxi == static_cast<int>(offset_idx -1 ) && mini == static_cast<int>(offset_idx + 1))
         {
           if(verbose)
             std::cerr << "No face detected." << std::endl;
@@ -158,7 +158,7 @@ bool read_OBJ(std::istream& is,
     std::cout<<"WARNING: normals were found in this file, but were discarded."<<std::endl;
   if(tex_found && verbose)
     std::cout<<"WARNING: textures were found in this file, but were discarded."<<std::endl;
-  if(maxi == offset_idx -1 && mini == offset_idx + 1)
+  if(maxi == static_cast<int>(offset_idx - 1) && mini == static_cast<int>(offset_idx + 1))
   {
     if(verbose)
       std::cerr << "No face detected." << std::endl;

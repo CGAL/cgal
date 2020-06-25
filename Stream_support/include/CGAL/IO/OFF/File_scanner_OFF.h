@@ -347,6 +347,7 @@ public:
 
   void scan_texture(float& x, float& y, float& w)
   {
+    w = 1;
     if(has_textures())
     {
       if(binary())
@@ -946,10 +947,7 @@ public:
 
       //if the value is of float type, convert it into an int
       if(is_float)
-      {
-        const char* s = color_info.c_str();
         rgb[index] = static_cast<unsigned char>(atof(color_info.c_str())*255);
-      }
 
       //else stores the value
       else

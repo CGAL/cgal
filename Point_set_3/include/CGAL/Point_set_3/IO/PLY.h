@@ -344,7 +344,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const char* fname,
               CGAL::Point_set_3<Point, Vector>& point_set,
-              const std::string& comments,
+              std::string& comments,
               const CGAL_BGL_NP_CLASS& np)
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
@@ -363,7 +363,7 @@ bool read_PLY(const char* fname,
 }
 
 template <typename Point, typename Vector>
-bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
+bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
 {
   return read_PLY(fname, point_set, comments, parameters::all_default());
 }
@@ -371,17 +371,19 @@ bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, co
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_PLY(fname, point_set, std::string(), np);
+  std::string unused_comments;
+  return read_PLY(fname, point_set, unused_comments, np);
 }
 
 template <typename Point, typename Vector>
 bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return read_PLY(fname, point_set, std::string(), parameters::all_default());
+  std::string unused_comments;
+  return read_PLY(fname, point_set, unused_comments, parameters::all_default());
 }
 
 template <typename Point, typename Vector>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
+bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
 {
   return read_PLY(fname.c_str(), point_set, comments, parameters::all_default());
 }
@@ -389,13 +391,15 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_PLY(fname.c_str(), point_set, std::string(), np);
+  std::string unused_comments;
+  return read_PLY(fname.c_str(), point_set, unused_comments, np);
 }
 
 template <typename Point, typename Vector>
 bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return read_PLY(fname.c_str(), point_set, std::string(), parameters::all_default());
+  std::string unused_comments;
+  return read_PLY(fname.c_str(), point_set, unused_comments, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

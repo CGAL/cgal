@@ -3,7 +3,10 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_points.h>
-#include <CGAL/boost/graph/io.h> // Just to try and create ambiguities
+
+// Just to try and create ambiguities
+#include <CGAL/boost/graph/io.h>
+#include <CGAL/IO/io.h>
 
 #include <CGAL/property_map.h>
 

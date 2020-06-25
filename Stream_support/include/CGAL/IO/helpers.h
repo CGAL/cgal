@@ -44,7 +44,7 @@ void fill_point(const double x, const double y, const double z, const double w, 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static std::string get_file_extension(const std::string fname)
+static inline std::string get_file_extension(const std::string fname)
 {
   std::string::size_type dot(fname.rfind("."));
   if(dot == std::string::npos)

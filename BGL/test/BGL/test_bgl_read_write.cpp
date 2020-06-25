@@ -350,7 +350,7 @@ void test_bgl_OFF(const char* filename)
   //@todo test multi objects in a single file
 
   // test wrong inputs
-  std::cerr<<"Error text is expected to follow."<<std::endl;
+  std::cerr << "Error text is expected to follow." << std::endl;
   ok = CGAL::read_OFF("data/mesh_that_doesnt_exist.off", fg);
   assert(!ok);
   ok = CGAL::read_OFF("data/invalid_cut.off", fg); // cut in half
@@ -363,7 +363,7 @@ void test_bgl_OFF(const char* filename)
   assert(!ok);
   ok = CGAL::read_OFF("data/pig.stl", fg);
   assert(!ok);
-  std::cerr<<"No more error text from here."<<std::endl;
+  std::cerr << "No more error text from here." << std::endl;
 }
 
 template<typename Mesh, typename K>
@@ -398,10 +398,8 @@ void test_bgl_OBJ(const std::string filename)
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
-  // Test NPs
-  typedef typename K::Vector_3                                                               Vector;
-  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
 
+  // Test NPs
   CGAL::clear(fg);
   ok = CGAL::read_OBJ("data/sphere.obj", fg);
   assert(ok);
@@ -432,7 +430,7 @@ void test_bgl_OBJ(const std::string filename)
   }
 
   // test wrong inputs
-  std::cerr<<"Error text is expected to follow."<<std::endl;
+  std::cerr << "Error text is expected to follow." << std::endl;
   ok = CGAL::read_OBJ("data/mesh_that_doesnt_exist.obj", fg);
   assert(!ok);
   ok = CGAL::read_OBJ("data/invalid_cut.obj", fg); // invalid vertex ids
@@ -441,7 +439,7 @@ void test_bgl_OBJ(const std::string filename)
   assert(!ok);
   ok = CGAL::read_OBJ("data/pig.stl", fg);
   assert(!ok);
-  std::cerr<<"No more error text from here."<<std::endl;
+  std::cerr << "No more error text from here." << std::endl;
 }
 
 template<class Mesh>
@@ -606,8 +604,6 @@ void test_bgl_STL(const std::string filename)
   assert(filename != "data/pig.stl" || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
   assert(filename != "data/pig.stl" || cpoints.size() == 8642);
 
-
-
   // write with STL
   {
     std::ofstream os("tmp.stl");
@@ -631,7 +627,7 @@ void test_bgl_STL(const std::string filename)
     assert(num_vertices(fg) == num_vertices(fg2) && num_faces(fg) == num_faces(fg2));
   }
 
-  std::cerr<<"Error text is expected to follow."<<std::endl;
+  std::cerr << "Error text is expected to follow." << std::endl;
   ok = CGAL::read_STL("data/mesh_that_doesnt_exist.stl", fg);
   assert(!ok);
   ok = CGAL::read_STL("data/invalid_cut.stl", fg); // cut in half
@@ -642,7 +638,7 @@ void test_bgl_STL(const std::string filename)
   assert(!ok);
   ok = CGAL::read_STL("data/full.off", fg);
   assert(!ok);
-  std::cerr<<"No more error text from here."<<std::endl;
+  std::cerr << "No more error text from here." << std::endl;
 }
 
 template<class Mesh>
@@ -678,7 +674,7 @@ void test_bgl_GOCAD(const char* filename)
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.ts", fg);
+    ok = CGAL::write_polygon_mesh("tmp.ts", fg, CGAL::parameters::stream_precision(10));
     assert(ok);
 
     Mesh fg2;
@@ -708,8 +704,7 @@ void test_bgl_GOCAD(const char* filename)
     assert(num_faces(fg2) == 24191);
   }
 
-
-  std::cerr<<"Error text is expected to follow."<<std::endl;
+  std::cerr << "Error text is expected to follow." << std::endl;
   ok = CGAL::read_GOCAD("data/mesh_that_doesnt_exist.ts", fg);
   assert(!ok);
   ok = CGAL::read_GOCAD("data/invalid_cut.ts", fg); // cut in half
@@ -720,7 +715,7 @@ void test_bgl_GOCAD(const char* filename)
   assert(!ok);
   ok = CGAL::read_GOCAD("data/full.off", fg);
   assert(!ok);
-  std::cerr<<"No more error text from here."<<std::endl;
+  std::cerr << "No more error text from here." << std::endl;
 }
 
 #ifdef CGAL_USE_VTK
@@ -731,7 +726,8 @@ void test_bgl_VTP(const char* filename,
   Mesh fg;
   bool ok = CGAL::read_VTP(filename, fg);
   assert(ok);
-  assert(filename != "data/bones.vtp" || (num_vertices(fg) == 2154 && num_faces(fg) == 4204));
+  assert(std::string(filename) != "data/bones.vtp" ||
+         (num_vertices(fg) == 2154 && num_faces(fg) == 4204));
 
   // write with VTP
   {
@@ -782,9 +778,6 @@ void test_bgl_VTP(const char* filename,
     assert(are_equal_meshes(fg, get(CGAL::vertex_point, fg), fg2, vpm2, vim1, vim2));
   }
 
-
-
-
   // write with VTP
   {
     std::ofstream os("tmp.vtp");
@@ -813,11 +806,10 @@ void test_bgl_VTP(const char* filename,
     ok = CGAL::read_polygon_mesh("tmp.vtp", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
-
   }
 
   // test wrong inputs
-  std::cerr<<"Error text is expected to follow."<<std::endl;
+  std::cerr << "Error text is expected to follow." << std::endl;
   ok = CGAL::read_VTP("data/mesh_that_doesnt_exist.vtp", fg);
   assert(!ok);
   ok = CGAL::read_VTP("data/invalid_cut.vtp", fg); // cut in half
@@ -832,9 +824,8 @@ void test_bgl_VTP(const char* filename,
   assert(!ok);
   ok = CGAL::read_VTP("corrupted_bin.vtp", fg);
   assert(!ok);
-  std::cerr<<"No more error text from here."<<std::endl;
+  std::cerr << "No more error text from here." << std::endl;
 }
-
 
 #endif // CGAL_USE_VTK
 

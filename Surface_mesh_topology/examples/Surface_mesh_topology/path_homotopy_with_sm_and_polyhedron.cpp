@@ -1,7 +1,9 @@
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/boost/graph/io.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Face_graph_wrapper.h>
@@ -40,13 +42,13 @@ void test(const FaceGraph& mesh, bool draw, const char* title)
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  std::string file=(argc==1?"data/elephant.off":argv[1]);
-  bool draw=(argc>2?std::string(argv[2])=="-draw":false);
+  const char* file = (argc == 1) ? "data/elephant.off" : argv[1];
+  bool draw = (argc>2) ? std::string(argv[2])=="-draw" : false;
   seed=static_cast<unsigned int>(CGAL::get_default_random().get_int(0,INT_MAX));
 
   {
     LCC_3_cmap lcc;
-    if (!CGAL::read_polygon_mesh(file, lcc))
+    if (!CGAL::load_off(lcc, file))
     {
       std::cout<<"ERROR reading file "<<file<<" for linear cell complex."<<std::endl;
       exit(EXIT_FAILURE);

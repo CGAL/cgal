@@ -16,15 +16,16 @@ typedef Reconstruction::Facet_const_iterator                    Facet_iterator;
 
 int main(int argc, char** argv)
 {
-  if (argc!=2){
+  if (argc != 2)
+  {
     std::cerr << "Error, no input file provided\n";
     return 1;
   }
-  // Read the data.
-  std::vector<Point> points;
-  std::ifstream in(argv[1]);
+
   std::cerr << "Reading " << std::flush;
-  if( !in || !CGAL::read_points( in, std::back_inserter( points ) ) ) {
+  std::vector<Point> points;
+  if(!CGAL::read_points(argv[1], std::back_inserter(points)))
+  {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;
   }
@@ -33,6 +34,7 @@ int main(int argc, char** argv)
   std::cerr << "Reconstruction ";
   CGAL::Timer t;
   t.start();
+
   // Construct the mesh in a scale space.
   Reconstruction reconstruct (points.begin(), points.end());
   reconstruct.increase_scale(4);

@@ -32,16 +32,15 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
 
 int main(int argc, char* argv[])
 {
-    // Read the data.
-    std::vector<Point> points;
-    if (argc!=2){
+    if (argc != 2)
+    {
       std::cerr << "Error, no input file provided\n";
       return 1;
     }
 
-    std::ifstream in(argv[1]);
     std::cout << "Reading " << std::flush;
-    if( !in || !CGAL::read_points(in, std::back_inserter(points)))
+    std::vector<Point> points;
+    if(!CGAL::read_points(argv[1], std::back_inserter(points)))
     {
       std::cerr << "Error: cannot read file" << std::endl;
       return EXIT_FAILURE;

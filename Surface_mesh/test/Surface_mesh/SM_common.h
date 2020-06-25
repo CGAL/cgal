@@ -117,7 +117,7 @@ struct Surface_fixture_3 {
 
 struct Cube_fixture
 {
-  Cube_fixture() { CGAL::read_polygon_mesh(m, "cube.off"); }
+  Cube_fixture() { CGAL::read_polygon_mesh("cube.off", m); }
 
   Sm m;
 
