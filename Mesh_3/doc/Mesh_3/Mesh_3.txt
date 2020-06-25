@@ -925,7 +925,7 @@ The domain is defined by a group of polyhedral surfaces that are conformal.
 For each facet of the input polyhedral surfaces,
 the ids of incident subdomains are known.
 The input surfaces intersect along polylines that are considered as sharp features,
-and protected as for all domain types in this Section.
+and protected as for all domain types in this section.
 
 \cgalExample{Mesh_3/mesh_polyhedral_complex.cpp}
 
