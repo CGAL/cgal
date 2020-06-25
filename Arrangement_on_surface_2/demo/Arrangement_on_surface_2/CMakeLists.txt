@@ -58,6 +58,7 @@ add_executable(arrangement_2
                SplitEdgeCallback.cpp
                FillFaceCallback.cpp
                MergeEdgeCallback.cpp
+               PointLocationCallback.cpp
                Utils.cpp
                NewTabDialog.cpp
                OverlayDialog.cpp

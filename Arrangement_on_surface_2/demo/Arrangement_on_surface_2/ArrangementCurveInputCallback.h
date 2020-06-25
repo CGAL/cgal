@@ -13,36 +13,22 @@
 #define ARRANGEMENT_CURVE_INPUT_CALLBACK_H
 
 #include <CGAL/Qt/GraphicsViewInput.h>
-#include <CGAL/Qt/Converter.h>
-#include <QEvent>
-#include <QGraphicsLineItem>
-#include <QGraphicsSceneMouseEvent>
-#include <iostream>
 #include "GraphicsViewCurveInput.h"
-#include "Utils.h"
 
-template <typename Arr_, typename ArrTraits = typename Arr_::Geometry_traits_2>
+template <typename Arr_>
 class ArrangementCurveInputCallback:
   public CGAL::Qt::GraphicsViewCurveInput< typename Arr_::Geometry_traits_2 >
 {
 public:
-  typedef Arr_ Arrangement;
-  typedef ArrTraits Traits;
+  typedef Arr_                                          Arrangement;
+  typedef typename Arrangement::Geometry_traits_2       Traits;
   typedef CGAL::Qt::GraphicsViewCurveInput< Traits >    Superclass;
-  typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
   typedef typename Traits::Curve_2                      Curve_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Point_2  Point_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename Kernel::FT                           FT;
 
   ArrangementCurveInputCallback(Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene):
     Superclass( parent, scene ),
     arrangement( arrangement_)
   {
-    this->snapToVertexStrategy.setArrangement( arrangement_ );
     this->setScene(scene);
 
     QObject::connect( this, SIGNAL( generate( CGAL::Object ) ),
@@ -63,8 +49,6 @@ public:
   void setScene( QGraphicsScene* scene )
   {
     this->Superclass::setScene( scene );
-    this->snapToVertexStrategy.setScene( scene );
-    this->snapToGridStrategy.setScene( scene );
   }
 
   void setArrangement( Arrangement* newArr )
@@ -73,29 +57,7 @@ public:
   }
 
 protected:
-  Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
-  {
-    if ( this->snapToGridEnabled )
-    {
-      return this->snapToGridStrategy.snapPoint( event );
-    }
-    else if ( this->snappingEnabled )
-    {
-      return this->snapToVertexStrategy.snapPoint( event );
-    }
-    else
-    {
-      Kernel_point_2 p = this->convert( event->scenePos( ) );
-      Point_2 res = this->toArrPoint( p );
-      return res;
-    }
-  }
-
   Arrangement* arrangement;
-  SnapToArrangementVertexStrategy< Arrangement > snapToVertexStrategy;
-  SnapToGridStrategy< typename Arrangement::Geometry_traits_2 >
-    snapToGridStrategy;
-  Arr_construct_point_2< Traits > toArrPoint;
 }; // class ArrangementCurveInputCallback
 
 #endif // ARRANGEMENT_SEGMENT_INPUT_CALLBACK_H

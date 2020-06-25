@@ -13,7 +13,15 @@
 #define ENVELOPE_CALLBACK_H
 
 #include "Callback.h"
-#include "CurveGraphicsItem.h"
+
+namespace CGAL
+{
+namespace Qt
+{
+template <typename T>
+class CurveGraphicsItem;
+}
+} // namespace CGAL
 
 class EnvelopeCallbackBase : public CGAL::Qt::Callback
 {
@@ -38,20 +46,14 @@ protected:
 /**
    Updates and draws the lower and upper envelopes of an observed arrangement.
 */
-template < typename Arr_, typename Traits = typename Arr_::Geometry_traits_2 >
+template < typename Arr_>
 class EnvelopeCallback : public EnvelopeCallbackBase
 {
 public:
   typedef Arr_                                          Arrangement;
-  typedef typename Arrangement::Edge_iterator           Edge_iterator;
-  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename Arrangement::Geometry_traits_2       Traits;
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::Curve_2                      Curve_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename Kernel::Ray_2                        Ray_2;
-  typedef typename Kernel::Line_2                       Line_2;
 
   /**
      Construct an envelope callback observing the given arrangement.
@@ -90,7 +92,6 @@ protected:
   */
   void updateEnvelope( bool lower );
 
-  Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* lowerEnvelope;
   CGAL::Qt::CurveGraphicsItem< Traits >* upperEnvelope;

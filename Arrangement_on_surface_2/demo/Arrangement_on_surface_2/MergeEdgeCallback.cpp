@@ -178,3 +178,4 @@ template class MergeEdgeCallback<Pol_arr>;
 template class MergeEdgeCallback<Conic_arr>;
 template class MergeEdgeCallback<Lin_arr>;
 template class MergeEdgeCallback<Alg_seg_arr>;
+// template class MergeEdgeCallback<Bezier_arr>;

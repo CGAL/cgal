@@ -12,7 +12,6 @@
 #ifndef CGAL_QT_CURVE_GRAPHICS_ITEM_H
 #define CGAL_QT_CURVE_GRAPHICS_ITEM_H
 
-#include "ArrangementPainterOstream.h"
 #include "PointsGraphicsItem.h"
 #include "GraphicsSceneMixin.h"
 
@@ -32,11 +31,9 @@ class CurveGraphicsItem : public GraphicsItem, public QGraphicsSceneMixin
 public:
   // known curve types
   typedef ArrTraits Traits;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel Kernel;
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
   typedef typename Traits::Point_2 Point_2;
-  typedef typename Kernel::Point_2 Kernel_point_2;
 
 public: // ctors
   CurveGraphicsItem( );
@@ -65,8 +62,6 @@ protected: // methods
   void updateBoundingBox( );
 
 protected: // fields
-  CGAL::Qt::Converter< Kernel > convert;
-  ArrangementPainterOstream< Traits > painterOstream;
   std::vector< X_monotone_curve_2 > curves;
   CGAL::Bbox_2 boundingBox;
 
@@ -75,7 +70,6 @@ protected: // fields
   QColor m_vertexColor;
   int m_vertexRadius;
   PointsGraphicsItem pointsGraphicsItem;
-
 }; // class CurveGraphicsItem
 
 } // namespace Qt

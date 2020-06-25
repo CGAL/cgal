@@ -455,6 +455,8 @@ void CurveGeneratorBase::generate(
   case CurveType::FivePointConicArc:
     obj = generateFivePointConicArc(clickedPoints);
     break;
+  default:
+    break;
   }
   if (obj) Q_EMIT generate(*obj);
 }
@@ -519,6 +521,9 @@ boost::optional<CGAL::Object>
 CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::generatePolyline(
   const std::vector<QPointF>& clickedPoints)
 {
+  if (clickedPoints.size() < 2)
+    return {};
+
   ArrTraits poly_tr;
   auto construct_poly = poly_tr.construct_curve_2_object();
   std::vector<Point_2> points;
@@ -775,6 +780,7 @@ template class GraphicsViewCurveInput<Pol_traits>;
 template class GraphicsViewCurveInput<Conic_traits>;
 template class GraphicsViewCurveInput<Lin_traits>;
 template class GraphicsViewCurveInput<Alg_seg_traits>;
+template class GraphicsViewCurveInput<Bezier_traits>;
 
 } // namespace Qt
 } // namespace CGAL

@@ -259,12 +259,11 @@ operator<<( const X_monotone_curve_2& curve )
 
 // Instantiation of Arr_Bezier_traits_2
 
-template < typename RatKernel, class AlgKernel, class NtTraits >
-ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel,
-                                                   NtTraits > >&
-ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel,
-                                                   NtTraits > >::
-operator<<( const X_monotone_curve_2& curve )
+template <typename RatKernel, class AlgKernel, class NtTraits>
+ArrangementPainterOstream<
+  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>&
+ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits>>::operator<<(const X_monotone_curve_2& curve)
 {
   return *this;
 }
@@ -379,9 +378,9 @@ operator<<( const X_monotone_curve_2& curve )
     QPointF qpt(vit->first, vit->second);
     path.moveTo(qpt);
 
-    while (++vit != vec.end())
+    for (auto& vit : vec)
     {
-      QPointF qpt_new = QPointF(vit->first, vit->second);
+      QPointF qpt_new = QPointF(vit.first, vit.second);
       if (lies_on_border(this, qpt) && lies_on_border(this, qpt_new))
         path.moveTo(qpt_new);
       else
@@ -412,6 +411,7 @@ template class ArrangementPainterOstream<Pol_traits>;
 template class ArrangementPainterOstream<Conic_traits>;
 template class ArrangementPainterOstream<Lin_traits>;
 template class ArrangementPainterOstream<Alg_seg_traits>;
+template class ArrangementPainterOstream<Bezier_traits>;
 
 } // namespace Qt
 } // namespace CGAL

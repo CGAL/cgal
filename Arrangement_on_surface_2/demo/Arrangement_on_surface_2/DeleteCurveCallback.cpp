@@ -1,17 +1,19 @@
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+
 #include "DeleteCurveCallback.h"
+#include "CurveGraphicsItem.h"
 #include "Utils.h"
 
 /*! Constructor */
 template <typename Arr_>
 DeleteCurveCallback<Arr_>::DeleteCurveCallback(
-	Arrangement* arr_, QObject* parent_) :
-	DeleteCurveCallbackBase(parent_),
-	scene(NULL), highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()),
-	arr(arr_)
+  Arrangement* arr_, QObject* parent_) :
+    DeleteCurveCallbackBase(parent_),
+    highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()), arr(arr_)
 {
-	QObject::connect(
-		this, SIGNAL(modelChanged()), this->highlightedCurve,
-		SLOT(modelChanged()));
+  QObject::connect(
+    this, SIGNAL(modelChanged()), this->highlightedCurve, SLOT(modelChanged()));
 
   this->setDeleteMode(DeleteMode::DeleteOriginatingCuve);
 }
@@ -23,22 +25,9 @@ DeleteCurveCallback<Arr_>::DeleteCurveCallback(
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::setScene(QGraphicsScene* scene_)
 {
-	this->scene = scene_;
-	this->highlightedCurve->setScene(scene_);
-	if (this->scene)
-	{
-		this->scene->addItem(this->highlightedCurve);
-	}
-}
-
-//! Getter function.
-/*!
-  returns the current scene of the viewport
-*/
-template <typename Arr_>
-QGraphicsScene* DeleteCurveCallback<Arr_>::getScene() const
-{
-	return this->scene;
+  CGAL::Qt::Callback::setScene(scene_);
+  this->highlightedCurve->setScene(scene_);
+  if (this->scene) { this->scene->addItem(this->highlightedCurve); }
 }
 
 template <typename Arr_>
@@ -90,12 +79,16 @@ template <typename Arr_>
 void DeleteCurveCallback<Arr_>::highlightNearestCurve(
 	QGraphicsSceneMouseEvent* event)
 {
+    typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+    typedef typename Kernel::Point_2                      Point;
+
+    CGAL::Qt::Converter< Kernel > convert;
 	// find the nearest curve to the cursor to be the new highlighted curve
-	Point p = this->convert(event->scenePos());
+	Point p = convert(event->scenePos());
 
 	Find_nearest_edge<Arr_> findNearestEdge(this->arr);
 	findNearestEdge.setScene(this->scene);
-	Halfedge_const_handle nearestEdge = findNearestEdge(p);
+	auto nearestEdge = findNearestEdge(p);
 	this->removableHalfedge = this->arr->non_const_handle(nearestEdge);
 
 	// now 'removableHalfedge' holds the closest halfedge to the point of the
@@ -124,7 +117,7 @@ void DeleteCurveCallback<Arr_>::highlightNearestCurve(
 			for (itr = this->arr->induced_edges_begin(ch);
 				 itr != this->arr->induced_edges_end(ch); ++itr)
 			{
-				X_monotone_curve_2 curve = (*itr)->curve();
+				auto curve = (*itr)->curve();
 				this->highlightedCurve->insert(curve);
 			}
 			ocit = temp;
@@ -143,3 +136,4 @@ template class DeleteCurveCallback<Pol_arr>;
 template class DeleteCurveCallback<Conic_arr>;
 template class DeleteCurveCallback<Lin_arr>;
 template class DeleteCurveCallback<Alg_seg_arr>;
+// template class DeleteCurveCallback<Bezier_arr>;

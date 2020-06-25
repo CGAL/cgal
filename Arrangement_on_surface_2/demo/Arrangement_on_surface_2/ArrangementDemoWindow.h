@@ -101,9 +101,6 @@ protected:
   template <class ArrType>
   void makeOverlayTab(ArrType* arr1, ArrType* arr2, TraitsType);
 
-  template <class Lambda>
-  void visitTraitsType(TraitsType, Lambda);
-
 private:
   Ui::ArrangementDemoWindow* ui;
   std::vector<std::pair<ArrangementDemoTabBase*, TraitsType>> tabs;

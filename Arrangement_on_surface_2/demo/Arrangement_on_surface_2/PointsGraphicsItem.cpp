@@ -31,13 +31,15 @@ void PointsGraphicsItem::paint(QPainter* painter,
 							   QWidget* /* widget */)
 {
   painter->save();
+
   painter->setBrush(QBrush(this->color));
   QTransform matrix = painter->worldTransform();
   painter->resetTransform();
-  for(auto& point : this->points){
+
+  for (auto& point : this->points)
     painter->drawEllipse(
       matrix.map(point), this->pointRadius, this->pointRadius);
-  }
+
   painter->restore();
 }
 
@@ -99,13 +101,5 @@ double PointsGraphicsItem::getPointRadius( ) const
 
 void PointsGraphicsItem::modelChanged( )
 {
-  if ( this->points.size( ) == 0 )
-  {
-	this->hide( );
-  }
-  else
-  {
-	this->show( );
-  }
   this->update( );
 }

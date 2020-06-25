@@ -312,3 +312,4 @@ template class VerticalRayShootCallback<Pol_arr>;
 template class VerticalRayShootCallback<Conic_arr>;
 template class VerticalRayShootCallback<Lin_arr>;
 template class VerticalRayShootCallback<Alg_seg_arr>;
+// template class VerticalRayShootCallback<Bezier_arr>;

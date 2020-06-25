@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
@@ -52,13 +53,8 @@ public:
     painterOstream( p, clippingRectangle ),
     qp( p ),
     convert( clippingRectangle ),
-    clippingRect( QRectF( ) ), // null rectangle
-    scale( 1.0 )
+    clippingRect( QRectF( ) ) // null rectangle
   {
-    if (p)
-    {
-      this->scale = p->worldTransform( ).m11( );
-    }
   }
 
   /*! Destructor (virtual) */
@@ -90,8 +86,6 @@ protected:
   QPainter* qp;
   Converter< Kernel > convert;
   QRectF clippingRect;
-  double scale;
-
 }; // class ArrangementPainterOstreamBase
 
 template < typename ArrTraits >
@@ -388,7 +382,6 @@ public: // methods
 protected:
   void setupFacade( );
   void remapFacadePainter();
-
 };
 
 } // namespace Qt

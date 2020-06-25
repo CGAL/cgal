@@ -169,13 +169,15 @@ typedef CGAL::Arr_landmarks_point_location<Pol_arr>
 #ifdef CGAL_USE_CORE
 
 #include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arrangement_2.h>
 
 typedef CGAL::CORE_algebraic_number_traits            Bezier_nt_traits;
 typedef Bezier_nt_traits::Rational                    Bezier_rational;
 typedef Bezier_nt_traits::Algebraic                   Bezier_algebraic;
 typedef CGAL::Cartesian<Bezier_rational>              Bezier_rat_kernel;
 typedef CGAL::Cartesian<Bezier_algebraic>             Bezier_alg_kernel;
-typedef CGAL::Arr_Bezier_curve_traits_2<Bezier_rat_kernel, Bezier_alg_kernel, Bezier_nt_traits >
+typedef CGAL::Arr_Bezier_curve_traits_2<
+  Bezier_rat_kernel, Bezier_alg_kernel, Bezier_nt_traits>
                                                       Bezier_traits;
 typedef Bezier_rat_kernel::Point_2                    Bezier_rat_point;
 typedef Bezier_traits::Curve_2                        Bezier_curve;

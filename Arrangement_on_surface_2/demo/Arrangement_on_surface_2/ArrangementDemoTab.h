@@ -49,7 +49,6 @@ public:
   ArrangementDemoTabBase( QWidget* parent );
   virtual ~ArrangementDemoTabBase( );
 
-  QGraphicsScene* getScene() const;
   ArrangementDemoGraphicsView* getView() const;
   virtual CGAL::Object getArrangement() const = 0;
   virtual void adjustViewport() = 0;
@@ -83,7 +82,6 @@ protected:
   void unhookAndInstallEventFilter(QObject*);
 
   ArrangementDemoGraphicsView* graphicsView;
-  QGraphicsScene* scene;
   QGridLayout* layout;
 
   std::unique_ptr<CGAL::Qt::ArrangementGraphicsItemBase>

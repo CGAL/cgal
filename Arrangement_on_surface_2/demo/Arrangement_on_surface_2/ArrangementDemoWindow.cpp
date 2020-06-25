@@ -39,6 +39,7 @@
 #include <CGAL/Arr_default_overlay_traits.h>
 #include <CGAL/Arr_overlay_2.h>
 
+#include "ui_ArrangementDemoWindow.h"
 #include "ui_AlgebraicCurveInputDialog.h"
 
 using namespace CGAL::Qt;
@@ -100,38 +101,72 @@ void ArrangementDemoWindow::setupUi()
 }
 
 template <class T>
-struct TypeHolder { using type = T; };
+struct TypeHolder
+{
+  using type = T;
+};
+
+template <typename T>
+static constexpr ArrangementDemoWindow::TraitsType traitFromType()
+{
+  using TraitsType = ArrangementDemoWindow::TraitsType;
+  using namespace std;
+
+  if (is_same<T, Seg_arr>::value) return TraitsType::SEGMENT_TRAITS;
+  else if (is_same<T, Pol_arr>::value) return TraitsType::POLYLINE_TRAITS;
+  else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
+  else if (is_same<T, Lin_arr>::value) return TraitsType::LINEAR_TRAITS;
+  else if (is_same<T, Alg_seg_arr>::value) return TraitsType::ALGEBRAIC_TRAITS;
+  // else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
+  else return TraitsType::NONE;
+}
 
 template <class Lambda>
-void ArrangementDemoWindow::visitTraitsType(TraitsType tt, Lambda lambda)
+static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
 {
+  using TraitsType = ArrangementDemoWindow::TraitsType;
+
   switch (tt)
   {
   default:
-  case SEGMENT_TRAITS:
+  case TraitsType::SEGMENT_TRAITS:
     lambda(TypeHolder<Seg_arr>{});
     break;
-  case POLYLINE_TRAITS:
+  case TraitsType::POLYLINE_TRAITS:
     lambda(TypeHolder<Pol_arr>{});
     break;
 #ifdef CGAL_USE_CORE
-  case CONIC_TRAITS:
+  case TraitsType::CONIC_TRAITS:
     lambda(TypeHolder<Conic_arr>{});
     break;
 #endif
-  case LINEAR_TRAITS:
+  case TraitsType::LINEAR_TRAITS:
     lambda(TypeHolder<Lin_arr>{});
     break;
-  case ALGEBRAIC_TRAITS:
+  case TraitsType::ALGEBRAIC_TRAITS:
     lambda(TypeHolder<Alg_seg_arr>{});
     break;
+  // case TraitsType::BEZIER_TRAITS:
+  //   lambda(TypeHolder<Bezier_arr>{});
+  //   break;
   }
+}
+
+template <class Lambda>
+static void forEachTraitsType(Lambda lambda)
+{
+  lambda(TypeHolder<Seg_arr>{});
+  lambda(TypeHolder<Pol_arr>{});
+  lambda(TypeHolder<Lin_arr>{});
+  lambda(TypeHolder<Conic_arr>{});
+  lambda(TypeHolder<Alg_seg_arr>{});
+  // lambda(TypeHolder<Bezier_arr>{});
 }
 
 QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
 {
-  static const QString typeNames[] = {
-    "Segment", "Polyline", "Conic", "Linear", "Algebraic"};
+  static const char* typeNames[] = {"Segment", "Polyline",  "Conic",
+                                    "Linear",  "Algebraic", "Bezier"};
   return QString("%1 - %2").arg(this->tabLabelCounter++).arg(typeNames[tt]);
 }
 
@@ -173,7 +208,11 @@ void ArrangementDemoWindow::resetActionGroups()
 void ArrangementDemoWindow::resetCallbackState()
 {
   auto activeTab = this->getActiveTab().first;
-  if (activeTab) activeTab->unhookCallbacks();
+  if (activeTab)
+  {
+    activeTab->getView()->setDragMode(QGraphicsView::NoDrag);
+    activeTab->unhookCallbacks();
+  }
 }
 
 void ArrangementDemoWindow::updateEnvelope(QAction* newMode)
@@ -560,28 +599,15 @@ void ArrangementDemoWindow::on_actionOverlay_triggered()
     std::vector<CGAL::Object> arrs = overlayDialog.selectedArrangements();
     if (arrs.size() == 2)
     {
-      Seg_arr* seg_arr;
-      Seg_arr* seg_arr2;
-      Pol_arr* pol_arr;
-      Pol_arr* pol_arr2;
+      forEachTraitsType([&](auto type_holder) {
+        using Arr = typename decltype(type_holder)::type;
+        auto tt = traitFromType<Arr>();
 
-#ifdef CGAL_USE_CORE
-      Conic_arr* conic_arr;
-      Conic_arr* conic_arr2;
-#endif
-      Lin_arr* lin_arr;
-      Lin_arr* lin_arr2;
-      if (CGAL::assign(seg_arr, arrs[0]) && CGAL::assign(seg_arr2, arrs[1]))
-        this->makeOverlayTab(seg_arr, seg_arr2, SEGMENT_TRAITS);
-      if (CGAL::assign(pol_arr, arrs[0]) && CGAL::assign(pol_arr2, arrs[1]))
-        this->makeOverlayTab(pol_arr, pol_arr2, POLYLINE_TRAITS);
-
-#ifdef CGAL_USE_CORE
-      if (CGAL::assign(conic_arr, arrs[0]) && CGAL::assign(conic_arr2, arrs[1]))
-        this->makeOverlayTab(conic_arr, conic_arr2, CONIC_TRAITS);
-#endif
-      if (CGAL::assign(lin_arr, arrs[0]) && CGAL::assign(lin_arr2, arrs[1]))
-        this->makeOverlayTab(lin_arr, lin_arr2, LINEAR_TRAITS);
+        Arr* arr;
+        Arr* arr2;
+        if (CGAL::assign(arr, arrs[0]) && CGAL::assign(arr2, arrs[1]))
+          this->makeOverlayTab(arr, arr2, tt);
+      });
     }
   }
 }
@@ -608,11 +634,35 @@ void ArrangementDemoWindow::makeOverlayTab(
   makeTab(std::move(overlayArr), tabLabel, tt);
 }
 
+struct ArrSaver
+{
+  template <typename Arr>
+  void operator()(Arr* arr)
+  {
+    using TextFormatter = CGAL::Arr_text_formatter<Arr>;
+    using ArrFormatter = CGAL::Arr_with_history_text_formatter<TextFormatter>;
+
+    ArrFormatter arrFormatter;
+    CGAL::write(*arr, ofs, arrFormatter);
+  }
+
+  void operator()(Conic_arr* arr)
+  {
+    Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
+    conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
+  }
+
+  void operator()(Bezier_arr* arr) { }
+
+  std::ofstream& ofs;
+};
+
 void ArrangementDemoWindow::on_actionSaveAs_triggered()
 {
   auto tab_tt = this->getActiveTab();
   auto activeTab = tab_tt.first;
   auto tt = tab_tt.second;
+
   if (!activeTab)
   {
     QMessageBox::information(this, "Oops", "Create a new tab first");
@@ -625,59 +675,18 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered()
 
   QByteArray ba = filename.toLocal8Bit();
   std::ofstream ofs(ba.data());
-  CGAL::Object arr = activeTab->getArrangement();
-  Seg_arr* seg;
-  Pol_arr* pol;
-  Lin_arr* lin;
-  Alg_seg_arr* alg_seg;
-
-#ifdef CGAL_USE_CORE
-  Conic_arr* conic;
-#endif
 
   // write type info
   ofs << static_cast<int>(tt) << std::endl;
-  if (CGAL::assign(seg, arr))
-  {
-    typedef CGAL::Arr_text_formatter<Seg_arr> Seg_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Seg_text_formatter>
-      ArrFormatter;
-    ArrFormatter arrFormatter;
-    CGAL::write(*seg, ofs, arrFormatter);
-  }
-  else if (CGAL::assign(pol, arr))
-  {
-    typedef CGAL::Arr_text_formatter<Pol_arr> Pol_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Pol_text_formatter>
-      ArrFormatter;
-    ArrFormatter arrFormatter;
-    CGAL::write(*pol, ofs, arrFormatter);
-  }
-  else if (CGAL::assign(lin, arr))
-  {
-    typedef CGAL::Arr_text_formatter<Lin_arr> Lin_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Lin_text_formatter>
-      ArrFormatter;
-    ArrFormatter arrFormatter;
-    CGAL::write(*lin, ofs, arrFormatter);
-  }
-  else if (CGAL::assign(alg_seg, arr))
-  {
-    typedef CGAL::Arr_text_formatter<Alg_seg_arr> Arc_text_formatter;
-    typedef CGAL::Arr_with_history_text_formatter<Arc_text_formatter>
-      ArrFormatter;
-    ArrFormatter arrFormatter;
-    CGAL::write(*alg_seg, ofs, arrFormatter);
-  }
-#ifdef CGAL_USE_CORE
-  else if (CGAL::assign(conic, arr))
-  {
-    Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
-    conicReader.write_data(ofs, conic->curves_begin(), conic->curves_end());
-  }
-#endif
 
-  ofs.close();
+  visitTraitsType(tt, [&](auto type_holder) {
+    using Arr = typename decltype(type_holder)::type;
+    Arr* typed_arr;
+    if (CGAL::assign(typed_arr, activeTab->getArrangement()))
+      ArrSaver{ofs}(typed_arr);
+    else
+      QMessageBox::information(this, "Oops", "Error saving file!");
+  });
 }
 
 void ArrangementDemoWindow::on_actionOpen_triggered()
@@ -697,6 +706,39 @@ void ArrangementDemoWindow::on_actionOpen_triggered()
   }
 }
 
+struct ArrOpener
+{
+  template <typename Arr>
+  auto operator()(TypeHolder<Arr>)
+  {
+    using Text_formatter = CGAL::Arr_text_formatter<Arr>;
+    using ArrFormatter = CGAL::Arr_with_history_text_formatter<Text_formatter>;
+
+    ArrFormatter arrFormatter;
+    auto arr = std::make_unique<Arr>();
+    CGAL::read(*arr, ifs, arrFormatter);
+    return arr;
+  }
+
+  auto operator()(TypeHolder<Conic_arr>)
+  {
+    Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
+    std::vector<Conic_arr::Curve_2> curve_list;
+    CGAL::Bbox_2 bbox;
+    conicReader.read_data(ifs, std::back_inserter(curve_list), bbox);
+    auto arr = std::make_unique<Conic_arr>();
+    CGAL::insert(*arr, curve_list.begin(), curve_list.end());
+    return arr;
+  }
+
+  auto operator()(TypeHolder<Bezier_arr>)
+  {
+    return std::make_unique<Bezier_arr>();
+  }
+
+  std::ifstream& ifs;
+};
+
 ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
 {
   if (filename.isNull()) return nullptr;
@@ -710,36 +752,12 @@ ArrangementDemoTabBase* ArrangementDemoWindow::openArrFile(QString filename)
   auto tt = static_cast<TraitsType>(tt_int);
 
   ArrangementDemoTabBase* createdTab = nullptr;
-  switch (tt)
-  {
-#ifdef CGAL_USE_CORE
-  case CONIC_TRAITS: {
-    Conic_reader<Conic_arr::Geometry_traits_2> conicReader;
-    std::vector<Conic_arr::Curve_2> curve_list;
-    CGAL::Bbox_2 bbox;
-    conicReader.read_data(ifs, std::back_inserter(curve_list), bbox);
-    auto conic = std::make_unique<Conic_arr>();
-    CGAL::insert(*conic, curve_list.begin(), curve_list.end());
-    createdTab = this->makeTab(std::move(conic), this->makeTabLabel(tt), tt);
-    break;
-  }
-#endif
-  default:
-    visitTraitsType(tt, [&](auto type_holder) {
-      using Arr_ = typename decltype(type_holder)::type;
-      // Conic has no text_formatter
-      using Arr =
-        std::conditional_t<std::is_same<Arr_, Conic_arr>::value, Seg_arr, Arr_>;
-      using Text_formatter = CGAL::Arr_text_formatter<Arr>;
-      using ArrFormatter =
-        CGAL::Arr_with_history_text_formatter<Text_formatter>;
 
-      ArrFormatter arrFormatter;
-      auto arr = std::make_unique<Arr>();
-      CGAL::read(*arr, ifs, arrFormatter);
-      createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt), tt);
-    });
-  }
+  visitTraitsType(tt, [&](auto type_holder) {
+    auto arr = ArrOpener{ifs}(type_holder);
+    createdTab = this->makeTab(std::move(arr), this->makeTabLabel(tt), tt);
+  });
+
   return createdTab;
 }
 

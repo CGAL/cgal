@@ -10,6 +10,7 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "EnvelopeCallback.h"
+#include "CurveGraphicsItem.h"
 #include "Utils.h"
 
 #include <CGAL/envelope_2.h>
@@ -21,8 +22,8 @@ EnvelopeCallbackBase::EnvelopeCallbackBase( QObject* parent ) :
   CGAL::Qt::Callback( parent )
 { }
 
-template < typename Arr_, typename Traits >
-EnvelopeCallback<Arr_, Traits>::EnvelopeCallback(Arrangement* arr_,
+template < typename Arr_>
+EnvelopeCallback<Arr_>::EnvelopeCallback(Arrangement* arr_,
                                                  QObject* parent) :
   EnvelopeCallbackBase( parent ),
   arr( arr_ ),
@@ -35,60 +36,60 @@ EnvelopeCallback<Arr_, Traits>::EnvelopeCallback(Arrangement* arr_,
   this->upperEnvelope->hide();
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback<Arr_, Traits>::setEnvelopeEdgeColor( const QColor& color )
+template < typename Arr_ >
+void EnvelopeCallback<Arr_>::setEnvelopeEdgeColor( const QColor& color )
 {
   this->lowerEnvelope->setEdgeColor( color );
   this->upperEnvelope->setEdgeColor( color );
 }
 
-template < typename Arr_, typename Traits >
-const QColor& EnvelopeCallback<Arr_, Traits>::getEnvelopeEdgeColor( ) const
+template < typename Arr_ >
+const QColor& EnvelopeCallback<Arr_>::getEnvelopeEdgeColor( ) const
 {
   return this->lowerEnvelope->edgeColor( );
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback<Arr_, Traits>::setEnvelopeEdgeWidth( int width )
+template < typename Arr_ >
+void EnvelopeCallback<Arr_>::setEnvelopeEdgeWidth( int width )
 {
   this->lowerEnvelope->setEdgeWidth( width );
   this->upperEnvelope->setEdgeWidth( width );
 }
 
-template < typename Arr_, typename Traits >
-int EnvelopeCallback<Arr_, Traits>::getEnvelopeEdgeWidth( ) const
+template < typename Arr_ >
+int EnvelopeCallback<Arr_>::getEnvelopeEdgeWidth( ) const
 {
   return this->lowerEnvelope->edgeWidth( );
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback<Arr_, Traits>::setEnvelopeVertexColor( const QColor& color )
+template < typename Arr_ >
+void EnvelopeCallback<Arr_>::setEnvelopeVertexColor( const QColor& color )
 {
   this->lowerEnvelope->setVertexColor( color );
   this->upperEnvelope->setVertexColor( color );
 }
 
-template < typename Arr_, typename Traits >
-const QColor& EnvelopeCallback<Arr_, Traits>::getEnvelopeVertexColor( ) const
+template < typename Arr_ >
+const QColor& EnvelopeCallback<Arr_>::getEnvelopeVertexColor( ) const
 {
   return this->lowerEnvelope->vertexColor( );
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback<Arr_, Traits>::setEnvelopeVertexRadius( int radius )
+template < typename Arr_ >
+void EnvelopeCallback<Arr_>::setEnvelopeVertexRadius( int radius )
 {
   this->lowerEnvelope->setVertexRadius( radius );
   this->upperEnvelope->setVertexRadius( radius );
 }
 
-template < typename Arr_, typename Traits >
-int EnvelopeCallback<Arr_, Traits>::getEnvelopeVertexRadius( ) const
+template < typename Arr_ >
+int EnvelopeCallback<Arr_>::getEnvelopeVertexRadius( ) const
 {
   return this->lowerEnvelope->vertexRadius( );
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback<Arr_, Traits>::setScene( QGraphicsScene* scene_ )
+template < typename Arr_ >
+void EnvelopeCallback<Arr_>::setScene( QGraphicsScene* scene_ )
 {
   EnvelopeCallbackBase::setScene(scene_);
   lowerEnvelope->setScene(scene_);
@@ -97,15 +98,15 @@ void EnvelopeCallback<Arr_, Traits>::setScene( QGraphicsScene* scene_ )
   this->scene->addItem( this->upperEnvelope );
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback< Arr_, Traits >::slotModelChanged( )
+template < typename Arr_ >
+void EnvelopeCallback< Arr_>::slotModelChanged( )
 {
   if (showLower) this->updateEnvelope(true);
   if (showUpper) this->updateEnvelope(false);
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback< Arr_, Traits >::updateEnvelope( bool lower )
+template < typename Arr_ >
+void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
 {
   std::vector<X_monotone_curve_2> curves;
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
@@ -152,9 +153,10 @@ void EnvelopeCallback< Arr_, Traits >::updateEnvelope( bool lower )
         rightPoint = e->right()->point();
       }
 
+      Construct_x_monotone_subcurve_2<Traits> construct_x_monotone_subcurve_2;
       X_monotone_curve_2 curve =
-        this->construct_x_monotone_subcurve_2(e->curve(),
-                                              leftPoint, rightPoint);
+        construct_x_monotone_subcurve_2(e->curve(), leftPoint, rightPoint);
+
       envelopeToUpdate->insert(curve);
       if (leftPoint)  envelopeToUpdate->insert(*leftPoint);
       if (rightPoint) envelopeToUpdate->insert(*rightPoint);
@@ -164,8 +166,8 @@ void EnvelopeCallback< Arr_, Traits >::updateEnvelope( bool lower )
   envelopeToUpdate->modelChanged();
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback< Arr_, Traits >::showLowerEnvelope( bool show )
+template < typename Arr_ >
+void EnvelopeCallback< Arr_>::showLowerEnvelope( bool show )
 {
   this->showLower = show;
   if (this->showLower)
@@ -179,8 +181,8 @@ void EnvelopeCallback< Arr_, Traits >::showLowerEnvelope( bool show )
   }
 }
 
-template < typename Arr_, typename Traits >
-void EnvelopeCallback< Arr_, Traits >::showUpperEnvelope( bool show )
+template < typename Arr_ >
+void EnvelopeCallback< Arr_>::showUpperEnvelope( bool show )
 {
   this->showUpper = show;
   if (this->showUpper)
@@ -194,8 +196,9 @@ void EnvelopeCallback< Arr_, Traits >::showUpperEnvelope( bool show )
   }
 }
 
-template class EnvelopeCallback<Seg_arr, Seg_traits>;
-template class EnvelopeCallback<Pol_arr, Pol_traits>;
-template class EnvelopeCallback<Conic_arr, Conic_traits>;
-template class EnvelopeCallback<Lin_arr, Lin_traits>;
-template class EnvelopeCallback<Alg_seg_arr, Alg_seg_traits>;
+template class EnvelopeCallback<Seg_arr>;
+template class EnvelopeCallback<Pol_arr>;
+template class EnvelopeCallback<Conic_arr>;
+template class EnvelopeCallback<Lin_arr>;
+template class EnvelopeCallback<Alg_seg_arr>;
+// template class EnvelopeCallback<Bezier_arr>;

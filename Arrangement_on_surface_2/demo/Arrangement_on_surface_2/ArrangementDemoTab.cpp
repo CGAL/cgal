@@ -9,6 +9,7 @@
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
+#include "ArrangementTypes.h"
 #include "ArrangementDemoTab.h"
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoGraphicsView.h"
@@ -28,8 +29,8 @@ static constexpr double MAX_WIDTH =
 
 ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   QWidget( parent ),
+  QGraphicsSceneMixin( new QGraphicsScene() ),
   graphicsView( new ArrangementDemoGraphicsView( this ) ),
-  scene( new QGraphicsScene( ) ),
   layout( new QGridLayout( this ) ),
   arrangementGraphicsItem( nullptr ),
   curveInputCallback( nullptr ),
@@ -52,17 +53,15 @@ ArrangementDemoTabBase::~ArrangementDemoTabBase( )
 
 void ArrangementDemoTabBase::setupUi( )
 {
+  auto scene = this->getScene();
+
   this->layout->addWidget( this->graphicsView, 0, 0 );
-  this->graphicsView->setScene( this->scene );
+  this->graphicsView->setScene( scene );
+
   // TODO: Find suitable values
   double xymin = -MAX_WIDTH / 2;
   double wh = MAX_WIDTH;
-  this->scene->setSceneRect(xymin, xymin, wh, wh);
-}
-
-QGraphicsScene* ArrangementDemoTabBase::getScene( ) const
-{
-  return this->scene;
+  scene->setSceneRect(xymin, xymin, wh, wh);
 }
 
 ArrangementDemoGraphicsView* ArrangementDemoTabBase::getView() const
@@ -248,7 +247,7 @@ template <class Arr_>
 ArrangementDemoTab<Arr_>::~ArrangementDemoTab()
 {
   // make unique_ptr handle deletion instead of Qt
-  this->scene->removeItem(this->arrangementGraphicsItem.get());
+  this->getScene()->removeItem(this->arrangementGraphicsItem.get());
 }
 
 template <class Arr_>
@@ -260,12 +259,14 @@ void ArrangementDemoTab<Arr_>::initArrangement()
 template <class Arr_>
 void ArrangementDemoTab<Arr_>::initComponents()
 {
+  auto scene = this->getScene();
+
   this->arrangementGraphicsItem =
     std::make_unique<CGAL::Qt::ArrangementGraphicsItem<Arrangement>>(
       this->arrangement.get());
   this->curveInputCallback =
     std::make_unique<ArrangementCurveInputCallback<Arrangement>>(
-      this->arrangement.get(), this, this->scene);
+      this->arrangement.get(), this, scene);
   this->deleteCurveCallback =
     std::make_unique<DeleteCurveCallback<Arrangement>>(
       this->arrangement.get(), this);
@@ -284,16 +285,16 @@ void ArrangementDemoTab<Arr_>::initComponents()
   this->fillFaceCallback = std::make_unique<FillFaceCallback<Arrangement>>(
     this->arrangement.get(), this);
 
-  this->scene->addItem(this->arrangementGraphicsItem.get());
-  this->arrangementGraphicsItem->setScene(this->scene);
-  this->curveInputCallback->setScene(this->scene);
-  this->deleteCurveCallback->setScene(this->scene);
-  this->pointLocationCallback->setScene(this->scene);
-  this->verticalRayShootCallback->setScene(this->scene);
-  this->mergeEdgeCallback->setScene(this->scene);
-  this->splitEdgeCallback->setScene(this->scene);
-  this->envelopeCallback->setScene(this->scene);
-  this->fillFaceCallback->setScene(this->scene);
+  scene->addItem(this->arrangementGraphicsItem.get());
+  this->arrangementGraphicsItem->setScene(scene);
+  this->curveInputCallback->setScene(scene);
+  this->deleteCurveCallback->setScene(scene);
+  this->pointLocationCallback->setScene(scene);
+  this->verticalRayShootCallback->setScene(scene);
+  this->mergeEdgeCallback->setScene(scene);
+  this->splitEdgeCallback->setScene(scene);
+  this->envelopeCallback->setScene(scene);
+  this->fillFaceCallback->setScene(scene);
 }
 
 template <class Arr_>
@@ -437,6 +438,25 @@ CGAL::Bbox_2 findOtherInterestingPoints<Alg_seg_arr>(
   return bb;
 }
 
+template <typename Arr>
+static CGAL::Bbox_2 curvesBbox(const std::unique_ptr<Arr>& arr)
+{
+  CGAL::Bbox_2 bb;
+  for (auto it = arr->edges_begin(); it != arr->edges_end(); ++it)
+    // can throws "CGAL::internal::Zero_resultant_exception"
+    try { bb += makeFinite(it->curve().bbox()); }
+    catch (...) { }
+
+  return bb;
+}
+
+template <>
+CGAL::Bbox_2 curvesBbox(
+  const std::unique_ptr<Bezier_arr>& arr)
+{
+  return {};
+}
+
 template <class Arr_>
 void ArrangementDemoTab<Arr_>::adjustViewport()
 {
@@ -449,13 +469,7 @@ void ArrangementDemoTab<Arr_>::adjustViewport()
     bb += makeFinite({x, y, x, y});
   }
 
-  for (auto it = arrangement->edges_begin(); it != arrangement->edges_end();
-       ++it)
-  {
-    // can throws "CGAL::internal::Zero_resultant_exception"
-    try { bb += makeFinite(it->curve().bbox()); }
-    catch (...) { }
-  }
+  bb += curvesBbox(this->arrangement);
 
   if (!isFinite(bb))
     bb += findOtherInterestingPoints(this->arrangement);
@@ -474,7 +488,7 @@ void ArrangementDemoTab<Arr_>::adjustViewport()
   double xmin = viewportRect.x() - MAX_WIDTH / 2;
   double ymin = viewportRect.y() - MAX_WIDTH / 2;
   double wh = MAX_WIDTH;
-  this->scene->setSceneRect(xmin, ymin, wh, wh);
+  this->getScene()->setSceneRect(xmin, ymin, wh, wh);
   this->graphicsView->fitInView(viewportRect, Qt::KeepAspectRatio);
 
   Q_EMIT modelChanged();
@@ -485,3 +499,4 @@ template class ArrangementDemoTab<Pol_arr>;
 template class ArrangementDemoTab<Conic_arr>;
 template class ArrangementDemoTab<Lin_arr>;
 template class ArrangementDemoTab<Alg_seg_arr>;
+// template class ArrangementDemoTab<Bezier_arr>;

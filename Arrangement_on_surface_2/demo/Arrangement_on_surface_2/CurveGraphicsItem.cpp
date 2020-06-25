@@ -1,5 +1,7 @@
 #include "CurveGraphicsItem.h"
+#include "ArrangementPainterOstream.h"
 #include "ArrangementTypes.h"
+#include "Utils.h"
 
 namespace CGAL
 {
@@ -8,7 +10,7 @@ namespace Qt
 
 template <class ArrTraits>
 CurveGraphicsItem<ArrTraits>::CurveGraphicsItem() :
-	painterOstream(0), boundingBox(), m_edgeColor(::Qt::red), m_edgeWidth(0),
+	boundingBox(), m_edgeColor(::Qt::red), m_edgeWidth(0),
 	m_vertexColor(::Qt::red), m_vertexRadius(1)
 {
 	this->setZValue(4);
@@ -25,28 +27,29 @@ void CurveGraphicsItem<ArrTraits>::paint(
 	painter->setPen(edgesPen);
 	QRectF clippingRectangle = this->viewportRect();
 
-	this->painterOstream =
+	auto painterOstream =
 		ArrangementPainterOstream<Traits>(painter, clippingRectangle);
-	this->painterOstream.setScene(this->getScene());
+	painterOstream.setScene(this->getScene());
 
 	for (auto& curve : this->curves)
 	{
-		this->painterOstream << curve;
+		painterOstream << curve;
 	}
 }
 
 template <class ArrTraits>
 QRectF CurveGraphicsItem<ArrTraits>::boundingRect() const
 {
-	QRectF boundingRectangle = this->convert(this->boundingBox);
-	return boundingRectangle;
+  typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
+  CGAL::Qt::Converter<Kernel> convert;
+  QRectF boundingRectangle = convert(this->boundingBox);
+  return boundingRectangle;
 }
 
 template <class ArrTraits>
 void CurveGraphicsItem<ArrTraits>::insert(const X_monotone_curve_2& curve)
 {
 	this->curves.push_back(curve);
-
 	this->updateBoundingBox();
 }
 
@@ -161,6 +164,7 @@ template class CurveGraphicsItem<Pol_traits>;
 template class CurveGraphicsItem<Conic_traits>;
 template class CurveGraphicsItem<Lin_traits>;
 template class CurveGraphicsItem<Alg_seg_traits>;
+// template class CurveGraphicsItem<Bezier_traits>;
 
 } // namespace Qt
 } // namespace CGAL

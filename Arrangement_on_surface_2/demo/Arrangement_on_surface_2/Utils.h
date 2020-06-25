@@ -97,6 +97,18 @@ public:
   typedef typename Kernel::FT CoordinateType;
 };
 
+template <typename RatKernel, typename AlgKernel, typename NtTraits>
+class ArrTraitsAdaptor<
+  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+{
+public:
+  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
+    ArrTraits;
+  typedef AlgKernel Kernel;
+  typedef typename ArrTraits::Point_2 Point_2;
+  typedef typename Kernel::FT CoordinateType;
+};
+
 template <typename Coefficient_>
 class ArrTraitsAdaptor< CGAL::Arr_algebraic_segment_traits_2< Coefficient_ > >
 {
@@ -127,87 +139,23 @@ public:
                                                         IntersectionResult;
 
   /*! Constructor */
-  Arr_compute_y_at_x_2( ) :
-    intersectCurves( this->traits.intersect_2_object( ) )
-  { }
+  Arr_compute_y_at_x_2( );
 
-  /*! Destructor (virtual) */
-  virtual ~Arr_compute_y_at_x_2() {}
+  CoordinateType
+  operator()(const X_monotone_curve_2& curve, const CoordinateType& x);
 
-  CoordinateType operator() ( const X_monotone_curve_2& curve,
-                              const CoordinateType& x )
-  {
-    typename Traits::Left_side_category category;
-    return this->operator()( curve, x, this->traits, category );
-  }
-
-  double approx( const X_monotone_curve_2& curve, const CoordinateType& x )
-  {
-    return CGAL::to_double( (*this)( curve, x ) );
-  }
+  double approx(const X_monotone_curve_2& curve, const CoordinateType& x);
 
 protected:
-  template <typename TTraits >
-  CoordinateType operator() ( const X_monotone_curve_2& curve,
-                              const CoordinateType& x, TTraits traits_,
-                              CGAL::Arr_oblivious_side_tag )
-  {
-    typedef typename TTraits::Construct_x_monotone_curve_2
-      Construct_x_monotone_curve_2;
-    Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
-      traits_.construct_x_monotone_curve_2_object( );
-    CoordinateType res( 0 );
-    CGAL::Bbox_2 clipRect = curve.bbox( );
-    Point_2 p1c1( x, CoordinateType( clipRect.ymin( ) - 1 ) ); // clicked point
-    // upper bounding box
-    Point_2 p2c1( x, CoordinateType( clipRect.ymax( ) + 1 ) );
+  template <typename TTraits>
+  CoordinateType operator()(
+    const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_,
+    CGAL::Arr_oblivious_side_tag);
 
-    const X_monotone_curve_2 verticalLine =
-      construct_x_monotone_curve_2( p1c1, p2c1 );
-    CGAL::Object o;
-    CGAL::Oneset_iterator< CGAL::Object > oi( o );
-
-    this->intersectCurves( curve, verticalLine, oi );
-
-    IntersectionResult pair;
-    if ( CGAL::assign( pair, o ) )
-    {
-      Point_2 pt = pair.first;
-      res = pt.y( );
-    }
-    return res;
-  }
-
-  template <typename TTraits >
-  CoordinateType operator() ( const X_monotone_curve_2& curve,
-                              const CoordinateType& x, TTraits traits_,
-                              CGAL::Arr_open_side_tag )
-  {
-    typename TTraits::Construct_x_monotone_curve_2
-      construct_x_monotone_curve_2 =
-      traits_.construct_x_monotone_curve_2_object( );
-    CoordinateType res( 0 );
-    // QRectF clipRect = this->viewportRect( );
-    Line_2 line = curve.supporting_line( );
-    // FIXME: get a better bounding box for an unbounded segment
-    Point_2 p1c1( x, CoordinateType( -10000000 ) ); // clicked point
-    Point_2 p2c1( x, CoordinateType(  10000000 ) ); // upper bounding box
-
-    const X_monotone_curve_2 verticalLine =
-      construct_x_monotone_curve_2( p1c1, p2c1 );
-    CGAL::Object o;
-    CGAL::Oneset_iterator< CGAL::Object > oi( o );
-
-    this->intersectCurves( curve, verticalLine, oi );
-
-    IntersectionResult pair;
-    if ( CGAL::assign( pair, o ) )
-    {
-      Point_2 pt = pair.first;
-      res = pt.y( );
-    }
-    return res;
-  }
+  template <typename TTraits>
+  CoordinateType operator()(
+    const X_monotone_curve_2& curve, const CoordinateType& x, TTraits traits_,
+    CGAL::Arr_open_side_tag);
 
 protected:
   Traits traits;
@@ -227,69 +175,25 @@ public:
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
 
-  CoordinateType operator() ( const X_monotone_curve_2& curve,
-                              const CoordinateType& x,
-                              Point_2* out=nullptr )
-  {
-    CGAL::Object o;
-    CGAL::Oneset_iterator< CGAL::Object > oi( o );
-    Intersect_2 intersect = traits.intersect_2_object( );
-    X_monotone_curve_2 c2 = this->makeVerticalLine( x );
-    intersect( curve, c2, oi );
-    std::pair< Point_2, Multiplicity > res;
-    if ( CGAL::assign( res, o ) ) // TODO: handle failure case
-    {
-      Point_2 p = res.first;
-      // std::cout << "approx y: " << p.to_double( ).second << std::endl;
-      CoordinateType coord = p.y( );
-      if ( out ) *out = p;
-      return coord;
-    }
-    else
-    {
-      std::cout << "Warning: vertical projection failed" << std::endl;
-      return CoordinateType( 0 );
-    }
-  }
+  CoordinateType operator()(
+    const X_monotone_curve_2& curve, const CoordinateType& x,
+    Point_2* out = nullptr);
 
-  double approx( const X_monotone_curve_2& curve, const CoordinateType& x )
-  {
-    CGAL::Object o;
-    CGAL::Oneset_iterator< CGAL::Object > oi( o );
-    Intersect_2 intersect = traits.intersect_2_object( );
-    X_monotone_curve_2 c2 = this->makeVerticalLine( x );
-    intersect( curve, c2, oi );
-    std::pair< Point_2, Multiplicity > res;
-    if ( CGAL::assign( res, o ) ) // TODO: handle failure case
-    {
-      Point_2 p = res.first;
-      std::pair< double, double > tmp = p.to_double();
-      return tmp.second;
-    }
-    else
-    {
-      return 0;
-    }
-  }
+  double approx(const X_monotone_curve_2& curve, const CoordinateType& x);
 
 protected:
-  X_monotone_curve_2 makeVerticalLine( const CoordinateType& x )
-  {
-    typename Traits::Construct_point_2 constructPoint =
-      traits.construct_point_2_object( );
-    typename Traits::Construct_x_monotone_segment_2 constructSegment =
-      traits.construct_x_monotone_segment_2_object( );
-
-    std::vector< X_monotone_curve_2 > curves;
-    Point_2 p1 = constructPoint( x, CoordinateType( -1000000 ) );
-    Point_2 p2 = constructPoint( x, CoordinateType( +1000000 ) );
-    constructSegment( p1, p2, std::back_inserter( curves ) );
-    return curves[ 0 ]; // by construction, there is one curve in curves
-  }
+  X_monotone_curve_2 makeVerticalLine(const CoordinateType& x);
   Traits traits;
 };
 
-template < class ArrTraits >
+// template <typename RatKernel, class AlgKernel, class NtTraits>
+// struct Arr_compute_y_at_x_2<
+//   CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+// {
+//   double approx(const X_monotone_curve_2& curve, const CoordinateType& x);
+// };
+
+template <class ArrTraits>
 class Compute_squared_distance_2_base : public QGraphicsSceneMixin
 {
 public:
@@ -514,6 +418,25 @@ public:
 
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
 
+template <typename RatKernel, typename AlgKernel, typename NtTraits>
+class Construct_x_monotone_subcurve_2<
+  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+{
+public:
+  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
+    ArrTraits;
+  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename ArrTraits::Point_2 Point_2;
+
+  /*
+    Return the subcurve of curve bracketed by pLeft and pRight.
+  */
+  X_monotone_curve_2 operator()(
+    const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
+    const boost::optional<Point_2>& pRight) {}
+
+}; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
+
 // FIXME: return Traits::Point_2 instead of Kernel::Point_2
 template <typename ArrTraits >
 class SnapStrategy : public QGraphicsSceneMixin
@@ -627,8 +550,7 @@ public:
   typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
   typedef typename Kernel::Compute_squared_distance_2
     Compute_squared_distance_2;
-  typedef typename Kernel::FT                           FT;
-  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Kernel::FT                           FT; typedef typename Traits::Point_2                      Point_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
 
   SnapToArrangementVertexStrategy( ):
@@ -780,104 +702,6 @@ protected: // member fields
   Point_location_strategy pointLocationStrategy;
   Arr_construct_point_2< ArrTraits > toArrPoint;
 
-}; // class Find_nearest_edge
-
-template <typename Arr_, typename Coefficient_>
-class Find_nearest_edge<Arr_, CGAL::Arr_algebraic_segment_traits_2<
-                                Coefficient_> >: public Find_nearest_edge_base
-{
-public: // typedefs
-  typedef Arr_ Arrangement;
-  typedef typename CGAL::Arr_algebraic_segment_traits_2<
-                                Coefficient_>   ArrTraits;
-
-  typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
-                                                        Point_location_strategy;
-  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
-  typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Arrangement::Face_const_handle       Face_const_handle;
-  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement::Ccb_halfedge_const_circulator
-    Ccb_halfedge_const_circulator;
-  typedef typename Point_curve_distance::FT             FT;
-  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
-  typedef typename Arrangement::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
-
-public:
-  /*! constructor */
-  Find_nearest_edge( Arrangement* arr_ ) :
-    Find_nearest_edge_base( ),
-    arr( arr_ ),
-    pointLocationStrategy( Point_location_strategy( *arr_ ) )
-  { }
-
-  /*! Destructor (virtual) */
-  virtual ~Find_nearest_edge() {}
-
-public: // member methods
-  Halfedge_const_handle operator()( const Point_2& queryPt );
-
-  virtual void setScene( QGraphicsScene* scene_ )
-  {
-    this->pointCurveDistance.setScene( scene_ );
-    Find_nearest_edge_base::setScene( scene_ );
-  }
-
-protected: // member methods
-  Face_const_handle getFace( const CGAL::Object& obj );
-
-protected: // member fields
-  Arrangement* arr;
-  Point_curve_distance pointCurveDistance;
-  Point_location_strategy pointLocationStrategy;
-  Arr_construct_point_2<ArrTraits> toArrPoint;
-
-}; // class Find_nearest_edge
-
-template <typename Arr_, typename Kernel_ >
-class Find_nearest_edge< Arr_, CGAL::Arr_linear_traits_2< Kernel_ > > :
-  public Find_nearest_edge_base
-{
-public: // typedefs
-  typedef Arr_ Arrangement;
-  typedef typename Arrangement::Geometry_traits_2       ArrTraits;
-  typedef Compute_squared_distance_2<ArrTraits>         Point_curve_distance;
-  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
-  typedef CGAL::Arr_walk_along_line_point_location<Arrangement>
-                                                        Point_location_strategy;
-  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
-  typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Arrangement::Face_const_handle       Face_const_handle;
-  typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement::Ccb_halfedge_const_circulator
-    Ccb_halfedge_const_circulator;
-  typedef typename Point_curve_distance::FT             FT;
-  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
-  typedef typename Arrangement::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
-
-public: // constructors
-  Find_nearest_edge( Arrangement* arr_ ) :
-    Find_nearest_edge_base( ),
-    arr( arr_ ),
-    pointLocationStrategy( Point_location_strategy( *arr_ ) )
-  { }
-
-public: // member methods
-  Halfedge_const_handle operator()( const Point_2& queryPt );
-
-protected: // member methods
-  Face_const_handle getFace( const CGAL::Object& obj );
-
-protected: // member fields
-  Arrangement* arr;
-  Point_curve_distance pointCurveDistance;
-  Point_location_strategy pointLocationStrategy;
 }; // class Find_nearest_edge
 
 #endif // CGAL_ARRANGEMENTS_DEMO_UTILS_H

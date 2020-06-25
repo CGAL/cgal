@@ -280,3 +280,4 @@ template class SplitEdgeCallback<Pol_arr>;
 template class SplitEdgeCallback<Conic_arr>;
 template class SplitEdgeCallback<Lin_arr>;
 template class SplitEdgeCallback<Alg_seg_arr>;
+// template class SplitEdgeCallback<Bezier_arr>;
