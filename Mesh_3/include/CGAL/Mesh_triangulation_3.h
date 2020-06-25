@@ -148,8 +148,11 @@ private:
                                   typename MD::Surface_patch_index,
                                   typename MD::Index> >::type;
 
-  struct Tds : public Triangulation_data_structure_3<Vertex_base,Cell_base> {};
-  using Triangulation = Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;;
+  struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
+                                                     Concurrency_tag> {};
+  using Triangulation =
+      Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
+  ;
 
 public:
   using type = Triangulation;
