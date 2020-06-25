@@ -255,6 +255,33 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+/*!
+ * \ingroup PkgStreamSupportIoFuncsOFF
+ *
+ * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param os the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
@@ -265,40 +292,9 @@ bool write_OFF(std::ostream& os,
   return writer(points, polygons, np);
 }
 
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
-{
-  std::ofstream os(fname);
-  Generic_writer<std::ostream, File_writer_OFF> writer(os);
-  return writer(points, polygons, np);
-}
-
-/*!
- * \ingroup PkgStreamSupportIoFuncsOFF
- *
- * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
- *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
- *
- * \param os the output stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
- *        using the indices of the points in `points`.
- *
- * \return `true` if the writing was successful, `false` otherwise.
- */
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& polygons
-#ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
-#endif
-               )
+               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }
@@ -312,14 +308,35 @@ bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& p
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const char* fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  Generic_writer<std::ostream, File_writer_OFF> writer(os);
+  return writer(points, polygons, np);
+}
+
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(const char* fname,
                const PointRange& points,

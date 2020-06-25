@@ -105,6 +105,13 @@ bool read_polygon_mesh(std::istream& is,
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `Graph`.}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{This applies only the \ref IOStreamPLY file format. }
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
@@ -197,6 +204,13 @@ bool read_polygon_mesh(const char* fname, Graph& g)
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{This applies only the \ref IOStreamPLY file format. }
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`

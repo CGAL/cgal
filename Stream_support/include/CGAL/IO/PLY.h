@@ -233,7 +233,12 @@ bool read_PLY(std::istream& is,
               const bool verbose = true,
               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(hedges), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(huvs), verbose);
+  return IO::internal::read_PLY(is, points, polygons,
+                                std::back_inserter(hedges),
+                                std::back_inserter(fcolors),
+                                std::back_inserter(vcolors),
+                                std::back_inserter(huvs),
+                                verbose);
 }
 
 template <class PointRange, class PolygonRange, class ColorRange>
@@ -247,7 +252,30 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(dummy_pui), std::back_inserter(fcolors), std::back_inserter(vcolors), std::back_inserter(dummy_pf), verbose);
+  return IO::internal::read_PLY(is, points, polygons,
+                                std::back_inserter(dummy_pui),
+                                std::back_inserter(fcolors),
+                                std::back_inserter(vcolors),
+                                std::back_inserter(dummy_pf),
+                                verbose);
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
+              const CGAL_BGL_NP_CLASS& np, const bool verbose = true)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
+  std::vector<std::pair<float, float> > dummy_pf;
+
+  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(dummy_pui),
+                                choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
+                                                 CGAL::Emptyset_iterator()),
+                                choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
+                                                 CGAL::Emptyset_iterator()),
+                                std::back_inserter(dummy_pf), verbose);
 }
 
 /*!
@@ -264,41 +292,21 @@ bool read_PLY(std::istream& is,
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
- * \param verbose: if `true`, will output warnings and error messages.
+ * \param verbose if `true`, will output warnings and error messages.
  *
  * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <class PointRange, class PolygonRange>
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np,
               const bool verbose = true
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
-{
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
-  std::vector<std::pair<float, float> > dummy_pf;
-
-  return IO::internal::read_PLY(is, points, polygons, std::back_inserter(dummy_pui),
-                                choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                std::back_inserter(dummy_pf), verbose);
-}
-
-
-template <class PointRange, class PolygonRange>
-bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
-              const bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return read_PLY(is, points, polygons, parameters::all_default(), verbose);
 }
@@ -318,6 +326,7 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param verbose if `true`, will output warnings and error messages.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin

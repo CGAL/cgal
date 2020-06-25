@@ -78,10 +78,7 @@ bool read_point_WKT(std::istream& in,
                     Point& point)
 {
   if(!in.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
 
   std::string line;
   while(std::getline(in, line))
@@ -130,10 +127,8 @@ bool read_multi_point_WKT(std::istream& in,
                           MultiPoint& mp)
 {
   if(!in.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
+
   internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   std::string line;
   while(std::getline(in, line))
@@ -179,10 +174,8 @@ bool read_linestring_WKT(std::istream& in,
                          LineString& polyline)
 {
   if(!in.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
+
   internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
   std::string line;
   while(std::getline(in, line))
@@ -226,10 +219,7 @@ bool read_multi_linestring_WKT(std::istream& in,
                                MultiLineString& mls)
 {
   if(!in.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
 
   typedef typename MultiLineString::value_type                                      PointRange;
   typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
@@ -282,10 +272,7 @@ bool read_polygon_WKT(std::istream& in,
                       Polygon& polygon)
 {
   if(!in.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
 
   std::string line;
   while(std::getline(in, line))
@@ -333,10 +320,7 @@ bool read_multi_polygon_WKT(std::istream& in,
                             MultiPolygon& polygons)
 {
   if(!in.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return false;
-  }
 
   internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   std::string line;
@@ -383,10 +367,7 @@ std::ostream& write_point_WKT(std::ostream& out,
                               const Point& point)
 {
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return out;
-  }
 
   out << boost::geometry::wkt(point) << std::endl;
   return out;
@@ -407,10 +388,7 @@ std::ostream& write_polygon_WKT(std::ostream& out,
                                 const Polygon& poly)
 {
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return out;
-  }
 
   out << boost::geometry::wkt(poly) << std::endl;
   return out;
@@ -431,10 +409,7 @@ std::ostream& write_linestring_WKT(std::ostream& out,
                                    LineString ls)
 {
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return out;
-  }
 
   internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(ls);
   out << boost::geometry::wkt(gc) << std::endl;
@@ -456,10 +431,7 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
                                     MultiPoint& mp)
 {
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return out;
-  }
 
   internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   out << boost::geometry::wkt(gc) << std::endl;
@@ -481,10 +453,7 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
                                       MultiPolygon& polygons)
 {
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return out;
-  }
 
   internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   out << boost::geometry::wkt(gc) << std::endl;
@@ -506,10 +475,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
                                          MultiLineString& mls)
 {
   if(!out.good())
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
     return out;
-  }
 
   typedef typename MultiLineString::value_type                                      PointRange;
   typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;

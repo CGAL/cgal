@@ -49,9 +49,6 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
 {
   typedef typename boost::range_value<PointRange>::type  Point;
 
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
   vtkIdType nb_points = poly_data->GetNumberOfPoints();
   vtkIdType nb_cells = poly_data->GetNumberOfCells();
   polygons.reserve(nb_cells);
@@ -63,7 +60,7 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
   {
     double coords[3];
     poly_data->GetPoint(i, coords);
-    points.push_back(Point(coords[0], coords[1], coords[2]));
+    points.emplace_back(coords[0], coords[1], coords[2]);
   }
 
   // extract cells
@@ -111,7 +108,7 @@ bool read_VTP(const char* fname,
     std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
-  test.close();
+
   vtkSmartPointer<vtkPointSet> data;
   vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
       vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
@@ -119,16 +116,8 @@ bool read_VTP(const char* fname,
   data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
   if (obs->GetError())
     return false;
-  return  IO::internal::vtkPointSet_to_polygon_soup(data, points, polygons, np);
-}
 
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
-bool read_VTP(const std::string& fname,
-              PointRange& points,
-              PolygonRange& polygons,
-              const NamedParameters& np)
-{
-  return read_VTP(fname.c_str(), points, polygons, np);
+  return IO::internal::vtkPointSet_to_polygon_soup(data, points, polygons, np);
 }
 
 /*!
@@ -149,17 +138,18 @@ bool read_VTP(const std::string& fname,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange>
-bool read_VTP(const char* fname,
-              PointRange& points,
-              PolygonRange& polygons)
+bool read_VTP(const char* fname, PointRange& points, PolygonRange& polygons)
 {
   return read_VTP(fname, points, polygons, parameters::all_default());
 }
 
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_VTP(fname.c_str(), points, polygons, np);
+}
 template <typename PointRange, typename PolygonRange>
-bool read_VTP(const std::string&  fname,
-              PointRange& points,
-              PolygonRange& polygons)
+bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_VTP(fname.c_str(), points, polygons, parameters::all_default());
 }
@@ -398,13 +388,9 @@ void write_soup_polys_points(std::ostream& os,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange,
-#ifndef DOXYGEN_RUNNING
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
-#else
-          typename NamedParameters
-#endif
-          >
+template <typename PointRange,
+          typename PolygonRange,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
@@ -459,9 +445,7 @@ bool write_VTP(std::ostream& os,
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_VTP(std::ostream& os,
-               const PointRange& points,
-               const PolygonRange& polygons)
+bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
 {
   return write_VTP(os, points, polygons, parameters::all_default());
 }
@@ -477,7 +461,7 @@ bool write_VTP(std::ostream& os,
  *                      whose value_type is an integer type.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param os the output stream
+ * \param fname the path to the output file
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
@@ -489,6 +473,12 @@ bool write_VTP(std::ostream& os,
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
@@ -499,33 +489,37 @@ bool write_VTP(const char* fname,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream out(fname);
-  return write_VTP(out, points, polygons, np);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ofstream os(fname, std::ios::binary);
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+    return write_VTP(os, points, polygons, np);
+  }
+  else
+  {
+    std::ofstream os(fname);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_VTP(os, points, polygons, np);
+  }
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_VTP(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons)
+bool write_VTP(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
   return write_VTP(fname, points, polygons, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname,
-               const PointRange& points,
-               const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_VTP(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
 {
   return write_VTP(fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_VTP(const std::string& fname,
-               const PointRange& points,
-               const PolygonRange& polygons)
+bool write_VTP(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
 {
-  return write_VTP(fname, points, polygons, parameters::all_default());
+  return write_VTP(fname.c_str(), points, polygons, parameters::all_default());
 }
 
 } // namespace CGAL

@@ -300,6 +300,33 @@ bool write_GOCAD(std::ostream& os,
 } // namespace internal
 } // namespace IO
 
+/*!
+ * \ingroup PkgStreamSupportIoFuncsGOCAD
+ *
+ * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamGocad.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param os the output stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return `true` if the writing was successful, `false` otherwise.
+*/
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -311,35 +338,6 @@ bool write_GOCAD(std::ostream& os,
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, np);
 }
 
-template <typename PointRange,
-          typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const char* fname,
-                 const PointRange& points,
-                 const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np)
-{
-  std::ofstream os(fname);
-  return IO::internal::write_GOCAD(os, fname, points, polygons, np);
-}
-
-/*!
- * \ingroup PkgStreamSupportIoFuncsGOCAD
- *
- * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamGocad.
- *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
- *
- * \param os the output stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
- *        using the indices of the points in `points`.
- *
- * \return `true` if the writing was successful, `false` otherwise.
-*/
 template <typename PointRange, typename PolygonRange>
 bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
 {
@@ -355,14 +353,36 @@ bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange&
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`6`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
 */
+template <typename PointRange,
+          typename PolygonRange,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(const char* fname,
+                 const PointRange& points,
+                 const PolygonRange& polygons,
+                 const CGAL_BGL_NP_CLASS& np)
+{
+  std::ofstream os(fname);
+  return IO::internal::write_GOCAD(os, fname, points, polygons, np);
+}
+
 template <typename PointRange, typename PolygonRange>
 bool write_GOCAD(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
@@ -377,14 +397,13 @@ bool write_GOCAD(const std::string& fname,
                  const PolygonRange& polygons,
                  const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname.c_str());
-  return IO::internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
+  return IO::internal::write_GOCAD(fname.c_str(), fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>
 bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
 {
-  return write_GOCAD(fname, points, polygons, parameters::all_default());
+  return write_GOCAD(fname.c_str(), points, polygons, parameters::all_default());
 }
 
 } // namespace CGAL
