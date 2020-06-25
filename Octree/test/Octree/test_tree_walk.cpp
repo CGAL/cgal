@@ -41,7 +41,8 @@ int main(void) {
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
-  auto treeWalker = CGAL::Depth_first();
+  auto treeWalker = CGAL::Preorder();
+  std::cout << octree.root() << std::endl;
   octree.print(std::cout, treeWalker.first(&octree.root()), treeWalker);
 
   return 0;

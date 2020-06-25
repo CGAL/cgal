@@ -8,7 +8,7 @@ namespace CGAL {
 
     // Passing null returns the first node
     if (nullptr == n)
-      return n;
+      return nullptr;
 
     // If this node has no parent, it has no siblings
     if (nullptr == n->parent())
@@ -25,7 +25,7 @@ namespace CGAL {
     return &((*n->parent())[index + 1]);
   }
 
-  struct Depth_first {
+  struct Preorder {
 
     template<class Node>
     Node *first(Node *root) {
@@ -42,19 +42,20 @@ namespace CGAL {
 
       if (n->is_leaf()) {
 
-        // Check if this node is the last sibling
-        if (7 != n->index().to_ulong()) {
+        Node *next = next_sibling(n);
 
-          // Return the next sibling
-          return (next_sibling(n));
+        if (nullptr == next) {
 
-        } else {
+          Node *parent = n->parent();
 
-          // Return the next sibling of the parent
-          // FIXME: this should be able to search upwards at the last sibling
-          return (next_sibling(n->parent()));
+          if (nullptr == parent)
+            return nullptr;
+
+          return next_sibling(parent);
+
         }
 
+        return next;
 
       } else {
 

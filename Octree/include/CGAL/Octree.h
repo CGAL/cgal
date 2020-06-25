@@ -186,6 +186,10 @@ namespace CGAL {
           os << ". ";
 
         os << "(" << node->location()[0] << "," << node->location()[1] << "," << node->location()[2] << ") ";
+
+        if (node->num_points() > 0)
+          os << " [" << node->num_points() << " points]";
+
         os << std::endl;
 
         node = tree_walker(node);
