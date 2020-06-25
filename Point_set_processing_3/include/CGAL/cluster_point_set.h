@@ -73,7 +73,7 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 
    \param points input point range
    \param cluster_map maps each point to the index of the cluster it belongs to.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

@@ -213,7 +213,7 @@ bool read_OFF(std::istream& is,
 
    \param fname input file name.
    \param output output iterator over points.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}

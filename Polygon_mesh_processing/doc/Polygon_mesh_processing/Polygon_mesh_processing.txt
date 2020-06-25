@@ -544,10 +544,10 @@ The example \ref Polygon_mesh_processing/locate_example.cpp presents a few of th
 \section PMPOrientation Orientation
 
 This package offers multiple functions to compute consistent face orientations for set of faces
-(Section \ref PolygonSoups) and polygon meshes (Section \ref OrientingPolygonMeshes).
+(Section \ref PMPPolygonSoups) and polygon meshes (Section \ref OrientingPolygonMeshes).
 Section \ref PolygonSoupExample offers an example of combination of these functions.
 
-\subsection PolygonSoups Polygon Soups
+\subsection PMPPolygonSoups Polygon Soups
 
 When the faces of a polygon mesh are given but the connectivity is unknown,
 this set of faces is called a \e polygon \e soup.
@@ -627,7 +627,7 @@ This example shows how to correctly repair and orient a soup to get a mesh from 
 
 *******************
 \subsection PSRepairing Polygon Soup Repairing
-To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
+To ensure that a polygon soup can be oriented (see Section \ref PMPPolygonSoups) and transformed
 into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
 and geometrical errors. This package offers the following functions:
 - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,

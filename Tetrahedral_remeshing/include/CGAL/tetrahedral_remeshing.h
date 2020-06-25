@@ -74,14 +74,14 @@ namespace CGAL
 *             and vertex base model of `RemeshingVertexBase_3`.
 * @tparam SLDS is an optional parameter for `Triangulation_3`, that
 *             specifies the type of the spatial lock data structure.
-* @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
 *           `Remeshing_triangulation` is a helper class that satisfies all the requirements
 *           of its template parameters.
 * @param target_edge_length the uniform target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
-* @param np optional sequence of \ref Remeshing_namedparameters "Named Parameters"
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
 *          among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -101,9 +101,8 @@ namespace CGAL
 *     \cgalParamDefault{`true`}
 *     \cgalParamExtra{Boundaries are between the exterior and the interior,
 *                     between two subdomains, between the areas selected or not for remeshing
-*                     (cf \ref Remeshing_cell_is_selected_map), or defined
-*                     by \ref Remeshing_edge_is_constrained_map
-*                     and \ref Remeshing_facet_is_constrained_map.}
+*                     (cf `cell_is_selected_map`), or defined
+*                     by `edge_is_constrained_map` and `facet_is_constrained_map`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{edge_is_constrained_map}

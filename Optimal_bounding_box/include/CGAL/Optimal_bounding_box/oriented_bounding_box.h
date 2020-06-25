@@ -288,7 +288,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 /// \tparam Output either the type `Aff_transformation_3` of the traits class,
 ///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class,
 ///                or a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param points the input range
 /// \param out the resulting array of points or affine transformation
@@ -386,7 +386,7 @@ void oriented_bounding_box(const PointRange& points,
 /// \tparam Output either the type `Aff_transformation_3` of the traits class,
 ///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class,
 ///                or a model of `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh
 /// \param out the resulting array of points or affine transformation

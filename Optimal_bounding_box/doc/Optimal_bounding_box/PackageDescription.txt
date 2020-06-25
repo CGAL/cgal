@@ -35,7 +35,7 @@
 \cgalCRPSection{Parameters}
 
 Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
-The page \ref obb_namedparameters describes their usage and provides a list of the parameters
+The page \ref bgl_namedparameters describes their usage and provides a list of the parameters
 that are used in this package.
 
 \cgalCRPSection{Concepts}

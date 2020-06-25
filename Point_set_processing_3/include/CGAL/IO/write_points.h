@@ -49,7 +49,7 @@ namespace CGAL {
 
   \param fname the name of the input file.
   \param points the range of points that will be written.
-  \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+  \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{point_map}
