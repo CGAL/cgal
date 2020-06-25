@@ -11,6 +11,7 @@
 #ifndef CGAL_IO_OFF_H
 #define CGAL_IO_OFF_H
 
+#include <CGAL/IO/OFF/Scanner_OFF.h>
 #include <CGAL/IO/OFF/File_scanner_OFF.h>
 #include <CGAL/IO/OFF/File_writer_OFF.h>
 #include <CGAL/IO/helpers.h>

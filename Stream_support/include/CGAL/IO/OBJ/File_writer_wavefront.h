@@ -17,8 +17,9 @@
 #ifndef CGAL_IO_OBJ_FILE_WRITER_WAVEFRONT_H
 #define CGAL_IO_OBJ_FILE_WRITER_WAVEFRONT_H
 
-#include <CGAL/IO/Color.h>
+#include <CGAL/IO/io.h>
 
+#include <fstream>
 #include <iostream>
 
 namespace CGAL {

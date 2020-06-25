@@ -19,11 +19,12 @@
 #define CGAL_IO_OFF_SCANNER_OFF_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/OFF/File_scanner_OFF.h>
+
 #include <iterator>
 #include <vector>
 #include <utility>
 #include <limits>
-#include <CGAL/IO/OFF/File_scanner_OFF.h>
 
 namespace CGAL {
 

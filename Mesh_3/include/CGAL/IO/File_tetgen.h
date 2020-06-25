@@ -17,10 +17,11 @@
 
 #include <CGAL/Time_stamper.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/utility.h>
 
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <CGAL/utility.h>
 
 namespace CGAL {
 
