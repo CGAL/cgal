@@ -176,9 +176,9 @@ namespace CGAL {
 
     const Node &root() const { return m_root; }
 
-    void print(std::ostream &os, std::function<Node *(Node *, Node *)> tree_walker) {
+    void print(std::ostream &os, Node *first, std::function<Node *(Node *)> tree_walker) {
 
-      Node *node = &root();
+      Node *node = first;
 
       while (nullptr != node) {
 
@@ -188,7 +188,7 @@ namespace CGAL {
         os << "(" << node->location()[0] << "," << node->location()[1] << "," << node->location()[2] << ") ";
         os << std::endl;
 
-        node = tree_walker(&root(), node);
+        node = tree_walker(node);
       }
     }
 
