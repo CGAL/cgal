@@ -176,6 +176,22 @@ namespace CGAL {
 
     const Node &root() const { return m_root; }
 
+    void print(std::ostream &os, std::function<Node *(Node *)> tree_walker) {
+
+      Node *node = &root();
+
+      while (nullptr != node) {
+
+        for (int i = 0; i < node->depth(); ++i)
+          os << ". ";
+
+        os << "(" << node->location()[0] << "," << node->location()[1] << "," << node->location()[2] << ") ";
+        os << std::endl;
+
+        node = tree_walker(node);
+      }
+    }
+
     bool operator==(Octree<PointRange, PointMap> &rhs) {
 
       // Identical trees should have the same bounding box

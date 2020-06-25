@@ -10,10 +10,10 @@
 using std::ostream;
 
 template<class Kernel, class PointRange>
-void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node, int depth = 0) {
+void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node) {
 
   // Set indentation
-  for (int i = 0; i < depth; ++i) {
+  for (int i = 0; i < node.depth(); ++i) {
     os << ". ";
   }
 
@@ -28,7 +28,7 @@ void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &nod
   // Print out this node's children
   if (!node.is_leaf()) {
     for (int i = 0; i < 8; ++i) {
-      writeToStream(os, node[i], depth + 1);
+      writeToStream(os, node[i]);
     }
   }
 }
