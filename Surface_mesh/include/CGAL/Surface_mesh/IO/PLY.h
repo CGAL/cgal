@@ -711,7 +711,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 } // namespace internal
 } // namespace IO
 
-/// \ingroup PkgSurfaceMeshIOFunc
+/// \ingroup PkgSurfaceMeshIOFuncPLY
 ///
 /// \brief extracts the surface mesh from an input stream in ASCII or Binary PLY format
 ///        and appends it to the surface mesh `sm`.
@@ -744,6 +744,8 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 ///
 /// \pre The data in the stream must represent a two-manifold. If this is not the case
 ///      the `failbit` of `is` is set and the mesh cleared.
+///
+/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 ///
 /// \return `true` on success.
 template <typename P>
@@ -864,7 +866,7 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
-/// \ingroup PkgSurfaceMeshIOFunc
+/// \ingroup PkgSurfaceMeshIOFuncPLY
 ///
 /// \brief inserts the surface mesh in an output stream in PLY format.
 ///
@@ -893,6 +895,8 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 ///     \cgalParamDefault{`6`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
+///
+/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 ///
 /// \returns `true` if writing was successful.
 template <typename P,

@@ -38,7 +38,7 @@ class Point_set_3;
 // Read
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOXYZ
 
   \brief reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
 
@@ -77,7 +77,7 @@ bool read_XYZ(std::istream& is,
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOXYZ
 
   \brief reads the content of an input file in the the \ref IOStreamXYZ into a point set.
 
@@ -123,7 +123,7 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
 // Write
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOXYZ
 
   \brief writes the content of a point set into an output stream in the \ref IOStreamXYZ.
 
@@ -165,7 +165,7 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOXYZ
 
   \brief writes the content of a point set into an output file in the \ref IOStreamXYZ.
 

@@ -61,6 +61,7 @@ bool read_OFF(std::istream& in,
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
+
   if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map))) ||
      !(is_default_parameter(get_parameter(np, internal_np::face_color_map))) ||
      !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map))) ||

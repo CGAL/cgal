@@ -244,8 +244,7 @@ through the points.
 Each of these methods produce a triangle mesh stored in different
 ways. If this output mesh is hampered by defects such as holes or
 self-intersections, \cgal provide several algorithms to post-process
-it (hole filling, remeshing, etc.) in the package \ref
-Chapter_PolygonMeshProcessing "Polygon Mesh Processing".
+it (hole filling, remeshing, etc.) in the package \ref PkgPolygonMeshProcessing "Polygon Mesh Processing".
 
 We do not discuss these functions here as there are many
 postprocessing possibilities whose relevance strongly depends on the
@@ -283,7 +282,7 @@ The following figure an example of a full reconstruction pipeline
 applied to a bear statue (courtesy _EPFL Computer Graphics and
 Geometry Laboratory_ \cgalCite{cgal:e-esmr}). Two mesh processing
 algorithms (hole filling and isotropic remeshing) are also applied
-(refer to the chapter \ref Chapter_PolygonMeshProcessing "Polygon Mesh Processing"
+(refer to the chapter \ref PkgPolygonMeshProcessing "Polygon Mesh Processing"
 for more information).
 
 \cgalFigureBegin{TutorialsReconstructionFigFull, reconstruction_pipeline.png}

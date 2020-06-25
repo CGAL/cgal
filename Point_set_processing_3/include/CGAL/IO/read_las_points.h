@@ -445,6 +445,7 @@ bool read_LAS_with_properties(std::istream& is,
    \cgalNamedParamsEnd
 
    \return `true` on success.
+
    \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType,

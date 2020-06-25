@@ -58,7 +58,7 @@ void check_if_property_is_used(PointSet& point_set,
 } // namespace internal
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOLAS
 
   \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
 
@@ -152,7 +152,7 @@ bool read_LAS(std::istream& is,
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOLAS
 
   \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
 
@@ -199,7 +199,7 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 // Write
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOLAS
 
   \brief writes the content of a point set into an output stream in the \ref IOStreamLAS.
 
@@ -402,7 +402,7 @@ bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOLAS
 
   \brief writes the content of a point set into an output file in the \ref IOStreamLAS.
 

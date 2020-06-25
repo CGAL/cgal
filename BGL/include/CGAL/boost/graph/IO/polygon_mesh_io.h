@@ -110,7 +110,7 @@ bool read_polygon_mesh(std::istream& is,
  *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
- *     \cgalParamExtra{This applies only the \ref IOStreamPLY file format. }
+ *     \cgalParamExtra{This applies only to the \ref IOStreamPLY file format. }
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -208,7 +208,7 @@ bool read_polygon_mesh(const char* fname, Graph& g)
  *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
- *     \cgalParamExtra{This applies only the \ref IOStreamPLY file format. }
+ *     \cgalParamExtra{This applies only to the \ref IOStreamPLY file format. }
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{vertex_point_map}

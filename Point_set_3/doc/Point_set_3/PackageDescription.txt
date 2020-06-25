@@ -29,6 +29,22 @@
 /// For a complete documentation of these functions, please refer to the
 /// \ref PkgPointSetProcessing3Ref manual.
 
+/// \defgroup PkgPointSet3IOLAS Input/Output (LAS)
+/// I/O Functions for \ref IOStreamLAS
+/// \ingroup PkgPointSet3IO
+
+/// \defgroup PkgPointSet3IOOFF Input/Output (OFF)
+/// I/O Functions for \ref IOStreamOFF
+/// \ingroup PkgPointSet3IO
+
+/// \defgroup PkgPointSet3IOPLY Input/Output (PLY)
+/// I/O Functions for \ref IOStreamPLY
+/// \ingroup PkgPointSet3IO
+
+/// \defgroup PkgPointSet3IOXYZ Input/Output (XYZ)
+/// I/O Functions for \ref IOStreamXYZ
+/// \ingroup PkgPointSet3IO
+
 /// \defgroup PkgPointSet3IODeprecated Input/Output (Deprecated)
 /// \ingroup PkgPointSet3IO
 /// These I/O functions are deprecated and newer versions should be used.
@@ -68,13 +84,9 @@ to handle manually property maps and iterators.
 
 - `CGAL::read_point_set()`
 - `CGAL::write_point_set()`
-- \link PkgPointSet3IO `CGAL::read_LAS()` \endlink
-- \link PkgPointSet3IO `CGAL::write_LAS()` \endlink
-- \link PkgPointSet3IO `CGAL::read_OFF()` \endlink
-- \link PkgPointSet3IO `CGAL::write_OFF()` \endlink
-- \link PkgPointSet3IO `CGAL::read_PLY()` \endlink
-- \link PkgPointSet3IO `CGAL::write_PLY()` \endlink
-- \link PkgPointSet3IO `CGAL::read_XYZ()` \endlink
-- \link PkgPointSet3IO `CGAL::write_XYZ()` \endlink
+- \link PkgPointSet3IOLAS I/O for `LAS` files \endlink
+- \link PkgPointSet3IOOFF I/O for `OFF` files \endlink
+- \link PkgPointSet3IOPLY I/O for `PLY` files \endlink
+- \link PkgPointSet3IOXYZ I/O for `XYZ` files \endlink
 
 */

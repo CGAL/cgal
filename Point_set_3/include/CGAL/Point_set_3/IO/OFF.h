@@ -39,7 +39,7 @@ class Point_set_3;
 // Read
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOOFF
 
   \brief reads the content of an intput stream in the \ref IOStreamOFF into a point set.
 
@@ -78,7 +78,7 @@ bool read_OFF(std::istream& is,
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOOFF
 
   \brief reads the content of an input file in the \ref IOStreamOFF into a point set.
 
@@ -125,7 +125,7 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
 // Write
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOOFF
 
   \brief writes the content of a point set into an output stream in the \ref IOStreamOFF.
 
@@ -168,7 +168,7 @@ bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOOFF
 
   \brief writes the content of a point set into an output file in the \ref IOStreamOFF.
 

@@ -522,7 +522,7 @@ a `double` value to the halfedges of a graph.
 \subsection BGLGraphIO Graph I/O
 
 Using a common graph concept enables having common input/output functions for all the models
-of this concept. A number of file formats are supported for models of `FaceGraph`:
+of this concept. The following file formats are supported for models of `FaceGraph`:
 - \ref IOStreamOFF (`.off`)
 - \ref IOStreamOBJ (`.obj`)
 - \ref IOStreamSTL (`.stl`)
@@ -530,7 +530,7 @@ of this concept. A number of file formats are supported for models of `FaceGraph
 - \ref IOStreamGocad (`.ts`)
 - \ref IOStreamVTK (`.vtp`)
 
-See the page \ref PkgBGLIOFct for an exhaustive description of the functions.
+See the page \ref PkgBGLIOFct for an exhaustive description of the I/O functions of this package.
 
 \section BGLEulerOperations Euler Operations
 

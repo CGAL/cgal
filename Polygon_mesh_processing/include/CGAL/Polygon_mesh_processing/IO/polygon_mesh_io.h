@@ -48,12 +48,6 @@ namespace Polygon_mesh_processing {
  * \param np sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamNBegin{repair_polygon_soup}
- *     \cgalParamDescription{a parameter used indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
- *                           should be called on the soup in case of issues in the input.}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
- *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
@@ -71,6 +65,13 @@ namespace Polygon_mesh_processing {
  *                    are identical. For each functor `Foo`, a function `Foo foo_object()` must be provided.}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{repair_polygon_soup}
+ *     \cgalParamDescription{a parameter used indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
+ *                           should be called on the soup in case of issues in the input.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{erase_all_duplicates}
@@ -91,6 +92,8 @@ namespace Polygon_mesh_processing {
  * \cgalNamedParamsEnd
  *
  * \return `true` if the reading and conversion worked, `false` otherwise.
+ *
+ * \sa \link PkgBGLIOFct `CGAL::write_polygon_mesh()` \endlink
  */
 template <typename Graph, typename NamedParameter>
 bool read_polygon_mesh(const char* fname,

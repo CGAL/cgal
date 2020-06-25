@@ -468,21 +468,37 @@ the requirement for traversal of all faces in a graph.
 /// \ingroup PkgBGLRef
 
 /// \defgroup PkgBGLIoFuncsSTL STL I/O Functions
+/// I/O Functions for \ref IOStreamSTL
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsPLY PLY I/O Functions
+/// I/O Functions for \ref IOStreamPLY
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
+/// I/O Functions for \ref IOStreamOBJ
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
+/// I/O Functions for \ref IOStreamOFF
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsVTP VTP I/O Functions
+/// I/O Functions for \ref IOStreamVTK
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsGOCAD GOCAD I/O Functions
+/// I/O Functions for \ref IOStreamGocad
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsWRL WRL I/O Functions
+/// I/O Functions for \ref IOStreamWRL
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIOFuncs3MF 3MF I/O Functions
+/// I/O Functions for \ref IOStream3MF
 /// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIOFctDeprecated I/O Functions (Deprecated)
 /// \ingroup PkgBGLIOFct
 
@@ -741,19 +757,14 @@ user might encounter.
 \cgalCRPSection{I/O Functions}
 - `CGAL::read_polygon_mesh()`
 - `CGAL::write_polygon_mesh()`
-- `CGAL::read_OFF()`
-- `CGAL::write_OFF()`
-- `CGAL::read_OBJ()`
-- `CGAL::write_OBJ()`
-- `CGAL::read_STL()`
-- `CGAL::write_STL()`
-- `CGAL::read_VTP()`
-- `CGAL::write_VTP()`
-- `CGAL::read_GOCAD()`
-- `CGAL::write_GOCAD()`
-- `CGAL::write_3MF()`
-- `CGAL::write_WRL()`
-
+- \link PkgBGLIoFuncsSTL I/O for STL files \endlink
+- \link PkgBGLIoFuncsPLY I/O for PLY files \endlink
+- \link PkgBGLIoFuncsOBJ I/O for OBJ files \endlink
+- \link PkgBGLIoFuncsOFF I/O for OFF files \endlink
+- \link PkgBGLIoFuncsGOCAD I/O for GOCAD files \endlink
+- \link PkgBGLIoFuncsVTP I/O for VTP files \endlink
+- \link PkgBGLIoFuncs3MF I/O for 3MF files \endlink
+- \link PkgBGLIoFuncsWRL I/O for WRL files \endlink
 */
 
 /*!

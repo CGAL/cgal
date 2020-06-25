@@ -11,6 +11,14 @@
 /// \defgroup PkgSurfaceMeshIOFunc I/O Functions
 /// \ingroup PkgSurface_mesh
 
+/// \defgroup PkgSurfaceMeshIOFuncOFF I/O Functions (OFF)
+/// I/O Functions for \ref IOStreamOFF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncPLY I/O Functions (PLY)
+/// I/O Functions for \ref IOStreamPLY
+/// \ingroup PkgSurfaceMeshIOFunc
+
 /// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)
 /// \ingroup PkgSurfaceMeshIOFunc
 
@@ -46,10 +54,8 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 - \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
 
 \cgalCRPSection{I/O Functions}
+- \link PkgSurfaceMeshIOFuncOFF I/O for `OFF` files \endlink
+- \link PkgSurfaceMeshIOFuncPLY I/O for `PLY` files \endlink
 - `read_3MF()`
-- \link PkgSurfaceMeshIOFunc `read_OFF()` \endlink
-- \link PkgSurfaceMeshIOFunc `write_OFF()` \endlink
-- \link PkgSurfaceMeshIOFunc `read_PLY()` \endlink
-- \link PkgSurfaceMeshIOFunc `write_PLY()` \endlink
 */
 

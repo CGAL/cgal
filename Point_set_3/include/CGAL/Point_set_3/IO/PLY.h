@@ -222,7 +222,7 @@ public:
 // Read
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOPLY
 
   \brief reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
 
@@ -307,7 +307,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOPLY
 
   \brief reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
 
@@ -446,7 +446,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 // Write
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOPLY
 
   \brief writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
@@ -713,7 +713,7 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 }
 
 /*!
-  \ingroup PkgPointSet3IO
+  \ingroup PkgPointSet3IOPLY
 
   \brief writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
@@ -734,11 +734,17 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-   \cgalParamNBegin{stream_precision}
-     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+    \cgalParamNBegin{use_binary_mode}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-    \cgalParamDefault{`6`}
-   \cgalParamNEnd
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \return `true` if the reading was successful, `false` otherwise.

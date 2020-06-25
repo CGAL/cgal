@@ -18,7 +18,7 @@ format automatically and can read both.
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)`\endlink
 
-This function overloads the generic function \link PkgBGLIOFct `read_OFF(std::istream&, FaceGraph)`\endlink.
+This function overloads the generic function \link PkgBGLIoFuncsOFF `read_OFF(std::istream&, FaceGraph)`\endlink.
 
 \cgalHeading{Implementation}
 
@@ -69,7 +69,7 @@ to allow for (a few) structuring comments in the output. Otherwise,
 the output would be free of comments. The default for writing is ASCII
 without comments.
 
-This function overloads the generic function \link PkgBGLIOFct `write_OFF(std::istream&,FaceGraph)` \endlink.
+This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(std::istream&,FaceGraph)` \endlink.
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`

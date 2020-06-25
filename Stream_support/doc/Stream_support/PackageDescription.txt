@@ -5,20 +5,35 @@
 /// \ingroup PkgStreamSupportRef
 
 /// \defgroup PkgStreamSupportIoFuncsSTL STL I/O Functions
+/// I/O Functions for \ref IOStreamSTL
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsPLY PLY I/O Functions
+/// I/O Functions for \ref IOStreamPLY
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsOBJ OBJ I/O Functions
+/// I/O Functions for \ref IOStreamOBJ
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsOFF OFF I/O Functions
+/// I/O Functions for \ref IOStreamOFF
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsVTP VTP I/O Functions
+/// I/O Functions for \ref IOStreamVTK
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsGOCAD GOCAD I/O Functions
+/// I/O Functions for \ref IOStreamGocad
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsWKT WKT I/O Functions
+/// I/O Functions for \ref IOStreamWKT
 /// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncs3MF 3MF I/O Functions
+/// I/O Functions for \ref IOStream3MF
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportEnumRef I/O Enums
@@ -49,7 +64,15 @@ the printing mode.
 \cgalClassifedRefPages
 
 \cgalCRPSection{Enum}
-- `CGAL::IO::Mode`
+- \link PkgStreamSupportEnumRef `CGAL::IO::Mode` \endlink
+
+\cgalCRPSection{Classes}
+- `CGAL::Color`
+- `CGAL::Istream_iterator<T,Stream>`
+- `CGAL::Ostream_iterator<T,Stream>`
+- `CGAL::Verbose_ostream`
+- `CGAL::Input_rep<T,F>`
+- `CGAL::Output_rep<T,F>`
 
 \cgalCRPSection{Functions}
 - `CGAL::get_mode()`
@@ -66,8 +89,8 @@ the printing mode.
 - `CGAL::oformat()`
 
 \cgalCRPSection{I/O Functions}
-- `GCAL::read_polygon_soup()`
-- `GCAL::write_polygon_soup()`
+- `CGAL::read_polygon_soup()`
+- `CGAL::write_polygon_soup()`
 - \link PkgStreamSupportIoFuncsSTL I/O for STL files \endlink
 - \link PkgStreamSupportIoFuncsPLY I/O for PLY files \endlink
 - \link PkgStreamSupportIoFuncsOBJ I/O for OBJ files \endlink
@@ -75,28 +98,7 @@ the printing mode.
 - \link PkgStreamSupportIoFuncsGOCAD I/O for GOCAD files \endlink
 - \link PkgStreamSupportIoFuncsVTP I/O for VTP files \endlink
 - \link PkgStreamSupportIoFuncs3MF I/O for 3MF files \endlink
+- \link PkgStreamSupportIoFuncsWKT I/O for WKT files \endlink
 
-\cgalCRPSection{I/O Functions (WKT)}
-- `GCAL::read_WKT()`
-- `CGAL::read_point_WKT()`
-- `GCAL::read_multi_point_WKT()`
-- `GCAL::read_linestring_WKT()`
-- `GCAL::read_multi_linestring_WKT()`
-- `GCAL::read_polygon_WKT()`
-- `GCAL::read_multi_polygon_WKT()`
-- `CGAL::write_point_WKT()`
-- `CGAL::write_polygon_WKT()`
-- `CGAL::write_linestring_WKT()`
-- `CGAL::write_multi_point_WKT()`
-- `CGAL::write_multi_polygon_WKT()`
-- `CGAL::write_multi_linestring_WKT()`
-
-\cgalCRPSection{Classes}
-- `CGAL::Color`
-- `CGAL::Istream_iterator<T,Stream>`
-- `CGAL::Ostream_iterator<T,Stream>`
-- `CGAL::Verbose_ostream`
-- `CGAL::Input_rep<T,F>`
-- `CGAL::Output_rep<T,F>`
 */
 

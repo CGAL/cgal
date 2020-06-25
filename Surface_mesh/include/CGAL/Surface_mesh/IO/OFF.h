@@ -255,7 +255,7 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 } // namespace IO
 } // namespace internal
 
-/// \ingroup PkgSurfaceMeshIOFunc
+/// \ingroup PkgSurfaceMeshIOFuncOFF
 ///
 /// \brief extracts the surface mesh from an input stream in ASCII OFF, COFF, NOFF, CNOFF
 /// format and appends it to the surface mesh `sm`.
@@ -491,11 +491,11 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 } // namespace internal
 } // namespace IO
 
-/// \ingroup PkgSurfaceMeshIOFunc
+/// \ingroup PkgSurfaceMeshIOFuncOFF
 ///
 /// \brief writes the surface mesh `sm` in the output stream, using the \ref IOStreamOFF.
 ///
-/// This overload of \link PkgBGLIOFct `read_OFF(std::ostream&, const Graph&)` \endlink will also output
+/// This overload of \link PkgBGLIOFct `write_OFF(std::ostream&, const Graph&)` \endlink will also output
 /// the following property maps internal to the surface mesh, if they exist and if they are not
 /// already present in the named parameters:
 ///
@@ -574,12 +574,6 @@ bool write_OFF(std::ostream& os,
     return IO::internal::write_OFF_with_or_without_vnormals(os, sm, np);
 
   return IO::internal::write_OFF_with_or_without_vnormals(os, sm, np.vertex_point_map(get_const_property_map(CGAL::vertex_point, sm)));
-}
-
-template <typename Point>
-bool write_OFF(std::ostream& os, const Surface_mesh<Point>& sm)
-{
-  return write_OFF(os, sm, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
