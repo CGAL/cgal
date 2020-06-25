@@ -325,6 +325,9 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true`, use the constrained Delaunay triangulation
+     to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
+         original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   \cgalNamedParamsEnd
 
@@ -343,7 +346,13 @@ namespace Polygon_mesh_processing {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    bool use_dt3 =
+    bool use_cdt =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+      false;
+#else
+      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+#endif
+bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
@@ -365,10 +374,19 @@ namespace Polygon_mesh_processing {
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
-
+//#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+    if(!use_cdt ||
+       !triangulate_hole_polyline_with_cdt(
+         points,
+         tracer,
+         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits))))
+    {
+      std::cerr<<"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< FAIL ! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"<<std::endl;
+//#endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
+    }
 
     CGAL_assertion(holes.empty());
     return tracer.out;
