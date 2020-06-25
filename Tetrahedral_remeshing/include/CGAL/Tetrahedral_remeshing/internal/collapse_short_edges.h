@@ -925,7 +925,8 @@ collapse(const typename C3t3::Cell_handle ch,
       {
         if (c3t3.is_in_complex(eiv0, eiv1))
         {
-          c3t3.add_to_complex(eiv0, vkept, c3t3.curve_index(eiv0, eiv1));
+          if (!c3t3.is_in_complex(eiv0, vkept))
+            c3t3.add_to_complex(eiv0, vkept, c3t3.curve_index(eiv0, eiv1));
           c3t3.remove_from_complex(eiv0, eiv1);
         }
       }
@@ -933,7 +934,8 @@ collapse(const typename C3t3::Cell_handle ch,
       {
         if (c3t3.is_in_complex(eiv0, eiv1))
         {
-          c3t3.add_to_complex(vkept, eiv1, c3t3.curve_index(eiv0, eiv1));
+          if (!c3t3.is_in_complex(vkept, eiv1))
+            c3t3.add_to_complex(vkept, eiv1, c3t3.curve_index(eiv0, eiv1));
           c3t3.remove_from_complex(eiv0, eiv1);
         }
       }
