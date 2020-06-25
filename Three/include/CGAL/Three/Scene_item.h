@@ -96,7 +96,7 @@ public:
   //! This is where the vectors of VBOs and VAOs are initialized.
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-  //! \brief Sets the number of isolated vertices.
+  //! \brief sets the number of isolated vertices.
   //!
   //! This number will be displayed in a warning box at loading.
   //! @see getNbIsolatedvertices
@@ -105,12 +105,12 @@ public:
   //! @see setNbIsolatedvertices
   std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
-  //! \brief Duplicates the item.
+  //! \brief duplicates the item.
   //!
   //! Creates a new item as a copy of this one.
   virtual Scene_item* clone() const = 0;
 
-  //! \brief Indicates if `m` is supported
+  //! \brief indicates if `m` is supported
   //!
   //! If it is, it will be displayed in the context menu of the item.
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
@@ -163,7 +163,7 @@ public:
   virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
-  //! \brief Determines if the item is finite or not.
+  //! \brief determines if the item is finite or not.
   //!
   //! For example, a plane is not finite.
   //! If false, the BBox is not computed.

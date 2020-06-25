@@ -195,7 +195,7 @@ private:
         //! for univariate case
         void get_range_AARD_1(int var, const NT& lower, const NT& upper,
                 const Poly_1& poly, NT& l, NT& h);
-        //! \brief Recursive Taylor, bivariate case
+        //! \brief recursive Taylor, bivariate case
         //!
         //! returns a range of polynomial values as Affine_form
         void get_range_RT_2(const NT& x_low,  const NT& x_high, const NT& y_low,
@@ -283,7 +283,7 @@ void Subdivision_2<NT_, Algebraic_curve_2_>::subdivide(const NT& x_low,
         quad_tree(x_mid,x_high,y_low,y_mid);
 }
 
-//! \brief Recursive Taylor, bivariate case
+//! \brief recursive Taylor, bivariate case
 template <class NT_, class Algebraic_curve_2_>
 void Subdivision_2<NT_, Algebraic_curve_2_>::get_range_RT_2(
         const NT& x_low, const NT& x_high, const NT& y_low, const NT& y_high,

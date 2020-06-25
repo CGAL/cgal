@@ -74,7 +74,7 @@ public:
 /*!
   \ingroup PkgBGLIoFuncsOBJ
 
-  \brief Reads the graph `g` from the stream `in`, using the \ref IOStreamOBJ.
+  \brief reads the graph `g` from the stream `in`, using the \ref IOStreamOBJ.
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
@@ -122,7 +122,7 @@ bool read_OBJ(std::istream& is,
 /*!
   \ingroup PkgBGLIoFuncsOBJ
 
-  \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamOBJ.
+  \brief reads the graph `g` from the file `fname`, using the \ref IOStreamOBJ.
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
@@ -187,7 +187,7 @@ bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, pa
 /*!
  \ingroup PkgBGLIoFuncsOBJ
 
-  \brief Writes the graph `g` into the output stream, using the \ref IOStreamOBJ.
+  \brief writes the graph `g` into the output stream, using the \ref IOStreamOBJ.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -230,7 +230,7 @@ bool write_OBJ(std::ostream& os,
 /*!
 \ingroup PkgBGLIoFuncsOBJ
 
-  \brief Writes the graph `g` into a file named `fname`, using the \ref IOStreamOBJ.
+  \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamOBJ.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

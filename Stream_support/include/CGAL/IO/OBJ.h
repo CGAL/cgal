@@ -209,7 +209,7 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
 ///
-/// \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
+/// \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
 ///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -230,7 +230,7 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons)
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
 ///
-/// \brief Reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
+/// \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
 ///
 /// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -294,7 +294,7 @@ bool write_OBJ(const std::string& fname, const PointRange& points, const Polygon
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
  *
- * \brief Writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOBJ.
+ * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOBJ.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -317,7 +317,7 @@ bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& p
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
  *
- * \brief Writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamOBJ.
+ * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamOBJ.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`

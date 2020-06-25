@@ -266,7 +266,7 @@ public:
 
 
   /*!
-    \brief Returns the resolution of the grid.
+    \brief returns the resolution of the grid.
   */
   float resolution() const
   {
@@ -274,14 +274,14 @@ public:
   }
 
   /*!
-    \brief Returns the number of cells along the X-axis.
+    \brief returns the number of cells along the X-axis.
   */
   std::size_t width() const
   {
     return m_width;
   }
   /*!
-    \brief Returns the number of cells along the Y-axis.
+    \brief returns the number of cells along the Y-axis.
   */
   std::size_t height() const
   {
@@ -300,7 +300,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the begin iterator on the indices of the points
+    \brief returns the begin iterator on the indices of the points
     lying in the cell at position `(x,y)`.
   */
   iterator indices_begin(std::size_t x, std::size_t y) const
@@ -311,7 +311,7 @@ public:
   }
 
   /*!
-    \brief Returns the past-the-end iterator on the indices of the points
+    \brief returns the past-the-end iterator on the indices of the points
     lying in the cell at position `(x,y)`.
   */
   iterator indices_end(std::size_t x, std::size_t y) const
@@ -322,7 +322,7 @@ public:
   }
 
   /*!
-    \brief Returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
+    \brief returns `false` if the cell at position `(x,y)` is empty, `true` otherwise.
   */
   bool has_points(std::size_t x, std::size_t y) const
   {
@@ -336,7 +336,7 @@ public:
   }
 
   /*!
-    \brief Returns the `x` grid coordinate of the point at position `index`.
+    \brief returns the `x` grid coordinate of the point at position `index`.
   */
   std::size_t x(std::size_t index) const
   {
@@ -350,7 +350,7 @@ public:
     return m_lower_scale->x(index) / 2;
   }
   /*!
-    \brief Returns the `y` grid coordinate of the point at position `index`.
+    \brief returns the `y` grid coordinate of the point at position `index`.
   */
   std::size_t y(std::size_t index) const
   {

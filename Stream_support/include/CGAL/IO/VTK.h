@@ -134,7 +134,7 @@ bool read_VTP(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamVTK.
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamVTK.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -368,7 +368,7 @@ void write_soup_polys_points(std::ostream& os,
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * \brief Writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
+ * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -469,7 +469,7 @@ bool write_VTP(std::ostream& os,
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * \brief Writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
+ * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`

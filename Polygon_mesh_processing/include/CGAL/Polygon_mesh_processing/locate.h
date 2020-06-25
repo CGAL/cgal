@@ -391,7 +391,7 @@ barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Po
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns a random point over the halfedge `hd`, as a location.
+/// \brief returns a random point over the halfedge `hd`, as a location.
 ///
 /// \details The random point is chosen on the halfedge, meaning that all
 ///          its barycentric coordinates are positive. It is constructed by uniformly generating
@@ -426,7 +426,7 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns a random point over the face `fd`, as a location.
+/// \brief returns a random point over the face `fd`, as a location.
 ///
 /// \details The random point is on the face, meaning that all its barycentric coordinates
 ///          are positive.  It is constructed by uniformly picking a value `u` between `0` and `1`,
@@ -459,7 +459,7 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns a random point over the mesh `tm`.
+/// \brief returns a random point over the mesh `tm`.
 ///
 /// \details The returned location is obtained by choosing a random face of the mesh and
 ///          a random point on that face. The barycentric coordinates of the point in the face
@@ -919,7 +919,7 @@ is_on_mesh_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the location of the given vertex `vd` as a location,
+/// \brief returns the location of the given vertex `vd` as a location,
 ///        that is an ordered pair specifying a face incident to `vd`
 ///        and the barycentric coordinates of the vertex `vd` in that face.
 ///
@@ -981,7 +981,7 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the location of a given vertex as a location in `fd`,
+/// \brief returns the location of a given vertex as a location in `fd`,
 ///        that is an ordered pair composed of `fd` and of the barycentric coordinates
 ///        of the vertex in `fd`.
 ///
@@ -1828,7 +1828,7 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the face location along `ray` nearest to its source point.
+/// \brief returns the face location along `ray` nearest to its source point.
 ///
 /// If the ray does not intersect the mesh, a default constructed location is returned.
 ///
@@ -1969,7 +1969,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ra
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the face location along `ray` nearest to its source point.
+/// \brief returns the face location along `ray` nearest to its source point.
 ///
 /// If the ray does not intersect the mesh, a default constructed location is returned.
 ///

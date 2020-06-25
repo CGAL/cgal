@@ -33,7 +33,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationFeature
 
-\brief Set of features (see `Feature_base`) used as input by
+\brief sets of features (see `Feature_base`) used as input by
 classification algorithms. This class handles both the instantiation,
 the addition and the deletion of features.
 
@@ -63,7 +63,7 @@ public:
   /// @{
 
   /*!
-    \brief Creates an empty feature set.
+    \brief creates an empty feature set.
   */
   Feature_set()
 #ifdef CGAL_LINKED_WITH_TBB
@@ -89,7 +89,7 @@ public:
   /// @{
 
   /*!
-    \brief Instantiates a new feature and adds it to the set.
+    \brief instantiates a new feature and adds it to the set.
 
     If several calls of `add()` are surrounded by
     `begin_parallel_additions()` and `end_parallel_additions()`, they
@@ -158,7 +158,7 @@ public:
 
 
   /*!
-    \brief Removes a feature.
+    \brief removes a feature.
 
     \param feature the handle to feature type that must be removed.
 
@@ -177,7 +177,7 @@ public:
   }
 
   /*!
-    \brief Removes all features.
+    \brief removes all features.
   */
   void clear ()
   {
@@ -193,7 +193,7 @@ public:
 #if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
 
   /*!
-    \brief Initializes structures to compute features in parallel.
+    \brief initializes structures to compute features in parallel.
 
     If the user wants to add features in parallel, this function
     should be called before making several calls of `add()`. After the
@@ -217,7 +217,7 @@ public:
 
   /*!
 
-    \brief Waits for the end of parallel feature computation and
+    \brief waits for the end of parallel feature computation and
     clears dedicated data structures afterwards.
 
     If the user wants to add features in parallel, this function
@@ -247,7 +247,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns how many features are defined.
+    \brief returns how many features are defined.
   */
   std::size_t size() const
   {
@@ -256,7 +256,7 @@ public:
 
 
   /*!
-    \brief Returns the \f$i^{th}\f$ feature.
+    \brief returns the \f$i^{th}\f$ feature.
   */
   Feature_handle operator[](std::size_t i) const
   {

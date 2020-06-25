@@ -58,7 +58,7 @@ public:
    */
   void addDockWidget(QDockWidget* dock_widget);
 
-  /*! \brief Gets an item of the templated type.
+  /*! \brief gets an item of the templated type.
    * \returns the first `SceneType` item found in the scene's list of currently selected
    * items;
    * \returns nullptr if there is no `SceneType` in the list.

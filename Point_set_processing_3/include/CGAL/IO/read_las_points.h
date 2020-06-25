@@ -318,7 +318,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief Reads user-selected points properties from a .las or .laz stream.
+   \brief reads user-selected points properties from a .las or .laz stream.
    Potential additional properties are ignored.
 
    Properties are handled through a variadic list of property
@@ -417,7 +417,7 @@ bool read_LAS_with_properties(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief Reads points (position only) from a .las or .laz stream.
+   \brief reads points (position only) from a .las or .laz stream.
 
    Potential additional properties are ignored.
 
@@ -468,7 +468,7 @@ bool read_LAS(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief Reads points (position only) from a .las or .laz stream.
+   \brief reads points (position only) from a .las or .laz stream.
 
    Potential additional properties are ignored.
 
@@ -572,7 +572,7 @@ bool read_LAS(const char* fname, OutputIterator output)
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief Reads points (position only) from a .las or .laz file.
+   \brief reads points (position only) from a .las or .laz file.
 
    Potential additional properties are ignored.
 

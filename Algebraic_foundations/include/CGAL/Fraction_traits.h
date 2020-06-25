@@ -17,7 +17,7 @@
 //         they may be wrong now.
 
 /*! \file NiX/Fraction_traits.h
-    \brief Defines class NiX::Fraction_traits.
+    \brief defines class NiX::Fraction_traits.
 
     Provides dependent types and function objects for all the functions
     beyond operators with specializations of the \c Fraction_traits<NT>

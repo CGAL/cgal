@@ -40,7 +40,7 @@ class Point_set_3;
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
+  \brief reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -79,7 +79,7 @@ bool read_XYZ(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an input file in the the \ref IOStreamXYZ into a point set.
+  \brief reads the content of an input file in the the \ref IOStreamXYZ into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -125,7 +125,7 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output stream in the \ref IOStreamXYZ.
+  \brief writes the content of a point set into an output stream in the \ref IOStreamXYZ.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -167,7 +167,7 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output file in the \ref IOStreamXYZ.
+  \brief writes the content of a point set into an output file in the \ref IOStreamXYZ.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`

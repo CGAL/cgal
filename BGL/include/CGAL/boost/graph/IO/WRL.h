@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
   \ingroup PkgBGLIoFuncsWRL
 
-  \brief Writes the graph `g` into the output stream, using the \ref IOStreamWRL (VRML 2.0).
+  \brief writes the graph `g` into the output stream, using the \ref IOStreamWRL (VRML 2.0).
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -71,7 +71,7 @@ bool write_WRL(std::ostream& os,
 /*!
   \ingroup PkgBGLIoFuncsWRL
 
-  \brief Writes the graph `g` into the output file, using the \ref IOStreamWRL (VRML 2.0).
+  \brief writes the graph `g` into the output file, using the \ref IOStreamWRL (VRML 2.0).
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

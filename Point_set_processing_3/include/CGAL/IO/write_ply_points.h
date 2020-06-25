@@ -78,7 +78,7 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief Saves the range of `points` with properties to a .ply stream.
+   \brief saves the range of `points` with properties to a .ply stream.
 
    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
@@ -140,7 +140,7 @@ template <typename PointRange,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief Saves the range of `points` (positions + normals, if available) to a .ply stream.
+   \brief saves the range of `points` (positions + normals, if available) to a .ply stream.
 
     %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
@@ -233,7 +233,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief Saves the range of `points` (positions + normals, if available) to a .ply stream.
+   \brief saves the range of `points` (positions + normals, if available) to a .ply stream.
 
    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 

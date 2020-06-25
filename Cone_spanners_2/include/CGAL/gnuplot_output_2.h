@@ -38,7 +38,7 @@ namespace CGAL {
 
 /*!
 *  \ingroup PkgConeSpanners2Ref
-*  \brief Output a set of files used by Gnuplot to plot `g`.
+*  \brief outputs a set of files used by Gnuplot to plot `g`.
 *
 *  The files that are generated for Gnuplot are:
 *  (1) prefix.v (vertex list)

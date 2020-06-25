@@ -42,18 +42,18 @@ public:
   /// \endcond
 
   /*!
-    \brief Returns the name of the feature (initialized to
+    \brief returns the name of the feature (initialized to
     `abstract_feature` for `Feature_base`).
   */
   const std::string& name() const { return m_name; }
 
   /*!
-    \brief Changes the name of the feature.
+    \brief changes the name of the feature.
   */
   void set_name (const std::string& name) { m_name = name; }
 
   /*!
-    \brief Returns the value taken by the feature for at the item for
+    \brief returns the value taken by the feature for at the item for
     the item at position `index`. This method must be implemented by
     inherited classes.
   */

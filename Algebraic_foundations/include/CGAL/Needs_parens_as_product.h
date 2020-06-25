@@ -27,7 +27,7 @@ namespace CGAL {
 class Parens_as_product_tag {};
 
 /*! \ingroup NiX_io_parens
- *  \brief Decides whether this number requires parentheses
+ *  \brief decides whether this number requires parentheses
  *  in case it appears within a produkt.
  */
 template <class NT>
@@ -36,7 +36,7 @@ struct Needs_parens_as_product{
 };
 
 /*! \ingroup NiX_io_parens
- *  \brief Decides whether this number requires parentheses
+ *  \brief decides whether this number requires parentheses
  *  in case it appears within a produkt.
  */
 template <class NT>

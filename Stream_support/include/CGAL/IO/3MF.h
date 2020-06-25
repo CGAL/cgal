@@ -374,7 +374,7 @@ int read_from_3mf(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncs3MF
  *
- * \brief Extracts ranges of points and triangles from a 3mf file.
+ * \brief extracts ranges of points and triangles from a 3mf file.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
  *  `BackInsertionSequence` whose `value type` is
@@ -425,7 +425,7 @@ int read_triangle_soups_from_3mf(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncs3MF
  *
- * \brief Writes the triangle soups contained in `all_points` and
+ * \brief writes the triangle soups contained in `all_points` and
  *  `all_polygons` into the 3mf file `fname`.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and

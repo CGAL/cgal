@@ -276,7 +276,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns a neighbor query object with fixed number of neighbors `k`.
+    \brief returns a neighbor query object with fixed number of neighbors `k`.
   */
   K_neighbor_query k_neighbor_query (const unsigned int k) const
   {
@@ -284,7 +284,7 @@ public:
   }
 
   /*!
-    \brief Returns a neighbor query object with fixed radius `radius`.
+    \brief returns a neighbor query object with fixed radius `radius`.
   */
   Sphere_neighbor_query sphere_neighbor_query (const float radius) const
   {

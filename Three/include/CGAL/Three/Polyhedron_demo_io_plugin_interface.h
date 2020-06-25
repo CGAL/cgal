@@ -31,7 +31,7 @@ class Scene_interface;
 class Polyhedron_demo_io_plugin_interface
 {
 public:
-  //! \brief Initializes the plugin
+  //! \brief initializes the plugin
   //! This function is called in the constructor of the MainWindow.
   //! Whatever initialization the plugin needs can be done here. Default
   //! behavior is to do nothing.

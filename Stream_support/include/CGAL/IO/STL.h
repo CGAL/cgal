@@ -125,7 +125,7 @@ bool read_STL(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
- * \brief Reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
+ * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -162,7 +162,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
- * \brief Reads the content of a file named `fname` into `points` and `polygons`, using the \ref IOStreamSTL.
+ * \brief reads the content of a file named `fname` into `points` and `polygons`, using the \ref IOStreamSTL.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -297,7 +297,7 @@ bool write_STL(const char* fname, const PointRange& points, const TriangleRange&
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
- * \brief Writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamSTL.
+ * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamSTL.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`

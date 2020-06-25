@@ -91,7 +91,7 @@ bool write_OFF_PSP(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief Saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
+   \brief saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
 
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).
@@ -159,7 +159,7 @@ bool write_OFF(std::ostream& os, const PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief Saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
+   \brief saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
 
    The function writes for each point a line with the x y z position
    followed by the nx ny nz normal (if available).

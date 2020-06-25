@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
  * \ingroup PkgSurfaceMeshIOFunc
  *
- * \brief Extracts the surface meshes from an input 3mf file and appends it to `output`.
+ * \brief extracts the surface meshes from an input 3mf file and appends it to `output`.
  *
  * \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
  *               besides being default constructible and assignable.

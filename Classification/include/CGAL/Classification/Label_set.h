@@ -25,7 +25,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationLabel
 
-\brief Set of `Label` used as input by classification
+\brief sets of `Label` used as input by classification
 algorithms.
 
 */
@@ -39,7 +39,7 @@ public:
   Label_set() { }
 
   /*!
-    \brief Initializes the set with the provided `labels` names.
+    \brief initializes the set with the provided `labels` names.
   */
   Label_set (const std::initializer_list<const char*>& labels)
   {
@@ -52,7 +52,7 @@ public:
   /// \endcond
 
   /*!
-    \brief Adds a label.
+    \brief adds a label.
 
     \note Names are not used for identification: two labels in the
     same set can have the same name (but not the same handle).
@@ -69,7 +69,7 @@ public:
   }
 
   /*!
-    \brief Removes a label.
+    \brief removes a label.
 
     \param label the handle to the label that must be removed.
 
@@ -93,7 +93,7 @@ public:
   }
 
   /*!
-    \brief Returns how many labels are defined.
+    \brief returns how many labels are defined.
   */
   std::size_t size () const
   {
@@ -101,7 +101,7 @@ public:
   }
 
   /*!
-    \brief Returns the \f$i^{th}\f$ label.
+    \brief returns the \f$i^{th}\f$ label.
   */
   Label_handle operator[] (std::size_t i) const
   {
@@ -110,7 +110,7 @@ public:
 
 
   /*!
-    \brief Removes all labels.
+    \brief removes all labels.
   */
   void clear ()
   {

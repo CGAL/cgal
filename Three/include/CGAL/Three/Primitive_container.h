@@ -193,7 +193,7 @@ public:
   //! setter for the texture data at UV coordinates (`i`,`j`).
   void setTextureData  (int i, int j, int r, int g, int b);
   //!
-  //! \brief Returns the `Vao` bound to `viewer`.
+  //! \brief returns the `Vao` bound to `viewer`.
   //!
   Vao* getVao(Viewer_interface* viewer)const;
   //!

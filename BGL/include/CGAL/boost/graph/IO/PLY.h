@@ -83,7 +83,7 @@ bool read_PLY_BGL(std::istream& is,
 /*!
   \ingroup PkgBGLIoFuncsPLY
 
-  \brief Reads the graph `g` from the input stream, using the \ref IOStreamPLY.
+  \brief reads the graph `g` from the input stream, using the \ref IOStreamPLY.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -155,7 +155,7 @@ bool read_PLY(std::istream& is, Graph& g,
 /*!
   \ingroup PkgBGLIoFuncsPLY
 
-  \brief Reads the graph `g` from a file named `fname`, using the \ref IOStreamPLY.
+  \brief reads the graph `g` from a file named `fname`, using the \ref IOStreamPLY.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -261,7 +261,7 @@ bool read_PLY(const std::string& fname, Graph& g,
 /*!
  \ingroup PkgBGLIoFuncsPLY
 
- \brief Writes the graph in an output stream, using the \ref IOStreamPLY.
+ \brief writes the graph in an output stream, using the \ref IOStreamPLY.
 
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -461,7 +461,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
 /*!
  \ingroup PkgBGLIoFuncsPLY
 
- \brief Writes the graph in the output file `fname`, using the \ref IOStreamPLY.
+ \brief writes the graph in the output file `fname`, using the \ref IOStreamPLY.
 
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

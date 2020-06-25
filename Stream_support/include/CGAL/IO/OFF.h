@@ -202,7 +202,7 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOFF.
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -225,7 +225,7 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * \brief Reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOFF.
+ * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -279,7 +279,7 @@ bool write_OFF(const char* fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * \brief Writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
+ * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -306,7 +306,7 @@ bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& p
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
  *
- * \brief Writes the content of `points` and `polygons` in the file `fname`, using the \ref IOStreamOFF.
+ * \brief writes the content of `points` and `polygons` in the file `fname`, using the \ref IOStreamOFF.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`

@@ -36,7 +36,7 @@ namespace CGAL {
 
 namespace internal {
 
-/*! \brief Tries to find a SIMPLE rational q with a<q<b.
+/*! \brief tries to find a SIMPLE rational q with a<q<b.
  *
  * In this context, simple means that the denominator of <tt>q</tt>
  * is a power of two, and is not too big. There is no guarantee to find

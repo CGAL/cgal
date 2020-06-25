@@ -224,7 +224,7 @@ public:
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
+  \brief reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -309,7 +309,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
+  \brief reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -410,7 +410,7 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   \deprecated This function is deprecated since \cgal 5.2,
               \link PkgPointSet3IO `CGAL::read_PLY()` \endlink  should be used instead.
 
-  \brief Reads a point set with properties from an input stream in ASCII or Binary PLY format.
+  \brief reads a point set with properties from an input stream in ASCII or Binary PLY format.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -448,7 +448,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes a point set with properties in an output stream in the \ref IOStreamPLY.
+  \brief writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
   If found, the normal map is inserted to the stream. All other
   properties with simple types are inserted in the stream.
@@ -715,7 +715,7 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes a point set with properties in an output stream in the \ref IOStreamPLY.
+  \brief writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
   If found, the normal map is inserted to the stream. All other
   properties with simple types are inserted in the stream.

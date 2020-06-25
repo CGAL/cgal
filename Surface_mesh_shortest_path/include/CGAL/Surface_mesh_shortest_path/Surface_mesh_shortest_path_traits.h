@@ -171,7 +171,7 @@ std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_t
 
 \internal
 
-\brief Provides an implementation of the SurfaceMeshShortestPathTraits
+\brief provides an implementation of the SurfaceMeshShortestPathTraits
 model which uses an exact Kernel during the unfolding operations to achieve better overall precision
 
 \tparam K Kernel Type

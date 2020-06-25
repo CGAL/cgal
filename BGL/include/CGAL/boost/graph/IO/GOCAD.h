@@ -82,7 +82,7 @@ public:
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
-/// \brief Reads the graph `g` from the input stream, using the \ref IOStreamGocad.
+/// \brief reads the graph `g` from the input stream, using the \ref IOStreamGocad.
 ///
 /// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
@@ -146,7 +146,7 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
-/// \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamGocad.
+/// \brief reads the graph `g` from the file `fname`, using the \ref IOStreamGocad.
 ///
 /// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
@@ -212,7 +212,7 @@ bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
-/// \brief Writes the graph `g` into the output stream `os`, using the \ref IOStreamGocad.
+/// \brief writes the graph `g` into the output stream `os`, using the \ref IOStreamGocad.
 ///
 /// \tparam Graph a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -309,7 +309,7 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
-/// \brief Writes the graph `g` into a file named `fname`, using the \ref IOStreamGocad.
+/// \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamGocad.
 ///
 /// In this overload, `fname` is used as the name of the graph within the file.
 ///
@@ -357,7 +357,7 @@ bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLA
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
-/// \brief Writes the graph `g` in the  \ref IOStreamGocad into `os`.
+/// \brief writes the graph `g` in the  \ref IOStreamGocad into `os`.
 ///
 /// The name assigned to `g`in the output is `anonymous`.
 ///

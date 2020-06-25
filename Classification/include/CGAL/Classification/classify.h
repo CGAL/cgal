@@ -320,7 +320,7 @@ namespace internal {
   /*!
     \ingroup PkgClassificationMain
 
-    \brief Runs the classification algorithm without any regularization.
+    \brief runs the classification algorithm without any regularization.
 
     There is no relationship between items, the classification energy
     is only minimized itemwise. This method is quick but produces
@@ -410,7 +410,7 @@ namespace internal {
   /*!
     \ingroup PkgClassificationMain
 
-    \brief Runs the classification algorithm with a local smoothing.
+    \brief runs the classification algorithm with a local smoothing.
 
     The computed classification energy is smoothed on a user defined
     local neighborhood of items. This method is a compromise between
@@ -480,7 +480,7 @@ namespace internal {
   /*!
     \ingroup PkgClassificationMain
 
-    \brief Runs the classification algorithm with a global
+    \brief runs the classification algorithm with a global
     regularization based on a graph cut.
 
     The computed classification energy is globally regularized through

@@ -36,7 +36,7 @@ namespace CGAL {
 /*!
  * \ingroup IOstreamFunctions
  *
- * \brief Reads a polygon soup from a file.
+ * \brief reads a polygon soup from a file.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
@@ -101,7 +101,7 @@ bool read_polygon_soup(const std::string& fname,
 /*!
  * \ingroup IOstreamFunctions
  *
- * \brief Writes the content of `points` and `polygons` in a file.
+ * \brief writes the content of `points` and `polygons` in a file.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)

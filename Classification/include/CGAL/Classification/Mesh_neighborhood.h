@@ -172,7 +172,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns a 1-ring neighbor query object.
+    \brief returns a 1-ring neighbor query object.
   */
   One_ring_neighbor_query one_ring_neighbor_query () const
   {
@@ -180,7 +180,7 @@ public:
   }
 
   /*!
-    \brief Returns an N-ring neighbor query object.
+    \brief returns an N-ring neighbor query object.
   */
   N_ring_neighbor_query n_ring_neighbor_query (const std::size_t n) const
   {

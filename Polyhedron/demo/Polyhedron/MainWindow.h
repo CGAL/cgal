@@ -87,7 +87,7 @@ public:
    @returns the IO plugin associated with `loader_name`*/
   CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
 
-  /*! \brief Loads on or more item with a given loader.
+  /*! \brief loads on or more item with a given loader.
    *
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
@@ -379,7 +379,7 @@ protected:
    */
   void loadPlugins();
   /*!
-   * \brief Initializes the plugins.
+   * \brief initializes the plugins.
    * Makes pairs between plugins and object names and fills the Operations menu.
    * Called only once.
    */

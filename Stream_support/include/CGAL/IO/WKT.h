@@ -62,7 +62,7 @@ void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Fills a `Point` from a WKT stream.
+//! \brief fills a `Point` from a WKT stream.
 //!
 //! The first line starting with POINT in the stream will be used.
 //!
@@ -111,7 +111,7 @@ bool read_point_WKT(std::istream& in,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Overwrites the content of a `MultiPoint` with the first line starting with MULTIPOINT in the stream.
+//! \brief overwrites the content of a `MultiPoint` with the first line starting with MULTIPOINT in the stream.
 //!
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`,
 //! and have:
@@ -159,7 +159,7 @@ bool read_multi_point_WKT(std::istream& in,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Fills a `Linestring` from a WKT stream.
+//! \brief fills a `Linestring` from a WKT stream.
 //!
 //! The first line starting with LINESTRING in the stream will be used.
 //!
@@ -208,7 +208,7 @@ bool read_linestring_WKT(std::istream& in,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Overwrites the content of a `MultiLineString` with the first line starting with MULTILINESTRING in the stream.
+//! \brief overwrites the content of a `MultiLineString` with the first line starting with MULTILINESTRING in the stream.
 //!
 //! \tparam MultiLineString must be a model of `RandomAccessRange` of `Linestring`,
 //! and have:
@@ -267,7 +267,7 @@ bool read_multi_linestring_WKT(std::istream& in,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Fills `polygon` from a WKT stream.
+//! \brief fills `polygon` from a WKT stream.
 //!
 //! The first line starting with POLYGON in the stream will be used.
 //!
@@ -315,7 +315,7 @@ bool read_polygon_WKT(std::istream& in,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Overwrites the content of a `MultiPolygon` with the first line starting with MULTIPOLYGON in the stream.
+//! \brief overwrites the content of a `MultiPolygon` with the first line starting with MULTIPOLYGON in the stream.
 //!
 //! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`,
 //! and have:
@@ -370,7 +370,7 @@ bool read_multi_polygon_WKT(std::istream& in,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Writes `point` into a WKT stream.
+//! \brief writes `point` into a WKT stream.
 //!
 //! \tparam Point is a `CGAL::Point_2`
 //!
@@ -394,7 +394,7 @@ std::ostream& write_point_WKT(std::ostream& out,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Writes `poly` into a WKT stream.
+//! \brief writes `poly` into a WKT stream.
 //!
 //! \tparam Polygon must be a `CGAL::General_polygon_with_holes_2`
 //!
@@ -418,7 +418,7 @@ std::ostream& write_polygon_WKT(std::ostream& out,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Writes the content of `ls` into a WKT stream.
+//! \brief writes the content of `ls` into a WKT stream.
 //!
 //! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`.
 //!
@@ -443,7 +443,7 @@ std::ostream& write_linestring_WKT(std::ostream& out,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Writes the content of `mp` into a WKT stream.
+//! \brief writes the content of `mp` into a WKT stream.
 //!
 //! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`.
 //!
@@ -468,7 +468,7 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Writes the content of `polygons` into a WKT stream.
+//! \brief writes the content of `polygons` into a WKT stream.
 //!
 //! \tparam MultiPolygon must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //!
@@ -493,7 +493,7 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
-//! \brief Writes the content of `mls` into a WKT stream.
+//! \brief writes the content of `mls` into a WKT stream.
 //!
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`.
 //!

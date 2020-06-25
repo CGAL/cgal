@@ -1079,7 +1079,7 @@ public:
         this->ptr()->node_list_.erase(n);
     }
 
-    /*! \brief Replace traits class
+    /*! \brief replaces traits class
      */
     void set_traits(TRAITS& traits) {
 
@@ -1090,7 +1090,7 @@ public:
 
     }
 
-    /*! \brief Returns a copy of this with its own representation
+    /*! \brief returns a copy of this with its own representation
      */
     Self make_unique() const {
       Self tmp = *this;

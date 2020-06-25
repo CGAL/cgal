@@ -113,7 +113,7 @@ public:
   /// @{
 
   /*!
-    \brief Instantiates the classifier using the sets of `labels` and `features`.
+    \brief instantiates the classifier using the sets of `labels` and `features`.
 
   */
   Neural_network_classifier (const Label_set& labels,
@@ -204,7 +204,7 @@ public:
 
   /// @{
   /*!
-    \brief Runs the training algorithm.
+    \brief runs the training algorithm.
 
     From the set of provided ground truth, this algorithm constructs a
     neural network and applies an Adam optimizer to set up the weights
@@ -446,7 +446,7 @@ public:
   /// @{
 
   /*!
-    \brief Saves the current configuration in the stream `output`.
+    \brief saves the current configuration in the stream `output`.
 
     This allows to easily save and recover a specific classification
     configuration, that is to say:
@@ -527,7 +527,7 @@ public:
   }
 
   /*!
-    \brief Loads a configuration from the stream `input`.
+    \brief loads a configuration from the stream `input`.
 
     The input file should be in the XML format written by the
     `save_configuration()` method. The feature set of the classifier

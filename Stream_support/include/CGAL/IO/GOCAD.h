@@ -184,7 +184,7 @@ bool read_GOCAD(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
- * \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamGocad.
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamGocad.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -208,7 +208,7 @@ bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons)
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
- * \brief Reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamGocad.
+ * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamGocad.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -326,7 +326,7 @@ bool write_GOCAD(const char* fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
- * \brief Writes the content of `points` and `polygons` in `os`, using the \ref IOStreamGocad.
+ * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamGocad.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -349,7 +349,7 @@ bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange&
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
- * \brief Writes the content of `points` and `polygons` in `fname`, using the \ref IOStreamGocad.
+ * \brief writes the content of `points` and `polygons` in `fname`, using the \ref IOStreamGocad.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`

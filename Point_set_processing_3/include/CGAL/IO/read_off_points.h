@@ -42,7 +42,7 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief Reads points (positions + normals, if available) from a .off ASCII stream.
+   \brief reads points (positions + normals, if available) from a .off ASCII stream.
 
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
@@ -200,7 +200,7 @@ bool read_OFF(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief Reads points (positions + normals, if available) from a .off ASCII file.
+   \brief reads points (positions + normals, if available) from a .off ASCII file.
 
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.

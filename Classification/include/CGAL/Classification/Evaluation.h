@@ -52,7 +52,7 @@ public:
 
 /*!
 
-  \brief Instantiates an evaluation object and computes all
+  \brief instantiates an evaluation object and computes all
   measurements.
 
   \param labels labels used.
@@ -137,7 +137,7 @@ public:
 
   /*!
 
-    \brief Returns the precision of the training for the given label.
+    \brief returns the precision of the training for the given label.
 
     Precision is the number of true positives divided by the sum of
     the true positives and the false positives.
@@ -150,7 +150,7 @@ public:
 
   /*!
 
-    \brief Returns the recall of the training for the given label.
+    \brief returns the recall of the training for the given label.
 
     Recall is the number of true positives divided by the sum of
     the true positives and the false negatives.
@@ -163,7 +163,7 @@ public:
 
   /*!
 
-    \brief Returns the \f$F_1\f$ score of the training for the given label.
+    \brief returns the \f$F_1\f$ score of the training for the given label.
 
     \f$F_1\f$ score is the harmonic mean of `precision()` and `recall()`:
 
@@ -180,7 +180,7 @@ public:
   }
 
   /*!
-    \brief Returns the intersection over union of the training for the
+    \brief returns the intersection over union of the training for the
     given label.
 
     Intersection over union is the number of true positives divided by
@@ -199,7 +199,7 @@ public:
 
 
   /*!
-    \brief Returns the accuracy of the training.
+    \brief returns the accuracy of the training.
 
     Accuracy is the total number of true positives divided by the
     total number of provided inliers.
@@ -207,13 +207,13 @@ public:
   float accuracy() const { return m_accuracy; }
 
   /*!
-    \brief Returns the mean \f$F_1\f$ score of the training over all
+    \brief returns the mean \f$F_1\f$ score of the training over all
     labels (see `f1_score()`).
   */
   float mean_f1_score() const { return m_mean_f1; }
 
   /*!
-    \brief Returns the mean intersection over union of the training
+    \brief returns the mean intersection over union of the training
     over all labels (see `intersection_over_union()`).
   */
   float mean_intersection_over_union() const { return m_mean_iou; }

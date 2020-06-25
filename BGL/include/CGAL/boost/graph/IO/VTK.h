@@ -113,7 +113,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 /*!
  * \ingroup PkgBGLIoFuncsVTP
  *
- * \brief Reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
+ * \brief reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
  *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -383,7 +383,7 @@ void write_polys_points(std::ostream& os,
 
 /*! \ingroup PkgBGLIoFuncsVTP
  *
- * \brief Writes a triangulated surface mesh in the `PolyData` XML format (\ref IOStreamVTK).
+ * \brief writes a triangulated surface mesh in the `PolyData` XML format (\ref IOStreamVTK).
  *
  * \tparam Graph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -480,7 +480,7 @@ bool write_VTP(std::ostream& os,
 
 /*! \ingroup PkgBGLIoFuncsVTP
  *
- * \brief Writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format (\ref IOStreamVTK).
+ * \brief writes a triangulated surface mesh the file `fname`, in the `PolyData` XML format (\ref IOStreamVTK).
  *
  * \tparam Graph a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

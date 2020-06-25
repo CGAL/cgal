@@ -257,7 +257,7 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 
 /// \ingroup PkgSurfaceMeshIOFunc
 ///
-/// \brief Extracts the surface mesh from an input stream in ASCII OFF, COFF, NOFF, CNOFF
+/// \brief extracts the surface mesh from an input stream in ASCII OFF, COFF, NOFF, CNOFF
 /// format and appends it to the surface mesh `sm`.
 ///
 /// The operator reads the point property as well as "v:normal", "v:color", `"v:texcoord"`, and "f:color".
@@ -493,7 +493,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 
 /// \ingroup PkgSurfaceMeshIOFunc
 ///
-/// \brief Writes the surface mesh `sm` in the output stream, using the \ref IOStreamOFF.
+/// \brief writes the surface mesh `sm` in the output stream, using the \ref IOStreamOFF.
 ///
 /// This overload of \link PkgBGLIOFct `read_OFF(std::ostream&, const Graph&)` \endlink will also output
 /// the following property maps internal to the surface mesh, if they exist and if they are not

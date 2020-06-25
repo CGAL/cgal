@@ -31,7 +31,7 @@ namespace internal {
 } // namespace internal
 
 /*!
- * \brief Represents different strategies how to handle
+ * \brief represents different strategies how to handle
  * degenerate cases during the analysis
  *
  * Currently, there are two possible strategies implemented. See the

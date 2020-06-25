@@ -83,7 +83,7 @@ namespace internal {
                                  ::CGAL::Tag_false) {return true;}
 
 /*! \ingroup CGAL_polynomial_utils
- *  \brief Test whether \c P and \c Q may have a common factor.
+ *  \brief tests whether \c P and \c Q may have a common factor.
  *
  *  This function is based on a fast modular arithmetic and serves as a
  *  filter to avoid expensive exact computations to determine whether \c P
@@ -110,7 +110,7 @@ bool may_have_common_factor(const Polynomial<NT>& P,
 }
 
 /*! \ingroup CGAL_polynomial_utils
- *  \brief Test whether the polynomial \c P may has a multiple root.
+ *  \brief tests whether the polynomial \c P may has a multiple root.
  *
  *  This function is based on a fast modular arithmetic and serves as a
  *  filter to avoid expensive exact computations to determine whether \c P

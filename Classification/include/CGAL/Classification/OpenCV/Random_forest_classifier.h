@@ -71,7 +71,7 @@ public:
   /// @{
 
 /*!
-  \brief Instantiates the classifier using the sets of `labels` and `features`.
+  \brief instantiates the classifier using the sets of `labels` and `features`.
 
   Parameters documentation is copy-pasted from [the official documentation of OpenCV](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html). For more details on this method, please refer to it.
 
@@ -129,7 +129,7 @@ public:
   /// @{
 
   /*!
-    \brief Runs the training algorithm.
+    \brief runs the training algorithm.
 
     From the set of provided ground truth, this algorithm estimates
     sets up the random trees that produce the most accurate result
@@ -262,7 +262,7 @@ public:
 
 
   /*!
-    \brief Saves the current configuration in the file named `filename`.
+    \brief saves the current configuration in the file named `filename`.
 
     This allows to easily save and recover a specific classification
     configuration.
@@ -276,7 +276,7 @@ public:
   }
 
   /*!
-    \brief Loads a configuration from the file named `filename`.
+    \brief loads a configuration from the file named `filename`.
 
     The input file should be in the XML format written by the
     `save_configuration()` method. The feature set of the classifier

@@ -33,7 +33,7 @@ namespace CGAL {
 /*!
  * \ingroup PkgBGLIOFuncs3MF
  *
- * \brief Writes the triangle meshes contained in `gs` into the 3mf file `filename`.
+ * \brief writes the triangle meshes contained in `gs` into the 3mf file `filename`.
  *
  * \tparam GraphRange a model of the concepts `RandomAccessContainer`
  *                    and `BackInsertionSequence` whose `value type` is

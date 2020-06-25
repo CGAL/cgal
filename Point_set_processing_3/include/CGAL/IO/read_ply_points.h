@@ -102,7 +102,7 @@ make_ply_normal_reader(VectorMap normal_map);
 /**
   \ingroup PkgPointSetProcessingIOPly
 
-  \brief Reads user-selected points properties from a .ply stream (ASCII or binary).
+  \brief reads user-selected points properties from a .ply stream (ASCII or binary).
 
   Potential additional point properties and faces are ignored.
 
@@ -193,7 +193,7 @@ bool read_PLY_with_properties(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief Reads points (positions + normals, if available) from a .ply stream (ASCII or binary).
+   \brief reads points (positions + normals, if available) from a .ply stream (ASCII or binary).
 
    Potential additional point properties and faces are ignored.
 
@@ -267,7 +267,7 @@ bool read_PLY(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief Reads points (positions + normals, if available) from a .ply file (ASCII or binary).
+   \brief reads points (positions + normals, if available) from a .ply file (ASCII or binary).
 
    Potential additional point properties and faces are ignored.
 

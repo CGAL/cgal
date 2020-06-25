@@ -454,7 +454,7 @@ public:
   /// @{
 
   /*!
-    \brief Returns the estimated unoriented normal vector of the point at position `index`.
+    \brief returns the estimated unoriented normal vector of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
   */
   template <typename GeomTraits>
@@ -467,7 +467,7 @@ public:
   }
 
   /*!
-    \brief Returns the estimated local tangent plane of the point at position `index`.
+    \brief returns the estimated local tangent plane of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
   */
   template <typename GeomTraits>
@@ -481,7 +481,7 @@ public:
   }
 
   /*!
-    \brief Returns the normalized eigenvalues of the point at position `index`.
+    \brief returns the normalized eigenvalues of the point at position `index`.
   */
   Eigenvalues eigenvalue (std::size_t index) const
   {

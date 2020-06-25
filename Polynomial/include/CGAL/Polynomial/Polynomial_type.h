@@ -17,7 +17,7 @@
 //         they may be wrong now.
 
 /*! \file CGAL/Polynomial.h
- *  \brief Defines class CGAL::Polynomial.
+ *  \brief defines class CGAL::Polynomial.
  *
  *  Polynomials in one variable (or more, by recursion)
  */
@@ -538,7 +538,7 @@ public:
       y+=abs(pow(x,d)*to_Interval(this->ptr()->coeff[d]));
       return y;
       } */
-    /*! \brief return the sign of the leading coefficient
+    /*! \brief returns the sign of the leading coefficient
      *
      *  For univariate real polynomials, this is the sign
      *  of the limit process \e x --> oo.

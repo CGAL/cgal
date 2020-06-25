@@ -60,7 +60,7 @@ void check_if_property_is_used(PointSet& point_set,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an intput stream in the \ref IOStreamLAS into a point set.
+  \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -154,7 +154,7 @@ bool read_LAS(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the content of an intput stream in the \ref IOStreamLAS into a point set.
+  \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -201,7 +201,7 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output stream in the \ref IOStreamLAS.
+  \brief writes the content of a point set into an output stream in the \ref IOStreamLAS.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -404,7 +404,7 @@ bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Writes the content of a point set into an output file in the \ref IOStreamLAS.
+  \brief writes the content of a point set into an output file in the \ref IOStreamLAS.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`

@@ -14,7 +14,7 @@
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h
- *\brief Defines class \c Arc_2 that represents an arc on a curve that
+ *\brief defines class \c Arc_2 that represents an arc on a curve that
  * can be analyzed.
  */
 
@@ -3360,7 +3360,7 @@ std::ostream& operator<<(
 }
 
 
-//! \brief Reads the objects from stream.
+//! \brief reads the objects from stream.
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::istream& operator>> (
     std::istream& is,

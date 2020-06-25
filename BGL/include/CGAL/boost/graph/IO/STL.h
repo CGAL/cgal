@@ -69,7 +69,7 @@ public:
 /*!
   \ingroup PkgBGLIoFuncsSTL
 
-  \brief Reads the graph `g` from the input stream, using the \ref IOStreamSTL.
+  \brief reads the graph `g` from the input stream, using the \ref IOStreamSTL.
 
   \attention The graph `g` is not cleared, and the data from the stream is added.
 
@@ -114,7 +114,7 @@ bool read_STL(std::istream& is,
 /*!
   \ingroup PkgBGLIoFuncsSTL
 
-  \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamSTL.
+  \brief reads the graph `g` from the file `fname`, using the \ref IOStreamSTL.
 
   \attention The graph `g` is not cleared, and the data from the stream is added.
 
@@ -172,7 +172,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 /*!
   \ingroup PkgBGLIoFuncsSTL
 
-  \brief Writes the graph `g` in the output stream `os`, using the \ref IOStreamSTL.
+  \brief writes the graph `g` in the output stream `os`, using the \ref IOStreamSTL.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -280,7 +280,7 @@ bool write_STL(std::ostream& os,
 /*!
 \ingroup PkgBGLIoFuncsSTL
 
- \brief Writes the graph `g` into a file named `fname`, using the \ref IOStreamSTL.
+ \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamSTL.
 
  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

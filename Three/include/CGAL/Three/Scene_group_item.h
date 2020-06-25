@@ -45,14 +45,14 @@ public :
     //!Returns true to avoid disturbing the BBox of the scene.
     bool isEmpty() const Q_DECL_OVERRIDE;
     /*!
-         * \brief Locks a child
+         * \brief locks a child
          *
          * A locked child cannot be moved out of the group nor can it be deleted.
          * Use it to prevent a child to be destroyed without its parent.
          */
         void lockChild(CGAL::Three::Scene_item*);
         /*!
-        * \brief Locks a child
+        * \brief locks a child
         *
         * A locked child cannot be moved out of the group nor can it be deleted.
         * Use it to prevent a child to be destroyed without its parent.
@@ -60,25 +60,25 @@ public :
         void lockChild(Scene_interface::Item_id id);
 
         /*!
-         * \brief Unlocks a child
+         * \brief unlocks a child
          *
          * @see lockChild()
          */
         void unlockChild(CGAL::Three::Scene_item*);
         /*!
-         * \brief Unlocks a child
+         * \brief unlocks a child
          *
          * @see lockChild()
          */
         void unlockChild(Scene_interface::Item_id id);
         /*!
-         * \brief Tells if a child is locked.
+         * \brief tells if a child is locked.
          * \return true if the child is locked.
          * @see lockChild()
          */
         bool isChildLocked(CGAL::Three::Scene_item*);
         /*!
-             * \brief Tells if a child is locked.
+             * \brief tells if a child is locked.
              * \return true if the child is locked.
              * @see lockChild()
              */
@@ -192,7 +192,7 @@ public :
     //!Sets the alpha value for the froup and all its children.
         virtual void setAlpha(int) Q_DECL_OVERRIDE;
 
-    //! \brief Returns a list of all the direct children.
+    //! \brief returns a list of all the direct children.
     //!
     //! Only returns children that have this item as a parent.
     //! Children of these children are not returned.
@@ -229,7 +229,7 @@ public :
 
     void compute_bbox() const Q_DECL_OVERRIDE{};
 public Q_SLOTS:
-    //!\brief Redraws children.
+    //!\brief redraws children.
     //!
     //! As each drawing function of a group draws all parts of its children,
     //! once any of these functions is called, we skip all drawing calls

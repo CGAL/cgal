@@ -88,7 +88,7 @@ bool read_OFF_BGL(std::istream& is,
 /*!
   \ingroup PkgBGLIoFuncsOFF
 
-  \brief Reads the graph `g` from data in the input stream, using the \ref IOStreamOFF.
+  \brief reads the graph `g` from data in the input stream, using the \ref IOStreamOFF.
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
@@ -171,7 +171,7 @@ bool read_OFF(std::istream& is, Graph& g,
 /*!
   \ingroup PkgBGLIoFuncsOFF
 
-  \brief Reads the graph `g` from the file `fname`, using the \ref IOStreamOFF.
+  \brief reads the graph `g` from the file `fname`, using the \ref IOStreamOFF.
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
@@ -314,7 +314,7 @@ bool write_OFF_BGL(std::ostream& os,
 /*!
   \ingroup PkgBGLIoFuncsOFF
 
-  \brief Writes the graph `g` in the output stream, using the \ref IOStreamOFF.
+  \brief writes the graph `g` in the output stream, using the \ref IOStreamOFF.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -395,7 +395,7 @@ bool write_OFF(std::ostream& os, const Graph& g,
 /*!
   \ingroup PkgBGLIoFuncsOFF
 
-  \brief Writes the graph `g` in the file `fname`, using the \ref IOStreamOFF.
+  \brief writes the graph `g` in the file `fname`, using the \ref IOStreamOFF.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

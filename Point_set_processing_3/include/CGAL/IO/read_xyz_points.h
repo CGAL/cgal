@@ -39,7 +39,7 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   \brief Reads points (positions + normals, if available) from a .xyz ASCII stream.
+   \brief reads points (positions + normals, if available) from a .xyz ASCII stream.
 
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.
@@ -187,7 +187,7 @@ bool read_XYZ(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   \brief Reads points (positions + normals, if available) from a .xyz ASCII file.
+   \brief reads points (positions + normals, if available) from a .xyz ASCII file.
 
    The function expects for each point a line with the x y z position,
    optionally followed by the nx ny nz normal.

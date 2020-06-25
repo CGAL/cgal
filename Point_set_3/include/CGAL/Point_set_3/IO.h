@@ -34,7 +34,7 @@ namespace CGAL {
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the point set from an input stream that can be either:
+  \brief reads the point set from an input stream that can be either:
 
   - \link IOStreamXYZ XYZ \endlink
   - \link IOStreamOFF OFF \endlink
@@ -82,7 +82,7 @@ std::istream& operator>>(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Reads the point set from an input file that can be either:
+  \brief reads the point set from an input file that can be either:
 
   - \link IOStreamXYZ XYZ \endlink
   - \link IOStreamOFF OFF \endlink
@@ -135,7 +135,7 @@ bool read_point_set(const char* filename, CGAL::Point_set_3<Point, Vector>& ps)
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Inserts the point set in an output stream in ASCII PLY format.
+  \brief inserts the point set in an output stream in ASCII PLY format.
          All properties are inserted in their instantiation order.
 
   \tparam Point a `CGAL::Point_3`
@@ -159,7 +159,7 @@ std::ostream& operator<<(std::ostream& os,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief Inserts the point set in an output file that can be either:
+  \brief inserts the point set in an output file that can be either:
 
   - \link IOStreamXYZ XYZ \endlink
   - \link IOStreamOFF OFF \endlink

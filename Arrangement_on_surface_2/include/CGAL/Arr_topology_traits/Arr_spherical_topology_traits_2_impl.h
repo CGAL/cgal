@@ -423,7 +423,7 @@ compare_y_at_x(const Point_2& p, const Halfedge* he) const
   return m_geom_traits->compare_y_at_x_2_object()(p, he->curve());
 }
 
-/*! \brief determine whether a vertex is associated with a curve end */
+/*! \brief determines whether a vertex is associated with a curve end */
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 are_equal(const Vertex* v,
@@ -803,7 +803,7 @@ _locate_around_pole(Vertex* v,
   return nullptr;
 }
 
-/*! \brief Return the face that lies below the given vertex, which lies
+/*! \brief returns the face that lies below the given vertex, which lies
  * on the line of discontinuity.
  */
 template <typename GeomTraits, typename Dcel>

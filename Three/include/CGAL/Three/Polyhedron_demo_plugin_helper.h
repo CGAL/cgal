@@ -32,7 +32,7 @@ class QDockWidget;
 #include <CGAL/Three/Scene_interface.h>
 namespace CGAL {
 namespace Three {
-  /*! \brief Provides convenient functions for a plugin.
+  /*! \brief provides convenient functions for a plugin.
    * This class provides convenient functions to manage dock_widgets and to access a certain type of items in the scene.
    * It also provides member variables for a Scene_interface and a QMainWindow.
    */
@@ -41,7 +41,7 @@ class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
 {
 public:
 
-  /*! \brief Gets an item of the templated type.
+  /*! \brief gets an item of the templated type.
    * \returns The currently selected `SceneType` item
    * \returns the first `SceneType` item found in the scene's list of items if the selected item is not a `SceneType`
    * \returns nullptr if there is no `SceneType` in the list.

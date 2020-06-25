@@ -713,7 +713,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
 /// \ingroup PkgSurfaceMeshIOFunc
 ///
-/// \brief Extracts the surface mesh from an input stream in ASCII or Binary PLY format
+/// \brief extracts the surface mesh from an input stream in ASCII or Binary PLY format
 ///        and appends it to the surface mesh `sm`.
 ///
 /// - the operator reads the vertex `point` property and the face
@@ -866,7 +866,7 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 
 /// \ingroup PkgSurfaceMeshIOFunc
 ///
-/// \brief Inserts the surface mesh in an output stream in PLY format.
+/// \brief inserts the surface mesh in an output stream in PLY format.
 ///
 /// If found, internal property maps with names "v:normal", "v:color" and "f:color" are inserted in the stream.
 ///

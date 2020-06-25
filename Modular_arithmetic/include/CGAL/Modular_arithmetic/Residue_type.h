@@ -197,7 +197,7 @@ public:
       return old_prime;
     }
 
-  /*! \brief return the current prime.  */
+  /*! \brief returns the current prime.  */
     static int get_current_prime(){
       return get_prime_int();
     }

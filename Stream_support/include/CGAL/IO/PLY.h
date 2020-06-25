@@ -253,7 +253,7 @@ bool read_PLY(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
- * \brief Reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -306,7 +306,7 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
- * \brief Reads the content of `fname` into `points` and `polygons`, using the \ref IOStreamPLY.
+ * \brief reads the content of `fname` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -468,7 +468,7 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
- * \brief Writes the content of `points` and `polygons` in  the file `fname`, using the \ref IOStreamPLY.
+ * \brief writes the content of `points` and `polygons` in  the file `fname`, using the \ref IOStreamPLY.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
