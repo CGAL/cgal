@@ -6,11 +6,11 @@ namespace CGAL {
   struct Siblings {
 
     template<class Node>
-    Node *operator()(Node *n) {
+    Node *operator()(Node *root, Node *n) {
 
-      // Null handler
+      // Passing null returns the first node
       if (nullptr == n)
-        return n;
+        return root;
 
       // If this node has no parent, it has no siblings
       if (nullptr == n->parent())
@@ -31,34 +31,42 @@ namespace CGAL {
   struct Depth_first {
 
     template<class Node>
-    Node *operator()(Node *n) {
+    Node *operator()(Node *root, Node *n) {
 
-      // Null handler
-      if (nullptr == n)
-        return n;
+      // Passing null returns the first node
+      if (nullptr == n) {
 
-      if (n->isLeaf()) {
+        return root;
+        // Find the deepest child on the left
+//        Node *first = root;
+//        while (!first->is_leaf())
+//          first = &(*first)[0];
+//        return first;
+      }
+
+      if (n->is_leaf()) {
+
+        Siblings siblings;
 
         // Check if this node is the last sibling
-        if (false) {
+        if (7 != n->index().to_ulong()) {
 
           // Return the next sibling
+          return (siblings(root, n));
 
         } else {
 
           // Return the next sibling of the parent
-
+          // FIXME: this should be able to search upwards at the last sibling
+          return (siblings(root, n->parent()));
         }
 
 
       } else {
 
         // Return the first child of this node
+        return &(*n)[0];
       }
-
-
-      // TODO: placeholder
-      return n;
 
     }
   };
