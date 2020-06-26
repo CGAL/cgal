@@ -775,10 +775,6 @@ public:
               {
                 parenthesis_pairing.pop();
               }
-              else if(next == pr.length() - 1 && prev == 0)
-              {
-                parenthesis_pairing.pop();
-              }
               else
               {
                 parenthesis_pairing.push(it->m_idx);
