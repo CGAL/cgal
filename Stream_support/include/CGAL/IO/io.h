@@ -82,6 +82,48 @@ enum Mode {ASCII = 0, PRETTY, BINARY};
 
 } // namespace IO
 
+#ifdef DOXYGEN_RUNNING
+/*!
+\ingroup IOstreamOperators
+
+\brief Inserts object `c` in the stream `os`. Returns `os`.
+\cgal defines output operators for classes that are derived
+from the class `ostream`. This allows to write to ostreams
+as `cout` or `cerr`, as well as to `std::ostringstream`
+and `std::ofstream`.
+The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
+
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+ostream& operator<<(ostream& os, Class c);
+
+/*!
+\ingroup IOstreamOperators
+
+\brief \cgal defines input operators for classes that are derived
+from the class `istream`. This allows to read from istreams
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
+
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+istream& operator>>(istream& is, Class c);
+#endif
+
 template <typename Dummy>
 struct IO_rep_is_specialized_aux
 {
