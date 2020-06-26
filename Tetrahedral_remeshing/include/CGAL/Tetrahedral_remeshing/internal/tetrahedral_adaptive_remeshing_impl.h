@@ -272,19 +272,65 @@ public:
 #endif
 
     std::size_t nb_slivers_peel = 0;
+    std::vector<std::pair<Cell_handle, std::array<bool, 4> > > peelable_cells;
     for (Cell_handle cit : tr().finite_cell_handles())
     {
+      std::array<bool, 4> facets_on_surface;
+      short count = 0;
       if(m_c3t3.is_in_complex(cit) && min_dihedral_angle(tr(), cit) < sliver_angle)
       {
         for (int i = 0; i < 4; ++i)
         {
           if (!m_c3t3.is_in_complex(cit->neighbor(i)))
           {
-            m_c3t3.remove_from_complex(cit);
-            ++nb_slivers_peel;
+            facets_on_surface[i] = true;
+            ++count;
+          }
+          else
+            facets_on_surface[i] = false;
+        }
+        if(count > 1)
+          peelable_cells.push_back(std::make_pair(cit, facets_on_surface));
+      }
+    }
+
+    for (auto c_i : peelable_cells)
+    {
+      Cell_handle c = c_i.first;
+      std::array<bool, 4> f_on_surface = c_i.second;
+
+      bool found = false;
+      Surface_patch_index patch;
+      for (int i = 0; i < 4; ++i)
+      {
+        if (f_on_surface[i])
+        {
+          Surface_patch_index spi = m_c3t3.surface_patch_index(c, i);
+          if (found && patch != spi)
+          {
+            found = false;
+            break;
+          }
+          else
+          {
+            found = true;
+            patch = spi;
           }
         }
       }
+      if(!found)
+        continue;
+
+      for (int i = 0; i < 4; ++i)
+      {
+        if(f_on_surface[i])
+          m_c3t3.remove_from_complex(c, i);
+        else
+          m_c3t3.add_to_complex(c, i, patch);
+      }
+
+      m_c3t3.remove_from_complex(c);
+      ++nb_slivers_peel;
     }
 
     CGAL_assertion(tr().tds().is_valid(true));
