@@ -1252,6 +1252,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
       CGAL::sqrt(CGAL::to_double(squared_length_3(tri_normal))));
     if(tri_normal_length <= FT(0))
       return false;
+
     tri_normal /= tri_normal_length;
 
     x += tri_normal.x(); y += tri_normal.y(); z += tri_normal.z();
@@ -1260,6 +1261,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
 
   if(num_normals < 1)
     return false;
+
   x /= static_cast<FT>(num_normals);
   y /= static_cast<FT>(num_normals);
   z /= static_cast<FT>(num_normals);
@@ -1288,11 +1290,17 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   CDT cdt(cdt_traits);
 
   std::vector< std::pair<Point_3,std::size_t> > points_and_ids;
+  std::vector<std::pair<std::size_t, std::size_t> > indices;
   for(std::size_t i =0; i< points.size()-1; ++i)
+  {
     points_and_ids.push_back( std::make_pair(points[i],i));
+    indices.push_back(std::make_pair(i, (i+1)%points.size()));
+  }
 
   cdt.insert(points_and_ids.begin(), points_and_ids.end());
-  cdt.insert_constraint(points.begin(), points.end());
+  cdt.insert_constraints(points.begin(), points.end(),
+                         indices.begin(), indices.end() );
+
 
   // sets mark is_external
   for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
@@ -1322,7 +1330,9 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
   if(cdt.dimension() != 2 ||
      cdt.number_of_vertices() != points.size()-1)
+  {
     return false;
+  }
 
   //fill the lambda
   for(typename CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(),
