@@ -163,7 +163,8 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false));
+      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false)
+        .use_2d_constrained_delaunay_triangulation(false));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
       assert(false);
