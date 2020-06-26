@@ -152,7 +152,7 @@ private:
   {
     std::unique_ptr<Neighborhood> neighborhood;
     std::unique_ptr<Planimetric_grid> grid;
-    std::unique<Local_eigen_analysis> eigen;
+    std::unique_ptr<Local_eigen_analysis> eigen;
     float voxel_size;
 
     Scale (const PointRange& input, PointMap point_map,
@@ -205,7 +205,7 @@ private:
   };
 
   Iso_cuboid_3 m_bbox;
-  std::vector<Scale*> m_scales;
+  std::vector<std::unique_ptr<Scale> > m_scales;
 
   const PointRange& m_input;
   PointMap m_point_map;
