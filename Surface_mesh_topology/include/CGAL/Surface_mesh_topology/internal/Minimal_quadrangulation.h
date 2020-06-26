@@ -532,8 +532,8 @@ public:
 
     if (!p.is_closed())
     {
-      std::cerr<<"Error: is_contractible requires a closed path."<<std::endl;
-      return false;
+      std::cerr<<"Error: is_simple_cycle requires a closed path."<<std::endl;
+      return true;
     }
 
     if (get_local_map().is_empty())
@@ -598,7 +598,6 @@ public:
         {
           Dart_const_handle dh = pr[i];
           auto dart_id = get_dart_id_relative_to(pr[i], pr[0]);
-          //TODO: remove debug output
           rb_nodes.emplace_back(i);
           auto& node = rb_nodes.back();
 

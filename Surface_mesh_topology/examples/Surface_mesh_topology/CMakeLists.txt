@@ -36,6 +36,7 @@ set(SOURCE_FILES
   path_homotopy_with_sm_and_polyhedron.cpp
   path_homotopy_with_symbols_2.cpp
   path_homotopy_with_symbols.cpp
+  path_simplicity_double_torus.cpp
   shortest_noncontractible_cycle_2.cpp
   shortest_noncontractible_cycle.cpp
   unsew_edgewidth_repeatedly.cpp
@@ -54,6 +55,7 @@ if(CGAL_Qt5_FOUND)
   target_link_libraries(path_homotopy_double_torus PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy_torus PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy_with_sm_and_polyhedron PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(path_simplicity_double_torus PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(shortest_noncontractible_cycle_2 PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(shortest_noncontractible_cycle PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(unsew_edgewidth_repeatedly PUBLIC CGAL::CGAL_Qt5)

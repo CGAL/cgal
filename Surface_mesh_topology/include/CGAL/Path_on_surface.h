@@ -1121,7 +1121,6 @@ public:
       ;
     /// It can be proved that the first match location is the length of match
     auto primitiveSize = itMatch - pp2.m_path.begin();
-    std::cout << pp1.length() << ' ' << primitiveSize << std::endl;
     CGAL_assertion(pp1.length() % primitiveSize == 0);
     pp1.cut(primitiveSize);
     CGAL_assertion(pp1.is_closed());
