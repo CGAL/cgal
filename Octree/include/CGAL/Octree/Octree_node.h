@@ -115,13 +115,13 @@ namespace CGAL {
       return (*m_children)[index];
     }
 
-    Range_iterator &begin() { return m_points_begin; }
+    Range_iterator &points_begin() { return m_points_begin; }
 
-    const Range_iterator &begin() const { return m_points_begin; }
+    const Range_iterator &points_begin() const { return m_points_begin; }
 
-    Range_iterator &end() { return m_points_end; }
+    Range_iterator &points_end() { return m_points_end; }
 
-    const Range_iterator &end() const { return m_points_end; }
+    const Range_iterator &points_end() const { return m_points_end; }
 
     Node *parent() { return m_parent; }
 
