@@ -21,6 +21,8 @@
 
 #include <CGAL/assertions.h>
 
+#include <memory>
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/cstdint.hpp>
 
@@ -48,11 +50,15 @@ namespace Classification {
   */
 
 template <typename GeomTraits, typename PointRange, typename PointMap>
-class Planimetric_grid
+class Planimetric_grid : public std::enable_shared_from_this< Planimetric_grid< GeomTraits, PointRange, PointMap> >
 {
 public:
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
+
+  std::shared_ptr<Planimetric_grid< GeomTraits, PointRange, PointMap> > get_ptr(){
+    return this->shared_from_this();
+  }
 
 private:
   typedef Image<std::vector<boost::uint32_t> > Image_indices;

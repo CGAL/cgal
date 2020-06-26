@@ -152,7 +152,7 @@ private:
   struct Scale
   {
     std::unique_ptr<Neighborhood> neighborhood;
-    std::unique_ptr<Planimetric_grid> grid;
+    std::shared_ptr<Planimetric_grid> grid;
     std::unique_ptr<Local_eigen_analysis> eigen;
     float voxel_size;
 
@@ -161,7 +161,7 @@ private:
            PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            std::size_t nb_scale,
-           Planimetric_grid* lower_grid = nullptr)
+           std::shared_ptr<Planimetric_grid> lower_grid = nullptr)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
@@ -188,9 +188,9 @@ private:
       t.start();
 
       if (lower_grid == nullptr)
-        grid = std::make_unique<Planimetric_grid> (range, point_map, bbox, this->voxel_size);
+        grid = std::make_shared<Planimetric_grid> (range, point_map, bbox, this->voxel_size);
       else
-        grid = std::unique_ptr<Planimetric_grid> (lower_grid);
+        grid = lower_grid->get_ptr();
       t.stop();
       CGAL_CLASSIFICATION_CERR << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
@@ -256,7 +256,7 @@ public:
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
-      m_scales.push_back (std::make_unique<Scale> (m_input, m_range, m_point_map, m_bbox, voxel_size, i, (m_scales[i-1]->grid).get()));
+      m_scales.push_back (std::make_unique<Scale> (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
     }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
@@ -374,6 +374,18 @@ public:
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
   /// @}
+
+   /// \cond SKIP_IN_MANUAL
+  virtual ~Mesh_feature_generator(){
+    clear();
+  }
+  /// \endcond
+
+private:
+
+  void clear(){
+    m_scales.clear();
+  }
 
 
 };
