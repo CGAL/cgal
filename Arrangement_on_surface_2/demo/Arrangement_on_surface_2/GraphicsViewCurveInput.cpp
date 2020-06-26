@@ -137,12 +137,17 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   if (event->button() == ::Qt::LeftButton)
   {
-    QPointF clickedPoint = this->snapPoint(event);
-    this->clickedPoints.push_back(clickedPoint);
+    QPointF point = this->snapPoint(event);
+
+    // only accept unique consecutive points
+    if (!this->clickedPoints.empty() && this->clickedPoints.front() == point)
+      return;
+    this->clickedPoints.push_back(point);
+
     if (this->clickedPoints.size() < static_cast<size_t>(this->numPoints))
     {
       if (this->clickedPoints.size() == 1) this->beginInput_();
-      this->pointsGraphicsItem.insert(clickedPoint);
+      this->pointsGraphicsItem.insert(point);
       this->updateVisualGuideNewPoint(this->clickedPoints);
     }
     else
@@ -235,7 +240,7 @@ PolylineInputMethod::PolylineInputMethod() :
 
 void PolylineInputMethod::beginInput()
 {
-  this->painterPath = {};
+  this->painterPath.clear();
   this->polylineGuide.setPath(this->painterPath);
   this->lastLine.setLine(0, 0, 0, 0);
   QPen pen = this->polylineGuide.pen();
@@ -384,6 +389,104 @@ FivePointConicInputMethod::FivePointConicInputMethod() :
 {
 }
 
+// BezierInputMethod
+BezierInputMethod::BezierInputMethod() : CurveInputMethod(CurveType::Bezier, -1)
+{
+  this->appendGraphicsItem(&(this->bezierGuide));
+  this->appendGraphicsItem(&(this->bezierOldGuide));
+}
+
+void BezierInputMethod::beginInput()
+{
+  this->painterOldPath.clear();
+  this->painterPath.clear();
+  this->bezierGuide.setPath(this->painterPath);
+  this->bezierOldGuide.setPath(this->painterOldPath);
+
+  QPen pen = this->bezierOldGuide.pen();
+  pen.setColor(this->color);
+  pen.setCosmetic(true);
+  this->bezierOldGuide.setPen(pen);
+
+  // TODO: set bezier guide color dynamically
+  pen = this->bezierGuide.pen();
+  pen.setColor(this->color);
+  pen.setCosmetic(true);
+  this->bezierGuide.setPen(QColorConstants::DarkGray);
+}
+
+static QPointF evalBezier(
+  const std::vector<QPointF>& control_points,
+  std::vector<QPointF>& cache, float t)
+{
+  // iterative de Casteljau Algorithm
+  cache.clear();
+
+  for (size_t j = 0; j + 1 < control_points.size(); j++)
+    cache.push_back(control_points[j] * (1.0f - t) + control_points[j + 1] * t);
+
+  for (size_t i = 1; i + 1 < control_points.size(); i++)
+    for (size_t j = 0; j + i + 1 < control_points.size(); j++)
+      cache[j] = cache[j] * (1.0f - t) + cache[j + 1] * t;
+
+  return cache[0];
+}
+
+static float approx_pixel_length(
+  const std::vector<QPointF>& control_points, const QTransform& worldTransform)
+{
+  float l = 0;
+  for (size_t i = 0; i + 1 < control_points.size(); i++)
+  {
+    QPointF p1 = worldTransform.map(control_points[i]);
+    QPointF p2 = worldTransform.map(control_points[i + 1]);
+    l += QLineF{p1, p2}.length();
+  }
+  return l;
+}
+
+static void updateBezierPainterPath(
+  const std::vector<QPointF>& controlPoints, std::vector<QPointF>& cache,
+  const QTransform& worldTransform, QPainterPath& painterPath)
+{
+  painterPath.clear();
+  if (controlPoints.size() < 2) return;
+
+  float pixel_len = approx_pixel_length(controlPoints, worldTransform);
+  static constexpr int PIXEL_DIV = 4;
+  int num_segs = std::max(1, static_cast<int>(pixel_len / PIXEL_DIV));
+
+  painterPath.moveTo(controlPoints[0]);
+  for (int i = 0; i < num_segs; i++)
+    painterPath.lineTo(
+      evalBezier(controlPoints, cache, static_cast<float>(i + 1) / num_segs));
+}
+
+void BezierInputMethod::updateVisualGuideMouseMoved(
+  const std::vector<QPointF>& clickedPoints, const QPointF& movePoint)
+{
+  this->controlPoints.clear();
+  std::copy(
+    clickedPoints.begin(), clickedPoints.end(),
+    std::back_inserter(this->controlPoints));
+  this->controlPoints.push_back(movePoint);
+
+  updateBezierPainterPath(
+    this->controlPoints, this->cache, this->getView()->transform(),
+    this->painterPath);
+
+  this->bezierGuide.setPath(this->painterPath);
+}
+
+void BezierInputMethod::updateVisualGuideNewPoint(
+  const std::vector<QPointF>& clickedPoints)
+{
+  updateBezierPainterPath(
+    clickedPoints, this->cache, this->getView()->transform(),
+    this->painterOldPath);
+  this->bezierOldGuide.setPath(this->painterPath);
+}
+
 template <typename ArrTraits>
 GraphicsViewCurveInput<ArrTraits>::GraphicsViewCurveInput(
   QObject* parent, QGraphicsScene* scene) :
@@ -455,6 +558,8 @@ void CurveGeneratorBase::generate(
   case CurveType::FivePointConicArc:
     obj = generateFivePointConicArc(clickedPoints);
     break;
+  case CurveType::Bezier:
+    obj = generateBezier(clickedPoints);
   default:
     break;
   }
@@ -498,6 +603,11 @@ CurveGeneratorBase::generateThreePointCircularArc(const std::vector<QPointF>&)
 }
 boost::optional<CGAL::Object>
 CurveGeneratorBase::generateFivePointConicArc(const std::vector<QPointF>&)
+{
+  return {};
+}
+boost::optional<CGAL::Object>
+CurveGeneratorBase::generateBezier(const std::vector<QPointF>&)
 {
   return {};
 }
@@ -773,6 +883,31 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   auto construct_curve = arrTraits.construct_curve_2_object();
   auto res = construct_curve(poly);
   return CGAL::make_object(res);
+}
+
+#include <iostream>
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+boost::optional<CGAL::Object> CurveGenerator<
+  Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
+  generateBezier(const std::vector<QPointF>& clickedPoints)
+{
+  using Traits =
+    Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>;
+
+  if (clickedPoints.size() < 2)
+    return {};
+
+  std::vector<typename RatKernel::Point_2> controlPoints;
+  controlPoints.reserve(clickedPoints.size());
+
+  CGAL::Qt::Converter<RatKernel> convert;
+  for (auto& point : clickedPoints)
+    controlPoints.push_back(convert(point));
+
+  return CGAL::make_object(
+    typename Traits::Curve_2{controlPoints.begin(), controlPoints.end()});
 }
 
 template class GraphicsViewCurveInput<Seg_traits>;

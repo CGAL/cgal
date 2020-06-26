@@ -144,22 +144,18 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
     {
       boost::optional<Point_2> leftPoint, rightPoint;
       if (e->left())
-      {
         leftPoint = e->left()->point();
-      }
 
       if (e->right())
-      {
         rightPoint = e->right()->point();
-      }
 
       Construct_x_monotone_subcurve_2<Traits> construct_x_monotone_subcurve_2;
       X_monotone_curve_2 curve =
         construct_x_monotone_subcurve_2(e->curve(), leftPoint, rightPoint);
 
       envelopeToUpdate->insert(curve);
-      if (leftPoint)  envelopeToUpdate->insert(*leftPoint);
-      if (rightPoint) envelopeToUpdate->insert(*rightPoint);
+      // TODO: visually show leftPoint and rightPoint
+      // the problem is they are not the actual curve points
     }
   }
 
@@ -201,4 +197,4 @@ template class EnvelopeCallback<Pol_arr>;
 template class EnvelopeCallback<Conic_arr>;
 template class EnvelopeCallback<Lin_arr>;
 template class EnvelopeCallback<Alg_seg_arr>;
-// template class EnvelopeCallback<Bezier_arr>;
+template class EnvelopeCallback<Bezier_arr>;

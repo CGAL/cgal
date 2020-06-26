@@ -68,9 +68,9 @@ public:
     return *this;
   }
 
-  void setScene( QGraphicsScene* scene_ )
+  void setScene( QGraphicsScene* scene_ ) override
   {
-    this->scene = scene_;
+    QGraphicsSceneMixin::setScene(scene_);
 
     // set the clipping rectangle
     if ( scene_ )
@@ -270,7 +270,8 @@ class ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKe
                                                                  NtTraits> > {
 
 public: // typedefs
-  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
+  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits >
+                                                        Traits;
   typedef ArrangementPainterOstreamBase< Traits >       Superclass;
   typedef typename Superclass::Point_2                  Point_2;
   typedef typename Superclass::Segment_2                Segment_2;
@@ -298,6 +299,9 @@ public:
 
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
+
+  std::vector<std::pair<double, double>>
+  getPoints(const X_monotone_curve_2& curve);
 
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
@@ -355,22 +359,40 @@ public:
   typedef Coefficient_                                  Coefficient;
   typedef typename CGAL::Arr_algebraic_segment_traits_2< Coefficient >
                                                         Traits;
+  typedef ArrangementPainterOstreamBase<Traits>         Super;
   typedef ArrangementPainterOstreamBase< Traits >       Superclass;
   typedef typename Traits::CKvA_2                       CKvA_2;
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef std::pair<double, double>                     Coord_2;
+  typedef std::vector<Coord_2>                          Coord_vec_2;
 
 public:
   /*! Constructor */
-  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()):
-    Superclass( p, clippingRectangle )
-  { }
+  ArrangementPainterOstream(QPainter* p, QRectF clippingRectangle = QRectF()) :
+      Superclass(p, clippingRectangle)
+  {
+  }
+
+  void setScene(QGraphicsScene* scene_) override
+  {
+    Super::setScene(scene_);
+    this->setupFacade();
+  }
+
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
 
 public: // methods
 
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve );
+
+  // Maybe move these functions to someplace else?
+  std::list<Coord_vec_2> getPointsList(const X_monotone_curve_2& curve);
+  QTransform getPointsListMapping();
+  QTransform getPointsListMapping(
+    const QTransform& worldTransform, const QGraphicsView* view);
+  void setupFacade();
 
   template < typename T >
   ArrangementPainterOstream& operator<<( const T& p )
@@ -380,7 +402,6 @@ public: // methods
   }
 
 protected:
-  void setupFacade( );
   void remapFacadePainter();
 };
 

@@ -38,14 +38,7 @@ public:
      *  adds the points to the vector
      */
   template < class Point >
-  void insert( const Point& point )
-  {
-	this->prepareGeometryChange( );
-
-	double x = CGAL::to_double( point.x( ) );
-	double y = CGAL::to_double( point.y( ) );
-	this->points.push_back( QPointF( x, y ) );
-  }
+  inline void insert( const Point& point );
 
   void clear( );
 
@@ -64,5 +57,25 @@ protected:
   QColor color;                       	/*!< QColor object for the curve */
 
 }; // class PointsGraphicsItem
+
+template <class Point>
+inline void PointsGraphicsItem::insert(const Point& point)
+{
+  this->prepareGeometryChange();
+
+  double x = CGAL::to_double(point.x());
+  double y = CGAL::to_double(point.y());
+  this->points.push_back(QPointF(x, y));
+}
+
+// TODO: clean this up
+#include "ArrangementTypes.h"
+template <>
+inline void PointsGraphicsItem::insert<Bezier_point>(const Bezier_point& point)
+{
+  this->prepareGeometryChange();
+  auto xy = point.approximate();
+  this->points.push_back(QPointF(xy.first, xy.second));
+}
 
 #endif // POINTS_GRAPHICS_ITEM_H

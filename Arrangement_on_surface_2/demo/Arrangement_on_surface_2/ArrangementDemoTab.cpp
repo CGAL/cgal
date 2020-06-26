@@ -320,6 +320,9 @@ void ArrangementDemoTab<Arr_>::setupCallbacks()
     this->splitEdgeCallback.get(), SIGNAL(modelChanged()), this,
     SIGNAL(modelChanged()));
   QObject::connect(
+    this->mergeEdgeCallback.get(), SIGNAL(modelChanged()), this,
+    SIGNAL(modelChanged()));
+  QObject::connect(
     this, SIGNAL(modelChanged()), this, SLOT(slotModelChanged()));
 }
 
@@ -457,18 +460,36 @@ CGAL::Bbox_2 curvesBbox(
   return {};
 }
 
-template <class Arr_>
-void ArrangementDemoTab<Arr_>::adjustViewport()
+template <typename Arr>
+static CGAL::Bbox_2 pointsBbox(const std::unique_ptr<Arr>& arr)
 {
-  CGAL::Bbox_2 bb = {};
-  for (auto it = arrangement->vertices_begin();
-       it != arrangement->vertices_end(); it++)
+  CGAL::Bbox_2 bb;
+  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
   {
     double x = CGAL::to_double(it->point().x());
     double y = CGAL::to_double(it->point().y());
     bb += makeFinite({x, y, x, y});
   }
+  return bb;
+}
 
+template <>
+CGAL::Bbox_2 pointsBbox<Bezier_arr>(const std::unique_ptr<Bezier_arr>& arr)
+{
+  CGAL::Bbox_2 bb;
+  for (auto it = arr->vertices_begin(); it != arr->vertices_end(); it++)
+  {
+    std::pair<double, double> p = it->point().approximate();
+    bb += makeFinite({p.first, p.second, p.first, p.second});
+  }
+  return bb;
+}
+
+template <class Arr_>
+void ArrangementDemoTab<Arr_>::adjustViewport()
+{
+  CGAL::Bbox_2 bb = {};
+  bb += pointsBbox(this->arrangement);
   bb += curvesBbox(this->arrangement);
 
   if (!isFinite(bb))
@@ -499,4 +520,4 @@ template class ArrangementDemoTab<Pol_arr>;
 template class ArrangementDemoTab<Conic_arr>;
 template class ArrangementDemoTab<Lin_arr>;
 template class ArrangementDemoTab<Alg_seg_arr>;
-// template class ArrangementDemoTab<Bezier_arr>;
+template class ArrangementDemoTab<Bezier_arr>;

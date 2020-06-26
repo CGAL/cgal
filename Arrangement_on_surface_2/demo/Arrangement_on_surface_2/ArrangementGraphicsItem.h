@@ -100,11 +100,6 @@ protected:
   template <typename TTraits>
   void paint(QPainter* painter, TTraits traits);
 
-  template <typename Coefficient_>
-  void paint(
-    QPainter* painter,
-    CGAL::Arr_algebraic_segment_traits_2<Coefficient_> traits);
-
   void updateBoundingBox();
 
   template <typename TTraits>
@@ -115,8 +110,6 @@ protected:
     CGAL::Arr_Bezier_curve_traits_2<RatK, AlgK, Nt, BoundingTratits> traits);
 
   void paintFaces(QPainter* painter);
-  void paintFaces(QPainter* painter, CGAL::Arr_oblivious_side_tag);
-  void paintFaces(QPainter* painter, CGAL::Arr_open_side_tag);
   void paintFace(Face_handle f, QPainter* painter);
 
   void visit_ccb_faces(Face_handle& fh, QPainter* painter);

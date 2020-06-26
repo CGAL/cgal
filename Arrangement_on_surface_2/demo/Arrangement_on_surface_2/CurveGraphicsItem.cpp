@@ -159,12 +159,31 @@ void CurveGraphicsItem<ArrTraits>::updateBoundingBox()
   this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
 }
 
+template <>
+void CurveGraphicsItem<Bezier_traits>::updateBoundingBox()
+{
+  this->prepareGeometryChange();
+
+  this->boundingBox = {};
+  for (auto& curve : this->curves)
+  {
+    // some algebraic curves throw exceptions when asking about their bbox
+    try
+    {
+      this->boundingBox += curve.supporting_curve().bbox();
+    }
+    catch (...) { }
+  }
+
+  this->boundingBox = remove_infs(this->boundingBox, this->viewportRect());
+}
+
 template class CurveGraphicsItem<Seg_traits>;
 template class CurveGraphicsItem<Pol_traits>;
 template class CurveGraphicsItem<Conic_traits>;
 template class CurveGraphicsItem<Lin_traits>;
 template class CurveGraphicsItem<Alg_seg_traits>;
-// template class CurveGraphicsItem<Bezier_traits>;
+template class CurveGraphicsItem<Bezier_traits>;
 
 } // namespace Qt
 } // namespace CGAL

@@ -42,7 +42,6 @@ public:
 
 protected:
   VerticalRayShootCallbackBase( QObject* parent_ );
-  using Callback::scene;
   bool shootingUp;
 }; // class VerticalRayShootCallbackBase
 
@@ -99,24 +98,24 @@ public:
 
   void slotModelChanged( );
 
-  virtual void setEdgeWidth( int width )
+  void setEdgeWidth( int width ) override
   {
     this->highlightedCurves->setEdgeWidth( width );
     this->rayGraphicsItem.setWidth( width );
   }
 
-  virtual void setEdgeColor( const QColor& color )
+  void setEdgeColor( const QColor& color ) override
   {
     this->highlightedCurves->setEdgeColor( color );
     this->rayGraphicsItem.setColor( color );
   }
 
-  virtual const QColor& edgeColor( ) const
+  const QColor& edgeColor( ) const override
   {
     return this->highlightedCurves->edgeColor( );
   }
 
-  virtual int edgeWidth( ) const
+  int edgeWidth( ) const override
   {
     return this->highlightedCurves->edgeWidth( );
   }

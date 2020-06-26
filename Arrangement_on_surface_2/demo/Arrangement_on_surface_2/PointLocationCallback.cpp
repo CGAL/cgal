@@ -196,4 +196,4 @@ template class PointLocationCallback<Pol_arr>;
 template class PointLocationCallback<Conic_arr>;
 template class PointLocationCallback<Lin_arr>;
 template class PointLocationCallback<Alg_seg_arr>;
-// template class PointLocationCallback<Bezier_arr>;
+template class PointLocationCallback<Bezier_arr>;

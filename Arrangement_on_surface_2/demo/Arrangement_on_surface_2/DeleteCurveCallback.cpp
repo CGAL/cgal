@@ -136,4 +136,4 @@ template class DeleteCurveCallback<Pol_arr>;
 template class DeleteCurveCallback<Conic_arr>;
 template class DeleteCurveCallback<Lin_arr>;
 template class DeleteCurveCallback<Alg_seg_arr>;
-// template class DeleteCurveCallback<Bezier_arr>;
+template class DeleteCurveCallback<Bezier_arr>;

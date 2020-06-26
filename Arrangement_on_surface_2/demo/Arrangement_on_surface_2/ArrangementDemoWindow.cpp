@@ -98,6 +98,7 @@ void ArrangementDemoWindow::setupUi()
   this->inputTypeGroup->addAction(this->ui->actionConicFivePoint);
   this->inputTypeGroup->addAction(this->ui->actionRay);
   this->inputTypeGroup->addAction(this->ui->actionLine);
+  this->inputTypeGroup->addAction(this->ui->actionBezier);
 }
 
 template <class T>
@@ -117,7 +118,7 @@ static constexpr ArrangementDemoWindow::TraitsType traitFromType()
   else if (is_same<T, Conic_arr>::value) return TraitsType::CONIC_TRAITS;
   else if (is_same<T, Lin_arr>::value) return TraitsType::LINEAR_TRAITS;
   else if (is_same<T, Alg_seg_arr>::value) return TraitsType::ALGEBRAIC_TRAITS;
-  // else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
+  else if (is_same<T, Bezier_arr>::value) return TraitsType::BEZIER_TRAITS;
   else return TraitsType::NONE;
 }
 
@@ -146,9 +147,9 @@ static void visitTraitsType(ArrangementDemoWindow::TraitsType tt, Lambda lambda)
   case TraitsType::ALGEBRAIC_TRAITS:
     lambda(TypeHolder<Alg_seg_arr>{});
     break;
-  // case TraitsType::BEZIER_TRAITS:
-  //   lambda(TypeHolder<Bezier_arr>{});
-  //   break;
+  case TraitsType::BEZIER_TRAITS:
+    lambda(TypeHolder<Bezier_arr>{});
+    break;
   }
 }
 
@@ -160,7 +161,7 @@ static void forEachTraitsType(Lambda lambda)
   lambda(TypeHolder<Lin_arr>{});
   lambda(TypeHolder<Conic_arr>{});
   lambda(TypeHolder<Alg_seg_arr>{});
-  // lambda(TypeHolder<Bezier_arr>{});
+  lambda(TypeHolder<Bezier_arr>{});
 }
 
 QString ArrangementDemoWindow::makeTabLabel(TraitsType tt)
@@ -253,6 +254,8 @@ void ArrangementDemoWindow::hideInsertMethods()
   this->ui->actionLine->setChecked(false);
   this->ui->actionPolyline->setVisible(false);
   this->ui->actionPolyline->setChecked(false);
+  this->ui->actionBezier->setVisible(false);
+  this->ui->actionBezier->setChecked(false);
 }
 
 void ArrangementDemoWindow::showInsertMethods()
@@ -291,6 +294,8 @@ void ArrangementDemoWindow::showInsertMethods()
     this->ui->actionAddAlgebraicCurve->setVisible(true);
     break;
   case BEZIER_TRAITS:
+    this->ui->actionBezier->setVisible(true);
+    this->ui->actionBezier->activate(QAction::Trigger);
     break;
   }
 }
@@ -319,6 +324,8 @@ void ArrangementDemoWindow::updateInputType(QAction* a)
     curveType = CurveType::ThreePointCircularArc;
   else if (a == this->ui->actionConicFivePoint)
     curveType = CurveType::FivePointConicArc;
+  else if (a == this->ui->actionBezier)
+    curveType = CurveType::Bezier;
 
   tab->activateCurveInputCallback(curveType);
 }

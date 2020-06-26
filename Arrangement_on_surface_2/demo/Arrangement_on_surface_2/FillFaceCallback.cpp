@@ -193,4 +193,4 @@ template class FillFaceCallback<Pol_arr>;
 template class FillFaceCallback<Conic_arr>;
 template class FillFaceCallback<Lin_arr>;
 template class FillFaceCallback<Alg_seg_arr>;
-// template class FillFaceCallback<Bezier_arr>;
+template class FillFaceCallback<Bezier_arr>;

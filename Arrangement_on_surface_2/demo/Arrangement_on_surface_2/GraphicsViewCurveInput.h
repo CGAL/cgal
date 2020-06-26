@@ -18,6 +18,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <tuple>
 #include <type_traits>
+#include <vector>
 
 #include "Callback.h"
 #include "GraphicsSceneMixin.h"
@@ -40,6 +41,8 @@ template <typename T>
 class Arr_polyline_traits_2;
 template <typename T, typename U, typename I>
 class Arr_conic_traits_2;
+template <typename T, typename U, typename I, typename S>
+class Arr_Bezier_curve_traits_2;
 template <typename T>
 class Arr_linear_traits_2;
 template <typename T>
@@ -60,6 +63,7 @@ enum class CurveType
   ThreePointCircularArc,
   FivePointConicArc,
   AlgebraicEquation,
+  Bezier,
 };
 
 class CurveGeneratorBase : public QObject
@@ -92,6 +96,9 @@ public:
 
   virtual boost::optional<CGAL::Object>
   generateFivePointConicArc(const std::vector<QPointF>&);
+
+  virtual boost::optional<CGAL::Object>
+  generateBezier(const std::vector<QPointF>&);
 
 Q_SIGNALS:
   void generate(CGAL::Object);
@@ -203,6 +210,17 @@ struct CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>> :
 
 private:
   boost::optional<CGAL::Object> generateEllipse_(const QPointF&, float, float);
+};
+
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+struct CurveGenerator<
+  Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>> :
+    public CurveGeneratorBase
+{
+  boost::optional<CGAL::Object>
+  generateBezier(const std::vector<QPointF>&) override;
 };
 
 class CurveInputMethod : public QGraphicsSceneMixin
@@ -351,10 +369,23 @@ public:
   FivePointConicInputMethod();
 };
 
-class AlgebraicEquationInputMethod : public CurveInputMethod
+class BezierInputMethod: public CurveInputMethod
 {
 public:
-  AlgebraicEquationInputMethod();
+  BezierInputMethod();
+  void beginInput() override;
+  void updateVisualGuideNewPoint(const std::vector<QPointF>&) override;
+  void updateVisualGuideMouseMoved(
+    const std::vector<QPointF>& clickedPoints,
+    const QPointF& movePoint) override;
+
+private:
+  QGraphicsPathItem bezierOldGuide;
+  QGraphicsPathItem bezierGuide;
+  QPainterPath painterOldPath;
+  QPainterPath painterPath;
+  std::vector<QPointF> controlPoints;
+  std::vector<QPointF> cache;
 };
 
 class GraphicsViewCurveInputBase :
@@ -423,6 +454,15 @@ struct GraphicsViewCurveInputTypeHelper<
 {
   using InputMethodTuple =
     std::tuple<LineInputMethod, CircleInputMethod, EllipseInputMethod>;
+};
+
+template <
+  typename RatKernel, typename AlgKernel, typename NtTraits,
+  typename BoundingTraits>
+struct GraphicsViewCurveInputTypeHelper<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits, BoundingTraits>>
+{
+  using InputMethodTuple = std::tuple<BezierInputMethod>;
 };
 
 template <typename ArrTraits>

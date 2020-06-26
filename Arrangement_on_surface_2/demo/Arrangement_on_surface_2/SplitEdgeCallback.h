@@ -85,9 +85,6 @@ protected:
 
   template < class TTraits >
   void splitEdges( const Point_2& pt, TTraits traits );
-  template < typename RatKernel, typename AlgKernel, typename NtTraits >
-  void splitEdges( const Point_2& pt,
-                   CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits> traits);
 
   template < class Coefficient_ >
   void splitEdges( const Point_2& pt,

@@ -63,6 +63,7 @@
    <addaction name="actionLine"/>
    <addaction name="actionCircle"/>
    <addaction name="actionEllipse"/>
+   <addaction name="actionBezier"/>
    <addaction name="actionConicThreePoint"/>
    <addaction name="actionConicFivePoint"/>
    <addaction name="actionAddAlgebraicCurve"/>
@@ -399,6 +400,21 @@
    </property>
    <property name="toolTip">
     <string>Five Point Conic</string>
+   </property>
+  </action>
+  <action name="actionBezier">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_segment.xpm</normaloff>:/icons/demo_conic_segment.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Bezier</string>
+   </property>
+   <property name="toolTip">
+    <string>Bezier</string>
    </property>
   </action>
   <action name="actionAddAlgebraicCurve">

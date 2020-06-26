@@ -119,13 +119,35 @@ SplitEdgeCallback<Arr_>::mousePressEvent( QGraphicsSceneMouseEvent* event )
   this->splitEdges( clickedPoint, Traits( ) );
 }
 
+template <typename TTraits, typename Point>
+static auto construct_segment(const Point& p1, const Point& p2)
+{
+  TTraits traits;
+  auto construct_x_monotone_curve_2 =
+    traits.construct_x_monotone_curve_2_object();
+  return construct_x_monotone_curve_2(p1, p2);
+}
+
+template <>
+auto construct_segment<Bezier_traits, Bezier_point>(
+  const Bezier_point& p1, const Bezier_point& p2)
+{
+  Bezier_traits traits;
+  Bezier_point points[] = {p1, p2};
+  Bezier_traits::Curve_2 curve{points, points + 2};
+  auto make_x_monotone = traits.make_x_monotone_2_object();
+  std::vector<CGAL::Object> curves;
+  make_x_monotone(curve, std::back_inserter(curves));
+  typename Bezier_traits::X_monotone_curve_2 segment;
+  CGAL::assign(segment, curves[0]);
+  return segment;
+}
+
 template <typename Arr_>
 template < typename TTraits >
 void SplitEdgeCallback<Arr_>::
 splitEdges( const Point_2& clickedPoint, TTraits traits )
 {
-  typename TTraits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2 =
-    traits.construct_x_monotone_curve_2_object( );
   if ( ! this->hasFirstPoint )
   {
     this->p1 = clickedPoint;
@@ -135,7 +157,7 @@ splitEdges( const Point_2& clickedPoint, TTraits traits )
   {
     this->p2 = clickedPoint;
     X_monotone_curve_2 splitCurve =
-      construct_x_monotone_curve_2( this->p1, this->p2 );
+      construct_segment<TTraits>(this->p1, this->p2);
     for ( Halfedge_iterator hei = this->arr->halfedges_begin( );
           hei != this->arr->halfedges_end( ); ++hei )
     {
@@ -280,4 +302,4 @@ template class SplitEdgeCallback<Pol_arr>;
 template class SplitEdgeCallback<Conic_arr>;
 template class SplitEdgeCallback<Lin_arr>;
 template class SplitEdgeCallback<Alg_seg_arr>;
-// template class SplitEdgeCallback<Bezier_arr>;
+template class SplitEdgeCallback<Bezier_arr>;

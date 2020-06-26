@@ -64,7 +64,6 @@ protected:
 
   Compute_squared_distance_2< Traits > squaredDistance;
   CGAL::Qt::Converter< Kernel > convert;
-  QGraphicsScene* scene;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurve2;
   Arrangement* arr;

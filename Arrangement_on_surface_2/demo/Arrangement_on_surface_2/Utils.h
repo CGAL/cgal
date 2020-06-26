@@ -12,20 +12,19 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Qt/Converter.h>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsView>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
+#include <QGraphicsSceneMouseEvent>
 
 #include "ArrangementDemoGraphicsView.h"
 #include "ArrangementTypes.h"
 #include "GraphicsSceneMixin.h"
 
 class QGraphicsScene;
+class QGraphicsSceneMouseEvent;
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF( Approximate_2 )
 
@@ -104,7 +103,7 @@ class ArrTraitsAdaptor<
 public:
   typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
     ArrTraits;
-  typedef AlgKernel Kernel;
+  typedef RatKernel Kernel;
   typedef typename ArrTraits::Point_2 Point_2;
   typedef typename Kernel::FT CoordinateType;
 };
@@ -186,12 +185,24 @@ protected:
   Traits traits;
 };
 
-// template <typename RatKernel, class AlgKernel, class NtTraits>
-// struct Arr_compute_y_at_x_2<
-//   CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
-// {
-//   double approx(const X_monotone_curve_2& curve, const CoordinateType& x);
-// };
+template <typename RatKernel, class AlgKernel, class NtTraits>
+struct Arr_compute_y_at_x_2<
+  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
+    public QGraphicsSceneMixin
+{
+  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
+    Traits;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Traits::Rational Rational;
+  typedef typename Traits::Algebraic Algebraic;
+  typedef typename Traits::Point_2 Point_2;
+
+  Algebraic operator()(
+    const X_monotone_curve_2& curve, const Rational& x, Point_2* out = nullptr);
+
+  Algebraic get_t(const X_monotone_curve_2& curve, const Rational& x);
+  double approx(const X_monotone_curve_2& curve, const Rational& x);
+};
 
 template <class ArrTraits>
 class Compute_squared_distance_2_base : public QGraphicsSceneMixin
@@ -298,27 +309,28 @@ public: // methods
 };
 
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-class Compute_squared_distance_2< CGAL::Arr_Bezier_curve_traits_2< RatKernel,
-                                                            AlgKernel,
-                                                            NtTraits > > :
-  public Compute_squared_distance_2_base< CGAL::Arr_Bezier_curve_traits_2< RatKernel,
-                                                                    AlgKernel,
-                                                                    NtTraits > > {
+class Compute_squared_distance_2<
+  CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>> :
+    public Compute_squared_distance_2_base<
+      CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
+{
 public:
-  typedef AlgKernel                                     Kernel;
-  typedef CGAL::Arr_Bezier_curve_traits_2< RatKernel, AlgKernel, NtTraits > Traits;
-  typedef Compute_squared_distance_2_base< Traits >     Superclass;
+  typedef RatKernel Kernel;
+  typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
+    Traits;
+  typedef Compute_squared_distance_2_base<Traits> Superclass;
   // _Conic_point_2< AlgKernel > : public AlgKernel::Point_2
-  typedef typename Traits::Point_2                      Conic_point_2;
-  typedef typename Kernel::FT                           FT;
-  typedef typename Kernel::Point_2                      Point_2;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename Traits::Curve_2                      Curve_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Traits::Point_2 Conic_point_2;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Traits::Curve_2 Curve_2;
+  typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
 
 public: // methods
-  double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const;
+  double operator()(const Point_2& p, const X_monotone_curve_2& c) const;
 };
+
 template <typename Coefficient_ >
 class Compute_squared_distance_2< CGAL::Arr_algebraic_segment_traits_2<
                                     Coefficient_ > > :
@@ -351,7 +363,6 @@ public:
 
 };
 
-// TODO: Make Construct_x_monotone_subcurve_2 more generic
 template <typename ArrTraits>
 class Construct_x_monotone_subcurve_2
 {
@@ -369,8 +380,6 @@ public:
                                                         CoordinateType;
   typedef typename ArrTraits::Point_2                   Point_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
-  //typedef typename Kernel::Line_2 Line_2;
-  //typedef typename Kernel::Compute_y_at_x_2 Compute_y_at_x_2;
 
   Construct_x_monotone_subcurve_2( );
 
@@ -405,9 +414,21 @@ class Construct_x_monotone_subcurve_2< CGAL::Arr_conic_traits_2< RatKernel,
                                                                  NtTraits > >
 {
 public:
-  typedef CGAL::Arr_conic_traits_2< RatKernel, AlgKernel, NtTraits > ArrTraits;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraits::Point_2 Point_2;
+  typedef CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>
+                                                        ArrTraits;
+  typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename ArrTraits::Split_2                   Split_2;
+  typedef typename ArrTraits::Intersect_2               Intersect_2;
+  typedef typename ArrTraits::Multiplicity              Multiplicity;
+  typedef typename ArrTraits::Construct_min_vertex_2    Construct_min_vertex_2;
+  typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
+  typedef typename ArrTraits::Compare_x_2               Compare_x_2;
+  typedef typename Kernel::FT                           FT;
+  typedef typename ArrTraitsAdaptor< ArrTraits >::CoordinateType
+                                                        CoordinateType;
+  typedef typename ArrTraits::Point_2                   Point_2;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
 
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
@@ -424,17 +445,33 @@ class Construct_x_monotone_subcurve_2<
 {
 public:
   typedef CGAL::Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>
-    ArrTraits;
-  typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename ArrTraits::Point_2 Point_2;
+                                                        ArrTraits;
+  typedef typename ArrTraits::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename ArrTraits::Split_2                   Split_2;
+  typedef typename ArrTraits::Intersect_2               Intersect_2;
+  typedef typename ArrTraits::Multiplicity              Multiplicity;
+  typedef typename ArrTraits::Construct_min_vertex_2    Construct_min_vertex_2;
+  typedef typename ArrTraits::Construct_max_vertex_2    Construct_max_vertex_2;
+  typedef typename ArrTraits::Compare_x_2               Compare_x_2;
+  typedef typename ArrTraits::Point_2                   Point_2;
+
+  Construct_x_monotone_subcurve_2();
 
   /*
     Return the subcurve of curve bracketed by pLeft and pRight.
   */
   X_monotone_curve_2 operator()(
     const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-    const boost::optional<Point_2>& pRight) {}
+    const boost::optional<Point_2>& pRight);
 
+protected:
+  ArrTraits traits;
+  Intersect_2 intersect_2;
+  Split_2 split_2;
+  Compare_x_2 compare_x_2;
+  Arr_compute_y_at_x_2< ArrTraits > compute_y_at_x;
+  Construct_min_vertex_2 construct_min_vertex_2;
+  Construct_max_vertex_2 construct_max_vertex_2;
 }; // class Construct_x_monotone_subcurve_2 for Arr_conic_traits_2
 
 // FIXME: return Traits::Point_2 instead of Kernel::Point_2

@@ -49,9 +49,9 @@ VerticalRayShootCallback<Arr_>::VerticalRayShootCallback(
 template <typename Arr_>
 void VerticalRayShootCallback<Arr_>::setScene(QGraphicsScene* scene_)
 {
-  this->scene = scene_;
+  CGAL::Qt::Callback::setScene(scene_);
   this->highlightedCurves->setScene(scene_);
-  if (this->scene)
+  if (scene_)
   {
     this->scene->addItem(this->highlightedCurves);
     this->scene->addItem(&this->rayGraphicsItem);
@@ -312,4 +312,4 @@ template class VerticalRayShootCallback<Pol_arr>;
 template class VerticalRayShootCallback<Conic_arr>;
 template class VerticalRayShootCallback<Lin_arr>;
 template class VerticalRayShootCallback<Alg_seg_arr>;
-// template class VerticalRayShootCallback<Bezier_arr>;
+template class VerticalRayShootCallback<Bezier_arr>;

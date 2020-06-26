@@ -10,7 +10,7 @@ template <typename Arr_>
 MergeEdgeCallback<Arr_>::MergeEdgeCallback(
   Arrangement* arr_, QObject* parent_) :
     CGAL::Qt::Callback(parent_),
-    scene(NULL), highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()),
+    highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()),
     highlightedCurve2(new CGAL::Qt::CurveGraphicsItem<Traits>()), arr(arr_),
     isFirst(true)
 {
@@ -29,7 +29,7 @@ void MergeEdgeCallback<Arr_>::setScene(QGraphicsScene* scene_)
   this->highlightedCurve2->setScene(scene_);
   this->squaredDistance.setScene(scene_);
 
-  if (this->scene)
+  if (scene_)
   {
     this->scene->addItem(this->highlightedCurve);
     this->scene->addItem(this->highlightedCurve2);
@@ -178,4 +178,4 @@ template class MergeEdgeCallback<Pol_arr>;
 template class MergeEdgeCallback<Conic_arr>;
 template class MergeEdgeCallback<Lin_arr>;
 template class MergeEdgeCallback<Alg_seg_arr>;
-// template class MergeEdgeCallback<Bezier_arr>;
+template class MergeEdgeCallback<Bezier_arr>;

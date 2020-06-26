@@ -258,6 +258,24 @@ operator<<( const X_monotone_curve_2& curve )
 }
 
 // Instantiation of Arr_Bezier_traits_2
+template <typename RatKernel, class AlgKernel, class NtTraits>
+std::vector<std::pair<double, double>>
+ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
+  RatKernel, AlgKernel, NtTraits>>::getPoints(const X_monotone_curve_2& curve)
+{
+  std::pair<double, double> param_range = curve.parameter_range();
+  auto&& supporting_curve = curve.supporting_curve();
+
+  std::vector<std::pair<double, double>> sampled_points;
+  //TODO: get adaptive number of samples
+  size_t number_of_samples = 100 * (param_range.second - param_range.first);
+  sampled_points.reserve(number_of_samples);
+
+  supporting_curve.sample(
+    param_range.first, param_range.second, number_of_samples,
+    std::back_inserter(sampled_points));
+  return sampled_points;
+}
 
 template <typename RatKernel, class AlgKernel, class NtTraits>
 ArrangementPainterOstream<
@@ -265,6 +283,16 @@ ArrangementPainterOstream<
 ArrangementPainterOstream<CGAL::Arr_Bezier_curve_traits_2<
   RatKernel, AlgKernel, NtTraits>>::operator<<(const X_monotone_curve_2& curve)
 {
+  auto sampled_points = this->getPoints(curve);
+  if (sampled_points.empty()) return *this;
+
+  QPainterPath painterPath;
+  painterPath.moveTo(sampled_points[0].first, sampled_points[0].second);
+
+  for (auto& p : sampled_points)
+    painterPath.lineTo(p.first, p.second);
+
+  this->qp->drawPath(painterPath);
   return *this;
 }
 
@@ -332,10 +360,24 @@ template <typename Coefficient_>
 void ArrangementPainterOstream<
   CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::remapFacadePainter()
 {
-  QGraphicsView* view = this->getView();
-  QRectF viewport = this->viewportRect();
+  this->qp->setTransform(this->getPointsListMapping());
+}
 
+template <typename Coefficient_>
+QTransform ArrangementPainterOstream<
+  CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::getPointsListMapping()
+{
   auto worldTransform = this->qp->transform();
+  return this->getPointsListMapping(worldTransform, this->getView());
+}
+
+template <typename Coefficient_>
+QTransform
+ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+  getPointsListMapping(
+    const QTransform& worldTransform, const QGraphicsView* view)
+{
+  QRectF viewport = ArrangementDemoGraphicsView::viewportRect(view);
 
   // (0, 0) ==> map(topLeft)
   QPointF dxdy = worldTransform.map(viewport.topLeft());
@@ -353,7 +395,21 @@ void ArrangementPainterOstream<
   float m22 = (p2.y() - dy) / view->height();
   float m12 = (p1.y() - dy) / view->width();
 
-  this->qp->setTransform(QTransform{m11, m12, m21, m22, dx, dy});
+  return QTransform{m11, m12, m21, m22, dx, dy};
+}
+
+template <typename Coefficient_>
+auto ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<
+  Coefficient_>>::getPointsList(const X_monotone_curve_2& curve)
+  -> std::list<Coord_vec_2>
+{
+  typedef Curve_renderer_facade<CKvA_2> Facade;
+  typedef std::pair<double, double> Coord_2;
+  typedef std::vector<Coord_2> Coord_vec_2;
+
+  std::list<Coord_vec_2> points;
+  Facade::instance().draw(curve, points);
+  return points;
 }
 
 template < typename Coefficient_ >
@@ -361,13 +417,7 @@ ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >&
 ArrangementPainterOstream<CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >::
 operator<<( const X_monotone_curve_2& curve )
 {
-  typedef Curve_renderer_facade<CKvA_2> Facade;
-  typedef std::pair<double, double> Coord_2;
-  typedef std::vector<Coord_2> Coord_vec_2;
-  this->setupFacade();
-
-  std::list<Coord_vec_2> points;
-  Facade::instance().draw(curve, points);
+  std::list<Coord_vec_2> points = this->getPointsList(curve);
 
   this->qp->save();
   this->remapFacadePainter();
@@ -393,18 +443,17 @@ operator<<( const X_monotone_curve_2& curve )
   return *this;
 }
 
-template < typename Coefficient_ >
-void
-ArrangementPainterOstream< CGAL::Arr_algebraic_segment_traits_2<Coefficient_> >::
-setupFacade( )
+template <typename Coefficient_>
+void ArrangementPainterOstream<
+  CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
+  setupFacade()
 {
-  typedef Curve_renderer_facade<CKvA_2> Facade;
   QGraphicsView* view = this->getView();
-  QRectF viewport = this->viewportRect( );
-  CGAL::Bbox_2 bbox = this->convert( viewport ).bbox( );
+  typedef Curve_renderer_facade<CKvA_2> Facade;
+  QRectF viewport = ArrangementDemoGraphicsView::viewportRect(view);
+  CGAL::Bbox_2 bbox = this->convert(viewport).bbox();
   Facade::setup(bbox, view->width(), view->height());
 }
-
 
 template class ArrangementPainterOstream<Seg_traits>;
 template class ArrangementPainterOstream<Pol_traits>;
