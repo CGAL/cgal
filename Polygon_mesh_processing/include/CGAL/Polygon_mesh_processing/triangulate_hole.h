@@ -381,9 +381,11 @@ bool use_dt3 =
          tracer,
          choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits))))
 #endif
+    {
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
+    }
 
     CGAL_assertion(holes.empty());
     return tracer.out;

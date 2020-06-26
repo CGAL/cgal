@@ -1208,7 +1208,7 @@ public:
  * Triangulate hole by using a cdt_2
  ************************************************************************/
 // /!\ points.first == points.last
-// \todo poitns.size() should only be computed once
+
 
 template <
   typename PointRange, //need size()
@@ -1235,7 +1235,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   FT x = FT(0), y = FT(0), z = FT(0);
   std::size_t num_normals = 0;
   const Point_3& ref_point = points[0];
-  for (std::size_t i = 1; i < points.size() - 1; ++i) {
+  std::size_t size = points.size()-1;
+  for (std::size_t i = 1; i < size; ++i) {
     const std::size_t ip = i + 1;
 
     const Point_3& p1 = ref_point; // 3 points, which form a triangle
@@ -1278,7 +1279,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   if(!is_simple_2(points.begin(), points.end()-1, p_traits))
      return false;
 
-  Lookup_table_map<int> lambda(static_cast<int>(points.size())-1,-1);
+  Lookup_table_map<int> lambda(static_cast<int>(size),-1);
   //Create and fill the cdt_2
   typedef CGAL::Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
   typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fb1;
@@ -1290,16 +1291,23 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   CDT cdt(cdt_traits);
 
   std::vector< std::pair<Point_3,std::size_t> > points_and_ids;
-  std::vector<std::pair<std::size_t, std::size_t> > indices;
-  for(std::size_t i =0; i< points.size()-1; ++i)
+  std::vector<typename CDT::Vertex_handle> vertices(size);
+  for(std::size_t i =0; i< size; ++i)
   {
     points_and_ids.push_back( std::make_pair(points[i],i));
-    indices.push_back(std::make_pair(i, (i+1)%points.size()));
+  }
+  cdt.insert(points_and_ids.begin(), points_and_ids.end());
+  for (typename CDT::Vertex_handle v : cdt.finite_vertex_handles())
+  {
+    vertices[v->info()] = v;
   }
 
-  cdt.insert(points_and_ids.begin(), points_and_ids.end());
-  cdt.insert_constraints(points.begin(), points.end(),
-                         indices.begin(), indices.end() );
+  for(std::size_t i = 0; i<size; ++i)
+  {
+    cdt.insert_constraint(vertices[i], vertices[(i+1)%(size)]);
+  }
+  //cdt.insert_constraints(points.begin(), points.end(),
+  //                       indices.begin(), indices.end() );
 
 
   // sets mark is_external
@@ -1329,7 +1337,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     }
   }
   if(cdt.dimension() != 2 ||
-     cdt.number_of_vertices() != points.size()-1)
+     cdt.number_of_vertices() != size)
   {
     return false;
   }
@@ -1352,7 +1360,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   //call the tracer
-  tracer(lambda, 0, points.size()-2);
+  tracer(lambda, 0, size - 1);
   return true;
 }
 #endif
