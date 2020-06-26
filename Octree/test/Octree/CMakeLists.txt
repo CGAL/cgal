@@ -8,6 +8,8 @@ find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
 create_single_source_cgal_program( "octree_test.cpp" )
 create_single_source_cgal_program( "test_octree_equality.cpp" )
+create_single_source_cgal_program( "test_octree_refine.cpp" )
+
 create_single_source_cgal_program( "test_node_index.cpp" )
 create_single_source_cgal_program( "test_tree_walk.cpp" )
 
