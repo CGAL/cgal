@@ -16,7 +16,6 @@
 #include <CGAL/license/Point_set_3.h>
 
 #include <CGAL/IO/helpers.h>
-#include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO/LAS.h>
 #include <CGAL/Point_set_3/IO/OFF.h>
 #include <CGAL/Point_set_3/IO/PLY.h>
@@ -26,6 +25,9 @@
 #include <string>
 
 namespace CGAL {
+
+template <typename Point, typename Vector>
+class Point_set_3;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
