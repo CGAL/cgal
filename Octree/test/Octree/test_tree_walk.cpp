@@ -14,9 +14,10 @@ typedef CGAL::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
-int main(void) {
+Point_set create_example_point_collection() {
 
   Point_set points;
+
   points.insert({-1, -1, -1});
   points.insert({1, -1, -1});
   points.insert({-1, 1, -1});
@@ -36,15 +37,25 @@ int main(void) {
   points.insert({-1, -1, -1.8});
   points.insert({-1, -1, -1.9});
 
-  auto point_map = points.point_map();
+  return points;
+}
 
+int test_preorder_print() {
+
+  auto points = create_example_point_collection();
+
+  auto point_map = points.point_map();
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
-  auto treeWalker = CGAL::Preorder();
-  std::cout << octree.root() << std::endl;
   std::cout << octree;
-  //octree.print(std::cout, treeWalker.first(&octree.root()), treeWalker);
+
+  return 0;
+}
+
+int main(void) {
+
+  test_preorder_print();
 
   return 0;
 }
