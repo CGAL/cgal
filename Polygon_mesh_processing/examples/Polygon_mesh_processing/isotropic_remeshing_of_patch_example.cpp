@@ -75,9 +75,7 @@ int main(int argc, char* argv[])
                            .protect_constraints(true)//i.e. protect border, here
                            );
 
-  std::ofstream out("out.off");
-  out.precision(17);
-  out << mesh;
+  CGAL::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
   std::cout << "Remeshing done." << std::endl;
 
   return 0;

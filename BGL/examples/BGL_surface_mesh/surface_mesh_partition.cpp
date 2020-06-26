@@ -44,9 +44,7 @@ int main(int argc, char** argv)
   CGAL::copy_face_graph(filtered_sm, part_sm);
 
   // Output the mesh extracted from subpart n°0
-  std::ofstream out("sm_part_0.off");
-  out.precision(17);
-  CGAL::write_OFF(out, part_sm);
+  CGAL::write_polygon_mesh("sm_part_0.off", part_sm, CGAL::parameters::stream_precision(17));
 
   // Output all the vertices that are in the part n°0
   std::ofstream outxyz("out.xyz");

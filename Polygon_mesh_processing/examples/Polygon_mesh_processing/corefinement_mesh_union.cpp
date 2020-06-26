@@ -29,9 +29,7 @@ int main(int argc, char* argv[])
   if(valid_union)
   {
     std::cout << "Union was successfully computed\n";
-    std::ofstream output("union.off");
-    output.precision(17);
-    output << out;
+    CGAL::write_polygon_mesh("union.off", out, CGAL::parameters::stream_precision(17));
     return 0;
   }
 

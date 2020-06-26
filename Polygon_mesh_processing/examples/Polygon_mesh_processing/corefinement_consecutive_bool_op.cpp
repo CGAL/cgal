@@ -102,9 +102,7 @@ int main(int argc, char* argv[])
                                          params::vertex_point_map(mesh2_vpm) ) )
     {
       std::cout << "Intersection and union were successfully computed\n";
-      std::ofstream output("inter_union.off");
-      output.precision(17);
-      output << mesh2;
+      CGAL::write_polygon_mesh("inter_union.off", mesh2, CGAL::parameters::stream_precision(17));
       return 0;
     }
 

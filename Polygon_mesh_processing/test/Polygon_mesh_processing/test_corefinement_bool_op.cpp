@@ -64,12 +64,11 @@ void run_boolean_operations(
   if ( res[CFR::UNION] ){
    std::cout << "  Union is a valid operation\n";
    assert(union_.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_union_tm2.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << union_;
-   #endif
+   CGAL::write_polygon_mesh(fname.str(), union_, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  Union is invalid\n";
@@ -77,12 +76,11 @@ void run_boolean_operations(
   if ( res[CFR::INTERSECTION] ){
    std::cout << "  Intersection is a valid operation\n";
    assert(inter.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_inter_tm2.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << inter;
-   #endif
+   CGAL::write_polygon_mesh(fname.str(), inter, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  Intersection is invalid\n";
@@ -90,12 +88,11 @@ void run_boolean_operations(
   if ( res[CFR::TM1_MINUS_TM2] ){
    std::cout << "  tm1-tm2 is a valid operation\n";
    assert(tm1_minus_tm2.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_minus_tm2.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << tm1_minus_tm2;
-   #endif
+   CGAL::write_polygon_mesh(fname.str(), tm1_minus_tm2, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  tm1-tm2 is invalid\n";
@@ -103,12 +100,11 @@ void run_boolean_operations(
   if ( res[CFR::TM2_MINUS_TM1] ){
    std::cout << "  tm2-tm1 is a valid operation\n";
    assert(tm2_minus_tm1.is_valid());
-   #ifdef CGAL_COREFINEMENT_DEBUG
+#ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm2_minus_tm1.off";
-   std::ofstream output(fname.str().c_str());
-   output << std::setprecision(17) << tm2_minus_tm1;
-   #endif
+   CGAL::write_polygon_mesh(fname.str(), tm2_minus_tm1, CGAL::parameters::stream_precision(17));
+#endif
   }
   else
     std::cout << "  tm2-tm1 is invalid\n";

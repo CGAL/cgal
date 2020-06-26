@@ -34,9 +34,7 @@ int main(int argc, char* argv[])
     if(!CGAL::is_triangle(halfedge(f, mesh), mesh))
       std::cerr << "Error: non-triangular face left in mesh." << std::endl;
 
-  std::ofstream cube_off(outfilename);
-  cube_off.precision(17);
-  cube_off << mesh;
+  CGAL::write_polygon_mesh(outfilename, mesh, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

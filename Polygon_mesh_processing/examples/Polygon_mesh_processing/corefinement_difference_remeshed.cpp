@@ -63,11 +63,10 @@ int main(int argc, char* argv[])
   if (valid_difference)
   {
     std::cout << "Difference was successfully computed\n";
-    std::ofstream output("difference.off");
-    output.precision(17);
-    output << mesh1;
+    CGAL::write_polygon_mesh("difference.off", mesh1, CGAL::parameters::stream_precision(17));
   }
-  else{
+  else
+  {
     std::cout << "Difference could not be computed\n";
     return 1;
   }
@@ -79,8 +78,7 @@ int main(int argc, char* argv[])
     if (is_constrained_map[e])
     {
       // insert all faces incident to the target vertex
-      for(halfedge_descriptor h :
-                    halfedges_around_target(halfedge(e,mesh1),mesh1))
+      for(halfedge_descriptor h : halfedges_around_target(halfedge(e,mesh1),mesh1))
       {
         if (!is_border(h, mesh1) )
         {
@@ -105,9 +103,7 @@ int main(int argc, char* argv[])
   PMP::isotropic_remeshing(selected_faces, 0.02, mesh1,
                            params::edge_is_constrained_map(is_constrained_map));
 
-  std::ofstream output("difference_remeshed.off");
-  output.precision(17);
-  output << mesh1;
+  CGAL::write_polygon_mesh("difference_remeshed.off", mesh1, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

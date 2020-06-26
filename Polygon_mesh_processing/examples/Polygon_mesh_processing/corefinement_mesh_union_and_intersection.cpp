@@ -48,9 +48,7 @@ int main(int argc, char* argv[])
   if (res[PMP::Corefinement::UNION])
   {
     std::cout << "Union was successfully computed\n";
-    std::ofstream output("union.off");
-    output.precision(17);
-    output << out_union;
+    CGAL::write_polygon_mesh("union.off", out_union, CGAL::parameters::stream_precision(17));
   }
   else
     std::cout << "Union could not be computed\n";
@@ -58,9 +56,7 @@ int main(int argc, char* argv[])
   if (res[PMP::Corefinement::INTERSECTION])
   {
     std::cout << "Intersection was successfully computed\n";
-    std::ofstream output("intersection.off");
-    output.precision(17);
-    output << out_intersection;
+    CGAL::write_polygon_mesh("intersection.off", out_intersection, CGAL::parameters::stream_precision(17));
   }
   else
     std::cout << "Intersection could not be computed\n";

@@ -33,5 +33,5 @@ int main(int argc, char* argv[])
   for(vertex_descriptor vd : vertices(sm1))
     std::cerr << vd << " " <<  name1[vd] <<std::endl;
 
-  std::cout << std::setprecision(17) << sm1 << std::endl;
+  CGAL::write_OFF(std::cout, sm1, CGAL::parameters::stream_precision(17));
 }

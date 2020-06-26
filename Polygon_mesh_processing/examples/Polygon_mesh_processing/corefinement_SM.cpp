@@ -34,12 +34,8 @@ int main(int argc, char* argv[])
             << num_vertices(mesh1) << " and "
             << num_vertices(mesh2) << "\n";
 
-  std::ofstream output("mesh1_refined.off");
-  output.precision(17);
-  output << mesh1;
-  output.close();
-  output.open("mesh2_refined.off");
-  output << mesh2;
+  CGAL::write_polygon_mesh("mesh1_refined.off", mesh1, CGAL::parameters::stream_precision(17));
+  CGAL::write_polygon_mesh("mesh2_refined.off", mesh2, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

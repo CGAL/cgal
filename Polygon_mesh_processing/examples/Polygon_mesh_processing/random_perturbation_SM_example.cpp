@@ -31,10 +31,7 @@ int main(int argc, char* argv[])
 
   PMP::random_perturbation(mesh, max_size, CGAL::parameters::vertex_point_map(mesh.points()).geom_traits(K()));
 
-  std::ofstream out("data/eight_perturbed.off");
-  out.precision(17);
-  out << mesh;
-  out.close();
+  CGAL::write_polygon_mesh("data/eight_perturbed.off", mesh, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

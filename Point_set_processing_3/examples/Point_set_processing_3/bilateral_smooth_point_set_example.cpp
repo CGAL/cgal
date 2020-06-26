@@ -50,7 +50,7 @@ int main(int argc, char*argv[])
       k,
       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
                        .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
-                       .sharpness_angle (sharpness_angle));
+                       .sharpness_angle(sharpness_angle));
   }
 
   //// Save point set.

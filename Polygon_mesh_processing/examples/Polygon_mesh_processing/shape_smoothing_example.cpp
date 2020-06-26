@@ -40,9 +40,7 @@ int main(int argc, char* argv[])
   PMP::smooth_shape(mesh, time, PMP::parameters::number_of_iterations(nb_iterations)
                                                 .vertex_is_constrained_map(vcmap));
 
-  std::ofstream output("mesh_shape_smoothed.off");
-  output.precision(17);
-  output << mesh;
+  CGAL::write_polygon_mesh("mesh_shape_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;

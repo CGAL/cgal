@@ -47,9 +47,7 @@ int main(int argc, char** argv)
                                          .use_safety_constraints(false) // authorize all moves
                                          .edge_is_constrained_map(eif));
 
-  std::ofstream output("mesh_smoothed.off");
-  output.precision(17);
-  output << mesh;
+  CGAL::write_polygon_mesh("mesh_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Done!" << std::endl;
 

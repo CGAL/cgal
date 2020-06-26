@@ -90,11 +90,8 @@ int main(int argc, char* argv[])
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
 
-  std::string outfile = "filled_SM.off";
-  std::ofstream out(outfile.c_str());
-  std::cout << "Mesh written to: " << outfile << std::endl;
-  out.precision(17);
-  out << mesh << std::endl;
+  CGAL::write_polygon_mesh("filled_SM.off", mesh, CGAL::parameters::stream_precision(17));
+  std::cout << "Mesh written to: filled_SM.off" << std::endl;
 
   return 0;
 }
