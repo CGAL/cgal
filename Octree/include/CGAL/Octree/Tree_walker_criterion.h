@@ -1,10 +1,12 @@
 #ifndef OCTREE_TREE_WALKER_CRITERION_H
 #define OCTREE_TREE_WALKER_CRITERION_H
 
+#include <iostream>
+
 namespace CGAL {
 
   template<class Node>
-  Node *next_sibling(Node *n) {
+  const Node *next_sibling(const Node *n) {
 
     // Passing null returns the first node
     if (nullptr == n)
@@ -28,12 +30,12 @@ namespace CGAL {
   struct Preorder {
 
     template<class Node>
-    Node *first(Node *root) {
+    const Node *first(const Node *root) {
       return root;
     }
 
     template<class Node>
-    Node *operator()(Node *n) {
+    const Node *operator()(const Node *n) {
 
       // Passing null returns the first node
       if (nullptr == n) {
@@ -42,11 +44,11 @@ namespace CGAL {
 
       if (n->is_leaf()) {
 
-        Node *next = next_sibling(n);
+        auto next = next_sibling(n);
 
         if (nullptr == next) {
 
-          Node *up = n->parent();
+          auto up = n->parent();
 
           while (nullptr != up) {
 

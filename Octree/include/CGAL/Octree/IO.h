@@ -3,6 +3,7 @@
 #define OCTREE_IO_H
 
 #include <CGAL/Octree.h>
+#include <CGAL/Octree/Tree_walker_criterion.h>
 
 #include <iostream>
 #include <ostream>
@@ -37,6 +38,16 @@ template<class Kernel, class PointRange>
 ostream &operator<<(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node) {
 
   writeToStream(os, node);
+  return os;
+}
+
+template<class PointRange,
+        class PointMap>
+ostream &operator<<(ostream &os, const CGAL::Octree<PointRange, PointMap> &octree) {
+
+  auto tree_walker = CGAL::Preorder();
+  auto first = tree_walker.first(&octree.root());
+  octree.print(os, first, tree_walker);
   return os;
 }
 

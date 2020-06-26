@@ -43,7 +43,8 @@ int main(void) {
 
   auto treeWalker = CGAL::Preorder();
   std::cout << octree.root() << std::endl;
-  octree.print(std::cout, treeWalker.first(&octree.root()), treeWalker);
+  std::cout << octree;
+  //octree.print(std::cout, treeWalker.first(&octree.root()), treeWalker);
 
   return 0;
 }
