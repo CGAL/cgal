@@ -64,6 +64,9 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the constrained Delaunay triangulation
+     to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
+         original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   \cgalNamedParamsEnd
 
@@ -99,13 +102,19 @@ namespace Polygon_mesh_processing {
 #endif
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
+    bool use_cdt =
+    #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+        false;
+#else
+        choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+#endif
 
     return internal::triangulate_hole_polygon_mesh(pmesh,
       border_halfedge,
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits))).first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),use_cdt).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -325,7 +334,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true`, use the constrained Delaunay triangulation
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the constrained Delaunay triangulation
      to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
          original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
@@ -381,11 +390,9 @@ bool use_dt3 =
          tracer,
          choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits))))
 #endif
-    {
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
-    }
 
     CGAL_assertion(holes.empty());
     return tracer.out;

@@ -1232,16 +1232,21 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   const Collinear_3 collinear_3 =
     traits.collinear_3_object();
 
+  std::vector<Point_3> P(boost::begin(points), boost::end(points));
+  if(P.front() != P.back()){
+    P.push_back(P.front());
+  }
+
   FT x = FT(0), y = FT(0), z = FT(0);
   std::size_t num_normals = 0;
-  const Point_3& ref_point = points[0];
-  std::size_t size = points.size()-1;
+  const Point_3& ref_point = P[0];
+  std::size_t size = P.size()-1;
   for (std::size_t i = 1; i < size; ++i) {
     const std::size_t ip = i + 1;
 
     const Point_3& p1 = ref_point; // 3 points, which form a triangle
-    const Point_3& p2 = points[i];
-    const Point_3& p3 = points[ip];
+    const Point_3& p2 = P[i];
+    const Point_3& p3 = P[ip];
 
     // Skip in case we have collinear points.
     if (collinear_3(p1, p2, p3))
@@ -1276,8 +1281,9 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   // Checking the hole simplicity.
   typedef Triangulation_2_projection_traits_3<Traits> P_traits;
   const P_traits p_traits(avg_normal);
-  if(!is_simple_2(points.begin(), points.end()-1, p_traits))
+  if(!is_simple_2(P.begin(), P.end()-1, p_traits))
      return false;
+
 
   Lookup_table_map<int> lambda(static_cast<int>(size),-1);
   //Create and fill the cdt_2
@@ -1294,7 +1300,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   std::vector<typename CDT::Vertex_handle> vertices(size);
   for(std::size_t i =0; i< size; ++i)
   {
-    points_and_ids.push_back( std::make_pair(points[i],i));
+    points_and_ids.push_back( std::make_pair(P[i],i));
   }
   cdt.insert(points_and_ids.begin(), points_and_ids.end());
   for (typename CDT::Vertex_handle v : cdt.finite_vertex_handles())
@@ -1306,8 +1312,6 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   {
     cdt.insert_constraint(vertices[i], vertices[(i+1)%(size)]);
   }
-  //cdt.insert_constraints(points.begin(), points.end(),
-  //                       indices.begin(), indices.end() );
 
 
   // sets mark is_external
