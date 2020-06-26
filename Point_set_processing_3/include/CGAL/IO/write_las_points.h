@@ -358,6 +358,8 @@ bool write_LAS(const char* filename,
   return write_LAS(os, points, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -388,7 +390,11 @@ bool write_LAS(const std::string& filename, const PointRange& points,
   return write_LAS(filename, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename ForwardIterator,
           typename PointMap>
@@ -412,9 +418,7 @@ bool write_las_points(std::ostream& os, ///< output stream.
   return write_LAS(os, points);
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
-
-#ifndef CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
 /**
   \ingroup PkgPointSetProcessing3IODeprecated

@@ -222,6 +222,8 @@ bool read_PLY(std::istream& is,
 } // namespace internal
 } // namespace IO
 
+/// \cond SKIP_IN_MANUAL
+
 template <class PointRange, class PolygonRange, class ColorRange, class HEdgesRange, class HUVRange>
 bool read_PLY(std::istream& is,
               PointRange& points,
@@ -277,6 +279,8 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
                                                  CGAL::Emptyset_iterator()),
                                 std::back_inserter(dummy_pf), verbose);
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
@@ -365,6 +369,8 @@ bool read_PLY(const char* fname,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons,
               const bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
@@ -385,6 +391,8 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
 {
   return read_PLY(fname.c_str(), points, polygons, parameters::all_default(), verbose);
 }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -467,12 +475,16 @@ bool write_PLY(std::ostream& out,
   return out.good();
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <class PointRange, class PolygonRange>
 bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& polygons,
                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_PLY(out, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
@@ -532,6 +544,8 @@ bool write_PLY(const char* fname,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <class PointRange, class PolygonRange>
 bool write_PLY(const char* fname, const PointRange& points, const PolygonRange& polygons,
                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
@@ -552,6 +566,8 @@ bool write_PLY(const std::string& fname, const PointRange& points, const Polygon
 {
   return write_PLY(fname.c_str(), points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

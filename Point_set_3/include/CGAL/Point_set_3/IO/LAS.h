@@ -171,11 +171,15 @@ bool read_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
   return read_LAS(is, point_set);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return read_LAS(fname.c_str(), point_set);
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -395,11 +399,15 @@ bool write_LAS(std::ostream& os,
   return okay;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return write_LAS(os, point_set, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOLAS
@@ -431,6 +439,8 @@ bool write_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, c
   return write_LAS(os, point_set, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
@@ -449,6 +459,8 @@ bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point
 {
   return write_LAS(fname.c_str(), point_set, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

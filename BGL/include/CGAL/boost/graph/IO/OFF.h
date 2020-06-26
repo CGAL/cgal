@@ -161,12 +161,16 @@ bool read_OFF(std::istream& is,
   return IO::internal::read_OFF_BGL(is, g, np, verbose);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
 bool read_OFF(std::istream& is, Graph& g,
               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_OFF(is, g, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgBGLIoFuncsOFF
@@ -245,6 +249,8 @@ bool read_OFF(const char* fname,
   return read_OFF(is, g, np, verbose);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
 bool read_OFF(const char* fname, Graph& g,
               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
@@ -265,6 +271,8 @@ bool read_OFF(const std::string& fname, Graph& g,
 {
   return read_OFF(fname, g, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -385,12 +393,16 @@ bool write_OFF(std::ostream& os,
   return IO::internal::write_OFF_BGL(os, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
 bool write_OFF(std::ostream& os, const Graph& g,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_OFF(os, g, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgBGLIoFuncsOFF
@@ -472,6 +484,8 @@ bool write_OFF(const char* fname,
   return write_OFF(os, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
 bool write_OFF(const char* fname, const Graph& g,
                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
@@ -492,6 +506,8 @@ bool write_OFF(const std::string& fname, const Graph& g,
 {
   return write_OFF(fname.c_str(), g, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

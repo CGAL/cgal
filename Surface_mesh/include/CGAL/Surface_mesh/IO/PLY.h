@@ -840,6 +840,8 @@ bool read_PLY(std::istream& is,
   return true;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename P>
 bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
 {
@@ -847,13 +849,14 @@ bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
   return read_PLY(is, sm, dummy);
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
   \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
 */
-
 template <typename P>
 CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
 {
@@ -1098,6 +1101,8 @@ bool write_PLY(std::ostream& os,
   return true;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename P>
 bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments)
 {
@@ -1117,6 +1122,8 @@ bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm)
   std::string unused_comment;
   return write_PLY(os, sm, unused_comment, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

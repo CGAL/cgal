@@ -299,12 +299,16 @@ bool read_PLY(std::istream& is,
   return !is.bad();
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::string dummy;
   return read_PLY(is, point_set, dummy);
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOPLY
@@ -362,6 +366,8 @@ bool read_PLY(const char* fname,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool read_PLY(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
 {
@@ -401,6 +407,8 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   std::string unused_comments;
   return read_PLY(fname.c_str(), point_set, unused_comments, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -694,6 +702,8 @@ bool write_PLY(std::ostream& os,
   return true;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
 {
@@ -711,6 +721,8 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 {
   return write_PLY(os, point_set, std::string(), parameters::all_default());
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOPLY
@@ -770,6 +782,8 @@ bool write_PLY(const char* fname,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_PLY(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
 {
@@ -812,6 +826,8 @@ bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 {
   return write_PLY(fname.c_str(), point_set, std::string(), parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

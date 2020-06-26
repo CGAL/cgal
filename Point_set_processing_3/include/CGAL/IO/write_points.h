@@ -104,6 +104,8 @@ bool write_points(const std::string& fname,
   return false;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_points(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
                   typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -124,6 +126,8 @@ bool write_points(const char* fname,const PointRange& points,
 {
   return write_points(fname, points, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

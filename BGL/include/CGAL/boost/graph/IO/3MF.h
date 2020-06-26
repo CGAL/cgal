@@ -13,10 +13,12 @@
 #define CGAL_BGL_IO_3MF_H
 
 #include <CGAL/IO/3MF.h>
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -31,7 +33,7 @@ namespace CGAL {
 // Write
 
 /*!
- * \ingroup PkgBGLIOFuncs3MF
+ * \ingroup PkgBGLIoFuncs3MF
  *
  * \brief writes the triangle meshes contained in `gs` into the 3mf file `filename`.
  *
@@ -53,9 +55,15 @@ namespace CGAL {
 template<typename GraphRange>
 bool write_3MF(const std::string& filename,
                const GraphRange& gs,
-               const std::vector<std::string>& names)
+               const std::vector<std::string>& names
+#ifndef DOXYGEN_RUNNING
+               , typename boost::disable_if<
+                   IO::internal::is_Point_set_or_Range_or_Iterator<
+                     typename boost::range_value<GraphRange>::type> >::type* = nullptr
+#endif
+               )
 {
-  typedef typename GraphRange::value_type                                       FaceGraph;
+  typedef typename boost::range_value<GraphRange>::type                         FaceGraph;
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
@@ -99,7 +107,7 @@ bool write_3MF(const std::string& filename,
     all_polygons.push_back(triangles);
   }
 
-  return write_triangle_soups_to_3mf(filename, all_points, all_polygons, names);
+  return write_3MF(filename, all_points, all_polygons, names);
 }
 
 } // namespace CGAL

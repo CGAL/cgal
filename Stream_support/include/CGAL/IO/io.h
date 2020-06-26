@@ -388,7 +388,7 @@ Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
 
 returns the printing mode of the %IO stream `s`.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -408,7 +408,7 @@ inline IO::Mode get_mode(std::ios& i)
 sets the mode of the %IO stream `s` to be the `IO::ASCII` mode.
 Returns the previous mode of `s`.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_binary_mode()`
 \sa `CGAL::set_pretty_mode()`
@@ -430,7 +430,7 @@ inline IO::Mode set_ascii_mode(std::ios& i)
 sets the mode of the %IO stream `s` to be the `IO::BINARY` mode.
 Returns the previous mode of `s`.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_pretty_mode()`
@@ -452,7 +452,7 @@ inline IO::Mode set_binary_mode(std::ios& i)
 sets the mode of the %IO stream `s` to be the `IO::PRETTY` mode.
 Returns the previous mode of `s`.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -473,7 +473,7 @@ inline IO::Mode set_pretty_mode(std::ios& i)
 
 sets the printing mode of the %IO stream `s`.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
 \sa `CGAL::set_pretty_mode()`
@@ -494,7 +494,7 @@ inline IO::Mode set_mode(std::ios& i, IO::Mode m)
 
 checks if the %IO stream `s` is in `IO::PRETTY` mode.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -510,7 +510,7 @@ inline bool is_pretty(std::ios& i) { return i.iword(IO::Static::get_mode()) == I
 
 checks if the %IO stream `s` is in `IO::ASCII` mode.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`
@@ -526,7 +526,7 @@ inline bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO
 
 checks if the %IO stream `s` is in `IO::BINARY` mode.
 
-\sa `CGAL::IO::Mode`
+\link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
 \sa `CGAL::set_binary_mode()`

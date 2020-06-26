@@ -145,6 +145,8 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets)
   return read_STL(is, points, facets, parameters::all_default());
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname, PointRange& points, TriangleRange& facets,
               const CGAL_BGL_NP_CLASS& np)
@@ -158,6 +160,8 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 {
   return read_STL(fname.c_str(), points, facets, np);
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
@@ -182,11 +186,15 @@ bool read_STL(const char* fname, PointRange& points, TriangleRange& facets)
   return read_STL(fname, points, facets, parameters::all_default());
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename TriangleRange>
 bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets)
 {
   return read_STL(fname, points, facets, parameters::all_default());
 }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,11 +298,15 @@ bool write_STL(std::ostream& os,
   return !os.fail();
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename TriangleRange>
 bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets)
 {
   return write_STL(os, points, facets, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
@@ -331,6 +343,8 @@ bool write_STL(const char* fname, const PointRange& points, const TriangleRange&
   return write_STL(os, points, facets, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename TriangleRange>
 bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets)
 {
@@ -349,6 +363,8 @@ bool write_STL(const std::string& fname, const PointRange& points, const Triangl
 {
   return write_STL(fname.c_str(), points, facets, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

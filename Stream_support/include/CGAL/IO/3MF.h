@@ -11,17 +11,19 @@
 #ifndef CGAL_IO_3MF_H
 #define CGAL_IO_3MF_H
 
-#include <CGAL/IO/Color.h>
 #include <CGAL/IO/3MF/read_3mf.h>
 #include <CGAL/IO/3MF/write_3mf.h>
+#include <CGAL/IO/Color.h>
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/iterator.h>
-
-#include <boost/range/value_type.hpp>
 
 #ifdef CGAL_LINKED_WITH_3MF
 #include <Model/COM/NMR_DLLInterfaces.h>
 #endif
+
+#include <boost/range/value_type.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <functional>
 #include <iostream>
@@ -36,19 +38,21 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
          typename PointRange, typename PolygonRange, typename ColorRange>
-int read_from_3mf(const std::string& fname,
-                  PointRanges& all_points,
-                  PolygonRanges& all_polygons,
-                  ColorRanges& all_colors,
-                  std::vector<std::string>& names,
-                  std::function<bool(NMR::PLib3MFModelMeshObject*,
-                                     const NMR::MODELTRANSFORM&,
-                                     PointRange&,
-                                     PolygonRange&,
-                                     ColorRange&,
-                                     std::string&)> func)
+int read_3MF(const std::string& fname,
+             PointRanges& all_points,
+             PolygonRanges& all_polygons,
+             ColorRanges& all_colors,
+             std::vector<std::string>& names,
+             std::function<bool(NMR::PLib3MFModelMeshObject*,
+                                const NMR::MODELTRANSFORM&,
+                                PointRange&,
+                                PolygonRange&,
+                                ColorRange&,
+                                std::string&)> func)
 {
   DWORD nInterfaceVersionMajor, nInterfaceVersionMinor, nInterfaceVersionMicro, nbVertices, nbPolygons;
   HRESULT hResult;
@@ -371,6 +375,8 @@ int read_from_3mf(const std::string& fname,
   return all_points.size();
 }
 
+/// \endcond
+
 /*!
  * \ingroup PkgStreamSupportIoFuncs3MF
  *
@@ -402,20 +408,19 @@ int read_from_3mf(const std::string& fname,
  * \return the number of soups read.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
-int read_triangle_soups_from_3mf(const std::string& fname,
-                                 PointRanges& all_points,
-                                 PolygonRanges& all_polygons,
-                                 ColorRanges& all_colors,
-                                 std::vector<std::string>& names)
+int read_3MF(const std::string& fname,
+             PointRanges& all_points,
+             PolygonRanges& all_polygons,
+             ColorRanges& all_colors,
+             std::vector<std::string>& names)
 {
   typedef typename boost::range_value<PointRanges>::type    PointRange;
   typedef typename boost::range_value<PolygonRanges>::type  PolygonRange;
   typedef typename boost::range_value<ColorRanges>::type    ColorRange;
 
-  return read_from_3mf<PointRanges,PolygonRanges,ColorRanges,
-                       PointRange, PolygonRange, ColorRange>
-          (fname, all_points, all_polygons, all_colors, names,
-           extract_soups<PointRange, PolygonRange, ColorRange>);
+  return read_3MF<PointRanges,PolygonRanges,ColorRanges,
+                  PointRange, PolygonRange, ColorRange>(fname, all_points, all_polygons, all_colors, names,
+                                                        extract_soups<PointRange, PolygonRange, ColorRange>);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -445,10 +450,10 @@ int read_triangle_soups_from_3mf(const std::string& fname,
  * \return `true` if the writing is successful, `false` otherwise.
  */
 template<typename PointRanges, typename PolygonRanges>
-bool write_triangle_soups_to_3mf(const std::string& fname,
-                                 const PointRanges& all_points,
-                                 const PolygonRanges& all_polygons,
-                                 const std::vector<std::string>& names)
+bool write_3MF(const std::string& fname,
+               const PointRanges& all_points,
+               const PolygonRanges& all_polygons,
+               const std::vector<std::string>& names)
 {
   // Create Model Instance
   NMR::PLib3MFModel * pModel;
@@ -479,27 +484,30 @@ bool write_triangle_soups_to_3mf(const std::string& fname,
   return IO::export_model_to_file(fname, pModel);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 // convenience
 template<typename PointRange, typename PolygonRange>
-bool write_triangle_soup_to_3mf(const std::string& fname,
-                                const PointRange& points,
-                                const PolygonRange& polygons,
-                                const std::string& name)
+bool write_3MF(const std::string& fname,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const std::string& name)
 {
   std::vector<PointRange> all_points(1, points);
   std::vector<PointRange> all_polygons(1, polygons);
   std::vector<std::string> names(1, name);
 
-  return write_triangle_soups_to_3mf(fname, all_points, all_polygons, names);
+  return write_3MF(fname, all_points, all_polygons, names);
 }
 
 template<typename PointRange, typename PolygonRange>
-bool write_3MF(const std::string& fname,
-               const PointRange& points,
-               const PolygonRange& polygons)
+bool write_3MF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
+               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_triangle_soup_to_3mf(fname, points, polygons, "anonymous");
 }
+
+/// \endcond
 
 } // namespace CGAL
 

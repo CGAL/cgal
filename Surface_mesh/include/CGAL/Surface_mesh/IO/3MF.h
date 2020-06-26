@@ -29,7 +29,7 @@ namespace CGAL {
 // @todo generalize it to any model of `FaceGraph` and put it in BGL/IO (see read_OFF for the face color map)
 
 /*!
- * \ingroup PkgSurfaceMeshIOFunc
+ * \ingroup PkgSurfaceMeshIOFunc3MF
  *
  * \brief extracts the surface meshes from an input 3mf file and appends it to `output`.
  *
@@ -59,7 +59,7 @@ int read_3MF(const std::string& filename,
   std::vector<std::vector<CGAL::Color> > all_colors;
   int result = 0;
 
-  int nb_meshes = CGAL::read_triangle_soups_from_3mf(filename, all_points, all_polygons, all_colors, names);
+  int nb_meshes = CGAL::read_3MF(filename, all_points, all_polygons, all_colors, names);
   if(nb_meshes < 0)
   {
     std::cerr << "Error in reading meshes." << std::endl;

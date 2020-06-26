@@ -38,7 +38,7 @@ int main(int argc, char** argv)
   std::vector<Mesh> meshes;
 
   //testing reading functions.
-  int nb_meshes = CGAL::read_3mf(filename, meshes);
+  int nb_meshes = CGAL::read_3MF(filename, meshes);
 
   if(nb_meshes <0)
     return 1;

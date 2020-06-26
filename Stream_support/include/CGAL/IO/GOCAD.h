@@ -35,6 +35,8 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
@@ -181,6 +183,8 @@ bool read_GOCAD(const std::string& fname,
   return read_GOCAD(fname.c_str(), points, polygons, np);
 }
 
+/// \endcond
+
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
@@ -228,11 +232,15 @@ bool read_GOCAD(const char* fname, PointRange& points, PolygonRange& polygons)
   return read_GOCAD(fname, points, polygons, parameters::all_default());
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_GOCAD(fname, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,11 +346,15 @@ bool write_GOCAD(std::ostream& os,
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
 {
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
@@ -383,19 +395,16 @@ bool write_GOCAD(const char* fname,
   return IO::internal::write_GOCAD(os, fname, points, polygons, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_GOCAD(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
   return write_GOCAD(fname, points, polygons, parameters::all_default());
 }
 
-template <typename PointRange,
-          typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname,
-                 const PointRange& points,
-                 const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
 {
   return IO::internal::write_GOCAD(fname.c_str(), fname.c_str(), points, polygons, np);
 }
@@ -405,6 +414,8 @@ bool write_GOCAD(const std::string& fname, const PointRange& points, const Polyg
 {
   return write_GOCAD(fname.c_str(), points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

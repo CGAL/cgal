@@ -151,6 +151,8 @@ bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
   return read_STL(is, g, np, verbose);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
               bool verbose = true)
@@ -164,6 +166,8 @@ template <typename Graph>
 bool read_STL(const char* fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -327,6 +331,8 @@ bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
   return write_STL(os, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
@@ -339,6 +345,8 @@ template <typename Graph>
 bool write_STL(const char* fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 } // namespace CGAL
 

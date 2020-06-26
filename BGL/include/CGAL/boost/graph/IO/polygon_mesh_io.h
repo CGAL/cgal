@@ -160,6 +160,8 @@ bool read_polygon_mesh(const std::string& fname,
   return false;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <class Graph>
 bool read_polygon_mesh(const std::string& fname, Graph& g)
 {
@@ -177,6 +179,8 @@ bool read_polygon_mesh(const char* fname, Graph& g)
 {
   return read_polygon_mesh(fname, g, parameters::all_default());
 }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -269,6 +273,8 @@ bool write_polygon_mesh(const std::string& fname,
   return false;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <class Graph>
 bool write_polygon_mesh(const std::string& fname, Graph& g)
 {
@@ -286,6 +292,8 @@ bool write_polygon_mesh(const char* fname, Graph& g)
 {
   return write_polygon_mesh(fname, g, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

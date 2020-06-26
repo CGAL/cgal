@@ -278,6 +278,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   converter(out, vpm);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
@@ -285,6 +287,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 {
   return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

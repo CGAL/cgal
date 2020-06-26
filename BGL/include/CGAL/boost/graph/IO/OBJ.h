@@ -164,11 +164,10 @@ bool read_OBJ(const char* fname,
   return read_OBJ(in, g, np, verbose);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname,
-              Graph& g,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_OBJ(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   return read_OBJ(fname.c_str(), g, np, verbose);
 }
@@ -179,6 +178,8 @@ template <typename Graph>
 bool read_OBJ(const char* fname, Graph& g) { return read_OBJ(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,6 +265,8 @@ bool write_OBJ(const char* fname,
   return write_OBJ(os, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
@@ -276,6 +279,8 @@ template <typename Graph>
 bool write_OBJ(const char* fname, const Graph& g) { return write_OBJ(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool write_OBJ(const std::string& fname, const Graph& g) { return write_OBJ(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 } // namespace CGAL
 

@@ -495,7 +495,7 @@ the requirement for traversal of all faces in a graph.
 /// I/O Functions for \ref IOStreamWRL
 /// \ingroup PkgBGLIOFct
 
-/// \defgroup PkgBGLIOFuncs3MF 3MF I/O Functions
+/// \defgroup PkgBGLIoFuncs3MF 3MF I/O Functions
 /// I/O Functions for \ref IOStream3MF
 /// \ingroup PkgBGLIOFct
 

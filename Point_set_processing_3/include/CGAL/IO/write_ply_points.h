@@ -222,6 +222,8 @@ bool write_PLY(std::ostream& os,
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 bool write_PLY(std::ostream& os, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -229,6 +231,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
   return write_PLY(os, points, parameters::all_default());
 }
 
+/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
@@ -305,6 +308,8 @@ bool write_PLY(const char* filename,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 bool write_PLY(const char* filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -326,7 +331,11 @@ bool write_PLY(const std::string& filename, const PointRange& points,
   return write_PLY(filename.c_str(), points, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename ForwardIterator,
           typename PointMap,
@@ -377,9 +386,7 @@ bool write_ply_points(std::ostream& os, ///< output stream.
   return write_PLY(os, points);
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
-
-#ifndef CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
 /**
 \ingroup PkgPointSetProcessing3IODeprecated

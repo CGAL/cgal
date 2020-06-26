@@ -306,7 +306,11 @@ bool read_XYZ(const char* fname, OutputIterator output)
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -445,8 +449,6 @@ bool read_xyz_points(std::istream& is, ///< input stream.
                                                                     parameters::point_map(point_map));
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
-
 /// \endcond
 
 /**
@@ -466,8 +468,6 @@ CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
 {
   return read_XYZ(is, output, np);
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
 
 /// \cond SKIP_IN_MANUAL
 

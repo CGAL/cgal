@@ -139,6 +139,8 @@ bool read_polygon_mesh(const char* fname,
   return true;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
 bool read_polygon_mesh(const char* fname, Graph& g)
 {
@@ -156,6 +158,8 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
 {
   return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

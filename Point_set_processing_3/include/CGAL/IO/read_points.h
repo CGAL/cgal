@@ -92,6 +92,8 @@ bool read_points(const std::string& fname,
   return false;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 // variant with default OutputIteratorType
 template <typename OutputIterator, typename NamedParameters>
 bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np)
@@ -138,6 +140,8 @@ bool read_points(const char* fname, OutputIterator output)
 {
   return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

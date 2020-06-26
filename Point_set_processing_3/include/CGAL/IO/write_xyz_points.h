@@ -141,12 +141,16 @@ bool write_XYZ(std::ostream& os,
   return Point_set_processing_3::internal::write_XYZ_PSP(os, points, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 bool write_XYZ(std::ostream& os, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_XYZ(os, points, parameters::all_default());
 }
+
+/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOXyz
@@ -207,6 +211,8 @@ bool write_XYZ(const char* filename,
   return write_XYZ(os, points, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 bool write_XYZ(const char* filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -214,8 +220,6 @@ bool write_XYZ(const char* filename, const PointRange& points,
   std::ofstream os(filename);
   return write_XYZ(os, points, parameters::all_default());
 }
-
-/// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(const std::string& filename, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
@@ -231,7 +235,11 @@ bool write_XYZ(const std::string& filename, const PointRange& points,
   return write_XYZ(filename, points, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename ForwardIterator,
           typename PointMap,
@@ -318,11 +326,7 @@ bool write_xyz_points(std::ostream& os, ///< output stream.
   return write_XYZ(os, points);
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
-
 /// \endcond
-
-#ifndef CGAL_NO_DEPRECATED_CODE
 
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
@@ -337,6 +341,7 @@ CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points
 }
 
 /// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points)
 {

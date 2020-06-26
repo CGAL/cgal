@@ -149,12 +149,16 @@ bool write_OFF(std::ostream& os,
   return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 bool write_OFF(std::ostream& os, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_OFF(os, points, parameters::all_default());
 }
+
+/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOOff
@@ -219,6 +223,8 @@ bool write_OFF(const char* filename,
   return write_OFF(os, points, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange>
 bool write_OFF(const char* filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
@@ -241,7 +247,11 @@ bool write_OFF(const std::string& filename, const PointRange& points,
   return write_OFF(filename, points, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename ForwardIterator,
           typename PointMap,
@@ -330,9 +340,7 @@ bool write_off_points(std::ostream& os, ///< output stream.
   return write_off_points(os, points);
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
-
-#ifndef CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
 /**
   \ingroup PkgPointSetProcessing3IODeprecated

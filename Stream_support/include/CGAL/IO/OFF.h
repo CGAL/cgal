@@ -160,6 +160,8 @@ bool read_OFF(std::istream& is,
 } // namespace internal
 } // namespace IO
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
 bool read_OFF(std::istream& is,
               PointRange& points,
@@ -183,11 +185,7 @@ bool read_OFF(std::istream& is,
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const char* fname,
-              PointRange& points,
-              PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_OFF(const char* fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
   std::ifstream in(fname);
   return read_OFF(in, points, polygons, np, verbose);
@@ -199,6 +197,8 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
 {
   return read_OFF(fname.c_str(), points, polygons, np, verbose);
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
@@ -246,11 +246,15 @@ bool read_OFF(const char* fname, PointRange& points, PolygonRange& polygons)
   return read_OFF(fname, points, polygons, parameters::all_default());
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_OFF(fname, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,12 +297,16 @@ bool write_OFF(std::ostream& os,
   return writer(points, polygons, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& polygons
                , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
@@ -338,14 +346,11 @@ bool write_OFF(const char* fname,
   return writer(points, polygons, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
-bool write_OFF(const char* fname,
-               const PointRange& points,
-               const PolygonRange& polygons
-#ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
-#endif
-               )
+bool write_OFF(const char* fname, const PointRange& points, const PolygonRange& polygons,
+               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }
@@ -362,6 +367,8 @@ bool write_OFF(const std::string& fname, const PointRange& points, const Polygon
 {
   return write_OFF(fname, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

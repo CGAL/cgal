@@ -178,6 +178,8 @@ bool read_OBJ(std::istream& is,
 } // namespace internal
 } // namespace IO
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
@@ -185,11 +187,9 @@ bool read_OBJ(std::istream& is,
               const CGAL_BGL_NP_CLASS&,
               bool verbose = true)
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  return IO::internal::read_OBJ(is, points, faces, CGAL::Emptyset_iterator(),
-                                CGAL::Emptyset_iterator(), verbose);
+  return IO::internal::read_OBJ(is, points, faces,
+                                CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                                verbose);
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -206,6 +206,8 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
 {
   return read_OBJ(fname.c_str(), points, polygons, np, verbose);
 }
+
+/// \endcond
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
 ///
@@ -249,11 +251,15 @@ bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons)
   return read_OBJ(fname, points, polygons, parameters::all_default());
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_OBJ(fname, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -299,11 +305,15 @@ bool write_OBJ(std::ostream& os,
   return writer(points, polygons, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
 {
   return write_OBJ(os, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
@@ -342,6 +352,8 @@ bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& 
   return write_OBJ(out, points, polygons, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
@@ -359,6 +371,8 @@ bool write_OBJ(const std::string& fname, const PointRange& points, const Polygon
 {
   return write_OBJ(fname.c_str(), points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

@@ -100,7 +100,7 @@ make_ply_normal_reader(VectorMap normal_map);
 #endif // DOXYGEN_RUNNING
 
 /**
-  \ingroup PkgPointSetProcessingIOPly
+  \ingroup PkgPointSetProcessing3IOPly
 
   \brief reads user-selected points properties from a .ply stream (ASCII or binary).
 
@@ -179,6 +179,8 @@ bool read_PLY_with_properties(std::istream& is,
   return true;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename OutputIterator,
           typename ... PropertyHandler>
 bool read_PLY_with_properties(std::istream& is,
@@ -189,6 +191,8 @@ bool read_PLY_with_properties(std::istream& is,
 
   return read_PLY_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
+
+/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
@@ -336,6 +340,8 @@ bool read_PLY(const char* fname,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np,
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
@@ -409,7 +415,11 @@ bool read_PLY(const char* fname, OutputIterator output,
   return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -478,6 +488,8 @@ bool read_ply_points(std::istream& is, ///< input stream.
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(is, output, parameters::point_map(point_map));
 }
+
+/// \endcond
 
 /**
  \ingroup PkgPointSetProcessing3IODeprecated

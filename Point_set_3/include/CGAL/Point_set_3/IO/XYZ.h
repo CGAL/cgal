@@ -96,11 +96,15 @@ bool read_XYZ(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
   return read_XYZ(is, point_set);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return read_XYZ(fname.c_str(), point_set);
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -158,11 +162,15 @@ bool write_XYZ(std::ostream& os,
   return Point_set_processing_3::internal::write_XYZ_PSP(os, point_set, np.point_map(point_set.point_map()));
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return write_XYZ(os, point_set, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOXYZ
@@ -194,6 +202,8 @@ bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_
   return write_XYZ(os, point_set, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_XYZ(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
@@ -212,6 +222,8 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 {
   return write_XYZ(fname.c_str(), point_set, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

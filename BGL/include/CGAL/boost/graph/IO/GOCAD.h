@@ -131,6 +131,8 @@ bool read_GOCAD(std::istream& is,
   return true;
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
@@ -143,6 +145,8 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 {
   return read_GOCAD(is, name_and_color, g, parameters::all_default());
 }
+
+/// \endcond
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
@@ -186,6 +190,8 @@ bool read_GOCAD(const char* fname,
   return read_GOCAD(is, name_and_color, g, np, verbose);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
 {
@@ -205,6 +211,8 @@ template <typename Graph>
 bool read_GOCAD(const char* fname, Graph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -349,11 +357,15 @@ bool write_GOCAD(const char* fname,
   return write_GOCAD(os, fname, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_GOCAD(fname.c_str(), g, np);
 }
+
+/// \endcond
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
@@ -393,6 +405,9 @@ bool write_GOCAD(std::ostream& os,
 {
   return write_GOCAD(os, "anonymous", g, np);
 }
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
 bool write_GOCAD(std::ostream& os, const Graph& g)
 {
@@ -403,6 +418,8 @@ template <typename Graph>
 bool write_GOCAD(const char* fname, const Graph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
 template <typename Graph>
 bool write_GOCAD(const std::string& fname, const Graph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 } // namespace CGAL
 

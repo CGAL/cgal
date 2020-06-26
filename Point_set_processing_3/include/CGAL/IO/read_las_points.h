@@ -403,6 +403,8 @@ bool read_LAS_with_properties(std::istream& is,
 
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename OutputIterator,
           typename ... PropertyHandler>
 bool read_LAS_with_properties(std::istream& is,
@@ -413,6 +415,8 @@ bool read_LAS_with_properties(std::istream& is,
 
   return read_LAS_with_properties<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
+
+/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOLas
@@ -466,6 +470,8 @@ bool read_LAS(std::istream& is,
   return read_LAS_with_properties(is, output, make_las_point_reader(point_map));
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np,
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
@@ -486,6 +492,8 @@ bool read_LAS(std::istream& is, OutputIterator output,
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
 }
+
+/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOLas
@@ -531,6 +539,8 @@ bool read_LAS(const char* filename,
   return read_LAS<OutputIteratorValueType>(filename, output, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
@@ -574,7 +584,11 @@ bool read_LAS(const std::string& fname, OutputIterator output)
   return read_LAS<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -598,9 +612,8 @@ bool read_las_points(std::istream& is, ///< input stream.
                                                                            CGAL::parameters::point_map(point_map));
 }
 
-#endif //CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 /**
  \ingroup PkgPointSetProcessing3IODeprecated
 
@@ -617,6 +630,7 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 }
 
 /// \cond SKIP_IN_MANUAL
+
 template <typename OutputIterator,
           typename ... PropertyHandler>
 CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
@@ -627,6 +641,7 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 
   return read_LAS<OutputValueType>(is, output, std::forward<PropertyHandler>(properties)...);
 }
+
 /// \endcond
 
 /**
@@ -652,6 +667,8 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is,
   return read_LAS(is, output, make_las_point_reader(point_map));
 }
 
+/// \cond SKIP_IN_MANUAL
+
 // variant with default NP
 template <typename OutputIteratorValueType, typename OutputIterator>
 CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
@@ -672,6 +689,8 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, CGAL::parameters::all_default());
 }
+
+/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

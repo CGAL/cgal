@@ -164,6 +164,8 @@ bool read_VTP(const char* fname,
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_VTP(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
@@ -173,6 +175,8 @@ template<typename Graph>
 bool read_VTP(const char* fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
 template<typename Graph>
 bool read_VTP(const std::string& fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -529,6 +533,8 @@ bool write_VTP(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
   return write_VTP(os, g, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename Graph>
 bool write_VTP(std::ostream& os, const Graph& g) { return write_VTP(os, g, CGAL::parameters::all_default()); }
 template<typename Graph>
@@ -537,6 +543,8 @@ template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np) { return write_VTP(fname.c_str(), g, np); }
 template<typename Graph>
 bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

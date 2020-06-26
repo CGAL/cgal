@@ -78,8 +78,8 @@ class Io_3mf_plugin:
     QList<Scene_item*> result;
     std::vector<std::vector<CGAL::Color> > all_colors;
     int nb_meshes =
-        CGAL::read_triangle_soups_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
-                                  all_points, all_polygons, all_colors, names);
+        CGAL::read_3MF(fileinfo.filePath().toUtf8().toStdString(),
+                       all_points, all_polygons, all_colors, names);
     if(nb_meshes <0 )
     {
       ok = false;

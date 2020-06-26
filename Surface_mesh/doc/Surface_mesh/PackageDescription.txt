@@ -19,6 +19,10 @@
 /// I/O Functions for \ref IOStreamPLY
 /// \ingroup PkgSurfaceMeshIOFunc
 
+/// \defgroup PkgSurfaceMeshIOFunc3MF I/O Functions (3MF)
+/// I/O Functions for \ref IOStream3MF
+/// \ingroup PkgSurfaceMeshIOFunc
+
 /// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)
 /// \ingroup PkgSurfaceMeshIOFunc
 

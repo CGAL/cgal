@@ -444,11 +444,15 @@ bool write_VTP(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
 {
   return write_VTP(os, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
@@ -504,6 +508,8 @@ bool write_VTP(const char* fname,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
 bool write_VTP(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
@@ -521,6 +527,8 @@ bool write_VTP(const std::string& fname, const PointRange& points, const Polygon
 {
   return write_VTP(fname.c_str(), points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace CGAL
 

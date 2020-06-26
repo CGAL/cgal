@@ -550,11 +550,9 @@ for more details.
 \section Mesh_3_section_io Input/Output
 Several formats are supported for writing a mesh:
  - VTU, with `CGAL::output_to_vtu()`
- - Avizo with `CGAL::output_to_avizo()`
- - Medit with `CGAL::output_to_medit()`
- - Tetgen with `CGAL::output_to_tetgen()`
-
-
+ - Avizo, with `CGAL::output_to_avizo()`
+ - Medit, with `CGAL::output_to_medit()`
+ - Tetgen, with `CGAL::output_to_tetgen()`
 
 \section Mesh_3_section_examples Examples
 

@@ -254,6 +254,8 @@ bool read_OFF(const char* fname,
   return read_OFF(is, output, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename OutputIteratorValueType, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np,
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
@@ -330,7 +332,11 @@ bool read_OFF(const char* fname, OutputIterator output,
   return read_OFF<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
+/// \endcond
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -465,9 +471,8 @@ bool read_off_points(std::istream& is, ///< input stream.
   return read_off_points<typename value_type_traits<OutputIterator>::type>(is, output, parameters::point_map(point_map));
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 /*!
  \ingroup PkgPointSetProcessing3IODeprecated
 
@@ -483,6 +488,8 @@ CGAL_DEPRECATED bool read_off_points(std::istream& is,
 {
   return read_OFF(is, output, np);
 }
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename OutputIteratorValueType, typename OutputIterator>
 CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output)
@@ -503,6 +510,8 @@ CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output)
 {
   return read_OFF(is, output, CGAL::parameters::all_default());
 }
+
+/// \endcond
 
 #endif //CGAL_NO_DEPRECATED_CODE
 

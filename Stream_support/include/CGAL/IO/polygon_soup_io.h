@@ -15,7 +15,7 @@
 #ifndef CGAL_IO_READ_POLYGON_SOUP_H
 #define CGAL_IO_READ_POLYGON_SOUP_H
 
-// #include <CGAL/IO/3MF.h>
+#include <CGAL/IO/3MF.h>
 #include <CGAL/IO/OBJ.h>
 #include <CGAL/IO/OFF.h>
 // #include <CGAL/IO/OI.h>

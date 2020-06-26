@@ -97,11 +97,15 @@ bool read_OFF(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
   return read_OFF(is, point_set);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool read_OFF(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return read_OFF(fname.c_str(), point_set);
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -161,11 +165,15 @@ bool write_OFF(std::ostream& os,
                                                          np.point_map(point_set.point_map()));
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
   return write_OFF(os, point_set, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOOFF
@@ -197,6 +205,8 @@ bool write_OFF(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_
   return write_OFF(os, point_set, np);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Point, typename Vector>
 bool write_OFF(const char* fname, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
@@ -215,6 +225,8 @@ bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 {
   return write_OFF(fname.c_str(), point_set, parameters::all_default());
 }
+
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
