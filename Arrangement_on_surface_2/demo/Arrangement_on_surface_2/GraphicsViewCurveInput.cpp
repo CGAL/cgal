@@ -140,7 +140,7 @@ void CurveInputMethod::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QPointF point = this->snapPoint(event);
 
     // only accept unique consecutive points
-    if (!this->clickedPoints.empty() && this->clickedPoints.front() == point)
+    if (!this->clickedPoints.empty() && this->clickedPoints.back() == point)
       return;
     this->clickedPoints.push_back(point);
 
