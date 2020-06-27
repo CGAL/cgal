@@ -53,9 +53,26 @@ int test_preorder_print() {
   return 0;
 }
 
+int test_postorder_print() {
+
+  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+
+  auto points = create_example_point_collection();
+
+  auto point_map = points.point_map();
+  Octree octree(points, point_map);
+  octree.refine(10, 1);
+
+  auto tree_walker = CGAL::Postorder();
+  octree.print(std::cout, tree_walker.first(&octree.root()), tree_walker);
+
+  return 0;
+}
+
 int main(void) {
 
   test_preorder_print();
+  test_postorder_print();
 
   return 0;
 }

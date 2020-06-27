@@ -27,6 +27,19 @@ namespace CGAL {
     return &((*n->parent())[index + 1]);
   }
 
+  template<class Node>
+  const Node *deepest_first_child(const Node *n) {
+
+    if (!n)
+      return nullptr;
+
+    // Find the deepest child on the left
+    auto first = n;
+    while (!first->is_leaf())
+      first = &(*first)[0];
+    return first;
+  }
+
   struct Preorder {
 
     template<class Node>
@@ -36,11 +49,6 @@ namespace CGAL {
 
     template<class Node>
     const Node *operator()(const Node *n) {
-
-      // Passing null returns the first node
-      if (nullptr == n) {
-
-      }
 
       if (n->is_leaf()) {
 
@@ -69,6 +77,26 @@ namespace CGAL {
         return &(*n)[0];
       }
 
+    }
+  };
+
+  struct Postorder {
+
+    template<class Node>
+    const Node *first(const Node *root) {
+
+      return deepest_first_child(root);
+    }
+
+    template<class Node>
+    const Node *operator()(const Node *n) {
+
+      auto next = deepest_first_child(next_sibling(n));
+
+      if (!next)
+        next = n->parent();
+
+      return next;
     }
   };
 }
