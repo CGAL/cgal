@@ -28,6 +28,25 @@ namespace CGAL {
   }
 
   template<class Node>
+  const Node *next_sibling_up(const Node *n) {
+
+    if (!n)
+      return nullptr;
+
+    auto up = n->parent();
+
+    while (nullptr != up) {
+
+      if (nullptr != next_sibling(up))
+        return next_sibling(up);
+
+      up = up->parent();
+    }
+
+    return nullptr;
+  }
+
+  template<class Node>
   const Node *deepest_first_child(const Node *n) {
 
     if (!n)
@@ -56,17 +75,7 @@ namespace CGAL {
 
         if (nullptr == next) {
 
-          auto up = n->parent();
-
-          while (nullptr != up) {
-
-            if (nullptr != next_sibling(up))
-              return next_sibling(up);
-
-            up = up->parent();
-          }
-
-          return nullptr;
+          return next_sibling_up(n);
         }
 
         return next;
@@ -95,6 +104,26 @@ namespace CGAL {
 
       if (!next)
         next = n->parent();
+
+      return next;
+    }
+  };
+
+  struct Leaves {
+
+    template<class Node>
+    const Node *first(const Node *root) {
+
+      return deepest_first_child(root);
+    }
+
+    template<class Node>
+    const Node *operator()(const Node *n) {
+
+      auto next = deepest_first_child(next_sibling(n));
+
+      if (!next)
+        next = deepest_first_child(next_sibling_up(n));
 
       return next;
     }
