@@ -2942,11 +2942,19 @@ move_point(const Vertex_handle& old_vertex,
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-#ifdef CGAL_LINKED_WITH_TBB
-  tr_.incident_cells_threadsafe(old_vertex, std::back_inserter(incident_cells_));
-#else
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
-#endif
+
+# ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(old_vertex, std::back_inserter(incident_cells_));
+  }
+  // Sequential
+  else
+# endif // CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+  }
 
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
@@ -3820,11 +3828,19 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
   // Get triangulation_vertex incident cells : removal conflict zone
   // TODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
   // We don't try to lock the incident cells since they've already been locked
-#ifdef CGAL_LINKED_WITH_TBB
-  tr_.incident_cells_threadsafe(v, removal_conflict_cells);
-#else
-  tr_.incident_cells(v, removal_conflict_cells);
-#endif
+
+# ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(v, removal_conflict_cells);
+  }
+  // Sequential
+  else
+# endif // CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(v, removal_conflict_cells);
+  }
 
   // Get conflict_point conflict zone
   int li=0;
