@@ -55,8 +55,10 @@ int test_preorder() {
   // Create the range
   auto nodes = octree.nodes();
 
+  for (auto &n : nodes)
+    std::cout << n;
+
   // Check each item in the range
-  std::cout << octree;
 
   auto iter = nodes.begin();
   assert(*iter == octree.root());

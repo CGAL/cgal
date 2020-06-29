@@ -225,15 +225,7 @@ namespace CGAL {
 
       while (nullptr != node) {
 
-        for (int i = 0; i < node->depth(); ++i)
-          os << ". ";
-
-        os << "(" << node->location()[0] << "," << node->location()[1] << "," << node->location()[2] << ") ";
-
-        if (node->num_points() > 0)
-          os << " [" << node->num_points() << " points]";
-
-        os << std::endl;
+        std::cout << node->depth();
 
         node = tree_walker(node);
       }

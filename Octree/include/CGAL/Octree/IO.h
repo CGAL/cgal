@@ -11,33 +11,32 @@
 using std::ostream;
 
 template<class Kernel, class PointRange>
-void writeToStream(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node) {
-
-  // Set indentation
-  for (int i = 0; i < node.depth(); ++i) {
-    os << ". ";
-  }
-
-  // Print out this node
-  os << "(" << node.location()[0] << "," << node.location()[1] << "," << node.location()[2] << ")";
-
-  if (node.num_points() > 0)
-    os << " [" << node.num_points() << " points]";
-
-  os << std::endl;
-
-  // Print out this node's children
-  if (!node.is_leaf()) {
-    for (int i = 0; i < 8; ++i) {
-      writeToStream(os, node[i]);
-    }
-  }
-}
-
-template<class Kernel, class PointRange>
 ostream &operator<<(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node) {
 
-  writeToStream(os, node);
+  // Show the depth of the node
+  for (int i = 0; i < node.depth(); ++i)
+    os << ". ";
+
+  // Wrap information in brackets
+  os << "{ ";
+
+  // Index identifies which child this is
+  os << "(" << node.index() << ") ";
+
+  // Location
+  os << "(" << node.location()[0] << ",";
+  os << node.location()[1] << ",";
+  os << node.location()[2] << ") ";
+
+  //  os << "location: " << node.location() << ", ";
+  if (!node.is_empty())
+    os << "[" << node.num_points() << " points] ";
+
+  os << (node.is_leaf() ? "[leaf] " : "");
+
+  // Wrap information in brackets
+  os << "}" << std::endl;
+
   return os;
 }
 
