@@ -306,7 +306,7 @@ void ArrangementDemoWindow::updateInputType(QAction* a)
   if (!tab) return;
 
   using namespace CGAL::Qt;
-  CurveType curveType;
+  CurveType curveType = CurveType::None;
 
   if (a == this->ui->actionSegment)
     curveType = CurveType::Segment;

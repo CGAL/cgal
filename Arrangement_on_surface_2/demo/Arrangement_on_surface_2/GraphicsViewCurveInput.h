@@ -64,6 +64,7 @@ enum class CurveType
   FivePointConicArc,
   AlgebraicEquation,
   Bezier,
+  None,
 };
 
 class CurveGeneratorBase : public QObject

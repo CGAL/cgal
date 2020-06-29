@@ -18,8 +18,8 @@
   	\param parent A QWidget pointer to the class
   	\param f A QT::WindowFlags config variable
 */
-NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
-  QDialog( parent, f ),
+NewTabDialog::NewTabDialog( QWidget* parent ) :
+  QDialog( parent ),
   ui( new Ui::NewTabDialog ),
   buttonGroup( new QButtonGroup )
 {

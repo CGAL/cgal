@@ -42,8 +42,7 @@ class ArrangementDemoPropertiesDialog : public QDialog
     GRID_COLOR_KEY                /*!< color of the grid  */
   };
 
-  ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ = 0,
-                                   Qt::WindowFlags f  = Qt::WindowType(0));
+  ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ = 0 );
   QVariant property( int index );
 
 protected:

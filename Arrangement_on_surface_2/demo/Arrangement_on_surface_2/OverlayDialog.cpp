@@ -19,9 +19,7 @@
 
 // TODO: Don't color the text, but set an icon for each arrangement type...
 // TODO: Or maybe don't bother
-OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent,
-							  Qt::WindowFlags f ) :
-  QDialog( parent, f ),
+OverlayDialog::OverlayDialog( ArrangementDemoWindow* parent ) :
   ui( new Ui::OverlayDialog )
 {
   // An extra parenthesis around QColor to avoid the

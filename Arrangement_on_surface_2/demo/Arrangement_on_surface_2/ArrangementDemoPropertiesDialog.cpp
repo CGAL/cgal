@@ -22,9 +22,8 @@
 
 
 ArrangementDemoPropertiesDialog::
-ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_,
-								 Qt::WindowFlags f ) :
-  QDialog( parent_, f ),
+ArrangementDemoPropertiesDialog( ArrangementDemoWindow* parent_ ) :
+  QDialog( parent_ ),
   parent( parent_ ),
   ui( new Ui::ArrangementDemoPropertiesDialog )
 {

@@ -29,7 +29,7 @@ class OverlayDialog : public QDialog
     ARRANGEMENT = 32
   } OverlayDialogRole;
 
-  OverlayDialog( ArrangementDemoWindow* parent, Qt::WindowFlags f = Qt::WindowType(0)  );
+  OverlayDialog( ArrangementDemoWindow* parent );
 
   std::vector< CGAL::Object > selectedArrangements( ) const;
 
