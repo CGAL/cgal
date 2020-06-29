@@ -7,8 +7,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
-#include <CGAL/Octree/Octree_node_range.h>
-
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
@@ -42,56 +40,39 @@ Point_set create_example_point_collection() {
   return points;
 }
 
-int test_preorder_print() {
+int test_preorder() {
 
-  auto points = create_example_point_collection();
-
+  // Define the dataset
+  Point_set points;
+  points.insert({-1, -1, -1});
+  points.insert({1, -1, -1});
   auto point_map = points.point_map();
+
+  // Create the octree
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
+  // Create the range
+  auto nodes = octree.nodes();
+
+  // Check each item in the range
   std::cout << octree;
 
-  return 0;
-}
+  auto iter = nodes.begin();
+  assert(*iter == octree.root());
 
-int test_postorder_print() {
-
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-
-  auto points = create_example_point_collection();
-
-  auto point_map = points.point_map();
-  Octree octree(points, point_map);
-  octree.refine(10, 1);
-
-  auto tree_walker = CGAL::Postorder();
-  octree.print(std::cout, tree_walker.first(&octree.root()), tree_walker);
-
-  return 0;
-}
-
-int test_leaves_print() {
-
-  std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-
-  auto points = create_example_point_collection();
-
-  auto point_map = points.point_map();
-  Octree octree(points, point_map);
-  octree.refine(10, 1);
-
-  auto tree_walker = CGAL::Leaves();
-  octree.print(std::cout, tree_walker.first(&octree.root()), tree_walker);
+  iter++;
+  assert(*iter == octree.root()[0]);
 
   return 0;
 }
 
 int main(void) {
 
-  test_preorder_print();
-  test_postorder_print();
-  test_leaves_print();
+  test_preorder();
+//  test_preorder_print();
+//  test_postorder_print();
+//  test_leaves_print();
 
   return 0;
 }

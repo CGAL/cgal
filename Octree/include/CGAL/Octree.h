@@ -41,6 +41,8 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/range/iterator_range.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <ostream>
@@ -49,6 +51,7 @@
 #include <queue>
 #include <vector>
 #include <math.h>
+#include <CGAL/Octree/Tree_walker_criterion.h>
 
 namespace CGAL {
 
@@ -78,16 +81,22 @@ namespace CGAL {
 
     public:
 
-      const_iterator() : m_node(0) {};
+      const_iterator() : m_node(0) {}
 
-      const_iterator(Node *p, std::function<const Node *(const Node *)> next) : m_node(p), m_next(next) {};
+      const_iterator(Node *p, std::function<const Node *(const Node *)> next) : m_node(p), m_next(next) {}
+
+      const_iterator(const_iterator const& other) : m_node(other.m_node), m_next(other.m_next) {}
 
     private:
       friend class boost::iterator_core_access;
 
+      bool equal(const_iterator const &other) const {
+        return m_node == other.m_node;
+      }
+
       void increment() {
         // TODO: This will use a node traversal function
-        std::cout << "Incrementing" << std::endl;
+        m_node = m_next(m_node);
       }
 
       Node const &dereference() const { return *m_node; }
@@ -203,6 +212,12 @@ namespace CGAL {
     Node &root() { return m_root; }
 
     const Node &root() const { return m_root; }
+
+    boost::iterator_range<const_iterator> nodes() {
+      Node * first = &m_root;
+      std::function<const Node *(const Node *)> next = CGAL::next_preorder<Node>;
+      return boost::make_iterator_range(const_iterator(first, next), const_iterator());
+    }
 
     void print(std::ostream &os, const Node *first, std::function<const Node *(const Node *)> tree_walker) const {
 

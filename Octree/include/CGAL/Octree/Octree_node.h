@@ -47,6 +47,7 @@ namespace CGAL {
   template<class Kernel,
           class PointRange>
   class Octree_node {
+
   public: // types :
 
     typedef Octree_node<Kernel, PointRange> Node;
@@ -145,7 +146,7 @@ namespace CGAL {
 
     std::bitset<3> index() const {
 
-      std::bitset<3> result {};
+      std::bitset<3> result{};
 
       result[0] = location()[0] & 1;
       result[1] = location()[1] & 1;

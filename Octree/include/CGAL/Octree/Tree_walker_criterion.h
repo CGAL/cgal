@@ -128,6 +128,78 @@ namespace CGAL {
       return next;
     }
   };
+
+
+//  class Tree_walker {
+//
+//    template<class Kernel, class PointRange>
+//    static const Octree_node <Kernel, PointRange> *first(const Octree_node <Kernel, PointRange> *root) {
+//      return root;
+//    }
+//
+//    template<class Kernel, class PointRange>
+//    static const Octree_node <Kernel, PointRange> *next(const Octree_node <Kernel, PointRange> *node) {
+//      return node;
+//    }
+//  };
+
+  class Preorder_tree_walker {
+
+  public:
+
+    Preorder_tree_walker() {
+
+    }
+
+    template<class Kernel, class PointRange>
+    static const Octree_node<Kernel, PointRange> *first(const Octree_node <Kernel, PointRange> *root) {
+      return root;
+    }
+
+    template<class Kernel, class PointRange>
+    static const Octree_node <Kernel, PointRange> *next(const Octree_node <Kernel, PointRange> *n) {
+
+      if (n->is_leaf()) {
+
+        auto next = next_sibling(n);
+
+        if (nullptr == next) {
+
+          return next_sibling_up(n);
+        }
+
+        return next;
+
+      } else {
+
+        // Return the first child of this node
+        return &(*n)[0];
+      }
+
+    }
+  };
+
+  template<class Node>
+  static const Node *next_preorder(const Node *n) {
+
+    if (n->is_leaf()) {
+
+      auto next = next_sibling(n);
+
+      if (nullptr == next) {
+
+        return next_sibling_up(n);
+      }
+
+      return next;
+
+    } else {
+
+      // Return the first child of this node
+      return &(*n)[0];
+    }
+
+  }
 }
 
 #endif //OCTREE_TREE_WALKER_CRITERION_H
