@@ -158,7 +158,7 @@ namespace CGAL {
       return (m_parent == neighbor->parent());
     }
 
-    bool operator==(Node &rhs) {
+    bool operator==(Node &rhs) const {
 
       // Compare the points they contain
       // TODO
