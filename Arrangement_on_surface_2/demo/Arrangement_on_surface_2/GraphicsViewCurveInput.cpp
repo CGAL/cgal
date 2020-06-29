@@ -885,7 +885,6 @@ CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   return CGAL::make_object(res);
 }
 
-#include <iostream>
 template <
   typename RatKernel, typename AlgKernel, typename NtTraits,
   typename BoundingTraits>

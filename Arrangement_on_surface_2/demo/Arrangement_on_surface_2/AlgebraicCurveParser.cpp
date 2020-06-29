@@ -41,7 +41,6 @@ struct polynomial_parser :
 	polynomial_parser() : polynomial_parser::base_type(start)
 	{
 		using boost::spirit::ascii::space;
-		typedef std::string::const_iterator iterator_type;
 		namespace phx = boost::phoenix;
 		using qi::_val;
 		using qi::eps;

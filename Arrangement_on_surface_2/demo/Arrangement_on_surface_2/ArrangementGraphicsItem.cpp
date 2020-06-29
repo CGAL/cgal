@@ -140,7 +140,6 @@ void ArrangementGraphicsItem<Arr_>::updateBoundingBox(
   this->bb = {};
   for (auto it = this->arr->edges_begin(); it != this->arr->edges_end(); ++it)
   {
-    // can throws "CGAL::internal::Zero_resultant_exception"
     // FIXME: There is no method to find bounding box of bezier x monotone curve
     // Look at Bezier_x_monotone_2.h Subcurve struct
     try {
@@ -169,7 +168,9 @@ void ArrangementGraphicsItem<Bezier_arr>::updatePointsItem()
   for (auto it = this->arr->vertices_begin(); it != this->arr->vertices_end();
        ++it)
   {
-    // Bezier_point throws an exception when its x() or y() are called
+    // Bezier_point can either be rational or exact
+    // Calling Bezier_point::x() assumes that it is exact, which might not be
+    // the case
     std::pair<double, double> p = it->point().approximate();
     QPointF qp {p.first, p.second};
     this->pointsGraphicsItem.insert(qp);

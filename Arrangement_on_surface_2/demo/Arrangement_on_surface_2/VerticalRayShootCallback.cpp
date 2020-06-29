@@ -10,6 +10,15 @@
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #include "VerticalRayShootCallback.h"
+#include "CurveGraphicsItem.h"
+#include "Utils.h"
+
+#include <CGAL/Qt/Converter.h>
+#include <CGAL/Arrangement_with_history_2.h>
+#include <CGAL/Arr_walk_along_line_point_location.h>
+
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 
 VerticalRayShootCallbackBase::VerticalRayShootCallbackBase(QObject* parent_) :
     CGAL::Qt::Callback(parent_), shootingUp(true)
@@ -29,8 +38,7 @@ template <typename Arr_>
 VerticalRayShootCallback<Arr_>::VerticalRayShootCallback(
   Arrangement* arr_, QObject* parent_) :
     VerticalRayShootCallbackBase(parent_),
-    arr(arr_), intersectCurves(this->traits.intersect_2_object()),
-    pointLocationStrategy(CGAL::make_object(new Walk_pl_strategy(*arr_))),
+    arr(arr_),
     highlightedCurves(new CGAL::Qt::CurveGraphicsItem<Traits>())
 {
   this->rayGraphicsItem.setZValue(100);
@@ -84,18 +92,56 @@ void VerticalRayShootCallback<Arr_>::mouseMoveEvent(
 {
 }
 
+// Those were removed from the header file to minimize includes
+template <typename Arrangement, typename Kernel_point_2>
+static CGAL::Object
+rayShootUp(const Arrangement* arr, const Kernel_point_2& point)
+{
+  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
+    Walk_pl_strategy;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+
+  Arr_construct_point_2<Traits> toArrPoint;
+  Walk_pl_strategy pointLocationStrategy{*arr};
+  return pointLocationStrategy.ray_shoot_up(toArrPoint(point));
+}
+
+template <typename Arrangement, typename Kernel_point_2>
+static CGAL::Object
+rayShootDown(const Arrangement* arr, const Kernel_point_2& point)
+{
+  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
+    Walk_pl_strategy;
+  typedef typename Arrangement::Geometry_traits_2 Traits;
+
+  Arr_construct_point_2<Traits> toArrPoint;
+  Walk_pl_strategy pointLocationStrategy{*arr};
+  return pointLocationStrategy.ray_shoot_down(toArrPoint(point));
+}
+
 template <typename Arr_>
 void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   QGraphicsSceneMouseEvent* event)
 {
+  // minimizing #includes in in the header file
+  // Utils.h and ArrangementTypes.h are disasters
+  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
+  typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
+  typedef typename Kernel::Point_2                      Kernel_point_2;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Kernel::Segment_2                    Segment_2;
+  typedef typename Kernel::FT                           FT;
+
   this->highlightedCurves->clear();
-  this->queryPt = this->convert(event->scenePos());
+  Kernel_point_2 queryPt;
+  CGAL::Qt::Converter< Kernel > convert;
+  queryPt = convert(event->scenePos());
   CGAL::Object pointLocationResult;
   if (this->shootingUp)
-  { pointLocationResult = this->rayShootUp(this->queryPt); }
+  { pointLocationResult = rayShootUp(arr, queryPt); }
   else
   {
-    pointLocationResult = this->rayShootDown(this->queryPt);
+    pointLocationResult = rayShootDown(arr, queryPt);
   }
   if (pointLocationResult.is_empty()) { return; }
 
@@ -114,8 +160,8 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
   Vertex_const_handle vertex;
   if (CGAL::assign(unboundedFace, pointLocationResult))
   {
-    Kernel_point_2 p2(FT(this->queryPt.x()), y2);
-    Segment_2 lineSegment(this->queryPt, p2);
+    Kernel_point_2 p2(FT(queryPt.x()), y2);
+    Segment_2 lineSegment(queryPt, p2);
     this->rayGraphicsItem.setSource(event->scenePos());
     this->rayGraphicsItem.setTargetY(CGAL::to_double(y2));
     this->rayGraphicsItem.setIsInfinite(true);
@@ -127,12 +173,12 @@ void VerticalRayShootCallback<Arr_>::highlightPointLocation(
     // draw a ray from the clicked point to the hit curve
     Arr_compute_y_at_x_2<Traits> compute_y_at_x_2;
     compute_y_at_x_2.setScene(this->getScene());
-    CoordinateType x(this->queryPt.x());
+    CoordinateType x(queryPt.x());
     double yApprox =
       CGAL::to_double(compute_y_at_x_2.approx(halfedge->curve(), x));
     FT yInt(yApprox);
-    Kernel_point_2 p2(this->queryPt.x(), yInt);
-    Segment_2 seg(this->queryPt, p2);
+    Kernel_point_2 p2(queryPt.x(), yInt);
+    Segment_2 seg(queryPt, p2);
     this->rayGraphicsItem.setSource(event->scenePos());
     this->rayGraphicsItem.setTargetY(CGAL::to_double(yInt));
     this->rayGraphicsItem.setIsInfinite(false);
@@ -165,146 +211,6 @@ VerticalRayShootCallback<Arr_>::getFace(const CGAL::Object& obj)
   if (v->is_isolated()) return v->face();
   Halfedge_around_vertex_const_circulator eit = v->incident_halfedges();
   return (eit->face());
-}
-
-template <typename Arr_>
-CGAL::Object
-VerticalRayShootCallback<Arr_>::rayShootUp(const Kernel_point_2& point)
-{
-  typename Supports_landmarks<Arrangement>::Tag supportsLandmarks;
-  return this->rayShootUp(point, supportsLandmarks);
-}
-
-template <typename Arr_>
-CGAL::Object VerticalRayShootCallback<Arr_>::rayShootUp(
-  const Kernel_point_2& pt, CGAL::Tag_true)
-{
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy* trapezoidStrategy;
-  SimplePointLocationStrategy* simpleStrategy;
-  LandmarksPointLocationStrategy* landmarksStrategy;
-
-  Point_2 point = this->toArrPoint(pt);
-
-  if (CGAL::assign(walkStrategy, this->pointLocationStrategy))
-  { pointLocationResult = walkStrategy->ray_shoot_up(point); }
-  else if (CGAL::assign(trapezoidStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = trapezoidStrategy->ray_shoot_up(point);
-  }
-  else if (CGAL::assign(simpleStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = simpleStrategy->ray_shoot_up(point);
-  }
-  else if (CGAL::assign(landmarksStrategy, this->pointLocationStrategy))
-  {
-    // pointLocationResult = landmarksStrategy->locate( point );
-    std::cerr << "Warning: landmarks point location strategy doesn't support "
-                 "ray shooting"
-              << std::endl;
-    return CGAL::Object();
-  }
-  else
-  {
-    std::cout << "Didn't find the right strategy\n";
-  }
-
-  return pointLocationResult;
-}
-
-template <typename Arr_>
-CGAL::Object VerticalRayShootCallback<Arr_>::rayShootUp(
-  const Kernel_point_2& pt, CGAL::Tag_false)
-{
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy* trapezoidStrategy;
-  SimplePointLocationStrategy* simpleStrategy;
-
-  Point_2 point = this->toArrPoint(pt);
-
-  if (CGAL::assign(walkStrategy, this->pointLocationStrategy))
-  { pointLocationResult = walkStrategy->ray_shoot_up(point); }
-  else if (CGAL::assign(trapezoidStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = trapezoidStrategy->ray_shoot_up(point);
-  }
-  else if (CGAL::assign(simpleStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = simpleStrategy->ray_shoot_up(point);
-  }
-  else
-  {
-    std::cout << "Didn't find the right strategy\n";
-  }
-
-  return pointLocationResult;
-}
-
-template <typename Arr_>
-CGAL::Object
-VerticalRayShootCallback<Arr_>::rayShootDown(const Kernel_point_2& point)
-{
-  typename Supports_landmarks<Arrangement>::Tag supportsLandmarks;
-  return this->rayShootDown(point, supportsLandmarks);
-}
-
-template <typename Arr_>
-CGAL::Object VerticalRayShootCallback<Arr_>::rayShootDown(
-  const Kernel_point_2& pt, CGAL::Tag_true)
-{
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy* trapezoidStrategy;
-  SimplePointLocationStrategy* simpleStrategy;
-  LandmarksPointLocationStrategy* landmarksStrategy;
-
-  Point_2 point = this->toArrPoint(pt);
-
-  if (CGAL::assign(walkStrategy, this->pointLocationStrategy))
-  { pointLocationResult = walkStrategy->ray_shoot_down(point); }
-  else if (CGAL::assign(trapezoidStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = trapezoidStrategy->ray_shoot_down(point);
-  }
-  else if (CGAL::assign(simpleStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = simpleStrategy->ray_shoot_down(point);
-  }
-  else if (CGAL::assign(landmarksStrategy, this->pointLocationStrategy))
-  {
-    // pointLocationResult = landmarksStrategy->locate( point );
-    std::cerr << "Warning: landmarks point location strategy doesn't support "
-                 "ray shooting"
-              << std::endl;
-    return CGAL::Object();
-  }
-  return pointLocationResult;
-}
-
-template <typename Arr_>
-CGAL::Object VerticalRayShootCallback<Arr_>::rayShootDown(
-  const Kernel_point_2& pt, CGAL::Tag_false)
-{
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy* trapezoidStrategy;
-  SimplePointLocationStrategy* simpleStrategy;
-
-  Point_2 point = this->toArrPoint(pt);
-
-  if (CGAL::assign(walkStrategy, this->pointLocationStrategy))
-  { pointLocationResult = walkStrategy->ray_shoot_down(point); }
-  else if (CGAL::assign(trapezoidStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = trapezoidStrategy->ray_shoot_down(point);
-  }
-  else if (CGAL::assign(simpleStrategy, this->pointLocationStrategy))
-  {
-    pointLocationResult = simpleStrategy->ray_shoot_down(point);
-  }
-  return pointLocationResult;
 }
 
 template class VerticalRayShootCallback<Seg_arr>;

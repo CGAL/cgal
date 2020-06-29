@@ -93,14 +93,8 @@ protected:
 
   Face_const_handle getFace( const CGAL::Object& o );
   CGAL::Object locate( const Kernel_point_2& point );
-  CGAL::Object locate( const Kernel_point_2& point,
-					   CGAL::Tag_false/*supportsLandmarks*/ );
-  template <typename=void>
-  CGAL::Object locate( const Kernel_point_2& point,
-					   CGAL::Tag_true /*doesNotSupportLandmarks*/ );
 
   CGAL::Qt::Converter< Kernel > convert;
-  CGAL::Object pointLocationStrategy;
   Arrangement* arr;
 }; // class FillFaceCallback
 

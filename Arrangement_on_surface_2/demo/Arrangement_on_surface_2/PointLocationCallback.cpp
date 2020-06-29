@@ -151,44 +151,30 @@ PointLocationCallback<Arr_>::getFace(const CGAL::Object& obj)
   return (eit->face());
 }
 
-template <typename Arr_>
-CGAL::Object PointLocationCallback<Arr_>::locate(const Kernel_point_2& point)
+template <typename Arrangement, typename SupportsLandmarks>
+struct LandmarkStrategyHelper
 {
-  typename Supports_landmarks<Arrangement>::Tag supportsLandmarks;
-  return this->locate(point, supportsLandmarks);
-}
+  using type = CGAL::Arr_walk_along_line_point_location<Arrangement>;
+};
+
+template <typename Arrangement>
+struct LandmarkStrategyHelper<Arrangement, CGAL::Tag_true>
+{
+  using type = CGAL::Arr_landmarks_point_location<Arrangement>;
+};
 
 template <typename Arr_>
-template <typename>
-CGAL::Object
-PointLocationCallback<Arr_>::locate(const Kernel_point_2& pt, CGAL::Tag_true)
+CGAL::Object PointLocationCallback<Arr_>::locate(const Kernel_point_2& pt)
 {
-  typedef typename Supports_landmarks<Arrangement>::LandmarksType
-    LandmarksPointLocationStrategy;
+  using SupportsLandmarks = typename Supports_landmarks<Arrangement>::Tag;
+  using LandmarksPointLocationStrategy =
+    typename LandmarkStrategyHelper<Arrangement, SupportsLandmarks>::type;
 
   Arr_construct_point_2<Traits> toArrPoint;
   Point_2 point = toArrPoint(pt);
 
   LandmarksPointLocationStrategy pointLocationStrategy{*arr};
-  CGAL::Object pointLocationResult = pointLocationStrategy.locate(point);
-
-  return pointLocationResult;
-}
-
-template <typename Arr_>
-CGAL::Object
-PointLocationCallback<Arr_>::locate(const Kernel_point_2& pt, CGAL::Tag_false)
-{
-  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
-    Walk_pl_strategy;
-
-  Arr_construct_point_2<Traits> toArrPoint;
-  Point_2 point = toArrPoint(pt);
-
-  Walk_pl_strategy pointLocationStrategy{*arr};
-  CGAL::Object pointLocationResult = pointLocationStrategy.locate(point);
-
-  return pointLocationResult;
+  return pointLocationStrategy.locate(point);
 }
 
 template class PointLocationCallback<Seg_arr>;

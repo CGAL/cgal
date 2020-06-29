@@ -74,11 +74,6 @@ protected:
                                CGAL::Arr_open_side_tag );
   Face_const_handle getFace( const CGAL::Object& o );
   CGAL::Object locate( const Kernel_point_2& point );
-  CGAL::Object locate( const Kernel_point_2& point,
-                       CGAL::Tag_false /*doesNotSupportLandmarks*/ );
-  template <typename=void>
-  CGAL::Object locate( const Kernel_point_2& point,
-                       CGAL::Tag_true /*supportsLandmarks*/ );
 
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;

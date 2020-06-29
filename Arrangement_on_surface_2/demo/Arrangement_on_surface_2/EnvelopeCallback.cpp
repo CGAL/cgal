@@ -130,6 +130,7 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
     envelopeToUpdate = this->upperEnvelope;
     CGAL::upper_envelope_x_monotone_2(curves.begin(), curves.end(), diagram);
   }
+
   envelopeToUpdate->clear( );
 
   auto next_edge = [](const auto& e) -> Edge_const_handle {
@@ -155,7 +156,7 @@ void EnvelopeCallback< Arr_>::updateEnvelope( bool lower )
 
       envelopeToUpdate->insert(curve);
       // TODO: visually show leftPoint and rightPoint
-      // the problem is they are not the actual curve points
+      // note: leftPoint and rightPoint are not the actual curve points
     }
   }
 

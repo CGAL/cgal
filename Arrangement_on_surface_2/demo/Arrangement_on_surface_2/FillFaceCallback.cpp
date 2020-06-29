@@ -45,7 +45,6 @@ QColor FillFaceCallbackBase::getColor() const { return this->fillColor; }
 template <class Arr_>
 FillFaceCallback<Arr_>::FillFaceCallback(Arrangement* arr_, QObject* parent_) :
     FillFaceCallbackBase(parent_),
-    pointLocationStrategy(CGAL::make_object(new Walk_pl_strategy(*arr_))),
     arr(arr_)
 {
 }
@@ -112,80 +111,36 @@ FillFaceCallback<Arr_>::getFace(const CGAL::Object& obj)
   return (eit->face());
 }
 
+
+template <typename Arrangement, typename SupportsLandmarks>
+struct LandmarkStrategyHelper
+{
+  using type = CGAL::Arr_walk_along_line_point_location<Arrangement>;
+};
+
+template <typename Arrangement>
+struct LandmarkStrategyHelper<Arrangement, CGAL::Tag_true>
+{
+  using type = CGAL::Arr_landmarks_point_location<Arrangement>;
+};
+
 //! A Template type
 //! locating the mouse position
 /*!
     \param point A Kernel_point_2 object
 */
 template <class Arr_>
-CGAL::Object FillFaceCallback<Arr_>::locate(const Kernel_point_2& point)
+CGAL::Object FillFaceCallback<Arr_>::locate(const Kernel_point_2& pt)
 {
-  typename Supports_landmarks<Arrangement>::Tag supportsLandmarks;
-  return this->locate(point, supportsLandmarks);
-}
-
-//! A Template type
-//! locating points given a query
-/*!
-    \param pt A kernel_point_2 object
-    \param Tag_true A CGAL object available in class
-*/
-template <class Arr_>
-template <typename>
-CGAL::Object
-FillFaceCallback<Arr_>::locate(const Kernel_point_2& pt, CGAL::Tag_true)
-{
-  typedef typename Supports_landmarks<Arrangement>::LandmarksType
-    LandmarksPointLocationStrategy;
-
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy*
-    trapezoidStrategy; /*!< searching of a trapezoid from the given faces */
-  SimplePointLocationStrategy* simpleStrategy;
-  LandmarksPointLocationStrategy*
-    landmarksStrategy; /*!< finds the neares neighbor point */
+  using SupportsLandmarks = typename Supports_landmarks<Arrangement>::Tag;
+  using LandmarksPointLocationStrategy =
+    typename LandmarkStrategyHelper<Arrangement, SupportsLandmarks>::type;
 
   Arr_construct_point_2<Traits> toArrPoint;
   Point_2 point = toArrPoint(pt);
 
-  if (CGAL::assign(walkStrategy, this->pointLocationStrategy))
-    pointLocationResult = walkStrategy->locate(point);
-  else if (CGAL::assign(trapezoidStrategy, this->pointLocationStrategy))
-    pointLocationResult = trapezoidStrategy->locate(point);
-  else if (CGAL::assign(simpleStrategy, this->pointLocationStrategy))
-    pointLocationResult = simpleStrategy->locate(point);
-  else if (CGAL::assign(landmarksStrategy, this->pointLocationStrategy))
-    pointLocationResult = landmarksStrategy->locate(point);
-
-  return pointLocationResult;
-}
-
-//! A Template type
-//! locating points given a query
-/*!
-    \param pt A kernel_point_2 object
-    \param Tag_false A CGAL object not available
-*/
-template <class Arr_>
-CGAL::Object
-FillFaceCallback<Arr_>::locate(const Kernel_point_2& pt, CGAL::Tag_false)
-{
-  CGAL::Object pointLocationResult;
-  Walk_pl_strategy* walkStrategy;
-  TrapezoidPointLocationStrategy* trapezoidStrategy;
-  SimplePointLocationStrategy* simpleStrategy;
-
-  Arr_construct_point_2<Traits> toArrPoint;
-  Point_2 point = toArrPoint(pt);
-
-  if (CGAL::assign(walkStrategy, this->pointLocationStrategy))
-    pointLocationResult = walkStrategy->locate(point);
-  else if (CGAL::assign(trapezoidStrategy, this->pointLocationStrategy))
-    pointLocationResult = trapezoidStrategy->locate(point);
-  else if (CGAL::assign(simpleStrategy, this->pointLocationStrategy))
-    pointLocationResult = simpleStrategy->locate(point);
-  return pointLocationResult;
+  LandmarksPointLocationStrategy pointLocationStrategy{*arr};
+  return pointLocationStrategy.locate(point);
 }
 
 template class FillFaceCallback<Seg_arr>;

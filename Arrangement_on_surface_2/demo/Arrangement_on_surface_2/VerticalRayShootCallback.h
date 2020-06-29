@@ -12,23 +12,19 @@
 #ifndef VERTICAL_RAY_SHOOT_CALLBACK_H
 #define VERTICAL_RAY_SHOOT_CALLBACK_H
 
-#include <QEvent>
-#include <QGraphicsItem>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsSceneMouseEvent>
-#include <CGAL/Qt/Converter.h>
-#include "CurveGraphicsItem.h"
-#include <CGAL/Arrangement_with_history_2.h>
-#include <CGAL/Arr_trapezoid_ric_point_location.h>
-#include <CGAL/Arr_simple_point_location.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Arr_landmarks_point_location.h>
-#include <vector>
-
 #include "Callback.h"
-#include "Utils.h"
 #include "VerticalRayGraphicsItem.h"
+
+namespace CGAL
+{
+namespace Qt
+{
+template <typename T>
+class CurveGraphicsItem;
+}
+}
+class QGraphicsSceneMouseEvent;
+class QGraphicsScene;
 
 class VerticalRayShootCallbackBase : public CGAL::Qt::Callback
 {
@@ -72,25 +68,6 @@ public:
   typedef typename Arrangement::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
   typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Intersect_2                  Intersect_2;
-  typedef typename Traits::Multiplicity                 Multiplicity;
-  typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
-  typedef typename ArrTraitsAdaptor< Traits >::CoordinateType CoordinateType;
-  typedef typename Kernel::Point_2                      Kernel_point_2;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef std::pair< typename Traits::Point_2, Multiplicity >
-                                                        IntersectionResult;
-  typedef typename Kernel::Segment_2                    Segment_2;
-  typedef typename Kernel::FT                           FT;
-  typedef typename CGAL::Arr_trapezoid_ric_point_location< Arrangement >
-    TrapezoidPointLocationStrategy;
-  typedef typename CGAL::Arr_simple_point_location< Arrangement >
-    SimplePointLocationStrategy;
-  typedef typename CGAL::Arr_walk_along_line_point_location< Arrangement >
-    Walk_pl_strategy;
-  typedef typename CGAL::Arr_landmarks_point_location< Arrangement >
-    LandmarksPointLocationStrategy;
 
   VerticalRayShootCallback( Arrangement* arr_, QObject* parent_ );
   void reset( );
@@ -125,23 +102,9 @@ protected:
   void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
   void highlightPointLocation( QGraphicsSceneMouseEvent *event );
   Face_const_handle getFace( const CGAL::Object& o );
-  CGAL::Object rayShootUp( const Kernel_point_2& point );
-  CGAL::Object rayShootUp( const Kernel_point_2& point, CGAL::Tag_true );
-  CGAL::Object rayShootUp( const Kernel_point_2& point, CGAL::Tag_false );
-  CGAL::Object rayShootDown( const Kernel_point_2& point );
-  CGAL::Object rayShootDown( const Kernel_point_2& point, CGAL::Tag_true );
-  CGAL::Object rayShootDown( const Kernel_point_2& point, CGAL::Tag_false );
 
-  using Superclass::scene;
-  using Superclass::shootingUp;
-  Traits traits;
   Arrangement* arr;
-  Intersect_2 intersectCurves;
-  CGAL::Qt::Converter< Kernel > convert;
-  CGAL::Object pointLocationStrategy;
   CGAL::Qt::CurveGraphicsItem< Traits >* highlightedCurves;
-  Kernel_point_2 queryPt;
-  Arr_construct_point_2< Traits > toArrPoint;
   VerticalRayGraphicsItem rayGraphicsItem;
 }; // class VerticalRayShootCallback
 

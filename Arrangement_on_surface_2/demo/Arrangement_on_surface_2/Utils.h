@@ -12,11 +12,6 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Qt/Converter.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_algebraic_segment_traits_2.h>
-#include <CGAL/Arr_walk_along_line_point_location.h>
 #include <QGraphicsSceneMouseEvent>
 
 #include "ArrangementDemoGraphicsView.h"
@@ -32,14 +27,12 @@ template <typename Arr_, bool b = has_Approximate_2< Arr_ >::value>
 struct Supports_landmarks
 {
   typedef CGAL::Boolean_tag< b > Tag;
-  struct LandmarksType { };
 };
 
 template <typename Arr_>
 struct Supports_landmarks< Arr_, true >
 {
   typedef CGAL::Tag_true Tag;
-  typedef CGAL::Arr_landmarks_point_location< Arr_ > LandmarksType;
 };
 
 /**
@@ -696,8 +689,6 @@ public: // typedefs
   //typedef typename Arrangement::Geometry_traits_2 ArrTraits;
   typedef Compute_squared_distance_2< ArrTraits > Point_curve_distance;
   typedef typename ArrTraits::X_monotone_curve_2 X_monotone_curve_2;
-  typedef CGAL::Arr_walk_along_line_point_location< Arrangement >
-                                                        Point_location_strategy;
   typedef typename ArrTraitsAdaptor<ArrTraits>::Kernel  Kernel;
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
@@ -714,8 +705,7 @@ public:
   /*! constructor */
   Find_nearest_edge( Arrangement* arr_ ) :
     Find_nearest_edge_base( ),
-    arr( arr_ ),
-    pointLocationStrategy( Point_location_strategy( *arr_ ) )
+    arr( arr_ )
   { }
 
   /*! Destructor (virtual) */
@@ -736,7 +726,6 @@ protected: // member methods
 protected: // member fields
   Arrangement* arr;
   Point_curve_distance pointCurveDistance;
-  Point_location_strategy pointLocationStrategy;
   Arr_construct_point_2< ArrTraits > toArrPoint;
 
 }; // class Find_nearest_edge

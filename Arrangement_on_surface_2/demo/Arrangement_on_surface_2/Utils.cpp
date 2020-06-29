@@ -13,6 +13,8 @@
 #include "ArrangementTypes.h"
 #include "ArrangementPainterOstream.h"
 
+#include <CGAL/Arr_walk_along_line_point_location.h>
+
 #include <QGraphicsSceneMouseEvent>
 #include <QScrollBar>
 
@@ -245,8 +247,12 @@ template <typename Arr_, typename ArrTraits>
 auto Find_nearest_edge<Arr_, ArrTraits>::operator()(const Point_2& queryPt)
   -> Halfedge_const_handle
 {
+  typedef CGAL::Arr_walk_along_line_point_location<Arrangement>
+    Point_location_strategy;
+
   typename ArrTraits::Point_2 pt = this->toArrPoint(queryPt);
-  CGAL::Object pointLocationResult = this->pointLocationStrategy.locate(pt);
+  Point_location_strategy pointLocationStrategy{*arr};
+  CGAL::Object pointLocationResult = pointLocationStrategy.locate(pt);
   Face_const_handle face = this->getFace(pointLocationResult);
   bool first = 1;
   X_monotone_curve_2 closestCurve;
