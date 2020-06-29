@@ -2,6 +2,7 @@
 
 \example Polygon_mesh_processing/self_intersections_example.cpp
 \example Polygon_mesh_processing/hole_filling_example.cpp
+\example Polygon_mesh_processing/hole_filling_example_SM.cpp
 \example Polygon_mesh_processing/stitch_borders_example.cpp
 \example Polygon_mesh_processing/compute_normals_example.cpp
 \example Polygon_mesh_processing/point_inside_example.cpp
@@ -21,8 +22,11 @@
 \example Polygon_mesh_processing/corefinement_mesh_union_and_intersection.cpp
 \example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
 \example Polygon_mesh_processing/detect_features_example.cpp
+\example Polygon_mesh_processing/volume_connected_components.cpp
 \example Polygon_mesh_processing/manifoldness_repair_example.cpp
 \example Polygon_mesh_processing/repair_polygon_soup_example.cpp
 \example Polygon_mesh_processing/mesh_smoothing_example.cpp
 \example Polygon_mesh_processing/shape_smoothing_example.cpp
+\example Polygon_mesh_processing/locate_example.cpp
+\example Polygon_mesh_processing/orientation_pipeline_example.cpp
 */

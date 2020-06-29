@@ -21,7 +21,7 @@ NO_SCM=""                # If set, git pull is not called.
 SOURCES_DIR="$PWD"       # Directory containing the sources, default is "$PWD"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 BETA=""                  #If set, will change the release number and version number accordingly.
-DESTINATION="/tmp"
+DESTINATION="$PWD"
 IS_MASTER="y"
 
 SOURCES_DIR_HAS_BEEN_SET=
@@ -180,9 +180,13 @@ else
 fi
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
-MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
-MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
-BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+if [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+    MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
+    MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
+    BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+else
+    eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
+fi
 
 # Do not show the bugfix number if it is 0.
 if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
@@ -302,35 +306,32 @@ if [ -n "$DO_PUBLIC" ]; then
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
+    if ! [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
+        eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
+    fi
 
-    cmake -DGIT_REPO=${SOURCES_DIR} -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
-    pushd "${DESTINATION}/${public_release_name}"
-
-    # Modify the version numbers in <CGAL/version.h>
-    sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
-
-    # Patch the date and CGAL version in man(1) pages
-    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
-
-    echo -n $public_release_version > VERSION 2>&1
-    cd ..
-
-    rm -f "${public_release_name}".tar*
-    tar -cf "${public_release_name}.tar" "${public_release_name}"
+    cmake -DGIT_REPO=${SOURCES_DIR} -DGENERATE_TARBALLS="ON" -DPUBLIC="ON" -DDESTINATION="${DESTINATION}" -DCGAL_VERSION="${public_release_version}" -DCGAL_VERSION_NR="${public_release_number}" -DVERBOSE="${VERBOSE}" -P ${SOURCES_DIR}/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+    tar -xf ${public_release_name}.tar.xz
     mkdir "${HTML_DIR}/${release_name}-public"
-    xz --best "${public_release_name}.tar" -c > "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
-    gzip "${public_release_name}.tar"
-    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/"
     # Do a Zip file as well for the public version.
     zip -q -r ${public_release_name}.zip ${public_release_name}
-    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
+    rm -rf ./${public_release_name}
+    tar -xf ${public_release_name}-examples.tar.xz
+    zip -q -r ${public_release_name}-examples.zip ${public_release_name}
+    rm -rf ./${public_release_name}
+    tar xf ${public_release_name}-library.tar.xz
+    zip -q -r ${public_release_name}-library.zip ${public_release_name}
+    mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
+    mv ${public_release_name}*.zip "${HTML_DIR}/${release_name}-public/"
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
-    popd
 fi
 
 if [ -n "$DO_PUBLIC" ]; then
   if docker version > /dev/null; then
+    # Re-extract the full version of CGAL, with examples/, and doc_html/
+    rm -rf ./${public_release_name}
+    tar -xf "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
     # Build the Windows installer
     docker pull cgal/cgal-nsis-dockerfile
     docker create -v `realpath ${DESTINATION}/${public_release_name}`:/mnt/cgal_release:ro,z \

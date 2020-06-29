@@ -36,14 +36,19 @@ void Triangle_container::initGL( Viewer_interface* viewer)
   if(viewer->isSharing())
   {
     if(!getVao(viewer))
-      setVao(viewer, new Vao(getVao(Three::mainViewer()), 
+      setVao(viewer, new Vao(getVao(Three::mainViewer()),
                              viewer->getShaderProgram(getProgram())));
   }
   else
   {
-    
     if(!getVao(viewer))
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+    //in both because of the soup item
+    if(!getVbo(VColors))
+      setVbo(VColors,
+             new Vbo("colors",
+                     Vbo::COLORS));
+    getVao(viewer)->addVbo(getVbo(VColors));
     if(isDataIndexed())
     {
       if(!getVbo(Smooth_vertices))
@@ -56,7 +61,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                        QOpenGLBuffer::IndexBuffer));
       getVao(viewer)->addVbo(getVbo(Smooth_vertices));
       getVao(viewer)->addVbo(getVbo(Vertex_indices));
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
       {
         if(!getVbo(Smooth_normals))
@@ -65,11 +70,6 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          Vbo::NORMALS));
         getVao(viewer)->addVbo(getVbo(Smooth_normals));
       }
-      if(!getVbo(VColors))
-        setVbo(VColors,
-               new Vbo("colors",
-                       Vbo::COLORS));
-      getVao(viewer)->addVbo(getVbo(VColors));
       if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
       {
         if(!getVbo(Distances))
@@ -103,18 +103,18 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                        Vbo::COLORS,
                        QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
       getVao(viewer)->addVbo(getVbo(FColors));
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasCenter").toBool())
       {
         if(!getVbo(Facet_centers))
           setVbo(Facet_centers,
                  new Vbo("center",
-                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool() 
+                  viewer->getShaderProgram(getProgram())->property("isInstanced").toBool()
                          ? Vbo::NOT_INSTANCED
                          : Vbo::GEOMETRY));
         getVao(viewer)->addVbo(getVbo(Facet_centers));
       }
-      
+
       if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
       {
         if(!getVbo(Radius))
@@ -123,7 +123,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          Vbo::NOT_INSTANCED,
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Radius));
-        
+
       }
       if(viewer->getShaderProgram(getProgram())->property("hasTexture").toBool())
       {

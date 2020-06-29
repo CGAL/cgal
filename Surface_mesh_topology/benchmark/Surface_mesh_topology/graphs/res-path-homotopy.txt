@@ -1,0 +1,616 @@
+Initial map: #Darts=3263148, #0-cells=543652, #1-cells=1631574, #2-cells=1087716, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 1.30931 seconds
+[TIME] Simplification in one face: 1.52864 seconds
+[TIME] Face quadrangulation: 0.334481 seconds
+[TIME] Total time for computation of reduced map: 3.18527 seconds
+Reduced map: #Darts=832, #0-cells=2, #1-cells=416, #2-cells=208, #ccs=1, valid=1
+Random seed: 1574945952: Path1 size: 1524414 (from 2360 darts); Path2 size: 1530418 (from 6004 deformations).
+[TIME] is_contractible: 3.86554 seconds
+[TIME] are_freely_homotopic: 7.8444 seconds
+Random seed: 1524412294: Path1 size: 1049124 (from 6814 darts); Path2 size: 1050087 (from 963 deformations).
+[TIME] is_contractible: 2.83135 seconds
+[TIME] are_freely_homotopic: 5.60931 seconds
+Random seed: 1903401680: Path1 size: 2509006 (from 1122 darts); Path2 size: 2513362 (from 4356 deformations).
+[TIME] is_contractible: 6.13668 seconds
+[TIME] are_freely_homotopic: 12.624 seconds
+Random seed: 931857252: Path1 size: 2224823 (from 5500 darts); Path2 size: 2232443 (from 7620 deformations).
+[TIME] is_contractible: 5.40251 seconds
+[TIME] are_freely_homotopic: 10.484 seconds
+Random seed: 1094439597: Path1 size: 1008888 (from 4919 darts); Path2 size: 1018619 (from 9731 deformations).
+[TIME] is_contractible: 2.38837 seconds
+[TIME] are_freely_homotopic: 4.79886 seconds
+Random seed: 74268877: Path1 size: 1332065 (from 2814 darts); Path2 size: 1339611 (from 7546 deformations).
+[TIME] is_contractible: 3.22555 seconds
+[TIME] are_freely_homotopic: 6.41267 seconds
+Random seed: 1179101070: Path1 size: 3561764 (from 608 darts); Path2 size: 3562141 (from 377 deformations).
+[TIME] is_contractible: 8.05207 seconds
+[TIME] are_freely_homotopic: 16.0708 seconds
+Random seed: 1456908315: Path1 size: 2438898 (from 7785 darts); Path2 size: 2442370 (from 3472 deformations).
+[TIME] is_contractible: 5.71337 seconds
+[TIME] are_freely_homotopic: 11.477 seconds
+Random seed: 1499814407: Path1 size: 1914057 (from 668 darts); Path2 size: 1919940 (from 5883 deformations).
+[TIME] is_contractible: 4.77898 seconds
+[TIME] are_freely_homotopic: 9.59951 seconds
+Random seed: 578744460: Path1 size: 2551120 (from 5048 darts); Path2 size: 2555476 (from 4356 deformations).
+[TIME] is_contractible: 6.3078 seconds
+[TIME] are_freely_homotopic: 12.6345 seconds
+Random seed: 213254128: Path1 size: 64526 (from 8013 darts); Path2 size: 70685 (from 6159 deformations).
+[TIME] is_contractible: 0.173418 seconds
+[TIME] are_freely_homotopic: 0.361924 seconds
+Random seed: 1775095594: Path1 size: 492594 (from 4092 darts); Path2 size: 498396 (from 5802 deformations).
+[TIME] is_contractible: 1.26223 seconds
+[TIME] are_freely_homotopic: 2.53348 seconds
+Random seed: 1876630085: Path1 size: 571858 (from 5582 darts); Path2 size: 580868 (from 9010 deformations).
+[TIME] is_contractible: 1.37788 seconds
+[TIME] are_freely_homotopic: 2.7772 seconds
+Random seed: 1560969122: Path1 size: 38840 (from 990 darts); Path2 size: 43934 (from 5094 deformations).
+[TIME] is_contractible: 0.095079 seconds
+[TIME] are_freely_homotopic: 0.203706 seconds
+Random seed: 810569075: Path1 size: 15721 (from 6097 darts); Path2 size: 22405 (from 6684 deformations).
+[TIME] is_contractible: 0.052084 seconds
+[TIME] are_freely_homotopic: 0.12308 seconds
+Random seed: 1388546522: Path1 size: 9948224 (from 3167 darts); Path2 size: 9954782 (from 6558 deformations).
+[TIME] is_contractible: 23.2806 seconds
+[TIME] are_freely_homotopic: 46.5412 seconds
+Random seed: 740365847: Path1 size: 1122183 (from 6018 darts); Path2 size: 1126957 (from 4774 deformations).
+[TIME] is_contractible: 2.45848 seconds
+[TIME] are_freely_homotopic: 4.81015 seconds
+Random seed: 1751524586: Path1 size: 1459662 (from 9345 darts); Path2 size: 1462867 (from 3205 deformations).
+[TIME] is_contractible: 3.35651 seconds
+[TIME] are_freely_homotopic: 6.8351 seconds
+Random seed: 1549068120: Path1 size: 1329962 (from 5701 darts); Path2 size: 1333900 (from 3938 deformations).
+[TIME] is_contractible: 3.47501 seconds
+[TIME] are_freely_homotopic: 7.01742 seconds
+Random seed: 201033949: Path1 size: 117030 (from 2125 darts); Path2 size: 123624 (from 6594 deformations).
+[TIME] is_contractible: 0.265891 seconds
+[TIME] are_freely_homotopic: 0.552161 seconds
+Random seed: 877874983: Path1 size: 1047344 (from 5741 darts); Path2 size: 1054974 (from 7630 deformations).
+[TIME] is_contractible: 2.62549 seconds
+[TIME] are_freely_homotopic: 5.27579 seconds
+Random seed: 133416294: Path1 size: 6539021 (from 2842 darts); Path2 size: 6542800 (from 3779 deformations).
+[TIME] is_contractible: 15.1482 seconds
+[TIME] are_freely_homotopic: 29.9774 seconds
+Random seed: 769183546: Path1 size: 380967 (from 5195 darts); Path2 size: 385239 (from 4272 deformations).
+[TIME] is_contractible: 0.911951 seconds
+[TIME] are_freely_homotopic: 1.78487 seconds
+Random seed: 1860083912: Path1 size: 41353 (from 8398 darts); Path2 size: 50077 (from 8724 deformations).
+[TIME] is_contractible: 0.115257 seconds
+[TIME] are_freely_homotopic: 0.254276 seconds
+Random seed: 1552388394: Path1 size: 3898884 (from 9652 darts); Path2 size: 3908780 (from 9896 deformations).
+[TIME] is_contractible: 8.92204 seconds
+[TIME] are_freely_homotopic: 18.0542 seconds
+Random seed: 394269490: Path1 size: 558908 (from 7487 darts); Path2 size: 563296 (from 4388 deformations).
+[TIME] is_contractible: 1.44482 seconds
+[TIME] are_freely_homotopic: 2.89175 seconds
+Random seed: 608779364: Path1 size: 4623570 (from 4581 darts); Path2 size: 4623770 (from 200 deformations).
+[TIME] is_contractible: 12.0801 seconds
+[TIME] are_freely_homotopic: 23.8146 seconds
+Random seed: 1391080840: Path1 size: 2627660 (from 6099 darts); Path2 size: 2633041 (from 5381 deformations).
+[TIME] is_contractible: 6.63529 seconds
+[TIME] are_freely_homotopic: 13.3076 seconds
+Random seed: 1692836185: Path1 size: 312744 (from 2352 darts); Path2 size: 313066 (from 322 deformations).
+[TIME] is_contractible: 0.820126 seconds
+[TIME] are_freely_homotopic: 1.65689 seconds
+Random seed: 118535817: Path1 size: 33012 (from 886 darts); Path2 size: 34720 (from 1708 deformations).
+[TIME] is_contractible: 0.108203 seconds
+[TIME] are_freely_homotopic: 0.230179 seconds
+Random seed: 1014624509: Path1 size: 5128852 (from 5834 darts); Path2 size: 5133062 (from 4210 deformations).
+[TIME] is_contractible: 11.6124 seconds
+[TIME] are_freely_homotopic: 23.6011 seconds
+Random seed: 914741513: Path1 size: 8652 (from 669 darts); Path2 size: 11181 (from 2529 deformations).
+[TIME] is_contractible: 0.026449 seconds
+[TIME] are_freely_homotopic: 0.060392 seconds
+Random seed: 479844977: Path1 size: 90040 (from 8608 darts); Path2 size: 90840 (from 800 deformations).
+[TIME] is_contractible: 0.216791 seconds
+[TIME] are_freely_homotopic: 0.433557 seconds
+Random seed: 2020930182: Path1 size: 325686 (from 8905 darts); Path2 size: 327807 (from 2121 deformations).
+[TIME] is_contractible: 0.873464 seconds
+[TIME] are_freely_homotopic: 1.75005 seconds
+Random seed: 937146605: Path1 size: 4408 (from 2389 darts); Path2 size: 4618 (from 210 deformations).
+[TIME] is_contractible: 0.01283 seconds
+[TIME] are_freely_homotopic: 0.026318 seconds
+Random seed: 1300363106: Path1 size: 2047709 (from 2988 darts); Path2 size: 2051939 (from 4230 deformations).
+[TIME] is_contractible: 5.35872 seconds
+[TIME] are_freely_homotopic: 10.6866 seconds
+Random seed: 1805470009: Path1 size: 2929154 (from 5735 darts); Path2 size: 2934675 (from 5521 deformations).
+[TIME] is_contractible: 7.39593 seconds
+[TIME] are_freely_homotopic: 14.586 seconds
+Random seed: 97004012: Path1 size: 2287508 (from 6025 darts); Path2 size: 2290644 (from 3136 deformations).
+[TIME] is_contractible: 5.55511 seconds
+[TIME] are_freely_homotopic: 10.9367 seconds
+Random seed: 1757477495: Path1 size: 20056 (from 8513 darts); Path2 size: 25590 (from 5534 deformations).
+[TIME] is_contractible: 0.061392 seconds
+[TIME] are_freely_homotopic: 0.135105 seconds
+Random seed: 579366743: Path1 size: 12729 (from 1759 darts); Path2 size: 18273 (from 5544 deformations).
+[TIME] is_contractible: 0.025678 seconds
+[TIME] are_freely_homotopic: 0.061112 seconds
+Random seed: 2110856968: Path1 size: 8756 (from 7872 darts); Path2 size: 11625 (from 2869 deformations).
+[TIME] is_contractible: 0.028232 seconds
+[TIME] are_freely_homotopic: 0.066159 seconds
+Random seed: 2017033362: Path1 size: 1133402 (from 6797 darts); Path2 size: 1141097 (from 7695 deformations).
+[TIME] is_contractible: 2.82907 seconds
+[TIME] are_freely_homotopic: 5.799 seconds
+Random seed: 1781133485: Path1 size: 887726 (from 8278 darts); Path2 size: 891707 (from 3981 deformations).
+[TIME] is_contractible: 2.14112 seconds
+[TIME] are_freely_homotopic: 4.27661 seconds
+Random seed: 2079943689: Path1 size: 190541 (from 1912 darts); Path2 size: 196368 (from 5827 deformations).
+[TIME] is_contractible: 0.443466 seconds
+[TIME] are_freely_homotopic: 0.889504 seconds
+Random seed: 357050911: Path1 size: 784656 (from 8912 darts); Path2 size: 793928 (from 9272 deformations).
+[TIME] is_contractible: 1.94601 seconds
+[TIME] are_freely_homotopic: 3.97098 seconds
+Random seed: 1204070003: Path1 size: 27886 (from 1541 darts); Path2 size: 35939 (from 8053 deformations).
+[TIME] is_contractible: 0.093204 seconds
+[TIME] are_freely_homotopic: 0.205428 seconds
+Random seed: 10590152: Path1 size: 166193 (from 8654 darts); Path2 size: 174683 (from 8490 deformations).
+[TIME] is_contractible: 0.481829 seconds
+[TIME] are_freely_homotopic: 0.959715 seconds
+Random seed: 1213655585: Path1 size: 1634955 (from 8188 darts); Path2 size: 1637981 (from 3026 deformations).
+[TIME] is_contractible: 4.05175 seconds
+[TIME] are_freely_homotopic: 8.12494 seconds
+Random seed: 102340164: Path1 size: 786667 (from 4193 darts); Path2 size: 787481 (from 814 deformations).
+[TIME] is_contractible: 2.16864 seconds
+[TIME] are_freely_homotopic: 4.30371 seconds
+Random seed: 65018470: Path1 size: 3058683 (from 7145 darts); Path2 size: 3066220 (from 7537 deformations).
+[TIME] is_contractible: 7.43228 seconds
+[TIME] are_freely_homotopic: 14.9763 seconds
+Random seed: 893839509: Path1 size: 853145 (from 3620 darts); Path2 size: 854664 (from 1519 deformations).
+[TIME] is_contractible: 1.91083 seconds
+[TIME] are_freely_homotopic: 3.84597 seconds
+Random seed: 626858492: Path1 size: 915736 (from 6468 darts); Path2 size: 924315 (from 8579 deformations).
+[TIME] is_contractible: 2.21234 seconds
+[TIME] are_freely_homotopic: 4.46275 seconds
+Random seed: 1473957125: Path1 size: 2064414 (from 7316 darts); Path2 size: 2068788 (from 4374 deformations).
+[TIME] is_contractible: 4.54639 seconds
+[TIME] are_freely_homotopic: 9.07704 seconds
+Random seed: 2097455431: Path1 size: 1498675 (from 6125 darts); Path2 size: 1506208 (from 7533 deformations).
+[TIME] is_contractible: 3.47994 seconds
+[TIME] are_freely_homotopic: 7.0999 seconds
+Random seed: 1805351056: Path1 size: 11465 (from 4255 darts); Path2 size: 13867 (from 2402 deformations).
+[TIME] is_contractible: 0.034742 seconds
+[TIME] are_freely_homotopic: 0.074569 seconds
+Random seed: 1551039656: Path1 size: 1500 (from 409 darts); Path2 size: 5543 (from 4043 deformations).
+[TIME] is_contractible: 0.004261 seconds
+[TIME] are_freely_homotopic: 0.019447 seconds
+Random seed: 731201525: Path1 size: 1460356 (from 7083 darts); Path2 size: 1465976 (from 5620 deformations).
+[TIME] is_contractible: 3.44903 seconds
+[TIME] are_freely_homotopic: 6.99999 seconds
+Random seed: 1336172401: Path1 size: 3918177 (from 892 darts); Path2 size: 3922313 (from 4136 deformations).
+[TIME] is_contractible: 9.90904 seconds
+[TIME] are_freely_homotopic: 19.7113 seconds
+Random seed: 1754013662: Path1 size: 155505 (from 1567 darts); Path2 size: 159968 (from 4463 deformations).
+[TIME] is_contractible: 0.419477 seconds
+[TIME] are_freely_homotopic: 0.853855 seconds
+Random seed: 1440167577: Path1 size: 5997 (from 4228 darts); Path2 size: 12540 (from 6543 deformations).
+[TIME] is_contractible: 0.012746 seconds
+[TIME] are_freely_homotopic: 0.037545 seconds
+Random seed: 1364584180: Path1 size: 7791265 (from 6393 darts); Path2 size: 7796654 (from 5389 deformations).
+[TIME] is_contractible: 18.2438 seconds
+[TIME] are_freely_homotopic: 36.3007 seconds
+Random seed: 1410381909: Path1 size: 3017926 (from 7754 darts); Path2 size: 3020885 (from 2959 deformations).
+[TIME] is_contractible: 7.27202 seconds
+[TIME] are_freely_homotopic: 14.4281 seconds
+Random seed: 1030767246: Path1 size: 2253 (from 1448 darts); Path2 size: 11462 (from 9209 deformations).
+[TIME] is_contractible: 0.007446 seconds
+[TIME] are_freely_homotopic: 0.043296 seconds
+Random seed: 913511814: Path1 size: 1344480 (from 8696 darts); Path2 size: 1349288 (from 4808 deformations).
+[TIME] is_contractible: 3.13805 seconds
+[TIME] are_freely_homotopic: 6.35775 seconds
+Random seed: 1423693671: Path1 size: 218100 (from 3471 darts); Path2 size: 226787 (from 8687 deformations).
+[TIME] is_contractible: 0.468398 seconds
+[TIME] are_freely_homotopic: 0.96952 seconds
+Random seed: 1075956758: Path1 size: 19859 (from 3815 darts); Path2 size: 25206 (from 5347 deformations).
+[TIME] is_contractible: 0.061167 seconds
+[TIME] are_freely_homotopic: 0.136706 seconds
+Random seed: 700728023: Path1 size: 1570055 (from 7862 darts); Path2 size: 1572437 (from 2382 deformations).
+[TIME] is_contractible: 3.70686 seconds
+[TIME] are_freely_homotopic: 7.42759 seconds
+Random seed: 1888402334: Path1 size: 1147928 (from 9424 darts); Path2 size: 1157287 (from 9359 deformations).
+[TIME] is_contractible: 3.11372 seconds
+[TIME] are_freely_homotopic: 6.27166 seconds
+Random seed: 1037308229: Path1 size: 4267 (from 3909 darts); Path2 size: 12199 (from 7932 deformations).
+[TIME] is_contractible: 0.013633 seconds
+[TIME] are_freely_homotopic: 0.05177 seconds
+Random seed: 1003878652: Path1 size: 794927 (from 2148 darts); Path2 size: 804905 (from 9978 deformations).
+[TIME] is_contractible: 1.94774 seconds
+[TIME] are_freely_homotopic: 3.91127 seconds
+Random seed: 502871283: Path1 size: 3118323 (from 4987 darts); Path2 size: 3123949 (from 5626 deformations).
+[TIME] is_contractible: 7.4862 seconds
+[TIME] are_freely_homotopic: 14.8817 seconds
+Random seed: 99745040: Path1 size: 345935 (from 7916 darts); Path2 size: 348709 (from 2774 deformations).
+[TIME] is_contractible: 0.961987 seconds
+[TIME] are_freely_homotopic: 1.93947 seconds
+Random seed: 1085969316: Path1 size: 5251784 (from 2720 darts); Path2 size: 5257377 (from 5593 deformations).
+[TIME] is_contractible: 12.0356 seconds
+[TIME] are_freely_homotopic: 24.3891 seconds
+Random seed: 1029892736: Path1 size: 425488 (from 7321 darts); Path2 size: 434411 (from 8923 deformations).
+[TIME] is_contractible: 1.0689 seconds
+[TIME] are_freely_homotopic: 2.21017 seconds
+Random seed: 1434221472: Path1 size: 1025760 (from 5393 darts); Path2 size: 1033772 (from 8012 deformations).
+[TIME] is_contractible: 2.47379 seconds
+[TIME] are_freely_homotopic: 4.96134 seconds
+Random seed: 1260354135: Path1 size: 2667536 (from 8426 darts); Path2 size: 2670807 (from 3271 deformations).
+[TIME] is_contractible: 5.99514 seconds
+[TIME] are_freely_homotopic: 12.1269 seconds
+Random seed: 410552450: Path1 size: 1020 (from 1008 darts); Path2 size: 10923 (from 9903 deformations).
+[TIME] is_contractible: 0.003334 seconds
+[TIME] are_freely_homotopic: 0.03613 seconds
+Random seed: 416264188: Path1 size: 41545 (from 2286 darts); Path2 size: 47295 (from 5750 deformations).
+[TIME] is_contractible: 0.13632 seconds
+[TIME] are_freely_homotopic: 0.285656 seconds
+Random seed: 950597358: Path1 size: 1586593 (from 5366 darts); Path2 size: 1595375 (from 8782 deformations).
+[TIME] is_contractible: 3.89181 seconds
+[TIME] are_freely_homotopic: 7.88352 seconds
+Random seed: 1698189675: Path1 size: 2356504 (from 2396 darts); Path2 size: 2366079 (from 9575 deformations).
+[TIME] is_contractible: 5.84226 seconds
+[TIME] are_freely_homotopic: 11.6113 seconds
+Random seed: 60202036: Path1 size: 698817 (from 2511 darts); Path2 size: 703240 (from 4423 deformations).
+[TIME] is_contractible: 1.81419 seconds
+[TIME] are_freely_homotopic: 3.64923 seconds
+Random seed: 1487242723: Path1 size: 1498299 (from 3976 darts); Path2 size: 1501573 (from 3274 deformations).
+[TIME] is_contractible: 3.70302 seconds
+[TIME] are_freely_homotopic: 7.44321 seconds
+Random seed: 719861449: Path1 size: 70491 (from 2990 darts); Path2 size: 78080 (from 7589 deformations).
+[TIME] is_contractible: 0.208676 seconds
+[TIME] are_freely_homotopic: 0.436235 seconds
+Random seed: 633605317: Path1 size: 3205404 (from 2101 darts); Path2 size: 3213809 (from 8405 deformations).
+[TIME] is_contractible: 7.6062 seconds
+[TIME] are_freely_homotopic: 15.2643 seconds
+Random seed: 2142556750: Path1 size: 137069 (from 9018 darts); Path2 size: 143418 (from 6349 deformations).
+[TIME] is_contractible: 0.331668 seconds
+[TIME] are_freely_homotopic: 0.684771 seconds
+Random seed: 1424644563: Path1 size: 185021 (from 7786 darts); Path2 size: 193489 (from 8468 deformations).
+[TIME] is_contractible: 0.456013 seconds
+[TIME] are_freely_homotopic: 0.94372 seconds
+Random seed: 909840399: Path1 size: 10514 (from 8703 darts); Path2 size: 14184 (from 3670 deformations).
+[TIME] is_contractible: 0.03405 seconds
+[TIME] are_freely_homotopic: 0.079866 seconds
+Random seed: 252496923: Path1 size: 258978 (from 9472 darts); Path2 size: 263450 (from 4472 deformations).
+[TIME] is_contractible: 0.654929 seconds
+[TIME] are_freely_homotopic: 1.31629 seconds
+Random seed: 955673551: Path1 size: 188212 (from 7173 darts); Path2 size: 189028 (from 816 deformations).
+[TIME] is_contractible: 0.572463 seconds
+[TIME] are_freely_homotopic: 1.14209 seconds
+Random seed: 370735399: Path1 size: 1655535 (from 6465 darts); Path2 size: 1659255 (from 3720 deformations).
+[TIME] is_contractible: 4.05374 seconds
+[TIME] are_freely_homotopic: 8.14516 seconds
+Random seed: 1742530242: Path1 size: 20552 (from 9202 darts); Path2 size: 29551 (from 8999 deformations).
+[TIME] is_contractible: 0.046739 seconds
+[TIME] are_freely_homotopic: 0.113477 seconds
+Random seed: 1526231623: Path1 size: 6858 (from 5474 darts); Path2 size: 12047 (from 5189 deformations).
+[TIME] is_contractible: 0.022151 seconds
+[TIME] are_freely_homotopic: 0.059419 seconds
+Random seed: 558603143: Path1 size: 231344 (from 6082 darts); Path2 size: 234092 (from 2748 deformations).
+[TIME] is_contractible: 0.522525 seconds
+[TIME] are_freely_homotopic: 1.05193 seconds
+Random seed: 99045425: Path1 size: 277089 (from 7346 darts); Path2 size: 283900 (from 6811 deformations).
+[TIME] is_contractible: 0.668141 seconds
+[TIME] are_freely_homotopic: 1.3473 seconds
+Random seed: 108772769: Path1 size: 1421926 (from 5611 darts); Path2 size: 1428857 (from 6931 deformations).
+[TIME] is_contractible: 3.38821 seconds
+[TIME] are_freely_homotopic: 6.82178 seconds
+Random seed: 1727722322: Path1 size: 6803208 (from 6951 darts); Path2 size: 6804143 (from 935 deformations).
+[TIME] is_contractible: 15.5407 seconds
+[TIME] are_freely_homotopic: 31.2071 seconds
+Random seed: 1334752652: Path1 size: 4341787 (from 4783 darts); Path2 size: 4342468 (from 681 deformations).
+[TIME] is_contractible: 10.8756 seconds
+[TIME] are_freely_homotopic: 21.6696 seconds
+Random seed: 1817691772: Path1 size: 9820 (from 2429 darts); Path2 size: 11913 (from 2093 deformations).
+[TIME] is_contractible: 0.024156 seconds
+[TIME] are_freely_homotopic: 0.051882 seconds
+Random seed: 905432892: Path1 size: 488145 (from 4710 darts); Path2 size: 491953 (from 3808 deformations).
+[TIME] is_contractible: 1.09079 seconds
+[TIME] are_freely_homotopic: 2.19668 seconds
+Random seed: 1958519057: Path1 size: 193168 (from 3581 darts); Path2 size: 202125 (from 8957 deformations).
+[TIME] is_contractible: 0.505617 seconds
+[TIME] are_freely_homotopic: 1.0208 seconds
+All the 100 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 13 among 100 (i.e. 13%).
+Initial map: #Darts=334212, #0-cells=55498, #1-cells=167106, #2-cells=111404, #ccs=1, valid=1
+[TIME] Simplification in one vertex: 0.110389 seconds
+[TIME] Simplification in one face: 0.150956 seconds
+[TIME] Face quadrangulation: 0.032417 seconds
+[TIME] Total time for computation of reduced map: 0.295167 seconds
+Reduced map: #Darts=824, #0-cells=2, #1-cells=412, #2-cells=206, #ccs=1, valid=1
+Random seed: 1574949942: Path1 size: 134408 (from 5488 darts); Path2 size: 144351 (from 9943 deformations).
+[TIME] is_contractible: 0.269846 seconds
+[TIME] are_freely_homotopic: 0.569942 seconds
+Random seed: 50530994: Path1 size: 72262 (from 2783 darts); Path2 size: 76189 (from 3927 deformations).
+[TIME] is_contractible: 0.158625 seconds
+[TIME] are_freely_homotopic: 0.328027 seconds
+Random seed: 247847864: Path1 size: 1163327 (from 3144 darts); Path2 size: 1167912 (from 4585 deformations).
+[TIME] is_contractible: 2.53666 seconds
+[TIME] are_freely_homotopic: 5.09627 seconds
+Random seed: 706313880: Path1 size: 95971 (from 3672 darts); Path2 size: 101468 (from 5497 deformations).
+[TIME] is_contractible: 0.22881 seconds
+[TIME] are_freely_homotopic: 0.477161 seconds
+Random seed: 188201654: Path1 size: 94754 (from 5181 darts); Path2 size: 98378 (from 3624 deformations).
+[TIME] is_contractible: 0.248858 seconds
+[TIME] are_freely_homotopic: 0.51487 seconds
+Random seed: 83309156: Path1 size: 1619634 (from 6552 darts); Path2 size: 1626306 (from 6672 deformations).
+[TIME] is_contractible: 3.6389 seconds
+[TIME] are_freely_homotopic: 7.25762 seconds
+Random seed: 1017839793: Path1 size: 1919 (from 351 darts); Path2 size: 8130 (from 6211 deformations).
+[TIME] is_contractible: 0.00373 seconds
+[TIME] are_freely_homotopic: 0.018792 seconds
+Random seed: 886255421: Path1 size: 169566 (from 2780 darts); Path2 size: 169802 (from 236 deformations).
+[TIME] is_contractible: 0.375949 seconds
+[TIME] are_freely_homotopic: 0.766477 seconds
+Random seed: 397789418: Path1 size: 52578 (from 4552 darts); Path2 size: 59065 (from 6487 deformations).
+[TIME] is_contractible: 0.119055 seconds
+[TIME] are_freely_homotopic: 0.25467 seconds
+Random seed: 1668607722: Path1 size: 327514 (from 2421 darts); Path2 size: 327939 (from 425 deformations).
+[TIME] is_contractible: 0.652794 seconds
+[TIME] are_freely_homotopic: 1.42988 seconds
+Random seed: 1358200861: Path1 size: 146008 (from 9387 darts); Path2 size: 155458 (from 9450 deformations).
+[TIME] is_contractible: 0.305657 seconds
+[TIME] are_freely_homotopic: 0.660986 seconds
+Random seed: 910744256: Path1 size: 590498 (from 8933 darts); Path2 size: 596057 (from 5559 deformations).
+[TIME] is_contractible: 1.32982 seconds
+[TIME] are_freely_homotopic: 2.69134 seconds
+Random seed: 1899095530: Path1 size: 144709 (from 8770 darts); Path2 size: 145509 (from 800 deformations).
+[TIME] is_contractible: 0.372597 seconds
+[TIME] are_freely_homotopic: 0.744431 seconds
+Random seed: 2092349574: Path1 size: 49839 (from 4600 darts); Path2 size: 52970 (from 3131 deformations).
+[TIME] is_contractible: 0.11164 seconds
+[TIME] are_freely_homotopic: 0.229819 seconds
+Random seed: 267040898: Path1 size: 2257 (from 533 darts); Path2 size: 4753 (from 2496 deformations).
+[TIME] is_contractible: 0.005862 seconds
+[TIME] are_freely_homotopic: 0.018162 seconds
+Random seed: 1683097682: Path1 size: 772205 (from 8790 darts); Path2 size: 779198 (from 6993 deformations).
+[TIME] is_contractible: 1.68543 seconds
+[TIME] are_freely_homotopic: 3.38799 seconds
+Random seed: 1331152193: Path1 size: 209107 (from 4008 darts); Path2 size: 210069 (from 962 deformations).
+[TIME] is_contractible: 0.512779 seconds
+[TIME] are_freely_homotopic: 1.07825 seconds
+Random seed: 233227286: Path1 size: 13950 (from 4723 darts); Path2 size: 19070 (from 5120 deformations).
+[TIME] is_contractible: 0.044721 seconds
+[TIME] are_freely_homotopic: 0.10062 seconds
+Random seed: 564988137: Path1 size: 148524 (from 4960 darts); Path2 size: 156085 (from 7561 deformations).
+[TIME] is_contractible: 0.361171 seconds
+[TIME] are_freely_homotopic: 0.75974 seconds
+Random seed: 1627703444: Path1 size: 15715 (from 187 darts); Path2 size: 20316 (from 4601 deformations).
+[TIME] is_contractible: 0.038191 seconds
+[TIME] are_freely_homotopic: 0.085281 seconds
+Random seed: 519520541: Path1 size: 341581 (from 9181 darts); Path2 size: 344135 (from 2554 deformations).
+[TIME] is_contractible: 0.828873 seconds
+[TIME] are_freely_homotopic: 1.65824 seconds
+Random seed: 824313550: Path1 size: 111707 (from 6305 darts); Path2 size: 114165 (from 2458 deformations).
+[TIME] is_contractible: 0.296571 seconds
+[TIME] are_freely_homotopic: 0.598192 seconds
+Random seed: 1290684516: Path1 size: 285513 (from 797 darts); Path2 size: 291355 (from 5842 deformations).
+[TIME] is_contractible: 0.605756 seconds
+[TIME] are_freely_homotopic: 1.24273 seconds
+Random seed: 326598709: Path1 size: 12753 (from 7482 darts); Path2 size: 17702 (from 4949 deformations).
+[TIME] is_contractible: 0.024112 seconds
+[TIME] are_freely_homotopic: 0.058651 seconds
+Random seed: 2086734682: Path1 size: 261253 (from 1027 darts); Path2 size: 263576 (from 2323 deformations).
+[TIME] is_contractible: 0.618294 seconds
+[TIME] are_freely_homotopic: 1.25177 seconds
+Random seed: 132606227: Path1 size: 18513 (from 7955 darts); Path2 size: 28416 (from 9903 deformations).
+[TIME] is_contractible: 0.052058 seconds
+[TIME] are_freely_homotopic: 0.130877 seconds
+Random seed: 121475808: Path1 size: 158453 (from 7060 darts); Path2 size: 163209 (from 4756 deformations).
+[TIME] is_contractible: 0.358461 seconds
+[TIME] are_freely_homotopic: 0.750459 seconds
+Random seed: 1769936895: Path1 size: 101060 (from 2871 darts); Path2 size: 103049 (from 1989 deformations).
+[TIME] is_contractible: 0.281742 seconds
+[TIME] are_freely_homotopic: 0.608572 seconds
+Random seed: 2059751412: Path1 size: 19681 (from 3639 darts); Path2 size: 22059 (from 2378 deformations).
+[TIME] is_contractible: 0.043818 seconds
+[TIME] are_freely_homotopic: 0.09175 seconds
+Random seed: 1990948225: Path1 size: 636056 (from 8889 darts); Path2 size: 637157 (from 1101 deformations).
+[TIME] is_contractible: 1.43374 seconds
+[TIME] are_freely_homotopic: 2.91012 seconds
+Random seed: 1730451011: Path1 size: 26136 (from 9419 darts); Path2 size: 29879 (from 3743 deformations).
+[TIME] is_contractible: 0.068484 seconds
+[TIME] are_freely_homotopic: 0.145167 seconds
+Random seed: 684989631: Path1 size: 10689 (from 8597 darts); Path2 size: 15705 (from 5016 deformations).
+[TIME] is_contractible: 0.033721 seconds
+[TIME] are_freely_homotopic: 0.083634 seconds
+Random seed: 428735279: Path1 size: 28682 (from 279 darts); Path2 size: 32541 (from 3859 deformations).
+[TIME] is_contractible: 0.068278 seconds
+[TIME] are_freely_homotopic: 0.139902 seconds
+Random seed: 61851330: Path1 size: 13712 (from 780 darts); Path2 size: 16507 (from 2795 deformations).
+[TIME] is_contractible: 0.030123 seconds
+[TIME] are_freely_homotopic: 0.06685 seconds
+Random seed: 642424623: Path1 size: 36802 (from 1199 darts); Path2 size: 39073 (from 2271 deformations).
+[TIME] is_contractible: 0.085301 seconds
+[TIME] are_freely_homotopic: 0.192078 seconds
+Random seed: 1090558461: Path1 size: 131822 (from 800 darts); Path2 size: 135049 (from 3227 deformations).
+[TIME] is_contractible: 0.330327 seconds
+[TIME] are_freely_homotopic: 0.657221 seconds
+Random seed: 481514882: Path1 size: 15369 (from 9986 darts); Path2 size: 15546 (from 177 deformations).
+[TIME] is_contractible: 0.040625 seconds
+[TIME] are_freely_homotopic: 0.080504 seconds
+Random seed: 1980511917: Path1 size: 1197160 (from 7912 darts); Path2 size: 1204876 (from 7716 deformations).
+[TIME] is_contractible: 2.66886 seconds
+[TIME] are_freely_homotopic: 5.37277 seconds
+Random seed: 1842672511: Path1 size: 47253 (from 7272 darts); Path2 size: 47995 (from 742 deformations).
+[TIME] is_contractible: 0.133238 seconds
+[TIME] are_freely_homotopic: 0.264456 seconds
+Random seed: 697653306: Path1 size: 48388 (from 5105 darts); Path2 size: 49535 (from 1147 deformations).
+[TIME] is_contractible: 0.099999 seconds
+[TIME] are_freely_homotopic: 0.198439 seconds
+Random seed: 1633707128: Path1 size: 1329710 (from 5106 darts); Path2 size: 1332418 (from 2708 deformations).
+[TIME] is_contractible: 3.19551 seconds
+[TIME] are_freely_homotopic: 6.3238 seconds
+Random seed: 60068853: Path1 size: 398055 (from 7741 darts); Path2 size: 398563 (from 508 deformations).
+[TIME] is_contractible: 0.898438 seconds
+[TIME] are_freely_homotopic: 1.81173 seconds
+Random seed: 989827132: Path1 size: 10626 (from 2147 darts); Path2 size: 14753 (from 4127 deformations).
+[TIME] is_contractible: 0.021253 seconds
+[TIME] are_freely_homotopic: 0.049661 seconds
+Random seed: 624504064: Path1 size: 38241 (from 1344 darts); Path2 size: 47721 (from 9480 deformations).
+[TIME] is_contractible: 0.098851 seconds
+[TIME] are_freely_homotopic: 0.226109 seconds
+Random seed: 332973462: Path1 size: 713191 (from 9221 darts); Path2 size: 718785 (from 5594 deformations).
+[TIME] is_contractible: 1.57574 seconds
+[TIME] are_freely_homotopic: 3.37537 seconds
+Random seed: 1786994212: Path1 size: 17118 (from 1919 darts); Path2 size: 19578 (from 2460 deformations).
+[TIME] is_contractible: 0.042418 seconds
+[TIME] are_freely_homotopic: 0.089777 seconds
+Random seed: 1475222584: Path1 size: 20334 (from 824 darts); Path2 size: 20581 (from 247 deformations).
+[TIME] is_contractible: 0.049075 seconds
+[TIME] are_freely_homotopic: 0.087179 seconds
+Random seed: 656214858: Path1 size: 425156 (from 1998 darts); Path2 size: 425864 (from 708 deformations).
+[TIME] is_contractible: 0.998048 seconds
+[TIME] are_freely_homotopic: 1.96725 seconds
+Random seed: 9811463: Path1 size: 681002 (from 297 darts); Path2 size: 685169 (from 4167 deformations).
+[TIME] is_contractible: 1.56764 seconds
+[TIME] are_freely_homotopic: 3.13846 seconds
+Random seed: 1499084921: Path1 size: 14736 (from 1862 darts); Path2 size: 23593 (from 8857 deformations).
+[TIME] is_contractible: 0.032963 seconds
+[TIME] are_freely_homotopic: 0.083728 seconds
+Random seed: 675748919: Path1 size: 66104 (from 3072 darts); Path2 size: 73386 (from 7282 deformations).
+[TIME] is_contractible: 0.144509 seconds
+[TIME] are_freely_homotopic: 0.312302 seconds
+Random seed: 446853816: Path1 size: 126934 (from 4202 darts); Path2 size: 133243 (from 6309 deformations).
+[TIME] is_contractible: 0.304479 seconds
+[TIME] are_freely_homotopic: 0.637488 seconds
+Random seed: 570468812: Path1 size: 173684 (from 8352 darts); Path2 size: 182567 (from 8883 deformations).
+[TIME] is_contractible: 0.380653 seconds
+[TIME] are_freely_homotopic: 0.806827 seconds
+Random seed: 1475889916: Path1 size: 216994 (from 8386 darts); Path2 size: 220747 (from 3753 deformations).
+[TIME] is_contractible: 0.51478 seconds
+[TIME] are_freely_homotopic: 1.05948 seconds
+Random seed: 1221641326: Path1 size: 13280 (from 7778 darts); Path2 size: 16356 (from 3076 deformations).
+[TIME] is_contractible: 0.030476 seconds
+[TIME] are_freely_homotopic: 0.066812 seconds
+Random seed: 71936334: Path1 size: 24361 (from 7218 darts); Path2 size: 31632 (from 7271 deformations).
+[TIME] is_contractible: 0.057538 seconds
+[TIME] are_freely_homotopic: 0.129382 seconds
+Random seed: 22866134: Path1 size: 287887 (from 7232 darts); Path2 size: 290771 (from 2884 deformations).
+[TIME] is_contractible: 0.643613 seconds
+[TIME] are_freely_homotopic: 1.31868 seconds
+Random seed: 1682518789: Path1 size: 13682 (from 3962 darts); Path2 size: 21002 (from 7320 deformations).
+[TIME] is_contractible: 0.032396 seconds
+[TIME] are_freely_homotopic: 0.08104 seconds
+Random seed: 1690300033: Path1 size: 43631 (from 7154 darts); Path2 size: 51969 (from 8338 deformations).
+[TIME] is_contractible: 0.085418 seconds
+[TIME] are_freely_homotopic: 0.192622 seconds
+Random seed: 1556202589: Path1 size: 38593 (from 3967 darts); Path2 size: 42276 (from 3683 deformations).
+[TIME] is_contractible: 0.095875 seconds
+[TIME] are_freely_homotopic: 0.202057 seconds
+Random seed: 1080932390: Path1 size: 52163 (from 2436 darts); Path2 size: 61186 (from 9023 deformations).
+[TIME] is_contractible: 0.1213 seconds
+[TIME] are_freely_homotopic: 0.267168 seconds
+Random seed: 568510672: Path1 size: 30870 (from 712 darts); Path2 size: 31893 (from 1023 deformations).
+[TIME] is_contractible: 0.073838 seconds
+[TIME] are_freely_homotopic: 0.169932 seconds
+Random seed: 476818107: Path1 size: 23218 (from 1296 darts); Path2 size: 26791 (from 3573 deformations).
+[TIME] is_contractible: 0.048905 seconds
+[TIME] are_freely_homotopic: 0.106194 seconds
+Random seed: 1231940380: Path1 size: 39019 (from 244 darts); Path2 size: 39369 (from 350 deformations).
+[TIME] is_contractible: 0.106431 seconds
+[TIME] are_freely_homotopic: 0.193006 seconds
+Random seed: 259400406: Path1 size: 18964 (from 2460 darts); Path2 size: 27272 (from 8308 deformations).
+[TIME] is_contractible: 0.056686 seconds
+[TIME] are_freely_homotopic: 0.13645 seconds
+Random seed: 1176742988: Path1 size: 11732 (from 9607 darts); Path2 size: 20138 (from 8406 deformations).
+[TIME] is_contractible: 0.035749 seconds
+[TIME] are_freely_homotopic: 0.106614 seconds
+Random seed: 776901128: Path1 size: 2756 (from 2068 darts); Path2 size: 8825 (from 6069 deformations).
+[TIME] is_contractible: 0.006236 seconds
+[TIME] are_freely_homotopic: 0.024911 seconds
+Random seed: 682675560: Path1 size: 85872 (from 5031 darts); Path2 size: 86320 (from 448 deformations).
+[TIME] is_contractible: 0.209328 seconds
+[TIME] are_freely_homotopic: 0.422786 seconds
+Random seed: 566519663: Path1 size: 18111 (from 1151 darts); Path2 size: 21500 (from 3389 deformations).
+[TIME] is_contractible: 0.040477 seconds
+[TIME] are_freely_homotopic: 0.086777 seconds
+Random seed: 1095996006: Path1 size: 39323 (from 4324 darts); Path2 size: 42317 (from 2994 deformations).
+[TIME] is_contractible: 0.11067 seconds
+[TIME] are_freely_homotopic: 0.242744 seconds
+Random seed: 1705041849: Path1 size: 110949 (from 6948 darts); Path2 size: 115416 (from 4467 deformations).
+[TIME] is_contractible: 0.280661 seconds
+[TIME] are_freely_homotopic: 0.58945 seconds
+Random seed: 1443122557: Path1 size: 271220 (from 1555 darts); Path2 size: 276460 (from 5240 deformations).
+[TIME] is_contractible: 0.598784 seconds
+[TIME] are_freely_homotopic: 1.22255 seconds
+Random seed: 1096168385: Path1 size: 135663 (from 360 darts); Path2 size: 143683 (from 8020 deformations).
+[TIME] is_contractible: 0.312725 seconds
+[TIME] are_freely_homotopic: 0.664022 seconds
+Random seed: 439840688: Path1 size: 44947 (from 3080 darts); Path2 size: 48769 (from 3822 deformations).
+[TIME] is_contractible: 0.085369 seconds
+[TIME] are_freely_homotopic: 0.185623 seconds
+Random seed: 176471338: Path1 size: 17174 (from 7199 darts); Path2 size: 22804 (from 5630 deformations).
+[TIME] is_contractible: 0.040513 seconds
+[TIME] are_freely_homotopic: 0.091902 seconds
+Random seed: 724801413: Path1 size: 19647 (from 8219 darts); Path2 size: 22235 (from 2588 deformations).
+[TIME] is_contractible: 0.052287 seconds
+[TIME] are_freely_homotopic: 0.112104 seconds
+Random seed: 36963316: Path1 size: 400748 (from 7330 darts); Path2 size: 408506 (from 7758 deformations).
+[TIME] is_contractible: 0.876389 seconds
+[TIME] are_freely_homotopic: 1.7828 seconds
+Random seed: 1527565741: Path1 size: 71523 (from 3702 darts); Path2 size: 71930 (from 407 deformations).
+[TIME] is_contractible: 0.14962 seconds
+[TIME] are_freely_homotopic: 0.338061 seconds
+Random seed: 914933755: Path1 size: 223197 (from 9382 darts); Path2 size: 228220 (from 5023 deformations).
+[TIME] is_contractible: 0.533326 seconds
+[TIME] are_freely_homotopic: 1.09191 seconds
+Random seed: 1521965457: Path1 size: 2601935 (from 6638 darts); Path2 size: 2603641 (from 1706 deformations).
+[TIME] is_contractible: 5.50732 seconds
+[TIME] are_freely_homotopic: 10.8151 seconds
+Random seed: 2046362967: Path1 size: 516647 (from 6827 darts); Path2 size: 521009 (from 4362 deformations).
+[TIME] is_contractible: 1.14199 seconds
+[TIME] are_freely_homotopic: 2.2921 seconds
+Random seed: 663235010: Path1 size: 1042972 (from 3550 darts); Path2 size: 1044599 (from 1627 deformations).
+[TIME] is_contractible: 2.29914 seconds
+[TIME] are_freely_homotopic: 4.62039 seconds
+Random seed: 2118300716: Path1 size: 104943 (from 6476 darts); Path2 size: 114537 (from 9594 deformations).
+[TIME] is_contractible: 0.231351 seconds
+[TIME] are_freely_homotopic: 0.498831 seconds
+Random seed: 2032286680: Path1 size: 1513 (from 964 darts); Path2 size: 9121 (from 7608 deformations).
+[TIME] is_contractible: 0.004627 seconds
+[TIME] are_freely_homotopic: 0.031175 seconds
+Random seed: 1954718906: Path1 size: 142475 (from 2023 darts); Path2 size: 145066 (from 2591 deformations).
+[TIME] is_contractible: 0.343284 seconds
+[TIME] are_freely_homotopic: 0.726973 seconds
+Random seed: 422276677: Path1 size: 6627 (from 6403 darts); Path2 size: 10613 (from 3986 deformations).
+[TIME] is_contractible: 0.019339 seconds
+[TIME] are_freely_homotopic: 0.049796 seconds
+Random seed: 1328445502: Path1 size: 448219 (from 7293 darts); Path2 size: 449595 (from 1376 deformations).
+[TIME] is_contractible: 0.946231 seconds
+[TIME] are_freely_homotopic: 1.917 seconds
+Random seed: 233652024: Path1 size: 219376 (from 8135 darts); Path2 size: 223420 (from 4044 deformations).
+[TIME] is_contractible: 0.51011 seconds
+[TIME] are_freely_homotopic: 1.05122 seconds
+Random seed: 1984406757: Path1 size: 370410 (from 9137 darts); Path2 size: 371342 (from 932 deformations).
+[TIME] is_contractible: 0.889112 seconds
+[TIME] are_freely_homotopic: 1.78276 seconds
+Random seed: 1805171553: Path1 size: 18643 (from 3244 darts); Path2 size: 19126 (from 483 deformations).
+[TIME] is_contractible: 0.041526 seconds
+[TIME] are_freely_homotopic: 0.08436 seconds
+Random seed: 519182547: Path1 size: 17322 (from 5722 darts); Path2 size: 18198 (from 876 deformations).
+[TIME] is_contractible: 0.032815 seconds
+[TIME] are_freely_homotopic: 0.066431 seconds
+Random seed: 538307140: Path1 size: 16556 (from 4339 darts); Path2 size: 25713 (from 9157 deformations).
+[TIME] is_contractible: 0.039275 seconds
+[TIME] are_freely_homotopic: 0.101854 seconds
+Random seed: 945348024: Path1 size: 8885 (from 8534 darts); Path2 size: 13720 (from 4835 deformations).
+[TIME] is_contractible: 0.018419 seconds
+[TIME] are_freely_homotopic: 0.046641 seconds
+Random seed: 928636710: Path1 size: 43760 (from 3689 darts); Path2 size: 51887 (from 8127 deformations).
+[TIME] is_contractible: 0.116647 seconds
+[TIME] are_freely_homotopic: 0.262684 seconds
+Random seed: 1389758013: Path1 size: 33747 (from 3227 darts); Path2 size: 41820 (from 8073 deformations).
+[TIME] is_contractible: 0.077442 seconds
+[TIME] are_freely_homotopic: 0.17862 seconds
+Random seed: 440615746: Path1 size: 73982 (from 7794 darts); Path2 size: 79198 (from 5216 deformations).
+[TIME] is_contractible: 0.194931 seconds
+[TIME] are_freely_homotopic: 0.409284 seconds
+Random seed: 989452973: Path1 size: 138225 (from 3498 darts); Path2 size: 141825 (from 3600 deformations).
+[TIME] is_contractible: 0.298229 seconds
+[TIME] are_freely_homotopic: 0.628531 seconds
+Random seed: 1545034495: Path1 size: 25385 (from 8559 darts); Path2 size: 34450 (from 9065 deformations).
+[TIME] is_contractible: 0.058727 seconds
+[TIME] are_freely_homotopic: 0.138786 seconds
+Random seed: 1533279853: Path1 size: 737872 (from 1987 darts); Path2 size: 744717 (from 6845 deformations).
+[TIME] is_contractible: 1.68372 seconds
+[TIME] are_freely_homotopic: 3.4144 seconds
+Random seed: 1357804745: Path1 size: 11975 (from 3879 darts); Path2 size: 20410 (from 8435 deformations).
+[TIME] is_contractible: 0.027492 seconds
+[TIME] are_freely_homotopic: 0.075561 seconds
+All the 100 tests OK: each pair of paths were homotopic.
+Number of contractible paths: 2 among 100 (i.e. 2%).

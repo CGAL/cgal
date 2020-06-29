@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -27,7 +18,6 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_callbacks.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_of_coplanar_triangles_3.h>
@@ -165,7 +155,8 @@ class Intersection_of_triangle_meshes
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
 
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
 
   typedef boost::unordered_set<face_descriptor> Face_set;
   typedef boost::unordered_map<edge_descriptor, Face_set> Edge_to_faces;
@@ -259,10 +250,11 @@ class Intersection_of_triangle_meshes
         if (callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
-    else
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                              edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                              callback, cutoff );
+    else {
+      CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                callback, cutoff );
+    }
   }
 
   // for autorefinement
@@ -713,7 +705,7 @@ class Intersection_of_triangle_meshes
         switch(type){
           case COPLANAR_TRIANGLES:
             #ifndef DO_NOT_HANDLE_COPLANAR_FACES
-            assert(!"COPLANAR_TRIANGLES : this point should never be reached!");
+            CGAL_error_msg("COPLANAR_TRIANGLES : this point should never be reached!");
             #else
             //nothing needs to be done, cf. comments at the beginning of the file
             #endif
@@ -1276,6 +1268,8 @@ public:
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
   {
+    CGAL_precondition(is_triangle_mesh(tm1));
+    CGAL_precondition(is_triangle_mesh(tm2));
     CGAL_assertion_code( doing_autorefinement=false; )
   }
 
@@ -1286,6 +1280,7 @@ public:
   : nodes(tm, tm, vpm, vpm)
   , visitor(v)
   {
+    CGAL_precondition(is_triangle_mesh(tm));
     CGAL_assertion_code( doing_autorefinement=true; )
   }
 

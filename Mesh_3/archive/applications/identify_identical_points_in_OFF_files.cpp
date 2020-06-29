@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau
 
@@ -53,7 +44,7 @@ int main()
 
   // Vector that maps from old vertex index to new vertex index,
   // as some (old) vertices may have identical point coordinates.
-  std::vector<int> new_index(n_vertices); 
+  std::vector<int> new_index(n_vertices);
 
   typedef boost::tuple<double, double, double> Point;
   // Vector that stores the points coordinates (in a Point).
@@ -67,8 +58,8 @@ int main()
   unsigned int index = 0;
   for(unsigned int i = 0; i < n_vertices; ++i)
   {
-    cin >> boost::get<0>(points[index]) 
-	>> boost::get<1>(points[index]) >> boost::get<2>(points[index]);
+    cin >> boost::get<0>(points[index])
+        >> boost::get<1>(points[index]) >> boost::get<2>(points[index]);
     Renumber::const_iterator it = renumber.find(points[index]);
     if( it == renumber.end() )
     {
@@ -81,13 +72,13 @@ int main()
       new_index[i] = it->second;
     }
   }
-  
+
   cout << index << " " << n_facets << dummy << endl;
   for(unsigned int i = 0; i < index; ++i)
   {
     cout << boost::get<0>(points[i]) << " "
-	 << boost::get<1>(points[i]) << " "
-	 << boost::get<2>(points[i]) << "\n";
+         << boost::get<1>(points[i]) << " "
+         << boost::get<2>(points[i]) << "\n";
   }
 
   // Vector that stores each facet.
@@ -119,7 +110,7 @@ int main()
     if( dummy != "3" )
     {
       std::cerr << "In facet #" << i_facet << ", expected \"3\", found \""
-		<< dummy << "\"!\n";
+                << dummy << "\"!\n";
       return 1;
     }
     i = new_index[i];
@@ -135,9 +126,9 @@ int main()
     for(int i_edge = 0; i_edge < 3; ++i_edge)
     {
       if( e[i_edge].first < e[i_edge].second )
-	edges[e[i_edge]].push_back(std::make_pair(i_facet, false));
+        edges[e[i_edge]].push_back(std::make_pair(i_facet, false));
       else
-	edges[opposite(e[i_edge])].push_back(std::make_pair(i_facet, true));
+        edges[opposite(e[i_edge])].push_back(std::make_pair(i_facet, true));
     }
   }
 
@@ -168,38 +159,38 @@ int main()
       e[0] = std::make_pair(i, j);
       e[1] = std::make_pair(j, k);
       e[2] = std::make_pair(k, i);
-      for(int ih = 0 ; ih < 3 ; ++ih) 
+      for(int ih = 0 ; ih < 3 ; ++ih)
       {
-	bool f_orient = false;
-	if(e[ih].first > e[ih].second) {
-	  f_orient = true;
-	  e[ih] = opposite(e[ih]);
-	}
+        bool f_orient = false;
+        if(e[ih].first > e[ih].second) {
+          f_orient = true;
+          e[ih] = opposite(e[ih]);
+        }
 
-	Edges_map::iterator edge_it = edges.find(e[ih]);
-	if(edge_it->second.size() == 2) { // regular edge
-	  int fn = edge_it->second[0].first;
-	  bool fn_orient = edge_it->second[0].second;
-	  if(fn == f)
-	  {
-	    fn = edge_it->second[1].first;
-	    fn_orient = edge_it->second[1].second;
-	  }
-	  if (oriented_set.find(fn) == oriented_set.end())
-	  {
-	    if(f_orient == fn_orient)
-	      oriented_set[fn] = ! oriented_set[f];
-	    else
-	      oriented_set[fn] = oriented_set[f];
-	    stack.push(fn);
-	  }
-	} // end "if the edge is regular"
-	else {
-	  std::cerr << boost::format("Irregular edge: (%1%,%2%)"
-				     ", %3% facets.\n")
-	    % e[ih].first % e[ih].second
-	    % edge_it->second.size();
-	}
+        Edges_map::iterator edge_it = edges.find(e[ih]);
+        if(edge_it->second.size() == 2) { // regular edge
+          int fn = edge_it->second[0].first;
+          bool fn_orient = edge_it->second[0].second;
+          if(fn == f)
+          {
+            fn = edge_it->second[1].first;
+            fn_orient = edge_it->second[1].second;
+          }
+          if (oriented_set.find(fn) == oriented_set.end())
+          {
+            if(f_orient == fn_orient)
+              oriented_set[fn] = ! oriented_set[f];
+            else
+              oriented_set[fn] = oriented_set[f];
+            stack.push(fn);
+          }
+        } // end "if the edge is regular"
+        else {
+          std::cerr << boost::format("Irregular edge: (%1%,%2%)"
+                                     ", %3% facets.\n")
+            % e[ih].first % e[ih].second
+            % edge_it->second.size();
+        }
       } // end "for each neighbor of f"
     } // end "stack non empty"
   } // end "oriented_set not full"

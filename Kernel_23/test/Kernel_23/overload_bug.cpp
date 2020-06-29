@@ -13,5 +13,5 @@ int main(){
   Segment_2D s1(Point_2(0,0),Point_2(1,0));
   Segment_2D s2(Point_2(0,0),Point_2(0,1));
   CGAL::intersection(s1,s2);
-  
+
 }

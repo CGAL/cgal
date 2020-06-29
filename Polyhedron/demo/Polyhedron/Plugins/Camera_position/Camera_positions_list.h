@@ -10,7 +10,7 @@ class QStandardItemModel;
 
 class Camera_positions_list : public QDockWidget {
   Q_OBJECT
-public:  
+public:
   Camera_positions_list(QWidget* parent);
 
 public Q_SLOTS:

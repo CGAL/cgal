@@ -43,7 +43,7 @@ int main()
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
   EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
-  EP eps2 = D.construct_point(ps2); 
+  EP eps2 = D.construct_point(ps2);
   EP eps3 = D.construct_point(ps3);
   EP eps4 = D.construct_point(ps4);
   EP eps5 = D.construct_point(ps5);
@@ -126,8 +126,8 @@ int main()
   CGAL_TEST(D.construct_direction(eps5,D.NE())==ED(RT(1),RT(1)));
   CGAL_TEST(D.construct_direction(eps5,D.SW())==ED(RT(-1),RT(-1)));
 
-  ESeg upper = D.construct_segment(D.NW(),D.NE()); 
-  ESeg left  = D.construct_segment(D.SW(),D.NW()); 
+  ESeg upper = D.construct_segment(D.NW(),D.NE());
+  ESeg left  = D.construct_segment(D.SW(),D.NW());
   EP ep_res = D.intersection(el1,upper);
   CGAL_TEST(ep_res==epn2);
   ep_res = D.intersection(left, upper);
@@ -139,7 +139,7 @@ int main()
 
 }
 
-{  
+{
   typedef CGAL::Extended_cartesian<Real> EDec;
   typedef EDec::Point_2     EP;
   typedef EDec::Segment_2   ESeg;
@@ -153,7 +153,7 @@ int main()
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
   EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
-  EP eps2 = D.construct_point(ps2); 
+  EP eps2 = D.construct_point(ps2);
   EP eps3 = D.construct_point(ps3);
   EP eps4 = D.construct_point(ps4);
   EP eps5 = D.construct_point(ps5);
@@ -236,8 +236,8 @@ int main()
   CGAL_TEST(D.construct_direction(eps5,D.NE())==ED(RT(1),RT(1)));
   CGAL_TEST(D.construct_direction(eps5,D.SW())==ED(RT(-1),RT(-1)));
 
-  ESeg upper = D.construct_segment(D.NW(),D.NE()); 
-  ESeg left  = D.construct_segment(D.SW(),D.NW()); 
+  ESeg upper = D.construct_segment(D.NW(),D.NE());
+  ESeg left  = D.construct_segment(D.SW(),D.NW());
   EP ep_res = D.intersection(el1,upper);
   CGAL_TEST(ep_res==epn2);
   ep_res = D.intersection(left, upper);
@@ -260,7 +260,7 @@ int main()
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
   EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
-  EP eps2 = D.construct_point(ps2); 
+  EP eps2 = D.construct_point(ps2);
   EP eps3 = D.construct_point(ps3);
   EP eps4 = D.construct_point(ps4);
   EP eps5 = D.construct_point(ps5);
@@ -343,8 +343,8 @@ int main()
   CGAL_TEST(D.construct_direction(eps5,D.NE())==ED(RT(1),RT(1)));
   CGAL_TEST(D.construct_direction(eps5,D.SW())==ED(RT(-1),RT(-1)));
 
-  ESeg upper = D.construct_segment(D.NW(),D.NE()); 
-  ESeg left  = D.construct_segment(D.SW(),D.NW()); 
+  ESeg upper = D.construct_segment(D.NW(),D.NE());
+  ESeg left  = D.construct_segment(D.SW(),D.NW());
   EP ep_res = D.intersection(el1,upper);
   CGAL_TEST(ep_res==epn2);
   ep_res = D.intersection(left, upper);

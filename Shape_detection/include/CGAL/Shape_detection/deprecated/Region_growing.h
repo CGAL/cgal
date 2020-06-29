@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
 
@@ -61,7 +52,7 @@ namespace Shape_detection {
 
   #ifdef DOXYGEN_NS
     namespace deprecated {
-  #endif 
+  #endif
 
   /*!
   \ingroup PkgShapeDetectionDEPR
@@ -76,10 +67,10 @@ namespace Shape_detection {
   */
   template<class Traits>
   class Region_growing_depr {
-    
+
   public:
-    
-    /// \name Types 
+
+    /// \name Types
     /// @{
 
     /// \cond SKIP_IN_MANUAL
@@ -120,10 +111,10 @@ namespace Shape_detection {
         typename std::vector<boost::shared_ptr<Shape> >::const_iterator> Base;
 
       Shape_range(boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
-      extracted_shapes) : 
+      extracted_shapes) :
       Base(make_range(extracted_shapes->begin(),
       extracted_shapes->end())), m_extracted_shapes(extracted_shapes) { }
-    
+
     private:
       boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
       m_extracted_shapes; // keeps a reference to the shape vector
@@ -137,7 +128,7 @@ namespace Shape_detection {
       Plane_range(boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
         extracted_shapes) : Base(make_range(extracted_shapes->begin(),
         extracted_shapes->end())), m_extracted_shapes(extracted_shapes) { }
-    
+
     private:
       boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
         m_extracted_shapes; // keeps a reference to the shape vector
@@ -161,7 +152,7 @@ namespace Shape_detection {
     };
 
     typedef boost::filter_iterator<Filter_unassigned_points,
-      boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> > 
+      boost::counting_iterator<std::size_t, boost::use_default, std::ptrdiff_t> >
       Point_index_iterator;
     ///< iterator for indices of points.
     /// \endcond
@@ -170,19 +161,19 @@ namespace Shape_detection {
     typedef unspecified_type Point_index_range;
     ///< An `Iterator_range` with a bidirectional iterator with value type `std::size_t`
     ///  as indices into the input data that has not been assigned to a shape.
-    ///  As this range class has no `size()` method, the method 
+    ///  As this range class has no `size()` method, the method
     ///  `Efficient_RANSAC::number_of_unassigned_points()` is provided.
-#else 
+#else
     typedef Iterator_range<Point_index_iterator> Point_index_range;
-#endif     
+#endif
 
     /// @}
 
-    /// \name Parameters 
+    /// \name Parameters
     /// @{
-    
+
     /*!
-      %Parameters for the shape detection algorithm. They are explained in detail 
+      %Parameters for the shape detection algorithm. They are explained in detail
       in Section \ref Shape_detection_RANSACParameters of the User Manual.
     */
     struct Parameters {
@@ -195,19 +186,19 @@ namespace Shape_detection {
 
       std::size_t min_points; ///< Minimum number of points of a shape. %Default value: 1% of total number of input points.
       FT epsilon;             ///< Maximum tolerance Euclidean distance from a point and a shape. %Default value: 1% of bounding box diagonal.
-      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value: 0.9 (around 25 degrees).
-      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. %Default value: 1% of bounding box diagonal.
+      FT normal_threshold;          ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value: 0.9 (around 25 degrees).
+      FT cluster_epsilon;            ///< Maximum distance between points to be considered connected. %Default value: 1% of bounding box diagonal.
     };
 
     /// @}
 
   private:
-    
+
     class My_point_map {
 
       Input_iterator input_iterator_first;
       Point_map point_map;
-      
+
     public:
       typedef typename Point_map::value_type value_type;
       typedef typename Point_map::reference reference;
@@ -221,7 +212,7 @@ namespace Shape_detection {
       reference operator[](key_type k) const {
         return get(point_map, *(input_iterator_first + k));
       }
-      
+
       friend reference get (const My_point_map& pmap, key_type idx) {
         return pmap[idx];
       }
@@ -234,7 +225,7 @@ namespace Shape_detection {
     typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
     typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
     typedef typename Neighbor_search::Distance Distance;
-    
+
     class Sort_by_planarity
     {
       Input_iterator m_first;
@@ -244,7 +235,7 @@ namespace Shape_detection {
       FT m_cluster_epsilon;
       mutable boost::shared_ptr<std::vector<std::size_t> > nb_points;
       mutable boost::shared_ptr<std::vector<FT> > score;
-      
+
     public:
       Sort_by_planarity (Input_iterator first,
                          Point_map point_map,
@@ -261,13 +252,13 @@ namespace Shape_detection {
       void compute_score (const std::size_t& idx) const
       {
         static std::vector<std::size_t> neighbors;
-        
+
         neighbors.clear();
         Sphere fs (get(m_point_map, *(m_first + idx)), m_cluster_epsilon * 2, 0, m_tree.traits());
         m_tree.search (std::back_inserter (neighbors), fs);
 
         (*nb_points)[idx] = neighbors.size();
-        
+
         Plane dummy;
         (*score)[idx]
           = CGAL::linear_least_squares_fitting_3
@@ -278,7 +269,7 @@ namespace Shape_detection {
            dummy,
            CGAL::Dimension_tag<0>());
       }
-      
+
       bool operator() (const std::size_t& a, const std::size_t& b) const
       {
         if ((*score)[a] == -1.)
@@ -305,7 +296,7 @@ namespace Shape_detection {
 
     // Maps index into points to assigned extracted primitive.
     std::vector<int> m_shape_index;
-    std::size_t m_num_available_points; 
+    std::size_t m_num_available_points;
     std::size_t m_num_total_points;
 
     // Give the index of the subset of point i.
@@ -317,20 +308,20 @@ namespace Shape_detection {
 
     // Iterators of input data.
     bool m_valid_iterators;
-    Input_iterator m_input_iterator_first, m_input_iterator_beyond; 
+    Input_iterator m_input_iterator_first, m_input_iterator_beyond;
     Point_map m_point_map;
     Normal_map m_normal_map;
-    My_point_map m_index_map;    
+    My_point_map m_index_map;
     Tree* m_tree;
-    
+
   public:
 
     /// \name Initialization
     /// @{
 
-    /*! 
+    /*!
       Constructs an empty shape detection object.
-    */ 
+    */
     Region_growing_depr (Traits t = Traits())
       : m_traits(t)
       , m_num_available_points(0)
@@ -339,9 +330,9 @@ namespace Shape_detection {
       , m_tree (nullptr)
     {}
 
-    /*! 
+    /*!
       Releases all memory allocated by this instances including shapes.
-    */ 
+    */
     ~Region_growing_depr() {
       clear();
     }
@@ -359,7 +350,7 @@ namespace Shape_detection {
       Retrieves the point property map.
     */
     const Point_map& point_map() const { return m_point_map; }
-    
+
     /*!
       Retrieves the normal property map.
     */
@@ -398,7 +389,7 @@ namespace Shape_detection {
         m_index_map = My_point_map (m_input_iterator_first, m_point_map);
         clear();
 
-        m_extracted_shapes = 
+        m_extracted_shapes =
           boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
         m_num_available_points = m_num_total_points = std::distance(
@@ -417,12 +408,12 @@ namespace Shape_detection {
       Shape_detection::Plane<Traits> >();`.
 
       \note So far, region growing algorithm only supports plane detection.
-    */ 
+    */
     template <class Shape_type>
     void add_shape_factory() {
       CGAL_static_assertion_msg ((boost::is_convertible<Shape_type, Plane_shape>::value),
                                  "Region growing only supports Plane shapes.");
-      
+
       m_shape_factories.push_back(factory<Shape_type>);
     }
 
@@ -431,7 +422,7 @@ namespace Shape_detection {
       These structures only depend on the input data, i.e. the points and
       normal vectors. This method is called by `detect()`, if it was not called
       before by the user.
-    */ 
+    */
     bool preprocess() {
       if (m_num_total_points == 0)
         return false;
@@ -449,7 +440,7 @@ namespace Shape_detection {
     /// @{
     /*!
       Removes all shape types registered for detection.
-     */ 
+     */
     void clear_shape_factories() {
       m_shape_factories.clear();
     }
@@ -457,9 +448,9 @@ namespace Shape_detection {
     /*!
       Removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
-      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()` 
+      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()`
       are invalidated.
-    */ 
+    */
     void clear()
     {
       // If there is no data yet, there are no data structures.
@@ -474,18 +465,18 @@ namespace Shape_detection {
 
       std::vector<int>().swap(m_shape_index);
 
-      m_extracted_shapes = 
+      m_extracted_shapes =
         boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
-      
+
       m_num_available_points = m_num_total_points;
     }
 
     /// @}
 
-    /// \name Detection 
+    /// \name Detection
     /// @{
 
-    /*! 
+    /*!
       Performs the shape detection.
 
       \param options %Parameters for shape detection.
@@ -514,7 +505,7 @@ namespace Shape_detection {
         return false;
 
       // Reset data structures possibly used by former search.
-      m_extracted_shapes = 
+      m_extracted_shapes =
         boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
       m_num_available_points = m_num_total_points;
 
@@ -525,10 +516,10 @@ namespace Shape_detection {
                                          CGAL::Property_map_to_unary_function<Point_map>(m_point_map)),
          boost::make_transform_iterator (m_input_iterator_beyond,
                                          CGAL::Property_map_to_unary_function<Point_map>(m_point_map)));
-      
+
       FT bbox_diagonal = (FT) CGAL::sqrt(
           (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
-        + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
+        + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
         + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 
       // Epsilon or cluster_epsilon have been set by the user?
@@ -536,13 +527,13 @@ namespace Shape_detection {
       m_options.epsilon = (m_options.epsilon < 0)
         ? bbox_diagonal * (FT) 0.01 : m_options.epsilon;
 
-      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) 
+      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0)
         ? bbox_diagonal * (FT) 0.01 : m_options.cluster_epsilon;
-      
+
       // Minimum number of points has been set?
-      m_options.min_points = 
-        (m_options.min_points >= m_num_available_points) ? 
-          (std::size_t)((FT)0.01 * m_num_available_points) : 
+      m_options.min_points =
+        (m_options.min_points >= m_num_available_points) ?
+          (std::size_t)((FT)0.01 * m_num_available_points) :
           m_options.min_points;
       m_options.min_points = (m_options.min_points < 10) ? 10 : m_options.min_points;
 
@@ -550,13 +541,13 @@ namespace Shape_detection {
       m_shape_index.assign(m_num_available_points, -1);
 
       Distance tr_dist (m_index_map);
-      
+
       // Initialization structures.
       int class_index = -1;
 
       if (callback && !callback(0.))
         return false;
-      
+
       std::vector<std::size_t> neighbors;
 
       std::vector<std::size_t> sorted_indices (m_num_total_points);
@@ -583,19 +574,19 @@ namespace Shape_detection {
           return false;
 
         std::size_t i = sorted_indices[I];
-        
+
         Input_iterator it = m_input_iterator_first + i;
-        
+
         if (m_shape_index[i] != -1)
           continue;
 
         m_shape_index[i] = ++ class_index;
-        
-        int conti = 0; // to accelerate least_square fitting 
+
+        int conti = 0; // to accelerate least_square fitting
 
         Vector plane_normal = get(m_normal_map, *it);
         plane_normal = plane_normal / std::sqrt(plane_normal * plane_normal);
-        
+
         Plane optimal_plane(get(m_point_map, *it),
                             plane_normal);
 
@@ -619,18 +610,18 @@ namespace Shape_detection {
                icfrit != index_container_former_ring.end(); ++ icfrit)
           {
             std::size_t point_index = *icfrit;
-                              
+
             Input_iterator pit = m_input_iterator_first + point_index;
 
             neighbors.clear();
             Sphere fs (get(m_point_map, *pit), m_options.cluster_epsilon, 0, m_tree->traits());
             m_tree->search (std::back_inserter (neighbors), fs);
-                
+
             for (std::size_t nb = 0; nb < neighbors.size(); ++ nb)
             {
               std::size_t neighbor_index = neighbors[nb];
               Input_iterator nbit = m_input_iterator_first + neighbor_index;
-                    
+
               if (m_shape_index[neighbor_index] != -1)
                 continue;
 
@@ -661,11 +652,11 @@ namespace Shape_detection {
             index_container.push_back(*lit);
           }
           index_container_current_ring.clear();
-          
+
           conti++;
           if (index_container.size() < 5)
             continue;
-          
+
           if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
           {
             std::list<Point> listp;
@@ -691,7 +682,7 @@ namespace Shape_detection {
 
           // BUG something fishy around here.
           m_num_available_points -= index_container.size();
-          
+
           p->compute (index_container,  m_input_iterator_first, m_traits,
                       m_point_map, m_normal_map, m_options.epsilon, m_options.normal_threshold);
           p->m_indices.clear();
@@ -715,7 +706,7 @@ namespace Shape_detection {
     /// @}
 
     /// \name Access
-    /// @{            
+    /// @{
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with value type
       `boost::shared_ptr<Shape>` over the detected shapes in the order of detection.
@@ -736,30 +727,30 @@ namespace Shape_detection {
     Plane_range planes() const {
       boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
         = boost::make_shared<std::vector<boost::shared_ptr<Plane_shape> > >();
-      
+
       for (std::size_t i = 0; i < m_extracted_shapes->size(); ++ i)
       {
         boost::shared_ptr<Plane_shape> pshape
           = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
-        
+
         // Ignore all shapes other than plane.
         if (pshape != boost::shared_ptr<Plane_shape>())
           planes->push_back (pshape);
       }
       return Plane_range(planes);
     }
-      
-    /*! 
+
+    /*!
       Number of points not assigned to a shape.
-    */ 
+    */
     std::size_t number_of_unassigned_points() {
       return m_num_available_points;
     }
-    
-    /*! 
-      Returns an `Iterator_range` with a bidirectional iterator with the value type 
+
+    /*!
+      Returns an `Iterator_range` with a bidirectional iterator with the value type
       `std::size_t` as indices into the input data that has not been assigned to a shape.
-    */ 
+    */
     Point_index_range indices_of_unassigned_points() {
       Filter_unassigned_points fup(m_shape_index);
 
@@ -776,7 +767,7 @@ namespace Shape_detection {
 
   #ifdef DOXYGEN_NS
     } // namespace deprecated
-  #endif 
+  #endif
 
 } // namespace Shape_detection
 } // namespace CGAL

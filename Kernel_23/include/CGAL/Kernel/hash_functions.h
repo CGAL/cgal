@@ -1,24 +1,15 @@
 // Copyright (c) 2019
 // GeometryFactory (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Simon Giraudot
- 
+
 #ifndef CGAL_KERNEL_HASH_FUNCTIONS_H
 #define CGAL_KERNEL_HASH_FUNCTIONS_H
 
@@ -66,8 +57,8 @@ template <typename K>
 inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Iso_rectangle_2<K>& iso_rectangle)
 {
-  std::size_t result = hash_value(iso_rectangle.min());
-  boost::hash_combine(result, hash_value(iso_rectangle.max()));
+  std::size_t result = hash_value((iso_rectangle.min)());
+  boost::hash_combine(result, hash_value((iso_rectangle.max)()));
   return result;
 }
 
@@ -135,8 +126,8 @@ template <typename K>
 inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Iso_cuboid_3<K>& iso_cuboid)
 {
-  std::size_t result = hash_value(iso_cuboid.min());
-  boost::hash_combine(result, hash_value(iso_cuboid.max()));
+  std::size_t result = hash_value((iso_cuboid.min)());
+  boost::hash_combine(result, hash_value((iso_cuboid.max)()));
   return result;
 }
 

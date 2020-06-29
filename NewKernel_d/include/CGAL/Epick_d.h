@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -49,7 +40,12 @@ struct Epick_d_help1
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
-  Cartesian_static_filters<Dim,Epick_d_help1<Dim>,Epick_d_help2<Dim> >
+  Cartesian_filter_K< \
+    Epick_d_help1<Dim>, \
+    Cartesian_base_d<Interval_nt_advanced, Dim>, \
+    Cartesian_base_d<internal::Exact_ring_selector<double>::Type, Dim>, \
+    typename Functors_without_division<Dim>::type \
+  >
 template<class Dim>
 struct Epick_d_help2
 : CGAL_BASE
@@ -59,9 +55,20 @@ struct Epick_d_help2
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
+  Cartesian_static_filters<Dim,Epick_d_help2<Dim>,Epick_d_help3<Dim> >
+
+template<class Dim>
+struct Epick_d_help3
+: CGAL_BASE
+{
+  constexpr Epick_d_help3(){}
+  constexpr Epick_d_help3(int d):CGAL_BASE(d){}
+};
+#undef CGAL_BASE
+#define CGAL_BASE \
   Kernel_d_interface< \
     Cartesian_wrap< \
-      Epick_d_help2<Dim>, \
+      Epick_d_help3<Dim>, \
       Epick_d<Dim> > >
 template<class Dim>
 struct Epick_d

@@ -48,7 +48,7 @@ detect_wrong_permissions || exit 1
 echo '.. Testing licenses...'
 detect_packages_licenses || exit 1
 if ! ${git} diff --exit-code > /dev/null; then
-    echo '=> There are modifications in licenses:'
+    echo '=> There are modifications in licenses (check if all modified/added headers files contain a valid SPDX tag compatible with the one in package_info/PKG/license and that no license text is present):'
     ${git} status --porcelain
     exit 1
 fi
@@ -159,6 +159,24 @@ txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}
+  exit 1
+fi
+
+#check no file contains tab characters
+echo '.. Checking if tab character is used...'
+file_with_tabs=$(git ls-files --stage | egrep '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\t')
+if [ -n "${file_with_tabs}" ]; then
+  echo "The following files have tabs:"
+  echo ${file_with_tabs}
+  exit 1
+fi
+
+#check no file contains trailing whitespaces characters
+echo '.. Look for trailing whitespaces...'
+files_with_trailingws=$(git ls-files --stage | egrep '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\s+$')
+if [ -n "${files_with_trailingws}" ]; then
+  echo "The following files have trailing whitespaces:"
+  echo ${files_with_trailingws}
   exit 1
 fi
 

@@ -5,6 +5,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QMdiArea>
 #include <QMdiSubWindow>
+#include <QMessageBox>
 #include "Messages_interface.h"
 using namespace CGAL::Three;
 
@@ -174,6 +175,18 @@ void Three::warning(QString s)
 void Three::error(QString s)
 {
   qobject_cast<Messages_interface*>(mainWindow())->message_error(s);
+}
+void Three::information(QString title, QString s)
+{
+  QMessageBox::information(mainWindow(), title, s);
+}
+void Three::warning(QString title, QString s)
+{
+  QMessageBox::warning(mainWindow(), title, s);
+}
+void Three::error(QString title, QString s)
+{
+  QMessageBox::critical(mainWindow(), title, s);
 }
 RenderingMode Three::defaultSurfaceMeshRenderingMode()
 {

@@ -2,23 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
-//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//            Waqar Khan        <wkhan@mpi-inf.mpg.de>
+//            Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
@@ -320,24 +312,24 @@ public:
 
       if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
           (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
-	  { //both cv1 and cv2 are vertical
+          { //both cv1 and cv2 are vertical
          CGAL_precondition (!(cv1.left()).equals(p) && !(cv2.left()).equals(p));
-	  }
-	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
+          }
+          else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
                    (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
-	  { //only cv1 is vertical
+          { //only cv1 is vertical
          CGAL_precondition (!(cv1.left()).equals(p));
-	  }
-	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+          }
+          else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
                    (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL))
-	  { //only cv2 is vertical
+          { //only cv2 is vertical
          CGAL_precondition (!(cv2.left()).equals(p));
-	  }
-	  else
-	  { //both cv1 and cv2 are non vertical
+          }
+          else
+          { //both cv1 and cv2 are non vertical
         CGAL_precondition (CGAL::compare (cv1.left().x(),p.x()) == SMALLER &&
                            CGAL::compare (cv2.left().x(),p.x()) == SMALLER);
-	  }
+          }
       // Compare the two curves immediately to the left of p:
       return (cv1.compare_to_left (cv2, p));
     }
@@ -555,21 +547,15 @@ public:
     return Split_2();
   }
 
-  class Intersect_2
-  {
+  class Intersect_2 {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    Intersection_map& _inter_map;       // The map of intersection points.
 
   public:
-
     /*! Constructor. */
-    Intersect_2 (Intersection_map& map) :
-      _inter_map (map)
-    {}
+    Intersect_2(Intersection_map& map) : _inter_map(map) {}
 
-    /*!
-     * Find the intersections of the two given curves and insert them to the
+    /*! Find the intersections of the two given curves and insert them to the
      * given output iterator. As two segments may itersect only once, only a
      * single will be contained in the iterator.
      * \param cv1 The first curve.
@@ -577,20 +563,15 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const X_monotone_curve_2& cv1,
-                               const X_monotone_curve_2& cv2,
-                               OutputIterator oi) const
-    {
-      return (cv1.intersect (cv2, oi, &_inter_map));
-    }
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              OutputIterator oi) const
+    { return (cv1.intersect(cv2, oi, &_inter_map)); }
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
-  {
-    return (Intersect_2 (inter_map));
-  }
+  Intersect_2 intersect_2_object() const { return (Intersect_2(inter_map)); }
 
   class Are_mergeable_2
   {
@@ -715,14 +696,11 @@ public:
     friend class Arr_circle_segment_traits_2<Kernel, Filter>;
 
   public:
-    /*!\brief
-     * Returns a trimmed version of an arc
-     *
+    /*! Obtain a trimmed version of an arc
      * \param xcv The arc
      * \param src the new first endpoint
      * \param tgt the new second endpoint
      * \return The trimmed arc
-     *
      * \pre src != tgt
      * \pre both points must be interior and must lie on \c cv
      */

@@ -69,7 +69,7 @@ int main(int, char **) {
                                                20);
 
   Mesher mesher(c2t3, surface, SMTraits(), criteria);
-  mesher.refine_mesh(); 
+  mesher.refine_mesh();
 
   std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
 }

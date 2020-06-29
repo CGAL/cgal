@@ -18,7 +18,7 @@ if ( CGAL_FOUND )
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
     if ( "${cppfile}" STREQUAL "test_3mf_to_sm.cpp" )
-      if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR)
+      if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
         include_directories(${3MF_INCLUDE_DIR})
         create_single_source_cgal_program( "${cppfile}" )
           target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
@@ -31,9 +31,9 @@ if ( CGAL_FOUND )
   endforeach()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 
 

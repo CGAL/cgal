@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -358,7 +349,7 @@ namespace internal {
         Patch_id pid = get_patch_id(f);
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(pid);
-        std::pair<typename Patch_id_to_index_map::iterator, bool> 
+        std::pair<typename Patch_id_to_index_map::iterator, bool>
           res = patch_id_to_index_map.insert(std::make_pair(pid,0));
         if(res.second){
           res.first->second =  patch_id_to_index_map.size()-1;
@@ -381,7 +372,6 @@ namespace internal {
       }
       for(std::size_t i=0; i < trees.size(); ++i){
         trees[i]->build();
-        trees[i]->accelerate_distance_queries();
       }
     }
 
@@ -1371,7 +1361,7 @@ private:
       do
       {
         if (is_on_patch_border(nxt))
-        { 
+        {
           CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
           return nxt;
         }
@@ -1523,7 +1513,9 @@ private:
       // tag patch border halfedges
       for(halfedge_descriptor h : halfedges(mesh_))
       {
-        if (status(h)==PATCH && status(opposite(h, mesh_))!=PATCH)
+        if (status(h) == PATCH
+          && (   status(opposite(h, mesh_)) != PATCH
+              || get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_))))
         {
           set_status(h, PATCH_BORDER);
           has_border_ = true;

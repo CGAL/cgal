@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -37,7 +28,7 @@ namespace CGAL {
 
 class Cartesian_tag;
 class Homogeneous_tag;
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -47,7 +38,7 @@ class Line_2_Line_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, LINE};
     Line_2_Line_2_pair(typename K::Line_2 const *line1,
-		       typename K::Line_2 const *line2)
+                       typename K::Line_2 const *line2)
       : _line1(line1), _line2(line2), _known(false) {}
 
     Intersection_results intersection_type() const;
@@ -78,9 +69,9 @@ inline bool do_intersect(
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Line_2>::result_type
-intersection(const typename K::Line_2 &line1, 
-	     const typename K::Line_2 &line2,
-	     const K&)
+intersection(const typename K::Line_2 &line1,
+             const typename K::Line_2 &line2,
+             const K&)
 {
     typedef Line_2_Line_2_pair<K> is_t;
     is_t linepair(&line1, &line2);
@@ -136,7 +127,7 @@ bool construct_if_finite(POINT &pt, RT x, RT y, RT w, R &, const Homogeneous_tag
 
 template <class R, class POINT, class RT>
 inline
-bool 
+bool
 construct_if_finite(POINT &pt, RT x, RT y, RT w, const R &r)
 {
   typedef typename R::Kernel_tag Tag;

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -35,9 +26,9 @@ namespace CGAL {
 
 // traverses the range [|first|,|last|). After execution, the value of |n| is
 // an iterator in the range such that |*n| $\ge_{\rm yx}$ |*it| for
-// all iterators |it| in the range. Similarly, for |s|, |w|, and |e| 
+// all iterators |it| in the range. Similarly, for |s|, |w|, and |e|
 // the inequations |*s| $\le_{\rm yx}$ |*it|, |*w| $\le_{\rm xy}$ |*it|,
-// and |*e| $\ge_{\rm yx}$ |*it| hold respectively for all iterators 
+// and |*e| $\ge_{\rm yx}$ |*it| hold respectively for all iterators
 // |it| in the range.
 // {\sc traits}: uses |Traits::Less_xy_2| and |Traits::Less_yx_2|.
 template <class ForwardIterator, class Traits>
@@ -122,7 +113,7 @@ ch_we_point( ForwardIterator first, ForwardIterator last,
 
 // traverses the range [|first|,|last|). After execution, the value of |n| is
 // an iterator in the range such that |*n| $\ge_{\rm yx}$ |*it| for
-// all iterators |it| in the range. 
+// all iterators |it| in the range.
 // {\sc traits}: uses |Traits::Less_yx_2|.
 template <class ForwardIterator, class Traits>
 void
@@ -145,7 +136,7 @@ ch_n_point( ForwardIterator first, ForwardIterator last, ForwardIterator& n)
 
 // traverses the range [|first|,|last|). After execution, the value of |s| is
 // an iterator in the range such that |*s| $\le_{\rm yx}$ |*it| for
-// all iterators |it| in the range. 
+// all iterators |it| in the range.
 // {\sc traits}: uses |Traits::Less_yx_2|.
 template <class ForwardIterator, class Traits>
 void

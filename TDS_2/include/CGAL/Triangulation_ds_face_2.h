@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -28,11 +19,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < class Fb >
 class  Triangulation_ds_face_2
-  : public Fb  
+  : public Fb
 {
 public:
   typedef typename Fb::Triangulation_data_structure Tds;
@@ -46,13 +37,13 @@ public :
   Triangulation_ds_face_2()
     : Fb()
   {}
-    
+
   Triangulation_ds_face_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
     :  Fb(v0,v1,v2)
   {}
-    
+
   Triangulation_ds_face_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
-			  Face_handle n0, Face_handle n1, Face_handle n2)
+                          Face_handle n0, Face_handle n1, Face_handle n2)
     :  Fb(v0,v1,v2,n0,n1,n2)
   {}
 
@@ -77,7 +68,7 @@ Triangulation_ds_face_2<Fb>::
 mirror_vertex(int i) const
 {
   CGAL_triangulation_precondition ( this->neighbor(i) != Face_handle()
-				    && this->dimension() >= 1);
+                                    && this->dimension() >= 1);
   //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
   return this->neighbor(i)->vertex(mirror_index(i));
 }
@@ -89,7 +80,7 @@ mirror_index(int i) const
 {
   // return the index of opposite vertex in neighbor(i);
   CGAL_triangulation_precondition (this->neighbor(i) != Face_handle() &&
-	                           this->dimension() >= 1);
+                                   this->dimension() >= 1);
   if (this->dimension() == 1) {
     return 1 - (this->neighbor(i)->index(this->vertex(1-i)));
   }
@@ -99,13 +90,13 @@ mirror_index(int i) const
 
 template < class Fb >
 bool
-Triangulation_ds_face_2<Fb>::  
+Triangulation_ds_face_2<Fb>::
 is_valid(bool verbose, int level) const
 {
   bool result = Fb::is_valid(verbose, level);
   for(int i = 0; i <= this->dimension(); i++) {
     Face_handle n = this->neighbor(i);
-    // the strange formulation in case dimension()==2 
+    // the strange formulation in case dimension()==2
     // is used to handle the cases of TDS allowing
     // two faces with two common edges
     int in;
@@ -113,7 +104,7 @@ is_valid(bool verbose, int level) const
     else in = mirror_index(i);
     result = result && ( this == &*(n->neighbor(in)) );
     switch(this->dimension()) {
-    case 0 : 
+    case 0 :
       break;
     case 1 :
       result = result &&  in == 1-i;
@@ -121,7 +112,7 @@ is_valid(bool verbose, int level) const
       break;
     case 2 :
       result = result && ( this->vertex(cw(i))  == n->vertex(ccw(in)))
-	              && ( this->vertex(ccw(i)) == n->vertex(cw(in)));
+                      && ( this->vertex(ccw(i)) == n->vertex(cw(in)));
       break;
     }
   }

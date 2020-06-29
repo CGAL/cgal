@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -63,17 +54,17 @@ protected:
   FT divide(const FT& x, const FT& y, Integral_domain_without_division_tag) {
     return FT(CGAL::to_double(x) / CGAL::to_double(y));
   }
-  
+
   inline static
   FT divide(const FT& x, const FT& y, Field_tag) {
     return x / y;
   }
-  
+
   inline static
   FT divide(const FT& x, const FT& y) {
     return divide(x,y, typename AST::Algebraic_category());
   }
-  
+
   inline static
   FT sqrt(const FT& x, Integral_domain_without_division_tag) {
     return CGAL::sqrt(CGAL::to_double(x));
@@ -108,17 +99,17 @@ protected:
   {
     return sqrt( distance2(p1, p2) );
   }
-  
- 
+
+
   inline static
   FT distance(const Point_2& p, const Line_2& l)
   {
     return divide( p.x() * l.a() + p.y() * l.b() + l.c(),
-		   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
+                   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
   }
 
-  
-  
+
+
   // instance stuff
   Point_2 c;
   Line_2 l;
@@ -137,7 +128,7 @@ protected:
   {
     std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[0];
-    return p[1]; 
+    return p[1];
   }
 
   std::vector< Point_2 > compute_points(const FT &d) const
@@ -153,8 +144,8 @@ protected:
     if ( l.a() == FT(0) ) {
       FT y = d2 * int(CGAL::sign(l.b())) - divide(l.c(), l.b());
 
-      FT C = CGAL::square(y) - FT(2) * c.y() * y + 
-	CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
+      FT C = CGAL::square(y) - FT(2) * c.y() * y +
+        CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
 
       FT D = CGAL::square(c.x()) - C;
 
@@ -198,8 +189,8 @@ protected:
   {
     return
       CGAL::is_positive( determinant<FT>(c.x(), c.y(), FT(1),
-					       o.x(), o.y(), FT(1),
-					       p.x(), p.y(), FT(1)) );
+                                               o.x(), o.y(), FT(1),
+                                               p.x(), p.y(), FT(1)) );
   }
 
   inline
@@ -229,7 +220,7 @@ protected:
   void compute_origin()
   {
     FT d = divide(l.a() * c.x() + l.b() * c.y() + l.c(),
-		  FT(2) * ( CGAL::square(l.a()) + CGAL::square(l.b()) )  );
+                  FT(2) * ( CGAL::square(l.a()) + CGAL::square(l.b()) )  );
     o = Point_2(c.x() - l.a() * d, c.y() - l.b() * d);
   }
 
@@ -302,13 +293,13 @@ public:
       W << p[1];
 
       if ( p.size() > 0 ) {
-	if ( right(p[0]) ) {
-	  pright.push_back(p[0]);
-	  pleft.push_back(p[1]);
-	} else {
-	  pright.push_back(p[1]);
-	  pleft.push_back(p[0]);
-	}
+        if ( right(p[0]) ) {
+          pright.push_back(p[0]);
+          pleft.push_back(p[1]);
+        } else {
+          pright.push_back(p[1]);
+          pleft.push_back(p[0]);
+        }
       }
     }
 

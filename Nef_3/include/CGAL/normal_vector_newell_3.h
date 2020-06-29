@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -35,6 +26,8 @@
 
 namespace CGAL {
 
+namespace internal_nef
+{
 template <class Handle, class Vector>
 CGAL_MEDIUM_INLINE
 void newell_single_step_3( const Handle& p, const Handle& q, Vector& n )
@@ -63,6 +56,7 @@ void newell_single_step_3( const Handle& p, const Handle& q, Vector& n )
         * q.hw() * q.hw()
     );
 }
+}
 
 template <class IC, class Vector>
 void normal_vector_newell_3( IC first, IC last, Vector& n )
@@ -86,11 +80,11 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
     IC prev = first;
     ++first;
     while( first != last) {
-        newell_single_step_3( *prev, *first, n);
+        internal_nef::newell_single_step_3( *prev, *first, n);
         prev = first;
         ++first;
     }
-    newell_single_step_3( *prev, *start_point, n);
+    internal_nef::newell_single_step_3( *prev, *start_point, n);
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 
@@ -108,11 +102,11 @@ void normal_vector_newell_3( IC first, IC last, VertexPointMap vpm, Vector& n )
     IC prev = first;
     ++first;
     while( first != last) {
-      newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
+        internal_nef::newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
         prev = first;
         ++first;
     }
-    newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
+    internal_nef::newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 

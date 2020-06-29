@@ -3,22 +3,13 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer, Marc Glisse
@@ -37,7 +28,7 @@
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
-// TODO : 
+// TODO :
 // - test whether stopping constant propagation only in functions taking
 //   double as arguments, improves performance.
 
@@ -539,9 +530,9 @@ private:
 #endif
       Internal_protector P;
 #ifdef CGAL_USE_SSE2
-# if 1
+# if !defined __SSE4_1__ && !defined __AVX__
       // Brutal, compute all products in all directions.
-      // The actual winner (by a hair) on recent hardware
+      // The actual winner (by a hair) on recent hardware before removing NaNs.
       __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
     __m128d bb = b.simd();                                // {-bi,bs}
     __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
@@ -551,21 +542,34 @@ private:
     __m128d bz = _mm_xor_pd(bb, m);                       // {bi,bs}
     bz = IA_opacify128(bz);
     __m128d c = swap_m128d (bz);                          // {bs,bi}
+
+    // The multiplications could produce some NaN, with 0 * inf. Replacing it with inf is safe.
+    // min(x,y) (the order is essential) returns its second argument when the first is NaN.
+    // An IEEE 754-2019 maximum could help.
+    __m128d big = IA::largest().simd();
     __m128d x1 = _mm_mul_pd(aa,bz);                       // {-ai*bi,as*bs}
+    //x1 = _mm_min_pd(x1,big); // no NaN
     __m128d x2 = _mm_mul_pd(aa,c);                        // {-ai*bs,as*bi}
+    x2 = _mm_min_pd(x2,big); // no NaN
     __m128d x3 = _mm_mul_pd(ap,bz);                       // {-as*bi,ai*bs}
+    //x3 = _mm_min_pd(x3,big); // no NaN
     __m128d x4 = _mm_mul_pd(ap,c);                        // {-as*bs,ai*bi}
+    x4 = _mm_min_pd(x4,big); // no NaN
+
     __m128d y1 = _mm_max_pd(x1,x2);
     __m128d y2 = _mm_max_pd(x3,x4);
     __m128d r = _mm_max_pd (y1, y2);
+    // Alternative with fewer instructions but more dependency
+    // __m128d r = _mm_max_pd(x1,_mm_max_pd(x2,_mm_max_pd(x3,_mm_min_pd(x4,big))));
     return IA (IA_opacify128(r));
-# elif 0
+# elif 1
     // we want to multiply ai,as with {ai<0?-bs:-bi,as<0?bi:bs}
     // we want to multiply as,ai with {as<0?-bs:-bi,ai<0?bi:bs}
     // requires SSE4 (otherwise use _mm_cmplt_pd, _mm_and_pd, _mm_andnot_pd and _mm_or_pd to avoid blendv)
     // probably faster on older hardware
     __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
     __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
+    __m128d big = IA::largest().simd();
     __m128d aa = a.simd();                                // {-ai,as}
     __m128d az = _mm_xor_pd(aa, m);                       // {ai,as}
     az = IA_opacify128_weak(az);
@@ -576,7 +580,9 @@ private:
     __m128d x = _mm_blendv_pd (bb, bp, az);               // {ai<0?-bs:-bi,as<0?bi:bs}
     __m128d y = _mm_blendv_pd (bb, bp, azp);              // {as<0?-bs:-bi,ai<0?bi:bs}
     __m128d p1 = _mm_mul_pd (az, x);
+    //p1 = _mm_min_pd(p1,big); // no NaN
     __m128d p2 = _mm_mul_pd (azp, y);
+    p2 = _mm_min_pd(p2,big); // no NaN
     __m128d r = _mm_max_pd (p1, p2);
     return IA (IA_opacify128(r));
 # elif 0
@@ -584,6 +590,7 @@ private:
     // we want to multiply -as,ai with {as<0?bs:bi,ai>0?bs:bi}
     // slightly worse than the previous one
     __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
+    __m128d big = IA::largest().simd();
     __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
     __m128d ax = swap_m128d (aa);                         // {as,-ai}
     __m128d ap = _mm_xor_pd (ax, m1);                     // {-as,ai}
@@ -595,13 +602,16 @@ private:
     __m128d x = _mm_blendv_pd (bbs, bbi, aa);             // {ai>0?bi:bs,as<0?bi:bs}
     __m128d y = _mm_blendv_pd (bbi, bbs, ax);             // {as<0?bs:bi,ai>0?bs:bi}
     __m128d p1 = _mm_mul_pd (aa, x);
+    //p1 = _mm_min_pd(p1,big); // no NaN
     __m128d p2 = _mm_mul_pd (ap, y);
+    p2 = _mm_min_pd(p2,big); // no NaN
     __m128d r = _mm_max_pd (p1, p2);
     return IA (IA_opacify128(r));
 # else
     // AVX version of the brutal method, same running time or slower
     __m128d aa = IA_opacify128_weak(a.simd());            // {-ai,as}
     __m128d bb = b.simd();                                // {-bi,bs}
+    __m256d big = _mm256_set1_pd(std::numeric_limits<double>::infinity());
     __m128d m = _mm_set_sd(-0.);                          // {-0,+0}
     __m128d m1 = _mm_set1_pd(-0.);                        // {-0,-0}
     __m128d ax = swap_m128d (aa);                         // {as,-ai}
@@ -612,7 +622,9 @@ private:
     __m256d Y1 = _mm256_set_m128d(bz,bz);                 // {bi,bs,bi,bs}
     __m256d Y2 = _mm256_permute_pd(Y1,5);                 // {bs,bi,bs,bi}
     __m256d Z1 = _mm256_mul_pd(X,Y1);
+    //Z1 = _mm256_min_pd(Z1,big); // no NaN
     __m256d Z2 = _mm256_mul_pd(X,Y2);
+    Z2 = _mm256_min_pd(Z2,big); // no NaN
     __m256d Z = _mm256_max_pd(Z1,Z2);
     __m128d z1 = _mm256_castpd256_pd128(Z);
     __m128d z2 = _mm256_extractf128_pd(Z,1);
@@ -620,21 +632,24 @@ private:
     return IA (IA_opacify128(r));
 # endif
 #else
-    if (a.inf() >= 0.0)					// a>=0
+    // TODO: try to move some NaN tests out of the hot path (test a.inf()>0 instead of >=0?).
+    if (a.inf() >= 0.0)                                        // a>=0
     {
       // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
       // b<=0     [a.sup()*b.inf(); a.inf()*b.sup()]
       // b~=0     [a.sup()*b.inf(); a.sup()*b.sup()]
       double aa = a.inf(), bb = a.sup();
+      if (bb <= 0.) return 0.; // In case b has an infinite bound, avoid NaN.
       if (b.inf() < 0.0)
       {
         aa = bb;
         if (b.sup() < 0.0)
           bb = a.inf();
       }
-      return IA(-CGAL_IA_MUL(aa, -b.inf()), CGAL_IA_MUL(bb, b.sup()));
+      double r = (b.sup() == 0) ? 0. : CGAL_IA_MUL(bb, b.sup()); // In case bb is infinite, avoid NaN.
+      return IA(-CGAL_IA_MUL(aa, -b.inf()), r);
     }
-    else if (a.sup()<=0.0)				// a<=0
+    else if (a.sup()<=0.0)                                // a<=0
     {
       // b>=0     [a.inf()*b.sup(); a.sup()*b.inf()]
       // b<=0     [a.sup()*b.sup(); a.inf()*b.inf()]
@@ -643,19 +658,25 @@ private:
       if (b.inf() < 0.0)
       {
         aa=bb;
-        if (b.sup() < 0.0)
+        if (b.sup() <= 0.0)
           bb=a.sup();
       }
+      else if (b.sup() <= 0) return 0.; // In case a has an infinite bound, avoid NaN.
       return IA(-CGAL_IA_MUL(-bb, b.sup()), CGAL_IA_MUL(-aa, -b.inf()));
     }
-    else						// 0 \in a
+    else                                                // 0 \in a
     {
-      if (b.inf()>=0.0)				// b>=0
-        return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
-            CGAL_IA_MUL( a.sup(), b.sup()));
-      if (b.sup()<=0.0)				// b<=0
+      if (b.inf()>=0.0) {                                // b>=0
+        if (b.sup()<=0.0)
+          return 0.; // In case a has an infinite bound, avoid NaN.
+        else
+          return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
+              CGAL_IA_MUL( a.sup(), b.sup()));
+      }
+      if (b.sup()<=0.0) {                                // b<=0
         return IA(-CGAL_IA_MUL( a.sup(), -b.inf()),
             CGAL_IA_MUL(-a.inf(), -b.inf()));
+      }
       // 0 \in b
       double tmp1 = CGAL_IA_MUL(-a.inf(),  b.sup());
       double tmp2 = CGAL_IA_MUL( a.sup(), -b.inf());
@@ -670,6 +691,7 @@ private:
     Interval_nt
     operator* (double a, Interval_nt b)
     {
+      CGAL_assertion(is_finite(a));
       // return Interval_nt(a)*b;
       Internal_protector P;
       if (a < 0) { a = -a; b = -b; }
@@ -679,8 +701,12 @@ private:
       __m128d bb = IA_opacify128_weak(b.simd());
       __m128d aa = _mm_set1_pd(IA_opacify(a));
       __m128d r = _mm_mul_pd(aa, bb);
+      // In case a is 0 and b has an infinite bound. This returns an interval
+      // larger than necessary, but is likely faster to produce.
+      r = _mm_min_pd(r,largest().simd());
       return IA(IA_opacify128(r));
 #else
+      else if (!(a > 0)) return 0.; // We could test this before the SSE block and remove the minpd line.
       return IA(-CGAL_IA_MUL(a, -b.inf()), CGAL_IA_MUL(a, b.sup()));
 #endif
     }
@@ -751,11 +777,11 @@ private:
     return IA (IA_opacify128(r));
 # endif
 #else
-    if (b.inf() > 0.0)				// b>0
+    if (b.inf() > 0.0)                                // b>0
     {
-      // e>=0	[a.inf()/b.sup(); a.sup()/b.inf()]
-      // e<=0	[a.inf()/b.inf(); a.sup()/b.sup()]
-      // e~=0	[a.inf()/b.inf(); a.sup()/b.inf()]
+      // e>=0        [a.inf()/b.sup(); a.sup()/b.inf()]
+      // e<=0        [a.inf()/b.inf(); a.sup()/b.sup()]
+      // e~=0        [a.inf()/b.inf(); a.sup()/b.inf()]
       double aa = b.sup(), bb = b.inf();
       if (a.inf() < 0.0)
       {
@@ -765,11 +791,11 @@ private:
       }
       return IA(-CGAL_IA_DIV(-a.inf(), aa), CGAL_IA_DIV(a.sup(), bb));
     }
-    else if (b.sup()<0.0)			// b<0
+    else if (b.sup()<0.0)                        // b<0
     {
-      // e>=0	[a.sup()/b.sup(); a.inf()/b.inf()]
-      // e<=0	[a.sup()/b.inf(); a.inf()/b.sup()]
-      // e~=0	[a.sup()/b.sup(); a.inf()/b.sup()]
+      // e>=0        [a.sup()/b.sup(); a.inf()/b.inf()]
+      // e<=0        [a.sup()/b.inf(); a.inf()/b.sup()]
+      // e~=0        [a.sup()/b.sup(); a.inf()/b.sup()]
       double aa = b.sup(), bb = b.inf();
       if (a.inf() < 0.0)
       {
@@ -779,7 +805,7 @@ private:
       }
       return IA(-CGAL_IA_DIV(a.sup(), -aa), CGAL_IA_DIV(a.inf(), bb));
     }
-    else					// b~0
+    else                                        // b~0
       return largest();
     // We could do slightly better -> [0;infinity] when b.sup()==0,
     // but is this worth ?
@@ -974,13 +1000,13 @@ struct Max <Interval_nt<Protected> >
     }
 };
 
-template<bool Protected> inline 
+template<bool Protected> inline
 Interval_nt<Protected> min BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Interval_nt<Protected> & x,
 const Interval_nt<Protected> & y){
   return CGAL::Min<Interval_nt<Protected> > ()(x,y);
 }
-template<bool Protected> inline 
+template<bool Protected> inline
 Interval_nt<Protected> max BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Interval_nt<Protected> & x,
 const Interval_nt<Protected> & y){
@@ -1228,7 +1254,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     typedef Interval_nt<B>  Type;
   typedef Uncertain<CGAL::Sign> Sign;
   typedef Uncertain<bool> Boolean;
-  typedef Uncertain<CGAL::Comparison_result> Comparison_result; 
+  typedef Uncertain<CGAL::Comparison_result> Comparison_result;
 
     class Abs
       : public CGAL::cpp98::unary_function< Type, Type > {
@@ -1307,7 +1333,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     typedef Interval_nt<B>      Type;
     typedef Tag_false           Is_exact;
     typedef Tag_true            Is_numerical_sensitive;
-    typedef Uncertain<bool>     Boolean; 
+    typedef Uncertain<bool>     Boolean;
 
     class Is_zero
       : public CGAL::cpp98::unary_function< Type, Boolean > {
@@ -1370,7 +1396,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
   public:
     Boolean operator()( const Type& x, const Type&) const {
       return ! Is_zero()(x);
-    } 
+    }
     // second operator computing q
     Boolean operator()( const Type& x, const Type& y, Type& q) const {
       if (! Is_zero()(x) )
@@ -1419,16 +1445,16 @@ struct Coercion_traits_interval_nt<A, Interval_nt<P>, Tag_true>{
 template< bool B >
 class Interval_traits< Interval_nt<B> >
   : public internal::Interval_traits_base< Interval_nt<B> >  {
-public: 
-  typedef Interval_traits<Interval_nt<B> > Self; 
-  typedef Interval_nt<B> Interval; 
-  typedef double Bound; 
-  typedef CGAL::Tag_false With_empty_interval; 
-  typedef CGAL::Tag_true  Is_interval; 
+public:
+  typedef Interval_traits<Interval_nt<B> > Self;
+  typedef Interval_nt<B> Interval;
+  typedef double Bound;
+  typedef CGAL::Tag_false With_empty_interval;
+  typedef CGAL::Tag_true  Is_interval;
 
  struct Construct :public CGAL::cpp98::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {
-      CGAL_precondition( l < r ); 
+      CGAL_precondition( l < r );
       return Interval(l,r);
     }
   };
@@ -1447,7 +1473,7 @@ public:
 
   struct Width :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
-      return width(a); 
+      return width(a);
     }
   };
 
@@ -1456,7 +1482,7 @@ public:
       return (Lower()(a)+Upper()(a))/2.0;
     }
   };
-    
+
   struct Norm :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return magnitude(a);
@@ -1486,25 +1512,25 @@ public:
       return a.is_same(b);
     }
   };
-    
+
   struct Overlap :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.do_overlap(b);
     }
   };
-    
+
   struct Subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
-      return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b) ;  
+      return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b) ;
     }
   };
-    
+
   struct Proper_subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
-      return Subset()(a,b) && ! Equal()(a,b); 
+      return Subset()(a,b) && ! Equal()(a,b);
     }
   };
-    
+
   struct Hull :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
 #ifdef CGAL_USE_SSE2
@@ -1512,16 +1538,16 @@ public:
 #else
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();
-      return Interval( 
+      return Interval(
              -max BOOST_PREVENT_MACRO_SUBSTITUTION (-a.inf(),-b.inf()),
               max BOOST_PREVENT_MACRO_SUBSTITUTION ( a.sup(), b.sup()));
 #endif
     }
   };
-    
-  
-//  struct Empty is Null_functor 
-  
+
+
+//  struct Empty is Null_functor
+
   struct Intersection :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();

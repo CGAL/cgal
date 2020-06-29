@@ -1,20 +1,11 @@
 // Copyright (c) 2008-2009 GeometryFactory and INRIA
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri and Laurent Saboret
 
@@ -36,6 +27,8 @@
 
 #include <utility> // defines std::pair
 
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/Cartesian_converter_fwd.h>
 #include <CGAL/Kernel_traits_fwd.h>
 #include <CGAL/assertions.h>
@@ -193,7 +186,7 @@ struct Dereference_property_map
 
 /// Free function to create a `Dereference_property_map` property map.
 ///
-/// \relates Dereference_property_map 
+/// \relates Dereference_property_map
 template <class Iter> // Type convertible to `key_type`
 Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>
 make_dereference_property_map(Iter)
@@ -225,9 +218,25 @@ struct Identity_property_map
   /// @}
 };
 
+
+/// \cond SKIP_IN_MANUAL
+template <typename T>
+struct Identity_property_map_no_lvalue
+{
+  typedef T key_type; ///< typedef to `T`
+  typedef T value_type; ///< typedef to `T`
+  typedef T reference; ///< typedef to `T`
+  typedef boost::readable_property_map_tag category; ///< `boost::readable_property_map_tag`
+
+  typedef Identity_property_map_no_lvalue<T> Self;
+
+  friend reference get(const Self&, const key_type& k) {return k;}
+};
+/// \endcond
+
 /// Free function to create a `Identity_property_map` property map.
 ///
-/// \relates Identity_property_map 
+/// \relates Identity_property_map
 template <class T> // Key and value type
 Identity_property_map<T>
   make_identity_property_map(T)
@@ -237,8 +246,8 @@ Identity_property_map<T>
 
 
 /// \ingroup PkgPropertyMapRef
-/// Property map that accesses the first item of a `std::pair`. 
-/// \tparam Pair Instance of `std::pair`. 
+/// Property map that accesses the first item of a `std::pair`.
+/// \tparam Pair Instance of `std::pair`.
 /// \cgalModels `LvaluePropertyMap`
 ///
 /// \sa `CGAL::Second_of_pair_property_map<Pair>`
@@ -262,9 +271,9 @@ struct First_of_pair_property_map
   /// @}
 };
 
-/// Free function to create a `First_of_pair_property_map` property map. 
+/// Free function to create a `First_of_pair_property_map` property map.
 ///
-/// \relates First_of_pair_property_map 
+/// \relates First_of_pair_property_map
 template <class Pair> // Pair type
 First_of_pair_property_map<Pair>
   make_first_of_pair_property_map(Pair)
@@ -273,13 +282,13 @@ First_of_pair_property_map<Pair>
 }
 
 /// \ingroup PkgPropertyMapRef
-/// 
-/// Property map that accesses the second item of a `std::pair`. 
-/// 
-/// \tparam Pair Instance of `std::pair`. 
-/// 
+///
+/// Property map that accesses the second item of a `std::pair`.
+///
+/// \tparam Pair Instance of `std::pair`.
+///
 /// \cgalModels `LvaluePropertyMap`
-/// 
+///
 /// \sa `CGAL::First_of_pair_property_map<Pair>`
 template <typename Pair>
 struct Second_of_pair_property_map
@@ -303,7 +312,7 @@ struct Second_of_pair_property_map
 
 /// Free function to create a Second_of_pair_property_map property map.
 ///
-/// \relates Second_of_pair_property_map 
+/// \relates Second_of_pair_property_map
 template <class Pair> // Pair type
 Second_of_pair_property_map<Pair>
   make_second_of_pair_property_map(Pair)
@@ -312,12 +321,12 @@ Second_of_pair_property_map<Pair>
 }
 
 /// \ingroup PkgPropertyMapRef
-/// 
+///
 /// Property map that accesses the Nth item of a `boost::tuple` or a `std::tuple`.
-/// 
+///
 /// \tparam N %Index of the item to access.
 /// \tparam Tuple Instance of `boost::tuple` or `std::tuple`.
-/// 
+///
 /// \cgalModels `LvaluePropertyMap`
 template <int N, typename Tuple>
 struct Nth_of_tuple_property_map
@@ -568,6 +577,38 @@ make_cartesian_converter_property_map(Vpm vpm)
 {
   return Cartesian_converter_property_map<GeomObject, Vpm>(vpm);
 }
+
+/// \cond SKIP_IN_MANUAL
+// Syntaxic sugar for transform_iterator+pmap_to_unary_function
+template <typename Iterator, typename Pmap>
+typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>, Iterator>
+make_transform_iterator_from_property_map (Iterator it, Pmap pmap)
+{
+  return boost::make_transform_iterator (it, CGAL::Property_map_to_unary_function<Pmap>(pmap));
+}
+
+// Syntaxic sugar for make_range+transform_iterator+pmap_to_unary_function
+template <typename Range, typename Pmap>
+CGAL::Iterator_range<typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>,
+                                                        typename Range::const_iterator> >
+make_transform_range_from_property_map (const Range& range, Pmap pmap)
+{
+  return CGAL::make_range
+    (make_transform_iterator_from_property_map (range.begin(), pmap),
+     make_transform_iterator_from_property_map (range.end(), pmap));
+}
+
+// Syntaxic sugar for make_range+transform_iterator+pmap_to_unary_function
+template <typename Range, typename Pmap>
+CGAL::Iterator_range<typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>,
+                                                        typename Range::iterator> >
+make_transform_range_from_property_map (Range& range, Pmap pmap)
+{
+  return CGAL::make_range
+    (make_transform_iterator_from_property_map (range.begin(), pmap),
+     make_transform_iterator_from_property_map (range.end(), pmap));
+}
+/// \endcond
 
 } // namespace CGAL
 

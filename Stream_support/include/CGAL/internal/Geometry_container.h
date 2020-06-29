@@ -4,17 +4,11 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -34,10 +28,10 @@ struct Dummy_deleter{
 namespace CGAL{
 namespace internal{
 
-/* \brief The Geometry_container struct is a wrapper 
+/* \brief The Geometry_container struct is a wrapper
  that provides an easy way to use the read and write functions
  of `Polygon_IO`.
- 
+
  \tparam Range is a model of `RandomAccessRange`
  \tparam TAG is the tag corresponding to the wkt structure you want
  to be read or written with this `CGAL::Geometry_container`
@@ -45,7 +39,7 @@ namespace internal{
 template <typename Range, typename TAG>
 struct Geometry_container{
   typedef std::pair<Range, TAG> type;
-  typedef typename Range::difference_type difference_type; 
+  typedef typename Range::difference_type difference_type;
   typedef typename Range::iterator iterator;
   typedef typename Range::const_iterator const_iterator;
   typedef typename Range::reverse_iterator reverse_iterator;
@@ -55,53 +49,53 @@ struct Geometry_container{
   boost::shared_ptr<Range>  range;
   bool must_delete;
   //
-  // Default constructor. 
-  // Creates a new internal Range. 
+  // Default constructor.
+  // Creates a new internal Range.
   // De-allocate memory after usage.
-  Geometry_container():range(new Range()), must_delete(true) 
-  {    
-  }  
+  Geometry_container():range(new Range()), must_delete(true)
+  {
+  }
   /*
    Copy constructor.
    Memory NOT de-allocated after usage.
   */
   Geometry_container(Range& range)
     :range(&range, Dummy_deleter()), must_delete(false){}
-  
+
   iterator begin()
   { return range->begin(); }
-  
+
   iterator end()
   { return range->end(); }
-  
+
   reverse_iterator rbegin()
   { return range->rbegin(); }
-  
+
   reverse_iterator rend()
   { return range->rend(); }
-  
+
   const_iterator begin()const
   { return range->begin(); }
-  
+
   const_iterator end()const
   { return range->end(); }
-  
+
   const_reverse_iterator rbegin()const
   { return range->rbegin(); }
-  
+
   const_reverse_iterator rend()const
   { return range->rend(); }
-  
+
   void clear(){ range->clear(); }
-  
+
   template<typename size_t>
   void resize(size_t n){ range->resize(n); }
-  
+
   template<typename T>
   void push_back(const T& t){ range->push_back(t); }
-  
+
   size_type size() { return range->size(); }
-  
+
   value_type operator[](size_type i)
   { return range[i]; }
 };//end Geometry_container

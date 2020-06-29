@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
@@ -65,10 +56,12 @@ public:
    *
    * [first,last[ is the range of primitives to be added to the tree.
    */
-  template<typename ConstPrimitiveIterator>
+  template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
   void expand(ConstPrimitiveIterator first,
               ConstPrimitiveIterator beyond,
               const std::size_t range,
+              const ComputeBbox& compute_bbox,
+              const SplitPrimitives& split_primitives,
               const AABBTraits&);
 
   /**
@@ -126,19 +119,20 @@ private:
 
 };  // end class AABB_node
 
-
 template<typename Tr>
-template<typename ConstPrimitiveIterator>
+template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
 void
 AABB_node<Tr>::expand(ConstPrimitiveIterator first,
                       ConstPrimitiveIterator beyond,
                       const std::size_t range,
+                      const ComputeBbox& compute_bbox,
+                      const SplitPrimitives& split_primitives,
                       const Tr& traits)
 {
-  m_bbox = traits.compute_bbox_object()(first, beyond);
+  m_bbox = compute_bbox(first, beyond);
 
   // sort primitives along longest axis aabb
-  traits.split_primitives_object()(first, beyond, m_bbox);
+  split_primitives(first, beyond, m_bbox);
 
   switch(range)
   {
@@ -149,14 +143,14 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
   case 3:
     m_p_left_child = &(*first);
     m_p_right_child = static_cast<Node*>(this)+1;
-    right_child().expand(first+1, beyond, 2,traits);
+    right_child().expand(first+1, beyond, 2, compute_bbox, split_primitives, traits);
     break;
   default:
     const std::size_t new_range = range/2;
     m_p_left_child = static_cast<Node*>(this) + 1;
     m_p_right_child = static_cast<Node*>(this) + new_range;
-    left_child().expand(first, first + new_range, new_range,traits);
-    right_child().expand(first + new_range, beyond, range - new_range,traits);
+    left_child().expand(first, first + new_range, new_range, compute_bbox, split_primitives, traits);
+    right_child().expand(first + new_range, beyond, range - new_range, compute_bbox, split_primitives, traits);
   }
 }
 

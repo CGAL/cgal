@@ -2,18 +2,12 @@
 // Copyright (c) 2004  Max-Planck-Institut Saarbruecken (Germany)
 // All rights reserved.
 //
-// This file is part of BenchmarkParser; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of BenchmarkParser
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s) : Lutz Kettner
 **************************************************************************/
@@ -49,7 +43,7 @@ bool benchmark_parse_file( std::string name, Benchmark_visitor* v);
 // (or analogous meaning for different streams) counting linenumbers
 // starting from 'n'. Uses visitor 'v' while parsing. Returns false if
 // something went wrong. See the visitor for details of the error reporting.
-bool benchmark_parse_stream( std::istream&  in, std::string name, 
+bool benchmark_parse_stream( std::istream&  in, std::string name,
                              Benchmark_visitor* v, int n = 1);
 
 
@@ -62,9 +56,9 @@ extern std::string   benchmark_filename;
 
 // Initialize lexer to scan from input stream with name and linenumber.
 // The caller is responsible for the lifetime of 'in' that must live
-// during the scan. Used by benchmark_parse_file and does not have to 
+// during the scan. Used by benchmark_parse_file and does not have to
 // be called separately.
-void benchmark_init_lexer( 
+void benchmark_init_lexer(
     std::istream& in, std::string name, int linenumber = 1);
 
 // Writes a trace of the current include file nesting to the 'out' stream.

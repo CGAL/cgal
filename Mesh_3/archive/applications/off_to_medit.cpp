@@ -5,8 +5,8 @@
 void usage(char* name)
 {
   std::cerr << "Usage:\n"
-	    << name << " [FILE_BASENAME]\n"
-	    << "    will convert FILE_BASENAME.off to FILE_BASENAME.mesh.\n";
+            << name << " [FILE_BASENAME]\n"
+            << "    will convert FILE_BASENAME.off to FILE_BASENAME.mesh.\n";
   exit(1);
 }
 
@@ -16,10 +16,10 @@ int main(int argc, char** argv)
     usage(argv[0]);
 
   std::string file_base = argv[1];
-  
+
   std::ifstream off((file_base + ".off").c_str());
   std::ofstream mesh((file_base + ".mesh").c_str());
-  
+
   std::string dummy_s;
 
   int number_of_points;
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
   mesh << "MeshVersionFormatted 1\n"
        << "Dimension 3\n"
        << "Vertices\n";
-  
+
   off >> dummy_s; // OFF
   off >> number_of_points >> number_of_faces >> dummy_i;
   mesh << number_of_points << "\n";

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -86,7 +77,7 @@ private:
 
 public:
   Boolean   operator()(const Site_2& q, const Site_2& s, const Site_2& r,
-		       const Site_2& t, Sign sgn) const
+                       const Site_2& t, Sign sgn) const
   {
 
     CGAL_SDG_DEBUG(
@@ -317,7 +308,7 @@ public:
             << ' ' << sgn << " returns "
             << ( sgn == NEGATIVE ) << std::endl;);
         return ( sgn == NEGATIVE );
-      } 
+      }
       else
       {
         if (sgn == NEGATIVE) {

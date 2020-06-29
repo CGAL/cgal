@@ -33,9 +33,9 @@ int main( int argc, char **argv) {
         else if ( n < 1 ) {
             filename[ n++] = argv[i];
         } else {
-	    n++;
+            n++;
             break;
-	}
+        }
     }
     if ((n > 1) || help) {
         if ( ! help)

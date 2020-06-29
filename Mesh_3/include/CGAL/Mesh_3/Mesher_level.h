@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU, Clement JAMIN
@@ -710,7 +701,7 @@ class Mesher_level<Tr, Derived, Element, Previous,
 {
 private:
   typedef Derived Derived_;
-  template <typename ML, typename Container_element, 
+  template <typename ML, typename Container_element,
             typename Quality, typename Mesh_visitor> class Enqueue_element;
 public:
 
@@ -1205,12 +1196,12 @@ private:
   public:
     // Constructor
     Enqueue_element(ML &ml,
-                    const Container_element &ce, 
-                    const Quality &quality, 
+                    const Container_element &ce,
+                    const Quality &quality,
                     Mesh_visitor visitor)
-    : m_mesher_level(ml), 
-      m_container_element(ce), 
-      m_quality(quality), 
+    : m_mesher_level(ml),
+      m_container_element(ce),
+      m_quality(quality),
       m_visitor(visitor)
     {
     }
@@ -1218,7 +1209,7 @@ private:
     // operator()
     void operator()() const
     {
-      typedef typename ML::Derived_::Container::value_type 
+      typedef typename ML::Derived_::Container::value_type
                                                  Container_quality_and_element;
 
       Mesher_level_conflict_status status;
@@ -1228,7 +1219,7 @@ private:
           return;
         }
 
-        status = m_mesher_level.try_lock_and_refine_element(m_container_element, 
+        status = m_mesher_level.try_lock_and_refine_element(m_container_element,
                                                             m_visitor);
       }
       while (status != NO_CONFLICT
@@ -1246,7 +1237,7 @@ private:
       // Finally we add the new local bad_elements to the feeder
       while (m_mesher_level.no_longer_local_element_to_refine() == false)
       {
-        Container_quality_and_element qe = 
+        Container_quality_and_element qe =
           m_mesher_level.derived().get_next_local_raw_element_impl();
         m_mesher_level.pop_next_local_element();
         m_mesher_level.enqueue_task(qe.second, qe.first, m_visitor);

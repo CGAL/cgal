@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
@@ -98,7 +89,7 @@ namespace CGAL {
         I
       };
     }
-    
+
     template <typename T, Id::Id id>
     struct Base
     {
@@ -132,7 +123,7 @@ namespace CGAL {
 
   /**
      \ingroup PkgPointSetProcessing3IOLas
-     
+
      Generates a %LAS property handler to read 3D points. Points are
      constructed from the input the using 3 %LAS properties
      `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
@@ -150,9 +141,9 @@ namespace CGAL {
     return std::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
                             LAS_property::X(), LAS_property::Y(), LAS_property::Z());
   }
-  
+
 /// \cond SKIP_IN_MANUAL
-  
+
 namespace internal {
 
   namespace LAS {
@@ -200,7 +191,7 @@ namespace internal {
   inline void get_value(const LASpoint& r, unsigned short& v, LAS_property::I&)
   { v = r.get_I(); }
 
-  
+
   template <std::size_t N>
   struct Filler
   {
@@ -243,7 +234,7 @@ namespace internal {
       get_value(r, std::get<0>(values), std::get<2>(wrappers));
     }
   };
-  
+
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
                            std::pair<PropertyMap, LAS_property::Base<T,id> >&& current);
@@ -254,7 +245,7 @@ namespace internal {
                            std::pair<PropertyMap, LAS_property::Base<T,id> >&& current,
                            NextPropertyBinder&& next,
                            PropertyMapBinders&& ... properties);
-  
+
   template <typename OutputValueType,
             typename PropertyMap,
             typename Constructor,
@@ -269,7 +260,7 @@ namespace internal {
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
   }
-  
+
   template <typename OutputValueType,
             typename PropertyMap,
             typename Constructor,
@@ -287,7 +278,7 @@ namespace internal {
     Filler<sizeof...(T)-1>::fill(reader, values, current);
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
-  
+
     process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
                         std::forward<PropertyMapBinders>(properties)...);
   }
@@ -317,9 +308,9 @@ namespace internal {
   }
 
   } // namespace LAS
-  
+
 } // namespace internal
-  
+
 
 /// \endcond
 
@@ -405,7 +396,7 @@ bool read_las_points_with_properties (std::istream& stream,
     }
 
   lasreader.close();
-  
+
   return true;
 
 }
@@ -444,7 +435,7 @@ bool read_las_points_with_properties (std::istream& stream,
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
-   
+
    \return true on success.
 
    \cgalRequiresCPP11
@@ -469,10 +460,10 @@ bool read_las_points(std::istream& stream,
   using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
-  
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  
+
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
   return read_las_points_with_properties (stream, output,
                                           make_las_point_reader (point_map));
 }
@@ -515,7 +506,7 @@ read_las_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template < typename OutputIteratorValueType,
            typename OutputIterator,
            typename PointMap >

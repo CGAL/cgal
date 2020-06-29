@@ -1,21 +1,12 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot, Nicolas Carrez
 
@@ -38,7 +29,7 @@ template <class Kernel, class Regular,class input_DS>
 void k_delaunay(Regular& rt,input_DS& input_wpt,int order){
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Weighted_point_2  Weighted_point_2;
-  
+
   std::vector<typename input_DS::iterator> Current_sel;//DS that will contain all possible combinaisons of k points (iterator), where k is the order
   typename input_DS::iterator it_wpt = input_wpt.begin();
   typename input_DS::iterator stop_combi = input_wpt.end();
@@ -75,7 +66,7 @@ void k_delaunay(Regular& rt,input_DS& input_wpt,int order){
     double pt_y = 0;
     for(;it_it_wpt!=Current_sel.end();++it_it_wpt){
       pt_x = pt_x + give_x<Kernel>((**it_it_wpt));
-      pt_y = pt_y + give_y<Kernel>((**it_it_wpt));      
+      pt_y = pt_y + give_y<Kernel>((**it_it_wpt));
       weight = weight + order * give_weight<Kernel>((**it_it_wpt));
       //substract form the weight the sum of the squared distances between each pair of wpoints selected
       for(typename std::vector<typename input_DS::iterator>::iterator le_WptI_cgal0 = it_it_wpt+1 ;le_WptI_cgal0!=Current_sel.end();++le_WptI_cgal0){

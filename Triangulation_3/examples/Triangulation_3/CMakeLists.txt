@@ -39,23 +39,21 @@ if ( CGAL_FOUND )
   endif()
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
-  if( TBB_FOUND )
-    include( CGAL_target_use_TBB )
-
+  if( TARGET CGAL::TBB_support )
     create_single_source_cgal_program( "parallel_insertion_and_removal_in_regular_3.cpp" )
     create_single_source_cgal_program( "parallel_insertion_in_delaunay_3.cpp" )
     create_single_source_cgal_program( "sequential_parallel.cpp" )
-    CGAL_target_use_TBB( parallel_insertion_and_removal_in_regular_3 )
-    CGAL_target_use_TBB( parallel_insertion_in_delaunay_3 )
-    CGAL_target_use_TBB( sequential_parallel )
+    target_link_libraries( parallel_insertion_and_removal_in_regular_3 PUBLIC CGAL::TBB_support)
+    target_link_libraries( parallel_insertion_in_delaunay_3 PUBLIC CGAL::TBB_support )
+    target_link_libraries( sequential_parallel  PUBLIC CGAL::TBB_support)
   else()
     message(STATUS "NOTICE: a few examples require TBB and will not be compiled.")
   endif()
 
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+
+endif()

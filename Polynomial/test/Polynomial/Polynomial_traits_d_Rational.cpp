@@ -12,11 +12,11 @@
 
 int main()
 {
-  typedef CGAL::Arithmetic_kernel AK; 
-  typedef AK::Rational Rational; 
-  
+  typedef CGAL::Arithmetic_kernel AK;
+  typedef AK::Rational Rational;
+
   typedef CGAL::Polynomial<Rational> Poly;
-  typedef CGAL::Polynomial_traits_d<Poly> PT; 
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Rational" << std::endl;
   std::cerr << "---------------------------------------" << std::endl;

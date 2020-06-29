@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -52,14 +43,14 @@ show_triangulation_edges(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
     std::map<typename Triangulation_2<GT, TDS>::Vertex_handle, int> V;
     int inum = 0;
     for( typename Triangulation_2<GT, TDS>::Vertex_iterator
-	  vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
+          vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
         V[vit] = inum++;
         gv << vit->point() << "\n";
     }
-  
+
     // Finite edges indices.
     for( typename Triangulation_2<GT, TDS>::Edge_iterator
-	  eit = T.edges_begin(); eit != T.edges_end(); ++eit) {
+          eit = T.edges_begin(); eit != T.edges_end(); ++eit) {
         gv << 2
            << V[(*eit).first->vertex(T.ccw((*eit).second))]
            << V[(*eit).first->vertex(T. cw((*eit).second))]
@@ -82,14 +73,14 @@ show_triangulation_faces(Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
     std::map<typename Triangulation_2<GT, TDS>::Vertex_handle, int> V;
     int inum = 0;
     for( typename Triangulation_2<GT, TDS>::Vertex_iterator
-	  vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
+          vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
         V[vit] = inum++;
         gv << vit->point();
     }
-  
+
     // Finite faces indices.
     for( typename Triangulation_2<GT, TDS>::Face_iterator
-	  fit = T.faces_begin(); fit != T.faces_end(); ++fit) {
+          fit = T.faces_begin(); fit != T.faces_end(); ++fit) {
         gv << 3;
         for (int i=0; i<3; i++)
             gv << V[fit->vertex(i)];
@@ -106,9 +97,9 @@ operator<<( Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
     bool raw_bak = gv.set_raw(true);
 
     if (gv.get_wired())
-	show_triangulation_edges(gv, T);
+        show_triangulation_edges(gv, T);
     else
-	show_triangulation_faces(gv, T);
+        show_triangulation_faces(gv, T);
 
     // Footer.
     gv << "}})";

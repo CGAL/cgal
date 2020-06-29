@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Efi Fogel <efifogel@gmail.com>
@@ -170,7 +161,7 @@ public:
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Event> Event_alloc;
   typedef typename Allocator_traits::template rebind_alloc<Subcurve> Subcurve_alloc;
-  
+
 protected:
   /*! \struct
    * An auxiliary functor for comparing event pointers.
@@ -289,7 +280,7 @@ public:
   /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range
    * of action event points (if a curve passed through an action point, it will
    * be split) and a range of query points (if a curve passed through a
-   * query point,it will not be splitted).
+   * query point,it will not be split).
    * \param curves_begin An iterator for the first x-monotone curve in the
    *                     range.
    * \param curves_end A past-the-end iterator for this range.

@@ -27,8 +27,15 @@ create_single_source_cgal_program( "test_Circular_kernel_basic.cpp" )
 create_single_source_cgal_program( "test_Exact_circular_kernel_basic.cpp" )
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
+endif()
+
+if(BUILD_TESTING)
+  set_tests_properties(
+      execution___of__test_Circular_kernel_basic
+      execution___of__test_Exact_circular_kernel_basic
+    PROPERTIES RESOURCE_LOCK Circular_kernel_basic)
 endif()
 

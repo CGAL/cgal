@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -136,7 +127,11 @@ protected:
   void highlightPointLocation( QGraphicsSceneMouseEvent *event );
   Face_const_handle getFace( const CGAL::Object& o );
   CGAL::Object rayShootUp( const Kernel_point_2& point );
+  CGAL::Object rayShootUp( const Kernel_point_2& point, CGAL::Tag_true );
+  CGAL::Object rayShootUp( const Kernel_point_2& point, CGAL::Tag_false );
   CGAL::Object rayShootDown( const Kernel_point_2& point );
+  CGAL::Object rayShootDown( const Kernel_point_2& point, CGAL::Tag_true );
+  CGAL::Object rayShootDown( const Kernel_point_2& point, CGAL::Tag_false );
 
   using Superclass::scene;
   using Superclass::shootingUp;
@@ -234,7 +229,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   {
     return;
   }
-    
+
   QRectF viewportRect = this->viewportRect( );
   FT y2;
   if ( this->shootingUp )
@@ -314,6 +309,14 @@ template < typename Arr_ >
 CGAL::Object
 VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt )
 {
+  typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
+  return this->rayShootUp( pt, supportsLandmarks );
+}
+
+template < typename Arr_ >
+CGAL::Object VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt,
+                                                           CGAL::Tag_true )
+{
   CGAL::Object pointLocationResult;
   Walk_pl_strategy* walkStrategy;
   TrapezoidPointLocationStrategy* trapezoidStrategy;
@@ -344,8 +347,47 @@ VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt )
 }
 
 template < typename Arr_ >
+CGAL::Object VerticalRayShootCallback< Arr_ >::rayShootUp( const Kernel_point_2& pt,
+                                                           CGAL::Tag_false )
+{
+  CGAL::Object pointLocationResult;
+  Walk_pl_strategy* walkStrategy;
+  TrapezoidPointLocationStrategy* trapezoidStrategy;
+  SimplePointLocationStrategy* simpleStrategy;
+
+  Point_2 point = this->toArrPoint( pt );
+
+  if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = walkStrategy->ray_shoot_up( point );
+  }
+  else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = trapezoidStrategy->ray_shoot_up( point );
+  }
+  else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = simpleStrategy->ray_shoot_up( point );
+  }
+  else
+  {
+    std::cout<<"Didn't find the right strategy\n";
+  }
+
+  return pointLocationResult;
+}
+
+template < typename Arr_ >
 CGAL::Object
 VerticalRayShootCallback< Arr_ >::rayShootDown( const Kernel_point_2& pt )
+{
+  typename Supports_landmarks< Arrangement >::Tag supportsLandmarks;
+  return this->rayShootDown( pt, supportsLandmarks );
+}
+
+template < typename Arr_ >
+CGAL::Object
+VerticalRayShootCallback< Arr_ >::rayShootDown( const Kernel_point_2& pt, CGAL::Tag_true )
 {
   CGAL::Object pointLocationResult;
   Walk_pl_strategy* walkStrategy;
@@ -372,6 +414,32 @@ VerticalRayShootCallback< Arr_ >::rayShootDown( const Kernel_point_2& pt )
     // pointLocationResult = landmarksStrategy->locate( point );
     std::cerr << "Warning: landmarks point location strategy doesn't support ray shooting" << std::endl;
     return CGAL::Object( );
+  }
+  return pointLocationResult;
+}
+
+template < typename Arr_ >
+CGAL::Object
+VerticalRayShootCallback< Arr_ >::rayShootDown( const Kernel_point_2& pt, CGAL::Tag_false )
+{
+  CGAL::Object pointLocationResult;
+  Walk_pl_strategy* walkStrategy;
+  TrapezoidPointLocationStrategy* trapezoidStrategy;
+  SimplePointLocationStrategy* simpleStrategy;
+
+  Point_2 point = this->toArrPoint( pt );
+
+  if ( CGAL::assign( walkStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = walkStrategy->ray_shoot_down( point );
+  }
+  else if ( CGAL::assign( trapezoidStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = trapezoidStrategy->ray_shoot_down( point );
+  }
+  else if ( CGAL::assign( simpleStrategy, this->pointLocationStrategy ) )
+  {
+    pointLocationResult = simpleStrategy->ray_shoot_down( point );
   }
   return pointLocationResult;
 }

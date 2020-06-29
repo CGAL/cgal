@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -23,7 +14,7 @@
 
 
 /*! \file CGAL/Algebraic_extension_traits.h
- *  \brief Defines traits class CGAL::Algebraic_extension_traits. 
+ *  \brief Defines traits class CGAL::Algebraic_extension_traits.
 */
 
 #ifndef CGAL_ALGEBRAIC_NUMBER_TRAITS_H
@@ -38,22 +29,22 @@ namespace CGAL {
 template< class T >
 class Algebraic_extension_traits {
 public:
-    //! \name Typedefs 
+    //! \name Typedefs
     //! the number type for which this instance has been instantiated
     typedef T Type;
     //! standard number types are not extended
     typedef CGAL::Tag_false Is_extended;
-  
-    //! computes the factor which normalizes a number to be integral after 
+
+    //! computes the factor which normalizes a number to be integral after
     //  multiplication
-    class Normalization_factor 
+    class Normalization_factor
         : public CGAL::cpp98::unary_function<Type,Type> {
     private:
-        static Type 
+        static Type
         normalization_factor(const Type&,Integral_domain_without_division_tag){
             return Type(1);
         }
-        static Type 
+        static Type
         normalization_factor(const Type& a, Field_tag){
             return Type(1)/a;
         }
@@ -66,15 +57,15 @@ public:
             return normalization_factor(a, Tag());
         }
     };
-    
-    class Denominator_for_algebraic_integers 
+
+    class Denominator_for_algebraic_integers
         : public CGAL::cpp98::unary_function<Type,Type> {
-    public: 
+    public:
         //! determine normalization factor
         Type operator () (const Type&) {
             return Type(1);
         }
-        
+
         template <class InputIterator>
         Type operator () (InputIterator, InputIterator) {
             return Type(1);

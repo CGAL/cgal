@@ -580,7 +580,7 @@ void R_s_k_2::draw_mesh_blocking_edges(const float point_size,
       draw_segment(a->point(), b->point());
     }
   }
-}    
+}
 
 void R_s_k_2::draw_collapsible_edge(const float point_size,
     const float line_width,

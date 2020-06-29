@@ -55,24 +55,24 @@ int main(int argc, char* argv[])
   double fs = (argc>3)? boost::lexical_cast<double>(argv[3]): 1;
   double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
   double cs = (argc>5)? boost::lexical_cast<double>(argv[5]): 1;
-  
+
   vtkDICOMImageReader*dicom_reader = vtkDICOMImageReader::New();
   dicom_reader->SetDirectoryName(argv[1]);
-  
+
   vtkDemandDrivenPipeline*executive =
     vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
   if (executive)
     {
       executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
     }
-  
+
   vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
   smoother->SetStandardDeviations(1., 1., 1.);
   smoother->SetInputConnection(dicom_reader->GetOutputPort());
   smoother->Update();
   vtkImageData* vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
-  
+
   CGAL::Image_3 image = CGAL::read_vtk_image_data(vtk_image);
   if(image.image() == 0){
     std::cerr << "could not create a CGAL::Image_3 from the vtk image\n";
@@ -91,13 +91,13 @@ int main(int argc, char* argv[])
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=fs, facet_distance=fd,
                          cell_radius_edge_ratio=3, cell_size=cs);
-  
+
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
-  
+
   // Output
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
-  
+
   return 0;
 }

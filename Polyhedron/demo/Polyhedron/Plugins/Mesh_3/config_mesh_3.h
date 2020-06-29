@@ -3,6 +3,15 @@
 
 #define  BOOST_PARAMETER_MAX_ARITY 12
 
+// CGAL_MESH_3_PROTECTION_DEBUG:
+// -  1 : display debug messages
+// -  2 : dump file `polylines_graph.polylines.txt` and
+//        `edges-graph.polylines.txt` from polyhedral and image domains
+// -  4 : dump c3t3 in case of a bug
+// -  8 : dump c3t3 at various stages of the protection
+// - 16 : more precise debug messages
+//#define CGAL_MESH_3_PROTECTION_DEBUG 255
+
 
 //#define CGAL_PROFILE
 
@@ -31,7 +40,7 @@
 #  define CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #endif
 
-#define CGAL_MESH_3_DEMO_BIGGER_HISTOGRAM_WITH_WHITE_BACKGROUNG
+//#define CGAL_MESH_3_DEMO_BIGGER_HISTOGRAM_WITH_WHITE_BACKGROUNG
 
 // If you define this, implicit function and segmented images won't be available
 //#define CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
@@ -90,7 +99,7 @@
   // =====================
   // Worksharing strategy
   // =====================
-      
+
 //# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 
   // ==========================================================================
@@ -116,7 +125,7 @@
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
 #endif // CGAL_CONCURRENT_MESH_3
-  
+
 //#define CGAL_MESH_3_PROFILING
 
 #endif // CGAL_DEMO_MESH_3_CONFIG_H

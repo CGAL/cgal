@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
@@ -69,8 +60,8 @@ namespace CGAL {
 
   /**
      \ingroup PkgPointSetProcessing3IOLas
-     
-     Generates a %LAS property handler to write 3D points. 
+
+     Generates a %LAS property handler to write 3D points.
 
      \sa `write_las_points_with_properties()`
 
@@ -84,7 +75,7 @@ namespace CGAL {
   }
 
   /// \cond SKIP_IN_MANUAL
-  
+
 namespace internal {
 
   namespace LAS {
@@ -125,7 +116,7 @@ namespace internal {
   { r.set_B(v); }
   inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::I&)
   { r.set_I(v); }
-  
+
   template <typename ForwardIterator>
   void output_properties (LASpoint&,
                           ForwardIterator)
@@ -159,9 +150,9 @@ namespace internal {
   }
 
   } // namespace LAS
-  
+
 } // namespace internal
-  
+
 
 /// \endcond
 
@@ -216,7 +207,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
      (points.begin(), CGAL::Property_map_to_unary_function<PointMap>(std::get<0>(point_property))),
      boost::make_transform_iterator
      (points.end(), CGAL::Property_map_to_unary_function<PointMap>(std::get<0>(point_property))));
-  
+
   LASheader header;
   header.x_scale_factor = 1e-9 * (bbox.xmax() - bbox.xmin());
   header.y_scale_factor = 1e-9 * (bbox.ymax() - bbox.ymin());
@@ -232,7 +223,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 
   LASwriterLAS laswriter;
   laswriter.open (stream, &header);
-  
+
   // Write positions + normals
   for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
   {
@@ -256,7 +247,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 /**
    \ingroup PkgPointSetProcessing3IOLas
    Saves the range of `points` (positions only) to a
-   .las stream. 
+   .las stream.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -285,9 +276,9 @@ write_las_points(
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
   return write_las_points_with_properties (stream, points, make_las_point_writer(point_map));
 }
 
@@ -320,8 +311,8 @@ write_las_points(
     (stream, points,
      CGAL::parameters::point_map(point_map));
 }
-  
-// deprecated API  
+
+// deprecated API
 template < typename ForwardIterator >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_las_points(), please update your code")
 bool

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
@@ -28,7 +19,7 @@
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <boost/optional.hpp>
 
-namespace CGAL { 
+namespace CGAL {
 
 namespace internal { namespace AABB_tree {
 
@@ -85,7 +76,7 @@ public:
     : m_result(), m_traits(traits)
   {}
 
-  bool go_further() const { 
+  bool go_further() const {
     return !m_result;
   }
 
@@ -100,7 +91,7 @@ public:
   }
 
   Result result() const { return m_result; }
-  bool is_intersection_found() const { 
+  bool is_intersection_found() const {
     return m_result;
   }
 
@@ -300,7 +291,7 @@ public:
                     const typename Primitive::Id& hint_primitive,
                     const AABBTraits& traits)
     : m_closest_point(hint),
-      m_closest_primitive(hint_primitive), 
+      m_closest_primitive(hint_primitive),
       m_traits(traits)
   {}
 
@@ -313,7 +304,7 @@ public:
     if( !m_traits.equal_3_object()(new_closest_point, m_closest_point) )
     {
       m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere 
+      m_closest_point = new_closest_point; // this effectively shrinks the sphere
     }
   }
 

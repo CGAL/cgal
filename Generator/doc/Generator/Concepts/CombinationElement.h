@@ -27,32 +27,32 @@ CombinationElement(const CombinationElement & e2);
 /// @}
 
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-the type of point being generated. 
-*/ 
-typedef unspecified_type value_type; 
+the type of point being generated.
+*/
+typedef unspecified_type value_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 Incrementation
-*/ 
+*/
 void operator++();
 
 /*!
 Decrementation
-*/ 
+*/
 void operator--();
 
 /*!
 Total order comparison
-*/ 
+*/
 bool operator<(const CombinationElement & e2);
 
 /*!
@@ -64,7 +64,7 @@ bool operator==(const CombinationElement & e2);
 /*!
 Equivalent to calling `++(*this)` `i` times if i is positive.
 Equivalent to calling `--(*this)` `-i` times if i is negative.
-*/ 
+*/
 CombinationElement operator+(int i);
 
 /*!

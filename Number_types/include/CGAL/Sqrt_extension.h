@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -26,17 +17,17 @@
 
 // COMMENTS FROM EXACUS
 /*! \ingroup NiX_Sqrt_extension
-\brief represents an extension of a number type by one square root. 
+\brief represents an extension of a number type by one square root.
 
  An instance of this class
-represents  an extension of the type NT by a square root of the 
-type ROOT. In case NT and ROOT do not coincide, 
-NT must be constructible from ROOT.  The number type NT 
-must be at least a model of the IntegralDomainWithoutDiv concept. 
+represents  an extension of the type NT by a square root of the
+type ROOT. In case NT and ROOT do not coincide,
+NT must be constructible from ROOT.  The number type NT
+must be at least a model of the IntegralDomainWithoutDiv concept.
 
-An Sqrt_extension is a model of RealComparable if NT is RealComparable.\n  
-The <B>algebraic type</B> of NiX::Sqrt_extension depends on the algebraic type 
-of NT: 
+An Sqrt_extension is a model of RealComparable if NT is RealComparable.\n
+The <B>algebraic type</B> of NiX::Sqrt_extension depends on the algebraic type
+of NT:
 - IntegralDomainWithoutDiv -> IntegralDomainWithoutDiv
 - IntegralDomain           -> IntegralDomain
 - UFDomain                 -> IntegralDomain
@@ -47,9 +38,9 @@ of NT:
 
 Note that NT and ROOT can themselves be an instance of
 NiX::Sqrt_extension, yielding a nested extension.\n
-Note that the extension of an UFDomain or EuclideanRing is just an 
-IntegralDomain, since the extension in general destroys the unique 
-factorization property. 
+Note that the extension of an UFDomain or EuclideanRing is just an
+IntegralDomain, since the extension in general destroys the unique
+factorization property.
 */
 
 #include <CGAL/number_type_basic.h>

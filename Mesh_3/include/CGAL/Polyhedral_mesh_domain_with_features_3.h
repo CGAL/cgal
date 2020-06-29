@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
@@ -37,7 +28,6 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
-#include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -316,7 +306,7 @@ void dump_graph_edges(std::ostream& out, const Graph& g)
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   out.precision(17);
-  for(edge_descriptor e : edges(g))
+  for(edge_descriptor e : make_range(edges(g)))
   {
     vertex_descriptor s = source(e, g);
     vertex_descriptor t = target(e, g);
@@ -358,9 +348,6 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
 
-    using Mesh_3::internal::Get_face_index_pmap;
-    Get_face_index_pmap<Polyhedron> get_face_index_pmap(p);
-
     PIDMap pid_map = get(face_patch_id_t<Tag_>(), p);
     VIPMap vip_map = get(vertex_incident_patches_t<P_id>(), p);
     EIFMap eif_map = get(CGAL::edge_is_feature, p);
@@ -370,8 +357,8 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
       , eif_map
       , pid_map
       , PMP::parameters::first_index(nb_of_patch_plus_one)
-      .face_index_map(get_face_index_pmap(p))
-      .vertex_incident_patches_map(vip_map));
+                        .face_index_map(get_initialized_face_index_map(p))
+                        .vertex_incident_patches_map(vip_map));
 
     Mesh_3::internal::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
@@ -413,7 +400,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   this->add_features_with_context(polylines.begin(),
                                   polylines.end());
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {//DEBUG
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
@@ -426,7 +413,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
     }
     og.close();
   }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 2
 
 }
 
@@ -485,7 +472,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {// DEBUG
     dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }

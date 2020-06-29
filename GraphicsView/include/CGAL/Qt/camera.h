@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 
 #ifndef QGLVIEWER_CAMERA_H
@@ -396,11 +388,11 @@ public:
   void computeProjectionMatrix() const;
   void computeModelViewMatrix() const;
   //!Sets the frustum according to the current type of the camera
-  //! (PERSPECTIVE or ORTHOGRAPHIC) in this order : 
+  //! (PERSPECTIVE or ORTHOGRAPHIC) in this order :
   //! left, right, top, bottom, near, far
   void setFrustum(double frustum[6]);
-  //!Fills `frustum` from the current frustum of the camera according 
-  //! to the current type (PERSPECTIVE or ORTHOGRAPHIC) in this order : 
+  //!Fills `frustum` from the current frustum of the camera according
+  //! to the current type (PERSPECTIVE or ORTHOGRAPHIC) in this order :
   //! left, right, top, bottom, near, far
   void getFrustum(double frustum[6]);
   void getProjectionMatrix(GLfloat m[16]) const;

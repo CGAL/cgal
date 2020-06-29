@@ -1,52 +1,124 @@
-Subject: CGAL 4.14 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.1 Beta 1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 4.14 Beta 1
+The CGAL Open Source Project is pleased to announce the release 5.1 Beta 1
 of CGAL, the Computational Geometry Algorithms Library.
 
 
-CGAL version 4.14 Beta 1 is a public testing release. It should provide
-a solid ground to report bugs that need to be tackled before the
-release of the final version of CGAL 4.14 in September.
+CGAL version 5.1 Beta 1 is a public testing release. It should provide a
+solid ground to report bugs that need to be tackled before the release
+of the final version of CGAL 5.1 in July.
+
 
 Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 4.13:
+has changed since CGAL 5.0:
 
 
-### 2D Periodic Hyperbolic Triangulations (new package)
+Tetrahedral Remeshing (new package)
 
- -   This package allows the computation of Delaunay triangulations of
-     the Bolza surface.  The Bolza surface is the most symmetric
-     hyperbolic surface of genus 2. Its fundamental domain is the
-     regular hyperbolic octagon with angles π/4 centered at the origin
-     of the Poincaré disk. Triangulations of the Bolza surface can be
-     seen as triangulations of the hyperbolic plane that are periodic
-     in the four directions defined by the sides of this regular
-     octagon.
+-   This package implements a tetrahedral isotropic remeshing algorithm,
+    that improves the quality of tetrahedra in terms of dihedral angles,
+    while targeting a given edge length.
 
-### 2D Hyperbolic Triangulations (new package)
+Surface Mesh Topology (new package)
 
- -   This package allows the computation of Delaunay Triangulations of
-     sets of points in the Poincaré disk, which is one of the
-     conformal models for the hyperbolic plane.
+-   This package enables the computation of some topological invariants
+    of surfaces, such as:
+    -   test if two (closed) curves on a combinatorial surface are
+        homotopic. Users can choose between free homotopy and homotopy
+        with fixed endpoints;
+    -   test is a curve is contractible;
+    -   compute shortest non-contractible cycles on a surface, with or
+        without weights on edges.
 
-### The Heat Method (new package)
+    See also the associated blog entry:
+      https://www.cgal.org/2020/05/08/Surface_mesh_topology/
 
--   This package provides an algorithm that solves the single- or
-    multiple-source shortest path problem by returning an
-    approximation of the geodesic distance for all vertices of a
-    triangle mesh to the closest vertex in a given set of source
-    vertices.
+Optimal Bounding Box (new package)
 
-### Triangulated Surface Mesh Approximation (new package)
+-   This package implements an optimization algorithm that aims to
+    construct a close approximation of the _optimal bounding box_ of a
+    mesh or a point set, which is defined as the smallest (in terms of
+    volume) bounding box that contains a given mesh or point set.
 
--   This package implements the Variational Shape Approximation method
-    to approximate an input surface triangle mesh by a simpler surface
-    triangle mesh.
+    See also the associated blog entry:
+      https://www.cgal.org/2020/04/20/Optimal_bounding_box/
+
+Tutorials
+
+-   Two new, detailed tutorials have been added:
+    -   Surface Reconstruction from Point Clouds, which goes over a
+        typical full processing pipeline in a CGAL environment.
+    -   Geographic Information Systems (GIS), which demonstrates usage
+        of CGAL data structures and algorithms in the context of a
+        typical GIS application.
+
+    Both tutorials provide complete code.
+
+    See https://doc.cgal.org/5.1/Manual/tutorials.html
+
+Point Set Processing
+
+-   Added wrapper functions for registration, using the Super4PCS and
+    ICP algorithms implemented in the third party libraries OpenGR and
+    libpointmatcher.
 
 
-See https://www.cgal.org/2019/03/04/cgal414-beta1/ for a complete list of
+Surface Mesh Simplification
+
+-   Added a new simplification method based on the quadric error defined
+    by Garland and Heckbert.
+
+dD Spatial Searching
+
+-   The kd-tree can now be built in parallel: CGAL::Kd_tree::build() is
+    given an optional template parameter ConcurrencyTag (default value
+    remains CGAL::Sequential_tag for backward compatibility).
+
+Intersecting Sequences of dD Iso-oriented Boxes
+
+-   Added parallel versions of the functions CGAL::box_intersection_d()
+    and CGAL::box_self_intersection_d().
+
+Polygon Mesh Processing
+
+-   Added the function CGAL::Polygon_mesh_processing::split(), which can
+    be used to split meshes along a mesh or a plane.
+-   Added the function
+    CGAL::Polygon_mesh_processing::split_connected_components() to split
+    a single mesh containing several connected components into several
+    meshes containing one connected component.
+-   Added parallel versions of the functions
+    CGAL::Polygon_mesh_processing::does_self_intersect() and
+    CGAL::Polygon_mesh_processing::self_intersections().
+-   Added several mesh repair functions (see the complete changelog for
+    more information).
+
+3D Fast Intersection and Distance Computation
+
+-   The behavior of the internal search tree used to accelerate distance
+    queries has changed: usage of the internal search tree will now be
+    enabled by default, and its construction will be triggered by the
+    first distance query. Automatic construction and usage can be
+    disabled by calling
+    CGAL::AABB_tree::do_not_accelerate_distance_queries() before the
+    first distance query, and the tree can be built at any moment by
+    calling CGAL::AABB_tree::accelerate_distance_queries().
+-   BREAKING CHANGE: CGAL::AABB_tree::accelerate_distance_queries() and
+    CGAL::AABB_tree::do_not_accelerate_distance_queries() are no longer
+    const functions.
+
+
+CGAL and the Boost Graph Library (BGL)
+
+-   Added the function CGAL::alpha_expansion_graphcut(), which
+    regularizes a multi-label partition over a user-defined graph.
+-   Added the function CGAL::regularize_face_selection_borders(), which
+    uses this alpha expansion graphcut to regularize the borders of a
+    selected faces on a triangle mesh.
+
+See https://www.cgal.org/2020/06/09/cgal51-beta1/ for a complete list of
 changes.
 
 

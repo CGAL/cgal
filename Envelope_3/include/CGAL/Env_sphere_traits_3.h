@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -43,7 +34,7 @@ class Env_sphere_traits_3 : public ConicTraits_2
 public:
   typedef ConicTraits_2                             Traits_2;
   typedef Env_sphere_traits_3<Traits_2>             Self;
-  
+
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::Curve_2                Curve_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
@@ -63,13 +54,13 @@ public:
   typedef typename Alg_kernel::FT                   Algebraic;
   typedef typename Alg_kernel::Point_2              Alg_point_2;
   typedef typename Alg_kernel::Circle_2             Alg_circle_2;
-  
+
   typedef typename Rat_kernel::Sphere_3             Surface_3;
-  
+
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
 protected:
-  typedef std::pair<X_monotone_curve_2, 
+  typedef std::pair<X_monotone_curve_2,
                     Multiplicity>                   Intersection_curve;
 
 public:
@@ -128,12 +119,12 @@ public:
       CGAL_assertion_code(Object *p = )
       parent.make_x_monotone_2_object()(curve, objs);
       CGAL_assertion(p == objs + 2);
-      
+
       X_monotone_curve_2 cv1, cv2;
-      
+
       CGAL_assertion(assign(cv1, objs[0]));
       CGAL_assertion(assign(cv2, objs[1]));
-      
+
       assign(cv1, objs[0]);
       assign(cv2, objs[1]);
 
@@ -151,9 +142,9 @@ public:
       }
 
       return o;
-    }  
-  };  
-  
+    }
+  };
+
   /*! Get a Construct_projected_boundary_2 functor object. */
   Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
@@ -169,7 +160,7 @@ public:
   public:
     Construct_projected_intersections_2(const Self * p) : parent(*p)
     {}
-    
+
     // insert into OutputIterator all the (2d) projections on the xy plane of
     // the intersection objects between the 2 surfaces
     // the data type of OutputIterator is Object
@@ -178,12 +169,12 @@ public:
     operator()(const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2,
                OutputIterator o) const
-    {      
+    {
       Rat_point_3 p1 = s1.center();
       Rat_point_3 p2 = s2.center();
       const Rational a1 = p1.x(), b1 = p1.y(), c1 = p1.z(),
                  a2 = p2.x(), b2 = p2.y(), c2 = p2.z();
-      const Rational sqr_r1 = s1.squared_radius(), 
+      const Rational sqr_r1 = s1.squared_radius(),
                      sqr_r2 = s2.squared_radius();
 
 //      // the spheres intersect iff d(p1, p2) <= (r1+r2)
@@ -196,7 +187,7 @@ public:
 //      Sign do_inter = CGAL_NTS sign(sqr_d*sqr_d + (1-2*sqr_d)*(sqr_r1+sqr_r2)-2*sqr_r1*sqr_r2);
 //      if (do_inter == POSITIVE)
 //        return o;
-        
+
       Nt_traits nt_traits;
 
       // we check if the centers of the 2 spheres have same z coordinate -
@@ -214,7 +205,7 @@ public:
           }
 
           // here we have c1 == c2, b1 == b2
-          
+
           // the intersection lies on the plane
           //                m
           //  (1)    x = --------
@@ -232,18 +223,18 @@ public:
           //    C = m^2 - 4ma1(a1-a2) + 4(a1^2 + b1^2 - sqr_r1)(a1-a2)^2
           // (we multiplied the equation by 4(a1-a2)^2 to get integer
           //  coefficients)
-          
+
           Rational a_diff = a1 - a2;
           Rational sqr_a_diff = a_diff * a_diff;
           Rational sqr_a1 = a1*a1, sqr_a2 = a2*a2;
           Rational sqr_b1 = b1*b1;
           Rational m = sqr_a1 - sqr_a2 + sqr_r2 - sqr_r1;
-         
+
           Rational A = 4*sqr_a_diff;
           Rational B = -8*b1*sqr_a_diff;
           Rational C = 4*sqr_a_diff*(sqr_a1+sqr_b1-sqr_r1) + m*m - 4*m*a1*a_diff;
 
-          
+
           Algebraic  ys[2];
           Algebraic *ys_end;
           std::ptrdiff_t   n_ys;
@@ -291,7 +282,7 @@ public:
           //  (1)    y = ----------------
           //                2(b1-b2)
           // where m = (a1^2 + b1^2 - a2^2 - b2^2 + sqr_r2 - sqr_r1)
-          
+
           // which is orthogonal to the xy-plane
           // we look at the intersection of this plane with the plane z = c1
           // to get the projected segment of the spheres intersection
@@ -305,8 +296,8 @@ public:
           // and                                          m^2       b1*m
           //               C = a1^2 + b1^2 - sqr_r1 + ---------- - -------
           //                                          4(b1-b2)^2   (b1-b2)
-          
-          // since we can solve only equations with integer coefficients we 
+
+          // since we can solve only equations with integer coefficients we
           // multiply everything by 4(b1 - b2)^2, and get:
           // D*x^2 + E*x + F = 0 where
           //         D = 4(b1-b2)^2 + 4(a1-a2)^2
@@ -324,7 +315,7 @@ public:
           Rational D = 4*sqr_a_diff + 4*sqr_b_diff;
           Rational E = -8*a1*sqr_b_diff - 4*m*a_diff + 8*b1*a_diff*b_diff;
           Rational F = 4*sqr_b_diff*(sqr_a1+sqr_b1-sqr_r1) + m*m - 4*m*b1*b_diff;
-          
+
           Algebraic  xs[2];
           Algebraic *xs_end;
           std::ptrdiff_t n_xs;
@@ -350,18 +341,18 @@ public:
           // with 2 endpoints
           Algebraic ys[2];
           ys[0] = (-2*a_diff*xs[0] + m)/(2*b_diff);
-          ys[1] = (-2*a_diff*xs[1] + m)/(2*b_diff);                
+          ys[1] = (-2*a_diff*xs[1] + m)/(2*b_diff);
 
           Alg_point_2 end1(xs[0], ys[0]);
           Alg_point_2 end2(xs[1], ys[1]);
-                              
+
           // equation (1) is:
           // 2(a1-a2)x + 2(b1-b2)y - m = 0
           Curve_2 res(0,0,0, 2*a_diff, 2*b_diff, -m, COLLINEAR, end1, end2);
           parent.add_curve_to_output(res, o);
           //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
         }
-        
+
       }
       // now the potential intersection is (a part of) a circle,
       // and the projection is (a part of) an ellipse
@@ -374,7 +365,7 @@ public:
         //                 2(c1-c2)
         // where m = a1^2 + b1^2 + c1^2 - a2^2 - b2^2 - c2^2 + sqr_r2 - sqr_r1
         //
-        // (**) since we deal with only half sphere we are interested 
+        // (**) since we deal with only half sphere we are interested
         //      in the part below min(c1, c2) in the case of lower envelope
         //  and in the part above max(c1, c2) in the case of upper envelope
         //
@@ -410,7 +401,7 @@ public:
         Rational a_diff = a1 - a2;
         Rational b_diff = b1 - b2;
         Rational c_diff = c1 - c2;
-        
+
         Rational sqr_a_diff = a_diff * a_diff;
         Rational sqr_b_diff = b_diff * b_diff;
         Rational sqr_c_diff = c_diff * c_diff;
@@ -418,7 +409,7 @@ public:
         Rational sqr_a1 = a1*a1, sqr_a2 = a2*a2;
         Rational sqr_b1 = b1*b1, sqr_b2 = b2*b2;
         Rational sqr_c1 = c1*c1, sqr_c2 = c2*c2;
-        
+
         Rational m = sqr_a1 + sqr_b1 + sqr_c1 -
                  sqr_a2 - sqr_b2 - sqr_c2 + sqr_r2 - sqr_r1;
 
@@ -432,13 +423,13 @@ public:
 
         // if the full spheres do not intersect, the equation we get has no
         // real solution, so we should check it:
-        bool ellipse_is_point = false;  
-        if (!parent.is_valid_conic_equation(R, S, T, U, V, W, 
+        bool ellipse_is_point = false;
+        if (!parent.is_valid_conic_equation(R, S, T, U, V, W,
                                             ellipse_is_point))
         {
           return o;
         }
-        
+
         // we need only a part of the ellipse (as stated in (**)) so we
         // construct the cutting line, which is:
         //    equation (*) <= min(c1,c2)    -- for lower envelope
@@ -463,28 +454,28 @@ public:
         int envelope_coef = 1;
         if (!parent.m_is_lower)
           envelope_coef = -1;
-        
+
         Sign sign_c_diff = CGAL_NTS sign(c_diff);
         Rational la = envelope_coef*2*a_diff*sign_c_diff;
         Rational lb = envelope_coef*2*b_diff*sign_c_diff;
         Rational lc = envelope_coef*sign_c_diff*(2*c_diff*z_plane - m);
 
-      	if (ellipse_is_point)
-      	{
-      	  // as specified in the is_valid_conic_equation method, the
+              if (ellipse_is_point)
+              {
+                // as specified in the is_valid_conic_equation method, the
           // intersection point is:
           //
-      	  Rational px = S*(4*U - T*V)/(T*T - 4*S*R);
+                Rational px = S*(4*U - T*V)/(T*T - 4*S*R);
           px = px / 2;
-      	  Rational py = -(T*px + V)/(2*S);
+                Rational py = -(T*px + V)/(2*S);
           // should check if the point is in the non-negative side of the
           // line
-      	  if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
+                if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
           {
-      	    *o++ = make_object(Point_2(px, py));
+                  *o++ = make_object(Point_2(px, py));
           }
           return o;
-      	}
+              }
 
         // EBEB 2012/06/29: Added because of
         // no matching function for call to 'compare(CGAL::Env_sphere_traits_3<Conic_traits_2>::Rational&, int)
@@ -516,7 +507,7 @@ public:
         std::ptrdiff_t n_inter_points;
         if (CGAL_NTS compare(lb, zero) != EQUAL)
         {
-          // Find the x-coordinates of the intersection points of the conic 
+          // Find the x-coordinates of the intersection points of the conic
           // curve and the line y = -(la*x + lc) / lb:
           // we get a quadratic equation Ax^2 + Bx + C = 0
           // where A = lb*lb*R + la*(la*S - lb*T)
@@ -525,13 +516,13 @@ public:
           Rational A = lb*lb*R + la*(la*S - lb*T),
                    B = 2*la*lc*S - lb*(lc*T + la*V - lb*U),
                    C = S*lc*lc + lb*(lb*W - lc*V);
-                   
+
           Algebraic      inter_xs[2];
           Algebraic     *inter_xs_end;
 
           inter_xs_end = nt_traits.solve_quadratic_equation(A, B, C, inter_xs);
           n_inter_points = inter_xs_end - inter_xs;
-                            
+
           if (n_inter_points > 0)
             source = Alg_point_2(inter_xs[0],
                              -(la*inter_xs[0] + lc) / Algebraic(lb));
@@ -547,7 +538,7 @@ public:
             Algebraic x_mid = Algebraic(Rational(-B/(2*A)));
             //Algebraic x_mid = (inter_xs[0] + inter_xs[1]) / 2;
             Alg_point_2 x_mid_point(x_mid, 0);
-            
+
             CGAL_precondition_code(int  x_mid_n_y_points;);
             Alg_point_2 x_mid_y_points[2];
 
@@ -555,7 +546,7 @@ public:
 
             CGAL_precondition_code(x_mid_n_y_points = )
               inter_cv.points_at_x(x_mid_point, x_mid_y_points);
-            
+
             CGAL_precondition(x_mid_n_y_points > 0);
 
             Algebraic y1 = x_mid_y_points[0].y(), y2 = x_mid_y_points[1].y();
@@ -586,7 +577,7 @@ public:
           Rational A = S,
                    B = T*inter_x + V,
                    C = R*inter_x*inter_x + U*inter_x + W;
-                   
+
           Algebraic  inter_points[2];
           Algebraic *inter_points_end;
 
@@ -599,7 +590,7 @@ public:
           if (n_inter_points == 2)
           {
             target = Alg_point_2(Algebraic(inter_x), inter_points[1]);
-            
+
             // Get the conic points whose y-coordinate are in the middle of the
             // two endpoints.
             // since inter_points[0] & inter_points[1] are roots of quadratic
@@ -633,7 +624,7 @@ public:
         }
 
         if (n_inter_points < 2)
-        {          
+        {
           // we should check whether the ellipse is in the positive side of the
           // line - in which case we return the full ellipse
           // or not - in which case there is no intersection if
@@ -648,8 +639,8 @@ public:
 
           CGAL_assertion_code(int         n_vtan_ps =)
             inter_cv.vertical_tangency_points(vtan_ps);
-          
-          
+
+
           CGAL_assertion(n_vtan_ps == 2);
 
           Algebraic lval = Algebraic(la)*vtan_ps[0].x() +
@@ -680,14 +671,14 @@ public:
                            Algebraic(lb)*vtan_ps[1].y() + Algebraic(lc);
           lval_sign = CGAL_NTS sign(lval);
           CGAL_assertion(lval_sign != ZERO);
-          
+
           if (lval_sign == POSITIVE)
             parent.add_curve_to_output(inter_cv, o);
             //*o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
           else
             *o++ = make_object(Point_2(source));
 
-          return o;          
+          return o;
         }
 
         CGAL_assertion(n_inter_points == 2);
@@ -708,20 +699,20 @@ public:
         Curve_2 res(R, S, T, U, V, W, orient, source, target);
         CGAL_assertion(res.is_valid());
         parent.add_curve_to_output(res, o);
-        //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));  
+        //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
       }
-      
+
       return o;
-    }  
-  };  
+    }
+  };
 
   /*! Get a Construct_projected_intersections_2 functor object. */
   Construct_projected_intersections_2
   construct_projected_intersections_2_object() const
-  {                                                                
+  {
     return Construct_projected_intersections_2(this);
   }
-   
+
   class Compare_z_at_xy_3
   {
   protected:
@@ -745,14 +736,14 @@ public:
         Comparison_result c1 = compare_in_point_first_method(p, s1, s2);
       );
       CGAL_expensive_assertion(c1 == c2);
-      
+
       return c2;
     }
 
     // check which of the surfaces is closer to the envelope at the xy
     // coordinates of cv (i.e. lower if computing the lower envelope, or upper
     // if computing the upper envelope)
-    // precondition: the surfaces are defined in all points of cv, and the 
+    // precondition: the surfaces are defined in all points of cv, and the
     //               answer is the same for each of these points
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& s1,
@@ -760,7 +751,7 @@ public:
     {
       // we compute a middle point on cv and use the previous function
       Point_2 mid = parent.construct_middle_point(cv);
-      Comparison_result res = 
+      Comparison_result res =
                    parent.compare_z_at_xy_3_object()(mid, s1, s2);
       return res;
     }
@@ -797,7 +788,7 @@ public:
     // and +sqrt(Ai) is for the upper part
     // we now need to compute the sign of:
     //    c1 - sqrt(A1) - (c2 - sqrt(A2))  - for lower envelope
-    //    c1 + sqrt(A1) - (c2 + sqrt(A2))  - for upper envelope    
+    //    c1 + sqrt(A1) - (c2 + sqrt(A2))  - for upper envelope
     Comparison_result
     compare_in_point_second_method(const Point_2& p,
                                    const Xy_monotone_surface_3& s1,
@@ -807,14 +798,14 @@ public:
       Rat_point_3 p2 = s2.center();
       const Rational a1 = p1.x(), b1 = p1.y(), c1 = p1.z(),
                  a2 = p2.x(), b2 = p2.y(), c2 = p2.z();
-      const Rational sqr_r1 = s1.squared_radius(), 
+      const Rational sqr_r1 = s1.squared_radius(),
                      sqr_r2 = s2.squared_radius();
       const Algebraic x1 = p.x(), y1 = p.y();
 
       Rational c_diff = c1 - c2;
       Algebraic x_diff1 = x1 - a1, y_diff1 = y1 - b1;
       Algebraic x_diff2 = x1 - a2, y_diff2 = y1 - b2;
-      
+
       Algebraic A1 = sqr_r1 - x_diff1*x_diff1 - y_diff1*y_diff1;
       Algebraic A2 = sqr_r2 - x_diff2*x_diff2 - y_diff2*y_diff2;
 
@@ -822,7 +813,7 @@ public:
         std::cout << "A1 = " << A1 << std::endl;
       if (CGAL_NTS sign(A2) == NEGATIVE)
         std::cout << "A2 = " << A2 << std::endl;
-        
+
       Sign res;
       // sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f is a CGAL method which
       // computes the sign of quantity: a + b * sqrt(e) + c * sqrt(f)
@@ -832,10 +823,10 @@ public:
                                                            Algebraic(1),
                                                            A1,
                                                            A2);
-      return res;    
-    }  
+      return res;
+    }
   };
-   
+
   /*! Get a Compare_z_at_xy_3 functor object. */
   Compare_z_at_xy_3
   compare_z_at_xy_3_object() const
@@ -866,7 +857,7 @@ public:
     {
       Comparison_result res = parent.compare_on_side(cv, s1, s2, false);
       return res;
-    }  
+    }
   };
 
   /*! Get a Compare_z_at_xy_above_3 functor object. */
@@ -891,8 +882,8 @@ public:
                const Xy_monotone_surface_3& s2) const
     {
       Comparison_result res = parent.compare_on_side(cv, s1, s2, true);
-      return res;      
-    }  
+      return res;
+    }
   };
 
   /*! Get a Compare_z_at_xy_below_3 functor object. */
@@ -915,7 +906,7 @@ public:
   public:
     Is_defined_over(const Self * p) : parent(*p)
     {}
-    
+
     // checks if point is in the xy-range of surf
     bool operator()(const Point_2& p, const Xy_monotone_surface_3& s) const
     {
@@ -942,7 +933,7 @@ public:
   /***************************************************************************/
 
   // helper methods
-    
+
   // compare the surfaces over the side (as specified in the compare_on_right
   // parameter) of the curve, assuming they are defined there
   Comparison_result compare_on_side(const X_monotone_curve_2& cv,
@@ -1073,7 +1064,7 @@ public:
                                    const Xy_monotone_surface_3& s) const
   {
     Algebraic res;
-   
+
     // the point coordinates
     const Algebraic x1 = p.x(), y1 = p.y();
 
@@ -1081,7 +1072,7 @@ public:
     Rat_point_3 center = s.center();
     const Rational a = center.x(), b = center.y(), c = center.z();
     const Rational sqr_r = s.squared_radius();
-    
+
     // we substitute x1 and y1 in the equation of s
     // (x-a)^2 + (y-b)^2 + (z-c)^2 = r^2
     // and get a quadratic equation of z:
@@ -1091,7 +1082,7 @@ public:
     Algebraic A = 1,
               B = -2*c,
               C = x_diff*x_diff + y_diff*y_diff + c*c - sqr_r;
-    
+
     Algebraic  zs[2];
     Algebraic *zs_end;
     std::ptrdiff_t n_zs;
@@ -1121,7 +1112,7 @@ public:
   {
     // get the x-value of the middle point
     Alg_kernel k;
-    Alg_point_2 mid_x = k.construct_midpoint_2_object()(cv.source(), 
+    Alg_point_2 mid_x = k.construct_midpoint_2_object()(cv.source(),
                                                         cv.target());
 
 // TODO_NEW_DESIGN - this is not implemented in X_monotone_curve_2, but maybe we want it there?
@@ -1145,20 +1136,20 @@ public:
   // r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
   // has real solutions
   // is_point is set to true if the equation represents just one point
-  template <class NT> 
+  template <class NT>
   bool is_valid_conic_equation(const NT& r, const NT& s, const NT& t,
                                const NT& u, const NT& v, const NT& w,
                                bool &is_point) const
   {
     // initialize is_point to false, and will change it when we detect
     // that the equation represents a point
-    is_point = false; 
+    is_point = false;
     // (*)  r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
     // we fix x, and get a 1-variable quadratic equation:
     // (**) s*y^2 + (tx + v)*y + (rx^2 + ux + w) = 0
     // (*) has real solution (x,y) iff there exists x such that (**) has a
     // solution y, i.e. discriminant(**) >= 0
-    // discriminant(**) = f(x) = (tx + v)^2 -4s(rx^2 + ux + w) 
+    // discriminant(**) = f(x) = (tx + v)^2 -4s(rx^2 + ux + w)
     //                         = (t^2 - 4sr)*x^2 + (stv - 4su)*x + (v^2 - 4sw)
     //                         = A*x^2 + B*x + C >= 0
     // where A = t^2 - 4sr
@@ -1166,7 +1157,7 @@ public:
     //       C = v^2 - 4sw
     // so we should check if there exists x such that f(x) >= 0
     // if A > 0 we have a smiling parabula, and a positive answer
-    // (the conic equation in this case represents hyperbola or 2 
+    // (the conic equation in this case represents hyperbola or 2
     // intersecting lines)
     Sign sign_A = CGAL_NTS sign(t*t - 4*s*r);
     if (sign_A == POSITIVE)
@@ -1174,21 +1165,21 @@ public:
     // if A < 0 we have a sad parabula, so we should check if it crosses the
     //          x-axis, i.e. if the equation f(x) = 0 has a real solution x.
     //          this means that discriminant(f(x)) >= 0
-    //          discriminant(f(x)) = B^2 - 4AC 
+    //          discriminant(f(x)) = B^2 - 4AC
     //                             = (2tv-4su)^2 - 4(t^2-4sr)(v^2-4sw)
     //                             = s(-tvu + su^2 + wt^2 + rv^2 - 4srw)
     if (sign_A == NEGATIVE)
     {
-      // (in this case the conic equation represents ellipse, circle, point 
+      // (in this case the conic equation represents ellipse, circle, point
       // or no curve)
       Sign sign_s = CGAL_NTS sign(s);
       Sign sign_eq = CGAL_NTS sign(-t*v*u + s*u*u + w*t*t + r*v*v - 4*s*r*w);
       // if sign_eq = 0 then discriminant(f(x))=0, and so we have only one x
-      // solution for f(x), say x0. since we get f(x0)=0 and f(x)<0 forall 
+      // solution for f(x), say x0. since we get f(x0)=0 and f(x)<0 forall
       // x!=x0, we have only one solution for (**). So the equation represents
       // a point with coordinates x0=-B/2A, y0=-(tx0 + v)/2s
       if (sign_eq == ZERO)
-	      is_point = true;
+              is_point = true;
 
       Sign sign_disc = CGAL_NTS sign(int(sign_s * sign_eq));
       return (sign_disc != NEGATIVE);

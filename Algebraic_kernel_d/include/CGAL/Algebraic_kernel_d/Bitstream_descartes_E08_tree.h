@@ -1,21 +1,12 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //
@@ -135,7 +126,7 @@ void Power_to_Bernstein_pm1_nofrac_matrix<Integer_>::init_m() {
                 else              { sum += term; }
             }
             m_[ij_to_idx(i,j)] =
-                sum 
+                sum
               * CGAL::internal::caching_factorial<Integer>(i)
               * CGAL::internal::caching_factorial<Integer>(degree - i);
         }
@@ -213,7 +204,7 @@ Bitstream_bernstein_from_power<Traits_>::Bitstream_bernstein_from_power(
     log_radius_(log_radius),
     approximator_(traits.approximator_object()),
     lower_bound_log2_abs_(traits.lower_bound_log2_abs_object())
-{ 
+{
     CGAL_assertion(degree_ >= 0);
     lbd_log_lcoeff_ = lower_bound_log2_abs_(input_power_coeff_[degree_]);
     if (degree_ == 2) {
@@ -416,7 +407,7 @@ template <class BitstreamDescartesE08TreeTraits>
   typedef CGAL::internal::Sign_eps_log2                                 \
   <Integer, Abs_le_pow2, Sign>                                          \
   Sign_eps_log2                                                         \
-  
+
 // end #define
 
 // typedefs for Bitstream_descartes_E08_tree{,_rep}
@@ -424,7 +415,7 @@ template <class BitstreamDescartesE08TreeTraits>
   CGAL_BITSTREAM_DESCARTES_E08_TREE_COMMON_TYPEDEFS;                   \
   typedef CGAL::internal::Bitstream_descartes_E08_node<TRAITS> Node;   \
   typedef std::list<Node> Node_list                                    \
-  
+
 // end #define
 
 
@@ -441,7 +432,7 @@ struct Bitstream_descartes_E08_node {
 public:
   typedef Bitstream_descartes_E08_node Self;
   CGAL_BITSTREAM_DESCARTES_E08_TREE_COMMON_TYPEDEFS;
-  
+
   friend class CGAL::internal::Bitstream_descartes_E08_tree<TRAITS>;
   friend class CGAL::internal::Bitstream_descartes_E08_tree_rep<TRAITS>;
 
@@ -575,11 +566,11 @@ public:
     Bitstream_descartes_E08_tree() : Base(Rep()) { }
 
     //! copy constructor
-#ifdef DOXYGEN_RUNNING  
+#ifdef DOXYGEN_RUNNING
     Bitstream_descartes_E08_tree(const Self& p)
         : Base(static_cast<const Base&>(p))
     { }
-#endif  
+#endif
 
     /*! \brief construct from initial interval and coefficients
      *
@@ -897,7 +888,7 @@ Bitstream_descartes_E08_tree<BitstreamDescartesE08TreeTraits>
     int l_min_var, l_max_var, r_min_var, r_max_var;
     internal::var_eps(this->ptr()->tmp1_coeff_.begin(),
                                      this->ptr()->tmp1_coeff_.end(),
-                                     l_min_var, l_max_var, 
+                                     l_min_var, l_max_var,
                                      Sign_eps_log2(n->log_eps_)
     );
     internal::var_eps(this->ptr()->tmp2_coeff_.begin(),
@@ -914,7 +905,7 @@ Bitstream_descartes_E08_tree<BitstreamDescartesE08TreeTraits>
         int children = 1;
         if (r_min_var > 0) {
             // create new node for right child
-            Node_iterator r = 
+            Node_iterator r =
                 this->ptr()->node_list_.insert(beyond, Node(degree(),
                             this->ptr()->splitpoint_num_,        // lower
                             n->upper_num_ << delta_log_bdry_den, // upper

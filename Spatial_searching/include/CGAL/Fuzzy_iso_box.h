@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -45,18 +36,18 @@ namespace CGAL {
     struct Is_from_point_from_adapter_traits{
       typedef boost::false_type type;
     };
-    
-    
+
+
     template <class K,class PM,class Base,class Point>
     struct Is_from_point_from_adapter_traits<Search_traits_adapter<K,PM,Base>,Point>{
       typedef typename boost::is_same<Point,typename Base::Point_d> type;
     };
   } //namespace internal
-  
+
   template <class SearchTraits>
   class Fuzzy_iso_box{
     SearchTraits traits;
-    
+
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
@@ -70,8 +61,8 @@ namespace CGAL {
 
     private:
 
-    typename boost::remove_cv< 
-      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type 
+    typename boost::remove_cv<
+      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type
       >::type min, max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;
@@ -94,7 +85,7 @@ namespace CGAL {
       min_begin = construct_it(min);
       max_begin = construct_it(max);
     }
-   
+
     public:
 
     // default constructor
@@ -107,7 +98,7 @@ namespace CGAL {
       CGAL_precondition(epsilon >= 0);
       construct<Point_d,typename SearchTraits::Construct_iso_box_d>(p,q);
     }
-        
+
   //additional constructor if SearchTraits = Search_traits_adapter
   template <class Point>
   Fuzzy_iso_box(const Point& p,const Point&q,FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
@@ -129,6 +120,17 @@ namespace CGAL {
     return true;
   }
 
+  template <typename Coord_iterator>
+  bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
+          Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+          Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+                for (unsigned int i = 0; i < dim; ++i, ++it_coord_begin, ++minit, ++maxit) {
+                        if ( ((*it_coord_begin) < (*minit)) || ((*it_coord_begin) > (*maxit)) )
+        return false;
+    }
+    return true;
+  }
+
   bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box eroded by 'eps' intersects 'rectangle'
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
@@ -139,7 +141,6 @@ namespace CGAL {
     }
     return true;
   }
-
 
   bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box dilated by 'eps' contains 'rectangle'

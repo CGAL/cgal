@@ -1,20 +1,11 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -131,7 +122,7 @@ namespace CGAL {
 
     // Init
     void init_storage()
-    {}
+    { null_dart_handle=nullptr; }
 
    /** Return if this dart is free for adimension.
      * @param dh a dart handle
@@ -151,6 +142,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return dh->mf[i]==dh;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,
@@ -250,7 +243,7 @@ namespace CGAL {
       CGAL_assertion( ah!=nullptr );
       return ah->is_valid();
     }
-    
+
     // accessors and modifiers to the attribute ref counting given its handle
     template<unsigned int i>
     std::size_t get_attribute_ref_counting
@@ -442,6 +435,8 @@ namespace CGAL {
     }
 
   protected:
+    Dart_handle null_dart_handle; // To be compatible with combinatorial map
+
     /// Dart container.
     Dart_container mdarts;
 

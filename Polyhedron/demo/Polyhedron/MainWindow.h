@@ -97,7 +97,8 @@ public:
                                             CGAL::Three::Polyhedron_demo_io_plugin_interface*,
                                             bool& ok,
                                             bool add_to_scene=true);
-  void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
+
+  void computeViewerBBox(CGAL::qglviewer::Vec &vmin, CGAL::qglviewer::Vec &vmax);
   void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min,
                         CGAL::qglviewer::Vec max);
 Q_SIGNALS:
@@ -139,6 +140,8 @@ public Q_SLOTS:
   /*! Open a file with a given loader, and return true if it was successful.
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
+
+  QString write_string_to_file(const QString &str, const QString& filename);
 
   /*! Reloads an item. Expects to be called by a QAction with the
    index of the item to be reloaded as data attached to the action.
@@ -451,6 +454,7 @@ public:
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
+  void on_actionLoad_a_Scene_from_a_Script_File_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
@@ -471,7 +475,6 @@ private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
   void on_action_Rearrange_Viewers_triggered();
   void recenterViewer();
-
 
 private:
   bool is_locked;
@@ -502,4 +505,5 @@ protected:
 private:
   bool is_main;
 };
+
 #endif // ifndef MAINWINDOW_H

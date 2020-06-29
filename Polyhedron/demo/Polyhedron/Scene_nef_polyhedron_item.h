@@ -65,7 +65,7 @@ public:
   operator-=(const Scene_nef_polyhedron_item&); // difference
 
   static Scene_nef_polyhedron_item*
-  sum(const Scene_nef_polyhedron_item&, 
+  sum(const Scene_nef_polyhedron_item&,
       const Scene_nef_polyhedron_item&);
 
   void convex_decomposition(std::list< Scene_surface_mesh_item*>&);

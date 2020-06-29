@@ -1,21 +1,12 @@
 // Copyright (c) 2011 GeometryFactory (France). All rights reserved.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Philipp Möller
 
@@ -37,7 +28,7 @@
     typedef typename boost::variant<typename K::R1, typename K::R2 >    \
                      variant_type;                                      \
     typedef typename boost::optional< variant_type > result_type;       \
-  };  
+  };
 
 #define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3)            \
   template<typename K>     \
@@ -45,7 +36,7 @@
     typedef typename boost::variant<typename K::R1, typename K::R2,     \
                                     typename K::R3> variant_type;       \
     typedef typename boost::optional< variant_type > result_type;       \
-  };                                                                    
+  };
 
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
   template<typename K>                                                  \
@@ -119,7 +110,7 @@ template<typename B>
 class IT<Bbox_3, B> : public Intersection_traits< typename Kernel_traits<B>::Kernel, CGAL::Bbox_3, B >
 { };
 
-  
+
 namespace Intersections {
 namespace internal {
 
@@ -145,7 +136,7 @@ namespace internal {
 // it somewhat nicer.
 template<typename T>
 inline
-const T* intersect_get(const CGAL::Object& o) { 
+const T* intersect_get(const CGAL::Object& o) {
   return CGAL::object_cast<T>(&o);
 }
 
@@ -205,7 +196,7 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 
 } // namespace internal
 } // namespace Intersections
-  
+
 // See overloads in the respective header files
 
 // template<typename A, typename B>
@@ -221,7 +212,7 @@ do_intersect_impl(const A& a, const B& b, Dynamic_dimension_tag) {
 // inline
 // bool
 // do_intersect(const A& a, const B& b) {
-//   CGAL_static_assertion_msg((boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value), 
+//   CGAL_static_assertion_msg((boost::is_same<typename A::Ambient_dimension, typename B::Ambient_dimension>::value),
 //                         "do_intersect with objects of different dimensions not supported");
 //   return internal::do_intersect_impl(a, b, typename A::Ambient_dimension());
 // }

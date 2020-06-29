@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Christina Vaz, Keenan Crane, Andreas Fabri
@@ -457,12 +448,12 @@ private:
     }
   }
 
-  
+
   void
   solve_phi()
   {
     Vector phi;
-  
+
     if(! la_cotan.linear_solver(m_index_divergence, phi)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in solve_phi() failed");
@@ -897,16 +888,6 @@ public:
   }
 
   /**
-   * get estimated distance from the current source set to a vertex `vd`.
-   * \warning The return type is `double` even when used with an exact kernel.
-   */
-  double
-  estimate_geodesic_distance(vertex_descriptor vd) const
-  {
-    return base().estimate_geodesic_distance(vd);
-  }
-
-  /**
    * returns the source set.
    */
   const Vertex_const_range&
@@ -914,7 +895,6 @@ public:
   {
     return base().sources();
   }
-
 
   /**
    * fills the distance property map with the estimated geodesic distance of each vertex to the closest source vertex.

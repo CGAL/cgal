@@ -30,7 +30,7 @@ int  main() {
   Neighbor_search N1(tree, query, 5, 10.0, false); // eps=10.0, nearest=false
 
   std::cout << "For query rectangle = [0.1, 0.2]^4 " << std::endl
-	    <<  "the " << K << " approximate furthest neighbors are: " << std::endl;
+            <<  "the " << K << " approximate furthest neighbors are: " << std::endl;
   for (Neighbor_search::iterator it = N1.begin();it != N1.end();it++) {
     std::cout << " Point " << it->first << " at distance  " << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }

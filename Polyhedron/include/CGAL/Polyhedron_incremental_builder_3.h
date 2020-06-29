@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -221,8 +212,8 @@ public:
         // readable polyhedrons. If the representation does not support
         // insertion the object must fit in the reserved sizes.
         //    If `mode' is set to ABSOLUTE_INDEXING the incremental builder
-        // uses absolute indexing and the vertices of the old polyhedral 
-        // surface can be used in new facets. Otherwise relative indexing is 
+        // uses absolute indexing and the vertices of the old polyhedral
+        // surface can be used in new facets. Otherwise relative indexing is
         // used starting with new indices for the new construction.
 
 
@@ -322,8 +313,8 @@ public:
 
     template <class InputIterator>
     bool test_facet( InputIterator first, InputIterator beyond) {
-        // tests if the facet described by the vertex indices in the 
-        // range [first,beyond) can be inserted without creating a 
+        // tests if the facet described by the vertex indices in the
+        // range [first,beyond) can be inserted without creating a
         // a non-manifold (and therefore invalid) situation.
         // First, create a copy of the indices and close it cyclically
         std::vector< std::size_t> indices( first, beyond);
@@ -403,7 +394,7 @@ protected:
         //     Set the facet of g to the current facet and g->opposite()
         //     to a border halfedge. Assign the vertex references.
         //     Set g->opposite()->next() to g. Return g->opposite().
-        typedef typename HDS::Supports_halfedge_vertex 
+        typedef typename HDS::Supports_halfedge_vertex
             Supports_halfedge_vertex;
         Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
         CGAL_assertion( w < new_vertices);
@@ -751,7 +742,7 @@ Polyhedron_incremental_builder_3<HDS>::
 test_facet_indices( std::vector< std::size_t> indices) {
     typedef typename HDS::Supports_halfedge_vertex Supports_halfedge_vertex;
     Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
-    // tests if the facet described by the vertex indices can be inserted 
+    // tests if the facet described by the vertex indices can be inserted
     // without creating a non-manifold (and therefore invalid) situation.
     // indices are cyclically closed once.
     std::size_t n = indices.size() - 1;
@@ -785,7 +776,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
     }
     // test non-manifold vertices
     for ( std::size_t i = 0; i < n; ++i) {
-        // since we don't allow duplicates in indices[..] and we 
+        // since we don't allow duplicates in indices[..] and we
         // tested for non-manifold halfedges already, we just need to check
         // if the vertex indices[i] is not a closed manifold yet.
         Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
@@ -798,8 +789,8 @@ test_facet_indices( std::vector< std::size_t> indices) {
                 return false;
         }
     }
-    
-    //Test if all halfedges of the new face 
+
+    //Test if all halfedges of the new face
     //are possibly consecutive border halfedges in the HDS.
     //Possibly because it may be not directly encoded in the HDS
     //(using next() function ). This situation can occur when one or
@@ -812,19 +803,19 @@ test_facet_indices( std::vector< std::size_t> indices) {
       std::size_t next_index=indices[ (i+1)%n];
       Vertex_handle   previous_vertex = index_to_vertex_map[ prev_index ];
       Vertex_handle   next_vertex     = index_to_vertex_map[ next_index ];
-      
+
       Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
-      
-      if ( v == Halfedge_handle() || 
+
+      if ( v == Halfedge_handle() ||
            get_vertex_to_edge_map(prev_index) == Halfedge_handle() ||
            get_vertex_to_edge_map(next_index) == Halfedge_handle()
          ) continue;
-      
+
       Halfedge_handle start=v;
       //halfedges pointing to/running out from vertex indices[i]
       //and that need to be possibly consecutive
       Halfedge_handle previous=Halfedge_handle(),next=Halfedge_handle();
-      
+
       //look for a halfedge incident to vertex indices[i]
       //and which opposite is incident to previous_vertex
       do{
@@ -836,12 +827,12 @@ test_facet_indices( std::vector< std::size_t> indices) {
         v = v->next()->opposite();
       }
       while (v!=start);
-      
+
       if (previous!=Halfedge_handle()){
         v=v->next()->opposite();
         //previous and next are already consecutive in the HDS
         if (v->opposite()->vertex()==next_vertex) continue;
-        
+
         //look for a border halfedge which opposite is
         //incident to next_vertex: set next halfedge
         do
@@ -854,9 +845,9 @@ test_facet_indices( std::vector< std::size_t> indices) {
         }
         while(v!=previous);
         if (next==Halfedge_handle()) continue;
-        
+
         //check if no constraint prevents
-        //previous and next to be adjacent: 
+        //previous and next to be adjacent:
         do{
           v=v->next()->opposite();
           if ( v->opposite()->is_border() ) break;
@@ -866,7 +857,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
         start=v;
       }
     }
-    
+
     return true;
 }
 

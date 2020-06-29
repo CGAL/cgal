@@ -18,7 +18,7 @@ void test_merge_duplicated_vertices_in_boundary_cycles(const char* fname,
 
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     exit(1);
   }
 
@@ -43,6 +43,7 @@ int main(int argc, char** argv)
   if (argc==1)
   {
     test_merge_duplicated_vertices_in_boundary_cycles("data/merge_points.off", 43);
+    test_merge_duplicated_vertices_in_boundary_cycles("data/merge_points_2.off", 62);
   }
   else
   {

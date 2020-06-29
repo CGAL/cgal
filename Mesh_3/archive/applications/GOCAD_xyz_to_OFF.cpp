@@ -19,7 +19,7 @@ Faces faces;
 int usage(const char* argv0, bool failure = true)
 {
   std::cerr << "Usage:\n"
-	    << "  " << argv0 << " INPUT.xyz OUTPUT.off\n";
+            << "  " << argv0 << " INPUT.xyz OUTPUT.off\n";
   if(failure)
     return EXIT_FAILURE;
   else
@@ -29,9 +29,9 @@ int usage(const char* argv0, bool failure = true)
 int incorrect_input(std::string error = "")
 {
   std::cerr << "Incorrect input file.\n"
-	    << "  " << error << "\n";
+            << "  " << error << "\n";
   std::cerr << "So far: " << vertices.size() << " vertices, "
-	    << faces.size() << " faces\n";
+            << faces.size() << " faces\n";
   return EXIT_FAILURE;
 }
 
@@ -43,18 +43,18 @@ int main(int argc, char** argv)
 
   sregex tface_re = bos >> *space >> "TFACE" >> *space >> eos;
 
-  sregex vertex_re = bos >> *space >> "VRTX" 
-			 >> +space >> (vertex_index=+_d)
-			 >> +space >> (vertex_x=+(digit|'-'|'+'|'.'))
-			 >> +space >> (vertex_y=+(digit|'-'|'+'|'.'))
-			 >> +space >> (vertex_z=+(digit|'-'|'+'|'.'))
-			 >> eos;
+  sregex vertex_re = bos >> *space >> "VRTX"
+                         >> +space >> (vertex_index=+_d)
+                         >> +space >> (vertex_x=+(digit|'-'|'+'|'.'))
+                         >> +space >> (vertex_y=+(digit|'-'|'+'|'.'))
+                         >> +space >> (vertex_z=+(digit|'-'|'+'|'.'))
+                         >> eos;
 
   sregex triangle_re = bos >> *space >> "TRGL"
-			   >> +space >> (s1=+digit)
-			   >> +space >> (s2=+digit)
-			   >> +space >> (s3=+digit)
-			   >> eos;
+                           >> +space >> (s1=+digit)
+                           >> +space >> (s2=+digit)
+                           >> +space >> (s3=+digit)
+                           >> eos;
   sregex end_re = bos >> *space >> "END" >> *space >> eos;
 
   std::ifstream input(argv[1]);
@@ -79,8 +79,8 @@ int main(int argc, char** argv)
   std::getline(input, line);
   while(input && regex_match(line, results, vertex_re)) {
     vertices.push_back(boost::make_tuple(results[vertex_x],
-					 results[vertex_y],
-					 results[vertex_z]));
+                                         results[vertex_y],
+                                         results[vertex_z]));
     std::getline(input, line);
   }
   while(input && regex_match(line, results, triangle_re)) {
@@ -98,13 +98,13 @@ int main(int argc, char** argv)
   for(Vertices::const_iterator vit = vertices.begin(), vend = vertices.end();
       vit != vend; ++vit)
     output << boost::get<0>(*vit) << " "
-	   << boost::get<1>(*vit) << " "
-	   << boost::get<2>(*vit) << "\n";
+           << boost::get<1>(*vit) << " "
+           << boost::get<2>(*vit) << "\n";
   for(Faces::const_iterator fit = faces.begin(), fend = faces.end();
       fit != fend; ++fit)
     output << "3 " << boost::get<0>(*fit)
-	   << " " << boost::get<1>(*fit)
-	   << " " << boost::get<2>(*fit) << "\n";
+           << " " << boost::get<1>(*fit)
+           << " " << boost::get<2>(*fit) << "\n";
   if(output)
     return EXIT_SUCCESS;
   else

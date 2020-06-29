@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -38,7 +29,7 @@ namespace CGAL {
 
 
 template < class HDS, class Predicate >
-typename HDS::Halfedge_handle 
+typename HDS::Halfedge_handle
 halfedgeDS_cut_component( HDS&                           hds,
                           typename HDS::Halfedge_handle  h,
                           Predicate                      pred,
@@ -46,8 +37,8 @@ halfedgeDS_cut_component( HDS&                           hds,
 // Cuts out a piece of a halfedge data structure for which the predicate
 // `pred' is true for the vertices.
 // The edge-vertex graph of the piece has to be a connected component.
-// The remaining piece gets a new boundary. Returns a border halfedge of 
-// the new boundary on the remaining piece. Assigns a halfedge of the 
+// The remaining piece gets a new boundary. Returns a border halfedge of
+// the new boundary on the remaining piece. Assigns a halfedge of the
 // cut outpiece to `cut_piece'.
 // The geometry for the vertices
 // on the boundary and the hole have to be taken care of after this
@@ -94,7 +85,7 @@ halfedgeDS_cut_component( HDS&                           hds,
             D.set_face( hnew, D.get_face( gnext));
             D.set_face_halfedge( hnew);
             h = g;
-            D.set_vertex_halfedge( h);                
+            D.set_vertex_halfedge( h);
         } else { // general case and last case
             Halfedge_handle gnext = g->next()->opposite();
             if ( gnext == start && gnext == g) {
@@ -103,8 +94,8 @@ halfedgeDS_cut_component( HDS&                           hds,
                 g = hds.edges_push_back( Halfedge(), Halfedge());
                 D.insert_tip( g, gnext);
                 D.close_tip(g->opposite(), D.vertices_push_back(Vertex()));
-                D.set_vertex_halfedge( g);                
-                D.set_vertex_halfedge( g->opposite());                
+                D.set_vertex_halfedge( g);
+                D.set_vertex_halfedge( g->opposite());
             }
             D.remove_tip( g);
             Vertex_handle v = D.vertices_push_back( Vertex());
@@ -115,7 +106,7 @@ halfedgeDS_cut_component( HDS&                           hds,
             D.set_face( hnew, D.get_face( gnext));
             D.set_face_halfedge( hnew);
             h = g;
-            D.set_vertex_halfedge( h);                
+            D.set_vertex_halfedge( h);
             if ( gnext == start) {
                 // last edge, special
                 D.insert_tip( hnew, hlast);
@@ -132,7 +123,7 @@ halfedgeDS_cut_component( HDS&                           hds,
 }
 
 template < class HDS, class Predicate >
-typename HDS::Halfedge_handle 
+typename HDS::Halfedge_handle
 halfedgeDS_cut_component( HDS&                           hds,
                           typename HDS::Halfedge_handle  h,
                           Predicate                      pred)
@@ -149,7 +140,7 @@ halfedgeDS_cut_component( HDS&                           hds,
     D.erase_connected_component( cut_piece);
     CGAL_postcondition( D.is_valid(false,3));
     return hnew;
-}   
+}
 
 } //namespace CGAL
 

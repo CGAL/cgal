@@ -11,7 +11,7 @@ typedef CGAL::Interval_skip_list<Interval> Interval_skip_list;
 void
 fct()
 {
- 
+
   Interval_skip_list isl;
   int i, n, d;
 
@@ -33,7 +33,7 @@ fct()
     isl.find_intervals(i, std::back_inserter(L));
     for(std::list<Interval>::iterator it = L.begin(); it != L.end(); it++){
       std::cout << *it;
-    }  
+    }
     std::cout << std::endl;
   }
 
@@ -46,7 +46,7 @@ fct()
   }
   std::cout << isl;
   std::cout << std::endl;
-  
+
 }
 
 int
@@ -58,4 +58,4 @@ main()
 
 }
 
-  
+

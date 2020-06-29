@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -170,12 +161,12 @@ private:
 
 public:
     Triangulation_data_structure( int dim=0)  /* Concept */
-        : dmax_(get_maximal_dimension<Dimen>::value(dim)), dcur_(-2), 
+        : dmax_(get_maximal_dimension<Dimen>::value(dim)), dcur_(-2),
           vertices_(), full_cells_()
     {
         CGAL_assertion_msg(dmax_ > 0, "maximal dimension must be positive.");
     }
-  
+
     ~Triangulation_data_structure()
     {
         clean_dynamic_memory();
@@ -951,10 +942,10 @@ Triangulation_data_structure<Dim, Vb, Fcb>
   {
     IITH_task task = task_queue.front();
     task_queue.pop();
-    
+
     Full_cell_handle old_s = full_cell(task.boundary_facet);
     const int facet_index = index_of_covertex(task.boundary_facet);
-    
+
     Full_cell_handle outside_neighbor = neighbor(old_s, facet_index);
     // Here, "new_s" might actually be a new cell, but it might also be "old_s"
     // if it has not been treated already in the meantime
@@ -978,7 +969,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 
       // add the new full_cell to the list of new full_cells
       *new_full_cells++ = new_s;
-  
+
       // check all of |Facet f|'s neighbors
       for (i = 0 ; i <= cur_dim ; ++i)
       {
@@ -1013,7 +1004,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             index,                        // index_of_inside_cell_in_outside_cell
             new_s,                        // future_neighbor
             i,                            // new_cell_index_in_future_neighbor
-            index_of_second_covertex(rot) // index_of_future_neighbor_in_new_cell 
+            index_of_second_covertex(rot) // index_of_future_neighbor_in_new_cell
           ));
         }
       }
@@ -1023,9 +1014,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     if (task.future_neighbor != Full_cell_handle())
     {
       // now the new neighboring full_cell exists, we link both
-      set_neighbors(new_s, 
-                    task.index_of_future_neighbor_in_new_cell, 
-                    task.future_neighbor, 
+      set_neighbors(new_s,
+                    task.index_of_future_neighbor_in_new_cell,
+                    task.future_neighbor,
                     task.new_cell_index_in_future_neighbor);
     }
   }
@@ -1238,7 +1229,7 @@ bool Triangulation_data_structure<Dimen, Vb, Fcb>
         if( ! v->is_valid(verbose) )
             return false;
     }
-    
+
     // FUTURE: for each vertex v, gather incident full_cells. then, check that
     // any full_cell containing v is among those gathered full_cells...
 

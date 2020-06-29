@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Nico Kruithof
@@ -43,8 +34,8 @@ namespace internal {
 template <class K>
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Triangle_3 &tr,
-	     const K & k);
+             const typename K::Triangle_3 &tr,
+             const K & k);
 
 // This code is not optimized:
   template <class K, class Bounded>
@@ -82,8 +73,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Triangle_3 &tr,
-	     const K & k)
+             const typename K::Triangle_3 &tr,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
 }
@@ -93,7 +84,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Triangle_3 &tr,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
 }
@@ -103,8 +94,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Segment_3 &seg,
-	     const K & k)
+             const typename K::Segment_3 &seg,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
 }
@@ -114,7 +105,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Segment_3 &seg,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
 }
@@ -124,7 +115,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
              const typename K::Iso_cuboid_3 &ic,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
 }
@@ -134,7 +125,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Iso_cuboid_3 &ic,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
 }
@@ -144,7 +135,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
              const typename K::Sphere_3 &sp,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
 }
@@ -154,7 +145,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
 }
@@ -163,8 +154,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Tetrahedron_3 &sp,
-	     const K & k)
+             const typename K::Tetrahedron_3 &sp,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(sp, tet, tet[0], k);
 }
@@ -173,8 +164,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const CGAL::Bbox_3 &bb,
-	     const K & k)
+             const CGAL::Bbox_3 &bb,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
 }
@@ -184,7 +175,7 @@ inline
 typename K::Boolean
 do_intersect(const CGAL::Bbox_3 &bb,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
 }

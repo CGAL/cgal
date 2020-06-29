@@ -5,7 +5,7 @@
 int main(int argc, char** argv)
 {
   QApplication application(argc,argv);
- 
+
   application.setOrganizationDomain("inria.fr");
   application.setOrganizationName("INRIA");
   application.setApplicationName("3D Periodic Lloyd");

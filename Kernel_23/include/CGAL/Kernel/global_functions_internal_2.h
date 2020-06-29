@@ -1,28 +1,19 @@
-// Copyright (c) 2003-2010  
+// Copyright (c) 2003-2010
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),,
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_KERNEL_GLOBAL_FUNCTIONS_INTERNAL_2_H
 #define CGAL_KERNEL_GLOBAL_FUNCTIONS_INTERNAL_2_H
 
@@ -283,7 +274,7 @@ compare_angle_with_x_axis(const typename K::Direction_2& d1,
 template <class K, class T1, class T2, class T3>
 inline
 typename boost::enable_if<
-  boost::mpl::equal_to<boost::mpl::integral_c<int, 
+  boost::mpl::equal_to<boost::mpl::integral_c<int,
                                               Ambient_dimension<T1>::type::value>,
                        boost::mpl::integral_c<int, 2> >,
   typename K::Comparison_result>
@@ -298,7 +289,7 @@ compare_distance(const T1 &o1,
 template <class K, class T1, class T2, class T3, class T4>
 inline
 typename boost::enable_if<
-  boost::mpl::equal_to<boost::mpl::integral_c<int, 
+  boost::mpl::equal_to<boost::mpl::integral_c<int,
                                               Ambient_dimension<T1>::type::value>,
                        boost::mpl::integral_c<int, 2> >,
   typename K::Comparison_result>
@@ -345,27 +336,23 @@ template <class K>
 inline
 typename K::Comparison_result
 compare_signed_distance_to_line(const typename K::Point_2& p,
-				const typename K::Point_2& q,
-				const typename K::Point_2& r,
-				const typename K::Point_2& s,
-				const K& k)
+                                const typename K::Point_2& q,
+                                const typename K::Point_2& r,
+                                const typename K::Point_2& s,
+                                const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(p, q, r, s)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(p, q, s, r)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(p, q, r, s);
 }
 
 template <class K>
 inline
 typename K::Comparison_result
 compare_signed_distance_to_line(const typename K::Line_2& l,
-				const typename K::Point_2& p,
-				const typename K::Point_2& q,
-				const K& k)
+                                const typename K::Point_2& p,
+                                const typename K::Point_2& q,
+                                const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(l, p, q)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(l, q, p)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(l, p, q);
 }
 
 template < class K >
@@ -607,9 +594,9 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_distance_to_point(const typename K::Point_2 &p,
-			     const typename K::Point_2 &q,
-			     const typename K::Point_2 &r,
-			     const K& k)
+                             const typename K::Point_2 &q,
+                             const typename K::Point_2 &r,
+                             const K& k)
 {
   return k.less_distance_to_point_2_object()(p, r, q);
 }
@@ -629,9 +616,9 @@ template <class K>
 inline
 typename K::Boolean
 has_smaller_signed_distance_to_line(const typename K::Line_2& l,
-				    const typename K::Point_2& p,
-				    const typename K::Point_2& q,
-				    const K& k)
+                                    const typename K::Point_2& p,
+                                    const typename K::Point_2& q,
+                                    const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(l, p, q);
 }
@@ -640,9 +627,9 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_signed_distance_to_line(const typename K::Line_2& l,
-				   const typename K::Point_2& p,
-				   const typename K::Point_2& q,
-				   const K& k)
+                                   const typename K::Point_2& p,
+                                   const typename K::Point_2& q,
+                                   const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(l, q, p);
 }
@@ -651,10 +638,10 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_signed_distance_to_line(const typename K::Point_2& p,
-				   const typename K::Point_2& q,
-				   const typename K::Point_2& r,
-				   const typename K::Point_2& s,
-				   const K& k)
+                                   const typename K::Point_2& q,
+                                   const typename K::Point_2& r,
+                                   const typename K::Point_2& s,
+                                   const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(p, q, s, r);
 }
@@ -666,7 +653,7 @@ has_smaller_signed_distance_to_line(const typename K::Point_2& p,
                                     const typename K::Point_2& q,
                                     const typename K::Point_2& r,
                                     const typename K::Point_2& s,
-				    const K& k)
+                                    const K& k)
 {
   return k.less_signed_distance_to_line_2_object()(p, q, r, s);
 }

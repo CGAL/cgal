@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -47,13 +38,13 @@ class Sqrt_extension_bfi_cache {
   typedef std::pair<long , ROOT> Input;
   typedef BFI                    Output;
   typedef typename Coercion_traits<ROOT,BFI>::Cast Cast;
-  typedef typename Algebraic_structure_traits<BFI>::Sqrt Sqrt; 
+  typedef typename Algebraic_structure_traits<BFI>::Sqrt Sqrt;
 
   struct Creator : public CGAL::cpp98::unary_function<BFI,Input> {
     BFI operator()(const Input& pair){
-      return Sqrt()(Cast()(pair.second)); 
+      return Sqrt()(Cast()(pair.second));
     }
-  };    
+  };
 
 public:
   typedef Cache<Input,Output,Creator> Cache_type;
@@ -62,11 +53,11 @@ public:
   {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Cache_type, cache_);
     return cache_;
-  } 
+  }
 
 };
 
-} // namespace INTERN_SQRT_EXTENSION 
+} // namespace INTERN_SQRT_EXTENSION
 
 
 template <typename NT, typename ROOT, typename ACDE_TAG, typename FP_TAG>
@@ -102,12 +93,12 @@ convert_to_bfi(const CGAL::Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x) {
   CGAL_assertion(lower(result) == lower(result_));
   CGAL_assertion(upper(result) == upper(result_));
 #endif
-  return result; 
+  return result;
 }
 
-} // namespace CGAL 
+} // namespace CGAL
 
-#endif 
+#endif
 
 
 #endif  // CGAL_SQRT_EXTENSION_CONVERT_TO_BFI_H

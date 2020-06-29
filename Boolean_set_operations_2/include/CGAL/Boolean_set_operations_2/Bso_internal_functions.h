@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -97,7 +88,7 @@ inline OutputIterator _intersection(const Pgn1& pgn1, const Pgn2& pgn2,
 //@{
 
 template <class Traits>
-inline bool _is_empty (const typename Traits:: Polygon_2& pgn, Traits& tr) 
+inline bool _is_empty (const typename Traits:: Polygon_2& pgn, Traits& tr)
 {
   typedef typename Traits::Curve_const_iterator Curve_const_iterator;
   const std::pair<Curve_const_iterator, Curve_const_iterator>& itr_pair =
