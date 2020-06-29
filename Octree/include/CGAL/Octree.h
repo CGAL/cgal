@@ -83,9 +83,9 @@ namespace CGAL {
 
       const_iterator() : m_node(0) {}
 
-      const_iterator(Node *p, std::function<const Node *(const Node *)> next) : m_node(p), m_next(next) {}
+      const_iterator(const Node *p, std::function<const Node *(const Node *)> next) : m_node(p), m_next(next) {}
 
-      const_iterator(const_iterator const& other) : m_node(other.m_node), m_next(other.m_next) {}
+      const_iterator(const_iterator const &other) : m_node(other.m_node), m_next(other.m_next) {}
 
     private:
       friend class boost::iterator_core_access;
@@ -95,7 +95,6 @@ namespace CGAL {
       }
 
       void increment() {
-        // TODO: This will use a node traversal function
         m_node = m_next(m_node);
       }
 
@@ -213,9 +212,9 @@ namespace CGAL {
 
     const Node &root() const { return m_root; }
 
-    boost::iterator_range<const_iterator> nodes() {
-      Node * first = &m_root;
-      std::function<const Node *(const Node *)> next = CGAL::next_preorder<Node>;
+    boost::iterator_range<const_iterator>
+    nodes(const Node *first, std::function<const Node *(const Node *)> tree_walker) {
+      std::function<const Node *(const Node *)> next = tree_walker;
       return boost::make_iterator_range(const_iterator(first, next), const_iterator());
     }
 

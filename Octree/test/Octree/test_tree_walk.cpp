@@ -14,32 +14,6 @@ typedef CGAL::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
-Point_set create_example_point_collection() {
-
-  Point_set points;
-
-  points.insert({-1, -1, -1});
-  points.insert({1, -1, -1});
-  points.insert({-1, 1, -1});
-  points.insert({1, 1, -1});
-  points.insert({-1, -1, 1});
-  points.insert({1, -1, 1});
-  points.insert({-1, 1, 1});
-  points.insert({1, 1, 1});
-
-  points.insert({-1, -1, -1.1});
-  points.insert({-1, -1, -1.2});
-  points.insert({-1, -1, -1.3});
-  points.insert({-1, -1, -1.4});
-  points.insert({-1, -1, -1.5});
-  points.insert({-1, -1, -1.6});
-  points.insert({-1, -1, -1.7});
-  points.insert({-1, -1, -1.8});
-  points.insert({-1, -1, -1.9});
-
-  return points;
-}
-
 int test_preorder() {
 
   // Define the dataset
@@ -53,18 +27,20 @@ int test_preorder() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.nodes();
+  auto tree_walker = CGAL::Preorder();
+  auto first = tree_walker.first(&octree.root());
+  auto nodes = octree.nodes(first, tree_walker);
 
   for (auto &n : nodes)
     std::cout << n;
 
   // Check each item in the range
-
   auto iter = nodes.begin();
   assert(*iter == octree.root());
-
-  iter++;
-  assert(*iter == octree.root()[0]);
+  for (int i = 0; i < 8; ++i) {
+    iter++;
+    assert(*iter == octree.root()[i]);
+  }
 
   return 0;
 }
