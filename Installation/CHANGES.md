@@ -101,6 +101,10 @@ Release date: July 2020
      As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
      new code is backward compatible. However, it is recommended that all calls
      to the intersection functions are fixed to use the new return type.
+ -   Changed Make_x_monotone_2::operator()() return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+     to modern `boost::variant` in all traits concepts and models. As exaplained
+     above, the code is backward compatible. However, it is recommended that all
+     calls to Make_x_monotone_2::operator()() are fixed to use the new return type.
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.1/Manual/packages.html#PkgBooleanSetOperations2)
 
