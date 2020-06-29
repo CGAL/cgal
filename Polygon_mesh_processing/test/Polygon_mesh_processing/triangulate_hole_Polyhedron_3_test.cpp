@@ -97,7 +97,7 @@ CGAL::internal::Weight_min_max_dihedral_and_area
 }
 
 
-void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_t nb_remaining_holes) {
+void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_t nb_remaining_holes) { //don't test with cdt as we are testing the weights and there is no weight in the cdt version
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
   std::cout << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
@@ -129,7 +129,7 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_
 }
 /******************************************************************/
 
-void test_triangulate_hole(const char* file_name) {
+void test_triangulate_hole(const char* file_name, bool use_cdt) {
   std::cout << "test_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -138,7 +138,8 @@ void test_triangulate_hole(const char* file_name) {
 
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
+                                                    CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
     if(patch.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
       assert(false);
@@ -153,7 +154,7 @@ void test_triangulate_hole(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_hole_should_be_no_output(const char* file_name) {
+void test_triangulate_hole_should_be_no_output(const char* file_name, bool use_cdt) {
   std::cout << "test_triangulate_hole_should_be_no_output:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -164,7 +165,7 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
     std::vector<Facet_handle> patch;
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
       CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false)
-        .use_2d_constrained_delaunay_triangulation(false));
+        .use_2d_constrained_delaunay_triangulation(use_cdt));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
       assert(false);
@@ -181,7 +182,7 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_and_refine_hole(const char* file_name) {
+void test_triangulate_and_refine_hole(const char* file_name, bool use_cdt) {
   std::cout << "test_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -192,7 +193,8 @@ void test_triangulate_and_refine_hole(const char* file_name) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, *it,
-      back_inserter(patch_facets), back_inserter(patch_vertices));
+      back_inserter(patch_facets), back_inserter(patch_vertices),
+                                                               CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
@@ -208,7 +210,7 @@ void test_triangulate_and_refine_hole(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_refine_and_fair_hole(const char* file_name) {
+void test_triangulate_refine_and_fair_hole(const char* file_name, bool use_cdt) {
   std::cout << "test_triangulate_refine_and_fair_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -219,7 +221,8 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
-      *it, back_inserter(patch_facets), back_inserter(patch_vertices));
+      *it, back_inserter(patch_facets), back_inserter(patch_vertices),
+      CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
@@ -235,7 +238,7 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_ouput_iterators_triangulate_hole(const char* file_name) {
+void test_ouput_iterators_triangulate_hole(const char* file_name, bool use_cdt) {
   std::cout << "test_ouput_iterators_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -248,7 +251,8 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
   std::vector<Halfedge_handle>::iterator it_2 = border_reps_2.begin();
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
     std::vector<Facet_handle> patch;
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
+              CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
 
     std::vector<Facet_handle> patch_2 = patch;
     Facet_handle* output_it =
@@ -264,7 +268,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
+void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name, bool use_cdt) {
   std::cout << "test_ouput_iterators_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -279,7 +283,8 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
-      *it, back_inserter(patch_facets), back_inserter(patch_vertices));
+      *it, back_inserter(patch_facets), back_inserter(patch_vertices),
+      CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
     // create enough space to hold outputs
     std::vector<Facet_handle> patch_facets_2 = patch_facets;
     std::vector<Vertex_handle> patch_vertices_2 = patch_vertices;
@@ -287,7 +292,8 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
 
     std::pair<Facet_handle*, Vertex_handle*> output_its =
       CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2,
-        *it_2, &*patch_facets_2.begin(), &*patch_vertices_2.begin());
+        *it_2, &*patch_facets_2.begin(), &*patch_vertices_2.begin(),
+        CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch_facets.size() != (std::size_t) (output_its.first - &*patch_facets_2.begin())) {
       std::cout << "  Error: returned facet output iterator is not valid!" << std::endl;
@@ -324,7 +330,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
   CGAL::Polygon_mesh_processing::parameters::weight_calculator(
     CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
-    sparse_linear_solver(Default_solver()));
+    sparse_linear_solver(Default_solver()).use_2d_constrained_delaunay_triangulation(false));
 
   // default solver
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
@@ -367,18 +373,24 @@ int main() {
   input_files.push_back("data/mech-holes-shark.off");
   // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
-    test_triangulate_hole(it->c_str());
-    //todo: add the np to triangulate_and_refine()
-    test_triangulate_and_refine_hole(it->c_str());
-    test_triangulate_refine_and_fair_hole(it->c_str());
-    test_ouput_iterators_triangulate_and_refine_hole(it->c_str());
-    test_ouput_iterators_triangulate_hole(it->c_str());
+    test_triangulate_hole(it->c_str(), true);
+    test_triangulate_hole(it->c_str(), false);
+    test_triangulate_and_refine_hole(it->c_str(), true);
+    test_triangulate_and_refine_hole(it->c_str(), false);
+    test_triangulate_refine_and_fair_hole(it->c_str(), true);
+    test_triangulate_refine_and_fair_hole(it->c_str(), false);
+    test_ouput_iterators_triangulate_and_refine_hole(it->c_str(), true);
+    test_ouput_iterators_triangulate_and_refine_hole(it->c_str(), false);
+    test_ouput_iterators_triangulate_hole(it->c_str(), true);
+    test_ouput_iterators_triangulate_hole(it->c_str(), false);
     test_triangulate_hole_weight(it->c_str(), true, 0);
     test_triangulate_hole_weight(it->c_str(), false, 0);
     std::cout << "------------------------------------------------" << std::endl;
   }
-  test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
-  test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
+  test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off", true);
+  test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off", false);
+  test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off", true);
+  test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off", false);
 
   test_triangulate_refine_and_fair_hole_compile();
   std::cout << "All Done!" << std::endl;
