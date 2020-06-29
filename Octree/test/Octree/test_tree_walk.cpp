@@ -31,9 +31,6 @@ int test_preorder() {
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
-  for (auto &n : nodes)
-    std::cout << n;
-
   // Check each item in the range
   auto iter = nodes.begin();
   assert(*iter == octree.root());

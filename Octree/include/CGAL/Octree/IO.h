@@ -28,10 +28,11 @@ ostream &operator<<(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &no
   os << node.location()[1] << ",";
   os << node.location()[2] << ") ";
 
-  //  os << "location: " << node.location() << ", ";
+  // If a node has points, indicate how many
   if (!node.is_empty())
     os << "[" << node.num_points() << " points] ";
 
+  // If a node is a leaf, mark it
   os << (node.is_leaf() ? "[leaf] " : "");
 
   // Wrap information in brackets
@@ -44,9 +45,15 @@ template<class PointRange,
         class PointMap>
 ostream &operator<<(ostream &os, const CGAL::Octree<PointRange, PointMap> &octree) {
 
+  // Create a range of nodes
   auto tree_walker = CGAL::Preorder();
   auto first = tree_walker.first(&octree.root());
-  octree.print(os, first, tree_walker);
+  auto nodes = octree.nodes(first, tree_walker);
+
+  // Iterate over the range and print each node
+  for (auto &n : nodes)
+    os << n;
+
   return os;
 }
 
