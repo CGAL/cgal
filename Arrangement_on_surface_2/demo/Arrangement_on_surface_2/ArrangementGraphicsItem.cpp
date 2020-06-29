@@ -407,7 +407,7 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
     double src_x = CGAL::to_double(cc->source()->point().x());
     double tgt_x = CGAL::to_double(cc->target()->point().x());
 
-    if (src_x > tgt_x)
+    if (src_x < tgt_x)
     {
       for (auto& vec : points)
           for(auto& vit : vec)
@@ -415,8 +415,8 @@ void ArrangementGraphicsItem<Arr_>::paintFace(
     }
     else
     {
-      for (auto& vec : points)
-        for (auto vit = vec.rbegin(); vit != vec.rend(); ++vit)
+      for (auto vecit = points.rbegin(); vecit != points.rend(); ++vecit)
+        for (auto vit = vecit->rbegin(); vit != vecit->rend(); ++vit)
           pts.push_back({vit->first, vit->second});
     }
   } while (++cc != f->outer_ccb());
