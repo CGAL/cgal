@@ -367,6 +367,9 @@ public:
                                   sizing,
                                   approx,
                                   tag_index);
+    CGAL::Three::Three::getMutex()->lock();
+    CGAL::Three::Three::getWaitCondition()->wakeAll();
+    CGAL::Three::Three::getMutex()->unlock();
     Q_EMIT resultReady(new_mesh);
   }
 Q_SIGNALS:
@@ -509,7 +512,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
           [this, item, angle, sizing, approx, offset_value, index]
           (SMesh *new_mesh){
     QApplication::restoreOverrideCursor();
-    static_cast<MainWindow*>(mw)->lock_test_item(false);
+    CGAL::Three::Three::isLocked() = false;
     if(!new_mesh){
       return;
     }
@@ -548,7 +551,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   message_box->open();
 
   QApplication::setOverrideCursor(Qt::BusyCursor);
-  static_cast<MainWindow*>(mw)->lock_test_item(true);
+  CGAL::Three::Three::isLocked() = true;
   worker->start();
 }
 

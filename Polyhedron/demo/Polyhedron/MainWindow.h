@@ -459,7 +459,6 @@ public Q_SLOTS:
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
   void test_all_actions();
-  void lock_test_item(bool b);
 private:
   SubViewer* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;

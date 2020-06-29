@@ -167,6 +167,8 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   viewer_window = new SubViewer(ui->mdiArea, this, nullptr);
   viewer = viewer_window->viewer;
   CGAL::Three::Three::s_mainviewer = viewer;
+  CGAL::Three::Three::s_mutex = &mutex;
+  CGAL::Three::Three::s_wait_condition = &wait_condition;
   viewer->setObjectName("mainViewer");
   viewer_window->showMaximized();
   viewer_window->setWindowFlags(
@@ -3594,23 +3596,25 @@ void MainWindow::test_all_actions()
     Polyhedron_demo_plugin_interface* plugin = pnp.first;
     Q_FOREACH(QAction* action, plugin->actions()){
       if(plugin->applicable(action)){
-        qDebug()<<"Testing "<<pnp.second<<"...";
+        qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<"...";
+
         action->triggered();
+
         //wait until is_locked is false again. This shouldn't freeze the tests
         //because it should only be used when the work is done in another thread.
-        if(is_locked)
+        if(isLocked())
         {
-          mutex.lock();
-          std::cout<<"waiting..."<<std::endl;
-          wait_condition.wait(&mutex);
-          std::cout<<"coucou"<<std::endl;
-          mutex.unlock();
+          getMutex()->lock();
+          getWaitCondition()->wait(getMutex());
+          getMutex()->unlock();
+          //get the "done event" that add items after the meshing thread is finished to execute before we start the next action.
+          QCoreApplication::processEvents();
+
           // to not block the main event loop, we call
           // QCoreApplication::processEvents();
           //. Indeed, if we don't, the events are not processed, which means the signals are not received,
           //which means we never escape that loop because mesh_3 finishes its work in a slot.
         }
-        qDebug()<<" OK.";
         while(scene->numberOfEntries() > nb_items)
         {
           scene->erase(nb_items);
@@ -3628,16 +3632,6 @@ void MainWindow::test_all_actions()
     scene->erase(0);
 }
 
-void MainWindow::lock_test_item(bool b)
-{
-  std::cout<<"lock"<<std::endl;
-  if(!b)
-  {
-    std::cout<<"wakeAll()"<<std::endl;
-    wait_condition.wakeAll();
-  }
-  is_locked = b;
-}
 
 void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 {

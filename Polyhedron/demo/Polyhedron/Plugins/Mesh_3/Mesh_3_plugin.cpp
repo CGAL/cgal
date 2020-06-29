@@ -728,7 +728,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   // Launch thread
   source_item_ = item;
   source_item_name_ = item_name;
-  static_cast<MainWindow*>(mw)->lock_test_item(true);
+  CGAL::Three::Three::isLocked() = true;
 
   launch_thread(thread);
 
@@ -773,7 +773,6 @@ launch_thread(Meshing_thread* mesh_thread)
   // -----------------------------------
   // Launch mesher
   // -----------------------------------
-  std::cout<<"start thread."<<std::endl;
   mesh_thread->start();
 }
 
@@ -792,7 +791,6 @@ void
 Mesh_3_plugin::
 meshing_done(Meshing_thread* thread)
 {
-  std::cout<<"done"<<std::endl;
   // Print message in console
   QString str = QString("Meshing of \"%1\" done in %2s<br>")
     .arg(source_item_name_)
@@ -874,8 +872,7 @@ treat_result(Scene_item& source_item,
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }
-  std::cerr<<"FINI ! "<<std::endl;
-  static_cast<MainWindow*>(mw)->lock_test_item(false);
+  CGAL::Three::Three::isLocked() = false;
 }
 
 #include "Mesh_3_plugin.moc"
