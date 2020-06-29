@@ -176,7 +176,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
     tracer(out, pmesh, P_edges);
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-    if(use_cdt && triangulate_hole_polyline_with_cdt(P, tracer, k))
+    if(use_cdt && triangulate_hole_polyline_with_cdt(P, tracer, is_valid, k))
     {
       return std::make_pair(tracer.out, CGAL::internal::Weight_min_max_dihedral_and_area(0,0));
     }

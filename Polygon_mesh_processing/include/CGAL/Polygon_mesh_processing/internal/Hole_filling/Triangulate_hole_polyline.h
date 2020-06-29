@@ -1213,11 +1213,13 @@ public:
 template <
   typename PointRange, //need size()
   typename Tracer,
+  typename Validity_checker,
   typename Traits
 >
 bool
 triangulate_hole_polyline_with_cdt(const PointRange& points,
                           Tracer& tracer,
+                          const Validity_checker& is_valid,
                           const Traits& traits)
 {
   typedef typename Traits::FT FT;
@@ -1360,6 +1362,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
       }
       std::sort(is.begin(), is.end());
       lambda.put(is[0],is[2], is[1]);
+      if(!is_valid(P,is[0],is[1],is[2]))
+        return false;
     }
   }
 

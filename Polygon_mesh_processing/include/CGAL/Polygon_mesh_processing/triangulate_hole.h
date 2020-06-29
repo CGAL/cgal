@@ -384,10 +384,17 @@ bool use_dt3 =
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+    struct Always_valid{
+      bool operator()(std::vector<Point>&, int,int,int)
+      {return true;}
+    };
+    Always_valid is_valid;
+
     if(!use_cdt ||
        !triangulate_hole_polyline_with_cdt(
          points,
          tracer,
+         is_valid,
          choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits))))
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),

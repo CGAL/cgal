@@ -109,7 +109,7 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
     Weight w_algo = CGAL::Polygon_mesh_processing::internal::triangulate_hole_polygon_mesh(
-      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel(), false).second; //todo test with and without cdt
+      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel(), false).second;
     if(patch.empty()) { continue; }
     Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
 
@@ -361,7 +361,6 @@ void generate_elephant_with_hole()
 
 int main() {
   generate_elephant_with_hole();
-/*
   std::vector<std::string> input_files;
   input_files.push_back("elephant_triangle_hole.off");
   input_files.push_back("elephant_quad_hole.off");
@@ -369,6 +368,7 @@ int main() {
   // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole(it->c_str());
+    //todo: add the np to triangulate_and_refine()
     test_triangulate_and_refine_hole(it->c_str());
     test_triangulate_refine_and_fair_hole(it->c_str());
     test_ouput_iterators_triangulate_and_refine_hole(it->c_str());
@@ -377,7 +377,6 @@ int main() {
     test_triangulate_hole_weight(it->c_str(), false, 0);
     std::cout << "------------------------------------------------" << std::endl;
   }
-*/
   test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
   test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
 
