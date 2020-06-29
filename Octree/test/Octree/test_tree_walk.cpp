@@ -7,6 +7,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
+#include <CGAL/Octree/Octree_node_range.h>
+
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;

@@ -40,6 +40,7 @@
  */
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 #include <iostream>
 #include <fstream>
 #include <ostream>
@@ -63,15 +64,41 @@ namespace CGAL {
     // Define the Node based on this kernel
     typedef Octree_node<Kernel, PointRange> Node;
 
-    // Some other useful types
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
-    // New Types :
     typedef typename PointRange::iterator Range_iterator;
     typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-    // TODO: Kernel can be deduced from the point map
+
+  public: // Classes
+
+    class const_iterator :
+            public boost::iterator_facade<const_iterator, Node const, boost::forward_traversal_tag> {
+
+    public:
+
+      const_iterator() : m_node(0) {};
+
+      const_iterator(Node *p, std::function<const Node *(const Node *)> next) : m_node(p), m_next(next) {};
+
+    private:
+      friend class boost::iterator_core_access;
+
+      void increment() {
+        // TODO: This will use a node traversal function
+        std::cout << "Incrementing" << std::endl;
+      }
+
+      Node const &dereference() const { return *m_node; }
+
+    private:
+
+      Node const *m_node;
+
+      std::function<const Node *(const Node *)> m_next;
+
+    };
 
   private: // data members :
     Node m_root;                      /* root node of the octree */
@@ -87,6 +114,7 @@ namespace CGAL {
     std::vector<size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
 
   public: // functions :
+
     Octree(
             PointRange &pwn,
             PointMap &point_map,
@@ -210,7 +238,6 @@ namespace CGAL {
       return rhs.m_root == m_root;
     }
 
-
   private: // functions :
 
     Point compute_barycenter_position(Node &node) const {
@@ -263,6 +290,7 @@ namespace CGAL {
       Point center = compute_barycenter_position(node);
       reassign_points(node, node.points_begin(), node.points_end(), center);
     }
+
   }; // end class Octree
 
 } // namespace CGAL
