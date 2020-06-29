@@ -147,6 +147,8 @@ public:
   template <typename LabelIndexRange>
   void train (const LabelIndexRange& ground_truth)
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
 #if (CV_MAJOR_VERSION < 3)
     if (rtree != nullptr)
       delete rtree;

@@ -251,6 +251,8 @@ public:
               const std::vector<std::size_t>& hidden_layers
               = std::vector<std::size_t>())
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
     if (restart_from_scratch)
       clear();
 

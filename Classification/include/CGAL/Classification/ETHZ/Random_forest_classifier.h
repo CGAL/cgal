@@ -167,6 +167,8 @@ public:
               std::size_t num_trees = 25,
               std::size_t max_depth = 20)
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
     CGAL::internal::liblearning::RandomForest::ForestParams params;
     params.n_trees   = num_trees;
     params.max_depth = max_depth;

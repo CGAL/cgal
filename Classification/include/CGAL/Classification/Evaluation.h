@@ -120,6 +120,8 @@ public:
   void append (const GroundTruthIndexRange& ground_truth,
                const ResultIndexRange& result)
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+    CGAL_precondition (m_labels.is_valid_ground_truth (result));
 
     for (const auto& p : CGAL::make_range
            (boost::make_zip_iterator(boost::make_tuple(ground_truth.begin(), result.begin())),

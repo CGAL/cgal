@@ -77,6 +77,10 @@ int main (int argc, char** argv)
   Label_handle vegetation = labels.add ("vegetation");
   Label_handle roof = labels.add ("roof");
 
+  // Check if ground truth is valid for this label set
+  if (!labels.is_valid_ground_truth (pts.range(label_map), true))
+    return EXIT_FAILURE;
+
   std::vector<int> label_indices(pts.size(), -1);
 
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;

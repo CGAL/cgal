@@ -298,6 +298,8 @@ public:
   float train (const LabelIndexRange& ground_truth,
                unsigned int nb_tests = 300)
   {
+    CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
+
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
     std::size_t i = 0;

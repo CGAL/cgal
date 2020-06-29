@@ -264,6 +264,67 @@ public:
 
   /// @}
 
+  /// \name Validity
+  /// @{
+
+  /*!
+    \brief Checks the validity of the ground truth with respect to the
+    label set.
+
+    \param ground_truth range of label indices. This function checks
+    that all these indices are either -1 (for unclassified) or a valid
+    index of one of the labels. If at least one of the indices is out
+    of range, this function returns `false`, otherwise it returns
+    `true`.
+
+    \param verbose if set to `true`, the number of inliers of each
+    label, the number of unclassified items and the potential number
+    of out-of-range items are displayed. Otherwise, this function does
+    not display anything.
+  */
+  template <typename LabelIndexRange>
+  bool is_valid_ground_truth (const LabelIndexRange& ground_truth,
+                              bool verbose = false) const
+  {
+    std::vector<std::size_t> nb_inliers (m_labels.size() + 2, 0);
+    std::size_t total = 0;
+
+    for (const auto& gt : ground_truth)
+    {
+      int g = int(gt);
+      if (g == -1)
+        ++ nb_inliers[m_labels.size()];
+      else if (g >= int(m_labels.size()))
+      {
+        ++ nb_inliers[m_labels.size() + 1];
+        if (!verbose)
+          break;
+      }
+      else
+        ++ nb_inliers[std::size_t(gt)];
+      ++ total;
+    }
+
+    bool valid = (nb_inliers[m_labels.size() + 1] == 0);
+
+    if (verbose)
+    {
+      std::cout << "Ground truth is " << (valid ? "valid" : "invalid") << ":" << std::endl;
+      std::cout << " * " << nb_inliers[m_labels.size()] << " unclassified item(s) ("
+                << 100. * (nb_inliers[m_labels.size()] / double(total)) << "%)" << std::endl;
+      for (std::size_t i = 0; i < m_labels.size(); ++ i)
+        std::cout << " * " << nb_inliers[i] << " " << m_labels[i]->name() << " inlier(s) ("
+                  << 100. * (nb_inliers[i] / double(total)) << "%)" << std::endl;
+      if (!valid)
+        std::cout << " * " << nb_inliers[m_labels.size() + 1] << " item(s) with out-of-range index ("
+                  << 100. * (nb_inliers[m_labels.size() + 1] / double(total)) << "%)" << std::endl;
+    }
+
+    return valid;
+  }
+
+  /// @}
+
 };
 
 
