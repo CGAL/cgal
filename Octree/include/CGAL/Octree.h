@@ -213,21 +213,9 @@ namespace CGAL {
     const Node &root() const { return m_root; }
 
     boost::iterator_range<const_iterator>
-    nodes(const Node *first, std::function<const Node *(const Node *)> tree_walker) {
+    nodes(const Node *first, std::function<const Node *(const Node *)> tree_walker) const {
       std::function<const Node *(const Node *)> next = tree_walker;
       return boost::make_iterator_range(const_iterator(first, next), const_iterator());
-    }
-
-    void print(std::ostream &os, const Node *first, std::function<const Node *(const Node *)> tree_walker) const {
-
-      auto node = first;
-
-      while (nullptr != node) {
-
-        std::cout << node->depth();
-
-        node = tree_walker(node);
-      }
     }
 
     bool operator==(Octree<PointRange, PointMap> &rhs) {
