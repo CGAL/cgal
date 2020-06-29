@@ -76,7 +76,7 @@ public:
   std::atomic<bool>& interrupted() { return *m_interrupted; }
   void join()
   {
-    if (m_thread->joinable())
+    if (m_thread != nullptr)
       m_thread->join();
   }
 
