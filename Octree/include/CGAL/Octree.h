@@ -104,6 +104,12 @@ namespace CGAL {
        * \brief
        * \todo
        */
+      typedef typename Kernel::Vector_3 Vector;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
       /*!
@@ -247,8 +253,8 @@ namespace CGAL {
         // save octree attributes
         m_bbox_min = bbox.min();
         m_bbox_side = bbox.max()[0] - m_bbox_min[0];
-        m_root.points_begin() = pwn.begin();
-        m_root.points_end() = pwn.end();
+        m_root.begin() = pwn.begin();
+        m_root.end() = pwn.end();
       }
 
       /*!
@@ -410,8 +416,8 @@ namespace CGAL {
         // Root case: reached the last dimension
         if (dimension == 3) {
 
-          node[coord.to_ulong()].points_begin() = begin;
-          node[coord.to_ulong()].points_end() = end;
+          node[coord.to_ulong()].begin() = begin;
+          node[coord.to_ulong()].end() = end;
 
           return;
         }
@@ -437,7 +443,7 @@ namespace CGAL {
       void reassign_points(Node &node) {
 
         Point center = compute_barycenter_position(node);
-        reassign_points(node, node.points_begin(), node.points_end(), center);
+        reassign_points(node, node.begin(), node.end(), center);
       }
 
     }; // end class Octree
