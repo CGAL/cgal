@@ -932,9 +932,6 @@ public:
   */
   typedef Iterator_range<unspecified_type> Facet_handles;
 
-
-
-
   /// @}
 
   /// \name Types for Tagging Optional Features
