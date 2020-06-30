@@ -3596,12 +3596,11 @@ void MainWindow::test_all_actions()
     Polyhedron_demo_plugin_interface* plugin = pnp.first;
     Q_FOREACH(QAction* action, plugin->actions()){
       if(plugin->applicable(action)){
-        qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<"...";
-
+        if(scene->mainSelectionIndex() == -1)
+        qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<" on";
+        qDebug()<<scene->item(scene->mainSelectionIndex())->name()<<"...";
+        qDebug()<<scene->selectionIndices().size()<<" selected items.";
         action->triggered();
-
-        //wait until is_locked is false again. This shouldn't freeze the tests
-        //because it should only be used when the work is done in another thread.
         if(isLocked())
         {
           getMutex()->lock();
@@ -3609,17 +3608,13 @@ void MainWindow::test_all_actions()
           getMutex()->unlock();
           //get the "done event" that add items after the meshing thread is finished to execute before we start the next action.
           QCoreApplication::processEvents();
-
-          // to not block the main event loop, we call
-          // QCoreApplication::processEvents();
-          //. Indeed, if we don't, the events are not processed, which means the signals are not received,
-          //which means we never escape that loop because mesh_3 finishes its work in a slot.
         }
         while(scene->numberOfEntries() > nb_items)
         {
           scene->erase(nb_items);
         }
-
+        if(scene->numberOfEntries() == 0)
+          qDebug()<<"no item .";
         selectSceneItem(0);
         //if the item is hidden, the scene's bbox is 0 and that badly
         //messes with the offset meshing, for example.
