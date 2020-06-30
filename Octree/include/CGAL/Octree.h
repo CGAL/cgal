@@ -104,12 +104,6 @@ namespace CGAL {
        * \brief
        * \todo
        */
-      typedef typename Kernel::Vector_3 Vector;
-
-      /*!
-       * \brief
-       * \todo
-       */
       typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
       /*!
