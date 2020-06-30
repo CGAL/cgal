@@ -85,7 +85,8 @@ namespace CGAL {
 
         const_iterator() : m_node(0) {}
 
-        const_iterator(const Node *p, std::function<const Node *(const Node *)> next) : m_node(p), m_next(next) {}
+        const_iterator(const Node *p, const std::function<const Node *(const Node *)> &next) : m_node(p),
+                                                                                               m_next(next) {}
 
         const_iterator(const_iterator const &other) : m_node(other.m_node), m_next(other.m_next) {}
 
