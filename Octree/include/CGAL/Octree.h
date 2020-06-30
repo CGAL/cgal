@@ -107,7 +107,7 @@ namespace CGAL {
 
         Node const *m_node;
 
-        std::function<const Node *(const Node *)> m_next;
+        const std::function<const Node *(const Node *)> &m_next;
 
       };
 
