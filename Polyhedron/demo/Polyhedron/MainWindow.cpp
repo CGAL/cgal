@@ -3596,10 +3596,8 @@ void MainWindow::test_all_actions()
     Polyhedron_demo_plugin_interface* plugin = pnp.first;
     Q_FOREACH(QAction* action, plugin->actions()){
       if(plugin->applicable(action)){
-        if(scene->mainSelectionIndex() == -1)
         qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<" on";
         qDebug()<<scene->item(scene->mainSelectionIndex())->name()<<"...";
-        qDebug()<<scene->selectionIndices().size()<<" selected items.";
         action->triggered();
         if(isLocked())
         {
@@ -3613,13 +3611,12 @@ void MainWindow::test_all_actions()
         {
           scene->erase(nb_items);
         }
-        if(scene->numberOfEntries() == 0)
-          qDebug()<<"no item .";
         selectSceneItem(0);
         //if the item is hidden, the scene's bbox is 0 and that badly
         //messes with the offset meshing, for example.
         scene->item(scene->mainSelectionIndex())->setVisible(true);
         reloadItem();
+        selectSceneItem(0);
       }
     }
   }

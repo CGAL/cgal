@@ -36,7 +36,20 @@ public:
   {
     if(scene->mainSelectionIndex() != -1
        && scene->item(scene->mainSelectionIndex())->isFinite())
+    {
+      const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+      Scene_facegraph_item* item = qobject_cast<Scene_facegraph_item*>(scene->item(index));
+
+      Scene_polyhedron_selection_item* selection_item =
+        qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+      Scene_points_with_normal_item* point_set_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+      if(!item && !selection_item && !point_set_item)
+        return false;
       return true;
+    }
     return false;
   }
 
