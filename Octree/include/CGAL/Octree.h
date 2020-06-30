@@ -83,7 +83,7 @@ namespace CGAL {
 
       public:
 
-        const_iterator() : m_node(0) {}
+        const_iterator() : m_node(0), m_next(CGAL::Octree::Tree_walker::Preorder()) {}
 
         const_iterator(const Node *p, const std::function<const Node *(const Node *)> &next) : m_node(p),
                                                                                                m_next(next) {}
@@ -217,9 +217,8 @@ namespace CGAL {
       const Node &root() const { return m_root; }
 
       boost::iterator_range<const_iterator>
-      nodes(const Node *first, std::function<const Node *(const Node *)> tree_walker) const {
-        std::function<const Node *(const Node *)> next = tree_walker;
-        return boost::make_iterator_range(const_iterator(first, next), const_iterator());
+      nodes(const Node *first, const std::function<const Node *(const Node *)> &tree_walker) const {
+        return boost::make_iterator_range(const_iterator(first, tree_walker), const_iterator());
       }
 
       bool operator==(Octree<PointRange, PointMap> &rhs) {
