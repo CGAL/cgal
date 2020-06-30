@@ -1,4 +1,5 @@
 /// \defgroup PkgOctreeRef Octree Reference
+/// \defgroup PkgOctreeClasses Classes
 /// \defgroup PkgOctreeConcepts Concepts
 /// \ingroup PgkOctreeRef
 

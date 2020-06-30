@@ -53,38 +53,115 @@ namespace CGAL {
 
   namespace Octree {
 
-    template<class PointRange,
-            class PointMap>
+    /*!
+     * \ingroup PkgOctreeClasses
+     *
+     * \brief A short description ...
+     *
+     * \details A longer description ...
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+     *
+     * \tparam PointRange is a range type that provides random access iterators over the indices of a set of points.
+     * \tparam PointMap is a type that maps items in the PointRange to Point data
+     */
+    template<class PointRange, class PointMap>
     class Octree {
-    public: // types
+
+    public:
+
+      /// \name Types
+      /// @{
+
+      // TODO: Add doxygen documentation to all of these types
 
       // Deduce the kernel
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename boost::property_traits<PointMap>::value_type Point;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
       // Define the Node based on this kernel
+      /*!
+       * \brief
+       * \todo
+       */
       typedef Octree_node <Kernel, PointRange> Node;
 
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename Kernel::FT FT;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename Kernel::Vector_3 Vector;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename PointRange::iterator Range_iterator;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+
+      /// @}
 
     public: // Classes
 
+      /// \name Classes
+      /// @{
+
+      /*!
+       * \brief A short description ...
+       * \todo
+       */
       class const_iterator :
               public boost::iterator_facade<const_iterator, Node const, boost::forward_traversal_tag> {
 
       public:
 
+        /// \name Creation
+        /// @{
+
+        /*!
+         * \brief A short description
+         * \todo
+         */
         const_iterator() : m_node(0), m_next(CGAL::Octree::Tree_walker::Preorder()) {}
 
+        /*!
+         * \brief A short description
+         * \todo
+         */
         const_iterator(const Node *p, const std::function<const Node *(const Node *)> &next) : m_node(p),
                                                                                                m_next(next) {}
-
+        /*!
+         * \brief A short description
+         * \todo
+         */
         const_iterator(const_iterator const &other) : m_node(other.m_node), m_next(other.m_next) {}
+
+        /// @}
 
       private:
         friend class boost::iterator_core_access;
@@ -107,6 +184,8 @@ namespace CGAL {
 
       };
 
+      /// @}
+
     private: // data members :
 
       Node m_root;                      /* root node of the octree */
@@ -123,6 +202,18 @@ namespace CGAL {
 
     public: // functions :
 
+      /// \name Construction, Destruction
+      /// @{
+
+      /*!
+       * \brief
+       *
+       * \todo
+       *
+       * \param pwn
+       * \param point_map
+       * \param enlarge_ratio
+       */
       Octree(
               PointRange &pwn,
               PointMap &point_map,
@@ -166,10 +257,27 @@ namespace CGAL {
         m_root.points_end() = pwn.end();
       }
 
+      /*!
+       * \brief
+       *
+       * \todo
+       */
       ~Octree() {
         m_root.unsplit();
       }
 
+      /// @}
+
+      /// \name Tree Building
+      /// @{
+
+      /*!
+       * \brief Short description
+       *
+       * \todo
+       *
+       * \param split_criterion
+       */
       void refine(const std::function<bool(const Node &)> &split_criterion) {
 
         // create a side length map
@@ -205,19 +313,69 @@ namespace CGAL {
         }
       }
 
+      /*!
+       * \brief Short description
+       *
+       * \todo
+       *
+       * \param max_depth
+       * \param bucket_size
+       */
       void refine(size_t max_depth, size_t bucket_size) {
         refine(Split_to_max_depth_or_bucket_size(max_depth, bucket_size));
       }
 
+      /// @}
+
+      /// \name Accessors
+      /// @{
+
+      /*!
+       * \brief
+       *
+       * \todo
+       *
+       * \return
+       */
       Node &root() { return m_root; }
 
+      /*!
+       * \brief
+       *
+       * \todo
+       *
+       * \return
+       */
       const Node &root() const { return m_root; }
 
+      /*!
+       * \brief
+       *
+       * \todo
+       *
+       * \param first
+       * \param tree_walker
+       *
+       * \return
+       */
       boost::iterator_range <const_iterator>
       nodes(const Node *first, const std::function<const Node *(const Node *)> &tree_walker) const {
         return boost::make_iterator_range(const_iterator(first, tree_walker), const_iterator());
       }
 
+      /// @}
+
+      /// \name Operators
+      /// @{
+
+      /*!
+       * \brief
+       *
+       * \todo
+       *
+       * \param rhs
+       * \return
+       */
       bool operator==(Octree<PointRange, PointMap> &rhs) {
 
         // Identical trees should have the same bounding box
@@ -231,6 +389,9 @@ namespace CGAL {
         // If all else is equal, recursively compare the trees themselves
         return rhs.m_root == m_root;
       }
+
+      /// @}
+
 
     private: // functions :
 
