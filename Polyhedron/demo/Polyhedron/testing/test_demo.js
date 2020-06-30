@@ -81,7 +81,8 @@ testItem = "./testing/data/sphere.inr.gz";
 main_window.open(testItem, 'segmented images');
 scene.erase(0);
 
-testItem = "./testing/data/oni.las";
-main_window.open(testItem, 'las_plugin');
-scene.erase(0);
-
+if (typeof las_plugin !== "undefined") {
+    testItem = "./testing/data/oni.las";
+    main_window.open(testItem, 'las_plugin');
+    scene.erase(0);
+}
