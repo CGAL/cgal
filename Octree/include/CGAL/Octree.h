@@ -173,7 +173,7 @@ namespace CGAL {
         m_root.unsplit();
       }
 
-      void refine(std::function<bool(const Node &)> split_criterion) {
+      void refine(const std::function<bool(const Node &)> &split_criterion) {
 
         // create a side length map
         for (int i = 0; i <= (int) 10; i++)
