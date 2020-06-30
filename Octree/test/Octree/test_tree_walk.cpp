@@ -27,7 +27,7 @@ int test_preorder() {
   octree.refine(10, 1);
 
   // Create the range
-  auto tree_walker = CGAL::Octree::Preorder();
+  auto tree_walker = CGAL::Octree::Tree_walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 

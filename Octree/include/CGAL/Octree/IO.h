@@ -46,7 +46,7 @@ template<class PointRange,
 ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap> &octree) {
 
   // Create a range of nodes
-  auto tree_walker = CGAL::Octree::Preorder();
+  auto tree_walker = CGAL::Octree::Tree_walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
