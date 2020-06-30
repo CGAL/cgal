@@ -335,6 +335,9 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
   features_protection_available = false;
   if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
     auto& sm_items = poly_items->sm_items;
+    if(sm_items.empty()) {
+      return tr("ERROR: there must be at least one surface mesh item.");
+    }
     for (auto sm_item : sm_items) {
       if (nullptr == sm_item->polyhedron()) {
         return tr("ERROR: no data in selected item %1").arg(sm_item->name());
