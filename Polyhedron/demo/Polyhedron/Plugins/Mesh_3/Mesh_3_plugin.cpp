@@ -17,7 +17,6 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <fstream>
-#include "MainWindow.h"
 
 #include <gsl/pointers>
 

@@ -37,8 +37,6 @@
 
 #include <memory> // std::shared_ptr
 
-#include "MainWindow.h"
-
 namespace CGAL{
 
 template <class TriangleMesh, class GeomTraits>
@@ -512,8 +510,8 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
           [this, item, angle, sizing, approx, offset_value, index]
           (SMesh *new_mesh){
     QApplication::restoreOverrideCursor();
-    CGAL::Three::Three::isLocked() = false;
     if(!new_mesh){
+      CGAL::Three::Three::isLocked() = false;
       return;
     }
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(new_mesh);
@@ -529,7 +527,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     item->setVisible(false);
     CGAL::Three::Three::scene()->itemChanged(index);
     QApplication::restoreOverrideCursor();
-
+    CGAL::Three::Three::isLocked() = false;
   });
   QMessageBox* message_box = new QMessageBox(QMessageBox::NoIcon,
                                              "Meshing",
