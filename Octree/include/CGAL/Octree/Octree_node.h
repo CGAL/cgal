@@ -62,7 +62,6 @@ namespace CGAL {
       // New Types :
       typedef typename PointRange::iterator Range_iterator;
       typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-      // TODO: Kernel can be deduced from the point map
 
     private: // members :
 

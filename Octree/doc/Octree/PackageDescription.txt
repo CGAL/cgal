@@ -1,0 +1,14 @@
+/// \defgroup PkgOctreeRef Octree Reference
+
+/*!
+  \code
+   #include <CGAL/Octree.h>
+  \endcode
+*/
+/// \ingroup PkgOctreeRef
+
+
+/**
+@addtogroup PkgOctreeRef
+
+**/

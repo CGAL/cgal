@@ -34,10 +34,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 
-/*
- * These headers were not included here originally
- * Adding them was necessary to make this header self sufficient
- */
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -57,17 +53,28 @@ namespace CGAL {
 
   namespace Octree {
 
+    /**
+     * @ingroup PkgOctreeRef
+     *
+     * @brief Octree data structure
+     *
+     * @tparam PointRange
+     * @tparam PointMap
+     */
     template<class PointRange,
             class PointMap>
     class Octree {
     public: // types
+
+      /// \name Types
+      /// @{
 
       // Deduce the kernel
       typedef typename boost::property_traits<PointMap>::value_type Point;
       typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
       // Define the Node based on this kernel
-      typedef Octree_node<Kernel, PointRange> Node;
+      typedef Octree_node <Kernel, PointRange> Node;
 
       typedef typename Kernel::FT FT;
       typedef typename Kernel::Vector_3 Vector;
@@ -76,7 +83,12 @@ namespace CGAL {
       typedef typename PointRange::iterator Range_iterator;
       typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
+      /// @}
+
     public: // Classes
+
+      /// \name Classes
+      /// @{
 
       class const_iterator :
               public boost::iterator_facade<const_iterator, Node const, boost::forward_traversal_tag> {
@@ -111,6 +123,8 @@ namespace CGAL {
 
       };
 
+      /// @}
+
     private: // data members :
 
       Node m_root;                      /* root node of the octree */
@@ -122,10 +136,13 @@ namespace CGAL {
       Point m_bbox_min;                  /* input bounding box min value */
       FT m_bbox_side;              /* input bounding box side length (cube) */
 
-      std::vector<FT> m_side_per_depth;      /* side length per node's depth */
-      std::vector<size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
+      std::vector <FT> m_side_per_depth;      /* side length per node's depth */
+      std::vector <size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
 
     public: // functions :
+
+      /// \name Creation
+      /// @{
 
       Octree(
               PointRange &pwn,
@@ -133,6 +150,8 @@ namespace CGAL {
               const FT enlarge_ratio = 1.2) :
               m_ranges(pwn),
               m_points_map(point_map) {
+
+        /// @}
 
         // compute bounding box that encloses all points
         Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
@@ -180,7 +199,7 @@ namespace CGAL {
           m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 
         // Initialize a queue of nodes that need to be refined
-        std::queue<Node *> todo;
+        std::queue < Node * > todo;
         todo.push(&m_root);
 
         // Process items in the queue until it's consumed fully
@@ -216,7 +235,7 @@ namespace CGAL {
 
       const Node &root() const { return m_root; }
 
-      boost::iterator_range<const_iterator>
+      boost::iterator_range <const_iterator>
       nodes(const Node *first, const std::function<const Node *(const Node *)> &tree_walker) const {
         return boost::make_iterator_range(const_iterator(first, tree_walker), const_iterator());
       }
