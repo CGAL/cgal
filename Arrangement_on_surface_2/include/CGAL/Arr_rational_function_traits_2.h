@@ -819,8 +819,9 @@ public:
     /*! Subdivide a given rational-function curve into x-monotone subcurves
      * and insert them to a given output iterator.
      * \param cv the curve.
-     * \param oi the output iterator for the result. Its value type is a variant
-     *           that wraps Point_2 or X_monotone_curve_2 objects.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
      * \return the past-the-end iterator.
      */
     template <typename OutputIterator>

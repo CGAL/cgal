@@ -621,8 +621,9 @@ public:
      * a given output iterator. As segments are always x_monotone a single
      * object is inserted.
      * \param cv the curve.
-     * \param oi the output iterator for the result. Its value type is a variant
-     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
      * \return The past-the-end output iterator.
      */
     template <typename OutputIterator>

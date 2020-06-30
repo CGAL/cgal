@@ -1381,8 +1381,9 @@ public:
      * a given output iterator. As spherical_arcs are always x_monotone, only
      * one object will be contained in the iterator.
      * \param xc the curve.
-     * \param oi the output iterator for the result. Its value type is a variant
-     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
      * \return the past-the-end iterator.
      */
     template <typename OutputIterator>

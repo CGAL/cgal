@@ -1410,9 +1410,9 @@ public:
  * Functor that computes the intersections of two arcs
  */
 template < class CurvedKernelViaAnalysis_2 >
-class Intersect_2 : public
-Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
-
+class Intersect_2 :
+    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2>
+{
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
@@ -1420,13 +1420,17 @@ public:
     //! the base type
     typedef
     Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
-    Base;
+      Base;
 
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
 
+    typedef unsigned int                              Multiplicity;
+    typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+    typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+
     //! the result type
-    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
-    result_type;
+    typedef CGAL::cpp98::iterator<std::output_iterator_tag, Intersection_result>
+      result_type;
 
     //! the arity of the functor
 
@@ -1458,11 +1462,6 @@ public:
     template < class OutputIterator >
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
-
-      typedef unsigned int                              Multiplicity;
-      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
-
         CERR("\nintersect; cv1: " << cv1
              << ";\n cv2:" << cv2 << "");
 

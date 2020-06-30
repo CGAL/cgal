@@ -42,15 +42,26 @@ namespace internal {
  * Isolated points are stored as \c CurvedKernelViaAnalysis_2::Point_2 objects.
  *
  * The resulting arcs and points are written to the output iterator as
- * polymorphic \c CGAL::Object. Past-the-end value of the iterator is returned.
+ * polymorphic \c variant. Past-the-end value of the iterator is returned.
+ *
+ * EF: I believe that the inheritance from binary_function is not exploited,
+ *     and thus redundant, but I keep it anyway.
  */
 template < class CurvedKernelViaAnalysis_2,
            class ConstructArc_2 =
            typename CurvedKernelViaAnalysis_2::Construct_arc_2 >
 struct Make_x_monotone_2 :
-    public CGAL::cpp98::binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
-            CGAL::cpp98::iterator<std::output_iterator_tag, CGAL::Object>,
-            CGAL::cpp98::iterator<std::output_iterator_tag, CGAL::Object> > {
+    public CGAL::cpp98::binary_function<
+        typename CurvedKernelViaAnalysis_2::Curve_2,
+        CGAL::cpp98::iterator<std::output_iterator_tag,
+                              boost::variant<
+                                typename CurvedKernelViaAnalysis_2::Point_2,
+                                typename CurvedKernelViaAnalysis_2::Arc_2> >,
+        CGAL::cpp98::iterator<std::output_iterator_tag,
+                              boost::variant<
+                                typename CurvedKernelViaAnalysis_2::Point_2,
+                                typename CurvedKernelViaAnalysis_2::Arc_2> > >
+{
 
     //!\name Public types
     //!@{
@@ -114,8 +125,8 @@ struct Make_x_monotone_2 :
    * Splits a curve into x-monotone arcs and isolated points
    *
    * \param curve The input curve
-   * \param oi Output iterator that stores CGAL::Object, which either
-   *           encapsulates Point_2 or Arc_2
+   * \param oi the output iterator for the result. Its dereference type is a
+   *           variant that wraps a Point_2 or an X_monotone_curve_2 objects.
    * \return Past-the-end iterator of \c oi
    */
   template <typename OutputIterator>
@@ -269,8 +280,8 @@ private:
    * \param cv_line The event line in focus
    * \param x x-coordinate of event
    * \param pts Points at event line
-   * \param oi Output iterator that stores CGAL::Object, which either
-   *           encapsulates Point_2 or Arc_2
+   * \param oi the output iterator for the result. Its dereference type is a
+   *           variant that wraps a Point_2 or an X_monotone_curve_2 objects.
    * \return Past-the-end iterator of \c oi
    */
   template <class OutputIterator>
