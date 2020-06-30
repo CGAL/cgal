@@ -5,129 +5,131 @@
 
 namespace CGAL {
 
-  template<class Node>
-  const Node *next_sibling(const Node *n) {
-
-    // Passing null returns the first node
-    if (nullptr == n)
-      return nullptr;
-
-    // If this node has no parent, it has no siblings
-    if (nullptr == n->parent())
-      return nullptr;
-
-    // Find out which child this is
-    std::size_t index = n->index().to_ulong();
-
-    // Return null if this is the last child
-    if (7 == index)
-      return nullptr;
-
-    // Otherwise, return the next child
-    return &((*n->parent())[index + 1]);
-  }
-
-  template<class Node>
-  const Node *next_sibling_up(const Node *n) {
-
-    if (!n)
-      return nullptr;
-
-    auto up = n->parent();
-
-    while (nullptr != up) {
-
-      if (nullptr != next_sibling(up))
-        return next_sibling(up);
-
-      up = up->parent();
-    }
-
-    return nullptr;
-  }
-
-  template<class Node>
-  const Node *deepest_first_child(const Node *n) {
-
-    if (!n)
-      return nullptr;
-
-    // Find the deepest child on the left
-    auto first = n;
-    while (!first->is_leaf())
-      first = &(*first)[0];
-    return first;
-  }
-
-  struct Preorder {
+  namespace Octree {
 
     template<class Node>
-    const Node *first(const Node *root) {
-      return root;
+    const Node *next_sibling(const Node *n) {
+
+      // Passing null returns the first node
+      if (nullptr == n)
+        return nullptr;
+
+      // If this node has no parent, it has no siblings
+      if (nullptr == n->parent())
+        return nullptr;
+
+      // Find out which child this is
+      std::size_t index = n->index().to_ulong();
+
+      // Return null if this is the last child
+      if (7 == index)
+        return nullptr;
+
+      // Otherwise, return the next child
+      return &((*n->parent())[index + 1]);
     }
 
     template<class Node>
-    const Node *operator()(const Node *n) {
+    const Node *next_sibling_up(const Node *n) {
 
-      if (n->is_leaf()) {
+      if (!n)
+        return nullptr;
 
-        auto next = next_sibling(n);
+      auto up = n->parent();
 
-        if (nullptr == next) {
+      while (nullptr != up) {
 
-          return next_sibling_up(n);
-        }
+        if (nullptr != next_sibling(up))
+          return next_sibling(up);
 
-        return next;
-
-      } else {
-
-        // Return the first child of this node
-        return &(*n)[0];
+        up = up->parent();
       }
 
-    }
-  };
-
-  struct Postorder {
-
-    template<class Node>
-    const Node *first(const Node *root) {
-
-      return deepest_first_child(root);
+      return nullptr;
     }
 
     template<class Node>
-    const Node *operator()(const Node *n) {
+    const Node *deepest_first_child(const Node *n) {
 
-      auto next = deepest_first_child(next_sibling(n));
+      if (!n)
+        return nullptr;
 
-      if (!next)
-        next = n->parent();
-
-      return next;
-    }
-  };
-
-  struct Leaves {
-
-    template<class Node>
-    const Node *first(const Node *root) {
-
-      return deepest_first_child(root);
+      // Find the deepest child on the left
+      auto first = n;
+      while (!first->is_leaf())
+        first = &(*first)[0];
+      return first;
     }
 
-    template<class Node>
-    const Node *operator()(const Node *n) {
+    struct Preorder {
 
-      auto next = deepest_first_child(next_sibling(n));
+      template<class Node>
+      const Node *first(const Node *root) {
+        return root;
+      }
 
-      if (!next)
-        next = deepest_first_child(next_sibling_up(n));
+      template<class Node>
+      const Node *operator()(const Node *n) {
 
-      return next;
-    }
-  };
+        if (n->is_leaf()) {
+
+          auto next = next_sibling(n);
+
+          if (nullptr == next) {
+
+            return next_sibling_up(n);
+          }
+
+          return next;
+
+        } else {
+
+          // Return the first child of this node
+          return &(*n)[0];
+        }
+
+      }
+    };
+
+    struct Postorder {
+
+      template<class Node>
+      const Node *first(const Node *root) {
+
+        return deepest_first_child(root);
+      }
+
+      template<class Node>
+      const Node *operator()(const Node *n) {
+
+        auto next = deepest_first_child(next_sibling(n));
+
+        if (!next)
+          next = n->parent();
+
+        return next;
+      }
+    };
+
+    struct Leaves {
+
+      template<class Node>
+      const Node *first(const Node *root) {
+
+        return deepest_first_child(root);
+      }
+
+      template<class Node>
+      const Node *operator()(const Node *n) {
+
+        auto next = deepest_first_child(next_sibling(n));
+
+        if (!next)
+          next = deepest_first_child(next_sibling_up(n));
+
+        return next;
+      }
+    };
 
 
 //  class Tree_walker {
@@ -178,6 +180,9 @@ namespace CGAL {
 //
 //    }
 //  };
+
+  }
+
 }
 
 #endif //OCTREE_TREE_WALKER_CRITERION_H

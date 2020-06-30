@@ -44,149 +44,153 @@
 
 namespace CGAL {
 
-  template<class Kernel,
-          class PointRange>
-  class Octree_node {
+  namespace Octree {
 
-  public: // types :
+    template<class Kernel,
+            class PointRange>
+    class Octree_node {
 
-    typedef Octree_node<Kernel, PointRange> Node;
-    typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3 Point;
+    public: // types :
 
-    typedef std::array<uint32_t, 3> IntPoint;
-    typedef std::array<Node, 8> ChildList;
+      typedef Octree_node<Kernel, PointRange> Node;
+      typedef typename Kernel::FT FT;
+      typedef typename Kernel::Point_3 Point;
 
-    // New Types :
-    typedef typename PointRange::iterator Range_iterator;
-    typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-    // TODO: Kernel can be deduced from the point map
+      typedef std::array<uint32_t, 3> IntPoint;
+      typedef std::array<Node, 8> ChildList;
 
-  private: // members :
+      // New Types :
+      typedef typename PointRange::iterator Range_iterator;
+      typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+      // TODO: Kernel can be deduced from the point map
 
-    //Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
-    std::unique_ptr<ChildList> m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
+    private: // members :
 
-    Node *m_parent;    /* pointer the the single parent node. Root if NULL */
-    IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
-    uint8_t m_depth;    /* current depth inside the octree */
+      //Node *m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
+      std::unique_ptr<ChildList> m_children; /* pointer the the 8 possible child nodes. Leaf if NULL */
 
-    Range_iterator m_points_begin, m_points_end;
+      Node *m_parent;    /* pointer the the single parent node. Root if NULL */
+      IntPoint m_location;    /* integer location of current node (x,y,z) on the current depth grid */
+      uint8_t m_depth;    /* current depth inside the octree */
 
-  public: // functions :
+      Range_iterator m_points_begin, m_points_end;
 
-    Octree_node() :
-            m_children(),
-            m_parent(NULL),
-            m_location(IntPoint{0, 0, 0}),
-            m_depth(0) {}
+    public: // functions :
 
-    ~Octree_node() {
-      unsplit();
-    }
+      Octree_node() :
+              m_children(),
+              m_parent(NULL),
+              m_location(IntPoint{0, 0, 0}),
+              m_depth(0) {}
 
-    void unsplit() {
-      if (m_children != NULL) {
-        for (int i = 0; i < 8; i++)
-          (*m_children)[i].unsplit();
-
-        m_children.reset();
+      ~Octree_node() {
+        unsplit();
       }
-    }
 
-    void split() {
-      m_children = std::make_unique<ChildList>();
-      for (int child_id = 0; child_id < 8; child_id++) {
-        (*m_children)[child_id].set_parent(this);
-        (*m_children)[child_id].depth() = m_depth + 1;
+      void unsplit() {
+        if (m_children != NULL) {
+          for (int i = 0; i < 8; i++)
+            (*m_children)[i].unsplit();
 
-        for (int j = 0; j < 3; j++) {
-          (*m_children)[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
-        }
-      }
-    }
-
-    bool is_leaf() const { return (m_children == NULL); }
-
-    Node &operator[](int index) {
-      return (*m_children)[index];
-    }
-
-    const Node &operator[](int index) const {
-      return (*m_children)[index];
-    }
-
-    Range_iterator &points_begin() { return m_points_begin; }
-
-    const Range_iterator &points_begin() const { return m_points_begin; }
-
-    Range_iterator &points_end() { return m_points_end; }
-
-    const Range_iterator &points_end() const { return m_points_end; }
-
-    Node *parent() { return m_parent; }
-
-    const Node *parent() const { return m_parent; }
-
-    void set_parent(Node *parent) { m_parent = parent; }
-
-    size_t num_points() const {
-      return std::distance(m_points_begin, m_points_end);
-    }
-
-    bool is_empty() const { return (num_points() == 0); }
-
-    IntPoint &location() { return m_location; }
-
-    const IntPoint &location() const { return m_location; }
-
-    uint8_t &depth() { return m_depth; }
-
-    const uint8_t &depth() const { return m_depth; }
-
-    std::bitset<3> index() const {
-
-      std::bitset<3> result{};
-
-      result[0] = location()[0] & 1;
-      result[1] = location()[1] & 1;
-      result[2] = location()[2] & 1;
-
-      return result;
-    }
-
-    bool is_sibling(Node *neighbor) const {
-      return (m_parent == neighbor->parent());
-    }
-
-    bool operator==(Node &rhs) const {
-
-      // Compare the points they contain
-      // TODO
-
-      // If one node is a leaf, and the other isn't, they're not the same
-      if (is_leaf() != rhs.is_leaf())
-        return false;
-
-      // If both nodes are non-leaf nodes
-      if (!is_leaf()) {
-
-        // Check all the children
-        for (int i = 0; i < 8; ++i) {
-
-          // If any child cell is different, they're not the same
-          if (!((*m_children)[i] == rhs[i]))
-            return false;
+          m_children.reset();
         }
       }
 
-      // If both nodes are leaf nodes they must be identical (no check necessary)
+      void split() {
+        m_children = std::make_unique<ChildList>();
+        for (int child_id = 0; child_id < 8; child_id++) {
+          (*m_children)[child_id].set_parent(this);
+          (*m_children)[child_id].depth() = m_depth + 1;
 
-      // If all other checks pass, the two trees are identical
-      return true;
-    }
+          for (int j = 0; j < 3; j++) {
+            (*m_children)[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
+          }
+        }
+      }
 
-  }; // end class Octree_node
+      bool is_leaf() const { return (m_children == NULL); }
+
+      Node &operator[](int index) {
+        return (*m_children)[index];
+      }
+
+      const Node &operator[](int index) const {
+        return (*m_children)[index];
+      }
+
+      Range_iterator &points_begin() { return m_points_begin; }
+
+      const Range_iterator &points_begin() const { return m_points_begin; }
+
+      Range_iterator &points_end() { return m_points_end; }
+
+      const Range_iterator &points_end() const { return m_points_end; }
+
+      Node *parent() { return m_parent; }
+
+      const Node *parent() const { return m_parent; }
+
+      void set_parent(Node *parent) { m_parent = parent; }
+
+      size_t num_points() const {
+        return std::distance(m_points_begin, m_points_end);
+      }
+
+      bool is_empty() const { return (num_points() == 0); }
+
+      IntPoint &location() { return m_location; }
+
+      const IntPoint &location() const { return m_location; }
+
+      uint8_t &depth() { return m_depth; }
+
+      const uint8_t &depth() const { return m_depth; }
+
+      std::bitset<3> index() const {
+
+        std::bitset<3> result{};
+
+        result[0] = location()[0] & 1;
+        result[1] = location()[1] & 1;
+        result[2] = location()[2] & 1;
+
+        return result;
+      }
+
+      bool is_sibling(Node *neighbor) const {
+        return (m_parent == neighbor->parent());
+      }
+
+      bool operator==(Node &rhs) const {
+
+        // Compare the points they contain
+        // TODO
+
+        // If one node is a leaf, and the other isn't, they're not the same
+        if (is_leaf() != rhs.is_leaf())
+          return false;
+
+        // If both nodes are non-leaf nodes
+        if (!is_leaf()) {
+
+          // Check all the children
+          for (int i = 0; i < 8; ++i) {
+
+            // If any child cell is different, they're not the same
+            if (!((*m_children)[i] == rhs[i]))
+              return false;
+          }
+        }
+
+        // If both nodes are leaf nodes they must be identical (no check necessary)
+
+        // If all other checks pass, the two trees are identical
+        return true;
+      }
+
+    }; // end class Octree_node
+
+  }
 }
 
 #endif //OCTREE_OCTREE_NODE_H

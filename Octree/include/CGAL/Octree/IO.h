@@ -11,7 +11,7 @@
 using std::ostream;
 
 template<class Kernel, class PointRange>
-ostream &operator<<(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &node) {
+ostream &operator<<(ostream &os, const CGAL::Octree::Octree_node<Kernel, PointRange> &node) {
 
   // Show the depth of the node
   for (int i = 0; i < node.depth(); ++i)
@@ -43,10 +43,10 @@ ostream &operator<<(ostream &os, const CGAL::Octree_node<Kernel, PointRange> &no
 
 template<class PointRange,
         class PointMap>
-ostream &operator<<(ostream &os, const CGAL::Octree<PointRange, PointMap> &octree) {
+ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap> &octree) {
 
   // Create a range of nodes
-  auto tree_walker = CGAL::Preorder();
+  auto tree_walker = CGAL::Octree::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
