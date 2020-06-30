@@ -22,9 +22,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 \cgalPkgShortInfoBegin
 This is all placeholder information
 \cgalPkgSince{0.9}
-\cgalPkgDependsOn{\ref PkgTDS2}
 \cgalPkgBib{cgal:y-t2}
-\cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip,Regular Triangulation,regular_triangulation_2.zip,Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
 \cgalPkgShortInfoEnd
 

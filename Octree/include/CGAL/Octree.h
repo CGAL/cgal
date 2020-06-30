@@ -53,21 +53,10 @@ namespace CGAL {
 
   namespace Octree {
 
-    /**
-     * @ingroup PkgOctreeRef
-     *
-     * @brief Octree data structure
-     *
-     * @tparam PointRange
-     * @tparam PointMap
-     */
     template<class PointRange,
             class PointMap>
     class Octree {
     public: // types
-
-      /// \name Types
-      /// @{
 
       // Deduce the kernel
       typedef typename boost::property_traits<PointMap>::value_type Point;
@@ -83,12 +72,7 @@ namespace CGAL {
       typedef typename PointRange::iterator Range_iterator;
       typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
-      /// @}
-
     public: // Classes
-
-      /// \name Classes
-      /// @{
 
       class const_iterator :
               public boost::iterator_facade<const_iterator, Node const, boost::forward_traversal_tag> {
@@ -123,8 +107,6 @@ namespace CGAL {
 
       };
 
-      /// @}
-
     private: // data members :
 
       Node m_root;                      /* root node of the octree */
@@ -141,9 +123,6 @@ namespace CGAL {
 
     public: // functions :
 
-      /// \name Creation
-      /// @{
-
       Octree(
               PointRange &pwn,
               PointMap &point_map,
@@ -151,7 +130,6 @@ namespace CGAL {
               m_ranges(pwn),
               m_points_map(point_map) {
 
-        /// @}
 
         // compute bounding box that encloses all points
         Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
@@ -308,7 +286,6 @@ namespace CGAL {
       }
 
     }; // end class Octree
-
 
   } // namespace Octree
 
