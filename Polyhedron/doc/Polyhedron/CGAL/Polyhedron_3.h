@@ -914,6 +914,27 @@ public:
   */
   typedef unspecified_type Plane_iterator;
 
+  /*!
+    range type for iterating over all vertices, with a nested
+    type `iterator` that has as value type `Vertex_handle`
+  */
+  typedef Iterator_range<unspecified_type> Vertex_handles;
+
+  /*!
+    range type for iterating over all halfedges, with a nested
+    type `iterator` that has as value type `Halfedge_handle`
+  */
+  typedef Iterator_range<unspecified_type> Halfedge_handles;
+
+  /*!
+    range type for iterating over all facets, with a nested
+    type `iterator` that has as value type `Facet_handle`
+  */
+  typedef Iterator_range<unspecified_type> Facet_handles;
+
+
+
+
   /// @}
 
   /// \name Types for Tagging Optional Features
@@ -1097,6 +1118,13 @@ public:
   Vertex_iterator vertices_end();
 
   /*!
+  returns a range of iterators over vertices.
+  \note While the value type of `Vertex_iterator` is `Vertex`, the value type of
+        `All_vertex_handles::iterator` is `Vertex_handle`
+  */
+  Vertex_handles vertex_handles();
+
+  /*!
     iterator over all
     halfedges.
   */
@@ -1106,6 +1134,13 @@ public:
     past-the-end iterator.
   */
   Halfedge_iterator halfedges_end();
+
+ /*!
+  returns a range of iterators over halfedges.
+  \note While the value type of `Halfedge_iterator` is `Halfedge`, the value type of
+        `Halfedge_handles::iterator` is `Halfedge_handle`
+  */
+  Halfedge_handles halfedge_handles();
 
   /*!
     iterator over all facets
@@ -1117,6 +1152,13 @@ public:
     past-the-end iterator.
   */
   Facet_iterator facets_end();
+
+ /*!
+  returns a range of iterators over facets.
+  \note While the value type of `Facet_iterator` is `Vertex`, the value type of
+        `All_facet_handles::iterator` is `Facet_handle`
+  */
+  Facet_handles facet_handles();
 
   /*!
     iterator over all edges.
