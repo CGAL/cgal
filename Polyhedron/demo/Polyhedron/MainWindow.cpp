@@ -3285,6 +3285,11 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setTotalPass(nb);
   });
+
+  action = subviewer->findChild<QAction*>("actionScaleScene");
+  connect(action, &QAction::triggered,
+          viewer, &Viewer::scaleScene);
+
   action= subviewer->findChild<QAction*>("actionBackFrontShading");
   connect(action, SIGNAL(toggled(bool)),
           viewer, SLOT(setBackFrontShading(bool)));
@@ -3496,6 +3501,10 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionBackFrontShading->setCheckable(true);
   actionBackFrontShading->setChecked(false);
   viewMenu->addAction(actionBackFrontShading);
+
+  QAction* actionScaleScene = new QAction("&Scale the Scene...",this);
+  actionScaleScene->setObjectName("actionScaleScene");
+  viewMenu->addAction(actionScaleScene);
 
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);

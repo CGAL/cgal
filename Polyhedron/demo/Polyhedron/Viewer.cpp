@@ -46,8 +46,10 @@ public:
   bool clipping;
   bool projection_is_ortho;
   bool cam_sharing;
+  bool scene_scaling;
   GLfloat gl_point_size;
   QVector4D clipbox[6];
+  QVector3D scaler;
   QPainter *painter;
 
   // L i g h t i n g
@@ -117,6 +119,7 @@ public:
   {
     return shader_programs;
   }
+
 #ifdef CGAL_USE_WEBSOCKETS
   QWebSocket m_webSocket;
 #endif
@@ -292,6 +295,8 @@ void Viewer::doBindings()
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
   d->is_connected = false;
+  d->scene_scaling = false;
+  d->scaler = QVector3D(1,1,1);
 
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -830,9 +835,23 @@ void Viewer::postSelection(const QPoint& pixel)
     point = camera()->pointUnderPixel(pixel, found) - offset();
   }
   if(found) {
-    Q_EMIT selectedPoint(point.x,
-                         point.y,
-                         point.z);
+    QVector3D transformed_point(point.x,
+                                point.y,
+                                point.z);
+    if(d->scene_scaling)
+    {
+      transformed_point = QVector3D(
+            point.x+offset().x,
+            point.y+offset().y,
+            point.z+offset().z);
+      transformed_point = transformed_point/d->scaler;
+      transformed_point[0] -=offset().x ;
+      transformed_point[1] -=offset().y ;
+      transformed_point[2] -=offset().z ;
+    }
+    Q_EMIT selectedPoint(transformed_point.x(),
+                         transformed_point.y(),
+                         transformed_point.z());
     CGAL::qglviewer::Vec dir;
     CGAL::qglviewer::Vec orig;
     if(d->projection_is_ortho)
@@ -930,6 +949,10 @@ void Viewer::attribBuffers(int program_name) const {
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
+    if(d->scene_scaling){
+      mvp_mat.scale(d->scaler);
+      mv_mat.scale(d->scaler);
+    }
 
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
@@ -1129,7 +1152,7 @@ void Viewer::drawVisualHints()
     {
       d->textRenderer->addText(message_text);
     }
-    d->textRenderer->draw(this);
+    d->textRenderer->draw(this, d->scaler);
 
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
@@ -1551,20 +1574,19 @@ void Viewer_impl::showDistance(QPoint pixel)
         rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffer.release();
         vao.release();
-
         distance_is_displayed = true;
-        double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
+        double dist = std::sqrt((BPoint.x-APoint.x)/scaler.x()*(BPoint.x-APoint.x)/scaler.x() + (BPoint.y-APoint.y)/scaler.y()*(BPoint.y-APoint.y)/scaler.y() + (BPoint.z-APoint.z)/scaler.z()*(BPoint.z-APoint.z)/scaler.z());
         QFont font;
         font.setBold(true);
         TextItem *ACoord = new TextItem(float(APoint.x),
                                         float(APoint.y),
                                         float(APoint.z),
-                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("A(%1,%2,%3)").arg(APoint.x/scaler.x()-viewer->offset().x).arg(APoint.y/scaler.y()-viewer->offset().y).arg(APoint.z/scaler.z()-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(float(BPoint.x),
                                         float(BPoint.y),
                                         float(BPoint.z),
-                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("B(%1,%2,%3)").arg(BPoint.x/scaler.x()-viewer->offset().x).arg(BPoint.y/scaler.y()-viewer->offset().y).arg(BPoint.z/scaler.z()-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
@@ -1576,12 +1598,12 @@ void Viewer_impl::showDistance(QPoint pixel)
         Q_FOREACH(TextItem* ti, distance_text)
           textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
-                  .arg(APoint.x-viewer->offset().x)
-                  .arg(APoint.y-viewer->offset().y)
-                  .arg(APoint.z-viewer->offset().z)
-                  .arg(BPoint.x-viewer->offset().x)
-                  .arg(BPoint.y-viewer->offset().y)
-                  .arg(BPoint.z-viewer->offset().z)
+                  .arg(APoint.x/scaler.x()-viewer->offset().x)
+                  .arg(APoint.y/scaler.y()-viewer->offset().y)
+                  .arg(APoint.z/scaler.z()-viewer->offset().z)
+                  .arg(BPoint.x/scaler.x()-viewer->offset().x)
+                  .arg(BPoint.y/scaler.y()-viewer->offset().y)
+                  .arg(BPoint.z/scaler.z()-viewer->offset().z)
                   .arg(dist)));
     }
 
@@ -1950,6 +1972,26 @@ QVector4D* Viewer::clipBox() const
 bool Viewer::isClipping() const
 {
   return d->clipping;
+}
+
+void Viewer::scaleScene()
+{
+  CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
+  if(!d->scene_scaling)
+  {
+
+    d->scaler.setX(1.0/(bbox.xmax()-bbox.xmin()));
+    d->scaler.setY(1.0/(bbox.ymax()-bbox.ymin()));
+    d->scaler.setZ(1.0/(bbox.zmax()-bbox.zmin()));
+  }
+  else
+    d->scaler = QVector3D(1,1,1);
+
+  CGAL::qglviewer::Vec min(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      max(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((min+max)*0.5);
+  camera()->fitBoundingBox(min, max);
+  d->scene_scaling = !d->scene_scaling;
 }
 #ifdef CGAL_USE_WEBSOCKETS
 void Viewer::setShareCam(bool b, QString session)
