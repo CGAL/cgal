@@ -448,6 +448,52 @@ public:
 
   }
 
+  void get_Minkowski_result(Polygon_with_holes_2 polygon)
+  {
+    typename Polygon_2::Vertex_const_iterator vit;
+    m_bound_rect = false;
+    Point_2 pt;
+
+    int i=0;
+
+    for (vit = polygon.outer_boundary().vertices_begin(); vit != polygon.outer_boundary().vertices_end(); ++vit)
+    {
+      if(i==0)
+      {
+        pt =  *vit;
+
+        mP0 = Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
+        mState = PieceStarted;
+      }
+      else
+      {
+        pt =  *vit;
+
+        mState = PieceOngoing;
+
+        mP1 = Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
+        UpdateOngoingPiece();
+
+        mP1 = Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
+        mState = HandleOngoing;
+        HideHandle();
+        CommitOngoingPiece(Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y())));
+        mState   = PieceEnded;
+
+      }
+
+      i++;
+    }
+
+    mState   = PieceOngoing;
+
+    mP1 = Point(-90,-90);
+    UpdateOngoingPiece();
+
+    CommitCurrLinearPolygon();
+    ReStart();
+  }
+
   bool isboundingRect()
   {
     return m_bound_rect;
