@@ -95,6 +95,11 @@ namespace CGAL {
        */
       typedef Octree_node <Kernel, PointRange> Node;
 
+      /*!
+       * \brief A range that provides input-iterator access to the nodes of a tree
+       */
+      typedef boost::iterator_range <Walker_iterator<const Node>> Node_range;
+
       /// @}
 
       // TODO: These typedefs might not be kept
@@ -124,7 +129,7 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief
+       * \brief Create an octree from a collection of points
        *
        * \todo
        *
@@ -176,7 +181,7 @@ namespace CGAL {
       }
 
       /*!
-       * \brief
+       * \brief Delete an octree by recursively deleting all of its nodes
        *
        * \todo
        */
@@ -190,7 +195,7 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief Short description
+       * \brief Subdivide an octree's nodes and sub-nodes until it meets the given criteria
        *
        * \todo
        *
@@ -232,7 +237,7 @@ namespace CGAL {
       }
 
       /*!
-       * \brief Short description
+       * \brief Refine an octree using a max depth and max number of points in a node
        *
        * \todo
        *
@@ -276,9 +281,10 @@ namespace CGAL {
        *
        * \return
        */
-      boost::iterator_range <Walker_iterator<const Node>>
+      Node_range
       nodes(const Node *first, const std::function<const Node *(const Node *)> &tree_walker) const {
-        return boost::make_iterator_range(Walker_iterator<const Node>(first, tree_walker), Walker_iterator<const Node>());
+        return boost::make_iterator_range(Walker_iterator<const Node>(first, tree_walker),
+                                          Walker_iterator<const Node>());
       }
 
       /// @}
