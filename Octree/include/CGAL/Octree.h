@@ -72,8 +72,6 @@ namespace CGAL {
       /// \name Types
       /// @{
 
-      // TODO: Add doxygen documentation to all of these types
-
       // Deduce the kernel
       /*!
        * \brief

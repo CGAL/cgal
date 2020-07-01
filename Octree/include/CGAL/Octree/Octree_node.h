@@ -46,22 +46,69 @@ namespace CGAL {
 
   namespace Octree {
 
+    /*!
+     * \ingroup PkgOctreeClasses
+     *
+     * \brief A short description ...
+     *
+     * \details A longer description ...
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+     *
+     * \tparam Kernel
+     * \tparam PointRange
+     */
     template<class Kernel,
             class PointRange>
     class Octree_node {
 
     public: // types :
 
+      /// \name Types
+      /// @{
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef Octree_node<Kernel, PointRange> Node;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename Kernel::FT FT;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename Kernel::Point_3 Point;
 
+      /*!
+       * \brief
+       * \todo
+       */
       typedef std::array<uint32_t, 3> IntPoint;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef std::array<Node, 8> ChildList;
 
-      // New Types :
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename PointRange::iterator Range_iterator;
+
+      /*!
+       * \brief
+       * \todo
+       */
       typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+
+      /// @}
 
     private: // members :
 
@@ -76,16 +123,39 @@ namespace CGAL {
 
     public: // functions :
 
+      /// \name Construction, Destruction
+      /// @{
+
+      /*!
+       * \brief
+       *
+       * \todo
+       */
       Octree_node() :
               m_children(),
               m_parent(NULL),
               m_location(IntPoint{0, 0, 0}),
               m_depth(0) {}
 
+      /*!
+       * \brief
+       *
+       * \todo
+       */
       ~Octree_node() {
         unsplit();
       }
 
+      /// @}
+
+      /// \name Mutators
+      /// @{
+
+      /*!
+       * \brief
+       *
+       * \todo
+       */
       void unsplit() {
         if (m_children != NULL) {
           for (int i = 0; i < 8; i++)
@@ -95,6 +165,11 @@ namespace CGAL {
         }
       }
 
+      /*!
+       * \brief
+       *
+       * \todo
+       */
       void split() {
         m_children = std::make_unique<ChildList>();
         for (int child_id = 0; child_id < 8; child_id++) {
@@ -106,6 +181,11 @@ namespace CGAL {
           }
         }
       }
+
+      /// @}
+
+      /// \name Accessors
+      /// @{
 
       bool is_leaf() const { return (m_children == NULL); }
 
@@ -160,6 +240,19 @@ namespace CGAL {
         return (m_parent == neighbor->parent());
       }
 
+      /// @}
+
+      /// \name Operators
+      /// @{
+
+      /*!
+       * \brief
+       *
+       * \todo
+       *
+       * \param rhs
+       * \return
+       */
       bool operator==(Node &rhs) const {
 
         // Compare the points they contain
@@ -186,6 +279,8 @@ namespace CGAL {
         // If all other checks pass, the two trees are identical
         return true;
       }
+
+      /// @}
 
     }; // end class Octree_node
 
