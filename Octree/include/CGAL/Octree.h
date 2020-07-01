@@ -359,9 +359,9 @@ namespace CGAL {
        *
        * \return
        */
-      boost::iterator_range <const_iterator>
+      boost::iterator_range <Walker_iterator<const Node>>
       nodes(const Node *first, const std::function<const Node *(const Node *)> &tree_walker) const {
-        return boost::make_iterator_range(const_iterator(first, tree_walker), const_iterator());
+        return boost::make_iterator_range(Walker_iterator<const Node>(first, tree_walker), Walker_iterator<const Node>());
       }
 
       /// @}

@@ -2,6 +2,8 @@
 #ifndef OCTREE_WALKER_ITERATOR_H
 #define OCTREE_WALKER_ITERATOR_H
 
+#include <CGAL/Octree/Tree_walker_criterion.h>
+
 #include <boost/iterator/iterator_facade.hpp>
 
 namespace CGAL {
@@ -16,7 +18,7 @@ namespace CGAL {
 
   public:
 
-    Walker_iterator() : m_value(nullptr) {}
+    Walker_iterator() : m_value(nullptr), m_next(CGAL::Octree::Tree_walker::Preorder()) {}
 
     Walker_iterator(Value *first, const Walker_function &next) : m_value(first), m_next(next) {}
 
