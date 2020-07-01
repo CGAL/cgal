@@ -2306,6 +2306,11 @@ void MainWindow::on_actionPreferences_triggered()
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
 
+  connect(prefdiag.backFrontColor_pushButton, &QPushButton::clicked,
+          this, [](){
+    qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setBackFrontColors();
+  });
+
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
