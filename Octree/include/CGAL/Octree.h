@@ -56,10 +56,12 @@ namespace CGAL {
     /*!
      * \ingroup PkgOctreeClasses
      *
-     * \brief A short description ...
+     * \brief Class Octree is a data structure for efficient computations in 3D space.
      *
-     * \details A longer description ...
-     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+     * \details It builds a heirarchy of nodes which subdivide the space based on a collection of points.
+     * Each node represents an axis aligned cubic region of space.
+     * A node contains the range of points that are present in the region it defines,
+     * and it may contain eight other nodes which further subdivide the region.
      *
      * \tparam PointRange is a range type that provides random access iterators over the indices of a set of points.
      * \tparam PointMap is a type that maps items in the PointRange to Point data
