@@ -432,19 +432,19 @@ void split_along_edges(TriangleMesh& tm,
   *   \cgalParamBegin{face_index_map}
   *     a property map containing a unique index for each face of `tm` (`clipper`).
   *   \cgalParamEnd
-  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+  *   \cgalParamBegin{visitor} (`np_tm` only) a class model of `PMPCorefinementVisitor`
   *                            that is used to track the creation of new faces.
   *   \cgalParamEnd
-  *   \cgalParamBegin{throw_on_self_intersection} if `true`,
+  *   \cgalParamBegin{throw_on_self_intersection} (`np_tm` only) if `true`,
   *      the set of triangles closed to the intersection of `tm` and `clipper` will be
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.  Default value is `false`.
   *   \cgalParamEnd
-  *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
+  *   \cgalParamBegin{clip_volume} (`np_tm` only) if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e., `tm` will be kept closed). Default value is `false`.
   *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false`, the parts of `tm` coplanar with `clipper`
+  *   \cgalParamBegin{use_compact_clipper} (`np_tm` only) if `false`, the parts of `tm` coplanar with `clipper`
   *      will not be part of the output. Default value is `true`.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
@@ -638,6 +638,10 @@ bool clip(TriangleMesh& tm,
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
   *   \cgalParamEnd
+  *   \cgalParamBegin{do_not_modify} (`np_s` only) if `true`, `splitter` will not be modified. The default value is `false`.
+  *                                  An interesting property of this option is that when set to `true`,
+  *                                  `tm` is no longer required to be without self-intersection.
+  *   \cgalParamEnd
   * \cgalNamedParamsEnd
 */
 template <class TriangleMesh,
@@ -668,9 +672,11 @@ void split(TriangleMesh& tm,
   // create a constrained edge map and corefine input mesh with the splitter,
   // and mark edges
 
+  const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
+
   PMP::corefine(tm, splitter,
                 CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
-                CGAL::parameters::vertex_point_map(vpm_s));
+                CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges
   internal::split_along_edges(tm, ecm, vpm_tm);
