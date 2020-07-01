@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor userchaptertetrahedralremeshing
 
 \cgalAutoToc
-\authors Jane Tournois, Noura Faraj
+\authors Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
 \image html bimba_back.png
 \image latex bimba_back.png

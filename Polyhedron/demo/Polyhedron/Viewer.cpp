@@ -852,7 +852,7 @@ void Viewer::postSelection(const QPoint& pixel)
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)
 {
-  QStringList list = s.split(" ", QString::SkipEmptyParts);
+  QStringList list = s.split(" ", CGAL_QT_SKIP_EMPTY_PARTS);
   if(list.size() != 7)
     return false;
   float vec[3];
@@ -1422,7 +1422,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 {
   if(e->modifiers().testFlag(Qt::ShiftModifier))
   {
-    double delta = e->delta();
+    double delta = e->angleDelta().y();
     if(delta>0)
     {
       switch(camera()->type())
@@ -1781,7 +1781,7 @@ void Viewer::setLighting()
   connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
           [this, dialog]()
   {
-    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), QString::SkipEmptyParts);
+    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;
