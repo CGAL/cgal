@@ -12,9 +12,13 @@ namespace CGAL {
 
   public:
 
+    typedef std::function<Value *(Value *)> Walker_function;
+
+  public:
+
     Walker_iterator() : m_value(nullptr) {}
 
-    Walker_iterator(Value *value) : m_value(value) {}
+    Walker_iterator(Value *first, const Walker_function &next) : m_value(first), m_next(next) {}
 
   private:
     friend class boost::iterator_core_access;
@@ -24,16 +28,17 @@ namespace CGAL {
     }
 
     void increment() {
-      // TODO
+      m_value = m_next(m_value);
     }
 
     Value &dereference() const {
-      return m_value;
+      return *m_value;
     }
 
   private:
 
     Value *m_value;
+    const Walker_function &m_next;
   };
 
 }
