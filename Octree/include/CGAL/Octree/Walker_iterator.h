@@ -8,19 +8,56 @@
 
 namespace CGAL {
 
+  /*!
+   * \ingroup PkgOctreeClasses
+   *
+   * \brief
+   *
+   * \todo
+   *
+   * \tparam Value
+   */
   template<class Value>
   class Walker_iterator :
           public boost::iterator_facade<Walker_iterator<Value>, Value, boost::forward_traversal_tag> {
 
   public:
 
+    /// \name Types
+    /// @{
+
+    /*!
+     * \brief
+     *
+     * \todo
+     */
     typedef std::function<Value *(Value *)> Walker_function;
+
+    /// @}
 
   public:
 
+    /// \name Creation
+    /// @{
+
+    /*!
+     * \brief
+     *
+     * \todo
+     */
     Walker_iterator() : m_value(nullptr), m_next(CGAL::Octree::Tree_walker::Preorder()) {}
 
+    /*!
+     * \brief
+     *
+     * \todo
+     *
+     * \param first
+     * \param next
+     */
     Walker_iterator(Value *first, const Walker_function &next) : m_value(first), m_next(next) {}
+
+    /// @}
 
   private:
     friend class boost::iterator_core_access;
