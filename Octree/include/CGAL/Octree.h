@@ -127,66 +127,6 @@ namespace CGAL {
 
       /// @}
 
-    public: // Classes
-
-      /// \name Classes
-      /// @{
-
-      /*!
-       * \brief A short description ...
-       * \todo
-       */
-      class const_iterator :
-              public boost::iterator_facade<const_iterator, Node const, boost::forward_traversal_tag> {
-
-      public:
-
-        /// \name Creation
-        /// @{
-
-        /*!
-         * \brief A short description
-         * \todo
-         */
-        const_iterator() : m_node(0), m_next(CGAL::Octree::Tree_walker::Preorder()) {}
-
-        /*!
-         * \brief A short description
-         * \todo
-         */
-        const_iterator(const Node *p, const std::function<const Node *(const Node *)> &next) : m_node(p),
-                                                                                               m_next(next) {}
-        /*!
-         * \brief A short description
-         * \todo
-         */
-        const_iterator(const_iterator const &other) : m_node(other.m_node), m_next(other.m_next) {}
-
-        /// @}
-
-      private:
-        friend class boost::iterator_core_access;
-
-        bool equal(const_iterator const &other) const {
-          return m_node == other.m_node;
-        }
-
-        void increment() {
-          m_node = m_next(m_node);
-        }
-
-        Node const &dereference() const { return *m_node; }
-
-      private:
-
-        Node const *m_node;
-
-        const std::function<const Node *(const Node *)> &m_next;
-
-      };
-
-      /// @}
-
     private: // data members :
 
       Node m_root;                      /* root node of the octree */
