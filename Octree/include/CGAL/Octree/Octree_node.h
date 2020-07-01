@@ -49,7 +49,7 @@ namespace CGAL {
     /*!
      * \ingroup PkgOctreeClasses
      *
-     * \brief A short description ...
+     * \brief A class representing a single node of the tree. Alternatively referred to as a cell, octant, or subtree
      *
      * \details A longer description ...
      * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -70,24 +70,6 @@ namespace CGAL {
        * \brief
        * \todo
        */
-      typedef Octree_node<Kernel, PointRange> Node;
-
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename Kernel::FT FT;
-
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename Kernel::Point_3 Point;
-
-      /*!
-       * \brief
-       * \todo
-       */
       typedef std::array<uint32_t, 3> IntPoint;
 
       /*!
@@ -96,19 +78,15 @@ namespace CGAL {
        */
       typedef std::array<Node, 8> ChildList;
 
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename PointRange::iterator Range_iterator;
-
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-
       /// @}
+
+    private: // Private types
+
+      typedef Octree_node<Kernel, PointRange> Node;
+      typedef typename Kernel::FT FT;
+      typedef typename Kernel::Point_3 Point;
+      typedef typename PointRange::iterator Range_iterator;
+      typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
     private: // members :
 

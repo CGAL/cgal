@@ -24,10 +24,10 @@
 
 #include <CGAL/Octree/Octree_node.h>
 #include <CGAL/Octree/Split_criterion.h>
+#include <CGAL/Octree/Tree_walker_criterion.h>
 #include <CGAL/Octree/Walker_iterator.h>
 
 #include <CGAL/bounding_box.h>
-#include <boost/iterator/transform_iterator.hpp>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/aff_transformation_tags.h>
 
@@ -48,7 +48,6 @@
 #include <queue>
 #include <vector>
 #include <math.h>
-#include <CGAL/Octree/Tree_walker_criterion.h>
 
 namespace CGAL {
 
@@ -133,7 +132,7 @@ namespace CGAL {
       std::vector<FT> m_side_per_depth;      /* side length per node's depth */
       std::vector<size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
 
-    public: // functions :
+    public:
 
       /// \name Construction, Destruction
       /// @{
