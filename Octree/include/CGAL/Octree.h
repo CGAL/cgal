@@ -75,57 +75,34 @@ namespace CGAL {
       /// \name Types
       /// @{
 
-      // Deduce the kernel
       /*!
-       * \brief
-       * \todo
+       * \brief The point type is deduced from the type of the property map used
        */
       typedef typename boost::property_traits<PointMap>::value_type Point;
 
       /*!
-       * \brief
-       * \todo
+       * \brief The Kernel used is deduced from the point type
        */
       typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
-      // Define the Node based on this kernel
       /*!
-       * \brief
-       * \todo
-       */
-      typedef Octree_node <Kernel, PointRange> Node;
-
-      /*!
-       * \brief
-       * \todo
+       * \brief The floating point type is decided by the Kernel
        */
       typedef typename Kernel::FT FT;
 
       /*!
-       * \brief
-       * \todo
+       * \brief The Sub-tree / Octant type
        */
-      typedef typename Kernel::Vector_3 Vector;
-
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
-
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename PointRange::iterator Range_iterator;
-
-      /*!
-       * \brief
-       * \todo
-       */
-      typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+      typedef Octree_node <Kernel, PointRange> Node;
 
       /// @}
+
+      // TODO: These typedefs might not be kept
+      typedef typename Kernel::Vector_3 Vector;
+      typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
+      typedef typename PointRange::iterator Range_iterator;
+      typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
+
 
     private: // data members :
 
@@ -151,15 +128,15 @@ namespace CGAL {
        *
        * \todo
        *
-       * \param pwn
+       * \param point_range
        * \param point_map
        * \param enlarge_ratio
        */
       Octree(
-              PointRange &pwn,
+              PointRange &point_range,
               PointMap &point_map,
               const FT enlarge_ratio = 1.2) :
-              m_ranges(pwn),
+              m_ranges(point_range),
               m_points_map(point_map) {
 
 
@@ -194,8 +171,8 @@ namespace CGAL {
         // save octree attributes
         m_bbox_min = bbox.min();
         m_bbox_side = bbox.max()[0] - m_bbox_min[0];
-        m_root.begin() = pwn.begin();
-        m_root.end() = pwn.end();
+        m_root.begin() = point_range.begin();
+        m_root.end() = point_range.end();
       }
 
       /*!
