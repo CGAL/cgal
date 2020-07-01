@@ -162,10 +162,8 @@ namespace CGAL {
 
       /// @}
 
-      /// \name Accessors
+      /// \name Child Accessors
       /// @{
-
-      bool is_leaf() const { return (m_children == NULL); }
 
       Node &operator[](int index) {
         return (*m_children)[index];
@@ -175,6 +173,11 @@ namespace CGAL {
         return (*m_children)[index];
       }
 
+      /// @}
+
+      /// \name Content Accessors
+      /// @{
+
       Range_iterator &begin() { return m_points_begin; }
 
       const Range_iterator &begin() const { return m_points_begin; }
@@ -182,6 +185,13 @@ namespace CGAL {
       Range_iterator &end() { return m_points_end; }
 
       const Range_iterator &end() const { return m_points_end; }
+
+      /// @}
+
+      /// \name Property Accessors
+      /// @{
+
+      bool is_leaf() const { return (m_children == NULL); }
 
       Node *parent() { return m_parent; }
 
