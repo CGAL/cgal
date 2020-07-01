@@ -96,9 +96,19 @@ namespace CGAL {
       typedef Octree_node <Kernel, PointRange> Node;
 
       /*!
+       * \brief A function that determines whether a node needs to be split when refining a tree
+       */
+      typedef std::function<bool(const Node &)> Split_criterion;
+
+      /*!
        * \brief A range that provides input-iterator access to the nodes of a tree
        */
       typedef boost::iterator_range <Walker_iterator<const Node>> Node_range;
+
+      /*!
+       * \brief A function that determines the next node in a traversal given the current one
+       */
+      typedef std::function<const Node *(const Node *)> Node_walker;
 
       /// @}
 
@@ -201,7 +211,7 @@ namespace CGAL {
        *
        * \param split_criterion
        */
-      void refine(const std::function<bool(const Node &)> &split_criterion) {
+      void refine(const Split_criterion &split_criterion) {
 
         // create a side length map
         for (int i = 0; i <= (int) 10; i++)
@@ -237,7 +247,7 @@ namespace CGAL {
       }
 
       /*!
-       * \brief Refine an octree using a max depth and max number of points in a node
+       * \brief Refine an octree using a max depth and max number of points in a node as split criterion
        *
        * \todo
        *
@@ -282,7 +292,7 @@ namespace CGAL {
        * \return
        */
       Node_range
-      nodes(const Node *first, const std::function<const Node *(const Node *)> &tree_walker) const {
+      nodes(const Node *first, const Node_walker &tree_walker) const {
         return boost::make_iterator_range(Walker_iterator<const Node>(first, tree_walker),
                                           Walker_iterator<const Node>());
       }
