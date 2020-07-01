@@ -51,9 +51,9 @@ namespace CGAL {
      *
      * \brief A class representing a single node of the tree. Alternatively referred to as a cell, octant, or subtree
      *
-     * \details A longer description ...
-     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+     * \details \todo The role of the Node isn't fully stable yet
      *
+     * \todo Template parameters may be changed in the future
      * \tparam Kernel
      * \tparam PointRange
      */
@@ -67,13 +67,15 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief
-       * \todo
+       * \brief The indices of this node at various levels of the tree, condensed to integer types
+       *
+       * \todo This warrants further explanation
        */
       typedef std::array<uint32_t, 3> IntPoint;
 
       /*!
-       * \brief
+       * \brief A list of sub-nodes
+       *
        * \todo
        */
       typedef std::array<Node, 8> ChildList;
@@ -116,7 +118,7 @@ namespace CGAL {
               m_depth(0) {}
 
       /*!
-       * \brief
+       * \brief Delete a node by recursively deleting all of its children
        *
        * \todo
        */
@@ -130,9 +132,9 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief
+       * \brief Eliminate this node's children, making it a leaf node
        *
-       * \todo
+       * \todo This might not be less necessary because of my use of smart pointers
        */
       void unsplit() {
         if (m_children != NULL) {
@@ -144,7 +146,7 @@ namespace CGAL {
       }
 
       /*!
-       * \brief
+       * \brief Split a node into subnodes
        *
        * \todo
        */
@@ -234,7 +236,7 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief
+       * \brief Compares the topology of a pair of nodes
        *
        * \todo
        *
