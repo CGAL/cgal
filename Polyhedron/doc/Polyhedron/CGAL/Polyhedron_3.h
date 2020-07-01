@@ -1117,7 +1117,7 @@ public:
   /*!
   returns a range of iterators over vertices.
   \note While the value type of `Vertex_iterator` is `Vertex`, the value type of
-        `All_vertex_handles::iterator` is `Vertex_handle`
+        `Vertex_handles::iterator` is `Vertex_handle`
   */
   Vertex_handles vertex_handles();
 
@@ -1153,7 +1153,7 @@ public:
  /*!
   returns a range of iterators over facets.
   \note While the value type of `Facet_iterator` is `Vertex`, the value type of
-        `All_facet_handles::iterator` is `Facet_handle`
+        `Facet_handles::iterator` is `Facet_handle`
   */
   Facet_handles facet_handles();
 

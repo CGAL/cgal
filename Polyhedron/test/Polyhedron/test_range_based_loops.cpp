@@ -62,7 +62,7 @@ void test_range_based_loops(){
         Halfedge_iterator hhitr = P.halfedges_begin();
         for(Halfedge_handle const & hh: P.halfedge_handles()){
             ++hhitr;
-         }
+        }
         assert(hhitr == P.halfedges_end());
     }
 
