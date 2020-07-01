@@ -730,7 +730,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   // Launch thread
   source_item_ = item;
   source_item_name_ = item_name;
+  CGAL::Three::Three::getMutex()->lock();
   CGAL::Three::Three::isLocked() = true;
+  CGAL::Three::Three::getMutex()->unlock();
 
   launch_thread(thread);
 
@@ -874,7 +876,9 @@ treat_result(Scene_item& source_item,
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }
+  CGAL::Three::Three::getMutex()->lock();
   CGAL::Three::Three::isLocked() = false;
+  CGAL::Three::Three::getMutex()->unlock();
 }
 
 #include "Mesh_3_plugin.moc"

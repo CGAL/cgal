@@ -3604,14 +3604,17 @@ void MainWindow::test_all_actions()
         qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<" on";
         qDebug()<<scene->item(scene->mainSelectionIndex())->name()<<"...";
         action->triggered();
+        getMutex()->lock();
         if(isLocked())
         {
+          getMutex()->unlock();
           getMutex()->lock();
           getWaitCondition()->wait(getMutex());
           getMutex()->unlock();
           //get the "done event" that add items after the meshing thread is finished to execute before we start the next action.
           QCoreApplication::processEvents();
         }
+        getMutex()->unlock();
         while(scene->numberOfEntries() > nb_items)
         {
           scene->erase(nb_items);
