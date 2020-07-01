@@ -63,6 +63,8 @@ namespace CGAL {
 
     public: // types :
 
+      typedef Octree_node<Kernel, PointRange> Node;
+
       /// \name Types
       /// @{
 
@@ -84,7 +86,6 @@ namespace CGAL {
 
     private: // Private types
 
-      typedef Octree_node<Kernel, PointRange> Node;
       typedef typename Kernel::FT FT;
       typedef typename Kernel::Point_3 Point;
       typedef typename PointRange::iterator Range_iterator;
@@ -111,11 +112,16 @@ namespace CGAL {
        *
        * \todo
        */
-      Octree_node() :
+      Octree_node(Node *parent = nullptr) :
               m_children(),
-              m_parent(NULL),
+              m_parent(parent),
               m_location(IntPoint{0, 0, 0}),
-              m_depth(0) {}
+              m_depth(0) {
+
+        if (parent)
+          m_depth = parent->depth() + 1;
+
+      }
 
       /*!
        * \brief Delete a node by recursively deleting all of its children
@@ -153,11 +159,12 @@ namespace CGAL {
       void split() {
         m_children = std::make_unique<ChildList>();
         for (int child_id = 0; child_id < 8; child_id++) {
-          (*m_children)[child_id].set_parent(this);
-          (*m_children)[child_id].depth() = m_depth + 1;
+
+          (*m_children)[child_id].m_parent = this;
+          (*m_children)[child_id].m_depth = m_depth + 1;
 
           for (int j = 0; j < 3; j++) {
-            (*m_children)[child_id].location()[j] = 2 * m_location[j] + ((child_id >> j) & 1);
+            (*m_children)[child_id].m_location[j] = 2 * m_location[j] + ((child_id >> j) & 1);
           }
         }
       }
