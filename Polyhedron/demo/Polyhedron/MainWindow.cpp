@@ -371,6 +371,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+    widget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
     ui->menuDockWindows->addAction(widget->toggleViewAction());
   }
   ui->menuDockWindows->removeAction(ui->dummyAction);
