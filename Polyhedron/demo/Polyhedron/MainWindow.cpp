@@ -1594,6 +1594,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             has_stats = true;
         }
         QMenu menu;
+        menu.addAction(actionAddToGroup);
+        menu.insertSeparator(0);
         Q_FOREACH(QString name, menu_actions.keys())
         {
           if(name == QString("alpha slider")
@@ -2594,6 +2596,10 @@ void MainWindow::makeNewGroup()
 {
   Scene_group_item * group = new Scene_group_item();
   scene->addItem(group);
+  for(Scene::Item_id id : scene->selectionIndices())
+  {
+    scene->changeGroup(scene->item(id), group);
+  }
 }
 
 void MainWindow::on_upButton_pressed()
