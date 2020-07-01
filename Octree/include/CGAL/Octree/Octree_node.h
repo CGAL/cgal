@@ -202,11 +202,7 @@ namespace CGAL {
 
       bool is_leaf() const { return (m_children == NULL); }
 
-      Node *parent() { return m_parent; }
-
       const Node *parent() const { return m_parent; }
-
-      void set_parent(Node *parent) { m_parent = parent; }
 
       size_t num_points() const {
         return std::distance(m_points_begin, m_points_end);
@@ -214,11 +210,7 @@ namespace CGAL {
 
       bool is_empty() const { return (num_points() == 0); }
 
-      IntPoint &location() { return m_location; }
-
       const IntPoint &location() const { return m_location; }
-
-      uint8_t &depth() { return m_depth; }
 
       const uint8_t &depth() const { return m_depth; }
 
@@ -245,7 +237,7 @@ namespace CGAL {
       /*!
        * \brief Compares the topology of a pair of nodes
        *
-       * \todo
+       * \todo Maybe this should compare more than just the topology
        *
        * \param rhs
        * \return
