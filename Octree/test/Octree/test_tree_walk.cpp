@@ -79,7 +79,6 @@ int test_preorder_25_nodes() {
   // Create the octree
   Octree octree(points, point_map);
   octree.refine(10, 1);
-  std::cout << octree;
 
   // Create the range
   auto tree_walker = CGAL::Octree::Tree_walker::Preorder();

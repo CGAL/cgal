@@ -72,7 +72,7 @@ namespace CGAL {
 
     public:
 
-      /// \name Types
+      /// \name Public Types
       /// @{
 
       /*!
@@ -93,7 +93,7 @@ namespace CGAL {
       /*!
        * \brief The Sub-tree / Octant type
        */
-      typedef Octree_node <Kernel, PointRange> Node;
+      typedef Octree_node<Kernel, PointRange> Node;
 
       /*!
        * \brief A function that determines whether a node needs to be split when refining a tree
@@ -103,7 +103,7 @@ namespace CGAL {
       /*!
        * \brief A range that provides input-iterator access to the nodes of a tree
        */
-      typedef boost::iterator_range <Walker_iterator<const Node>> Node_range;
+      typedef boost::iterator_range<Walker_iterator<const Node>> Node_range;
 
       /*!
        * \brief A function that determines the next node in a traversal given the current one
@@ -112,12 +112,12 @@ namespace CGAL {
 
       /// @}
 
-      // TODO: These typedefs might not be kept
+    private: // Private types
+
       typedef typename Kernel::Vector_3 Vector;
       typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
       typedef typename PointRange::iterator Range_iterator;
       typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-
 
     private: // data members :
 
@@ -130,8 +130,8 @@ namespace CGAL {
       Point m_bbox_min;                  /* input bounding box min value */
       FT m_bbox_side;              /* input bounding box side length (cube) */
 
-      std::vector <FT> m_side_per_depth;      /* side length per node's depth */
-      std::vector <size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
+      std::vector<FT> m_side_per_depth;      /* side length per node's depth */
+      std::vector<size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
 
     public: // functions :
 
@@ -218,7 +218,7 @@ namespace CGAL {
           m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 
         // Initialize a queue of nodes that need to be refined
-        std::queue < Node * > todo;
+        std::queue<Node *> todo;
         todo.push(&m_root);
 
         // Process items in the queue until it's consumed fully
@@ -264,7 +264,7 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief
+       * \brief Provides read and write access to the root node, and by extension the rest of the tree
        *
        * \todo
        *
@@ -273,7 +273,7 @@ namespace CGAL {
       Node &root() { return m_root; }
 
       /*!
-       * \brief
+       * \brief Provides read-only access to the root node, and by extension the rest of the tree
        *
        * \todo
        *
@@ -282,7 +282,7 @@ namespace CGAL {
       const Node &root() const { return m_root; }
 
       /*!
-       * \brief
+       * \brief Constructs an input range of nodes from a tree walker function
        *
        * \todo
        *
@@ -291,8 +291,7 @@ namespace CGAL {
        *
        * \return
        */
-      Node_range
-      nodes(const Node *first, const Node_walker &tree_walker) const {
+      Node_range nodes(const Node *first, const Node_walker &tree_walker) const {
         return boost::make_iterator_range(Walker_iterator<const Node>(first, tree_walker),
                                           Walker_iterator<const Node>());
       }
@@ -303,7 +302,7 @@ namespace CGAL {
       /// @{
 
       /*!
-       * \brief
+       * \brief Compares the topology of a pair of Octrees
        *
        * \todo
        *
