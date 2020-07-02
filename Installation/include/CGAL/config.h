@@ -36,7 +36,7 @@
 #  define WIN64
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
 #endif
 
