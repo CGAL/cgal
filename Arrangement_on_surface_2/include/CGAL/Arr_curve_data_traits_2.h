@@ -136,15 +136,14 @@ public:
       // Attach the data to each of the resulting x-monotone curves.
       X_monotone_curve_data xdata = Convert()(cv.data());
       for (const auto& base_obj : base_objects) {
-        const Base_x_monotone_curve_2* base_xcv =
-          boost::get<Base_x_monotone_curve_2>(&base_obj);
-        if (base_xcv != nullptr) {
-          *oi++ = Make_x_monotone_result(X_monotone_curve_2(*base_xcv, xdata));
+        if (const auto* bxcv = boost::get<Base_x_monotone_curve_2>(&base_obj)) {
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(*bxcv, xdata));
           continue;
         }
         // Current object is an isolated point: Leave it as is.
-        CGAL_assertion(boost::get<Point_2>(&base_obj) != nullptr);
-        *oi++ = base_obj;
+        const auto* bp = boost::get<Point_2>(&base_obj);
+        CGAL_assertion(bp);
+        *oi++ = Make_x_monotone_result(*bp);
       }
 
       return oi;
