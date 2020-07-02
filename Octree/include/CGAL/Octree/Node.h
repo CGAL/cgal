@@ -65,6 +65,8 @@ namespace CGAL {
           return (*m_children)[index];
         }
 
+        const Node<Value> *parent() const { return m_parent; }
+
         const uint8_t &depth() const { return m_depth; }
 
         bool is_leaf() const { return (!m_children); }

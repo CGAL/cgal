@@ -23,6 +23,7 @@
 #define CGAL_OCTREE_3_H
 
 #include <CGAL/Octree/Octree_node.h>
+#include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Split_criterion.h>
 #include <CGAL/Octree/Tree_walker_criterion.h>
 #include <CGAL/Octree/Walker_iterator.h>
@@ -89,10 +90,12 @@ namespace CGAL {
        */
       typedef typename Kernel::FT FT;
 
+      typedef boost::iterator_range<typename PointRange::iterator> Points_iterator_range;
       /*!
        * \brief The Sub-tree / Octant type
        */
-      typedef Octree_node<Kernel, PointRange> Node;
+      typedef Node::Node<Points_iterator_range> Node;
+//      typedef Octree_node<Kernel, PointRange> Node;
 
       /*!
        * \brief A function that determines whether a node needs to be split when refining a tree
@@ -185,17 +188,7 @@ namespace CGAL {
         // save octree attributes
         m_bbox_min = bbox.min();
         m_bbox_side = bbox.max()[0] - m_bbox_min[0];
-        m_root.begin() = point_range.begin();
-        m_root.end() = point_range.end();
-      }
-
-      /*!
-       * \brief Delete an octree by recursively deleting all of its nodes
-       *
-       * \todo
-       */
-      ~Octree() {
-        m_root.unsplit();
+        m_root.value() = {point_range.begin(), point_range.end()};
       }
 
       /// @}
@@ -213,7 +206,7 @@ namespace CGAL {
       void refine(const Split_criterion &split_criterion) {
 
         // create a side length map
-        for (int i = 0; i <= (int) 10; i++)
+        for (int i = 0; i <= (int) 32; i++)
           m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
 
         // Initialize a queue of nodes that need to be refined
@@ -348,8 +341,7 @@ namespace CGAL {
         // Root case: reached the last dimension
         if (dimension == 3) {
 
-          node[coord.to_ulong()].begin() = begin;
-          node[coord.to_ulong()].end() = end;
+          node[coord.to_ulong()].value() = {begin, end};
 
           return;
         }
@@ -375,7 +367,7 @@ namespace CGAL {
       void reassign_points(Node &node) {
 
         Point center = compute_barycenter_position(node);
-        reassign_points(node, node.begin(), node.end(), center);
+        reassign_points(node, node.value().begin(), node.value().end(), center);
       }
 
     }; // end class Octree

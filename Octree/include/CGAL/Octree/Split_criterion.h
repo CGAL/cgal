@@ -43,7 +43,9 @@ namespace CGAL {
 
       template<class Node>
       bool operator()(const Node &n) const {
-        return (n.num_points() > m_bucket_size && n.depth() < m_max_depth);
+        size_t num_points = std::distance(n.value().begin(), n.value().end());
+        size_t depth = n.depth();
+        return (num_points > m_bucket_size && depth < m_max_depth);
       }
     };
   }
