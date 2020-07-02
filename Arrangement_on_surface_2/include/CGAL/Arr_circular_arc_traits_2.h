@@ -179,19 +179,17 @@ public:
     OutputIterator operator()(const Curve_2& arc, OutputIterator oi) const
     {
       typedef boost::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_2_result;
+        Make_x_monotone_result;
 
       std::vector<CGAL::Object> objs;
       CircularKernel().make_x_monotone_2_object()(arc, std::back_inserter(objs));
       for (const auto& obj : objs) {
-        const auto* p = CGAL::object_cast<Point_2>(&obj);
-        if (p != nullptr) {
-          *oi++ = Make_x_monotone_2_result(*p);
+        if (const auto* p = CGAL::object_cast<Point_2>(&obj)) {
+          *oi++ = Make_x_monotone_result(*p);
           continue;
         }
-        const auto* xcv = CGAL::object_cast<X_monotone_curve_2>(&obj);
-        if (xcv != nullptr) {
-          *oi++ = Make_x_monotone_2_result(*xcv);
+        if (const auto* xcv = CGAL::object_cast<X_monotone_curve_2>(&obj)) {
+          *oi++ = Make_x_monotone_result(*xcv);
           continue;
         }
         CGAL_error();
