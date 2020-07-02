@@ -125,9 +125,8 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& line, OutputIterator oi) const
     {
-      typedef boost::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_2_result;
-      *oi++ = Make_x_monotone_2_result(line);
+      typedef boost::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
+      *oi++ = Make_x_monotone_result(line);
       return oi;
     }
   };
