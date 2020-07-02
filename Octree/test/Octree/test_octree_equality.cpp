@@ -45,8 +45,8 @@ int test_identical_trees() {
   } else {
     failures++;
     std::cout << "[FAIL]" << std::endl;
-    std::cout << a.root() << std::endl;
-    std::cout << b.root() << std::endl;
+    std::cout << a << std::endl;
+    std::cout << b << std::endl;
   }
 
   return failures;
@@ -83,8 +83,8 @@ int test_different_trees() {
   } else {
     failures++;
     std::cout << "[FAIL]" << std::endl;
-    std::cout << a.root() << std::endl;
-    std::cout << b.root() << std::endl;
+    std::cout << a << std::endl;
+    std::cout << b << std::endl;
   }
 
   return failures;
