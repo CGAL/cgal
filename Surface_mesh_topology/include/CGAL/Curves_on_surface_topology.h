@@ -169,11 +169,11 @@ public:
 //================================================================================
 // Test whether a path is homotopic to a simple cycle
 
-  bool is_simple_cycle(const Path_on_surface<Mesh>& p,
+  bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p,
                        bool display_time=false) const
   {
     compute_minimal_quadrangulation(display_time);
-    return m_minimal_quadrangulation->is_simple_cycle(p, display_time);
+    return m_minimal_quadrangulation->is_homotopic_to_simple_cycle(p, display_time);
   }
 
 protected:

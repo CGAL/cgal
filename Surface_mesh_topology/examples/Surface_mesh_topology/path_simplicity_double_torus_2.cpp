@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   Path_on_surface<LCC_3_cmap> p(lcc);
   create_path(p);
 
-  bool res=cst.is_simple_cycle(p);
+  bool res=cst.is_homotopic_to_simple_cycle(p);
   std::cout<<"Path p (pink) "<<(res?"IS":"IS NOT")
            <<" simple."<<std::endl;
 

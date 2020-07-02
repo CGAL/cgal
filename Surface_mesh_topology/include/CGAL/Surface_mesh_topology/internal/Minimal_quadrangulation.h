@@ -524,7 +524,7 @@ public:
   }
 
   /// @return true iff 'p' is a simple curve.
-  bool is_simple_cycle(const Path_on_surface<Mesh>& p,
+  bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p,
                        bool display_time=false) const
   {
     if (p.is_empty())
@@ -532,7 +532,7 @@ public:
 
     if (!p.is_closed())
     {
-      std::cerr<<"Error: is_simple_cycle requires a closed path."<<std::endl;
+      std::cerr<<"Error: is_homotopic_to_simple_cycle requires a closed path."<<std::endl;
       return true;
     }
 
@@ -586,39 +586,39 @@ public:
         // Compute the backward cyclic KMP failure table for the curve
         std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
         pr.compute_switchable();
-        std::size_t num_sides = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
+        size_type degree = get_local_map().template info<0>(get_local_map().darts().begin());
 
         typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
                 typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
         std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
         rb_nodes.reserve(pr.length());
-        std::vector<rbtree> trees(num_sides);
+        std::vector<rbtree> trees(degree);
 
         for (std::size_t i = 0; i < pr.length(); ++i)
         {
           Dart_const_handle dh = pr[i];
-          auto dart_id = get_dart_id_relative_to(pr[i], pr[0]);
+          auto dart_id = get_dart_absolute_order_relative_to(pr[i], pr[0]);
           rb_nodes.emplace_back(i);
           auto& node = rb_nodes.back();
 
           // Check whether current darts needs to be switched
-          if (pr.is_switchable(i))
+          if (i > 0 && pr.is_switchable(i))
           {
             // Look at the t-1 turn of [i-1, i, i + 1]
             Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
-            auto dleft_id = get_dart_id_relative_to(dleft, pr[0]);
+            auto dleft_id = get_dart_absolute_order_relative_to(dleft, pr[0]);
             // Binary search within potential switch trigger
             // TODO: apply the optimization Francis mentioned by only look at the largest one
             // Convert a dart to a circular ordering index
-            auto to_order = [this, &pr, &dleft, num_sides] (const std::size_t& j) -> size_type
+            auto to_order = [this, &pr, &dleft] (const std::size_t& j) -> size_type
             {
               Dart_const_handle dprev = this->get_previous_relative_to(pr, j, dleft);
-              return this->get_order_relative_to(dprev, dleft, num_sides);
+              return this->get_order_relative_to(dprev, dleft);
             };
-            size_type key_val = get_order_relative_to(pr[i - 1], dleft, num_sides);
+            size_type key_val = get_order_relative_to(pr[i - 1], dleft);
             if (get_local_map().template belong_to_same_cell<0>(dh, pr[0]))
             {
-              auto comparator = [&to_order, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+              auto comparator = [&to_order] (const std::size_t& key, const rbtree::value_type& b) -> bool {
                 return key > to_order(b.m_idx);
               };
               auto it_trigger = trees[dleft_id].upper_bound(key_val, comparator);
@@ -629,7 +629,7 @@ public:
             }
             else
             {
-              auto comparator = [&to_order, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+              auto comparator = [&to_order] (const std::size_t& key, const rbtree::value_type& b) -> bool {
                 return key < to_order(b.m_idx);
               };
               auto it_trigger = trees[dleft_id].upper_bound(0, comparator);
@@ -639,7 +639,7 @@ public:
               }
             }
             dh = pr[i];
-            dart_id = get_dart_id_relative_to(pr[i], pr[0]);
+            dart_id = get_dart_absolute_order_relative_to(pr[i], pr[0]);
           }
           // Insert current darts
           if (trees[dart_id].empty())
@@ -648,7 +648,7 @@ public:
           }
           else
           {
-            size_type prev_dart_id = get_dart_id_relative_to(pr[i - 1], pr[0]);
+            size_type prev_dart_id = get_dart_absolute_order_relative_to(pr[i - 1], pr[0]);
             auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
             if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
             {
@@ -664,11 +664,11 @@ public:
             {
               if (get_local_map().template belong_to_same_cell<0>(dh, pr[0]))
               {
-                auto comparator = [this, &pr, &p_original, &suffix_len, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+                auto comparator = [this, &pr, &p_original, &suffix_len] (const std::size_t& key, const rbtree::value_type& b) -> bool {
                   if (b.m_idx == 0 && pr[key] == pr[0])
                   {
                     if(pr[key] != p_original[key]) {
-                      // current edge was switched
+                      // current edge was switched so it should always be on the right side (more counter-clockwise)
                       return false;
                     }
                     std::size_t current_dividing_idx = key + p_original.length() - 1 - suffix_len[key - 1];
@@ -682,15 +682,15 @@ public:
                                       dcur = p_original[current_dividing_idx],
                                       d0 = p_original[path_end_dividing_idx];
 
-                    std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase, num_sides);
-                    std::size_t b_prev_order = this->get_order_relative_to(d0, dbase, num_sides);
+                    std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
+                    std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
                     return b_prev_order < key_prev_order;
                   }
                   else
                   {
-                    std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key], num_sides);
+                    std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
                     Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
-                    std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key], num_sides);
+                    std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
                     return b_prev_order < key_prev_order;
                   }
                 };
@@ -699,11 +699,11 @@ public:
               }
               else
               {
-                auto comparator = [this, &pr, &p_original, num_sides] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+                auto comparator = [this, &pr, &p_original] (const std::size_t& key, const rbtree::value_type& b) -> bool {
                   /// It is impossible that pr[key] == pr[b.m_idx] == pr[0]
-                  std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key], num_sides);
+                  std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
                   Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
-                  std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key], num_sides);
+                  std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
                   return b_prev_order > key_prev_order;
                 };
                 auto it_after = trees[dart_id].upper_bound(i, comparator);
@@ -718,7 +718,7 @@ public:
         Dart_const_handle dcur = pr[0], dstart = pr[0];
         std::stack<std::size_t> parenthesis_pairing;
         do {
-          auto dart_id = get_dart_id_relative_to(dcur, pr[0]);
+          auto dart_id = get_dart_absolute_order_relative_to(dcur, pr[0]);
           for (auto it = trees[dart_id].begin(); it != trees[dart_id].end(); ++it)
           {
             if (parenthesis_pairing.empty())
@@ -756,7 +756,7 @@ public:
         dcur = get_local_map().opposite2(pr[0]);
         dstart = get_local_map().opposite2(pr[0]);
         do {
-          auto dart_id = get_dart_id_relative_to(dcur, pr[0]);
+          auto dart_id = get_dart_absolute_order_relative_to(dcur, pr[0]);
           for (auto it = trees[dart_id].rbegin(); it != trees[dart_id].rend(); ++it)
           {
             if (parenthesis_pairing.empty())
@@ -790,7 +790,7 @@ public:
     if (display_time)
     {
       t.stop();
-      std::cout<<"[TIME] is_simple_cycle: "<<t.time()<<" seconds"
+      std::cout<<"[TIME] is_homotopic_to_simple_cycle: "<<t.time()<<" seconds"
                <<std::endl;
     }
 
@@ -1968,11 +1968,12 @@ protected:
     return result;
   }
 
-  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref, size_type num_sides) const
+  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
-    size_type ref_order = get_dart_id_relative_to(ref, ref),
-              x_order = get_dart_id_relative_to(x, ref);
-    return x_order <= ref_order ? (x_order + num_sides - ref_order - 1) : (x_order - ref_order - 1);
+    size_type degree = get_local_map().template info<0>(ref);
+    size_type ref_order = get_dart_absolute_order_relative_to(ref, ref),
+              x_order = get_dart_absolute_order_relative_to(x, ref);
+    return x_order <= ref_order ? (x_order + degree - ref_order - 1) : (x_order - ref_order - 1);
   }
 
   int get_previous_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
@@ -2017,11 +2018,12 @@ protected:
     return p[j];
   }
 
-  size_type get_dart_id_relative_to(Dart_const_handle x, Dart_const_handle ref) const
+  size_type get_dart_absolute_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
+    size_type degree = get_local_map().template info<0>(ref);
     return get_local_map().template belong_to_same_cell<0>(x, ref) ?
-           get_local_map().info(x) :
-           get_local_map().info(get_local_map().opposite2(x));
+           get_dart_id(x) % degree :
+           get_dart_id(get_local_map().opposite2(x)) % degree;
   }
 
   bool is_same_corner(const Path_on_surface<Local_map>& p, std::size_t j, std::size_t ref) const

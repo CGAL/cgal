@@ -94,15 +94,15 @@ int main(int argc, char** argv)
   create_path_3(p3);
 
 
-  bool res1=cst.is_simple_cycle(p1);
+  bool res1=cst.is_homotopic_to_simple_cycle(p1);
   std::cout<<"Path p1 (pink) "<<(res1?"IS":"IS NOT")
            <<" simple."<<std::endl;
 
-  bool res2=cst.is_simple_cycle(p2);
+  bool res2=cst.is_homotopic_to_simple_cycle(p2);
   std::cout<<"Path p2 (green) "<<(res2?"IS":"IS NOT")
            <<" simple."<<std::endl;
 
-  bool res3=cst.is_simple_cycle(p3);
+  bool res3=cst.is_homotopic_to_simple_cycle(p3);
   std::cout<<"Path p3 (blue) "<<(res3?"IS":"IS NOT")
            <<" simple."<<std::endl;
 
