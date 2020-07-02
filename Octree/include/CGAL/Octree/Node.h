@@ -25,12 +25,17 @@ namespace CGAL {
 
     public:
 
-      Node(Value value, Node<Value> *parent = nullptr) {
+      Node(Value value, Node<Value> *parent = nullptr) : m_value(value), m_parent(parent) {
 
-        m_value = value;
-        m_parent = parent;
         if (parent)
           m_depth = parent->m_depth + 1;
+      }
+
+      Node(Node&& other) {
+
+        m_value = other.m_value;
+        m_parent = other.m_parent;
+        m_children = std::move(other.m_children);
       }
 
       // The default constructor is enough
