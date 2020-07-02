@@ -3,16 +3,19 @@
 
 #include <array>
 #include <memory>
+#include <bitset>
 
 namespace CGAL {
   namespace Octree {
 
-    template <typename Value>
+    template<typename Value>
     class Node {
 
     public:
 
       typedef std::array<Node<Value>, 8> Child_list;
+      typedef std::array<uint32_t, 3> Int_location;
+      typedef std::bitset<3> Index;
 
     private:
 
@@ -25,13 +28,15 @@ namespace CGAL {
 
     public:
 
-      Node(Value value, Node<Value> *parent = nullptr) : m_value(value), m_parent(parent) {
+      Node(Value value, Node<Value> *parent = nullptr, Index index = 0) : m_value(value), m_parent(parent) {
 
-        if (parent)
+        if (parent) {
+
           m_depth = parent->m_depth + 1;
+        }
       }
 
-      Node(Node&& other) {
+      Node(Node &&other) {
 
         m_value = other.m_value;
         m_parent = other.m_parent;
@@ -62,6 +67,9 @@ namespace CGAL {
       const Node<Value> &operator[](int index) const {
         return (*m_children)[index];
       }
+
+      const uint8_t &depth() const { return m_depth; }
+
 
     };
   }
