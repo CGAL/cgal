@@ -33,12 +33,16 @@ namespace CGAL {
           m_depth = parent->m_depth + 1;
       }
 
+      // The default constructor is enough
+
       void split() {
 
       }
 
       void unsplit() {
 
+        // std::unique_ptr handles this nicely
+        m_children.reset();
       }
 
     };
