@@ -68,6 +68,7 @@ namespace CGAL {
         const uint8_t &depth() const { return m_depth; }
 
         bool is_leaf() const { return (!m_children); }
+
         bool is_root() const { return (!m_parent); }
 
         Int_location location() const {
@@ -77,7 +78,9 @@ namespace CGAL {
 
         Index index() const {
 
-          Index result{};
+          // TODO: There's a better way of doing this
+
+          Index result;
 
           result[0] = location()[0] & 1;
           result[1] = location()[1] & 1;
@@ -87,6 +90,7 @@ namespace CGAL {
         }
 
         Value &value() { return m_value; }
+
         const Value &value() const { return m_value; }
 
       };
