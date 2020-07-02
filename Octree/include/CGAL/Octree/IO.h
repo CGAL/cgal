@@ -81,8 +81,8 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
 //  if (!node.is_empty())
 //    os << "[" << node.num_points() << " points] ";
 
-//  // If a node is a leaf, mark it
-//  os << (node.is_leaf() ? "[leaf] " : "");
+  // If a node is a leaf, mark it
+  os << (node.is_leaf() ? "[leaf] " : "");
 
   // Wrap information in brackets
   os << "}" << std::endl;
