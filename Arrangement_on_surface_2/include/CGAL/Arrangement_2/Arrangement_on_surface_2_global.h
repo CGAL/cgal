@@ -100,8 +100,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
   // Insert each x-monotone curve into the arrangement.
   for (const auto& x_obj : x_objects) {
     // Act according to the type of the current object.
-    const X_monotone_curve_2* x_curve = boost::get<X_monotone_curve_2>(&x_obj);
-
+    const auto* x_curve = boost::get<X_monotone_curve_2>(&x_obj);
     if (x_curve != nullptr) {
       // Inserting an x-monotone curve:
       // Initialize the zone-computation object with the given curve.
@@ -119,7 +118,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
       arr_access.notify_after_global_change();
       continue;
     }
-    const Point_2* iso_p = boost::get<Point_2>(&x_obj);
+    const auto* iso_p = boost::get<Point_2>(&x_obj);
     CGAL_assertion(iso_p != nullptr);
 
     // Inserting a point into the arrangement:

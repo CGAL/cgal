@@ -43,7 +43,7 @@ typedef Conic_traits_2::Curve_2                       Conic_curve_2;
 typedef Conic_traits_2::X_monotone_curve_2            Conic_x_monotone_curve_2;
 typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>   Polycurve_conic_traits_2;
 typedef Polycurve_conic_traits_2::X_monotone_curve_2  Pc_x_monotone_curve_2;
-// typedef Polycurve_conic_traits_2::Point_2          polypoint;
+typedef Polycurve_conic_traits_2::Point_2             Pc_point_2;
 
 // typedef CGAL::Arr_polyline_traits_2<
 //                CGAL::Arr_conic_traits_2<CGAL::Cartesian<BigRat>,
@@ -107,7 +107,8 @@ void check_equal()
  {
   Polycurve_conic_traits_2 traits;
   std::vector<CGAL::Object> intersection_points;
-  traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersection_points));
+  traits.intersect_2_object()(xcv1, xcv2,
+                              std::back_inserter(intersection_points));
   std::cout<< "Number of intersection Points: " << intersection_points.size()
            << std::endl;
 
@@ -151,7 +152,7 @@ void check_compare_end_points_xy_2()
                        0, 0, 0, 0, 1, 3,         // The line: y = -3.
                        Conic_point_2(1.41, -2),  // Approximation of the target.
                        0, 0, 0, 0, 1, 2);        // The line: y = -2.
-  CGAL_assertion(c2.is_valid());
+  assert(c2.is_valid());
 
   //make polyline x-monotone curves
   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
@@ -631,22 +632,23 @@ void check_compare_y_at_x_left()
                (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
 }
 
-template <typename Curve_type>
-void check_make_x_monotne_curve(Curve_type c1)
+template <typename GeometryTraits>
+void check_make_x_monotne_curve(const typename GeometryTraits::Curve_2& c1)
 {
+  typename GeometryTraits::Point_2                      Point_2;
+  typename GeometryTraits::X_monotone_curve_2           X_monotone_curve_2;
+  typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
   Polycurve_conic_traits_2 traits;
-  std::vector<CGAL::Object> obj_vec;
-  traits.make_x_monotone_2_object()(c1, std::back_inserter(obj_vec));
-
+  std::vector<Make_x_monotone_result> objs;
+  traits.make_x_monotone_2_object()(c1, std::back_inserter(objs));
   std::cout << "The polycurve is: " << c1 << std::endl;
-
-  std::cout<< "The poly curve have been split into " << obj_vec.size()
+  std::cout<< "The poly curve have been split into " << objs.size()
            << " polycurves" << std::endl;
 
   //const Pc_x_monotone_curve_2 *split_curve_1 =
-  //  CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[0]));
+  //  CGAL::object_cast<Pc_x_monotone_curve_2> (&(objs[0]));
   //const Pc_x_monotone_curve_2 *split_curve_2 =
-  //  CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[1]));
+  //  CGAL::object_cast<Pc_x_monotone_curve_2> (&(objs[1]));
 
   //std::cout << "The split curve 1 is: " << *split_curve_1 << std::endl;
   //std::cout << "The split curve 2 is: " << *split_curve_2 << std::endl;
@@ -726,10 +728,8 @@ int main(int argc, char* argv[])
 {
   Polycurve_conic_traits_2 traits;
     //polycurve constructors
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Construct_curve_2  construct_polycurve =
-    traits.construct_curve_2_object();
+  auto construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
+  auto construct_polycurve = traits.construct_curve_2_object();
 
    //create a curve
 
@@ -886,7 +886,7 @@ int main(int argc, char* argv[])
   //check_split(conic_x_mono_polycurve_1, conic_x_mono_polycurve_2);
   // std::cout<< std::endl;
 
-  //check_make_x_monotne_curve(conic_polycurve_2);
+  //check_make_x_monotne_curve<Point_2, Curve_2>(conic_polycurve_2);
    //std::cout<< std::endl;
 
   // check_is_vertical();
