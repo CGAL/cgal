@@ -68,6 +68,7 @@ namespace CGAL {
         const uint8_t &depth() const { return m_depth; }
 
         bool is_leaf() const { return (!m_children); }
+        bool is_root() const { return (!m_parent); }
 
         Int_location location() const {
 
