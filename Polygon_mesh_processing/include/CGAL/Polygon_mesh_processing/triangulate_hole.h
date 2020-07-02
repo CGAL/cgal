@@ -391,7 +391,7 @@ bool use_dt3 =
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     struct Always_valid{
-      bool operator()(std::vector<Point>&, int,int,int)
+      bool operator()(const std::vector<Point>&, int,int,int)const
       {return true;}
     };
     Always_valid is_valid;

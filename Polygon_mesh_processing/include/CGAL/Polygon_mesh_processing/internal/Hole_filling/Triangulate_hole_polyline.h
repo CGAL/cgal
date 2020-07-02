@@ -1259,7 +1259,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     const FT tri_normal_length = static_cast<FT>(
       CGAL::sqrt(CGAL::to_double(squared_length_3(tri_normal))));
     if(tri_normal_length <= FT(0))
-      return false;
+      continue;
 
     tri_normal /= tri_normal_length;
 
@@ -1293,12 +1293,13 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fb1;
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                        TDS;
-  typedef CGAL::Exact_intersections_tag                                      Itag;
+  typedef CGAL::No_intersection_tag                                          Itag; //If the polygon is simple, there should be no intersection.
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
   P_traits cdt_traits(normal);
   CDT cdt(cdt_traits);
 
   std::vector< std::pair<Point_3,std::size_t> > points_and_ids;
+  points_and_ids.reserve(size);
   std::vector<typename CDT::Vertex_handle> vertices(size);
   for(std::size_t i =0; i< size; ++i)
   {
