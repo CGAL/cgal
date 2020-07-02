@@ -324,7 +324,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         endif()
       else()
 
-        if (NOT WITH_CGAL_${component}) 
+        if (NOT WITH_CGAL_${component})
           message(STATUS "NOTICE: The CGAL_${component} library seems to be required but is not build. Thus, it is expected that some executables will not be compiled.")
         endif()
 
