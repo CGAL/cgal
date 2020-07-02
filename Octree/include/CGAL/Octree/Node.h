@@ -55,6 +55,14 @@ namespace CGAL {
         m_children.reset();
       }
 
+      Node<Value> &operator[](int index) {
+        return (*m_children)[index];
+      }
+
+      const Node<Value> &operator[](int index) const {
+        return (*m_children)[index];
+      }
+
     };
   }
 }
