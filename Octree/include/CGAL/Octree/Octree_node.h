@@ -225,10 +225,6 @@ namespace CGAL {
         return result;
       }
 
-      bool is_sibling(Node *neighbor) const {
-        return (m_parent == neighbor->parent());
-      }
-
       /// @}
 
       /// \name Operators
