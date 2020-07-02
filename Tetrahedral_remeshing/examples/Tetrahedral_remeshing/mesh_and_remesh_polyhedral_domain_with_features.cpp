@@ -4,7 +4,6 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
@@ -12,8 +11,8 @@
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
-typedef CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron> Mesh_domain;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 // Triangulation for Meshing
 typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, CGAL::Default>::type Tr;
