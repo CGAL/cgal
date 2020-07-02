@@ -473,13 +473,16 @@ EOF
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	(my $pf_short) = ($pf =~ m/_(.*)/);
-	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
+	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
 
         ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
 
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
-	    $_ = <PLATFORM_INFO>; # TESTER
+	    $_ = <PLATFORM_INFO>; # COMPILER
+            chomp;
+            my $compiler = $_;
+            print OUTPUT " title=\"$compiler\">$pf_short</a>";
 	    $_ = <PLATFORM_INFO>; # TESTER_NAME
 	    chomp;
 	    my $tester_name = $_;
@@ -520,6 +523,7 @@ EOF
                 }                    
 	    }
 	} else {
+            print OUTPUT ">$pf_short</a>";
 	    my $index = 12;
 	    while ($index) {
 		print OUTPUT "<td>?</td>\n";

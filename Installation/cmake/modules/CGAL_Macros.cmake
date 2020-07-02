@@ -145,6 +145,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       message("Search dirs:")
       message("${search_dirs}")
     endif()
+    message( STATUS "USING COMPILER_VERSION = '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}'" )
   endfunction()
 
   macro( get_dependency_version LIB )
@@ -702,4 +703,3 @@ function(process_CGAL_subdirectory entry subdir type_name)
     message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
   endif()
 endfunction()
-
