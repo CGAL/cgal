@@ -55,7 +55,7 @@ int main()
   Curve_2 cv0 = construct_curve(CGAL::ipower(x,4)+CGAL::ipower(y,3)-1);
   // Construct all x-monotone segments using the Make_x_mononotone functor
   std::vector<Make_x_monotone_result> pre_segs;
-  make_x_monotone(cv0,std::back_inserter(pre_segs));
+  make_x_monotone(cv0, std::back_inserter(pre_segs));
   // Cast all CGAL::Objects into X_monotone_segment_2
   // (the vector might also contain Point_2 objects for isolated points,
   // but not for this instance
