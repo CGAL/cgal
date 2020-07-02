@@ -101,21 +101,21 @@ public:
   /**
    * Constructor
    */
-  Mesh_complex_3_in_triangulation_3()
-    : Base()
-    , edges_()
-    , corners_() {}
+  Mesh_complex_3_in_triangulation_3() = default;
 
   /**
    * Copy constructor
    */
   Mesh_complex_3_in_triangulation_3(const Self& rhs);
 
-  /// Move constructor
+  /**
+   * Move constructor
+   */
   Mesh_complex_3_in_triangulation_3(Self&& rhs)
     : Base(std::move(rhs))
     , edges_(std::move(rhs.edges_))
     , corners_(std::move(rhs.corners_))
+    , far_vertices_(std::move(rhs.far_vertices_))
   {}
 
   /**
@@ -146,6 +146,7 @@ public:
     Base::clear();
     edges_.clear();
     corners_.clear();
+    far_vertices_.clear();
   }
 
   /// Import Base functions
