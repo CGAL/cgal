@@ -286,8 +286,7 @@ public:
         this->_ckva()->make_x_monotone_2_object()(cv, std::back_inserter(arcs));
         auto it = arcs.begin();
         auto helper = it;
-        const X_monotone_curve_2* it_seg_p =
-          boost::get<X_monotone_curve_2>(&(*it));
+        const auto* it_seg_p = boost::get<X_monotone_curve_2>(&(*it));
         while (it != arcs.end()) {
           if ( on_arc(p, *it_seg_p) ) break;
           it++;
