@@ -93,6 +93,32 @@ namespace CGAL {
 
         const Value &value() const { return m_value; }
 
+        bool operator==(Node &rhs) const {
+
+          // Compare the points they contain
+          // TODO
+
+          // If one node is a leaf, and the other isn't, they're not the same
+          if (is_leaf() != rhs.is_leaf())
+            return false;
+
+          // If both nodes are non-leaf nodes
+          if (!is_leaf()) {
+
+            // Check all the children
+            for (int i = 0; i < 8; ++i) {
+
+              // If any child cell is different, they're not the same
+              if (!((*m_children)[i] == rhs[i]))
+                return false;
+            }
+          }
+
+          // If both nodes are leaf nodes they must be identical (no check necessary)
+
+          // If all other checks pass, the two trees are identical
+          return true;
+        }
       };
     }
 
