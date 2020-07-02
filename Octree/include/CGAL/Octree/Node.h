@@ -86,6 +86,9 @@ namespace CGAL {
           return result;
         }
 
+        Value &value() { return m_value; }
+        const Value &value() const { return m_value; }
+
       };
     }
 
