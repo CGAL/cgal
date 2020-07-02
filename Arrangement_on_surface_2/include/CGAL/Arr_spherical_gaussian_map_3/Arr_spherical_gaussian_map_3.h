@@ -158,12 +158,11 @@ public:
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
 
     auto it = x_objects.begin();
-    const X_monotone_curve_2* xc = boost::get<X_monotone_curve_2>(&(*it));
+    const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "1.a. insert_in_face_interior(" << *xc << ")" << std::endl;
 #endif
-    Halfedge_handle he =
-      m_sgm.insert_in_face_interior(*xc, m_sgm.faces_begin());
+    Halfedge_handle he = m_sgm.insert_in_face_interior(*xc, m_sgm.faces_begin());
     if (! xc->is_directed_right()) he = he->twin();
     *oi++ = he;
 
@@ -200,7 +199,7 @@ public:
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
 
     auto it = x_objects.begin();
-    const X_monotone_curve_2* xc = boost::get<X_monotone_curve_2>(&(*it));
+    const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "2.a. insert_from_vertex(" << *xc << ", "
               << vertex1->point() << ")" << std::endl;
@@ -245,7 +244,7 @@ public:
 
     auto it = x_objects.begin();
     if (x_objects.size() == 1) {
-      const X_monotone_curve_2* xc = boost::get<X_monotone_curve_2>(&(*it));
+      const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
       std::cout << "3. insert_from_vertex(" << *xc << ")" << std::endl;
 #endif
@@ -298,7 +297,7 @@ public:
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
     auto it = x_objects.begin();
     if (x_objects.size() == 1) {
-      const X_monotone_curve_2 * xc = boost::get<X_monotone_curve_2>(&(*it));
+      const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
       std::cout << "4. insert_at_vertices(" << *xc << ")" << std::endl;
 #endif
