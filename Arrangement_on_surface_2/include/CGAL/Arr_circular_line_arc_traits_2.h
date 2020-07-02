@@ -53,19 +53,19 @@ namespace CGAL {
       typedef typename CK::Circular_arc_point_2         Point_2;
       typedef boost::variant<Arc1, Arc2>                X_monotone_curve_2;
       typedef boost::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_2_result;
+        Make_x_monotone_result;
 
       for (auto it = res1.begin(); it != res1.end(); ++it) {
         if (const Arc1* arc = CGAL::object_cast<Arc1>(&*it)) {
           boost::variant<Arc1, Arc2> v =  *arc;
-          *res2++ = Make_x_monotone_2_result(v);
+          *res2++ = Make_x_monotone_result(v);
         }
         else if (const Arc2* line = CGAL::object_cast<Arc2>(&*it)) {
           boost::variant<Arc1, Arc2> v =  *line;
-          *res2++ = Make_x_monotone_2_result(v);
+          *res2++ = Make_x_monotone_result(v);
         }
         else if (const Point_2* p = CGAL::object_cast<Point_2>(&*it)) {
-          *res2++ = Make_x_monotone_2_result(*p);
+          *res2++ = Make_x_monotone_result(*p);
         }
         else CGAL_error();
       }
