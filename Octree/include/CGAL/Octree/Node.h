@@ -42,6 +42,11 @@ namespace CGAL {
 
       void split() {
 
+        m_children = std::make_unique<Child_list>();
+        for (int child_id = 0; child_id < 8; child_id++) {
+
+          (*m_children)[child_id] = {m_value, this};
+        }
       }
 
       void unsplit() {
