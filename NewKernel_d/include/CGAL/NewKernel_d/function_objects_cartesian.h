@@ -616,7 +616,36 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
 
     Point const& p0=*f;
     int d = pd(p0);
-    if (d+1 == std::distance(f,e))
+    int k = static_cast<int>(std::distance(f,e));
+    if(k==1) return p0;
+    if(k==2){
+      typename Get_functor<R_, Midpoint_tag>::type mid(this->kernel());
+      return mid(p0, *++f);
+    }
+    if(k==3){
+      // Same equations as in the general case, but solved by hand (Cramer)
+      // (c-r).(p-r)=(p-r)²/2
+      // (c-r).(q-r)=(q-r)²/2
+      typedef typename Get_type<R_, Vector_tag>::type Vector;
+      typename Get_functor<R_, Squared_length_tag>::type sl(this->kernel());
+      typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
+      typename Get_functor<R_, Scaled_vector_tag>::type sv(this->kernel());
+      typename Get_functor<R_, Difference_of_points_tag>::type dp(this->kernel());
+      typename Get_functor<R_, Translated_point_tag>::type tp(this->kernel());
+      Iter f2=f;
+      Point const& q=*++f2;
+      Point const& r=*++f2;
+      Vector u = dp(p0, r);
+      Vector v = dp(q, r);
+      FT uv = sp(u, v);
+      FT u2 = sl(u);
+      FT v2 = sl(v);
+      FT den = 2 * (u2 * v2 - CGAL::square(uv));
+      FT a = (u2 - uv) * v2 / den;
+      FT b = (v2 - uv) * u2 / den;
+      return tp(tp(r, sv(u, a)), sv(v, b));
+    }
+    if (k == d+1)
     {
       // 2*(x-y).c == x^2-y^2
       typedef typename LA::Square_matrix Matrix;
@@ -641,61 +670,59 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       //std::cout << "Sol: " << res << std::endl;
       return cp(d,LA::vector_begin(res),LA::vector_end(res));
     }
-    else
-    {
-      /*
-       * Matrix P=(p1, p2, ...) (each point as a column)
-       * Matrix Q=2*t(p2-p1,p3-p1, ...) (each vector as a line)
-       * Matrix M: QP, adding a line of 1 at the top
-       * Vector B: (1, p2^2-p1^2, p3^2-p1^2, ...)
-       * Solve ML=B, the center of the sphere is PL
-       *
-       * It would likely be faster to write P then transpose, multiply,
-       * etc instead of doing it by hand.
-       */
-      // TODO: check for degenerate cases?
 
-      typedef typename R_::Max_ambient_dimension D2;
-      typedef typename R_::LA::template Rebind_dimension<Dynamic_dimension_tag,D2>::Other LAd;
-      typedef typename LAd::Square_matrix Matrix;
-      typedef typename LAd::Vector Vec;
-      typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
-      int k=static_cast<int>(std::distance(f,e));
-      Matrix m(k,k);
-      Vec b(k);
-      Vec l(k);
-      int j,i=0;
-      // We are doing a quadratic number of *f, which can be costly with transforming_iterator.
-      for(Iter f2=f;f2!=e;++f2,++i){
-        Point const& p2=*f2;
-        b(i)=m(i,i)=sdo(p2);
-        j=0;
-        for(Iter f3=f;f3!=e;++f3,++j){
-          m(j,i)=m(i,j)=sp(p2,*f3);
-        }
-      }
-      for(i=1;i<k;++i){
-        b(i)-=b(0);
-        for(j=0;j<k;++j){
-          m(i,j)=2*(m(i,j)-m(0,j));
-        }
-      }
-      for(j=0;j<k;++j) m(0,j)=1;
-      b(0)=1;
+    /* The general case
+     *
+     * Matrix P=(p1, p2, ...) (each point as a column)
+     * Matrix Q=2*t(p2-p1,p3-p1, ...) (each vector as a line)
+     * Matrix M: QP, adding a line of 1 at the top
+     * Vector B: (1, p2^2-p1^2, p3^2-p1^2, ...)
+     * Solve ML=B, the center of the sphere is PL
+     *
+     * It would likely be faster to write P then transpose, multiply,
+     * etc instead of doing it by hand.
+     */
+    // TODO: check for degenerate cases?
 
-      LAd::solve(l,std::move(m),std::move(b));
-
-      typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
-      for(i=0;i<d;++i) center(i)=0;
+    typedef typename R_::Max_ambient_dimension D2;
+    typedef typename R_::LA::template Rebind_dimension<Dynamic_dimension_tag,D2>::Other LAd;
+    typedef typename LAd::Square_matrix Matrix;
+    typedef typename LAd::Vector Vec;
+    typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
+    Matrix m(k,k);
+    Vec b(k);
+    Vec l(k);
+    int j,i=0;
+    // We are doing a quadratic number of *f, which can be costly with transforming_iterator.
+    for(Iter f2=f;f2!=e;++f2,++i){
+      Point const& p2=*f2;
+      b(i)=m(i,i)=sdo(p2);
       j=0;
-      for(Iter f2=f;f2!=e;++f2,++j){
-        for(i=0;i<d;++i){
-          center(i)+=l(j)*c(*f2,i);
-        }
+      for(Iter f3=f;f3!=e;++f3,++j){
+        m(j,i)=m(i,j)=sp(p2,*f3);
       }
-
-      return cp(LA::vector_begin(center),LA::vector_end(center));
     }
+    for(i=1;i<k;++i){
+      b(i)-=b(0);
+      for(j=0;j<k;++j){
+        m(i,j)=2*(m(i,j)-m(0,j));
+      }
+    }
+    for(j=0;j<k;++j) m(0,j)=1;
+    b(0)=1;
+
+    LAd::solve(l,std::move(m),std::move(b));
+
+    typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
+    for(i=0;i<d;++i) center(i)=0;
+    j=0;
+    for(Iter f2=f;f2!=e;++f2,++j){
+      for(i=0;i<d;++i){
+        center(i)+=l(j)*c(*f2,i);
+      }
+    }
+
+    return cp(LA::vector_begin(center),LA::vector_end(center));
   }
 };
 }
