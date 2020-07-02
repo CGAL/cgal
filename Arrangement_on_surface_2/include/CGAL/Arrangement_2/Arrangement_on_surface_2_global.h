@@ -529,7 +529,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
 template <typename GeometryTraits_2, typename TopologyTraits>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
-            const Object& obj)
+            typename Arr_point_location_result<
+              Arrangement_on_surface_2<GeometryTraits_2,
+                                       TopologyTraits> >::type obj)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -597,7 +599,8 @@ template <typename GeometryTraits_2, typename TopologyTraits>
 CGAL_DEPRECATED void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  const typename GeometryTraits_2::X_monotone_curve_2& c,
- const Object& obj)
+ typename Arr_point_location_result<
+   Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits> >::type obj)
 {
   insert(arr, c, obj);
 }
@@ -1367,60 +1370,47 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
 
   // Shoot a vertical ray from each vertex we have collected downward, and
   // check that this vertex is really contained in the proper face.
-  typename Gt2::Compare_y_at_x_right_2 comp_y_at_x_right =
-    traits->compare_y_at_x_right_2_object();
-  typename Gt2::Compare_y_at_x_left_2 comp_y_at_x_left =
-    traits->compare_y_at_x_left_2_object();
+  auto comp_y_at_x_right = traits->compare_y_at_x_right_2_object();
+  auto comp_y_at_x_left = traits->compare_y_at_x_left_2_object();
 
-  typename std::list<std::pair<Vertex_const_handle,
-                               Face_const_handle> >::iterator    vf_iter;
   typename Tt::Default_point_location_strategy def_pl(arr);
-  Vertex_const_handle curr_v;
-  Object obj;
-  Halfedge_const_handle he_below;
-  Vertex_const_handle v_below;
-  Face_const_handle in_face;
-  Halfedge_around_vertex_const_circulator first, circ;
-  bool assign_ok;
   const Halfedge_const_handle invalid_he;
 
-  for (vf_iter = vf_list.begin(); vf_iter != vf_list.end(); ++vf_iter) {
+  Face_const_handle in_face;
+  for (auto vf_iter = vf_list.begin(); vf_iter != vf_list.end(); ++vf_iter) {
     // Perform ray-shooting from the current vertex.
-    curr_v = vf_iter->first;
-    obj = def_pl.ray_shoot_down(curr_v->point());
+    Vertex_const_handle curr_v = vf_iter->first;
+    auto obj = def_pl.ray_shoot_down(curr_v->point());
 
-    if (CGAL::assign(he_below, obj)) {
-      // Hit an edge - take the incident face of the halfedge directed to the
+    // if (CGAL::assign(he_below, obj)) {
+    if (auto* he_below_p = boost::get<Halfedge_const_handle>(&obj)) {
+      // Hit an edge; take the incident face of the halfedge directed to the
       // right.
-      if (he_below->direction() == ARR_RIGHT_TO_LEFT)
-        he_below = he_below->twin();
-
-      in_face = he_below->face();
+      auto he_below = *he_below_p;
+      in_face = (he_below->direction() == ARR_RIGHT_TO_LEFT) ?
+        he_below->twin()->face() : he_below->face();
     }
-    else if (CGAL::assign(v_below, obj)) {
+    else if (auto* v_below_p = boost::get<Vertex_const_handle>(&obj)) {
+      auto v_below = *v_below_p;
       // Hit a vertex.
       if (v_below->is_isolated()) in_face = v_below->face();
       else {
         // Get the first halfedge around v_below that is directed from left to
         // right and the first halfedge that is directed from right to left.
-        first = circ = v_below->incident_halfedges();
+        Halfedge_around_vertex_const_circulator circ =
+          v_below->incident_halfedges();
+        Halfedge_around_vertex_const_circulator first = circ;
         Halfedge_const_handle he_left;  // A halfedge to the left of v_below.
         Halfedge_const_handle he_right; // A halfedge to the right of v_below.
-
         do {
-          if (circ->direction() == ARR_LEFT_TO_RIGHT) {
-            he_left = circ;
-          }
+          if (circ->direction() == ARR_LEFT_TO_RIGHT) he_left = circ;
           else {
             he_right = circ;
-            if (he_left != invalid_he && he_right != invalid_he)
-              break;
+            if ((he_left != invalid_he) && (he_right != invalid_he)) break;
           }
-          ++circ;
+        } while(++circ != first);
 
-        } while(circ != first);
-
-        CGAL_assertion (he_left != invalid_he || he_right != invalid_he);
+        CGAL_assertion((he_left != invalid_he) || (he_right != invalid_he));
 
         if (he_left != invalid_he && he_right != invalid_he) {
           while (he_left->direction() == ARR_LEFT_TO_RIGHT)
@@ -1446,26 +1436,24 @@ is_valid(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr)
         else {
           Comparison_result res;
           Halfedge_const_handle he_curr = he_right;
-
-          do // as long as we have he_right halfedge which is below
-          {
+          do {
+            // as long as we have he_right halfedge which is below
             he_right = he_curr;
             he_curr = he_right->next()->twin();
-            res = comp_y_at_x_right (he_curr->curve(),
-                                     he_right->curve(),
-                                     v_below->point());
+            res = comp_y_at_x_right(he_curr->curve(),
+                                    he_right->curve(),
+                                    v_below->point());
           } while(res == SMALLER);
           in_face = he_right->face();
         }
       }
     }
     else {
+      auto* in_face_p = boost::get<Face_const_handle>(&obj);
+      CGAL_assertion(in_face_p);
+      in_face = *in_face_p;
       // Hit nothing (an unbounded face is returned).
-      assign_ok = CGAL::assign(in_face, obj);
-
-      CGAL_assertion (assign_ok && in_face->is_unbounded());
-
-      if (! assign_ok) return false;
+      CGAL_assertion(in_face->is_unbounded());
     }
 
     if (vf_iter->second != in_face) {
@@ -1624,7 +1612,6 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     // Check whether the isolated point lies inside a face (otherwise,
     // it conincides with a vertex or an edge).
     auto obj = pl.locate(*iso_p);
-    //! \todo: EF, this is suspicious. Shouldn't we continue if false?
     if (boost::get<Face_const_handle>(&x_obj) != nullptr) return true;
   }
 

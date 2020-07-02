@@ -694,8 +694,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
 
   //convert it into x-monotone bezier segment.
   std::vector<CGAL::Object> obj_vector;
-  bezier_traits.make_x_monotone_2_object()(seg,
-                                           std::back_inserter(obj_vector));
+  bezier_traits.make_x_monotone_2_object()(seg, std::back_inserter(obj_vector));
   X_monotone_subcurve_2 x_segment =
     CGAL::object_cast<X_monotone_subcurve_2>((obj_vector[0]));
 

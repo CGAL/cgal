@@ -251,7 +251,7 @@ public:
    * \param obj An object that represents the location of the left end of the
    *            curve.
    */
-  void init_with_hint(const X_monotone_curve_2& cv, const Object& obj);
+  void init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj);
 
   /*! Compute the zone of the given curve and issue the apporpriate
    * notifications for the visitor.

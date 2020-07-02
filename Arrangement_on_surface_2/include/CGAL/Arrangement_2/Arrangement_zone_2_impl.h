@@ -29,7 +29,7 @@ namespace CGAL {
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
+init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj)
 {
   // Set the curve and check whether its ends are bounded, therefore
   // associated with valid endpoints.
