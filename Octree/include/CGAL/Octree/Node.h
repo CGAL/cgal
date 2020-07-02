@@ -7,71 +7,86 @@
 
 namespace CGAL {
   namespace Octree {
+    namespace Node {
 
-    template<typename Value>
-    class Node {
+      template<typename Value>
+      class Node {
 
-    public:
+      public:
 
-      typedef std::array<Node<Value>, 8> Child_list;
-      typedef std::array<uint32_t, 3> Int_location;
-      typedef std::bitset<3> Index;
+        typedef std::array<Node<Value>, 8> Child_list;
+        typedef std::array<uint32_t, 3> Int_location;
+        typedef std::bitset<3> Index;
 
-    private:
+      private:
 
-      Value m_value;
+        Value m_value;
 
-      const Node<Value> *m_parent;
-      uint8_t m_depth;
+        const Node<Value> *m_parent;
 
-      std::unique_ptr<Child_list> m_children;
+        uint8_t m_depth;
+        Int_location m_location;
 
-    public:
+        std::unique_ptr<Child_list> m_children;
 
-      Node(Value value, Node<Value> *parent = nullptr, Index index = 0) : m_value(value), m_parent(parent) {
+      public:
 
-        if (parent) {
+        Node(Node<Value> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
 
-          m_depth = parent->m_depth + 1;
+          if (parent) {
+
+            m_depth = parent->m_depth + 1;
+
+            for (int i = 0; i < 3; i++)
+              m_location[i] = (2 * m_location[i]) + index[i];
+
+          }
         }
-      }
 
-      Node(Node &&other) {
+        void split() {
 
-        m_value = other.m_value;
-        m_parent = other.m_parent;
-        m_children = std::move(other.m_children);
-      }
+          m_children = std::make_unique<Child_list>();
+          for (int index = 0; index < 8; index++) {
 
-      // The default constructor is enough
-
-      void split() {
-
-        m_children = std::make_unique<Child_list>();
-        for (int child_id = 0; child_id < 8; child_id++) {
-
-          (*m_children)[child_id] = {m_value, this};
+            (*m_children)[index] = std::move(Node<Value>(this, {index}));
+          }
         }
-      }
 
-      void unsplit() {
+        void unsplit() {
 
-        // std::unique_ptr handles this nicely
-        m_children.reset();
-      }
+          m_children.reset();
+        }
 
-      Node<Value> &operator[](int index) {
-        return (*m_children)[index];
-      }
+        Node<Value> &operator[](int index) {
+          return (*m_children)[index];
+        }
 
-      const Node<Value> &operator[](int index) const {
-        return (*m_children)[index];
-      }
+        const Node<Value> &operator[](int index) const {
+          return (*m_children)[index];
+        }
 
-      const uint8_t &depth() const { return m_depth; }
+        const uint8_t &depth() const { return m_depth; }
 
 
-    };
+        Int_location location() const {
+
+          return m_location;
+        }
+
+        Index index() const {
+
+          Index result{};
+
+          result[0] = location()[0] & 1;
+          result[1] = location()[1] & 1;
+          result[2] = location()[2] & 1;
+
+          return result;
+        }
+
+      };
+    }
+
   }
 }
 
