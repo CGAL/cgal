@@ -726,15 +726,15 @@ public:
         typedef typename SweepCurvesAdapter_2::Native_arc_2     Native_arc_2;
         typedef typename SweepCurvesAdapter_2::Native_point_2   Native_point_2;
         typedef typename SweepCurvesAdapter_2::Generic_point_2  Generic_point_2;
-        typedef boost::variant<Native_arc_2, Native_point_2>    Make_x_monotone_result;
+        typedef boost::variant<Native_arc_2, Native_point_2>
+          Make_x_monotone_result;
 
         std::vector<Make_x_monotone_result> objs;
         auto make_x_monotone = _m_adapter->kernel().make_x_monotone_2_object();
         make_x_monotone(cv, std::back_inserter(objs));
         // sort out normal and degenerate arcs
         for (auto& obj : objs) {
-          auto* arc = boost::get<Native_arc_2>(&obj);
-          if (arc) {
+          if (auto* arc = boost::get<Native_arc_2>(&obj)) {
             *oi++ = Generic_arc_2(*arc);
             continue;
           }
