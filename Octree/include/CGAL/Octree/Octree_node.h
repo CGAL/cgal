@@ -174,10 +174,26 @@ namespace CGAL {
       /// \name Child Accessors
       /// @{
 
+      /*!
+       * \brief Access the child nodes of this node by their indices
+       *
+       * \todo
+       *
+       * \param index
+       * \return
+       */
       Node &operator[](int index) {
         return (*m_children)[index];
       }
 
+      /*!
+       * \brief Read-only access the child nodes of this node by their indices
+       *
+       * \todo
+       *
+       * \param index
+       * \return
+       */
       const Node &operator[](int index) const {
         return (*m_children)[index];
       }
