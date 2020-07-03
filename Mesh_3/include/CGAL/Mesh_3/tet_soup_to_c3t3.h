@@ -261,6 +261,8 @@ bool build_infinite_cells(Tr& tr,
     // the only finite facet
     it->second.push_back(std::make_pair(opp_c, 0));
     CGAL_assertion(it->second.size() == 2);
+
+    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG
