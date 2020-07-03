@@ -2,6 +2,7 @@
 #define OCTREE_WALKER_CRITERION_H
 
 #include <iostream>
+#include "Node.h"
 
 namespace CGAL {
 
@@ -9,8 +10,8 @@ namespace CGAL {
 
     namespace Walker {
 
-      template<class Node>
-      const Node *next_sibling(const Node *n) {
+      template<class Value>
+      const Node::Node<Value> *next_sibling(const Node::Node<Value> *n) {
 
         // Passing null returns the first node
         if (nullptr == n)
@@ -31,8 +32,8 @@ namespace CGAL {
         return &((*n->parent())[index + 1]);
       }
 
-      template<class Node>
-      const Node *next_sibling_up(const Node *n) {
+      template<class Value>
+      const Node::Node<Value> *next_sibling_up(const Node::Node<Value> *n) {
 
         if (!n)
           return nullptr;
@@ -50,8 +51,8 @@ namespace CGAL {
         return nullptr;
       }
 
-      template<class Node>
-      const Node *deepest_first_child(const Node *n) {
+      template<class Value>
+      const Node::Node<Value> *deepest_first_child(const Node::Node<Value> *n) {
 
         if (!n)
           return nullptr;
@@ -65,13 +66,13 @@ namespace CGAL {
 
       struct Preorder {
 
-        template<class Node>
-        const Node *first(const Node *root) {
+        template<class Value>
+        const Node::Node<Value> *first(const Node::Node<Value> *root) {
           return root;
         }
 
-        template<class Node>
-        const Node *operator()(const Node *n) {
+        template<class Value>
+        const Node::Node<Value> *operator()(const Node::Node<Value> *n) {
 
           if (n->is_leaf()) {
 
@@ -95,14 +96,14 @@ namespace CGAL {
 
       struct Postorder {
 
-        template<class Node>
-        const Node *first(const Node *root) {
+        template<class Value>
+        const Node::Node<Value> *first(const Node::Node<Value> *root) {
 
           return deepest_first_child(root);
         }
 
-        template<class Node>
-        const Node *operator()(const Node *n) {
+        template<class Value>
+        const Node::Node<Value> *operator()(const Node::Node<Value> *n) {
 
           auto next = deepest_first_child(next_sibling(n));
 
@@ -115,14 +116,14 @@ namespace CGAL {
 
       struct Leaves {
 
-        template<class Node>
-        const Node *first(const Node *root) {
+        template<class Value>
+        const Node::Node<Value> *first(const Node::Node<Value> *root) {
 
           return deepest_first_child(root);
         }
 
-        template<class Node>
-        const Node *operator()(const Node *n) {
+        template<class Value>
+        const Node::Node<Value> *operator()(const Node::Node<Value> *n) {
 
           auto next = deepest_first_child(next_sibling(n));
 
