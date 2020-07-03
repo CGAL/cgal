@@ -26,7 +26,7 @@ int test_preorder_1_node() {
   octree.refine(10, 1);
 
   // Create the range
-  auto tree_walker = CGAL::Octree::Tree_walker::Preorder();
+  auto tree_walker = CGAL::Octree::Walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
@@ -50,7 +50,7 @@ int test_preorder_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto tree_walker = CGAL::Octree::Tree_walker::Preorder();
+  auto tree_walker = CGAL::Octree::Walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
@@ -81,7 +81,7 @@ int test_preorder_25_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto tree_walker = CGAL::Octree::Tree_walker::Preorder();
+  auto tree_walker = CGAL::Octree::Walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
@@ -121,9 +121,6 @@ int main(void) {
   test_preorder_1_node();
   test_preorder_9_nodes();
   test_preorder_25_nodes();
-//  test_preorder_print();
-//  test_postorder_print();
-//  test_leaves_print();
 
   return 0;
 }
