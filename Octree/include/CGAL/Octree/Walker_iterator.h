@@ -4,6 +4,7 @@
 
 #include <CGAL/Octree/Tree_walker_criterion.h>
 
+#include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 namespace CGAL {

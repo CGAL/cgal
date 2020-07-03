@@ -3,7 +3,6 @@
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/IO.h>
 #include <CGAL/Octree/Tree_walker_criterion.h>
-#include <CGAL/Octree/Node.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
@@ -113,8 +112,6 @@ int test_preorder_25_nodes() {
     iter++;
     assert(*iter == octree.root()[7][i]);
   }
-
-  std::cout << octree;
 
   return 0;
 }

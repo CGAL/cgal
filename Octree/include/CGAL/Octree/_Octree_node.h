@@ -19,8 +19,8 @@
 //
 // Author(s)     : Tong Zhao, Cédric Portaneri
 
-#ifndef OCTREE_OCTREE_NODE_H
-#define OCTREE_OCTREE_NODE_H
+#ifndef OCTREE__OCTREE_NODE_H
+#define OCTREE__OCTREE_NODE_H
 
 #include <CGAL/bounding_box.h>
 #include <boost/iterator/transform_iterator.hpp>
@@ -288,4 +288,4 @@ namespace CGAL {
   }
 }
 
-#endif //OCTREE_OCTREE_NODE_H
+#endif //OCTREE__OCTREE_NODE_H

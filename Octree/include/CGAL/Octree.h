@@ -22,7 +22,6 @@
 #ifndef CGAL_OCTREE_3_H
 #define CGAL_OCTREE_3_H
 
-#include <CGAL/Octree/Octree_node.h>
 #include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Split_criterion.h>
 #include <CGAL/Octree/Tree_walker_criterion.h>
