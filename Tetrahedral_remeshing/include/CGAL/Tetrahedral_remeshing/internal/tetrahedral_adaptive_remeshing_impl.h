@@ -143,6 +143,8 @@ public:
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
+    CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3,
+      "00-facets_in_complex_after_init.off");
 #endif
   }
 
@@ -169,6 +171,8 @@ public:
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
+    CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3,
+      "00-facets_in_complex_after_init.off");
 #endif
   }
 
@@ -192,6 +196,8 @@ public:
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
+    CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3,
+      "1-facets_in_complex_after_split.off");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
 #endif
@@ -378,6 +384,7 @@ private:
                  const FacetIsConstrainedMap& fcmap)
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    debug_c3t3();
     std::size_t nbc = 0;
     std::size_t nbf = 0;
     std::size_t nbe = 0;
@@ -531,6 +538,14 @@ private:
         return false;
     }
     return true;
+  }
+  void debug_c3t3()
+  {
+    for (typename Tr::Facet f : tr().finite_facets())
+    {
+      typename Tr::Facet mf = tr().mirror_facet(f);
+      CGAL_assertion(m_c3t3.is_in_complex(f) == m_c3t3.is_in_complex(mf));
+    }
   }
 
   template<typename PatchIndex>
