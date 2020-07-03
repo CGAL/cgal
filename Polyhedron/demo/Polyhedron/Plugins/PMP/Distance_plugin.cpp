@@ -34,6 +34,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
+#include <tbb/parallel_for.h>
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;

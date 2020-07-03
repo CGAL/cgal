@@ -20,7 +20,7 @@
 #ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>

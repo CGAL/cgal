@@ -231,6 +231,15 @@ public:
     copy_tds(tds);
   }
 
+  Triangulation_data_structure_3(Tds && tds)
+    noexcept(noexcept(Cell_range(std::move(tds._cells))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))))
+    : _dimension(std::exchange(tds._dimension, -2))
+    , _cells(std::move(tds._cells))
+    , _vertices(std::move(tds._vertices))
+  {
+  }
+
   Tds & operator= (const Tds & tds)
   {
     if (&tds != this) {
@@ -239,6 +248,17 @@ public:
     }
     return *this;
   }
+
+  Tds & operator= (Tds && tds)
+    noexcept(noexcept(Tds(std::move(tds))))
+  {
+    _cells = std::move(tds._cells);
+    _vertices = std::move(tds._vertices);
+    _dimension = std::exchange(tds._dimension, -2);
+    return *this;
+  }
+
+  ~Triangulation_data_structure_3() = default; // for the rule-of-five
 
   size_type number_of_vertices() const { return vertices().size(); }
 
@@ -917,12 +937,6 @@ public:
         *output++ = e;
         return *this;
       }
-      Facet_it& operator=(const Facet_it& f) {
-        output = f.output;
-        filter = f.filter;
-        return *this;
-      }
-      Facet_it(const Facet_it&)=default;
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);
@@ -1046,6 +1060,15 @@ public:
         }
       }
     }
+
+    // Implement the rule-of-five, to please the diagnostic
+    // `cppcoreguidelines-special-member-functions` of clang-tidy.
+    // Instead of defaulting those special member functions, let's
+    // delete them, to prevent any misuse.
+    Vertex_extractor(const Vertex_extractor&) = delete;
+    Vertex_extractor(Vertex_extractor&&) = delete;
+    Vertex_extractor& operator=(const Vertex_extractor&) = delete;
+    Vertex_extractor& operator=(Vertex_extractor&&) = delete;
 
     ~Vertex_extractor()
     {
@@ -1226,7 +1249,7 @@ public:
     return visit_incident_cells_threadsafe<
       Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
                        OutputIterator, Filter,
-                       internal::Has_member_visited<Vertex>::value>,
+                       false>,
       OutputIterator>(v, edges, f);
   }
 
@@ -1296,6 +1319,52 @@ public:
   adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
   {
     return adjacent_vertices<False_filter>(v, vertices);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices) const
+  {
+    return adjacent_vertices_threadsafe<False_filter>(v, vertices);
+  }
+
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices,
+                               Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition(v != Vertex_handle());
+    CGAL_triangulation_precondition(dimension() >= -1);
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
+    CGAL_triangulation_expensive_precondition(is_valid());
+
+    if (dimension() == -1)
+      return vertices;
+
+    if (dimension() == 0) {
+      Vertex_handle v1 = v->cell()->neighbor(0)->vertex(0);
+      if (!f(v1)) *vertices++ = v1;
+      return vertices;
+    }
+
+    if (dimension() == 1) {
+      CGAL_triangulation_assertion(number_of_vertices() >= 3);
+      Cell_handle n0 = v->cell();
+      const int index_v_in_n0 = n0->index(v);
+      CGAL_assume(index_v_in_n0 <= 1);
+      Cell_handle n1 = n0->neighbor(1 - index_v_in_n0);
+      const int index_v_in_n1 = n1->index(v);
+      CGAL_assume(index_v_in_n1 <= 1);
+      Vertex_handle v1 = n0->vertex(1 - index_v_in_n0);
+      Vertex_handle v2 = n1->vertex(1 - index_v_in_n1);
+      if (!f(v1)) *vertices++ = v1;
+      if (!f(v2)) *vertices++ = v2;
+      return vertices;
+    }
+    return visit_incident_cells_threadsafe<
+      Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, OutputIterator, Filter,
+                       false>,
+      OutputIterator>(v, vertices, f);
   }
 
   template <class Visitor, class OutputIterator, class Filter>

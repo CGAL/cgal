@@ -18,7 +18,7 @@
 #ifndef CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H
 #define CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <boost/type_traits/is_same.hpp>

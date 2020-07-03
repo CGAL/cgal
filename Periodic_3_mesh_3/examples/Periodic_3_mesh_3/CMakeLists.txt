@@ -23,7 +23,8 @@ endif()
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -52,5 +53,5 @@ foreach(target
     mesh_implicit_shape_with_subdomains
     mesh_implicit_shape_with_optimizers
     mesh_implicit_shape_with_features)
-  CGAL_target_use_Eigen(${target})
+  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
 endforeach()

@@ -44,7 +44,7 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     : vertices_(dmax+1), neighbors_(dmax+1)
     {}
     void*   for_compact_container() const { return vertices_.for_compact_container(); }
-    void* & for_compact_container()       { return vertices_.for_compact_container(); }
+    void    for_compact_container(void *p){ vertices_.for_compact_container(p); }
     int dimension() const { return ( vertices_.size() - 1 ); }
     void set_mirror_index(const int, const int) {}
 #ifdef BOOST_NO_INT64_T

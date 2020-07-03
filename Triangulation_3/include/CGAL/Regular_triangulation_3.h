@@ -153,6 +153,7 @@ public:
   using Tr_Base::geom_traits;
 #endif
   using Tr_Base::adjacent_vertices;
+  using Tr_Base::adjacent_vertices_threadsafe;
   using Tr_Base::cw;
   using Tr_Base::ccw;
   using Tr_Base::construct_point;
@@ -199,21 +200,38 @@ public:
     CGAL_triangulation_postcondition(is_valid());
   }
 
+  Regular_triangulation_3(Regular_triangulation_3&& rt)
+    noexcept(noexcept(Tr_Base(std::move(rt))))
+    : Tr_Base(std::move(rt)), hidden_point_visitor(this)
+  {
+    CGAL_triangulation_postcondition(is_valid());
+  }
+
+  ~Regular_triangulation_3() = default;
+
   void swap(Regular_triangulation_3& tr)
   {
-    // The 'vertices' and 'hidden_points' members of 'hidden_point_visitor' should be empty
-    // as they are only filled (and cleared) during the insertion of a point.
-    // Hidden points are not stored there, but rather in cells. Thus, the only thing that must be set
-    // is the triangulation pointer.
-    Hidden_point_visitor<Concurrency_tag> new_hpv(this);
-    std::swap(hidden_point_visitor, new_hpv);
-
+    // The 'vertices' and 'hidden_points' members of
+    // 'hidden_point_visitor' should be empty as they are only filled
+    // (and cleared) during the insertion of a point.  Hidden points
+    // are not stored there, but rather in cells. Thus, the only thing
+    // that must be set is the triangulation pointer, and it is
+    // already correctly set. There is nothing to do about
+    // 'hidden_point_visitor'.
     Tr_Base::swap(tr);
   }
 
-  Regular_triangulation_3& operator=(Regular_triangulation_3 tr)
+  Regular_triangulation_3& operator=(const Regular_triangulation_3& tr)
   {
-    swap(tr);
+    Regular_triangulation_3 copy(tr);
+    copy.swap(*this);
+    return *this;
+  }
+
+  Regular_triangulation_3& operator=(Regular_triangulation_3&& tr)
+    noexcept(noexcept(Regular_triangulation_3(std::move(tr))))
+  {
+    Tr_Base::operator=(std::move(tr));
     return *this;
   }
 
@@ -1393,11 +1411,6 @@ protected:
       : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point(const Insert_point& ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1502,12 +1515,6 @@ protected:
                            tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
       : m_rt(rt), m_points(points), m_infos(infos), m_indices(indices),
         m_tls_hint(tls_hint)
-    {}
-
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info &ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_infos(ip.m_infos),
-        m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
     {}
 
     // operator()
@@ -1621,12 +1628,6 @@ protected:
         m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
     {}
 
-    // Constructor
-    Remove_point(const Remove_point& rp)
-      : m_rt(rp.m_rt), m_vertices(rp.m_vertices),
-        m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1717,7 +1718,7 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   while(true)
   {
     Vertex_handle tmp = nearest;
-    adjacent_vertices(nearest, std::back_inserter(vs));
+    adjacent_vertices_threadsafe(nearest, std::back_inserter(vs));
     for(typename std::vector<Vertex_handle>::const_iterator
          vsit = vs.begin(); vsit != vs.end(); ++vsit)
       tmp = nearest_power_vertex(p, tmp, *vsit);

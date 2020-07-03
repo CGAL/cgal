@@ -25,9 +25,7 @@ template <typename Mesh>
 void test_stitch_boundary_cycles(const char* fname,
                                  const std::size_t expected_n)
 {
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
-  typedef typename boost::graph_traits<Mesh>::face_descriptor         face_descriptor;
 
   std::cout << "Testing stitch_boundary_cycles(); file: " << fname << "..." << std::flush;
 
@@ -44,15 +42,11 @@ void test_stitch_boundary_cycles(const char* fname,
     if(!is_border(h, mesh))
       continue;
 
-    std::unordered_map<vertex_descriptor, vertex_descriptor> v2v;
     std::unordered_map<halfedge_descriptor, halfedge_descriptor> h2h;
-    std::unordered_map<face_descriptor, face_descriptor> f2f;
 
     Mesh mesh_cpy;
     CGAL::copy_face_graph(mesh, mesh_cpy,
-                          std::inserter(v2v, v2v.end()),
-                          std::inserter(h2h, h2h.end()),
-                          std::inserter(f2f, f2f.end()));
+                          CGAL::parameters::halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())));
 
     assert(is_border(h2h.at(h), mesh_cpy));
 
