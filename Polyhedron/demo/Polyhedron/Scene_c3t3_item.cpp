@@ -58,7 +58,7 @@ QVector4D cgal_plane_to_vector4d(EPICK::Plane_3 plane) {
     static_cast<float>(-plane.d()) };
 }
 
-// The special Scene_item only for triangles
+
 class Scene_intersection_item : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT

@@ -334,6 +334,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                                 scene_points_with_normal_item)
 
   add_item(scene_lcc_item Scene_lcc_item.cpp)
+  add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
 
   foreach(lib demo_framework scene_basic_objects scene_color_ramp
               scene_polygon_soup_item scene_nef_polyhedron_item)

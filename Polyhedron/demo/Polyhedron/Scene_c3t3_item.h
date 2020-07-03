@@ -24,8 +24,6 @@
 #include <CGAL/Three/Scene_item_with_properties.h>
 
 struct Scene_c3t3_item_priv;
-class Scene_spheres_item;
-class Scene_intersection_item;
 using namespace CGAL::Three;
   class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
   : public Scene_group_item, public Scene_item_with_properties
