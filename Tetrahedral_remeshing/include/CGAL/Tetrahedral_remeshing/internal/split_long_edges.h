@@ -125,7 +125,6 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   Vertex_handle new_v = tr.tds().insert_in_edge(e);
   new_v->set_point(typename Tr::Point(m));
   new_v->set_dimension(dimension);
-  set_index(new_v, c3t3);
 
   // update c3t3 with subdomain and surface patch indices
   std::vector<Cell_handle> new_cells;
@@ -174,6 +173,8 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     //the 4th facet (new_v, v_and_opp_patch.first, v1 or v2)
     // will have its patch tagged from the other side, if needed
   }
+
+  set_index(new_v, c3t3);
 
   return new_v;
 }
