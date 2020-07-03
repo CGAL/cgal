@@ -1508,12 +1508,18 @@ void Viewer_impl::showDistance(QPoint pixel)
         TextItem *ACoord = new TextItem(float(APoint.x),
                                         float(APoint.y),
                                         float(APoint.z),
-                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("A(%1,%2,%3)")
+                                        .arg(APoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
+                                        .arg(APoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
+                                        .arg(APoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(float(BPoint.x),
                                         float(BPoint.y),
                                         float(BPoint.z),
-                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("B(%1,%2,%3)")
+                                        .arg(BPoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
+                                        .arg(BPoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
+                                        .arg(BPoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
@@ -1525,13 +1531,13 @@ void Viewer_impl::showDistance(QPoint pixel)
         Q_FOREACH(TextItem* ti, distance_text)
           textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
-                  .arg(APoint.x-viewer->offset().x)
-                  .arg(APoint.y-viewer->offset().y)
-                  .arg(APoint.z-viewer->offset().z)
-                  .arg(BPoint.x-viewer->offset().x)
-                  .arg(BPoint.y-viewer->offset().y)
-                  .arg(BPoint.z-viewer->offset().z)
-                  .arg(dist)));
+                  .arg(APoint.x/scaler.x()-viewer->offset().x)
+                  .arg(APoint.y/scaler.y()-viewer->offset().y)
+                  .arg(APoint.z/scaler.z()-viewer->offset().z)
+                  .arg(BPoint.x/scaler.x()-viewer->offset().x)
+                  .arg(BPoint.y/scaler.y()-viewer->offset().y)
+                  .arg(BPoint.z/scaler.z()-viewer->offset().z)
+                  .arg(dist, 0, 'g', 10)));
     }
 
 }
