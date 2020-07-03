@@ -290,6 +290,13 @@ namespace CGAL {
                                           Walker_iterator<const Node>());
       }
 
+      template<class Walker>
+      Node_range nodes() const {
+        Node_walker first = Walker::first;
+        Node_walker next = Walker::next;
+        return nodes(first(m_root), next);
+      }
+
       /// @}
 
       /// \name Operators

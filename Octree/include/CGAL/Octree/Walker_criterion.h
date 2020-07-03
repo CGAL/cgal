@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Node.h"
+#include "Walker_iterator.h"
 
 namespace CGAL {
 
@@ -63,6 +64,39 @@ namespace CGAL {
           first = &(*first)[0];
         return first;
       }
+
+      class _Preorder {
+
+      public:
+
+        template<class Value>
+        static const Node::Node<Value> *first(const Node::Node<Value> *root) {
+          return root;
+        }
+
+        template<class Value>
+        static const Node::Node<Value> *next(const Node::Node<Value> *n) {
+
+          if (n->is_leaf()) {
+
+            auto next = next_sibling(n);
+
+            if (nullptr == next) {
+
+              return next_sibling_up(n);
+            }
+
+            return next;
+
+          } else {
+
+            // Return the first child of this node
+            return &(*n)[0];
+          }
+
+        }
+      };
+
 
       struct Preorder {
 
