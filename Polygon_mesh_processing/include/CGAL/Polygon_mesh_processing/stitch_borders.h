@@ -397,8 +397,12 @@ OutputIterator collect_duplicated_stitchable_boundary_edges(const HalfedgeRange&
 
   if(per_cc)
   {
+    // 'PMP::connected_component' is not local, but it is cheap.
+    // One could write a local version of PMP::connected_components with seed faces and which
+    // would not use a global dynamic pmap (but rather an unordered set) to mark visited faces,
+    // but it would have to be very small CCs for it to yield a better runtime.
+    // Consequently, leaving the global version till it is the limiting factor.
     cc = get(Face_property_tag(), pmesh);
-    // @todo this isn't local and kinda kills the 'going local' vibe
     num_cc = connected_components(pmesh, cc, np);
     border_edges_per_cc.resize(num_cc);
   }
