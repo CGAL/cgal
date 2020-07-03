@@ -1,5 +1,5 @@
-#ifndef OCTREE_TREE_WALKER_CRITERION_H
-#define OCTREE_TREE_WALKER_CRITERION_H
+#ifndef OCTREE_WALKER_CRITERION_H
+#define OCTREE_WALKER_CRITERION_H
 
 #include <iostream>
 
@@ -7,7 +7,7 @@ namespace CGAL {
 
   namespace Octree {
 
-    namespace Tree_walker {
+    namespace Walker {
 
       template<class Node>
       const Node *next_sibling(const Node *n) {
@@ -190,4 +190,4 @@ namespace CGAL {
 
 }
 
-#endif //OCTREE_TREE_WALKER_CRITERION_H
+#endif //OCTREE_WALKER_CRITERION_H

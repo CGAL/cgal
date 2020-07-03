@@ -24,7 +24,7 @@
 
 #include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Split_criterion.h>
-#include <CGAL/Octree/Tree_walker_criterion.h>
+#include <CGAL/Octree/Walker_criterion.h>
 #include <CGAL/Octree/Walker_iterator.h>
 
 #include <CGAL/bounding_box.h>
@@ -89,12 +89,15 @@ namespace CGAL {
        */
       typedef typename Kernel::FT FT;
 
+      /*!
+       * \brief
+       */
       typedef boost::iterator_range<typename PointRange::iterator> Points_iterator_range;
+
       /*!
        * \brief The Sub-tree / Octant type
        */
       typedef Node::Node<Points_iterator_range> Node;
-//      typedef Octree_node<Kernel, PointRange> Node;
 
       /*!
        * \brief A function that determines whether a node needs to be split when refining a tree

@@ -4,7 +4,7 @@
 
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/Node.h>
-#include <CGAL/Octree/Tree_walker_criterion.h>
+#include <CGAL/Octree/Walker_criterion.h>
 
 #include <iostream>
 #include <ostream>
@@ -17,7 +17,7 @@ template<class PointRange,
 ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap> &octree) {
 
   // Create a range of nodes
-  auto tree_walker = CGAL::Octree::Tree_walker::Preorder();
+  auto tree_walker = CGAL::Octree::Walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
 
