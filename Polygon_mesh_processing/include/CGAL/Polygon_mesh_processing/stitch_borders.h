@@ -889,8 +889,8 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// \param h a border halfedge of the polygon mesh `pm`
-/// \param pm the polygon mesh to be stitched
+/// \param h a border halfedge of the polygon mesh `pmesh`
+/// \param pmesh the polygon mesh to be stitched
 /// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
@@ -947,12 +947,12 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
-/// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::halfedge_descriptor`
+/// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 /// \tparam PolygonMesh a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// \param boundary_cycle_representatives a range of border halfedges, each describing a boundary cycle of the mesh `pm`
-/// \param pm the polygon mesh to be stitched
+/// \param boundary_cycle_representatives a range of border halfedges, each describing a boundary cycle of the mesh `pmesh`
+/// \param pmesh the polygon mesh to be stitched
 /// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
@@ -1135,12 +1135,12 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
 ///
-/// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::halfedge_descriptor`
+/// \tparam BorderHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 /// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// \param boundary_cycles a range of border halfedges, each describing a boundary cycle whose halfedges
-///                        will be considered for stitching
+/// \param boundary_cycle_representatives a range of border halfedges, each describing a boundary cycle whose halfedges
+///                                       will be considered for stitching
 /// \param pmesh the polygon mesh to be modified by the stitching procedure
 /// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 ///
