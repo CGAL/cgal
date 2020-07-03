@@ -1,18 +1,14 @@
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 //#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_DUMP_REMESHING_STEPS
+//#define CGAL_DUMP_REMESHING_STEPS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
-#include <CGAL/Tetrahedral_remeshing/tetrahedral_remeshing_io.h>
-#include "tetrahedral_remeshing_generate_input.h"
-
 #include <iostream>
 #include <fstream>
-#include <string>
 
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 
@@ -29,7 +25,7 @@ int main(int argc, char* argv[])
 
   std::ifstream in("data/sphere.mesh");
   if (CGAL::build_triangulation_from_file<Remeshing_triangulation, true>(in, tr))
-    std::cout << "build ok" << std::endl;
+    std::cout << "build triangulation ok" << std::endl;
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
 
