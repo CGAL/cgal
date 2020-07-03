@@ -17,6 +17,7 @@
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
 #include <QAction>
+#include <QMultipleInputDialog.h>
 #include <QRegularExpressionMatch>
 #ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
@@ -25,6 +26,7 @@
 #include <CGAL/Three/Three.h>
 
 #include "ui_LightingDialog.h"
+#include "CGAL_double_edit.h"
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -1480,7 +1482,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 
 bool Viewer::testDisplayId(double x, double y, double z)
 {
-    return d->scene->testDisplayId(x,y,z,this);
+    return d->scene->testDisplayId(x,y,z,this, d->scaler);
 }
 
 QPainter* Viewer::getPainter(){return d->painter;}
@@ -1979,10 +1981,40 @@ void Viewer::scaleScene()
   CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
   if(!d->scene_scaling)
   {
+    QMultipleInputDialog dialog ("Scale Scene", CGAL::Three::Three::mainWindow());
+    DoubleEdit* x_val = dialog.add<DoubleEdit> ("Scale along X");
+    DoubleEdit* y_val = dialog.add<DoubleEdit> ("Scale along Y");
+    DoubleEdit* z_val = dialog.add<DoubleEdit> ("Scale along Z");
+    x_val->setMinimum(0);
+    y_val->setMinimum(0);
+    z_val->setMinimum(0);
+    if(bbox != CGAL::Bbox_3(0,0,0,0,0,0))
+    {
+      QPushButton* norm_button = dialog.add<QPushButton> ("");
+      norm_button->setText("Normalize");
+      norm_button->setToolTip("Automatically fill values to display the scene in a unit cube.");
 
-    d->scaler.setX(1.0/(bbox.xmax()-bbox.xmin()));
-    d->scaler.setY(1.0/(bbox.ymax()-bbox.ymin()));
-    d->scaler.setZ(1.0/(bbox.zmax()-bbox.zmin()));
+      connect(norm_button, &QPushButton::clicked, this,
+              [x_val, y_val, z_val, &bbox](){
+        x_val->setValue(1.0/(bbox.xmax()-bbox.xmin()));
+        y_val->setValue(1.0/(bbox.ymax()-bbox.ymin()));
+        z_val->setValue(1.0/(bbox.zmax()-bbox.zmin()));
+      });
+    }
+    if (dialog.exec() != QDialog::Accepted)
+    {
+      parent()->findChild<QAction*>("actionScaleScene")->setChecked(false);
+      return;
+    }
+    d->scaler.setX(x_val->text()==""?1.0:x_val->value());
+    d->scaler.setY(y_val->text()==""?1.0:y_val->value());
+    d->scaler.setZ(z_val->text()==""?1.0:z_val->value());
+
+    if(d->scaler.x() == 0.0 || d->scaler.y() == 0.0 || d->scaler.z()== 0.0)
+    {
+      parent()->findChild<QAction*>("actionScaleScene")->setChecked(false);
+      return;
+    }
   }
   else
     d->scaler = QVector3D(1,1,1);

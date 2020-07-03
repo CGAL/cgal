@@ -20,13 +20,13 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& 
         Q_FOREACH(TextItem* item, list->textList())
         {
           CGAL::qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
-          src.x *= scaler.x();
-          src.y *= scaler.y();
-          src.z *= scaler.z();
           if(viewer->testDisplayId(src.x, src.y, src.z))
           {
             if(item->is_3D())
             {
+              src.x *= scaler.x();
+              src.y *= scaler.y();
+              src.z *= scaler.z();
               rect = QRect(int(camera->projectedCoordinatesOf(src).x -item->width()/2),
                            int(camera->projectedCoordinatesOf(src).y -item->height()/2),
                            int(item->width()),

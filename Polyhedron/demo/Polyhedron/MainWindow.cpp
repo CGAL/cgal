@@ -3287,6 +3287,8 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
   });
 
   action = subviewer->findChild<QAction*>("actionScaleScene");
+  action->setCheckable(true);
+  action->setChecked(false);
   connect(action, &QAction::triggered,
           viewer, &Viewer::scaleScene);
 

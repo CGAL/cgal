@@ -149,7 +149,7 @@ public:
   bool printFaceIds()const Q_DECL_OVERRIDE;
   void printAllIds() Q_DECL_OVERRIDE;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*, const QVector3D &scaler)const Q_DECL_OVERRIDE;
   float alpha() const Q_DECL_OVERRIDE;
   void setAlpha(int alpha) Q_DECL_OVERRIDE;
   QSlider* alphaSlider();
