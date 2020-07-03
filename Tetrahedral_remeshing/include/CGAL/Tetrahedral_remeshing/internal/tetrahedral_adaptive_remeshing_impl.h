@@ -193,13 +193,13 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
-#endif
-#ifdef CGAL_DUMP_REMESHING_STEPS
-    CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
     CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3,
       "1-facets_in_complex_after_split.off");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
+#endif
+#ifdef CGAL_DUMP_REMESHING_STEPS
+    CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
 #endif
   }
 
@@ -216,11 +216,11 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "2-collapse");
-    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
 #endif
   }
 
@@ -232,11 +232,11 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "3-flip");
-    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
 #endif
   }
 
@@ -247,11 +247,11 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "4-smooth");
-    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
 #endif
   }
 
