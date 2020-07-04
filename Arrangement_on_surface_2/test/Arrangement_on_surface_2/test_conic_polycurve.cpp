@@ -11,19 +11,19 @@ int main()
 
 #else
 
+#include <vector>
+#include <list>
+
+#include <boost/type_traits/is_same.hpp>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
-#include <vector>
-#include <list>
-
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
-#include <boost/type_traits/is_same.hpp>
 
 ////////////////////
 //conic traits
@@ -102,28 +102,36 @@ void check_equal()
             << ((are_equal) ? "equal" : "Not equal") << std::endl;
  }
 
- template <typename curve_type>
- void check_intersect(curve_type &xcv1, curve_type &xcv2)
+ template <typename Traits>
+ void check_intersect(typename Traits::X_monotone_curve_2& xcv1,
+                      typename Traits::X_monotone_curve_2& xcv2,
+                      const Traits& traits)
  {
-  Polycurve_conic_traits_2 traits;
-  std::vector<CGAL::Object> intersection_points;
-  traits.intersect_2_object()(xcv1, xcv2,
-                              std::back_inserter(intersection_points));
-  std::cout<< "Number of intersection Points: " << intersection_points.size()
-           << std::endl;
+   typedef typename Traits::Multiplicity                Multiplicity;
+   typedef typename Traits::Point_2                     Point_2;
+   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
+   typedef std::pair<Multiplicity, Point_2>             Intersection_point;
+   typedef boost::variant<Intersection_point, X_monotone_curve_2>
+     Intersection_result;
 
-  //dynamic cast the cgal_objects
-  // std::vector< std::pair<Polycurve_conic_traits_2::Point_2,
-  //                        Polycurve_conic_traits_2::Multiplicity> > pm_vector;
-  // for(int i=0; i<intersection_points.size(); i++)
-  // {
-  //   std::pair<Polycurve_conic_traits_2::Point_2,
-  //             Polycurve_conic_traits_2::Multiplicity> pm =
-  //   CGAL::object_cast<std::pair<Polycurve_conic_traits_2::Point_2,
-  //                               Polycurve_conic_traits_2::Multiplicity> >
-  //                              (&(intersection_points[i]));
-  //   pm_vector.push_back(pm);
-  // }
+   std::vector<Intersection_result> intersection_points;
+   traits.intersect_2_object()(xcv1, xcv2,
+                               std::back_inserter(intersection_points));
+   std::cout<< "Number of intersection Points: " << intersection_points.size()
+            << std::endl;
+
+   //dynamic cast the cgal_objects
+   // std::vector< std::pair<Polycurve_conic_traits_2::Point_2,
+   //                        Polycurve_conic_traits_2::Multiplicity> > pm_vector;
+   // for(int i=0; i<intersection_points.size(); i++)
+   // {
+   //   std::pair<Polycurve_conic_traits_2::Point_2,
+   //             Polycurve_conic_traits_2::Multiplicity> pm =
+   //   CGAL::object_cast<std::pair<Polycurve_conic_traits_2::Point_2,
+   //                               Polycurve_conic_traits_2::Multiplicity> >
+   //                              (&(intersection_points[i]));
+   //   pm_vector.push_back(pm);
+   // }
  }
 
 void check_compare_end_points_xy_2()
