@@ -76,6 +76,7 @@ add_executable(arrangement_2
                GraphicsViewCurveInput.cpp
                AlgebraicCurveParser.cpp
                GraphicsSceneMixin.cpp
+               GridGraphicsItem.cpp
                ${CGAL_Qt5_MOC_FILES}
                ${arrangement_2_uis}
                ${CGAL_Qt5_RESOURCE_FILES})

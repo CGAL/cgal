@@ -81,10 +81,10 @@ void FillFaceCallback<Arr_>::fillFace(QGraphicsSceneMouseEvent* event)
   Face_const_handle face = this->getFace(pointLocationResult);
   Face_handle f = this->arr->non_const_handle(face);
 
-  if (f->color() == ::Qt::white && this->fillColor.isValid())
+  if (f->color() == ::Qt::transparent && this->fillColor.isValid())
     f->set_color(this->fillColor);
   else
-    f->set_color(::Qt::white);
+    f->set_color(::Qt::transparent);
 }
 
 //! A Template type

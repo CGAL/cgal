@@ -60,16 +60,6 @@ void GraphicsViewCurveInputBase::reset()
   }
 }
 
-void GraphicsViewCurveInputBase::setSnappingEnabled(bool b)
-{
-  this->snappingEnabled = b;
-}
-
-void GraphicsViewCurveInputBase::setSnapToGridEnabled(bool b)
-{
-  this->snapToGridEnabled = b;
-}
-
 void GraphicsViewCurveInputBase::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
   if (this->inputMethod) this->inputMethod->mouseMoveEvent(event);
@@ -410,9 +400,9 @@ void BezierInputMethod::beginInput()
 
   // TODO: set bezier guide color dynamically
   pen = this->bezierGuide.pen();
-  pen.setColor(this->color);
+  pen.setColor(QColorConstants::DarkGray);
   pen.setCosmetic(true);
-  this->bezierGuide.setPen(QColorConstants::DarkGray);
+  this->bezierGuide.setPen(pen);
 }
 
 static QPointF evalBezier(

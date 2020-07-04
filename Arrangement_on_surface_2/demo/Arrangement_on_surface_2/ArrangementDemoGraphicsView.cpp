@@ -12,10 +12,12 @@
 #include "ArrangementDemoGraphicsView.h"
 
 #include <iostream>
+#include <cmath>
 #include <QVarLengthArray>
 #include <QPen>
 #include <QCoreApplication>
 #include <QKeyEvent>
+#include <QFontMetrics>
 
 //! Member function to setup the viewport of the screen
 /*!
@@ -23,9 +25,8 @@
 */
 ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   QGraphicsView( parent ),
-  showGrid( false ),
-  gridSize( 50 ),
-  gridColor( ::Qt::black ),
+  maxScale( 500000 ),
+  minScale( 0.0004 ),
   backgroundColor( ::Qt::white )
 {
   this->resetTransform();
@@ -37,56 +38,6 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   // TODO: Make options menu work
   this->setRenderHint(QPainter::Antialiasing);
-}
-
-//! Member function to display the grid
-/*!
-  \param b boolean value to toggle the grid view
-*/
-void ArrangementDemoGraphicsView::setShowGrid( bool b )
-{
-  this->showGrid = b;
-}
-
-//! Member function to get the grid
-/*!
-  \return the grid to be displayed
-*/
-bool ArrangementDemoGraphicsView::getShowGrid( ) const
-{
-  return this->showGrid;
-}
-
-//! Member function to set the size of grid
-/*!
-  \param size integer variable 
-*/
-void ArrangementDemoGraphicsView::setGridSize( int size )
-{
-  this->gridSize = size;
-}
-
-int ArrangementDemoGraphicsView::getGridSize( ) const
-{
-  return this->gridSize;
-}
-
-//! Member function to set the color of grid
-/*!
-  \param color a QColor object 
-*/
-void ArrangementDemoGraphicsView::setGridColor( QColor color )
-{
-  this->gridColor = color;
-}
-
-//! Member function to get the color of grid
-/*!
-  \return the grid color being set
-*/
-QColor ArrangementDemoGraphicsView::getGridColor( ) const
-{
-  return this->gridColor;
 }
 
 //! Member function to set color of background
@@ -111,41 +62,19 @@ QColor ArrangementDemoGraphicsView::getBackgroundColor( ) const
 /*!
   \param painter a Qpainter pointer to its class 
 */
-void ArrangementDemoGraphicsView::drawForeground( QPainter* painter,
-                                                  const QRectF& /* rect */)
+void ArrangementDemoGraphicsView::drawBackground(
+  QPainter* painter, const QRectF& /* rect */)
 {
-  QRectF viewportRect = this->viewportRect( );
-  if ( this->showGrid )
-  {
-    // compute integer-spaced grid lines
-    QVarLengthArray< QLineF, 100 > linesX;
-    QVarLengthArray< QLineF, 100 > linesY;
-    qreal left =
-      int(viewportRect.left()) - (int(viewportRect.left()) % this->gridSize);
-    qreal top =
-      int(viewportRect.top()) - (int(viewportRect.top()) % this->gridSize);
-    for ( qreal x = left; x < viewportRect.right( ); x += this->gridSize )
-    {
-      linesX.append( QLineF(x, viewportRect.top(), x, viewportRect.bottom()));
-    }
-    for ( qreal y = top; y < viewportRect.bottom( ); y += this->gridSize )
-    {
-      linesY.append(QLineF(viewportRect.left( ), y, viewportRect.right(), y));
-    }
+}
 
-    // set up the painter
-    QPen savePen = painter->pen( );
-    QPen gridPen( savePen );
-    gridPen.setColor( this->gridColor );
-    painter->setPen( gridPen );
-
-    // draw the grid
-    painter->drawLines( linesX.data( ), linesX.size( ) );
-    painter->drawLines( linesY.data( ), linesY.size( ) );
-
-    // revert the painter
-    painter->setPen( savePen );
-  }
+void ArrangementDemoGraphicsView::paintEvent(QPaintEvent* event)
+{
+  qreal scale = std::sqrt(std::abs(this->transform().determinant()));
+  if (scale > this->maxScale)
+    this->scale(this->maxScale / scale, this->maxScale / scale);
+  else if (scale < this->minScale)
+    this->scale(this->minScale / scale, this->minScale / scale);
+  QGraphicsView::paintEvent(event);
 }
 
 QRectF ArrangementDemoGraphicsView::viewportRect() const

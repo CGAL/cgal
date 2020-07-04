@@ -21,6 +21,7 @@
 #include "SplitEdgeCallback.h"
 #include "EnvelopeCallback.h"
 #include "FillFaceCallback.h"
+#include "GridGraphicsItem.h"
 
 #include <QGridLayout>
 
@@ -32,7 +33,6 @@ ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   QGraphicsSceneMixin( new QGraphicsScene() ),
   graphicsView( new ArrangementDemoGraphicsView( this ) ),
   layout( new QGridLayout( this ) ),
-  arrangementGraphicsItem( nullptr ),
   curveInputCallback( nullptr ),
   deleteCurveCallback( nullptr ),
   pointLocationCallback( nullptr ),
@@ -41,7 +41,9 @@ ArrangementDemoTabBase::ArrangementDemoTabBase( QWidget* parent ) :
   splitEdgeCallback( nullptr ),
   envelopeCallback( nullptr ),
   fillFaceCallback( nullptr ),
-  activeCallback( nullptr )
+  activeCallback( nullptr ),
+  arrangementGraphicsItem( nullptr ),
+  gridGraphicsItem( nullptr )
 {
   this->setupUi( );
 }
@@ -72,7 +74,12 @@ ArrangementDemoGraphicsView* ArrangementDemoTabBase::getView() const
 CGAL::Qt::ArrangementGraphicsItemBase*
 ArrangementDemoTabBase::getArrangementGraphicsItem( ) const
 {
-  return this->arrangementGraphicsItem.get();
+  return this->arrangementGraphicsItem;
+}
+
+GridGraphicsItem* ArrangementDemoTabBase::getGridGraphicsItem() const
+{
+  return this->gridGraphicsItem;
 }
 
 //! Determining the points of the arrangement
@@ -246,8 +253,6 @@ ArrangementDemoTab<Arr_>::ArrangementDemoTab(
 template <class Arr_>
 ArrangementDemoTab<Arr_>::~ArrangementDemoTab()
 {
-  // make unique_ptr handle deletion instead of Qt
-  this->getScene()->removeItem(this->arrangementGraphicsItem.get());
 }
 
 template <class Arr_>
@@ -261,9 +266,6 @@ void ArrangementDemoTab<Arr_>::initComponents()
 {
   auto scene = this->getScene();
 
-  this->arrangementGraphicsItem =
-    std::make_unique<CGAL::Qt::ArrangementGraphicsItem<Arrangement>>(
-      this->arrangement.get());
   this->curveInputCallback =
     std::make_unique<ArrangementCurveInputCallback<Arrangement>>(
       this->arrangement.get(), this, scene);
@@ -285,7 +287,13 @@ void ArrangementDemoTab<Arr_>::initComponents()
   this->fillFaceCallback = std::make_unique<FillFaceCallback<Arrangement>>(
     this->arrangement.get(), this);
 
-  scene->addItem(this->arrangementGraphicsItem.get());
+  this->arrangementGraphicsItem =
+    new CGAL::Qt::ArrangementGraphicsItem<Arrangement>(this->arrangement.get());
+  this->gridGraphicsItem = new GridGraphicsItem();
+
+  scene->addItem(this->arrangementGraphicsItem);
+  scene->addItem(this->gridGraphicsItem);
+
   this->arrangementGraphicsItem->setScene(scene);
   this->curveInputCallback->setScene(scene);
   this->deleteCurveCallback->setScene(scene);
@@ -311,7 +319,7 @@ void ArrangementDemoTab<Arr_>::setupCallbacks()
     this->fillFaceCallback.get(), SIGNAL(modelChanged()), this,
     SIGNAL(modelChanged()));
   QObject::connect(
-    this, SIGNAL(modelChanged()), this->arrangementGraphicsItem.get(),
+    this, SIGNAL(modelChanged()), this->arrangementGraphicsItem,
     SLOT(modelChanged()));
   QObject::connect(
     this, SIGNAL(modelChanged()), this->envelopeCallback.get(),

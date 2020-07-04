@@ -10,11 +10,13 @@ namespace Qt {
 
 ArrangementGraphicsItemBase::ArrangementGraphicsItemBase() :
     bb(0, 0, 0, 0), verticesPen(QPen(::Qt::blue, 3.)),
-    edgesPen(QPen(::Qt::blue, 1.)), backgroundColor(::Qt::white)
+    edgesPen(QPen(::Qt::blue, 1.)), backgroundColor(::Qt::transparent)
 {
   this->verticesPen.setCosmetic(true);
-  this->verticesPen.setCapStyle(::Qt::SquareCap);
   this->edgesPen.setCosmetic(true);
+  this->edgesPen.setWidth(2);
+  this->facesPen.setCosmetic(true);
+  this->facesPen.setColor(QColorConstants::Transparent);
   this->pointsGraphicsItem.setParentItem(this);
 }
 
@@ -91,7 +93,25 @@ template <typename TTraits>
 void ArrangementGraphicsItem<Arr_>::paint(
   QPainter* painter, TTraits /* traits */)
 {
-  this->paintFaces(painter);
+  auto windowRect = painter->window();
+  if (
+    facesPixmap.width() != windowRect.width() ||
+    facesPixmap.height() != windowRect.height())
+  { facesPixmap = {windowRect.width(), windowRect.height()}; }
+
+  facesPixmap.fill(QColorConstants::Transparent);
+
+  QPainter painter2{&facesPixmap};
+  painter2.setCompositionMode(QPainter::CompositionMode_Source);
+  painter2.setTransform(painter->transform());
+  painter2.setBrush(painter->brush());
+  painter2.setPen(painter->pen());
+  this->paintFaces(&painter2);
+
+  painter->save();
+  painter->resetTransform();
+  painter->drawPixmap(QPoint{0, 0}, facesPixmap);
+  painter->restore();
 
   painter->setPen(this->verticesPen);
 
@@ -266,98 +286,55 @@ ArrangementGraphicsItem< Arr_ >::
 paintFace( Face_handle f, QPainter* painter,
                 CGAL::Arr_polyline_traits_2< Kernel_ > )
 {
-  if (!f->is_unbounded())  // f is not the unbounded face
+  if (!f->is_unbounded())
   {
-    // typedef typename CGAL::Arr_polyline_traits_2<Kernel_> Arr_poly_traits;
-    // typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
-    // typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
-    // typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
-
-    // Obtain a polyline traits class and construct the needed functors
-    // Arr_poly_traits poly_tr;
-    // Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
-    // Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
-    // Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
-
-    // Construct needed functors from the segment traits
-    // typedef typename Arr_poly_traits::Subcurve_traits_2      Subcurve_traits;
-    // typedef typename Subcurve_traits::Construct_min_vertex_2 Seg_const_min_v;
-    // typedef typename Subcurve_traits::Construct_max_vertex_2 Seg_const_max_v;
-    // Seg_const_min_v construct_min_v = poly_tr.subcurve_traits_2()->
-    //   construct_min_vertex_2_object();
-    // Seg_const_max_v construct_max_v = poly_tr.subcurve_traits_2()->
-    //   construct_max_vertex_2_object();
-
-    // Iterator of the segments of an x-monotone polyline
-    // typename X_monotone_curve_2::Subcurve_const_iterator seg_it;
-
     QVector< QPointF > pts; // holds the points of the polygon
-    X_monotone_curve_2 cv;
 
+    CGAL::Qt::Converter<Kernel> convert;
     /* running with around the outer of the face and generate from it
      * polygon
      */
     Ccb_halfedge_circulator cc = f->outer_ccb();
     do {
-      // The drawing is actually identical to segment
-      double x = CGAL::to_double(cc->source()->point().x());
-      double y = CGAL::to_double(cc->source()->point().y());
-      QPointF coord_source(x , y);
-      pts.push_back(coord_source );
+      if (this->antenna(cc)) continue;
 
-      // The code below is problematic
-      // cv = cc->curve();
+      QPointF src = convert(cc->source()->point());
+      QPointF tgt = convert(cc->target()->point());
 
-      // // Determine the direction of cv (left-to-right or right-to-left)
-      // Comparison_result dir = comp_end_pts(cv);
+      Halfedge he = *cc;
+      if (he.direction() == ARR_LEFT_TO_RIGHT && src.x() > tgt.x())
+        std::swap(src, tgt);
+      if (he.direction() == ARR_RIGHT_TO_LEFT && src.x() < tgt.x())
+        std::swap(src, tgt);
 
-      // for (seg_it = cv.subcurves_begin();
-      //      seg_it != cv.subcurves_end() ; ++seg_it)
-      //   {
-      //     if (dir == SMALLER)
-      //       {
-      //         // cv is directed from left-to-right
-      //         // Adding the left-min vertex of the current segment
-      //         double x = CGAL::to_double((construct_min_v(*seg_it)).x());
-      //         double y = CGAL::to_double((construct_min_v(*seg_it)).y());
-      //         QPointF coord_source(x , y);
-      //         pts.push_back(coord_source );
-      //       }
-      //     else
-      //       {
-      //         // cv is directed from right-to-left
-      //         // Adding the right-max vertex of the current segment
-      //         double x = CGAL::to_double((construct_max_v(*seg_it)).x());
-      //         double y = CGAL::to_double((construct_max_v(*seg_it)).y());
-      //         QPointF coord_source(x , y);
-      //         pts.push_back(coord_source );
-      //       }
-      //   }
+      auto&& curve = cc->curve();
+      auto first_subcurve = curve.subcurves_begin();
+      QPointF src_first = convert(first_subcurve->source());
+      QPointF tgt_first = convert(first_subcurve->target());
 
-      // if (dir == SMALLER)
-      //   {
-      //     // Add the right-most point of cv
-      //     double x = CGAL::to_double((poly_const_max_v(cv)).x());
-      //     double y = CGAL::to_double((poly_const_max_v(cv)).y());
-      //     QPointF coord_source(x , y);
-      //     pts.push_back(coord_source );
-      //   }
-      // else
-      //   {
-      //     // Add the left-most point of cv
-      //     double x = CGAL::to_double((poly_const_min_v(cv)).x());
-      //     double y = CGAL::to_double((poly_const_min_v(cv)).y());
-      //     QPointF coord_source(x , y);
-      //     pts.push_back(coord_source );
-      //   }
-      //created from the outer boundary of the face
+      if (src_first == src)
+      {
+        for (auto it = curve.subcurves_begin(); it != curve.subcurves_end(); ++it)
+        {
+          pts.push_back(convert(it->source()));
+          pts.push_back(convert(it->target()));
+        }
+      }
+      else
+      {
+        QVector<QPointF> pts_tmp;
+        for (auto it = curve.subcurves_begin(); it != curve.subcurves_end(); ++it)
+        {
+          pts_tmp.push_front(convert(it->source()));
+          pts_tmp.push_front(convert(it->target()));
+        }
+        pts += pts_tmp;
+      }
     } while (++cc != f->outer_ccb());
 
     // make polygon from the outer ccb of the face 'f'
     QPolygonF pgn( pts );
 
-    // fill the face according to its color (stored at any of her
-    // incidents curves)
     QBrush oldBrush = painter->brush();
     if (!f->color().isValid())
       painter->setBrush(this->backgroundColor);
@@ -435,7 +412,7 @@ template <typename Arr_>
 void ArrangementGraphicsItem<Arr_>::paintFaces(QPainter* painter)
 {
   QPen pen = painter->pen();
-  painter->setPen(QColorConstants::Transparent);
+  painter->setPen(this->facesPen);
 
   // Prepare all faces for painting
   for (auto fi = this->arr->faces_begin(); fi != this->arr->faces_end(); ++fi)

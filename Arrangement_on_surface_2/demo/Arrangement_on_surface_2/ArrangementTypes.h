@@ -49,7 +49,7 @@ class Face_with_color : public CGAL::Arr_face_base
   bool      m_visited;
 
 public:
-  Face_with_color() : CGAL::Arr_face_base(), m_color(::Qt::white), m_visited(false) { }
+  Face_with_color() : CGAL::Arr_face_base(), m_color(::Qt::transparent), m_visited(false) { }
 
   QColor color() const { return m_color; }
   void set_color(const QColor& c) { m_color = c; }

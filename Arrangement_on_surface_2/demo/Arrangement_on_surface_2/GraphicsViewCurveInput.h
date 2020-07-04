@@ -22,7 +22,6 @@
 
 #include "Callback.h"
 #include "GraphicsSceneMixin.h"
-#include "ISnappable.h"
 #include "PointsGraphicsItem.h"
 
 class QEvent;
@@ -391,14 +390,11 @@ private:
 
 class GraphicsViewCurveInputBase :
     public GraphicsViewInput,
-    public ISnappable,
     public QGraphicsSceneMixin
 {
 public:
   GraphicsViewCurveInputBase(QObject* parent, QGraphicsScene* scene);
 
-  void setSnappingEnabled(bool b);
-  void setSnapToGridEnabled(bool b);
   void setColor(QColor c);
   void reset();
   virtual void setCurveType(CurveType type) = 0;
@@ -409,8 +405,6 @@ protected:
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
   virtual bool eventFilter(QObject* obj, QEvent* event);
 
-  bool snappingEnabled;
-  bool snapToGridEnabled;
   CurveInputMethod* inputMethod; // active input method
 };                               // class GraphicsViewCurveInputBase
 

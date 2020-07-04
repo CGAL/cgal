@@ -25,6 +25,7 @@ class EnvelopeCallbackBase;
 class FillFaceCallbackBase;
 class SplitEdgeCallbackBase;
 class DeleteCurveCallbackBase;
+class GridGraphicsItem;
 
 namespace CGAL
 {
@@ -54,6 +55,7 @@ public:
   virtual void adjustViewport() = 0;
 
   CGAL::Qt::ArrangementGraphicsItemBase* getArrangementGraphicsItem() const;
+  GridGraphicsItem* getGridGraphicsItem() const;
   CGAL::Qt::GraphicsViewCurveInputBase* getCurveInputCallback() const;
   CGAL::Qt::Callback* getDeleteCurveCallback() const;
   CGAL::Qt::Callback* getPointLocationCallback() const;
@@ -84,8 +86,6 @@ protected:
   ArrangementDemoGraphicsView* graphicsView;
   QGridLayout* layout;
 
-  std::unique_ptr<CGAL::Qt::ArrangementGraphicsItemBase>
-    arrangementGraphicsItem;
   std::unique_ptr<CGAL::Qt::GraphicsViewCurveInputBase> curveInputCallback;
   std::unique_ptr<DeleteCurveCallbackBase> deleteCurveCallback;
   std::unique_ptr<CGAL::Qt::Callback> pointLocationCallback;
@@ -96,6 +96,9 @@ protected:
   std::unique_ptr<FillFaceCallbackBase> fillFaceCallback;
 
   QObject* activeCallback;
+
+  CGAL::Qt::ArrangementGraphicsItemBase* arrangementGraphicsItem;
+  GridGraphicsItem* gridGraphicsItem;
 }; // class ArrangementDemoTabBase
 
 template < class Arr_ >

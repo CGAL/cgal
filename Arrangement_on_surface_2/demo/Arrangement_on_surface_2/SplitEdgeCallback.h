@@ -21,24 +21,16 @@
 
 #include "CurveGraphicsItem.h"
 #include "Utils.h"
-#include "ISnappable.h"
 
-class SplitEdgeCallbackBase : public CGAL::Qt::Callback, public ISnappable
+class SplitEdgeCallbackBase : public CGAL::Qt::Callback
 {
 public:
-  void setSnappingEnabled( bool b );
-  void setSnapToGridEnabled( bool b );
-
   virtual void setColor( QColor c );
   QColor getColor( ) const;
 
 protected:
   SplitEdgeCallbackBase( QObject* parent );
-
-  bool snappingEnabled;
-  bool snapToGridEnabled;
   QColor color;
-
 }; // SplitEdgeCallbackBase
 
 /**
@@ -79,9 +71,7 @@ protected:
   void mousePressEvent( QGraphicsSceneMouseEvent *event );
   void mouseMoveEvent( QGraphicsSceneMouseEvent *event );
 
-  virtual Point_2 snapPoint( QGraphicsSceneMouseEvent *event );
-  template < class TTraits >
-  Point_2 snapPoint( QGraphicsSceneMouseEvent *event, TTraits traits );
+  Point_2 snapPoint( QGraphicsSceneMouseEvent *event );
 
   template < class TTraits >
   void splitEdges( const Point_2& pt, TTraits traits );
@@ -102,9 +92,6 @@ protected:
   Intersect_2 intersectCurves;
   Equal_2 areEqual;
   QGraphicsLineItem* segmentGuide;
-  SnapToArrangementVertexStrategy<Arrangement> snapToVertexStrategy;
-  SnapToGridStrategy< typename Arrangement::Geometry_traits_2 >
-    snapToGridStrategy;
 }; // class SplitEdgeCallback
 
 #endif // SPLIT_EDGE_CALLBACK_H

@@ -15,17 +15,13 @@
 #include <QGraphicsView>
 #include <QColor>
 
+class QPaintEvent;
+
 class ArrangementDemoGraphicsView : public QGraphicsView
 {
 public:
   ArrangementDemoGraphicsView( QWidget* parent = 0 );
 
-  void setShowGrid( bool b );
-  bool getShowGrid( ) const;
-  void setGridSize( int size );
-  int getGridSize( ) const;
-  void setGridColor( QColor color );
-  QColor getGridColor( ) const;
   void setBackgroundColor( QColor color );
   QColor getBackgroundColor( ) const;
   QRectF viewportRect() const;
@@ -33,11 +29,11 @@ public:
   void resetTransform();
 
 protected:
-  void drawForeground( QPainter* painter, const QRectF& rect );     //!< drawing on the screen
+  void drawBackground(QPainter* painter, const QRectF& rect) override;
+  void paintEvent(QPaintEvent* event) override;
 
-  bool showGrid;            /*!< displaying grid toggle */
-  int gridSize;              /*!< an integer value for the grid size */
-  QColor gridColor;           /*!< color for the grid */
+  qreal maxScale;
+  qreal minScale;
   QColor backgroundColor;     /*!< color for the background */
 };
 

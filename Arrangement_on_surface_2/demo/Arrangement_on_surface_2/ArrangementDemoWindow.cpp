@@ -25,6 +25,7 @@
 #include "DeleteCurveMode.h"
 #include "GraphicsViewCurveInput.h"
 #include "FillFaceCallback.h"
+#include "GridGraphicsItem.h"
 
 #include <QActionGroup>
 #include <QColorDialog>
@@ -775,12 +776,11 @@ void ArrangementDemoWindow::on_actionPreferences_triggered()
   ArrangementDemoTabBase* currentTab = this->tabs[currentTabIndex].first;
   CGAL::Qt::ArrangementGraphicsItemBase* agi =
     currentTab->getArrangementGraphicsItem();
-  ArrangementDemoGraphicsView* view =
-    dynamic_cast<ArrangementDemoGraphicsView*>(currentTab->getView());
   EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback();
   VerticalRayShootCallbackBase* verticalRayShootCallback =
     currentTab->getVerticalRayShootCallback();
   SplitEdgeCallbackBase* splitEdgeCallback = currentTab->getSplitEdgeCallback();
+  GridGraphicsItem* gridGraphicsItem = currentTab->getGridGraphicsItem();
 
   ArrangementDemoPropertiesDialog* dialog =
     new ArrangementDemoPropertiesDialog(this);
@@ -811,8 +811,6 @@ void ArrangementDemoWindow::on_actionPreferences_triggered()
         .value<unsigned int>();
     DeleteCurveMode mode =
       dialog->property(Dialog::DELETE_CURVE_MODE_KEY).value<DeleteCurveMode>();
-    unsigned int gridSize =
-      dialog->property(Dialog::GRID_SIZE_KEY).value<unsigned int>();
     QColor gridColor = dialog->property(Dialog::GRID_COLOR_KEY).value<QColor>();
     // end new for Qt5 version !
 
@@ -821,8 +819,9 @@ void ArrangementDemoWindow::on_actionPreferences_triggered()
     agi->setEdgesPen(edgesPen);
     agi->setVerticesPen(verticesPen);
     agi->modelChanged();
-    view->setGridSize(gridSize);
-    view->setGridColor(gridColor);
+    gridGraphicsItem->setAxesColor(gridColor);
+    gridColor.setAlpha(0.5);
+    gridGraphicsItem->setAxesColor(gridColor);
     envelopeCallback->setEnvelopeEdgeColor(envelopeEdgeColor);
     envelopeCallback->setEnvelopeEdgeWidth(envelopeEdgeWidth);
     envelopeCallback->setEnvelopeVertexColor(envelopeVertexColor);

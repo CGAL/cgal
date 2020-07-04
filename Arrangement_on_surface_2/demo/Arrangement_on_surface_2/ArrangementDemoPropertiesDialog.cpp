@@ -19,6 +19,7 @@
 #include "ArrangementGraphicsItem.h"
 #include "ArrangementDemoTab.h"
 #include "EnvelopeCallback.h"
+#include "GridGraphicsItem.h"
 
 
 ArrangementDemoPropertiesDialog::
@@ -92,7 +93,6 @@ void ArrangementDemoPropertiesDialog::setupUi( )
   QTableWidgetItem* verticalRayEdgeColorItem = new QTableWidgetItem;
   QTableWidgetItem* verticalRayEdgeWidthItem = new QTableWidgetItem;
   QTableWidgetItem* deleteCurveModeItem = new QTableWidgetItem;
-  QTableWidgetItem* gridSizeItem = new QTableWidgetItem;
   QTableWidgetItem* gridColorItem = new QTableWidgetItem;
 
   this->ui->tableWidget->setItem( int(EDGE_COLOR_KEY), 0, edgeColorItem );
@@ -113,7 +113,6 @@ void ArrangementDemoPropertiesDialog::setupUi( )
 								  verticalRayEdgeWidthItem );
   this->ui->tableWidget->setItem( int(DELETE_CURVE_MODE_KEY), 0,
 								  deleteCurveModeItem );
-  this->ui->tableWidget->setItem( int(GRID_SIZE_KEY), 0, gridSizeItem );
   this->ui->tableWidget->setItem( int(GRID_COLOR_KEY), 0, gridColorItem );
 
   // fill in the items with data
@@ -140,11 +139,10 @@ void ArrangementDemoPropertiesDialog::updateUi( )
 	return;
   }
 
-  ArrangementDemoGraphicsView* view =
-    dynamic_cast<ArrangementDemoGraphicsView*>(currentTab->getView());
   EnvelopeCallbackBase* envelopeCallback = currentTab->getEnvelopeCallback( );
   VerticalRayShootCallbackBase* verticalRayShootCallback =
 	currentTab->getVerticalRayShootCallback( );
+  GridGraphicsItem* gridGraphicsItem = currentTab->getGridGraphicsItem();
 
   QPen vertexPen = agi->getVerticesPen( );
   QPen edgePen = agi->getEdgesPen( );
@@ -154,8 +152,7 @@ void ArrangementDemoPropertiesDialog::updateUi( )
   QColor edgeColor = edgePenBrush.color( );
   unsigned int edgeWidth = edgePen.width( );
   unsigned int vertexRadius = vertexPen.width( );
-  unsigned int gridSize = view->getGridSize( );
-  QColor gridColor = view->getGridColor( );
+  QColor gridColor = gridGraphicsItem->getAxesColor( );
   unsigned int envelopeEdgeWidth = envelopeCallback->getEnvelopeEdgeWidth( );
   unsigned int envelopeVertexRadius =
 	envelopeCallback->getEnvelopeVertexRadius( );
@@ -174,8 +171,6 @@ void ArrangementDemoPropertiesDialog::updateUi( )
 	this->ui->tableWidget->item( int(VERTEX_RADIUS_KEY), 0 );
   QTableWidgetItem* deleteCurveModeItem =
 	this->ui->tableWidget->item( int(DELETE_CURVE_MODE_KEY), 0 );
-  QTableWidgetItem* gridSizeItem =
-	this->ui->tableWidget->item( int( GRID_SIZE_KEY ), 0 );
   QTableWidgetItem* gridColorItem =
 	this->ui->tableWidget->item( int( GRID_COLOR_KEY ), 0 );
   QTableWidgetItem* envelopeEdgeColorItem =
@@ -235,8 +230,6 @@ void ArrangementDemoPropertiesDialog::updateUi( )
 								QVariant::fromValue( deleteCurveMode ) );
 
   // grid properties
-  gridSizeItem->setData( Qt::DisplayRole, gridSize );
-
   gridColorItem->setData( Qt::DisplayRole, gridColor );
   gridColorItem->setData( Qt::DecorationRole, gridColor );
   gridColorItem->setData( Qt::UserRole, QVariant::fromValue( gridColor ) );

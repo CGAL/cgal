@@ -12,6 +12,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/GraphicsItem.h>
+#include <QPixmap>
 
 #include "GraphicsSceneMixin.h"
 #include "PointsGraphicsItem.h"
@@ -59,7 +60,9 @@ protected:
   CGAL::Bbox_2 bb;
   QPen verticesPen;
   QPen edgesPen;
+  QPen facesPen;
   QColor backgroundColor;
+  QPixmap facesPixmap;
   PointsGraphicsItem pointsGraphicsItem;
 }; // class ArrangementGraphicsItemBase
 

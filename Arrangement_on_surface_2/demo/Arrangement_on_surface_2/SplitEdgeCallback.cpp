@@ -11,24 +11,6 @@
 
 #include "SplitEdgeCallback.h"
 
-//! enable/disable snapping
-/*!
-  \param b boolean value to toggle the its currents state
-*/
-void SplitEdgeCallbackBase::setSnappingEnabled( bool b )
-{
-  this->snappingEnabled = b;
-}
-
-//! enable/disable of the snapping grid
-/*!
-  \param b boolean value to toggle its current state
-*/
-void SplitEdgeCallbackBase::setSnapToGridEnabled( bool b )
-{
-  this->snapToGridEnabled = b;
-}
-
 //! displays the color of the nodes and edges after the splitting has been performed
 /*!
   \param c A QColor object for the selected scene
@@ -49,8 +31,6 @@ QColor SplitEdgeCallbackBase::getColor( ) const
 
 SplitEdgeCallbackBase::SplitEdgeCallbackBase( QObject* parent ) :
   CGAL::Qt::Callback( parent ),
-  snappingEnabled( false ),
-  snapToGridEnabled( false ),
   color( ::Qt::blue )
 { }
 
@@ -69,7 +49,6 @@ SplitEdgeCallback<Arr_>::SplitEdgeCallback(Arrangement* arr_, QObject* parent):
   pen.setColor( this->color );
   pen.setCosmetic(true);
   this->segmentGuide->setPen( pen );
-  this->snapToVertexStrategy.setArrangement( arr_ );
 
   QObject::connect( this, SIGNAL( modelChanged( ) ),
                     this, SLOT( slotModelChanged( ) ) );
@@ -78,9 +57,7 @@ SplitEdgeCallback<Arr_>::SplitEdgeCallback(Arrangement* arr_, QObject* parent):
 template <typename Arr_>
 void SplitEdgeCallback<Arr_>::setScene( QGraphicsScene* scene_ )
 {
-  this->scene = scene_;
-  this->snapToVertexStrategy.setScene( scene_ );
-  this->snapToGridStrategy.setScene( scene_ );
+  CGAL::Qt::Callback::setScene(scene_);
   if ( this->scene )
   {
     this->scene->addItem( this->segmentGuide );
@@ -271,30 +248,10 @@ template <typename Arr_>
 typename SplitEdgeCallback<Arr_>::Point_2
 SplitEdgeCallback<Arr_>::snapPoint( QGraphicsSceneMouseEvent* event )
 {
-  return this->snapPoint( event, Traits( ) );
-}
-
-template <typename Arr_>
-template <typename TTraits>
-typename SplitEdgeCallback<Arr_>::Point_2
-SplitEdgeCallback<Arr_>::snapPoint(QGraphicsSceneMouseEvent* event,
-                                   TTraits /* traits */)
-{
-  if ( this->snapToGridEnabled )
-  {
-    return this->snapToGridStrategy.snapPoint( event );
-  }
-  if ( this->snappingEnabled )
-  {
-    return this->snapToVertexStrategy.snapPoint( event );
-  }
-  else
-  { // fallback "analog" selection
-    typename Kernel::Point_2 pt = this->convert( event->scenePos( ) );
-    CoordinateType x( pt.x( ) );
-    CoordinateType y( pt.y( ) );
-    return Point_2( x, y );
-  }
+  typename Kernel::Point_2 pt = this->convert( event->scenePos( ) );
+  CoordinateType x( pt.x( ) );
+  CoordinateType y( pt.y( ) );
+  return Point_2( x, y );
 }
 
 template class SplitEdgeCallback<Seg_arr>;
