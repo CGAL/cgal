@@ -711,6 +711,8 @@ private:
   bool m_yellow_int;
   bool m_magenta_int;
   bool m_aqua_int;
+  bool m_grid;
+  bool m_pan;
 
   bool m_blue_union;
   bool m_red_union;
@@ -832,6 +834,7 @@ protected slots:
 public slots:
   void processInput(CGAL::Object o);
   void on_actionNew_triggered();
+  void on_actionGrid_triggered();
   void on_actionRecenter_triggered();
   void on_actionComplementH_toggled(bool aChecked);
   void on_actionUnionH_toggled(bool aChecked);
@@ -965,7 +968,7 @@ public slots:
   void on_actionDeleteResult();
   void on_actionDeleteAll_triggered();
   void on_actionClearH_toggled(bool aChecked);
-  void on_actionPAN_toggled(bool aChecked);
+  void on_actionPAN_triggered();
 
 signals:
   void changed();
@@ -1272,7 +1275,9 @@ MainWindow::MainWindow() :
   m_visible_yellow(false), //default 
   m_visible_magenta(false), //default 
   m_visible_aqua(false), //default
-  empty_warn(true) // default
+  empty_warn(true), // default
+  m_grid(false), //default
+  m_pan(false)
   // pathItem0_exists(false),
   // pathItem1_exists(false),
   // pathItem2_exists(false),
@@ -1572,6 +1577,18 @@ MainWindow::MainWindow() :
                    SLOT(on_showAquaMink_Sum_toggled(bool)));
 
   //clear
+  this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+  // axis 
+  // m_scene.addLine(0,-10000000,0,10000000, QPen(Qt::black));
+  // m_scene.addLine(-15500000,0,15500000,0, QPen(Qt::black));
+
+  // // Add the vertical lines first, paint them red
+  // for (int x=-15500000; x<=15500000; x+=50)
+  //     m_scene.addLine(x,-10000000,x,10000000, QPen(Qt::black));
+
+  // // Now add the horizontal lines, paint them green
+  // for (int y=-10000000; y<=10000000; y+=50)
+  //     m_scene.addLine(-15500000,y,15500000,y, QPen(Qt::black));
 
   m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
   m_linear_input -> mLinearGI -> setPen(sPens[0]);
@@ -3541,6 +3558,10 @@ void MainWindow::on_actionNew_triggered()
   m_circular_active = false;
   m_bezier_active = false;
   // empty_warn = true;
+
+  m_grid = true;
+  on_actionGrid_triggered();
+  m_pan = false;
 
   m_linear_input->Reset();
   m_circular_input->Reset();
@@ -6295,10 +6316,24 @@ void MainWindow::ToogleView(size_t aGROUP, bool a_check)
   else set(aGROUP).gi()->hide();
 }
 
-void MainWindow::on_actionPAN_toggled(bool aChecked)
+void MainWindow::on_actionGrid_triggered()
+{
+  if(!m_grid)
+  {
+    this->graphicsView->scene()->setBackgroundBrush(Qt::CrossPattern);
+    m_grid = true;
+  }
+  else
+  {
+    this->graphicsView->scene()->setBackgroundBrush(Qt::NoBrush);
+    m_grid = false;
+  }
+}
+
+void MainWindow::on_actionPAN_triggered()
 {
 
-  if(aChecked)
+  if(!m_pan)
   {
 
     if (!m_circular_active && !m_bezier_active) 
@@ -6346,6 +6381,7 @@ void MainWindow::on_actionPAN_toggled(bool aChecked)
 
     this->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     m_scene.update();
+    m_pan = true;
     modelChanged();
   }
   else
@@ -6363,6 +6399,7 @@ void MainWindow::on_actionPAN_toggled(bool aChecked)
     {
       actionInsertBezier ->setChecked(true);
     }
+    m_pan = false;
     modelChanged();
   }
 }

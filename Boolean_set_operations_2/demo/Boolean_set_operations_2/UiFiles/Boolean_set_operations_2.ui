@@ -295,6 +295,17 @@
           </widget>
         </item>
         <item>
+          <widget class="QToolBar" name="OperationsToolBar21">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionGrid"/>
+          </widget>
+        </item>
+        <item>
           <widget class="QToolBar" name="OperationsToolBar33">
            <attribute name="toolBarArea" >
             <enum>TopToolBarArea</enum>
@@ -3134,6 +3145,18 @@
    </property> 
    <property name="text">
     <string>Delete all Buckets</string>
+   </property>
+  </action>
+  <action name="actionGrid" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/demo_snapgrid.xpm</normaloff>:/cgal/icons/resources/demo_snapgrid.xpm</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Grid</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+G</string>
    </property>
   </action>
   <action name="actionNew" >
