@@ -17,7 +17,7 @@ typedef CGAL::Octree::Octree
         Octree;
 
 
-bool test_1_point() {
+void test_1_point() {
 
   // Define the dataset
   Point_set points;
@@ -33,10 +33,9 @@ bool test_1_point() {
   single_node.value() = octree.root().value();
   assert(single_node == octree.root());
 
-  return true;
 }
 
-bool test_2_points() {
+void test_2_points() {
 
   // Define the dataset
   Point_set points;
@@ -48,25 +47,30 @@ bool test_2_points() {
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
+  // Create an analogue for the tree
+  Octree other{points, point_map};
+  other.root().split();
 
-  return true;
+  // Compare the results of printing them
+  std::stringstream octree_printed, other_printed;
+  octree_printed << octree;
+  other_printed << other;
+  assert(other_printed.str() == octree_printed.str());
 }
 
-bool test_9_points() {
+void test_9_points() {
 
   // TODO
-
-  return true;
 }
 
 int main(void) {
 
 
-  assert(test_1_point());
+  test_1_point();
 
-  assert(test_9_points());
+  test_2_points();
 
-  assert(test_1_point());
+  test_9_points();
 
   return EXIT_SUCCESS;
 }
