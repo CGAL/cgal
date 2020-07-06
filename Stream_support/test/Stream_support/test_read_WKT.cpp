@@ -18,10 +18,10 @@ int main()
 {
   typedef CGAL::Point_2<Kernel> Point;
   typedef std::vector<Point> Linestring;
-  typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
+  typedef CGAL::Polygon_with_holes_2<Kernel> Cgal_polygon;
   typedef std::vector<Point> MultiPoint;
   typedef std::vector<Linestring> MultiLinestring;
-  typedef std::vector<Polygon> MultiPolygon;
+  typedef std::vector<Cgal_polygon> MultiPolygon;
 
   Point p;
   {
@@ -38,7 +38,7 @@ int main()
     CGAL_assertion(ls.size() == 3);
   }
   {
-    Polygon poly;
+    Cgal_polygon poly;
     std::ifstream in("data/polygon.wkt");
     CGAL::read_polygon_WKT(in, poly);
     in.close();

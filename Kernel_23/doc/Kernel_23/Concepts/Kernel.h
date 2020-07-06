@@ -648,6 +648,11 @@ public:
   typedef unspecified_type Compare_angle_with_x_axis_2;
 
   /*!
+    a model of `Kernel::CompareSignedDistanceToLine_2`
+  */
+  typedef unspecified_type Compare_signed_distance_to_line_2;
+
+  /*!
     a model of `Kernel::CompareSlope_2`
   */
   typedef unspecified_type Compare_slope_2;

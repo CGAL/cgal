@@ -116,9 +116,9 @@ template<class T>inline std::enable_if_t<std::is_empty<T>::value, unsigned> dept
 
 // For an iterator, exact/approx applies to the objects it points to
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
-auto exact(T const& t) {return make_transforming_iterator(t,[](auto const&u){return CGAL::exact(u);});}
+auto exact(T const& t) {return make_transforming_iterator(t,[](auto const&u)->decltype(auto){return CGAL::exact(u);});}
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
-auto approx(T const& t) {return make_transforming_iterator(t,[](auto const&u){return CGAL::approx(u);});}
+auto approx(T const& t) {return make_transforming_iterator(t,[](auto const&u)->decltype(auto){return CGAL::approx(u);});}
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
 unsigned depth(T const&) {return 1;} // FIXME: depth(*t) would be better when t is valid, but not for end iterators, and the true answer would iterate on the range, but we can't do that with only one iterator... We need to replace iterators with ranges to solve that.
 

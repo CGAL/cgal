@@ -132,7 +132,7 @@ MainWindow::MainWindow()
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   this->graphicsView->setScene(&scene);
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
+  this->graphicsView->transform().scale(1, -1);
   this->graphicsView->setMouseTracking(true);
 
   rgi = new CGAL::Qt::RegularGridGraphicsItem<K>(delta, delta);

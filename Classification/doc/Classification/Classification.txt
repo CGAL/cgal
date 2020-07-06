@@ -21,7 +21,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - a set of labels (for example: _ground_, _building_, _vegetation_) is defined by the user;
 - a classifier is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item to belong to one label or another;
 - classification is computed itemwise using the classifier;
-- additional regularization can be used by smoothing either locally or globally through a _Graph Cut_ \cgalCite{Boykov2001FastApproximate} approach.
+- additional regularization can be used by smoothing either locally or globally through a _graph cut_ \cgalCite{Boykov2001FastApproximate} approach.
 
 \cgalFigureBegin{Classification_organization_fig,organization.svg}
 Organization of the package.
@@ -431,7 +431,7 @@ quantifies the strengh of the regularization, \f$i \sim j\f$
 represents the pairs of neighboring items and
 \f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
 
-A _Graph Cut_ based algorithm (Alpha Expansion) is used to quickly reach
+A _graph cut_ based algorithm (alpha expansion) is used to quickly reach
 an approximate solution close to the global optimum of this energy.
 
 This method allows to consistently segment the input data set in

@@ -149,7 +149,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
                                  : 0),
                                 (ui.m_use_edge_length->isChecked()
                                  ? ui.m_edge_length->value()
-                                 : std::numeric_limits<double>::max()));
+                                 : (std::numeric_limits<double>::max)()));
 
     if (selection_item)
       {

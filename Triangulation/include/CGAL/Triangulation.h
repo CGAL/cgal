@@ -27,6 +27,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/Random.h>
 
+#include <boost/container/small_vector.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -187,7 +188,6 @@ protected: // DATA MEMBERS
     Triangulation_ds                            tds_;
     const Geom_traits                           kernel_;
     Vertex_handle                               infinity_;
-    mutable std::vector<Oriented_side>          orientations_;
     mutable boost::optional<Flat_orientation_d> flat_orientation_;
     // The user can specify a Flat_orientation_d object to be used for
     // orienting simplices of a specific dimension
@@ -317,8 +317,6 @@ public:
             ++infinity_;
             ++inf2;
         }
-        // A full_cell has at most 1 + maximal_dimension() facets:
-        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
     }
@@ -613,8 +611,6 @@ public:
     {
         tds_.clear();
         infinity_ = tds().insert_increase_dimension();
-        // A full_cell has at most 1 + maximal_dimension() facets:
-        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -1090,6 +1086,8 @@ Triangulation<TT, TDS>
     // of one |orientation| predicate
     Full_cell_handle previous = Full_cell_handle();
     bool full_cell_not_found = true;
+    // A full_cell has at most dimension + 1 facets:
+    boost::container::small_vector<signed char, 8> orientations_ (cur_dim + 1);
     while(full_cell_not_found) // we walk until we locate the query point |p|
     {
     #ifdef CGAL_TRIANGULATION_STATISTICS

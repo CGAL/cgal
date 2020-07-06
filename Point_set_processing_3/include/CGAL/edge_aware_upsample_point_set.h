@@ -147,10 +147,8 @@ update_new_point(
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   CGAL_assertion_code( unsigned int size = static_cast<unsigned int>(rich_point_set.size()) );
-  CGAL_point_set_processing_precondition(father_index >= 0 &&
-                                         father_index < size);
-  CGAL_point_set_processing_precondition(mother_index >= 0 &&
-                                           mother_index < size);
+  CGAL_point_set_processing_precondition(father_index < size);
+  CGAL_point_set_processing_precondition(mother_index < size);
 
   // 1, get neighbor information from the two "parent points"
   Rich_point& new_v = rich_point_set[new_point_index];
@@ -379,7 +377,7 @@ edge_aware_upsample_point_set(
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
-  CGAL::Bbox_3 bbox(0., 0., 0., 0., 0., 0.);
+  CGAL::Bbox_3 bbox;
 
   typename PointRange::const_iterator it = begin; // point iterator
   for(unsigned int i = 0; it != end; ++it, ++i)

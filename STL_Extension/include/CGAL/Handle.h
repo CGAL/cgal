@@ -87,6 +87,8 @@ class Handle
 
     bool identical(const Handle& h) const noexcept { return PTR == h.PTR; }
 
+    void * for_compact_container() const { return PTR; }
+    void for_compact_container(void* p) { PTR = static_cast<Rep*>(p); }
   protected:
     Rep* PTR;
 };

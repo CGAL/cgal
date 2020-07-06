@@ -28,6 +28,11 @@ function of the inferred solid (Poisson Surface Reconstruction -
 referred to as Poisson). Poisson is a two steps process: it requires
 solving for the implicit function before function evaluation.
 
+\note A \ref tuto_reconstruction "detailed tutorial on surface reconstruction"
+is provided with a guide to choose the most appropriate method along
+with pre- and post-processing.
+
+
 \section Poisson_surface_reconstruction_3Common Common Reconstruction Pipeline
 
 Surface reconstruction from point sets is often a sequential process

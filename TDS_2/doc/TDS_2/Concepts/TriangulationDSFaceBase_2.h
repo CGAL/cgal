@@ -183,7 +183,7 @@ void * for_compact_container() const;
 /*!
 
 */
-void * & for_compact_container();
+void for_compact_container(void *p);
 
 /// @}
 

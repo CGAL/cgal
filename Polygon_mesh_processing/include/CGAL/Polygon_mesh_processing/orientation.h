@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -140,50 +141,52 @@ namespace internal{
 
 /**
  * \ingroup PMP_orientation_grp
- * tests whether a closed polygon mesh has a positive orientation.
- * A closed polygon mesh is considered to have a positive orientation if the normal vectors
- * to all its faces point outside the domain bounded by the polygon mesh.
+ * tests whether a closed triangle mesh has a positive orientation.
+ * A closed triangle mesh is considered to have a positive orientation if the normal vectors
+ * to all its faces point outside the domain bounded by the triangle mesh.
  * The normal vector to each face is chosen pointing on the side of the face
  * where its sequence of vertices is seen counterclockwise.
- * @pre `CGAL::is_closed(pmesh)`
- * @pre If `pmesh` contains several connected components, they are oriented consistently.
+ * @pre `CGAL::is_closed(tm)`
+ * @pre `CGAL::is_triangle_mesh(tm)`
+ * @pre If `tm` contains several connected components, they are oriented consistently.
  *      In other words, the answer to this predicate would be the same for each
  *      isolated connected component.
  *
- * @tparam PolygonMesh a model of `FaceListGraph`
+ * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * @param pmesh the closed polygon mesh to be tested
+ * @param tm the closed triangle mesh free from self-intersections to be tested
  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`
  *      If this parameter is omitted, an internal property map for
  *      `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *    \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \note This function is only doing an orientation test for one connected component of `pmesh`.
+ * \note This function is only doing an orientation test for one connected component of `tm`.
  *       For performance reasons, it is left to the user to call the function `does_bound_a_volume()`
- *       on a triangulated version of `pmesh` to ensure the result returned is relevant.
+ *       on a triangulated version of `tm` to ensure the result returned is relevant.
  *       For advanced usages, the function `volume_connected_components()` should be used instead.
  *
  * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
-template<typename PolygonMesh, typename NamedParameters>
-bool is_outward_oriented(const PolygonMesh& pmesh,
+template<typename TriangleMesh, typename NamedParameters>
+bool is_outward_oriented(const TriangleMesh& tm,
                          const NamedParameters& np)
 {
-  CGAL_warning(CGAL::is_closed(pmesh));
-  CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
+  CGAL_warning(CGAL::is_closed(tm));
+  CGAL_warning(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(CGAL::is_valid_polygon_mesh(tm));
 
 #ifdef CGAL_PMP_DEBUG_CODE
-  //check for empty pmesh
-  CGAL_warning(faces(pmesh).first != faces(pmesh).second);
+  //check for empty tm
+  CGAL_warning(faces(tm).first != faces(tm).second);
 #endif
 
-  if (faces(pmesh).first == faces(pmesh).second)
+  if (faces(tm).first == faces(tm).second)
     return true;
 
 
@@ -191,40 +194,40 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   using parameters::get_parameter;
 
   //VertexPointMap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                 get_const_property_map(vertex_point, pmesh));
+                                 get_const_property_map(vertex_point, tm));
   //Kernel
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   //find the vertex with maximal z coordinate
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
-  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *(vertices(pmesh).first);
-  for (typename boost::graph_traits<PolygonMesh>::vertex_iterator
-          vit=std::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
+  typename boost::graph_traits<TriangleMesh>::vertex_descriptor v_max = *(vertices(tm).first);
+  for (typename boost::graph_traits<TriangleMesh>::vertex_iterator
+          vit=std::next(vertices(tm).first), vit_end = vertices(tm).second;
           vit!=vit_end; ++vit)
   {
     // skip isolated vertices
-    if (halfedge(*vit, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+    if (halfedge(*vit, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
       continue;
     if( less_z(v_max, *vit) )
       v_max=*vit;
   }
 
   // only isolated vertices
-  if (halfedge(v_max, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+  if (halfedge(v_max, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
     return true;
 
-  return internal::is_outward_oriented(v_max, pmesh, np);
+  return internal::is_outward_oriented(v_max, tm, np);
 }
 
 ///\cond SKIP_IN_MANUAL
 
-template<typename PolygonMesh>
-bool is_outward_oriented(const PolygonMesh& pmesh)
+template<typename TriangleMesh>
+bool is_outward_oriented(const TriangleMesh& tm)
 {
-  return is_outward_oriented(pmesh,
+  return is_outward_oriented(tm,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
@@ -1336,6 +1339,206 @@ template <class TriangleMesh>
 void orient_to_bound_a_volume(TriangleMesh& tm)
 {
   orient_to_bound_a_volume(tm, parameters::all_default());
+}
+
+/*!
+ * \ingroup PMP_orientation_grp
+ * reverses the connected components of `tm` having compatible boundary cycles
+ * that could be merged if their orientation were made compatible, and stitches them.
+ * Connected components are examined by increasing number of faces.
+ *
+ * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ *
+ * @param pm a surface mesh
+ * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `pm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{face_index_map}
+ *     a property map containing an index for each face initialized from 0 to num_faces(pm).
+ *   \cgalParamEnd
+ *   \cgalParamBegin{maximum_number_of_faces}
+ *     if not 0 (default), a connected component is considered reversible only
+ *     if it has no more faces than the value given. Otherwise, it is always considered reversible.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
+ */
+template <class PolygonMesh, class NamedParameters>
+void merge_reversible_connected_components(PolygonMesh& pm,
+                                           const NamedParameters& np)
+{
+  typedef boost::graph_traits<PolygonMesh> GrT;
+  typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename GrT::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
+
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(vertex_point, pm));
+
+  typedef std::size_t F_cc_id;
+  typedef std::size_t B_cc_id;
+
+
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type Fidmap;
+  Fidmap fim = CGAL::get_initialized_face_index_map(pm, np);
+
+  typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
+  F_cc_id nb_cc = connected_components(pm, f_cc_ids, parameters::face_index_map(fim));
+
+  std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
+  for (face_descriptor f : faces(pm))
+    nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
+
+  std::map< std::pair<Point_3, Point_3>, std::vector<halfedge_descriptor> > border_hedges_map;
+  std::vector<halfedge_descriptor> border_hedges;
+  typedef typename boost::property_map<PolygonMesh, dynamic_halfedge_property_t<B_cc_id> >::type H_to_bcc_id;
+  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_cc_id>(), pm);
+  const B_cc_id base_value(-1);
+  const B_cc_id FILTERED_OUT(-2);
+
+  // collect border halfedges
+  for (halfedge_descriptor h : halfedges(pm))
+    if ( is_border(h, pm) )
+    {
+      put(h_bcc_ids, h, base_value);
+      border_hedges.push_back(h);
+    }
+
+  // compute the border cc id of all halfedges and mark those duplicated in their own cycle
+  B_cc_id bcc_id=0;
+  for (halfedge_descriptor h : border_hedges)
+  {
+    if (get(h_bcc_ids,h) == base_value)
+    {
+      typedef std::map< std::pair<Point_3, Point_3>, halfedge_descriptor> Hmap;
+      Hmap hmap;
+      for (halfedge_descriptor hh : halfedges_around_face(h, pm))
+      {
+        std::pair< typename Hmap::iterator, bool > insert_res =
+            hmap.insert(
+              std::make_pair(
+                make_sorted_pair(get(vpm, source(hh, pm)),
+                                 get(vpm, target(hh,pm))), hh) );
+        if (insert_res.second)
+          put(h_bcc_ids, hh, bcc_id);
+        else
+        {
+          put(h_bcc_ids, hh, FILTERED_OUT);
+          put(h_bcc_ids, insert_res.first->second, FILTERED_OUT);
+        }
+      }
+      ++bcc_id;
+    }
+  }
+
+  // fill endpoints -> hedges
+  for (halfedge_descriptor h : border_hedges)
+  {
+    if ( get(h_bcc_ids, h) != FILTERED_OUT)
+      border_hedges_map[std::make_pair(get(vpm, source(h, pm)), get(vpm, target(h, pm)))].push_back(h);
+  }
+
+  // max nb of faces for a CC to be reversed
+  const std::size_t threshold =
+    parameters::choose_parameter( parameters::get_parameter(np, internal_np::maximum_number_of_faces), 0);
+
+  std::vector<bool> border_cycle_to_ignore(bcc_id, false);
+  std::vector<F_cc_id> cycle_f_cc_id(bcc_id);
+  std::vector< std::vector<F_cc_id> > patch_neighbors(nb_cc);
+
+  for (const auto& p : border_hedges_map)
+  {
+    const std::vector<halfedge_descriptor>& hedges = p.second;
+    switch(hedges.size())
+    {
+      case 1:
+        // isolated border hedge nothing to do
+      break;
+      case 2:
+      {
+        F_cc_id cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], pm), pm)),
+                cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], pm), pm));
+
+        if (cc_id_0!=cc_id_1)
+        {
+          cycle_f_cc_id[ get(h_bcc_ids, hedges[0]) ] = cc_id_0;
+          cycle_f_cc_id[ get(h_bcc_ids, hedges[1]) ] = cc_id_1;
+          // WARNING: we might have duplicates here but it is not important for our usage
+          patch_neighbors[cc_id_0].push_back(cc_id_1);
+          patch_neighbors[cc_id_1].push_back(cc_id_0);
+          break;
+        }
+        CGAL_FALLTHROUGH;
+      }
+      default:
+        for (halfedge_descriptor h : hedges)
+          border_cycle_to_ignore[get(h_bcc_ids, h)]=true;
+    }
+  }
+
+  // sort the connected components with potential matches using their number
+  // of faces (sorted by decreasing number of faces)
+  std::set<F_cc_id> ccs_to_reverse;
+  std::vector<bool> reversible(nb_cc, false);
+  std::set< F_cc_id, std::function<bool(F_cc_id,F_cc_id)> > queue(
+    [&nb_faces_per_cc](F_cc_id i, F_cc_id j)
+    {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
+  );
+
+  for (B_cc_id i=0; i<bcc_id; ++i)
+  {
+    if ( !border_cycle_to_ignore[i] )
+    {
+      reversible[ cycle_f_cc_id[i] ] = true;
+      queue.insert(cycle_f_cc_id[i]);
+    }
+  }
+
+  // consider largest CC selected and reverse the neighbor patches if
+  // not already reversed or not marked as reversible
+  while( !queue.empty() )
+  {
+    F_cc_id f_cc_id = *queue.begin();
+    queue.erase( queue.begin() );
+    CGAL_assertion( reversible[f_cc_id] );
+    for (F_cc_id id : patch_neighbors[f_cc_id])
+    {
+      if (reversible[id] && (threshold==0 || threshold >= nb_faces_per_cc[id]))
+      {
+        CGAL_assertion( nb_faces_per_cc[f_cc_id] >= nb_faces_per_cc[id] );
+        ccs_to_reverse.insert(id);
+        reversible[id]=false;
+        queue.erase(id);
+      }
+    }
+  }
+
+  // reverse ccs and stitches boundaries
+  std::vector<face_descriptor> faces_to_reverse;
+  for (face_descriptor f : faces(pm))
+    if ( ccs_to_reverse.count( get(f_cc_ids, f) ) != 0 )
+      faces_to_reverse.push_back(f);
+
+  if ( !faces_to_reverse.empty() )
+  {
+    reverse_face_orientations(faces_to_reverse, pm);
+    stitch_borders(pm, np);
+  }
+}
+
+template <class PolygonMesh>
+void merge_reversible_connected_components(PolygonMesh& pm)
+{
+  merge_reversible_connected_components(pm, parameters::all_default());
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

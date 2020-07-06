@@ -268,6 +268,13 @@ line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
   return (-a*x-c) / b;
 }
 
+// Silence a warning for MSVC 2017
+// > include\cgal\constructions\kernel_ftc2.h(287) :
+// >   warning C4723: potential divide by 0
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4723)
+#endif
 template < class FT >
 inline
 void
@@ -276,14 +283,6 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
 {
   if (CGAL_NTS is_zero(b))
     {
-      // Laurent Rineau, 2018/12/07: I add this CGAL_assume to calm
-      // down a warning from MSVC 2017:
-      // > include\cgal\constructions\kernel_ftc2.h(287) :
-      // >   warning C4723: potential divide by 0
-      // The test `!boost::is_integral<FT>::value` is there to avoid
-      // that `a != 0` is tested on anything but integral types, for
-      // performance reasons.
-      CGAL_assume(!boost::is_integral<FT>::value || a != FT(0));
 
       x = -c/a;
       y = 1 - i * a;
@@ -294,6 +293,9 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
       y = -(a+c)/b - i * a;
     }
 }
+#if defined(BOOST_MSVC)
+#pragma warning(pop)
+#endif
 
 template < class FT >
 inline

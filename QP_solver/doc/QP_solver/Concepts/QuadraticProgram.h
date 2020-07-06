@@ -5,18 +5,6 @@
 
 A model of `QuadraticProgram` describes a convex quadratic program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
 \f{eqnarray*}{
 \mbox{(QP)}& \mbox{minimize}
 & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\

@@ -149,7 +149,7 @@ void smooth_shape(const FaceRange& faces,
 
   for(unsigned int iter=0; iter<nb_iterations; ++iter)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "iteration #" << iter << std::endl;
 #endif
 
@@ -161,7 +161,7 @@ void smooth_shape(const FaceRange& faces,
     }
     else
     {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
       std::cerr << "Failed to solve system!" << std::endl;
 #endif
       break;

@@ -4,7 +4,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/convex_hull_3_to_polyhedron_3.h>
+#include <CGAL/convex_hull_3_to_face_graph.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/convex_hull_incremental_3.h>
 #include <CGAL/Timer.h>
@@ -68,7 +68,7 @@ int main(int argc,char** argv)
   time.stop();
   std::cout << "Delaunay " << time.time() << std::endl;
   time.start();
-  CGAL::convex_hull_3_to_polyhedron_3(T,poly);
+  CGAL::convex_hull_3_to_face_graph(T,poly);
   time.stop();
   std::cout << "Delaunay+to_poly " << time.time() <<" "<< poly.size_of_vertices() << std::endl;
   poly.clear();

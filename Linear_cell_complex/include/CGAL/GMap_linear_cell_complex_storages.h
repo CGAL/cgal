@@ -122,7 +122,7 @@ namespace CGAL {
 
     // Init
     void init_storage()
-    {}
+    { null_dart_handle=nullptr; }
 
    /** Return if this dart is free for adimension.
      * @param dh a dart handle
@@ -435,6 +435,8 @@ namespace CGAL {
     }
 
   protected:
+    Dart_handle null_dart_handle; // To be compatible with combinatorial map
+
     /// Dart container.
     Dart_container mdarts;
 

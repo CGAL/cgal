@@ -1048,6 +1048,36 @@ get(PropertyTag ptag, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
   return get(ptag, w.graph());
 }
 
+#define CGAL_FFG_DYNAMIC_PMAP_SPEC(TAG) \
+template <class Graph, \
+          typename FIMap, \
+          typename VIMap, \
+          typename HIMap, \
+          class T> \
+typename boost::property_map<Graph, TAG<T> >::const_type \
+get(TAG<T> ptag, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w) \
+{ \
+  return get(ptag, w.graph()); \
+} \
+\
+template <class Graph, \
+          typename FIMap, \
+          typename VIMap, \
+          typename HIMap, \
+          class T> \
+typename boost::property_map<Graph, TAG<T> >::type \
+get(TAG<T> ptag, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w) \
+{ \
+  return get(ptag, w.graph()); \
+}
+
+CGAL_FFG_DYNAMIC_PMAP_SPEC(dynamic_vertex_property_t)
+CGAL_FFG_DYNAMIC_PMAP_SPEC(dynamic_halfedge_property_t)
+CGAL_FFG_DYNAMIC_PMAP_SPEC(dynamic_edge_property_t)
+CGAL_FFG_DYNAMIC_PMAP_SPEC(dynamic_face_property_t)
+
+#undef CGAL_FFG_DYNAMIC_PMAP_SPEC
+
 //specializations for indices
 template <class Graph,
           typename FIMap,

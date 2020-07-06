@@ -521,7 +521,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -550,7 +550,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -577,7 +577,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -614,7 +614,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -659,7 +659,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -697,7 +697,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -739,7 +739,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
