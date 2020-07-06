@@ -29,7 +29,7 @@ bool is_equal(const FT d1, const FT d2)
 
   bool ok;
   if(std::is_floating_point<FT>::value)
-    ok = CGAL::abs(d1 - d2) < std::max(epsilon * d1, epsilon);
+    ok = CGAL::abs(d1 - d2) < (std::max)(epsilon * d1, epsilon);
   else
     ok = (d1 == d2);
 

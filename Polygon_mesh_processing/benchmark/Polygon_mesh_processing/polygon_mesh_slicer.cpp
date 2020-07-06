@@ -106,9 +106,9 @@ int main(int argc, char* argv[])
   t.start();
   std::cerr << "bbox"<< std::endl;
   Iso_cuboid_3 ic = CGAL::bounding_box(points(m).begin(), points(m).end());
-  Point_3 p = midpoint(ic.min(), ic.max());
-  double zmin = ic.min().z();
-  double zmax = ic.max().z();
+  Point_3 p = midpoint((ic.min)(), (ic.max)());
+  double zmin = (ic.min)().z();
+  double zmax = (ic.max)().z();
   double delta = (zmax - zmin)/N;
 
   std::cerr << "slicer"<< std::endl;

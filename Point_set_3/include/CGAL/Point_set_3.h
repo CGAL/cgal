@@ -321,8 +321,8 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<Index>("index", typename Index::size_type(-1));
-    boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
+    m_indices = this->add_property_map<Index>("index", typename Index::size_type(-1)).first;
+    m_points = this->add_property_map<Point>("point", CGAL::ORIGIN).first;
     m_nb_removed = 0;
   }
 
@@ -336,12 +336,12 @@ public:
   {
     Base other;
     other.template add<Index>("index", typename Index::size_type(-1));
-    other.template add<Point>("point", Point (0., 0., 0.));
+    other.template add<Point>("point", CGAL::ORIGIN);
     other.resize(m_base.size());
     other.transfer(m_base);
     m_base.swap(other);
-    boost::tie (m_indices, boost::tuples::ignore) = this->property_map<Index>("index");
-    boost::tie (m_points, boost::tuples::ignore) = this->property_map<Point>("point");
+    m_indices = this->property_map<Index>("index").first;
+    m_points = this->property_map<Point>("point").first;
   }
 
   /*!
@@ -790,7 +790,7 @@ public:
   {
     Property_map<T> pm;
     bool added = false;
-    boost::tie (pm, added) = m_base.template add<T> (name, t);
+    std::tie (pm, added) = m_base.template add<T> (name, t);
     return std::make_pair (pm, added);
   }
 
@@ -811,7 +811,7 @@ public:
   {
     Property_map<T> pm;
     bool okay = false;
-    boost::tie (pm, okay) = m_base.template get<T>(name);
+    std::tie (pm, okay) = m_base.template get<T>(name);
     return std::make_pair (pm, okay);
   }
 
@@ -852,10 +852,10 @@ public:
     that is `true` if the property was added and `false` if it already
     exists (and was therefore not added but only returned).
   */
-  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = Vector(0., 0., 0.))
+  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = CGAL::NULL_VECTOR)
   {
     bool out = false;
-    boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
+    std::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
     return std::make_pair (m_normals, out);
   }
   /*!

@@ -52,7 +52,8 @@ class Nef_nary_intersection_3 {
   }
 
   Polyhedron get_intersection() {
-
+    if (queue.empty())
+      return empty;
     while(queue.size() > 1)
       intersect();
     inserted = 0;

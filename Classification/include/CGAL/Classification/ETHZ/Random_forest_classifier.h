@@ -186,15 +186,17 @@ public:
     std::vector<int> gt;
     std::vector<float> ft;
 
-    for (std::size_t i = 0; i < ground_truth.size(); ++ i)
+    std::size_t idx = 0;
+    for (const auto& ig : ground_truth)
     {
-      int g = int(ground_truth[i]);
+      int g = int(ig);
       if (g != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
-          ft.push_back(m_features[f]->value(i));
+          ft.push_back(m_features[f]->value(idx));
         gt.push_back(g);
       }
+      ++ idx;
     }
 
     CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers" << std::endl;

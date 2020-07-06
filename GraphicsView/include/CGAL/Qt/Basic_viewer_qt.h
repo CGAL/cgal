@@ -1218,13 +1218,13 @@ protected:
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
-    setKeyDescription(::Qt::Key_F, "Toggles faces display");
-    setKeyDescription(::Qt::Key_G, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
     setKeyDescription(::Qt::Key_T, "Toggles text display");
     setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
+    setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
@@ -1278,13 +1278,8 @@ protected:
       m_draw_edges=!m_draw_edges;
       displayMessage(QString("Draw edges=%1.").arg(m_draw_edges?"true":"false"));
       update();
-    }else if ((e->key()==::Qt::Key_F) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_faces=!m_draw_faces;
-      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
-      update();
     }
-    else if ((e->key()==::Qt::Key_G) && (modifiers==::Qt::NoButton))
+    else if ((e->key()==::Qt::Key_S) && (modifiers==::Qt::NoButton))
     {
       m_flatShading=!m_flatShading;
       if (m_flatShading)
@@ -1305,6 +1300,12 @@ protected:
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
       negate_all_normals();
       redraw();
+    }
+    else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_text=!m_draw_text;
+      displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
+      update();
     }
     else if ((e->key()==::Qt::Key_U) && (modifiers==::Qt::NoButton))
     {
@@ -1330,16 +1331,16 @@ protected:
         redraw();
       }
     }
-    else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_text=!m_draw_text;
-      displayMessage(QString("Draw text=%1.").arg(m_draw_text?"true":"false"));
-      update();
-    }
     else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
     {
       m_draw_vertices=!m_draw_vertices;
       displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
+      update();
+    }
+    else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
+    {
+      m_draw_faces=!m_draw_faces;
+      displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
       update();
     }
     else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl

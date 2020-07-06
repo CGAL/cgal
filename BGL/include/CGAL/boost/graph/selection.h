@@ -140,7 +140,7 @@ struct Regularization_graph
       if (get(pmap.rg->is_selected_map, fd))
       {
         if (pmap.rg->prevent_unselection)
-          out[0] = std::numeric_limits<double>::max();
+          out[0] = (std::numeric_limits<double>::max)();
         else
           out[0] = value;
         out[1] = 0.;

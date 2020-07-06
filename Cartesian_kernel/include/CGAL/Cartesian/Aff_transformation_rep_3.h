@@ -183,8 +183,8 @@ public:
   virtual std::ostream &print(std::ostream &os) const
   {
     os <<"Aff_transformationC3("<<t11<<' '<<t12<<' '<<t13<<' '<<t14<<std::endl;
-    os <<"                    "<< t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;
-    os <<"                    "<< t31<<' '<<t32<<' '<<t33<<' '<<t34<<")";
+    os <<"                     "<<t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;
+    os <<"                     "<<t31<<' '<<t32<<' '<<t33<<' '<<t34<<")";
     return os;
   }
 

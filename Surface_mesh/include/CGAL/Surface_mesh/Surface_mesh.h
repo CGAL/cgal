@@ -64,17 +64,17 @@ namespace CGAL {
     typedef boost::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
-        /// <tt>std::numeric_limits<size_type>::max()</tt></a>
+        /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
         /// as `size_type` is an unsigned type.
         explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
 
-        /// reset index to be invalid (index=std::numeric_limits<size_type>::max())
+        /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
 
-        /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
+        /// return whether the index is valid, i.e., the index is not equal to `%(std::numeric_limits<size_type>::max)()`.
         bool is_valid() const {
           size_type inf = (std::numeric_limits<size_type>::max)();
           return idx_ != inf;
@@ -253,10 +253,10 @@ namespace CGAL {
         // compatibility with OpenMesh handles
         size_type idx() const { return (size_type)halfedge_ / 2; }
 
-        // resets index to be invalid (index=std::numeric_limits<size_type>::max())
+        // resets index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { halfedge_.reset(); }
 
-        // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
+        // returns whether the index is valid, i.e., the index is not equal to (std::numeric_limits<size_type>::max)().
         bool is_valid() const { return halfedge_.is_valid(); }
 
 
@@ -1129,6 +1129,8 @@ public:
   }
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
+    ///
+    /// After calling this method, the object is the same as a newly constructed object. The additional properties (such as normal vectors) are also removed and must thus be re-added if needed.
     void clear();
 
 
@@ -1565,7 +1567,7 @@ public:
     }
 
 
-    /// performs a validity check on a single ede.
+    /// performs a validity check on a single edge.
     bool is_valid(Edge_index e) const {
       Halfedge_index h = halfedge(e);
       return is_valid(h) && is_valid(opposite(h));
@@ -2838,20 +2840,33 @@ void
 Surface_mesh<P>::
 clear()
 {
-    vprops_.resize(0);
-    hprops_.resize(0);
-    eprops_.resize(0);
-    fprops_.resize(0);
+  vprops_.clear();
+  hprops_.clear();
+  eprops_.clear();
+  fprops_.clear();
 
-    vprops_.shrink_to_fit();
-    hprops_.shrink_to_fit();
-    eprops_.shrink_to_fit();
-    fprops_.shrink_to_fit();
+  vprops_.resize(0);
+  hprops_.resize(0);
+  eprops_.resize(0);
+  fprops_.resize(0);
 
-    removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
-    garbage_ = false;
-    anonymous_property_ = 0;
+  vprops_.shrink_to_fit();
+  hprops_.shrink_to_fit();
+  eprops_.shrink_to_fit();
+  fprops_.shrink_to_fit();
+
+  vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+  hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+  fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+  vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
+  vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+  eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+  fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
+
+  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  anonymous_property_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -3275,4 +3290,3 @@ namespace boost {
 #include <CGAL/enable_warnings.h>
 
 #endif /* CGAL_SURFACE_MESH_H */
-

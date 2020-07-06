@@ -145,6 +145,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       message("Search dirs:")
       message("${search_dirs}")
     endif()
+    message( STATUS "USING COMPILER_VERSION = '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}'" )
   endfunction()
 
   macro( get_dependency_version LIB )
@@ -323,7 +324,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         endif()
       else()
 
-        if (NOT WITH_CGAL_${component}) 
+        if (NOT WITH_CGAL_${component})
           message(STATUS "NOTICE: The CGAL_${component} library seems to be required but is not build. Thus, it is expected that some executables will not be compiled.")
         endif()
 
@@ -397,7 +398,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
     write_basic_package_version_file("${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
-      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}"
+      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}"
       COMPATIBILITY SameMajorVersion)
 
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
@@ -702,4 +703,3 @@ function(process_CGAL_subdirectory entry subdir type_name)
     message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
   endif()
 endfunction()
-

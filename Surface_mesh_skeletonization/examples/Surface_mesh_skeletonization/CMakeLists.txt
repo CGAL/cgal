@@ -12,8 +12,9 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+  include(CGAL_Eigen_support)
 
-  if(EIGEN3_FOUND)
+  if(TARGET CGAL::Eigen_support)
     create_single_source_cgal_program( "simple_mcfskel_example.cpp" )
     create_single_source_cgal_program( "simple_mcfskel_sm_example.cpp" )
     create_single_source_cgal_program( "simple_mcfskel_LCC_example.cpp" )
@@ -29,7 +30,7 @@ if ( CGAL_FOUND )
         MCF_Skeleton_sm_example
         MCF_Skeleton_LCC_example
         segmentation_example)
-      CGAL_target_use_Eigen(${target})
+      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
     endforeach()
   else()
     message(STATUS "These programs require the Eigen library (3.2 or greater), and will not be compiled.")
@@ -40,4 +41,3 @@ else()
   message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

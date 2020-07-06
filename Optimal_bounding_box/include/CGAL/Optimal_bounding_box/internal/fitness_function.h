@@ -39,7 +39,7 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
   CGAL_assertion(points.size() >= 3);
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
-  xmin = ymin = zmin = FT{std::numeric_limits<double>::max()};
+  xmin = ymin = zmin = FT{(std::numeric_limits<double>::max)()};
   xmax = ymax = zmax = FT{std::numeric_limits<double>::lowest()};
 
   for(const Point& pt : points)
@@ -81,7 +81,7 @@ compute_fitness_if_smaller(const typename Traits::Matrix& R, // rotation matrix
   CGAL_assertion(points.size() >= 3);
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
-  xmin = ymin = zmin = FT{std::numeric_limits<double>::max()};
+  xmin = ymin = zmin = FT{(std::numeric_limits<double>::max)()};
   xmax = ymax = zmax = FT{std::numeric_limits<double>::lowest()};
 
   // compute every 1%, with a minimum of 1000 iterations

@@ -129,10 +129,10 @@ protected:
       for(int j = 0; j < covering_sheets[1]; j++){
         Kernel::Vector_2 shift(i * (orig_domain.xmax() - orig_domain.xmin()),
                                j * orig_domain.ymax() - orig_domain.ymin());
-        Kernel::Point_2 p1(orig_domain.min());
+        Kernel::Point_2 p1((orig_domain.min)());
         Kernel::Point_2 p2(orig_domain.xmin(), orig_domain.ymax());
         Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
-        Kernel::Point_2 p4(orig_domain.max());
+        Kernel::Point_2 p4((orig_domain.max)());
 
         add_segment(p1 + shift, p2 + shift, CGAL::Color(96, 104, 252));
         add_segment(p1 + shift, p3 + shift, CGAL::Color(96, 104, 252));

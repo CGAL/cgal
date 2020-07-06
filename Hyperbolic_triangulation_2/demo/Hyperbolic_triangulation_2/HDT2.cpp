@@ -207,7 +207,7 @@ MainWindow::MainWindow()
   this->graphicsView->shear(230, 230);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
+  this->graphicsView->transform().scale(1, -1);
 
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
@@ -318,7 +318,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
                          tr("Enter number of random points"),
                              100,
                              0,
-                             std::numeric_limits<int>::max(),
+                             (std::numeric_limits<int>::max)(),
                              1,
                              &ok);
 

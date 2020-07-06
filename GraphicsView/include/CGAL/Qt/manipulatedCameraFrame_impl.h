@@ -421,7 +421,7 @@ void ManipulatedCameraFrame::wheelEvent(QWheelEvent *const event,
   case MOVE_BACKWARD:
     //#CONNECTION# mouseMoveEvent() MOVE_FORWARD case
     translate(
-        inverseTransformOf(Vec(0.0, 0.0, 0.2 * flySpeed() * event->delta())));
+        inverseTransformOf(Vec(0.0, 0.0, 0.2 * flySpeed() * event->angleDelta().y())));
     Q_EMIT manipulated();
     break;
   default:

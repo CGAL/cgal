@@ -23,7 +23,7 @@ struct State{
 class UVProjector:public QWidget
 {
 public:
-  UVProjector(QWidget* parent = 0, Qt::WindowFlags flags =0)
+  UVProjector(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowType(0))
     :QWidget(parent,flags)
   {
     setMouseTracking(true);
@@ -108,7 +108,7 @@ protected:
   }
   void wheelEvent(QWheelEvent *event)
   {
-   if(event->delta() >0)
+   if(event->angleDelta().y() >0)
      translation[2] *= 1.2;
    else
     translation[2] /= 1.2;

@@ -96,7 +96,9 @@ namespace CGAL {
         };
         /// \endcond
 
-        /// The variables of mixed integer programs.
+        /// \ingroup PkgSolverInterfaceRef
+        ///
+        /// The variable of a mixed integer program.
         ///
         /// \cgalModels `MixedIntegerProgramVariable`
         template <typename FT>
@@ -193,7 +195,10 @@ namespace CGAL {
         };
         /// \endcond
 
-        /// The linear constraint.
+        /// \ingroup PkgSolverInterfaceRef
+        ///
+        /// The linear constraint of a mixed integer program.
+        ///
         /// \cgalModels `MixedIntegerProgramLinearConstraint`
         template <typename FT>
         class Linear_constraint : public Linear_expression<FT>, public Bound<FT>
@@ -222,7 +227,9 @@ namespace CGAL {
         };
 
 
-        /// The linear objective.
+        /// \ingroup PkgSolverInterfaceRef
+        ///
+        /// The linear objective of a mixed integer program.
         ///
         /// \cgalModels `MixedIntegerProgramLinearObjective`
         ///
@@ -256,16 +263,16 @@ namespace CGAL {
                 /// \endcond
         };
 
-        /// \ingroup PkgSolver
+        /// \ingroup PkgSolverInterfaceRef
         ///
-        /// The class `Mixed_integer_program_traits` provides an interface for
+        /// The class `CGAL::Mixed_integer_program_traits` provides an interface for
         /// formulating and solving (constrained or unconstrained) mixed integer
         /// programs. It can also be used for general linear programs.
         /// \note The solve() function is virtual and thus this class cannot be
         ///                  instantiated directly. Client code should use the inherited
-        ///       classes, i.e., `GLPK_mixed_integer_program_traits` or
-        ///                  `SCIP_mixed_integer_program_traits`. Alternatively, use
-        ///       `Mixed_integer_program_traits` as a base to derive a new model
+        ///       classes, i.e., `CGAL::GLPK_mixed_integer_program_traits` or
+        ///                  `CGAL::SCIP_mixed_integer_program_traits`. Alternatively, use
+        ///       `CGAL::Mixed_integer_program_traits` as a base to derive a new model
         ///       (using e.g., <a href = "https://projects.coin-or.org/Cbc"> CBC </a>,
         ///       <a href = "http://www.gurobi.com/"> Gurobi </a> for better
         ///       performance).
@@ -275,7 +282,6 @@ namespace CGAL {
         /// \endcond
         ///
         /// \cgalModels `MixedIntegerProgramTraits`
-
         template <typename FT>
         class Mixed_integer_program_traits
         {

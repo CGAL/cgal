@@ -143,11 +143,11 @@ public:
     {
       bbox = bbox + ps.point(*it).bbox();
     }
-    CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
-    CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+    CGAL::qglviewer::Vec v_min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    CGAL::qglviewer::Vec v_max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
-    setBbox(Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z));
+    setBbox(Bbox(v_min.x,v_min.y,v_min.z,
+                 v_max.x,v_max.y,v_max.z));
   }
   bool isEmpty() const{return false;}
 Q_SIGNALS:
@@ -417,12 +417,12 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       Scene_item::Bbox b = item->bbox();
 
 
-      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)),
-                                                   Kernel::Point_3(b.max(0), b.min(1), b.min(2))))),
-          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)),
-                                                Kernel::Point_3(b.min(0), b.max(1), b.min(2))))),
-          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)),
-                                                Kernel::Point_3(b.min(0), b.min(1), b.max(2)))));
+      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+                                                   Kernel::Point_3((b.max)(0), (b.min)(1), (b.min)(2))))),
+          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+                                                Kernel::Point_3((b.min)(0), (b.max)(1), (b.min)(2))))),
+          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3((b.min)(0), (b.min)(1), (b.min)(2)),
+                                                Kernel::Point_3((b.min)(0), (b.min)(1), (b.max)(2)))));
 
       GridDialog dialog(mw);
       dialog.x_space_doubleSpinBox->setValue(x_t);

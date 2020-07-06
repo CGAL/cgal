@@ -125,9 +125,9 @@ extLong& extLong::operator*= (const extLong& y) {
     if (std::fabs(d - p) <= std::fabs(d) * relEps) {
       val = p;
       flag = 0;
-    } else if (d > EXTLONG_MAX) {
+    } else if (d > static_cast<double>(EXTLONG_MAX)) {
       *this = CORE_posInfty;
-    } else if (d < EXTLONG_MIN) {
+    } else if (d < static_cast<double>(EXTLONG_MIN)) {
       *this = CORE_negInfty;
     } else {
 #ifdef CORE_DEBUG

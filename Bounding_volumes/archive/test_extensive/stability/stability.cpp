@@ -17,8 +17,8 @@ int nr = 0;
 
 double rerr(double exact,double approx) {
   const double e = std::abs((exact-approx)/exact);
-  mine = std::min(mine,e);
-  maxe = std::max(maxe,e);
+  mine = (std::min)(mine,e);
+  maxe = (std::max)(maxe,e);
   avge += e;
   ++nr;
   return e;

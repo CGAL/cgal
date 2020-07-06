@@ -19,7 +19,8 @@ include_directories( ./ )
 find_package(CGAL COMPONENTS Qt5)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (NOT TARGET CGAL::Eigen_support)
   message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -45,10 +46,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND )
   add_file_dependencies( PCA_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_executable  ( PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
-  CGAL_target_use_Eigen(PCA_demo)
 
   target_link_libraries( PCA_demo PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+    CGAL::CGAL CGAL::CGAL_Qt5 CGAL::Eigen_support Qt5::Gui)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS PCA_demo )
 

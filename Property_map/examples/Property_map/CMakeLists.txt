@@ -33,9 +33,8 @@ endif()
 create_single_source_cgal_program( "dynamic_properties.cpp" )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (EIGEN3_FOUND)
+include(CGAL_Eigen_support)
+if (TARGET CGAL::Eigen_support)
   create_single_source_cgal_program( "custom_property_map.cpp" )
-  CGAL_target_use_Eigen(custom_property_map)
+  target_link_libraries(custom_property_map PUBLIC CGAL::Eigen_support)
 endif()
-
-
