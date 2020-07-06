@@ -228,9 +228,9 @@ namespace CGAL {
          */
         bool operator==(Node &rhs) const {
 
-          // Compare the values they contain
-          if (m_value != rhs.m_value)
-            return false;
+          // TODO: Should I compare the values they contain
+//          if (m_value != rhs.m_value)
+//            return false;
 
           // If one node is a leaf, and the other isn't, they're not the same
           if (is_leaf() != rhs.is_leaf())

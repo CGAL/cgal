@@ -47,15 +47,12 @@ void test_2_points() {
   Octree octree(points, point_map);
   octree.refine(10, 1);
 
-  // Create an analogue for the tree
-  Octree other{points, point_map};
-  other.root().split();
+  // The octree should have been split once
+  Octree::Node other{};
+  other.split();
+  assert(other == octree.root());
 
-  // Compare the results of printing them
-  std::stringstream octree_printed, other_printed;
-  octree_printed << octree;
-  other_printed << other;
-  assert(other_printed.str() == octree_printed.str());
+
 }
 
 void test_9_points() {
