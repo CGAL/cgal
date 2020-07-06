@@ -617,6 +617,7 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
     Point const& p0=*f;
     int d = pd(p0);
     int k = static_cast<int>(std::distance(f,e));
+    CGAL_assume(k>=1);
     if(k==1) return p0;
     if(k==2){
       typename Get_functor<R_, Midpoint_tag>::type mid(this->kernel());

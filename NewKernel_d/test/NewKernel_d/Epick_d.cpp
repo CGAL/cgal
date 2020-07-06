@@ -712,6 +712,22 @@ void test3(){
   std::ostringstream sv1; sv1 << v1; assert(sv1.str()=="3 3 2 1");
   std::istringstream sv2("3 4 5 6"); sv2 >> v1; assert(v1[0]==4&&v1[1]==5);
 }
+template<class Ker>
+void test4(){
+  typedef typename Ker::Point_d P;
+  typedef typename Ker::Construct_circumcenter_d CCc;
+  typedef typename Ker::Equal_d E;
+  Ker k(4);
+  CCc ccc Kinit(construct_circumcenter_d_object);
+  E ed Kinit(equal_d_object);
+  auto mkpt=[](auto...x){double l[]{(double)x...};return P(std::begin(l), std::end(l));};
+  P tab1[]={mkpt(15,20,40,80),mkpt(10,23,36,80),mkpt(10,20,40,85),mkpt(10,15,40,80),mkpt(13,20,40,76)};
+  assert(ed(ccc(tab1+0, tab1+5),mkpt(10,20,40,80)));
+  P tab2[]={mkpt(15,20,40,80),mkpt(13,24,40,80),mkpt(10,25,40,80),mkpt(10,20,43,84)};
+  assert(ed(ccc(tab2+0, tab2+4),mkpt(10,20,40,80)));
+  P tab3[]={mkpt(15,20,35,80),mkpt(10,25,40,75),mkpt(13,24,37,76)};
+  assert(ed(ccc(tab3+0, tab3+3),mkpt(10,20,40,80)));
+}
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
 template struct CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
@@ -733,6 +749,7 @@ int main(){
   test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
   test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
   test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
+  test4<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
 #endif
 }
 
