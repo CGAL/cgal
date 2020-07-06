@@ -19,7 +19,6 @@ typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_tria
 int main(int argc, char* argv[])
 {
   const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
-  const std::size_t nbv = (argc > 2) ? atoi(argv[2]) : 1000;
 
   Remeshing_triangulation tr;
 
