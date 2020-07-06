@@ -10,7 +10,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 template<
 class PolygonMesh,
@@ -81,12 +81,13 @@ void test_triangulate_hole_with_cdt_2(
   std::vector<Face_handle> patch_faces;
   for (const Halfedge_handle h : borders) {
     patch_faces.clear();
-    CGAL::Polygon_mesh_processing::triangulate_hole_with_cdt_2(
+    CGAL::Polygon_mesh_processing::triangulate_hole(
       pmesh,
       h,
       std::back_inserter(patch_faces),
       CGAL::Polygon_mesh_processing::parameters::vertex_point_map(
         get(CGAL::vertex_point, pmesh)).
+        use_2d_constrained_delaunay_triangulation(true).
         geom_traits(GeomTraits()));
 
     if (verbose)
@@ -127,9 +128,9 @@ int main(int argc, char **argv) {
 
   // Checking on a data file with two planar, simple, and orthogonal holes.
   test_triangulate_hole_with_cdt_2<Surface_mesh_EI, EI>(
-    "exact_inexact", argc, argv, "w_orthogonal_hole", 2, 1, false);
+    "exact_inexact", argc, argv, "w_orthogonal_hole", 2, 2, false);
   test_triangulate_hole_with_cdt_2<Polyhedron_3_EE, EE>(
-    "exact_exact", argc, argv, "w_orthogonal_hole", 2, 1, false);
+    "exact_exact", argc, argv, "w_orthogonal_hole", 2, 2, false);
   std::cout <<
     "test_triangulate_hole_with_cdt_2: orthogonal hole SUCCESS" << std::endl;
 

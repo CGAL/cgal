@@ -1235,14 +1235,14 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     traits.collinear_3_object();
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
-  if(P.front() != P.back()){
+  if (P.front() != P.back()) {
     P.push_back(P.front());
   }
 
   FT x = FT(0), y = FT(0), z = FT(0);
   std::size_t num_normals = 0;
   const Point_3& ref_point = P[0];
-  std::size_t size = P.size()-1;
+  const std::size_t size = P.size() - 1;
   for (std::size_t i = 1; i < size; ++i) {
     const std::size_t ip = i + 1;
 
@@ -1255,55 +1255,43 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
       continue;
 
     // Computing the normal of a triangle.
-    Vector_3 tri_normal = CGAL::normal(p1, p2, p3);
-    const FT tri_normal_length = static_cast<FT>(
-      CGAL::sqrt(CGAL::to_double(squared_length_3(tri_normal))));
-    if(tri_normal_length <= FT(0))
-      continue;
-
-    tri_normal /= tri_normal_length;
-
+    const Vector_3 tri_normal = CGAL::normal(p1, p2, p3);
     x += tri_normal.x(); y += tri_normal.y(); z += tri_normal.z();
     ++num_normals;
   }
 
-  if(num_normals < 1)
+  if (num_normals < 1)
     return false;
 
+  // Setting the final normal.
   x /= static_cast<FT>(num_normals);
   y /= static_cast<FT>(num_normals);
   z /= static_cast<FT>(num_normals);
-
-  // Setting the final normal.
-  const Vector_3 normal = Vector_3(x, y, z);
-  const FT normal_length = static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_length_3(normal))));
-  const Vector_3 avg_normal = normal / normal_length;
+  const Vector_3 avg_normal = Vector_3(x, y, z);
 
   // Checking the hole simplicity.
   typedef Triangulation_2_projection_traits_3<Traits> P_traits;
   const P_traits p_traits(avg_normal);
-  if(!is_simple_2(P.begin(), P.end()-1, p_traits))
+  if (!is_simple_2(P.begin(), P.end() - 1, p_traits))
      return false;
 
-
-  Lookup_table_map<int> lambda(static_cast<int>(size),-1);
-  //Create and fill the cdt_2
+  Lookup_table_map<int> lambda(static_cast<int>(size), -1);
+  // Create and fill the cdt_2.
   typedef CGAL::Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
-  typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fb1;
-  typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;
+  typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fbi;
+  typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fbi>         Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                        TDS;
-  typedef CGAL::No_constraint_intersection_tag                               Itag; //If the polygon is simple, there should be no intersection.
+  typedef CGAL::No_constraint_intersection_tag                               Itag; // If the polygon is simple, there should be no intersection.
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
-  P_traits cdt_traits(normal);
+  P_traits cdt_traits(avg_normal);
   CDT cdt(cdt_traits);
 
   std::vector< std::pair<Point_3,std::size_t> > points_and_ids;
   points_and_ids.reserve(size);
   std::vector<typename CDT::Vertex_handle> vertices(size);
-  for(std::size_t i =0; i< size; ++i)
+  for (std::size_t i = 0; i < size; ++i)
   {
-    points_and_ids.push_back( std::make_pair(P[i],i));
+    points_and_ids.push_back(std::make_pair(P[i],i));
   }
   cdt.insert(points_and_ids.begin(), points_and_ids.end());
   for (typename CDT::Vertex_handle v : cdt.finite_vertex_handles())
@@ -1311,64 +1299,61 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     vertices[v->info()] = v;
   }
 
-  for(std::size_t i = 0; i<size; ++i)
+  for (std::size_t i = 0; i < size; ++i)
   {
-    cdt.insert_constraint(vertices[i], vertices[(i+1)%(size)]);
+    cdt.insert_constraint(vertices[i], vertices[(i + 1) % (size)]);
   }
 
-
-  // sets mark is_external
-  for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
-        end = cdt.all_faces_end();
-      fit != end; ++fit)
+  // Sets mark is_external.
+  for (typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
+    end = cdt.all_faces_end(); fit != end; ++fit)
   {
     fit->info() = false;
   }
   std::queue<typename CDT::Face_handle> face_queue;
   face_queue.push(cdt.infinite_vertex()->face());
-  while(! face_queue.empty() )
+  while (!face_queue.empty())
   {
     typename CDT::Face_handle fh = face_queue.front();
     face_queue.pop();
 
-    if(fh->info())
+    if (fh->info())
       continue;
 
     fh->info() = true;
-    for(int i = 0; i <3; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
-      if(!cdt.is_constrained(typename CDT::Edge(fh, i)))
+      if (!cdt.is_constrained(typename CDT::Edge(fh, i)))
       {
         face_queue.push(fh->neighbor(i));
       }
     }
   }
-  if(cdt.dimension() != 2 ||
-     cdt.number_of_vertices() != size)
+  if (cdt.dimension() != 2 ||
+    cdt.number_of_vertices() != size)
   {
     return false;
   }
 
-  //fill the lambda
-  for(typename CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(),
-        end = cdt.finite_faces_end();
-      fit != end; ++fit)
+  // Fill the lambda.
+  for (typename CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(),
+    end = cdt.finite_faces_end(); fit != end; ++fit)
   {
-    if(!fit->info())//if ! is external
+    if (!fit->info()) // if !is external
     {
       std::vector<std::size_t> is(3);
-      for(int i=0; i<3; ++i)
+      for (std::size_t i = 0; i < 3; ++i)
       {
         is[i] = fit->vertex(i)->info();
       }
       std::sort(is.begin(), is.end());
       lambda.put(is[0],is[2], is[1]);
-      if(!is_valid(P,is[0],is[1],is[2]))
+      if (!is_valid(P, is[0], is[1], is[2]))
         return false;
     }
   }
 
-  //call the tracer
+  // Call the tracer.
   tracer(lambda, 0, size - 1);
   return true;
 }

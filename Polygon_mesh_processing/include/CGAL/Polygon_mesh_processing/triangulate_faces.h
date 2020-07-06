@@ -29,10 +29,6 @@
 #include <CGAL/use.h>
 #endif
 
-#include <CGAL/assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Polygon_2_algorithms.h>
-
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -86,15 +82,6 @@ public:
 
   bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt)
   {
-    Emptyset_iterator out;
-    return triangulate_face(f, pmesh, use_cdt, out);
-  }
-
-  // Default for out is Emptyset_iterator(),
-  // and out is only used for triangulate_with_cdt_2().
-  template <typename OutputIterator>
-  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt, OutputIterator out)
-  {
     typedef typename Traits::FT FT;
 
     typename Traits::Vector_3 normal =
@@ -131,29 +118,11 @@ public:
       FT p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
       if(p0p2>p1p3)
       {
-        // CGAL::Euler::split_face(v0, v2, pmesh);
-        halfedge_descriptor hnew = halfedge(add_edge(pmesh), pmesh);
-        face_descriptor fnew = add_face(pmesh);
-        CGAL::internal::insert_tip(hnew, v2, pmesh);
-        CGAL::internal::insert_tip(opposite(hnew, pmesh), v0, pmesh);
-        set_face(hnew, face(v0, pmesh), pmesh);
-        CGAL::internal::set_face_in_face_loop(opposite(hnew, pmesh), fnew, pmesh);
-        set_halfedge(face(hnew, pmesh), hnew, pmesh);
-        set_halfedge(face(opposite(hnew, pmesh), pmesh), opposite(hnew, pmesh), pmesh);
-        *out++ = fnew;
+        CGAL::Euler::split_face(v0, v2, pmesh);
       }
       else
       {
-        // CGAL::Euler::split_face(v1, v3, pmesh);
-        halfedge_descriptor hnew = halfedge(add_edge(pmesh), pmesh);
-        face_descriptor fnew = add_face(pmesh);
-        CGAL::internal::insert_tip(hnew, v3, pmesh);
-        CGAL::internal::insert_tip(opposite(hnew, pmesh), v1, pmesh);
-        set_face(hnew, face(v1, pmesh), pmesh);
-        CGAL::internal::set_face_in_face_loop(opposite(hnew, pmesh), fnew, pmesh);
-        set_halfedge(face(hnew, pmesh), hnew, pmesh);
-        set_halfedge(face(opposite(hnew, pmesh), pmesh), opposite(hnew, pmesh), pmesh);
-        *out++ = fnew;
+        CGAL::Euler::split_face(v1, v3, pmesh);
       }
     }
     else
@@ -174,19 +143,18 @@ public:
                                                            Itag>             CDT;
         P_traits cdt_traits(normal);
         CDT cdt(cdt_traits);
-        return triangulate_face_with_CDT(f, pmesh, cdt, out);
+        return triangulate_face_with_CDT(f, pmesh, cdt);
       }
 #else
       CGAL_USE(use_cdt);
 #endif
-      // Don't use out if no cdt.
       return triangulate_face_with_hole_filling(f, pmesh);
     }
     return true;
   }
 
-  template <class CDT, typename OutputIterator>
-  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, OutputIterator out)
+  template<class CDT>
+  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt)
   {
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
 
@@ -299,13 +267,7 @@ public:
         set_next(h1, h2, pmesh);
         set_next(h2, h0, pmesh);
 
-        // Euler::fill_hole(h0, pmesh);
-        face_descriptor new_face = add_face(pmesh);
-        for (halfedge_descriptor hd : CGAL::halfedges_around_face(h0, pmesh)) {
-          set_face(hd, new_face, pmesh);
-        }
-        set_halfedge(new_face, h0, pmesh);
-        *out++ = new_face;
+        Euler::fill_hole(h0, pmesh);
       }
     }
     return true;
@@ -474,16 +436,8 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
-  typedef typename internal_np::Lookup_named_param_def<
-    internal_np::output_iterator_t,
-    NamedParameters,
-    Emptyset_iterator>::type Output_iterator;
-
-  Output_iterator out = choose_parameter(
-    get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
-
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap, traits);
-  return modifier.triangulate_face(f, pmesh, use_cdt, out);
+  return modifier.triangulate_face(f, pmesh, use_cdt);
 }
 
 template<typename PolygonMesh>
@@ -577,159 +531,6 @@ template <typename PolygonMesh>
 bool triangulate_faces(PolygonMesh& pmesh)
 {
   return triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-/*!
-  \ingroup hole_filling_grp
-  \brief triangulates a planar hole in a polygon mesh.
-
-  If the hole is planar, this function uses the 2D constrained Delaunay triangulation
-  in order to close the hole. The constraints are the border edges of the hole.
-
-  The hole must not contain any non-manifold vertex, nor self-intersections.
-  The patch generated does not introduce non-manifold edges nor degenerate triangles.
-  If a hole cannot be triangulated, `pmesh` is not modified and nothing is recorded in `out`.
-
-  \tparam PolygonMesh a model of `MutableFaceGraph`
-  \tparam OutputIterator a model of `OutputIterator` holding
-  `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-
-  \param pmesh polygon mesh which has the hole
-  \param border_halfedge a border halfedge incident to the hole
-  \param out iterator over patch faces
-  \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-        If this parameter is omitted, an internal property map for
-        `CGAL::vertex_point_t` should be available in `PolygonMesh`
-        \cgalParamEnd
-    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
-  \cgalNamedParamsEnd
-
-  \return `out`
-*/
-template<
-typename PolygonMesh,
-typename OutputIterator,
-typename NamedParameters>
-OutputIterator triangulate_hole_with_cdt_2(
-  PolygonMesh& pmesh,
-  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-  OutputIterator out,
-  const NamedParameters& np) {
-
-  #ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
-
-  return triangulate_hole(
-    pmesh, border_halfedge, out, np);
-
-  #else
-
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
-  const Traits traits = parameters::choose_parameter(
-    parameters::get_parameter(np, internal_np::geom_traits), Traits());
-
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Point_3 Point_3;
-  typedef typename Traits::Vector_3 Vector_3;
-  typedef typename Traits::Collinear_3 Collinear_3;
-  typedef typename Traits::Compute_squared_length_3 Squared_length_3;
-
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPM;
-  const VPM vpm = parameters::choose_parameter(
-    parameters::get_parameter(np, internal_np::vertex_point),
-    get_const_property_map(boost::vertex_point, pmesh));
-
-  typedef Halfedge_around_face_circulator<PolygonMesh> Hedge_around_face_circulator;
-  Hedge_around_face_circulator circ(border_halfedge, pmesh);
-  Hedge_around_face_circulator done(circ);
-
-  // Getting the hole boundary.
-  std::vector<Point_3> polyline_3d;
-  do {
-    polyline_3d.push_back(get(vpm, target(*circ, pmesh)));
-  } while (++circ != done);
-  CGAL_assertion(
-    polyline_3d.size() >= 3);
-
-  // Compute an average normal of the hole face.
-  const Squared_length_3 squared_length_3 =
-    traits.compute_squared_length_3_object();
-  const Collinear_3 collinear_3 =
-    traits.collinear_3_object();
-
-  FT x = FT(0), y = FT(0), z = FT(0);
-  std::size_t num_normals = 0;
-  const Point_3& ref_point = polyline_3d[0];
-  for (std::size_t i = 1; i < polyline_3d.size() - 1; ++i) {
-    const std::size_t ip = i + 1;
-
-    const Point_3& p1 = ref_point; // 3 points, which form a triangle
-    const Point_3& p2 = polyline_3d[i];
-    const Point_3& p3 = polyline_3d[ip];
-
-    // Skip in case we have collinear points.
-    if (collinear_3(p1, p2, p3))
-      continue;
-
-    // Computing the normal of a triangle.
-    Vector_3 tri_normal = CGAL::normal(p1, p2, p3);
-    const FT tri_normal_length = static_cast<FT>(
-      CGAL::sqrt(CGAL::to_double(squared_length_3(tri_normal))));
-    CGAL_assertion(tri_normal_length > FT(0));
-    tri_normal /= tri_normal_length;
-
-    x += tri_normal.x(); y += tri_normal.y(); z += tri_normal.z();
-    ++num_normals;
-  }
-
-  CGAL_assertion(num_normals >= 1);
-  x /= static_cast<FT>(num_normals);
-  y /= static_cast<FT>(num_normals);
-  z /= static_cast<FT>(num_normals);
-
-  // Setting the final normal.
-  const Vector_3 normal = Vector_3(x, y, z);
-  const FT normal_length = static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_length_3(normal))));
-  const Vector_3 avg_normal = normal / normal_length;
-
-  // Checking the hole simplicity.
-  typedef Triangulation_2_projection_traits_3<Traits> P_traits;
-  const P_traits p_traits(avg_normal);
-  const bool is_simple =
-    is_simple_2(polyline_3d.begin(), polyline_3d.end(), p_traits);
-  // if (!is_simple) // temporarily removed
-  //   return triangulate_hole(
-  //     pmesh, border_halfedge, out, np);
-
-  // Adding the new face.
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  face_descriptor new_face = add_face(pmesh);
-  set_halfedge(new_face, border_halfedge, pmesh);
-  do {
-    set_face(*circ, new_face, pmesh);
-  } while (++circ != done);
-
-  // Triangulating.
-  const bool use_cdt = true;
-  internal::Triangulate_modifier<PolygonMesh, VPM, Traits> modifier(vpm, traits);
-  const bool success_with_cdt_2 =
-    modifier.triangulate_face(new_face, pmesh, use_cdt, out);
-
-  if (!success_with_cdt_2) {
-    remove_face(new_face, pmesh);
-    do {
-      set_face(*circ, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
-    } while (++circ != done);
-    return triangulate_hole(
-      pmesh, border_halfedge, out, np);
-  }
-
-  #endif
-  return out;
 }
 
 } // end namespace Polygon_mesh_processing
