@@ -14,7 +14,7 @@ typedef CGAL::Octree::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
-int test_preorder_1_node() {
+bool test_preorder_1_node() {
 
   // Define the dataset
   Point_set points;
@@ -32,12 +32,13 @@ int test_preorder_1_node() {
 
   // Check each item in the range
   auto iter = nodes.begin();
-  assert(*iter == octree.root());
+  if (!(*iter == octree.root()))
+    return false;
 
-  return 0;
+  return true;
 }
 
-int test_preorder_9_nodes() {
+bool test_preorder_9_nodes() {
 
   // Define the dataset
   Point_set points;
@@ -60,13 +61,14 @@ int test_preorder_9_nodes() {
   assert(*iter == octree.root());
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert(*iter == octree.root()[i]);
+    if (!(*iter == octree.root()[i]))
+      return false;
   }
 
-  return 0;
+  return true;
 }
 
-int test_preorder_25_nodes() {
+bool test_preorder_25_nodes() {
 
   // Define the dataset
   Point_set points;
@@ -87,33 +89,44 @@ int test_preorder_25_nodes() {
 
   // Check each item in the range
   auto iter = nodes.begin();
-  assert(*iter == octree.root());
+  if(!(*iter == octree.root()))
+    return false;
   iter++;
-  assert(*iter == octree.root()[0]);
+  if(!(*iter == octree.root()[0]))
+    return false;
   iter++;
-  assert(*iter == octree.root()[1]);
+  if(!(*iter == octree.root()[1]))
+    return false;
   iter++;
-  assert(*iter == octree.root()[2]);
+  if(!(*iter == octree.root()[2]))
+    return false;
   iter++;
-  assert(*iter == octree.root()[3]);
+  if(!(*iter == octree.root()[3]))
+    return false;
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert(*iter == octree.root()[3][i]);
+    if(!(*iter == octree.root()[3][i]))
+      return false;
   }
   iter++;
-  assert(*iter == octree.root()[4]);
+  if(!(*iter == octree.root()[4]))
+    return false;
   iter++;
-  assert(*iter == octree.root()[5]);
+  if(!(*iter == octree.root()[5]))
+    return false;
   iter++;
-  assert(*iter == octree.root()[6]);
+  if(!(*iter == octree.root()[6]))
+    return false;
   iter++;
-  assert(*iter == octree.root()[7]);
+  if(!(*iter == octree.root()[7]))
+    return false;
   for (int i = 0; i < 8; ++i) {
     iter++;
-    assert(*iter == octree.root()[7][i]);
+    if(!(*iter == octree.root()[7][i]))
+      return false;
   }
 
-  return 0;
+  return true;
 }
 
 int main(void) {
