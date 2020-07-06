@@ -88,7 +88,6 @@ namespace Surface_mesh_parameterization {
 ///                           Eigen::IncompleteLUT< double > > >
 /// \endcode
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 /// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 /// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 /// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
@@ -345,8 +344,7 @@ protected:
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
-                          vertex_around_target_circulator neighbor_vertex_v_j) const
-  = 0;
+                          vertex_around_target_circulator neighbor_vertex_v_j) const = 0;
 
   /// Compute the line i of matrix A for i inner vertex:
   /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
