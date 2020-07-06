@@ -209,7 +209,7 @@ std::size_t cluster_point_set (PointRange& points,
 
       neighbors.clear();
       neighbor_query.get_iterators (get (point_map, p), 0, neighbor_radius,
-                                    std::back_inserter (neighbors), false);
+                                    std::back_inserter (neighbors), 0);
 
       for (const iterator& it : neighbors)
       {
