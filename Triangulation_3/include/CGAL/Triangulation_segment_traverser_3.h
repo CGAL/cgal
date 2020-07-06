@@ -845,8 +845,7 @@ public:
         _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
         break;
       }
-      default ://FACET
-        CGAL_assertion(ltnext == Locate_type::FACET);
+      default ://FACET or OUTSIDE_AFFINE_HULL
         if(chnext == Cell_handle())
           _curr_simplex = Simplex_3();
         else
