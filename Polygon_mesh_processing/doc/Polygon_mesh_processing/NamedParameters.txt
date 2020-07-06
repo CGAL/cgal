@@ -216,6 +216,13 @@ non-Delaunay triangulations search space to find a solution.\n
 <b>Default:</b> `true`
 \cgalNPEnd
 
+\cgalNPBegin{use_2d_constrained_delaunay_triangulation} \anchor PMP_use_2d_constrained_delaunay_triangulation
+enables the use of the 2D constrained Delaunay triangulation to triangulate the hole (the default is `true`),
+if no valid triangulation can be found, the algorithm falls back to the original algorithm to find a solution.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
 \cgalNPBegin{use_random_uniform_sampling} \anchor PMP_use_random_uniform_sampling
 is a parameter used in `sample_triangle_mesh()` to indicate that the points are picked
 in a random uniform way.\n

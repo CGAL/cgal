@@ -64,7 +64,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the constrained Delaunay triangulation
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the 2D constrained Delaunay triangulation
      to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
          original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
@@ -169,7 +169,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the constrained Delaunay triangulation
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the 2D constrained Delaunay triangulation
      to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
          original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
@@ -241,7 +241,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the constrained Delaunay triangulation
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the 2D constrained Delaunay triangulation
      to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
          original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values
@@ -340,7 +340,7 @@ namespace Polygon_mesh_processing {
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
          If no valid triangulation can be found in this search space, the algorithm falls back to the
          non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the constrained Delaunay triangulation
+     \cgalParamBegin{use_2d_constrained_delaunay_triangulation} if `true` (the default), use the 2D constrained Delaunay triangulation
      to triangulate the hole. If no valid triangulation can be found, the algorithm falls back to the
          original algorithm to find a solution.\cgalParamEnd
      \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd

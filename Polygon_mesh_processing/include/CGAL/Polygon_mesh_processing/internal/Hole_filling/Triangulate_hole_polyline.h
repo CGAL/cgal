@@ -1293,7 +1293,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fb1;
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                        TDS;
-  typedef CGAL::No_intersection_tag                                          Itag; //If the polygon is simple, there should be no intersection.
+  typedef CGAL::No_constraint_intersection_tag                               Itag; //If the polygon is simple, there should be no intersection.
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
   P_traits cdt_traits(normal);
   CDT cdt(cdt_traits);
