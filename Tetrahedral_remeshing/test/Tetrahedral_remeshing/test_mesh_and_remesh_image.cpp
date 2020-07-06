@@ -30,7 +30,7 @@ typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
 
 using namespace CGAL::parameters;
 
-int main(int argc, char** argv)
+int main()
 {
   const char* filename = "data/liver.inr.gz";
 
