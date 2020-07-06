@@ -59,8 +59,7 @@ class CollapseTriangulation
   typedef typename C3t3::Triangulation::Geom_traits::Vector_3 Vector_3;
 
 public:
-  CollapseTriangulation(C3t3& c3t3,
-                        const Edge& e,
+  CollapseTriangulation(const Edge& e,
                         const std::unordered_set<Cell_handle>& cells_to_insert,
                         Collapse_type _collapse_type)
     : collapse_type(_collapse_type)
@@ -981,7 +980,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
 }
 
 template<typename C3t3>
-bool is_cells_set_manifold(const C3t3& c3t3,
+bool is_cells_set_manifold(const C3t3&,
     std::unordered_set<typename C3t3::Cell_handle>& cells)
 {
   typedef typename C3t3::Cell_handle Cell_handle;
@@ -1125,7 +1124,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
 
-    CollapseTriangulation<C3t3> local_tri(c3t3, edge, cells_to_insert, collapse_type);
+    CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
 
     Result_type res = local_tri.collapse();
     if (res == VALID)
