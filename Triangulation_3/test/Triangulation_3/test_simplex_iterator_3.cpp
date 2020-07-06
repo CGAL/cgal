@@ -430,7 +430,7 @@ int main(int argc, char* argv[])
   // - along a facet and an edge successively
 
   //temporatily disable
-//  test_triangulation_on_a_grid();
+  test_triangulation_on_a_grid();
 
   return 0;
 }
