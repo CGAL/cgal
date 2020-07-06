@@ -28,6 +28,7 @@
 #include <boost/mpl/has_xxx.hpp>
 
 #include <CGAL/tags.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Curve_data_aux.h>
 
