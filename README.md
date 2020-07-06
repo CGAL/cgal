@@ -18,7 +18,7 @@ Getting Started with CGAL
 it is no longer needed to build CGAL libraries before it can be used.**
 
 Head over to the [CGAL manual](https://doc.cgal.org/latest/Manual/general_intro.html)
-for usage guides and tutorials that will get you started smoothly.
+for usage guides and tutorials that will get you started smoothly with this C++ Library.
 
 License
 =======
