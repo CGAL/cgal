@@ -7,6 +7,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
+#include <cassert>
+
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_set_3<Point> Point_set;
@@ -61,8 +63,7 @@ bool test_preorder_9_nodes() {
   assert(*iter == octree.root());
   for (int i = 0; i < 8; ++i) {
     iter++;
-    if (!(*iter == octree.root()[i]))
-      return false;
+    assert((*iter == octree.root()[i]));
   }
 
   return true;
@@ -92,38 +93,28 @@ bool test_preorder_25_nodes() {
   if(!(*iter == octree.root()))
     return false;
   iter++;
-  if(!(*iter == octree.root()[0]))
-    return false;
+  assert((*iter == octree.root()[0]));
   iter++;
-  if(!(*iter == octree.root()[1]))
-    return false;
+  assert((*iter == octree.root()[1]));
   iter++;
-  if(!(*iter == octree.root()[2]))
-    return false;
+  assert((*iter == octree.root()[2]));
   iter++;
-  if(!(*iter == octree.root()[3]))
-    return false;
+  assert((*iter == octree.root()[3]));
   for (int i = 0; i < 8; ++i) {
     iter++;
-    if(!(*iter == octree.root()[3][i]))
-      return false;
+    assert((*iter == octree.root()[3][i]));
   }
   iter++;
-  if(!(*iter == octree.root()[4]))
-    return false;
+  assert((*iter == octree.root()[4]));
   iter++;
-  if(!(*iter == octree.root()[5]))
-    return false;
+  assert((*iter == octree.root()[5]));
   iter++;
-  if(!(*iter == octree.root()[6]))
-    return false;
+  assert((*iter == octree.root()[6]));
   iter++;
-  if(!(*iter == octree.root()[7]))
-    return false;
+  assert((*iter == octree.root()[7]));
   for (int i = 0; i < 8; ++i) {
     iter++;
-    if(!(*iter == octree.root()[7][i]))
-      return false;
+    assert((*iter == octree.root()[7][i]));
   }
 
   return true;
