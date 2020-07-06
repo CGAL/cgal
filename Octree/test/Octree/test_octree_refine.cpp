@@ -52,12 +52,27 @@ void test_2_points() {
   other.split();
   assert(other == octree.root());
 
-
 }
 
-void test_9_points() {
+void test_4_points() {
 
-  // TODO
+  Point_set points;
+  points.insert({1, 1, 1});
+  points.insert({1, 1, 2});
+  points.insert({1, 1, 3});
+  points.insert({1, 1, 4});
+  auto point_map = points.point_map();
+
+  // Create the octree
+  Octree octree(points, point_map);
+  octree.refine(10, 1);
+
+  // The octree should have been split once on the first level, and twice on the second
+  Octree::Node other{};
+  other.split();
+  other[3].split();
+  other[7].split();
+  assert(other == octree.root());
 }
 
 int main(void) {
@@ -67,7 +82,7 @@ int main(void) {
 
   test_2_points();
 
-  test_9_points();
+  test_4_points();
 
   return EXIT_SUCCESS;
 }
