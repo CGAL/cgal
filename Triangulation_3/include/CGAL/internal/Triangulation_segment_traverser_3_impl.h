@@ -12,6 +12,7 @@
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 
+#include <CGAL/license/Triangulation_3.h>
 
 namespace CGAL {
 

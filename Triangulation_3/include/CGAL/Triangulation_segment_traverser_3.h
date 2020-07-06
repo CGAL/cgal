@@ -13,6 +13,8 @@
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 
+#include <CGAL/license/Triangulation_3.h>
+
 #include <iostream>
 #include <utility>
 #include <tuple>
