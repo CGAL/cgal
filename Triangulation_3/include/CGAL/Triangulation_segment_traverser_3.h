@@ -13,17 +13,10 @@
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 
-#include <CGAL/basic.h>
-
 #include <iostream>
-#include <list>
-#include <set>
-#include <map>
 #include <utility>
-#include <stack>
 #include <tuple>
 
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
