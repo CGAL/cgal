@@ -34,8 +34,7 @@ bool test_preorder_1_node() {
 
   // Check each item in the range
   auto iter = nodes.begin();
-  if (!(*iter == octree.root()))
-    return false;
+  assert(*iter == octree.root());
 
   return true;
 }
@@ -87,6 +86,11 @@ bool test_preorder_25_nodes() {
   auto tree_walker = CGAL::Octree::Walker::Preorder();
   auto first = tree_walker.first(&octree.root());
   auto nodes = octree.nodes(first, tree_walker);
+
+  for (auto &n : nodes) {
+    std::cout << n;
+  }
+  std::cout << "xxx";
 
   // Check each item in the range
   auto iter = nodes.begin();

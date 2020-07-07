@@ -2,6 +2,7 @@
 #define OCTREE_WALKER_CRITERION_H
 
 #include <iostream>
+#include <boost/range/iterator_range.hpp>
 #include "Node.h"
 #include "Walker_iterator.h"
 
@@ -12,7 +13,7 @@ namespace CGAL {
     namespace Walker {
 
       template<class Value>
-      const Node::Node<Value> *next_sibling(const Node::Node<Value> *n) {
+      const Node::Node <Value> *next_sibling(const Node::Node <Value> *n) {
 
         // Passing null returns the first node
         if (nullptr == n)
@@ -34,7 +35,7 @@ namespace CGAL {
       }
 
       template<class Value>
-      const Node::Node<Value> *next_sibling_up(const Node::Node<Value> *n) {
+      const Node::Node <Value> *next_sibling_up(const Node::Node <Value> *n) {
 
         if (!n)
           return nullptr;
@@ -53,7 +54,7 @@ namespace CGAL {
       }
 
       template<class Value>
-      const Node::Node<Value> *deepest_first_child(const Node::Node<Value> *n) {
+      const Node::Node <Value> *deepest_first_child(const Node::Node <Value> *n) {
 
         if (!n)
           return nullptr;
@@ -70,12 +71,12 @@ namespace CGAL {
       public:
 
         template<class Value>
-        static const Node::Node<Value> *first(const Node::Node<Value> *root) {
+        static const Node::Node <Value> *first(const Node::Node <Value> *root) {
           return root;
         }
 
         template<class Value>
-        static const Node::Node<Value> *next(const Node::Node<Value> *n) {
+        static const Node::Node <Value> *next(const Node::Node <Value> *n) {
 
           if (n->is_leaf()) {
 
@@ -101,12 +102,12 @@ namespace CGAL {
       struct Preorder {
 
         template<class Value>
-        const Node::Node<Value> *first(const Node::Node<Value> *root) {
+        const Node::Node <Value> *first(const Node::Node <Value> *root) const {
           return root;
         }
 
         template<class Value>
-        const Node::Node<Value> *operator()(const Node::Node<Value> *n) {
+        const Node::Node <Value> *operator()(const Node::Node <Value> *n) const {
 
           if (n->is_leaf()) {
 
@@ -131,13 +132,13 @@ namespace CGAL {
       struct Postorder {
 
         template<class Value>
-        const Node::Node<Value> *first(const Node::Node<Value> *root) {
+        const Node::Node <Value> *first(const Node::Node <Value> *root) {
 
           return deepest_first_child(root);
         }
 
         template<class Value>
-        const Node::Node<Value> *operator()(const Node::Node<Value> *n) {
+        const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
 
           auto next = deepest_first_child(next_sibling(n));
 
@@ -151,13 +152,13 @@ namespace CGAL {
       struct Leaves {
 
         template<class Value>
-        const Node::Node<Value> *first(const Node::Node<Value> *root) {
+        const Node::Node <Value> *first(const Node::Node <Value> *root) {
 
           return deepest_first_child(root);
         }
 
         template<class Value>
-        const Node::Node<Value> *operator()(const Node::Node<Value> *n) {
+        const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
 
           auto next = deepest_first_child(next_sibling(n));
 
@@ -169,54 +170,47 @@ namespace CGAL {
       };
 
 
-//  class Tree_walker {
+//      class Tree_walker {
 //
-//    template<class Kernel, class PointRange>
-//    static const Octree_node <Kernel, PointRange> *first(const Octree_node <Kernel, PointRange> *root) {
-//      return root;
-//    }
+//      public:
 //
-//    template<class Kernel, class PointRange>
-//    static const Octree_node <Kernel, PointRange> *next(const Octree_node <Kernel, PointRange> *node) {
-//      return node;
-//    }
-//  };
+//        template<class Value>
+//        virtual const Node::Node <Value> *first(const Node::Node <Value> *root) const = 0;
+//
+//        template<class Value>
+//        virtual const Node::Node <Value> *next(const Node::Node <Value> *n) const = 0;
+//      };
 
-//  class Preorder_tree_walker {
-//
-//  public:
-//
-//    Preorder_tree_walker() {
-//
-//    }
-//
-//    template<class Kernel, class PointRange>
-//    static const Octree_node<Kernel, PointRange> *first(const Octree_node <Kernel, PointRange> *root) {
-//      return root;
-//    }
-//
-//    template<class Kernel, class PointRange>
-//    static const Octree_node <Kernel, PointRange> *next(const Octree_node <Kernel, PointRange> *n) {
-//
-//      if (n->is_leaf()) {
-//
-//        auto next = next_sibling(n);
-//
-//        if (nullptr == next) {
-//
-//          return next_sibling_up(n);
-//        }
-//
-//        return next;
-//
-//      } else {
-//
-//        // Return the first child of this node
-//        return &(*n)[0];
-//      }
-//
-//    }
-//  };
+      class Preorder_tree_walker {
+
+      public:
+
+        template<class Value>
+        const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+          return root;
+        }
+
+        template<class Value>
+        const Node::Node <Value> *next(const Node::Node <Value> *n) const {
+
+          if (n->is_leaf()) {
+
+            auto next = next_sibling(n);
+
+            if (nullptr == next) {
+
+              return next_sibling_up(n);
+            }
+
+            return next;
+
+          } else {
+
+            return &(*n)[0];
+          }
+
+        }
+      };
 
 
     }

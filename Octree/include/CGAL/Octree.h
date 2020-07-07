@@ -291,10 +291,22 @@ namespace CGAL {
       }
 
       template<class Walker>
-      Node_range nodes() const {
-        Node_walker first = Walker::first;
-        Node_walker next = Walker::next;
-        return nodes(first(m_root), next);
+      Node_range nodes(const Walker &walker) const {
+
+        const Node *first = walker.first(&m_root);
+
+//        Node_walker next =
+//                [=](const Node *n) -> const Node * {
+//                  return walker.next(n);
+//                };
+
+//        Node_walker next = boost::bind(&Walker::next, walker, _1);
+
+        Node_walker next = walker;
+
+        return boost::make_iterator_range(Walker_iterator<const Node>(first, walker),
+                                          Walker_iterator<const Node>());
+        //return nodes(first, next);
       }
 
       /// @}
