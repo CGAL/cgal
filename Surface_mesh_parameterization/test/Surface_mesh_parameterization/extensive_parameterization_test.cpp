@@ -143,17 +143,15 @@ int main(int, char**)
                             boost::hash<PM_vertex_descriptor> > > uvpm(uvhm);
 
     // Indices map
-    typedef boost::unordered_map<PM_vertex_descriptor, int> Indices;
-    Indices indices;
-    PMP::connected_component(face(opposite(hd, pm), pm), pm,
-                             boost::make_function_output_iterator(
-                               SMP::internal::Index_map_filler<PMesh, Indices>(pm, indices)));
-
-    boost::associative_property_map<Indices> vipm(indices);
+    typedef CGAL::dynamic_vertex_property_t<int>                                 Vertex_int_tag;
+    typedef typename boost::property_map<PMesh, Vertex_int_tag>::type            Vertex_int_map;
+    Vertex_int_map vipm = get(Vertex_int_tag(), pm);
+    CGAL::Surface_mesh_parameterization::internal::fill_index_map_of_cc(hd, pm, vipm);
 
     // Vertex parameterized map
-    boost::unordered_set<PM_vertex_descriptor> vs;
-    SMP::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
+    typedef CGAL::dynamic_vertex_property_t<bool>                                Vertex_bool_tag;
+    typedef typename boost::property_map<PMesh, Vertex_bool_tag>::type           Vertex_bool_map;
+    Vertex_bool_map vpm = get(Vertex_bool_tag(), pm);
 
     // Parameterizer
     SMP::ARAP_parameterizer_3<PMesh> parameterizer;

@@ -15,19 +15,10 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
-
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-
-#include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
 
 /// \file parameterize.h
 
@@ -57,7 +48,7 @@ namespace Surface_mesh_parameterization {
 /// \param mesh a triangulated surface.
 /// \param parameterizer a parameterizer.
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-/// \param uvm an instanciation of the class `VertexUVmap`.
+/// \param uvmap an instanciation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The mesh border must be mapped onto a convex polygon
@@ -68,23 +59,18 @@ template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
 Error_code parameterize(TriangleMesh& mesh,
                         Parameterizer parameterizer,
                         HD bhd,
-                        VertexUVmap uvm)
+                        VertexUVmap uvmap)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef CGAL::dynamic_vertex_property_t<int>                                 Vertex_int_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_int_tag>::type     Vertex_int_map;
+  Vertex_int_map vimap = get(Vertex_int_tag(), mesh);
+  internal::fill_index_map_of_cc(bhd, mesh, vimap);
 
-  typedef boost::unordered_map<vertex_descriptor, int> Indices;
-  Indices indices;
-  CGAL::Polygon_mesh_processing::connected_component(
-         face(opposite(bhd, mesh), mesh),
-         mesh,
-         boost::make_function_output_iterator(
-         internal::Index_map_filler<TriangleMesh, Indices>(mesh, indices)));
-  boost::associative_property_map<Indices> vipm(indices);
+  typedef CGAL::dynamic_vertex_property_t<bool>                                Vertex_bool_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_bool_tag>::type    Vertex_bool_map;
+  Vertex_bool_map vpmap = get(Vertex_bool_tag(), mesh);
 
-  boost::unordered_set<vertex_descriptor> vs;
-  internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpm(vs);
-
-  return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
+  return parameterizer.parameterize(mesh, bhd, uvmap, vimap, vpmap);
 }
 
 /// \ingroup  PkgSurfaceMeshParameterizationMainFunction
@@ -106,7 +92,7 @@ Error_code parameterize(TriangleMesh& mesh,
 ///
 /// \param mesh a triangulated surface.
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-/// \param uvm an instanciation of the class `VertexUVmap`.
+/// \param uvmap an instanciation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The vertices must be indexed (vimap must be initialized).
@@ -114,16 +100,14 @@ Error_code parameterize(TriangleMesh& mesh,
 template <class TriangleMesh, class HD, class VertexUVmap>
 Error_code parameterize(TriangleMesh& mesh,
                         HD bhd,
-                        VertexUVmap uvm)
+                        VertexUVmap uvmap)
 {
   Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
-  return parameterize(mesh, parameterizer, bhd, uvm);
+  return parameterize(mesh, parameterizer, bhd, uvmap);
 }
 
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PARAMETERIZE_H
