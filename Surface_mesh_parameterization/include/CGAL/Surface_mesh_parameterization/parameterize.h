@@ -120,41 +120,6 @@ Error_code parameterize(TriangleMesh& mesh,
   return parameterize(mesh, parameterizer, bhd, uvm);
 }
 
-template <class TM, class SEM, class SVM>
-class Seam_mesh;
-
-template <class TM, class SEM, class SVM, class Parameterizer, class HD, class VertexUVmap>
-Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
-                        Parameterizer parameterizer,
-                        HD bhd,
-                        VertexUVmap uvm)
-{
-  typedef typename boost::graph_traits<Seam_mesh<TM, SEM, SVM> >::vertex_descriptor vertex_descriptor;
-  boost::unordered_set<vertex_descriptor> vs;
-  internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpm(vs);
-
-  typedef boost::unordered_map<vertex_descriptor, int> Indices;
-  Indices indices;
-  CGAL::Polygon_mesh_processing::connected_component(
-         face(opposite(bhd, mesh), mesh),
-         mesh,
-         boost::make_function_output_iterator(
-         internal::Index_map_filler<Seam_mesh<TM, SEM, SVM>,
-                                    Indices>(mesh, indices)));
-  boost::associative_property_map<Indices> vipm(indices);
-
-  return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
-}
-
-template <class TM, class SEM, class SVM, class HD, class VertexUVmap>
-Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
-                        HD bhd,
-                        VertexUVmap uvm)
-{
-  Mean_value_coordinates_parameterizer_3<Seam_mesh<TM, SEM, SVM> > parameterizer;
-  return parameterize(mesh, parameterizer, bhd, uvm);
-}
-
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
