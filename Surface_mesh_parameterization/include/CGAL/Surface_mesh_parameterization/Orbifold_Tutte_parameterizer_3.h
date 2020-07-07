@@ -358,7 +358,8 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 /// shows how to select cones on the input mesh and automatically construct
 /// the seams and the cones on the `Seam_mesh`.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \attention The global function `CGAL::Surface_mesh_parameterization::parameterize()` cannot be used
+/// with this parameterizer. Users should use this class's member function `parameterize()` instead.
 ///
 /// \tparam SeamMesh must be a `Seam_mesh`, with underlying mesh any model of `FaceListGraph` and `HalfedgeListGraph`.
 ///
