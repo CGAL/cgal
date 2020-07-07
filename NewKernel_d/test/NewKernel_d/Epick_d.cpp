@@ -715,11 +715,18 @@ void test3(){
 template<class Ker>
 void test4(){
   typedef typename Ker::Point_d P;
+  typedef typename Ker::Weighted_point_d WP;
   typedef typename Ker::Construct_circumcenter_d CCc;
   typedef typename Ker::Equal_d E;
+  typedef typename Ker::Power_center_d PC;
+  typedef typename Ker::Power_distance_d PoD;
+  typedef typename Ker::Affine_rank_d AR;
   Ker k(4);
   CCc ccc Kinit(construct_circumcenter_d_object);
   E ed Kinit(equal_d_object);
+  PC pc Kinit(power_center_d_object);
+  PoD pod Kinit(power_distance_d_object);
+  AR ar Kinit(affine_rank_d_object);
   auto mkpt=[](auto...x){double l[]{(double)x...};return P(std::begin(l), std::end(l));};
   P tab1[]={mkpt(15,20,40,80),mkpt(10,23,36,80),mkpt(10,20,40,85),mkpt(10,15,40,80),mkpt(13,20,40,76)};
   assert(ed(ccc(tab1+0, tab1+5),mkpt(10,20,40,80)));
@@ -727,6 +734,15 @@ void test4(){
   assert(ed(ccc(tab2+0, tab2+4),mkpt(10,20,40,80)));
   P tab3[]={mkpt(15,20,35,80),mkpt(10,25,40,75),mkpt(13,24,37,76)};
   assert(ed(ccc(tab3+0, tab3+3),mkpt(10,20,40,80)));
+  auto mkwpt=[](auto...x){double l[]{(double)x...};auto last=std::prev(std::end(l));return WP(P(std::begin(l), last),*last);};
+  WP tab4[]={mkwpt(89,17,29,97,14),mkwpt(86,99,64,26,44),mkwpt(40,9,13,91,20),mkwpt(41,30,93,13,10),mkwpt(45,6,98,9,0),mkwpt(0,0,0,0,0)};
+  for(int i=5;i>=1;--i){
+    tab4[i]=pc(tab4+0, tab4+i);
+    for(int j=0;j<i;++j)
+      assert(pod(tab4[i],tab4[j])==0);
+    auto drop=[](WP const&x){return x.point();};
+    assert(ar(CGAL::make_transforming_iterator(tab4+0,drop), CGAL::make_transforming_iterator(tab4+i+1,drop))==i-1);
+  }
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
