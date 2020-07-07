@@ -1161,6 +1161,23 @@ public:
                                get_opposite_ith_real_dart(i));
   }
 
+  /// @return the turn between dart number i-1 and dart number i.
+  std::size_t prev_positive_turn(std::size_t i) const
+  {
+    // CGAL_assertion(is_valid());
+    CGAL_assertion(i<m_path.size());
+    CGAL_assertion (is_closed() || i>0);
+    return next_positive_turn(prev_index(i));
+  }
+  /// @return the negative turn between dart number i-1 and dart number i.
+  std::size_t prev_negative_turn(std::size_t i) const
+  {
+    // CGAL_assertion(is_valid());
+    CGAL_assertion(i<m_path.size());
+    CGAL_assertion (is_closed() || i>0);
+    return next_negative_turn(prev_index(i));
+  }
+
   /// Computes all positive turns of this path.
   std::vector<std::size_t> compute_positive_turns() const
   {

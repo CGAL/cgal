@@ -97,10 +97,10 @@ protected:
 
 // Small wrapper to provide per dart iterator on a Path_on_surface_with_rle
 template<class Path_>
-class Dart_iterator
+class CDart_iterator
 {
 public:
-  typedef Dart_iterator<Path_>                    Self;
+  typedef CDart_iterator<Path_>                   Self;
   typedef Path_                                   Path;
   typedef typename Path::Map                      Map;
   typedef typename Map::Dart_handle               Dart_handle;
@@ -113,7 +113,7 @@ public:
   typedef Dart_const_handle&                      reference;
   typedef std::bidirectional_iterator_tag         iterator_category;
 
-  Dart_iterator(const Path_& path, const List_iterator& it_flat, bool is_end = false)
+  CDart_iterator(const Path_& path, const List_iterator& it_flat, bool is_end = false)
       : m_path(path),
         m_it_flat(it_flat),
         m_curr_idx_in_flat(0),
@@ -220,11 +220,11 @@ public:
   typedef CFlat<Map>                                         Flat;
   typedef std::list<Flat>                                    List_of_flats;
   typedef typename List_of_flats::iterator                   List_iterator;
-  typedef Dart_iterator<Self>                                Dart_iterator;
+  typedef CDart_iterator<Self>                                Dart_iterator;
   // TODO typedef typename List_of_dart_length::const_iterator List_const_iterator;
 
   friend class Path_on_surface<Map>;
-  friend Dart_iterator;
+  friend CDart_iterator<Self>;
 
   struct List_iterator_hash
   {
@@ -282,15 +282,15 @@ public:
 
     if (apath.is_closed())
     {
-      if (!use_only_negative && apath.next_positive_turn(i)==2)
+      if (!use_only_negative && apath.prev_positive_turn(i)==2)
       { positive_flat=true; negative_flat=false; }
-      else if (!use_only_positive && apath.next_negative_turn(i)==2)
+      else if (!use_only_positive && apath.prev_negative_turn(i)==2)
       { positive_flat=false; negative_flat=true; }
 
-      while ((positive_flat && apath.next_positive_turn(i)==2) ||
-             (negative_flat && apath.next_negative_turn(i)==2))
+      while ((positive_flat && apath.prev_positive_turn(i)==2) ||
+             (negative_flat && apath.prev_negative_turn(i)==2))
       {
-        i=apath.next_index(i);
+        i=apath.prev_index(i);
         if (i==0) // Case of a closed path, made of only one flat part.
         {
           m_path.push_back(Flat(apath.real_front(), apath.real_back(),
@@ -301,8 +301,7 @@ public:
           return;
         }
       }
-      // Here i is the last dart of a flat
-      i=apath.next_index(i); // Now we are sure that i is the beginning of a flat
+      // Here i is the first dart of a flat
     }
 
     starti=i;
