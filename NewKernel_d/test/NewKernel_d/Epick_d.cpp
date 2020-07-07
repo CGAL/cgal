@@ -142,7 +142,7 @@ void test2(){
   typedef typename K1::Compute_squared_radius_d SR;
   typedef typename K1::Translated_point_d TP;
   typedef typename K1::Power_center_d PC;
-  typedef typename K1::Power_distance_d PoD;
+  typedef typename K1::Compute_power_product_d PoD;
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
   typedef typename K1::Compute_squared_radius_smallest_orthogonal_sphere_d CSRSOS;
