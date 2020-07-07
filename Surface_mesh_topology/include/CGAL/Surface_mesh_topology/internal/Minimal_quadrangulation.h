@@ -570,29 +570,31 @@ public:
     }
     else
     {
-      // TODO: genus > 1 and not contractible, perform unzip algorithm
+      // genus > 1 and not contractible, perform unzip algorithm
       internal::Path_on_surface_with_rle<Self>
           pt=transform_original_path_into_quad_surface_with_rle(p);
       pt.canonize();
       // Use non-rle path from now on
-      auto factorization=pt.factorize();
-      Path_on_surface<Local_map> pr(factorization.first);
-      pr.simplify_flips();
-      Path_on_surface<Local_map> p_original(pr);
+      Path_on_surface<Local_map> p_canonized(pt);
+      auto factorization=p_canonized.factorize();
       if (factorization.second <= 1) {
         // If the curve is not primitive, there must be at least
         // one self intersection
 
+        Path_on_surface<Local_map> pr(factorization.first);
+        pr.simplify_flips();
+        Path_on_surface<Local_map> p_original(pr);
+
         // Compute the backward cyclic KMP failure table for the curve
         std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
         pr.compute_switchable();
-        size_type degree = get_local_map().template info<0>(get_local_map().darts().begin());
+        size_type src_degree = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
 
         typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
                 typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
         std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
         rb_nodes.reserve(pr.length());
-        std::vector<rbtree> trees(degree);
+        std::vector<rbtree> trees(src_degree);
 
         for (std::size_t i = 0; i < pr.length(); ++i)
         {
@@ -1970,10 +1972,10 @@ protected:
 
   size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
-    size_type degree = get_local_map().template info<0>(ref);
+    size_type ref_degree = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
     size_type ref_order = get_dart_absolute_order_relative_to(ref, ref),
               x_order = get_dart_absolute_order_relative_to(x, ref);
-    return x_order <= ref_order ? (x_order + degree - ref_order - 1) : (x_order - ref_order - 1);
+    return x_order <= ref_order ? (x_order + ref_degree - ref_order - 1) : (x_order - ref_order - 1);
   }
 
   int get_previous_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
@@ -2020,10 +2022,10 @@ protected:
 
   size_type get_dart_absolute_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
-    size_type degree = get_local_map().template info<0>(ref);
+    size_type ref_degree = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
     return get_local_map().template belong_to_same_cell<0>(x, ref) ?
-           get_dart_id(x) % degree :
-           get_dart_id(get_local_map().opposite2(x)) % degree;
+           get_dart_id(x) % ref_degree :
+           get_dart_id(get_local_map().opposite2(x)) % ref_degree;
   }
 
   bool is_same_corner(const Path_on_surface<Local_map>& p, std::size_t j, std::size_t ref) const

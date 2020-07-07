@@ -1507,13 +1507,6 @@ public:
      CGAL_assertion(is_valid());
   }
 
-  /// Factorize the path into primitive
-  std::pair<Self, int> factorize() {
-    Path_on_surface<Map> p(*this);
-    auto result = p.factorize();
-    return std::make_pair(Self(m_MQ, result.first, m_use_only_positive, m_use_only_negative), result.second);
-  }
-
   void display_positive_turns()
   {
     std::cout<<"+(";
