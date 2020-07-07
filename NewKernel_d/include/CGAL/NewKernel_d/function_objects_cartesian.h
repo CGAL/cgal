@@ -689,19 +689,19 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       Vec b = typename CVec::Dimension()(k-1);
       std::vector<Vector> vecs; vecs.reserve(k-1);
       while(++f!=e)
-	vecs.emplace_back(dp(*f,p0));
+        vecs.emplace_back(dp(*f,p0));
       // Only need to fill the lower half
       for(int i=0;i<k-1;++i){
-	for(int j=i;j<k-1;++j)
-	  m(j,i)=sp(vecs[i],vecs[j]);
-	b[i]=m(i,i)/2;
+        for(int j=i;j<k-1;++j)
+          m(j,i)=sp(vecs[i],vecs[j]);
+        b[i]=m(i,i)/2;
       }
       // Assumes Eigen...
       Vec res=m.ldlt().solve(b);
       Point center=p0;
       // Wasteful if we only want the radius
       for(int i=0;i<k-1;++i)
-	center=tp(center,sv(vecs[i],res[i]));
+        center=tp(center,sv(vecs[i],res[i]));
       return center;
     }
   }
