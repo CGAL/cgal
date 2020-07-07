@@ -95,119 +95,6 @@ protected:
   const Local_map& m_map;
 };
 
-// Small wrapper to provide per dart iterator on a Path_on_surface_with_rle
-template<class Path_>
-class CDart_iterator
-{
-public:
-  typedef CDart_iterator<Path_>                   Self;
-  typedef Path_                                   Path;
-  typedef typename Path::Map                      Map;
-  typedef typename Map::Dart_handle               Dart_handle;
-  typedef typename Map::Dart_const_handle         Dart_const_handle;
-  typedef CFlat<Map>                              Flat;
-  typedef typename Path::List_iterator            List_iterator;
-  typedef std::ptrdiff_t                          difference_type;
-  typedef Dart_const_handle                       value_type;
-  typedef Dart_const_handle*                      pointer;
-  typedef Dart_const_handle&                      reference;
-  typedef std::bidirectional_iterator_tag         iterator_category;
-
-  CDart_iterator(const Path_& path, const List_iterator& it_flat, bool is_end = false)
-      : m_path(path),
-        m_it_flat(it_flat),
-        m_curr_idx_in_flat(0),
-        m_curr_dart(is_end ? nullptr : it_flat->begin)
-        {}
-
-  Dart_const_handle operator*() const {
-    CGAL_assertion(m_it_flat != m_path.m_path.end());
-    return m_curr_dart;
-  }
-
-  Self& operator++() {
-    CGAL_assertion(m_it_flat != m_path.m_path.end());
-    increment();
-    return *this;
-  }
-
-  Self operator++(int) {
-    CGAL_assertion(m_it_flat != m_path.m_path.end());
-    Self pre_increment(*this);
-    increment();
-    return pre_increment;
-  }
-
-  Self& operator--() {
-    CGAL_assertion(m_it_flat != m_path.m_path.begin());
-    decrement();
-    return *this;
-  }
-
-  Self operator--(int) {
-    CGAL_assertion(m_it_flat != m_path.m_path.begin());
-    Self pre_decrement(*this);
-    decrement();
-    return pre_decrement;
-  }
-
-  void increment() {
-    if (m_curr_idx_in_flat == std::abs(m_it_flat->length)) {
-      m_it_flat = std::next(m_it_flat);
-      m_curr_idx_in_flat = 0;
-      if (m_it_flat != m_path.m_path.end()) {
-        m_curr_dart = m_it_flat->begin;
-      }
-    }
-    else {
-      ++m_curr_idx_in_flat;
-      if (m_it_flat->length > 0) {
-        m_curr_dart = m_path.get_map().template beta<1, 2, 1>(m_curr_dart);
-      }
-      else {
-        m_curr_dart = m_path.get_map().template beta<2, 0, 2, 0, 2>(m_curr_dart);
-      }
-    }
-  }
-
-  void decrement() {
-    if (m_curr_idx_in_flat == 0) {
-      m_it_flat = std::prev(m_it_flat);
-      m_curr_idx_in_flat = std::abs(m_it_flat->length);
-      m_curr_dart = m_it_flat->end;
-    }
-    else {
-      --m_curr_idx_in_flat;
-      if (m_it_flat->length > 0) {
-        m_curr_dart = m_path.get_map().template beta<0, 2, 0>(m_curr_dart);
-      }
-      else {
-        m_curr_dart = m_path.get_map().template beta<2, 1, 2, 1, 2>(m_curr_dart);
-      }
-    }
-  }
-
-  bool operator==(const Self& other) const {
-    return m_it_flat == other.m_it_flat && m_curr_idx_in_flat == other.m_curr_idx_in_flat;
-  }
-
-  bool operator!=(const Self& other) const {
-    return !(*this == other);
-  }
-
-  Self& operator=(const Self& other) {
-    m_it_flat = other.m_it_flat;
-    m_curr_idx_in_flat = other.m_curr_idx_in_flat;
-    m_curr_dart = other.m_curr_dart;
-    return *this;
-  }
-
-  const Path_&  m_path;
-  List_iterator m_it_flat;
-  std::size_t   m_curr_idx_in_flat;
-  Dart_const_handle m_curr_dart;
-};
-
 template<typename MQ> // MQ for minimal quadrangulation
 class Path_on_surface_with_rle
 {
@@ -220,11 +107,9 @@ public:
   typedef CFlat<Map>                                         Flat;
   typedef std::list<Flat>                                    List_of_flats;
   typedef typename List_of_flats::iterator                   List_iterator;
-  typedef CDart_iterator<Self>                                Dart_iterator;
   // TODO typedef typename List_of_dart_length::const_iterator List_const_iterator;
 
   friend class Path_on_surface<Map>;
-  friend CDart_iterator<Self>;
 
   struct List_iterator_hash
   {
@@ -545,18 +430,6 @@ public:
   {
     CGAL_assertion(!is_empty());
     return end_of_flat(std::prev(m_path.end()));
-  }
-
-  /// @return the beginning of an iterator through all the darts
-  Dart_iterator begin()
-  {
-    return Dart_iterator(*this, m_path.begin(), is_empty());
-  }
-
-  /// @return the end of the iterator through all the darts
-  Dart_iterator end()
-  {
-    return Dart_iterator(*this, m_path.end(), true);
   }
 
   /// @return true iff df can be added at the end of the path.
@@ -1349,12 +1222,6 @@ public:
     return (t==1 && flat_length(it) >= 0);
   }
 
-  /// @return true iff the dart 'it_dart' forms a switchable subpath (aka left-L-shape)
-  bool is_switchable(const Dart_iterator& it_dart) {
-    CGAL_assertion(it_dart != end());
-    return is_switchable(it_dart.m_it_flat);
-  }
-
   /// Add the given dart 'dh' before the flat 'it'.
   void add_dart_before(const List_iterator& it, Dart_const_handle dh,
                        Set_of_it& modified_flats)
@@ -1591,40 +1458,6 @@ public:
     m_length-=2;
 
     it1=merge_modified_flats_when_possible(modified_flats);
-  }
-
-  /// Switch the left-L-shape of the subpath starting at 'it'
-  void switch_dart(Dart_iterator& it_dart)
-  {
-    CGAL_assertion(is_switchable(it_dart));
-    List_iterator it = it_dart.m_it_flat;
-    Set_of_it modified_flats;
-    /// Break current flat into 3 pieces:
-    /// previous unswitched flat, current dart, next switched flat
-    if (it_dart.m_curr_idx_in_flat > 0) {
-      add_dart_before(it, it->begin, modified_flats);
-      List_iterator it_prev = std::prev(it);
-      set_end_of_flat(it_prev, get_map().template beta<0, 2, 0>(*it_dart));
-      set_flat_length(it_prev, it_dart.m_curr_idx_in_flat - 1);
-      flat_modified(it_prev, modified_flats);
-    }
-    /// Need to switch to t1-1 turn
-    List_iterator it_next = next_iterator(it);
-    Dart_const_handle d_new_first_dart = get_map().template beta<0, 2>(*it_dart);
-    Dart_const_handle d_new_flat_begin = get_map().template beta<2, 0, 2>(d_new_first_dart);
-    Dart_const_handle d_new_flat_end = get_map().template beta<1, 2>(begin_of_flat(it_next));
-
-    add_dart_before(it, d_new_first_dart, modified_flats);
-    set_begin_of_flat(it, d_new_flat_begin);
-    set_end_of_flat(it, d_new_flat_end);
-    set_flat_length(it, -(it->length - it_dart.m_curr_idx_in_flat));
-    flat_modified(it, modified_flats);
-    reduce_flat_from_beginning(it_next, modified_flats);
-    flat_modified(it_next, modified_flats);
-
-    merge_modified_flats_when_possible(modified_flats);
-    it_dart = Dart_iterator(*this, it);
-    --it_dart;
   }
 
   /// Right push the path, if all all l-shape are pushed, otherwise only one.
