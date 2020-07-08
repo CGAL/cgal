@@ -8,166 +8,166 @@
 
 namespace CGAL {
 
-  namespace Octree {
+namespace Octree {
 
-    namespace Walker {
+namespace Walker {
 
-      template<class Value>
-      const Node::Node <Value> *next_sibling(const Node::Node <Value> *n) {
+template<class Value>
+const Node::Node <Value> *next_sibling(const Node::Node <Value> *n) {
 
-        // Passing null returns the first node
-        if (nullptr == n)
-          return nullptr;
+  // Passing null returns the first node
+  if (nullptr == n)
+    return nullptr;
 
-        // If this node has no parent, it has no siblings
-        if (nullptr == n->parent())
-          return nullptr;
+  // If this node has no parent, it has no siblings
+  if (nullptr == n->parent())
+    return nullptr;
 
-        // Find out which child this is
-        std::size_t index = n->index().to_ulong();
+  // Find out which child this is
+  std::size_t index = n->index().to_ulong();
 
-        // Return null if this is the last child
-        if (7 == index)
-          return nullptr;
+  // Return null if this is the last child
+  if (7 == index)
+    return nullptr;
 
-        // Otherwise, return the next child
-        return &((*n->parent())[index + 1]);
+  // Otherwise, return the next child
+  return &((*n->parent())[index + 1]);
+}
+
+template<class Value>
+const Node::Node <Value> *next_sibling_up(const Node::Node <Value> *n) {
+
+  if (!n)
+    return nullptr;
+
+  auto up = n->parent();
+
+  while (nullptr != up) {
+
+    if (nullptr != next_sibling(up))
+      return next_sibling(up);
+
+    up = up->parent();
+  }
+
+  return nullptr;
+}
+
+template<class Value>
+const Node::Node <Value> *deepest_first_child(const Node::Node <Value> *n) {
+
+  if (!n)
+    return nullptr;
+
+  // Find the deepest child on the left
+  auto first = n;
+  while (!first->is_leaf())
+    first = &(*first)[0];
+  return first;
+}
+
+class _Preorder {
+
+public:
+
+  template<class Value>
+  static const Node::Node <Value> *first(const Node::Node <Value> *root) {
+    return root;
+  }
+
+  template<class Value>
+  static const Node::Node <Value> *next(const Node::Node <Value> *n) {
+
+    if (n->is_leaf()) {
+
+      auto next = next_sibling(n);
+
+      if (nullptr == next) {
+
+        return next_sibling_up(n);
       }
 
-      template<class Value>
-      const Node::Node <Value> *next_sibling_up(const Node::Node <Value> *n) {
+      return next;
 
-        if (!n)
-          return nullptr;
+    } else {
 
-        auto up = n->parent();
+      // Return the first child of this node
+      return &(*n)[0];
+    }
 
-        while (nullptr != up) {
+  }
+};
 
-          if (nullptr != next_sibling(up))
-            return next_sibling(up);
 
-          up = up->parent();
-        }
+struct Preorder {
 
-        return nullptr;
+  template<class Value>
+  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+    return root;
+  }
+
+  template<class Value>
+  const Node::Node <Value> *operator()(const Node::Node <Value> *n) const {
+
+    if (n->is_leaf()) {
+
+      auto next = next_sibling(n);
+
+      if (nullptr == next) {
+
+        return next_sibling_up(n);
       }
 
-      template<class Value>
-      const Node::Node <Value> *deepest_first_child(const Node::Node <Value> *n) {
+      return next;
 
-        if (!n)
-          return nullptr;
+    } else {
 
-        // Find the deepest child on the left
-        auto first = n;
-        while (!first->is_leaf())
-          first = &(*first)[0];
-        return first;
-      }
+      // Return the first child of this node
+      return &(*n)[0];
+    }
 
-      class _Preorder {
+  }
+};
 
-      public:
+struct Postorder {
 
-        template<class Value>
-        static const Node::Node <Value> *first(const Node::Node <Value> *root) {
-          return root;
-        }
+  template<class Value>
+  const Node::Node <Value> *first(const Node::Node <Value> *root) {
 
-        template<class Value>
-        static const Node::Node <Value> *next(const Node::Node <Value> *n) {
+    return deepest_first_child(root);
+  }
 
-          if (n->is_leaf()) {
+  template<class Value>
+  const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
 
-            auto next = next_sibling(n);
+    auto next = deepest_first_child(next_sibling(n));
 
-            if (nullptr == next) {
+    if (!next)
+      next = n->parent();
 
-              return next_sibling_up(n);
-            }
+    return next;
+  }
+};
 
-            return next;
+struct Leaves {
 
-          } else {
+  template<class Value>
+  const Node::Node <Value> *first(const Node::Node <Value> *root) {
 
-            // Return the first child of this node
-            return &(*n)[0];
-          }
+    return deepest_first_child(root);
+  }
 
-        }
-      };
+  template<class Value>
+  const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
 
+    auto next = deepest_first_child(next_sibling(n));
 
-      struct Preorder {
+    if (!next)
+      next = deepest_first_child(next_sibling_up(n));
 
-        template<class Value>
-        const Node::Node <Value> *first(const Node::Node <Value> *root) const {
-          return root;
-        }
-
-        template<class Value>
-        const Node::Node <Value> *operator()(const Node::Node <Value> *n) const {
-
-          if (n->is_leaf()) {
-
-            auto next = next_sibling(n);
-
-            if (nullptr == next) {
-
-              return next_sibling_up(n);
-            }
-
-            return next;
-
-          } else {
-
-            // Return the first child of this node
-            return &(*n)[0];
-          }
-
-        }
-      };
-
-      struct Postorder {
-
-        template<class Value>
-        const Node::Node <Value> *first(const Node::Node <Value> *root) {
-
-          return deepest_first_child(root);
-        }
-
-        template<class Value>
-        const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
-
-          auto next = deepest_first_child(next_sibling(n));
-
-          if (!next)
-            next = n->parent();
-
-          return next;
-        }
-      };
-
-      struct Leaves {
-
-        template<class Value>
-        const Node::Node <Value> *first(const Node::Node <Value> *root) {
-
-          return deepest_first_child(root);
-        }
-
-        template<class Value>
-        const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
-
-          auto next = deepest_first_child(next_sibling(n));
-
-          if (!next)
-            next = deepest_first_child(next_sibling_up(n));
-
-          return next;
-        }
-      };
+    return next;
+  }
+};
 
 
 //      class Tree_walker {
@@ -181,43 +181,43 @@ namespace CGAL {
 //        virtual const Node::Node <Value> *next(const Node::Node <Value> *n) const = 0;
 //      };
 
-      class Preorder_tree_walker {
+class Preorder_tree_walker {
 
-      public:
+public:
 
-        template<class Value>
-        const Node::Node <Value> *first(const Node::Node <Value> *root) const {
-          std::cout << "Walker First() invoked" << std::endl;
-          return root;
-        }
+  template<class Value>
+  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+    std::cout << "Walker First() invoked" << std::endl;
+    return root;
+  }
 
-        template<class Value>
-        const Node::Node <Value> *next(const Node::Node <Value> *n) const {
-          std::cout << "Walker Next() invoked" << std::endl;
+  template<class Value>
+  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
+    std::cout << "Walker Next() invoked" << std::endl;
 
-          if (n->is_leaf()) {
+    if (n->is_leaf()) {
 
-            auto next = next_sibling(n);
+      auto next = next_sibling(n);
 
-            if (nullptr == next) {
+      if (nullptr == next) {
 
-              return next_sibling_up(n);
-            }
+        return next_sibling_up(n);
+      }
 
-            return next;
+      return next;
 
-          } else {
+    } else {
 
-            return &(*n)[0];
-          }
-
-        }
-      };
-
-
+      return &(*n)[0];
     }
 
   }
+};
+
+
+}
+
+}
 
 }
 

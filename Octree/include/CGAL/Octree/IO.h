@@ -28,7 +28,7 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap
   return os;
 }
 
-template <typename Value>
+template<typename Value>
 ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
 
   // Show the depth of the node
