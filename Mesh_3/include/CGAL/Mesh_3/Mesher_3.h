@@ -417,12 +417,10 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   double elapsed_time = 0.;
 #if CGAL_MESH_3_USE_INTEL_ITT
   auto mesh_3_domain = __itt_domain_create("org.cgal.Mesh_3.refine_mesh");
-  auto refine_mesh_task_handle = __itt_string_handle_create("Mesher_3::refine_mesh");
   auto initialize_task_handle = __itt_string_handle_create("Mesher_3::initialize");
   auto refine_surface_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine surface mesh");
   auto scan_cells_task_handle = __itt_string_handle_create("Mesher_3 scan triangulation for bad cells");
   auto refine_volume_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine volume mesh");
-  CGAL_MESH_3_TASK_BEGIN(refine_mesh_task_handle);
 #endif // CGAL_MESH_3_USE_INTEL_ITT
 
   // First surface mesh could modify c3t3 without notifying cells_mesher
@@ -633,7 +631,6 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     << std::endl << std::endl;
 #endif
 
-  CGAL_MESH_3_TASK_END(refine_mesh_task_handle);
   return elapsed_time;
 }
 
