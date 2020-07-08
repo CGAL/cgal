@@ -125,8 +125,8 @@ public:
   typedef Kernel_traits<Point>::Kernel::Segment_3 Datum;
   /*!
   Id type:
-  - `boost::graph_traits<HalfedgeGraph>::%edge_descriptor if `OneHalfedgeGraphPerTree` is `Tag_true`
-  - `std::pair<boost::graph_traits<HalfedgeGraph>::edge_descriptor, HalfedgeGraph>` if `OneHalfedgeGraphPerTree` is `Tag_false`
+  - `boost::graph_traits<HalfedgeGraph>::%edge_descriptor` if `OneHalfedgeGraphPerTree` is `Tag_true`
+  - `std::pair<boost::graph_traits<HalfedgeGraph>::%edge_descriptor, const HalfedgeGraph*>` if `OneHalfedgeGraphPerTree` is `Tag_false`
   */
   unspecified_type Id;
   /// @}
@@ -202,4 +202,3 @@ public:
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
-
