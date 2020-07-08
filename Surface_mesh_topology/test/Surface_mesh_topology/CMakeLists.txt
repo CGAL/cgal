@@ -34,6 +34,7 @@ set(SOURCE_FILES
   path_tests.cpp
   path_with_rle_deformation_tests.cpp
   shortest_noncontractible_cycle_tests.cpp
+  simplicity_double_torus.cpp
   test_homotopy.cpp
   test_homotopy_with_polygonal_schema.cpp
   test_shortest_cycle_non_contractible.cpp
