@@ -135,8 +135,15 @@ CGAL_installation_test_find_package_version(equal)
 CGAL_installation_test_find_package_version(greater)
 CGAL_installation_test_find_package_version(exact)
 CGAL_installation_test_find_package_version(fail-exact)
+
 set_tests_properties(
   test_find_package_version_greater
   test_find_package_version_less_major
   test_find_package_version_fail-exact
   PROPERTIES WILL_FAIL TRUE)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_config_file)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file)
+set(TEST_SRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/test_configuration.cpp)
+configure_file(test_configuration.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_config_file/CMakeLists.txt)
+add_test(NAME test_config_file
+  COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_PROJECT_SOURCE_DIR}/CGALConfig.cmake)

@@ -41,6 +41,7 @@ do
     continue
   fi
 cd $ROOT
+
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
@@ -92,28 +93,264 @@ cd $ROOT
           exit 1
     fi
     echo "Matrix is up to date."
-    #check if non standard cgal installation works
+    exit 0
+  fi
+
+  if [ "$ARG" = "Installation" ]
+  then
+
+# ==-- CGAL installed in a non-default prefix, with the CGAL_Qt5 header-files. --==
     cd $ROOT
     mkdir build_test
     cd build_test
-    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ -DCGAL_BUILD_THREE_DOC=TRUE ..
+    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ ..
     mytime make install
     # test install with minimal downstream example
     mkdir installtest
     cd installtest
     touch main.cpp
     mkdir build
-    echo 'project(Example)' >> CMakeLists.txt
-    echo 'set(PROJECT_SRCS ${PROJECT_SOURCE_DIR}/main.cpp)' >> CMakeLists.txt
-    echo 'find_package(CGAL REQUIRED)' >> CMakeLists.txt
-    echo 'add_executable(${PROJECT_NAME} ${PROJECT_SRCS})' >> CMakeLists.txt
-    echo 'target_link_libraries(${PROJECT_NAME} CGAL::CGAL)' >> CMakeLists.txt
-    echo '#include "CGAL/remove_outliers.h"' >> main.cpp
+    # https://doc.cgal.org/latest/Triangulation_2/Triangulation_2_2draw_triangulation_2_8cpp-example.html and  https://doc.cgal.org/latest/Algebraic_foundations/Algebraic_foundations_2interoperable_8cpp-example.html
+    cat << EOF > main.cpp
+      #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+      #include <CGAL/Triangulation_2.h>
+      #include <CGAL/draw_triangulation_2.h>
+      #include <CGAL/basic.h>
+      #include <CGAL/Coercion_traits.h>
+      #include <CGAL/IO/io.h>
+      #include <fstream>
+      typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+      typedef CGAL::Triangulation_2<K>                            Triangulation;
+      typedef Triangulation::Point                                Point;
+
+      template <typename A, typename B>
+      typename CGAL::Coercion_traits<A,B>::Type
+      binary_func(const A& a , const B& b){
+          typedef CGAL::Coercion_traits<A,B> CT;
+          CGAL_static_assertion((CT::Are_explicit_interoperable::value));
+          typename CT::Cast cast;
+          return cast(a)*cast(b);
+      }
+
+      int main(int argc, char**) {
+        std::cout<< binary_func(double(3), int(5)) << std::endl;
+        std::cout<< binary_func(int(3), double(5)) << std::endl;
+        std::ifstream in("data/triangulation_prog1.cin");
+        std::istream_iterator<Point> begin(in);
+        std::istream_iterator<Point> end;
+        Triangulation t;
+        t.insert(begin, end);
+        if(argc == 3) // do not test Qt5 at runtime
+          CGAL::draw(t);
+        return EXIT_SUCCESS;
+       }
+EOF
+    cat << EOF > "CMakeLists.txt"
+      cmake_minimum_required(VERSION 3.1...3.15)
+      find_package(CGAL COMPONENTS Qt5)
+      add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+      add_executable(test main.cpp)
+      target_link_libraries(test PUBLIC CGAL::CGAL_Qt5)
+EOF
+
     cd build
-    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install -DCGAL_BUILD_THREE_DOC=TRUE ..
+    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    make -j2
+    ./test
     cd ..
+    rm -rf ./build
+    cd ..
+    rm -rf ./install/*
+
+# ==-- CGAL installed in a non-default prefix, without the CGAL_Qt5 header-files. --==
+     # https://doc.cgal.org/latest/Triangulation_2/Triangulation_2_2draw_triangulation_2_8cpp-example.html and  https://doc.cgal.org/latest/Algebraic_foundations/Algebraic_foundations_2interoperable_8cpp-example.html
+    mytime cmake -DCMAKE_INSTALL_PREFIX=install/ -DCGAL_BUILD_THREE_DOC=TRUE -DWITH_CGAL_Qt5=OFF ..
+    mytime make install
+    # test install with minimal downstream example
+    cd installtest
+    touch main.cpp
+    mkdir build
+    cat << EOF > "CMakeLists.txt"
+      cmake_minimum_required(VERSION 3.1...3.15)
+      find_package(CGAL)
+      add_definitions(-DQT_NO_KEYWORDS)
+      add_executable(test main.cpp)
+      target_link_libraries(test PUBLIC CGAL::CGAL)
+EOF
+    cat << EOF > main.cpp
+    #include <iostream>
+    #include <CGAL/Simple_cartesian.h>
+    typedef CGAL::Simple_cartesian<double> Kernel;
+    typedef Kernel::Point_2 Point_2;
+    typedef Kernel::Segment_2 Segment_2;
+    int main()
+    {
+      Point_2 p(1,1), q(10,10);
+      std::cout << "p = " << p << std::endl;
+      std::cout << "q = " << q.x() << " " << q.y() << std::endl;
+      std::cout << "sqdist(p,q) = "
+                << CGAL::squared_distance(p,q) << std::endl;
+
+      Segment_2 s(p,q);
+      Point_2 m(5, 9);
+
+      std::cout << "m = " << m << std::endl;
+      std::cout << "sqdist(Segment_2(p,q), m) = "
+                << CGAL::squared_distance(s,m) << std::endl;
+      std::cout << "p, q, and m ";
+      switch (CGAL::orientation(p,q,m)){
+      case CGAL::COLLINEAR:
+        std::cout << "are collinear\n";
+        break;
+      case CGAL::LEFT_TURN:
+        std::cout << "make a left turn\n";
+        break;
+      case CGAL::RIGHT_TURN:
+        std::cout << "make a right turn\n";
+        break;
+      }
+      std::cout << " midpoint(p,q) = " << CGAL::midpoint(p,q) << std::endl;
+      return 0;
+    }
+EOF
+    cd build
+    mytime cmake -DCMAKE_INSTALL_PREFIX=../../install ..
+    make -j2
+    ./test
+    cd ..
+    rm -rf ./build
+    cd ../..
+    rm -rf ./install_test
+
+#==-- configure CGAL (as header-only), then use its build-directory as CGAL_DIR (we might want to support that use-case to be compatible with our usage with non-header-only, for CGAL-4.14) --==
+mkdir config_dir
+cd config_dir
+mytime cmake  ..
+cd ..
+mkdir test_dir
+#==-- test install with minimal downstream example --==
+cd test_dir
+touch main.cpp
+mkdir build
+cat << EOF > main.cpp
+  #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+  #include <CGAL/Triangulation_2.h>
+  #include <CGAL/draw_triangulation_2.h>
+  #include <CGAL/basic.h>
+  #include <CGAL/Coercion_traits.h>
+  #include <CGAL/IO/io.h>
+  #include <fstream>
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef CGAL::Triangulation_2<K>                            Triangulation;
+  typedef Triangulation::Point                                Point;
+
+  template <typename A, typename B>
+  typename CGAL::Coercion_traits<A,B>::Type
+  binary_func(const A& a , const B& b){
+      typedef CGAL::Coercion_traits<A,B> CT;
+      CGAL_static_assertion((CT::Are_explicit_interoperable::value));
+      typename CT::Cast cast;
+      return cast(a)*cast(b);
+  }
+
+  int main(int argc, char**) {
+    std::cout<< binary_func(double(3), int(5)) << std::endl;
+    std::cout<< binary_func(int(3), double(5)) << std::endl;
+    std::ifstream in("data/triangulation_prog1.cin");
+    std::istream_iterator<Point> begin(in);
+    std::istream_iterator<Point> end;
+    Triangulation t;
+    t.insert(begin, end);
+    if(argc == 3) // do not test Qt5 at runtime
+      CGAL::draw(t);
+    return EXIT_SUCCESS;
+   }
+EOF
+cat << EOF > "CMakeLists.txt"
+  cmake_minimum_required(VERSION 3.1...3.15)
+  find_package(CGAL COMPONENTS Qt5)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  add_executable(test main.cpp)
+  target_link_libraries(test PUBLIC CGAL::CGAL_Qt5)
+EOF
+cd build
+mytime cmake -DCGAL_DIR=$ROOT/config_dir ..
+CGAL_PATH=$(cat CMakeCache.txt |grep -i cgal_dir)
+if [ "$CGAL_PATH" != "CGAL_DIR:PATH=$ROOT/config_dir"]; then
+  exit 1;
+fi
+
+
+make -j2
+./test
+cd ../..
+rm -rf config_dir test_dir
+
+#==-- CGAL_DIR pointing to the directory containing Git/CGALConfig.cmake (for the Git layout only) --==
+mkdir test_dir
+cd test_dir
+touch main.cpp
+mkdir build
+cat << EOF > main.cpp
+  #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+  #include <CGAL/Triangulation_2.h>
+  #include <CGAL/draw_triangulation_2.h>
+  #include <CGAL/basic.h>
+  #include <CGAL/Coercion_traits.h>
+  #include <CGAL/IO/io.h>
+  #include <fstream>
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef CGAL::Triangulation_2<K>                            Triangulation;
+  typedef Triangulation::Point                                Point;
+
+  template <typename A, typename B>
+  typename CGAL::Coercion_traits<A,B>::Type
+  binary_func(const A& a , const B& b){
+      typedef CGAL::Coercion_traits<A,B> CT;
+      CGAL_static_assertion((CT::Are_explicit_interoperable::value));
+      typename CT::Cast cast;
+      return cast(a)*cast(b);
+  }
+
+  int main(int argc, char**) {
+    std::cout<< binary_func(double(3), int(5)) << std::endl;
+    std::cout<< binary_func(int(3), double(5)) << std::endl;
+    std::ifstream in("data/triangulation_prog1.cin");
+    std::istream_iterator<Point> begin(in);
+    std::istream_iterator<Point> end;
+    Triangulation t;
+    t.insert(begin, end);
+    if(argc == 3) // do not test Qt5 at runtime
+      CGAL::draw(t);
+    return EXIT_SUCCESS;
+   }
+EOF
+cat << EOF > "CMakeLists.txt"
+  cmake_minimum_required(VERSION 3.1...3.15)
+  find_package(CGAL COMPONENTS Qt5)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  add_executable(test main.cpp)
+  target_link_libraries(test PUBLIC CGAL::CGAL_Qt5)
+EOF
+  cd build
+  mytime cmake -DCGAL_DIR=$ROOT/CGALConfig.cmake ..
+  if [ "$CGAL_PATH" != "CGAL_DIR:PATH=$ROOT"]; then
+    exit 1;
+  fi
+  make -j2
+  ./test
+  cd ../..
+  rm -rf config_dir test_dir
+  #==-- configure all CGAL with -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON, and then launch CTest on a few labels. --==
+  mkdir config_dir
+  cd config_dir
+  cmake -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON -DBUILD_TESTING=ON ..
+  ctest -j2 -L AABB_tree
+  cd ..
+  rm -rf ./config_dir
     exit 0
   fi
+
   IFS=$old_IFS
 
   if [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ] && [ "$ARG" != Polyhedron_demo ]; then
@@ -185,6 +422,7 @@ cd $ROOT
     cd "$ROOT/$DEMO"
     build_demo
   fi
+
 done
 IFS=$old_IFS
 # Local Variables:
