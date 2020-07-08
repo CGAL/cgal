@@ -519,7 +519,9 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   } // end test of `maximal_number_of_vertices`
 #else // ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Start surface scan...";
+  CGAL_MESH_3_TASK_BEGIN(initialize_task_handle);
   initialize();
+  CGAL_MESH_3_TASK_END(initialize_task_handle);
   std::cerr << "end scan. [Bad facets:" << facets_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
@@ -535,6 +537,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "(" << r_tr.number_of_vertices() << ","
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
+  CGAL_MESH_3_TASK_BEGIN(refine_surface_mesh_task_handle);
   while ( ! facets_mesher_.is_algorithm_done() &&
           ! forced_stop() )
   {
@@ -561,6 +564,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     }
     ++nbsteps;
   }
+  CGAL_MESH_3_TASK_END(refine_surface_mesh_task_handle);
   std::cerr << std::endl;
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
   std::cerr << std::endl;
@@ -574,7 +578,9 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   facets_visitor_.activate();
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   std::cerr << "Start volume scan...";
+  CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
   cells_mesher_.scan_triangulation();
+  CGAL_MESH_3_TASK_END(scan_cells_task_handle);
   refinement_stage = REFINE_ALL;
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
@@ -588,6 +594,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "(" << r_tr.number_of_vertices() << ","
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
+  CGAL_MESH_3_TASK_BEGIN(refine_volume_mesh_task_handle);
   while ( ! cells_mesher_.is_algorithm_done()  &&
           ! forced_stop() )
   {
@@ -600,6 +607,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
         % (nbsteps / timer.time());
     ++nbsteps;
   }
+  CGAL_MESH_3_TASK_END(refine_volume_mesh_task_handle);
   std::cerr << std::endl;
 
   std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
