@@ -9,7 +9,10 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/squared_distance_3.h>
 
+#include <chrono>
 #include <cassert>
+
+using namespace std::chrono;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -33,7 +36,9 @@ void naive_vs_accelerated(std::size_t dataset_size) {
 
   // Use the naive algorithm to find the nearest point in the dataset
   Point naive_nearest = *points.points().begin();
+  auto naive_start_time = high_resolution_clock::now();
   {
+
     FT distance_nearest = std::numeric_limits<FT>::max();
     for (auto &p : points.points()) {
 
@@ -44,7 +49,9 @@ void naive_vs_accelerated(std::size_t dataset_size) {
         naive_nearest = p;
       }
     }
+
   }
+  duration<float> naive_elapsed_time = high_resolution_clock::now() - naive_start_time;
 
   std::cout << "Naive --> "
             << "Closest point to "
@@ -57,9 +64,11 @@ void naive_vs_accelerated(std::size_t dataset_size) {
 
   // Do the same using the octree
   Point octree_nearest = *generator;
+  auto octree_start_time = high_resolution_clock::now();
   {
 
   }
+  duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
   std::cout << "Octree --> "
             << "Closest point to "
@@ -71,9 +80,10 @@ void naive_vs_accelerated(std::size_t dataset_size) {
             << std::endl;
 
   // Check that they produce the same answer
+  assert(octree_nearest == naive_nearest);
 
   // Check that the octree was faster
-
+  assert(octree_elapsed_time < naive_elapsed_time);
 }
 
 int main(void) {
