@@ -23,68 +23,30 @@ public:
   }
   QString name() const override{ return "triangulation_3_io_plugin"; }
   //todo: probably the same than for c3t3_io_plugn
-  QString nameFilters() const override{ return
-        ""; }
+  QString nameFilters() const override{ return "T3 files(*.tr_test)"; }
 
-  //todo: same
-  QString saveNameFilters() const override{
-    return ".tr_tst";
-  }
 
   //todo
   bool canLoad(QFileInfo) const override{ return true; }
   QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override{
 
     // Open file
-    //std::ifstream ifs(fileinfo.filePath().toUtf8());
-    //if(!ifs) {
-    //  std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    //  ok = false;
-    //  Scene_triangulation_3_item* new_item = new Scene_triangulation_3_item();
-    //  return QList<CGAL::Three::Scene_item*>();
-    //}
-
-    //temp {
-    T3* tr = new Tr();
-    CGAL::Random rng;
-    typedef T3::Point Point;
-    typedef T3::Cell_handle Cell_handle;
-
-    while (tr->number_of_vertices() < 20)
-      tr->insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
-
-    const typename T3::Geom_traits::Plane_3
-        plane(Point_3(0, 0, 0), Point_3(0, 1, 0), Point_3(0, 0, 1));
-
-    for (Cell_handle c : tr->finite_cell_handles())
-    {
-      if (plane.has_on_positive_side(
-            CGAL::centroid(Point_3(c->vertex(0)->point()), Point_3(c->vertex(1)->point()),
-                           Point_3(c->vertex(2)->point()),Point_3( c->vertex(3)->point()))))
-        c->set_subdomain_index(1);
-      else
-        c->set_subdomain_index(2);
-    }
-
-    CGAL_assertion(tr->is_valid(true));
-    //}
-
-
-    QString ext = fileinfo.suffix();
-    bool res = true;
-    if(ext == "")
-    {
-    }
-    else
-    {
-    }
-    if(!res)
-    {
+    std::ifstream ifs(fileinfo.filePath().toUtf8());
+    if(!ifs) {
+      std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
     }
+    T3* tr = new Tr();
+    ifs >> *tr;
+    if(ifs.fail() || !tr->is_valid(false)) {
+      std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+      ok = false;
+      return QList<CGAL::Three::Scene_item*>();
+    }
+
     Scene_triangulation_3_item* new_item = new Scene_triangulation_3_item(tr);
-    //new_item->setName(fileinfo.fileName());
+    new_item->setName(fileinfo.fileName());
     new_item->invalidateOpenGLBuffers();
     if(add_to_scene)
       CGAL::Three::Three::scene()->addItem(new_item);
@@ -93,8 +55,38 @@ public:
   }
 
 
-  bool canSave(const CGAL::Three::Scene_item*)override{return true;}
-  bool save(QFileInfo, QList<CGAL::Three::Scene_item*>& )override{
+  bool canSave(const CGAL::Three::Scene_item* item)override
+  {
+    return qobject_cast<const Scene_triangulation_3_item*>(item);
+  }
+
+  bool save(QFileInfo fileinfo, QList<Scene_item *> &items)override{
+    for(int id : CGAL::Three::Three::scene()->selectionIndices())
+    {
+      Scene_item* item = CGAL::Three::Three::scene()->item(id);
+      const Scene_triangulation_3_item* t3_item = qobject_cast<const Scene_triangulation_3_item*>(item);
+      if (!t3_item)
+      {
+        continue;
+      }
+
+      QString path = fileinfo.absoluteFilePath();
+
+      if(path.endsWith(".tr_test"))
+      {
+        std::ofstream out(fileinfo.filePath().toUtf8(),
+                          std::ios_base::out|std::ios_base::binary);
+
+        out << t3_item->triangulation();
+        if( out.fail())
+          return false;
+        else
+        {
+          items.pop_front();
+          return true;
+        }
+      }
+    }
     return false;
   }
 
