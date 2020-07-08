@@ -215,7 +215,7 @@ void test2(){
   //PDW pdw Kinit(point_drop_weight_d_object);
   PDW const& pdw = cp;
   PW pw Kinit(compute_weight_d_object);
-  PoD pod Kinit(power_distance_d_object);
+  PoD pod Kinit(compute_power_product_d_object);
   PSBPS psbps Kinit(power_side_of_bounded_power_sphere_d_object);
   CSRSOS csrsos Kinit(compute_squared_radius_smallest_orthogonal_sphere_d_object);
 
