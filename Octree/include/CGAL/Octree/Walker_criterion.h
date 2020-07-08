@@ -187,11 +187,13 @@ namespace CGAL {
 
         template<class Value>
         const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+          std::cout << "Walker First() invoked" << std::endl;
           return root;
         }
 
         template<class Value>
         const Node::Node <Value> *next(const Node::Node <Value> *n) const {
+          std::cout << "Walker Next() invoked" << std::endl;
 
           if (n->is_leaf()) {
 

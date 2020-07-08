@@ -43,11 +43,13 @@
 #include <iostream>
 #include <fstream>
 #include <ostream>
+#include <functional>
 
 #include <stack>
 #include <queue>
 #include <vector>
 #include <math.h>
+#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -291,22 +293,30 @@ namespace CGAL {
       }
 
       template<class Walker>
-      Node_range nodes(const Walker &walker) const {
+      Node_range walk(Walker walker = Walker()) const {
 
         const Node *first = walker.first(&m_root);
 
-//        Node_walker next =
-//                [=](const Node *n) -> const Node * {
-//                  return walker.next(n);
-//                };
+        Node_walker next =
+                [=](const Node *n) -> const Node * {
+                  return walker.next(n);
+                };
 
-//        Node_walker next = boost::bind(&Walker::next, walker, _1);
+//        Node_walker next = std::bind(&Walker::next, walker, std::placeholders::_1);
 
-        Node_walker next = walker;
-
-        return boost::make_iterator_range(Walker_iterator<const Node>(first, walker),
+        return boost::make_iterator_range(Walker_iterator<const Node>(first, next),
                                           Walker_iterator<const Node>());
-        //return nodes(first, next);
+      }
+
+      const Point &nearest_neighbor(const Point &point) {
+
+        std::queue<Node *> todo;
+        todo.push(&m_root);
+
+        while (!todo.empty()) {
+
+
+        }
       }
 
       /// @}

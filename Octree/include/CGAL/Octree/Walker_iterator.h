@@ -5,6 +5,9 @@
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
+#include <CGAL/Octree/Node.h>
+#include "Node.h"
+
 namespace CGAL {
 
   /*!
@@ -78,7 +81,6 @@ namespace CGAL {
     Value *m_value;
     const Walker_function &m_next;
   };
-
 }
 
 #endif //OCTREE_WALKER_ITERATOR_H
