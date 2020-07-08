@@ -53,7 +53,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     (point(v1->point()), point(v2->point()));
 
   //backup subdomain info of incident cells before making changes
-  short dimension = (c3t3.is_in_complex(e)) ? 1 : 3;
+  short dimension = (std::max)((std::max)(1, c3t3.in_dimension(v1)), c3t3.in_dimension(v2));
   boost::unordered_map<Facet, Subdomain_index> cells_info;
   boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
 
@@ -110,11 +110,6 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
     // surface data for facets of the cells to be split
     const int findex = CGAL::Triangulation_utils_3::next_around_edge(index_v1, index_v2);
-    if (c3t3.is_in_complex(c, findex))
-    {
-      if (dimension == 3)
-        dimension = 2;
-    }
     Surface_patch_index patch = c3t3.surface_patch_index(c, findex);
     Vertex_handle opp_vertex = c->vertex(findex);
     facets_info.insert(std::make_pair(opp_facet1,
@@ -178,6 +173,8 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     //the 4th facet (new_v, v_and_opp_patch.first, v1 or v2)
     // will have its patch tagged from the other side, if needed
   }
+
+  set_index(new_v, c3t3);
 
   return new_v;
 }

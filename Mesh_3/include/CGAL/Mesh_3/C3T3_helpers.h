@@ -1572,10 +1572,17 @@ private:
   Cell_vector c3t3_cells(const Cell_vector& cells) const
   {
     Cell_vector c3t3_cells;
+#ifdef CGAL_CXX17
+    std::remove_copy_if(cells.begin(),
+                        cells.end(),
+                        std::back_inserter(c3t3_cells),
+                        std::not_fn(Is_in_c3t3<Cell_handle>(c3t3_)));
+#else
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
+#endif
     return c3t3_cells;
   }
 

@@ -39,16 +39,17 @@ The tetrahedral remeshing algorithm improves the quality of dihedral angles,
 while targeting the user-defined uniform sizing field and preserving the
 topology of the feature complex, as highlighted by Figure \cgalFigureRef{Remesh_liver}.
 
-\cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
-Tetrahedral mesh, improved by the uniform tetrahedral remeshing algorithm.
-(Left) Before remeshing, dihedral angles were in the interval [0.7; 178.9].
-(Right) After remeshing and keeping the same density,
-dihedral angles are the interval [12,7; 157.7].
-\cgalFigureEnd
-
 Experimental evidence shows that a higher number of remeshing iterations
 leads to a mesh with a improved fidelity to the sizing criterion,
 and higher quality dihedral angles.
+
+\cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
+Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
+(Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
+(Right) After remeshing and keeping the same density,
+dihedral angles are in the interval [12,7; 157.7].
+\cgalFigureEnd
+
 
 \section secTetRemeshingAPI API
 
@@ -96,6 +97,18 @@ Preserving all surfaces exactly could also be achieved by
 setting the named parameter `remesh_boundaries` to `false`.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
+
+
+\subsection ssecEx4 Tetrahedral Remeshing After Mesh Generation
+
+The tetrahedral remeshing algorithm is designed as a post-processing for
+mesh generation algorithms. The API allows to generate a tetrahedral mesh
+with `Mesh_3`, the tetrahedral mesh generation package, and
+further improve it with the tetrahedral remeshing algorithm.
+This example shows how to use tetrahedral mesh generation and remeshing in sequence,
+from a polyhedral domain with features.
+
+\cgalExample{Tetrahedral_remeshing/mesh_and_remesh_polyhedral_domain_with_features.cpp}
 
 */
 } /* namespace CGAL */

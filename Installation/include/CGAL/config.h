@@ -36,8 +36,9 @@
 #  define WIN64
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
+#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
 #endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
@@ -295,6 +296,10 @@
 // Same for C++14.
 #if __cplusplus >= 201402L || _MSVC_LANG >= 201402L
 #  define CGAL_CXX14 1
+#endif
+// Same for C++17
+#if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
+#  define CGAL_CXX17 1
 #endif
 
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
