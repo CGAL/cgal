@@ -36,7 +36,6 @@
 #include <CGAL/Search_traits_adapter.h>
 
 #include <boost/function.hpp>
-#include <boost/bind.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
 

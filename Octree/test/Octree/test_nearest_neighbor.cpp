@@ -66,7 +66,7 @@ void naive_vs_accelerated(std::size_t dataset_size) {
   Point octree_nearest = *generator;
   auto octree_start_time = high_resolution_clock::now();
   {
-
+    // TODO: Write a nearest-neighbor implementation and use it here
   }
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
