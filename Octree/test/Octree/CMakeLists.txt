@@ -4,6 +4,9 @@
 cmake_minimum_required(VERSION 3.1...3.14)
 project(Octree)
 
+# TODO: I shouldn't leave this here
+set(CMAKE_CXX_STANDARD 14)
+
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
 
 create_single_source_cgal_program("test_octree_equality.cpp")
