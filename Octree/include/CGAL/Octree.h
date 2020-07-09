@@ -296,6 +296,10 @@ public:
                                       Walker_iterator<const Node>());
   }
 
+  const Node &locate(const Point &p) {
+
+  }
+
   /// @}
 
   /// \name Operators
