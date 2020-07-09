@@ -134,6 +134,7 @@ if ( CGAL_FOUND )
         mesh_polyhedral_domain
         mesh_polyhedral_domain_sm
         mesh_polyhedral_domain_with_features
+        mesh_polyhedral_domain_with_features_sm
         mesh_polyhedral_domain_with_lipschitz_sizing
         mesh_two_implicit_spheres_with_balls)
         CGAL_target_use_TBB(${target})
