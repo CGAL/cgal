@@ -78,9 +78,7 @@ int main(void) {
 
 
   test_1_point();
-
   test_2_points();
-
   test_4_points();
 
   return EXIT_SUCCESS;

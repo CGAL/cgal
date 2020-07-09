@@ -298,6 +298,7 @@ public:
 
   const Node &locate(const Point &p) {
 
+    return root();
   }
 
   /// @}
