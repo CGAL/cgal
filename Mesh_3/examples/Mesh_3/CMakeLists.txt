@@ -119,7 +119,7 @@ if ( CGAL_FOUND )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )
 
-    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND AND TARGET ${target})
+    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND)
       foreach(target
         mesh_3D_image
         mesh_3D_image_variable_size
@@ -137,7 +137,9 @@ if ( CGAL_FOUND )
         mesh_polyhedral_domain_with_features_sm
         mesh_polyhedral_domain_with_lipschitz_sizing
         mesh_two_implicit_spheres_with_balls)
-        CGAL_target_use_TBB(${target})
+        if(TARGET ${target})
+          CGAL_target_use_TBB(${target})
+        endif()
       endforeach()
     endif()
 
