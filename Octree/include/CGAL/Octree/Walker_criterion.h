@@ -75,7 +75,7 @@ struct Preorder {
   }
 
   template<class Value>
-  const Node::Node <Value> *operator()(const Node::Node <Value> *n) const {
+  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
 
     if (n->is_leaf()) {
 
@@ -100,13 +100,13 @@ struct Preorder {
 struct Postorder {
 
   template<class Value>
-  const Node::Node <Value> *first(const Node::Node <Value> *root) {
+  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
 
     return deepest_first_child(root);
   }
 
   template<class Value>
-  const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
+  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
 
     auto next = deepest_first_child(next_sibling(n));
 
@@ -120,13 +120,13 @@ struct Postorder {
 struct Leaves {
 
   template<class Value>
-  const Node::Node <Value> *first(const Node::Node <Value> *root) {
+  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
 
     return deepest_first_child(root);
   }
 
   template<class Value>
-  const Node::Node <Value> *operator()(const Node::Node <Value> *n) {
+  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
 
     auto next = deepest_first_child(next_sibling(n));
 
@@ -136,38 +136,6 @@ struct Leaves {
     return next;
   }
 };
-
-class Preorder_tree_walker {
-
-public:
-
-  template<class Value>
-  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
-    return root;
-  }
-
-  template<class Value>
-  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
-
-    if (n->is_leaf()) {
-
-      auto next = next_sibling(n);
-
-      if (nullptr == next) {
-
-        return next_sibling_up(n);
-      }
-
-      return next;
-
-    } else {
-
-      return &(*n)[0];
-    }
-
-  }
-};
-
 
 }
 

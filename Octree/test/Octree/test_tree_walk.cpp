@@ -28,7 +28,7 @@ bool test_preorder_1_node() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder_tree_walker>();
+  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -50,7 +50,7 @@ bool test_preorder_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder_tree_walker>();
+  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -78,7 +78,7 @@ bool test_preorder_25_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder_tree_walker>();
+  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder>();
 
   // Check each item in the range
   auto iter = nodes.begin();
