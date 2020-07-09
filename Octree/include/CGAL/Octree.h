@@ -296,6 +296,14 @@ public:
                                       Walker_iterator<const Node>());
   }
 
+  /*!
+   * \brief Find the leaf node which would contain a point
+   *
+   * \todo
+   *
+   * \param p
+   * \return
+   */
   const Node &locate(const Point &p) const {
 
     // Start at the root node
