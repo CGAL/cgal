@@ -121,21 +121,21 @@ if ( CGAL_FOUND )
 
     if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND AND TARGET ${target})
       foreach(target
-        mesh_3D_image_with_features
         mesh_3D_image
-        mesh_polyhedral_domain
+        mesh_3D_image_variable_size
         mesh_3D_image_with_custom_initialization
-        mesh_two_implicit_spheres_with_balls
-        mesh_optimization_lloyd_example
-        mesh_optimization_example
+        mesh_3D_image_with_features
         mesh_implicit_sphere
-        mesh_polyhedral_complex_sm
         mesh_implicit_sphere_variable_size
-        mesh_polyhedral_domain_sm
-        mesh_polyhedral_domain_with_lipschitz_sizing
+        mesh_optimization_example
+        mesh_optimization_lloyd_example
         mesh_polyhedral_complex
+        mesh_polyhedral_complex_sm
+        mesh_polyhedral_domain
+        mesh_polyhedral_domain_sm
         mesh_polyhedral_domain_with_features
-        mesh_3D_image_variable_size)
+        mesh_polyhedral_domain_with_lipschitz_sizing
+        mesh_two_implicit_spheres_with_balls)
         CGAL_target_use_TBB(${target})
       endforeach()
     endif()
@@ -143,4 +143,3 @@ if ( CGAL_FOUND )
 else()
   message(STATUS "This program requires the CGAL library, and will not be compiled.")
 endif()
-
