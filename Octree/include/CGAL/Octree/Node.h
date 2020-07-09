@@ -226,7 +226,7 @@ public:
    * \param rhs
    * \return
    */
-  bool operator==(Node &rhs) const {
+  bool operator==(const Node &rhs) const {
 
     // TODO: Should I compare the values they contain
 //          if (m_value != rhs.m_value)
