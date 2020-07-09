@@ -248,10 +248,8 @@ public:
       }
     }
 
-    // If both nodes are leaf nodes they must be identical (no check necessary)
-
-    // If all other checks pass, the two trees are identical
-    return true;
+    // If both nodes are leaf nodes, they must be in the same location
+    return (location() == rhs.location());
   }
 
   /// @}
