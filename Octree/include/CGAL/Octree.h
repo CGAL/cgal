@@ -290,6 +290,15 @@ public:
                                       Walker_iterator<const Node>());
   }
 
+  /*!
+   * \brief Constructs an input range of nodes using a tree walker function
+   *
+   * \todo
+   *
+   * \tparam Walker
+   * \param walker
+   * \return
+   */
   template<class Walker>
   Node_range walk(const Walker& walker = Walker()) const {
 
@@ -300,17 +309,6 @@ public:
 
     return boost::make_iterator_range(Walker_iterator<const Node>(first, next),
                                       Walker_iterator<const Node>());
-  }
-
-  const Point &nearest_neighbor(const Point &point) {
-
-    std::queue<Node *> todo;
-    todo.push(&m_root);
-
-    while (!todo.empty()) {
-
-
-    }
   }
 
   /// @}

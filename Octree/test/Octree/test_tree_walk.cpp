@@ -28,9 +28,7 @@ bool test_preorder_1_node() {
   octree.refine(10, 1);
 
   // Create the range
-  auto tree_walker = CGAL::Octree::Walker::Preorder();
-  auto first = tree_walker.first(&octree.root());
-  auto nodes = octree.nodes(first, tree_walker);
+  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder_tree_walker>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -52,10 +50,7 @@ bool test_preorder_9_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-  auto tree_walker = CGAL::Octree::Walker::Preorder();
-  auto first = tree_walker.first(&octree.root());
-  auto nodes = octree.nodes(first, tree_walker);
-
+  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder_tree_walker>();
 
   // Check each item in the range
   auto iter = nodes.begin();
@@ -83,21 +78,12 @@ bool test_preorder_25_nodes() {
   octree.refine(10, 1);
 
   // Create the range
-//  auto tree_walker = CGAL::Octree::Walker::Preorder();
-//  auto first = tree_walker.first(&octree.root());
-//  auto nodes = octree.nodes(first, tree_walker); // FIXME: This works
-
-  // FIXME: Preorder_tree_walker is a temporary name
-  // It will become "Preorder" as soon as it can replace the existing solution
-  auto nodes = octree.walk(CGAL::Octree::Walker::Preorder_tree_walker());
-
+  auto nodes = octree.walk<CGAL::Octree::Walker::Preorder_tree_walker>();
 
   // Check each item in the range
   auto iter = nodes.begin();
-  std::cout << *iter;
   assert(*iter == octree.root());
   iter++;
-  std::cout << *iter;
   assert((*iter == octree.root()[0]));
   iter++;
   assert((*iter == octree.root()[1]));
@@ -127,8 +113,8 @@ bool test_preorder_25_nodes() {
 
 int main(void) {
 
-//  test_preorder_1_node();
-//  test_preorder_9_nodes();
+  test_preorder_1_node();
+  test_preorder_9_nodes();
   test_preorder_25_nodes();
 
   return 0;

@@ -66,38 +66,6 @@ const Node::Node <Value> *deepest_first_child(const Node::Node <Value> *n) {
   return first;
 }
 
-class _Preorder {
-
-public:
-
-  template<class Value>
-  static const Node::Node <Value> *first(const Node::Node <Value> *root) {
-    return root;
-  }
-
-  template<class Value>
-  static const Node::Node <Value> *next(const Node::Node <Value> *n) {
-
-    if (n->is_leaf()) {
-
-      auto next = next_sibling(n);
-
-      if (nullptr == next) {
-
-        return next_sibling_up(n);
-      }
-
-      return next;
-
-    } else {
-
-      // Return the first child of this node
-      return &(*n)[0];
-    }
-
-  }
-};
-
 
 struct Preorder {
 
@@ -169,31 +137,17 @@ struct Leaves {
   }
 };
 
-
-//      class Tree_walker {
-//
-//      public:
-//
-//        template<class Value>
-//        virtual const Node::Node <Value> *first(const Node::Node <Value> *root) const = 0;
-//
-//        template<class Value>
-//        virtual const Node::Node <Value> *next(const Node::Node <Value> *n) const = 0;
-//      };
-
 class Preorder_tree_walker {
 
 public:
 
   template<class Value>
   const Node::Node <Value> *first(const Node::Node <Value> *root) const {
-    std::cout << "Walker First() invoked" << std::endl;
     return root;
   }
 
   template<class Value>
   const Node::Node <Value> *next(const Node::Node <Value> *n) const {
-    std::cout << "Walker Next() invoked" << std::endl;
 
     if (n->is_leaf()) {
 

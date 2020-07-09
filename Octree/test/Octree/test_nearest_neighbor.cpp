@@ -49,7 +49,6 @@ void naive_vs_accelerated(std::size_t dataset_size) {
         naive_nearest = p;
       }
     }
-
   }
   duration<float> naive_elapsed_time = high_resolution_clock::now() - naive_start_time;
 

@@ -16,7 +16,6 @@ typedef CGAL::Octree::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
-
 void test_1_point() {
 
   // Define the dataset
