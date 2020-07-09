@@ -99,7 +99,7 @@ public:
     m_children = std::make_unique<Child_list>();
     for (int index = 0; index < 8; index++) {
 
-      (*m_children)[index] = std::move(Node<Value>(this, {index}));
+      (*m_children)[index] = std::move(Node<Value>(this, { Index(index) }));
     }
   }
 

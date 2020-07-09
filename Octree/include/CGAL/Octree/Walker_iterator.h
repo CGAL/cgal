@@ -47,7 +47,7 @@ public:
    *
    * \todo
    */
-  Walker_iterator() : m_value(nullptr), m_next({}) {}
+  Walker_iterator() : m_value(nullptr), m_next() {}
 
   /*!
    * \brief
@@ -79,7 +79,7 @@ private:
 private:
 
   Value *m_value;
-  const Walker_function &m_next;
+  Walker_function m_next;
 };
 }
 

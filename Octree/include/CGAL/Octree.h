@@ -293,16 +293,12 @@ public:
   }
 
   template<class Walker>
-  Node_range walk(Walker walker = Walker()) const {
+  Node_range walk(const Walker& walker = Walker()) const {
 
     const Node *first = walker.first(&m_root);
 
-    Node_walker next =
-            [=](const Node *n) -> const Node * {
-              return walker.next(n);
-            };
-
-//        Node_walker next = std::bind(&Walker::next, walker, std::placeholders::_1);
+    Node_walker next = std::bind(&Walker::template next<Points_iterator_range>,
+                                 walker, std::placeholders::_1);
 
     return boost::make_iterator_range(Walker_iterator<const Node>(first, next),
                                       Walker_iterator<const Node>());
