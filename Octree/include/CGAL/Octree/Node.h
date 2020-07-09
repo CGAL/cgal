@@ -221,7 +221,9 @@ public:
   /// @{
 
   /*!
-   * \brief Compare this node to another node
+   * \brief Compare the topology of this node to another node
+   *
+   * \todo
    *
    * \param rhs
    * \return
