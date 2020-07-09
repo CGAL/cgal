@@ -276,21 +276,6 @@ public:
   const Node &root() const { return m_root; }
 
   /*!
-   * \brief Constructs an input range of nodes from a tree walker function
-   *
-   * \todo
-   *
-   * \param first
-   * \param tree_walker
-   *
-   * \return
-   */
-  Node_range nodes(const Node *first, const Node_walker &tree_walker) const {
-    return boost::make_iterator_range(Walker_iterator<const Node>(first, tree_walker),
-                                      Walker_iterator<const Node>());
-  }
-
-  /*!
    * \brief Constructs an input range of nodes using a tree walker function
    *
    * \todo
