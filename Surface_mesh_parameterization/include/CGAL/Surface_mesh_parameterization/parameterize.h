@@ -61,6 +61,9 @@ Error_code parameterize(TriangleMesh& mesh,
                         HD bhd,
                         VertexUVmap uvmap)
 {
+  CGAL_precondition(is_valid_polygon_mesh(mesh));
+  CGAL_precondition(bhd != boost::graph_traits<TriangleMesh>::null_halfedge() && is_border(bhd, mesh));
+
   typedef CGAL::dynamic_vertex_property_t<int>                                 Vertex_int_tag;
   typedef typename boost::property_map<TriangleMesh, Vertex_int_tag>::type     Vertex_int_map;
   Vertex_int_map vimap = get(Vertex_int_tag(), mesh);

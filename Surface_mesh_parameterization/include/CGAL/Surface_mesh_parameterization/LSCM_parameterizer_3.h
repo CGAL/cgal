@@ -196,6 +196,9 @@ public:
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap)
   {
+    CGAL_precondition(is_valid_polygon_mesh(mesh));
+    CGAL_precondition(bhd != boost::graph_traits<TriangleMesh>::null_halfedge() && is_border(bhd, mesh));
+
     // Fill containers
     boost::unordered_set<vertex_descriptor> ccvertices;
     std::vector<face_descriptor> ccfaces;
