@@ -296,9 +296,21 @@ public:
                                       Walker_iterator<const Node>());
   }
 
-  const Node &locate(const Point &p) {
+  const Node &locate(const Point &p) const {
 
-    return root();
+    // Start at the root node
+    auto *node_for_point = &m_root;
+
+    // Descend the tree until reaching a leaf node
+    while (!node_for_point->is_leaf()) {
+
+      // Find the correct sub-node of the current node
+      // TODO: Logic for finding subnodes
+      node_for_point = &(*node_for_point)[0];
+    }
+
+    // Return the result
+    return *node_for_point;
   }
 
   /// @}

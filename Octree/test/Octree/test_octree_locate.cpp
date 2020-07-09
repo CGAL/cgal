@@ -35,9 +35,33 @@ void test_1_point() {
 
 }
 
+void test_8_points() {
+
+  // Define the dataset
+  Point_set points;
+  points.insert({-1, -1, -1});
+  points.insert({1, -1, -1});
+  points.insert({-1, 1, -1});
+  points.insert({1, 1, -1});
+  points.insert({-1, -1, 1});
+  points.insert({1, -1, 1});
+  points.insert({-1, 1, 1});
+  points.insert({1, 1, 1});
+  auto point_map = points.point_map();
+
+  // Create the octree
+  Octree octree(points, point_map);
+  octree.refine(10, 1);
+  std::cout << octree;
+
+  // The octree should have been split once
+  assert(octree.root()[0] == octree.locate({-1, -1, -1}));
+}
+
 int main(void) {
 
   test_1_point();
+  test_8_points();
 
   return EXIT_SUCCESS;
 }
