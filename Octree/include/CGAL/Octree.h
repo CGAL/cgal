@@ -299,10 +299,10 @@ public:
   /*!
    * \brief Find the leaf node which would contain a point
    *
-   * \todo
+   * Traverses the octree and finds the deepest cell that has a domain enclosing the point passed.
    *
-   * \param p
-   * \return
+   * \param p The point to find a node for
+   * \return A reference to the node which would contain the point
    */
   const Node &locate(const Point &p) const {
 
