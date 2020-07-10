@@ -588,18 +588,17 @@ public:
         // Compute the backward cyclic KMP failure table for the curve
         std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
         pr.compute_switchable();
-        size_type src_degree = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
 
         typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
                 typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
         std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
         rb_nodes.reserve(pr.length());
-        std::vector<rbtree> trees(src_degree);
+        std::unordered_map<size_type, rbtree> trees;
 
         for (std::size_t i = 0; i < pr.length(); ++i)
         {
           Dart_const_handle dh = pr[i];
-          auto dart_id = get_dart_absolute_order_relative_to(pr[i], pr[0]);
+          auto dart_id = get_absolute_idx(dh);
           rb_nodes.emplace_back(i);
           auto& node = rb_nodes.back();
 
@@ -608,7 +607,7 @@ public:
           {
             // Look at the t-1 turn of [i-1, i, i + 1]
             Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
-            auto dleft_id = get_dart_absolute_order_relative_to(dleft, pr[0]);
+            auto dleft_id = get_absolute_idx(dleft);
             // Binary search within potential switch trigger
             // TODO: apply the optimization Francis mentioned by only look at the largest one
             // Convert a dart to a circular ordering index
@@ -618,7 +617,7 @@ public:
               return this->get_order_relative_to(dprev, dleft);
             };
             size_type key_val = get_order_relative_to(pr[i - 1], dleft);
-            if (get_local_map().template belong_to_same_cell<0>(dh, pr[0]))
+            if (is_absolutely_directed(dleft))
             {
               auto comparator = [&to_order] (const std::size_t& key, const rbtree::value_type& b) -> bool {
                 return key > to_order(b.m_idx);
@@ -641,7 +640,7 @@ public:
               }
             }
             dh = pr[i];
-            dart_id = get_dart_absolute_order_relative_to(pr[i], pr[0]);
+            dart_id = get_absolute_idx(pr[i]);
           }
           // Insert current darts
           if (trees[dart_id].empty())
@@ -650,7 +649,7 @@ public:
           }
           else
           {
-            size_type prev_dart_id = get_dart_absolute_order_relative_to(pr[i - 1], pr[0]);
+            size_type prev_dart_id = get_absolute_idx(pr[i - 1]);
             auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
             if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
             {
@@ -664,128 +663,153 @@ public:
             }
             else
             {
-              if (get_local_map().template belong_to_same_cell<0>(dh, pr[0]))
-              {
-                auto comparator = [this, &pr, &p_original, &suffix_len] (const std::size_t& key, const rbtree::value_type& b) -> bool {
-                  if (b.m_idx == 0 && pr[key] == pr[0])
+              auto less_than_in_tree = is_absolutely_directed(dh)?
+                std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()};
+              auto comparator = [this, &pr, &p_original, &suffix_len, &less_than_in_tree] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+                if (b.m_idx == 0 && pr[key] == pr[0])
+                {
+                  if(pr[key] != p_original[key]) {
+                    // current edge was switched so it should always be on the right side (more counter-clockwise)
+                    return false;
+                  }
+                  std::size_t current_dividing_idx = key + p_original.length() - 1 - suffix_len[key - 1];
+                  std::size_t path_end_dividing_idx = p_original.length() - 1 - suffix_len[key - 1];
+                  std::size_t last_same_idx = (path_end_dividing_idx == p_original.length() - 1) ? 0 : path_end_dividing_idx + 1;
+                  if (current_dividing_idx >= p_original.length())
                   {
-                    if(pr[key] != p_original[key]) {
-                      // current edge was switched so it should always be on the right side (more counter-clockwise)
-                      return false;
-                    }
-                    std::size_t current_dividing_idx = key + p_original.length() - 1 - suffix_len[key - 1];
-                    std::size_t path_end_dividing_idx = p_original.length() - 1 - suffix_len[key - 1];
-                    std::size_t last_same_idx = (path_end_dividing_idx == p_original.length() - 1) ? 0 : path_end_dividing_idx + 1;
-                    if (current_dividing_idx >= p_original.length())
-                    {
-                      current_dividing_idx -= p_original.length();
-                    }
-                    Dart_const_handle dbase = p_original[last_same_idx],
-                                      dcur = p_original[current_dividing_idx],
-                                      d0 = p_original[path_end_dividing_idx];
+                    current_dividing_idx -= p_original.length();
+                  }
+                  Dart_const_handle dbase = p_original[last_same_idx],
+                                    dcur = p_original[current_dividing_idx],
+                                    d0 = p_original[path_end_dividing_idx];
 
-                    std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
-                    std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
-                    return b_prev_order < key_prev_order;
-                  }
-                  else
-                  {
-                    std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
-                    Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
-                    std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
-                    return b_prev_order < key_prev_order;
-                  }
-                };
-                auto it_after = trees[dart_id].upper_bound(i, comparator);
-                trees[dart_id].insert_before(it_after, node);
-              }
-              else
-              {
-                auto comparator = [this, &pr, &p_original] (const std::size_t& key, const rbtree::value_type& b) -> bool {
-                  /// It is impossible that pr[key] == pr[b.m_idx] == pr[0]
+                  std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
+                  std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
+                  return less_than_in_tree(b_prev_order, key_prev_order);
+                }
+                else
+                {
                   std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
                   Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
                   std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
-                  return b_prev_order > key_prev_order;
-                };
-                auto it_after = trees[dart_id].upper_bound(i, comparator);
-                trees[dart_id].insert_before(it_after, node);
-              }
+                  return less_than_in_tree(b_prev_order, key_prev_order);
+                }
+              };
+              auto it_after = trees[dart_id].upper_bound(i, comparator);
+              trees[dart_id].insert_before(it_after, node);
             }
           }
         }
         // Check whether orders form a valid parenthesis expression
         // First for the same direction of pr[0]
         res = true;
-        Dart_const_handle dcur = pr[0], dstart = pr[0];
-        std::stack<std::size_t> parenthesis_pairing;
-        do {
-          auto dart_id = get_dart_absolute_order_relative_to(dcur, pr[0]);
-          for (auto it = trees[dart_id].begin(); it != trees[dart_id].end(); ++it)
+
+        pr.display();
+        std::cout << std::endl;
+        pr.display_pos_and_neg_turns();
+        std::cout << std::endl;
+        p_original.display();
+        std::cout << std::endl;
+        p_original.display_pos_and_neg_turns();
+        std::cout << std::endl;
+        auto marktemp=get_local_map().get_new_mark();
+        for (auto it=get_local_map().darts().begin();
+             it!=get_local_map().darts().end(); ++it)
+        {
+          if (!get_local_map().is_marked(it, marktemp))
           {
-            if (parenthesis_pairing.empty())
-            {
-              parenthesis_pairing.push(it->m_idx);
-            }
-            else
-            {
-              std::size_t prev = parenthesis_pairing.top();
-              std::size_t next = it->m_idx;
-              if(prev > next)
+            std::stack<std::size_t> parenthesis_pairing;
+            std::vector<rbtree::value_type> rotated_darts;
+            bool start_pairing = false;
+            Dart_const_handle dh2=it;
+            auto construct_parenthesis = [&pr, &it, &parenthesis_pairing, &start_pairing, &rotated_darts, this] (const rbtree::value_type& node) {
+              std::cout << get_local_map().darts().index(pr[node.m_idx]) << '@' << node.m_idx << ' ';
+              if (!start_pairing)
               {
-                std::swap(prev, next);
+                if (rotated_darts.empty())
+                {
+                  rotated_darts.emplace_back(node);
+                  return;
+                }
+                else
+                {
+                  std::size_t prev = rotated_darts.back().m_idx;
+                  std::size_t next = node.m_idx;
+                  if(prev > next)
+                  {
+                    std::swap(prev, next);
+                  }
+                  std::size_t distance = next - prev;
+                  if(next == pr.length() - 1 && prev == 0)
+                  {
+                    distance = 1;
+                    std::swap(prev, next);
+                  }
+                  if(distance == 1 && this->get_local_map().template belong_to_same_cell<0>(pr[next], it))
+                  {
+                    start_pairing = true;
+                    std::cout << "starting ";
+                  }
+                  else
+                  {
+                    rotated_darts.emplace_back(node);
+                    return;
+                  }
+                }
               }
-              if(next == prev + 1 && get_local_map().template belong_to_same_cell<0>(pr[next], dstart))
+              if (parenthesis_pairing.empty())
               {
-                parenthesis_pairing.pop();
-              }
-              else if(next == pr.length() - 1 && prev == 0)
-              {
-                parenthesis_pairing.pop();
+                parenthesis_pairing.push(node.m_idx);
               }
               else
               {
-                parenthesis_pairing.push(it->m_idx);
+                std::size_t prev = parenthesis_pairing.top();
+                std::size_t next = node.m_idx;
+                if(prev > next)
+                {
+                  std::swap(prev, next);
+                }
+                std::size_t distance = next - prev;
+                if(next == pr.length() - 1 && prev == 0)
+                {
+                  distance = 1;
+                  std::swap(prev, next);
+                }
+                if(distance == 1 && this->get_local_map().template belong_to_same_cell<0>(pr[next], it))
+                {
+                  parenthesis_pairing.pop();
+                }
+                else
+                {
+                  parenthesis_pairing.push(node.m_idx);
+                }
               }
-            }
-          }
-          dcur = get_local_map().template beta<2, 1>(dcur);
-        } while (dcur != dstart);
-        res = parenthesis_pairing.empty();
-        while (!parenthesis_pairing.empty())
-        { parenthesis_pairing.pop(); }
-        // Next check for the opposite direction of pr[0]
-        dcur = get_local_map().opposite2(pr[0]);
-        dstart = get_local_map().opposite2(pr[0]);
-        do {
-          auto dart_id = get_dart_absolute_order_relative_to(dcur, pr[0]);
-          for (auto it = trees[dart_id].rbegin(); it != trees[dart_id].rend(); ++it)
-          {
-            if (parenthesis_pairing.empty())
+            };
+            do
             {
-              parenthesis_pairing.push(it->m_idx);
-            }
-            else
-            {
-              std::size_t prev = parenthesis_pairing.top();
-              std::size_t next = it->m_idx;
-              if(prev > next)
+              get_local_map().mark(dh2, marktemp);
+              auto dart_id = get_absolute_idx(dh2);
+              std::cout << get_local_map().darts().index(dh2) << ':';
+              if(is_absolutely_directed(dh2))
               {
-                std::swap(prev, next);
-              }
-              if(next == prev + 1 && get_local_map().template belong_to_same_cell<0>(pr[next], dstart))
-              {
-                parenthesis_pairing.pop();
+                std::for_each(trees[dart_id].begin(), trees[dart_id].end(), construct_parenthesis);
               }
               else
               {
-                parenthesis_pairing.push(it->m_idx);
+                std::for_each(trees[dart_id].rbegin(), trees[dart_id].rend(), construct_parenthesis);
               }
+              std::cout << std::endl;
+              dh2 = get_local_map().template beta<2, 1>(dh2);
             }
+            while(dh2!=it);
+            std::cout << "leftover:";
+            std::for_each(rotated_darts.begin(), rotated_darts.end(), construct_parenthesis);
+            std::cout << std::endl;
+            std::cout << std::endl;
+            res = res && parenthesis_pairing.empty();
           }
-          dcur = get_local_map().template beta<2, 1>(dcur);
-        } while (dcur != dstart);
-        res = res && parenthesis_pairing.empty();
+        }
+        get_local_map().free_mark(marktemp);
       }
     }
 
@@ -2018,6 +2042,16 @@ protected:
     if (j < 0) { j += p.length(); }
     else if (j >= p.length()) { j -= p.length(); }
     return p[j];
+  }
+
+  size_type get_absolute_idx(Dart_const_handle dh) const
+  {
+    return std::min(get_local_map().darts().index(dh), get_local_map().darts().index(get_local_map().opposite(dh)));
+  }
+
+  bool is_absolutely_directed(Dart_const_handle dh) const
+  {
+    return get_local_map().darts().index(dh) < get_local_map().darts().index(get_local_map().opposite(dh));
   }
 
   size_type get_dart_absolute_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
