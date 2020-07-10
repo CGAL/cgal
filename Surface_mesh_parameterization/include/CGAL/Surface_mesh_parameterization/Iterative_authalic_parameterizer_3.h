@@ -334,7 +334,10 @@ private:
   {
     m_vertex_L2_map = get(Vertex_double_tag(), tmesh);
     for(vertex_descriptor v : vertices)
+    {
       put(m_vertex_L2_map, v, compute_vertex_L2(tmesh, v));
+//      std::cout << "Vertex L2: " << v << " = " << compute_vertex_L2(tmesh, v) << std::endl;
+    }
   }
 
   NT get_A(const std::array<const Point_2*, 3>& uv_points) const
@@ -687,6 +690,7 @@ private:
 
       // Get j index
       const int j = get(vimap, *vj);
+//      std::cout << "W[" << i << ", " << j << "] = " << w_ij << std::endl;
 
       // Set w_ij in matrix
       A.set_coef(i, j, w_ij, true /*new*/);
@@ -926,7 +930,7 @@ public:
 
     NT area_3D = initialize_faces_areas(cc_faces, tmesh);
 
-    if(DEBUG_L0) // @fixme clean that stuff
+    if(DEBUG_L0)
       std::cout << std::endl;
 
     int last_best_i = 0;
@@ -1005,6 +1009,9 @@ public:
       // WARNING: this package does not support homogeneous coordinates!
       CGAL_postcondition(Du == NT(1));
       CGAL_postcondition(Dv == NT(1));
+
+//      for(int i=0; i<nv; ++i)
+//        std::cout << "Sol[" << i << "] = " << Xu[i] << " " << Xv[i] << std::endl;
 
       // Copy A to A_prev, it is a computationally inefficient task but neccesary
       copy_sparse_matrix(A, A_prev, tmesh, cc_vertices, vimap);
@@ -1091,7 +1098,7 @@ public:
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap,
-                          int& iterations) // @fixme which default value
+                          int& iterations)
   {
     double unused_error;
     return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iterations, unused_error);
@@ -1105,7 +1112,7 @@ public:
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap,
-                          const int& iterations = 15) // @fixme which default value
+                          const int& iterations = 15)
   {
     int iter = iterations; // need a non-const ref
     return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iter);
@@ -1115,7 +1122,7 @@ public:
   Error_code parameterize(TriangleMesh& tmesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
-                          const int iterations = 15) // @fixme which default value
+                          const int iterations = 15)
   {
     Vertex_int_map vimap = get(Vertex_int_tag(), tmesh);
     internal::fill_index_map_of_cc(bhd, tmesh, vimap);
