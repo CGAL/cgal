@@ -37,12 +37,18 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
   os << "{ ";
 
   // Index identifies which child this is
-  os << "(" << node.index() << ") ";
+  os << "("
+     << node.index()[0]
+     << node.index()[1]
+     << node.index()[2]
+     << ") ";
 
   // Location
-  os << "(" << node.location()[0] << ",";
-  os << node.location()[1] << ",";
-  os << node.location()[2] << ") ";
+  os << "("
+     << node.location()[0] << ","
+     << node.location()[1] << ","
+     << node.location()[2]
+     << ") ";
 
 //  // If a node has points, indicate how many
 //  if (!node.is_empty())
