@@ -16,7 +16,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
-#include <CGAL/Surface_mesh_parameterization/Square_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
 
 #include <CGAL/Default.h>
@@ -24,8 +24,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
-#include <CGAL/squared_distance_2.h> //for 2D functions
-#include <CGAL/squared_distance_3.h> //for 3D functions
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -48,32 +46,25 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup  PkgSurfaceMeshParameterizationMethods
 ///
-/// The class `Iterative_authalic_parameterizer_3`
-/// implements the *Iterative Parameterization* algorithm.
+/// The class `Iterative_authalic_parameterizer_3` implements the *Iterative Parameterization* algorithm,
+/// as described by Jain et al. \cgalCite{cgal:j-lrsspp-19}.
 ///
-/// A one-to-one mapping is guaranteed if the surface's border is mapped onto a convex polygon.
-///
-/// @fixme wrong description
-/// This class is a strategy called by the main parameterization algorithm
-/// `Fixed_border_iterative_parameterizer_3::parameterize()` and it:
-/// - provides the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of the matrix A
-///   for j neighbor vertex of i, based on Iterative Parameterization algorithm.
-///
-/// \cgalModels `Parameterizer_3`
+/// This parameterization is a fixed border parameterization and is part of the authalic
+/// parameterization family, meaning that it aims to minimize area distortion
+/// between the input surface mesh and the parameterized output.
+/// More precisely, the approach used by this parameterizer is to iteratively redistribute
+/// the \f$ L_2\f$ stretch over the mesh, as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01}.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
-///
 /// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
-///   Square_border_arc_length_parameterizer_3<TriangleMesh_>
+///   Circular_border_arc_length_parameterizer_3<TriangleMesh_>
 /// \endcode
 ///
 /// \tparam SolverTraits_ must be a model of `SparseLinearAlgebraTraits_d`.<br>
-///         Note that the system is *not* symmetric because `Fixed_border_iterative_parameterizer_3`
-///         does not remove border vertices from the system.<br>
+///         Note that the system is *not* symmetric because border vertices are not removed from the system.<br>
 ///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
 ///         is provided as default parameter:
@@ -83,7 +74,8 @@ namespace Surface_mesh_parameterization {
 ///                           Eigen::IncompleteLUT< double > > >
 /// \endcode
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_iterative_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
 template <class TriangleMesh_,
           class BorderParameterizer_ = Default,
@@ -93,7 +85,7 @@ class Iterative_authalic_parameterizer_3
 public:
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<BorderParameterizer_,
-                                Square_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
+                                Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
   typedef typename Default::Get<SolverTraits_,
 #if defined(CGAL_EIGEN3_ENABLED)
