@@ -20,8 +20,13 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap
   auto nodes = octree.template walk<CGAL::Octree::Walker::Preorder>();
 
   // Iterate over the range and print each node
-  for (auto &n : nodes)
+  for (auto &n : nodes) {
+
+    for (int i = 0; i < n.depth(); ++i)
+      os << ". ";
+
     os << n << std::endl;
+  }
 
   return os;
 }
@@ -30,8 +35,8 @@ template<typename Value>
 ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
 
   // Show the depth of the node
-  for (int i = 0; i < node.depth(); ++i)
-    os << ". ";
+//  for (int i = 0; i < node.depth(); ++i)
+//    os << ". ";
 
   // Wrap information in brackets
   os << "{ ";
@@ -48,6 +53,11 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
      << node.location()[0] << ","
      << node.location()[1] << ","
      << node.location()[2]
+     << ") ";
+
+  // Depth
+  os << "("
+     << +node.depth() // The + forces printing as an int instead of a char
      << ") ";
 
 //  // If a node has points, indicate how many

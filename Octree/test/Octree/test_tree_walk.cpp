@@ -108,6 +108,8 @@ bool test_preorder_25_nodes() {
     assert((*iter == octree.root()[7][i]));
   }
 
+  std::cout << octree;
+
   return true;
 }
 
