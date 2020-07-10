@@ -190,20 +190,17 @@ public:
   // Measure L2 stretch
   template <typename FaceRange, typename VertexUVmap>
   NT compute_area_distortion(const FaceRange& face_range,
+                             const NT A_3D,
                              TriangleMesh& tmesh,
                              const VertexUVmap uvmap)
   {
     Face_NT_map area_2DMap = get(Face_NT_tag(), tmesh);
 
     std::vector<NT> area_dist;
-    NT A_3D = 0;
     NT A_2D = 0;
 
     for(face_descriptor f : face_range)
     {
-      const NT a_3D = get(m_face_areas, f);
-      A_3D += a_3D;
-
       // get area in parameterised mesh
       const halfedge_descriptor h = halfedge(f, tmesh);
       const NT a_2D = abs(CGAL::area(get(uvmap, source(h, tmesh)),
@@ -424,16 +421,27 @@ private:
     const PPM ppmap = get(vertex_point, tmesh);
 
     for(face_descriptor f : face_range)
+    {
       put(m_face_L2_map, f, compute_face_L2(f, tmesh, uvmap, ppmap));
+//      std::cout << "Face L2: " << f << " = " << compute_face_L2(f, tmesh, uvmap, ppmap) << std::endl;
+    }
   }
 
   template <typename FaceRange>
-  void initialize_faces_areas(const FaceRange& face_range,
-                              TriangleMesh& tmesh)
+  NT initialize_faces_areas(const FaceRange& face_range,
+                            TriangleMesh& tmesh)
   {
     m_face_areas = get(Face_NT_tag(), tmesh);
+    NT total_area = 0;
+
     for(face_descriptor f : face_range)
-      put(m_face_areas, f, Polygon_mesh_processing::face_area(f, tmesh));
+    {
+      const NT f_area = Polygon_mesh_processing::face_area(f, tmesh);
+      put(m_face_areas, f, f_area);
+      total_area += f_area;
+    }
+
+    return total_area;
   }
 
   struct Neighbor_list
@@ -913,7 +921,7 @@ public:
 
     m_last_best_uv_map = get(Vertex_point2_tag(), tmesh);
 
-    initialize_faces_areas(cc_faces, tmesh);
+    NT area_3D = initialize_faces_areas(cc_faces, tmesh);
 
     if(DEBUG_L0) // @fixme clean that stuff
       std::cout << std::endl;
@@ -1021,7 +1029,7 @@ public:
       compute_faces_L2(cc_faces, tmesh, uvmap);
       compute_vertices_L2(cc_vertices, tmesh);
 
-      err[i] = compute_area_distortion(cc_faces, tmesh, uvmap);
+      err[i] = compute_area_distortion(cc_faces, area_3D, tmesh, uvmap);
 
       if(DEBUG_L0)
         std::cout << " err " << err[i] << std::flush;
