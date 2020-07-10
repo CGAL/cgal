@@ -1294,8 +1294,8 @@ public:
       m_switchable[j - 1] = false;
     }
     /// Last dart may become switchable
-    if ((is_switchable(j) && next_positive_turn(j - 1) == 2) ||
-        next_positive_turn(j - 1) == 1)
+    if (j < length() && ((is_switchable(j) && next_positive_turn(j - 1) == 2) ||
+        next_positive_turn(j - 1) == 1))
     {
       m_switchable[j - 1] = true;
     }
