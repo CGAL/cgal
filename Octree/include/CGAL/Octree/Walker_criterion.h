@@ -67,13 +67,30 @@ const Node::Node <Value> *deepest_first_child(const Node::Node <Value> *n) {
 }
 
 
+/*!
+ * \brief Walker for preorder traversal
+ */
 struct Preorder {
 
+  /*!
+   * \brief Retrieve the first node of a tree in a preorder traversal, given the root
+   *
+   * \tparam Value
+   * \param root
+   * \return
+   */
   template<class Value>
   const Node::Node <Value> *first(const Node::Node <Value> *root) const {
     return root;
   }
 
+  /*!
+   * \brief Retrieve the next node of a tree in a preorder traversal, given the current one
+   *
+   * \tparam Value
+   * \param n
+   * \return
+   */
   template<class Value>
   const Node::Node <Value> *next(const Node::Node <Value> *n) const {
 
@@ -97,14 +114,31 @@ struct Preorder {
   }
 };
 
+/*!
+ * \brief Walker for leaves-only traversal
+ */
 struct Postorder {
 
+  /*!
+   * \brief Retrieve the first node of a tree in a postorder traversal, given the root
+   *
+   * \tparam Value
+   * \param root
+   * \return
+   */
   template<class Value>
   const Node::Node <Value> *first(const Node::Node <Value> *root) const {
 
     return deepest_first_child(root);
   }
 
+  /*!
+   * \brief Retrieve the next node of a tree in a postorder traversal, given the current one
+   *
+   * \tparam Value
+   * \param n
+   * \return
+   */
   template<class Value>
   const Node::Node <Value> *next(const Node::Node <Value> *n) const {
 
@@ -117,14 +151,31 @@ struct Postorder {
   }
 };
 
+/*!
+ * \brief Walker for leaves-only traversal
+ */
 struct Leaves {
 
+  /*!
+   * \brief Retrieve the first node of a tree in a leaves-only traversal, given the root
+   *
+   * \tparam Value
+   * \param root
+   * \return
+   */
   template<class Value>
   const Node::Node <Value> *first(const Node::Node <Value> *root) const {
 
     return deepest_first_child(root);
   }
 
+  /*!
+   * \brief Retrieve the next node of a tree in a leaves-only traversal, given the current one
+   *
+   * \tparam Value
+   * \param n
+   * \return
+   */
   template<class Value>
   const Node::Node <Value> *next(const Node::Node <Value> *n) const {
 

@@ -8,7 +8,6 @@ namespace CGAL {
 
 namespace Octree {
 
-
 struct Split_to_bucket_size {
 
   std::size_t m_bucket_size;
