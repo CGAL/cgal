@@ -312,9 +312,18 @@ public:
     // Descend the tree until reaching a leaf node
     while (!node_for_point->is_leaf()) {
 
+      // Find the point to split around
+      Point center = compute_barycenter_position(*node_for_point);
+
+      // Find the index of the correct sub-node
+      typename Node::Index index;
+      for (int dimension = 0; dimension < 3; ++dimension) {
+
+        index[dimension] = center[dimension] < p[dimension];
+      }
+
       // Find the correct sub-node of the current node
-      // TODO: Logic for finding subnodes
-      node_for_point = &(*node_for_point)[0];
+      node_for_point = &(*node_for_point)[index.to_ulong()];
     }
 
     // Return the result
@@ -353,7 +362,7 @@ public:
 
 private: // functions :
 
-  Point compute_barycenter_position(Node &node) const {
+  Point compute_barycenter_position(const Node &node) const {
 
     // Determine the side length of this node
     FT size = m_side_per_depth[node.depth()];
