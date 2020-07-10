@@ -662,7 +662,7 @@ private:
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     NT w_ii = 0;
 
-    bool use_uniform_weights = true;
+    bool use_uniform_weights = false;
     const int neighborsCounter = degree(v, tmesh);
     if(neighborsCounter < 2)
     {
