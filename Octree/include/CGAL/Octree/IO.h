@@ -21,7 +21,7 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap
 
   // Iterate over the range and print each node
   for (auto &n : nodes)
-    os << n;
+    os << n << std::endl;
 
   return os;
 }
@@ -61,7 +61,7 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
   os << (node.is_root() ? "[root] " : "");
 
   // Wrap information in brackets
-  os << "}" << std::endl;
+  os << "}";
 
   return os;
 }
