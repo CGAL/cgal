@@ -214,10 +214,11 @@ public:
     {
       const NT a_3D = get(m_face_areas, f);
       const NT a_2D = get(area_2DMap, f);
+
       area_dist.push_back(abs(a_3D/A_3D - a_2D/A_2D));
     }
 
-    return sqrt(std::accumulate(area_dist.begin(), area_dist.end(), NT(0)));
+    return std::accumulate(area_dist.begin(), area_dist.end(), NT(0));
   }
 
   // IO Helpers
