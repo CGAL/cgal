@@ -119,28 +119,30 @@ if ( CGAL_FOUND )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )
 
-    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND AND TARGET ${target})
+    if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TBB_FOUND)
       foreach(target
-        mesh_3D_image_with_features
         mesh_3D_image
-        mesh_polyhedral_domain
+        mesh_3D_image_variable_size
         mesh_3D_image_with_custom_initialization
-        mesh_two_implicit_spheres_with_balls
-        mesh_optimization_lloyd_example
-        mesh_optimization_example
+        mesh_3D_image_with_features
         mesh_implicit_sphere
-        mesh_polyhedral_complex_sm
         mesh_implicit_sphere_variable_size
-        mesh_polyhedral_domain_sm
-        mesh_polyhedral_domain_with_lipschitz_sizing
+        mesh_optimization_example
+        mesh_optimization_lloyd_example
         mesh_polyhedral_complex
+        mesh_polyhedral_complex_sm
+        mesh_polyhedral_domain
+        mesh_polyhedral_domain_sm
         mesh_polyhedral_domain_with_features
-        mesh_3D_image_variable_size)
-        CGAL_target_use_TBB(${target})
+        mesh_polyhedral_domain_with_features_sm
+        mesh_polyhedral_domain_with_lipschitz_sizing
+        mesh_two_implicit_spheres_with_balls)
+        if(TARGET ${target})
+          CGAL_target_use_TBB(${target})
+        endif()
       endforeach()
     endif()
 
 else()
   message(STATUS "This program requires the CGAL library, and will not be compiled.")
 endif()
-
