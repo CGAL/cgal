@@ -482,13 +482,14 @@ private:
     return std::acos(v0*v1 / (CGAL::sqrt(v0*v0) * CGAL::sqrt(v1*v1)));
   }
 
+  template <typename VertexIndexMap>
   Error_code setup_inner_vertex_relations(Matrix& A,
                                           Matrix& A_prev,
                                           Vector&,
                                           Vector&,
                                           const TriangleMesh& tmesh,
                                           vertex_descriptor v,
-                                          Vertex_int_map& vimap)
+                                          VertexIndexMap vimap)
   {
     const PPM ppmap = get(vertex_point, tmesh);
 
@@ -648,12 +649,13 @@ private:
     return weight;
   }
 
+  template <typename VertexIndexMap>
   Error_code setup_inner_vertex_relations_cotangent(Matrix& A,
                                                     Vector&,
                                                     Vector&,
                                                     const TriangleMesh& tmesh,
                                                     vertex_descriptor v,
-                                                    Vertex_int_map& vimap)
+                                                    VertexIndexMap& vimap)
   {
     const int i = get(vimap, v);
 
