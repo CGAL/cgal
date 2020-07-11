@@ -81,10 +81,10 @@ aos_ssec-basic-dcel).
 The class template `Arrangement_2` derives from the following class
 template:
 
-<code>
+\code{.cpp}
 template <typename GeometryTraits, typename TopologyTraits>
 class Arrangement_on_surface_2 { ... };
-</code>
+\endcode
 
 An instance of this template represents a two-dimensional arrangement
 embedded in a surface in three dimensional space. When the template is
@@ -366,12 +366,15 @@ two aspects of modularity as follows:
 The latter separation is exhibited by the two template parameters of
 the `Arrangement_2` class template; their description follows.
 
-<UL> <LI>The `Traits` template-parameter should be instantiated with a
+<UL>
+
+<LI>The `Traits` template-parameter should be instantiated with a
   model of the `ArrangementBasicTraits_2` concept and optionally
   additional geometry traits concepts. A model of the
   `ArrangementBasicTraits_2` concept defines the types of
   \f$x\f$-monotone curves and two-dimensional points, namely
-  `X_monotone_curve_2` and `%Point_2`, respectively, and supports
+  `ArrangementBasicTraits_2::X_monotone_curve_2` and
+  `ArrangementBasicTraits_2::Point_2`, respectively, and supports
   basic geometric predicates on them. The instantiated traits class
   determines the family of planar curves that induce the arrangement.
 
@@ -401,10 +404,11 @@ the `Arrangement_2` class template; their description follows.
 The function template `print_arrangement_size()` listed below prints
 out quantitative measures of a given arrangement. While in what
 follows it is used only by examples, it demonstrates well the use of
-the member functions `number_of_vertices()`, `number_of_edges()`, and
-`number_of_faces()`, which return the number of vertices, edges, and
-faces of an arrangement, respectively. The function template is
-defined in the header file `Arr_print.h`.
+the member functions `Arrangement_2::number_of_vertices()`,
+`Arrangement_2::number_of_edges()`, and
+`Arrangement_2::number_of_faces()`, which return the number of
+vertices, edges, and faces of an arrangement, respectively. The
+function template is defined in the header file `Arr_print.h`.
 
 \code{.cpp}
 template <typename Arrangement>
@@ -418,8 +422,8 @@ void print_arrangement_size(const Arrangement& arr)
 \endcode
 
 You can also obtain the number of halfedges of an arrangement using
-the member function `number_of_halfedges()`. Recall that the number of
-halfedges is always twice the number of edges.
+the member function `Arrangement_2::number_of_halfedges()`. Recall
+that the number of halfedges is always twice the number of edges.
 
 \image html triangle.png
 \image latex triangle.png
@@ -427,12 +431,12 @@ halfedges is always twice the number of edges.
 The simple program listed below constructs an arrangement of three
 connected line segments forming a triangle. It uses the
 <em>Cartesian</em> kernel with an integral-number type to instantiate
-the `Arr_segment_traits_2` class template. The resulting arrangement
-consists of two faces, a bounded triangular face and the unbounded
-face.  Constructing and maintaining arrangements using
-limited-precision numbers, such as `int`, works properly only under
-severe restrictions, which in many cases render the program not very
-useful. In this example, however, the points are far apart, and
+the `Arr_non_caching_segment_traits_2<Kernel>` class template. The
+resulting arrangement consists of two faces, a bounded triangular face
+and the unbounded face.  Constructing and maintaining arrangements
+using limited-precision numbers, such as `int`, works properly only
+under severe restrictions, which in many cases render the program not
+very useful. In this example, however, the points are far apart, and
 constructions of new geometric objects do not occur. Thus, it is safe
 to use `int` after all. The program constructs an arrangement induced
 by three line segments that are pairwise disjoint in their interior,
@@ -478,12 +482,13 @@ the relevant features of the arrangement at hand.
 As mentioned above, the arrangement is represented as a \sc{Dcel},
 which stores three containers of vertices, halfedges and faces,
 respectively. Thus, the `Arrangement_2` class supplies iterators for
-these containers. For example, the methods `vertices_begin()` and
-`vertices_end()` return `Arrangement_2::Vertex_iterator` objects that
-define the valid range of arrangement vertices. The value type of this
-iterator is `Arrangement_2::Vertex`. Moreover, the vertex-iterator
-type is convertible to `Arrangement_2::Vertex_handle`, which serves as
-a pointer to a vertex. As we show next, all functions related to
+these containers. For example, the methods
+`Arrangement_2::vertices_begin()` and `vertices_end()` return
+`Arrangement_2::Vertex_iterator` objects that define the valid range
+of arrangement vertices. The value type of this iterator is
+`Arrangement_2::Vertex`. Moreover, the vertex-iterator type is
+convertible to `Arrangement_2::Vertex_handle`, which serves as a
+pointer to a vertex. As we show next, all functions related to
 arrangement features accept handle types as input parameters and
 return handle types as their output.
 
@@ -501,13 +506,13 @@ vertex - see below.}, and handle types also have non-mutable
 (<em>const</em>) counterparts. These non-mutable iterators are useful
 for traversing an arrangement with the promise to keep it
 unchanged. For example, the arrangement has a non-constant member
-function called `vertices_begin()` that returns a `Vertex_iterator`
-object and another const member function that returns a
-`Vertex_const_iterator` object. In fact, all methods listed in this
-section that return an iterator, a circulator, or a handle have
-non-mutable counterparts. It should be noted that, for example,
-`Vertex_handle` can be readily converted into a `Vertex_const_handle`,
-but not vice-versa.
+function called `Arrangement_2::vertices_begin()` that returns a
+`Vertex_iterator` object and another const member function that
+returns a `Vertex_const_iterator` object. In fact, all methods listed
+in this section that return an iterator, a circulator, or a handle
+have non-mutable counterparts. It should be noted that, for example,
+`Arrangement_2::Vertex_handle` can be readily converted into a
+`Arrangement_2::Vertex_const_handle`, but not vice-versa.
 
 The conversion of a non-mutable handle to a corresponding mutable handle
 is nevertheless possible, and can be performed using the static
@@ -523,22 +528,24 @@ A vertex is always associated with a geometric entity, namely with
 an `Arrangement_2::Point_2` object, which can be obtained by the
 `Arrangement_2::Vertex::point()` method.
 
-The `is_isolated()` method determines whether a vertex is isolated
-or not. Recall that the halfedges incident to a non-isolated vertex,
-namely the halfedges that share a common target vertex, form a circular
-list around this vertex. The `incident_halfedges()` method returns
-a circulator of type `Arrangement_2::Halfedge_around_vertex_circulator`
+The `Arrangement_2::Vertex::is_isolated()` method determines whether a
+vertex is isolated or not. Recall that the halfedges incident to a
+non-isolated vertex, namely the halfedges that share a common target
+vertex, form a circular list around this vertex. The
+`Arrangement_2::Vertex::incident_halfedges()` method returns a
+circulator of type `Arrangement_2::Halfedge_around_vertex_circulator`
 that enables the traversal of this circular list in a clockwise
 direction. The value type of this circulator is `Halfedge`.
 
 The function below prints all the halfedges incident to a given
-arrangement vertex (assuming that the `%Point_2` type can be
-inserted into the standard output using the `<<` operator). The
-arrangement type is the same as in the simple example above.
+arrangement vertex (assuming that objects of the
+`Arrangement_2::Point_2` type can be inserted into the standard output
+using the `<<` operator). The arrangement type is the same as in the
+simple example above.
 
 \code
 template <typename Arrangement>
-void print_ncident_halfedges(typename Arrangement::Vertex_const_handle v)
+void print_incident_halfedges(typename Arrangement::Vertex_const_handle v)
 {
   if (v->is_isolated()) {
     std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
@@ -553,8 +560,8 @@ void print_ncident_halfedges(typename Arrangement::Vertex_const_handle v)
 }
 \endcode
 
-If \f$v\f$ is an isolated vertex, the call
-`v->face()` obtains the face that contains \f$v\f$.
+The member function `Arrangement_2::Vertex::face()` can be used to
+obtain the face that contains an isolated vertex.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssectr_halfedge Traversal Methods for an Arrangement Halfedge
@@ -576,11 +583,12 @@ method. From the definition of halfedges, it follows that if
 <LI>`he->target()` is equivalent to `he->twin()->source()`.
 </UL>
 
-Every halfedge has an incident face that lies to its left, which
-can be obtained by the `face()` method. Recall that a
-halfedge is always one link in a connected chain of halfedges that
-share the same incident face, known as a <em>CCB</em>. The
-`prev()` and `next()` methods return handles to the
+Every halfedge has an incident face that lies to its left, which can
+be obtained by the `Arrangement_2::Halfedge::face()` method. Recall
+that a halfedge is always one link in a connected chain of halfedges
+that share the same incident face, known as a <em>CCB</em>. The
+`Arrangement_2::Halfedge::prev()` and
+`Arrangement_2::Halfedge::next()` methods return handles to the
 previous and next halfedges in the CCB, respectively.
 
 As the CCB is a circular list of halfedges, it is only natural to
@@ -627,15 +635,20 @@ boundary of the face.
 A face can also contain disconnected components in its interior,
 namely holes and isolated vertices:
 <UL>
-<LI>The `holes_begin()` and `holes_end()` methods return
-  iterators of type `Arrangement_2::Hole_iterator` that define the range of
-  holes inside the face. The value type of such an iterator type is
-  `Ccb_halfedge_circulator`, defining the CCB that winds in a clockwise
-  orientation around a hole.
-<LI>The `isolated_vertices_begin()` and `isolated_vertices_end()` methods
-  return iterators of type `Arrangement_2::Isolated_vertex_iterator` that
-  define the range of isolated vertices inside the face. The value type of
-  this iterator is `Vertex`.
+
+<LI>The `Arrangement_2::Face::holes_begin()` and
+  `Arrangement_2::Face::holes_end()` methods return iterators of type
+  `Arrangement_2::Hole_iterator` that define the range of holes inside
+  the face. The value type of such an iterator type is
+  `Arrangement_2::Ccb_halfedge_circulator`, defining the CCB that
+  winds in a clockwise orientation around a hole.
+
+<LI>The `Arrangement_2::Face::isolated_vertices_begin()` and
+  `Arrangement_2::Face::isolated_vertices_end()` methods return
+  iterators of type `Arrangement_2::Isolated_vertex_iterator` that
+  define the range of isolated vertices inside the face. The value
+  type of this iterator is `Vertex`.
+
 </UL>
 
 The function `print_face()` listed below prints the outer and inner
@@ -767,7 +780,7 @@ inserted curve, only the following three scenarios are possible:
 <LI>Neither curve endpoints correspond to any existing arrangement
 vertex. In this case we have to create two new vertices that
 correspond to the curve endpoints, respectively, and connect them
-using a pair of twin halfedges. This halfedge pair initiates a new
+using a pair of twin halfedges. This halfedge pair forms a new
 hole inside the face that contains the curve in its interior.</LI>
 
 <LI>Exactly one endpoint corresponds to an existing arrangement
@@ -782,21 +795,25 @@ the face that contains this vertex, essentially falling back to the
 handling of the previous case, naturally, skipping the creation of
 the existing vertex.)</LI>
 
-<LI>If both endpoints correspond to existing arrangement vertices, we
-connect these vertices using a pair of twin halfedges.
-(If one or both vertices are isolated, we fall back to the handling
-of the first or second case, respectively, naturally, skipping the
+<LI>Both endpoints correspond to existing arrangement vertices. In
+this case we connect these vertices using a pair of twin halfedges.
+(If one or both vertices are isolated, we fall back to the handling of
+the first or second case, respectively, naturally, skipping the
 creation of the existing vertices.) The two following subcases may
 occur:
+
 <UL>
+
 <LI>Two disconnected components are merged into a single connected
-component (as is the case with the segment \f$s_1\f$ in the figure
-below).</LI>
-<LI>A new face that splits from an existing arrangement face is
-created (as is the case with the segment \f$s_2\f$ in the figure
-below). In this case we also have to examine the holes and isolated
-vertices in the existing face and move the relevant ones inside the
-new face.</LI>
+  component (as is the case with the segment \f$s_1\f$ in the figure
+  below).</LI>
+
+<LI>A new face, which is split from an existing arrangement face, is
+  created (as is the case with the segment \f$s_2\f$ in the figure
+  below). In this case we also have to examine the holes and isolated
+  vertices in the existing face and move the relevant ones inside the
+  new face.</LI>
+
 </UL>
 </LI>
 </OL>
@@ -804,42 +821,38 @@ new face.</LI>
 \image html connect_comp.png
 \image latex connect_comp.png
 
-The `Arrangement_2` class offers insertion functions named
-`insert_in_face_interior()`, `insert_from_left_vertex()`,
-`insert_from_right_vertex()` and `insert_at_vertices()` that perform
-the special insertion procedures listed above. The first function
-accepts an \f$x\f$-monotone curve \f$C\f$ and an arrangement face
-\f$f\f$ that contains this curve in its interior. The other functions
-accept an \f$x\f$-monotone curve \f$C\f$ and handles to the existing
-vertices that correspond to the curve endpoint(s). Each of the four
-functions returns a handle to one of the twin halfedges that have been
-created, where:
+The `Arrangement_2` class offers insertion functions that perform the
+special insertion procedures listed above, namely,
+`Arrangement_2::insert_in_face_interior()`,
+`Arrangement_2::insert_from_left_vertex()`,
+`Arrangement_2::insert_from_right_vertex()` and
+`Arrangement_2::insert_at_vertices()`. The first function accepts an
+\f$x\f$-monotone curve \f$C\f$ and an arrangement face \f$f\f$ that
+contains this curve in its interior. The other functions accept an
+\f$x\f$-monotone curve \f$C\f$ and handles to the existing vertices
+that correspond to the curve endpoint(s). Each of the four functions
+returns a handle to one of the twin halfedges that have been created;
+more precisely:
 
 <UL>
-<LI>`insert_in_face_interior(C, f)` returns a halfedge directed
-from the vertex corresponding to the left endpoint of `C`
-toward the vertex corresponding to its right endpoint.
-<LI>`insert_from_left_vertex(C, v)` and
-`insert_from_right_vertex(C, v)` returns a halfedge whose
-source is the vertex \f$v\f$ and target is the new vertex
-that has just been created.
-<LI>`insert_at_vertices(C, v1, v2)` returns a halfedge directed
-from \f$v_1\f$ to \f$v_2\f$.
-</UL>
 
-In many examples of this chapter we use the `Arr_segment_traits_2`
-class that enables the efficient maintenance of arrangements of line
-segments; see more details on this traits class in Section \ref
-aos_sec-geom_traits. In the following 7 examples the `Traits`
-parameter of the `Arrangement_2<Traits, Dcel>` class template is
-substituted with an instance of the `Arr_segment_traits_2<Kernel>`
-class template. In these examples the `Arr_segment_traits_2` class
-template is instantiated with the predefined kernel that evaluates
-predicates in an exact manner, but constructs geometric objects in an
-inexact manner, as none of these examples construct new geometric
-objects.  In the remaining examples the traits class-template is
-instantiated with a kernel that evaluates predicates and constructs
-geometric objects, both in an exact manner.
+<LI>`Arrangement_2::insert_in_face_interior(const X_monotone_curve_2&
+C, Face_handle f)` returns a handle to a halfedge directed from the
+vertex corresponding to the left endpoint of `C` toward the vertex
+corresponding to its right endpoint.
+
+<LI>`Arrangement_2::insert_from_left_vertex(const X_monotone_curve_2&
+C, Vertex_handle v)` and
+`Arrangement_2::insert_from_right_vertex(const X_monotone_curve_2& C,
+Vertex_handle v)` returns a handle to a halfedge, the source of which
+is the vertex \f$v\f$, and the target of which is the new vertex that
+has just been created.
+
+<LI>`Arrangement_2::insert_at_vertices(const X_monotone_curve_2& C,
+Vertex_handle v1, Vertex_handle v2)` returns a handle to a halfedge
+directed from \f$v_1\f$ to \f$v_2\f$.
+
+</UL>
 
 \cgalFigureBegin{arr_figex_2,ex_1.png}
 The arrangement of the line segments \f$s_1, \ldots, s_5\f$
@@ -847,7 +860,7 @@ constructed in `edge_insertion.cpp`. The arrows mark the direction of
 the halfedges returned from the various insertion functions.
 \cgalFigureEnd
 
-The following program demonstrates the usage of the four specialized
+The program below demonstrates the usage of the four specialized
 insertion functions. It creates an arrangement of five line segments
 \f$s_1, \ldots, s_5\f$, as depicted in \cgalFigureRef{arr_figex_2}.
 \cgalFootnote{Notice that in all figures in the rest of this chapter
@@ -859,12 +872,48 @@ vertices created by the insertion of preceding segments. The arrows in
 the figure mark the direction of the halfedges \f$e_1, \ldots, e_5\f$
 returned from the insertion functions. The resulting arrangement
 consists of three faces, where the two bounded faces form together a
-hole in the unbounded face. This example, as many others in this
-chapter, uses some print-utility functions from the file
-`print_arr.h`; these functions are also listed in Section \ref
-arr_ssectraverse.
+hole in the unbounded face.
+
+Two header files are included in the code in order to make this and
+the following examples more compact. The file
+`arr_inexact_construction_segments.h` is listed
+immediately after the program. The file `arr_print.h` is
+introduced in Section \ref arr_ssectraverse.
 
 \cgalExample{Arrangement_on_surface_2/edge_insertion.cpp}
+
+The statements below define the types for arrangements of line
+segments common to all examples that do not construct new geometric
+objects. They are kept in the header file
+`arr_inexact_construction_segments.h`.  In these examples the `Traits`
+parameter of the `Arrangement_2<Traits, Dcel>` class template is
+substituted with an instance of the
+`Arr_non_caching_segment_traits_2<Kernel>` class template. The
+`Arr_non_caching_segment_traits_2` class template is instantiated with
+the predefined kernel that evaluates predicates in an exact manner,
+but constructs geometric objects in an inexact manner, as none of
+these examples construct new geometric objects.  In the remaining
+examples the traits class-template is instantiated with a kernel that
+evaluates predicates and constructs geometric objects, both in an
+exact manner.
+
+\code{.cpp}
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Arr_non_caching_segment_traits_2.h>
+#include <CGAL/Arrangement_2.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::FT                                          Number_type;
+
+typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>      Traits;
+typedef Traits::Point_2                                     Point;
+typedef Traits::X_monotone_curve_2                          Segment;
+
+typedef CGAL::Arrangement_2<Traits>                         Arrangement;
+typedef Arrangement::Vertex_handle                          Vertex_handle;
+typedef Arrangement::Halfedge_handle                        Halfedge_handle;
+typedef Arrangement::Face_handle                            Face_handle;
+\endcode
 
 <!----------------------------------------------------------------------------->
 \subsection arr_sssecmf_iso_verts Manipulating Isolated Vertices
@@ -873,18 +922,20 @@ arr_ssectraverse.
 Isolated points are simpler geometric entities than curves, and indeed
 the member functions that manipulate them are easier to understand.
 
-The call `arr.insert_in_face_interior(p, f)` inserts an isolated point
-\f$p\f$, located in the interior of a given face \f$ f\f$, into the
-arrangement and returns a handle to the arrangement vertex associated
-with \f$p\f$ it has created. Naturally, this function has a
-precondition that \f$p\f$ is really an isolated point, namely it does
-not coincide with any existing arrangement vertex and does not lie on
-any edge. As mentioned in Section \ref arr_ssectraverse, it is
-possible to obtain the face containing an isolated vertex handle
-\f$v\f$ by calling `v->face()`.
+The member function `Arrangement_2::insert_in_face_interior(const
+%Point_2& p, Face_handle f)` inserts an isolated point \f$p\f$, located
+in the interior of a given face \f$ f\f$, into the arrangement and
+returns a handle to the arrangement vertex associated with \f$p\f$ it
+has created. Naturally, this function has a precondition that \f$p\f$
+is really an isolated point, namely it does not coincide with any
+existing arrangement vertex and does not lie on any edge. As mentioned
+in Section \ref arr_ssectraverse, it is possible to obtain the face
+containing an isolated vertex calling the member function
+`Arrangement_2::vertex::face()`.
 
-The member function `remove_isolated_vertex(v)` accepts a handle to an
-isolated vertex and removes it from the arrangement.
+The member function
+`Arrangement_2::remove_isolated_vertex(Vertex_handle v)` accepts a
+handle to an isolated vertex and removes it from the arrangement.
 
 \cgalFigureBegin{arr_figex_3,ex_2.png}
 An arrangement of line segments containing three isolated vertices,
@@ -924,15 +975,16 @@ that lies on an \f$x\f$-monotone curve associated with an existing
 edge \f$e\f$ into the arrangement \f$\cal A\f$, you must first
 construct the two curves \f$c_1\f$ and \f$c_2\f$, which are the two
 subcurves that result from splitting the \f$x\f$-monotone curve
-associated with the edge \f$e\f$ at \f$p\f$. Then, you have to issue
-the call `arr.split_edge(he, c1, c2)`, where `arr` identifies the
-arrangement \f$\cal A\f$ and `he` is a handle to one of the two
-halfedges that represent the edge \f$e\f$. The function splits the two
-halfedges that represent \f$e\f$ into two pairs of halfedges,
-respectively. Two new halfedges are incident to the new vertex \f$v\f$
-associated with \f$p\f$. The function returns a handle to the new
-halfedge, the source of which is the source vertex of the halfedge
-handled by `he`, and the target of which is the new vertex \f$v\f$.
+associated with the edge \f$e\f$ at \f$p\f$. Then, you have to use the
+member function `Arrangement_2::split_edge(Halfedge_handle he, const
+X_monotone_curve_2& c1, const X_monotone_curve_2& c2)`, where `he` is
+a handle to one of the two halfedges that represent the edge
+\f$e\f$. The function splits the two halfedges that represent \f$e\f$
+into two pairs of halfedges, respectively. Two new halfedges are
+incident to the new vertex \f$v\f$ associated with \f$p\f$. The
+function returns a handle to the new halfedge, the source of which is
+the source vertex of the halfedge handled by `he`, and the target of
+which is the new vertex \f$v\f$.
 
 The reverse operation is also possible. Consider a vertex \f$v\f$ of
 degree \f$2\f$ that has two incident edges \f$e_1\f$ and \f$e_2\f$
@@ -942,21 +994,22 @@ continuous \f$x\f$-monotone curve \f$c\f$ of the type supported by the
 traits class in use. To merge the edges \f$e_1\f$ and \f$e_2\f$ into a
 single edge associated with the curve \f$c\f$, essentially removing
 the vertex \f$v\f$ from the arrangement identified by `arr`, you need
-to issue the call `arr.merge_edge(he1, he2, c)`, where `he1` and `he2`
-are handles to halfedges representing \f$e_1\f$ and \f$e_2\f$,
-respectively.
+to use the member function `Arrangement_2.merge_edge(Halfedge_handle
+he1, Halfedge_handle he2, const X_monotone_curve_2& c)`, where `he1`
+and `he2` are handles to halfedges representing \f$e_1\f$ and
+\f$e_2\f$, respectively.
 
-Finally, the call `arr.remove_edge(he)` removes the edge \f$e\f$ from
-the arrangement, where `he` is a handle to one of the two halfedges
-that represents \f$e\f$. Note that this operation is the reverse of an
-insertion operation, so it may cause a connected component to split
-into two, or two faces to merge into one, or a hole to disappear.  By
-default, if the removal of \f$e\f$ causes one of its end vertices to
-become isolated, this vertex is removed as well. However, you can
-control this behavior and choose to keep the isolated vertices by
-supplying additional Boolean flags to `remove_edge()` indicating
-whether the source or the target vertices are to be removed should
-they become isolated.
+Finally, the member function `Arrangement_2.remove_edge(he)` removes
+the edge \f$e\f$ from the arrangement, where `he` is a handle to one
+of the two halfedges that represents \f$e\f$. Note that this operation
+is the reverse of an insertion operation, so it may cause a connected
+component to split into two, or two faces to merge into one, or a hole
+to disappear.  By default, if the removal of \f$e\f$ causes one of its
+end vertices to become isolated, this vertex is removed as
+well. However, you can control this behavior and choose to keep the
+isolated vertices by supplying additional Boolean flags to
+`remove_edge()` indicating whether the source or the target vertices
+are to be removed should they become isolated.
 
 \cgalFigureBegin{arr_figex_4,ex_3.png}
 An arrangement of line segments as constructed in
@@ -2048,15 +2101,17 @@ fictitious. Note that non-fictitious unbounded faces always have valid
 CCBs (although this CCB may comprise only fictitious halfedge in case
 the arrangement contains only bounded curves).  </UL>
 
-The method `arr.number_of_edges()` does not count the number of
-fictitious edges, (which is always
-`arr.number_of_vertices_at_infinity() + 4`), and the iterators
-returned by `arr.edges_begin()` and `arr.edges_end()` specify
-a range of non-fictitious edges. Similarly, `arr.number_of_faces()`
-does not count the fictitious face. However, the
-`Ccb_halfedge_circulator` of the outer boundary of an
-unbounded face or the `Halfegde_around_vertex_circulator` of a vertex
-at infinity do traverse fictitious halfedges. For example, it is possible
+The method `Arrangement_2::number_of_edges()` does not count the
+number of fictitious edges, (which is always the result of
+`Arrangement_2::number_of_vertices_at_infinity() + 4`), and the
+iterators returned by `Arrangement_2::edges_begin()` and
+`Arrangement_2::edges_end()` specify a range of non-fictitious
+edges. Similarly, `Arrangement_2::number_of_faces()` does not count
+the fictitious face. However, the
+`Arrangement_2::Ccb_halfedge_circulator` of the outer boundary of an
+unbounded face or the
+`Arrangement_2::Halfegde_around_vertex_circulator` of a vertex at
+infinity do traverse fictitious halfedges. For example, it is possible
 to traverse the outer boundaries of the unbounded arrangement edges
 using the following procedure:
 
@@ -2409,7 +2464,7 @@ aos_sssec-tr_lanmarks_concept.
   curves is used only for testing as part of the test suite.}
 <DT><B>`Construct_min_vertex_2`,`Construct_max_vertex_2`:</B><DD>
   Returns the lexicographically smaller or left (resp. larger or right)
-  endpoint of an $x$-monotone curve.
+  endpoint of an \f$x\f$-monotone curve.
 <DT><B>`Is_vertical_2`:</B><DD> Determines whether an \f$x\f$-monotone curve
   is vertical.
 <DT><B>`Compare_y_at_x_2`:</B><DD> Given an \f$x\f$-monotone curve \f$C\f$
@@ -2422,9 +2477,10 @@ aos_sssec-tr_lanmarks_concept.
   there.
 </DL>
 
-Each model of the concept `ArrangementBasicTraits_2`
-needs to define a tag named `Has_left_category`. It determines
+Each model of the concept `ArrangementBasicTraits_2` needs to define a
+tag named `ArrangementBasicTraits_2::Has_left_category`. It determines
 whether the traits class supports the following predicate:
+
 <DL>
 <DT><B>`Compare_y_at_x_left_2`:</B><DD> Given two \f$x\f$-monotone curves
   \f$C_1\f$ and \f$C_2\f$ that share a common maximal (right) endpoint
@@ -2432,15 +2488,17 @@ whether the traits class supports the following predicate:
   immediately to the left of \f$p\f$, or whether the two curves overlap
   there.
 </DL>
-If the `Has_left_category` type nested in a model of the basic concept
-is defined as `Tag_true`\cgalFootnote{In principle, the category type may
-only be convertible to the tag type, but in practice the category is
-typically explicitly defined as the tag.} the model must support the
-predicate. If the type is defined as `Tag_false`, we resort to an internal
-version, which is based just on the reduced set of provided operations.
-The internal version might be less efficient, but it exempts the traits
-developer from the potentially non-trivial task of providing an
-(efficient) implementation of this predicate.
+
+If the `ArrangementBasicTraits_2::Has_left_category` type nested in a
+model of the basic concept is defined as `Tag_true`\cgalFootnote{In
+principle, the category type may only be convertible to the tag type,
+but in practice the category is typically explicitly defined as the
+tag.} the model must support the predicate. If the type is defined as
+`Tag_false`, we resort to an internal version, which is based just on
+the reduced set of provided operations.  The internal version might be
+less efficient, but it exempts the traits developer from the
+potentially non-trivial task of providing an (efficient)
+implementation of this predicate.
 
 The basic set of predicates is sufficient for constructing
 arrangements of \f$x\f$-monotone curves that do not reach or approach
