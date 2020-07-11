@@ -82,6 +82,8 @@
 #include <CGAL/approximated_offset_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/minkowski_sum_2.h>
 
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
@@ -711,7 +713,7 @@ private:
   bool m_yellow_int;
   bool m_magenta_int;
   bool m_aqua_int;
-  bool m_grid;
+  // bool m_grid;
   bool m_pan;
 
   bool m_blue_union;
@@ -834,7 +836,7 @@ protected slots:
 public slots:
   void processInput(CGAL::Object o);
   void on_actionNew_triggered();
-  void on_actionGrid_triggered();
+  // void on_actionGrid_triggered();
   void on_actionRecenter_triggered();
   void on_actionComplementH_toggled(bool aChecked);
   void on_actionUnionH_toggled(bool aChecked);
@@ -1276,7 +1278,7 @@ MainWindow::MainWindow() :
   m_visible_magenta(false), //default 
   m_visible_aqua(false), //default
   empty_warn(true), // default
-  m_grid(false), //default
+  // m_grid(false), //default
   m_pan(false)
   // pathItem0_exists(false),
   // pathItem1_exists(false),
@@ -3559,8 +3561,8 @@ void MainWindow::on_actionNew_triggered()
   m_bezier_active = false;
   // empty_warn = true;
 
-  m_grid = true;
-  on_actionGrid_triggered();
+  // m_grid = true;
+  // on_actionGrid_triggered();
   m_pan = false;
 
   m_linear_input->Reset();
@@ -6235,9 +6237,6 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 	        color2 = 6;
 	      }
 
-	      
-
-
 	      typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 	      typedef Kernel::Point_2                            Point_2;
 	      typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
@@ -6246,51 +6245,81 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 
 	      Polygon_2 lp1,lp2;
 
+        // Compute the Minkowski sum using the decomposition approach.
+        CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
+
 	      if(color1 == 0 && !blue_set().is_empty()) 
 	      {
 	        if(color2 == 1 && !red_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);
-	      else if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p2);
-	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p3);
-	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p6);
+  	      else if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p2);
+  	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p3);
+  	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p4);
+  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p5);
+  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p6);
+
+          if (!mink_sum_res.is_unbounded()) 
+          {
+            m_linear_input->get_Minkowski_result(mink_sum_res,p0);
+          }
 	      }
 	      else if(color1 == 1 && !red_set().is_empty()) 
 	      {
-	       if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p2);
-	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p3);
-	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p6);
+	        if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p2);
+  	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p3);
+  	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p4);
+  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p5);
+  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p6);
+
+          if (!mink_sum_res.is_unbounded()) 
+          {
+            m_linear_input->get_Minkowski_result(mink_sum_res,p1);
+          }
 	      }
 	      else if(color1 == 2 && !black_set().is_empty()) 
 	      {
 	        if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p3);
-	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p6);
+  	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p4);
+  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p5);
+  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p6);
+
+          if (!mink_sum_res.is_unbounded()) 
+          {
+            m_linear_input->get_Minkowski_result(mink_sum_res,p2);
+          }
 	      }
 	      else if(color1 == 3 && !brown_set().is_empty()) 
 	      {
 	       if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p4);
-	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3,p6);
+  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p5);
+  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3,p6);
+
+          if (!mink_sum_res.is_unbounded()) 
+          {
+            m_linear_input->get_Minkowski_result(mink_sum_res,p3);
+          }
 	      }
 	      else if(color1 == 4 && !yellow_set().is_empty())
 	      {
 	        if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p5);
-	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p6);
+	        else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p6);
+
+          if (!mink_sum_res.is_unbounded()) 
+          {
+            m_linear_input->get_Minkowski_result(mink_sum_res,p4);
+          }
 	      }
 	      else if(color1 == 5 && !magenta_set().is_empty())
 	      {
 	        if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p5, p6);
+
+          if (!mink_sum_res.is_unbounded()) 
+          {
+            m_linear_input->get_Minkowski_result(mink_sum_res,p5);
+          }
 	      }
 	      
 	      //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
-	      if (!mink_sum_res.is_unbounded()) 
-	      {
-	        m_linear_input->get_Minkowski_result(mink_sum_res);
-	      }
+	      
 	      else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
 	        lDone = true;
 	        minkowksi_sum_operated = true;
@@ -6316,19 +6345,19 @@ void MainWindow::ToogleView(size_t aGROUP, bool a_check)
   else set(aGROUP).gi()->hide();
 }
 
-void MainWindow::on_actionGrid_triggered()
-{
-  if(!m_grid)
-  {
-    this->graphicsView->scene()->setBackgroundBrush(Qt::CrossPattern);
-    m_grid = true;
-  }
-  else
-  {
-    this->graphicsView->scene()->setBackgroundBrush(Qt::NoBrush);
-    m_grid = false;
-  }
-}
+// void MainWindow::on_actionGrid_triggered()
+// {
+//   if(!m_grid)
+//   {
+//     this->graphicsView->scene()->setBackgroundBrush(Qt::CrossPattern);
+//     m_grid = true;
+//   }
+//   else
+//   {
+//     this->graphicsView->scene()->setBackgroundBrush(Qt::NoBrush);
+//     m_grid = false;
+//   }
+// }
 
 void MainWindow::on_actionPAN_triggered()
 {
@@ -6638,64 +6667,72 @@ void MainWindow::processInput(CGAL::Object o)
             {
               active_set().linear().join(lCPWH);
               active_linear_sources().push_back(lCPWH);
+
+              switch(m_color_active)
+              {
+                case 0: p0 = m_linear_input -> getMinkPolygon();  
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p0.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p0.reverse_orientation();
+                        }
+                        break;
+
+                case 1: p1 = m_linear_input -> getMinkPolygon();  
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p1.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p1.reverse_orientation();
+                        }
+                        break;
+
+                case 2: p2 = m_linear_input -> getMinkPolygon();  
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p2.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p2.reverse_orientation();
+                        }
+                        break;
+
+                case 3: p3 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p3.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p3.reverse_orientation();
+                        }
+                        break;
+                case 4: p4 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon();
+                        if (p4.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p4.reverse_orientation();
+                        }
+                        break;
+                case 5: p5 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon();  
+                        if (p5.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p5.reverse_orientation();
+                        }
+                        break;
+                case 6: p6 = m_linear_input -> getMinkPolygon();
+                        m_linear_input -> clearMinkPolygon(); 
+                        if (p6.orientation() == CGAL::CLOCKWISE) 
+                        { 
+                          p6.reverse_orientation();
+                        }
+                        break;
+              }
             }
             else
             {
               result_set().linear().join(lCPWH);
               result_linear_sources().push_back(lCPWH);
-            }
               switch(m_color_active)
               {
-                  case 0: p0 = m_linear_input -> getMinkPolygon();  
-                          m_linear_input -> clearMinkPolygon(); 
-                          if (p0.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p0.reverse_orientation();
-                          }
-                          break;
-                  case 1: p1 = m_linear_input -> getMinkPolygon();  
-                          m_linear_input -> clearMinkPolygon(); 
-                          if (p1.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p1.reverse_orientation();
-                          }
-                          break;
-                  case 2: p2 = m_linear_input -> getMinkPolygon();  
-                          m_linear_input -> clearMinkPolygon(); 
-                          if (p2.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p2.reverse_orientation();
-                          }
-                          break;
-                  case 3: p3 = m_linear_input -> getMinkPolygon();
-                          m_linear_input -> clearMinkPolygon(); 
-                          if (p3.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p3.reverse_orientation();
-                          }
-                          break;
-                  case 4: p4 = m_linear_input -> getMinkPolygon();
-                          m_linear_input -> clearMinkPolygon();
-                          if (p4.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p4.reverse_orientation();
-                          }
-                          break;
-                  case 5: p5 = m_linear_input -> getMinkPolygon();
-                          m_linear_input -> clearMinkPolygon();  
-                          if (p5.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p5.reverse_orientation();
-                          }
-                          break;
-                  case 6: p6 = m_linear_input -> getMinkPolygon();
-                          m_linear_input -> clearMinkPolygon(); 
-                          if (p6.orientation() == CGAL::CLOCKWISE) 
-                          { 
-                            p6.reverse_orientation();
-                          }
-                          break;
+
               }
+            }
         }
       }
 

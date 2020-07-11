@@ -29,6 +29,7 @@
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 
+#include <QtCore>
 #include <QPolygonF>
 #include <QPointF>
 #include <QGraphicsLineItem>
@@ -448,13 +449,42 @@ public:
 
   }
 
-  void get_Minkowski_result(Polygon_with_holes_2 polygon)
+  void get_Minkowski_result(Polygon_with_holes_2 polygon, Polygon_2 p0)
   {
     typename Polygon_2::Vertex_const_iterator vit;
     m_bound_rect = false;
     Point_2 pt;
 
     int i=0;
+    double x_res_cord = 0.0000;
+    double y_res_cord = 0.0000;
+    int v_res_count = 0;
+
+    for (vit = polygon.outer_boundary().vertices_begin(); vit != polygon.outer_boundary().vertices_end(); ++vit)
+    {
+      pt =  *vit;
+      x_res_cord = x_res_cord + CGAL::to_double(pt.x());
+      y_res_cord = y_res_cord + CGAL::to_double(pt.y());
+      v_res_count+=1;
+    }
+
+    x_res_cord = x_res_cord/v_res_count;
+    y_res_cord = y_res_cord/v_res_count;
+
+    double x_f_cord = 0.0000;
+    double y_f_cord = 0.0000;
+    int v_f_count = 0;
+
+    for (vit = p0.begin(); vit != p0.end(); ++vit)
+    {
+      pt =  *vit;
+      x_f_cord = x_f_cord + CGAL::to_double(pt.x());
+      y_f_cord = y_f_cord + CGAL::to_double(pt.y());
+      v_f_count+=1;
+    }
+
+    x_f_cord = x_f_cord/v_f_count;
+    y_f_cord = y_f_cord/v_f_count;
 
     for (vit = polygon.outer_boundary().vertices_begin(); vit != polygon.outer_boundary().vertices_end(); ++vit)
     {
@@ -462,7 +492,7 @@ public:
       {
         pt =  *vit;
 
-        mP0 = Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
+        mP0 = Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord);
         mState = PieceStarted;
       }
       else
@@ -471,13 +501,13 @@ public:
 
         mState = PieceOngoing;
 
-        mP1 = Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
+        mP1 = Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord);
         UpdateOngoingPiece();
 
-        mP1 = Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
+        mP1 = Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord);
         mState = HandleOngoing;
         HideHandle();
-        CommitOngoingPiece(Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y())));
+        CommitOngoingPiece(Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord));
         mState   = PieceEnded;
 
       }
