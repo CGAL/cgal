@@ -11,7 +11,7 @@ on the sphere.
 The data structure concept `TriangulationDataStructure_2` was primarily designed
 to serve as a data structure for the 2D triangulation classes of \cgal, which are triangulations
 embedded in the 2D Euclidean plane.
-However its genericy makes it usable for any orientable triangulated surface without boundary,
+However its genericity makes it usable for any orientable triangulated surface without boundary,
 regardless of the dimensionality of the space the triangulation is embedded in, and thus
 it is a valid data structure for the triangulations on the sphere of this package.
 

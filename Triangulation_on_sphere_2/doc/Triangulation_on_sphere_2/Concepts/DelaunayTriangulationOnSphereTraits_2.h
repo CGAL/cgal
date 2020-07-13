@@ -30,7 +30,7 @@ public:
   ///
   /// `Point_3 operator()(Point_3 p, Point_3 q, Point_3 r)`
   ///
-  /// which returns the center of the circle circumscribed to face with vertices `p`, `q`, and `r`.
+  /// which returns the center of the circle circumscribed to the face with vertices `p`, `q`, and `r`.
   ///
   /// \note This type is only required for the computation of dual objects (Voronoi vertex)
   /// and a dummy type can be used otherwise.

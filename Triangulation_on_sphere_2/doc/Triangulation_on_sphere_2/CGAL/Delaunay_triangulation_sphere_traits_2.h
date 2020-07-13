@@ -62,7 +62,7 @@ public:
   ///
   typedef typename K::Compare_xyz_3                 Compare_on_sphere_2;
 
-  /// If the kernel cannot represent algeabric coordinates exactly, there is a tolerance
+  /// If the kernel cannot represent algebraic coordinates exactly, there is a tolerance
   /// around the sphere, and thus different points can actually be the same point.
   /// This particular equality functor checks if both query points are on the sphere and
   /// are aligned (and on the same side) with the center of the sphere.
@@ -109,7 +109,7 @@ public:
   /// or whether `p` is within an automatically computed small distance otherwise.
   bool is_on_sphere(const Point_on_sphere_2& p) const;
 
-  /// Returns `false` if `K` can represent algeabric coordinates, or whether the distance
+  /// Returns `false` if `K` can represent algebraic coordinates, or whether the distance
   /// between `p` and `q` is lower than \f$ 2 \sqrt{R\delta} \f$ otherwise.
   bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const;
 

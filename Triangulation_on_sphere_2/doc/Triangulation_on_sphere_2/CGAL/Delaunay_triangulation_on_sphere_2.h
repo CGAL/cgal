@@ -81,7 +81,7 @@ public:
   /*!
   Inserts the point `p`.
   If the point `p` coincides with an already existing vertex, this vertex is returned
-  and the triangulation is not updated.
+  and the triangulation remains unchanged.
   The optional parameter `f` is used to give a hint about the location of `p`.
   */
   Vertex_handle insert(const Point& p, Face_handle f = Face_handle());

@@ -14,14 +14,14 @@ This triangulation class is very similar to `CGAL::Triangulation_2` as both clas
 triangulations of 2-manifold domain without boundary. A significant difference is that
 in the case of Euclidean 2D triangulation, it is necessary to introduce so-called <i>infinite
 faces</i> to complete the convex hull into an actual 2-manifold without boundary that the triangulation
-data structure can represent. This is not necessary for triangulations of the sphere,
-that is already perfectly adapted to the triangulation data structure.
+data structure can represent. This is not necessary for triangulations on the sphere,
+which are already perfectly adapted to the triangulation data structure.
 
 There is an exception to the previous statement: in the degenerate configuration
 where all points of \f$ \mathcal{S}\f$ lie on the same hemisphere, the triangulation has a border.
 Internally, the triangulation data structure must however remain a 2-manifold at all time,
-and to ensure this fictitious faces called <i>ghost faces</i> are added. In contrast, faces that
-not ghost-faces are called <i>solid</i> faces.
+and to ensure this fictitious faces called <i>ghost faces</i> are added. We call faces that
+are not ghost faces <em>solid faces</em>.
 
 \tparam Traits is the geometric traits, which must be a model of the concept `TriangulationOnSphereTraits_2`.
 
@@ -241,7 +241,7 @@ public:
   size_type number_of_faces() const;
 
   /*!
-  Returns the number of ghost_faces.
+  Returns the number of ghost faces.
   */
   size_type number_of_ghost_faces() const;
 
@@ -251,12 +251,12 @@ public:
   /// @{
 
   /*!
-  Returns the geometric position of the vertex `*v`.
+  Returns the geometric position of the vertex `v`.
   */
   const Point& point(const Vertex_handle v);
 
   /*!
-  Returns the geometric position of the `i`-th vertex of the face `*f`.
+  Returns the geometric position of the `i`-th vertex of the face `f`.
   */
   const Point& point(const Face_handle f, const int i);
 
@@ -443,7 +443,7 @@ public:
   /*!
   Specifies which case occurs when locating a point in the triangulation.
   */
-  enum Locate_type { VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
+  enum Locate_type { VERTEX=0, /*!< when the point coincides with a vertex of the triangulation */
                      EDGE, /*!< when the point is in the relative interior of an edge */
                      FACE, /*!< when the point is in the interior of a face */
                      OUTSIDE_CONVEX_HULL, /*!< when the point is outside the convex hull but in the affine hull of the current triangulation */

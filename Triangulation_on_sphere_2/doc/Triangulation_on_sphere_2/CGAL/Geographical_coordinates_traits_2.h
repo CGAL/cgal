@@ -102,7 +102,7 @@ public:
 \ingroup PkgTriangulationOnSphere2TriangulationClasses
 
 This class represents coordinates of the Geographical Coordinates System,
-that is a pair of two values representing a longitude and a latitude.
+that is a pair of two values representing a latitude and a longitude.
 
 \tparam K a kernel type; must be a model of `Kernel`
 
@@ -115,7 +115,7 @@ public:
   typedef typename K::FT                            FT;
 
   ///
-  typedef FT                                        latitude;
+  typedef FT                                        Latitude;
 
   ///
   typedef FT                                        Longitude;
@@ -126,7 +126,7 @@ public:
   /// Construct a point on the sphere at coordinates `(la, lo)`.
   ///
   /// \pre `la` is within `[-90; 90[` and `lo` is within `[-180; 180[`.
-  Geographical_coordinates(const latitude la, const Longitude lo);
+  Geographical_coordinates(const Latitude la, const Longitude lo);
 };
 
 } // namespace CGAL
