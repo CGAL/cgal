@@ -285,7 +285,7 @@ public:
    * \return
    */
   template<class Walker>
-  Node_range walk(const Walker& walker = Walker()) const {
+  Node_range walk(const Walker &walker = Walker()) const {
 
     const Node *first = walker.first(&m_root);
 
@@ -330,7 +330,7 @@ public:
     return *node_for_point;
   }
 
-  template <typename Point_output_iterator>
+  template<typename Point_output_iterator>
   void nearest_k_neighbours(const Point &p, std::size_t k, Point_output_iterator output) const {
 
     *output++ = p;
@@ -418,9 +418,39 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  template <typename Point_output_iterator>
-  void nearest_k_neighbours_recursive(const Point &p, std::size_t k, const Node &node, FT radius_squared, Point_output_iterator output) {
+  // TODO: It might be possible to fold this into the non-recursive function signature
+  template<typename Point_output_iterator>
+  void nearest_k_neighbours_recursive(const Point &p, std::size_t k, const Node &node, FT radius_squared,
+                                      Point_output_iterator output) {
 
+    // List that pairs each child node with its distance
+    // TODO: Perhaps I should use a purpose-made struct instead of a pair here
+    std::array<std::pair<FT, typename Node::Index>, 8> nodes_to_visit;
+
+    // Add the child nodes to the list
+    for (int index = 0; index < 3; ++index) {
+
+      // Set the indices properly
+      nodes_to_visit[index].second() = index;
+
+      // Check if the node contains any points
+      if (std::distance(node[index].value().begin(), node[index].value().end()) == 0) {
+
+        // Empty nodes are considered infinitely far
+        nodes_to_visit[index].first() = std::numeric_limits<FT>::max();
+      }
+
+      else {
+
+        // Find the distance squared between p and the node's center point
+
+      }
+    }
+
+
+
+
+    // Sort the nodes by their distance from the point p
   }
 
 }; // end class Octree
