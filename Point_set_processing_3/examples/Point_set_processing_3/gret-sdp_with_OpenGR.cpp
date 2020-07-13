@@ -46,7 +46,6 @@ void extractPatchesAndTrFromConfigFile(const string& configFilePath,  Registrati
 
 int main(int argc, const char** argv)
 {
-
     RegistrationProblem problem;
     vector<MatrixType> gt_transformations;
 
@@ -57,7 +56,7 @@ int main(int argc, const char** argv)
     const int m = problem.m;
     const vector<Patch>& patches = problem.patches;
 
-    CGAL::OpenGR::GRET_SDP<K::FT> matcher;
+    CGAL::OpenGR::GRET_SDP matcher;
     matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
                                                 .normal_map(Normal_map())
                                                 .vertex_index_map(Index_map()));
