@@ -418,6 +418,10 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
+  void nearest_k_neighbours_recursive() {
+
+  }
+
 }; // end class Octree
 
 } // namespace Octree
