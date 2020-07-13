@@ -9,12 +9,11 @@ find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
-  create_single_source_cgal_program( "triang_on_sphere_ex.cpp" )
-  create_single_source_cgal_program( "triang_on_sphere_ex_proj.cpp" )
+  create_single_source_cgal_program( "triang_on_sphere.cpp" )
+  create_single_source_cgal_program( "triang_on_sphere_proj.cpp" )
 
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+
+endif()
