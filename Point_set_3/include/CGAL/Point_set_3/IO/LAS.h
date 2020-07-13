@@ -68,6 +68,8 @@ void check_if_property_is_used(PointSet& point_set,
   \param is the input stream
   \param point_set the point set
 
+  \note All LAS properties are read as described in `read_LAS_with_properties()`.
+
   \return `true` if the reading was successful, `false` otherwise.
  */
 template <typename Point, typename Vector>
@@ -162,6 +164,8 @@ bool read_LAS(std::istream& is,
   \param fname the path to the input file
   \param point_set the point set
 
+  \note All LAS properties are read as described in `read_LAS_with_properties()`.
+
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector>
@@ -214,6 +218,8 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
   \param os the output stream
   \param point_set the point set
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \note All LAS properties are written as described in `read_LAS_with_properties()`.
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{stream_precision}
@@ -421,6 +427,8 @@ bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
   \param fname the path to the output file
   \param point_set the point set
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \note All LAS properties are written as described in `read_LAS_with_properties()`.
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{stream_precision}

@@ -42,7 +42,7 @@ namespace CGAL {
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -82,7 +82,7 @@ bool write_WRL(std::ostream& os,
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the name of the output file
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin

@@ -12,15 +12,15 @@
 /// \ingroup PkgSurface_mesh
 
 /// \defgroup PkgSurfaceMeshIOFuncOFF I/O Functions (OFF)
-/// I/O Functions for \ref IOStreamOFF
+/// I/O Functions for the \ref IOStreamOFF
 /// \ingroup PkgSurfaceMeshIOFunc
 
 /// \defgroup PkgSurfaceMeshIOFuncPLY I/O Functions (PLY)
-/// I/O Functions for \ref IOStreamPLY
+/// I/O Functions for the \ref IOStreamPLY
 /// \ingroup PkgSurfaceMeshIOFunc
 
 /// \defgroup PkgSurfaceMeshIOFunc3MF I/O Functions (3MF)
-/// I/O Functions for \ref IOStream3MF
+/// I/O Functions for the \ref IOStream3MF
 /// \ingroup PkgSurfaceMeshIOFunc
 
 /// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)

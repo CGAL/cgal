@@ -275,7 +275,7 @@ bool read_PLY(const std::string& fname, Graph& g,
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  \param os the output stream
- \param g the graph to be output
+ \param g the graph to be written
  \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment ")
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
@@ -479,7 +479,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  \param fname the name of the output file
- \param g the graph to be output
+ \param g the graph to be written
  \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment ")
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 

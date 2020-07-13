@@ -176,11 +176,11 @@ struct Dummy_default_vertex_point_map
   }
 };
 
-template <class Point_3, class NamedParameter, class PolygonMesh>
+template <class Point_3, class NamedParameters, class PolygonMesh>
 struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
-                                     NamedParameter>::type Default_map;
+                                     NamedParameters>::type Default_map;
   typedef typename boost::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 

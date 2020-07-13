@@ -319,7 +319,8 @@ the \ref PkgBGLIOFct of the \ref PkgBGL package, and the \ref PMP_IO_grp of the 
 package for more information.
 
 In addition, this package provides overloads of these I/O functions specific to `CGAL::Surface_mesh`
-to read and write directly from/to internal property maps, see \ref PkgSurfaceMeshIOFunc for more info.
+to read and write directly from/to internal property maps,
+see \ref PkgSurfaceMeshIOFunc for more information.
 
 \section sectionSurfaceMesh_memory Memory Management
 

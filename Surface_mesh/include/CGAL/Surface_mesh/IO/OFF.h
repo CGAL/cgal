@@ -257,12 +257,18 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 
 /// \ingroup PkgSurfaceMeshIOFuncOFF
 ///
-/// \brief extracts the surface mesh from an input stream in ASCII OFF, COFF, NOFF, CNOFF
-/// format and appends it to the surface mesh `sm`.
+/// \brief extracts the surface mesh from an input stream in the \ref IOStreamOFF
+///        and appends it to the surface mesh `sm`.
 ///
-/// The operator reads the point property as well as "v:normal", "v:color", `"v:texcoord"`, and "f:color".
-/// If an alternative vertex_point map is given through `np`,
-/// then it will be used instead of the default one.
+/// This function reads the point property as well as vertex normals, vertex and face colors,
+/// and texture vertex coordinates. Those properties are stored in internal property maps
+/// named "v:normal", "v:color", "f:color", and `"v:texcoord"`, respectively.
+/// If property maps are passed through named parameters (see below),
+/// then they are used instead of the internal ones.
+///
+/// Ignores comment lines which start with a hash, and lines with whitespace.
+///
+///\attention The graph `g` is not cleared, and the data from the stream is added.
 ///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.

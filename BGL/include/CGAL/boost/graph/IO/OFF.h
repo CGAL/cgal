@@ -90,6 +90,10 @@ bool read_OFF_BGL(std::istream& is,
 
   \brief reads the graph `g` from data in the input stream, using the \ref IOStreamOFF.
 
+  This function reads the point property as well as vertex normals (NOFF), vertex and face colors (COFF),
+  and texture vertex coordinates (TOFF). Those properties are stored in property maps that
+  are passed through named parameters (see below), when passed.
+
   Ignores comment lines which start with a hash, and lines with whitespace.
 
   \attention The graph `g` is not cleared, and the data from the stream is added.
@@ -176,6 +180,10 @@ bool read_OFF(std::istream& is, Graph& g,
   \ingroup PkgBGLIoFuncsOFF
 
   \brief reads the graph `g` from the file `fname`, using the \ref IOStreamOFF.
+
+  This function reads the point property as well as vertex normals (NOFF), vertex and face colors (COFF),
+  and texture vertex coordinates (TOFF). Those properties are stored in property maps that
+  are passed through named parameters (see below), when passed.
 
   Ignores comment lines which start with a hash, and lines with whitespace.
 
@@ -328,7 +336,7 @@ bool write_OFF_BGL(std::ostream& os,
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -413,7 +421,7 @@ bool write_OFF(std::ostream& os, const Graph& g,
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the name of the output file
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin

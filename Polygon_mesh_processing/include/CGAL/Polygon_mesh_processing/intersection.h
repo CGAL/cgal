@@ -1487,8 +1487,8 @@ template<class TriangleMeshRange,
 struct Mesh_callback
 {
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
-  typedef typename boost::range_value<NamedParametersRange>::type NamedParameter;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameter>::const_type VPM;
+  typedef typename boost::range_value<NamedParametersRange>::type NamedParameters;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
   typedef CGAL::AABB_traits<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;

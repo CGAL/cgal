@@ -182,7 +182,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -290,7 +290,7 @@ bool write_STL(std::ostream& os,
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
  \param fname the name of the output stream
- \param g the graph to be output
+ \param g the graph to be written
  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
  \cgalNamedParamsBegin

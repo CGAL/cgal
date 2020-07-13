@@ -194,7 +194,7 @@ bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, pa
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -237,7 +237,7 @@ bool write_OBJ(std::ostream& os,
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the output file
-  \param g the graph to be output
+  \param g the graph to be written
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin

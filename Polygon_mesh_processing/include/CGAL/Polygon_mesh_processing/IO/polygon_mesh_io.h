@@ -40,22 +40,22 @@ namespace Polygon_mesh_processing {
  * \brief Attempts to read a file as a polygon mesh; in case of failure, reads the file as a polygon soup,
  * repairs and orients it to obtain a polygon mesh.
  *
- * \tparam Graph a model of `MutableFaceGraph`
+ * \tparam PolygonMesh a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the name of the input file
- * \param g the graph
+ * \param g the polygon mesh
  * \param np sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `Graph`.}
+ *                     must be available in `PolygonMesh`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
@@ -95,15 +95,15 @@ namespace Polygon_mesh_processing {
  *
  * \sa \link PkgBGLIOFct `CGAL::write_polygon_mesh()` \endlink
  */
-template <typename Graph, typename NamedParameter>
+template <typename PolygonMesh, typename NamedParameters>
 bool read_polygon_mesh(const char* fname,
-                       Graph& g,
-                       const NamedParameter& np)
+                       PolygonMesh& g,
+                       const NamedParameters& np)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  typedef typename CGAL::GetVertexPointMap<Graph, NamedParameter>::type      VPM;
-  typedef typename boost::property_traits<VPM>::value_type                   Point;
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type                     Point;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -141,20 +141,20 @@ bool read_polygon_mesh(const char* fname,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Graph>
-bool read_polygon_mesh(const char* fname, Graph& g)
+template <typename PolygonMesh>
+bool read_polygon_mesh(const char* fname, PolygonMesh& g)
 {
   return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
 }
 
-template <typename Graph, typename NamedParameter>
-bool read_polygon_mesh(const std::string& fname, Graph& g, const NamedParameter& np)
+template <typename PolygonMesh, typename NamedParameters>
+bool read_polygon_mesh(const std::string& fname, PolygonMesh& g, const NamedParameters& np)
 {
   return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname.c_str(), g, np);
 }
 
-template <typename Graph>
-bool read_polygon_mesh(const std::string& fname, Graph& g)
+template <typename PolygonMesh>
+bool read_polygon_mesh(const std::string& fname, PolygonMesh& g)
 {
   return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
 }

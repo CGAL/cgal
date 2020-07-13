@@ -227,7 +227,7 @@ bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g
 ///
 /// \param os the output stream
 /// \param name the name that will be assigned to `g` in the output file
-/// \param g the graph to be output
+/// \param g the graph to be written
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -325,7 +325,7 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param fname the name of the output file
-/// \param g the graph to be output
+/// \param g the graph to be written
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -377,7 +377,7 @@ bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLA
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param os the output stream
-/// \param g the graph to be output
+/// \param g the graph to be written
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin

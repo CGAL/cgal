@@ -30,19 +30,19 @@
 /// \ref PkgPointSetProcessing3Ref manual.
 
 /// \defgroup PkgPointSet3IOLAS Input/Output (LAS)
-/// I/O Functions for \ref IOStreamLAS
+/// I/O Functions for the \ref IOStreamLAS
 /// \ingroup PkgPointSet3IO
 
 /// \defgroup PkgPointSet3IOOFF Input/Output (OFF)
-/// I/O Functions for \ref IOStreamOFF
+/// I/O Functions for the \ref IOStreamOFF
 /// \ingroup PkgPointSet3IO
 
 /// \defgroup PkgPointSet3IOPLY Input/Output (PLY)
-/// I/O Functions for \ref IOStreamPLY
+/// I/O Functions for the \ref IOStreamPLY
 /// \ingroup PkgPointSet3IO
 
 /// \defgroup PkgPointSet3IOXYZ Input/Output (XYZ)
-/// I/O Functions for \ref IOStreamXYZ
+/// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup PkgPointSet3IO
 
 /// \defgroup PkgPointSet3IODeprecated Input/Output (Deprecated)

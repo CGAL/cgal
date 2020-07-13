@@ -468,35 +468,35 @@ the requirement for traversal of all faces in a graph.
 /// \ingroup PkgBGLRef
 
 /// \defgroup PkgBGLIoFuncsSTL STL I/O Functions
-/// I/O Functions for \ref IOStreamSTL
+/// I/O Functions for the \ref IOStreamSTL
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsPLY PLY I/O Functions
-/// I/O Functions for \ref IOStreamPLY
+/// I/O Functions for the \ref IOStreamPLY
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
-/// I/O Functions for \ref IOStreamOBJ
+/// I/O Functions for the \ref IOStreamOBJ
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
-/// I/O Functions for \ref IOStreamOFF
+/// I/O Functions for the \ref IOStreamOFF
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsVTP VTP I/O Functions
-/// I/O Functions for \ref IOStreamVTK
+/// I/O Functions for the \ref IOStreamVTK
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsGOCAD GOCAD I/O Functions
-/// I/O Functions for \ref IOStreamGocad
+/// I/O Functions for the \ref IOStreamGocad
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsWRL WRL I/O Functions
-/// I/O Functions for \ref IOStreamWRL
+/// I/O Functions for the \ref IOStreamWRL
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncs3MF 3MF I/O Functions
-/// I/O Functions for \ref IOStream3MF
+/// I/O Functions for the \ref IOStream3MF
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIOFctDeprecated I/O Functions (Deprecated)

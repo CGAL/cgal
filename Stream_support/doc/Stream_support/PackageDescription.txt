@@ -5,35 +5,35 @@
 /// \ingroup PkgStreamSupportRef
 
 /// \defgroup PkgStreamSupportIoFuncsSTL STL I/O Functions
-/// I/O Functions for \ref IOStreamSTL
+/// I/O Functions for the \ref IOStreamSTL
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncsPLY PLY I/O Functions
-/// I/O Functions for \ref IOStreamPLY
+/// I/O Functions for the \ref IOStreamPLY
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncsOBJ OBJ I/O Functions
-/// I/O Functions for \ref IOStreamOBJ
+/// I/O Functions for the \ref IOStreamOBJ
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncsOFF OFF I/O Functions
-/// I/O Functions for \ref IOStreamOFF
+/// I/O Functions for the \ref IOStreamOFF
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncsVTP VTP I/O Functions
-/// I/O Functions for \ref IOStreamVTK
+/// I/O Functions for the \ref IOStreamVTK
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncsGOCAD GOCAD I/O Functions
-/// I/O Functions for \ref IOStreamGocad
+/// I/O Functions for the \ref IOStreamGocad
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncsWKT WKT I/O Functions
-/// I/O Functions for \ref IOStreamWKT
+/// I/O Functions for the \ref IOStreamWKT
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportIoFuncs3MF 3MF I/O Functions
-/// I/O Functions for \ref IOStream3MF
+/// I/O Functions for the \ref IOStream3MF
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportEnumRef I/O Enums
