@@ -91,12 +91,76 @@ void naive_vs_octree(std::size_t dataset_size) {
   assert(octree_elapsed_time < naive_elapsed_time);
 }
 
+void kdtree_vs_octree(std::size_t dataset_size) {
+
+  // Create a dataset
+  Point_set points;
+  CGAL::Random_points_in_cube_3<Point> generator;
+  points.reserve(dataset_size);
+  for (std::size_t i = 0; i < dataset_size; ++i)
+    points.insert(*(generator++));
+
+  // Choose another random point from the same bounds as the dataset
+  Point random_point = *(generator++);
+
+  // Use the naive algorithm to find the nearest point in the dataset
+  Point kdtree_nearest = *points.points().begin();
+  auto kdtree_start_time = high_resolution_clock::now();
+  {
+
+  }
+  duration<float> kdtree_elapsed_time = high_resolution_clock::now() - kdtree_start_time;
+
+  std::cout << "Kd_tree --> "
+            << "Closest point to "
+            << "(" << random_point << ") "
+            << "is "
+            << "(" << kdtree_nearest << ") "
+            << "at a distance^2 of "
+            << CGAL::squared_distance(kdtree_nearest, random_point)
+            << std::endl;
+
+  // Do the same using the octree
+  Point octree_nearest = *generator;
+  auto point_map = points.point_map();
+  Octree octree(points, point_map);
+  octree.refine(10, 1);
+  auto octree_start_time = high_resolution_clock::now();
+  {
+    // TODO: Write a nearest-neighbor implementation and use it here
+    std::vector<Point> k_neighbors;
+    octree.nearest_k_neighbours(random_point, 1, std::back_inserter(k_neighbors));
+    octree_nearest = *k_neighbors.begin();
+  }
+  duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
+
+  std::cout << "Octree --> "
+            << "Closest point to "
+            << "(" << random_point << ") "
+            << "is "
+            << "(" << octree_nearest << ") "
+            << "at a distance^2 of "
+            << CGAL::squared_distance(octree_nearest, random_point)
+            << std::endl;
+
+  // Check that they produce the same answer
+  assert(octree_nearest == kdtree_nearest);
+
+  // Check that the octree was faster
+  assert(octree_elapsed_time < kdtree_elapsed_time);
+}
+
 int main(void) {
 
   naive_vs_octree(100);
   naive_vs_octree(1000);
   naive_vs_octree(10000);
   naive_vs_octree(100000);
+
+  kdtree_vs_octree(100);
+  kdtree_vs_octree(1000);
+  kdtree_vs_octree(10000);
+  kdtree_vs_octree(100000);
 
   return EXIT_SUCCESS;
 }
