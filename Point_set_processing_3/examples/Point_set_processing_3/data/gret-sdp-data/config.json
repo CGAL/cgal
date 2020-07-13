@@ -1,0 +1,7 @@
+{
+	"n":	1000,
+	"m":	5,
+	"d":	3,
+	"patches":["patch0.dat", "patch1.dat", "patch2.dat", "patch3.dat", "patch4.dat"],
+	"gt_trafos":["gt_trafo0.dat", "gt_trafo1.dat", "gt_trafo2.dat", "gt_trafo3.dat", "gt_trafo4.dat"]
+}

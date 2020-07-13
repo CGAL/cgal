@@ -86,7 +86,7 @@ if ( CGAL_FOUND )
         hierarchy_simplification_example
         normals_example)
       add_executable(${target} "${target}.cpp")
-      target_link_libraries(${target} ${CGAL_libs})
+      target_link_libraries(${target} ${CGAL_libs} )
     endforeach()
 
     # Executables that require libpointmatcher
@@ -104,6 +104,29 @@ if ( CGAL_FOUND )
     find_package(OpenGR QUIET)
     include(CGAL_OpenGR_support)
     if (TARGET CGAL::OpenGR_support)
+
+    # GRET SDP
+    find_package(Boost 1.54 COMPONENTS system filesystem  REQUIRED)
+      if (Boost_FOUND)    
+      include_directories(${Boost_INCLUDE_DIRS})
+      set(GRET_SDP_DATA_DIR_TO ${CMAKE_CURRENT_BINARY_DIR}/gret-sdp-data)
+      set(GRET_SDP_DATA_DIR_FROM ${PROJECT_SOURCE_DIR}/data/gret-sdp-data)
+      add_custom_target(copy_gret_sdp_data)
+      add_custom_command(TARGET copy_gret_sdp_data
+          POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E make_directory ${GRET_SDP_DATA_DIR_TO}
+          COMMAND ${CMAKE_COMMAND} -E copy ${GRET_SDP_DATA_DIR_FROM}/* ${GRET_SDP_DATA_DIR_TO}/.
+      )
+      
+      find_package(MOSEK REQUIRED)
+      include_directories(${MOSEK_INCLUDE_DIRS})
+      add_executable(gret-sdp_with_OpenGR "gret-sdp_with_OpenGR.cpp" )
+      target_link_libraries(gret-sdp_with_OpenGR
+      ${CGAL_libs} CGAL::OpenGR_support ${MOSEK_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+      add_dependencies(gret-sdp_with_OpenGR copy_gret_sdp_data)
+      endif(Boost_FOUND)
+      
+      # SUPER4PC
       add_executable(registration_with_OpenGR "registration_with_OpenGR.cpp" )
       target_link_libraries(registration_with_OpenGR
         ${CGAL_libs} CGAL::OpenGR_support)
