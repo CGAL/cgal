@@ -311,7 +311,7 @@ bool write_LAS(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only) to a .las stream.
+   Saves the range of `points` (positions only) using the \ref IOStreamLAS.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -354,7 +354,8 @@ bool write_LAS(const char* filename,
 #endif
                )
 {
-  std::ofstream os(filename);
+  std::ofstream os(filename, std::ios::binary);
+  CGAL::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, np);
 }
 
@@ -379,7 +380,8 @@ template <typename PointRange>
 bool write_LAS(const char* filename, const PointRange& points,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  std::ofstream os(filename);
+  std::ofstream os(filename, std::ios::binary);
+  CGAL::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points)());
 }
 

@@ -498,7 +498,7 @@ bool read_LAS(std::istream& is, OutputIterator output,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief reads points (position only) from a .las or .laz stream.
+   \brief reads points (position only) using the \ref IOStreamLAS.
 
    Potential additional properties are ignored.
 
@@ -535,7 +535,8 @@ bool read_LAS(const char* filename,
               PointOutputIterator output,
               const CGAL_BGL_NP_CLASS& np)
 {
-  std::ifstream is(filename);
+  std::ifstream is(filename, std::ios::binary);
+  CGAL::set_mode(is, CGAL::IO::BINARY);
   return read_LAS<OutputIteratorValueType>(filename, output, np);
 }
 
@@ -544,7 +545,8 @@ bool read_LAS(const char* filename,
 template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const char* fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ifstream is(fname);
+  std::ifstream is(fname, std::ios::binary);
+  CGAL::set_mode(is, CGAL::IO::BINARY);
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 

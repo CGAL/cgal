@@ -250,7 +250,8 @@ which offers combinatorial repairing while reading bad inputs.
 
 \section IOStreamLAS LAS (Lidar) File Format
 
-Similar to the \ref IOStreamPLY, but this format does not handle normals and requires the \ref thirdpartyLASlib library.
+Similar to the \ref IOStreamPLY, but this format is binary-only and does not handle normals.
+The \ref thirdpartyLASlib library is required.
 
 A precise specification of those formats is available
 <a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000418.shtml">here</a>.
