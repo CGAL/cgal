@@ -20,9 +20,34 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap
   auto nodes = octree.template walk<CGAL::Octree::Walker::Preorder>();
 
   // Iterate over the range and print each node
+//  for (auto &n : nodes) {
+//
+//    for (int i = 0; i < n.depth() - 1; ++i)
+//      os << " │  ";
+//
+//    if (!n.is_root()) {
+//
+//      if (n.index() == 7)
+//        os << " └─";
+//      else
+//        os << " ├─";
+//    }
+//
+//    os << n << std::endl;
+//
+//    if (!n.is_leaf()) {
+//
+//      for (int i = 0; i < n.depth(); ++i)
+//        os << " │  ";
+//
+//      os << " ┬ " << std::endl;
+//    }
+//  }
+
+  // Iterate over the range and print each node
   for (auto &n : nodes) {
 
-    for (int i = 0; i < n.depth(); ++i)
+    for (int i = 0; i < n.depth() - 1; ++i)
       os << ". ";
 
     os << n << std::endl;

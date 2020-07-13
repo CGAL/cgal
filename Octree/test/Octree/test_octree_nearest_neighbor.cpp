@@ -22,7 +22,7 @@ typedef CGAL::Octree::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
-void naive_vs_accelerated(std::size_t dataset_size) {
+void naive_vs_octree(std::size_t dataset_size) {
 
   // Create a dataset
   Point_set points;
@@ -63,9 +63,15 @@ void naive_vs_accelerated(std::size_t dataset_size) {
 
   // Do the same using the octree
   Point octree_nearest = *generator;
+  auto point_map = points.point_map();
+  Octree octree(points, point_map);
+  octree.refine(10, 1);
   auto octree_start_time = high_resolution_clock::now();
   {
     // TODO: Write a nearest-neighbor implementation and use it here
+    std::vector<Point> k_neighbors;
+    octree.nearest_k_neighbours(random_point, 1, std::back_inserter(k_neighbors));
+    octree_nearest = *k_neighbors.begin();
   }
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
@@ -87,10 +93,10 @@ void naive_vs_accelerated(std::size_t dataset_size) {
 
 int main(void) {
 
-  naive_vs_accelerated(100);
-  naive_vs_accelerated(1000);
-  naive_vs_accelerated(10000);
-  naive_vs_accelerated(100000);
+  naive_vs_octree(100);
+  naive_vs_octree(1000);
+  naive_vs_octree(10000);
+  naive_vs_octree(100000);
 
   return EXIT_SUCCESS;
 }

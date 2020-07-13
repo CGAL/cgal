@@ -330,6 +330,12 @@ public:
     return *node_for_point;
   }
 
+  template <typename Point_output_iterator>
+  void nearest_k_neighbours(const Point &p, std::size_t k, Point_output_iterator output) {
+
+    *output++ = p;
+  }
+
   /// @}
 
   /// \name Operators
