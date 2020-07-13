@@ -418,7 +418,8 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  void nearest_k_neighbours_recursive() {
+  template <typename Point_output_iterator>
+  void nearest_k_neighbours_recursive(const Point &p, std::size_t k, const Node &node, FT radius_squared, Point_output_iterator output) {
 
   }
 
