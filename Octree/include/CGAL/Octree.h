@@ -438,6 +438,34 @@ private: // functions :
 
       // Base case: the node has no children
 
+      // Check if the node contains any points
+      if (0 < std::distance(node.value().begin(), node.value().end())) {
+
+        // If it does, loop through each point
+        for (auto point : node.value()) {
+
+          // Find the distance of the point
+          FT new_distance_squared = CGAL::squared_distance(point, p);
+
+          // Check whether the new distance is an improvement
+          if (new_distance_squared < largest_radius_squared_found) {
+
+            // Make room for the new point if necessary
+            if (out.size() == out.capacity()) {
+
+              // Find the location of the furthest point in the list
+
+              // Remove the furthest point
+            }
+
+            // Add the point to the list
+
+            // Update the distance
+            largest_radius_squared_found = new_distance_squared;
+          }
+        }
+      }
+
     } else {
 
       // If the node has children
