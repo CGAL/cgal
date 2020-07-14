@@ -335,16 +335,15 @@ public:
   void nearest_k_neighbours(const Point &p, std::size_t k, Point_output_iterator output) const {
 
     // Create an empty list of points
-//    std::vector<const Point &> points_list;
-//    points_list.reserve(k);
+    std::vector<Point> points_list;
+    points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-//    nearest_k_neighbours_recursive_simple(p, points_list);
+    nearest_k_neighbours_recursive_simple(p, points_list);
 
     // Add all the points found to the output
-//    for (auto &point : points_list)
-//      *output++ = point;
-    *output++ = p;
+    for (auto &point : points_list)
+      *output++ = point;
   }
 
   /// @}
@@ -429,10 +428,9 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  template<typename Point_output_iterator>
-  void nearest_k_neighbours_recursive_simple(const Point &p, std::vector<const Point &> &out) const {
+  void nearest_k_neighbours_recursive_simple(const Point &p, std::vector<Point> &out) const {
 
-//    out.push_back(p);
+    out.push_back(p);
   }
 
   // TODO: It might be possible to fold this into the non-recursive function signature
