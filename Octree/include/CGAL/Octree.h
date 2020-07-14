@@ -339,7 +339,7 @@ public:
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbours_recursive_simple(p, points_list);
+    nearest_k_neighbours_recursive_simple(p, points_list, m_root);
 
     // Add all the points found to the output
     for (auto &point : points_list)
@@ -428,7 +428,7 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  void nearest_k_neighbours_recursive_simple(const Point &p, std::vector<Point> &out) const {
+  void nearest_k_neighbours_recursive_simple(const Point &p, std::vector<Point> &out, const Node &node) const {
 
     out.push_back(p);
   }
