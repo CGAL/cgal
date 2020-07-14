@@ -24,6 +24,8 @@ typedef CGAL::Octree::Octree
 
 void naive_vs_octree(std::size_t dataset_size) {
 
+  std::cout << "[ " << dataset_size << " points ]" << std::endl;
+
   // Create a dataset
   Point_set points;
   CGAL::Random_points_in_cube_3<Point> generator;
