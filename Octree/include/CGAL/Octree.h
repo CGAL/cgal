@@ -428,10 +428,38 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  void nearest_k_neighbours_recursive_simple(const Point &p, std::vector<Point> &out, const Node &node,
-                                             FT largest_distance) const {
+  FT nearest_k_neighbours_recursive_simple(const Point &p, std::vector<Point> &out, const Node &node,
+                                           FT search_bounds_radius_squared) const {
 
+    FT largest_radius_squared_found = search_bounds_radius_squared;
+
+    // Check whether we've reached the bottom of the tree
+    if (node.is_leaf()) {
+
+      // Base case: the node has no children
+
+    } else {
+
+      // If the node has children
+
+      // Search each of them
+      for (int index = 0; index < 8; ++index) {
+        auto &n = node[index];
+
+        // Check whether this node is capable of containing closer points
+        // TODO: Maybe I should write a function for determining the distance between a node and a point?
+        // FIXME: For now, this checks every child (which degenerates to the brute force method)
+        if (true /*TODO: Replace this with the equation*/) {
+
+          // Recursive case
+          largest_radius_squared_found =
+                  nearest_k_neighbours_recursive_simple(p, out, n, largest_radius_squared_found);
+
+        }
+      }
+    }
     out.push_back(p);
+    return largest_radius_squared_found;
   }
 
   // TODO: It might be possible to fold this into the non-recursive function signature
