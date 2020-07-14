@@ -535,8 +535,8 @@ public:
     typedef typename HDS::Halfedge_const_iterator Halfedge_const_iterator;
     typedef typename HDS::Face_const_iterator     Face_const_iterator;
 
-    typedef Iterator_range< Prevent_deref<Vertex_iterator> >   Vertex_const_handles;
-    typedef Iterator_range< Prevent_deref<Halfedge_iterator> > Halfedge_const_handles;
+    typedef Iterator_range< Prevent_deref<Vertex_const_iterator> >   Vertex_const_handles;
+    typedef Iterator_range< Prevent_deref<Halfedge_const_iterator> > Halfedge_const_handles;
 
     // Auxiliary iterators for convenience
     typedef Project_point<Vertex>                 Proj_point;
@@ -902,7 +902,7 @@ public:
     Point_const_iterator points_end()   const { return vertices_end();}
 
     Const_points points() const {
-        return Points(points_begin(), points_end());
+        return Const_points(points_begin(), points_end());
     }
 
     Plane_iterator       planes_begin()       { return facets_begin();}
@@ -916,7 +916,7 @@ public:
     Plane_const_iterator planes_end()   const { return facets_end();}
 
     Const_planes planes() const {
-        return Planes(planes_begin(), planes_end());
+        return Const_planes(planes_begin(), planes_end());
     }
 
     Edge_iterator        edges_begin()        { return halfedges_begin();}
@@ -934,7 +934,7 @@ public:
     Edge_const_iterator  edges_end()    const { return halfedges_end();}
 
     Const_edges edges() const {
-        return Edges(edges_begin(), edges_end());
+        return Const_edges(edges_begin(), edges_end());
     }
 
     Traits&       traits()       { return m_traits; }
