@@ -18,7 +18,8 @@ using namespace std;
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef double Scalar;
+typedef CGAL::Simple_cartesian<Scalar> K;
 typedef K::Point_3 Point_3;
 typedef K::Vector_3 Vector_3;
 typedef boost::tuple<Point_3, int, Vector_3> Pwn;
@@ -28,7 +29,7 @@ typedef CGAL::Nth_of_tuple_property_map<2, Pwn> Normal_map;
 typedef std::vector<Pwn> Patch;
 
 enum {Dim = 3};
-typedef Eigen::Matrix<K::FT, Dim+1, Dim+1> MatrixType;
+typedef Eigen::Matrix<Scalar, Dim+1, Dim+1> MatrixType;
 
 
 
@@ -55,8 +56,8 @@ int main(int argc, const char** argv)
     const int n = problem.n;
     const int m = problem.m;
     const vector<Patch>& patches = problem.patches;
-
-    CGAL::OpenGR::GRET_SDP matcher;
+        
+    CGAL::OpenGR::GRET_SDP<Scalar> matcher;
     matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
                                                 .normal_map(Normal_map())
                                                 .vertex_index_map(Index_map()));
@@ -69,7 +70,7 @@ void readPatch(const string& file, PatchRange& patch){
     file_stream >> num_points;
     patch.reserve(num_points);
 
-    K::FT x, y, z;
+    Scalar x, y, z;
     int index;
     while(file_stream >> index){
         file_stream >> x;

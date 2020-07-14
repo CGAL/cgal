@@ -16,6 +16,7 @@
 #include <gr/algorithms/GRET_SDP.h>
 #include <gr/accelerators/MOSEKWrapper.h>
 #include <gr/shared.h>
+#include <memory>
 
 namespace CGAL {
 
@@ -79,50 +80,53 @@ namespace OpenGR {
         };
     }
 
-    template <typename Kernel>
-    using GRET_SDPOptions = typename gr::GRET_SDP<gr::Point3D<typename Kernel::FT>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>::OptionsType;
+    template <typename Scalar>
+    using GRET_SDPOptions = typename gr::GRET_SDP<gr::Point3D<Scalar>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>::OptionsType;
 
+    template <class Scalar>
     class GRET_SDP {
+        using GrMatcherType = gr::GRET_SDP<gr::Point3D<Scalar>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>;
+        using GrOptionsType = typename GrMatcherType::OptionsType;
+        
+
         public:
+        GRET_SDP();
 
         template <class PatchRange, class NamedParameters>
         void registerPatches(const PatchRange& patches, const int n, const NamedParameters& np);
 
+        // returns transformations
+        template<typename TrRange>
+        void getTransformations(TrRange& transformations);
+
+        // returns registered points
+        template<typename PointRange>
+        void getRegisteredPatches(PointRange& registered_points);
+
         private:
-        template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
-        void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GRET_SDPOptions<Kernel>& options);
+        std::unique_ptr<GrMatcherType> gr_matcher;
 
+        template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
+        void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map);
 
+        template <class NamedParameters>
+        GrOptionsType GetOptionsFromNamedParameters(const NamedParameters& np);
     };
 
+    template <class Scalar>
+    GRET_SDP<Scalar>::GRET_SDP() {};
 
-    template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
-    void GRET_SDP::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GRET_SDPOptions<Kernel>& options){
-        typedef typename Kernel::FT Scalar;
-        typedef gr::Point3D<Scalar> PointType;
-        typedef typename PatchRange::value_type PointRange;
-        typedef gr::GRET_SDP<PointType, gr::DummyTransformVisitor, gr::GRET_SDP_Options> MatcherType;
+    template <class Scalar>
+    template <class NamedParameters>
+    typename GRET_SDP<Scalar>::GrOptionsType 
+    GRET_SDP<Scalar>::GetOptionsFromNamedParameters(const NamedParameters& np) {
+        GrOptionsType options;
+        return options;
+    };
 
-        // unary function that converty CGAL PatchRange to OpenGR PatchRange
-        internal::CGAL_range_and_pmaps_range_to_opengr_point3d_PatchRange<PatchRange, Scalar, PointMap, IndexMap, VectorMap>
-        unary_function(point_map, index_map, vector_map);
-
-        // construct gr patches
-        auto gr_patches = boost::make_iterator_range(
-        boost::make_transform_iterator (patches.begin(), unary_function),
-        boost::make_transform_iterator (patches.end(),   unary_function));
-
-        gr::Utils::Logger logger(gr::Utils::Verbose);
-        MatcherType matcher(options, logger);
-
-        gr::DummyTransformVisitor tr_visitor;
-        matcher.template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(gr_patches, n, tr_visitor);
-
-    }
-
-
+    template <class Scalar>
     template <class PatchRange, class NamedParameters>
-    void GRET_SDP::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
+    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
     {
         namespace PSP = CGAL::Point_set_processing_3;
         typedef typename PatchRange::value_type PointRange;
@@ -133,16 +137,54 @@ namespace OpenGR {
         typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
         typedef typename PSP::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
 
-        typedef typename PSP::GetK<PointRange, NamedParameters>::Kernel Kernel;
-
+        //typedef typename PSP::GetK<PointRange, NamedParameters>::Kernel Kernel;
         PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
         NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
         auto index_map = get_parameter(np, internal_np::vertex_index);
 
-        GRET_SDPOptions<Kernel> options;
+        // using GrMatcherType = gr::GRET_SDP<gr::Point3D<typename Kernel::FT>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>;
+        GrOptionsType options = GetOptionsFromNamedParameters(np);
+        gr::Utils::Logger logger(gr::Utils::NoLog);
 
-        registerPatches<Kernel>(patches, n, point_map, index_map, normal_map, options);
+        gr_matcher = std::unique_ptr<GrMatcherType>(new GrMatcherType(options, logger));
+
+        registerPatches(patches, n, point_map, index_map, normal_map);
     }
+    
+    // returns transformations
+    template <class Scalar>
+    template<typename TrRange>
+    void GRET_SDP<Scalar>::getTransformations(TrRange& transformations){
+
+    }
+
+    // returns registered points
+    template <class Scalar>
+    template<typename PointRange>
+    void GRET_SDP<Scalar>::getRegisteredPatches(PointRange& registered_points){
+        
+    }
+    template <class Scalar>
+    template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
+    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map){
+        // unary function that converty CGAL PatchRange to OpenGR PatchRange
+        internal::CGAL_range_and_pmaps_range_to_opengr_point3d_PatchRange<PatchRange,Scalar, PointMap, IndexMap, VectorMap>
+        unary_function(point_map, index_map, vector_map);
+
+        // construct gr patches
+        auto gr_patches = boost::make_iterator_range(
+        boost::make_transform_iterator (patches.begin(), unary_function),
+        boost::make_transform_iterator (patches.end(),   unary_function));
+
+        gr::DummyTransformVisitor tr_visitor;
+
+        GrMatcherType matcher(GrOptionsType(), gr::Utils::Logger(gr::Utils::NoLog));
+        matcher.template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(gr_patches, n, tr_visitor);
+
+        gr_matcher->template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(gr_patches, n, tr_visitor);
+
+    }
+
 
 } } // end of namespace CGAL::OpenGR
 
