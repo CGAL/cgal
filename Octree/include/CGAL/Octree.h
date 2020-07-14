@@ -48,6 +48,7 @@
 #include <queue>
 #include <vector>
 #include <math.h>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
@@ -427,7 +428,7 @@ private: // functions :
     // TODO: Perhaps I should use a purpose-made struct instead of a pair here
     std::array<std::pair<FT, typename Node::Index>, 8> nodes_to_visit;
 
-    // Add the child nodes to the list
+    // Add the each of the child nodes to the list
     for (int index = 0; index < 3; ++index) {
 
       // Set the indices properly
@@ -438,19 +439,18 @@ private: // functions :
 
         // Empty nodes are considered infinitely far
         nodes_to_visit[index].first = std::numeric_limits<FT>::max();
-      }
-
-      else {
+      } else {
 
         // Find the distance squared between p and the node's center point
-
+        nodes_to_visit[index].first = CGAL::squared_distance(p, compute_barycenter_position(node[index]));
       }
     }
 
-
-
-
-    // Sort the nodes by their distance from the point p
+    // Sort the nodes by their distance
+    //std::sort(nodes_to_visit.begin(), nodes_to_visit.end());
+    std::sort(nodes_to_visit.begin(), nodes_to_visit.end(), [](auto &left, auto &right) {
+      return left.first < right.first;
+    });
 
     // TODO
 
