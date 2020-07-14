@@ -453,12 +453,14 @@ private: // functions :
             // Make room for the new point if necessary
             if (out.size() == out.capacity()) {
 
-              // Find the location of the furthest point in the list
 
-              // Remove the furthest point
             }
 
             // Add the point to the list
+            // TODO
+
+            // Sort the list (for next time)
+            // TODO
 
             // Update the distance
             largest_radius_squared_found = new_distance_squared;
