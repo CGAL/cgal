@@ -122,6 +122,7 @@ private: // Private types
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
   typedef typename Kernel::Sphere_3 Sphere;
+  typedef typename CGAL::Bbox_3 Bbox;
   typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
@@ -429,13 +430,17 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  bool do_intersect(const Node &node, Sphere sphere) const {
+  bool do_intersect(const Node &node, const Sphere &sphere) const {
+
+    // TODO
 
     // Create a cubic bounding box from the node
 
     // Check for overlap between the node's box and the sphere as a box, to quickly eliminate some cases
 
     // Check for intersection between the node and the sphere
+
+    return true;
   }
 
   FT nearest_k_neighbours_recursive(const Point &p, std::vector<Point> &out, const Node &node,
@@ -493,9 +498,7 @@ private: // functions :
         auto &n = node[index];
 
         // Check whether this node is capable of containing closer points
-        // TODO: Maybe I should write a function for determining the distance between a node and a point?
-        // FIXME: For now, this checks every child (which degenerates to the brute force method)
-        if (true /*TODO: Replace this with the equation*/) {
+        if (do_intersect(n, Sphere{p, largest_radius_squared_found})) {
 
           // Recursive case
           largest_radius_squared_found =
