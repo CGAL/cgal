@@ -60,7 +60,9 @@ void naive_vs_octree(std::size_t dataset_size) {
             << "is "
             << "(" << naive_nearest << ") "
             << "at a distance^2 of "
-            << CGAL::squared_distance(naive_nearest, random_point)
+            << CGAL::squared_distance(naive_nearest, random_point) << " "
+            << "with a time of "
+            << naive_elapsed_time.count()
             << std::endl;
 
   // Do the same using the octree
@@ -83,14 +85,16 @@ void naive_vs_octree(std::size_t dataset_size) {
             << "is "
             << "(" << octree_nearest << ") "
             << "at a distance^2 of "
-            << CGAL::squared_distance(octree_nearest, random_point)
+            << CGAL::squared_distance(octree_nearest, random_point) << " "
+            << "with a time of "
+            << octree_elapsed_time.count()
             << std::endl;
 
   // Check that they produce the same answer
   assert(octree_nearest == naive_nearest);
 
   // Check that the octree was faster
-  //assert(octree_elapsed_time < naive_elapsed_time);
+  assert(octree_elapsed_time < naive_elapsed_time);
 }
 
 void kdtree_vs_octree(std::size_t dataset_size) {
@@ -149,9 +153,9 @@ void kdtree_vs_octree(std::size_t dataset_size) {
 
 int main(void) {
 
-  naive_vs_octree(100);
-  naive_vs_octree(1000);
-  naive_vs_octree(10000);
+//  naive_vs_octree(100);
+//  naive_vs_octree(1000);
+//  naive_vs_octree(10000);
   naive_vs_octree(100000);
 
   kdtree_vs_octree(100);
