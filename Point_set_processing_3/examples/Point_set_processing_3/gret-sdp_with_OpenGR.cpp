@@ -1,7 +1,9 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Cartesian_matrix.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/OpenGR/gret_sdp.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -11,14 +13,13 @@
 #include <iostream>
 #include <utility>
 
-#include <CGAL/OpenGR/gret_sdp.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
 
 using namespace std;
 namespace pt = boost::property_tree;
 namespace fs = boost::filesystem;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef double Scalar;
+typedef CGAL::Simple_cartesian<Scalar> K;
 typedef K::Point_3 Point_3;
 typedef K::Vector_3 Vector_3;
 typedef boost::tuple<Point_3, int, Vector_3> Pwn;
@@ -29,8 +30,6 @@ typedef std::vector<Pwn> Patch;
 
 enum {Dim = 3};
 typedef Eigen::Matrix<K::FT, Dim+1, Dim+1> MatrixType;
-
-
 
 namespace params = CGAL::parameters;
 
