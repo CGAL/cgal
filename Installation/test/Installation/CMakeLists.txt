@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.7...3.15)
 project( Installation_Tests )
 
 
@@ -141,9 +141,51 @@ set_tests_properties(
   test_find_package_version_less_major
   test_find_package_version_fail-exact
   PROPERTIES WILL_FAIL TRUE)
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_config_file)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file)
+
 set(TEST_SRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/test_configuration.cpp)
-configure_file(test_configuration.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_config_file/CMakeLists.txt)
+configure_file(test_configuration.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_config_file/CMakeLists.txt @ONLY)
+message("CMAKE_SOURCE_DIR is ${CMAKE_SOURCE_DIR}")
 add_test(NAME test_config_file
-  COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_PROJECT_SOURCE_DIR}/CGALConfig.cmake)
+  COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CGAL_SOURCE_DIR} -DCGAL_GIVEN_DIR=${CGAL_SOURCE_DIR})
+list(APPEND test_config_lst "test_config_file")
+if(CGAL_TEST_SUITE)
+  add_test(NAME test_config_file_2
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CGAL_SOURCE_DIR}/lib/cmake/CGAL/ -DCGAL_GIVEN_DIR=${CGAL_SOURCE_DIR}/lib/cmake/CGAL)
+  list(APPEND test_config_lst "test_config_file_2")
+endif()#CGAL_TEST_SUITE
+
+add_test(NAME config_non_standard_cgal
+COMMAND ${CMAKE_COMMAND} -S ${CGAL_DIR} -B ${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/test_config_file)
+
+add_test(NAME install_non_standard_cgal
+COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/non_standard_install --target "install")
+
+add_test(NAME test_config_file_3
+COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_3 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
+set_property(TEST test_config_file_3 APPEND PROPERTY LABELS "test_config_file_3")
+set_property(TEST install_non_standard_cgal APPEND PROPERTY LABELS "test_config_file_3")
+set_property(TEST config_non_standard_cgal APPEND PROPERTY LABELS "test_config_file_3")
+
+list(APPEND test_config_lst "test_config_file_3")
+foreach(tgt ${test_config_lst})
+  add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
+  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
+  set_property(TEST ${tgt} APPEND PROPERTY DEPENDS "${tgt}_SetupFixture")
+  set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY FIXTURES_SETUP ${tgt})
+  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY FIXTURES_CLEANUP ${tgt})
+  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY DEPENDS ${tgt})
+  set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY LABELS ${tgt})
+  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY LABELS ${tgt})
+endforeach()
+
+set_property(TEST install_non_standard_cgal APPEND PROPERTY DEPENDS config_non_standard_cgal)
+set_property(TEST test_config_file_3 APPEND PROPERTY DEPENDS install_non_standard_cgal)
+set_property(TEST config_non_standard_cgal APPEND PROPERTY FIXTURES_SETUP test_config_file_3)
+set_property(TEST install_non_standard_cgal APPEND PROPERTY FIXTURES_SETUP test_config_file_3)
+
+
+
