@@ -1,6 +1,14 @@
 Release History
 ===============
 
+Release 5.2
+-----------
+
+### CGAL and the Boost Graph Library (BGL)
+
+- Added the function `can_add_face()`, which tests whether a new face defined by a range of vertices can be added.
+
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
