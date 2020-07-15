@@ -121,6 +121,7 @@ private: // Private types
 
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
+  typedef typename Kernel::Sphere_3 Sphere;
   typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
 
@@ -428,7 +429,7 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  bool do_intersect(const Node &node, typename Kernel::Sphere_3 sphere) const {
+  bool do_intersect(const Node &node, Sphere sphere) const {
 
     // Create a cubic bounding box from the node
 
