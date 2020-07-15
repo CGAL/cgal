@@ -435,8 +435,31 @@ private: // functions :
     // TODO
 
     // Create a cubic bounding box from the node
+    Bbox node_cube;
+    {
+      // TODO: This could be its own method!
 
-    // Check for overlap between the node's box and the sphere as a box, to quickly eliminate some cases
+      // Determine the side length of this node
+      FT size = m_side_per_depth[node.depth()];
+
+      // Determine the location this node should be split
+      FT min_corner[3];
+      FT max_corner[3];
+      for (int i = 0; i < 3; i++) {
+
+        min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
+        max_corner[i] = min_corner[i] + size;
+      }
+
+      // Create the cube
+      node_cube = {min_corner[0], min_corner[1], min_corner[2],
+                   max_corner[0], max_corner[1], max_corner[2]};
+    }
+
+    // Check for overlap between the node's box and the sphere as a box, to quickly catch some cases
+    // FIXME: Activating this can cause wrong results!
+//    if (!do_overlap(node_cube, sphere.bbox()))
+//      return false;
 
     // Check for intersection between the node and the sphere
 
