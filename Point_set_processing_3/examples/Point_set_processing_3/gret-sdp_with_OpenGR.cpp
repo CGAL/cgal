@@ -39,7 +39,7 @@ struct RegistrationProblem {
     int n;
     int m;
     int d;
-    vector<Patch> patches;
+    std::vector<Patch> patches;
 };
 
 template <typename TrRange>
@@ -48,14 +48,14 @@ void extractPatchesAndTrFromConfigFile(const string& configFilePath,  Registrati
 int main(int argc, const char** argv)
 {
     RegistrationProblem problem;
-    vector<MatrixType> gt_transformations;
+    std::vector<MatrixType> gt_transformations;
 
     extractPatchesAndTrFromConfigFile("/home/felix/Workspace/GSoC20/cgal-felix/build/examples/Point_set_processing_3/gret-sdp-data/config.json", problem, gt_transformations);
 
     const int d = problem.d;
     const int n = problem.n;
     const int m = problem.m;
-    const vector<Patch>& patches = problem.patches;
+    const std::vector<Patch>& patches = problem.patches;
         
     CGAL::OpenGR::GRET_SDP<Scalar> matcher;
     matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
