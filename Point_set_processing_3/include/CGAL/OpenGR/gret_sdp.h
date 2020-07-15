@@ -91,14 +91,14 @@ namespace OpenGR {
         void registerPatches(const PatchRange& patches, const int n, const NamedParameters& np);
 
         private:
-        template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
+        template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
         void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options);
 
 
     };
 
     template <typename Scalar>
-    template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
+    template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
     void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options){
 
         // unary function that converty CGAL PatchRange to OpenGR PatchRange
@@ -131,15 +131,13 @@ namespace OpenGR {
         typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
         typedef typename PSP::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
 
-        typedef typename PSP::GetK<PointRange, NamedParameters>::Kernel Kernel;
-
         PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
         NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
         auto index_map = get_parameter(np, internal_np::vertex_index);
 
         GR_Options options;
 
-        registerPatches<Kernel>(patches, n, point_map, index_map, normal_map, options);
+        registerPatches(patches, n, point_map, index_map, normal_map, options);
     }
 
 } } // end of namespace CGAL::OpenGR
