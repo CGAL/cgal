@@ -34,6 +34,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
+#include <CGAL/intersections.h>
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -432,8 +433,6 @@ private: // functions :
 
   bool do_intersect(const Node &node, const Sphere &sphere) const {
 
-    // TODO
-
     // Create a cubic bounding box from the node
     Bbox node_cube;
     {
@@ -457,13 +456,12 @@ private: // functions :
     }
 
     // Check for overlap between the node's box and the sphere as a box, to quickly catch some cases
-    // FIXME: Activating this can cause wrong results!
+    // FIXME: Activating this causes slower times!
 //    if (!do_overlap(node_cube, sphere.bbox()))
 //      return false;
 
     // Check for intersection between the node and the sphere
-
-    return true;
+    return CGAL::do_intersect(node_cube, sphere);
   }
 
   FT nearest_k_neighbours_recursive(const Point &p, std::vector<Point> &out, const Node &node,
@@ -521,7 +519,7 @@ private: // functions :
         auto &n = node[index];
 
         // Check whether this node is capable of containing closer points
-        if (do_intersect(n, Sphere{p, largest_radius_squared_found})) {
+        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 10 /*TODO: This is my epsilon*/})) {
 
           // Recursive case
           largest_radius_squared_found =
