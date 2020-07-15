@@ -1,6 +1,13 @@
 Release History
 ===============
 
+Release 5.2
+-----------
+
+### Surface Mesh
+
+- Added the functions `set_recycle_garbage()` and `does_recycle_garbage()` to the class `Surface_mesh`.
+
 [Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
