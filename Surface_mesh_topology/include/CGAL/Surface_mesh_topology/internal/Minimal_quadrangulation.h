@@ -1989,10 +1989,19 @@ protected:
     }
   }
 
+  /// Essentially compute the positive turn between ref and x
+  /// Requires x and ref outgoing at the same vertex
   size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<0>(get_local_map().opposite2(x), ref));
-    return get_local_map().positive_turn(get_local_map().opposite2(ref), get_local_map().opposite2(x));
+#if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
+    size_type ref_degree = get_local_map().template info<0>(ref);
+    size_type x_order = get_dart_id(get_local_map().opposite2(x)) % ref_degree;
+    size_type base_order = get_dart_id(ref) % ref_degree;
+    return (x_order < base_order) ? (x_order + ref_degree - base_order) : (x_order - base_order);
+#else
+    return get_local_map().negative_turn(x, ref);
+#endif
   }
 
   int get_previous_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
