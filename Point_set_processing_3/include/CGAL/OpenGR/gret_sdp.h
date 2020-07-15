@@ -17,6 +17,7 @@
 #include <gr/accelerators/MOSEKWrapper.h>
 #include <gr/shared.h>
 
+#include <memory>
 
 namespace CGAL {
 
@@ -91,6 +92,8 @@ namespace OpenGR {
         void registerPatches(const PatchRange& patches, const int n, const NamedParameters& np);
 
         private:
+        std::unique_ptr<GR_MatcherType> gr_matcher;
+
         template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
         void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options);
 
@@ -111,7 +114,10 @@ namespace OpenGR {
         boost::make_transform_iterator (patches.end(),   unary_function));
 
         gr::Utils::Logger logger(gr::Utils::Verbose);
+        // this one works
         GR_MatcherType matcher(options, logger);
+        // this one does not work
+        //gr_matcher.reset(new GR_MatcherType(options, logger));
 
         gr::DummyTransformVisitor tr_visitor;
         matcher.template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(gr_patches, n, tr_visitor);
@@ -135,6 +141,7 @@ namespace OpenGR {
         NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
         auto index_map = get_parameter(np, internal_np::vertex_index);
 
+        // add named parameters options to GR_Options (currently no options)
         GR_Options options;
 
         registerPatches(patches, n, point_map, index_map, normal_map, options);
