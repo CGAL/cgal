@@ -47,7 +47,7 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap
   // Iterate over the range and print each node
   for (auto &n : nodes) {
 
-    for (int i = 0; i < n.depth() - 1; ++i)
+    for (int i = 0; i < n.depth(); ++i)
       os << ". ";
 
     os << n << std::endl;
