@@ -1,4 +1,3 @@
-#define CGAL_TRACE_CMAP_TOOLS
 #include <CGAL/Polygonal_schema.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/Curves_on_surface_topology.h>
