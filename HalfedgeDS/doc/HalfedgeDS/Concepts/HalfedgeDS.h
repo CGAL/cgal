@@ -177,6 +177,24 @@ iterator over all faces.
 */
 typedef unspecified_type Face_iterator;
 
+/*!
+  range type for iterating over the vertices, with a nested
+  type `iterator` that has as value type `Vertex_handle`
+*/
+typedef Iterator_range<unspecified_type> Vertex_handles;
+
+/*!
+  range type for iterating over the halfedges, with a nested
+  type `iterator` that has as value type `Halfedge_handle`
+*/
+typedef Iterator_range<unspecified_type> Halfedge_handles;
+
+/*!
+  range type for iterating over the faces, with a nested
+  type `iterator` that has as value type `Face_handle`
+*/
+typedef Iterator_range<unspecified_type> Face_handles;
+
 /// @}
 
 /* \name Types for Tagging Optional Features
@@ -398,6 +416,12 @@ Vertex_iterator vertices_begin();
 Vertex_iterator vertices_end();
 
 /*!
+returns a range of handles over the vertices.
+\note The value type of `Vertex_handles::iterator` is `Vertex_handle`.
+*/
+Vertex_handles vertex_handles();
+
+/*!
 iterator over all halfedges
 */
 Halfedge_iterator halfedges_begin();
@@ -408,6 +432,12 @@ Halfedge_iterator halfedges_begin();
 Halfedge_iterator halfedges_end();
 
 /*!
+returns a range of handles over the halfedges.
+\note The value type of `Halfedge_handles::iterator` is `Halfedge_handle`.
+*/
+Halfedge_handles halfedge_handles();
+
+/*!
 iterator over all faces.
 */
 Face_iterator faces_begin();
@@ -416,6 +446,12 @@ Face_iterator faces_begin();
 
 */
 Face_iterator faces_end();
+
+/*!
+returns a range of handles over the faces.
+\note The value type of `Face_handles::iterator` is `Face_handle`.
+*/
+Face_handles face_handles();
 
 /// @}
 
