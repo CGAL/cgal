@@ -700,123 +700,58 @@ public:
         // Check whether orders form a valid parenthesis expression
         // First for the same direction of pr[0]
         res = true;
-
-        p_original.display();
-        std::cout << std::endl;
-        for(std::size_t i = 0; i < p_original.length(); ++i)
-        {
-          std::cout << (i>0?" ":"") << positive_turn(p_original[i], p_original.get_next_dart(i));
-        }
-        std::cout << ")" << std::endl;
-
-        Path_on_surface<Local_map> p_temp(get_local_map());
-        for(auto& dart : pr)
-        {
-          p_temp.push_back(dart);
-        }
-        p_temp.display();
-        std::cout << std::endl;
-        std::cout << "+(";
-        for(std::size_t i = 0; i < p_temp.length(); ++i)
-        {
-          std::cout << (i>0?" ":"") << positive_turn(p_temp[i], p_temp.get_next_dart(i));
-        }
-        std::cout << ")" << std::endl;
-
         auto marktemp=get_local_map().get_new_mark();
         for (auto it=get_local_map().darts().begin();
              it!=get_local_map().darts().end(); ++it)
         {
           if (!get_local_map().is_marked(it, marktemp))
           {
-            std::stack<std::size_t> parenthesis_pairing;
-            std::vector<rbtree::value_type> rotated_darts;
-            bool start_pairing = false;
+            std::stack<std::pair<std::size_t, bool>> parenthesis_pairing;
             Dart_const_handle dh2=it;
-            auto construct_parenthesis = [&pr, &it, &parenthesis_pairing, &start_pairing, &rotated_darts, this] (const rbtree::value_type& node) {
-              std::cout << get_local_map().darts().index(pr[node.m_idx]) << '@' << node.m_idx << ' ';
-              if (!start_pairing)
-              {
-                if (rotated_darts.empty())
-                {
-                  rotated_darts.emplace_back(node);
-                  return;
-                }
-                else
-                {
-                  std::size_t prev = rotated_darts.back().m_idx;
-                  std::size_t next = node.m_idx;
-                  if(prev > next)
-                  {
-                    std::swap(prev, next);
-                  }
-                  std::size_t distance = next - prev;
-                  if(next == pr.size() - 1 && prev == 0)
-                  {
-                    distance = 1;
-                    std::swap(prev, next);
-                  }
-                  if(distance == 1 && this->get_local_map().template belong_to_same_cell<0>(pr[next], it))
-                  {
-                    start_pairing = true;
-                    std::cout << "starting ";
-                  }
-                  else
-                  {
-                    rotated_darts.emplace_back(node);
-                    return;
-                  }
-                }
-              }
-              if (parenthesis_pairing.empty())
-              {
-                parenthesis_pairing.push(node.m_idx);
-              }
-              else
-              {
-                std::size_t prev = parenthesis_pairing.top();
-                std::size_t next = node.m_idx;
-                if(prev > next)
-                {
-                  std::swap(prev, next);
-                }
-                std::size_t distance = next - prev;
-                if(next == pr.size() - 1 && prev == 0)
-                {
-                  distance = 1;
-                  std::swap(prev, next);
-                }
-                if(distance == 1 && this->get_local_map().template belong_to_same_cell<0>(pr[next], it))
-                {
-                  parenthesis_pairing.pop();
-                }
-                else
-                {
-                  parenthesis_pairing.push(node.m_idx);
-                }
-              }
-            };
             do
             {
               get_local_map().mark(dh2, marktemp);
               auto dart_id = get_absolute_idx(dh2);
-              std::cout << get_local_map().darts().index(dh2) << ':';
+              auto handle_node = [&dh2, &pr, &parenthesis_pairing] (const rbtree::value_type& node) {
+                auto curr_dart = std::make_pair(node.m_idx, pr[node.m_idx] == dh2);
+                if (parenthesis_pairing.empty())
+                {
+                  parenthesis_pairing.push(curr_dart);
+                }
+                else
+                {
+                  auto prev_dart = parenthesis_pairing.top();
+                  auto next_dart = curr_dart;
+                  if (next_dart < prev_dart)
+                  {
+                    std::swap(next_dart, prev_dart);
+                  }
+                  if (next_dart.first == pr.size() - 1 && prev_dart.first == 0)
+                  {
+                    std::swap(next_dart, prev_dart);
+                  }
+                  if ((next_dart.first - prev_dart.first == 1 || next_dart.first == 0) &&
+                      (!prev_dart.second && next_dart.second))
+                  {
+                    parenthesis_pairing.pop();
+                  }
+                  else
+                  {
+                    parenthesis_pairing.push(curr_dart);
+                  }
+                }
+              };
               if(is_absolutely_directed(dh2))
               {
-                std::for_each(trees[dart_id].begin(), trees[dart_id].end(), construct_parenthesis);
+                std::for_each(trees[dart_id].begin(), trees[dart_id].end(), handle_node);
               }
               else
               {
-                std::for_each(trees[dart_id].rbegin(), trees[dart_id].rend(), construct_parenthesis);
+                std::for_each(trees[dart_id].rbegin(), trees[dart_id].rend(), handle_node);
               }
-              std::cout << std::endl;
               dh2 = get_local_map().template beta<2, 1>(dh2);
             }
             while(dh2!=it);
-            std::cout << "leftover:";
-            std::for_each(rotated_darts.begin(), rotated_darts.end(), construct_parenthesis);
-            std::cout << std::endl;
-            std::cout << std::endl;
             res = res && parenthesis_pairing.empty();
           }
         }
