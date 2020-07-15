@@ -125,8 +125,8 @@ public:
   typedef Kernel_traits<Point>::Kernel::Segment_3 Datum;
   /*!
   Id type:
-  - `boost::graph_traits<HalfedgeGraph>::%edge_descriptor if `OneHalfedgeGraphPerTree` is `Tag_true`
-  - `std::pair<boost::graph_traits<HalfedgeGraph>::edge_descriptor, HalfedgeGraph>` if `OneHalfedgeGraphPerTree` is `Tag_false`
+  - `boost::graph_traits<HalfedgeGraph>::%edge_descriptor` if `OneHalfedgeGraphPerTree` is `Tag_true`
+  - `std::pair<boost::graph_traits<HalfedgeGraph>::%edge_descriptor, const HalfedgeGraph*>` if `OneHalfedgeGraphPerTree` is `Tag_false`
   */
   unspecified_type Id;
   /// @}
@@ -141,7 +141,7 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor edge_descriptor;
 
   /*!
-  Constructs a primitive.
+  constructs a primitive.
   \tparam Iterator is an input iterator with `Id` as value type.
   This \ref AABB_tree/AABB_halfedge_graph_edge_example.cpp "example" gives a way to call this constructor
   using the insert-by-range method of the class `AABB_tree<Traits>`.
@@ -156,7 +156,7 @@ public:
   {}
 
   /*!
-  Constructs a primitive.
+  constructs a primitive.
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
@@ -202,4 +202,3 @@ public:
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
-

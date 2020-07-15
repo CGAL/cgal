@@ -455,6 +455,12 @@ public:
         run(mmap.get_fg(), *it);
     }
 
+    size_type index(Dart_const_handle it) const
+    {
+      return internal::Index_from_halfedge_descriptor<HEG>::
+        run(mmap.get_fg(), it);
+    }
+
   private:
     const Self & mmap;
     mutable typename Self::size_type msize;

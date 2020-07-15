@@ -87,7 +87,7 @@ void GlViewer::paintGL()
 void GlViewer::wheelEvent(QWheelEvent *event)
 {
   if (!m_scene) return;
-  m_scale += 0.05 * (event->delta() / 120);
+  m_scale += 0.05 * (event->angleDelta().y() / 120);
   if (m_scale <= 0.0) m_scale = 0.0;
   update();
 }

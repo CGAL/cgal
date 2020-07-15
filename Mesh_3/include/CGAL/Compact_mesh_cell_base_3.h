@@ -54,7 +54,7 @@ void set_weighted_circumcenter(T* &t, std::nullptr_t)
   t = nullptr;
 }
 template<typename T>
-bool compare_weighted_circumcenter(T* t)
+bool is_null(T* t)
 {
   return t == nullptr;
 }
@@ -80,7 +80,7 @@ void set_weighted_circumcenter(std::atomic<T*>& t, std::nullptr_t)
 }
 
 template<typename T>
-bool compare_weighted_circumcenter(std::atomic<T*>& t)
+bool is_null(std::atomic<T*>& t)
 {
   return t.load() == nullptr;
 }
@@ -302,7 +302,7 @@ public:
 public:
   void invalidate_weighted_circumcenter_cache() const
   {
-    if (!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)) {
+    if (!internal_tbb::is_null(weighted_circumcenter_)) {
       internal_tbb::delete_circumcenter(weighted_circumcenter_);
       internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
@@ -386,7 +386,7 @@ public:
 
   ~Compact_mesh_cell_base_3()
   {
-    if(!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)){
+    if(!internal_tbb::is_null(weighted_circumcenter_)){
       internal_tbb::delete_circumcenter(weighted_circumcenter_);
       internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
@@ -458,7 +458,7 @@ public:
   void set_neighbor(int i, Cell_handle n)
   {
     CGAL_triangulation_precondition( i >= 0 && i <= 3);
-    CGAL_triangulation_precondition( this != &*n );
+    CGAL_triangulation_precondition( this != n.operator->() );
     N[i] = n;
   }
 
@@ -471,10 +471,10 @@ public:
   void set_neighbors(Cell_handle n0, Cell_handle n1,
                      Cell_handle n2, Cell_handle n3)
   {
-    CGAL_triangulation_precondition( this != &*n0 );
-    CGAL_triangulation_precondition( this != &*n1 );
-    CGAL_triangulation_precondition( this != &*n2 );
-    CGAL_triangulation_precondition( this != &*n3 );
+    CGAL_triangulation_precondition( this != n0.operator->() );
+    CGAL_triangulation_precondition( this != n1.operator->() );
+    CGAL_triangulation_precondition( this != n2.operator->() );
+    CGAL_triangulation_precondition( this != n3.operator->() );
     N[0] = n0;
     N[1] = n1;
     N[2] = n2;
@@ -491,7 +491,7 @@ public:
 
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container(); }
+  void for_compact_container(void *p) { N[0].for_compact_container(p); }
 
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
@@ -533,7 +533,7 @@ public:
   {
     CGAL_static_assertion((boost::is_same<Point_3,
       typename GT_::Construct_weighted_circumcenter_3::result_type>::value));
-    if (weighted_circumcenter_ == nullptr) {
+    if (internal_tbb::is_null(weighted_circumcenter_)) {
       this->try_to_set_circumcenter(
         new Point_3(gt.construct_weighted_circumcenter_3_object()
                         (this->vertex(0)->point(),

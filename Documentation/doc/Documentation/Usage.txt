@@ -60,12 +60,6 @@ On most operating systems, package managers offer \cgal and its essential third 
 On macOS, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
 
     brew install cgal
-    brew install cgal-qt5   #(only for GUI)
-
-You should check that cgal and cgal-qt5 are correctly "linked", especially when upgrading from an old version. If not, run the following command:
-
-    brew link cgal
-    brew link cgal-qt5  #(if you installed it)
 
 On Linux distributions such as `Debian`/`Ubuntu`/`Mint`, use `apt-get` in the following way:
 

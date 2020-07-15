@@ -12,6 +12,7 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
   include_directories (BEFORE "include")
 
@@ -30,12 +31,12 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
   create_single_source_cgal_program( "test_io_triangulation_3.cpp" )
 
-  if(TBB_FOUND)
+  if(TARGET CGAL::TBB_support)
     foreach(target
         test_delaunay_3
         test_regular_3
         test_regular_insert_range_with_info)
-      CGAL_target_use_TBB(${target})
+      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
     endforeach()
   endif()
 
@@ -54,4 +55,3 @@ else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

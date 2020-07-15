@@ -30,6 +30,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Container_helper.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/tuple.h>
@@ -973,7 +974,7 @@ void split_connected_components_impl(FIMap fim,
     }
     nb_patches+=1;
   }
-
+  CGAL::internal::reserve(range, nb_patches);
   for(faces_size_type i=0; i<nb_patches; ++i)
   {
     CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>

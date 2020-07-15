@@ -1,0 +1,7 @@
+if(TensorFlow_FOUND AND NOT TARGET CGAL::TensorFlow_support)
+  add_library(CGAL::TensorFlow_support INTERFACE IMPORTED)
+  set_target_properties(CGAL::TensorFlow_support PROPERTIES
+    INTERFACE_COMPILE_DEFINITIONS "CGAL_LINKED_WITH_TENSORFLOW"
+    INTERFACE_INCLUDE_DIRECTORIES "${TensorFlow_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "${TensorFlow_LIBRARY}")
+endif()

@@ -354,10 +354,6 @@ protected Q_SLOTS:
   void save(QString filename, QList<CGAL::Three::Scene_item*>& to_save);
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
-#ifdef CGAL_USE_WEBSOCKETS
-  //!Starts a new WS server if none is already exist. Else, does nothing.
-  void on_action_Start_a_Session_triggered();
-#endif
   //!Opens a Dialog to choose a color and make it the background color.
   void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
@@ -501,30 +497,5 @@ protected:
 private:
   bool is_main;
 };
-#ifdef CGAL_USE_WEBSOCKETS
-QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
-QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
-class EchoServer : public QObject
-{
-    Q_OBJECT
-public:
-    explicit EchoServer(quint16 port);
-    ~EchoServer();
-
-
-Q_SIGNALS:
-    void closed();
-
-private Q_SLOTS:
-    void onNewConnection();
-    void processTextMessage(QString message);
-    void processBinaryMessage(QByteArray message);
-    void socketDisconnected();
-
-private:
-    QWebSocketServer *m_pWebSocketServer;
-    QList<QWebSocket *> m_clients;
-};
-#endif
 #endif // ifndef MAINWINDOW_H

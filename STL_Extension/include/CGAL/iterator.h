@@ -1480,8 +1480,6 @@ struct Range_iterator_type<RangeRef&>       { typedef typename RangeRef::iterato
 template <typename RangeRef>
 struct Range_iterator_type<const RangeRef&> { typedef typename RangeRef::const_iterator type; };
 
-
-
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>

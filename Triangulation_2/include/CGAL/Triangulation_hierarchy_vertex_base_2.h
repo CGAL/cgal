@@ -41,13 +41,13 @@ public:
   };
 
   Triangulation_hierarchy_vertex_base_2()
-    : Base(), _up(0), _down(0)
+    : Base()
     {}
   Triangulation_hierarchy_vertex_base_2(const Point & p, Face_handle f)
-    : Base(p,f), _up(0), _down(0)
+    : Base(p,f)
     {}
   Triangulation_hierarchy_vertex_base_2(const Point & p)
-    : Base(p), _up(0), _down(0)
+    : Base(p)
     {}
 
   Vertex_handle up() {return _up;}
@@ -57,8 +57,8 @@ public:
 
 
  private:
-  Vertex_handle  _up;    // same vertex one level above
-  Vertex_handle  _down;  // same vertex one level below
+  Vertex_handle  _up   = nullptr;    // same vertex one level above
+  Vertex_handle  _down = nullptr;  // same vertex one level below
 };
 
 } //namespace CGAL

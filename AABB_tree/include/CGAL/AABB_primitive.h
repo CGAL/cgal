@@ -112,14 +112,14 @@ struct AABB_primitive
   /// @}
 
   /*!
-  Constructs a primitive and initializes the property maps.
+  constructs a primitive and initializes the property maps.
   */
   AABB_primitive(Id id,
                  ObjectPropertyMap o_pmap=ObjectPropertyMap(),
                  PointPropertyMap p_pmap=PointPropertyMap());
 
   /*!
-  Constructs a primitive from an iterator with `Id` as value type
+  constructs a primitive from an iterator with `Id` as value type
   and initializes the property maps.
   */
   template <class Iterator>

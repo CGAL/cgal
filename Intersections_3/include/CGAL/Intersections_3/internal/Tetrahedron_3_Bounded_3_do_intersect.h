@@ -161,23 +161,40 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
 }
 
 template <class K>
-inline
-typename K::Boolean
-do_intersect(const typename K::Tetrahedron_3 &tet,
-             const CGAL::Bbox_3 &bb,
-             const K & k)
-{
-  return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
+inline typename K::Boolean do_intersect(const typename K::Tetrahedron_3 &tet,
+                                        const CGAL::Bbox_3 &bb, const K &k) {
+  // Swap arguments.
+  return do_intersect(bb, tet, k);
 }
 
-  template <class K>
-inline
-typename K::Boolean
-do_intersect(const CGAL::Bbox_3 &bb,
-             const typename K::Tetrahedron_3 &tet,
-             const K & k)
-{
-  return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
+// BBox_3 specific code since it is ok for BBox_3 to degenerate.
+template <class K>
+inline typename K::Boolean do_intersect(const CGAL::Bbox_3 &aabb,
+                                        const typename K::Tetrahedron_3 &tet,
+                                        const K &k) {
+  typename K::Construct_triangle_3 tr = k.construct_triangle_3_object();
+  typename K::Boolean result = false;
+  typename K::Boolean b = false;
+
+  b = do_intersect(aabb, tr(tet[0], tet[1], tet[2]), k);
+  if (certainly(b)) return b;
+  if (is_indeterminate(b)) result = b;
+  b = do_intersect(aabb, tr(tet[1], tet[2], tet[3]), k);
+  if (certainly(b)) return b;
+  if (is_indeterminate(b)) result = b;
+  b = do_intersect(aabb, tr(tet[2], tet[3], tet[0]), k);
+  if (certainly(b)) return b;
+  if (is_indeterminate(b)) result = b;
+  b = do_intersect(aabb, tr(tet[3], tet[0], tet[1]), k);
+  if (certainly(b)) return b;
+  if (is_indeterminate(b)) result = b;
+
+  b = k.has_on_bounded_side_3_object()(
+      tet, k.construct_point_3_object()(aabb.xmin(), aabb.ymin(), aabb.zmin()));
+  if (certainly(b)) return b;
+  if (is_indeterminate(b)) result = b;
+
+  return result;
 }
 
 } // namespace internal
