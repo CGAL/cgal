@@ -442,7 +442,8 @@ private: // functions :
       if (0 < std::distance(node.value().begin(), node.value().end())) {
 
         // If it does, loop through each point
-        for (auto point : node.value()) {
+        for (auto i : node.value()) {
+          auto point = get(m_points_map, i);
 
           // Find the distance of the point
           FT new_distance_squared = CGAL::squared_distance(point, p);
@@ -451,16 +452,21 @@ private: // functions :
           if (new_distance_squared < largest_radius_squared_found) {
 
             // Make room for the new point if necessary
-            if (out.size() == out.capacity()) {
+            if (out.size() == out.capacity())
 
-
-            }
+              // The list is already sorted, so the last item is the furthest
+              out.pop_back();
 
             // Add the point to the list
-            // TODO
+            out.push_back(point);
 
             // Sort the list (for next time)
-            // TODO
+            // TODO: This is stupidly inefficient, I need to save distances when adding points to the list
+            std::sort(out.begin(), out.end(), [=](auto &left, auto &right) {
+
+              // TODO: Calculating distances for every comparison is a massive waste
+              return CGAL::squared_distance(left, p) < CGAL::squared_distance(right, p);
+            });
 
             // Update the distance
             largest_radius_squared_found = new_distance_squared;
@@ -488,7 +494,7 @@ private: // functions :
         }
       }
     }
-    out.push_back(p);
+    //out.push_back(p);
     return largest_radius_squared_found;
   }
 
