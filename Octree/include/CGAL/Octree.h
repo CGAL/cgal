@@ -428,6 +428,15 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
+  bool do_intersect(const Node &node, typename Kernel::Sphere_3 sphere) const {
+
+    // Create a cubic bounding box from the node
+
+    // Check for overlap between the node's box and the sphere as a box, to quickly eliminate some cases
+
+    // Check for intersection between the node and the sphere
+  }
+
   FT nearest_k_neighbours_recursive(const Point &p, std::vector<Point> &out, const Node &node,
                                            FT search_bounds_radius_squared) const {
 
