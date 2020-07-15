@@ -339,7 +339,7 @@ public:
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbours_recursive_simple(p, points_list, m_root, std::numeric_limits<FT>::max());
+    nearest_k_neighbours_recursive(p, points_list, m_root, std::numeric_limits<FT>::max());
 
     // Add all the points found to the output
     for (auto &point : points_list)
@@ -428,7 +428,7 @@ private: // functions :
     reassign_points(node, node.value().begin(), node.value().end(), center);
   }
 
-  FT nearest_k_neighbours_recursive_simple(const Point &p, std::vector<Point> &out, const Node &node,
+  FT nearest_k_neighbours_recursive(const Point &p, std::vector<Point> &out, const Node &node,
                                            FT search_bounds_radius_squared) const {
 
     FT largest_radius_squared_found = search_bounds_radius_squared;
@@ -489,75 +489,13 @@ private: // functions :
 
           // Recursive case
           largest_radius_squared_found =
-                  nearest_k_neighbours_recursive_simple(p, out, n, largest_radius_squared_found);
+                  nearest_k_neighbours_recursive(p, out, n, largest_radius_squared_found);
 
         }
       }
     }
     //out.push_back(p);
     return largest_radius_squared_found;
-  }
-
-  // TODO: It might be possible to fold this into the non-recursive function signature
-  template<typename Point_output_iterator>
-  void nearest_k_neighbours_recursive(const Point &p, std::size_t k, const Node &node, FT radius_squared,
-                                      Point_output_iterator output) const {
-
-    // TODO: What's are these used for?
-    FT epsilon = 0.05;
-    FT smallest_distance_squared = radius_squared;
-
-    // List that pairs each child node with its distance
-    // TODO: Perhaps I should use a purpose-made struct instead of a pair here
-    std::array<std::pair<FT, typename Node::Index>, 8> nodes_to_visit;
-
-    // Add each of the child nodes to the list
-    for (int index = 0; index < 3; ++index) {
-
-      // Set the indices properly
-      nodes_to_visit[index].second = typename Node::Index(index);
-
-      // Check if the node contains any points
-      if (std::distance(node[index].value().begin(), node[index].value().end()) == 0) {
-
-        // Empty nodes are considered infinitely far
-        nodes_to_visit[index].first = std::numeric_limits<FT>::max();
-
-      } else {
-
-        // Find the distance squared between p and the node's center point
-        nodes_to_visit[index].first = CGAL::squared_distance(p, compute_barycenter_position(node[index]));
-      }
-    }
-
-    // Sort the nodes by their distance
-    //std::sort(nodes_to_visit.begin(), nodes_to_visit.end());
-    std::sort(nodes_to_visit.begin(), nodes_to_visit.end(), [](auto &left, auto &right) {
-      return left.first < right.first;
-    });
-
-    // Check each of the children
-    for (auto n : nodes_to_visit) {
-
-      // Stop if a specific criterion is reached
-      // TODO: There's a lot to unpack from this expression...
-      if (!(n.first < smallest_distance_squared + m_side_per_depth[node.depth()] / 4.0 +
-                      std::sqrt(smallest_distance_squared * m_side_per_depth[node.depth()]) - epsilon))
-        return;
-
-      // Check if we've reached the end of the tree
-      if (node.is_leaf()) {
-
-        // Special treatment for leaves
-      } else {
-
-        // Recursive case
-      }
-    }
-
-    // TODO
-
-    *output++ = p;
   }
 
 }; // end class Octree
