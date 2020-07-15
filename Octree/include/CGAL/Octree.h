@@ -338,15 +338,15 @@ public:
   void nearest_k_neighbours(const Point &p, std::size_t k, Point_output_iterator output) const {
 
     // Create an empty list of points
-    std::vector<Point> points_list;
+    std::vector<std::pair<Point, FT>> points_list;
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
     nearest_k_neighbours_recursive(p, points_list, m_root, std::numeric_limits<FT>::max());
 
     // Add all the points found to the output
-    for (auto &point : points_list)
-      *output++ = point;
+    for (auto &item : points_list)
+      *output++ = item.first;
   }
 
   /// @}
@@ -436,7 +436,7 @@ private: // functions :
     // Create a cubic bounding box from the node
     Bbox node_cube;
     {
-      // TODO: This could be its own method!
+      // TODO: This could be its own method
 
       // Determine the side length of this node
       FT size = m_side_per_depth[node.depth()];
@@ -464,7 +464,7 @@ private: // functions :
     return CGAL::do_intersect(node_cube, sphere);
   }
 
-  FT nearest_k_neighbours_recursive(const Point &p, std::vector<Point> &out, const Node &node,
+  FT nearest_k_neighbours_recursive(const Point &p, std::vector<std::pair<Point, FT>> &out, const Node &node,
                                            FT search_bounds_radius_squared) const {
 
     FT largest_radius_squared_found = search_bounds_radius_squared;
@@ -494,14 +494,14 @@ private: // functions :
               out.pop_back();
 
             // Add the point to the list
-            out.push_back(point);
+            out.push_back({point, new_distance_squared});
 
             // Sort the list (for next time)
             // TODO: This is stupidly inefficient, I need to save distances when adding points to the list
             std::sort(out.begin(), out.end(), [=](auto &left, auto &right) {
 
               // TODO: Calculating distances for every comparison is a massive waste
-              return CGAL::squared_distance(left, p) < CGAL::squared_distance(right, p);
+              return left.second < right.second;
             });
 
             // Update the distance
