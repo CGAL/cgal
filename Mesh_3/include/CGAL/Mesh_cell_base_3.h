@@ -15,7 +15,7 @@
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"

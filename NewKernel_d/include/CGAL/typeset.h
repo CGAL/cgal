@@ -41,11 +41,17 @@ namespace CGAL {
     template<class X> using contains = std::false_type;
     template<class X> using add = typeset<X>;
   };
+  struct typeset_all {
+    typedef typeset_all type;
+    template<class X> using contains = std::true_type;
+    template<class X> using add = typeset_all;
+  };
 
   template<class T1, class T2> struct typeset_union_ :
     typeset_union_<typename T1::template add<typename T2::head>::type, typename T2::tail>
   {};
   template<class T> struct typeset_union_ <T, typeset<> > : T {};
+  template<class T> struct typeset_union_ <T, typeset_all > : typeset_all {};
 
   template<class T1, class T2>
     struct typeset_intersection_ {
@@ -55,8 +61,8 @@ namespace CGAL {
         std::conditional<T2::template contains<H>::value,
         typename U::template add<H>::type, U>::type type;
     };
-  template<class T>
-    struct typeset_intersection_<typeset<>,T> : typeset<> {};
+  template<class T> struct typeset_intersection_<typeset<>, T> : typeset<> {};
+  template<class T> struct typeset_intersection_<typeset_all, T> : T {};
 
   template<class T1, class T2>
     using typeset_union = typename typeset_union_<T1,T2>::type;

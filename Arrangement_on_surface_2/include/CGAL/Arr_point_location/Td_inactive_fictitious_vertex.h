@@ -133,7 +133,7 @@ public:
 
  private:
 
-  Data* ptr() const { return (Data*)(PTR.p);  }
+  Data* ptr() const { return (Data*)(PTR);  }
 
         Curve_end vtx_to_ce(Vertex_const_handle v) const
   {
@@ -185,7 +185,7 @@ public:
   {
     Curve_end v_ce(vtx_to_ce(v_before_rem));
 
-    PTR.p = new Data( v_ce.cv(), v_ce.ce(), node);
+    PTR = new Data( v_ce.cv(), v_ce.ce(), node);
 
   }
 
@@ -241,7 +241,7 @@ public:
   /*! Access the trapezoid id (PTR). */
   inline unsigned long id() const
   {
-    return (unsigned long) PTR.p;
+    return (unsigned long) PTR;
   }
 
 

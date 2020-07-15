@@ -168,6 +168,8 @@ void treat_surf_inner_region(std::istream& input,
   iss.str(input_line);
   std::string dump;
   iss >> dump >> name;
+  name.erase(std::remove(name.begin(), name.end(), '"'), name.end());
+  name.erase(std::remove(name.begin(), name.end(), ','), name.end());
   for(std::size_t j=0; j<materials.size(); ++j)
   {
     if(materials[j].second.compare(name) == 0)
@@ -272,6 +274,111 @@ void build_surf_patch(DuplicatedPointsOutIterator out,
   CGAL_assertion(is_valid_polygon_mesh(mesh));
 }
 
+template<class Point>
+bool fill_binary_vertices(std::istream& is, std::vector<Point>& points, const std::size_t& nb_points)
+{
+  float f[3];
+  std::size_t pos = 0;
+  while(pos < nb_points)
+  {
+    is.read(reinterpret_cast<char*>(&f[0]), sizeof(f[0]));
+    if(!is.good())
+      return false;
+    is.read(reinterpret_cast<char*>(&f[1]), sizeof(f[1]));
+    if(!is.good())
+      return false;
+    is.read(reinterpret_cast<char*>(&f[2]), sizeof(f[2]));
+    if(!is.good())
+      return false;
+    points.push_back(Point(f[0], f[1], f[2]));
+    ++pos;
+  }
+  return true;
+}
+
+bool fill_binary_triangles(std::istream& is, std::vector<std::array<std::size_t, 3> >& triangles, const std::size_t& nb_trs)
+{
+  int tr[7];
+  std::size_t pos = 0;
+  while(pos < nb_trs)
+  {
+    for(int i = 0; i < 7; ++i)
+    {
+      is.read(reinterpret_cast<char*>(&tr[i]), sizeof(tr[i]));
+      if(!is.good())
+        return false;
+    }
+    std::array<std::size_t, 3> tri;
+    for(int i = 0; i < 3; ++i)
+      tri[i] = tr[i];
+    triangles.push_back(tri);
+    ++pos;
+  }
+  return true;
+}
+
+bool fill_binary_patch(std::istream& is, std::vector<std::size_t>& patch, std::size_t size)
+{
+  int id = 0;
+  std::size_t pos = 0;
+  while(pos < size)
+  {
+    is.read(reinterpret_cast<char*>(&id), sizeof(int));
+    if(!is.good())
+      return false;
+    patch.push_back(id);
+    ++pos;
+  }
+  return true;
+}
+
+template<typename Point_3, typename DuplicatedPointsOutIterator, typename Mesh>
+bool build_binary_surf_patch(DuplicatedPointsOutIterator& out,
+                             std::vector<Mesh>& output,
+                             std::vector<Point_3>& points,
+                             const std::vector<std::array<std::size_t, 3> >& polygons,
+                             const std::vector<std::size_t>& patch,
+                             const std::size_t i)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  typedef std::array<std::size_t, 3> Triangle_ind;
+  std::vector<Triangle_ind> triangles;
+  triangles.reserve(patch.size());
+  for(const std::size_t& id : patch)
+  {
+    triangles.push_back(polygons[id]);
+  }
+  if (!PMP::is_polygon_soup_a_polygon_mesh(triangles))
+  {
+    std::cout << "Orientation of patch #" << (i + 1) << "...";
+    std::cout.flush();
+
+    const std::size_t nbp_init = points.size();
+    bool no_duplicates =
+        PMP::orient_polygon_soup(points, triangles);//returns false if some points
+    //were duplicated
+
+    std::cout << "\rOrientation of patch #" << (i + 1) << " done";
+
+    if(!no_duplicates) //collect duplicates
+    {
+      for (std::size_t i = nbp_init; i < points.size(); ++i)
+        *out++ = points[i];
+      std::cout << " (non manifold -> "
+                << (points.size() - nbp_init) << " duplicated vertices)";
+    }
+    std::cout << "." << std::endl;
+  }
+
+  Mesh& mesh = output[i];
+
+  PMP::internal::PS_to_PM_converter<std::vector<Point_3>, std::vector<Triangle_ind> > converter(points, triangles);
+  converter(mesh, false/*insert_isolated_vertices*/);
+
+  CGAL_assertion(PMP::remove_isolated_vertices(mesh) == 0);
+  CGAL_assertion(is_valid_polygon_mesh(mesh));
+  return true;
+}
 }//end internal
 }//end IO
 
@@ -292,72 +399,174 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
 
   std::vector<Point_3> points;
   std::string line;
-  std::istringstream iss;
   std::size_t nb_vertices(0);
   std::vector<material> materials;
   //ignore header
   int material_id = 0;
   int nb_patches = 0;
-  while(std::getline(input, line))
+  if(!std::getline(input, line))
+    return false;
+  bool binary = (line.find("BINARY") != std::string::npos);
+  if(!binary)
   {
-    if (line_starts_with(line, "Materials"))
-    {
-      if(!IO::internal::treat_surf_materials(input, materials, material_id))
-        return false;
-    }
-
-    //get grid box
-    if (line_starts_with(line, "GridBox"))
-    {
-      IO::internal::treat_surf_grid_box(line, grid_box);
-    }
-
-    //get grid size
-    if (line_starts_with(line, "GridSize"))
-    {
-      IO::internal::treat_surf_grid_size(line, grid_size);
-    }
-
-    //get number of vertices
-    if (line_starts_with(line, "Vertices"))
-    {
-      IO::internal::treat_surf_vertices(input, line, nb_vertices, points);
-    }
-
-    //get number of patches
-    if (line_starts_with(line, "Patches"))
-    {
-      IO::internal::get_surf_patches(line, nb_patches, metadata, output);
-      break;
-    }
-  }
-
-  for(int i=0; i < nb_patches; ++i)
-  {
-    std::size_t nb_triangles(0);
-    //get metada
     while(std::getline(input, line))
     {
-      if (line_starts_with(line, "InnerRegion"))
+      if (line_starts_with(line, "Materials"))
       {
-        IO::internal::treat_surf_inner_region(input, line, materials, metadata, i);
+        if(!IO::internal::treat_surf_materials(input, materials, material_id))
+          return false;
       }
-      if (line_starts_with(line, "Triangles"))
+
+      //get grid box
+      if (line_starts_with(line, "GridBox"))
       {
-        IO::internal::treat_surf_triangles(line, nb_triangles);
+        IO::internal::treat_surf_grid_box(line, grid_box);
+      }
+
+      //get grid size
+      if (line_starts_with(line, "GridSize"))
+      {
+        IO::internal::treat_surf_grid_size(line, grid_size);
+      }
+
+      //get number of vertices
+      if (line_starts_with(line, "Vertices"))
+      {
+        IO::internal::treat_surf_vertices(input, line, nb_vertices, points);
+      }
+
+      //get number of patches
+      if (line_starts_with(line, "Patches"))
+      {
+        IO::internal::get_surf_patches(line, nb_patches, metadata, output);
         break;
       }
     }
 
-    //connect triangles
+    for(int i=0; i < nb_patches; ++i)
+    {
+      std::size_t nb_triangles(0);
+      //get metada
+      while(std::getline(input, line))
+      {
+        if (line_starts_with(line, "InnerRegion"))
+        {
+          IO::internal::treat_surf_inner_region(input, line, materials, metadata, i);
+        }
+        if (line_starts_with(line, "Triangles"))
+        {
+          IO::internal::treat_surf_triangles(line, nb_triangles);
+          break;
+        }
+      }
+      //connect triangles
+      typedef std::array<std::size_t, 3> Triangle_ind;
+      std::vector<Triangle_ind> polygons;
+      IO::internal::connect_surf_triangles(input, nb_triangles, polygons);
+
+      //build patch
+      IO::internal::build_surf_patch(out, output, points, polygons, i);
+    } // end loop on patches
+  }
+  else
+  {
+    int nTriangles = 0;
     typedef std::array<std::size_t, 3> Triangle_ind;
-    std::vector<Triangle_ind> polygons;
-    IO::internal::connect_surf_triangles(input, nb_triangles, polygons);
+    std::vector<Triangle_ind> triangles;
+    std::vector<int> tr_per_patches;
+    int patch_counter = -1;
+    while(std::getline(input, line))
+    {
+      //get nb vertices
+      if (line_starts_with(line, "nVertices"))
+      {
+        std::istringstream iss;
+        iss.str(line);
+        std::string dump;
+        if(!(iss >> dump >> nb_vertices))
+           return false;
+      }
+    //get nb triangles
+      if (line_starts_with(line, "nTriangles"))
+      {
+        std::istringstream iss;
+        iss.str(line);
+        std::string dump;
+        if(!(iss >> dump >> nTriangles))
+          return false;
+        std::cout<<nTriangles<<" triangles."<<std::endl;
+      }
+    //get nb patches and nb triangles per patches
+      if (line_starts_with(line, "define Patches"))
+      {
+        std::istringstream iss;
+        iss.str(line);
+        std::string dump;
+        if(patch_counter <0)
+        {
+          if(!(iss >> dump >> dump >> nb_patches))
+            return false;
+          std::cout<<nb_patches<<" patches."<<std::endl;
+          ++patch_counter;
+          metadata.resize(nb_patches);
+          output.resize(nb_patches);
+        }
+        else if(patch_counter < nb_patches)
+        {
+          int nb_tr = 0;
+          if(!(iss >> dump >> dump >> nb_tr))
+            return false;
+          tr_per_patches.push_back(nb_tr);
+          ++patch_counter;
+        }
+        else
+        {
+          std::cerr<<"Error in input file. Incoherent number of materials."<<std::endl;
+          return false;
+        }
+        //reset patch_counter
+        if(patch_counter == nb_patches)
+          patch_counter = 0;
+      }
 
-    //build patch
-    IO::internal::build_surf_patch(out, output, points, polygons, i);
-  } // end loop on patches
+    //get materials Ids
+      if (line_starts_with(line, "Materials"))
+      {
+        if(!IO::internal::treat_surf_materials(input, materials, material_id))
+          return false;
+      }
+    //get patches  InnerRegion
+      if (line_starts_with(line, "InnerRegion"))
+      {
+        IO::internal::treat_surf_inner_region(input, line, materials,metadata, patch_counter);
+      }
+      if (line_starts_with(line, "GridBox"))
+      {
+        IO::internal::treat_surf_grid_box(line, grid_box);
+      }
 
+      //get grid size
+      if (line_starts_with(line, "GridSize"))
+      {
+        IO::internal::treat_surf_grid_size(line, grid_size);
+      }
+      //fill vertices
+      if (line_starts_with(line, "@1"))
+        IO::internal::fill_binary_vertices(input, points, nb_vertices);
+      //fill triangles
+      else if (line_starts_with(line, "@2"))
+      {
+        IO::internal::fill_binary_triangles(input, triangles, nTriangles);
+      }
+      //fill patches
+      else if (line_starts_with(line, "@"))
+      {
+        std::vector<std::size_t> patch;
+        IO::internal::fill_binary_patch(input, patch, tr_per_patches[patch_counter]);
+        IO::internal::build_binary_surf_patch(out, output, points, triangles, patch, patch_counter++);
+      }
+    }
+  }
   return true;
 }
 

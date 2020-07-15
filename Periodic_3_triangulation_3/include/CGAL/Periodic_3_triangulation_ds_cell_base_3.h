@@ -233,7 +233,7 @@ public:
 
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container(); }
+  void for_compact_container(void *p) { N[0].for_compact_container(p); }
 
   // TDS internal data access functions.
   TDS_data& tds_data() { return _tds_data; }

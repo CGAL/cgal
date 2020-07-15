@@ -14,7 +14,7 @@
 #include "ui_NewTabDialog.h"
 #include <QButtonGroup>
 
-NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
+NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f) :
   QDialog( parent, f ),
   ui( new Ui::NewTabDialog ),
   buttonGroup( new QButtonGroup )

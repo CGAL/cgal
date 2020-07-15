@@ -98,6 +98,7 @@ CGAL_add_named_parameter(i_used_as_a_predicate_t, i_used_as_a_predicate, i_used_
 CGAL_add_named_parameter(nesting_levels_t, nesting_levels, nesting_levels);
 CGAL_add_named_parameter(i_used_for_volume_orientation_t, i_used_for_volume_orientation, i_used_for_volume_orientation);
 CGAL_add_named_parameter(area_threshold_t, area_threshold, area_threshold)
+CGAL_add_named_parameter(halfedges_keeper_t, halfedges_keeper, halfedges_keeper)
 CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 
@@ -147,6 +148,7 @@ CGAL_add_named_parameter(transformation_checkers_t, transformation_checkers, tra
 CGAL_add_named_parameter(inspector_t, inspector, inspector)
 CGAL_add_named_parameter(logger_t, logger, logger)
 CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatcher_config)
+CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
@@ -165,6 +167,12 @@ CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedr
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
+// tetrahedral remeshing parameters
+CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
+CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
+CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
+CGAL_add_named_parameter(remeshing_visitor_t, remeshing_visitor, remeshing_visitor)
+
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
@@ -176,4 +184,3 @@ CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
 CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
-

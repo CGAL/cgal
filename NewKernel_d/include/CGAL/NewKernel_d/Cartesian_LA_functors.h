@@ -58,7 +58,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
         }
         template<class...U>
         typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-                std::is_same<Dimension_tag<sizeof...(U)>, Dimension>::value,
+                std::is_same<Dimension_tag<int(sizeof...(U))>, Dimension>::value,
           result_type>::type
         operator()(U&&...u)const{
                 return typename Constructor::Values()(std::forward<U>(u)...);
@@ -66,7 +66,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
         //template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==static_dim+1)>::type,class=void>
         template<class...U>
         typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-                std::is_same<Dimension_tag<sizeof...(U)-1>, Dimension>::value,
+                std::is_same<Dimension_tag<int(sizeof...(U)-1)>, Dimension>::value,
           result_type>::type
         operator()(U&&...u)const{
                 return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);

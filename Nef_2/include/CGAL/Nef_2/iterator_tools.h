@@ -48,6 +48,12 @@ public:
     bool operator!=( const Self& i) const {
         return !(*this == i);
     }
+    bool operator==( const Iter& i ) const {
+      return Iter::operator==(i);
+    }
+    bool operator!=( const Iter& i) const {
+        return !(*this == i);
+    }
 
     Self& operator++() {
       Move move;

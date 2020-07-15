@@ -39,6 +39,10 @@ template <class Triangul>
 void
 _test_cls_triangulation_2( const Triangul & )
 {
+  static_assert(std::is_nothrow_move_constructible<Triangul>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Triangul>::value,
+                "move assignment is missing");
   //typedef Triangulation                      Cls;
 
   // We assume the traits class has been tested already

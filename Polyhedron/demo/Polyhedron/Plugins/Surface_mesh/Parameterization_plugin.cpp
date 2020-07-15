@@ -143,12 +143,17 @@ protected:
     }
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
-      QPointF old_pos = v->mapToScene(event->pos());
-      if(event->delta() <0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+      QPoint pos = event->pos();
+#else
+      QPointF pos = event->position();
+#endif
+      QPointF old_pos = v->mapToScene(pos.x(), pos.y());
+      if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
       else
         v->scale(0.8, 0.8);
-      QPointF new_pos = v->mapToScene(event->pos());
+      QPointF new_pos = v->mapToScene(pos.x(), pos.y());
       QPointF delta = new_pos - old_pos;
       v->translate(delta.x(), delta.y());
       v->update();

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <array>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -36,7 +37,7 @@ typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 typedef Triangulation_3::Vertex_handle Vertex_handle;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 
 // Functor to init the advancing front algorithm with indexed points
