@@ -581,21 +581,26 @@ public:
         // If the curve is not primitive, there must be at least
         // one self intersection
 
-        Path_on_surface<Local_map> pr(factorization.first);
-        pr.simplify_flips();
-        Path_on_surface<Local_map> p_original(pr);
+        auto& p_original = factorization.first;
+        p_original.simplify_flips();
+        std::vector<Dart_const_handle> pr;
+        pr.reserve(p_original.length());
+        for(std::size_t i = 0; i < p_original.length(); ++i)
+        {
+          pr.emplace_back(p_original[i]);
+        }
 
         // Compute the backward cyclic KMP failure table for the curve
-        std::vector<std::size_t> suffix_len = compute_common_circular_suffix(pr);
-        pr.compute_switchable();
+        std::vector<std::size_t> suffix_len = compute_common_circular_suffix(p_original);
+        std::vector<bool> switchable = compute_switchable(p_original);
 
         typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
                 typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
         std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
-        rb_nodes.reserve(pr.length());
+        rb_nodes.reserve(pr.size());
         std::unordered_map<size_type, rbtree> trees;
 
-        for (std::size_t i = 0; i < pr.length(); ++i)
+        for (std::size_t i = 0; i < pr.size(); ++i)
         {
           Dart_const_handle dh = pr[i];
           auto dart_id = get_absolute_idx(dh);
@@ -603,44 +608,22 @@ public:
           auto& node = rb_nodes.back();
 
           // Check whether current darts needs to be switched
-          if (i > 0 && pr.is_switchable(i))
+          if (i > 0 && switchable[i])
           {
             // Look at the t-1 turn of [i-1, i, i + 1]
             Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
-            auto dleft_id = get_absolute_idx(dleft);
-            // Binary search within potential switch trigger
-            // TODO: apply the optimization Francis mentioned by only look at the largest one
-            // Convert a dart to a circular ordering index
-            auto to_order = [this, &pr, &dleft] (const std::size_t& j) -> size_type
+            size_type dleft_id = get_absolute_idx(dleft);
+            if(trees[dleft_id].size() > 0)
             {
-              Dart_const_handle dprev = this->get_previous_relative_to(pr, j, dleft);
-              return this->get_order_relative_to(dprev, dleft);
-            };
-            size_type key_val = get_order_relative_to(pr[i - 1], dleft);
-            if (is_absolutely_directed(dleft))
-            {
-              auto comparator = [&to_order] (const std::size_t& key, const rbtree::value_type& b) -> bool {
-                return key > to_order(b.m_idx);
-              };
-              auto it_trigger = trees[dleft_id].upper_bound(key_val, comparator);
-              if (it_trigger != trees[dleft_id].end() && !get_local_map().template belong_to_same_cell<1>(pr[it_trigger->m_idx], dh))
+              std::size_t max_turn_idx = is_absolutely_directed(dleft) ? trees[dleft_id].begin()->m_idx : trees[dleft_id].rbegin()->m_idx;
+              Dart_const_handle dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
+              if(get_order_relative_to(pr[i - 1], dleft) > get_order_relative_to(dprev, dleft))
               {
-                pr.switch_dart(i);
+                switch_dart(pr, i, switchable);
+                dh = pr[i];
+                dart_id = get_absolute_idx(pr[i]);
               }
             }
-            else
-            {
-              auto comparator = [&to_order] (const std::size_t& key, const rbtree::value_type& b) -> bool {
-                return key < to_order(b.m_idx);
-              };
-              auto it_trigger = trees[dleft_id].upper_bound(0, comparator);
-              if (it_trigger != trees[dleft_id].end() && to_order(it_trigger->m_idx) < key_val)
-              {
-                pr.switch_dart(i);
-              }
-            }
-            dh = pr[i];
-            dart_id = get_absolute_idx(pr[i]);
           }
           // Insert current darts
           if (trees[dart_id].empty())
@@ -653,24 +636,38 @@ public:
             auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
             if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
             {
-              auto it_after = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::prev(it_prev)->m_idx, pr[i - 1])]);
-              trees[dart_id].insert_before(it_after, node);
+              auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::prev(it_prev)->m_idx, pr[i - 1])]);
+              if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
+              {
+                trees[dart_id].insert_before(std::next(it_adjacent), node);
+              }
+              else
+              {
+                trees[dart_id].insert_before(it_adjacent, node);
+              }
             }
             else if (std::next(it_prev) != trees[prev_dart_id].end() && is_same_corner(pr, std::next(it_prev)->m_idx, i - 1))
             {
-              auto it_before = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::next(it_prev)->m_idx, pr[i-1])]);
-              trees[dart_id].insert_before(std::next(it_before), node);
+              auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::next(it_prev)->m_idx, pr[i-1])]);
+              if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
+              {
+                trees[dart_id].insert_before(it_adjacent, node);
+              }
+              else
+              {
+                trees[dart_id].insert_before(std::next(it_adjacent), node);
+              }
             }
             else
             {
               auto less_than_in_tree = is_absolutely_directed(dh)?
-                std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()};
+                std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()};
               auto comparator = [this, &pr, &p_original, &suffix_len, &less_than_in_tree] (const std::size_t& key, const rbtree::value_type& b) -> bool {
                 if (b.m_idx == 0 && pr[key] == pr[0])
                 {
                   if(pr[key] != p_original[key]) {
                     // current edge was switched so it should always be on the right side (more counter-clockwise)
-                    return false;
+                    return less_than_in_tree(1, 0);
                   }
                   std::size_t current_dividing_idx = key + p_original.length() - 1 - suffix_len[key - 1];
                   std::size_t path_end_dividing_idx = p_original.length() - 1 - suffix_len[key - 1];
@@ -685,14 +682,14 @@ public:
 
                   std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
                   std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
-                  return less_than_in_tree(b_prev_order, key_prev_order);
+                  return less_than_in_tree(key_prev_order, b_prev_order);
                 }
                 else
                 {
                   std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
                   Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
                   std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
-                  return less_than_in_tree(b_prev_order, key_prev_order);
+                  return less_than_in_tree(key_prev_order, b_prev_order);
                 }
               };
               auto it_after = trees[dart_id].upper_bound(i, comparator);
@@ -704,14 +701,28 @@ public:
         // First for the same direction of pr[0]
         res = true;
 
-        pr.display();
-        std::cout << std::endl;
-        pr.display_pos_and_neg_turns();
-        std::cout << std::endl;
         p_original.display();
         std::cout << std::endl;
-        p_original.display_pos_and_neg_turns();
+        for(std::size_t i = 0; i < p_original.length(); ++i)
+        {
+          std::cout << (i>0?" ":"") << positive_turn(p_original[i], p_original.get_next_dart(i));
+        }
+        std::cout << ")" << std::endl;
+
+        Path_on_surface<Local_map> p_temp(get_local_map());
+        for(auto& dart : pr)
+        {
+          p_temp.push_back(dart);
+        }
+        p_temp.display();
         std::cout << std::endl;
+        std::cout << "+(";
+        for(std::size_t i = 0; i < p_temp.length(); ++i)
+        {
+          std::cout << (i>0?" ":"") << positive_turn(p_temp[i], p_temp.get_next_dart(i));
+        }
+        std::cout << ")" << std::endl;
+
         auto marktemp=get_local_map().get_new_mark();
         for (auto it=get_local_map().darts().begin();
              it!=get_local_map().darts().end(); ++it)
@@ -740,7 +751,7 @@ public:
                     std::swap(prev, next);
                   }
                   std::size_t distance = next - prev;
-                  if(next == pr.length() - 1 && prev == 0)
+                  if(next == pr.size() - 1 && prev == 0)
                   {
                     distance = 1;
                     std::swap(prev, next);
@@ -770,7 +781,7 @@ public:
                   std::swap(prev, next);
                 }
                 std::size_t distance = next - prev;
-                if(next == pr.length() - 1 && prev == 0)
+                if(next == pr.size() - 1 && prev == 0)
                 {
                   distance = 1;
                   std::swap(prev, next);
@@ -1994,54 +2005,111 @@ protected:
     return result;
   }
 
+  /// Compute a boolean array of whether there is an left-L-shape at i-th dart, aka whether it is swicthable
+  std::vector<bool> compute_switchable(const Path_on_surface<Local_map>& p) const
+  {
+    std::vector<bool> switchable(p.length(), false);
+    /// Skip the last dart and the first dart since it can never be switched, nor can it
+    /// be the second last dart of a switch
+    std::size_t idx = p.length() - 2;
+    while (idx > 0)
+    {
+      if (positive_turn(p[idx], p[idx + 1]) == 1)
+      {
+        /// This is the end of a possible switchbale subpath
+        switchable[idx].flip();
+        --idx;
+        while (idx > 0 && positive_turn(p[idx], p[idx + 1]) == 2)
+        {
+          switchable[idx].flip();
+          --idx;
+        }
+      } else
+      {
+        --idx;
+      }
+    }
+    return switchable;
+  }
+
+  /// Actually switch the dart in a vector of darts
+  void switch_dart(std::vector<Dart_const_handle>& p, std::size_t i, std::vector<bool>& switchable) const
+  {
+    CGAL_assertion(static_cast<bool>(switchable[i]));
+    p[i] = get_local_map().template beta<0, 2>(p[i]);
+    p[i + 1] = get_local_map().template beta<2, 0, 2>(p[i]);
+    switchable[i] = false;
+    /// It is guarantee that the last dart is not switchable
+    std::size_t j = i + 2;
+    for(; switchable[j - 1]; ++j)
+    {
+      p[j] = get_local_map().template beta<2, 0, 2, 0, 2>(p[j - 1]);
+      switchable[j - 1] = false;
+    }
+    /// Last dart may become switchable
+    if (j < p.size() && ((switchable[j] && positive_turn(p[j - 1], p[j]) == 2) ||
+        positive_turn(p[j - 1], p[j]) == 1))
+    {
+      switchable[j - 1] = true;
+    }
+  }
+
   size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
   {
-    size_type ref_degree = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
-    size_type ref_order = get_dart_absolute_order_relative_to(ref, ref),
-              x_order = get_dart_absolute_order_relative_to(x, ref);
-    return x_order <= ref_order ? (x_order + ref_degree - ref_order - 1) : (x_order - ref_order - 1);
+    CGAL_assertion(get_local_map().template belong_to_same_cell<0>(get_local_map().opposite2(x), ref));
+    return get_local_map().positive_turn(get_local_map().opposite2(ref), get_local_map().opposite2(x));
   }
 
-  int get_previous_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
+  int get_previous_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
-    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? (static_cast<int>(i) - 1) : (static_cast<int>(i) + 1);
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    return p[i] == ref ? (static_cast<int>(i) - 1) : (static_cast<int>(i) + 1);
   }
 
-  bool has_previous_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  bool has_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     int j = get_previous_idx_relative_to(p, i, ref);
-    return j >= 0 && j < p.length();
+    return j >= 0 && j < p.size();
   }
 
-  Dart_const_handle get_previous_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  Dart_const_handle get_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
-    int j = get_previous_idx_relative_to(p, i, ref);
-    if (j < 0) { j += p.length(); }
-    else if (j >= p.length()) { j -= p.length(); }
-    return p[j];
+    if (p[i] == ref)
+    {
+      return p[(i == 0) ? (p.size() - 1) : i - 1];
+    }
+    else
+    {
+      return get_local_map().opposite2(p[(i == p.size() - 1) ? 0 : i + 1]);
+    }
   }
 
-  int get_next_idx_relative_to(const Path_on_surface<Local_map>&p, std::size_t i, Dart_const_handle ref) const
-  {
-    return get_local_map().template belong_to_same_cell<0>(p[i], ref) ? (static_cast<int>(i) + 1) : (static_cast<int>(i) - 1);
-  }
-
-  bool has_next_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  int get_next_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
-    int j = get_next_idx_relative_to(p, i, ref);
-    return j >= 0 && j < p.length();
+    return p[i] == ref ? (static_cast<int>(i) + 1) : (static_cast<int>(i) - 1);
   }
 
-  Dart_const_handle get_next_relative_to(const Path_on_surface<Local_map>& p, std::size_t i, Dart_const_handle ref) const
+  bool has_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     int j = get_next_idx_relative_to(p, i, ref);
-    if (j < 0) { j += p.length(); }
-    else if (j >= p.length()) { j -= p.length(); }
-    return p[j];
+    return j >= 0 && j < p.size();
+  }
+
+  Dart_const_handle get_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    if (p[i] == ref)
+    {
+      return p[(i == p.size() - 1) ? 0 : i + 1];
+    }
+    else
+    {
+      return get_local_map().opposite2(p[(i == 0) ? (p.size() - 1) : i - 1]);
+    }
   }
 
   size_type get_absolute_idx(Dart_const_handle dh) const
@@ -2054,21 +2122,13 @@ protected:
     return get_local_map().darts().index(dh) < get_local_map().darts().index(get_local_map().opposite(dh));
   }
 
-  size_type get_dart_absolute_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
-  {
-    size_type ref_degree = degree<Local_map, 0>(get_local_map(), get_local_map().darts().begin());
-    return get_local_map().template belong_to_same_cell<0>(x, ref) ?
-           get_dart_id(x) % ref_degree :
-           get_dart_id(get_local_map().opposite2(x)) % ref_degree;
-  }
-
-  bool is_same_corner(const Path_on_surface<Local_map>& p, std::size_t j, std::size_t ref) const
+  bool is_same_corner(const std::vector<Dart_const_handle>& p, std::size_t j, std::size_t ref) const
   {
     if (!has_next_relative_to(p, j, p[ref]))
     {
       return false;
     }
-    return get_local_map().template belong_to_same_cell<1>(get_next_relative_to(p, j, p[ref]), p[ref + 1]);
+    return get_next_relative_to(p, j, p[ref]) == p[ref + 1];
   }
 
 protected:
