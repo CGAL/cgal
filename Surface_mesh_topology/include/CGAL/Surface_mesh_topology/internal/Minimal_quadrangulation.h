@@ -617,6 +617,7 @@ public:
             {
               std::size_t max_turn_idx = is_absolutely_directed(dleft) ? trees[dleft_id].begin()->m_idx : trees[dleft_id].rbegin()->m_idx;
               Dart_const_handle dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
+              // If there exists a crossing that can be avoided, switch
               if(get_order_relative_to(pr[i - 1], dleft) > get_order_relative_to(dprev, dleft))
               {
                 switch_dart(pr, i, switchable);
@@ -632,6 +633,9 @@ public:
           }
           else
           {
+            // First check whether there is another corner in the previous part of the path
+            // where it matches p[i - 1] -> p[i]
+            // If so, p[i] must be inserted adjacent to one such corner
             size_type prev_dart_id = get_absolute_idx(pr[i - 1]);
             auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
             if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
@@ -660,6 +664,8 @@ public:
             }
             else
             {
+              /// There is no same corner in the previous of the path
+              /// Perform usual unzip insertion
               auto less_than_in_tree = is_absolutely_directed(dh)?
                 std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()};
               auto comparator = [this, &pr, &p_original, &suffix_len, &less_than_in_tree] (const std::size_t& key, const rbtree::value_type& b) -> bool {
@@ -667,8 +673,9 @@ public:
                 {
                   if(pr[key] != p_original[key]) {
                     // current edge was switched so it should always be on the right side (more counter-clockwise)
-                    return less_than_in_tree(1, 0);
+                    return less_than_in_tree(0, 1);
                   }
+                  /// Comparing to pr[0], needs to check longest suffix
                   std::size_t current_dividing_idx = key + p_original.length() - 1 - suffix_len[key - 1];
                   std::size_t path_end_dividing_idx = p_original.length() - 1 - suffix_len[key - 1];
                   std::size_t last_same_idx = (path_end_dividing_idx == p_original.length() - 1) ? 0 : path_end_dividing_idx + 1;
@@ -698,7 +705,6 @@ public:
           }
         }
         // Check whether orders form a valid parenthesis expression
-        // First for the same direction of pr[0]
         res = true;
         auto marktemp=get_local_map().get_new_mark();
         for (auto it=get_local_map().darts().begin();
@@ -720,6 +726,9 @@ public:
                 }
                 else
                 {
+                  /// We can cancel a pair of dart iff
+                  /// 1) They are adjacent in the path (wrap around for the last dart)
+                  /// 2) The first one is going in and the second one is going out
                   auto prev_dart = parenthesis_pairing.top();
                   auto next_dart = curr_dart;
                   if (next_dart < prev_dart)
@@ -2004,12 +2013,18 @@ protected:
 #endif
   }
 
+  /// Extend p[i] towards the reverse direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the index
   int get_previous_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     return p[i] == ref ? (static_cast<int>(i) - 1) : (static_cast<int>(i) + 1);
   }
 
+  /// Extend p[i] towards the reverse direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return whether the extension is viable without crossing the first and the last dart
   bool has_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
@@ -2017,6 +2032,9 @@ protected:
     return j >= 0 && j < p.size();
   }
 
+  /// Extend p[i] towards the reverse direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the actual dart, wrap around if reaching boundary
   Dart_const_handle get_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
@@ -2030,12 +2048,18 @@ protected:
     }
   }
 
+  /// Extend p[i] towards the direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the index
   int get_next_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     return p[i] == ref ? (static_cast<int>(i) + 1) : (static_cast<int>(i) - 1);
   }
 
+  /// Extend p[i] towards the direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return whether the extension is viable without crossing the first and the last dart
   bool has_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
@@ -2043,6 +2067,9 @@ protected:
     return j >= 0 && j < p.size();
   }
 
+  /// Extend p[i] towards the direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the actual dart, wrap around if reaching boundary
   Dart_const_handle get_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
@@ -2056,16 +2083,20 @@ protected:
     }
   }
 
+  /// @return a unique 1-cell id for the dart
   size_type get_absolute_idx(Dart_const_handle dh) const
   {
     return std::min(get_local_map().darts().index(dh), get_local_map().darts().index(get_local_map().opposite(dh)));
   }
 
+  /// @return true if the dart is the representative for the unique 1-cell id
   bool is_absolutely_directed(Dart_const_handle dh) const
   {
     return get_local_map().darts().index(dh) < get_local_map().darts().index(get_local_map().opposite(dh));
   }
 
+  /// @return true if p[ref] -> p[ref + 1] forms the same corner as p[j]
+  /// Requires p[j] and p[ref] on the same 1-cell
   bool is_same_corner(const std::vector<Dart_const_handle>& p, std::size_t j, std::size_t ref) const
   {
     if (!has_next_relative_to(p, j, p[ref]))
