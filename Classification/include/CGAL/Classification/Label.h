@@ -58,7 +58,7 @@ public:
   /// @{
 
   /*!
-    returns the name of the classification label (e.g. vegetation).
+    returns the name of the classification label (_e.g._ vegetation).
   */
   const std::string& name() const { return m_name; }
 
@@ -70,7 +70,7 @@ public:
   std::size_t index() const { return m_index; }
 
   /*!
-    returns the standard index of the classification label (i.e. index in the ASPRS standard).
+    returns the standard index of the classification label (_e.g._ index in the ASPRS standard).
 
     \note This index is purely user-oriented and is not used by the classification algorithms.
   */

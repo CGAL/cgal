@@ -320,14 +320,14 @@ public:
   /// @{
 
   /*!
-    \brief Converts a deprecated GZ configuration to a new BIN
-    configuration.
+    \brief Converts a deprecated configuration (in compressed ASCII
+    format) to a new configuration (in binary format).
 
     The input file should be a GZIP container written by the
     `save_configuration()` method from CGAL 5.1 and earlier. The
     output is a valid configuration for CGAL 5.2 and later.
 
-    \note This function and depends on the Boost libraries
+    \note This function depends on the Boost libraries
     [Serialization](https://www.boost.org/libs/serialization) and
     [IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
   */
