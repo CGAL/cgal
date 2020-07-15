@@ -17,6 +17,7 @@
 #include <gr/accelerators/MOSEKWrapper.h>
 #include <gr/shared.h>
 
+
 namespace CGAL {
 
 namespace OpenGR {
@@ -82,6 +83,7 @@ namespace OpenGR {
     template <typename Kernel>
     using GRET_SDPOptions = typename gr::GRET_SDP<gr::Point3D<typename Kernel::FT>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>::OptionsType;
 
+    template <typename Scalar>
     class GRET_SDP {
         public:
 
@@ -95,10 +97,9 @@ namespace OpenGR {
 
     };
 
-
+    template <typename Scalar>
     template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
-    void GRET_SDP::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GRET_SDPOptions<Kernel>& options){
-        typedef typename Kernel::FT Scalar;
+    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GRET_SDPOptions<Kernel>& options){
         typedef gr::Point3D<Scalar> PointType;
         typedef typename PatchRange::value_type PointRange;
         typedef gr::GRET_SDP<PointType, gr::DummyTransformVisitor, gr::GRET_SDP_Options> MatcherType;
@@ -120,9 +121,9 @@ namespace OpenGR {
 
     }
 
-
+    template <typename Scalar>
     template <class PatchRange, class NamedParameters>
-    void GRET_SDP::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
+    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
     {
         namespace PSP = CGAL::Point_set_processing_3;
         typedef typename PatchRange::value_type PointRange;

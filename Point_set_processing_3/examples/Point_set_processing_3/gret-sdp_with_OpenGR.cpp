@@ -55,7 +55,7 @@ int main(int argc, const char** argv)
     const int m = problem.m;
     const vector<Patch>& patches = problem.patches;
 
-    CGAL::OpenGR::GRET_SDP matcher;
+    CGAL::OpenGR::GRET_SDP<Scalar> matcher;
     matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
                                                 .normal_map(Normal_map())
                                                 .vertex_index_map(Index_map()));
