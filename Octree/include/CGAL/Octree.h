@@ -334,6 +334,25 @@ public:
     return *node_for_point;
   }
 
+  Bbox bbox(const Node &node) const {
+
+    // Determine the side length of this node
+    FT size = m_side_per_depth[node.depth()];
+
+    // Determine the location this node should be split
+    FT min_corner[3];
+    FT max_corner[3];
+    for (int i = 0; i < 3; i++) {
+
+      min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
+      max_corner[i] = min_corner[i] + size;
+    }
+
+    // Create the cube
+    return {min_corner[0], min_corner[1], min_corner[2],
+            max_corner[0], max_corner[1], max_corner[2]};
+  }
+
   template<typename Point_output_iterator>
   void nearest_k_neighbours(const Point &p, std::size_t k, Point_output_iterator output) const {
 
@@ -465,7 +484,7 @@ private: // functions :
   }
 
   FT nearest_k_neighbours_recursive(const Point &p, std::vector<std::pair<Point, FT>> &out, const Node &node,
-                                           FT search_bounds_radius_squared) const {
+                                    FT search_bounds_radius_squared) const {
 
     FT largest_radius_squared_found = search_bounds_radius_squared;
 
@@ -486,6 +505,7 @@ private: // functions :
 
           // Check whether the new distance is an improvement
           if (new_distance_squared < largest_radius_squared_found) {
+            std::cout << out.size() << std::endl;
 
             // Make room for the new point if necessary
             if (out.size() == out.capacity())
@@ -496,16 +516,14 @@ private: // functions :
             // Add the point to the list
             out.push_back({point, new_distance_squared});
 
-            // Sort the list (for next time)
-            // TODO: This is stupidly inefficient, I need to save distances when adding points to the list
+            // Sort the list
             std::sort(out.begin(), out.end(), [=](auto &left, auto &right) {
-
-              // TODO: Calculating distances for every comparison is a massive waste
               return left.second < right.second;
             });
 
             // Update the distance
-            largest_radius_squared_found = new_distance_squared;
+            largest_radius_squared_found = out.back().second;
+            std::cout << largest_radius_squared_found << std::endl;
           }
         }
       }
@@ -519,7 +537,7 @@ private: // functions :
         auto &n = node[index];
 
         // Check whether this node is capable of containing closer points
-        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 10 /*TODO: This is my epsilon*/})) {
+        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 0.1 /*TODO: This is my epsilon*/})) {
 
           // Recursive case
           largest_radius_squared_found =
