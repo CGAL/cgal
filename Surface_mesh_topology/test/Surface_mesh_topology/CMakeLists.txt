@@ -36,6 +36,7 @@ set(SOURCE_FILES
   shortest_noncontractible_cycle_tests.cpp
   simplicity_double_torus.cpp
   simplicity_double_torus_with_holes.cpp
+  simplicity_homology_group.cpp
   test_homotopy.cpp
   test_homotopy_with_polygonal_schema.cpp
   test_shortest_cycle_non_contractible.cpp
