@@ -80,26 +80,25 @@ namespace OpenGR {
         };
     }
 
-    template <typename Kernel>
-    using GRET_SDPOptions = typename gr::GRET_SDP<gr::Point3D<typename Kernel::FT>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>::OptionsType;
 
     template <typename Scalar>
     class GRET_SDP {
         public:
+        using GR_Options = typename gr::GRET_SDP<gr::Point3D<Scalar>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>::OptionsType;
 
         template <class PatchRange, class NamedParameters>
         void registerPatches(const PatchRange& patches, const int n, const NamedParameters& np);
 
         private:
         template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
-        void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GRET_SDPOptions<Kernel>& options);
+        void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options);
 
 
     };
 
     template <typename Scalar>
     template <class Kernel, class PatchRange, class PointMap, class IndexMap, class VectorMap>
-    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GRET_SDPOptions<Kernel>& options){
+    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options){
         typedef gr::Point3D<Scalar> PointType;
         typedef typename PatchRange::value_type PointRange;
         typedef gr::GRET_SDP<PointType, gr::DummyTransformVisitor, gr::GRET_SDP_Options> MatcherType;
@@ -140,7 +139,7 @@ namespace OpenGR {
         NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
         auto index_map = get_parameter(np, internal_np::vertex_index);
 
-        GRET_SDPOptions<Kernel> options;
+        GR_Options options;
 
         registerPatches<Kernel>(patches, n, point_map, index_map, normal_map, options);
     }
