@@ -166,6 +166,6 @@ int main() {
   test_halfedge_handles_and_edges(polyhedron);
   test_const_halfedge_handles_and_edges(polyhedron);
 
-  std::cout << "test_range_based_loops: SUCCESS" << std::endl;
+  std::cout << "test_polyhedron_range_based_loops: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }
