@@ -81,8 +81,8 @@ class Periodic_2_triangulation_2 : public Triangulation_cw_ccw_2
 {
 public:
 
-/// The enum Iterator_type is defined by `Periodic_2_triangulation_2` to
-/// specify the behavior of geometric iterators.
+  /// The enum Iterator_type is defined by `Periodic_2_triangulation_2` to
+  /// specify the behavior of geometric iterators.
   enum Iterator_type
   {
     /// Return all geometric primitives as they are
@@ -103,10 +103,10 @@ public:
     UNIQUE_COVER_DOMAIN
   };
 
-/// The enum `@` is defined by `Periodic_2_triangulation_2` to
-/// specify which case occurs when locating a point in the
-/// triangulation. If the triangulation does not contain any points
-/// `EMPTY` is returned.
+  /// The enum `@` is defined by `Periodic_2_triangulation_2` to
+  /// specify which case occurs when locating a point in the
+  /// triangulation. If the triangulation does not contain any points
+  /// `EMPTY` is returned.
   enum Locate_type
   {
     /// when the located point coincides with a vertex of the triangulation
@@ -119,8 +119,8 @@ public:
     EMPTY
   };
 
-/// \name Types
-/// @{
+  /// \name Types
+  /// @{
 
   /*!
   the traits class.
@@ -206,7 +206,7 @@ public:
   */
   typedef Tds::difference_type difference_type;
 
-/// @}
+  /// @}
 
   /*!
   \name Handles, Iterators and Circulators
@@ -224,7 +224,7 @@ public:
   and circulators, the edge circulators and iterators are also
   bidirectional and non-mutable.
   */
-/// @{
+  /// @{
 
   /*!
   handle to a vertex.
@@ -302,10 +302,10 @@ public:
   */
   typedef unspecified_type Vertex_circulator;
 
-/// @}
+  /// @}
 
-/// \name Geometric iterators:
-/// @{
+  /// \name Geometric iterators:
+  /// @{
 
   /*!
   iterator over the triangles
@@ -325,18 +325,17 @@ public:
   */
   typedef unspecified_type Periodic_point_iterator;
 
-/// @}
+  /// @}
 
-/// \name Creation
-/// @{
+  /// \name Creation
+  /// @{
 
   /*!
   Introduces an empty triangulation `t` with
   `domain` as original domain. \pre `domain` is a square.
   */
-  Triangulation_2(const Iso_rectangle & domain =
-                    Iso_rectangle(0, 0, 1, 1), const Geom_traits & traits =
-                    Geom_traits());
+  Periodic_2_triangulation_2(const Iso_rectangle & domain = Iso_rectangle(0, 0, 1, 1),
+                             const Geom_traits & traits = Geom_traits());
 
   /*!
   Copy constructor. All the vertices and faces are duplicated.
@@ -344,7 +343,7 @@ public:
   refer to different triangulations:
   if `tr` is modified, `this` is not.
   */
-  Triangulation_2(const Triangulation_2& tr);
+  Periodic_2_triangulation_2(const Periodic_2_triangulation_2& tr);
 
   /*!
   Assignment. All the vertices and faces are duplicated.
@@ -352,14 +351,14 @@ public:
   refer to different triangulations:
   if `tr` is modified, `this` is not.
   */
-  Triangulation_2 operator=(const Triangulation_2<Traits, Tds>& tr);
+  Periodic_2_triangulation_2 operator=(const Periodic_2_triangulation_2<Traits, Tds>& tr);
 
   /*!
   The triangulations `tr` and `this` are swapped.
   `t.swap(tr)` should be preferred to `this` = `tr` or to
   `t(tr)` if `tr` is deleted after that.
   */
-  void swap(Triangulation_2& tr);
+  void swap(Periodic_2_triangulation_2& tr);
 
   /*!
   Deletes all faces and vertices
@@ -367,13 +366,13 @@ public:
   */
   void clear();
 
-/// @}
+  /// @}
 
-/// \name Access Functions
-/// The responsibility of keeping a valid triangulation belongs to the
-/// user when using advanced operations allowing a direct manipulation
-/// of the `tds`.
-/// @{
+  /// \name Access Functions
+  /// The responsibility of keeping a valid triangulation belongs to the
+  /// user when using advanced operations allowing a direct manipulation
+  /// of the `tds`.
+  /// @{
 
   /*!
   Returns a const reference to the triangulation traits object.
@@ -426,14 +425,14 @@ public:
   */
   size_type number_of_stored_faces() const;
 
-/// @}
+  /// @}
 
-/// \name Non const access
-/// \cgalAdvancedBegin
-/// This method is mainly a help for users implementing
-/// their own triangulation algorithms.
-/// \cgalAdvancedEnd
-/// @{
+  /// \name Non const access
+  /// \cgalAdvancedBegin
+  /// This method is mainly a help for users implementing
+  /// their own triangulation algorithms.
+  /// \cgalAdvancedEnd
+  /// @{
 
   /*!
   \cgalAdvancedFunction
@@ -443,10 +442,10 @@ public:
   */
   Triangulation_data_structure_2 & tds();
 
-/// @}
+  /// @}
 
-/// \name Non-constant-time access functions
-/// @{
+  /// \name Non-constant-time access functions
+  /// @{
 
   /*!
   Returns the number of edges. Counts all edges that are
@@ -460,16 +459,16 @@ public:
   */
   size_type number_of_stored_edges() const;
 
-/// @}
+  /// @}
 
-/// \name Non-constant-time queries and conversions
-/// \cgalAdvancedBegin
-/// It is not recommended to interfere with the built-in
-/// covering management. Especially a premature conversion to the
-/// 1-sheeted covering space might lead to problems when modifying the
-/// triangulation later.
-/// \cgalAdvancedEnd
-/// @{
+  /// \name Non-constant-time queries and conversions
+  /// \cgalAdvancedBegin
+  /// It is not recommended to interfere with the built-in
+  /// covering management. Especially a premature conversion to the
+  /// 1-sheeted covering space might lead to problems when modifying the
+  /// triangulation later.
+  /// \cgalAdvancedEnd
+  /// @{
 
   /*!
   \cgalAdvancedFunction
@@ -526,10 +525,10 @@ public:
   */
   void convert_to_9_sheeted_covering();
 
-/// @}
+  /// @}
 
-/// \name Geometric access functions
-/// @{
+  /// \name Geometric access functions
+  /// @{
 
   /*!
   Returns the periodic point given by vertex `v`. If `this` is
@@ -569,14 +568,14 @@ public:
   */
   Periodic_triangle periodic_triangle(const Face_handle f) const;
 
-/// @}
+  /// @}
 
-/// \name
-/// Note that a traits class providing exact constructions should be
-/// used in order to guarantee the following operations to be exact
-/// (as opposed to computing the triangulation only, which requires
-/// only exact predicates).
-/// @{
+  /// \name
+  /// Note that a traits class providing exact constructions should be
+  /// used in order to guarantee the following operations to be exact
+  /// (as opposed to computing the triangulation only, which requires
+  /// only exact predicates).
+  /// @{
 
   /*!
   Converts the `Periodic_point` `pp` (point-offset pair) to the
@@ -622,13 +621,13 @@ public:
   */
   Triangle triangle(Face_handle f) const;
 
-/// @}
+  /// @}
 
-/// \name Predicates
-/// The class `Periodic_2_triangulation_2` provides methods to test
-/// the presence in the triangulation of a particular feature (edge or
-/// face).
-/// @{
+  /// \name Predicates
+  /// The class `Periodic_2_triangulation_2` provides methods to test
+  /// the presence in the triangulation of a particular feature (edge or
+  /// face).
+  /// @{
 
   /*!
   `true` if there is an edge having `va` and `vb` as
@@ -660,14 +659,14 @@ public:
   bool is_face(Vertex_handle v1, Vertex_handle v2,
                Vertex_handle v3, Face_handle &fr);
 
-/// @}
+  /// @}
 
-/// \name Queries
-/// The class `Periodic_2_triangulation_2` provides methods to locate
-/// a given point with respect to a triangulation. It also provides
-/// methods to locate a point with respect to a given face of the
-/// triangulation.
-/// @{
+  /// \name Queries
+  /// The class `Periodic_2_triangulation_2` provides methods to locate
+  /// a given point with respect to a triangulation. It also provides
+  /// methods to locate a point with respect to a given face of the
+  /// triangulation.
+  /// @{
 
   /*!
   If the triangulation is not empty, a face
@@ -711,17 +710,17 @@ public:
   oriented_side(Face_handle f,
                 const Point& p) const;
 
-/// @}
+  /// @}
 
-/// \name Face, Edge and Vertex Iterators
-/// The following iterators allow the user to visit faces, edges and
-/// vertices of the stored triangulation, i.e. in case of computing in
-/// a multiply sheeted covering space all stored periodic copies of
-/// each item are returned. These iterators are non-mutable,
-/// bidirectional and their value types are respectively `Face`,
-/// `Edge` and `Vertex`. They are all invalidated by any change in the
-/// triangulation.
-/// @{
+  /// \name Face, Edge and Vertex Iterators
+  /// The following iterators allow the user to visit faces, edges and
+  /// vertices of the stored triangulation, i.e. in case of computing in
+  /// a multiply sheeted covering space all stored periodic copies of
+  /// each item are returned. These iterators are non-mutable,
+  /// bidirectional and their value types are respectively `Face`,
+  /// `Edge` and `Vertex`. They are all invalidated by any change in the
+  /// triangulation.
+  /// @{
 
   /*!
   Starts at an arbitrary vertex
@@ -753,32 +752,32 @@ public:
   */
   Face_iterator faces_end() const;
 
-/// @}
+  /// @}
 
-/// \name Geometric iterators
-/// The following iterators allow the user to obtain geometric
-/// primitives corresponding to faces, edges, and vertices of the
-/// triangulation. These iterators are non-mutable, bidirectional and
-/// their value types are respectively `Periodic_triangle`,
-/// `Periodic_segment` and `Periodic_point`. They are all invalidated
-/// by any change in the triangulation. If the periodic triangulation
-/// is not computed in the 1-sheeted covering space, these iterators
-/// can be used to retain only the geometric primitives in the
-/// original domain. This can be controlled using the enum
-/// `Iterator_type`, see \ref
-/// ::CGAL::Periodic_2_triangulation_2::Iterator_type.
-///
-/// \anchor P2Triangulation2figgeom_iterators
-/// \image html 3pts_stored.png
-/// \image html 3pts_stored_cover_domain.png
-/// \image html 3pts_unique.png
-/// \image html 3pts_unique_cover_domain.png
-/// <center><b>The four different modes of the geometric iterators:
-/// `STORED`, `STORED_COVER_DOMAIN`, `UNIQUE`,
-/// `UNIQUE_COVER_DOMAIN`. Note that in case of computing in the
-/// 1-sheeted covering space, stored and unique give the same
-/// result.</b></center>
-/// @{
+  /// \name Geometric iterators
+  /// The following iterators allow the user to obtain geometric
+  /// primitives corresponding to faces, edges, and vertices of the
+  /// triangulation. These iterators are non-mutable, bidirectional and
+  /// their value types are respectively `Periodic_triangle`,
+  /// `Periodic_segment` and `Periodic_point`. They are all invalidated
+  /// by any change in the triangulation. If the periodic triangulation
+  /// is not computed in the 1-sheeted covering space, these iterators
+  /// can be used to retain only the geometric primitives in the
+  /// original domain. This can be controlled using the enum
+  /// `Iterator_type`, see \ref
+  /// ::CGAL::Periodic_2_triangulation_2::Iterator_type.
+  ///
+  /// \anchor P2Triangulation2figgeom_iterators
+  /// \image html 3pts_stored.png
+  /// \image html 3pts_stored_cover_domain.png
+  /// \image html 3pts_unique.png
+  /// \image html 3pts_unique_cover_domain.png
+  /// <center><b>The four different modes of the geometric iterators:
+  /// `STORED`, `STORED_COVER_DOMAIN`, `UNIQUE`,
+  /// `UNIQUE_COVER_DOMAIN`. Note that in case of computing in the
+  /// 1-sheeted covering space, stored and unique give the same
+  /// result.</b></center>
+  /// @{
 
   /*!
   Iterates over the points of the triangulation. Its behavior is
@@ -786,7 +785,7 @@ public:
   \ref ::CGAL::Periodic_2_triangulation_2::Iterator_type.
   */
   Periodic_point_iterator periodic_points_begin(Iterator_type it =
-        STORED) const;
+      STORED) const;
 
   /*!
   Past-the-end iterator. Note that to match another
@@ -794,7 +793,7 @@ public:
   `Iterator_type` `it`.
   */
   Periodic_point_iterator periodic_points_end(Iterator_type it =
-        STORED) const;
+      STORED) const;
 
   /*!
   Iterates over the segments of the triangulation. Its behavior is
@@ -802,7 +801,7 @@ public:
   \ref ::CGAL::Periodic_2_triangulation_2::Iterator_type.
   */
   Periodic_segment_iterator periodic_segments_begin(Iterator_type it =
-        STORED) const;
+      STORED) const;
 
   /*!
   Past-the-end iterator. Note that to match another
@@ -810,7 +809,7 @@ public:
   `Iterator_type` `it`.
   */
   Periodic_segment_iterator periodic_segments_end(Iterator_type it =
-        STORED) const;
+      STORED) const;
 
   /*!
   Iterates over the triangles of the triangulation. Its behavior is
@@ -818,7 +817,7 @@ public:
   \ref ::CGAL::Periodic_2_triangulation_2::Iterator_type.
   */
   Periodic_triangle_iterator periodic_triangles_begin(Iterator_type it =
-        STORED) const;
+      STORED) const;
 
   /*!
   Past-the-end iterator. Note that to match another
@@ -826,21 +825,21 @@ public:
   `Iterator_type` `it`.
   */
   Periodic_triangle_iterator periodic_triangles_end(Iterator_type it =
-        STORED) const;
+      STORED) const;
 
-/// @}
+  /// @}
 
-/// \name Face, Edge and Vertex Circulators
-/// The triangulation also provides circulators that allows to visit
-/// respectively all faces or edges incident to a given vertex or all
-/// vertices adjacent to a given vertex. These circulators are
-/// non-mutable and bidirectional. The `operator++` moves the
-/// circulator counterclockwise around the vertex while the
-/// `operator-` moves clockwise. A face circulator is invalidated by
-/// any modification of the face pointed to. An edge or a vertex
-/// circulator are invalidated by any modification of one of the two
-/// faces incident to the edge pointed to.
-/// @{
+  /// \name Face, Edge and Vertex Circulators
+  /// The triangulation also provides circulators that allows to visit
+  /// respectively all faces or edges incident to a given vertex or all
+  /// vertices adjacent to a given vertex. These circulators are
+  /// non-mutable and bidirectional. The `operator++` moves the
+  /// circulator counterclockwise around the vertex while the
+  /// `operator-` moves clockwise. A face circulator is invalidated by
+  /// any modification of the face pointed to. An edge or a vertex
+  /// circulator are invalidated by any modification of one of the two
+  /// faces incident to the edge pointed to.
+  /// @{
 
   /*!
   Starts at an arbitrary face incident
@@ -879,10 +878,10 @@ public:
   */
   Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f) ;
 
-/// @}
+  /// @}
 
-/// \name Traversal between adjacent faces
-/// @{
+  /// \name Traversal between adjacent faces
+  /// @{
 
   /*!
   returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is
@@ -897,12 +896,12 @@ public:
   */
   int mirror_index(Face_handle f, int i) const;
 
-/// @}
+  /// @}
 
-// \name Modifiers
-// The following operations are guaranteed to lead to a valid
-// triangulation when they are applied on a valid triangulation.
-// @{
+  // \name Modifiers
+  // The following operations are guaranteed to lead to a valid
+  // triangulation when they are applied on a valid triangulation.
+  // @{
 
   /*
   Inserts point `p` in the triangulation and returns the
@@ -924,7 +923,7 @@ public:
   \pre `p` lies in the original domain.
   */
   Vertex_handle insert(const Point& p, Face_handle f =
-                         Face_handle());
+      Face_handle());
 
   /*
   Same as above except that the location
@@ -949,25 +948,25 @@ public:
   original domain.
   */
   template < class InputIterator > int insert(InputIterator
-      first, InputIterator last);
+                                              first, InputIterator last);
 
-// @}
+  // @}
 
-/// \anchor Triangulation_ref_Fig_insert1
-/// \image html insert1.png "Insertion of a point on an edge."
-/// \anchor Triangulation_ref_Fig_insert2
-/// \image html insert2.png "Insertion in a face."
+  /// \anchor Triangulation_ref_Fig_insert1
+  /// \image html insert1.png "Insertion of a point on an edge."
+  /// \anchor Triangulation_ref_Fig_insert2
+  /// \image html insert2.png "Insertion in a face."
 
-/// \name
-/// \cgalAdvancedBegin
-/// The following member functions offer more specialized
-/// versions of the insertion or removal operations to be used when
-/// one knows to be in the corresponding case. The following functions
-/// are mainly intended to be used in conjunction with the
-/// `find_conflicts()` member functions of Delaunay and constrained
-/// Delaunay triangulations to perform insertions.
-/// \cgalAdvancedEnd
-/// @{
+  /// \name
+  /// \cgalAdvancedBegin
+  /// The following member functions offer more specialized
+  /// versions of the insertion or removal operations to be used when
+  /// one knows to be in the corresponding case. The following functions
+  /// are mainly intended to be used in conjunction with the
+  /// `find_conflicts()` member functions of Delaunay and constrained
+  /// Delaunay triangulations to perform insertions.
+  /// \cgalAdvancedEnd
+  /// @{
 
   /*!
   \cgalAdvancedFunction
@@ -1049,10 +1048,10 @@ public:
   */
   void set_domain(const Iso_rectangle dom);
 
-/// @}
+  /// @}
 
-/// \name Miscellaneous
-/// @{
+  /// \name Miscellaneous
+  /// @{
 
   /*!
   Returns \f$ i+1\f$ modulo 3.\pre \f$0 \leq i \leq 2\f$.
@@ -1077,17 +1076,17 @@ public:
   */
   size_t degree(Vertex_handle v);
 
-/// @}
+  /// @}
 
-/// \name Checking
-/// \cgalAdvancedBegin
-/// The responsibility of keeping a valid triangulation
-/// belongs to the users if advanced operations are used. Obviously
-/// the advanced user, who implements higher levels operations may
-/// have to make a triangulation invalid at some times. The following
-/// method is provided to help the debugging.
-/// \cgalAdvancedEnd
-/// @{
+  /// \name Checking
+  /// \cgalAdvancedBegin
+  /// The responsibility of keeping a valid triangulation
+  /// belongs to the users if advanced operations are used. Obviously
+  /// the advanced user, who implements higher levels operations may
+  /// have to make a triangulation invalid at some times. The following
+  /// method is provided to help the debugging.
+  /// \cgalAdvancedEnd
+  /// @{
 
   /*!
   \cgalAdvancedFunction
@@ -1101,7 +1100,7 @@ public:
   bool
   is_valid(bool verbose = false, int level = 0) const;
 
-/// @}
+  /// @}
 
 }; /* end Periodic_2_triangulation_2 */
 
