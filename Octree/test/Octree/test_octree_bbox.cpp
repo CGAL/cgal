@@ -56,10 +56,43 @@ void test_9_nodes() {
   assert(octree.bbox(octree.root()[7]) == CGAL::Bbox_3(0, 0, 0, 1.1, 1.1, 1.1));
 }
 
+void test_25_nodes() {
+
+  // Define the dataset
+  Point_set points;
+  points.insert({-1, -1, -1});
+  points.insert({1, 1, 1});
+  points.insert({-1, -1, -0.5});
+  points.insert({1, 0.5, 1});
+  auto point_map = points.point_map();
+
+  // Create the octree
+  Octree octree(points, point_map, 1.5);
+  octree.refine(10, 1);
+
+  // Compare the top node
+  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 1.5, 1.5, 1.5));
+
+  // Compare the child nodes
+  std::cout << octree.bbox(octree.root()[0]) << std::endl;
+  assert(octree.bbox(octree.root()[0]) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 0, 0, 0));
+  assert(octree.bbox(octree.root()[1]) == CGAL::Bbox_3(0, -1.5, -1.5, 1.5, 0, 0));
+  assert(octree.bbox(octree.root()[2]) == CGAL::Bbox_3(-1.5, 0, -1.5, 0, 1.5, 0));
+  assert(octree.bbox(octree.root()[3]) == CGAL::Bbox_3(0, 0, -1.5, 1.5, 1.5, 0));
+  assert(octree.bbox(octree.root()[4]) == CGAL::Bbox_3(-1.5, -1.5, 0, 0, 0, 1.5));
+  assert(octree.bbox(octree.root()[5]) == CGAL::Bbox_3(0, -1.5, 0, 1.5, 0, 1.5));
+  assert(octree.bbox(octree.root()[6]) == CGAL::Bbox_3(-1.5, 0, 0, 0, 1.5, 1.5));
+  assert(octree.bbox(octree.root()[7]) == CGAL::Bbox_3(0, 0, 0, 1.5, 1.5, 1.5));
+
+
+  std::cout << octree << std::endl;
+}
+
 int main(void) {
 
   test_1_node();
   test_9_nodes();
+  test_25_nodes();
 
   return EXIT_SUCCESS;
 }
