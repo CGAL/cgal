@@ -881,7 +881,8 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Stitches together, whenever possible, two halfedges belonging to the boundary cycle described by the halfedge `h`.
+/// \brief stitches together, whenever possible, two halfedges belonging to the boundary cycle described by the halfedge `h`.
+///
 /// Two border halfedges `h1` and `h2` can be stitched
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
@@ -942,7 +943,8 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Stitches together, whenever possible, two halfedges belonging to the same boundary cycle.
+/// \brief stitches together, whenever possible, two halfedges belonging to the same boundary cycle.
+///
 /// Two border halfedges `h1` and `h2` can be stitched
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
@@ -1031,7 +1033,8 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 /*!
 * \ingroup PMP_repairing_grp
 *
-* Stitches together border halfedges in a polygon mesh.
+* \brief stitches together border halfedges in a polygon mesh.
+*
 * The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
 * For each pair `p` in this vector, `p.second` and its opposite will be removed
 * from `pmesh`.
@@ -1129,8 +1132,9 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Same as the other overload but the pairs of halfedges to be stitched
+/// \brief Same as the other overload, but the pairs of halfedges to be stitched
 /// are automatically found amongst all border halfedges.
+///
 /// Two border halfedges `h1` and `h2` are set to be stitched
 /// if the points associated to the source and target vertices of `h1` are
 /// the same as those of the target and source vertices of `h2` respectively.
@@ -1180,7 +1184,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
   return stitch_borders(boundary_cycle_representatives, pmesh, mv, np);
 }
 
-///\cond SKIP_IN_MANUAL
+/// \cond SKIP_IN_MANUAL
 template <typename BorderHalfedgeRange, typename PolygonMesh>
 std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representatives,
                            PolygonMesh& pmesh)
@@ -1209,7 +1213,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh)
 {
   return stitch_borders(pmesh, parameters::all_default());
 }
-///\endcond
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
