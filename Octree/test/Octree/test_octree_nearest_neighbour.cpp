@@ -22,6 +22,11 @@ typedef CGAL::Octree::Octree
         <Point_set, typename Point_set::Point_map>
         Octree;
 
+typedef CGAL::Search_traits_3<Kernel> Kd_tree_traits;
+typedef CGAL::Orthogonal_k_neighbor_search<Kd_tree_traits> Kd_tree_search;
+typedef Kd_tree_search::Tree Kd_tree;
+
+
 void naive_vs_octree(std::size_t dataset_size) {
 
   std::cout << "[ " << dataset_size << " points ]" << std::endl;
