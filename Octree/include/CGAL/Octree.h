@@ -149,11 +149,13 @@ public:
   /*!
    * \brief Create an octree from a collection of points
    *
-   * \todo
+   * The resulting octree will have a root node with no children that contains the points passed.
+   * That root node will have a bounding box that encloses all of the points passed,
+   * with padding according to the enlarge_ratio
    *
-   * \param point_range
-   * \param point_map
-   * \param enlarge_ratio
+   * \param point_range random access iterator over the indices of the points
+   * \param point_map maps the point indices to their coordinate locations
+   * \param enlarge_ratio the degree to which the bounding box should be enlarged
    */
   Octree(
           PointRange &point_range,
@@ -207,7 +209,7 @@ public:
    *
    * \todo
    *
-   * \param split_criterion
+   * \param split_criterion rule to use when determining whether or not a node needs to be subdivided
    */
   void refine(const Split_criterion &split_criterion) {
 
@@ -249,8 +251,8 @@ public:
    *
    * \todo
    *
-   * \param max_depth
-   * \param bucket_size
+   * \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split)
+   * \param bucket_size maximum points a node is allowed to contain
    */
   void refine(size_t max_depth, size_t bucket_size) {
     refine(Split_to_max_depth_or_bucket_size(max_depth, bucket_size));
@@ -266,7 +268,7 @@ public:
    *
    * \todo
    *
-   * \return
+   * \return a reference to the root node of the tree
    */
   Node &root() { return m_root; }
 
@@ -275,7 +277,7 @@ public:
    *
    * \todo
    *
-   * \return
+   * \return a const reference to the root node of the tree
    */
   const Node &root() const { return m_root; }
 
@@ -284,9 +286,9 @@ public:
    *
    * \todo
    *
-   * \tparam Walker
-   * \param walker
-   * \return
+   * \tparam Walker type of the walker rule
+   * \param walker the rule to use when determining the order of the sequence of points produced
+   * \return a forward input iterator over the nodes of the tree
    */
   template<class Walker>
   Node_range walk(const Walker &walker = Walker()) const {
@@ -396,8 +398,8 @@ public:
    *
    * \todo
    *
-   * \param rhs
-   * \return
+   * \param rhs tree to compare with
+   * \return whether the trees have the same topology
    */
   bool operator==(Octree<PointRange, PointMap> &rhs) {
 
