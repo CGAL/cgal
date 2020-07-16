@@ -2786,6 +2786,7 @@ operator=(const Surface_mesh<P>& rhs)
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
         garbage_           = rhs.garbage_;
+        recycle_           = rhs.recycle_;
         anonymous_property_ = rhs.anonymous_property_;
     }
 
@@ -2839,6 +2840,7 @@ assign(const Surface_mesh<P>& rhs)
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
         garbage_           = rhs.garbage_;
+        recycle_           = rhs.recycle_;
         anonymous_property_ = rhs.anonymous_property_;
     }
 
@@ -2877,6 +2879,7 @@ clear()
   removed_vertices_ = removed_edges_ = removed_faces_ = 0;
   vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
   garbage_ = false;
+  recycle_ = true;
   anonymous_property_ = 0;
 }
 
