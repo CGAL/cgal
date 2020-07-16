@@ -74,7 +74,6 @@ void test_25_nodes() {
   assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 1.5, 1.5, 1.5));
 
   // Compare the child nodes
-  std::cout << octree.bbox(octree.root()[0]) << std::endl;
   assert(octree.bbox(octree.root()[0]) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 0, 0, 0));
   assert(octree.bbox(octree.root()[1]) == CGAL::Bbox_3(0, -1.5, -1.5, 1.5, 0, 0));
   assert(octree.bbox(octree.root()[2]) == CGAL::Bbox_3(-1.5, 0, -1.5, 0, 1.5, 0));
@@ -84,6 +83,27 @@ void test_25_nodes() {
   assert(octree.bbox(octree.root()[6]) == CGAL::Bbox_3(-1.5, 0, 0, 0, 1.5, 1.5));
   assert(octree.bbox(octree.root()[7]) == CGAL::Bbox_3(0, 0, 0, 1.5, 1.5, 1.5));
 
+  // Compare children of the first child
+  assert(octree.bbox(octree.root()[0][0]) == CGAL::Bbox_3(-1.5, -1.5, -1.5, -0.75, -0.75, -0.75));
+  assert(octree.bbox(octree.root()[0][1]) == CGAL::Bbox_3(-0.75, -1.5, -1.5, 0, -0.75, -0.75));
+  assert(octree.bbox(octree.root()[0][2]) == CGAL::Bbox_3(-1.5, -0.75, -1.5, -0.75, 0, -0.75));
+  assert(octree.bbox(octree.root()[0][3]) == CGAL::Bbox_3(-0.75, -0.75, -1.5, 0, 0, -0.75));
+  assert(octree.bbox(octree.root()[0][4]) == CGAL::Bbox_3(-1.5, -1.5, -0.75, -0.75, -0.75, 0));
+  assert(octree.bbox(octree.root()[0][5]) == CGAL::Bbox_3(-0.75, -1.5, -0.75, 0, -0.75, 0));
+  assert(octree.bbox(octree.root()[0][6]) == CGAL::Bbox_3(-1.5, -0.75, -0.75, -0.75, 0, 0));
+  assert(octree.bbox(octree.root()[0][7]) == CGAL::Bbox_3(-0.75, -0.75, -0.75, 0, 0, 0));
+
+  // Compare children of the last child
+  std::cout << octree.bbox(octree.root()[7][0]) << std::endl;
+  // FIXME: I've found my error! root()[7][0] produces the same box as root()[0][0]
+//  assert(octree.bbox(octree.root()[7][0]) == CGAL::Bbox_3(-1.5, -1.5, -1.5, -0.75, -0.75, -0.75));
+//  assert(octree.bbox(octree.root()[7][1]) == CGAL::Bbox_3(-0.75, -1.5, -1.5, 0, -0.75, -0.75));
+//  assert(octree.bbox(octree.root()[7][2]) == CGAL::Bbox_3(-1.5, -0.75, -1.5, -0.75, 0, -0.75));
+//  assert(octree.bbox(octree.root()[7][3]) == CGAL::Bbox_3(-0.75, -0.75, -1.5, 0, 0, -0.75));
+//  assert(octree.bbox(octree.root()[7][4]) == CGAL::Bbox_3(-1.5, -1.5, -0.75, -0.75, -0.75, 0));
+//  assert(octree.bbox(octree.root()[7][5]) == CGAL::Bbox_3(-0.75, -1.5, -0.75, 0, -0.75, 0));
+//  assert(octree.bbox(octree.root()[7][6]) == CGAL::Bbox_3(-1.5, -0.75, -0.75, -0.75, 0, 0));
+//  assert(octree.bbox(octree.root()[7][7]) == CGAL::Bbox_3(-0.75, -0.75, -0.75, 0, 0, 0));
 
   std::cout << octree << std::endl;
 }
