@@ -8,6 +8,9 @@ namespace CGAL {
 
 namespace Octree {
 
+/*!
+ * \brief Criterion to split nodes of an octree when they contain more than a certain number of items
+ */
 struct Split_to_bucket_size {
 
   std::size_t m_bucket_size;
@@ -21,6 +24,9 @@ struct Split_to_bucket_size {
   }
 };
 
+/*!
+ * \brief Criterion to split nodes of an octree when they are less than a certain depth
+ */
 struct Split_to_max_depth {
 
   std::size_t m_max_depth;
@@ -33,6 +39,9 @@ struct Split_to_max_depth {
   }
 };
 
+/*!
+ * \brief Criterion to split nodes when they are less than a depth and they contain more than a number of items
+ */
 struct Split_to_max_depth_or_bucket_size {
 
   std::size_t m_max_depth, m_bucket_size;
