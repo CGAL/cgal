@@ -799,7 +799,7 @@ public:
   {
     Property_map<T> pm;
     bool added = false;
-    std::tie (pm, added) = m_base.template add<T> (name, t);
+    boost::tie (pm, added) = m_base.template add<T> (name, t);
     return std::make_pair (pm, added);
   }
 
@@ -820,7 +820,7 @@ public:
   {
     Property_map<T> pm;
     bool okay = false;
-    std::tie (pm, okay) = m_base.template get<T>(name);
+    boost::tie (pm, okay) = m_base.template get<T>(name);
     return std::make_pair (pm, okay);
   }
 
@@ -864,7 +864,7 @@ public:
   std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = CGAL::NULL_VECTOR)
   {
     bool out = false;
-    std::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
+    boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
     return std::make_pair (m_normals, out);
   }
   /*!
