@@ -79,7 +79,7 @@ public:
       m_depth = parent->m_depth + 1;
 
       for (int i = 0; i < 3; i++)
-        m_location[i] = (2 * m_location[i]) + index[i];
+        m_location[i] = (2 * parent->m_location[i]) + index[i];
 
     }
   }
