@@ -8,6 +8,8 @@ namespace CGAL {
 
 namespace Octree {
 
+namespace Split_criterion {
+
 /*!
  * \brief Criterion to split nodes of an octree when they contain more than a certain number of items
  */
@@ -56,6 +58,9 @@ struct Split_to_max_depth_or_bucket_size {
     return (num_points > m_bucket_size && depth < m_max_depth);
   }
 };
+
+}
+}
 }
 
 /*
@@ -85,6 +90,5 @@ struct Stop_at_normal_deviation {
 };
 
 */
-}
 
 #endif //OCTREE_SPLIT_CRITERION_H

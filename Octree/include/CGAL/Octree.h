@@ -104,7 +104,7 @@ public:
   /*!
    * \brief A function that determines whether a node needs to be split when refining a tree
    */
-  typedef std::function<bool(const Node &)> Split_criterion;
+  typedef std::function<bool(const Node &)> Split_criterion_function;
 
   /*!
    * \brief A range that provides input-iterator access to the nodes of a tree
@@ -211,7 +211,7 @@ public:
    *
    * \param split_criterion rule to use when determining whether or not a node needs to be subdivided
    */
-  void refine(const Split_criterion &split_criterion) {
+  void refine(const Split_criterion_function &split_criterion) {
 
     // create a side length map
     for (int i = 0; i <= (int) 32; i++)
@@ -255,7 +255,7 @@ public:
    * \param bucket_size maximum points a node is allowed to contain
    */
   void refine(size_t max_depth, size_t bucket_size) {
-    refine(Split_to_max_depth_or_bucket_size(max_depth, bucket_size));
+    refine(Split_criterion::Split_to_max_depth_or_bucket_size(max_depth, bucket_size));
   }
 
   /// @}
