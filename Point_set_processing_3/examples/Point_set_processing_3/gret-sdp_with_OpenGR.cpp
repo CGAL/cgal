@@ -72,7 +72,8 @@ int main(int argc, const char** argv)
 
     std::vector<TrafoType> transformations;
     matcher.getTransformations(transformations);
-    
+    std::vector<Pwn> registered_patches;
+    matcher.getRegisteredPatches(registered_patches);
 }
 
 template <typename PatchRange>
