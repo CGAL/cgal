@@ -8,6 +8,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/filesystem.hpp>
+#include "boost/tuple/tuple.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -24,11 +25,16 @@ typedef double Scalar;
 typedef CGAL::Simple_cartesian<Scalar> K;
 typedef K::Point_3 Point_3;
 typedef K::Vector_3 Vector_3;
-typedef boost::tuple<Point_3, int, Vector_3> Pwn;
-typedef CGAL::Nth_of_tuple_property_map<0, Pwn> Point_map;
-typedef CGAL::Nth_of_tuple_property_map<1, Pwn> Index_map;
-typedef CGAL::Nth_of_tuple_property_map<2, Pwn> Normal_map;
-typedef std::vector<Pwn> Patch;
+// indexed point with normal
+typedef boost::tuple<Point_3, int, Vector_3> iPwn;
+typedef CGAL::Nth_of_tuple_property_map<0, iPwn> iPoint_map;
+typedef CGAL::Nth_of_tuple_property_map<1, iPwn> iIndex_map;
+typedef CGAL::Nth_of_tuple_property_map<2, iPwn> iNormal_map;
+// point with normal
+typedef std::pair<Point_3, Vector_3> Pwn;
+typedef CGAL::First_of_pair_property_map<Pwn> Point_map;
+typedef CGAL::Second_of_pair_property_map<Pwn> Normal_map;
+
 typedef K::Aff_transformation_3 TrafoType;
 
 enum {Dim = 3};
@@ -40,7 +46,7 @@ struct RegistrationProblem {
     int n;
     int m;
     int d;
-    std::vector<Patch> patches;
+    std::vector<std::vector<iPwn>> patches;
 };
 
 template <typename TrRange>
@@ -63,17 +69,19 @@ int main(int argc, const char** argv)
     const int d = problem.d;
     const int n = problem.n;
     const int m = problem.m;
-    const vector<Patch>& patches = problem.patches;
+    const vector<std::vector<iPwn>>& patches = problem.patches;
 
     CGAL::OpenGR::GRET_SDP<K> matcher;
-    matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
-                                                .normal_map(Normal_map())
-                                                .vertex_index_map(Index_map()));
+    matcher.registerPatches(patches, n, params::point_map(iPoint_map())
+                                                .normal_map(iNormal_map())
+                                                .vertex_index_map(iIndex_map()));
 
     std::vector<TrafoType> transformations;
     matcher.getTransformations(transformations);
     std::vector<Pwn> registered_patches;
-    matcher.getRegisteredPatches(registered_patches);
+    matcher.getRegisteredPatches(registered_patches, params::point_map(Point_map())
+                                                .normal_map(Normal_map()));
+    
 }
 
 template <typename PatchRange>
