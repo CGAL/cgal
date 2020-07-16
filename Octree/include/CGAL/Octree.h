@@ -383,6 +383,11 @@ public:
     // Invoking the recursive function adds those points to the vector (passed by reference)
     nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max());
 
+    // Sort the list by distance
+    std::sort(points_list.begin(), points_list.end(), [=](auto &left, auto &right) {
+      return left.second < right.second;
+    });
+
     // Add all the points found to the output
     for (auto &item : points_list)
       *output++ = item.first;
@@ -531,9 +536,33 @@ private: // functions :
 
       // If the node has children
 
-      // Search each of them
+      // Create a list of the child nodes
+      std::vector<std::pair<typename Node::Index, FT>> children_with_distances;
+      children_with_distances.reserve(8);
+
+      // Check each node
       for (int index = 0; index < 8; ++index) {
         auto &n = node[index];
+
+        // If the node isn't empty
+        if (0 < std::distance(node.value().begin(), node.value().end())) {
+
+          // Find the distance of the node's center
+          auto node_center_distance = CGAL::squared_distance(p, compute_barycenter_position(n));
+
+          // Add this node to the list
+          children_with_distances.emplace_back(index, node_center_distance);
+        }
+      }
+
+      // Sort the children by their distance
+      std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto &left, auto &right) {
+        return left.second < right.second;
+      });
+
+      // Search each of them
+      for (auto child : children_with_distances) {
+        auto &n = node[child.first.to_ulong()];
 
         // Check whether this node is capable of containing closer points
         if (do_intersect(n, Sphere{p, largest_radius_squared_found + 0.1 /*TODO: This is my epsilon*/})) {

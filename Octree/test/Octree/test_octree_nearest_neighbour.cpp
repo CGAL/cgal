@@ -123,7 +123,6 @@ void kdtree_vs_octree(std::size_t dataset_size) {
   Kd_tree kd_tree(points.points().begin(), points.points().end());
   {
     Kd_tree_search search(kd_tree, random_point, K);
-    std::cout << search.begin()->first << std::endl;
     for (auto p : search)
       kd_tree_nearest_neighbours.push_back(p.first);
   }
@@ -143,7 +142,6 @@ void kdtree_vs_octree(std::size_t dataset_size) {
   Octree octree(points, point_map);
   octree.refine(10, 1);
   {
-    // TODO: Write a nearest-neighbor implementation and use it here
     octree.nearest_k_neighbours(random_point, K, std::back_inserter(octree_nearest_neighbours));
   }
 
@@ -159,6 +157,7 @@ void kdtree_vs_octree(std::size_t dataset_size) {
   // Check that they produce the same answer
   for (int j = 0; j < K; ++j) {
 
+    std::cout << j << std::endl;
     assert(octree_nearest_neighbours[j] == kd_tree_nearest_neighbours[j]);
   }
 }
