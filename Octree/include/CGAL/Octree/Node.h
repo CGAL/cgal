@@ -4,6 +4,7 @@
 #include <array>
 #include <memory>
 #include <bitset>
+#include <cassert>
 
 namespace CGAL {
 namespace Octree {
@@ -96,6 +97,8 @@ public:
    */
   void split() {
 
+    assert(is_leaf());
+
     m_children = std::make_unique<Child_list>();
     for (int index = 0; index < 8; index++) {
 
@@ -127,6 +130,10 @@ public:
    * \return
    */
   Node<Value> &operator[](int index) {
+
+    assert(!is_leaf());
+    assert(0 <= index && index < 8);
+
     return (*m_children)[index];
   }
 
@@ -139,6 +146,10 @@ public:
    * \return
    */
   const Node<Value> &operator[](int index) const {
+
+    assert(!is_leaf());
+    assert(0 <= index && index < 8);
+
     return (*m_children)[index];
   }
 
@@ -175,7 +186,7 @@ public:
    */
   Index index() const {
 
-    // TODO: There's a better way of doing this
+    // TODO: There must be a better way of doing this!
 
     Index result;
 
