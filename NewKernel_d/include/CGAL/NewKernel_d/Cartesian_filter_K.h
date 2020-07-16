@@ -32,22 +32,28 @@ namespace CGAL {
   // It would be nicer to write the table in the other direction: Orientation_of_points_tag is good up to 6, Side_of_oriented_sphere_tag up to 5, etc.
 template<class> struct Functors_without_division { typedef typeset<> type; };
 template<> struct Functors_without_division<Dimension_tag<1> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<2> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<3> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag >::type  type;
 };
 template<> struct Functors_without_division<Dimension_tag<4> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<5> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<6> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 
 // FIXME:

@@ -47,11 +47,6 @@
 
 #include <boost/mpl/if.hpp>
 
-#ifdef CGAL_CXX11
-#define CGAL_CONSTEXPR constexpr
-#else
-#define CGAL_CONSTEXPR
-#endif
 namespace CGAL {
 
 #define CGAL_GENERATE_MEMBER_DETECTOR(X)                                           \
