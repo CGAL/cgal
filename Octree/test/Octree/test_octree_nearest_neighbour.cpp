@@ -118,6 +118,7 @@ void kdtree_vs_octree(std::size_t dataset_size) {
 
   // Use the naive algorithm to find the nearest point in the dataset
   Point kdtree_nearest = *points.points().begin();
+  Kd_tree kd_tree(points.points().begin(), points.points().end());
   {
     // TODO: kD_tree invocation
   }
@@ -163,7 +164,7 @@ int main(void) {
   naive_vs_octree(10000);
   naive_vs_octree(100000);
 
-//  kdtree_vs_octree(100);
+  kdtree_vs_octree(100);
 //  kdtree_vs_octree(1000);
 //  kdtree_vs_octree(10000);
 //  kdtree_vs_octree(100000);
