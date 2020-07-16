@@ -52,18 +52,16 @@ class GOCAD_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  GOCAD_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
+  GOCAD_builder(std::istream& is) : Base(is) { }
 
-  // @check ascii
   template <typename NamedParameters>
   bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np,
-            bool verbose)
+            const NamedParameters& np)
   {
     std::pair<std::string, std::string> name_and_color;
-    bool res = read_GOCAD(is, name_and_color, points, faces, np, verbose);
+    bool res = read_GOCAD(is, name_and_color, points, faces, np);
     if(res)
     {
       name = name_and_color.first;
@@ -92,7 +90,6 @@ public:
 /// \param is the input stream
 /// \param name_and_color name and color of the mesh
 /// \param g the graph to be built from the input data
-/// \param verbose whether extra information is printed when an incident occurs during reading
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -103,6 +100,12 @@ public:
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 ///                     must be available in `Graph`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{verbose}
+///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`true`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -115,13 +118,16 @@ template <typename Graph,
 bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 Graph& g,
-                const CGAL_BGL_NP_CLASS& np,
-                bool verbose = true)
+                const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+                )
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type     VPM;
   typedef typename boost::property_traits<VPM>::value_type                     Point;
 
-  IO::internal::GOCAD_builder<Graph, Point> builder(is, verbose);
+  IO::internal::GOCAD_builder<Graph, Point> builder(is);
   if(!builder(g, np))
     return false;
 
@@ -133,17 +139,26 @@ bool read_GOCAD(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
+template <typename Graph>
+bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_color, Graph& g,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_GOCAD(is, name_and_color, g, parameters::all_default());
+}
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_GOCAD(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
-  return read_GOCAD(is, dummy, g, np, verbose);
+  return read_GOCAD(is, dummy, g, np);
 }
 
 template <typename Graph>
-bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_color, Graph& g)
+bool read_GOCAD(std::istream& is, Graph& g,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return read_GOCAD(is, name_and_color, g, parameters::all_default());
+  return read_GOCAD(is, g, parameters::all_default());
 }
 
 /// \endcond
@@ -160,7 +175,6 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 /// \param fname the name of the input file
 /// \param name_and_color name and color of the mesh
 /// \param g the graph to be built from the input data
-/// \param verbose whether extra information is printed when an incident occurs during reading
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -171,6 +185,12 @@ bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 ///                     must be available in `Graph`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{verbose}
+///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`true`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -183,34 +203,55 @@ template <typename Graph,
 bool read_GOCAD(const char* fname,
                 std::pair<std::string, std::string>& name_and_color,
                 Graph& g,
-                const CGAL_BGL_NP_CLASS& np,
-                bool verbose = true)
+                const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+                )
 {
   std::ifstream is(fname);
-  return read_GOCAD(is, name_and_color, g, np, verbose);
+  return read_GOCAD(is, name_and_color, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
+template <typename Graph>
+bool read_GOCAD(const char* fname, std::pair<std::string, std::string>& name_and_color, Graph& g,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_GOCAD(fname, name_and_color, g, parameters::all_default());
+}
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_GOCAD(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
-  return read_GOCAD(fname, dummy, g, np, verbose);
+  return read_GOCAD(fname, dummy, g, np);
+}
+
+template <typename Graph>
+bool read_GOCAD(const char* fname, Graph& g,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_GOCAD(fname, g, parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname, Graph& g, CGAL_BGL_NP_CLASS np, bool verbose = true)
+bool read_GOCAD(const std::string& fname, Graph& g, CGAL_BGL_NP_CLASS np,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return read_GOCAD(fname.c_str(), g, np, verbose);
+  return read_GOCAD(fname.c_str(), g, np);
 }
 
 template <typename Graph>
-bool read_GOCAD(std::istream& is, Graph& g) { return read_GOCAD(is, g, parameters::all_default()); }
-template <typename Graph>
-bool read_GOCAD(const char* fname, Graph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
-template <typename Graph>
-bool read_GOCAD(const std::string& fname, Graph& g) { return read_GOCAD(fname, g, parameters::all_default()); }
+bool read_GOCAD(const std::string& fname, Graph& g,
+                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_GOCAD(fname, g, parameters::all_default());
+}
+
+/// \endcond
 
 /// \endcond
 
@@ -252,7 +293,11 @@ template <typename Graph,
 bool write_GOCAD(std::ostream& os,
                  const char* name,
                  const Graph& g,
-                 const CGAL_BGL_NP_CLASS& np)
+                 const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                 , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+                 )
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor  halfedge_descriptor;
@@ -309,60 +354,20 @@ bool write_GOCAD(std::ostream& os,
   return os.good();
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template <typename Graph>
-bool write_GOCAD(std::ostream& os, const char* name, const Graph& g)
+bool write_GOCAD(std::ostream& os, const char* name, const Graph& g,
+                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_GOCAD(os, name, g, parameters::all_default());
 }
 
-/// \ingroup PkgBGLIoFuncsGOCAD
-///
-/// \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamGocad.
-///
-/// In this overload, `fname` is used as the name of the graph within the file.
-///
-/// \tparam Graph a model of `FaceListGraph`
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-///
-/// \param fname the name of the output file
-/// \param g the graph to be written
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///   \cgalParamNBegin{vertex_point_map}
-///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
-///                    as key type and `%Point_3` as value type}
-///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
-///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `Graph`.}
-///   \cgalParamNEnd
-///
-///   \cgalParamNBegin{stream_precision}
-///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-///     \cgalParamType{int}
-///     \cgalParamDefault{`6`}
-///   \cgalParamNEnd
-/// \cgalNamedParamsEnd
-///
-/// \sa Overloads of this function for specific models of the concept `FaceGraph`.
-///
-template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const char* fname,
-                 const Graph& g,
-                 const CGAL_BGL_NP_CLASS& np)
+template <typename Graph>
+bool write_GOCAD(std::ostream& os, const Graph& g,
+                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  std::ofstream os(fname);
-  return write_GOCAD(os, fname, g, np);
-}
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_GOCAD(fname.c_str(), g, np);
+  return write_GOCAD(os, "anonymous", g, parameters::all_default());
 }
 
 /// \endcond
@@ -401,23 +406,83 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
                  const Graph& g,
-                 const CGAL_BGL_NP_CLASS& np)
+                 const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                 , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+                 )
 {
   return write_GOCAD(os, "anonymous", g, np);
+}
+
+/// \ingroup PkgBGLIoFuncsGOCAD
+///
+/// \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamGocad.
+///
+/// In this overload, `fname` is used as the name of the graph within the file.
+///
+/// \tparam Graph a model of `FaceListGraph`
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///
+/// \param fname the name of the output file
+/// \param g the graph to be written
+/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `g`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `Graph`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{stream_precision}
+///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+///     \cgalParamType{int}
+///     \cgalParamDefault{`6`}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
+///
+/// \sa Overloads of this function for specific models of the concept `FaceGraph`.
+///
+template <typename Graph,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(const char* fname,
+                 const Graph& g,
+                 const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                 , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+                 )
+{
+  std::ofstream os(fname);
+  return write_GOCAD(os, fname, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph>
-bool write_GOCAD(std::ostream& os, const Graph& g)
+bool write_GOCAD(const char* fname, const Graph& g,
+                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return write_GOCAD(os, "anonymous", g, parameters::all_default());
+  return write_GOCAD(fname, g, parameters::all_default());
+}
+
+template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_GOCAD(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
+                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_GOCAD(fname.c_str(), g, np);
 }
 
 template <typename Graph>
-bool write_GOCAD(const char* fname, const Graph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
-template <typename Graph>
-bool write_GOCAD(const std::string& fname, const Graph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
+bool write_GOCAD(const std::string& fname, const Graph& g,
+                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_GOCAD(fname, g, parameters::all_default());
+}
 
 /// \endcond
 

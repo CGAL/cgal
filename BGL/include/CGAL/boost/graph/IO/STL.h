@@ -50,16 +50,15 @@ class STL_builder
   typedef typename Base::Face_container                                         Face_container;
 
 public:
-  STL_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
+  STL_builder(std::istream& is) : Base(is) { }
 
   template <typename NamedParameters>
   bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np,
-            bool verbose)
+            const NamedParameters& np)
   {
-    return read_STL(is, points, faces, np, verbose);
+    return read_STL(is, points, faces, np);
   }
 };
 
@@ -78,7 +77,6 @@ public:
 
   \param is the input stream
   \param g the graph to be built from the input data
-  \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -89,6 +87,12 @@ public:
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -101,13 +105,12 @@ public:
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  IO::internal::STL_builder<Graph, Point> builder(is, verbose);
+  IO::internal::STL_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
 
@@ -123,7 +126,6 @@ bool read_STL(std::istream& is,
 
   \param fname the name of the input file
   \param g the graph to be built from the input data
-  \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -135,6 +137,12 @@ bool read_STL(std::istream& is,
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -144,20 +152,18 @@ bool read_STL(std::istream& is,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(fname);
-  return read_STL(is, g, np, verbose);
+  return read_STL(is, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_STL(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_STL(fname.c_str(), g, np, verbose);
+  return read_STL(fname.c_str(), g, np);
 }
 
 template <typename Graph>

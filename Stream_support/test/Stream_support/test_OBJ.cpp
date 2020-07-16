@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/IO/GOCAD.h>
+#include <CGAL/IO/OBJ.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
 #include <iostream>

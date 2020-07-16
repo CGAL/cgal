@@ -41,7 +41,7 @@ template <class Traits,
           class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-              const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<Polyhedron_3<Traits, Items, HDS, Alloc> >::vertex_descriptor Vertex;
 
@@ -62,12 +62,14 @@ bool read_OFF(std::istream& in,
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), true);
+
   if(!(is_default_parameter(get_parameter(np, internal_np::vertex_color_map))) ||
      !(is_default_parameter(get_parameter(np, internal_np::face_color_map))) ||
      !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map))) ||
      !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map))))
   {
-    return CGAL::IO::internal::read_OFF_BGL(in, P, np, verbose);
+    return CGAL::IO::internal::read_OFF_BGL(in, P, np);
   }
 
   CGAL::scan_OFF(in, P, verbose);

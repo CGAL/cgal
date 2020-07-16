@@ -51,21 +51,32 @@ namespace CGAL {
  * whose value_type is `std::size_t`.
  * \tparam PointRange a model of the concept `RandomAccessContainer`
  * whose value type is the point type
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the name of the file.
  * \param polygons each element in the range describes a polygon
  * using the indices of the vertices.
  * \param points points of the soup of polygons
- * \param verbose: if `true`, will output warnings and error messages.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \return `true` if reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_polygon_soup(const std::string& fname,
                        PointRange& points,
                        PolygonRange& polygons,
-                       const bool verbose = false)
+                       const CGAL_BGL_NP_CLASS& np)
 {
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
+
   const std::string ext = IO::internal::get_file_extension(fname);
   if(ext == std::string())
   {
@@ -75,18 +86,18 @@ bool read_polygon_soup(const std::string& fname,
   }
 
   if(ext == "obj")
-    return read_OBJ(fname, points, polygons);
+    return read_OBJ(fname, points, polygons, np);
   else if(ext == "off")
-    return read_OFF(fname, points, polygons);
+    return read_OFF(fname, points, polygons, np);
   else if(ext == "ply")
-    return read_PLY(fname, points, polygons);
+    return read_PLY(fname, points, polygons, np);
   else if(ext == "stl")
-    return read_STL(fname, points, polygons);
+    return read_STL(fname, points, polygons, np);
   else if(ext == "ts")
-    return read_GOCAD(fname, points, polygons);
+    return read_GOCAD(fname, points, polygons, np);
 #ifdef CGAL_USE_VTK
   else if(ext == "ts")
-    return read_VTP(fname, points, polygons);
+    return read_VTP(fname, points, polygons, np);
 #endif
 
   if(verbose)
@@ -97,6 +108,18 @@ bool read_polygon_soup(const std::string& fname,
 
   return false;
 }
+
+/// \cond SKIP_IN_MANUAL
+
+template <typename PointRange, typename PolygonRange>
+bool read_polygon_soup(const std::string& fname,
+                       PointRange& points,
+                       PolygonRange& polygons)
+{
+  return read_polygon_soup(fname, points, polygons, parameters::all_default());
+}
+
+/// \endcond
 
 /*!
  * \ingroup IOstreamFunctions
@@ -125,12 +148,14 @@ bool read_polygon_soup(const std::string& fname,
  *
  * \return `true` if writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_polygon_soup(const std::string& fname,
                         const PointRange& points,
                         const PolygonRange& polygons,
-                        const bool verbose = false)
+                        const CGAL_BGL_NP_CLASS& np)
 {
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
+
   const std::string ext = IO::internal::get_file_extension(fname);
   if(ext == std::string())
   {
@@ -140,18 +165,18 @@ bool write_polygon_soup(const std::string& fname,
   }
 
   if(ext == "obj")
-    return write_OBJ(fname, points, polygons);
+    return write_OBJ(fname, points, polygons, np);
   else if(ext == "off")
-    return write_OFF(fname, points, polygons);
+    return write_OFF(fname, points, polygons, np);
   else if(ext == "ply")
-    return write_PLY(fname, points, polygons);
+    return write_PLY(fname, points, polygons, np);
   else if(ext == "stl")
-    return write_STL(fname, points, polygons);
+    return write_STL(fname, points, polygons, np);
   else if(ext == "ts")
-    return write_GOCAD(fname, points, polygons);
+    return write_GOCAD(fname, points, polygons, np);
 #ifdef CGAL_USE_VTK
   else if(ext == "vtp")
-    return write_VTP(fname, points, polygons);
+    return write_VTP(fname, points, polygons, np);
 #endif
 #ifdef CGAL_LINKED_WITH_3MF
   else if(ext == "3mf")
@@ -167,6 +192,18 @@ bool write_polygon_soup(const std::string& fname,
 
   return false;
 }
+
+/// \cond SKIP_IN_MANUAL
+
+template <typename PointRange, typename PolygonRange>
+bool write_polygon_soup(const std::string& fname,
+                        PointRange& points,
+                        PolygonRange& polygons)
+{
+  return write_polygon_soup(fname, points, polygons, parameters::all_default());
+}
+
+/// \endcond
 
 } // namespace CGAL
 

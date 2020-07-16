@@ -27,19 +27,56 @@
 #include <fstream>
 #include <string>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
+/*!
+ * \ingroup PkgStreamSupportIoFuncsSTL
+ *
+ * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam TriangleRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param is the input stream
+ * \param points points of the soup of triangles
+ * \param facets a `TriangleRange`. Each element in it describes a triangle
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& /*np*/, // might become useful one day for face normals
-              bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+              , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+#endif
+              )
 {
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
+
   if(!is.good())
   {
     if(verbose)
@@ -122,43 +159,13 @@ bool read_STL(std::istream& is,
   }
 }
 
-/*!
- * \ingroup PkgStreamSupportIoFuncsSTL
- *
- * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
- *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
- *
- * \param is the input stream
- * \param points points of the soup of triangles
- * \param facets a `TriangleRange`. Each element in it describes a triangle
- *        using the indices of the points in `points`.
- *
- * \returns `true` if the reading was successful, `false` otherwise.
- */
-template <typename PointRange, typename TriangleRange>
-bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets)
-{
-  return read_STL(is, points, facets, parameters::all_default());
-}
-
 /// \cond SKIP_IN_MANUAL
 
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, PointRange& points, TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename TriangleRange>
+bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
+              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
-  std::ifstream in(fname);
-  return read_STL(in, points, facets, np);
-}
-
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np)
-{
-  return read_STL(fname.c_str(), points, facets, np);
+  return read_STL(is, points, facets, parameters::all_default());
 }
 
 /// \endcond
@@ -172,24 +179,51 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  * \tparam TriangleRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
  * \param points points of the soup of triangles
  * \param facets a `TriangleRange`. Each element in it describes a triangle
  *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange>
-bool read_STL(const char* fname, PointRange& points, TriangleRange& facets)
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_STL(const char* fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
+              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
-  return read_STL(fname, points, facets, parameters::all_default());
+  std::ifstream in(fname);
+  return read_STL(in, points, facets, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename TriangleRange>
-bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets)
+bool read_STL(const char* fname, PointRange& points, TriangleRange& facets,
+              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+{
+  return read_STL(fname, points, facets, parameters::all_default());
+}
+
+template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
+              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+{
+  return read_STL(fname.c_str(), points, facets, np);
+}
+
+template <typename PointRange, typename TriangleRange>
+bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets,
+              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return read_STL(fname, points, facets, parameters::all_default());
 }
@@ -231,7 +265,11 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool write_STL(std::ostream& os,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+#endif
+               )
 {
   typedef typename boost::range_value<TriangleRange>::type                  Triangle;
 
@@ -301,7 +339,8 @@ bool write_STL(std::ostream& os,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename TriangleRange>
-bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets)
+bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets,
+               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return write_STL(os, points, facets, parameters::all_default());
 }
@@ -336,8 +375,14 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_STL(const char* fname,
+               const PointRange& points,
+               const TriangleRange& facets,
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+#endif
+               )
 {
   std::ofstream os(fname);
   return write_STL(os, points, facets, np);
@@ -346,20 +391,22 @@ bool write_STL(const char* fname, const PointRange& points, const TriangleRange&
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename TriangleRange>
-bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets)
+bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets,
+               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return write_STL(fname, points, facets, parameters::all_default());
 }
 
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
+               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return write_STL(fname.c_str(), points, facets, np);
 }
 
 template <typename PointRange, typename TriangleRange>
-bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets)
+bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets,
+               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return write_STL(fname.c_str(), points, facets, parameters::all_default());
 }

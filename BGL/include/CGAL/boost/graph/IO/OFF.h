@@ -54,16 +54,15 @@ class OFF_builder
   typedef typename Base::Face_container                                     Face_container;
 
 public:
-  OFF_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
+  OFF_builder(std::istream& is) : Base(is) { }
 
   template <typename NamedParameters>
   bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np,
-            bool verbose)
+            const NamedParameters& np)
   {
-    return read_OFF(is, points, faces, np, verbose);
+    return read_OFF(is, points, faces, np);
   }
 };
 
@@ -72,13 +71,12 @@ public:
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF_BGL(std::istream& is,
                   Graph& g,
-                  const CGAL_BGL_NP_CLASS& np,
-                  bool verbose = true)
+                  const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
 
-  IO::internal::OFF_builder<Graph, Point> builder(is, verbose);
+  IO::internal::OFF_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
 
@@ -103,7 +101,6 @@ bool read_OFF_BGL(std::istream& is,
 
   \param is the input stream
   \param g the graph to be built from the input data
-  \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -143,6 +140,12 @@ bool read_OFF_BGL(std::istream& is,
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{face colors that may exist in the input will be ignored}
     \cgalParamNEnd
+
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -155,14 +158,13 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true
+              const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
               )
 {
-  return IO::internal::read_OFF_BGL(is, g, np, verbose);
+  return IO::internal::read_OFF_BGL(is, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -194,7 +196,6 @@ bool read_OFF(std::istream& is, Graph& g,
 
   \param fname the name of the input file
   \param g the graph to be built from the input data
-  \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -234,6 +235,12 @@ bool read_OFF(std::istream& is, Graph& g,
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{face colors that may exist in the input will be ignored}
     \cgalParamNEnd
+
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
@@ -246,15 +253,14 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true
+              const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
               )
 {
   std::ifstream is(fname);
-  return read_OFF(is, g, np, verbose);
+  return read_OFF(is, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -267,10 +273,9 @@ bool read_OFF(const char* fname, Graph& g,
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+bool read_OFF(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_OFF(fname.c_str(), g, np, verbose);
+  return read_OFF(fname.c_str(), g, np);
 }
 
 template <typename Graph>

@@ -22,7 +22,7 @@ void read(const char* fname, std::size_t v, std::size_t f)
 
   std::vector<Point_type> points;
   std::vector<Polygon_type> faces;
-  assert(CGAL::read_STL(input, points, faces, true));
+  assert(CGAL::read_STL(input, points, faces, CGAL::parameters::verbose(true)));
 
   std::cout << "OFF version of file " << fname << std::endl;
 

@@ -36,7 +36,9 @@ public:
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets,
-                    bool,bool,bool)
+                    const bool /*colors*/ = false,
+                    const bool /*normals*/ = false,
+                    const bool /*textures*/ = false)
   {
     m_os = &o;
     m_facets = facets;

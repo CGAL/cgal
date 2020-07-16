@@ -42,11 +42,12 @@ bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 PointRange& points,
                 PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS&,
-                bool verbose = true)
+                const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename boost::range_value<PointRange>::type     Point;
   typedef typename boost::range_value<PolygonRange>::type   Poly;
+
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
 
   if(!is)
   {
@@ -153,38 +154,6 @@ bool read_GOCAD(std::istream& is,
   return end_read && nb_gocad == nb_end && !is.bad();
 }
 
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(std::istream& is,
-                PointRange& points,
-                PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS& np)
-{
-  std::pair<std::string, std::string> dummy;
-  return read_GOCAD(is, dummy, points, polygons, np);
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const char* fname,
-                PointRange& points,
-                PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS& np)
-{
-  std::ifstream in(fname);
-  std::pair<std::string, std::string> dummy;
-  return read_GOCAD(in, dummy, points, polygons, np);
-}
-
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname,
-                PointRange& points,
-                PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS& np)
-{
-  return read_GOCAD(fname.c_str(), points, polygons, np);
-}
-
-/// \endcond
-
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
@@ -194,20 +163,49 @@ bool read_GOCAD(const std::string& fname,
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(std::istream& is,
+                PointRange& points,
+                PolygonRange& polygons,
+                const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+#endif
+                )
+{
+  std::pair<std::string, std::string> dummy;
+  return read_GOCAD(is, dummy, points, polygons, np);
+}
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange>
-bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons)
+bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons,
+                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(is, dummy, points, polygons, parameters::all_default());
 }
+
+/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
@@ -218,24 +216,58 @@ bool read_GOCAD(std::istream& is, PointRange& points, PolygonRange& polygons)
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
  *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange>
-bool read_GOCAD(const char* fname, PointRange& points, PolygonRange& polygons)
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(const char* fname,
+                PointRange& points,
+                PolygonRange& polygons,
+                const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+#endif
+                )
 {
-  return read_GOCAD(fname, points, polygons, parameters::all_default());
+  std::ifstream in(fname);
+  std::pair<std::string, std::string> dummy;
+  return read_GOCAD(in, dummy, points, polygons, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+{
+  return read_GOCAD(fname.c_str(), points, polygons, np);
+}
+
 template <typename PointRange, typename PolygonRange>
-bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& polygons)
+bool read_GOCAD(const char* fname, PointRange& points, PolygonRange& polygons,
+                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+{
+  return read_GOCAD(fname, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange>
+bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& polygons,
+                typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return read_GOCAD(fname, points, polygons, parameters::all_default());
 }
@@ -341,7 +373,11 @@ template <typename PointRange,
 bool write_GOCAD(std::ostream& os,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np)
+                 const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                 , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+#endif
+                 )
 {
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, np);
 }
@@ -349,7 +385,8 @@ bool write_GOCAD(std::ostream& os,
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename PolygonRange>
-bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
+bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange& polygons,
+                 typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return IO::internal::write_GOCAD(os, "anonymous", points, polygons, parameters::all_default());
 }
@@ -389,7 +426,11 @@ template <typename PointRange,
 bool write_GOCAD(const char* fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np)
+                 const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+                 , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+#endif
+                 )
 {
   std::ofstream os(fname);
   return IO::internal::write_GOCAD(os, fname, points, polygons, np);
@@ -404,13 +445,15 @@ bool write_GOCAD(const char* fname, const PointRange& points, const PolygonRange
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
+bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+                 typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return IO::internal::write_GOCAD(fname.c_str(), fname.c_str(), points, polygons, np);
+  return write_GOCAD(fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
+bool write_GOCAD(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
+                 typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_GOCAD(fname.c_str(), points, polygons, parameters::all_default());
 }

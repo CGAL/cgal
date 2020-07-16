@@ -31,6 +31,11 @@
 #include <utility>
 #include <vector>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,9 +267,52 @@ bool read_PLY(std::istream& is,
                                 verbose);
 }
 
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np, const bool verbose = true)
+/// \endcond
+
+/*!
+ * \ingroup PkgStreamSupportIoFuncsPLY
+ *
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `SequenceContainer`
+ *                      whose value_type is itself a model of the concept `SequenceContainer`
+ *                      whose value_type is an integer type.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param is the input stream
+ * \param points points of the soup of polygons.
+ * \param polygons a `PolygonRange`. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
+template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+#endif
+              )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -277,43 +325,20 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
                                                  CGAL::Emptyset_iterator()),
                                 choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
                                                  CGAL::Emptyset_iterator()),
-                                std::back_inserter(dummy_pf), verbose);
+                                std::back_inserter(dummy_pf),
+                                choose_parameter(get_parameter(np, internal_np::verbose), true));
+}
+
+/// \cond SKIP_IN_MANUAL
+
+template <class PointRange, class PolygonRange>
+bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
+              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+{
+  return read_PLY(is, points, polygons, parameters::all_default());
 }
 
 /// \endcond
-
-/*!
- * \ingroup PkgStreamSupportIoFuncsPLY
- *
- * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
- *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
- *
- * \param is the input stream
- * \param points points of the soup of polygons.
- * \param polygons a `PolygonRange`. Each element in it describes a polygon
- *        using the indices of the points in `points`.
- * \param verbose if `true`, will output warnings and error messages.
- *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
- *
- * \returns `true` if the reading was successful, `false` otherwise.
- */
-template <class PointRange, class PolygonRange>
-bool read_PLY(std::istream& is,
-              PointRange& points,
-              PolygonRange& polygons,
-              const bool verbose = true
-#ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
-#endif
-              )
-{
-  return read_PLY(is, points, polygons, parameters::all_default(), verbose);
-}
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
@@ -330,12 +355,17 @@ bool read_PLY(std::istream& is,
  * \param points points of the soup of polygons.
  * \param polygons a `PolygonRange`. Each element in it describes a polygon
  *        using the indices of the points in `points`.
- * \param verbose if `true`, will output warnings and error messages.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
  *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -347,25 +377,24 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_PLY(const char* fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np,
-              const bool verbose = true,
+              const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
 {
-  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  const bool binary = parameters::choose_parameter(parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
     CGAL::set_mode(is, CGAL::IO::BINARY);
-    return read_PLY(is, points, polygons, np, verbose);
+    return read_PLY(is, points, polygons, np);
   }
   else
   {
     std::ifstream is(fname);
     CGAL::set_mode(is, CGAL::IO::ASCII);
-    return read_PLY(is, points, polygons, np, verbose);
+    return read_PLY(is, points, polygons, np);
   }
 }
 
@@ -373,23 +402,23 @@ bool read_PLY(const char* fname,
 
 template <typename PointRange, typename PolygonRange>
 bool read_PLY(const char* fname, PointRange& points, PolygonRange& polygons,
-              const bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return read_PLY(fname, points, polygons, parameters::all_default(), verbose);
+  return read_PLY(fname, points, polygons, parameters::all_default());
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-              const bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return read_PLY(fname.c_str(), points, polygons, np, verbose);
+  return read_PLY(fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>
 bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons,
-              const bool verbose = true, typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return read_PLY(fname.c_str(), points, polygons, parameters::all_default(), verbose);
+  return read_PLY(fname.c_str(), points, polygons, parameters::all_default());
 }
 
 /// \endcond

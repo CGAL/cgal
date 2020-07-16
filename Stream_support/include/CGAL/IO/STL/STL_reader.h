@@ -34,7 +34,7 @@ bool read_ASCII_facet(std::istream& is,
                       TriangleRange& facets,
                       int& index,
                       IndexMap& index_map,
-                      bool verbose = true)
+                      const bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type         Point;
   typedef typename boost::range_value<TriangleRange>::type      Triangle;
@@ -42,8 +42,7 @@ bool read_ASCII_facet(std::istream& is,
   // Here, we have already read the word 'facet' and are looking to read till 'endfacet'
 
   std::string s;
-  std::string vertex("vertex"),
-              endfacet("endfacet");
+  std::string vertex("vertex"), endfacet("endfacet");
 
   int count = 0;
   double x,y,z;
@@ -114,7 +113,7 @@ template <class PointRange, class TriangleRange>
 bool parse_ASCII_STL(std::istream& is,
                      PointRange& points,
                      TriangleRange& facets,
-                     bool verbose = true)
+                     const bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type           Point;
   bool solid_found = false;
@@ -167,7 +166,7 @@ template <class PointRange, class TriangleRange>
 bool parse_binary_STL(std::istream& is,
                       PointRange& points,
                       TriangleRange& facets,
-                      bool verbose = true)
+                      const bool verbose = true)
 {
   typedef typename boost::range_value<PointRange>::type         Point;
   typedef typename boost::range_value<TriangleRange>::type      Triangle;

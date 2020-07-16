@@ -112,6 +112,12 @@ bool read_polygon_mesh(std::istream& is,
  *     \cgalParamDefault{`true`}
  *     \cgalParamExtra{This applies only to the \ref IOStreamPLY file format. }
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
@@ -125,9 +131,10 @@ bool read_polygon_mesh(std::istream& is,
 template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
                        Graph& g,
-                       const NamedParameters& np,
-                       const bool verbose = false)
+                       const NamedParameters& np)
 {
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
+
   const std::string ext = IO::internal::get_file_extension(fname);
   if(ext == std::string())
   {
@@ -204,7 +211,6 @@ bool read_polygon_mesh(const char* fname, Graph& g)
  *
  * \param fname the name of the file
  * \param g the mesh to be output
- * \param verbose whether extra information is printed when an incident occurs during writing
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -229,6 +235,12 @@ bool read_polygon_mesh(const char* fname, Graph& g)
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
@@ -238,9 +250,10 @@ bool read_polygon_mesh(const char* fname, Graph& g)
 template <class Graph, typename NamedParameters>
 bool write_polygon_mesh(const std::string& fname,
                         Graph& g,
-                        const NamedParameters& np,
-                        const bool verbose = false)
+                        const NamedParameters& np)
 {
+  const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
+
   const std::string ext = IO::internal::get_file_extension(fname);
   if(ext == std::string())
   {

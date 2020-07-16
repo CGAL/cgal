@@ -55,16 +55,15 @@ class OBJ_builder
   typedef typename Base::Face_container                                     Face_container;
 
 public:
-  OBJ_builder(std::istream& is, bool verbose) : Base(is, verbose) { }
+  OBJ_builder(std::istream& is) : Base(is) { }
 
   template <typename NamedParameters>
   bool read(std::istream& is,
             Point_container& points,
             Face_container& faces,
-            const NamedParameters& np,
-            bool verbose)
+            const NamedParameters& np)
   {
-    return read_OBJ(is, points, faces, np, verbose);
+    return read_OBJ(is, points, faces, np);
   }
 };
 
@@ -85,7 +84,6 @@ public:
 
   \param is the input stream
   \param g the graph to be built from the input data
-  \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -96,6 +94,12 @@ public:
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -109,15 +113,29 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+              )
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
 
-  IO::internal::OBJ_builder<Graph, Point> builder(is, verbose);
+  IO::internal::OBJ_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
+
+/// \cond SKIP_IN_MANUAL
+
+template <typename Graph>
+bool read_OBJ(std::istream& is, Graph& g,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_OBJ(is, g, parameters::all_default());
+}
+
+/// \endcond
 
 /*!
   \ingroup PkgBGLIoFuncsOBJ
@@ -133,7 +151,6 @@ bool read_OBJ(std::istream& is,
 
   \param fname the name of the input file
   \param g the graph to be built from the input data
-  \param verbose whether extra information is printed when an incident occurs during reading
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -144,6 +161,12 @@ bool read_OBJ(std::istream& is,
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{verbose}
+      \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -157,27 +180,38 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const char* fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np,
-              bool verbose = true)
+              const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+              )
 {
   std::ifstream in(fname);
-  return read_OBJ(in, g, np, verbose);
+  return read_OBJ(in, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np, bool verbose = true)
+bool read_OBJ(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
-  return read_OBJ(fname.c_str(), g, np, verbose);
+  return read_OBJ(fname.c_str(), g, np);
 }
 
 template <typename Graph>
-bool read_OBJ(std::istream& is, Graph& g) { return read_OBJ(is, g, parameters::all_default()); }
+bool read_OBJ(const char* fname, Graph& g,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_OBJ(fname, g, parameters::all_default());
+}
+
 template <typename Graph>
-bool read_OBJ(const char* fname, Graph& g) { return read_OBJ(fname, g, parameters::all_default()); }
-template <typename Graph>
-bool read_OBJ(const std::string& fname, Graph& g) { return read_OBJ(fname, g, parameters::all_default()); }
+bool read_OBJ(const std::string& fname, Graph& g,
+              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return read_OBJ(fname, g, parameters::all_default());
+}
 
 /// \endcond
 
@@ -222,11 +256,26 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+               )
 {
   IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_wavefront> printer(os);
   return printer(g, np);
 }
+
+/// \cond SKIP_IN_MANUAL
+
+template <typename Graph>
+bool write_OBJ(std::ostream& os, const Graph& g,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_OBJ(os, g, parameters::all_default());
+}
+
+/// \endcond
 
 /*!
 \ingroup PkgBGLIoFuncsOBJ
@@ -259,7 +308,11 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const char* fname,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+#endif
+               )
 {
   std::ofstream os(fname);
   return write_OBJ(os, g, np);
@@ -267,18 +320,26 @@ bool write_OBJ(const char* fname,
 
 /// \cond SKIP_IN_MANUAL
 
+template <typename Graph>
+bool write_OBJ(const char* fname, const Graph& g,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_OBJ(fname, g, parameters::all_default());
+}
+
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_OBJ(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_OBJ(fname.c_str(), g, np);
 }
 
 template <typename Graph>
-bool write_OBJ(std::ostream& os, const Graph& g) { return write_OBJ(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_OBJ(const char* fname, const Graph& g) { return write_OBJ(fname, g, parameters::all_default()); }
-template <typename Graph>
-bool write_OBJ(const std::string& fname, const Graph& g) { return write_OBJ(fname, g, parameters::all_default()); }
+bool write_OBJ(const std::string& fname, const Graph& g,
+               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+{
+  return write_OBJ(fname, g, parameters::all_default());
+}
 
 /// \endcond
 
