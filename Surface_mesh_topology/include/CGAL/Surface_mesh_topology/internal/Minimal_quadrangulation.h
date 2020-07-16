@@ -553,15 +553,7 @@ public:
       count_edges_of_path_on_torus(pt, a, b);
       a = std::abs(a);
       b = std::abs(b);
-      res=(a == 0 || b == 0 || CGAL::gcd(a, b) - 1 == 0);
-    }
-    else if (local_map_is_a_cylinder())
-    {
-      internal::Path_on_surface_with_rle<Self>
-        pt=transform_original_path_into_quad_surface_with_rle(p);
-
-      int p = count_edges_of_path_on_cylinder(pt);
-      res=(std::abs(p) <= 1);
+      res=((a == 0 && b == 1) || (b == 0 && a == 1) || CGAL::gcd(a, b) - 1 == 0);
     }
     else if (is_contractible(p))
     {
@@ -810,35 +802,6 @@ protected:
         else if (path[i]==get_local_map().template beta<2>(dhb)) { --b; }
       }
     }
-  }
-
-  int count_edges_of_path_on_cylinder
-  (const Path_on_surface<Local_map>& path) const
-  {
-    CGAL_assertion(local_map_is_a_cylinder());
-    int p = 0;
-
-    Dart_const_handle dhp=get_local_map().darts().begin();
-    Dart_const_handle dhn=get_local_map().template beta<2>(dhp);
-    for (std::size_t i = 0; i < path.length(); ++i)
-    {
-      if(path.get_ith_flip(i))
-      {
-        if (path[i]==dhp || path[i]==get_local_map().template beta<1>(dhp))
-        { --p; }
-        else if (path[i]==dhn || path[i]==get_local_map().template beta<1>(dhn))
-        { ++p; }
-      }
-      else
-      {
-        if (path[i]==dhp || path[i]==get_local_map().template beta<1>(dhp))
-        { ++p; }
-        else if (path[i]==dhn || path[i]==get_local_map().template beta<1>(dhn))
-        { --p; }
-      }
-    }
-
-    return p/2;
   }
 
   Path_on_surface<Local_map>
@@ -1734,13 +1697,6 @@ protected:
     if (get_local_map().number_of_darts()!=4)
     { return false; }
     return (get_local_map().number_of_marked_darts(m_mark_perforated)==0);
-  }
-
-  bool local_map_is_a_cylinder() const
-  {
-    if (get_local_map().number_of_darts()!=4)
-    { return false; }
-    return (get_local_map().number_of_marked_darts(m_mark_perforated)==4);
   }
 
   /// @return true iff the perforated faces are correctly marked
