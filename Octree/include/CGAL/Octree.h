@@ -334,6 +334,14 @@ public:
     return *node_for_point;
   }
 
+  /*!
+   * \brief Find the bounding box of a node
+   *
+   * \todo
+   *
+   * \param node the node to determine the bounding box of
+   * \return the bounding box defined by that node's relationship to the tree
+   */
   Bbox bbox(const Node &node) const {
 
     // Determine the side length of this node
@@ -353,15 +361,25 @@ public:
             max_corner[0], max_corner[1], max_corner[2]};
   }
 
+  /*!
+   * \brief Find the K points in a tree that are nearest to the search point
+   *
+   * \todo
+   *
+   * \tparam Point_output_iterator an output iterator type that will accept points
+   * \param search_point the location to find points near
+   * \param k the number of points to find
+   * \param output the output iterator to add the found points to
+   */
   template<typename Point_output_iterator>
-  void nearest_k_neighbours(const Point &p, std::size_t k, Point_output_iterator output) const {
+  void nearest_k_neighbours(const Point &search_point, std::size_t k, Point_output_iterator output) const {
 
     // Create an empty list of points
     std::vector<std::pair<Point, FT>> points_list;
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbours_recursive(p, points_list, m_root, std::numeric_limits<FT>::max());
+    nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max());
 
     // Add all the points found to the output
     for (auto &item : points_list)
@@ -453,26 +471,7 @@ private: // functions :
   bool do_intersect(const Node &node, const Sphere &sphere) const {
 
     // Create a cubic bounding box from the node
-    Bbox node_cube;
-    {
-      // TODO: This could be its own method
-
-      // Determine the side length of this node
-      FT size = m_side_per_depth[node.depth()];
-
-      // Determine the location this node should be split
-      FT min_corner[3];
-      FT max_corner[3];
-      for (int i = 0; i < 3; i++) {
-
-        min_corner[i] = m_bbox_min[i] + (node.location()[i] * size);
-        max_corner[i] = min_corner[i] + size;
-      }
-
-      // Create the cube
-      node_cube = {min_corner[0], min_corner[1], min_corner[2],
-                   max_corner[0], max_corner[1], max_corner[2]};
-    }
+    Bbox node_cube = bbox(node);
 
     // Check for overlap between the node's box and the sphere as a box, to quickly catch some cases
     // FIXME: Activating this causes slower times!

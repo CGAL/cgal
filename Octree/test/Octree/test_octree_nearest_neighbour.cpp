@@ -157,7 +157,7 @@ int main(void) {
   naive_vs_octree(1000);
   naive_vs_octree(10000);
   naive_vs_octree(100000);
-//
+
 //  kdtree_vs_octree(100);
 //  kdtree_vs_octree(1000);
 //  kdtree_vs_octree(10000);
