@@ -45,10 +45,17 @@ void extractPatchesAndTrFromConfigFile(const string& configFilePath,  Registrati
 
 int main(int argc, const char** argv)
 {
+    if(argc != 2){
+        std::cout << "execute program using: " << "./gret-sdp_with_OpenGR" << " <config/file/path>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::string config_file(argv[1]);
+
     RegistrationProblem problem;
     vector<MatrixType> gt_transformations;
 
-    extractPatchesAndTrFromConfigFile("/home/felix/Workspace/GSoC20/cgal-felix/build/examples/Point_set_processing_3/gret-sdp-data/config.json", problem, gt_transformations);
+    extractPatchesAndTrFromConfigFile(config_file, problem, gt_transformations);
 
     const int d = problem.d;
     const int n = problem.n;

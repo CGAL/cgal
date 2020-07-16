@@ -8,9 +8,6 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-// currently used for CGAL_range_and_pmaps_to_opengr_point3d_range
-#include <CGAL/OpenGR/compute_registration_transformation.h>
-
 #include <boost/range/iterator_range.hpp>
 
 #include <gr/algorithms/GRET_SDP.h>
@@ -91,6 +88,13 @@ namespace OpenGR {
         template <class PatchRange, class NamedParameters>
         void registerPatches(const PatchRange& patches, const int n, const NamedParameters& np);
 
+        // returns transformations
+        template<typename TrRange>
+        void getTransformations(TrRange& transformations);
+
+        // returns registered points
+        template<typename PointRange>
+        void getRegisteredPatches(PointRange& registered_points);
         private:
         std::unique_ptr<GR_MatcherType> gr_matcher;
 
@@ -114,13 +118,12 @@ namespace OpenGR {
         boost::make_transform_iterator (patches.end(),   unary_function));
 
         gr::Utils::Logger logger(gr::Utils::Verbose);
-        // this one works
-        GR_MatcherType matcher(options, logger);
-        // this one does not work
-        //gr_matcher.reset(new GR_MatcherType(options, logger));
-
         gr::DummyTransformVisitor tr_visitor;
-        matcher.template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(gr_patches, n, tr_visitor);
+         
+        // this one does not work
+        gr_matcher.reset( new GR_MatcherType(options, logger) );
+        gr_matcher-> template RegisterPatches<gr::MOSEK_WRAPPER<Scalar>>(gr_patches, n, tr_visitor);
+
 
     }
 
