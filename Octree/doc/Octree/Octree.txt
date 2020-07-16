@@ -1,27 +1,20 @@
 namespace CGAL {
 
 /*!
-\mainpage Octree
+\mainpage User Manual
 \anchor Chapter_Octree
 
 \cgalAutoToc
 \author Jackson Campolattaro
 
-Introductory text.
+\section Section_Octree_Introduction Introduction
 
-\section Section_Octree_Definitions Definitions
+Introduction section.
 
-Definitions section.
-
-\subsection Subsection_Octree_Basic_Description Description
-
-Description of the octree
-
-Maybe more subsections with examples
-
-...
-
-\section Section_Octree_Design Design
+\section Section_Octree_Splitting_Rules Splitting Rules
+\section Section_Octree_Walker_Rules Walker Rules
+\section Section_Octree_Example_Programs Example Programs
+\section Section_Octree_Software_Design Software Design
 
 Explain the design of the package.
 
