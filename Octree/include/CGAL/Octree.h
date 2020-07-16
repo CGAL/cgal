@@ -522,7 +522,8 @@ private: // functions :
             });
 
             // Update the distance
-            largest_radius_squared_found = out.back().second;
+            if (out.size() == out.capacity())
+              largest_radius_squared_found = out.back().second;
           }
         }
       }
@@ -539,15 +540,11 @@ private: // functions :
       for (int index = 0; index < 8; ++index) {
         auto &n = node[index];
 
-        // If the node isn't empty
-        if (0 < std::distance(node.value().begin(), node.value().end())) {
+        // Find the distance of the node's center
+        auto node_center_distance = CGAL::squared_distance(p, compute_barycenter_position(n));
 
-          // Find the distance of the node's center
-          auto node_center_distance = CGAL::squared_distance(p, compute_barycenter_position(n));
-
-          // Add this node to the list
-          children_with_distances.emplace_back(index, node_center_distance);
-        }
+        // Add this node to the list
+        children_with_distances.emplace_back(index, node_center_distance);
       }
 
       // Sort the children by their distance
@@ -560,7 +557,7 @@ private: // functions :
         auto &n = node[child.first.to_ulong()];
 
         // Check whether this node is capable of containing closer points
-        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 0.1 /*TODO: This is my epsilon*/})) {
+        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 10 /*TODO: This is my epsilon*/})) {
 
           // Recursive case
           largest_radius_squared_found =
@@ -569,7 +566,7 @@ private: // functions :
         }
       }
     }
-    //out.push_back(p);
+
     return largest_radius_squared_found;
   }
 
