@@ -577,7 +577,9 @@ public:
       // Use non-rle path from now on
       Path_on_surface<Local_map> p_canonized(pt);
       auto factorization=p_canonized.factorize();
-      if (factorization.second <= 1) {
+      // If the path length is 1, it must be simple
+      res = factorization.second <= 1 && factorization.first.length() <= 1;
+      if (factorization.second <= 1 && !res) {
         // If the curve is not primitive, there must be at least
         // one self intersection
 
@@ -672,7 +674,7 @@ public:
                 if (b.m_idx == 0 && pr[key] == pr[0])
                 {
                   if(pr[key] != p_original[key]) {
-                    // current edge was switched so it should always be on the right side (more counter-clockwise)
+                    // current edge was switched so it should always be on the right side (more clockwise)
                     return less_than_in_tree(0, 1);
                   }
                   /// Comparing to pr[0], needs to check longest suffix
