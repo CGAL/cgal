@@ -123,7 +123,7 @@ int main()
 
   if (res)
   {
-    std::cout<<"SUCCESS simplicity_double_torus_with_holes; all tests ok."<<std::endl;
+    std::cout<<"SUCCESS simplicity_homology_group; all tests ok."<<std::endl;
     return EXIT_SUCCESS;
   }
 
