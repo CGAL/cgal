@@ -13,6 +13,10 @@ An octree is a commonly used data structure that subdivides 3d space.
 The Octree package provides the Octree and Node classes.
 
 \section Section_Octree_Example_Programs Example Programs
+
+\subsection Section_Octree_Example_Point_Set Example for an Octree built from a Point_set_3
+\subsection Section_Octree_Example_Custom_Split_Criterion Example for a Custom Split_criterion
+
 \section Section_Octree_Software_Design Software Design
 
 \subsection Subsection_Octree_Splitting_Rules Splitting Rules

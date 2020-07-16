@@ -265,6 +265,10 @@ public:
     return (location() == rhs.location());
   }
 
+  bool operator!=(const Node &rhs) const {
+    return !operator==(rhs);
+  }
+
   /// @}
 };
 }
