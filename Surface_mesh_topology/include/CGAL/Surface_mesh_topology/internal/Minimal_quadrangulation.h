@@ -708,7 +708,7 @@ public:
         res = true;
         auto marktemp=get_local_map().get_new_mark();
         for (auto it=get_local_map().darts().begin();
-             it!=get_local_map().darts().end(); ++it)
+             res && it!=get_local_map().darts().end(); ++it)
         {
           if (!get_local_map().is_marked(it, marktemp))
           {
@@ -760,7 +760,7 @@ public:
               }
               dh2 = get_local_map().template beta<2, 1>(dh2);
             }
-            while(dh2!=it);
+            while(dh2!=it && res);
             res = res && parenthesis_pairing.empty();
           }
         }
