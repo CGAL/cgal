@@ -13,11 +13,11 @@ namespace Split_criterion {
 /*!
  * \brief Criterion to split nodes of an octree when they contain more than a certain number of items
  */
-struct Split_to_bucket_size {
+struct Bucket_size {
 
   std::size_t m_bucket_size;
 
-  Split_to_bucket_size(std::size_t bucket_size) :
+  Bucket_size(std::size_t bucket_size) :
           m_bucket_size(bucket_size) {}
 
   template<class Node>
@@ -29,11 +29,11 @@ struct Split_to_bucket_size {
 /*!
  * \brief Criterion to split nodes of an octree when they are less than a certain depth
  */
-struct Split_to_max_depth {
+struct Max_depth {
 
   std::size_t m_max_depth;
 
-  Split_to_max_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
+  Max_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
 
   template<class Node>
   bool operator()(const Node &n) const {
@@ -44,11 +44,11 @@ struct Split_to_max_depth {
 /*!
  * \brief Criterion to split nodes when they are less than a depth and they contain more than a number of items
  */
-struct Split_to_max_depth_or_bucket_size {
+struct Max_depth_or_bucket_size {
 
   std::size_t m_max_depth, m_bucket_size;
 
-  Split_to_max_depth_or_bucket_size(std::size_t max_depth, std::size_t bucket_size) :
+  Max_depth_or_bucket_size(std::size_t max_depth, std::size_t bucket_size) :
           m_max_depth(max_depth), m_bucket_size(bucket_size) {}
 
   template<class Node>

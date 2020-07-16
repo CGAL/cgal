@@ -255,7 +255,7 @@ public:
    * \param bucket_size maximum points a node is allowed to contain
    */
   void refine(size_t max_depth, size_t bucket_size) {
-    refine(Split_criterion::Split_to_max_depth_or_bucket_size(max_depth, bucket_size));
+    refine(Split_criterion::Max_depth_or_bucket_size(max_depth, bucket_size));
   }
 
   /// @}
