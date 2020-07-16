@@ -93,12 +93,38 @@ namespace OpenGR {
         void getRegisteredPatches(PointRange& registered_points);
         private:
         std::unique_ptr<GR_MatcherType> gr_matcher;
+        int m;
 
         template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
         void registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options);
 
 
     };
+
+    template <typename Kernel>
+    template <class PatchRange, class NamedParameters>
+    void GRET_SDP<Kernel>::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
+    {
+        m = patches.size();
+
+        namespace PSP = CGAL::Point_set_processing_3;
+        typedef typename PatchRange::value_type PointRange;
+        using parameters::choose_parameter;
+        using parameters::get_parameter;
+
+        // property map types
+        typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
+        typedef typename PSP::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+
+        PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+        NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+        auto index_map = get_parameter(np, internal_np::vertex_index);
+
+        // add named parameters options to GR_Options (currently no options)
+        GR_Options options;
+
+        registerPatches(patches, n, point_map, index_map, normal_map, options);
+    }
 
     template <typename Kernel>
     template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
@@ -123,35 +149,27 @@ namespace OpenGR {
 
     }
 
-    template <typename Kernel>
-    template <class PatchRange, class NamedParameters>
-    void GRET_SDP<Kernel>::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
-    {
-        namespace PSP = CGAL::Point_set_processing_3;
-        typedef typename PatchRange::value_type PointRange;
-        using parameters::choose_parameter;
-        using parameters::get_parameter;
-
-        // property map types
-        typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-        typedef typename PSP::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-
-        PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-        NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-        auto index_map = get_parameter(np, internal_np::vertex_index);
-
-        // add named parameters options to GR_Options (currently no options)
-        GR_Options options;
-
-        registerPatches(patches, n, point_map, index_map, normal_map, options);
-    }
-
 
     // returns transformations
     template <typename Kernel>
     template<typename TrRange>
     void GRET_SDP<Kernel>::getTransformations(TrRange& transformations){
+        //typedef typename Kernel::Aff_transformation_3 cgal_trafo_type;
+        typedef typename GR_MatcherType::MatrixType gr_trafo_type;
 
+        // get gr transformations
+        std::vector<gr_trafo_type> gr_transformations;
+        gr_matcher->getTransformations(gr_transformations);
+
+        // convert to cgal affin transformations
+        transformations.reserve(m);
+        for(const gr_trafo_type& gr_trafo : gr_transformations)
+            transformations.emplace_back(
+                gr_trafo.coeff(0,0), gr_trafo.coeff(0,1), gr_trafo.coeff(0,2), gr_trafo.coeff(0,3),
+                gr_trafo.coeff(1,0), gr_trafo.coeff(1,1), gr_trafo.coeff(1,2), gr_trafo.coeff(1,3),
+                gr_trafo.coeff(2,0), gr_trafo.coeff(2,1), gr_trafo.coeff(2,2), gr_trafo.coeff(2,3)
+            );
+        
     }
 
     // returns registered points

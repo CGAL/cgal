@@ -29,6 +29,7 @@ typedef CGAL::Nth_of_tuple_property_map<0, Pwn> Point_map;
 typedef CGAL::Nth_of_tuple_property_map<1, Pwn> Index_map;
 typedef CGAL::Nth_of_tuple_property_map<2, Pwn> Normal_map;
 typedef std::vector<Pwn> Patch;
+typedef K::Aff_transformation_3 TrafoType;
 
 enum {Dim = 3};
 typedef Eigen::Matrix<K::FT, Dim+1, Dim+1> MatrixType;
@@ -68,6 +69,10 @@ int main(int argc, const char** argv)
     matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
                                                 .normal_map(Normal_map())
                                                 .vertex_index_map(Index_map()));
+
+    std::vector<TrafoType> transformations;
+    matcher.getTransformations(transformations);
+    
 }
 
 template <typename PatchRange>
