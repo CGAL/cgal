@@ -33,6 +33,8 @@ namespace CGAL {
 
   writes the graph `g` in the wrl format (VRML 2.0).
 
+  \param os the output stream
+  \param g the graph to be written
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
@@ -127,6 +129,8 @@ bool write_wrl(std::ostream& os,
 
   writes the graph `g` in the OFF format.
 
+  \param os the output stream
+  \param g the graph to be written
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
@@ -256,6 +260,8 @@ inline std::string next_non_comment(std::istream& is)
 
  reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash, and lines with whitespace.
 
+ \param is the input stream
+ \param g the graph to be read
  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
  \cgalNamedParamsBegin

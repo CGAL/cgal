@@ -153,7 +153,7 @@ namespace internal{
  *      isolated connected component.
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the closed triangle mesh free from self-intersections to be tested
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
