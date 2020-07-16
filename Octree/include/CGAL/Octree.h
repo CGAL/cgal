@@ -505,7 +505,6 @@ private: // functions :
 
           // Check whether the new distance is an improvement
           if (new_distance_squared < largest_radius_squared_found) {
-            std::cout << out.size() << std::endl;
 
             // Make room for the new point if necessary
             if (out.size() == out.capacity())
@@ -523,7 +522,6 @@ private: // functions :
 
             // Update the distance
             largest_radius_squared_found = out.back().second;
-            std::cout << largest_radius_squared_found << std::endl;
           }
         }
       }
