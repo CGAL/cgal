@@ -383,11 +383,6 @@ public:
     // Invoking the recursive function adds those points to the vector (passed by reference)
     nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max());
 
-    // Sort the list by distance
-    std::sort(points_list.begin(), points_list.end(), [=](auto &left, auto &right) {
-      return left.second < right.second;
-    });
-
     // Add all the points found to the output
     for (auto &item : points_list)
       *output++ = item.first;
