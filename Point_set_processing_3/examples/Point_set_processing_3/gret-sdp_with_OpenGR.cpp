@@ -13,6 +13,8 @@
 #include <iostream>
 #include <utility>
 
+#include <Eigen/Dense>
+
 
 using namespace std;
 namespace pt = boost::property_tree;
@@ -62,7 +64,7 @@ int main(int argc, const char** argv)
     const int m = problem.m;
     const vector<Patch>& patches = problem.patches;
 
-    CGAL::OpenGR::GRET_SDP<Scalar> matcher;
+    CGAL::OpenGR::GRET_SDP<K> matcher;
     matcher.registerPatches(patches, problem.n, params::point_map(Point_map())
                                                 .normal_map(Normal_map())
                                                 .vertex_index_map(Index_map()));

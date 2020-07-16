@@ -58,11 +58,6 @@ namespace OpenGR {
             typedef typename InputRange::value_type argument_type;
             typedef typename argument_type::value_type value_type;
 
-
-            // typedef typename boost::iterator_range<<boost::iterators::transform_iterator<
-            // CGAL_range_and_pmaps_to_opengr_point3d_range<Scalar, argument_type, PointMap, VectorMap>,
-            // argument_type::iterator>> return_type;
-
             CGAL_range_and_pmaps_to_opengr_indexed_point3d_range<Scalar, argument_type, PointMap, IndexMap, VectorMap>
             unary_function;
 
@@ -79,9 +74,10 @@ namespace OpenGR {
     }
 
 
-    template <typename Scalar>
+    template <typename Kernel>
     class GRET_SDP {
         public:
+        using Scalar = typename Kernel::FT;
         using GR_MatcherType = gr::GRET_SDP<gr::Point3D<Scalar>, gr::DummyTransformVisitor, gr::GRET_SDP_Options>;
         using GR_Options = typename GR_MatcherType::OptionsType;
 
@@ -104,9 +100,9 @@ namespace OpenGR {
 
     };
 
-    template <typename Scalar>
+    template <typename Kernel>
     template <class PatchRange, class PointMap, class IndexMap, class VectorMap>
-    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options){
+    void GRET_SDP<Kernel>::registerPatches(const PatchRange& patches, const int n, PointMap point_map, IndexMap index_map, VectorMap vector_map, GR_Options& options){
 
         // unary function that converty CGAL PatchRange to OpenGR PatchRange
         internal::CGAL_range_and_pmaps_range_to_opengr_point3d_PatchRange<PatchRange, Scalar, PointMap, IndexMap, VectorMap>
@@ -127,9 +123,9 @@ namespace OpenGR {
 
     }
 
-    template <typename Scalar>
+    template <typename Kernel>
     template <class PatchRange, class NamedParameters>
-    void GRET_SDP<Scalar>::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
+    void GRET_SDP<Kernel>::registerPatches(const PatchRange& patches, const int n, const NamedParameters& np)
     {
         namespace PSP = CGAL::Point_set_processing_3;
         typedef typename PatchRange::value_type PointRange;
@@ -148,6 +144,21 @@ namespace OpenGR {
         GR_Options options;
 
         registerPatches(patches, n, point_map, index_map, normal_map, options);
+    }
+
+
+    // returns transformations
+    template <typename Kernel>
+    template<typename TrRange>
+    void GRET_SDP<Kernel>::getTransformations(TrRange& transformations){
+
+    }
+
+    // returns registered points
+    template <typename Kernel>
+    template<typename PointRange>
+    void GRET_SDP<Kernel>::getRegisteredPatches(PointRange& registered_points){
+        
     }
 
 } } // end of namespace CGAL::OpenGR
