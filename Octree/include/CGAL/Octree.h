@@ -557,7 +557,7 @@ private: // functions :
         auto &n = node[child.first.to_ulong()];
 
         // Check whether this node is capable of containing closer points
-        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 10 /*TODO: This is my epsilon*/})) {
+        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 0.01 /*TODO: This is my epsilon*/})) {
 
           // Recursive case
           largest_radius_squared_found =

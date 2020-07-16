@@ -163,24 +163,22 @@ void kdtree_vs_octree(std::size_t dataset_size) {
   std::cout << std::endl;
 
   // Check that they produce the same answer
-  for (int j = 0; j < K; ++j) {
-
-    std::cout << j << std::endl;
+  for (int j = 0; j < K; ++j)
     assert(octree_nearest_neighbours[j] == kd_tree_nearest_neighbours[j]);
-  }
+
 }
 
 int main(void) {
 
-//  naive_vs_octree(100);
-//  naive_vs_octree(1000);
-//  naive_vs_octree(10000);
-//  naive_vs_octree(100000);
+  naive_vs_octree(500);
+  naive_vs_octree(1000);
+  naive_vs_octree(10000);
+  naive_vs_octree(100000);
 
   kdtree_vs_octree(100);
-//  kdtree_vs_octree(1000);
-//  kdtree_vs_octree(10000);
-//  kdtree_vs_octree(100000);
+  kdtree_vs_octree(1000);
+  kdtree_vs_octree(10000);
+  kdtree_vs_octree(100000);
 
   return EXIT_SUCCESS;
 }
