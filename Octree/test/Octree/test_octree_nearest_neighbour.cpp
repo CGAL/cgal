@@ -94,11 +94,9 @@ void naive_vs_octree(std::size_t dataset_size) {
   assert(octree_elapsed_time < naive_elapsed_time);
 }
 
-void kdtree_vs_octree(std::size_t dataset_size) {
+void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
 
   std::cout << "[ " << dataset_size << " points ]" << std::endl;
-
-  int K = 16;
 
   // Create a dataset
   Point_set points;
@@ -156,10 +154,10 @@ int main(void) {
   naive_vs_octree(10000);
   naive_vs_octree(100000);
 
-  kdtree_vs_octree(100);
-  kdtree_vs_octree(1000);
-  kdtree_vs_octree(10000);
-  kdtree_vs_octree(100000);
+  kdtree_vs_octree(100, 16);
+  kdtree_vs_octree(1000, 16);
+  kdtree_vs_octree(10000, 16);
+  kdtree_vs_octree(100000, 16);
 
   return EXIT_SUCCESS;
 }
