@@ -47,6 +47,11 @@
 
 #include <boost/mpl/if.hpp>
 
+#ifdef CGAL_CXX11
+#define CGAL_CONSTEXPR constexpr
+#else
+#define CGAL_CONSTEXPR
+#endif
 namespace CGAL {
 
 #define CGAL_GENERATE_MEMBER_DETECTOR(X)                                           \
@@ -192,7 +197,7 @@ protected:
 
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   // `m_size` plus or minus `precision_of_approximate_size - 1`
-  static constexpr double precision_of_approximate_size_plus_1 = 1.10;
+  static CGAL_CONSTEXPR double precision_of_approximate_size_plus_1 = 1.10;
   size_type m_approximate_size;
   std::atomic<size_type> m_atomic_approximate_size;
   void refresh_approximate_size() {
