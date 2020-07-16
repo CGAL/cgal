@@ -22,6 +22,8 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Polygonal_schema.h>
 
+#include <tuple>
+
 namespace CGAL {
 namespace Surface_mesh_topology {
 namespace internal {
@@ -32,7 +34,7 @@ namespace internal {
     struct Dart_wrapper
     {
       using Vertex_attribute = CGAL::Cell_attribute<Map, int>;
-      using Attributes       = CGAL::cpp11::tuple<Vertex_attribute>;
+      using Attributes       = std::tuple<Vertex_attribute>;
     };
   };
 

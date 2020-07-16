@@ -22,8 +22,8 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   gridColor( ::Qt::black ),
   backgroundColor( ::Qt::white )
 {
-  QMatrix m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
-  this->setMatrix( m );
+  QTransform m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
+  this->setTransform( m );
   this->setBackgroundBrush( QBrush( backgroundColor ) );
 }
 

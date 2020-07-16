@@ -382,8 +382,6 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
-message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
-
 if ( RUNNING_CGAL_AUTO_TEST )
   message(STATUS "Operating system:")
   execute_process(COMMAND uname -a
@@ -392,41 +390,6 @@ if ( RUNNING_CGAL_AUTO_TEST )
     ERROR_VARIABLE uname_a)
   message(STATUS "${uname_a}")
   CGAL_display_compiler_version()
-  if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
-    if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
-      if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
-        message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR}
-          EXCLUDE CGAL_Core_LIBRARY
-                  CGAL_CORE_PACKAGE_DIR
-                  WITH_CGAL_Core
-                  CGAL_INSTALLATION_PACKAGE_DIR
-                  CGAL_MAINTENANCE_PACKAGE_DIR
-                  CGAL_PDB_BINARY_DIR
-                  CGAL_PDB_SOURCE_DIR
-                  CGAL_BINARY_DIR
-                  CGAL_SOURCE_DIR)
-#        message("List of cache variables:")
-
-        ## The following lines removes nasty loaded cache values. We do not
-        ## want that the current build tree depends on binaries that were
-        ## build in the reference build tree.
-        get_property(cache_variables DIRECTORY PROPERTY CACHE_VARIABLES)
-        foreach(var ${cache_variables})
-#          get_property(var_value CACHE ${var} PROPERTY VALUE)
-#          get_property(type CACHE ${var} PROPERTY TYPE)
-          string(REGEX MATCH "^CGAL(_.*_(DEPENDS|BINARY_DIR)|_.*LIBRARY)$" var_name_matches ${var})
-          if(var_name_matches)
-            unset(${var} CACHE)
-#          else()
-#            message("${var}:${var_type}=${var_value}")
-          endif()
-        endforeach()
-
-
-      endif()
-    endif()
-  endif()
 endif()
 
 include(CGAL_Common)

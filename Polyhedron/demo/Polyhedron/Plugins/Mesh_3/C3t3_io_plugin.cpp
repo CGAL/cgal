@@ -129,14 +129,14 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
       {
+        item->c3t3().rescan_after_load_of_triangulation();
         for( C3t3::Triangulation::Finite_cells_iterator
              cit = item->c3t3().triangulation().finite_cells_begin();
              cit != item->c3t3().triangulation().finite_cells_end();
              ++cit)
         {
-            CGAL_assertion(cit->info() >= 0);
-            if(cit->info() != 0)
-              item->c3t3().add_to_complex(cit, cit->info());
+            if(cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
+              item->c3t3().add_to_complex(cit, cit->subdomain_index());
             for(int i=0; i < 4; ++i)
             {
               if(cit->surface_patch_index(i)>0)

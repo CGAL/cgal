@@ -73,11 +73,11 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
 public:
   //todo check if this is used. If not remove it
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
   explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
   explicit QGLViewer(QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
 
   virtual ~QGLViewer();
 

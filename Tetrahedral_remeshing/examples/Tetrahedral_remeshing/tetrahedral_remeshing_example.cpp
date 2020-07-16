@@ -14,7 +14,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 
-
 int main(int argc, char* argv[])
 {
   const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;

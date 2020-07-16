@@ -70,7 +70,10 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
   std::vector<Point> points;
-  neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
+
+  // query using as fallback minimum requires nb points for jet fitting (d+1)*(d+2)/2
+  neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points),
+                             (degree_fitting + 1) * (degree_fitting + 2) / 2);
 
   // performs jet fitting
   Monge_jet_fitting monge_fit;
