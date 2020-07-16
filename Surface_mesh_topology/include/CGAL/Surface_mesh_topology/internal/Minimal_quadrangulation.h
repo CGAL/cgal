@@ -731,15 +731,11 @@ public:
                   /// 2) The first one is going in and the second one is going out
                   auto prev_dart = parenthesis_pairing.top();
                   auto next_dart = curr_dart;
-                  if (next_dart < prev_dart)
+                  if(!next_dart.second)
                   {
                     std::swap(next_dart, prev_dart);
                   }
-                  if (next_dart.first == pr.size() - 1 && prev_dart.first == 0)
-                  {
-                    std::swap(next_dart, prev_dart);
-                  }
-                  if ((next_dart.first - prev_dart.first == 1 || next_dart.first == 0) &&
+                  if ((next_dart.first - prev_dart.first == 1 || (next_dart.first == 0 && prev_dart.first == pr.size() - 1)) &&
                       (!prev_dart.second && next_dart.second))
                   {
                     parenthesis_pairing.pop();
