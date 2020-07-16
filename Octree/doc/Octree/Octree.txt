@@ -9,12 +9,14 @@ namespace CGAL {
 
 \section Section_Octree_Introduction Introduction
 
-Introduction section.
+An octree is a commonly used data structure that subdivides 3d space.
+The Octree package provides the Octree and Node classes.
 
-\section Section_Octree_Splitting_Rules Splitting Rules
-\section Section_Octree_Walker_Rules Walker Rules
 \section Section_Octree_Example_Programs Example Programs
 \section Section_Octree_Software_Design Software Design
+
+\subsection Subsection_Octree_Splitting_Rules Splitting Rules
+\subsection Subsection_Octree_Walker_Rules Walker Rules
 
 Explain the design of the package.
 
