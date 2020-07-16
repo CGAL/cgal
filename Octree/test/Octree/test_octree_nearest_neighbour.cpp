@@ -60,11 +60,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   duration<float> naive_elapsed_time = high_resolution_clock::now() - naive_start_time;
 
   std::cout << "Naive --> "
-            << "Closest point to "
-            << "(" << random_point << ") "
-            << "is "
-            << "(" << naive_nearest << ") "
-            << "at a distance^2 of "
+            << "distance^2 of "
             << CGAL::squared_distance(naive_nearest, random_point) << " "
             << "with a time of "
             << naive_elapsed_time.count()
@@ -85,11 +81,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
   std::cout << "Octree --> "
-            << "Closest point to "
-            << "(" << random_point << ") "
-            << "is "
-            << "(" << octree_nearest << ") "
-            << "at a distance^2 of "
+            << "distance^2 of "
             << CGAL::squared_distance(octree_nearest, random_point) << " "
             << "with a time of "
             << octree_elapsed_time.count()
@@ -130,7 +122,7 @@ void kdtree_vs_octree(std::size_t dataset_size) {
 
   std::cout << "Kd_tree --> "
             << kd_tree_nearest_neighbours.size() << " points "
-            << "at distances ";
+            << "at distance^2s ";
   for (int k = 0; k < kd_tree_nearest_neighbours.size(); ++k)
     std::cout << CGAL::squared_distance(kd_tree_nearest_neighbours[k], random_point) << ", ";
   std::cout << std::endl;
@@ -146,7 +138,7 @@ void kdtree_vs_octree(std::size_t dataset_size) {
 
   std::cout << "Octree --> "
             << octree_nearest_neighbours.size() << " points "
-            << "at distances ";
+            << "at distance^2s ";
   for (int k = 0; k < octree_nearest_neighbours.size(); ++k)
     std::cout << CGAL::squared_distance(octree_nearest_neighbours[k], random_point) << ", ";
   std::cout << std::endl;
