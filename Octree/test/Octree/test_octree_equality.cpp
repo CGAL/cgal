@@ -68,7 +68,7 @@ void test_identical_contents_different_criteria() {
   b.refine(10, 9);
 
   // Check if those trees are considered equal
-  assert(!(a == b));
+  assert(a != b);
 }
 
 void test_different_contents_identical_criteria() {

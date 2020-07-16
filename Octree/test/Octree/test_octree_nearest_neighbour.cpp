@@ -128,12 +128,6 @@ void kdtree_vs_octree(std::size_t dataset_size) {
       kd_tree_nearest_neighbours.push_back(p.first);
   }
 
-  // Sort the list by distance
-  std::sort(kd_tree_nearest_neighbours.begin(), kd_tree_nearest_neighbours.end(), [=](auto &left, auto &right) {
-    return CGAL::squared_distance(random_point, left) < CGAL::squared_distance(random_point, right);
-  });
-
-
   std::cout << "Kd_tree --> "
             << kd_tree_nearest_neighbours.size() << " points "
             << "at distances ";
@@ -149,11 +143,6 @@ void kdtree_vs_octree(std::size_t dataset_size) {
   {
     octree.nearest_k_neighbours(random_point, K, std::back_inserter(octree_nearest_neighbours));
   }
-
-  // Sort the list by distance
-  std::sort(octree_nearest_neighbours.begin(), octree_nearest_neighbours.end(), [=](auto &left, auto &right) {
-    return CGAL::squared_distance(random_point, left) < CGAL::squared_distance(random_point, right);
-  });
 
   std::cout << "Octree --> "
             << octree_nearest_neighbours.size() << " points "
