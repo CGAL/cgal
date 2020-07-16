@@ -381,7 +381,7 @@ public:
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max());
+    nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max(), k);
 
     // Add all the points found to the output
     for (auto &item : points_list)
@@ -485,7 +485,7 @@ private: // functions :
   }
 
   FT nearest_k_neighbours_recursive(const Point &p, std::vector<std::pair<Point, FT>> &out, const Node &node,
-                                    FT search_bounds_radius_squared) const {
+                                    FT search_bounds_radius_squared, std::size_t k) const {
 
     FT largest_radius_squared_found = search_bounds_radius_squared;
 
@@ -507,23 +507,24 @@ private: // functions :
           // Check whether the new distance is an improvement
           if (new_distance_squared < largest_radius_squared_found) {
 
-            // Make room for the new point if necessary
-            if (out.size() == out.capacity())
-
-              // The list is already sorted, so the last item is the furthest
-              out.pop_back();
-
-            // Add the point to the list
+            // If it is, add it to the list
             out.push_back({point, new_distance_squared});
 
-            // Sort the list
-            std::sort(out.begin(), out.end(), [=](auto &left, auto &right) {
-              return left.second < right.second;
-            });
+            // Check whether the list is full
+            if (out.size() >= k) {
 
-            // Update the distance
-            if (out.size() == out.capacity())
+              // If the list has at least K points, sort them
+              std::sort(out.begin(), out.end(), [=](auto &left, auto &right) {
+                return left.second < right.second;
+              });
+
+              // Make sure the list has only k points (discarding the furthest ones, if there are more
+              out.resize(k);
+
+              // Update the largest distance
               largest_radius_squared_found = out.back().second;
+            }
+
           }
         }
       }
@@ -561,7 +562,7 @@ private: // functions :
 
           // Recursive case
           largest_radius_squared_found =
-                  nearest_k_neighbours_recursive(p, out, n, largest_radius_squared_found);
+                  nearest_k_neighbours_recursive(p, out, n, largest_radius_squared_found, k);
 
         }
       }
