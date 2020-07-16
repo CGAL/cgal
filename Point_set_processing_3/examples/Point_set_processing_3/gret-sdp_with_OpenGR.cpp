@@ -32,7 +32,7 @@ typedef std::vector<Pwn> Patch;
 typedef K::Aff_transformation_3 TrafoType;
 
 enum {Dim = 3};
-typedef Eigen::Matrix<K::FT, Dim+1, Dim+1> MatrixType;
+typedef Eigen::Matrix<Scalar, Dim+1, Dim+1> MatrixType;
 
 namespace params = CGAL::parameters;
 
@@ -40,7 +40,7 @@ struct RegistrationProblem {
     int n;
     int m;
     int d;
-    vector<Patch> patches;
+    std::vector<Patch> patches;
 };
 
 template <typename TrRange>
@@ -56,7 +56,7 @@ int main(int argc, const char** argv)
     std::string config_file(argv[1]);
 
     RegistrationProblem problem;
-    vector<MatrixType> gt_transformations;
+    std::vector<MatrixType> gt_transformations;
 
     extractPatchesAndTrFromConfigFile(config_file, problem, gt_transformations);
 
@@ -82,7 +82,7 @@ void readPatch(const string& file, PatchRange& patch){
     file_stream >> num_points;
     patch.reserve(num_points);
 
-    K::FT x, y, z;
+    Scalar x, y, z;
     int index;
     while(file_stream >> index){
         file_stream >> x;
