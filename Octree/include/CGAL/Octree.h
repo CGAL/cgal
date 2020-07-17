@@ -499,7 +499,7 @@ private: // functions :
       // Base case: the node has no children
 
       // Check if the node contains any points
-      if (0 < std::distance(node.points().begin(), node.points().end())) {
+      if (!node.is_empty()) {
 
         // If it does, loop through each point
         for (auto i : node.points()) {

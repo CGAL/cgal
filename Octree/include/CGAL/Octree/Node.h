@@ -230,6 +230,14 @@ public:
    */
   const Point_range &points() const { return m_points; }
 
+  /*!
+   * \brief Check whether this node contains any points
+   * \return
+   */
+  bool is_empty() const {
+    return m_points.end() == m_points.begin();
+  }
+
   /// @}
 
   /// \name Operators
