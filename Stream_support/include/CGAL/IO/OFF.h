@@ -25,6 +25,7 @@
 #include <CGAL/use.h>
 
 #include <boost/range/value_type.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <fstream>
 #include <iostream>

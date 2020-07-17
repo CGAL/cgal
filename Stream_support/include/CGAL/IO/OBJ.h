@@ -16,10 +16,13 @@
 
 #include <CGAL/IO/OBJ/File_writer_wavefront.h>
 #include <CGAL/IO/Generic_writer.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/Container_helper.h>
-#include <CGAL/IO/io.h>
+
 #include <boost/range/value_type.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <fstream>
 #include <iostream>

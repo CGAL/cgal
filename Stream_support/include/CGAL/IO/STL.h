@@ -16,12 +16,14 @@
 #define CGAL_IO_STL_H
 
 #include <CGAL/IO/STL/STL_reader.h>
+#include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <boost/range/value_type.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <iostream>
 #include <fstream>

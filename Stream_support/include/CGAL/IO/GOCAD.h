@@ -14,16 +14,17 @@
 #define CGAL_IO_GOCAD_H
 
 #include <CGAL/IO/helpers.h>
+#include <CGAL/IO/io.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/IO/io.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>
 
 #include <boost/range/value_type.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <fstream>
 #include <iostream>
