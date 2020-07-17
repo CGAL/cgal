@@ -254,12 +254,19 @@ the state is inactive, nothing happens.
 
 \section IOstreamSupportedFormats Importing and Exporting Data using Standard File Formats
 
-Although there is a large number of different types of input data structures in \cgal algorithms,
-some common data structures such as point sets or polygon meshes appear often. These
-traditional data structures have long been used and specific standards have been created
-to facilite data exchange. In the following section, the file formats supported in \cgal are listed
-for the most common data structures used in \cgal. A reverse viewpoint, listing the data structures
-which can be used for a specific file format is available on the page: \ref IOStreamSupportedFileFormats.
+Specific standards have been created to facilite the exchange of data for traditional data structures
+of computational geometry, such as point sets or polygon meshes.
+
+\cgal aims to provide a uniform and consistent approach for Input/Output functions,
+providing for a given file format with shorter name `XXX` an input function `read_XXX(input, data_structure)`,
+an output function called `write_XXX(output, data_structure)`. Whenever possible, a <em>generic</em> I/O function
+which can deduce the file format from the extension is also provided for convenience.
+
+In the following subsection, file formats supported in \cgal are listed along with associated
+potential data structures. A reverse viewpoint, listing the data structures which can be used for a specific file format
+is available on the page: \ref IOStreamSupportedFileFormats.
+
+Note that these categories will grow as the on-going effort to uniformize I/O in \cgal progresses.
 
 \subsection IOstreamPointSetIO Point Set IO
 A set of points is the basic input of many algorithms. The following table shows which file formats
