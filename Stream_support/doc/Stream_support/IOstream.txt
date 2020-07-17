@@ -279,7 +279,7 @@ can be read from and written to for basic point ranges.
       <th colspan="1">\ref IOStreamOFF "OFF"</th>
       <th colspan="1">\ref IOStreamXYZ "XYZ"</th>
       <th colspan="1">\ref IOStreamPLY "PLY"</th>
-      <th colspan="1">\ref IOStreamPLY "LAS"</th>
+      <th colspan="1">\ref IOStreamLAS "LAS"</th>
     </tr>
     <tr>
       <td>Input</td>
