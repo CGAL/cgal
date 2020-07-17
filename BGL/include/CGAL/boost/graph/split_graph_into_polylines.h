@@ -205,7 +205,7 @@ split_graph_into_polylines(const Graph& graph,
 #endif
 
 /*!
-\ingroup PkgBGLRef
+\ingroup PkgBGLPartition
 splits into polylines the graph `g` at vertices of degree greater than 2
 and at vertices for which `is_terminal(v,graph)==true`.
 The polylines are reported using a visitor.
