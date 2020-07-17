@@ -17,6 +17,10 @@
 
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
+#include <CGAL/Surface_mesh/IO/3MF.h>
+#include <CGAL/Surface_mesh/IO/OFF.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
+
 #include <CGAL/boost/graph/io.h>
 
 #include <string>
