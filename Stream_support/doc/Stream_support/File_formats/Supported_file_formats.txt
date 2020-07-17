@@ -24,7 +24,8 @@ this specific format.
 
 \section IOStreamOFF Object File Format (OFF)
 
-The `Object File Format (OFF)` file format can be used to represent collections of planar polygons with possibly shared vertices.
+The `OFF` file format, using the file extension `.off`,
+can be used to represent collections of planar polygons with possibly shared vertices.
 Although it can be as light as providing points and faces described by IDs, the format also allows
 users to provide more properties such as associating normals or colors to vertices.
 
@@ -101,7 +102,7 @@ which offers combinatorial repairing while reading bad inputs.
 
 \section IOStreamOBJ Wavefront Advanced Visualizer Object Format (OBJ)
 
-The OBJ file format is a simple data-format that represents 3D geometry.
+The `OBJ` file format, using the file extension `.obj`, is a simple ASCII data format that represents 3D geometry.
 Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
 
 A precise specification of the format is available <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
@@ -141,7 +142,8 @@ which offers combinatorial repairing while reading bad inputs.
 
 \section IOStreamSTL STereoLithography (STL) File Format
 
-STL is a file format native to the stereolithography CAD software created by 3D Systems.
+The `STL` file format, using the file extension `.stl`, is an ASCII or binary format native
+to the stereolithography CAD software created by 3D Systems.
 STL files describe the surface geometry of a three-dimensional object.
 
 A precise specification of those formats is available <a href="http://www.fabbers.com/tech/STL_Format">here</a>.
@@ -186,6 +188,7 @@ which offers combinatorial repairing while reading bad inputs.
 
 Conceived to store the data obtained during 3D scans, the `PLY` file format stores objects
 as a simple list of polygons and is capable of storing external properties.
+It uses the file extension `.ply`.
 
 A precise specification of those formats is available <a href="http://paulbourke.net/dataformats/ply/">here</a>.
 
@@ -250,8 +253,9 @@ which offers combinatorial repairing while reading bad inputs.
 
 \section IOStreamLAS LAS (Lidar) File Format
 
-Similar to the \ref IOStreamPLY, but this format is binary-only and does not handle normals.
-The \ref thirdpartyLASlib library is required.
+The `LAS` file format, using the file extension `.las`, is similar to the \ref IOStreamPLY,
+except for some characteristics: this format is binary-only and does not handle normals.
+The \ref thirdpartyLASlib library is required to read or write using this format.
 
 A precise specification of those formats is available
 <a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000418.shtml">here</a>.
@@ -285,9 +289,9 @@ A precise specification of those formats is available
 
 \section IOStreamXYZ XYZ File Format
 
-The `XYZ` format is a non-standard format regularly used to describe point sets.
-Each line represent a point, and is composed of its coordinates and other properties.
-We only support coordinates and normals.
+The `XYZ` format, using the file extension `.xyz`, is a non-standard ASCII data format
+regularly used to describe point sets. Each line represent a point, and is composed
+of its coordinates and other properties. Only coordinates and normals are currently supported in \cgal.
 
 <table class="iotable">
   <tr>
@@ -318,7 +322,8 @@ We only support coordinates and normals.
 
 \section IOStreamGocad GOCAD (TS) File Format
 
-The `.ts` format is an ASCII file format that allows a range of primitive types to be imported into the GOCAD package.
+The `GOCAD` format, using the file extension `.ts`, is an ASCII file format
+that enables a range of primitive types to be imported into the GOCAD package.
 
 A precise specification of the format is available <a href="http://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
 
@@ -357,7 +362,7 @@ which offers combinatorial repairing while reading bad inputs.
 
 \section IOStream3MF 3D Manufacturing Format (3MF)
 
-The `3D Manufacturing Format (3MF)` is an open source file format created by the 3MF Consortium.
+The `3MF`, using the file extension `.3mf`, is an open source file format created by the 3MF Consortium.
 It is an XML-based format that aims to enhance the \ref IOStreamSTL by adding means to include
 extra information such as colors.
 
