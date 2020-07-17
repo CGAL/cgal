@@ -35,6 +35,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/intersections.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -49,7 +50,6 @@
 #include <queue>
 #include <vector>
 #include <math.h>
-#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
