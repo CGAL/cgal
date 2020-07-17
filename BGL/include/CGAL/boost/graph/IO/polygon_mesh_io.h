@@ -7,6 +7,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
 #define CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H

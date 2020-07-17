@@ -1,4 +1,4 @@
-// Copyright (c) 2018  GeometryFactory Sarl (France).
+// Copyright (c) 2018-2020  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // Licensees holding a valid commercial license may use this file in

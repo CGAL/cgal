@@ -1,4 +1,4 @@
-// Copyright (c) 2015  GeometryFactory (France).  All rights reserved.
+// Copyright (c) 2015-2020  GeometryFactory (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
