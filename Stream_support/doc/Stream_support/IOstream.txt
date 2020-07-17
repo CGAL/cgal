@@ -269,8 +269,8 @@ is available on the page: \ref IOStreamSupportedFileFormats.
 Note that these categories will grow as the on-going effort to uniformize I/O in \cgal progresses.
 
 \subsection IOstreamPointSetIO Point Set IO
-A set of points is the basic input of many algorithms. The following table shows which file formats
-can be read from and written to for basic point ranges.
+A set of points - possibly with normals - is the basic input of many algorithms.
+The following table shows which file formats can be read from and written for point ranges.
 
 <table class="iotable">
     <tr>
@@ -299,6 +299,14 @@ can be read from and written to for basic point ranges.
     </tr>
 </table>
 
+All of these functions (with the exception of the LAS format) can read
+and write either points alone or points with normals (depending on
+whether the `normal_map` named parameter is used by the user or not).
+
+Note that the %PLY format handles both ASCII and binary formats. In
+addition, %PLY and %LAS are extensible formats that can embed additional
+properties. These can also be read by \cgal (see Section \ref
+Point_set_processing_3Properties_io).
 
 The class `CGAL::Point_set_3` is the data structure used in \cgal to represent point sets.
 It is a vector-based data structure that contains a default property (named <em>point</em>)
@@ -377,9 +385,10 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
 </table>
 
 \subsection IOstreamPolygonMeshIO Polygon Mesh IO
-A Polygon Mesh is a 3D structure that refines the concept of `FaceGraph`
-with some additional restrictions; a more precise definition can be found \ref PMPDef "here".
-The table above only lists the functions that work with any Polygon Mesh.
+A \a polygon \a mesh is a consistent and orientable surface mesh, that can have
+one or more boundaries. This refines the concept of `FaceGraph` with some additional restrictions;
+a complete definition can be found \ref PMPDef "here".
+The table above only lists the functions that work with any polygon mesh.
 
 <table class="iotable">
     <tr>
@@ -420,7 +429,7 @@ See the reference manual of each data structure for more information.
 
 The functions above require the input to represent a 2-manifold surface (possibly with boundaries).
 If this is not the case, the package \ref PkgPolygonMeshProcessing offers the function
-\link PMP_IO_grp `CGAL::Polgyon_mesh_processing::read_polygon_mesh()` \endlink
+\link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()` \endlink
 which can perform some combinatorial repairing to ensure the input data is a 2-manifold.
 
 \subsection IOstreamWKT Simple 2D Geometry IO

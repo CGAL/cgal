@@ -291,7 +291,7 @@ We only support coordinates and normals.
 
 <table class="iotable">
   <tr>
-    <th colspan="4">LAS (Lidar) File Format</th>
+    <th colspan="4">XYZ File Format</th>
   </tr>
   <tr>
     <td rowspan="2" width="75">Input</td>
@@ -330,23 +330,23 @@ A precise specification of the format is available <a href="http://paulbourke.ne
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsOBJ CGAL::read_OBJ(const char*, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsGOCAD CGAL::read_GOCAD(const char*, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsOBJ CGAL::read_OBJ(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsGOCAD CGAL::read_GOCAD(const char*, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsOBJ CGAL::write_OBJ(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsGOCAD CGAL::write_GOCAD(const char*, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsOBJ CGAL::write_OBJ(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsGOCAD CGAL::write_GOCAD(const char*, PointRange&, PolygonRange&)\endlink</td>
   </tr>
 </table>
 

@@ -370,6 +370,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    \returns `true` if reading was successful, `false` otherwise.
 
    \sa `make_las_point_reader()`
+
    \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType,
@@ -421,7 +422,7 @@ bool read_LAS_with_properties(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief reads points (position only) from a .las or .laz stream.
+   \brief reads points (position only) using the \ref IOStreamLAS.
 
    Potential additional properties are ignored.
 
@@ -450,7 +451,7 @@ bool read_LAS_with_properties(std::istream& is,
 
    \returns `true` if reading was successful, `false` otherwise.
 
-   \sa \ref IOStreamLAS
+   \sa `read_LAS_with_properties()`
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -526,7 +527,8 @@ bool read_LAS(std::istream& is, OutputIterator output,
    \cgalNamedParamsEnd
 
    \returns `true` if reading was successful, `false` otherwise.
-   \sa \ref IOStreamLAS
+
+   \sa `read_LAS_with_properties()`
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,

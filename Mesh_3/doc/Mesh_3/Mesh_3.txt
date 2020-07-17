@@ -548,11 +548,11 @@ See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB docu
 for more details.
 
 \section Mesh_3_section_io Input/Output
-Several formats are supported for writing a mesh:
- - VTU, with `CGAL::output_to_vtu()`
- - Avizo, with `CGAL::output_to_avizo()`
- - Medit, with `CGAL::output_to_medit()`
- - Tetgen, with `CGAL::output_to_tetgen()`
+Several file formats are supported for writing a mesh:
+ - \ref IOStreamVTK, using `CGAL::output_to_vtu()`
+ - \ref IOStreamAvizo, using `CGAL::output_to_avizo()`
+ - \ref IOStreamMedit, using `CGAL::output_to_medit()`
+ - \ref IOStreamTetgen, using `CGAL::output_to_tetgen()`
 
 \section Mesh_3_section_examples Examples
 

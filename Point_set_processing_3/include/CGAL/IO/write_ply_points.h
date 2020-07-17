@@ -78,7 +78,7 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief saves the range of `points` with properties to a .ply stream.
+   \brief saves the range of `points` with properties using \ref IOStreamPLY.
 
    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
@@ -140,7 +140,7 @@ template <typename PointRange,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief saves the range of `points` (positions + normals, if available) to a .ply stream.
+   \brief saves the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
     %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
@@ -181,6 +181,8 @@ template <typename PointRange,
    \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
    \returns `true` if writing was successful, `false` otherwise.
+
+   \sa `write_PLY_with_properties()`
 */
 template <typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -236,7 +238,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief saves the range of `points` (positions + normals, if available) to a .ply stream.
+   \brief saves the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
@@ -282,7 +284,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 
    \returns `true` if writing was successful, `false` otherwise.
 
-   \sa \ref IOStreamPLY
+   \sa `write_PLY_with_properties()`
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* filename,

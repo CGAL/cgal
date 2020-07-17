@@ -247,7 +247,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only) to a .las stream.
+   Saves the range of `points` (positions only) using the \ref IOStreamLAS.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -280,6 +280,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
    \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamLAS
+   \sa `write_LAS_with_properties()`
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(std::ostream& os,
@@ -343,7 +344,7 @@ bool write_LAS(std::ostream& os,
 
    \returns `true` if writing was successful, `false` otherwise.
 
-   \sa \ref IOStreamLAS
+   \sa `write_LAS_with_properties()`
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(const char* filename,

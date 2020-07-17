@@ -158,23 +158,9 @@ per line)
 - \link IOStreamLAS LAS (Lidar Format) \endlink -- \cgalCite{cgal:asprs-lasf-13} This format does
 not handle normals and requires the \ref thirdpartyLASlib library.
 
-The following functions are available:
-
-- `read_points()`
-- `read_XYZ()`
-- `read_OFF()`
-- `read_PLY()`
-- `read_LAS()`
-- `write_points()`
-- `write_XYZ()`
-- `write_OFF()`
-- `write_PLY()`
-- `write_LAS()`
-
-All of these functions (with the exception of the LAS format) can read
-and write either points alone or points with normals (depending on
+All of the functions in \ref PkgPointSetProcessing3IO (with the exception of the LAS format)
+can read and write either points alone or points with normals (depending on
 whether the `normal_map` named parameter is used by the user or not).
-
 Note that the %PLY format handles both ASCII and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
 properties. These can also be read by \cgal (see Section \ref

@@ -128,9 +128,9 @@ make_ply_normal_reader(VectorMap normal_map);
 
   \returns `true` if reading was successful, `false` otherwise.
 
+  \sa \ref IOStreamPLY
   \sa `make_ply_point_reader()`
   \sa `make_ply_normal_reader()`
-  \sa \ref IOStreamPLY
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -233,6 +233,8 @@ bool read_PLY_with_properties(std::istream& is,
    \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 
    \returns `true` if reading was successful, `false` otherwise.
+
+   \sa `read_PLY_with_properties()`
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -313,6 +315,7 @@ bool read_PLY(std::istream& is,
    \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamPLY
+   \sa `read_PLY_with_properties()`
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
