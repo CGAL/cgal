@@ -555,7 +555,7 @@ using std::max;
 #endif
 
 // Macro to specify [[no_unique_address]] if supported
-#if __has_cpp_attribute(no_unique_address)
+#if CGAL_CXX11 && __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
