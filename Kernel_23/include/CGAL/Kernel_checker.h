@@ -88,6 +88,15 @@ public:
     : p1(pp1), p2(pp2), cmp(c)
   { }
 
+  template <typename F>
+  struct result;
+
+  template <typename F, typename A1>
+  struct result<F(A1)> {
+    typedef typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&)>::type,
+                             typename CGAL::cpp11::result_of<P2(const A1&)>::type>::result_type type;
+  };
+
   template <class A1>
   typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&)>::type,
                    typename CGAL::cpp11::result_of<P2(const A1&)>::type>::result_type
@@ -112,6 +121,12 @@ public:
     }
     return Pairify<result_type_1, result_type_2>()(res1, res2);
   }
+
+  template <typename F, typename A1, typename A2>
+  struct result<F(A1, A2)> {
+    typedef typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&, const A2&)>::type,
+                             typename CGAL::cpp11::result_of<P2(const A1&, const A2&)>::type>::result_type type;
+  };
 
   template <class A1, class A2>
   typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&, const A2&)>::type,
@@ -139,6 +154,12 @@ public:
     }
     return Pairify<result_type_1, result_type_2>()(res1, res2);
   }
+
+  template <typename F, typename A1, typename A2, typename A3>
+  struct result<F(A1, A2, A3)> {
+    typedef typename Pairify<typename CGAL::cpp11::result_of<P1(const A1&, const A2&, const A3&)>::type,
+                             typename CGAL::cpp11::result_of<P2(const A1&, const A2&, const A3&)>::type>::result_type type;
+  };
 
   template <class A1, class A2, class A3>
   typename Pairify<typename CGAL::cpp11::result_of<P1(
@@ -170,6 +191,16 @@ public:
     }
     return Pairify<result_type_1, result_type_2>()(res1, res2);
   }
+
+  template <typename F, typename A1, typename A2, typename A3, typename A4>
+  struct result<F(A1, A2, A3, A4)> {
+    typedef
+      typename Pairify<typename CGAL::cpp11::result_of<P1(
+                         const A1&, const A2&, const A3&, const A4&)>::type,
+                       typename CGAL::cpp11::result_of<P2(
+                         const A1&, const A2&, const A3&, const A4&)>::type>::result_type
+    type;
+  };
 
   template <class A1, class A2, class A3, class A4>
   typename Pairify<typename CGAL::cpp11::result_of<P1(
@@ -206,6 +237,16 @@ public:
     }
     return Pairify<result_type_1, result_type_2>()(res1, res2);
   }
+
+  template <typename F, typename A1, typename A2, typename A3, typename A4, typename A5>
+  struct result<F(A1, A2, A3, A4, A5)> {
+    typedef
+      typename Pairify<typename CGAL::cpp11::result_of<P1(
+                         const A1&, const A2&, const A3&, const A4&, const A5&)>::type,
+                       typename CGAL::cpp11::result_of<P2(
+                         const A1&, const A2&, const A3&, const A4&, const A5&)>::type>::result_type
+    type;
+  };
 
   template <class A1, class A2, class A3, class A4, class A5>
   typename Pairify<typename CGAL::cpp11::result_of<P1(
