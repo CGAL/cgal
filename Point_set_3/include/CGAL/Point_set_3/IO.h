@@ -36,12 +36,13 @@ class Point_set_3;
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief reads the point set from an input stream that can be either:
+  \brief reads the point set from an input stream.
 
-  - \link IOStreamXYZ XYZ \endlink
-  - \link IOStreamOFF OFF \endlink
-  - \link IOStreamPLY PLY \endlink
-  - \link IOStreamLAS LAS \endlink
+  Supported file formats are the following:
+  - \ref IOStreamOFF (`.off`)
+  - \ref IOStreamPLY (`.ply`)
+  - \ref IOStreamLAS (`.las`)
+  - \ref IOStreamXYZ (`.xyz`)
 
   The format is detected from the stream. If the stream contains
   normal vectors, the normal map is added to the point set. For PLY
@@ -84,12 +85,13 @@ std::istream& operator>>(std::istream& is,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief reads the point set from an input file that can be either:
+  \brief reads the point set from an input file.
 
-  - \link IOStreamXYZ XYZ \endlink
-  - \link IOStreamOFF OFF \endlink
-  - \link IOStreamPLY PLY \endlink
-  - \link IOStreamLAS LAS \endlink
+  Supported file formats are the following:
+  - \ref IOStreamOFF (`.off`)
+  - \ref IOStreamPLY (`.ply`)
+  - \ref IOStreamLAS (`.las`)
+  - \ref IOStreamXYZ (`.xyz`)
 
   The format is detected from the filename extension. If the file contains
   normal vectors, the normal map is added to the point set. For PLY
@@ -165,12 +167,13 @@ std::ostream& operator<<(std::ostream& os,
 /*!
   \ingroup PkgPointSet3IO
 
-  \brief inserts the point set in an output file that can be either:
+  \brief inserts the point set in an output file.
 
-  - \link IOStreamXYZ XYZ \endlink
-  - \link IOStreamOFF OFF \endlink
-  - \link IOStreamPLY PLY \endlink
-  - \link IOStreamLAS LAS \endlink
+  Supported file formats are the following:
+  - \ref IOStreamOFF (`.off`)
+  - \ref IOStreamPLY (`.ply`)
+  - \ref IOStreamLAS (`.las`)
+  - \ref IOStreamXYZ (`.xyz`)
 
   The format is detected from the filename extension.
 

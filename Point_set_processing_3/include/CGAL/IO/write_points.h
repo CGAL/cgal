@@ -36,18 +36,21 @@ namespace CGAL {
 /**
   \ingroup PkgPointSetProcessing3IO
 
-  Saves the range of `points` with properties to a file that can be either:
+  \brief saves the range of `points` with properties to a file.
 
-  - \link IOStreamXYZ XYZ \endlink
-  - \link IOStreamOFF OFF \endlink
-  - \link IOStreamPLY PLY \endlink
-  - \link IOStreamLAS LAS \endlink
+  Supported file formats are the following:
+  - \ref IOStreamOFF (`.off`)
+  - \ref IOStreamPLY (`.ply`)
+  - \ref IOStreamLAS (`.las`)
+  - \ref IOStreamXYZ (`.xyz`)
+
+  The format is detected from the filename extension.
 
   \tparam PointRange is a model of `ConstRange`. The value type of
   its iterator is the key type of the named parameter `point_map`.
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param fname the name of the input file.
+  \param fname the name of the output file.
   \param points the range of points that will be written.
   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
@@ -61,7 +64,7 @@ namespace CGAL {
     \cgalParamNBegin{normal_map}
       \cgalParamDescription{a property map associating normals to the elements of the poing range}
       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-      \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+      \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
     \cgalParamNEnd
 
     \cgalParamNBegin{geom_traits}

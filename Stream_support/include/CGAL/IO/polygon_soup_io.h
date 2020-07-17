@@ -46,6 +46,8 @@ namespace CGAL {
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
  *
+ * The format is detected from the filename extension.
+ *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
@@ -133,6 +135,8 @@ bool read_polygon_soup(const std::string& fname,
  * - \ref IOStreamPLY (`.ply`)
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
+ *
+ * The format is detected from the filename extension.
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`

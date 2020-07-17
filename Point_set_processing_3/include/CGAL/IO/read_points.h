@@ -31,12 +31,15 @@ namespace CGAL {
 /**
   \ingroup PkgPointSetProcessing3IO
 
-  Reads the point set from an input file that can be either:
+  \brief reads the point set from an input file.
 
-  - \link IOStreamXYZ XYZ \endlink
-  - \link IOStreamOFF OFF \endlink
-  - \link IOStreamPLY PLY \endlink
-  - \link IOStreamLAS LAS \endlink
+  Supported file formats are the following:
+  - \ref IOStreamOFF (`.off`)
+  - \ref IOStreamPLY (`.ply`)
+  - \ref IOStreamLAS (`.las`)
+  - \ref IOStreamXYZ (`.xyz`)
+
+  The format is detected from the filename extension.
 
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.

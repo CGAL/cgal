@@ -40,6 +40,16 @@ namespace Polygon_mesh_processing {
  * \brief Attempts to read a file as a polygon mesh; in case of failure, reads the file as a polygon soup,
  * repairs and orients it to obtain a polygon mesh.
  *
+ * Supported file formats are the following:
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
+ *
+ * The format is detected from the filename extension.
+ *
  * \tparam PolygonMesh a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -58,15 +68,6 @@ namespace Polygon_mesh_processing {
  *                     must be available in `PolygonMesh`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{The traits class must provide the nested functors `Less_xyz_3` and `Equal_3`
- *                    to respectivelycompare lexicographically two points and to check if two points
- *                    are identical. For each functor `Foo`, a function `Foo foo_object()` must be provided.}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{repair_polygon_soup}
  *     \cgalParamDescription{a parameter used indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
  *                           should be called on the soup in case of issues in the input.}
@@ -74,20 +75,10 @@ namespace Polygon_mesh_processing {
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{erase_all_duplicates}
- *     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
- *                           whether all the duplicate polygons should be removed
- *                           or if one (arbitrarily chosen) face should be kept.}
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`false`}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{require_same_orientation}
- *     \cgalParamDescription{Parameter to indicate if polygon orientation should be taken
- *                           into account when determining whether two polygons are duplicates,
- *                           that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`false`}
+ *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
