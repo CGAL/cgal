@@ -196,7 +196,7 @@ public:
     // save octree attributes
     m_bbox_min = bbox.min();
     m_bbox_side = bbox.max()[0] - m_bbox_min[0];
-    m_root.value() = {point_range.begin(), point_range.end()};
+    m_root.points() = {point_range.begin(), point_range.end()};
   }
 
   /// @}
@@ -445,7 +445,7 @@ private: // functions :
     // Root case: reached the last dimension
     if (dimension == 3) {
 
-      node[coord.to_ulong()].value() = {begin, end};
+      node[coord.to_ulong()].points() = {begin, end};
 
       return;
     }
@@ -471,7 +471,7 @@ private: // functions :
   void reassign_points(Node &node) {
 
     Point center = compute_barycenter_position(node);
-    reassign_points(node, node.value().begin(), node.value().end(), center);
+    reassign_points(node, node.points().begin(), node.points().end(), center);
   }
 
   bool do_intersect(const Node &node, const Sphere &sphere) const {
@@ -499,10 +499,10 @@ private: // functions :
       // Base case: the node has no children
 
       // Check if the node contains any points
-      if (0 < std::distance(node.value().begin(), node.value().end())) {
+      if (0 < std::distance(node.points().begin(), node.points().end())) {
 
         // If it does, loop through each point
-        for (auto i : node.value()) {
+        for (auto i : node.points()) {
           auto point = get(m_points_map, i);
 
           // Find the distance of the point

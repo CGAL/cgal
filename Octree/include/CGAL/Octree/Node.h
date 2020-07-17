@@ -222,13 +222,13 @@ public:
    * \brief Access to the content held by this node
    * \return
    */
-  Point_range &value() { return m_points; }
+  Point_range &points() { return m_points; }
 
   /*!
    * \brief Read-only access to the content held by this node
    * \return
    */
-  const Point_range &value() const { return m_points; }
+  const Point_range &points() const { return m_points; }
 
   /// @}
 
