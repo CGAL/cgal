@@ -99,7 +99,7 @@ public:
   /*!
    * \brief The Sub-tree / Octant type
    */
-  typedef Node::Node<Points_iterator_range> Node;
+  typedef Node::Node<typename PointRange::iterator> Node;
 
   /*!
    * \brief A function that determines whether a node needs to be split when refining a tree

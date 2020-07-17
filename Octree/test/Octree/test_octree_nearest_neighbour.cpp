@@ -141,6 +141,9 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
     std::cout << CGAL::squared_distance(octree_nearest_neighbours[k], random_point) << ", ";
   std::cout << std::endl;
 
+  // Check that the octree produces the right number of results
+  assert(octree_nearest_neighbours.size() == K);
+
   // Check that they produce the same answer
   for (int j = 0; j < K; ++j)
     assert(octree_nearest_neighbours[j] == kd_tree_nearest_neighbours[j]);

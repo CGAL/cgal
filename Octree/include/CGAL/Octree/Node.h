@@ -1,6 +1,8 @@
 #ifndef OCTREE_NODE_H
 #define OCTREE_NODE_H
 
+#include <boost/range/iterator_range.hpp>
+
 #include <array>
 #include <memory>
 #include <bitset>
@@ -50,7 +52,7 @@ public:
 
 private:
 
-  Value m_value;
+  boost::iterator_range<Value> m_value;
 
   const Node<Value> *m_parent;
 
@@ -218,13 +220,13 @@ public:
    * \brief Access to the content held by this node
    * \return
    */
-  Value &value() { return m_value; }
+  boost::iterator_range<Value> &value() { return m_value; }
 
   /*!
    * \brief Read-only access to the content held by this node
    * \return
    */
-  const Value &value() const { return m_value; }
+  const boost::iterator_range<Value> &value() const { return m_value; }
 
   /// @}
 
