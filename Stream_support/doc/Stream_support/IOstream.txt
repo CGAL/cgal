@@ -435,8 +435,10 @@ Free functions are provided for reading and writing several \cgal types using th
 - `CGAL::Polygon_with_holes_2`
 - random access range of the above types.
 
-You can find more information about WKT \ref PkgStreamSupportRef "here", but
-here is a table to summarize the most useful functions :
+You can find more information about WKT \ref PkgStreamSupportRef "here".
+The following table summarizes the most useful functions. Note that the name deviates
+from the standard \cgal I/O functions, for clarity reasons.
+
 <table>
 <tr>
 <th colspan="1"></th>
