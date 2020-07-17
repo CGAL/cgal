@@ -54,7 +54,7 @@ public:
 
 private:
 
-  Point_range m_value;
+  Point_range m_points;
 
   const Node<Point_index> *m_parent;
 
@@ -222,13 +222,13 @@ public:
    * \brief Access to the content held by this node
    * \return
    */
-  Point_range &value() { return m_value; }
+  Point_range &value() { return m_points; }
 
   /*!
    * \brief Read-only access to the content held by this node
    * \return
    */
-  const Point_range &value() const { return m_value; }
+  const Point_range &value() const { return m_points; }
 
   /// @}
 
@@ -246,7 +246,7 @@ public:
   bool operator==(const Node &rhs) const {
 
     // TODO: Should I compare the values they contain
-//          if (m_value != rhs.m_value)
+//          if (m_points != rhs.m_points)
 //            return false;
 
     // If one node is a leaf, and the other isn't, they're not the same
