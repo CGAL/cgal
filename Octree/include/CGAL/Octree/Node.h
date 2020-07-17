@@ -19,9 +19,9 @@ namespace Node {
  *
  * \details The role of the node isn't fully stable yet
  *
- * \tparam Value is the datatype the node will contain
+ * \tparam Point_index is the datatype the node will contain
  */
-template<typename Value>
+template<typename Point_index>
 class Node {
 
 public:
@@ -32,7 +32,7 @@ public:
   /*!
    * \brief Array for containing the children of this node
    */
-  typedef std::array<Node<Value>, 8> Child_list;
+  typedef std::array<Node<Point_index>, 8> Child_list;
 
   /*!
    * \brief Set of bits representing this node's relationship to its parent
@@ -52,9 +52,9 @@ public:
 
 private:
 
-  boost::iterator_range<Value> m_value;
+  boost::iterator_range<Point_index> m_value;
 
-  const Node<Value> *m_parent;
+  const Node<Point_index> *m_parent;
 
   uint8_t m_depth;
 
@@ -75,7 +75,7 @@ public:
    * \param parent
    * \param index
    */
-  Node(Node<Value> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
+  Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
 
     if (parent) {
 
@@ -104,7 +104,7 @@ public:
     m_children = std::make_unique<Child_list>();
     for (int index = 0; index < 8; index++) {
 
-      (*m_children)[index] = std::move(Node<Value>(this, { Index(index) }));
+      (*m_children)[index] = std::move(Node<Point_index>(this, { Index(index) }));
     }
   }
 
@@ -131,7 +131,7 @@ public:
    * \param index
    * \return
    */
-  Node<Value> &operator[](int index) {
+  Node<Point_index> &operator[](int index) {
 
     assert(!is_leaf());
     assert(0 <= index && index < 8);
@@ -147,7 +147,7 @@ public:
    * \param index
    * \return
    */
-  const Node<Value> &operator[](int index) const {
+  const Node<Point_index> &operator[](int index) const {
 
     assert(!is_leaf());
     assert(0 <= index && index < 8);
@@ -165,7 +165,7 @@ public:
    *
    * \return
    */
-  const Node<Value> *parent() const { return m_parent; }
+  const Node<Point_index> *parent() const { return m_parent; }
 
   /*!
    * \brief Retrieve this node's depth in the tree
@@ -220,13 +220,13 @@ public:
    * \brief Access to the content held by this node
    * \return
    */
-  boost::iterator_range<Value> &value() { return m_value; }
+  boost::iterator_range<Point_index> &value() { return m_value; }
 
   /*!
    * \brief Read-only access to the content held by this node
    * \return
    */
-  const boost::iterator_range<Value> &value() const { return m_value; }
+  const boost::iterator_range<Point_index> &value() const { return m_value; }
 
   /// @}
 
