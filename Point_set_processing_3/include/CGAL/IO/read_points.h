@@ -28,6 +28,53 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
+
+template <typename OutputIteratorValueType,
+          typename PointOutputIterator,
+          typename NamedParameters>
+bool read_points(const std::string& fname,
+                 PointOutputIterator output,
+                 const NamedParameters& np)
+{
+  const std::string ext = IO::internal::get_file_extension(fname);
+
+  if(ext == "xyz")
+    return read_XYZ<OutputIteratorValueType>(fname, output, np);
+  else if(ext == "off")
+    return read_OFF<OutputIteratorValueType>(fname, output, np);
+  else if(ext == "ply")
+    return read_PLY<OutputIteratorValueType>(fname, output, np);
+#ifdef CGAL_LINKED_WITH_LASLIB
+  else if(ext == "las")
+    return read_LAS<OutputIteratorValueType>(fname, output, np);
+#endif
+
+  return false;
+}
+
+// variant with default OutputIteratorType
+template <typename OutputIterator, typename NamedParameters>
+bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np)
+{
+  return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, np);
+}
+
+template <typename OutputIteratorValueType, typename OutputIterator>
+bool read_points(const std::string& fname, OutputIterator output)
+{
+  return read_points<OutputIteratorValueType>(fname, output, parameters::all_default());
+}
+
+// variant with all default
+template<typename OutputIterator>
+bool read_points(const std::string& fname, OutputIterator output)
+{
+  return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
+}
+
+/// \endcond
+
 /**
   \ingroup PkgPointSetProcessing3IO
 
@@ -72,59 +119,13 @@ namespace CGAL {
 
   \returns `true` if reading was successful, `false` otherwise.
 */
-template <typename OutputIteratorValueType,
-          typename PointOutputIterator,
-          typename NamedParameters>
-bool read_points(const std::string& fname,
-                 PointOutputIterator output,
-                 const NamedParameters& np)
-{
-  const std::string ext = IO::internal::get_file_extension(fname);
-
-  if(ext == "xyz")
-    return read_XYZ<OutputIteratorValueType>(fname, output, np);
-  else if(ext == "off")
-    return read_OFF<OutputIteratorValueType>(fname, output, np);
-  else if(ext == "ply")
-    return read_PLY<OutputIteratorValueType>(fname, output, np);
-#ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
-    return read_LAS<OutputIteratorValueType>(fname, output, np);
-#endif
-
-  return false;
-}
-
-/// \cond SKIP_IN_MANUAL
-
-// variant with default OutputIteratorType
-template <typename OutputIterator, typename NamedParameters>
-bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np)
-{
-  return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, np);
-}
-
-// variant with default np
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_points(const std::string& fname, OutputIterator output)
-{
-  return read_points<OutputIteratorValueType>(fname, output, parameters::all_default());
-}
-
-// variant with all default
-template<typename OutputIterator>
-bool read_points(const std::string& fname, OutputIterator output)
-{
-  return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
-}
-
-// variants with char*
-
 template <typename OutputIteratorValueType, typename OutputIterator, typename NamedParameters>
 bool read_points(const char* fname, OutputIterator output, const NamedParameters& np)
 {
   return read_points<OutputIteratorValueType>(std::string(fname), output, np);
 }
+
+/// \cond SKIP_IN_MANUAL
 
 template <typename OutputIterator, typename NamedParameters>
 bool read_points(const char* fname, OutputIterator output, const NamedParameters& np)

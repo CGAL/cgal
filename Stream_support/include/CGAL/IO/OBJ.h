@@ -277,18 +277,18 @@ bool read_OBJ(const char* fname,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OBJ(fname.c_str(), points, polygons, np);
-}
-
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(const char* fname, PointRange& points, PolygonRange& polygons,
               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return read_OBJ(fname, points, polygons, parameters::all_default());
+}
+
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np,
+              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+{
+  return read_OBJ(fname.c_str(), points, polygons, np);
 }
 
 template <typename PointRange, typename PolygonRange>

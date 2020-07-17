@@ -33,6 +33,39 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
+
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_points(const std::string& fname,
+                  const PointRange& points,
+                  const CGAL_BGL_NP_CLASS& np,
+                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+{
+  const std::string ext = IO::internal::get_file_extension(fname);
+
+  if(ext == "xyz")
+    return write_XYZ(fname, points, np);
+  else if(ext == "off")
+    return write_OFF(fname, points, np);
+  else if(ext == "ply")
+    return write_PLY(fname, points, np);
+#ifdef CGAL_LINKED_WITH_LASLIB
+  else if(ext == "las")
+    return write_LAS(fname, points, np);
+
+#endif
+  return false;
+}
+
+template <typename PointRange>
+bool write_points(const std::string& fname,const PointRange& points,
+                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+{
+  return write_points(fname, points, parameters::all_default());
+}
+
+/// \endcond
+
 /**
   \ingroup PkgPointSetProcessing3IO
 
@@ -83,45 +116,16 @@ namespace CGAL {
   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_points(const std::string& fname,
-                  const PointRange& points,
-                  const CGAL_BGL_NP_CLASS& np
+bool write_points(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
                   , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
 #endif
                   )
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
-
-  if(ext == "xyz")
-    return write_XYZ(fname, points, np);
-  else if(ext == "off")
-    return write_OFF(fname, points, np);
-  else if(ext == "ply")
-    return write_PLY(fname, points, np);
-#ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
-    return write_LAS(fname, points, np);
-
-#endif
-  return false;
-}
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_points(const char* fname, const PointRange& points, const CGAL_BGL_NP_CLASS& np,
-                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
   return write_points(std::string(fname), points, np);
 }
 
-template <typename PointRange>
-bool write_points(const std::string& fname,const PointRange& points,
-                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_points(fname, points, parameters::all_default());
-}
+/// \cond SKIP_IN_MANUAL
 
 template <typename PointRange>
 bool write_points(const char* fname,const PointRange& points,

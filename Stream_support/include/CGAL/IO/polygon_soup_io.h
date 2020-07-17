@@ -33,44 +33,12 @@
 
 namespace CGAL {
 
-/*!
- * \ingroup IOstreamFunctions
- *
- * \brief reads a polygon soup from a file.
- *
- * Supported file formats are the following:
- * - \ref IOStreamOFF (`.off`)
- * - \ref IOStreamOBJ (`.obj`)
- * - \ref IOStreamSTL (`.stl`)
- * - \ref IOStreamPLY (`.ply`)
- * - \ref IOStreamGocad (`.ts`)
- * - \ref IOStreamVTK (`.vtp`)
- *
- * The format is detected from the filename extension.
- *
- * \tparam PolygonRange a model of the concept `RandomAccessContainer`
- * whose value_type is a model of the concept `RandomAccessContainer`
- * whose value_type is `std::size_t`.
- * \tparam PointRange a model of the concept `RandomAccessContainer`
- * whose value type is the point type
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
- *
- * \param fname the name of the file.
- * \param polygons each element in the range describes a polygon
- * using the indices of the vertices.
- * \param points points of the soup of polygons
- * \param np optional \ref bgl_namedparameters "Named Parameters" described below
- *
- * \cgalNamedParamsBegin
- *   \cgalParamNBegin{verbose}
- *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
- *
- * \return `true` if reading was successful, `false` otherwise.
- */
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Read
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_polygon_soup(const std::string& fname,
                        PointRange& points,
@@ -111,12 +79,8 @@ bool read_polygon_soup(const std::string& fname,
   return false;
 }
 
-/// \cond SKIP_IN_MANUAL
-
 template <typename PointRange, typename PolygonRange>
-bool read_polygon_soup(const std::string& fname,
-                       PointRange& points,
-                       PolygonRange& polygons)
+bool read_polygon_soup(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_polygon_soup(fname, points, polygons, parameters::all_default());
 }
@@ -126,7 +90,7 @@ bool read_polygon_soup(const std::string& fname,
 /*!
  * \ingroup IOstreamFunctions
  *
- * \brief writes the content of `points` and `polygons` in a file.
+ * \brief reads a polygon soup from a file.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
@@ -139,19 +103,48 @@ bool read_polygon_soup(const std::string& fname,
  * The format is detected from the filename extension.
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
- * whose value_type is a model of the concept `RandomAccessContainer`
- * whose value_type is `std::size_t`.
- * \tparam PointRange a model of the concept `RandomAccessContainer`
- * whose value type is the point type
+ *                      whose value_type is a model of the concept `RandomAccessContainer`
+ *                      whose value_type is `std::size_t`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the name of the file.
- * \param polygons each element in the range describes a polygon
- * using the indices of the vertices.
  * \param points points of the soup of polygons
- * \param verbose: if `true`, will output warnings and error messages.
+ * \param polygons each element in the range describes a polygon using the indices of the vertices.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
- * \return `true` if writing was successful, `false` otherwise.
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return `true` if reading was successful, `false` otherwise.
  */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_polygon_soup(const char* fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
+{
+  return read_OBJ(std::string(fname), points, polygons, np);
+}
+
+/// \cond SKIP_IN_MANUAL
+
+template <typename PointRange, typename PolygonRange>
+bool read_polygon_soup(const char* fname, PointRange& points, PolygonRange& polygons)
+{
+  return read_OBJ(fname, points, polygons, parameters::all_default());
+}
+
+/// \endcond
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Write
+
+/// \cond SKIP_IN_MANUAL
+
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_polygon_soup(const std::string& fname,
                         const PointRange& points,
@@ -197,12 +190,60 @@ bool write_polygon_soup(const std::string& fname,
   return false;
 }
 
+template <typename PointRange, typename PolygonRange>
+bool write_polygon_soup(const std::string& fname, PointRange& points, PolygonRange& polygons)
+{
+  return write_polygon_soup(fname, points, polygons, parameters::all_default());
+}
+
+/// \endcond
+
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * \brief writes the content of `points` and `polygons` in a file.
+ *
+ * Supported file formats are the following:
+ * - \ref IOStreamOFF (`.off`)
+ * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamSTL (`.stl`)
+ * - \ref IOStreamPLY (`.ply`)
+ * - \ref IOStreamGocad (`.ts`)
+ * - \ref IOStreamVTK (`.vtp`)
+ *
+ * The format is detected from the filename extension.
+ *
+ * \tparam PolygonRange a model of the concept `RandomAccessContainer`
+ *                      whose value_type is a model of the concept `RandomAccessContainer`
+ *                      whose value_type is `std::size_t`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param fname the name of the file.
+ * \param points points of the soup of polygons
+ * \param polygons each element in the range describes a polygon using the indices of the vertices.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \return `true` if writing was successful, `false` otherwise.
+ */
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_polygon_soup(const char* fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
+{
+  return write_polygon_soup(std::string(fname), points, polygons, np);
+}
+
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename PolygonRange>
-bool write_polygon_soup(const std::string& fname,
-                        PointRange& points,
-                        PolygonRange& polygons)
+bool write_polygon_soup(const char* fname, PointRange& points, PolygonRange& polygons)
 {
   return write_polygon_soup(fname, points, polygons, parameters::all_default());
 }

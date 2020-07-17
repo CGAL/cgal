@@ -82,6 +82,31 @@ std::istream& operator>>(std::istream& is,
   return is;
 }
 
+/// \cond SKIP_IN_MANUAL
+
+template <typename Point,
+          typename Vector>
+bool read_point_set(const std::string& fname,
+                    CGAL::Point_set_3<Point, Vector>& ps)
+{
+  const std::string ext = IO::internal::get_file_extension(fname);
+
+  if(ext == "xyz")
+    return read_XYZ(fname, ps);
+  else if(ext == "off")
+    return read_OFF(fname, ps);
+  else if(ext =="ply")
+    return read_PLY(fname, ps);
+#ifdef CGAL_LINKED_WITH_LASLIB
+  else if(ext == "las")
+    return read_LAS(fname, ps);
+#endif
+
+  return false;
+}
+
+/// \endcond
+
 /*!
   \ingroup PkgPointSet3IO
 
@@ -100,41 +125,16 @@ std::istream& operator>>(std::istream& is,
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
-  \param filename the path to the input file
+  \param fname the path to the input file
   \param ps the point set
 
   \return `true` if the reading was successful, `false` otherwise.
  */
-template <typename Point,
-          typename Vector>
-bool read_point_set(const std::string& filename,
-                    CGAL::Point_set_3<Point, Vector>& ps)
-{
-  const std::string ext = IO::internal::get_file_extension(filename);
-
-  if(ext == "xyz")
-    return read_XYZ(filename, ps);
-  else if(ext == "off")
-    return read_OFF(filename, ps);
-  else if(ext =="ply")
-    return read_PLY(filename, ps);
-#ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
-    return read_LAS(filename, ps);
-#endif
-
-  return false;
-}
-
-/// \cond SKIP_IN_MANUAL
-
 template <typename Point, typename Vector>
-bool read_point_set(const char* filename, CGAL::Point_set_3<Point, Vector>& ps)
+bool read_point_set(const char* fname, CGAL::Point_set_3<Point, Vector>& ps)
 {
-  return read_point_set(std::string(filename), ps);
+  return read_point_set(std::string(fname), ps);
 }
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,6 +164,31 @@ std::ostream& operator<<(std::ostream& os,
   return os;
 }
 
+/// \cond SKIP_IN_MANUAL
+
+template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_point_set(const std::string& fname,
+                     CGAL::Point_set_3<Point, Vector>& ps,
+                     const CGAL_BGL_NP_CLASS& np)
+{
+  const std::string ext = IO::internal::get_file_extension(fname);
+
+  if(ext == "xyz")
+    return write_XYZ(fname, ps, np);
+  else if(ext == "off")
+    return write_OFF(fname, ps, np);
+  else if(ext == "ply")
+    return write_PLY(fname, ps, np);
+#ifdef CGAL_LINKED_WITH_LASLIB
+  else if(ext == "las")
+    return write_LAS(fname, ps, np);
+#endif
+
+  return false;
+}
+
+/// \endcond
+
 /*!
   \ingroup PkgPointSet3IO
 
@@ -181,7 +206,7 @@ std::ostream& operator<<(std::ostream& os,
   \tparam Vector a `CGAL::Vector_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param filename the path to the output file
+  \param fname the path to the output file
   \param ps the point set
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
@@ -196,46 +221,25 @@ std::ostream& operator<<(std::ostream& os,
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_point_set(const std::string& filename,
+bool write_point_set(const char* fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
                      const CGAL_BGL_NP_CLASS& np)
 {
-  const std::string ext = IO::internal::get_file_extension(filename);
-
-  if(ext == "xyz")
-    return write_XYZ(filename, ps, np);
-  else if(ext == "off")
-    return write_OFF(filename, ps, np);
-  else if(ext == "ply")
-    return write_PLY(filename, ps, np);
-#ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
-    return write_LAS(filename, ps, np);
-#endif
-
-  return false;
+  return write_point_set(std::string(fname), ps, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_point_set(const char* filename,
-                     CGAL::Point_set_3<Point, Vector>& ps,
-                     const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector>
+bool write_point_set(const char* fname, CGAL::Point_set_3<Point, Vector>& ps)
 {
-  return write_point_set(std::string(filename), ps, np);
+  return write_point_set(fname, ps, parameters::all_default());
 }
 
 template <typename Point, typename Vector>
-bool write_point_set(const char* filename, CGAL::Point_set_3<Point, Vector>& ps)
+bool write_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
 {
-  return write_point_set(filename, ps, parameters::all_default());
-}
-
-template <typename Point, typename Vector>
-bool write_point_set(const std::string& filename, CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return write_point_set(filename.c_str(), ps, parameters::all_default());
+  return write_point_set(fname.c_str(), ps, parameters::all_default());
 }
 
 /// \endcond
