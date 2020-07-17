@@ -235,7 +235,15 @@ public:
    * \return
    */
   bool is_empty() const {
-    return m_points.end() == m_points.begin();
+    return m_points.empty();
+  }
+
+  /*!
+   * \brief Count the points contained by this node
+   * \return
+   */
+  std::size_t number_of_points() const {
+    return std::distance(m_points.begin(), m_points.end());
   }
 
   /// @}
