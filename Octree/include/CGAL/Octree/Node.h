@@ -48,11 +48,13 @@ public:
    */
   typedef std::array<uint32_t, 3> Int_location;
 
+  typedef boost::iterator_range<Point_index> Node_range;
+
   /// @}
 
 private:
 
-  boost::iterator_range<Point_index> m_value;
+  Node_range m_value;
 
   const Node<Point_index> *m_parent;
 
@@ -220,13 +222,13 @@ public:
    * \brief Access to the content held by this node
    * \return
    */
-  boost::iterator_range<Point_index> &value() { return m_value; }
+  Node_range &value() { return m_value; }
 
   /*!
    * \brief Read-only access to the content held by this node
    * \return
    */
-  const boost::iterator_range<Point_index> &value() const { return m_value; }
+  const Node_range &value() const { return m_value; }
 
   /// @}
 
