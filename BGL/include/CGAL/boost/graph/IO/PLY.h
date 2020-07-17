@@ -83,6 +83,8 @@ bool read_PLY_BGL(std::istream& is,
 
   \brief reads the graph `g` from the input stream, using the \ref IOStreamPLY.
 
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -130,7 +132,7 @@ bool read_PLY_BGL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -215,6 +217,8 @@ bool read_PLY(std::istream& is, Graph& g,
   \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
+
+  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -325,7 +329,7 @@ bool read_PLY(const std::string& fname, Graph& g,
 
  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
- \returns `true` if writing was successful.
+ \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
@@ -533,7 +537,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
     \cgalParamNEnd
  \cgalNamedParamsEnd
 
- \returns `true` if writing was successful.
+ \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const char* fname,

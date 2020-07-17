@@ -75,7 +75,7 @@ namespace CGAL {
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamXYZ
 */
@@ -223,7 +223,7 @@ bool read_XYZ(std::istream& is,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamXYZ
 */
@@ -457,7 +457,7 @@ bool read_xyz_points(std::istream& is, ///< input stream.
    \deprecated This function is deprecated since \cgal 5.2,
                \link PkgPointSetProcessing3IOXyz `CGAL::read_XYZ()` \endlink should be used instead.
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,

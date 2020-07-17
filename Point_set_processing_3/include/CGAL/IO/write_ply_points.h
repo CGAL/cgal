@@ -100,7 +100,7 @@ namespace CGAL {
    within the `PropertyHandler` parameter.
    \tparam PropertyHandler handlers to recover properties.
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamPLY
    \sa `make_ply_point_writer()`
@@ -180,7 +180,7 @@ template <typename PointRange,
 
    \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -280,7 +280,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamPLY
 */

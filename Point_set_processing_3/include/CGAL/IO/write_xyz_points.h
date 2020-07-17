@@ -125,7 +125,7 @@ bool write_XYZ_PSP(std::ostream& os,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamXYZ
 */
@@ -194,7 +194,7 @@ bool write_XYZ(std::ostream& os, const PointRange& points,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamXYZ
 */

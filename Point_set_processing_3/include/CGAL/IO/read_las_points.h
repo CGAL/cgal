@@ -367,7 +367,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    \tparam OutputIterator iterator over output points.
    \tparam PropertyHandler handlers to recover properties.
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa `make_las_point_reader()`
    \sa \ref IOStreamLAS
@@ -448,7 +448,7 @@ bool read_LAS_with_properties(std::istream& is,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamLAS
 */
@@ -525,7 +525,7 @@ bool read_LAS(std::istream& is, OutputIterator output,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
    \sa \ref IOStreamLAS
 */
 template <typename OutputIteratorValueType,

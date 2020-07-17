@@ -126,7 +126,7 @@ make_ply_normal_reader(VectorMap normal_map);
   \tparam PointOutputIterator iterator over output points.
   \tparam PropertyHandler handlers to recover properties.
 
-  \return `true` on success.
+  \returns `true` if reading was successful, `false` otherwise.
 
   \sa `make_ply_point_reader()`
   \sa `make_ply_normal_reader()`
@@ -232,7 +232,7 @@ bool read_PLY_with_properties(std::istream& is,
 
    \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
@@ -310,7 +310,7 @@ bool read_PLY(std::istream& is,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamPLY
 */

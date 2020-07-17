@@ -747,7 +747,8 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 ///
 /// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 ///
-/// \return `true` on success.
+/// \returns `true` if reading was successful, `false` otherwise.
+///
 template <typename P>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
@@ -901,7 +902,7 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 ///
 /// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 ///
-/// \returns `true` if writing was successful.
+/// \returns `true` if writing was successful, `false` otherwise.
 template <typename P,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,

@@ -40,11 +40,11 @@ namespace CGAL {
  * \param filename the path to the 3mf file
  * \param output a `std::vector` containing the `CGAL::Surface_mesh`s that will be filled by this function
  *
- * \return the number of extracted meshes
+ * \returns `true` if reading was successful, `false` otherwise.
  */
 template<typename Point>
-int read_3MF(const std::string& filename,
-             std::vector<CGAL::Surface_mesh<Point> >& output)
+bool read_3MF(const std::string& filename,
+              std::vector<CGAL::Surface_mesh<Point> >& output)
 {
   typedef std::vector<Point>                                  PointRange;
   typedef std::vector<std::size_t>                            Polygon;
@@ -57,17 +57,19 @@ int read_3MF(const std::string& filename,
   std::vector<PolygonRange> all_polygons;
   std::vector<std::string> names;
   std::vector<std::vector<CGAL::Color> > all_colors;
-  int result = 0;
 
-  int nb_meshes = CGAL::read_3MF(filename, all_points, all_polygons, all_colors, names);
-  if(nb_meshes < 0)
+  const bool success = CGAL::read_3MF(filename, all_points, all_polygons, all_colors, names);
+  if(!success)
   {
     std::cerr << "Error in reading meshes." << std::endl;
-    return -1;
+    return false;
   }
 
+  const std::size_t nb_meshes = all_points.size();
+  int result = 0;
   output.reserve(nb_meshes);
-  for(int i=0; i<nb_meshes; ++i)
+
+  for(std::size_t i=0; i<nb_meshes; ++i)
   {
     bool skip = false;
     SMesh sm;
@@ -124,7 +126,7 @@ int read_3MF(const std::string& filename,
     ++result;
   }
 
-  return result;
+  return true;
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

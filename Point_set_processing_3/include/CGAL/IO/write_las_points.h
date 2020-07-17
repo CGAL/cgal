@@ -178,7 +178,7 @@ namespace LAS {
    \tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
    \tparam PropertyHandler handlers to recover properties.
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa `make_las_point_writer()`
    \sa \ref IOStreamLAS
@@ -277,7 +277,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamLAS
 */
@@ -341,7 +341,7 @@ bool write_LAS(std::ostream& os,
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamLAS
 */

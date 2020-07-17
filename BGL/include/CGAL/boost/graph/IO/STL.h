@@ -98,7 +98,7 @@ public:
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if the resulting mesh is valid.
+  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -147,7 +147,7 @@ bool read_STL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if the resulting mesh is valid.
+  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -210,7 +210,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 
   \pre The graph must contain only triangle faces.
 
-  \returns `true` if writing was successful.
+  \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
@@ -323,6 +323,8 @@ bool write_STL(std::ostream& os,
  \cgalNamedParamsEnd
 
  \pre The graph must contain only triangle faces.
+
+ \returns `true` if writing was successful, `false` otherwise.
 
  \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */

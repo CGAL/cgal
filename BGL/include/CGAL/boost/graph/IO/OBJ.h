@@ -105,7 +105,7 @@ public:
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if the resulting mesh is valid.
+  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -172,7 +172,7 @@ bool read_OBJ(std::istream& is, Graph& g,
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if the resulting mesh is valid.
+  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -248,7 +248,7 @@ bool read_OBJ(const std::string& fname, Graph& g,
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \returns `true` if writing was successful.
+  \returns `true` if writing was successful, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -300,7 +300,7 @@ bool write_OBJ(std::ostream& os, const Graph& g,
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \returns `true` if writing was successful.
+  \returns `true` if writing was successful, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */

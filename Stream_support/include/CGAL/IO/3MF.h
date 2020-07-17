@@ -42,17 +42,17 @@ namespace CGAL {
 
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
          typename PointRange, typename PolygonRange, typename ColorRange>
-int read_3MF(const std::string& fname,
-             PointRanges& all_points,
-             PolygonRanges& all_polygons,
-             ColorRanges& all_colors,
-             std::vector<std::string>& names,
-             std::function<bool(NMR::PLib3MFModelMeshObject*,
-                                const NMR::MODELTRANSFORM&,
-                                PointRange&,
-                                PolygonRange&,
-                                ColorRange&,
-                                std::string&)> func)
+bool read_3MF(const std::string& fname,
+              PointRanges& all_points,
+              PolygonRanges& all_polygons,
+              ColorRanges& all_colors,
+              std::vector<std::string>& names,
+              std::function<bool(NMR::PLib3MFModelMeshObject*,
+                                 const NMR::MODELTRANSFORM&,
+                                 PointRange&,
+                                 PolygonRange&,
+                                 ColorRange&,
+                                 std::string&)> func)
 {
   DWORD nInterfaceVersionMajor, nInterfaceVersionMinor, nInterfaceVersionMicro, nbVertices, nbPolygons;
   HRESULT hResult;
@@ -66,7 +66,7 @@ int read_3MF(const std::string& fname,
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not get 3MF Library version: " << std::hex << hResult << std::endl;
-    return -1;
+    return false;
   }
 
   // Create Model Instance
@@ -74,7 +74,7 @@ int read_3MF(const std::string& fname,
   if(hResult != LIB3MF_OK)
   {
     std::cerr << "could not create model: " << std::hex << hResult << std::endl;
-    return -1;
+    return false;
   }
 
   // Create Model Reader
@@ -83,7 +83,7 @@ int read_3MF(const std::string& fname,
   {
     std::cerr << "could not create model reader: " << std::hex << hResult << std::endl;
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   // Import Model from File
@@ -93,7 +93,7 @@ int read_3MF(const std::string& fname,
     std::cerr << "could not parse file: " << std::hex << hResult << std::endl;
     NMR::lib3mf_release(pReader);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   // Release Model Reader
@@ -108,7 +108,7 @@ int read_3MF(const std::string& fname,
   {
     std::cerr << "could not get object: " << std::hex << hResult << std::endl;
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   hResult = NMR::lib3mf_resourceiterator_movenext(pResourceIterator, &pbHasNext);
@@ -117,7 +117,7 @@ int read_3MF(const std::string& fname,
     std::cerr << "could not get next object: " << std::hex << hResult << std::endl;
     NMR::lib3mf_release(pResourceIterator);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   /**************************************************
@@ -138,7 +138,7 @@ int read_3MF(const std::string& fname,
       std::cerr << "could not get resource: " << std::hex << hResult << std::endl;
       NMR::lib3mf_release(pResourceIterator);
       NMR::lib3mf_release(pModel);
-      return -1;
+      return false;
     }
 
     // get resource ID
@@ -149,7 +149,7 @@ int read_3MF(const std::string& fname,
       NMR::lib3mf_release(pResource);
       NMR::lib3mf_release(pResourceIterator);
       NMR::lib3mf_release(pModel);
-      return -1;
+      return false;
     }
 
     // Query mesh interface
@@ -171,7 +171,7 @@ int read_3MF(const std::string& fname,
           DWORD nComponentCount;
           hResult = NMR::lib3mf_componentsobject_getcomponentcount(pComponentsObject, &nComponentCount);
           if(hResult != LIB3MF_OK)
-            return -1;
+            return false;
 
           //for each component
           DWORD nIndex;
@@ -181,13 +181,13 @@ int read_3MF(const std::string& fname,
             NMR::PLib3MFModelComponent * pComponent;
             hResult = NMR::lib3mf_componentsobject_getcomponent(pComponentsObject, nIndex, &pComponent);
             if(hResult != LIB3MF_OK)
-              return -1;
+              return false;
 
             hResult = NMR::lib3mf_component_getobjectresource(pComponent, &compResource);
             if(hResult != LIB3MF_OK)
             {
               NMR::lib3mf_release(pComponent);
-              return -1;
+              return false;
             }
 
             hResult = NMR::lib3mf_object_ismeshobject(compResource, &bIsMeshObject);
@@ -201,7 +201,7 @@ int read_3MF(const std::string& fname,
                 if(hResult != LIB3MF_OK)
                 {
                   NMR::lib3mf_release(pComponent);
-                  return -1;
+                  return false;
                 }
 
                 if(bHasTransform)
@@ -211,7 +211,7 @@ int read_3MF(const std::string& fname,
                   if(hResult != LIB3MF_OK)
                   {
                     NMR::lib3mf_release(pComponent);
-                    return -1;
+                    return false;
                   }
                 }
                 else
@@ -248,7 +248,7 @@ int read_3MF(const std::string& fname,
     if(hResult != LIB3MF_OK)
     {
       std::cerr << "could not get next object: " << std::hex << hResult << std::endl;
-      return -1;
+      return false;
     }
   }
 
@@ -264,7 +264,7 @@ int read_3MF(const std::string& fname,
     std::cout << "could not get build items: " << std::hex << hResult << std::endl;
     NMR::lib3mf_release(pBuildItemIterator);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   hResult = NMR::lib3mf_builditemiterator_movenext(pBuildItemIterator, &pbHasNext);
@@ -273,7 +273,7 @@ int read_3MF(const std::string& fname,
     std::cout << "could not get next build item: " << std::hex << hResult << std::endl;
     NMR::lib3mf_release(pBuildItemIterator);
     NMR::lib3mf_release(pModel);
-    return -1;
+    return false;
   }
 
   while (pbHasNext)
@@ -288,7 +288,7 @@ int read_3MF(const std::string& fname,
       std::cout << "could not get build item: " << std::hex << hResult << std::endl;
       NMR::lib3mf_release(pBuildItemIterator);
       NMR::lib3mf_release(pModel);
-      return -1;
+      return false;
     }
 
     // Retrieve Resource
@@ -300,7 +300,7 @@ int read_3MF(const std::string& fname,
       NMR::lib3mf_release(pBuildItem);
       NMR::lib3mf_release(pBuildItemIterator);
       NMR::lib3mf_release(pModel);
-      return -1;
+      return false;
     }
 
     BOOL bIsMeshObject;
@@ -326,7 +326,7 @@ int read_3MF(const std::string& fname,
           NMR::lib3mf_release(pBuildItemIterator);
           NMR::lib3mf_release(pModel);
           std::cerr << "could not check object transform: " << std::hex << hResult << std::endl;
-          return -1;
+          return false;
         }
 
         if(bHasTransform)
@@ -339,7 +339,7 @@ int read_3MF(const std::string& fname,
             NMR::lib3mf_release(pBuildItemIterator);
             NMR::lib3mf_release(pModel);
             std::cerr << "could not get object transform: " << std::hex << hResult << std::endl;
-            return -1;
+            return false;
           }
         }
         else
@@ -366,13 +366,13 @@ int read_3MF(const std::string& fname,
     if(hResult != LIB3MF_OK)
     {
       std::cerr << "could not get next build item: " << std::hex << hResult << std::endl;
-      return -1;
+      return false;
     }
   }
 
   // Release Build Item Iterator
   NMR::lib3mf_release(pBuildItemIterator);
-  return all_points.size();
+  return true;
 }
 
 /// \endcond
@@ -405,7 +405,7 @@ int read_3MF(const std::string& fname,
  * \param names will contain the name of each mesh in `fname` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
  *
- * \return the number of soups read.
+ * \returns `true` if reading was successful, `false` otherwise.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
 int read_3MF(const std::string& fname,

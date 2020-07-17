@@ -62,7 +62,7 @@ namespace CGAL {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \returns `true` if writing was successful.
+  \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_WRL(std::ostream& os,
@@ -102,7 +102,7 @@ bool write_WRL(std::ostream& os,
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \returns `true` if writing was successful.
+  \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_WRL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)

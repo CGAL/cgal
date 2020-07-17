@@ -564,7 +564,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-/// \returns `true` if writing was successful.
+/// \returns `true` if writing was successful, `false` otherwise.
 ///
 template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,

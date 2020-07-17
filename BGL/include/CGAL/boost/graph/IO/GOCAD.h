@@ -111,7 +111,7 @@ public:
 ///
 /// \pre The data must represent a 2-manifold
 ///
-/// \returns `true` if the resulting mesh is valid.
+/// \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 ///
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -195,6 +195,8 @@ bool read_GOCAD(std::istream& is, Graph& g,
 /// \cgalNamedParamsEnd
 ///
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
+///
+/// \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
 ///
 /// \pre The data must represent a 2-manifold
 ///
@@ -287,6 +289,8 @@ bool read_GOCAD(const std::string& fname, Graph& g,
 ///     \cgalParamDefault{`6`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
+///
+/// \returns `true` if writing was successful, `false` otherwise.
 ///
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -401,6 +405,8 @@ bool write_GOCAD(std::ostream& os, const Graph& g,
 ///     \cgalParamDefault{`6`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
+///
+/// \returns `true` if writing was successful, `false` otherwise.
 ///
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

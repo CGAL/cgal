@@ -77,7 +77,7 @@ namespace CGAL {
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamOFF
 */
@@ -235,7 +235,7 @@ bool read_OFF(std::istream& is,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if reading was successful, `false` otherwise.
 
    \sa \ref IOStreamOFF
 */

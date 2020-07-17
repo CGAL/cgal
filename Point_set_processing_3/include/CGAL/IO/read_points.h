@@ -67,7 +67,7 @@ namespace CGAL {
      \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \return `true` on success.
+  \returns `true` if reading was successful, `false` otherwise.
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,

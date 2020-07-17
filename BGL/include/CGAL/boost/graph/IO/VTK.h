@@ -139,7 +139,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \attention The graph `g` is not cleared, and the data from the stream is added.
  *
- * \returns `true` if reading was successful
+ * \returns `true` if reading was successful, `false` otherwise.
 */
 template<typename Graph,
          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -427,6 +427,8 @@ void write_polys_points(std::ostream& os,
  * \cgalNamedParamsEnd
  *
  * \pre `g` contains only triangular faces
+ *
+ * \returns `true` if writing was successful, `false` otherwise.
  */
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
@@ -525,6 +527,8 @@ bool write_VTP(std::ostream& os,
  * \cgalNamedParamsEnd
  *
  * \pre `g` contains only triangular faces
+ *
+ * \returns `true` if writing was successful, `false` otherwise.
  */
 template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)

@@ -77,7 +77,7 @@ namespace CGAL {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  \return `true` on success.
+  \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_points(const std::string& fname,

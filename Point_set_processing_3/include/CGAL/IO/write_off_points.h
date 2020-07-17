@@ -133,7 +133,7 @@ bool write_OFF_PSP(std::ostream& os,
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamOFF
 */
@@ -205,7 +205,7 @@ bool write_OFF(std::ostream& os, const PointRange& points,
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \return `true` on success.
+   \returns `true` if writing was successful, `false` otherwise.
 
    \sa \ref IOStreamOFF
 */
