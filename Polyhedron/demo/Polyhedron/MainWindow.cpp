@@ -2886,7 +2886,7 @@ QString make_fullpath(const QString& filename, bool duplicate = false)
 }
 /*
  The two following functions allow to create files from string and strings from files.
- This is used as a workaround of the absence of stream management in our IO system.
+ This is used as a workaround of the absence of stream management in our I/O system.
  The whole to/from Base64 is used to avoid problems with binary formats. Everything is written
  as a base64 binary string, and converted back to what it was.
 */

@@ -12,7 +12,7 @@ namespace CGAL {
 
 An algorithm is the application of a serie of steps to convert some input data into output data.
 As such, it is necessary to have a way to input and output external data into \cgal data structures.
-This is achieved using <em>input-output (IO) streams</em> of data, which enables reading and writing
+This is achieved using <em>input/output (I/O) streams</em> of data, which enables reading and writing
 to and from files, the console, or other custom structures.
 
 \subsection StreamSupportOutline Outline
@@ -30,8 +30,8 @@ to and from files, the console, or other custom structures.
 \section IOstreamIO Reading and Writing Data With Streams
 
 All classes in the \cgal kernel provide input and output operators for
-%IO streams. Classes external to \cgal are also supported, by means of `oformat()`
-(Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
+I/O streams. Classes external to \cgal are also supported, by means of `oformat()`
+(Section \ref seciofornoncgaltypes "I/O for Non CGAL Types").
 The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii,
@@ -55,7 +55,7 @@ would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
 is in <span class="textsc">Ascii</span> mode.
 
-\cgal provides the following functions to modify the mode of an IO stream.
+\cgal provides the following functions to modify the mode of an I/O stream.
 
 \code{.cpp}
 IO::Mode set_mode(std::ios& s, IO::Mode m);

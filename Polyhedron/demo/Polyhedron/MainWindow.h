@@ -82,9 +82,9 @@ public:
   MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
-  /*! Finds an IO plugin.
+  /*! Finds an I/O plugin.
    * throws std::invalid_argument if no loader with that argument can be found
-   @returns the IO plugin associated with `loader_name`*/
+   @returns the I/O plugin associated with `loader_name`*/
   CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
 
   /*! \brief loads on or more item with a given loader.

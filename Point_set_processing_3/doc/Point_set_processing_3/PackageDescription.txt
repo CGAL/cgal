@@ -7,25 +7,25 @@
 Collection of algorithms of point set processing (smoothing,
 simplification, etc.).
 
-\defgroup PkgPointSetProcessing3IO IO (I/O Functions)
+\defgroup PkgPointSetProcessing3IO I/O Functions
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IODeprecated IO (I/O Functions (Deprecated))
+\defgroup PkgPointSetProcessing3IODeprecated I/O Functions (Deprecated)
 \ingroup PkgPointSetProcessing3IO
 
-\defgroup PkgPointSetProcessing3IOOff IO (OFF Formats)
+\defgroup PkgPointSetProcessing3IOOff I/O (OFF Formats)
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IOXyz IO (XYZ Formats)
+\defgroup PkgPointSetProcessing3IOXyz I/O (XYZ Formats)
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IOPly IO (PLY Format)
+\defgroup PkgPointSetProcessing3IOPly I/O (PLY Format)
 \ingroup PkgPointSetProcessing3Ref
 
 Read and write points (with or without additional properties) in PLY
 format.
 
-\defgroup PkgPointSetProcessing3IOLas IO (LAS Format)
+\defgroup PkgPointSetProcessing3IOLas I/O (LAS Format)
 \ingroup PkgPointSetProcessing3Ref
 
 Read and write points (with or without additional properties) in LAS
@@ -78,17 +78,17 @@ format.
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
 
-\cgalCRPSection{IO (All Formats)}
+\cgalCRPSection{I/O (All Formats)}
 
 - `CGAL::read_points()`
 - `CGAL::write_points()`
 
-\cgalCRPSection{IO (XYZ/OFF Formats)}
+\cgalCRPSection{I/O (XYZ/OFF Formats)}
 
 - \link PkgPointSetProcessing3IOOff OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
 - \link PkgPointSetProcessing3IOXyz XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
 
-\cgalCRPSection{IO (PLY Format)}
+\cgalCRPSection{I/O (PLY Format)}
 
 - \link PkgPointSetProcessing3IOPly `CGAL::read_PLY()` \endlink
 - `CGAL::read_PLY_with_properties()`
@@ -100,7 +100,7 @@ format.
 - `CGAL::make_ply_normal_reader()`
 - `CGAL::make_ply_normal_writer()`
 
-\cgalCRPSection{IO (LAS Format)}
+\cgalCRPSection{I/O (LAS Format)}
 
 - `CGAL::read_LAS()`
 - `CGAL::read_LAS_with_properties()`

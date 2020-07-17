@@ -1,4 +1,4 @@
-/// \defgroup PkgStreamSupportRef IO Streams Reference
+/// \defgroup PkgStreamSupportRef I/O Streams Reference
 /// \defgroup IOstreamOperators Stream Operators
 /// \ingroup PkgStreamSupportRef
 /// \defgroup IOstreamFunctions I/O Functions
@@ -41,11 +41,11 @@
 
 /*!
 \addtogroup PkgStreamSupportRef
-\cgalPkgDescriptionBegin{IO Streams,PkgStreamSupport}
+\cgalPkgDescriptionBegin{I/O Streams,PkgStreamSupport}
 \cgalPkgPicture{io.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner}
-\cgalPkgDesc{All classes in the \cgal kernel provide input and output operators for IO streams.   The basic task of such an operator is to produce a representation of an object that can be written as a sequence of characters on devices as a console, a file, or a pipe. In \cgal we distinguish between  a raw ascii, a raw binary and a pretty printing format.}
+\cgalPkgDesc{All classes in the \cgal kernel provide input and output operators for I/O streams.   The basic task of such an operator is to produce a representation of an object that can be written as a sequence of characters on devices as a console, a file, or a pipe. In \cgal we distinguish between  a raw ascii, a raw binary and a pretty printing format.}
 \cgalPkgManuals{Chapter_IO_Streams,PkgStreamSupportRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -56,7 +56,7 @@
 \cgalPkgDescriptionEnd
 
 All classes in the \cgal kernel provide input and output operators for
-IO streams.
+I/O streams.
 \cgal provides three different printing mode, defined in the enum
 `IO::Mode`, as well as different functions to set and get
 the printing mode.
