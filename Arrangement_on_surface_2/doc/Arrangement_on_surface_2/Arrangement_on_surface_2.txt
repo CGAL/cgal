@@ -927,13 +927,11 @@ The member function `Arrangement_2::insert_in_face_interior(const
 in the interior of a given face \f$ f\f$, into the arrangement and
 returns a handle to the arrangement vertex associated with \f$p\f$ it
 has created. Naturally, this function has a precondition that \f$p\f$
-is really an isolated point, namely it does not coincide with any
+is really an isolated point; namely it does not coincide with any
 existing arrangement vertex and does not lie on any edge. As mentioned
 in Section \ref arr_ssectraverse, it is possible to obtain the face
 containing an isolated vertex calling the member function
-`Arrangement_2::vertex::face()`.
-
-The member function
+`Arrangement_2::vertex::face()`. The member function
 `Arrangement_2::remove_isolated_vertex(Vertex_handle v)` accepts a
 handle to an isolated vertex and removes it from the arrangement.
 
@@ -959,10 +957,11 @@ isolated vertices that are still contained in the unbounded face
 \subsection arr_sssecmf_halfedges Manipulating Halfedges
 <!----------------------------------------------------------------------------->
 
-In the previous subsection we showed how to introduce new isolated
-vertices in the arrangement. You may wonder now how you can insert a
-new point that lies on an an \f$x\f$-monotone curve that is associated
-with existing arrangement edge.
+While reading the previous subsection you learned how to insert new
+points that induce isolated vertices\index{vertex!isolated} into the
+arrangement. You may wonder now how you can insert a new point that
+lies on an an \f$x\f$-monotone curve that is associated with existing
+arrangement edge.
 
 The introduction of a vertex, the geometric mapping of which is a
 point \f$p\f$ that lies on an \f$x\f$-monotone curve, requires the
@@ -1020,40 +1019,44 @@ eventually removed in step (c).
 
 The following example program shows how the edge-manipulation
 functions can be used. The program works in three steps, as
-demonstrated in \cgalFigureRef{arr_figex_3}.
+demonstrated in \cgalFigureRef{arr_figex_3}. Note that the program
+uses the fact that `split_edge()` returns one of the new halfedges
+(after the split) that has the same direction as the original halfedge
+(the first parameter of the function) and is directed towards the
+split point. Thus, it is easy to identify the vertices \f$u_1\f$ and
+\f$u_2\f$ associated with the split points.
 
 \cgalExample{Arrangement_on_surface_2/edge_manipulation.cpp}
 
-Note that the program uses the fact that `split_edge()` returns one of
-the new halfedges (after the split) that has the same direction as the
-original halfedge (the first parameter of the function) and is
-directed towards the split point. Thus, it is easy to identify the
-vertices \f$u_1\f$ and \f$u_2\f$ associated with the split points.
-Also note the insertion of the isolated vertex \f$v_6\f$ located
-inside the triangular face (the incident face of \f$e_7\f$). This
-vertex seizes from being isolated, as it is gets connected to other
-vertices.
-
-In this context, we should mention the two member functions
-`modify_vertex(v, p)`, which sets \f$p\f$ to be the point associated
-with the vertex \f$v\f$, and `modify_edge(e, c)`, which sets \f$C\f$
-to be the \f$x\f$-monotone curve associated with the halfedge
-\f$e\f$. These functions have preconditions that \f$p\f$ is
-geometrically equivalent to `v->point()` and \f$C\f$ is equivalent to
-`e->curve()` (i.e., the two curves have the same graph), respectively,
-to avoid the invalidation of the geometric structure of the
-arrangement. At a first glance it may seen as these two functions are
-of little use. However, we should keep in mind that there may be
+The member functions `modify_vertex(v, p)` and `modify_edge(e, c)`
+modify the geometric mappings of existing features of the
+arrangement. The member function modify_vertex(v, p) accepts a handle
+to a vertex \f$v\f$ and a reference to a point \f$p\f$, and sets
+\f$p\f$ to be the point associated with the vertex \f$v\f$. The member
+function `modify_edge(he, c)` accepts a handle to one of the two
+halfedges that represent an edge \f$e\f$ and a reference to a curve
+\f$c\f$, and sets \f$c\f$ to be the \f$x\f$-monotone curve associated
+with \f$e\f$. (Note that both halfedges are modified; that is, both
+expressions `he->curve()` and `he->twin()->curve()` evaluate to
+\f$c\f$ after the modification.) These functions have preconditions
+that \f$p\f$ is geometrically equivalent to `v->point()` and \f$c\f$
+is equivalent to `e->curve()`, respectively.\cgalFootnote{{Roughly
+speaking, two curves are equivalent iff they have the same graph. In
+Section~\ref{ssec:traits:basic} we give a formal definition of curves
+and curve equivalence.} If these preconditions are not met, the
+corresponding operation may invalidate the structure of the
+arrangement. At first glance it may seem as if these two functions are
+of little use. However, you should keep in mind that there may be
 extraneous data (probably non-geometric) associated with the point
 objects or with the curve objects, as defined by the traits
-class. With these two functions we can modify this data; see more
-details in Section \ref aos_sec-geom_traits.
-
-In addition, we can use these functions to replace a geometric object
-(a point or a curve) with an equivalent object that has a more compact
-representation. For example, we can replace the point
-\f$(\frac{20}{40}, \frac{99}{33})\f$ associated with some vertex
-\f$v\f$, by \f$(\frac{1}{2}, 3)\f$.
+class. With these two functions you can modify this data; see more
+details in Section \ref arr_ssecmeta_tr. In addition, you can use
+these functions to replace a geometric object (a point or a curve)
+with an equivalent object that has a more compact representation. For
+example, if we use some simple rational-number type to represent the
+point coordinates, we can replace the point \f$(\frac{20}{40},
+\frac{99}{33})\f$ associated with some vertex $v$ with an equivalent
+point with normalized coordinates, namely \f$(\frac{1}{2}, 3)\f$.
 
 <!----------------------------------------------------------------------------->
 \subsection arr_sssecadv_insert Advanced Insertion Functions
@@ -1065,36 +1068,42 @@ representation. For example, we can replace the point
 \cgalAdvancedBegin
 
 Assume that the specialized insertion function
-`insert_from_left_vertex(C, v)` is invoked for a curve \f$C\f$, whose
-left endpoint is already associated with a non-isolated vertex
+`insert_from_left_vertex(c, v)` is given a curve \f$c\f$, the left
+endpoint of which is already associated with a non-isolated vertex
 \f$v\f$. Namely, \f$v\f$ has already several incident halfedges. It is
 necessary in this case to locate the exact place for the new halfedge
-mapped to the inserted new curve \f$C\f$ in the circular list of
-halfedges incident to \f$v\f$. More precisely, it is sufficient to
-locate one of the halfedges `pred` directed toward \f$v\f$ such that
-\f$C\f$ is located between `pred` and `pred->next()` in clockwise
-order around \f$v\f$, in order to complete the insertion (see
-\cgalFigureRef{arr_figex_1} for an illustration). This may take
-\f$O(d)\f$ time where \f$d\f$ is the degree of the vertex. However, if
-the halfedge `pred` is known in advance, the insertion can be carried
-out in constant time.
+mapped to the inserted new curve \f$c\f$ in the circular list of
+halfedges incident to \f$v\f$. More precisely, in order to complete
+the insertion, it is necessary to locate the halfedge
+\f$e_{\mathrm{pred}}\f$ directed toward \f$v\f$, such that \f$c\f$ is
+located between the curves associated with \f$e_{\mathrm{pred}}\f$ and
+the next halfedge in the clockwise order in the circular list of
+halfedges around \f$v\f$; see \cgalFigureRef{arr_figex_1}. This search
+may take \f$O(d)\f$ time, where \f$d\f$ is the degree of the vertex
+\f$v\f$. \cgalFootnote{We can store the handles to the halfedges
+incident to $v$ in an efficient search structure to obtain $O(\log d)$
+access time. However, as $d$ is usually very small, this may lead to a
+waste of storage space without a meaningful improvement in running
+time in practice.} However, if the halfedge \f$e_{\mathrm{pred}}\f$ is
+known in advance, the insertion can be carried out in constant time,
+and without performing any geometric comparisons.
 
-The `Arrangement_2` class provides the advanced versions of the
-specialized insertion functions for a curve \f$C\f$ - namely we have
-`insert_from_left_vertex(C, pred)` and
-`insert_from_right_vertex(C, pred)` that accept a halfedge `pred` as
-specified above, instead of a vertex \f$v\f$. These functions are more
-efficient, as they take constant time and do not perform any geometric
-operations. Thus, they should be used when the halfedge `pred` is
-known. In case that the vertex \f$v\f$ is isolated or that the
-predecessor halfedge for the new inserted curve is not known, the
-simpler versions of these insertion functions should be used.
-
-Similarly, there exist two overrides of the `insert_at_vertices()`
-function: One that accept the two predecessor halfedges around the two
-vertices \f$v_1\f$ and \f$v_2\f$ that correspond to the curve
-endpoints, and one that accepts a handle for one vertex and a
-predecessor halfedge around the other vertex.
+The `Arrangement_2` class provides advanced versions of the
+specialized insertion functions for a curve \f$C\f$, namely,
+`insert_from_left_vertex(c, he_pred)` and `insert_from_right_vertex(c,
+he_pred)`.  These functions accept a halfedge \f$e_{\mathrm{pred}}\f$
+as specified above, instead of a handle to a vertex \f$v\f$. They are
+more efficient, as they take constant time and do not perform any
+geometric operations. Thus, you should use them when the halfedge
+\f$e_{\mathrm{pred}}\f$ is known. In cases where the vertex \f$v\f$ is
+isolated or the predecessor halfedge for the newly inserted curve is
+not known, the simpler versions of these insertion functions should be
+used. Similarly, the member function `insert_at_vertices()` is
+overloaded with two additional versions as follows. One accepts two
+handles to the two predecessor halfedges around the two vertices
+\f$v_1\f$ and \f$v_2\f$, respectively, that correspond to the curve
+endpoints. The other one accepts a handle to one vertex and a handle
+to the predecessor halfedge around the other vertex.
 
 \cgalFigureBegin{arr_figex_5,ex_4.png}
 An arrangement of line segments, as constructed in
@@ -1104,7 +1113,7 @@ vertices.
 \cgalFigureEnd
 
 The following program shows how to construct the arrangement
-depicted in \cgalFigureRef{arr_figex_4} using the specialized
+depicted in \cgalFigureRef{arr_figex_5} using the specialized
 insertion functions that accept predecessor halfedges:
 
 \cgalExample{Arrangement_on_surface_2/special_edge_insertion.cpp}
