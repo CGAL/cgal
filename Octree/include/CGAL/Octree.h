@@ -594,10 +594,42 @@ private: // functions :
 
       // Base case: the node has no children
 
-      // Check whether the node contains points
-      // TODO: This may be avoidable!
-      if (!node.is_empty()) {
+      // Loop through each of the points contained by the node
+      // Note: there might be none, and that should be fine!
+      for (auto point_index : node.points()) {
 
+        // Retrieve each point from the octree's point map
+        auto point = get(m_points_map, point_index);
+
+        // Pair that point with its distance from the search point
+        Point_with_distance current_point_with_distance =
+                {point, squared_distance(point, search_bounds.center())};
+
+        // Check if the new point is within the bounds
+        if (current_point_with_distance.distance < search_bounds.squared_radius()) {
+
+          // Check if the results list is full
+          if (results.size() == results.capacity()) {
+
+            // Delete a point if we need to make room
+            results.pop_back();
+          }
+
+          // Add the new point
+          results.push_back(current_point_with_distance);
+
+          // Sort the list
+          std::sort(results.begin(), results.end(), [=](auto &left, auto &right) {
+            return left.distance < right.distance;
+          });
+
+          // Check if the results list is full
+          if (results.size() == results.capacity()) {
+
+            // Set the search radius
+            search_bounds = Sphere(search_bounds.center(), results.back().distance);
+          }
+        }
       }
     }
     else {
