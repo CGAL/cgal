@@ -1364,7 +1364,7 @@ dynamic and is frequently going through changes, the
 selected point-location strategy.
 
 \cgalFigureBegin{arr_figex_8,ex_5.png}
-The arrangement of line segments, as constructed in `point_location_example.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$q_1, \ldots, q_6\f$ are drawn as crosses.
+The arrangement of line segments, as constructed in `point_location.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$q_1, \ldots, q_6\f$ are drawn as crosses.
 \cgalFigureEnd
 
 The program listed below constructs a simple arrangement of five line
@@ -1377,7 +1377,7 @@ the function `construct_segment_arr()` defined in the header file
 program employs the naive and the landmark strategies to issue
 several point-location queries on this arrangement.
 
-\cgalExample{Arrangement_on_surface_2/point_location_example.cpp}
+\cgalExample{Arrangement_on_surface_2/point_location.cpp}
 
 Note that the program uses the `locate_point()` function template
 to locate a point and nicely print the result of each query; see
@@ -1412,14 +1412,15 @@ the result of the upward vertical ray-shooting operation from a
 given query point to the standard output-stream. The ray-shooting
 object `vrs` is assumed to be already attached to an arrangement.
 The function template is defined in the header file
-`point_location_utils.h.
+`point_location_utils.h.`
 
 \code
-template <typename RayShoot>
+template <typename VerticalRayShooting>
 void shoot_vertical_ray(const RayShoot& vrs,
-                       const typename RayShoot::Arrangement_2::Point_2& q)
+                        const typename
+			VerticalRayShooting::Arrangement_2::Point_2& q)
 {
-  typedef RayShoot                                      Vertical_ray_shooting;
+  typedef VerticalRayShooting                           Vertical_ray_shooting;
 
   // Perform the point-location query.
   typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
@@ -1451,7 +1452,7 @@ void shoot_vertical_ray(const RayShoot& vrs,
 The program below uses the function template listed above to
 perform vertical ray-shooting queries on an arrangement. The
 arrangement and the query points are exactly the same as in
-`point_location.cpp`; see \cgalFigureRef{arr_figex_5}.
+`point_location.cpp`; see \cgalFigureRef{arr_figex_8}.
 
 \cgalExample{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
@@ -1501,7 +1502,7 @@ maintain complex additional data structures.
 
 The program below issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-`point_location_example.cpp`; see Section \ref arr_ssecpl.
+`point_location.cpp`; see Section \ref arr_ssecpl.
 
 \cgalExample{Arrangement_on_surface_2/batched_point_location.cpp}
 
