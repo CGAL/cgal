@@ -958,10 +958,10 @@ isolated vertices that are still contained in the unbounded face
 <!----------------------------------------------------------------------------->
 
 While reading the previous subsection you learned how to insert new
-points that induce isolated vertices\index{vertex!isolated} into the
-arrangement. You may wonder now how you can insert a new point that
-lies on an an \f$x\f$-monotone curve that is associated with existing
-arrangement edge.
+points that induce isolated vertices into the arrangement. You may
+wonder now how you can insert a new point that lies on an an
+\f$x\f$-monotone curve that is associated with existing arrangement
+edge.
 
 The introduction of a vertex, the geometric mapping of which is a
 point \f$p\f$ that lies on an \f$x\f$-monotone curve, requires the
@@ -1030,33 +1030,34 @@ split point. Thus, it is easy to identify the vertices \f$u_1\f$ and
 
 The member functions `modify_vertex(v, p)` and `modify_edge(e, c)`
 modify the geometric mappings of existing features of the
-arrangement. The member function modify_vertex(v, p) accepts a handle
-to a vertex \f$v\f$ and a reference to a point \f$p\f$, and sets
-\f$p\f$ to be the point associated with the vertex \f$v\f$. The member
-function `modify_edge(he, c)` accepts a handle to one of the two
-halfedges that represent an edge \f$e\f$ and a reference to a curve
-\f$c\f$, and sets \f$c\f$ to be the \f$x\f$-monotone curve associated
-with \f$e\f$. (Note that both halfedges are modified; that is, both
-expressions `he->curve()` and `he->twin()->curve()` evaluate to
-\f$c\f$ after the modification.) These functions have preconditions
+arrangement. The member function `modify_vertex(v, p)` accepts a
+handle to a vertex \f$v\f$ and a reference to a point \f$p\f$, and
+sets \f$p\f$ to be the point associated with the vertex \f$v\f$. The
+member function `modify_edge(he, c)` accepts a handle to one of the
+two halfedges that represent an edge \f$e\f$ and a reference to a
+curve \f$c\f$, and sets \f$c\f$ to be the \f$x\f$-monotone curve
+associated with \f$e\f$. (Note that both halfedges are modified; that
+is, both expressions `he->curve()` and `he->twin()->curve()` evaluate
+to \f$c\f$ after the modification.) These functions have preconditions
 that \f$p\f$ is geometrically equivalent to `v->point()` and \f$c\f$
-is equivalent to `e->curve()`, respectively.\cgalFootnote{{Roughly
+is equivalent to `e->curve()`, respectively.\cgalFootnote{Roughly
 speaking, two curves are equivalent iff they have the same graph. In
-Section~\ref{ssec:traits:basic} we give a formal definition of curves
-and curve equivalence.} If these preconditions are not met, the
-corresponding operation may invalidate the structure of the
-arrangement. At first glance it may seem as if these two functions are
-of little use. However, you should keep in mind that there may be
-extraneous data (probably non-geometric) associated with the point
-objects or with the curve objects, as defined by the traits
+Section \ref aos_sssec-geom_traits-concepts_basic we give a formal
+definition of curves and curve equivalence.} If these preconditions
+are not met, the corresponding operation may invalidate the structure
+of the arrangement. At first glance it may seem as if these two
+functions are of little use. However, you should keep in mind that
+there may be extraneous data (probably non-geometric) associated with
+the point objects or with the curve objects, as defined by the traits
 class. With these two functions you can modify this data; see more
 details in Section \ref arr_ssecmeta_tr. In addition, you can use
 these functions to replace a geometric object (a point or a curve)
 with an equivalent object that has a more compact representation. For
 example, if we use some simple rational-number type to represent the
 point coordinates, we can replace the point \f$(\frac{20}{40},
-\frac{99}{33})\f$ associated with some vertex $v$ with an equivalent
-point with normalized coordinates, namely \f$(\frac{1}{2}, 3)\f$.
+\frac{99}{33})\f$ associated with some vertex \f$v\f$ with an
+equivalent point with normalized coordinates, namely \f$(\frac{1}{2},
+3)\f$.
 
 <!----------------------------------------------------------------------------->
 \subsection arr_sssecadv_insert Advanced Insertion Functions
@@ -1081,12 +1082,13 @@ the next halfedge in the clockwise order in the circular list of
 halfedges around \f$v\f$; see \cgalFigureRef{arr_figex_1}. This search
 may take \f$O(d)\f$ time, where \f$d\f$ is the degree of the vertex
 \f$v\f$. \cgalFootnote{We can store the handles to the halfedges
-incident to $v$ in an efficient search structure to obtain $O(\log d)$
-access time. However, as $d$ is usually very small, this may lead to a
-waste of storage space without a meaningful improvement in running
-time in practice.} However, if the halfedge \f$e_{\mathrm{pred}}\f$ is
-known in advance, the insertion can be carried out in constant time,
-and without performing any geometric comparisons.
+incident to $v$ in an efficient search structure to obtain \f$O(\log
+d)\f$ access time. However, as \f$d\f$ is usually very small, this may
+lead to a waste of storage space without a meaningful improvement in
+running time in practice.} However, if the halfedge
+\f$e_{\mathrm{pred}}\f$ is known in advance, the insertion can be
+carried out in constant time, and without performing any geometric
+comparisons.
 
 The `Arrangement_2` class provides advanced versions of the
 specialized insertion functions for a curve \f$C\f$, namely,
@@ -1129,12 +1131,11 @@ arrangement operations - see more details in the Reference Manual.
 
 \section arr_secqueries Issuing Queries on an Arrangement
 
-One of the most important query types defined on arrangements is
-the <em>point-location</em> query: Given a point, find the arrangement
-cell that contains it. Typically, the result of a point-location
-query is one of the arrangement faces, but in degenerate situations
-the query point can be located on an edge or it may coincide with a
-vertex.
+One of the most useful query types defined on arrangements is the
+<em>point-location</em> query: Given a point, find the arrangement
+cell that contains it. Typically, the result of a point-location query
+is one of the arrangement faces, but in degenerate situations the
+query point can lie on an edge, or it may coincide with a vertex.
 
 Point-location queries are common in many applications, and also
 play an important role in the incremental construction of arrangements
@@ -1146,28 +1147,30 @@ ability to answer such queries effectively.
 \subsection arr_ssecpl Point-Location Queries
 <!----------------------------------------------------------------------------->
 
-The `Arrangement_2` class template does not support point-location
-queries directly, as the arrangement representation is decoupled from
-the geometric algorithms that operate on it. The <em>2D
-Arrangements</em> package includes a set of class templates that are
-capable of answering such queries; all are models of the concept
-`ArrangementPointLocation_2`. Each model employs a different
-algorithm or <em>strategy</em> for answering queries. A model of this
-concept must define the `locate()` member function, which accepts
-an input query-point and returns an object that represents the
-arrangement cell that contains this point. This object is is type
-`Arr_point_location_result<Arrangement_2>::%Type`---a discriminated
-union container of the bounded types `Vertex_const_handle`,
-`Halfedge_const_handle`, or `Face_const_handle`. Depending on
-whether the query point is located inside a face, on an edge, or on a
-vertex, the appropriate handle can be obtained with <em>value retrieval</em>
-by `boost::get` as demonstrated in the example below.
+Recall that the arrangement representation is decoupled from the
+geometric algorithms that operate on it. Thus, the `Arrangement_2`
+class template does not support point-location queries directly.
+Instead, the \ref PkgArrangementOnSurface2 package provides a set of
+class templates that are capable of answering such queries; all are
+models of the concept `ArrangementPointLocation_2`. Each model employs
+a different algorithm or <em>strategy</em> for answering queries.  A
+model of this concept must define the `locate()` member function,
+which accepts an input query-point and returns a polymorphic object
+representing the arrangement cell that contains this point.  The
+returned object is of type
+`Arr_point_location_result<Arrangement_2>::%Type`, which is a
+discriminated union container of the bounded types
+`Arrangement_2::Vertex_const_handle`,
+`Arrangement_2::Halfedge_const_handle`, or
+`Arrangement_2::Face_const_handle`. Depending on whether the query
+point is located inside a face, lies on an edge, or coincides with a
+vertex, the appropriate handle can be obtained with <em>value
+retrieval</em> by `boost::get` as demonstrated in the example below.
 
 Note that the handles returned by the `locate()` functions are
-non-mutable (`const`). If necessary, such handles may
-be cast to mutable handles using the `non_const_handle()` methods
-`Arrangement_2::non_const_handle()` provided by the
-`Arrangement_2` class.
+non-mutable (`const`). If necessary, such handles may be cast to
+mutable handles using the `Arrangement_2::non_const_handle()` methods
+provided by the `Arrangement_2` class.
 
 An object `pl` of any point-location class must be attached to an
 `Arrangement_2` object `arr` before it is used to answer
@@ -1175,11 +1178,12 @@ point-location queries on `arr`. This attachment can be performed
 when `pl` is constructed or at a later time using the
 `pl.init(arr)` call.
 
-The function template listed below accepts a point-location object,
-the type of which is a model of the `ArrangementPointLocation_2`
-concept, and a query point. The function template issues a
-point-location query for the given point, and prints out the result.
-It is defined in the header file `point_location_utils.h`.
+The function template `locate_point()` listed below accepts a
+point-location object, the type of which is a model of the
+`ArrangementPointLocation_2` concept, and a query point. The function
+template issues a point-location query for the given point, and prints
+out the result.  It is defined in the header file
+`point_location_utils.h`.
 
 \anchor lst_pl
 \code
@@ -1208,9 +1212,8 @@ to an arrangement.
 
 \code
 template <typename Arrangement_>
-void
-print_point_location
-(const typename PointLocation::Arrangement_2::Point_2& q
+void print_point_location
+(const typename PointLocation::Arrangement_::Point_2& q
  typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
 {
   typedef Arrangement_                                  Arrangement_2;
@@ -1290,14 +1293,24 @@ vary according to the user choice.} for answering queries:
 <LI>`Arr_trapezoid_ric_point_location<Arrangement>` implements an
   improved variant of Mulmuley's point-location algorithm
   \cgalCite{m-fppa-90}; see also \cgalCite{bkos-cgaa-00}, Chapter 6.
-  The (expected) query-time is logarithmic. The arrangement faces
-  are decomposed into simpler cells each of constant complexity, known
-  as <em>pseudo-trapezoids</em>, and a search structure (a directed acyclic
-  graph) is constructed on top of these cells, facilitating the search
-  of the pseudo trapezoid (hence the arrangement cell) containing a
-  query point in expected logarithmic time. The trapezoidal map and
-  the search structure are built by a randomized incremental construction
-  algorithm (RIC).
+  The (expected) query-time is logarithmic in the size of the
+  arrangement. The arrangement faces are decomposed into simpler cells
+  each of constant complexity, known as <em>pseudo trapezoids</em>,
+  and a search structure (a directed acyclic graph) is constructed on
+  top of these cells, facilitating the search of the pseudo trapezoid
+  (hence the arrangement cell) containing a query point in expected
+  logarithmic time. The trapezoidal map and the search structure are
+  built by a randomized incremental construction algorithm (RIC).
+
+<LI> `Arr_triangulation_point_location<Arrangement>` uses a
+  constrained triangulation, provided by the \ref PkgTriangulation3
+  package, as a search strcture. Every time the arrangement is
+  modified the constrained triangulation search-structure is
+  reconstructed from scrach, where the edges of the arrangement are
+  set to be the constrained edges of the triangulation. This strategy
+  is inefficient (especially when the number of modifications applied
+  to the arrangement is high) and provided only for educational
+  purposes.
 
 </UL>
 
@@ -1306,57 +1319,57 @@ templates that implement them store a pointer to an arrangement object
 and operate directly on it. Attaching such point-location objects to
 an existing arrangement has virtually no running-time cost at all, but
 the query time is linear in the size of the arrangement (the
-performance of the walk strategy is much better in practice, but
-its worst-case performance is linear). Using these strategies is
-therefore recommended only when a relatively small number of
-point-location queries are issued by the application, or when the
-arrangement is constantly changing (That is, changes in the arrangement
-structure are more frequent than point-location queries).
+performance of the walk strategy is much better in practice, but its
+worst-case performance is linear). Using these strategies is therefore
+recommended only when a relatively small number of point-location
+queries are issued by the application, or when the arrangement is
+constantly changing (That is, changes in the arrangement structure are
+more frequent than point-location queries).  On the other hand, the
+landmark and the trapezoid RIC strategies require auxiliary data
+structures on top of the arrangement structure, which they need to
+construct once they are attached to an arrangement object and need to
+keep up-to-date as this arrangement changes.
 
-On the other hand, the landmarks and the trapezoid RIC strategies
-require auxiliary data structures on top of the arrangement, which
-they need to construct once they are attached to an arrangement object
-and need to keep up-to-date as this arrangement changes.  The data
-structure needed by the landmarks strategy can be constructed in
-\f$O(N \log N)\f$ time, where \f$N\f$ is the overall number of edges
-in the arrangement, but the constant hidden in the \f$O()\f$ notation
-for the trapezoidal map RIC strategy is much larger. Thus,
-construction needed by the landmark algorithm is in practice
-significantly faster than the construction needed by the trapezoidal
-map RIC strategy. In addition, although both resulting data structures
-are asymptotically linear in size, using a <span
-class="textsc">Kd</span>-tree as the nearest-neighbor search-structure
-that the landmark algorithm stores significantly reduces memory
-consumption.  The trapezoidal map RIC algorithm has expected
-logarithmic query time, while the query time for the landmark strategy
-may be as large as linear. In practice however, the query times of
-both strategies are competitive. For a detailed experimental
-comparison see \cgalCite{cgal:hh-eplca-05}.
+As aformentioned, the triangulation strategy is provided only for
+educational purposes, and thus we do not elaborate on this strategy.
+The data structure needed by the landmark and the trapezoidal map RIC
+strategies can be constructed in \f$O(N \log N)\f$ time, where \f$N\f$
+is the overall number of edges in the arrangement, but the constant
+hidden in the \f$O()\f$ notation for the trapezoidal map RIC strategy
+is much larger. Thus, construction needed by the landmark algorithm is
+in practice significantly faster than the construction needed by the
+trapezoidal map RIC strategy. In addition, although both resulting
+data structures are asymptotically linear in size, the actual amount
+of memory consumed by the landmark algorithm is typically smaller than
+to the amount used by the trapezoidal map RIC algorithm, due to the
+space-efficient <span class="textsc">Kd</span>-tree used by the
+landmark algorithm as the nearest-neighbor search-structure.  The
+trapezoidal map RIC algorithm has expected logarithmic query time,
+while the query time for the landmark algorithm may be as large as
+linear. In practice however, the query times of both strategies are
+competitive. For a detailed experimental comparison see
+\cgalCite{cgal:hh-eplca-05}.
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
 nearest-neighbor search-structure of the landmark algorithm may
-consume more time when the arrangement changes frequently, especially
-when a <span class="textsc">Kd</span>-tree is used, as it must be
-rebuilt each time the arrangement changes. It is therefore recommended
-that the `Arr_landmarks_point_location` class template be used when
-the application frequently issues point-location queries on an
-arrangement that only seldom changes. If the arrangement is more
+consume significant time when the arrangement changes frequently,
+especially when a <span class="textsc">Kd</span>-tree is used, as it
+must be rebuilt each time the arrangement changes. It is therefore
+recommended that the `Arr_landmarks_point_location` class template be
+used when the application frequently issues point-location queries on
+an arrangement that only seldom changes. If the arrangement is more
 dynamic and is frequently going through changes, the
 `Arr_trapezoid_ric_point_location` class template should be the
 selected point-location strategy.
 
-<!----------------------------------------------------------------------------->
-\subsection arr_sssecpl_ex An Arrangement of Line Segments (code example)
-<!----------------------------------------------------------------------------->
-
 \cgalFigureBegin{arr_figex_8,ex_5.png}
-The arrangement of line segments, as constructed in `point_location_example.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$q_1, \ldots, q_6\f$ are marked with crosses.
+The arrangement of line segments, as constructed in `point_location_example.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$q_1, \ldots, q_6\f$ are drawn as crosses.
 \cgalFigureEnd
 
 The program listed below constructs a simple arrangement of five line
 segments that form a pentagonal face, with a single isolated
-vertex in its interior, as depicted in \cgalFigureRef{arr_figex_5}.
+vertex in its interior, as depicted in \cgalFigureRef{arr_figex_8}.
 Notice that we use the same arrangement structure in the next
 three example programs. The arrangement construction is performed by
 the function `construct_segment_arr()` defined in the header file
@@ -1368,7 +1381,7 @@ several point-location queries on this arrangement.
 
 Note that the program uses the `locate_point()` function template
 to locate a point and nicely print the result of each query; see
-\ref lst_pl "here".
+\ref lst_pl "code example" in Section \ref arr_ssecpl.
 
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecray_shoot Vertical Ray Shooting
@@ -1417,9 +1430,9 @@ void shoot_vertical_ray(const RayShoot& vrs,
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  const Vertex_const_handle*   v;
+  const Vertex_const_handle* v;
   const Halfedge_const_handle* e;
-  const Face_const_handle*     f;
+  const Face_const_handle* f;
 
   std::cout << "Shooting up from (" << q << ") : ";
   if (v = boost::get<Vertex_const_handle>(&obj))         // we hit a vertex
@@ -1427,9 +1440,10 @@ void shoot_vertical_ray(const RayShoot& vrs,
               << " vertex: " << (*v)->point() << std::endl;
   else if (e = boost::get<Halfedge_const_handle>(&obj))  // we hit an edge
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
-  else if (f = boost::get<Face_const_handle>(&obj)) \{    // we hit nothing
+  else if (f = boost::get<Face_const_handle>(&obj)) {    // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing." << std::endl;
+  }
   else CGAL_error();
 }
 \endcode
@@ -2428,11 +2442,7 @@ class, thereby extending it.
 \subsection aos_ssec-geom_traits-concepts The Hierarchy of the Geometry Traits Concepts
 <!----------------------------------------------------------------------------->
 
-<!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-geom_traits-concepts_main The Main Concepts
-<!----------------------------------------------------------------------------->
-
-A rather large direted acyclic graph is required to capture the entire
+A rather large directed acyclic graph is required to capture the entire
 hierarchy of the geometry traits-class conepts. In the following
 sections we review individual clusters of the graph and desribe the
 relations between them. Figure
@@ -2443,7 +2453,9 @@ cluster.
 The hierarchy of the main geometry traits concepts.
 \cgalFigureEnd
 
-\paragraph aos_par-geom_traits-concepts_basic The Basic Concept
+<!----------------------------------------------------------------------------->
+\subsubsection aos_sssec-geom_traits-concepts_basic The Basic Concept
+<!----------------------------------------------------------------------------->
 
 A model of the basic concept, `ArrangementBasicTraits_2`, needs to
 define the types `%Point_2` and `%X_monotone_curve_2`, where objects
@@ -2521,7 +2533,9 @@ four additional nested types, namely `Left_side_category`,
 type `Arr_oblivious_side_tag` for the class to be a model of the
 concept `ArrangementBasicTraits_2`.
 
-\paragraph aos_par-geom_traits-concepts_intersecting Intersecting x-Monotone Curves}
+<!----------------------------------------------------------------------------->
+\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersecting x-Monotone Curves}
+<!----------------------------------------------------------------------------->
 
 Constructing an arrangement induced by \f$x\f$-monotone curves that
 may intersect in their interior requires operations that are not
@@ -2588,7 +2602,9 @@ Otherwise, it is not possible to merge \f$x\f$-monotone curve and
 redundant vertices may be left in the arrangement due to the removal of
 edges.
 
-\paragraph aos_par-geom_traits-concepts_arbitrary Arbitrary Curves
+<!----------------------------------------------------------------------------->
+\subsubsection aos_sssec-geom_traits-concepts_arbitrary Arbitrary Curves
+<!----------------------------------------------------------------------------->
 
 The concept `ArrangementTraits_2` refines the
 `ArrangementXMonotoneTraits_2` concept. A model of the refined concept
@@ -2616,7 +2632,7 @@ of objects of that type. In all other cases it is sufficient to use a
 model of the `ArrangementXMonotoneTraits_2` concept.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-tr_lanmarks_concept The Landmarks Concept
+\subsubsection aos_sssec-tr_lanmarks_concept The Landmark Concept
 <!----------------------------------------------------------------------------->
 
 \cgalFigureBegin{aos_fig-landmark_concept_cluster,landmark_concept_cluster.png}
