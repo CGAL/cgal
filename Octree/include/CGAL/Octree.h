@@ -575,6 +575,37 @@ private: // functions :
     return largest_radius_squared_found;
   }
 
+
+  // TODO: There has to be a better way than using structs like these!
+  struct Point_with_distance {
+    Point point;
+    FT distance;
+  };
+  struct Node_index_with_distance {
+    typename Node::Index index;
+    FT distance;
+  };
+
+  void _nearest_k_neighbours_recursive(Sphere &search_bounds, const Node &node,
+                                       std::vector<Point_with_distance> &results) {
+
+    // Check whether the node has children
+    if (node.is_leaf()) {
+
+      // Base case: the node has no children
+
+      // Check whether the node contains points
+      // TODO: This may be avoidable!
+      if (!node.is_empty()) {
+
+      }
+    }
+    else {
+
+      // Recursive case: the node has children
+    }
+  }
+
 }; // end class Octree
 
 } // namespace Octree
