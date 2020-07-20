@@ -31,6 +31,7 @@
 #include<CGAL/tss.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
+#include <CGAL/result_of.h>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>

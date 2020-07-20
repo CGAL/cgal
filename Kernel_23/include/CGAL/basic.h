@@ -23,11 +23,6 @@
 #include <iostream>
 #include <cstdlib>
 
-// This cannot be disabled for now until we have a clear idea which
-// compilers implement N3276.
-
-#include <CGAL/result_of.h>
-
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 #include <CGAL/number_type_basic.h>
