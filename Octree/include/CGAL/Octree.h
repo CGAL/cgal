@@ -377,15 +377,17 @@ public:
   void nearest_k_neighbours(const Point &search_point, std::size_t k, Point_output_iterator output) const {
 
     // Create an empty list of points
-    std::vector<std::pair<Point, FT>> points_list;
+    std::vector<Point_with_distance> points_list;
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-    nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max(), k);
+//    nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max(), k);
+    auto search_bounds = Sphere(search_point, std::numeric_limits<FT>::max());
+    _nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
 
     // Add all the points found to the output
     for (auto &item : points_list)
-      *output++ = item.first;
+      *output++ = item.point;
   }
 
   /// @}
@@ -587,7 +589,7 @@ private: // functions :
   };
 
   void _nearest_k_neighbours_recursive(Sphere &search_bounds, const Node &node,
-                                       std::vector<Point_with_distance> &results) {
+                                       std::vector<Point_with_distance> &results) const {
 
     // Check whether the node has children
     if (node.is_leaf()) {
@@ -644,9 +646,10 @@ private: // functions :
         auto &child_node = node[index];
 
         // Add a child to the list, with its distance
-        children_with_distances.emplace_back(Node::Index(index),
-                                             CGAL::squared_distance(search_bounds.center(),
-                                                                    compute_barycenter_position(child_node)));
+        children_with_distances.push_back(
+                {typename Node::Index(index),
+                 CGAL::squared_distance(search_bounds.center(), compute_barycenter_position(child_node))}
+        );
       }
 
       // Sort the children by their distance from the search point
@@ -656,13 +659,13 @@ private: // functions :
 
       // Loop over the children
       for (auto child_with_distance : children_with_distances) {
-        auto &child_node = node[child_with_distance.index];
+        auto &child_node = node[child_with_distance.index.to_ulong()];
 
         // Check whether the bounding box of the child intersects with the search bounds
         if (do_intersect(child_node, search_bounds)) {
 
           // Recursively invoke this function
-          // TODO
+          _nearest_k_neighbours_recursive(search_bounds, child_node, results);
         }
       }
     }

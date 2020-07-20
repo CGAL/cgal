@@ -93,7 +93,6 @@ void naive_vs_octree(std::size_t dataset_size) {
   // Check that the octree was faster
   assert(octree_elapsed_time < naive_elapsed_time);
 }
-
 void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
 
   std::cout << "[ " << dataset_size << " points ]" << std::endl;
@@ -149,6 +148,63 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
     assert(octree_nearest_neighbours[j] == kd_tree_nearest_neighbours[j]);
 
 }
+
+/*
+void _kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
+
+  std::cout << "[ " << dataset_size << " points ]" << std::endl;
+
+  // Create a dataset
+  Point_set points;
+  CGAL::Random_points_in_cube_3<Point> generator;
+  points.reserve(dataset_size);
+  for (std::size_t i = 0; i < dataset_size; ++i)
+    points.insert(*(generator++));
+
+  // Choose another random point from the same bounds as the dataset
+  Point random_point = *(generator++);
+
+  // Use the naive algorithm to find the nearest point in the dataset
+  std::vector<Point> kd_tree_nearest_neighbours;
+  Kd_tree kd_tree(points.points().begin(), points.points().end());
+  {
+    Kd_tree_search search(kd_tree, random_point, K);
+
+    for (auto p : search)
+      kd_tree_nearest_neighbours.push_back(p.first);
+  }
+
+  std::cout << "Kd_tree --> "
+            << kd_tree_nearest_neighbours.size() << " points "
+            << "at distance^2s ";
+  for (int k = 0; k < kd_tree_nearest_neighbours.size(); ++k)
+    std::cout << CGAL::squared_distance(kd_tree_nearest_neighbours[k], random_point) << ", ";
+  std::cout << std::endl;
+
+  // Do the same using the octree
+  std::vector<Point> octree_nearest_neighbours;
+  auto point_map = points.point_map();
+  Octree octree(points, point_map);
+  octree.refine(10, 1);
+  {
+    octree.nearest_k_neighbours(random_point, K, std::back_inserter(octree_nearest_neighbours));
+  }
+
+  std::cout << "Octree --> "
+            << octree_nearest_neighbours.size() << " points "
+            << "at distance^2s ";
+  for (int k = 0; k < octree_nearest_neighbours.size(); ++k)
+    std::cout << CGAL::squared_distance(octree_nearest_neighbours[k], random_point) << ", ";
+  std::cout << std::endl;
+
+  // Check that the octree produces the right number of results
+  assert(octree_nearest_neighbours.size() == K);
+
+  // Check that they produce the same answer
+  for (int j = 0; j < K; ++j)
+    assert(octree_nearest_neighbours[j] == kd_tree_nearest_neighbours[j]);
+
+}*/
 
 int main(void) {
 
