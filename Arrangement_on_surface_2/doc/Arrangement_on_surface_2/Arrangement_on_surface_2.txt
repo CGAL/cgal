@@ -1524,9 +1524,9 @@ Section \ref aos_ssec-basic-arr_class explains how to construct
 arrangements of \f$x\f$-monotone curves that are pairwise disjoint in
 their interior when the location of the segment endpoints in the
 arrangement is known. Here we relax this constraint, and allow the
-location of the inserted \f$x\f$-monotone curve endpoints to be unknown,
-as it may be unknown at the time of insertion. We retain, for the moment,
-the requirement that the interior of the inserted curve is disjoint from
+location of the inserted \f$x\f$-monotone curve endpoints to be
+unknown at the time of insertion. We retain, for the moment, the
+requirement that the interior of the inserted curve is disjoint from
 all existing arrangement edges and vertices.
 
 The free function `insert_non_intersecting_curve(arr, c, pl)` inserts
