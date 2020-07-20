@@ -83,7 +83,8 @@ public:
     mOngoingCurvePen(QColor(255, 215, 0)),
     mHandlePen(QColor(255, 165, 0)),
     mState(Start),
-    m_bound_rect(true)
+    m_bound_rect(true),
+    m_hole(false)
   {
     mOngoingPieceGI->setPen(mOngoingCurvePen);
     mHandleGI->setPen(mHandlePen);
@@ -208,7 +209,6 @@ public:
 
        default: break; //! \todo handle default case
       }
-      mink_polygon.push_back(Point_2(aP.x(),aP.y()));
     }
     else if (aEvent->button() == ::Qt::RightButton) {
       switch (mState) {
@@ -224,7 +224,6 @@ public:
        default: break; //! \todo handle default case
       }
     }
-
     return rHandled;
   }
 
@@ -236,29 +235,15 @@ public:
         (aEvent->key() == ::Qt::Key_Backspace))
     {
       RemoveLastPiece();
-      mink_polygon.erase(mink_polygon.vertices_end());
       mState = (mLinearPolygonPieces.size() > 0) ? PieceEnded : Start;
       rHandled = true;
     }
     else if (aEvent->key() == ::Qt::Key_Escape) {
       Reset();
-      mink_polygon.clear();
       mState = Start;
       rHandled = true;
     }
     return rHandled;
-  }
-
-public:
-
-  Polygon_2 getMinkPolygon()
-  { 
-    return mink_polygon; 
-  }
-
-  void clearMinkPolygon()
-  {
-      mink_polygon.clear();
   }
 
   Linear_curve const* ongoing_piece() const
@@ -390,18 +375,6 @@ public:
 
   void get_BoundingRect()
   {
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,-10000000),Point(-10000000,10000000)));
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,10000000),Point(10000000,10000000)));
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(10000000,10000000),Point(10000000,-10000000)));
-
-      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[0]);
-      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[1]);
-      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[2]);
-
-      // m_bound_rect = true;
-      // CommitCurrLinearPolygon();
-      // ReStart();
-
       m_bound_rect = true;
 
       mP0 = Point(-15500000,-10000000);
@@ -449,7 +422,88 @@ public:
 
   }
 
-  void get_Minkowski_result(Polygon_with_holes_2 polygon, Polygon_2 p0)
+  void get_Minkowski_holes(Polygon_with_holes_2 polygon, Polygon_with_holes_2 p0)
+  {
+    typename Polygon_2::Vertex_const_iterator vit;
+    m_bound_rect = false;
+    Point_2 pt;
+    Polygon_2 hole;
+
+    int i;
+    double x_res_cord = 0.0000;
+    double y_res_cord = 0.0000;
+    int v_res_count = 0;
+
+    for (vit = polygon.outer_boundary().vertices_begin(); vit != polygon.outer_boundary().vertices_end(); ++vit)
+    {
+      pt =  *vit;
+      x_res_cord = x_res_cord + CGAL::to_double(pt.x());
+      y_res_cord = y_res_cord + CGAL::to_double(pt.y());
+      v_res_count+=1;
+    }
+
+    x_res_cord = x_res_cord/v_res_count;
+    y_res_cord = y_res_cord/v_res_count;
+
+    double x_f_cord = 0.0000;
+    double y_f_cord = 0.0000;
+    int v_f_count = 0;
+
+    for (vit = p0.outer_boundary().vertices_begin(); vit != p0.outer_boundary().vertices_end(); ++vit)
+    {
+      pt =  *vit;
+      x_f_cord = x_f_cord + CGAL::to_double(pt.x());
+      y_f_cord = y_f_cord + CGAL::to_double(pt.y());
+      v_f_count+=1;
+    }
+
+    x_f_cord = x_f_cord/v_f_count;
+    y_f_cord = y_f_cord/v_f_count;
+
+    for(Polygon_with_holes_2::Hole_const_iterator hi = polygon.holes_begin(); hi != polygon.holes_end(); ++ hi )
+    {
+      hole =*hi;
+
+      i=0;
+
+      for (vit = hole.begin(); vit != hole.end(); ++vit)
+      {
+        if(i==0)
+        {
+          pt =  *vit;
+
+          mP0 = Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord);
+          mState = PieceStarted;
+        }
+        else
+        {
+          pt =  *vit;
+
+          mState = PieceOngoing;
+
+          mP1 = Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord);
+          UpdateOngoingPiece();
+
+          mP1 = Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord);
+          mState = HandleOngoing;
+          HideHandle();
+          CommitOngoingPiece(Point(CGAL::to_double(pt.x())-x_res_cord+x_f_cord,CGAL::to_double(pt.y())-y_res_cord+y_f_cord));
+          mState   = PieceEnded;
+        }
+        i++;
+      }
+
+      mState   = PieceOngoing;
+
+      mP1 = Point(-90,-90);
+      UpdateOngoingPiece();
+
+      CommitCurrLinearPolygon();
+      ReStart();
+    }
+  }
+
+  void get_Minkowski_result(Polygon_with_holes_2 polygon, Polygon_with_holes_2 p0)
   {
     typename Polygon_2::Vertex_const_iterator vit;
     m_bound_rect = false;
@@ -475,7 +529,7 @@ public:
     double y_f_cord = 0.0000;
     int v_f_count = 0;
 
-    for (vit = p0.begin(); vit != p0.end(); ++vit)
+    for (vit = p0.outer_boundary().vertices_begin(); vit != p0.outer_boundary().vertices_end(); ++vit)
     {
       pt =  *vit;
       x_f_cord = x_f_cord + CGAL::to_double(pt.x());
@@ -529,6 +583,12 @@ public:
     return m_bound_rect;
   }
 
+  bool ishole()
+  {
+    return m_hole;
+  }
+
+
 public:
   QGraphicsScene* mScene;
   GI* mLinearGI;
@@ -546,8 +606,8 @@ public:
   int mState;
 
   bool m_bound_rect;
-  
-  Polygon_2 mink_polygon;
+
+  bool m_hole;
 
   Point mP0;
   Point mP1;

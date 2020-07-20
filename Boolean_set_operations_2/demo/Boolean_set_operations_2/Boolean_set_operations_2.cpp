@@ -756,8 +756,8 @@ private:
   bool m_clear_magenta;
   bool m_clear_aqua;
 
-  Polygon_with_holes_2 mink_sum_res;
   bool minkowksi_sum_operated;
+  bool m_disjoint;
 
   // QGraphicsPathItem* pathItem0;
   // QGraphicsPathItem* pathItem1;
@@ -776,8 +776,6 @@ private:
   // bool pathItem5_exists;
   // bool pathItem6_exists;
   // bool pathItem7_exists;
-
-  Polygon_2 p0,p1,p2,p3,p4,p5,p6;
 
   Curve_set_container m_curve_sets;
   //container for curves
@@ -844,7 +842,6 @@ public slots:
   void on_actionDifferenceH_toggled(bool aChecked);
   void on_actionSymmetric_DifferenceH_toggled(bool aChecked);
   void on_actionMinkowski_SumH_toggled(bool aChecked);
-  //void get_MinkowskiSum_result(Polygon_with_holes_2 polygon);
   void on_actionInsertLinear_toggled(bool aChecked);
   void on_actionInsertCircular_toggled(bool aChecked);
   void on_actionInsertBezier_toggled(bool aChecked);
@@ -858,9 +855,6 @@ public slots:
   //void on_actionSaveResult_triggered();
   void on_actionAddColor_triggered();
   void on_actionMinusColor_triggered();
-  // void on_actionCopy_triggered();
-  // void on_actionMove_triggered();
-  // void on_actionPaste_triggered();
 
   void on_actionCopyH_toggled(bool aChecked);
   void on_actionMoveH_toggled(bool aChecked);
@@ -971,6 +965,7 @@ public slots:
   void on_actionDeleteAll_triggered();
   void on_actionClearH_toggled(bool aChecked);
   void on_actionPAN_triggered();
+  Polygon_with_holes_2 getMinkInputPolygon(size_t colorx);
 
 signals:
   void changed();
@@ -1278,7 +1273,7 @@ MainWindow::MainWindow() :
   m_visible_magenta(false), //default 
   m_visible_aqua(false), //default
   empty_warn(true), // default
-  // m_grid(false), //default
+  m_disjoint(false), //default
   m_pan(false)
   // pathItem0_exists(false),
   // pathItem1_exists(false),
@@ -3559,6 +3554,7 @@ void MainWindow::on_actionNew_triggered()
   
   m_circular_active = false;
   m_bezier_active = false;
+  m_disjoint = false;
   // empty_warn = true;
 
   // m_grid = true;
@@ -6040,126 +6036,80 @@ void MainWindow::on_actionPasteH_toggled(bool aChecked)
   }
 }
 
-// void MainWindow::on_actionPaste_triggered()
-// {
-//   //actionPasteH->setChecked(true); 	
-// }
+Polygon_with_holes_2 MainWindow::getMinkInputPolygon(size_t colorx)
+{
 
-// void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
-// {
+  Linear_polygon_set lps;
+  typedef std::vector<Linear_polygon_with_holes> Pgn_with_holes_container;
+  typedef typename Kernel::Point_2                Point;
+  std::list<Polygon_2> pgns;
 
-//   QPolygonF poly;
+  switch(colorx)
+  {
+    case 0:lps = blue_set().linear(); break;
+    case 1:lps = red_set().linear(); break;
+    case 2:lps = black_set().linear(); break;
+    case 3:lps = brown_set().linear(); break;
+    case 4:lps = yellow_set().linear(); break;
+    case 5:lps = magenta_set().linear(); break;
+    case 6:lps = aqua_set().linear(); break;
+  }
 
-//   typename Polygon_2::Vertex_const_iterator  vit;
-//   Point_2 pt;
-//   for (vit = polygon.outer_boundary().vertices_begin(); vit != polygon.outer_boundary().vertices_end(); ++vit)
-//     {
-//       pt =  *vit;
-//       poly << QPoint(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()));
-//     }
+  Pgn_with_holes_container res(lps.number_of_polygons_with_holes());
+  res.begin() = lps.polygons_with_holes(res.begin());
+  typename Pgn_with_holes_container::const_iterator it;
 
-//     QPainterPath m_pathTrack;
-//     m_pathTrack.addPolygon(poly);
+  Linear_polygon_with_holes temp;
 
-//   QBrush brush;
-//   QPen pen;
-  
-//   switch(m_color_active)
-//   {
-//         case 0: brush.setColor(QColor(255,0,0,75)); pen.setColor((QColor(255,0,0,32)));
-//             brush.setStyle(Qt::SolidPattern);
-//             if (pathItem0_exists) m_scene.removeItem(pathItem0);
-//             pathItem0 = m_scene.addPath(m_pathTrack,pen,brush);
-//             pathItem0_exists = true;
+  Polygon_with_holes_2 pwh;
+  Polygon_2 p;
 
-//             /*boost::optional<QRectF> lTotalRect = poly.boundingRect();
+  //show_warning("Number of polygons with holes: "+to_string(lps.number_of_polygons_with_holes()));
 
-//               if (lTotalRect) 
-//               {
-//                 this->graphicsView->setSceneRect(*lTotalRect);
-//                 this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-//             }
+  if(lps.number_of_polygons_with_holes()>1)
+  {
+    m_disjoint = true;
+  }
 
-//             if (polygon.number_of_holes() >= 0)
-//             { 
-//               typename Polygon_with_holes_2::Hole_const_iterator hit;
-//               for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-//               {
-//                    for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-//                    {
-//                     QPolygonF poly;
-//                     poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-//                    }
+  if(!m_disjoint)
+  {
+    for (it = res.begin(); it != res.end (); ++it ) 
+    {
+      temp=*it;
+      for(auto vit = temp.outer_boundary().curves_begin();vit!=temp.outer_boundary().curves_end();vit++)
+      {
+        auto pt = vit->source();
+        //show_warning(to_string(CGAL::to_double(pt.x()))+" , "+to_string(CGAL::to_double(pt.y())));
+        p.push_back(Point(CGAL::to_double(pt.x()),CGAL::to_double(pt.y()))); 
+      }
+      if (p.orientation() == CGAL::CLOCKWISE) 
+      { 
+        p.reverse_orientation();
+      }
 
-//                   m_pathTrack.addPolygon(poly);
+      pgns.push_back(p);
 
-//                 QBrush brush;
-//                 brush.setColor(QColor(0,0,0,150));
-//                 brush.setStyle(Qt::SolidPattern);
-//                 QPen pen(Qt::white);
-//                 pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-//               }
-//             }*/
-//             //zoomToFit();
-//             modelChanged(); 
-//             break; //blue
-
-//       case 1: brush.setColor(QColor(0,0,0,75)); pen.setColor((QColor(0,0,0,32))); 
-//           brush.setStyle(Qt::SolidPattern);
-//             if (pathItem1_exists) m_scene.removeItem(pathItem1);
-//           pathItem1 = m_scene.addPath(m_pathTrack,pen,brush);
-//           pathItem1_exists =true;
-
-//           modelChanged(); 
-//           break; //red
-
-//         case 2:brush.setColor(QColor(0,0,255,75)); pen.setColor((QColor(0,0,255,32))); 
-//              brush.setStyle(Qt::SolidPattern);
-//                if (pathItem2_exists) m_scene.removeItem(pathItem2);
-//              pathItem2 = m_scene.addPath(m_pathTrack,pen,brush);
-//              pathItem2_exists =true;
-
-//             modelChanged();
-//             break;  //black
-
-//       case 3: brush.setColor(QColor(210,105,30,75)); pen.setColor((QColor(210,105,30,32))); 
-//           brush.setStyle(Qt::SolidPattern);
-//             if (pathItem3_exists) m_scene.removeItem(pathItem3);
-//           pathItem3 = m_scene.addPath(m_pathTrack,pen,brush);
-//           pathItem3_exists = true;
-
-//           modelChanged();
-//           break; //brown
-
-//         case 4: brush.setColor(QColor(255,255,0,75)); pen.setColor((QColor(255,255,0,32))); 
-//             brush.setStyle(Qt::SolidPattern);
-//               if (pathItem4_exists) m_scene.removeItem(pathItem4);
-//             pathItem4 = m_scene.addPath(m_pathTrack,pen,brush);
-//             pathItem4_exists =true;
-
-//             modelChanged();
-//             break; // yellow
-
-//       case 5: brush.setColor(QColor(255,0,255,75)); pen.setColor((QColor(255,0,255,32))); 
-//           brush.setStyle(Qt::SolidPattern);
-//             if (pathItem5_exists) m_scene.removeItem(pathItem5);
-//           pathItem5 = m_scene.addPath(m_pathTrack,pen,brush);
-//           pathItem5_exists =true;
-//           modelChanged();
-//           break;  //magenta
-
-//       case 6: brush.setColor(QColor(0,255,255,75)); pen.setColor((QColor(0,255,255,32))); 
-//           brush.setStyle(Qt::SolidPattern);
-//           if (pathItem6_exists) m_scene.removeItem(pathItem6);
-//           pathItem6 = m_scene.addPath(m_pathTrack,pen,brush);
-//           pathItem6_exists = true;
-//           modelChanged();
-//           break;  //aqua
-//     }
-
-  
-// }
-
+      for(Linear_polygon_with_holes::Hole_const_iterator hi = temp.holes_begin(); hi != temp.holes_end(); ++ hi )
+      {
+        Polygon_2 hole;
+        auto vti =*hi;
+        for(auto hit=vti.curves_begin();hit!=vti.curves_end();hit++)
+        {
+          auto pti=hit->source();
+          hole.push_back(Point(CGAL::to_double(pti.x()),CGAL::to_double(pti.y())));
+        }
+        if (hole.orientation() == CGAL::COUNTERCLOCKWISE) 
+        { 
+          hole.reverse_orientation();
+        }
+        pgns.push_back(hole);
+      }
+    }
+    std::list<Polygon_2>::iterator pit = pgns.begin();
+    return Polygon_with_holes_2(pgns.front(),++pit,pgns.end());
+  }
+  return pwh;
+}
 
 void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 {
@@ -6171,9 +6121,6 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 
 	  if(!m_circular_active && !m_bezier_active)
 	  {
-	    // actionCopy->setChecked(false);
-	    // actionMove->setChecked(false);
-	    //actionMinkowski_Sum->setChecked(true);
 	    actionComplementH->setChecked(false);
 	    actionUnionH->setChecked(false);
 	    actionIntersectionH->setChecked(false);
@@ -6239,90 +6186,153 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 
 	      typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 	      typedef Kernel::Point_2                            Point_2;
-	      typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
-	      typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
-	      typedef std::list<Polygon_with_holes_2>            Pgn_with_holes_2_container;
 
-	      Polygon_2 lp1,lp2;
+        Polygon_with_holes_2 p0,p1;
 
         // Compute the Minkowski sum using the decomposition approach.
         CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
 
 	      if(color1 == 0 && !blue_set().is_empty()) 
 	      {
-	        if(color2 == 1 && !red_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);
-  	      else if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p2);
-  	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p3);
-  	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p4);
-  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p5);
-  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p0, p6);
 
+          p0 = getMinkInputPolygon(color1);
+	        if(color2 == 1 && !red_set().is_empty()) 
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 2 && !black_set().is_empty()) 
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 3 && !brown_set().is_empty()) 
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 4 && !yellow_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 5 && !magenta_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 6 && !aqua_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+	      }
+
+
+	      else if(color1 == 1 && !red_set().is_empty()) 
+	      {
+
+          p0 = getMinkInputPolygon(color1);
+	        if(color2 == 2 && !black_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 3 && !brown_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 4 && !yellow_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 5 && !magenta_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+  	      else if(color2 == 6 && !aqua_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+	      }
+
+
+	      else if(color1 == 2 && !black_set().is_empty()) 
+	      {
+
+          p0 = getMinkInputPolygon(color1);
+	        if(color2 == 3 && !brown_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+          else if(color2 == 4 && !yellow_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+          else if(color2 == 5 && !magenta_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+          else if(color2 == 6 && !aqua_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+	      }
+
+
+	      else if(color1 == 3 && !brown_set().is_empty()) 
+	      {
+          p0 = getMinkInputPolygon(color1);
+	        if(color2 == 4 && !yellow_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+          else if(color2 == 5 && !magenta_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+          else if(color2 == 6 && !aqua_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+	      }
+
+	      else if(color1 == 4 && !yellow_set().is_empty())
+	      {
+	        p0 = getMinkInputPolygon(color1);
+          if(color2 == 5 && !magenta_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+          else if(color2 == 6 && !aqua_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+	      }
+
+	      else if(color1 == 5 && !magenta_set().is_empty())
+	      {
+          p0 = getMinkInputPolygon(color1);
+          if(color2 == 6 && !aqua_set().is_empty())
+          {
+            p1 = getMinkInputPolygon(color2);
+          }
+	      }
+
+        if(!m_disjoint)
+        {
+          
+          Polygon_with_holes_2 mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);    
           if (!mink_sum_res.is_unbounded()) 
           {
             m_linear_input->get_Minkowski_result(mink_sum_res,p0);
+            m_linear_input->m_hole=true;
+            m_linear_input->get_Minkowski_holes(mink_sum_res,p0);
+            result_set().clear(); result_linear_sources().clear();
+            m_linear_input->m_hole=false;
           }
-	      }
-	      else if(color1 == 1 && !red_set().is_empty()) 
-	      {
-	        if(color2 == 2 && !black_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p2);
-  	      else if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p3);
-  	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p4);
-  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p5);
-  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p1, p6);
-
-          if (!mink_sum_res.is_unbounded()) 
-          {
-            m_linear_input->get_Minkowski_result(mink_sum_res,p1);
-          }
-	      }
-	      else if(color1 == 2 && !black_set().is_empty()) 
-	      {
-	        if(color2 == 3 && !brown_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p3);
-  	      else if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p4);
-  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p5);
-  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p2, p6);
-
-          if (!mink_sum_res.is_unbounded()) 
-          {
-            m_linear_input->get_Minkowski_result(mink_sum_res,p2);
-          }
-	      }
-	      else if(color1 == 3 && !brown_set().is_empty()) 
-	      {
-	       if(color2 == 4 && !yellow_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p4);
-  	      else if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3, p5);
-  	      else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p3,p6);
-
-          if (!mink_sum_res.is_unbounded()) 
-          {
-            m_linear_input->get_Minkowski_result(mink_sum_res,p3);
-          }
-	      }
-	      else if(color1 == 4 && !yellow_set().is_empty())
-	      {
-	        if(color2 == 5 && !magenta_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p5);
-	        else if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p4, p6);
-
-          if (!mink_sum_res.is_unbounded()) 
-          {
-            m_linear_input->get_Minkowski_result(mink_sum_res,p4);
-          }
-	      }
-	      else if(color1 == 5 && !magenta_set().is_empty())
-	      {
-	        if(color2 == 6 && !aqua_set().is_empty()) mink_sum_res  = CGAL::minkowski_sum_2(p5, p6);
-
-          if (!mink_sum_res.is_unbounded()) 
-          {
-            m_linear_input->get_Minkowski_result(mink_sum_res,p5);
-          }
-	      }
-	      
-	      //CGAL_assertion(mink_sum_res.number_of_holes() == 0);
-	      
-	      else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
-	        lDone = true;
-	        minkowksi_sum_operated = true;
+          else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
+          lDone = true;
+          minkowksi_sum_operated = true;
+        }
+        else
+        {
+          show_error("DISJOINT POLYGON SET ERROR\n\nCannot perform Minkowski Sum operation since Input Bucket contains more than disjoint polygons!!!");
+          m_disjoint = false;
+        }
 	    }
 	    else
 	    {
@@ -6332,7 +6342,7 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 
 	  this->setCursor(old);
 	  if (lDone){ 
-	    zoomToFit();
+	    //zoomToFit();
 	    modelChanged();
 	  }
 	}
@@ -6597,7 +6607,7 @@ void MainWindow::exception_handler()
     if(ensure_linear_mode())
     {
       m_linear_input -> Reset();
-      m_linear_input -> mink_polygon.clear();
+      //m_linear_input -> mink_polygon.clear();
       m_linear_input -> mState = m_linear_input -> Start;
     }
     else if(ensure_circular_mode())
@@ -6656,81 +6666,27 @@ void MainWindow::processInput(CGAL::Object o)
       {
         if (ensure_linear_mode()) 
         {
-            CGAL::Orientation orient = lLI.orientation();
+            CGAL::Orientation orient = lLI.orientation(); 
             if (orient == CGAL::CLOCKWISE) 
             {
               lLI.reverse_orientation();
             }
             Linear_polygon_with_holes lCPWH(lLI);
 
-            if(!m_linear_input->isboundingRect())
+            if(!m_linear_input->isboundingRect() && !m_linear_input->ishole())
             {
               active_set().linear().join(lCPWH);
               active_linear_sources().push_back(lCPWH);
-
-              switch(m_color_active)
-              {
-                case 0: p0 = m_linear_input -> getMinkPolygon();  
-                        m_linear_input -> clearMinkPolygon(); 
-                        if (p0.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p0.reverse_orientation();
-                        }
-                        break;
-
-                case 1: p1 = m_linear_input -> getMinkPolygon();  
-                        m_linear_input -> clearMinkPolygon(); 
-                        if (p1.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p1.reverse_orientation();
-                        }
-                        break;
-
-                case 2: p2 = m_linear_input -> getMinkPolygon();  
-                        m_linear_input -> clearMinkPolygon(); 
-                        if (p2.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p2.reverse_orientation();
-                        }
-                        break;
-
-                case 3: p3 = m_linear_input -> getMinkPolygon();
-                        m_linear_input -> clearMinkPolygon(); 
-                        if (p3.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p3.reverse_orientation();
-                        }
-                        break;
-                case 4: p4 = m_linear_input -> getMinkPolygon();
-                        m_linear_input -> clearMinkPolygon();
-                        if (p4.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p4.reverse_orientation();
-                        }
-                        break;
-                case 5: p5 = m_linear_input -> getMinkPolygon();
-                        m_linear_input -> clearMinkPolygon();  
-                        if (p5.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p5.reverse_orientation();
-                        }
-                        break;
-                case 6: p6 = m_linear_input -> getMinkPolygon();
-                        m_linear_input -> clearMinkPolygon(); 
-                        if (p6.orientation() == CGAL::CLOCKWISE) 
-                        { 
-                          p6.reverse_orientation();
-                        }
-                        break;
-              }
             }
             else
             {
               result_set().linear().join(lCPWH);
               result_linear_sources().push_back(lCPWH);
-              switch(m_color_active)
+              if(m_linear_input->ishole())
               {
-
+                active_set().difference(result_set());
+                result_set().clear();
+                result_linear_sources().clear();
               }
             }
         }
@@ -6794,3 +6750,16 @@ int main(int argc, char* argv[])
     show_error("Exception throne during run of the program:\n" + s);
   }
 }
+
+// CGAL error: precondition violation!
+// Expr: ! is_degen
+// File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Arr_segment_traits_2.h
+// Line: 145
+// Explanation:Cannot construct a degenerate segment
+
+// Exception throne during run of the program:
+// CGAL error: precondition violation!
+// Expr: pgn1.is_simple()
+// File: /home/ronnie8888/Documents/cgal-public-dev/Minkowski_sum_2/include/CGAL/Minkowski_sum_2/Minkowski_sum_by_reduced_convolution_2.h
+// Line: 102
+// Explanation:
