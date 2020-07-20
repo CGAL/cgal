@@ -164,7 +164,6 @@ public:
           m_ranges(point_range),
           m_points_map(point_map) {
 
-
     // compute bounding box that encloses all points
     Iso_cuboid bbox = CGAL::bounding_box(boost::make_transform_iterator
                                                  (m_ranges.begin(),
@@ -197,6 +196,7 @@ public:
     m_bbox_min = bbox.min();
     m_bbox_side = bbox.max()[0] - m_bbox_min[0];
     m_root.points() = {point_range.begin(), point_range.end()};
+
   }
 
   /// @}
