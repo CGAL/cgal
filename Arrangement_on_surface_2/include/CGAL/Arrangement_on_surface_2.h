@@ -46,11 +46,6 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 
-#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
-#include <CGAL/Union_find.h>
-#endif
-
-
 namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
@@ -151,11 +146,6 @@ protected:
   typedef typename DFace::Isolated_vertex_iterator  DIso_vertex_iter;
   typedef typename DFace::Isolated_vertex_const_iterator
                                                     DIso_vertex_const_iter;
-
-#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
-  typedef CGAL::Union_find<DInner_ccb*>             Inner_ccb_uf;
-  typedef typename Inner_ccb_uf::handle             Inner_ccb_uf_handle;
-#endif
 
 protected:
   /*! \class
@@ -918,9 +908,6 @@ protected:
   const Traits_adaptor_2* m_geom_traits;   // the geometry-traits adaptor.
   bool                    m_own_traits;    // inidicates whether the geometry
                                            // traits should be freed up.
-#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
-  Inner_ccb_uf            m_inner_ccb_uf;  // efficient CCB merging
-#endif
 
 public:
   /// \name Constructors.
@@ -2290,52 +2277,31 @@ protected:
     return false;
   }
 
-  /*! Create a new inner ccb and init its union find handle */
-  DInner_ccb* new_inner_ccb()
-  {
-    DInner_ccb* ic = _dcel().new_inner_ccb();
-#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
-    ic->set_uf_handle (m_inner_ccb_uf.make_set(ic));
-#endif
-    return ic;
-  }
-
-  /*! Get the valid CCB corresponding to this CCB in the union find */
-  const DInner_ccb* primary_inner_ccb (const DInner_ccb* ic) const
-  {
-#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
-    if (ic == nullptr)
-      return ic;
-
-    return *m_inner_ccb_uf.find(ic->uf_handle());
-#else
-    return ic;
-#endif
-  }
-
-  /*! Get the valid CCB corresponding to this CCB in the union find */
-  DInner_ccb* primary_inner_ccb (DInner_ccb* ic)
-  {
-#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
-    if (ic == nullptr)
-      return ic;
-
-    return *m_inner_ccb_uf.find(ic->uf_handle());
-#else
-    return ic;
-#endif
-  }
-
   /*! Get the inner CCB of the halfedge (including union find behavior) */
   const DInner_ccb* inner_ccb_of (const DHalfedge* he) const
   {
-    return primary_inner_ccb(he->inner_ccb());
+    return _dcel().primary_inner_ccb(he->inner_ccb());
   }
 
   /*! Get the inner CCB of the halfedge (including union find behavior) */
   DInner_ccb* inner_ccb_of (DHalfedge* he)
   {
-    return primary_inner_ccb(he->inner_ccb());
+    return _dcel().primary_inner_ccb(he->inner_ccb());
+  }
+
+  /*! Merge two inner CCBs */
+  void merge_inner_ccb (DInner_ccb* ic1, DInner_ccb* ic2, DHalfedge* he1, DHalfedge* he2);
+
+public:
+  /*! Follow union set to keep only primary inner CCBs */
+  void clean_inner_ccbs();
+
+  /*! Get the correct face using union find is necessary */
+  Face_handle face_of (Halfedge_handle he)
+  {
+    if (he->is_on_inner_ccb())
+      return _handle_for(inner_ccb_of(&*he)->face());
+    return _handle_for(((DHalfedge*)(&*he))->outer_ccb()->face());
   }
 
 protected:

@@ -916,6 +916,11 @@ public:
 
   typedef Inner_ccb                   Hole;
 
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  typedef typename Inner_ccb::Uf        Inner_ccb_uf;
+  typedef typename Inner_ccb_uf::handle Inner_ccb_uf_handle;
+#endif
+
 protected:
   // The vetices, halfedges and faces are stored in three in-place lists.
   typedef In_place_list<Vertex, false>           Vertex_list;
@@ -956,6 +961,10 @@ protected:
   Inner_ccb_allocator in_ccb_alloc;         // An allocator for inner CCBs.
   Iso_vert_allocator  iso_vert_alloc;       // Allocator for isolated vertices.
 
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  Inner_ccb_uf        inner_ccb_uf;         // efficient CCB merging
+#endif
+
 public:
   // Definitions of iterators.
   typedef typename Vertex_list::iterator              Vertex_iterator;
@@ -963,6 +972,7 @@ public:
   typedef typename Face_list::iterator                Face_iterator;
   typedef CGAL::N_step_adaptor_derived<Halfedge_iterator, 2>
                                                       Edge_iterator;
+  typedef typename Inner_ccb_list::iterator           Inner_ccb_iterator;
 
   // Definitions of const iterators.
   typedef typename Vertex_list::const_iterator        Vertex_const_iterator;
@@ -1039,6 +1049,9 @@ public:
   {
     return make_prevent_deref_range(edges_begin(), edges_end());
   }
+
+  Inner_ccb_iterator inner_ccbs_begin() { return in_ccbs.begin(); }
+  Inner_ccb_iterator inner_ccbs_end()   { return in_ccbs.end(); }
   //@}
 
   /// \name Obtaining constant iterators.
@@ -1122,8 +1135,44 @@ public:
     Inner_ccb* ic = in_ccb_alloc.allocate(1);
     std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic);
     in_ccbs.push_back(*ic);
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+    ic->set_uf_handle (inner_ccb_uf.make_set(ic));
+#endif
     return (ic);
   }
+
+  /*! Get the valid CCB corresponding to this CCB in the union find */
+  const Inner_ccb* primary_inner_ccb (const Inner_ccb* ic) const
+  {
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+    if (ic == nullptr)
+      return ic;
+
+    return *inner_ccb_uf.find(ic->uf_handle());
+#else
+    return ic;
+#endif
+  }
+
+  /*! Get the valid CCB corresponding to this CCB in the union find */
+  Inner_ccb* primary_inner_ccb (Inner_ccb* ic)
+  {
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+    if (ic == nullptr)
+      return ic;
+
+    return *inner_ccb_uf.find(ic->uf_handle());
+#else
+    return ic;
+#endif
+  }
+
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  void merge (Inner_ccb* ic1, Inner_ccb* ic2)
+  {
+    inner_ccb_uf.unify_sets(ic1->uf_handle(), ic2->uf_handle());
+  }
+#endif
 
   /*! Create a new isolated vertex. */
   Isolated_vertex* new_isolated_vertex()

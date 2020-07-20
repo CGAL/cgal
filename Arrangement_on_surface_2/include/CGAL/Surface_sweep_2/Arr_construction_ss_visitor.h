@@ -142,6 +142,9 @@ public:
   /* A notification issued before the sweep process starts. */
   inline void before_sweep();
 
+  /*! A notification issued after the sweep process ends. */
+  inline void after_sweep();
+
   /*!
    * A notification invoked before the sweep-line starts handling the given
    * event.
@@ -268,6 +271,13 @@ private:
 template <typename Hlpr, typename Vis>
 void Arr_construction_ss_visitor<Hlpr, Vis>::before_sweep()
 { m_helper.before_sweep(); }
+
+//-----------------------------------------------------------------------------
+// A notification issued after the sweep process starts.
+// Rebuilds inner CCBs
+template <typename Hlpr, typename Vis>
+void Arr_construction_ss_visitor<Hlpr, Vis>::after_sweep()
+{ m_arr->clean_inner_ccbs(); }
 
 //-----------------------------------------------------------------------------
 // A notification invoked before the sweep-line starts handling the given
@@ -699,7 +709,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // we obtained), we have to examine the holes and isolated vertices
     // in the existing face (pointed by the twin halfedge) and relocate
     // the relevant features in the new face.
-    CGAL_assertion(res->face() != res->twin()->face());
+    CGAL_assertion(m_arr->face_of(res) != m_arr->face_of(res->twin()));
     this->relocate_in_new_face(res);
   }
 
@@ -835,7 +845,7 @@ relocate_in_new_face(Halfedge_handle he)
   const Halfedge_indices_map& const_he_indices_table = m_he_indices_table;
 
   // Go along the boundary of the new face.
-  Face_handle new_face = he->face();
+  Face_handle new_face = m_arr->face_of(he);
   Halfedge_handle curr_he = he;
   const Halfedge_handle invalid_he;
 
@@ -880,10 +890,10 @@ relocate_in_new_face(Halfedge_handle he)
       else {
         // If necessary, move the hole that the halfedge belongs to into the
         // new face.
-        if ((he_on_face->twin()->face() != new_face) &&
+        if ((m_arr->face_of(he_on_face->twin()) != new_face) &&
             he_on_face->twin()->is_on_inner_ccb())
         {
-          m_arr_access.move_inner_ccb(he_on_face->twin()->face(),
+          m_arr_access.move_inner_ccb(m_arr->face_of(he_on_face->twin()),
                                       new_face,
                                       he_on_face->twin()->ccb());
 

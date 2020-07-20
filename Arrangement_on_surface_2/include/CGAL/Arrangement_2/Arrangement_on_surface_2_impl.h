@@ -2274,7 +2274,7 @@ _insert_in_face_interior(DFace* f,
   // and link them together to form a new connected component, a hole in f.
   DHalfedge* he1 = _dcel().new_edge();
   DHalfedge* he2 = he1->opposite();
-  DInner_ccb* ic = new_inner_ccb();
+  DInner_ccb* ic = _dcel().new_inner_ccb();
   X_monotone_curve_2* dup_cv = _new_curve(cv);
 
   ic->set_face(f);
@@ -2731,22 +2731,7 @@ _insert_at_vertices(DHalfedge* he_to,
                                      (Halfedge_handle(prev2))->ccb(),
                                      Halfedge_handle(he1));
 
-      // Remove the inner component prev2 belongs to, and unite it with the
-      // inner component that prev1 belongs to.
-      f->erase_inner_ccb(ic2);
-
-      // Set the merged component for the two new halfedges.
-      he1->set_inner_ccb(ic1);
-      he2->set_inner_ccb(ic1);
-
-      // Make all halfedges along ic2 to point to ic1.
-      DHalfedge* curr;
-
-      for (curr = he2->next(); curr != he1; curr = curr->next())
-        curr->set_inner_ccb(ic1);
-
-      // Delete the redundant inner CCB.
-      _dcel().delete_inner_ccb(ic2);
+      merge_inner_ccb (ic1, ic2, he1, he2);
 
       // Notify the observers that we have merged the two inner CCBs.
       _notify_after_merge_inner_ccb(fh, (Halfedge_handle(he1))->ccb());
@@ -4613,7 +4598,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       ic1->set_halfedge(prev1);
 
       // Create a new component that represents the new hole we split.
-      DInner_ccb* new_ic = new_inner_ccb();
+      DInner_ccb* new_ic = _dcel().new_inner_ccb();
       f1->add_inner_ccb(new_ic, prev2);
       new_ic->set_face(f1);
 
@@ -4681,7 +4666,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
                                      Halfedge_handle(he1->next()));
 
         // Create a new component that represents the new hole.
-        DInner_ccb* new_ic = new_inner_ccb();
+        DInner_ccb* new_ic = _dcel().new_inner_ccb();
 
         f1->add_inner_ccb(new_ic, he1->next());
         new_ic->set_face(f1);
@@ -4783,7 +4768,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       _notify_before_add_inner_ccb(Face_handle(f1), hh);
 
       // Initiate a new inner CCB inside the given face.
-      DInner_ccb* new_ic = new_inner_ccb();
+      DInner_ccb* new_ic = _dcel().new_inner_ccb();
 
       f1->add_inner_ccb(new_ic, prev1);
       new_ic->set_face(f1);
@@ -4962,7 +4947,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       _notify_before_add_inner_ccb(Face_handle(f1), hh);
 
       // Initiate a new inner CCB inside the given face.
-      DInner_ccb* new_ic = new_inner_ccb();
+      DInner_ccb* new_ic = _dcel().new_inner_ccb();
 
       f1->add_inner_ccb(new_ic, prev1);
       new_ic->set_face(f1);
@@ -5516,6 +5501,108 @@ _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const
   } while (circ != first);
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+// Merge two inner CCBs
+//
+template <typename GeomTraits, typename TopTraits>
+void
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+merge_inner_ccb(DInner_ccb* ic1, DInner_ccb* ic2, DHalfedge* he1,  DHalfedge* he2)
+{
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+
+  // Unify sets of both primary inner CCBs
+  DInner_ccb* primary1 = _dcel().primary_inner_ccb(ic1);
+  DInner_ccb* primary2 = _dcel().primary_inner_ccb(ic2);
+  _dcel().merge (ic1, ic2);
+
+  DInner_ccb* primary = _dcel().primary_inner_ccb(ic1);
+
+  CGAL_assertion (primary == _dcel().primary_inner_ccb(ic2));
+  CGAL_assertion (primary == primary1 || primary == primary2);
+
+  // Update face/CCB relationships
+  if (primary1 != primary)
+  {
+    primary->set_face (primary1->face());
+    primary1->face()->erase_inner_ccb(primary1);
+  }
+  if (primary2 != primary)
+  {
+    primary->set_face (primary2->face());
+    primary2->face()->erase_inner_ccb(primary2);
+  }
+
+  // Update halfedges
+  he1->set_inner_ccb(primary);
+  he2->set_inner_ccb(primary);
+
+#else
+
+  // Remove the outer component prev2 belongs to, and unite it with the
+  // outer component that prev1 belongs to.
+  ic2->face()->erase_inner_ccb(ic2);
+
+  // Set the merged component for the two new halfedges.
+  he1->set_inner_ccb(ic1);
+  he2->set_inner_ccb(ic1);
+
+  // Make all halfedges along ic2 to point to ic1.
+  DHalfedge* curr;
+
+  for (curr = he2->next(); curr != he1; curr = curr->next())
+    curr->set_inner_ccb(ic1);
+
+  // Delete the redundant inner CCB.
+  _dcel().delete_inner_ccb(ic2);
+
+#endif
+}
+
+//---------------------------------------------------------------------------
+// Follow union set to keep only primary inner CCBs
+//
+template <typename GeomTraits, typename TopTraits>
+void
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+clean_inner_ccbs()
+{
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+
+  std::set<DInner_ccb*> to_keep;
+
+  for (DHalfedge_iter he = _dcel().halfedges_begin();
+       he != _dcel().halfedges_end(); ++ he)
+  {
+    if (!he->is_on_inner_ccb())
+      continue;
+
+    DInner_ccb* ic1 = he->inner_ccb();
+    DInner_ccb* ic2 = _dcel().primary_inner_ccb(ic1);
+
+    if (ic1 == ic2)
+    {
+      to_keep.insert(ic1);
+      continue;
+    }
+
+    he->set_inner_ccb (ic2);
+    if (!ic2->halfedge()->is_on_inner_ccb()
+        || ic2->halfedge()->inner_ccb() != ic2)
+      ic2->set_halfedge(&(*he));
+  }
+
+  typename Dcel::Inner_ccb_iterator it = _dcel().inner_ccbs_begin();
+  while (it != _dcel().inner_ccbs_end())
+  {
+    typename Dcel::Inner_ccb_iterator current = it ++;
+    if (to_keep.find(&*current) == to_keep.end())
+      _dcel().delete_inner_ccb(&*current);
+  }
+
+#endif
 }
 
 } // namespace CGAL
