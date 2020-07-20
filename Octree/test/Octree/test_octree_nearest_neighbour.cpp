@@ -70,7 +70,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   Point octree_nearest = *generator;
   auto point_map = points.point_map();
   Octree octree(points, point_map);
-  octree.refine(10, 1);
+  octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
   {
     // TODO: Write a nearest-neighbor implementation and use it here
@@ -120,28 +120,20 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
 
   std::cout << "Kd_tree --> "
             << kd_tree_nearest_neighbours.size() << " points "
-            << "in " << kd_tree_elapsed_time.count() << "s "
-            << "at distance^2s ";
-  for (int k = 0; k < kd_tree_nearest_neighbours.size(); ++k)
-    std::cout << CGAL::squared_distance(kd_tree_nearest_neighbours[k], random_point) << ", ";
-  std::cout << std::endl;
+            << "in " << kd_tree_elapsed_time.count() << "s ";
 
   // Do the same using the octree
   std::vector<Point> octree_nearest_neighbours;
   auto point_map = points.point_map();
   Octree octree(points, point_map);
-  octree.refine(10, 10);
+  octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
   octree.nearest_k_neighbours(random_point, K, std::back_inserter(octree_nearest_neighbours));
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
   std::cout << "Octree --> "
             << octree_nearest_neighbours.size() << " points "
-            << "in " << octree_elapsed_time.count() << "s "
-            << "at distance^2s ";
-  for (int k = 0; k < octree_nearest_neighbours.size(); ++k)
-    std::cout << CGAL::squared_distance(octree_nearest_neighbours[k], random_point) << ", ";
-  std::cout << std::endl;
+            << "in " << octree_elapsed_time.count() << "s ";
 
   // Check that the octree produces the right number of results
   assert(octree_nearest_neighbours.size() == K);
