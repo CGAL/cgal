@@ -631,10 +631,40 @@ private: // functions :
           }
         }
       }
-    }
-    else {
+    } else {
 
       // Recursive case: the node has children
+
+      // Create a list to map children to their distances
+      std::vector<Node_index_with_distance> children_with_distances;
+      children_with_distances.reserve(8);
+
+      // Fill the list with child nodes
+      for (int index = 0; index < 8; ++index) {
+        auto &child_node = node[index];
+
+        // Add a child to the list, with its distance
+        children_with_distances.emplace_back(Node::Index(index),
+                                             CGAL::squared_distance(search_bounds.center(),
+                                                                    compute_barycenter_position(child_node)));
+      }
+
+      // Sort the children by their distance from the search point
+      std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto &left, auto &right) {
+        return left.distance < right.distance;
+      });
+
+      // Loop over the children
+      for (auto child_with_distance : children_with_distances) {
+        auto &child_node = node[child_with_distance.index];
+
+        // Check whether the bounding box of the child intersects with the search bounds
+        if (do_intersect(child_node, search_bounds)) {
+
+          // Recursively invoke this function
+          // TODO
+        }
+      }
     }
   }
 
