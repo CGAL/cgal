@@ -518,7 +518,7 @@ private: // functions :
   };
 
   void nearest_k_neighbours_recursive(Sphere &search_bounds, const Node &node,
-                                      std::vector<Point_with_distance> &results) const {
+                                      std::vector<Point_with_distance> &results, FT epsilon = 0) const {
 
     // Check whether the node has children
     if (node.is_leaf()) {
@@ -558,7 +558,7 @@ private: // functions :
           if (results.size() == results.capacity()) {
 
             // Set the search radius
-            search_bounds = Sphere(search_bounds.center(), results.back().distance);
+            search_bounds = Sphere(search_bounds.center(), results.back().distance + epsilon);
           }
         }
       }
