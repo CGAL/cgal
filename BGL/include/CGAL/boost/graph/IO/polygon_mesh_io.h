@@ -145,7 +145,6 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *
  * \param fname the name of the file
  * \param g the mesh
- * \param verbose whether extra information is printed when an incident occurs during reading
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
