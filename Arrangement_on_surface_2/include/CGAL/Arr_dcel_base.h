@@ -835,7 +835,7 @@ public:
   }
 
   /*! Set the UF handle associated to the inner CCB */
-  void set_uf_handle(Uf_handle ufh) const
+  void set_uf_handle(Uf_handle ufh)
   {
     this->ufh = ufh;
   }

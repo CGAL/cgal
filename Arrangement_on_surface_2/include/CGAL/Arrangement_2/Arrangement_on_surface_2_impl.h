@@ -510,7 +510,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
     (prev1 != nullptr,
      "The inserted curve cannot be located in the arrangement.");
 
-  DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
+  DFace* f1 = prev1->is_on_inner_ccb() ? inner_ccb_of(prev1)->face() :
     prev1->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's right end has boundary conditions,
@@ -743,7 +743,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
   CGAL_assertion_msg
     (prev2 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
-  DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
+  DFace* f2 = prev2->is_on_inner_ccb() ? inner_ccb_of(prev2)->face() :
     prev2->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's left end has boundary conditions,
@@ -1068,7 +1068,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
        "The inserted curve cannot be located in the arrangement.");
 
     CGAL_assertion_code
-      (DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
+      (DFace* f2 = prev2->is_on_inner_ccb() ? inner_ccb_of(prev2)->face() :
        prev2->outer_ccb()->face());
 
     CGAL_assertion_msg
@@ -1107,7 +1107,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
        "The inserted curve cannot be located in the arrangement.");
 
     CGAL_assertion_code
-      (DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
+      (DFace* f1 = prev1->is_on_inner_ccb() ? inner_ccb_of(prev1)->face() :
        prev1->outer_ccb()->face());
 
     CGAL_assertion_msg
@@ -1700,10 +1700,10 @@ merge_edge(Halfedge_handle e1, Halfedge_handle e2,
 
   // Keep pointers to the components that contain two halfedges he3 and he2,
   // pointing at the end vertices of the merged halfedge.
-  DInner_ccb* ic1 = (he3->is_on_inner_ccb()) ? he3->inner_ccb() : nullptr;
+  DInner_ccb* ic1 = (he3->is_on_inner_ccb()) ? inner_ccb_of(he3) : nullptr;
   DOuter_ccb* oc1 = (ic1 == nullptr) ? he3->outer_ccb() : nullptr;
 
-  DInner_ccb* ic2 = (he4->is_on_inner_ccb()) ? he4->inner_ccb() : nullptr;
+  DInner_ccb* ic2 = (he4->is_on_inner_ccb()) ? inner_ccb_of(he4) : nullptr;
   DOuter_ccb* oc2 = (ic2 == nullptr) ? he4->outer_ccb() : nullptr;
 
   // Notify the observers that we are about to merge an edge.
@@ -1977,7 +1977,7 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _move_inner_ccb(DFace* from_face, DFace* to_face, DHalfedge* he)
 {
   // Get the DCEL record that represents the inner CCB.
-  DInner_ccb* ic = he->inner_ccb();
+  DInner_ccb* ic = inner_ccb_of(he);
 
   CGAL_assertion(ic->face() == from_face);
 
@@ -2334,7 +2334,7 @@ _insert_from_vertex(DHalfedge* he_to, const X_monotone_curve_2& cv,
   else
     std::cout << "he_to: fictitious" << std::endl;
   std::cout << "f_to: " << (he_to->is_on_inner_ccb() ?
-                            he_to->inner_ccb()->face() :
+                            inner_ccb_of(he_to)->face() :
                             he_to->outer_ccb()->face()) << std::endl;
   std::cout << "cv    : " << cv << std::endl;
   std::cout << "cv_dir: " << cv_dir << std::endl;
@@ -2344,7 +2344,7 @@ _insert_from_vertex(DHalfedge* he_to, const X_monotone_curve_2& cv,
 
   // Get the incident face of the previous halfedge. Note that this will also
   // be the incident face of the two new halfedges we are about to create.
-  DInner_ccb* ic = (he_to->is_on_inner_ccb()) ? he_to->inner_ccb() : nullptr;
+  DInner_ccb* ic = (he_to->is_on_inner_ccb()) ? inner_ccb_of(he_to) : nullptr;
   DOuter_ccb* oc = (ic == nullptr) ? he_to->outer_ccb() : nullptr;
 
   // The first vertex is the one that the he_to halfedge points to.
@@ -2436,7 +2436,7 @@ _insert_at_vertices(DHalfedge* he_to,
     std::cout << "he_to: fictitious" << std::endl;
   std::cout << "dir1 : " << he_to->direction() << std::endl;
   std::cout << "f_to : " << (he_to->is_on_inner_ccb() ?
-                            he_to->inner_ccb()->face() :
+                            inner_ccb_of(he_to)->face() :
                             he_to->outer_ccb()->face()) << std::endl;
   std::cout << "cv    : " << cv << std::endl;
   std::cout << "cv_dir: " << cv_dir << std::endl;
@@ -2446,7 +2446,7 @@ _insert_at_vertices(DHalfedge* he_to,
     std::cout << "he_away: fictitious" << std::endl;
   std::cout << "dir 2 : " << he_away->direction() << std::endl;
   std::cout << "f_away: " << (he_away->is_on_inner_ccb() ?
-                             he_away->inner_ccb()->face() :
+                             inner_ccb_of(he_away)->face() :
                              he_away->outer_ccb()->face()) << std::endl;
 #endif
 
@@ -2482,8 +2482,8 @@ _insert_at_vertices(DHalfedge* he_to,
 
     // Comment EBEB 2012-08-05 hole1/hole2 appear later as ic1/ic2, but we keep
     // them here, as the usage is rather local to decide swapping
-    DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : nullptr;
-    DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : nullptr;
+    DInner_ccb* hole1 = (prev1->is_on_inner_ccb()) ? inner_ccb_of(prev1) : nullptr;
+    DInner_ccb* hole2 = (prev2->is_on_inner_ccb()) ? inner_ccb_of(prev2) : nullptr;
 
     if ((hole1 == hole2) && (hole1 != nullptr)) {
       // .. only in this special case, we have to check whether swapping should
@@ -2581,7 +2581,7 @@ _insert_at_vertices(DHalfedge* he_to,
     std::cout << "prev1: fictitious" << std::endl;
   std::cout << "dir1 : " << prev1->direction() << std::endl;
   std::cout << "pref: " << (prev1->is_on_inner_ccb() ?
-                            prev1->inner_ccb()->face() :
+                            inner_ccb_of(prev1)->face() :
                             prev1->outer_ccb()->face()) << std::endl;
   if (!prev2->has_null_curve())
     std::cout << "prev2: " << prev2->curve() << std::endl;
@@ -2589,17 +2589,17 @@ _insert_at_vertices(DHalfedge* he_to,
     std::cout << "prev2: fictitious" << std::endl;
   std::cout << "dir 2: " << prev2->direction() << std::endl;
   std::cout << "pref2: " << (prev2->is_on_inner_ccb() ?
-                             prev2->inner_ccb()->face() :
+                             inner_ccb_of(prev2)->face() :
                              prev2->outer_ccb()->face()) << std::endl;
   std::cout << "cv_dir: " << cv_dir << std::endl;
 #endif
 
   // Get the components containing the two previous halfedges and the incident
   // face (which should be the same for the two components).
-  DInner_ccb* ic1 = (prev1->is_on_inner_ccb()) ? prev1->inner_ccb() : nullptr;
+  DInner_ccb* ic1 = (prev1->is_on_inner_ccb()) ? inner_ccb_of(prev1) : nullptr;
   DOuter_ccb* oc1 = (ic1 == nullptr) ? prev1->outer_ccb() : nullptr;
   DFace* f = (ic1 != nullptr) ? ic1->face() : oc1->face();
-  DInner_ccb* ic2 = (prev2->is_on_inner_ccb()) ? prev2->inner_ccb() : nullptr;
+  DInner_ccb* ic2 = (prev2->is_on_inner_ccb()) ? inner_ccb_of(prev2) : nullptr;
   DOuter_ccb* oc2 = (ic2 == nullptr) ? prev2->outer_ccb() : nullptr;
 
   CGAL_precondition_code(DFace* f2 = (ic2 != nullptr) ? ic2->face() : oc2->face());
@@ -2900,7 +2900,7 @@ _insert_at_vertices(DHalfedge* he_to,
               << "  defines new outer CCB" << std::endl;
     std::cout << "he2dir  : " << he2->direction() << std::endl;
     std::cout << "prev1->face(): " << (prev1->is_on_inner_ccb() ?
-                                       prev1->inner_ccb()->face() :
+                                       inner_ccb_of(prev1)->face() :
                                        prev1->outer_ccb()->face())
               << std::endl;
     std::cout << "signs1: " << signs1.first  << "," << signs1.second
@@ -2935,7 +2935,7 @@ _insert_at_vertices(DHalfedge* he_to,
                   << "  defines new inner CCB" << std::endl;
         std::cout << "he1dir  : " << he1->direction() << std::endl;
         std::cout << "prev2->face(): " << (prev2->is_on_inner_ccb() ?
-                                           prev2->inner_ccb()->face() :
+                                           inner_ccb_of(prev2)->face() :
                                            prev2->outer_ccb()->face())
                   << std::endl;
         std::cout << "signs2: " << signs2.first  << "," << signs2.second
@@ -2969,7 +2969,7 @@ _insert_at_vertices(DHalfedge* he_to,
         std::cout << "(=> prev2=" << &(*prev2) << ") he1= " << &(*he1) << "  defines new outer CCB" << std::endl;
         std::cout << "he1dir  : " << he1->direction() << std::endl;
         std::cout << "prev2->face(): " << (prev2->is_on_inner_ccb() ?
-                                           prev2->inner_ccb()->face() :
+                                           inner_ccb_of(prev2)->face() :
                                            prev2->outer_ccb()->face())
                   << std::endl;
         std::cout << "signs2: " << signs2.first  << "," << signs2.second
@@ -3113,10 +3113,10 @@ _insert_at_vertices(DHalfedge* he_to,
 #if 0
   {
     DHalfedge* he1 = he2->opposite();
-    DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+    DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? inner_ccb_of(he1) : nullptr;
     DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
     DFace* f1 = (ic1 != nullptr) ? ic1->face() : oc1->face();
-    DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+    DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? inner_ccb_of(he2) : nullptr;
     DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
     DFace* f2 = (ic2 != nullptr) ? ic2->face() : oc2->face();
     CGAL_postcondition((ic1 != ic2) || (f1 == f2));
@@ -3138,10 +3138,10 @@ _relocate_inner_ccbs_in_new_face(DHalfedge* new_he)
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace* new_face = (new_he->is_on_inner_ccb()) ?
-    new_he->inner_ccb()->face() : new_he->outer_ccb()->face();
+    inner_ccb_of(new_he)->face() : new_he->outer_ccb()->face();
   DHalfedge* opp_he = new_he->opposite();
   const bool opp_on_inner_ccb = opp_he->is_on_inner_ccb();
-  DFace* old_face = opp_on_inner_ccb ? opp_he->inner_ccb()->face() :
+  DFace* old_face = opp_on_inner_ccb ? inner_ccb_of(opp_he)->face() :
     opp_he->outer_ccb()->face();
 
   CGAL_assertion(new_face != old_face);
@@ -3156,7 +3156,7 @@ _relocate_inner_ccbs_in_new_face(DHalfedge* new_he)
     // need to move it.
     CGAL_assertion((*ic_it)->is_on_inner_ccb());
 
-    if (opp_on_inner_ccb && ((*ic_it)->inner_ccb() == opp_he->inner_ccb())) {
+    if (opp_on_inner_ccb && (inner_ccb_of(*ic_it) == inner_ccb_of(opp_he))) {
       ++ic_it;
       continue;
     }
@@ -3188,11 +3188,11 @@ _relocate_isolated_vertices_in_new_face(DHalfedge* new_he)
   // The given halfedge points to the new face, while its twin points to the
   // old face (the one that has just been split).
   DFace* new_face = (new_he->is_on_inner_ccb()) ?
-    new_he->inner_ccb()->face() :
+    inner_ccb_of(new_he)->face() :
     new_he->outer_ccb()->face();
   DHalfedge* opp_he = new_he->opposite();
   DFace* old_face = (opp_he->is_on_inner_ccb()) ?
-    opp_he->inner_ccb()->face() :
+    inner_ccb_of(opp_he)->face() :
     opp_he->outer_ccb()->face();
 
   CGAL_assertion(new_face != old_face);
@@ -3328,9 +3328,9 @@ _split_edge(DHalfedge* e, DVertex* v,
   // Get the split halfedge and its twin, its source and target.
   DHalfedge* he1 = e;
   DHalfedge* he2 = he1->opposite();
-  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? inner_ccb_of(he1) : nullptr;
   DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
-  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? inner_ccb_of(he2) : nullptr;
   DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
 
   // Notify the observers that we are about to split an edge.
@@ -4193,10 +4193,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // belong to and their incident faces.
   DHalfedge* he1 = e;
   DHalfedge* he2 = e->opposite();
-  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+  DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? inner_ccb_of(he1) : nullptr;
   DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
   DFace* f1 = (oc1 != nullptr) ? oc1->face() : ic1->face();
-  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+  DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? inner_ccb_of(he2) : nullptr;
   DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
   DFace* f2 = (oc2 != nullptr) ? oc2->face() : ic2->face();
 
@@ -5367,7 +5367,7 @@ _is_valid(Face_const_handle f) const
     he = *ic_it;
     if (! he->is_on_inner_ccb()) return false;
 
-    ic = he->inner_ccb();
+    ic = inner_ccb_of(he);
     if (ic->face() != p_f) return false;
 
     if (! _is_inner_ccb_valid(ic, he)) return false;
@@ -5430,7 +5430,7 @@ _is_inner_ccb_valid(const DInner_ccb* ic, const DHalfedge* first) const
   do {
     if (! curr->is_on_inner_ccb()) return false;
 
-    if (ic != curr->inner_ccb()) return false;
+    if (ic != inner_ccb_of(curr)) return false;
 
     if (! found_rep && ic->halfedge() == curr) found_rep = true;
 

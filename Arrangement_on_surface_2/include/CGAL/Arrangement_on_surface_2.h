@@ -2290,10 +2290,52 @@ protected:
     return false;
   }
 
+  /*! Create a new inner ccb and init its union find handle */
   DInner_ccb* new_inner_ccb()
   {
     DInner_ccb* ic = _dcel().new_inner_ccb();
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+    ic->set_uf_handle (m_inner_ccb_uf.make_set(ic));
+#endif
     return ic;
+  }
+
+  /*! Get the valid CCB corresponding to this CCB in the union find */
+  const DInner_ccb* primary_inner_ccb (const DInner_ccb* ic) const
+  {
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+    if (ic == nullptr)
+      return ic;
+
+    return *m_inner_ccb_uf.find(ic->uf_handle());
+#else
+    return ic;
+#endif
+  }
+
+  /*! Get the valid CCB corresponding to this CCB in the union find */
+  DInner_ccb* primary_inner_ccb (DInner_ccb* ic)
+  {
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+    if (ic == nullptr)
+      return ic;
+
+    return *m_inner_ccb_uf.find(ic->uf_handle());
+#else
+    return ic;
+#endif
+  }
+
+  /*! Get the inner CCB of the halfedge (including union find behavior) */
+  const DInner_ccb* inner_ccb_of (const DHalfedge* he) const
+  {
+    return primary_inner_ccb(he->inner_ccb());
+  }
+
+  /*! Get the inner CCB of the halfedge (including union find behavior) */
+  DInner_ccb* inner_ccb_of (DHalfedge* he)
+  {
+    return primary_inner_ccb(he->inner_ccb());
   }
 
 protected:
