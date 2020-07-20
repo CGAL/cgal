@@ -271,7 +271,7 @@ public:
     //  provides a conversion operator.
     /*         \return a handle to the current cell.
          */
-    operator const  Cell_handle() const
+    operator Cell_handle() const
     {
       return std::get<0>(_cur);
     }
@@ -279,7 +279,7 @@ public:
     //  provides a conversion operator.
     /*         \return the simplex through wich the current cell was entered.
          */
-    operator const  Simplex() const { return _cur; }
+    operator Simplex() const { return _cur; }
 
     //  checks whether the iterator has reached the final cell, which contains the `target()`.
     /*  If the `target()` lies on a facet, edge, or vertex, the final cell is the cell containing
