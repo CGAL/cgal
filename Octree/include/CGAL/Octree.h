@@ -364,6 +364,34 @@ public:
   }
 
   /*!
+   * \brief Find the K points in a tree that are nearest to the search point and within a specific radius
+   *
+   * \todo
+   *
+   * \tparam Point_output_iterator an output iterator type that will accept points
+   * \param search_point the location to find points near
+   * \param search_radius_squared the size of the region to search within
+   * \param k the number of points to find
+   * \param output the output iterator to add the found points to
+   */
+  template<typename Point_output_iterator>
+  void nearest_k_neighbours_in_radius(const Point &search_point, FT search_radius_squared, std::size_t k,
+                                      Point_output_iterator output) const {
+
+    // Create an empty list of points
+    std::vector<Point_with_distance> points_list;
+    points_list.reserve(k);
+
+    // Invoking the recursive function adds those points to the vector (passed by reference)
+    auto search_bounds = Sphere(search_point, search_radius_squared);
+    _nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
+
+    // Add all the points found to the output
+    for (auto &item : points_list)
+      *output++ = item.point;
+  }
+
+  /*!
    * \brief Find the K points in a tree that are nearest to the search point
    *
    * \todo
@@ -376,17 +404,7 @@ public:
   template<typename Point_output_iterator>
   void nearest_k_neighbours(const Point &search_point, std::size_t k, Point_output_iterator output) const {
 
-    // Create an empty list of points
-    std::vector<Point_with_distance> points_list;
-    points_list.reserve(k);
-
-    // Invoking the recursive function adds those points to the vector (passed by reference)
-    auto search_bounds = Sphere(search_point, std::numeric_limits<FT>::max());
-    _nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
-
-    // Add all the points found to the output
-    for (auto &item : points_list)
-      *output++ = item.point;
+    return nearest_k_neighbours_in_radius(search_point, std::numeric_limits<FT>::max(), k, output);
   }
 
   /// @}
