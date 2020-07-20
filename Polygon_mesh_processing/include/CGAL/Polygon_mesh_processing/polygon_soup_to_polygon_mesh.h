@@ -37,13 +37,30 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+template <typename PolygonMesh>
+struct Default_PS_to_PM_visitor
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor            face_descriptor;
+
+  template <typename PID>
+  void on_vertex_creation(const PID pid, const vertex_descriptor v, const PolygonMesh& pmesh) const
+  {
+    std::cout << "Point[" << pid << "] gives vertex " << v << std::endl;
+  }
+
+  template <typename FID>
+  void on_face_creation(const FID fid, const face_descriptor f, const PolygonMesh& pmesh) const
+  {
+    std::cout << "Face[" << fid << "] gives faces " << f << std::endl;
+  }
+};
+
 template <typename PointRange,
-          typename PolygonRange,
-          typename PointMap = typename CGAL::GetPointMap<PointRange>::const_type>
+          typename PolygonRange>
 class PS_to_PM_converter
 {
   typedef typename boost::range_value<PolygonRange>::type                 Polygon;
-  typedef typename boost::property_traits<PointMap>::value_type           Point;
 
 public:
   /**
@@ -52,23 +69,26 @@ public:
   * @param polygons each element in the range describes a polygon using the index of the points in the range.
   */
   PS_to_PM_converter(const PointRange& points,
-                     const PolygonRange& polygons,
-                     const PointMap pm = PointMap())
+                     const PolygonRange& polygons)
     : m_points(points),
-      m_polygons(polygons),
-      m_pm(pm)
+      m_polygons(polygons)
   { }
 
-  template <typename PolygonMesh, typename VertexPointMap>
+  template <typename PolygonMesh,
+            typename VertexPointMap,
+            typename PointMap = typename CGAL::GetPointMap<PointRange>::const_type,
+            typename Visitor = Default_PS_to_PM_visitor<PolygonMesh> >
   void operator()(PolygonMesh& pmesh,
                   VertexPointMap vpm,
+                  PointMap pm,
+                  const Visitor& visitor = Visitor(),
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
 
-    typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
-
-    CGAL_static_assertion((std::is_convertible<Point, PM_Point>::value));
+    CGAL_assertion_code(typedef typename boost::property_traits<VertexPointMap>::value_type     VPM_Point;)
+    CGAL_assertion_code(typedef typename boost::property_traits<PointMap>::value_type           Point;)
+    CGAL_static_assertion((std::is_convertible<Point, VPM_Point>::value));
 
     reserve(pmesh, static_cast<typename boost::graph_traits<PolygonMesh>::vertices_size_type>(m_points.size()),
             static_cast<typename boost::graph_traits<PolygonMesh>::edges_size_type>(2*m_polygons.size()),
@@ -94,8 +114,8 @@ public:
         continue;
 
       vertices[i] = add_vertex(pmesh);
-      PM_Point pi(get(m_pm, m_points[i]));
-      put(vpm, vertices[i], pi);
+      put(vpm, vertices[i], get(pm, m_points[i]));
+      visitor.on_vertex_creation(i, vertices[i], pmesh);
     }
 
     for(std::size_t i = 0, end = m_polygons.size(); i < end; ++i)
@@ -108,9 +128,9 @@ public:
       for(std::size_t j = 0; j < size; ++j)
         vr[j] = vertices[polygon[j] ];
 
-      CGAL_assertion_code(typename boost::graph_traits<PolygonMesh>::face_descriptor fd =)
-          CGAL::Euler::add_face(vr, pmesh);
+      typename boost::graph_traits<PolygonMesh>::face_descriptor fd = CGAL::Euler::add_face(vr, pmesh);
       CGAL_assertion(fd != boost::graph_traits<PolygonMesh>::null_face());
+      visitor.on_face_creation(i, fd, pmesh);
     }
   }
 
@@ -118,13 +138,14 @@ public:
   void operator()(PolygonMesh& pmesh,
                   const bool insert_isolated_vertices = true)
   {
+    typedef typename CGAL::GetPointMap<PointRange>::const_type Point_map;
+
     return operator()(pmesh, get(CGAL::vertex_point, pmesh), insert_isolated_vertices);
   }
 
 private:
   const PointRange& m_points;
   const PolygonRange& m_polygons;
-  const PointMap m_pm;
 };
 
 } // namespace internal
@@ -231,6 +252,9 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *     a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
 *     of the vertex point map associated to the polygon mesh. If this parameter is omitted, `CGAL::Identity_property_map` is used.
 *   \cgalParamEnd
+*   \cgalParamBegin{visitor} a class model of `PMPPS_to_PMVisitor`
+*                            that is used to track the creation of new points.
+*   \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @param np_pm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
@@ -269,8 +293,14 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   Vertex_point_map vpm = choose_parameter(get_parameter(np_pm, internal_np::vertex_point),
                                           get_property_map(CGAL::vertex_point, out));
 
-  internal::PS_to_PM_converter<PointRange, PolygonRange, Point_map> converter(points, polygons, pm);
-  converter(out, vpm);
+  typedef typename internal_np::Lookup_named_param_def<
+                                  internal_np::visitor_t,
+                                  NamedParameters_PS,
+                                  internal::Default_PS_to_PM_visitor<PolygonMesh> >::type Visitor;
+  Visitor visitor = choose_parameter<Visitor>(get_parameter(np_ps, internal_np::visitor));
+
+  internal::PS_to_PM_converter<PointRange, PolygonRange> converter(points, polygons);
+  converter(out, vpm, pm, visitor);
 }
 
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>
