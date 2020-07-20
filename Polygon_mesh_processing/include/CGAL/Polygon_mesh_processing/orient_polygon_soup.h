@@ -16,28 +16,31 @@
 
 #include <CGAL/license/Polygon_mesh_processing/orientation.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 
-#include <set>
-#include <map>
-#include <stack>
-#include <vector>
 #include <algorithm>
 #include <iostream>
+#include <set>
+#include <stack>
+#include <vector>
 
 namespace CGAL {
-
 namespace Polygon_mesh_processing {
-
 namespace internal {
 
-template<class PointRange, class PolygonRange>
+struct Default_PS_orienter_visitor
+{
+  template <typename VID>
+  void on_point_duplication(const VID, const VID) const { }
+};
+
+template<class PointRange, class PolygonRange,
+         class Visitor = Default_PS_orienter_visitor>
 struct Polygon_soup_orienter
 {
   typedef typename PointRange::value_type                               Point_3;
@@ -63,6 +66,7 @@ struct Polygon_soup_orienter
   Edge_map edges;             //< the set of edges of the input polygons
   Marked_edges marked_edges;  //< the set of singular edges or edges incident
                               //<   to non-compatible orientation polygons
+  const Visitor& visitor;
 
   /// for each polygon referenced by its position in `polygons`, indicates
   /// the connected component it belongs too after orientation.
@@ -147,8 +151,8 @@ struct Polygon_soup_orienter
     }
   }
 
-  Polygon_soup_orienter(Points& points, Polygons& polygons)
-    : points(points), polygons(polygons), edges(points.size())
+  Polygon_soup_orienter(Points& points, Polygons& polygons, const Visitor& visitor)
+    : points(points), polygons(polygons), edges(points.size()), visitor(visitor)
   {}
 
 //filling containers
@@ -374,6 +378,7 @@ struct Polygon_soup_orienter
     {
       V_ID new_index = static_cast<V_ID>(points.size());
       points.push_back( points[vid_and_pids.first] );
+      visitor.on_point_duplication(vid_and_pids.first, new_index);
       for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
     }
@@ -460,21 +465,41 @@ struct Polygon_soup_orienter
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{visitor} a class model of `PMPOrientationVisitor`
+  *                            that is used to track the creation of new points.
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
+ *
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
  */
-template <class PointRange, class PolygonRange>
+template <class PointRange, class PolygonRange, class NamedParameters>
 bool orient_polygon_soup(PointRange& points,
-                         PolygonRange& polygons)
+                         PolygonRange& polygons,
+                         const NamedParameters& np)
 {
-  std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orienter<PointRange, PolygonRange> orienter(points, polygons);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename internal_np::Lookup_named_param_def<
+                                  internal_np::visitor_t,
+                                  NamedParameters,
+                                  internal::Default_PS_orienter_visitor>::type Visitor;
+  Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor));
+
+  const std::size_t inital_nb_pts = points.size();
+
+  internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor> orienter(points, polygons, visitor);
   orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();
@@ -482,7 +507,15 @@ bool orient_polygon_soup(PointRange& points,
   return inital_nb_pts==points.size();
 }
 
-} }//end namespace CGAL::Polygon_mesh_processing
+template <class PointRange, class PolygonRange>
+bool orient_polygon_soup(PointRange& points,
+                         PolygonRange& polygons)
+{
+  return orient_polygon_soup(points, polygons, parameters::all_default());
+}
+
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
