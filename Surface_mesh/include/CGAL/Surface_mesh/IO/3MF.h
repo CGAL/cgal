@@ -24,6 +24,10 @@
 
 #if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_DEPRECATED
+#endif
+
 namespace CGAL {
 
 // @todo generalize it to any model of `FaceGraph` and put it in BGL/IO (see read_OFF for the face color map)
