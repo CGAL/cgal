@@ -381,7 +381,6 @@ public:
     points_list.reserve(k);
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
-//    nearest_k_neighbours_recursive(search_point, points_list, m_root, std::numeric_limits<FT>::max(), k);
     auto search_bounds = Sphere(search_point, std::numeric_limits<FT>::max());
     _nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
 
@@ -489,94 +488,6 @@ private: // functions :
     // Check for intersection between the node and the sphere
     return CGAL::do_intersect(node_cube, sphere);
   }
-
-  FT nearest_k_neighbours_recursive(const Point &p, std::vector<std::pair<Point, FT>> &out, const Node &node,
-                                    FT search_bounds_radius_squared, std::size_t k) const {
-
-    FT largest_radius_squared_found = search_bounds_radius_squared;
-
-    // Check whether we've reached the bottom of the tree
-    if (node.is_leaf()) {
-
-      // Base case: the node has no children
-
-      // Check if the node contains any points
-      if (!node.is_empty()) {
-
-        // If it does, loop through each point
-        for (auto i : node.points()) {
-          auto point = get(m_points_map, i);
-
-          // Find the distance of the point
-          FT new_distance_squared = CGAL::squared_distance(point, p);
-
-          // Check whether the new distance is an improvement
-          if (new_distance_squared < largest_radius_squared_found) {
-
-            // If it is, add it to the list
-            out.push_back({point, new_distance_squared});
-
-            // Check whether the list is full
-            if (out.size() >= k) {
-
-              // If the list has at least K points, sort them
-              std::sort(out.begin(), out.end(), [=](auto &left, auto &right) {
-                return left.second < right.second;
-              });
-
-              // Make sure the list has only k points (discarding the furthest ones, if there are more
-              out.resize(k);
-
-              // Update the largest distance
-              largest_radius_squared_found = out.back().second;
-            }
-
-          }
-        }
-      }
-
-    } else {
-
-      // If the node has children
-
-      // Create a list of the child nodes
-      std::vector<std::pair<typename Node::Index, FT>> children_with_distances;
-      children_with_distances.reserve(8);
-
-      // Check each node
-      for (int index = 0; index < 8; ++index) {
-        auto &n = node[index];
-
-        // Find the distance of the node's center
-        auto node_center_distance = CGAL::squared_distance(p, compute_barycenter_position(n));
-
-        // Add this node to the list
-        children_with_distances.emplace_back(index, node_center_distance);
-      }
-
-      // Sort the children by their distance
-      std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto &left, auto &right) {
-        return left.second < right.second;
-      });
-
-      // Search each of them
-      for (auto child : children_with_distances) {
-        auto &n = node[child.first.to_ulong()];
-
-        // Check whether this node is capable of containing closer points
-        if (do_intersect(n, Sphere{p, largest_radius_squared_found + 0.01 /*TODO: This is my epsilon*/})) {
-
-          // Recursive case
-          largest_radius_squared_found =
-                  nearest_k_neighbours_recursive(p, out, n, largest_radius_squared_found, k);
-
-        }
-      }
-    }
-
-    return largest_radius_squared_found;
-  }
-
 
   // TODO: There has to be a better way than using structs like these!
   struct Point_with_distance {
