@@ -50,7 +50,7 @@ else()
 endif()
 polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
   Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
-  ${meshingUI_FILES} KEYWORDS IO Mesh_3)
+  ${meshingUI_FILES} KEYWORDS Mesh_3)
 target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
 # Use Eigen
