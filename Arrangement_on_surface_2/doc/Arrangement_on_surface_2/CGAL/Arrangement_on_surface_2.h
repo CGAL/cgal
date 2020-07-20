@@ -323,12 +323,9 @@ public:
 
   /*! \name
    *
-   * The following handles, iterators, and circulators all have respective
-   * constant counterparts (for example, in addition to `Vertex_iterator` the
-   * type `Vertex_const_iterator` is also defined). See
-   * \cgalCite{cgal:ms-strg-96} for a discussion of constant versus mutable
-   * iterator types. The mutable types are assignable to their constant
-   * counterparts. `Vertex_iterator`, `Halfedge_iterator`, and `Face_iterator`
+   * The following mutable handles, iterators, and circulators have respective
+   * constant counterparts.  The mutable types are assignable to their constant
+   * counterparts.  `Vertex_iterator`, `Halfedge_iterator`, and `Face_iterator`
    * are equivalent to the respective handle types (namely, `Vertex_handle`,
    * `Halfedge_handle`, and `Face_handle`). Thus, wherever the handles appear in
    * function parameter lists, the respective iterators can be passed as well.
@@ -338,6 +335,7 @@ public:
    * `boost::unordered_map`.
    */
 
+  /// Mutable
   /// @{
 
   /*! a handle to an arrangement vertex. */
@@ -412,6 +410,84 @@ public:
    * Its value type is `Vertex`.
    */
   typedef unspecified_type Isolated_vertex_iterator;
+
+  /// @}
+
+  /// Constant
+  /// @{
+
+  /*! a handle to an arrangement vertex. */
+  typedef unspecified_type Vertex_const_handle;
+
+  /*! a handle to a halfedge.
+   * The halfedge and its twin form together an arrangement edge.
+   */
+  typedef unspecified_type Halfedge_const_handle;
+
+  /*! a handle to an arrangement face. */
+  typedef unspecified_type Face_const_handle;
+
+  /*! a bidirectional iterator over the
+   * vertices of the arrangement. Its value-type is `Vertex`.
+   */
+  typedef unspecified_type Vertex_const_iterator;
+
+  /*! a bidirectional iterator over the
+   * halfedges of the arrangement. Its value-type is `Halfedge`.
+   */
+  typedef unspecified_type Halfedge_const_iterator;
+
+  /*! a bidirectional iterator over the
+   * edges of the arrangement. (That is, it skips every other halfedge.)
+   * Its value-type is `Halfedge`.
+   */
+  typedef unspecified_type Edge_const_iterator;
+
+  /*! a bidirectional iterator over the
+   * faces of arrangement. Its value-type is `Face`.
+   */
+  typedef unspecified_type Face_const_iterator;
+
+  /*! a bidirectional iterator over the
+   * unbounded faces of arrangement. Its value-type is `Face`.
+   */
+  typedef unspecified_type Unbounded_face_const_iterator;
+
+  /*! a bidirectional circulator
+   * over the halfedges that have a given vertex as their target.
+   * Its value-type is `Halfedge`.
+   */
+  typedef unspecified_type Halfedge_around_vertex_const_circulator;
+
+  /*! a bidirectional circulator over the
+   * halfedges of a CCB (connected component of the boundary).
+   * Its value-type is `Halfedge`. Each
+   * bounded face has a single CCB representing it outer boundary, and may
+   * have several inner CCBs representing its holes.
+   */
+  typedef unspecified_type Ccb_halfedge_const_circulator;
+
+  /*! a bidirectional iterator over the inner CCBs of a given face.
+   * Its value type is `Ccb_halfedge_circulator`.
+   */
+  typedef unspecified_type Inner_ccb_const_iterator;
+
+  /*! a bidirectional iterator over the outer CCBs of a given face.
+   * Its value type is `Ccb_halfedge_circulator`.
+   */
+  typedef unspecified_type Outer_ccb_const_iterator;
+
+  /*! a bidirectional iterator over the holes
+   * (i.e., inner CCBs) contained inside a given face.
+   * Its value type is `Ccb_halfedge_circulator`.
+   */
+  typedef unspecified_type Hole_const_iterator;
+
+  /*! a bidirectional iterator over the
+   * isolated vertices contained inside a given face.
+   * Its value type is `Vertex`.
+   */
+  typedef unspecified_type Isolated_vertex_const_iterator;
 
   /// @}
 

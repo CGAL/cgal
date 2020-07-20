@@ -80,9 +80,9 @@ void point_location_query(const PointLocation& pl,
 // Perform a vertical ray-shooting query and print the result.
 //
 template <typename VerticalRayShooting>
-void vertical_ray_shooting_query(const VerticalRayShooting& vrs,
-                                 const typename
-                                 VerticalRayShooting::Arrangement_2::Point_2& q)
+void shoot_vertical_ray(const VerticalRayShooting& vrs,
+                        const typename
+                        VerticalRayShooting::Arrangement_2::Point_2& q)
 {
   typedef VerticalRayShooting                           Vertical_ray_shooting;
 
