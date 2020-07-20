@@ -27,6 +27,24 @@ to and from files, the console, or other custom structures.
                                   The page \ref IOStreamSupportedFileFormats offers the reversed viewpoint
                                   (file format to \cgal data structure).
 
+\section IOstreamPrecision Stream Precision
+
+When manipulating floating point-based number types, it is important to always
+keep in mind that the stream of the precision should be chosen appropriately,
+lest potentially significant loss of data might incur. For example, consider
+the following extreme case:
+\code{.cpp}
+double v = 184, w = 182;
+std::cout << std::setprecision(2) << v << " " << w << std::endl;
+\endcode
+This snipplet will produce the output `1.8e+02 1.8e+02` despite `v` and `w` being different.
+As the default precision of output streams of the \stl is `6`, this can be a real source of bugs
+and wrong outputs.
+
+The stream precision of \stl streams can be modified using
+<a href="https://en.cppreference.com/w/cpp/io/manip/setprecision">std::setprecision</a>.
+File I/O functions also offer an optional named parameter to set the output stream precision.
+
 \section IOstreamIO Reading and Writing Data With Streams
 
 All classes in the \cgal kernel provide input and output operators for
