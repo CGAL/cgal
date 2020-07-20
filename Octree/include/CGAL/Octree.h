@@ -384,7 +384,7 @@ public:
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
     auto search_bounds = Sphere(search_point, search_radius_squared);
-    _nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
+    nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
 
     // Add all the points found to the output
     for (auto &item : points_list)
@@ -517,8 +517,8 @@ private: // functions :
     FT distance;
   };
 
-  void _nearest_k_neighbours_recursive(Sphere &search_bounds, const Node &node,
-                                       std::vector<Point_with_distance> &results) const {
+  void nearest_k_neighbours_recursive(Sphere &search_bounds, const Node &node,
+                                      std::vector<Point_with_distance> &results) const {
 
     // Check whether the node has children
     if (node.is_leaf()) {
@@ -594,7 +594,7 @@ private: // functions :
         if (do_intersect(child_node, search_bounds)) {
 
           // Recursively invoke this function
-          _nearest_k_neighbours_recursive(search_bounds, child_node, results);
+          nearest_k_neighbours_recursive(search_bounds, child_node, results);
         }
       }
     }
