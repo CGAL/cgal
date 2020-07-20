@@ -16,6 +16,10 @@ if(NOT POLICY CMP0064)
   # Add a fake function to avoid CMake errors
   function(cgal_add_compilation_test)
   endfunction()
+  # Add a fake function to avoid CMake errors
+  function(cgal_setup_test_properties)
+  endfunction()
+  
 
   # Then return, to exit the file
   return()
