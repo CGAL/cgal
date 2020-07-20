@@ -36,7 +36,10 @@ namespace internal {
 struct Default_PS_orienter_visitor
 {
   template <typename VID>
-  void on_point_duplication(const VID, const VID) const { }
+  void on_point_duplication(const VID existing_id, const VID new_id) const
+  {
+    std::cout << "Point [" << existing_id << "] is being duplicated, new point has ID: " << new_id << std::endl;
+  }
 };
 
 template<class PointRange, class PolygonRange,
