@@ -1516,18 +1516,20 @@ requirements on the traits class.
 \subsection arr_ssecinc_insert Incremental Insertion Functions
 <!----------------------------------------------------------------------------->
 
-<!----------------------------------------------------------------------------->
-\subsubsection arr_sssecinsert_non_x Inserting Non-Intersecting Curves
-<!----------------------------------------------------------------------------->
-
 Section \ref aos_ssec-basic-arr_class explains how to construct
 arrangements of \f$x\f$-monotone curves that are pairwise disjoint in
 their interior when the location of the segment endpoints in the
 arrangement is known. Here we relax this constraint, and allow the
 location of the inserted \f$x\f$-monotone curve endpoints to be
-unknown at the time of insertion. We retain, for the moment, the
-requirement that the interior of the inserted curve is disjoint from
-all existing arrangement edges and vertices.
+unknown at the time of insertion.
+
+<!----------------------------------------------------------------------------->
+\subsubsection arr_sssecinsert_non_x Inserting Non-Intersecting Curves
+<!----------------------------------------------------------------------------->
+
+We retain, for the moment, the requirement that the interior of the
+inserted curve is disjoint from all existing arrangement edges and
+vertices.
 
 The free function `insert_non_intersecting_curve(arr, c, pl)` inserts
 the \f$x\f$-monotone curve \f$c\f$ into the arrangement `arr`, with
