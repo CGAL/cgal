@@ -2274,7 +2274,7 @@ _insert_in_face_interior(DFace* f,
   // and link them together to form a new connected component, a hole in f.
   DHalfedge* he1 = _dcel().new_edge();
   DHalfedge* he2 = he1->opposite();
-  DInner_ccb* ic = _dcel().new_inner_ccb();
+  DInner_ccb* ic = new_inner_ccb();
   X_monotone_curve_2* dup_cv = _new_curve(cv);
 
   ic->set_face(f);
@@ -4613,7 +4613,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       ic1->set_halfedge(prev1);
 
       // Create a new component that represents the new hole we split.
-      DInner_ccb* new_ic = _dcel().new_inner_ccb();
+      DInner_ccb* new_ic = new_inner_ccb();
       f1->add_inner_ccb(new_ic, prev2);
       new_ic->set_face(f1);
 
@@ -4681,7 +4681,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
                                      Halfedge_handle(he1->next()));
 
         // Create a new component that represents the new hole.
-        DInner_ccb* new_ic = _dcel().new_inner_ccb();
+        DInner_ccb* new_ic = new_inner_ccb();
 
         f1->add_inner_ccb(new_ic, he1->next());
         new_ic->set_face(f1);
@@ -4783,7 +4783,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       _notify_before_add_inner_ccb(Face_handle(f1), hh);
 
       // Initiate a new inner CCB inside the given face.
-      DInner_ccb* new_ic = _dcel().new_inner_ccb();
+      DInner_ccb* new_ic = new_inner_ccb();
 
       f1->add_inner_ccb(new_ic, prev1);
       new_ic->set_face(f1);
@@ -4962,7 +4962,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       _notify_before_add_inner_ccb(Face_handle(f1), hh);
 
       // Initiate a new inner CCB inside the given face.
-      DInner_ccb* new_ic = _dcel().new_inner_ccb();
+      DInner_ccb* new_ic = new_inner_ccb();
 
       f1->add_inner_ccb(new_ic, prev1);
       new_ic->set_face(f1);

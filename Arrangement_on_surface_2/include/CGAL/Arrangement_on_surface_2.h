@@ -2290,6 +2290,12 @@ protected:
     return false;
   }
 
+  DInner_ccb* new_inner_ccb()
+  {
+    DInner_ccb* ic = _dcel().new_inner_ccb();
+    return ic;
+  }
+
 protected:
   /* Notify the observers on global arrangement operations: */
 
