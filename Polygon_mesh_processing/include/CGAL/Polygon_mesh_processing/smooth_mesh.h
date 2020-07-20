@@ -36,7 +36,7 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smoothes a triangulated region of a polygon mesh.
+* \short smooths a triangulated region of a polygon mesh.
 *
 * This function attempts to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.

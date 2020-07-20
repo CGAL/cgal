@@ -741,7 +741,7 @@ void keep_connected_components(PolygonMesh& pmesh
 
 /*!
 * \ingroup keep_connected_components_grp
-* Removes in `pmesh` the connected components designated by theirs ids
+* removes in `pmesh` the connected components designated by theirs ids
 * in `components_to_remove` as well as all isolated vertices.
 * The connected component id of a face is given by `fcm`.
 *
@@ -992,7 +992,6 @@ void split_connected_components_impl(FIMap fim,
 /*!
  * \ingroup keep_connected_components_grp
  * identifies the connected components of `pm` and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
- *
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam PolygonMeshRange a model of `SequenceContainer` with `PolygonMesh` as value type.
