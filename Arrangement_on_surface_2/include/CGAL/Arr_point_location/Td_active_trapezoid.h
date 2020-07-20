@@ -144,7 +144,7 @@ public:
 
  private:
 
-  Data* ptr() const { return (Data*)(PTR.p); }
+  Data* ptr() const { return (Data*)(PTR); }
 
 public:
 
@@ -255,7 +255,7 @@ private:
   {
     //define the initial trapezoid: left, right, btm, top are at infinity.
     // has no neighbours
-    PTR.p = new Data
+    PTR = new Data
       (Traits::empty_vtx_handle(),
        Traits::empty_vtx_handle(),
        Traits::empty_he_handle(),
@@ -274,7 +274,7 @@ private:
                   boost::optional<Td_map_item&> rt = boost::none,
                   Dag_node* node = 0)
   {
-    PTR.p = new Data (l, r, b, t, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),
+    PTR = new Data (l, r, b, t, (lb) ? *lb : Td_map_item(0), (lt) ? *lt : Td_map_item(0),
                    (rb) ? *rb : Td_map_item(0), (rt) ? *rt : Td_map_item(0), node);
     //m_dag_node = node;
   }
@@ -332,7 +332,7 @@ private:
   /*! Access the trapezoid id (PTR). */
   inline unsigned long id() const
   {
-    return (unsigned long) PTR.p;
+    return (unsigned long) PTR;
   }
 
   /*! Access trapezoid left.

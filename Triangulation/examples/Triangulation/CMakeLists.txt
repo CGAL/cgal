@@ -17,7 +17,8 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.0)
-  if (EIGEN3_FOUND)
+  include(CGAL_Eigen_support)
+  if (TARGET CGAL::Eigen_support)
     create_single_source_cgal_program( "barycentric_subdivision.cpp" )
     create_single_source_cgal_program( "delaunay_triangulation.cpp" )
     create_single_source_cgal_program( "convex_hull.cpp" )
@@ -34,7 +35,7 @@ if ( CGAL_FOUND )
         triangulation
         triangulation_data_structure_dynamic
         triangulation_data_structure_static)
-      CGAL_target_use_Eigen(${target})
+      target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
     endforeach()
   else()
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
@@ -45,4 +46,3 @@ else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

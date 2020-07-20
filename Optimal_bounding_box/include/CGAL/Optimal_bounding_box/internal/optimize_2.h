@@ -214,6 +214,25 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
   }
 }
 
+// This operation makes no sense if an exact number type is used, so skip it, if so
+template <typename Traits,
+          typename IsFTExact = typename Algebraic_structure_traits<typename Traits::FT>::Is_exact>
+struct Optimizer_along_axes
+{
+  template <typename PointRange>
+  void operator()(typename Traits::Matrix& rot, const PointRange& points, const Traits& traits)
+  {
+    return optimize_along_OBB_axes(rot, points, traits);
+  }
+};
+
+template <typename Traits>
+struct Optimizer_along_axes<Traits, CGAL::Tag_true>
+{
+  template <typename PointRange>
+  void operator()(typename Traits::Matrix&, const PointRange&, const Traits&) { }
+};
+
 } // namespace internal
 } // namespace Optimal_bounding_box
 } // namespace CGAL

@@ -295,7 +295,7 @@ qreal ManipulatedFrame::deltaWithPrevPos(QMouseEvent *const event,
 CGAL_INLINE_FUNCTION
 qreal ManipulatedFrame::wheelDelta(const QWheelEvent *event) const {
   static const qreal WHEEL_SENSITIVITY_COEF = 8E-4;
-  return event->delta() * wheelSensitivity() * WHEEL_SENSITIVITY_COEF;
+  return event->angleDelta().y() * wheelSensitivity() * WHEEL_SENSITIVITY_COEF;
 }
 
 CGAL_INLINE_FUNCTION

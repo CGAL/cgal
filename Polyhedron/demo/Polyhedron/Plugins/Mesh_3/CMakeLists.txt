@@ -34,13 +34,13 @@ else()
   message(STATUS "NOTICE : the DICOM files (.dcm) need VTK libraries to be open and will not be able to.")
 endif()
 
-find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem)
+find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
 if(Boost_FILESYSTEM_FOUND)
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   polyhedron_demo_plugin(io_image_plugin Io_image_plugin Volume_plane_intersection.cpp Raw_image_dialog.cpp ${imgUI_FILES} ${VOLUME_MOC_OUTFILES} KEYWORDS IO Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
   if(TARGET Boost::filesystem)
-    target_link_libraries(io_image_plugin PUBLIC Boost::filesystem)
+    target_link_libraries(io_image_plugin PUBLIC Boost::filesystem Boost::system)
   else()
     target_link_libraries(io_image_plugin PUBLIC ${Boost_LIBRARIES})
   endif()
@@ -54,9 +54,10 @@ target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_su
 
 # Use Eigen
  find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+ include(CGAL_Eigen_support)
 
- if (EIGEN3_FOUND)
-   CGAL_target_use_Eigen(mesh_3_optimization_plugin)
+ if (TARGET CGAL::Eigen_support)
+   target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen_support)
  else() #eigen
    message(STATUS "The Mesh_3_optimization_plugin requires Eigen, which was not found, and will use a deprecated class to replace it. Warnings are to be expected.")
  endif()#eigen
@@ -69,8 +70,8 @@ polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI
 target_link_libraries(c3t3_rib_exporter_plugin PUBLIC scene_c3t3_item)
 
 if(TBB_FOUND)
-  CGAL_target_use_TBB(mesh_3_plugin)
-  CGAL_target_use_TBB(mesh_3_optimization_plugin)
-  CGAL_target_use_TBB(c3t3_io_plugin)
-  CGAL_target_use_TBB(c3t3_rib_exporter_plugin)
+  target_link_libraries(mesh_3_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(c3t3_io_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(c3t3_rib_exporter_plugin PUBLIC CGAL::TBB_support)
 endif()

@@ -134,15 +134,12 @@ namespace Qt {
     } // end case KeyRelease
     case QEvent::Wheel: {
       QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
-      if(wheelEvent->orientation() != ::Qt::Vertical) {
-        return false;
-      }
       double zoom_ratio = 240.0;
       if( (wheelEvent->modifiers() & ::Qt::ShiftModifier)
           || (wheelEvent->modifiers() & ::Qt::ControlModifier) ) {
         zoom_ratio = 120.0;
       }
-      scaleView(v, pow((double)2, -wheelEvent->delta() / zoom_ratio));
+      scaleView(v, pow((double)2, -wheelEvent->angleDelta().y() / zoom_ratio));
 
       //         display_parameters();
       return true;
@@ -311,12 +308,12 @@ namespace Qt {
       boost::format("matrix translation=(%1%, %2%)\n"
                     "       rotation=(%3% - %4% )\n"
                     "                (%5% - %6% )\n")
-      % v->matrix().dx()
-      % v->matrix().dy()
-      % v->matrix().m11()
-      % v->matrix().m12()
-      % v->matrix().m21()
-      % v->matrix().m22();
+      % v->transform().dx()
+      % v->transform().dy()
+      % v->transform().m11()
+      % v->transform().m12()
+      % v->transform().m21()
+      % v->transform().m22();
 
     QRect vp_rect = v->viewport()->rect();
     QPoint vp_top_left = vp_rect.topLeft();

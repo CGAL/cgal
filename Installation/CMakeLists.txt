@@ -20,7 +20,7 @@ if(POLICY CMP0056)
   cmake_policy(SET CMP0056 NEW)
 endif()
 
-# Use GNUInstallDirst to get canonical paths
+# Use GNUInstallDirs to get canonical paths
 include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
@@ -134,10 +134,6 @@ if ( CGAL_BRANCH_BUILD )
   #
   # Create version files
   #
-
-  file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MAJOR_NUMBER" CGAL_MAJOR_VERSION REGEX "[0-9]*")
-  file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
-  file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
 
   file(REMOVE ${CMAKE_BINARY_DIR}/VERSION)
   if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
@@ -386,8 +382,6 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
-message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
-
 if ( RUNNING_CGAL_AUTO_TEST )
   message(STATUS "Operating system:")
   execute_process(COMMAND uname -a
@@ -396,41 +390,6 @@ if ( RUNNING_CGAL_AUTO_TEST )
     ERROR_VARIABLE uname_a)
   message(STATUS "${uname_a}")
   CGAL_display_compiler_version()
-  if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
-    if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
-      if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
-        message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR}
-          EXCLUDE CGAL_Core_LIBRARY
-                  CGAL_CORE_PACKAGE_DIR
-                  WITH_CGAL_Core
-                  CGAL_INSTALLATION_PACKAGE_DIR
-                  CGAL_MAINTENANCE_PACKAGE_DIR
-                  CGAL_PDB_BINARY_DIR
-                  CGAL_PDB_SOURCE_DIR
-                  CGAL_BINARY_DIR
-                  CGAL_SOURCE_DIR)
-#        message("List of cache variables:")
-
-        ## The following lines removes nasty loaded cache values. We do not
-        ## want that the current build tree depends on binaries that were
-        ## build in the reference build tree.
-        get_property(cache_variables DIRECTORY PROPERTY CACHE_VARIABLES)
-        foreach(var ${cache_variables})
-#          get_property(var_value CACHE ${var} PROPERTY VALUE)
-#          get_property(type CACHE ${var} PROPERTY TYPE)
-          string(REGEX MATCH "^CGAL(_.*_(DEPENDS|BINARY_DIR)|_.*LIBRARY)$" var_name_matches ${var})
-          if(var_name_matches)
-            unset(${var} CACHE)
-#          else()
-#            message("${var}:${var_type}=${var_value}")
-          endif()
-        endforeach()
-
-
-      endif()
-    endif()
-  endif()
 endif()
 
 include(CGAL_Common)
@@ -765,11 +724,11 @@ set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DOCDIR}"
   CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_MANDIR}/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
@@ -863,6 +822,8 @@ if(NOT CGAL_HEADER_ONLY)
 else()
   configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
     "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+  configure_file("${CGAL_MODULES_DIR}/CGALConfigVersion_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"  @ONLY)
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -916,12 +877,17 @@ if(NOT CGAL_HEADER_ONLY)
     ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
-  configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
-    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
   install(FILES
-    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
-    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+    ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfigVersion.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  if(NOT CGAL_INSTALL_CMAKE_DIR STREQUAL "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL")
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
+      ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
+    install(FILES
+      ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
+      DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  endif()
 endif()
 
 if(CGAL_INSTALL_MAN_DIR)
@@ -1369,4 +1335,3 @@ if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
-
