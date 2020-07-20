@@ -34,6 +34,9 @@
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/assertions.h>
 
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+#include <CGAL/Union_find.h>
+#endif
 
 namespace CGAL {
 
@@ -762,10 +765,18 @@ public:
   typedef Arr_face<V,H,F>                    Face;
   typedef typename Face::Inner_ccb_iterator  Inner_ccb_iterator;
 
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  typedef CGAL::Union_find<Self*>            Uf;
+  typedef typename Uf::handle                Uf_handle;
+#endif
+
 private:
   Face* p_f;                  // The face the contains the CCB in its interior.
   Inner_ccb_iterator  iter;   // The inner CCB identifier.
   bool iter_is_not_singular;
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  Uf_handle ufh;
+#endif
 
 public:
   /*! Default constructor. */
@@ -814,6 +825,21 @@ public:
     iter = it;
     iter_is_not_singular = true;
   }
+
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  /*! Get the UF handle associated to the inner CCB */
+  Uf_handle uf_handle() const
+  {
+    CGAL_assertion (ufh != Uf_handle());
+    return ufh;
+  }
+
+  /*! Set the UF handle associated to the inner CCB */
+  void set_uf_handle(Uf_handle ufh) const
+  {
+    this->ufh = ufh;
+  }
+#endif
 };
 
 /*! \class

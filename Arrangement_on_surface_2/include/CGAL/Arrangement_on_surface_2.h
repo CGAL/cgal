@@ -46,6 +46,11 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+#include <CGAL/Union_find.h>
+#endif
+
+
 namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
@@ -146,6 +151,11 @@ protected:
   typedef typename DFace::Isolated_vertex_iterator  DIso_vertex_iter;
   typedef typename DFace::Isolated_vertex_const_iterator
                                                     DIso_vertex_const_iter;
+
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  typedef CGAL::Union_find<DInner_ccb*>             Inner_ccb_uf;
+  typedef typename Inner_ccb_uf::handle             Inner_ccb_uf_handle;
+#endif
 
 protected:
   /*! \class
@@ -908,6 +918,9 @@ protected:
   const Traits_adaptor_2* m_geom_traits;   // the geometry-traits adaptor.
   bool                    m_own_traits;    // inidicates whether the geometry
                                            // traits should be freed up.
+#ifndef CGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB
+  Inner_ccb_uf            m_inner_ccb_uf;  // efficient CCB merging
+#endif
 
 public:
   /// \name Constructors.
