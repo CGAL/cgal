@@ -167,7 +167,7 @@ to know in order use \cgal 2D arrangements embedded in curved
 surfaces.  Most of the succeeding material is oblivious to the type of
 the embedding surface. In Section \ref arr_secqueries we show how
 queries on an arrangement can be issued. In Section \ref
-arr_secgl_funcs we review some important free (global) functions that
+arr_secgl_funcs we review some useful free (global) functions that
 operate on arrangements, the most important ones being the free
 insertion-functions.  In Section \ref aos_sec-unbounded we explain how
 to construct and manipulate arrangements of unbounded curves.  Section
@@ -727,7 +727,7 @@ The arrangement member-functions that insert new curves into the
 arrangement, thus enabling the construction of a planar subdivision, are
 rather specialized, as they require a-priori knowledge on the location of
 the inserted curve. Indeed, for most purposes it is more convenient to
-construct an arrangement using the free (global) insertion-functions.
+construct an arrangement using the free insertion-functions.
 
 <!----------------------------------------------------------------------------->
 \subsection arr_sssecmf_insert_cv Inserting Pairwise Disjoint x-Monotone Curves
@@ -1507,7 +1507,7 @@ The `Arrangement_2` class template is used to represent
 two-dimensional subdivisions induced by planar curves. Its interface
 is minimal in the sense that the member functions hardly perform any
 geometric operations. In this section we explain how to utilize the
-free (global) functions that enhance that set of operations on
+free functions that enhance that set of operations on
 arrangements. The implementation of these operations typically require
 non-trivial geometric algorithms, and occasionally incurs additional
 requirements on the traits class.
@@ -4132,7 +4132,7 @@ edge that used to connect the two components.
 <LI>An edge is removed.
 <LI>A hole is deleted from the interior of a face.
 </UL>
-<LI>Notifiers about a change applied by a free (global) function.
+<LI>Notifiers about a change applied by a free function.
 This category consists of a single pair of notifiers, namely
 `before_global_change()` and `after_global_change()`. Neither of
 these functions is invoked by methods of the `Arrangement_2` class.
