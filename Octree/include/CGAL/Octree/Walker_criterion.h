@@ -1,5 +1,16 @@
-#ifndef OCTREE_WALKER_CRITERION_H
-#define OCTREE_WALKER_CRITERION_H
+// Copyright (c) 2007-2020  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
+
+#ifndef CGAL_OCTREE_WALKER_CRITERION_H
+#define CGAL_OCTREE_WALKER_CRITERION_H
 
 #include <iostream>
 #include <boost/range/iterator_range.hpp>
@@ -194,4 +205,4 @@ struct Leaves {
 
 }
 
-#endif //OCTREE_WALKER_CRITERION_H
+#endif //CGAL_OCTREE_WALKER_CRITERION_H

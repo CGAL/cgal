@@ -1,6 +1,16 @@
+// Copyright (c) 2007-2020  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
 
-#ifndef OCTREE_SPLIT_CRITERION_H
-#define OCTREE_SPLIT_CRITERION_H
+#ifndef CGAL_OCTREE_SPLIT_CRITERION_H
+#define CGAL_OCTREE_SPLIT_CRITERION_H
 
 #include <iostream>
 
@@ -91,4 +101,4 @@ struct Stop_at_normal_deviation {
 
 */
 
-#endif //OCTREE_SPLIT_CRITERION_H
+#endif //CGAL_OCTREE_SPLIT_CRITERION_H

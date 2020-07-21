@@ -1,6 +1,16 @@
+// Copyright (c) 2007-2020  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Jackson Campolattaro, Cédric Portaneri, Tong Zhao
 
-#ifndef OCTREE_WALKER_ITERATOR_H
-#define OCTREE_WALKER_ITERATOR_H
+#ifndef CGAL_OCTREE_WALKER_ITERATOR_H
+#define CGAL_OCTREE_WALKER_ITERATOR_H
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -83,4 +93,4 @@ private:
 };
 }
 
-#endif //OCTREE_WALKER_ITERATOR_H
+#endif //CGAL_OCTREE_WALKER_ITERATOR_H
