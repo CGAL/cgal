@@ -448,7 +448,9 @@ public:
     Scene* scene_obj =static_cast<Scene*>(scene);
     connect(scene_obj, &Scene::itemIndexSelected,
             this, &DisplayPropertyPlugin::enableButtons);
+
     on_propertyBox_currentIndexChanged(0);
+
 
   }
 private Q_SLOTS:
@@ -486,8 +488,18 @@ private Q_SLOTS:
         displayScaledJacobian(item);
         break;
     case 2:
-      if(!displayHeatIntensity(item))
+      if(!displayHeatIntensity(item)){
+        QApplication::restoreOverrideCursor();
         return;
+      }
+      item->setRenderingMode(Gouraud);
+      break;
+    case 3:
+      if(!displayThreadIds(item))
+      {
+        QApplication::restoreOverrideCursor();
+        return;
+      }
       item->setRenderingMode(Gouraud);
       break;
     default:  // Heat Method (Intrinsic Delaunay)
@@ -637,6 +649,7 @@ private Q_SLOTS:
     dock_widget->maxBox->setValue(jacobian_max[item].first);
     return true;
   }
+
 
   void displayAngles(Scene_surface_mesh_item* item)
   {
@@ -917,6 +930,49 @@ private Q_SLOTS:
     displayLegend();
     if(dock_widget->sourcePointsButton->isChecked())
       dock_widget->sourcePointsButton->toggle();
+    return true;
+  }
+
+  bool displayThreadIds(Scene_surface_mesh_item* item)
+  {
+    SMesh& smesh = *item->face_graph();
+    bool exists;
+    SMesh::Property_map<vertex_descriptor, int> vtid;
+    boost::tie(vtid, exists) = smesh.property_map<vertex_descriptor, int>("v:thread_id");
+    for(auto v : vertices(smesh))
+    {
+      int id =vtid[v];
+      if(id < minBox)
+        minBox = id;
+      if(id > maxBox)
+        maxBox = id;
+    }
+    if(!exists)
+      return false;
+    //scale a color ramp between min and max
+    float max = maxBox;
+    float min = minBox;
+
+    //fill v:color pmap
+    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+        smesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+    for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(smesh).begin();
+        vit != vertices(smesh).end();
+        ++vit)
+    {
+      if(min == max)
+        --min;
+      float f = (vtid[*vit]-min)/(max-min);
+      if(f<0)
+        f = 0;
+      if(f>1)
+        f = 1;
+      CGAL::Color color(
+            255*color_ramp.r(f),
+            255*color_ramp.g(f),
+            255*color_ramp.b(f));
+      vcolors[*vit] = color;
+    }
     return true;
   }
 
@@ -1327,6 +1383,5 @@ private:
     return (double) (std::max)( min_scaled_jac, -ARBITRARY_DBL_MAX );
 
   }
-
 
 #include "Display_property_plugin.moc"
