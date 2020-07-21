@@ -50,6 +50,10 @@ namespace Surface_mesh_parameterization {
 /// The user can provide four vertices on the border of the mesh, which will be
 /// mapped to the four corners of the square.
 ///
+/// \attention The square border parameterizer may create degenerate faces in the parameterization:
+///            if an input border vertex has valence `1` and if it is mapped to the same edge of the square
+///            as its two adjacent (border) vertices, for example.
+///
 /// Implementation note:
 /// To simplify the implementation, the border parameterizer knows only the
 /// `TriangleMesh` class and does not know the parameterization algorithm
@@ -388,6 +392,10 @@ public:
 /// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
+/// \attention The square border parameterizer may create degenerate faces in the parameterization:
+///            if an input border vertex has valence `1` and if it is mapped to the same edge of the square
+///            as its two adjacent (border) vertices, for example.
+///
 /// \cgalModels `Parameterizer_3`
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
@@ -453,6 +461,10 @@ protected:
 /// Square_border_parameterizer_3 implements most of the border parameterization
 /// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
+///
+/// \attention The square border parameterizer may create degenerate faces in the parameterization:
+///            if an input border vertex has valence `1` and if it is mapped to the same edge of the square
+///            as its two adjacent (border) vertices, for example.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
