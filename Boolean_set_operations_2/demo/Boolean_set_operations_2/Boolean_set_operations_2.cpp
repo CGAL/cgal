@@ -52,6 +52,7 @@
 #include <QDropEvent> 
 #include <QPainter>
 #include <QSlider>
+#include <QGraphicsLineItem>
 #include <QProgressBar>
 #include <QMessageBox>
 #include <QGraphicsPathItem>
@@ -713,7 +714,7 @@ private:
   bool m_yellow_int;
   bool m_magenta_int;
   bool m_aqua_int;
-  // bool m_grid;
+  bool m_grid;
   bool m_pan;
 
   bool m_blue_union;
@@ -759,24 +760,6 @@ private:
   bool minkowksi_sum_operated;
   bool m_disjoint;
 
-  // QGraphicsPathItem* pathItem0;
-  // QGraphicsPathItem* pathItem1;
-  // QGraphicsPathItem* pathItem2;
-  // QGraphicsPathItem* pathItem3;
-  // QGraphicsPathItem* pathItem4;
-  // QGraphicsPathItem* pathItem5;
-  // QGraphicsPathItem* pathItem6;
-  // QGraphicsPathItem* pathItem7;
-
-  // bool pathItem0_exists;
-  // bool pathItem1_exists;
-  // bool pathItem2_exists;
-  // bool pathItem3_exists;
-  // bool pathItem4_exists;
-  // bool pathItem5_exists;
-  // bool pathItem6_exists;
-  // bool pathItem7_exists;
-
   Curve_set_container m_curve_sets;
   //container for curves
   Circular_region_source_container m_blue_circular_sources;
@@ -812,6 +795,9 @@ private:
   Bezier_region_source_container m_result_bezier_sources;
   Bezier_region_source_container m_comp_bezier_sources;
 
+  QGraphicsLineItem *xAxis = new QGraphicsLineItem();
+  QGraphicsLineItem *yAxis = new QGraphicsLineItem();
+
   //typedefs of classes used to draw circular and linear polygon
   CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>* m_linear_input;
   CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>* m_circular_input;
@@ -834,7 +820,7 @@ protected slots:
 public slots:
   void processInput(CGAL::Object o);
   void on_actionNew_triggered();
-  // void on_actionGrid_triggered();
+  void on_actionAxis_triggered();
   void on_actionRecenter_triggered();
   void on_actionComplementH_toggled(bool aChecked);
   void on_actionUnionH_toggled(bool aChecked);
@@ -1274,18 +1260,8 @@ MainWindow::MainWindow() :
   m_visible_aqua(false), //default
   empty_warn(true), // default
   m_disjoint(false), //default
-  m_pan(false)
-  // pathItem0_exists(false),
-  // pathItem1_exists(false),
-  // pathItem2_exists(false),
-  // pathItem3_exists(false),
-  // pathItem4_exists(false),
-  // pathItem5_exists(false),
-  // pathItem6_exists(false),
-  // pathItem7_exists(false)
-  //radiusOffIn->setValidator(new QDoubleValidator(0.0, 100.0, 2,this));
-
-  // setting color rows to setVisible-> False 
+  m_pan(false),
+  m_grid(false)
 {
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
@@ -1311,7 +1287,7 @@ MainWindow::MainWindow() :
   // Setup the m_scene and the view
   //
   m_scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  m_scene.setSceneRect(-100, -100, 100, 100);
+  m_scene.setSceneRect(-320, -210, 640, 420);
   this->graphicsView->setScene(&m_scene);
   this->graphicsView->setMouseTracking(true);
   this->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1576,6 +1552,13 @@ MainWindow::MainWindow() :
   //clear
   this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
   // axis 
+
+  QPen *dashedLine {new QPen(QBrush(Qt::black), 1, Qt::DashLine)};
+  xAxis->setLine(-15500000, 0, 15500000, 0);
+  xAxis->setPen(*dashedLine);
+  yAxis->setLine(0, -10000000, 0, 10000000);
+  yAxis->setPen(*dashedLine);
+
   // m_scene.addLine(0,-10000000,0,10000000, QPen(Qt::black));
   // m_scene.addLine(-15500000,0,15500000,0, QPen(Qt::black));
 
@@ -3496,15 +3479,8 @@ void MainWindow::on_actionNew_triggered()
 {
   for( Curve_set_iterator si = m_curve_sets.begin(); si != m_curve_sets.end() ; ++ si )
     si->clear();
-  
-  // if (pathItem0_exists) m_scene.removeItem(pathItem0);
-  // if (pathItem1_exists) m_scene.removeItem(pathItem1);
-  // if (pathItem2_exists) m_scene.removeItem(pathItem2);
-  // if (pathItem3_exists) m_scene.removeItem(pathItem3);
-  // if (pathItem4_exists) m_scene.removeItem(pathItem4);
-  // if (pathItem5_exists) m_scene.removeItem(pathItem5);
-  // if (pathItem6_exists) m_scene.removeItem(pathItem6);
-  // if (pathItem7_exists) m_scene.removeItem(pathItem7);
+
+  this->graphicsView->setSceneRect(-320, -210, 640, 420);
 
   result_set().clear();
   blue_set().clear();
@@ -3557,8 +3533,8 @@ void MainWindow::on_actionNew_triggered()
   m_disjoint = false;
   // empty_warn = true;
 
-  // m_grid = true;
-  // on_actionGrid_triggered();
+  m_grid = true;
+  on_actionAxis_triggered();
   m_pan = false;
 
   m_linear_input->Reset();
@@ -3591,6 +3567,7 @@ void MainWindow::on_actionNew_triggered()
   actionCopyH->setChecked(false);
   actionMoveH->setChecked(false);
   actionPasteH->setChecked(false);
+  actionAxis->setChecked(false);
 
   actionComplementH -> setChecked(false);
   actionUnionH -> setChecked(false);
@@ -3758,7 +3735,6 @@ void MainWindow::on_actionNew_triggered()
   moveBlack -> setVisible(true);
   pasteBlack -> setVisible(true);
   
-  
   m_visible_brown = false;
   showBrown ->setVisible(false);
   drawBrown -> setVisible(false);
@@ -3842,6 +3818,7 @@ void MainWindow::on_actionNew_triggered()
   line0007 -> setGeometry(QRect(380,0,7,125));
   line0006 -> setGeometry(QRect(70,0,7,125));
 
+  m_scene.update();
   zoomToFit();
   modelChanged();
 }
@@ -3881,15 +3858,6 @@ void MainWindow::on_actionDeleteResult()
     if (true)
     {
 
-    // if (pathItem0_exists) m_scene.removeItem(pathItem0);
-    // if (pathItem1_exists) m_scene.removeItem(pathItem1);
-    // if (pathItem2_exists) m_scene.removeItem(pathItem2);
-    // if (pathItem3_exists) m_scene.removeItem(pathItem3);
-    // if (pathItem4_exists) m_scene.removeItem(pathItem4);
-    // if (pathItem5_exists) m_scene.removeItem(pathItem5);
-    // if (pathItem6_exists) m_scene.removeItem(pathItem6);
-    // if (pathItem7_exists) m_scene.removeItem(pathItem7);
-
     result_set().clear();result_circular_sources().clear();result_bezier_sources().clear();result_linear_sources().clear();
 
       lDone = true;
@@ -3910,7 +3878,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			blue_linear_sources().clear();
 			blue_circular_sources().clear();
 			blue_bezier_sources().clear();
-			//if (pathItem0_exists) m_scene.removeItem(pathItem0);
 		}
 
 		if(clearBlack -> isChecked()) 
@@ -3919,7 +3886,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			black_linear_sources().clear();
 			black_circular_sources().clear();
 			black_bezier_sources().clear();
-			//if (pathItem2_exists) m_scene.removeItem(pathItem2);
 		}
 
 		if(clearRed -> isChecked()) 
@@ -3928,7 +3894,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			red_linear_sources().clear();
 			red_circular_sources().clear();
 			red_bezier_sources().clear();
-			//if (pathItem1_exists) m_scene.removeItem(pathItem1);
 		}
 
 		if(clearBrown -> isChecked()) 
@@ -3937,7 +3902,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			brown_linear_sources().clear();
 			brown_circular_sources().clear();
 			brown_bezier_sources().clear();
-			//if (pathItem3_exists) m_scene.removeItem(pathItem3);
 		}
 
 		if(clearYellow -> isChecked()) 
@@ -3946,7 +3910,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			yellow_linear_sources().clear();
 			yellow_circular_sources().clear();
 			yellow_bezier_sources().clear();
-			//if (pathItem4_exists) m_scene.removeItem(pathItem4);
 		}
 
 		if(clearMagenta -> isChecked()) 
@@ -3955,7 +3918,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			magenta_linear_sources().clear();
 			magenta_circular_sources().clear();
 			magenta_bezier_sources().clear();
-			//if (pathItem5_exists) m_scene.removeItem(pathItem5);
 		}
 
 		if(clearAqua -> isChecked()) 
@@ -3964,7 +3926,6 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 			aqua_linear_sources().clear();
 			aqua_circular_sources().clear();
 			aqua_bezier_sources().clear();
-			//if (pathItem6_exists) m_scene.removeItem(pathItem6);
 		}
 
 		if(!(clearBlue -> isChecked()) && !(clearRed -> isChecked()) && !(clearBlack -> isChecked()) && !(clearBrown -> isChecked()) && !(clearYellow -> isChecked()) && !(clearMagenta -> isChecked()) && !(clearAqua -> isChecked()))
@@ -6355,19 +6316,23 @@ void MainWindow::ToogleView(size_t aGROUP, bool a_check)
   else set(aGROUP).gi()->hide();
 }
 
-// void MainWindow::on_actionGrid_triggered()
-// {
-//   if(!m_grid)
-//   {
-//     this->graphicsView->scene()->setBackgroundBrush(Qt::CrossPattern);
-//     m_grid = true;
-//   }
-//   else
-//   {
-//     this->graphicsView->scene()->setBackgroundBrush(Qt::NoBrush);
-//     m_grid = false;
-//   }
-// }
+void MainWindow::on_actionAxis_triggered()
+{
+  if (!m_grid)
+  {
+    m_scene.addItem(xAxis);
+    m_scene.addItem(yAxis);
+    m_grid = true;
+  }
+  else
+  {
+    m_scene.removeItem(xAxis);
+    m_scene.removeItem(yAxis);
+    m_grid = false;
+  }
+  m_scene.update();
+  modelChanged();
+}
 
 void MainWindow::on_actionPAN_triggered()
 {
@@ -6498,63 +6463,6 @@ void MainWindow::zoomToFit()
       else lTotalRect = lRect;
     }
   }
-
-  // if (pathItem0_exists) 
-  // {
-  //     QRectF lRect = pathItem0->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem1_exists) 
-  // {
-  //     QRectF lRect = pathItem1->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem2_exists) 
-  // {
-  //     QRectF lRect = pathItem2->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem3_exists) 
-  // {
-  //     QRectF lRect = pathItem3->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem4_exists) 
-  // {
-  //     QRectF lRect = pathItem4->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem5_exists) 
-  // {
-  //     QRectF lRect = pathItem5->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem6_exists) 
-  // {
-  //     QRectF lRect = pathItem6->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
-  // if (pathItem7_exists) 
-  // {
-  //     QRectF lRect = pathItem7->boundingRect();
-  //     if (lTotalRect) lTotalRect = *lTotalRect | lRect;
-  //     else lTotalRect = lRect;
-  // }
-
         
   if (lTotalRect) {
     this->graphicsView->setSceneRect(*lTotalRect);

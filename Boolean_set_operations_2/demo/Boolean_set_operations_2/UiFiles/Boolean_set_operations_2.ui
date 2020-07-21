@@ -250,39 +250,6 @@
            <addaction name="actionPAN"/>
           </widget>
         </item>
-        <!-- <item>
-          <widget class="QToolBar" name="OperationsToolBar3">
-           <attribute name="toolBarArea" >
-            <enum>TopToolBarArea</enum>
-           </attribute>
-           <attribute name="toolBarBreak" >
-            <bool>false</bool>
-           </attribute>
-           <addaction name="actionCopy"/>
-          </widget>
-        </item>
-        <item>
-          <widget class="QToolBar" name="OperationsToolBar31">
-           <attribute name="toolBarArea" >
-            <enum>TopToolBarArea</enum>
-           </attribute>
-           <attribute name="toolBarBreak" >
-            <bool>false</bool>
-           </attribute>
-           <addaction name="actionMove"/>
-          </widget>
-        </item>
-        <item>
-          <widget class="QToolBar" name="OperationsToolBar310">
-           <attribute name="toolBarArea" >
-            <enum>TopToolBarArea</enum>
-           </attribute>
-           <attribute name="toolBarBreak" >
-            <bool>false</bool>
-           </attribute>
-           <addaction name="actionPaste"/>
-          </widget>
-        </item> -->
         <item>
           <widget class="QToolBar" name="OperationsToolBar32">
            <attribute name="toolBarArea" >
@@ -294,19 +261,19 @@
            <addaction name="actionDeleteAll"/>
           </widget>
         </item>
-        <!-- <item>
-          <widget class="QToolBar" name="OperationsToolBar21">
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar33">
            <attribute name="toolBarArea" >
             <enum>TopToolBarArea</enum>
            </attribute>
            <attribute name="toolBarBreak" >
             <bool>false</bool>
            </attribute>
-           <addaction name="actionGrid"/>
+           <addaction name="actionAxis"/>
           </widget>
-        </item> -->
+        </item>
         <item>
-          <widget class="QToolBar" name="OperationsToolBar33">
+          <widget class="QToolBar" name="OperationsToolBar34">
            <attribute name="toolBarArea" >
             <enum>TopToolBarArea</enum>
            </attribute>
@@ -2916,51 +2883,6 @@
     <string>Ctrl+L</string>
    </property>
   </action>
-  <!-- <action name="actionCopy">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/copy.png</normaloff>:/cgal/icons/resources/copy.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Copy</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+C</string>
-   </property>
-  </action>
-  <action name="actionMove">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/move.png</normaloff>:/cgal/icons/resources/move.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Cut</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+M</string>
-   </property>
-  </action>
-  <action name="actionPaste">
-   <property name="checkable" >
-    <bool>true</bool>
-   </property> 
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/paste.png</normaloff>:/cgal/icons/resources/paste.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Paste</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+P</string>
-   </property>
-  </action> -->
   <action name="actionRecenter">
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
@@ -3147,18 +3069,21 @@
     <string>Delete all Buckets</string>
    </property>
   </action>
-  <!-- <action name="actionGrid" >
+  <action name="actionAxis" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>  
    <property name="icon" >
     <iconset resource="boolean_operations_2.qrc" >
-     <normaloff>:/cgal/icons/resources/demo_snapgrid.xpm</normaloff>:/cgal/icons/resources/demo_snapgrid.xpm</iconset>
+     <normaloff>:/cgal/icons/resources/axis.png</normaloff>:/cgal/icons/resources/axis.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Grid</string>
+    <string>&amp;Axis</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+G</string>
+    <string>Ctrl+Shift+A</string>
    </property>
-  </action> -->
+  </action>
   <action name="actionNew" >
    <property name="icon" >
     <iconset resource="boolean_operations_2.qrc" >
