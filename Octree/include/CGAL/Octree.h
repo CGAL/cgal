@@ -306,7 +306,7 @@ public:
   const Node &locate(const Point &p) const {
 
     // Make sure the point is enclosed by the octree
-    assert(do_intersect(p, bbox(m_root)));
+    assert(CGAL::do_intersect(p, bbox(m_root)));
 
     // Start at the root node
     auto *node_for_point = &m_root;

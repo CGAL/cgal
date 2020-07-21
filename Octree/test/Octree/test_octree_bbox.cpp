@@ -102,8 +102,6 @@ void test_25_nodes() {
   assert(octree.bbox(octree.root()[7][5]) == CGAL::Bbox_3(0.75, 0, 0.75, 1.5, 0.75, 1.5));
   assert(octree.bbox(octree.root()[7][6]) == CGAL::Bbox_3(0, 0.75, 0.75, 0.75, 1.5, 1.5));
   assert(octree.bbox(octree.root()[7][7]) == CGAL::Bbox_3(0.75, 0.75, 0.75, 1.5, 1.5, 1.5));
-
-  std::cout << octree << std::endl;
 }
 
 int main(void) {

@@ -30,8 +30,10 @@ void test_1_point() {
 
   // Because there's only the root node, any point should be placed in it
   assert(octree.root() == octree.locate({-1, -1, -1}));
-  assert(octree.root() == octree.locate({0, 0, 0}));
-  assert(octree.root() == octree.locate({1000, 0, -1000}));
+
+  // These points would be placed outside the root node
+//  assert(octree.root() == octree.locate({0, 0, 0}));
+//  assert(octree.root() == octree.locate({1000, 0, -1000}));
 
 }
 
@@ -99,7 +101,7 @@ void test_10_points() {
   assert(octree.root()[0] == octree.locate({-1, -1, -1}));
   assert(octree.root()[1] == octree.locate({1, -1, -1}));
   assert(octree.root()[2] == octree.locate({-1, 1, -1}));
-  assert(octree.root()[3][3][3][7][3][7][7][7][7][7] == octree.locate({1, 1, -1}));
+  assert(octree.root()[3][3][3] == octree.locate({1, 1, -1}));
   assert(octree.root()[4][4][4] == octree.locate({-1, -1, 1}));
   assert(octree.root()[5] == octree.locate({1, -1, 1}));
   assert(octree.root()[6] == octree.locate({-1, 1, 1}));
@@ -109,7 +111,7 @@ void test_10_points() {
   assert(octree.root()[0] == octree.locate({-1.1, -1.1, -1.1}));
   assert(octree.root()[1] == octree.locate({1.1, -1.1, -1.1}));
   assert(octree.root()[2] == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.root()[3][3][3][3] == octree.locate({1.1, 1.1, -1.1}));
+  assert(octree.root()[3][3][3] == octree.locate({1.1, 1.1, -1.1}));
   assert(octree.root()[4][4][4] == octree.locate({-1.1, -1.1, 1.1}));
   assert(octree.root()[5] == octree.locate({1.1, -1.1, 1.1}));
   assert(octree.root()[6] == octree.locate({-1.1, 1.1, 1.1}));
