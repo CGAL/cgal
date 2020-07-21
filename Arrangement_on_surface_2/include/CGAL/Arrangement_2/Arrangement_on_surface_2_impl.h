@@ -285,16 +285,13 @@ insert_in_face_interior(const Point_2& p, Face_handle f)
 #endif
 
   // Obtain the boundary conditions:
-  const Arr_parameter_space ps_x =
-    m_geom_traits->parameter_space_in_x_2_object()(p);
-  const Arr_parameter_space ps_y =
-    m_geom_traits->parameter_space_in_y_2_object()(p);
+  auto ps_x = m_geom_traits->parameter_space_in_x_2_object()(p);
+  auto ps_y = m_geom_traits->parameter_space_in_y_2_object()(p);
 
   // Create a new vertex associated with the given point.
   // The point is either the interior of the parameter space or on the boundary.
-  DVertex* v(NULL);
-  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
-    v = _create_vertex(p);
+  DVertex* v(nullptr);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) v = _create_vertex(p);
   else {
     v = _create_boundary_vertex(p, ps_x, ps_y);
 
@@ -451,10 +448,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   // Check if cv's right end has boundary conditions. If not, create a vertex
   // that corresponds to the right endpoint.
-  const Arr_parameter_space  ps_x2 =
-    m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
-  const Arr_parameter_space  ps_y2 =
-    m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
+  auto ps_x2 = m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+  auto ps_y2 = m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
   DVertex* v2 = nullptr;
   DHalfedge* fict_prev2 = nullptr;
 
@@ -2110,7 +2105,7 @@ _create_vertex(const Point_2& p)
   v->set_boundary(ARR_INTERIOR, ARR_INTERIOR);
 
   // Notify the observers that we have just created a new vertex.
-  Vertex_handle   vh(v);
+  Vertex_handle vh(v);
   _notify_after_create_vertex(vh);
 
   return v;
@@ -2957,7 +2952,7 @@ _insert_at_vertices(DHalfedge* he_to,
     bool   is_hole;
 
     if (ic1 != nullptr) {
-      // In this case (3.3) we have two distinguish two sub-cases.
+      // In this case (3.3) we have too distinguish two sub-cases.
       if (is_split_face_contained) {
         // Comment: This is true for all non-identification topologies
 
@@ -3362,12 +3357,10 @@ _split_edge(DHalfedge* e, const Point_2& p,
 {
   // Allocate a new vertex and associate it with the split point.
   // Obtain the boundary conditions:
-  const Arr_parameter_space ps_x =
-    m_geom_traits->parameter_space_in_x_2_object()(p);
-  const Arr_parameter_space ps_y =
-    m_geom_traits->parameter_space_in_y_2_object()(p);
+  auto ps_x = m_geom_traits->parameter_space_in_x_2_object()(p);
+  auto ps_y = m_geom_traits->parameter_space_in_y_2_object()(p);
 
-  DVertex* v(NULL);
+  DVertex* v(nullptr);
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) v = _create_vertex(p);
   else {
     v = _create_boundary_vertex(p, ps_x, ps_y);
@@ -3554,10 +3547,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   // one. Note that we do this carefully, keeping track of the number of
   // times we crossed the identification curve in x or in y (if they exist).
   // Note that the path must not be incident to any vertex on open boundary.
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-    m_geom_traits->parameter_space_in_y_2_object();
+  auto parameter_space_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto parameter_space_in_y = m_geom_traits->parameter_space_in_y_2_object();
 
   // TODO 2012-09-20 check "correction" here too (as in "other" function of this kind
   int x_index = 0;
@@ -4069,10 +4060,8 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
 {
   // std::cout << "_defines_outer_ccb_of_new_face" << std::endl;
   // Search for the leftmost vertex among the local minima
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-    m_geom_traits->parameter_space_in_y_2_object();
+  auto parameter_space_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto parameter_space_in_y = m_geom_traits->parameter_space_in_y_2_object();
 
   // check all reported local minima
   InputIterator lm_it = lm_begin;
