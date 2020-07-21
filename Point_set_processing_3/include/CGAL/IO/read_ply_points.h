@@ -202,6 +202,8 @@ bool read_PLY_with_properties(std::istream& is,
 
    Potential additional point properties and faces are ignored.
 
+   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
@@ -230,8 +232,6 @@ bool read_PLY_with_properties(std::istream& is,
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
    \cgalNamedParamsEnd
-
-   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 
    \returns `true` if reading was successful, `false` otherwise.
 

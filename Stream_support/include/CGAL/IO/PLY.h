@@ -274,6 +274,8 @@ bool read_PLY(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
+ * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
@@ -299,8 +301,6 @@ bool read_PLY(std::istream& is,
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
@@ -434,6 +434,8 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *
  * writes the content of `points` and `polygons` in `out`, using the \ref IOStreamPLY.
  *
+ * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
@@ -453,8 +455,6 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *     \cgalParamDefault{`6`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */

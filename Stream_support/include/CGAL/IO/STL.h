@@ -45,6 +45,8 @@ namespace CGAL {
  *
  * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
  *
+ * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+ *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
  *                      whose value_type is itself a model of the concept `SequenceContainer`
@@ -190,6 +192,12 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
@@ -203,8 +211,19 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool read_STL(const char* fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
 {
-  std::ifstream in(fname);
-  return read_STL(in, points, facets, np);
+  const bool binary = parameters::choose_parameter(parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ifstream is(fname, std::ios::binary);
+    CGAL::set_mode(is, CGAL::IO::BINARY);
+    return read_STL(is, points, facets, np);
+  }
+  else
+  {
+    std::ifstream is(fname);
+    CGAL::set_mode(is, CGAL::IO::ASCII);
+    return read_STL(is, points, facets, np);
+  }
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -240,6 +259,8 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
  * writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
+ *
+ * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
@@ -367,6 +388,12 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{use_binary_mode}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
@@ -386,8 +413,19 @@ bool write_STL(const char* fname,
 #endif
                )
 {
-  std::ofstream os(fname);
-  return write_STL(os, points, facets, np);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ofstream os(fname, std::ios::binary);
+    CGAL::set_mode(os, CGAL::IO::BINARY);
+    return write_STL(os, points, facets, np);
+  }
+  else
+  {
+    std::ofstream os(fname);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_STL(os, points, facets, np);
+  }
 }
 
 /// \cond SKIP_IN_MANUAL

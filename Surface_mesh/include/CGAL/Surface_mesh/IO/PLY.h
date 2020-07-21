@@ -714,6 +714,8 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
 /// \ingroup PkgSurfaceMeshIOFuncPLY
 ///
+/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+///
 /// \brief extracts the surface mesh from an input stream in the \ref IOStreamPLY
 ///        and appends it to the surface mesh `sm`.
 ///
@@ -745,8 +747,6 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 ///
 /// \pre The data in the stream must represent a two-manifold. If this is not the case
 ///      the `failbit` of `is` is set and the mesh cleared.
-///
-/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 ///
 /// \returns `true` if reading was successful, `false` otherwise.
 ///
@@ -883,6 +883,8 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 /// simple types are inserted in the stream. The halfedges follow
 /// the same behavior.
 ///
+/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.
 ///               In typical use cases it will be a 2D or 3D point type.
@@ -900,8 +902,6 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 ///     \cgalParamDefault{`6`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
-///
-/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 ///
 /// \returns `true` if writing was successful, `false` otherwise.
 template <typename P,

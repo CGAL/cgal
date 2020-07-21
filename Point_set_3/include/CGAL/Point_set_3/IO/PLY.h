@@ -238,14 +238,14 @@ public:
   header. Each line starting by "comment " in the header is
   appended to the `comments` string (without the "comment " word).
 
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
   \param is the input stream
   \param point_set the point set
   \param comments optional PLY comments.
-
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
 
   \return `true` if the reading was successful, `false` otherwise.
  */

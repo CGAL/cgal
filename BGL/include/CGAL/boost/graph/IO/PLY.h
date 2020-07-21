@@ -83,7 +83,7 @@ bool read_PLY_BGL(std::istream& is,
 
   \brief reads the graph `g` from the input stream, using the \ref IOStreamPLY.
 
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -281,6 +281,8 @@ bool read_PLY(const std::string& fname, Graph& g,
 
  \brief writes the graph in an output stream, using the \ref IOStreamPLY.
 
+ \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -326,8 +328,6 @@ bool read_PLY(const std::string& fname, Graph& g,
       \cgalParamDefault{`6`}
     \cgalParamNEnd
  \cgalNamedParamsEnd
-
- \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
  \returns `true` if writing was successful, `false` otherwise.
 */

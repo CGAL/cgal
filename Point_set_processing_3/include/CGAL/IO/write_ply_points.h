@@ -143,7 +143,9 @@ template <typename PointRange,
 
    \brief saves the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
-    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
+   %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
+
+   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -178,8 +180,6 @@ template <typename PointRange,
        \cgalParamDefault{`6`}
      \cgalParamNEnd
    \cgalNamedParamsEnd
-
-   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
    \returns `true` if writing was successful, `false` otherwise.
 

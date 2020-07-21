@@ -70,6 +70,8 @@ public:
 
   \brief reads the graph `g` from the input stream, using the \ref IOStreamSTL.
 
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+
   \attention The graph `g` is not cleared, and the data from the stream is added.
 
   \tparam Graph a model of `MutableFaceGraph`
@@ -129,6 +131,12 @@ bool read_STL(std::istream& is,
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
+    \cgalParamNBegin{use_binary_mode}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+    \cgalParamNEnd
+
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
       \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
@@ -154,8 +162,19 @@ bool read_STL(std::istream& is,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ifstream is(fname);
-  return read_STL(is, g, np);
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  if(binary)
+  {
+    std::ifstream is(fname, std::ios::binary);
+    CGAL::set_mode(is, CGAL::IO::BINARY);
+    return read_STL(is, g, np);
+  }
+  else
+  {
+    std::ifstream is(fname);
+    CGAL::set_mode(is, CGAL::IO::ASCII);
+    return read_STL(is, g, np);
+  }
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -183,6 +202,8 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
   \ingroup PkgBGLIoFuncsSTL
 
   \brief writes the graph `g` in the output stream `os`, using the \ref IOStreamSTL.
+
+  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -331,12 +352,19 @@ bool write_STL(std::ostream& os,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname);
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
+  {
+    std::ofstream os(fname, std::ios::binary);
     CGAL::set_mode(os, CGAL::IO::BINARY);
-
-  return write_STL(os, g, np);
+    return write_STL(os, g, np);
+  }
+  else
+  {
+    std::ofstream os(fname);
+    CGAL::set_mode(os, CGAL::IO::ASCII);
+    return write_STL(os, g, np);
+  }
 }
 
 /// \cond SKIP_IN_MANUAL

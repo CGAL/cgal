@@ -186,8 +186,9 @@ bool read_OBJ(const char* fname,
 #endif
               )
 {
-  std::ifstream in(fname);
-  return read_OBJ(in, g, np);
+  std::ifstream is(fname);
+  CGAL::set_mode(is, CGAL::IO::ASCII);
+  return read_OBJ(is, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -315,6 +316,7 @@ bool write_OBJ(const char* fname,
                )
 {
   std::ofstream os(fname);
+  CGAL::set_mode(os, CGAL::IO::ASCII);
   return write_OBJ(os, g, np);
 }
 

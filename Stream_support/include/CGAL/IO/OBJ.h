@@ -275,6 +275,7 @@ bool read_OBJ(const char* fname,
               )
 {
   std::ifstream in(fname);
+  CGAL::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(in, points, polygons, np);
 }
 
@@ -401,8 +402,9 @@ bool write_OBJ(const char* fname,
 #endif
                )
 {
-  std::ofstream out(fname);
-  return write_OBJ(out, points, polygons, np);
+  std::ofstream os(fname);
+  CGAL::set_mode(os, CGAL::IO::ASCII);
+  return write_OBJ(os, points, polygons, np);
 }
 
 /// \cond SKIP_IN_MANUAL
