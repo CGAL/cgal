@@ -632,7 +632,7 @@ public:
                                 const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2)
   {
-    DHalfedge* he = p_arr->_split_edge (p_arr->_halfedge(e), p, cv1, cv2);
+    DHalfedge* he = p_arr->_split_edge(p_arr->_halfedge(e), p, cv1, cv2);
 
     CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));
