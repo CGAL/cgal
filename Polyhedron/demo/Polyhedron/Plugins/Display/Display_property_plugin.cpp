@@ -20,6 +20,7 @@
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
+#include "Color_map.h"
 #include <boost/unordered_map.hpp>
 #include "ui_Display_property.h"
 #include "id_printing.h"
@@ -28,10 +29,11 @@
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Dynamic_property_map.h>
+#include <type_traits>
+#include <unordered_map>
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
-
 
 //Item for heat values
 typedef CGAL::Three::Triangle_container Tri;
@@ -396,6 +398,12 @@ public:
     dock_widget->maxColorButton->setPalette(palette);
     dock_widget->maxColorButton->setStyle(QStyleFactory::create("Fusion"));
     dock_widget->maxColorButton->update();
+
+    palette = QPalette(Qt::green);
+    dock_widget->initColorButton->setPalette(palette);
+    dock_widget->initColorButton->setStyle(QStyleFactory::create("Fusion"));
+    dock_widget->initColorButton->update();
+
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
 
@@ -438,6 +446,23 @@ public:
       replaceRamp();
     });
 
+    connect(dock_widget->initColorButton, &QPushButton::pressed,
+            this, [this]()
+    {
+      QColor initColor = QColorDialog::getColor();
+      if (!initColor.isValid())
+      {
+        return;
+      }
+
+      QPalette palette(initColor);
+      rI = initColor.redF();
+      gI = initColor.greenF();
+      bI = initColor.blueF();
+      dock_widget->initColorButton->setPalette(palette);
+      dock_widget->initColorButton->update();
+    });
+
     connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
             this, SLOT(on_sourcePointsButton_toggled(bool)));
     connect(dock_widget->deleteButton, &QPushButton::clicked,
@@ -446,19 +471,44 @@ public:
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
-    connect(scene_obj, &Scene::itemIndexSelected,
-            this, &DisplayPropertyPlugin::enableButtons);
+    connect(scene_obj, SIGNAL(itemIndexSelected(int)),
+            this,SLOT(enableButtons(int)));
+    connect(scene_obj, SIGNAL(itemIndexSelected(int)),
+            this,SLOT(detectScalarProperties(int)));
 
     on_propertyBox_currentIndexChanged(0);
 
 
   }
 private Q_SLOTS:
+  void detectScalarProperties(int i)
+  {
+    //keep first 4 items as they are hardcoded.
+    for(int i = dock_widget->propertyBox->count(); i>=4; --i)
+      dock_widget->propertyBox->removeItem(i);
+
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+    if(!item)
+      return;
+    std::vector<std::string> vprop = item->face_graph()->properties<vertex_descriptor>();
+    std::vector<std::string> fprop = item->face_graph()->properties<face_descriptor>();
+    for(auto s : vprop)
+      if(is_property_scalar<vertex_descriptor>(s, item->face_graph()))
+      {
+        dock_widget->propertyBox->addItem(s.c_str());
+      }
+    for(auto s : fprop)
+      if(is_property_scalar<face_descriptor>(s, item->face_graph()))
+      {
+        dock_widget->propertyBox->addItem(s.c_str());
+      }
+  }
+
   void openDialog()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else{
-      replaceRamp();
       dock_widget->show();
       dock_widget->raise(); }
   }
@@ -476,8 +526,6 @@ private Q_SLOTS:
       item = h_item->getParent();
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    replaceRamp();
     item->face_graph()->collect_garbage();
 
     switch(dock_widget->propertyBox->currentIndex()){
@@ -488,24 +536,38 @@ private Q_SLOTS:
         displayScaledJacobian(item);
         break;
     case 2:
+      dock_widget->colorChoiceWidget->setCurrentIndex(0);
       if(!displayHeatIntensity(item)){
         QApplication::restoreOverrideCursor();
         return;
       }
       item->setRenderingMode(Gouraud);
       break;
-    case 3:
-      if(!displayThreadIds(item))
-      {
-        QApplication::restoreOverrideCursor();
-        return;
-      }
-      item->setRenderingMode(Gouraud);
-      break;
-    default:  // Heat Method (Intrinsic Delaunay)
+    case 3:// Heat Method (Intrinsic Delaunay)
+      dock_widget->colorChoiceWidget->setCurrentIndex(0);
       if(!displayHeatIntensity(item, true))
         return;
       item->setRenderingMode(Gouraud);
+      break;
+    default:
+      if(dock_widget->propertyBox->currentText().contains("v:"))
+      {
+        if(!treat_vertex_property(dock_widget->propertyBox->currentText().toStdString(), item->face_graph()))
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+        item->setRenderingMode(Gouraud);
+      }
+      else if(dock_widget->propertyBox->currentText().contains("f:"))
+      {
+        if(!treat_face_property(dock_widget->propertyBox->currentText().toStdString(), item->face_graph()))
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+        item->setRenderingMode(Flat);
+      }
       break;
     }
 
@@ -513,11 +575,11 @@ private Q_SLOTS:
             this, [item](){
       bool does_exist;
       SMesh::Property_map<face_descriptor, double> pmap;
-      boost::tie(pmap, does_exist) =
+      std::tie(pmap, does_exist) =
           item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
       if(does_exist)
         item->face_graph()->remove_property_map(pmap);
-      boost::tie(pmap, does_exist) =
+      std::tie(pmap, does_exist) =
           item->face_graph()->property_map<face_descriptor,double>("f:angle");
       if(does_exist)
         item->face_graph()->remove_property_map(pmap);
@@ -530,10 +592,10 @@ private Q_SLOTS:
       dock_widget->zoomToMaxButton->setEnabled(true);}
   }
 
-  void enableButtons()
+  void enableButtons(int i)
   {
     Scene_surface_mesh_item* item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
     if(! item )
     {
       dock_widget->zoomToMinButton->setEnabled(false);
@@ -564,13 +626,13 @@ private Q_SLOTS:
     SMesh& smesh = *item->face_graph();
     SMesh::Property_map<face_descriptor, double> jacobians;
     bool found;
-    boost::tie(jacobians, found) = smesh.property_map<face_descriptor,double>("f:jacobian");
+    std::tie(jacobians, found) = smesh.property_map<face_descriptor,double>("f:jacobian");
     if(found)
     {
       smesh.remove_property_map(jacobians);
     }
     SMesh::Property_map<face_descriptor, double> angles;
-    boost::tie(angles, found) = smesh.property_map<face_descriptor,double>("f:angle");
+    std::tie(angles, found) = smesh.property_map<face_descriptor,double>("f:angle");
     if(found)
     {
       smesh.remove_property_map(angles);
@@ -584,7 +646,7 @@ private Q_SLOTS:
     //compute and store the jacobian per face
     bool non_init;
     SMesh::Property_map<face_descriptor, double> fjacobian;
-    boost::tie(fjacobian, non_init) = smesh.add_property_map<face_descriptor, double>("f:jacobian", 0);
+    std::tie(fjacobian, non_init) = smesh.add_property_map<face_descriptor, double>("f:jacobian", 0);
     if(non_init)
     {
       double res_min = ARBITRARY_DBL_MAX,
@@ -613,29 +675,7 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::itemChanged,
               this, &DisplayPropertyPlugin::resetProperty);
     }
-    //scale a color ramp between min and max
-    double max = maxBox;
-    double min = minBox;
-    //fill f:color pmap
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-        smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-    for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-        fit != faces(smesh).end();
-        ++fit)
-    {
-      if(min == max)
-        --min;
-      double f = (fjacobian[*fit]-min)/(max-min);
-      if(f<min)
-        f = min;
-      if(f>max)
-        f = max;
-      CGAL::Color color(
-            255*color_ramp.r(f),
-            255*color_ramp.g(f),
-            255*color_ramp.b(f));
-      fcolors[*fit] = color;
-    }
+    treat_face_property("f:jacobian", item->face_graph());
   }
 
   bool resetScaledJacobian(Scene_surface_mesh_item* item)
@@ -659,7 +699,7 @@ private Q_SLOTS:
     //compute and store smallest angle per face
     bool non_init;
     SMesh::Property_map<face_descriptor, double> fangle;
-    boost::tie(fangle, non_init) = smesh.add_property_map<face_descriptor, double>("f:angle", 0);
+    std::tie(fangle, non_init) = smesh.add_property_map<face_descriptor, double>("f:angle", 0);
     if(non_init)
     {
       double res_min = ARBITRARY_DBL_MAX,
@@ -751,31 +791,7 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::itemChanged,
               this, &DisplayPropertyPlugin::resetProperty);
     }
-    //scale a color ramp between min and max
-
-    float max = maxBox;
-    float min = minBox;
-
-    //fill f:color pmap
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-        smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-    for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-        fit != faces(smesh).end();
-        ++fit)
-    {
-      if(min == max)
-        --min;
-      float f = (fangle[*fit]-min)/(max-min);
-      if(f<0)
-        f = 0;
-      if(f>1)
-        f = 1;
-      CGAL::Color color(
-            255*color_ramp.r(f),
-            255*color_ramp.g(f),
-            255*color_ramp.b(f));
-      fcolors[*fit] = color;
-    }
+    treat_face_property("f:angle", item->face_graph());
   }
 
   bool resetAngles(Scene_surface_mesh_item* item)
@@ -823,6 +839,8 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
               [this,item](){
                 auto it =  mesh_heat_method_map.find(item);
+                if(it == mesh_heat_method_map.end())
+                  return;
                 delete it->second;
                 mesh_heat_method_map.erase(it);
               }
@@ -881,7 +899,7 @@ private Q_SLOTS:
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     dock_widget->minBox->setValue(min);
     dock_widget->maxBox->setValue(max);
-
+    displayLegend();
     //}
     SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
         mesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
@@ -933,59 +951,20 @@ private Q_SLOTS:
     return true;
   }
 
-  bool displayThreadIds(Scene_surface_mesh_item* item)
-  {
-    SMesh& smesh = *item->face_graph();
-    bool exists;
-    SMesh::Property_map<vertex_descriptor, int> vtid;
-    boost::tie(vtid, exists) = smesh.property_map<vertex_descriptor, int>("v:thread_id");
-    for(auto v : vertices(smesh))
-    {
-      int id =vtid[v];
-      if(id < minBox)
-        minBox = id;
-      if(id > maxBox)
-        maxBox = id;
-    }
-    if(!exists)
-      return false;
-    //scale a color ramp between min and max
-    float max = maxBox;
-    float min = minBox;
-
-    //fill v:color pmap
-    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-        smesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
-    for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(smesh).begin();
-        vit != vertices(smesh).end();
-        ++vit)
-    {
-      if(min == max)
-        --min;
-      float f = (vtid[*vit]-min)/(max-min);
-      if(f<0)
-        f = 0;
-      if(f>1)
-        f = 1;
-      CGAL::Color color(
-            255*color_ramp.r(f),
-            255*color_ramp.g(f),
-            255*color_ramp.b(f));
-      vcolors[*vit] = color;
-    }
-    return true;
-  }
-
   void replaceRamp()
   {
-    color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
-    displayLegend();
-    minBox = dock_widget->minBox->value();
-    maxBox = dock_widget->maxBox->value();
+    if(dock_widget->colorChoiceWidget->currentIndex() == 0)
+    {
+      color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
+      displayLegend();
+      minBox = dock_widget->minBox->value();
+      maxBox = dock_widget->maxBox->value();
+    }
   }
 
   void on_propertyBox_currentIndexChanged(int)
   {
+    dock_widget->sourcePointsButton->setEnabled(false);
     switch(dock_widget->propertyBox->currentIndex())
     {
     case 0:
@@ -993,12 +972,9 @@ private Q_SLOTS:
       dock_widget->groupBox->  setEnabled(true);
       dock_widget->groupBox_3->setEnabled(true);
 
-      dock_widget->sourcePointsButton->setEnabled(false);
-
       dock_widget->minBox->setMinimum(0);
       dock_widget->minBox->setMaximum(360);
       dock_widget->minBox->setValue(0);
-
       dock_widget->maxBox->setMinimum(0);
       dock_widget->maxBox->setMaximum(360);
       Scene_surface_mesh_item* item =
@@ -1009,12 +985,12 @@ private Q_SLOTS:
         dock_widget->maxBox->setValue(60);
       else if(is_quad_mesh(*item->face_graph()))
         dock_widget->maxBox->setValue(90);
+      replaceRamp();
       break;
     }
     case 1:
       dock_widget->groupBox->  setEnabled(true);
       dock_widget->groupBox_3->setEnabled(true);
-      dock_widget->sourcePointsButton->setEnabled(false);
 
       dock_widget->minBox->setMinimum(-1000);
       dock_widget->minBox->setMaximum(1000);
@@ -1024,16 +1000,18 @@ private Q_SLOTS:
       dock_widget->maxBox->setMaximum(1000);
       dock_widget->maxBox->setValue(2);
       break;
+    case 2:
+    case 3:
+      dock_widget->sourcePointsButton->setEnabled(true);
     default:
-      dock_widget->maxBox->setMinimum(0);
+      dock_widget->maxBox->setMinimum(-99999999);
       dock_widget->maxBox->setMaximum(99999999);
+      dock_widget->minBox->setMinimum(-99999999);
+      dock_widget->minBox->setMaximum(99999999);
       dock_widget->groupBox->  setEnabled(false);
       dock_widget->groupBox_3->setEnabled(false);
-      dock_widget->sourcePointsButton->setEnabled(true);
-
     }
-    replaceRamp();
-    enableButtons();
+    enableButtons(scene->mainSelectionIndex());
   }
 
   void closure()Q_DECL_OVERRIDE
@@ -1109,6 +1087,8 @@ private Q_SLOTS:
 
   void delete_group()
   {
+    if(scene->selectionIndices().empty())
+      return;
     Scene_item* item = scene->item(scene->selectionIndices().first());
     Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
     if(!group || !group->property("heat_group").toBool())
@@ -1116,6 +1096,18 @@ private Q_SLOTS:
     for(auto child_id : group->getChildren())
     {
       if(Scene_surface_mesh_item* child = qobject_cast<Scene_surface_mesh_item*>(scene->item(child_id))){
+        auto it =  mesh_heat_method_map.find(child);
+        if(it != mesh_heat_method_map.end())
+          mesh_heat_method_map.erase(it);
+
+        auto it2 =  mesh_heat_item_map.find(child);
+        if(it2 != mesh_heat_item_map.end())
+          mesh_heat_item_map.erase(it2);
+
+        auto it3 =  mesh_heat_method_idt_map.find(child);
+        if(it3 != mesh_heat_method_idt_map.end())
+          mesh_heat_method_idt_map.erase(it3);
+
         group->unlockChild(child);
          group->removeChild(child);
          scene->addChild(child);
@@ -1125,6 +1117,7 @@ private Q_SLOTS:
       }
     }
     scene->erase(scene->item_id(group));
+    source_points = nullptr;
 
   }
 
@@ -1237,9 +1230,66 @@ private Q_SLOTS:
    source_points->itemChanged();
   }
 private:
+  template<typename PM>
+  bool displayVertexProperty(SMesh& smesh, PM pm);
+  template<typename PM>
+  bool displayFaceProperty(SMesh& smesh, PM pm);
+  bool treat_vertex_property(std::string name, SMesh* sm);
+  bool treat_face_property(std::string name, SMesh* sm);
+  template<typename Simplex>
+  bool is_property_scalar(std::string name, const SMesh* sm);
+  template<typename Value_type>
+  void displayMapLegend(const std::vector<Value_type>& values)
+  {
+    // Create a legend_ and display it
+    const std::size_t size = (std::min)(color_map.size(), (std::size_t)256);
+    const int text_height = 20;
+    const int height = text_height*size + text_height;
+    const int width = 90;
+    const int cell_width = width/3;
+    const int top_margin = 15;
+    const int left_margin = 5;
+    const int drawing_height = height - text_height + top_margin;
+
+    legend_ = QPixmap(width, height );
+    legend_.fill(QColor(200, 200, 200));
+
+    QPainter painter(&legend_);
+    painter.setPen(Qt::black);
+    painter.setBrush(QColor(200, 200, 200));
+
+    int j = 0;
+    int tick_height = text_height;
+    for (std::size_t i = 0; i< size; ++i, j+=tick_height)
+    {
+      QColor color(color_map[i].red(),
+                   color_map[i].green(),
+                   color_map[i].blue());
+      painter.fillRect(left_margin,
+                       drawing_height - top_margin - j,
+                       cell_width,
+                       tick_height,
+                       color);
+      QRect text_rect(left_margin + cell_width+10, drawing_height - top_margin - j,
+                          50, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, tr("%1").arg(values[i], 0, 'f', 3, QLatin1Char(' ')));
+    }
+    if(color_map.size() > size){
+      QRect text_rect(left_margin + cell_width+10, 0,
+                          50, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, tr("[...]"));
+    }
+    // draw right vertical line
+    painter.setPen(Qt::blue);
+
+    painter.drawLine(QPoint(left_margin + cell_width+10, drawing_height - top_margin +tick_height),
+                     QPoint(left_margin + cell_width+10,
+                            drawing_height - top_margin  - static_cast<int>(size)*tick_height+tick_height));
+    dock_widget->legendLabel->setPixmap(legend_);
+  }
   void displayLegend()
   {
-    // Create an legend_ and display it
+    // Create a legend_ and display it
     const int height = 256;
     const int width = 90;
     const int cell_width = width/3;
@@ -1255,14 +1305,13 @@ private:
     painter.setPen(Qt::black);
     painter.setBrush(QColor(200, 200, 200));
 
-    // Build legend_ data
     double min_value(dock_widget->minBox->value()),
         max_value(dock_widget->maxBox->value());
+    // Build legend_ data
     std::vector<double> graduations(100);
     for(int i=0; i<100; ++i)
       graduations[i] = i/100.0;
 
-    // draw
     int i=0;
     for (std::vector<double>::iterator it = graduations.begin(), end = graduations.end();
          it != end; ++it, i+=2)
@@ -1276,15 +1325,12 @@ private:
                        2,
                        color);
     }
-
     // draw right vertical line
     painter.setPen(Qt::blue);
 
-    painter.drawLine(QPoint(left_margin + cell_width+10, drawing_height - top_margin),
+    painter.drawLine(QPoint(left_margin + cell_width+10, drawing_height - top_margin + 2),
                      QPoint(left_margin + cell_width+10,
-                            drawing_height - top_margin - static_cast<int>(graduations.size())*2));
-
-
+                            drawing_height - top_margin - static_cast<int>(graduations.size())*2 + 2));
     // draw min value and max value
     painter.setPen(Qt::blue);
     QRect min_text_rect(left_margin + cell_width+10,drawing_height - top_margin,
@@ -1300,13 +1346,17 @@ private:
   double scaled_jacobian(const face_descriptor& f , const SMesh &mesh);
   QList<QAction*> _actions;
   Color_ramp color_ramp;
+  std::vector<QColor> color_map;
   DockWidget* dock_widget;
   double rm;
   double rM;
+  double rI;
   double gm;
   double gM;
+  double gI;
   double bm;
   double bM;
+  double bI;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
 
@@ -1384,4 +1434,407 @@ private:
 
   }
 
+  template<typename Simplex>
+  bool DisplayPropertyPlugin::is_property_scalar(std::string name, const SMesh* sm)
+  {
+
+    if(sm->template property_map<Simplex,boost::int8_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint8_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::int16_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint16_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::int32_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint32_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::int64_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint64_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,float>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,double>(name).second)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  bool DisplayPropertyPlugin::treat_vertex_property(std::string name, SMesh* sm)
+  {
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int8_t>   Int8_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint8_t>  Uint8_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int16_t>  Int16_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint16_t> Uint16_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int32_t>  Int32_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint32_t> Uint32_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::int64_t>  Int64_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, boost::uint64_t> Uint64_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, float>           Float_map;
+    typedef typename SMesh::template Property_map<vertex_descriptor, double>          Double_map;
+
+    bool okay = false;
+    {
+      Int8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int8_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint8_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int16_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint16_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int32_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint32_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::int64_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,boost::uint64_t>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Float_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,float>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Double_map pmap;
+      std::tie(pmap, okay) = sm->property_map<vertex_descriptor,double>(name);
+      if(okay)
+      {
+        return displayVertexProperty(*sm, pmap);
+      }
+    }
+  }
+
+  bool DisplayPropertyPlugin::treat_face_property(std::string name, SMesh* sm)
+  {
+    typedef typename SMesh::template Property_map<face_descriptor, boost::int8_t>   Int8_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::uint8_t>  Uint8_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::int16_t>  Int16_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::uint16_t> Uint16_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::int32_t>  Int32_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::uint32_t> Uint32_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::int64_t>  Int64_map;
+    typedef typename SMesh::template Property_map<face_descriptor, boost::uint64_t> Uint64_map;
+    typedef typename SMesh::template Property_map<face_descriptor, float>           Float_map;
+    typedef typename SMesh::template Property_map<face_descriptor, double>          Double_map;
+
+    bool okay = false;
+    {
+      Int8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int8_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint8_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int16_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint16_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int32_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint32_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Int64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::int64_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Uint64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,boost::uint64_t>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Float_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,float>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+
+    {
+      Double_map pmap;
+      std::tie(pmap, okay) = sm->property_map<face_descriptor,double>(name);
+      if(okay)
+      {
+        return displayFaceProperty(*sm, pmap);
+      }
+    }
+  }
+
+  template<typename PM>
+  bool DisplayPropertyPlugin::displayVertexProperty(SMesh& smesh, PM pm)
+  {
+    typedef typename PM::value_type Value_type;
+    minBox = ARBITRARY_DBL_MAX;
+    maxBox = -ARBITRARY_DBL_MAX;
+    std::vector<Value_type> values;
+    for(auto v : vertices(smesh))
+    {
+      values.push_back(pm[v]);
+    }
+    std::sort(values.begin(), values.end());
+    auto end = std::unique(values.begin(), values.end());
+
+
+    minBox = *values.begin();
+    maxBox = *(end-1);
+    dock_widget->minBox->setValue(minBox);
+    dock_widget->maxBox->setValue(maxBox);
+    //fill v:color pmap
+    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+        smesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+
+    if(dock_widget->colorChoiceWidget->currentIndex() == 1)
+    {
+      std::unordered_map<Value_type, std::size_t> value_index_map;
+      //fill map
+      std::size_t counter = 0;
+      for(auto it = values.begin(); it != end; ++it)
+      {
+        value_index_map[*it] = counter++;
+      }
+      color_map.clear();
+      compute_color_map(QColor(rI, gI, bI),std::distance(values.begin(), end),
+                        std::back_inserter(color_map));
+      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(smesh).begin();
+          vit != vertices(smesh).end();
+          ++vit)
+      {
+        CGAL::Color color(
+              color_map[value_index_map[pm[*vit]]].red(),
+              color_map[value_index_map[pm[*vit]]].green(),
+              color_map[value_index_map[pm[*vit]]].blue());
+        vcolors[*vit] = color;
+      }
+      displayMapLegend(values);
+    }
+    else
+    {
+      //scale a color ramp between min and max
+      replaceRamp();
+      float max = maxBox;
+      float min = minBox;
+      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(smesh).begin();
+          vit != vertices(smesh).end();
+          ++vit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(pm[*vit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*color_ramp.r(f),
+              255*color_ramp.g(f),
+              255*color_ramp.b(f));
+        vcolors[*vit] = color;
+      }
+    }
+    return true;
+  }
+
+  template<typename PM>
+  bool DisplayPropertyPlugin::displayFaceProperty(SMesh& smesh, PM pm)
+  {
+    typedef typename PM::value_type Value_type;
+    minBox = ARBITRARY_DBL_MAX;
+    maxBox = -ARBITRARY_DBL_MAX;
+    std::vector<Value_type> values;
+    for(auto f : faces(smesh))
+    {
+      values.push_back(pm[f]);
+    }
+    std::sort(values.begin(), values.end());
+    auto end = std::unique(values.begin(), values.end());
+    minBox = *values.begin();
+    maxBox = *(end-1);
+    dock_widget->minBox->setValue(minBox);
+    dock_widget->maxBox->setValue(maxBox);
+    //fill v:color pmap
+    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+        smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+
+    if(dock_widget->colorChoiceWidget->currentIndex() == 1)
+    {
+      std::unordered_map<Value_type, std::size_t> value_index_map;
+      //fill map
+      std::size_t counter = 0;
+      for(auto it = values.begin(); it != end; ++it)
+      {
+        value_index_map[*it] = counter++;
+      }
+      color_map.clear();
+      compute_color_map(QColor(rI, gI, bI),std::distance(values.begin(), end),
+                        std::back_inserter(color_map));
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
+          fit != faces(smesh).end();
+          ++fit)
+      {
+        CGAL::Color color(
+              color_map[value_index_map[pm[*fit]]].red(),
+              color_map[value_index_map[pm[*fit]]].green(),
+              color_map[value_index_map[pm[*fit]]].blue());
+        fcolors[*fit] = color;
+      }
+      displayMapLegend(values);
+    }
+    else
+    {
+      //scale a color ramp between min and max
+      replaceRamp();
+      float max = maxBox;
+      float min = minBox;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
+          fit != faces(smesh).end();
+          ++fit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(pm[*fit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*color_ramp.r(f),
+              255*color_ramp.g(f),
+              255*color_ramp.b(f));
+        fcolors[*fit] = color;
+      }
+    }
+    return true;
+  }
 #include "Display_property_plugin.moc"
+
