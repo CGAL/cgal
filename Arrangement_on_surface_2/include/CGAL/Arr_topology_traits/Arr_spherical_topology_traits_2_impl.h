@@ -589,8 +589,7 @@ place_boundary_vertex(Face* /* f */,
   const Point_2& key = (ind == ARR_MIN_END) ?
     m_geom_traits->construct_min_vertex_2_object()(xc) :
     m_geom_traits->construct_max_vertex_2_object()(xc);
-  typename Vertex_map::iterator it = m_boundary_vertices.find(key);
-
+  auto it = m_boundary_vertices.find(key);
   if (it != m_boundary_vertices.end()) {
     Vertex* v = it->second;
     return CGAL::make_object(v);
