@@ -278,7 +278,10 @@ public:
   /*!
    * \brief Constructs an input range of nodes using a tree walker function
    *
-   * \todo
+   * The result is a boost range created from iterators that meet the criteria defining a Forward Input Iterator
+   * This is completely compatible with standard foreach syntax.
+   * Dereferencing returns a const reference to a node.
+   * \todo Perhaps I should add some discussion of recommended usage
    *
    * \tparam Walker type of the walker rule
    * \param walker the rule to use when determining the order of the sequence of points produced
@@ -300,11 +303,14 @@ public:
    * \brief Find the leaf node which would contain a point
    *
    * Traverses the octree and finds the deepest cell that has a domain enclosing the point passed.
+   * Behavior when a node is outside the octree is currently undefined.
    *
    * \param p The point to find a node for
-   * \return A reference to the node which would contain the point
+   * \return A const reference to the node which would contain the point
    */
   const Node &locate(const Point &p) const {
+
+    // TODO: Asser that p is inside the octree
 
     // Start at the root node
     auto *node_for_point = &m_root;
@@ -333,7 +339,10 @@ public:
   /*!
    * \brief Find the bounding box of a node
    *
-   * \todo
+   * Creates a cubic region representing a node.
+   * The size of the region is dependent on the node's depth in the tree.
+   * The location of the region is dependent on the node's location.
+   * The bounding box is useful for checking for collisions with a node.
    *
    * \param node the node to determine the bounding box of
    * \return the bounding box defined by that node's relationship to the tree
