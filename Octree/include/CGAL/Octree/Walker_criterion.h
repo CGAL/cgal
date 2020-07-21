@@ -23,8 +23,8 @@ namespace Octree {
 
 namespace Walker {
 
-template<class Value>
-const Node::Node <Value> *next_sibling(const Node::Node <Value> *n) {
+template<class Point_index>
+const Node::Node <Point_index> *next_sibling(const Node::Node <Point_index> *n) {
 
   // Passing null returns the first node
   if (nullptr == n)
@@ -45,8 +45,8 @@ const Node::Node <Value> *next_sibling(const Node::Node <Value> *n) {
   return &((*n->parent())[index + 1]);
 }
 
-template<class Value>
-const Node::Node <Value> *next_sibling_up(const Node::Node <Value> *n) {
+template<class Point_index>
+const Node::Node <Point_index> *next_sibling_up(const Node::Node <Point_index> *n) {
 
   if (!n)
     return nullptr;
@@ -64,8 +64,8 @@ const Node::Node <Value> *next_sibling_up(const Node::Node <Value> *n) {
   return nullptr;
 }
 
-template<class Value>
-const Node::Node <Value> *deepest_first_child(const Node::Node <Value> *n) {
+template<class Point_index>
+const Node::Node <Point_index> *deepest_first_child(const Node::Node <Point_index> *n) {
 
   if (!n)
     return nullptr;
@@ -86,24 +86,24 @@ struct Preorder {
   /*!
    * \brief Retrieve the first node of a tree in a preorder traversal, given the root
    *
-   * \tparam Value
+   * \tparam Point_index
    * \param root
    * \return
    */
-  template<class Value>
-  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+  template<class Point_index>
+  const Node::Node <Point_index> *first(const Node::Node <Point_index> *root) const {
     return root;
   }
 
   /*!
    * \brief Retrieve the next node of a tree in a preorder traversal, given the current one
    *
-   * \tparam Value
+   * \tparam Point_index
    * \param n
    * \return
    */
-  template<class Value>
-  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
+  template<class Point_index>
+  const Node::Node <Point_index> *next(const Node::Node <Point_index> *n) const {
 
     if (n->is_leaf()) {
 
@@ -133,12 +133,12 @@ struct Postorder {
   /*!
    * \brief Retrieve the first node of a tree in a postorder traversal, given the root
    *
-   * \tparam Value
+   * \tparam Point_index
    * \param root
    * \return
    */
-  template<class Value>
-  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+  template<class Point_index>
+  const Node::Node <Point_index> *first(const Node::Node <Point_index> *root) const {
 
     return deepest_first_child(root);
   }
@@ -146,12 +146,12 @@ struct Postorder {
   /*!
    * \brief Retrieve the next node of a tree in a postorder traversal, given the current one
    *
-   * \tparam Value
+   * \tparam Point_index
    * \param n
    * \return
    */
-  template<class Value>
-  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
+  template<class Point_index>
+  const Node::Node <Point_index> *next(const Node::Node <Point_index> *n) const {
 
     auto next = deepest_first_child(next_sibling(n));
 
@@ -170,12 +170,12 @@ struct Leaves {
   /*!
    * \brief Retrieve the first node of a tree in a leaves-only traversal, given the root
    *
-   * \tparam Value
+   * \tparam Point_index
    * \param root
    * \return
    */
-  template<class Value>
-  const Node::Node <Value> *first(const Node::Node <Value> *root) const {
+  template<class Point_index>
+  const Node::Node <Point_index> *first(const Node::Node <Point_index> *root) const {
 
     return deepest_first_child(root);
   }
@@ -183,12 +183,12 @@ struct Leaves {
   /*!
    * \brief Retrieve the next node of a tree in a leaves-only traversal, given the current one
    *
-   * \tparam Value
+   * \tparam Point_index
    * \param n
    * \return
    */
-  template<class Value>
-  const Node::Node <Value> *next(const Node::Node <Value> *n) const {
+  template<class Point_index>
+  const Node::Node <Point_index> *next(const Node::Node <Point_index> *n) const {
 
     auto next = deepest_first_child(next_sibling(n));
 
