@@ -116,6 +116,8 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \brief reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
  *
+ * \attention The graph `g` is not cleared, and the data from the stream is added.
+ *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -137,8 +139,6 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \pre The data must represent a 2-manifold
  * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
- *
- * \attention The graph `g` is not cleared, and the data from the stream is added.
  *
  * \returns `true` if reading was successful, `false` otherwise.
 */

@@ -273,15 +273,15 @@ the state is inactive, nothing happens.
 \section IOstreamSupportedFormats Importing and Exporting Data using Standard File Formats
 
 Specific standards have been created to facilite the exchange of data for traditional data structures
-of computational geometry, such as point sets or polygon meshes.
+such as point sets or polygon meshes.
 
 \cgal aims to provide a uniform and consistent approach for Input/Output functions,
 providing for a given file format with shorter name `XXX` an input function `read_XXX(input, data_structure)`,
-an output function called `write_XXX(output, data_structure)`. Whenever possible, a <em>generic</em> I/O function
+and an output function called `write_XXX(output, data_structure)`. Whenever possible, a <em>generic</em> I/O function
 which can deduce the file format from the extension is also provided for convenience.
 
-In the following subsection, file formats supported in \cgal are listed along with associated
-potential data structures. A reverse viewpoint, listing the data structures which can be used for a specific file format
+In the following subsection, file formats supported in \cgal are listed along with compatible
+\cgal data structures. A reverse viewpoint, listing the data structures which can be used for a specific file format
 is available on the page: \ref IOStreamSupportedFileFormats.
 
 Note that these categories will grow as the on-going effort to uniformize I/O in \cgal progresses.
@@ -451,7 +451,6 @@ If this is not the case, the package \ref PkgPolygonMeshProcessing offers the fu
 which can perform some combinatorial repairing to ensure the input data is a 2-manifold.
 
 \subsection IOstreamWKT Simple 2D Geometry IO
-
 `WKT` stands for <em>Well-Known Text</em> and it is a text markup language for representing
 vector geometry objects on a geographical map. See the
 <A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
@@ -492,16 +491,7 @@ from the standard \cgal I/O functions, for clarity reasons.
 
 \subsection IOstreamOtherIO Other Data Structures
 
-Other data structures of \cgal have their own I/O functions, detailed in their respective manuals,
-for example:
-
-- \ref AlphaShape3DIO "3D Alpha Shapes"
-- \ref arr_secio "2D Arrangements"
-- \ref Nef_3File "3D Boolean Operations on Nef Polyhedra"
-- \ref secMesh_2_IO "2D Conforming Triangulations and Meshes"
-- \ref Mesh_3_section_io "3D Mesh Generation"
-- \ref Surface_mesherIO "Surface Mesh Generation"
-- ...
+Other data structures of \cgal have their own I/O functions, see their respective user and reference manuals.
 
 \subsection IOstreamOther Reading Unsupported Formats
 
