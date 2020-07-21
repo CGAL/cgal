@@ -385,7 +385,7 @@ public:
    * \param output the output iterator to add the found points to (in order of increasing distance)
    */
   template<typename Point_output_iterator>
-  void nearest_k_neighbours_in_radius(const Point &search_point, FT search_radius_squared, std::size_t k,
+  void nearest_k_neighbors_in_radius(const Point &search_point, FT search_radius_squared, std::size_t k,
                                       Point_output_iterator output) const {
 
     // Create an empty list of points
@@ -394,7 +394,7 @@ public:
 
     // Invoking the recursive function adds those points to the vector (passed by reference)
     auto search_bounds = Sphere(search_point, search_radius_squared);
-    nearest_k_neighbours_recursive(search_bounds, m_root, points_list);
+    nearest_k_neighbors_recursive(search_bounds, m_root, points_list);
 
     // Add all the points found to the output
     for (auto &item : points_list)
@@ -404,7 +404,7 @@ public:
   /*!
    * \brief Find the K points in a tree that are nearest to the search point
    *
-   * This function is equivalent to invoking nearest_k_neighbours_in_radius for an infinite radius.
+   * This function is equivalent to invoking nearest_k_neighbors_in_radius for an infinite radius.
    * For a tree with K or fewer points, all points in the tree will be returned.
    *
    * \tparam Point_output_iterator an output iterator type that will accept points
@@ -413,9 +413,9 @@ public:
    * \param output the output iterator to add the found points to (in order of increasing distance)
    */
   template<typename Point_output_iterator>
-  void nearest_k_neighbours(const Point &search_point, std::size_t k, Point_output_iterator output) const {
+  void nearest_k_neighbors(const Point &search_point, std::size_t k, Point_output_iterator output) const {
 
-    return nearest_k_neighbours_in_radius(search_point, std::numeric_limits<FT>::max(), k, output);
+    return nearest_k_neighbors_in_radius(search_point, std::numeric_limits<FT>::max(), k, output);
   }
 
   /// @}
@@ -528,7 +528,7 @@ private: // functions :
     FT distance;
   };
 
-  void nearest_k_neighbours_recursive(Sphere &search_bounds, const Node &node,
+  void nearest_k_neighbors_recursive(Sphere &search_bounds, const Node &node,
                                       std::vector<Point_with_distance> &results, FT epsilon = 0) const {
 
     // Check whether the node has children
@@ -605,7 +605,7 @@ private: // functions :
         if (do_intersect(child_node, search_bounds)) {
 
           // Recursively invoke this function
-          nearest_k_neighbours_recursive(search_bounds, child_node, results);
+          nearest_k_neighbors_recursive(search_bounds, child_node, results);
         }
       }
     }

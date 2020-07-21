@@ -75,7 +75,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   {
     // TODO: Write a nearest-neighbor implementation and use it here
     std::vector<Point> k_neighbors;
-    octree.nearest_k_neighbours(random_point, 1, std::back_inserter(k_neighbors));
+    octree.nearest_k_neighbors(random_point, 1, std::back_inserter(k_neighbors));
     octree_nearest = *k_neighbors.begin();
   }
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
@@ -109,38 +109,40 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
   Point random_point = *(generator++);
 
   // Use the naive algorithm to find the nearest point in the dataset
-  std::vector<Point> kd_tree_nearest_neighbours;
+  std::vector<Point> kd_tree_nearest_neighbors;
   Kd_tree kd_tree(points.points().begin(), points.points().end());
   kd_tree.build();
   auto kd_tree_start_time = high_resolution_clock::now();
   Kd_tree_search search(kd_tree, random_point, K);
   duration<float> kd_tree_elapsed_time = high_resolution_clock::now() - kd_tree_start_time;
   for (auto p : search)
-    kd_tree_nearest_neighbours.push_back(p.first);
+    kd_tree_nearest_neighbors.push_back(p.first);
 
   std::cout << "Kd_tree --> "
-            << kd_tree_nearest_neighbours.size() << " points "
-            << "in " << kd_tree_elapsed_time.count() << "s ";
+            << kd_tree_nearest_neighbors.size() << " points "
+            << "in " << kd_tree_elapsed_time.count() << "s "
+            << std::endl;
 
   // Do the same using the octree
-  std::vector<Point> octree_nearest_neighbours;
+  std::vector<Point> octree_nearest_neighbors;
   auto point_map = points.point_map();
   Octree octree(points, point_map);
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
-  octree.nearest_k_neighbours(random_point, K, std::back_inserter(octree_nearest_neighbours));
+  octree.nearest_k_neighbors(random_point, K, std::back_inserter(octree_nearest_neighbors));
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
   std::cout << "Octree --> "
-            << octree_nearest_neighbours.size() << " points "
-            << "in " << octree_elapsed_time.count() << "s ";
+            << octree_nearest_neighbors.size() << " points "
+            << "in " << octree_elapsed_time.count() << "s "
+            << std::endl;
 
   // Check that the octree produces the right number of results
-  assert(octree_nearest_neighbours.size() == K);
+  assert(octree_nearest_neighbors.size() == K);
 
   // Check that they produce the same answer
   for (int j = 0; j < K; ++j)
-    assert(octree_nearest_neighbours[j] == kd_tree_nearest_neighbours[j]);
+    assert(octree_nearest_neighbors[j] == kd_tree_nearest_neighbors[j]);
 
 }
 

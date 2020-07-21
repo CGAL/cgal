@@ -13,7 +13,7 @@ create_single_source_cgal_program("test_octree_equality.cpp")
 create_single_source_cgal_program("test_octree_refine.cpp")
 create_single_source_cgal_program("test_octree_locate.cpp")
 create_single_source_cgal_program("test_octree_bbox.cpp")
-create_single_source_cgal_program("test_octree_nearest_neighbour.cpp")
+create_single_source_cgal_program("test_octree_nearest_neighbor.cpp")
 
 create_single_source_cgal_program("test_node.cpp")
 create_single_source_cgal_program("test_node_index.cpp")
