@@ -1245,7 +1245,7 @@ private:
     const std::size_t size = (std::min)(color_map.size(), (std::size_t)256);
     const int text_height = 20;
     const int height = text_height*size + text_height;
-    const int width = 90;
+    const int width = 140;
     const int cell_width = width/3;
     const int top_margin = 15;
     const int left_margin = 5;
@@ -1291,7 +1291,7 @@ private:
   {
     // Create a legend_ and display it
     const int height = 256;
-    const int width = 90;
+    const int width = 140;
     const int cell_width = width/3;
     const int top_margin = 5;
     const int left_margin = 5;
@@ -1334,15 +1334,16 @@ private:
     // draw min value and max value
     painter.setPen(Qt::blue);
     QRect min_text_rect(left_margin + cell_width+10,drawing_height - top_margin,
-                        50, text_height);
+                        100, text_height);
     painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value, 0, 'f', 1));
 
     QRect max_text_rect(left_margin + cell_width+10, drawing_height - top_margin - 200,
-                        50, text_height);
+                        100, text_height);
     painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value, 0, 'f', 1));
 
     dock_widget->legendLabel->setPixmap(legend_);
   }
+
   double scaled_jacobian(const face_descriptor& f , const SMesh &mesh);
   QList<QAction*> _actions;
   Color_ramp color_ramp;
