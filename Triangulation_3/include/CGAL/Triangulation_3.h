@@ -567,7 +567,7 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  typename boost::result_of<const Construct_point_3(const P&)>::type
+  typename boost::result_of<Construct_point_3(P)>::type
   construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
