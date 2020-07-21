@@ -99,7 +99,7 @@ while [ $1 ]; do
             continue
         ;;
         --dest)
-            shift 
+            shift
             DESTINATION=$1
             shift;continue
         ;;
@@ -111,7 +111,7 @@ while [ $1 ]; do
             printerr "Unrecognized option : $1"
             exit
         ;;
-        *) 
+        *)
             if [ -z "$SOURCES_DIR_HAS_BEEN_SET" ]; then
                 SOURCES_DIR="$1"
                 SOURCES_DIR_HAS_BEEN_SET=y
@@ -159,7 +159,7 @@ if [ -z "$VERBOSE" ]; then
   exec 3>&1 >> ${LOGFILE}
 fi
 
-# Verbose: displays all executed commands 
+# Verbose: displays all executed commands
 #PS4='[${LINENO}]+ '
 #set -x
 
@@ -189,7 +189,7 @@ else
 fi
 
 # Do not show the bugfix number if it is 0.
-if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
+if [ x"$BUGFIX_NUMBER" != "x0" ]; then
     BUGFIX_STRING=".$BUGFIX_NUMBER"
 else
     BUGFIX_STRING=""

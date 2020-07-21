@@ -3,7 +3,7 @@
 # DESTINATION the path where the release is created, default is /tmp
 # PUBLIC=[ON/OFF] indicates if a public release should be built, default is OFF
 # VERBOSE=[ON/OFF] makes the script more verbose, default is OFF
-# CGAL_VERSION=release id used to update version.h, VERSION and the release directory. Can be 4.12-Ic-33, 4.12-I-32, 4.12, ... 
+# CGAL_VERSION=release id used to update version.h, VERSION and the release directory. Can be 4.12-Ic-33, 4.12-I-32, 4.12, ...
 #   Must be followed by -beta<beta_number> if the release is a beta.
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033 , or 10412009<beta number>0
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
