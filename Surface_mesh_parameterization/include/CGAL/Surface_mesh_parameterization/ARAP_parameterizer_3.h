@@ -468,7 +468,7 @@ private:
     return OK;
   }
 
-  // Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  // computes `w_ij`, the `(i, j)`-coefficient of matrix `A` for `j` neighbor vertex of `i`.
   NT compute_w_ij(const TriangleMesh& mesh,
                   halfedge_descriptor hd,
                   const Cot_map ctmap) const
@@ -1255,7 +1255,7 @@ private:
 
 // Public operations
 public:
-  /// Check if the 3D -> 2D mapping is one-to-one.
+  /// returns whether the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
                              const Faces_vector& faces,
@@ -1264,7 +1264,7 @@ public:
     return internal::is_one_to_one_mapping(mesh, faces, uvmap);
   }
 
-  /// Compute a mapping from a triangular 3D surface mesh to a piece of the 2D space.
+  /// computes a mapping from a triangular 3D surface mesh to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///

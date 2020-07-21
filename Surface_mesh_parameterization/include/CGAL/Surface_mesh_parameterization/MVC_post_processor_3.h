@@ -741,7 +741,7 @@ public:
     return OK;
   }
 
-  /// Compute a one-to-one mapping from a triangular 2D surface mesh
+  /// computes a one-to-one mapping from a triangular 2D surface mesh
   /// that is not necessarily embedded to a piece of the 2D space.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with

@@ -28,7 +28,7 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup  PkgSurfaceMeshParameterizationMainFunction
 ///
-/// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
+/// computes a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// simple 2D domain.
 /// The mapping is piecewise linear on the triangle mesh.
 /// The result is a pair `(u,v)` of parameter coordinates for each vertex of the input mesh.
@@ -78,7 +78,7 @@ Error_code parameterize(TriangleMesh& mesh,
 
 /// \ingroup  PkgSurfaceMeshParameterizationMainFunction
 ///
-/// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
+/// computes a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// 2D circle, using Floater Mean Value Coordinates algorithm.
 /// A one-to-one mapping is guaranteed.
 ///

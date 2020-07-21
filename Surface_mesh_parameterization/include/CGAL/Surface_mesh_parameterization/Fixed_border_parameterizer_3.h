@@ -58,8 +58,8 @@ namespace Surface_mesh_parameterization {
 /// Nevertheless, it implements most of the parameterization algorithm `parameterize()`.
 /// Subclasses are *Strategies* \cgalCite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:
 /// - They provide the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - They implement `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
-///   for j neighbor vertex of i.
+/// - They implement `compute_w_ij()` to compute `w_ij`, the `(i, j)`-coefficient of matrix `A`,
+///   for `j` neighbor vertex of `i`.
 ///
 // @todo `Fixed_border_parameterizer_3` should remove border vertices
 // from the linear systems in order to have a symmetric positive definite
@@ -163,10 +163,10 @@ public:
 
   // Default copy constructor and operator =() are fine
 
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
   ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
@@ -296,7 +296,7 @@ public:
 
 // Protected operations
 protected:
-  /// Initialize A, Bu and Bv after border parameterization.
+  /// initializes `A`, `Bu` and `Bv` after border parameterization.
   /// Fill the border vertices' lines in both linear systems:
   /// "u = constant" and "v = constant".
   ///
@@ -317,7 +317,7 @@ protected:
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
-  /// \pre A, Bu and Bv must be allocated.
+  /// \pre `A`, `Bu`, and `Bv` must be allocated.
   /// \pre Border vertices must be parameterized.
   template <typename VertexUVmap, typename VertexIndexMap>
   void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv,
@@ -339,7 +339,7 @@ protected:
     }
   }
 
-  /// Compute w_ij, coefficient of matrix A for j neighbor vertex of i.
+  /// computes `w_ij`, coefficient of matrix `A` for `j` neighbor vertex of `i`.
   /// Implementation note: Subclasses must at least implement compute_w_ij().
   ///
   /// \param mesh a triangulated surface.

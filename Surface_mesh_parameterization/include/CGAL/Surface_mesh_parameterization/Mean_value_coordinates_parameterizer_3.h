@@ -158,7 +158,7 @@ public:
 
     // Default copy constructor and operator =() are fine
 
-  /// Check if the 3D -> 2D mapping is one-to-one.
+  /// returns whether the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
                              halfedge_descriptor bhd,
@@ -176,7 +176,7 @@ public:
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  /// computes `w_ij`, the `(i, j)`-coefficient of matrix A for j neighbor vertex of i.
   ///
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`

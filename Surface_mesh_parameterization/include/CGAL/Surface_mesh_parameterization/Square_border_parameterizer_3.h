@@ -245,7 +245,7 @@ private:
 public:
   // Default constructor, copy constructor and operator =() are fine
 
-  /// Assign to the vertices of the border of the mesh a 2D position
+  /// assigns to the vertices of the border of the mesh a 2D position
   /// (i.e.\ a (u,v) pair) on the border's shape. Mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
@@ -344,7 +344,7 @@ public:
     return OK;
   }
 
-  /// Indicate if the border's shape is convex.
+  /// indicates if the border's shape is convex.
   bool is_border_convex() const { return true; }
 
 public:
@@ -425,7 +425,7 @@ public:
 
 // Protected operations
 protected:
-  /// Compute the length of an edge.
+  /// computes the length of an edge.
   virtual NT compute_edge_length(const TriangleMesh& /* mesh */,
                                  vertex_descriptor /* source */,
                                  vertex_descriptor /* target */) const

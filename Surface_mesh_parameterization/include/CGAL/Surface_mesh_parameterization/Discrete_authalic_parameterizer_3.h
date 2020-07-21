@@ -48,8 +48,8 @@ namespace Surface_mesh_parameterization {
 /// This class is a strategy  called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
 /// - provides the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of the matrix A
-///   for j neighbor vertex of i, based on Discrete Authalic Parameterization algorithm.
+/// - implements `compute_w_ij()` to compute `w_ij`, the `(i, j)`-coefficient of the matrix `A`
+///   for `j` neighbor vertex of `i`, based on Discrete Authalic Parameterization algorithm.
 ///
 /// \cgalModels `Parameterizer_3`
 ///
@@ -159,7 +159,7 @@ public:
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i, j), coefficient of matrix A for j neighbor vertex of i.
+  /// computes `w_ij`, the (i, j), coefficient of matrix `A` for `j` neighbor vertex of `i`.
   ///
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`

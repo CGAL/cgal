@@ -96,7 +96,7 @@ private:
 
 // Public operations
 public:
-  /// Assign to the mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
+  /// assigns to the mesh's border vertices a 2D position (i.e.\ a `(u,v)` pair)
   /// on the circle. Mark them as <i>parameterized</i>.
   ///
   /// The distribution of vertices over the circle depends on the function
@@ -159,7 +159,7 @@ public:
     return OK;
   }
 
-  /// Indicate if border's shape is convex.
+  /// indicates if border's shape is convex.
   bool is_border_convex() const { return true; }
 
   virtual ~Circular_border_parameterizer_3() { }
@@ -204,7 +204,7 @@ private:
 
 // Protected operations
 protected:
-  /// Compute the length of an edge.
+  /// computes the length of an edge.
   virtual NT compute_edge_length(const TriangleMesh& /* mesh */,
                                  vertex_descriptor /* source */,
                                  vertex_descriptor /* target */) const
@@ -259,7 +259,7 @@ private:
 
 // Protected operations
 protected:
-  /// Compute the length of an edge.
+  /// computes the length of an edge.
   virtual NT compute_edge_length(const TriangleMesh& mesh,
                                  vertex_descriptor source,
                                  vertex_descriptor target) const

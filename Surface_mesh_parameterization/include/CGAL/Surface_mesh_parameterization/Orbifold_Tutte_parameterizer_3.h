@@ -67,7 +67,7 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// Read a serie of cones from an input stream. Cones are passed as an
+/// reads a serie of cones from an input stream. Cones are passed as an
 /// integer value that is the index of a vertex handle in the mesh tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
@@ -192,7 +192,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// Locate the cones on the seam mesh (that is, find the corresponding seam mesh
+/// locates the cones on the seam mesh (that is, find the corresponding seam mesh
 /// `vertex_descriptor`) and mark them with a tag to indicate whether the cone is a
 /// simple cone or a duplicated cone (see \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink).
 ///
@@ -889,7 +889,7 @@ private:
   }
 
 public:
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.

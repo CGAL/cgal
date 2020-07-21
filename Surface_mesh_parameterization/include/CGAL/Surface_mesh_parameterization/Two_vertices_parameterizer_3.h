@@ -267,7 +267,7 @@ public:
     return OK;
   }
 
-  /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
+  /// maps two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
   ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
@@ -309,7 +309,7 @@ public:
     return parameterize(mesh, vertices, uvmap, vimap, vpmap);
   }
 
-  /// Indicate if the border's shape is convex.
+  /// indicates if the border's shape is convex.
   /// Meaningless for free border parameterization algorithms.
   bool is_border_convex() const { return false; }
 };

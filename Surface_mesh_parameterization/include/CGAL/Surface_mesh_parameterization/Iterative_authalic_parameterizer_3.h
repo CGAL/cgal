@@ -53,7 +53,7 @@ namespace Surface_mesh_parameterization {
 /// parameterization family, meaning that it aims to minimize area distortion
 /// between the input surface mesh and the parameterized output.
 /// More precisely, the approach used by this parameterizer is to iteratively redistribute
-/// the \f$ L_2\f$ stretch over the mesh, as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01}.
+/// the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 /// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
@@ -608,8 +608,7 @@ private:
     return OK;
   }
 
-  /// Compute w_ij, coefficient of matrix A for j neighbor vertex of i.
-  /// Implementation note: Subclasses must at least implement compute_w_ij().
+  /// computes `w_ij`, coefficient of matrix `A` for `j` neighbor vertex of `i`.
   ///
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`
@@ -802,7 +801,7 @@ private:
   }
 
 public:
-  /// Initialize A, Bu and Bv after border parameterization.
+  /// initializes `A`, `Bu`, and `Bv` after border parameterization.
   /// Fill the border vertices' lines in both linear systems:
   /// "u = constant" and "v = constant".
   ///
@@ -823,7 +822,7 @@ public:
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
-  /// \pre A, Bu and Bv must be allocated.
+  /// \pre `A`, `Bu`, and `Bv` must be allocated.
   /// \pre Border vertices must be parameterized.
   template <typename VertexUVmap, typename VertexIndexMap>
   void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv,
@@ -848,10 +847,10 @@ public:
     }
   }
 
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
   ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and

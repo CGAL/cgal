@@ -155,7 +155,7 @@ public:
 
   // Default copy constructor and operator =() are fine
 
-  /// Check if the 3D -> 2D mapping is one-to-one.
+  /// returns whether the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
                              halfedge_descriptor bhd,
@@ -164,10 +164,10 @@ public:
     return internal::is_one_to_one_mapping(mesh, bhd, uvmap);
   }
 
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
   ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
