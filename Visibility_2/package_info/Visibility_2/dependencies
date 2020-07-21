@@ -23,4 +23,5 @@ Stream_support
 Surface_sweep_2
 TDS_2
 Triangulation_2
+Union_find
 Visibility_2
