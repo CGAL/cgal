@@ -322,7 +322,7 @@ public:
     while (!node_for_point->is_leaf()) {
 
       // Find the point to split around
-      Point center = compute_barycenter_position(*node_for_point);
+      Point center = barycenter(*node_for_point);
 
       // Find the index of the correct sub-node
       typename Node::Index index;
@@ -464,7 +464,7 @@ public:
 
 private: // functions :
 
-  Point compute_barycenter_position(const Node &node) const {
+  Point barycenter(const Node &node) const {
 
     // Determine the side length of this node
     FT size = m_side_per_depth[node.depth()];
@@ -517,7 +517,7 @@ private: // functions :
     node.split();
 
     // Find the point to around which the node is split
-    Point center = compute_barycenter_position(node);
+    Point center = barycenter(node);
 
     // Add the node's points to its children
     reassign_points(node, node.points().begin(), node.points().end(), center);
@@ -607,7 +607,7 @@ private: // functions :
         // Add a child to the list, with its distance
         children_with_distances.push_back(
                 {typename Node::Index(index),
-                 CGAL::squared_distance(search_bounds.center(), compute_barycenter_position(child_node))}
+                 CGAL::squared_distance(search_bounds.center(), barycenter(child_node))}
         );
       }
 
