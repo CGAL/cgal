@@ -1134,6 +1134,16 @@ public:
 
     return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iterations);
   }
+
+  template <typename VertexUVmap>
+  Error_code parameterize(Triangle_mesh& tmesh,
+                          VertexUVmap uvmap,
+                          const int iterations = 15)
+  {
+    const halfedge_descriptor bhd = Polygon_mesh_processing::longest_border(tmesh).first;
+
+    return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iterations);
+  }
 };
 
 } // namespace Surface_mesh_parameterization
