@@ -660,6 +660,17 @@ function(test_construction_segments)
 endfunction()
 
 #---------------------------------------------------------------------#
+# construction with segments, without Union Find
+#---------------------------------------------------------------------#
+function(test_construction_segments_no_union_find)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${SEGMENT_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB")
+  compile_and_run_with_flags( test_construction segments_no_union_find "${flags}")
+endfunction()
+
+#---------------------------------------------------------------------#
 # construction with linear curves
 #---------------------------------------------------------------------#
 function(test_construction_linear_curves)
