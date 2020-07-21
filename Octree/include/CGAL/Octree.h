@@ -201,10 +201,15 @@ public:
    *
    * The split criterion can be any function pointer that takes a Node pointer
    * and returns a boolean value (where true implies that a Node needs to be split).
+   * It's safe to call this function repeatedly, and with different criterion.
    *
    * \param split_criterion rule to use when determining whether or not a node needs to be subdivided
    */
   void refine(const Split_criterion_function &split_criterion) {
+
+    // If the tree has already been refined, reset it
+    if (!m_root.is_leaf())
+      m_root.unsplit();
 
     // create a side length map
     for (int i = 0; i <= (int) 32; i++)
