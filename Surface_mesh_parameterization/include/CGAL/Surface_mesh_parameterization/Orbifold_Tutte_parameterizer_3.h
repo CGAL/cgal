@@ -202,7 +202,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 ///                  but is passed here as a template parameter for convenience, to avoid
 ///                  having to pass the multiple template parameters of the class `CGAL::Seam_mesh`.
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
-///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
+///                  with value type `boost::graph_traits<SeamMesh::Triangle_mesh>::%vertex_descriptor`.
 /// \tparam ConeMap must be a model of `AssociativeContainer`
 ///                 with `boost::graph_traits<SeamMesh>::%vertex_descriptor` as key type and
 ///                 \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink as value type.
@@ -216,13 +216,13 @@ bool locate_cones(const SeamMesh& mesh,
                   ConeInputBidirectionalIterator first, ConeInputBidirectionalIterator beyond,
                   ConeMap& cones)
 {
-  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
+  typedef typename SeamMesh::Triangle_mesh                                 Triangle_mesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor   TM_vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
 
   // property map to go from TM_vertex_descriptor to Point_3
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM              PM_PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM             PM_PPM;
   const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
 
   // property map to go from vertex_descriptor to Point_3
@@ -264,9 +264,9 @@ bool locate_unordered_cones(const SeamMesh& mesh,
   CGAL_precondition(cones.empty());
   CGAL_precondition(std::distance(first, beyond) == 3 || std::distance(first, beyond) == 4);
 
-  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
+  typedef typename SeamMesh::Triangle_mesh                                 Triangle_mesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor   TM_vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor      halfedge_descriptor;
 
@@ -282,7 +282,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
   CGAL_assertion(vertex_on_seam != vertex_descriptor());
 
   // property map to go from TM_vertex_descriptor to Point_3
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM            PM_PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM           PM_PPM;
   const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
 
   // property map to go from vertex_descriptor to Point_3
@@ -406,12 +406,15 @@ public:
   #endif
   >::type                                                     Solver_traits;
 #else
+  /// Solver traits type
   typedef SolverTraits_                                       Solver_traits;
 #endif
 
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor  halfedge_descriptor;
+
 private:
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::face_descriptor      face_descriptor;
 
   typedef typename boost::graph_traits<SeamMesh>::vertex_iterator      vertex_iterator;

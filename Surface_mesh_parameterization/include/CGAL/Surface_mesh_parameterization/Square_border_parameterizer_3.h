@@ -67,18 +67,24 @@ class Square_border_parameterizer_3
 {
 // Public types
 public:
+  /// Triangle mesh type
+  typedef TriangleMesh_                                   Triangle_mesh;
+
   typedef TriangleMesh_                                   TriangleMesh;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+  /// Mesh vertex type
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor    vertex_descriptor;
 
-  typedef Halfedge_around_face_iterator<TriangleMesh>  halfedge_around_face_iterator;
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
 
 // Protected types
 protected:
+  typedef Halfedge_around_face_iterator<Triangle_mesh>              halfedge_around_face_iterator;
+
   // Traits subtypes:
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
-  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM      PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::Kernel   Kernel;
   typedef typename Kernel::FT                                       NT;
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Vector_3                                 Vector_3;
@@ -92,14 +98,14 @@ private:
 
 // Protected operations
 protected:
-  virtual double compute_edge_length(const TriangleMesh& mesh,
+  virtual double compute_edge_length(const Triangle_mesh& mesh,
                                      vertex_descriptor source,
                                      vertex_descriptor target) const = 0;
 
 // Private operations
 private:
   // Compute the total length of the border.
-  double compute_border_length(const TriangleMesh& mesh,
+  double compute_border_length(const Triangle_mesh& mesh,
                                halfedge_descriptor bhd) const
   {
     double len = 0.0;
@@ -111,7 +117,7 @@ private:
 
   // Utility method for parameterize().
   // Compute the mesh iterator whose offset is closest to 'value'.
-  halfedge_around_face_iterator closest_iterator(const TriangleMesh& mesh,
+  halfedge_around_face_iterator closest_iterator(const Triangle_mesh& mesh,
                                                  halfedge_descriptor bhd,
                                                  Offset_map& offset,
                                                  double value) const
@@ -138,7 +144,7 @@ private:
   // Set the corners by splitting the border of the mesh in four
   // approximately equal segments.
   template<typename VertexParameterizedMap>
-  halfedge_descriptor compute_offsets_without_given_vertices(const TriangleMesh& mesh,
+  halfedge_descriptor compute_offsets_without_given_vertices(const Triangle_mesh& mesh,
                                                              halfedge_descriptor bhd,
                                                              VertexParameterizedMap vpmap,
                                                              Offset_map& offset) const
@@ -185,7 +191,7 @@ private:
   // the mesh. The vertices between two given vertices vi and vj are
   // sent to the same side of the square.
   template<typename VertexParameterizedMap>
-  halfedge_descriptor compute_offsets(const TriangleMesh& mesh,
+  halfedge_descriptor compute_offsets(const Triangle_mesh& mesh,
                                       halfedge_descriptor bhd,
                                       VertexParameterizedMap vpmap,
                                       Offset_map& offset)
@@ -249,14 +255,14 @@ public:
   /// (i.e.\ a (u,v) pair) on the border's shape. Mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
@@ -270,7 +276,7 @@ public:
   template<typename VertexUVMap,
            typename VertexIndexMap,
            typename VertexParameterizedMap>
-  Error_code parameterize(const TriangleMesh& mesh,
+  Error_code parameterize(const Triangle_mesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVMap uvmap,
                           VertexIndexMap /* vimap */,
@@ -396,15 +402,14 @@ class Square_border_uniform_parameterizer_3
 // Public types
 public:
   // We have to repeat the types exported by superclass
-  /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_ TriangleMesh;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  /// @endcond
+  typedef TriangleMesh_                                                  TriangleMesh;
+  typedef TriangleMesh_                                                  Triangle_mesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
 
 // Private types
 private:
-  typedef Square_border_parameterizer_3<TriangleMesh_>          Base;
-  typedef typename Base::NT                                     NT;
+  typedef Square_border_parameterizer_3<TriangleMesh_>                   Base;
+  typedef typename Base::NT                                              NT;
 
 public:
   virtual ~Square_border_uniform_parameterizer_3() { }
@@ -426,7 +431,7 @@ public:
 // Protected operations
 protected:
   /// computes the length of an edge.
-  virtual NT compute_edge_length(const TriangleMesh& /* mesh */,
+  virtual NT compute_edge_length(const Triangle_mesh& /* mesh */,
                                  vertex_descriptor /* source */,
                                  vertex_descriptor /* target */) const
   {
@@ -462,14 +467,13 @@ class Square_border_arc_length_parameterizer_3
 {
 // Public types
 public:
-  /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_                                         TriangleMesh;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  /// @endcond
+  typedef TriangleMesh_                                                  TriangleMesh;
+  typedef TriangleMesh_                                                  Triangle_mesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
 
 // Private types
 private:
-  typedef Square_border_parameterizer_3<TriangleMesh_>          Base;
+  typedef Square_border_parameterizer_3<Triangle_mesh>          Base;
   typedef typename Base::PPM                                    PPM;
   typedef typename Base::NT                                     NT;
   typedef typename Base::Vector_3                               Vector_3;
@@ -494,7 +498,7 @@ public:
 // Protected operations
 protected:
   /// Compute the length of an edge.
-  virtual NT compute_edge_length(const TriangleMesh& mesh,
+  virtual NT compute_edge_length(const Triangle_mesh& mesh,
                                  vertex_descriptor source,
                                  vertex_descriptor target) const
   {

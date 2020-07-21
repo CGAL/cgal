@@ -112,6 +112,10 @@ class Seam_mesh
   typedef Seam_mesh<TM, SEM, SVM>                                 Self;
 
 public:
+  /// The underlying mesh type
+  typedef TM                                                      Triangle_mesh;
+
+  // backward compatibility
   typedef TM                                                      TriangleMesh;
 
 public:

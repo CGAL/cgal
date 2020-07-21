@@ -218,7 +218,7 @@ convex combination condition. This algorithm amounts to solve one
 sparse linear system for each set of parameter coordinates, with a
 \#vertices x \#vertices sparse and symmetric positive definite matrix
 (if the border vertices are eliminated from the linear system).
-A coefficient \f$ (i, j)\f$ of the matrix is set to 1 for an edge linking
+A coefficient \f$ (i,j)\f$ of the matrix is set to 1 for an edge linking
 the vertex \f$ v_i\f$ to the vertex \f$ v_j\f$, to minus the degree of the
 vertex \f$ v_i\f$ for a diagonal element, and to 0 for any other matrix
 entry. Although a bijective mapping is guaranteed when the border is convex,
@@ -475,55 +475,43 @@ underlying (input) mesh.
 
 \subsection Surface_mesh_parameterizationParameterization Parameterization Methods and Guarantees
 
-<UL>
-
-<LI>Fixed boundaries
-
-<UL>
-
-<LI>One-to-one mapping
-
-Tutte's theorem guarantees a one-to-one mapping provided that the weights are all positive
-and the border is convex.
-It is the case for Tutte Barycentric Mapping and Floater Mean Value Coordinates.
-It is not always the case for Discrete Conformal Map (cotangents) and
-Discrete Authalic parameterization.
-
-<LI>Non-singularity of the matrix
-
-Geshorgin's theorem guarantees the convergence of the solver if the matrix is diagonal dominant.
-This is the case with positive weights (Tutte Barycentric Mapping and Floater Mean Value Coordinates).
-
-</UL>
-
-<LI>Free boundaries
-
-<UL>
-
-<LI>One-to-one mapping
-
-No guarantee is provided by either LSCM or ARAP parameterizations (both global
-overlaps and triangle flips can occur).
-
-<LI>Non-singularity of the matrix
-
-For LSCM, the matrix of the system is the Gram matrix of a matrix with maximal rank,
-and is therefore non-singular (Gram theorem).
-
-</UL>
-
-<LI> Boundary-less
-
-<UL>
-
-<LI>One-to-one mapping
-
-The Orbifold-Tutte embedding is guaranteed to exist and to be computable
-via a sparse linear system.
-
-</UL>
-
-</UL>
+<ul>
+  <li><b>Fixed boundaries</b>
+    <ul>
+      <li><em>One-to-one mapping</em><br>
+        Tutte's theorem guarantees a one-to-one mapping provided that the weights are all positive
+        and the border is convex.
+        It is the case for Tutte Barycentric Mapping and Floater Mean Value Coordinates.
+        It is not always the case for Discrete Conformal Map (cotangents), Discrete Authalic,
+        and Iterative Authalic parameterizations.
+      </li>
+      <li><em>Non-singularity of the matrix</em><br>
+        Geshorgin's theorem guarantees the convergence of the solver if the matrix is diagonal dominant.
+        This is the case with positive weights (Tutte Barycentric Mapping and Floater Mean Value Coordinates).
+      </li>
+    </ul>
+  </li>
+  <li><b>Free boundaries</b>
+    <ul>
+      <li><em>One-to-one mapping</em><br>
+        No guarantee is provided by either LSCM or ARAP parameterizations (both global overlaps
+        and triangle flips can occur).
+      </li>
+      <li><em>Non-singularity of the matrix</em><br>
+        For LSCM, the matrix of the system is the Gram matrix of a matrix with maximal rank,
+        and is therefore non-singular (Gram theorem).
+      </li>
+    </ul>
+  </li>
+  <li><b>Boundary-less</b>
+    <ul>
+      <li><em>One-to-one mapping</em><br>
+        The Orbifold-Tutte embedding is guaranteed to exist and to be computable
+        via a sparse linear system.
+      </li>
+    </ul>
+  </li>
+</ul>
 
 \section Surface_mesh_parameterizationExtendingthe Implementation History
 

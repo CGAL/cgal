@@ -97,30 +97,35 @@ public:
 #endif
   >::type                                                                        Solver_traits;
 #else
+  /// Border parameterizer type
   typedef Border_parameterizer_                                                  Border_parameterizer;
+
+  /// Solver traits type
   typedef SolverTraits_                                                          Solver_traits;
 #endif
+
+  /// Triangle mesh type
+  typedef TriangleMesh_                                                          Triangle_mesh;
 
   typedef TriangleMesh_                                                          TriangleMesh;
 
   // Private types
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor       halfedge_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::face_descriptor           face_descriptor;
 
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>                    vertex_around_target_circulator;
-  typedef CGAL::Face_around_target_circulator<TriangleMesh>                      face_around_target_circulator;
-  typedef CGAL::Vertex_around_face_circulator<TriangleMesh>                      vertex_around_face_circulator;
+  typedef CGAL::Vertex_around_target_circulator<Triangle_mesh>                   vertex_around_target_circulator;
+  typedef CGAL::Face_around_target_circulator<Triangle_mesh>                     face_around_target_circulator;
 
-  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel                 Kernel;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::Kernel                Kernel;
 
   typedef typename Kernel::FT                                                    NT;
   typedef typename Kernel::Point_2                                               Point_2;
   typedef typename Kernel::Point_3                                               Point_3;
   typedef typename Kernel::Vector_3                                              Vector_3;
 
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM                    PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM                   PPM;
   typedef typename boost::property_traits<PPM>::reference                        PPM_ref;
 
   typedef std::unordered_set<vertex_descriptor>                                  Vertex_set;
@@ -130,15 +135,15 @@ private:
   typedef typename Solver_traits::Matrix                                         Matrix;
 
   typedef CGAL::dynamic_vertex_property_t<double>                                Vertex_double_tag;
-  typedef typename boost::property_map<TriangleMesh, Vertex_double_tag>::type    Vertex_Double_map;
+  typedef typename boost::property_map<Triangle_mesh, Vertex_double_tag>::type   Vertex_Double_map;
   typedef CGAL::dynamic_vertex_property_t<bool>                                  Vertex_bool_tag;
-  typedef typename boost::property_map<TriangleMesh, Vertex_bool_tag>::type      Vertex_bool_map;
+  typedef typename boost::property_map<Triangle_mesh, Vertex_bool_tag>::type     Vertex_bool_map;
   typedef CGAL::dynamic_vertex_property_t<int>                                   Vertex_int_tag;
-  typedef typename boost::property_map<TriangleMesh, Vertex_int_tag>::type       Vertex_int_map;
+  typedef typename boost::property_map<Triangle_mesh, Vertex_int_tag>::type      Vertex_int_map;
   typedef CGAL::dynamic_vertex_property_t<Point_2>                               Vertex_point2_tag;
-  typedef typename boost::property_map<TriangleMesh, Vertex_point2_tag>::type    Vertex_point2_map;
+  typedef typename boost::property_map<Triangle_mesh, Vertex_point2_tag>::type   Vertex_point2_map;
   typedef CGAL::dynamic_face_property_t<NT>                                      Face_NT_tag;
-  typedef typename boost::property_map<TriangleMesh, Face_NT_tag>::type          Face_NT_map;
+  typedef typename boost::property_map<Triangle_mesh, Face_NT_tag>::type         Face_NT_map;
 
   // Fields
 private:
@@ -171,7 +176,6 @@ public:
   /// Constructor
   ///
   /// \param border_parameterizer %Object that maps the surface's border to 2D space
-  /// \param iterations an integer number of iterations to run the parameterization
   /// \param sparse_la Traits object to access a sparse linear system
   ///
   Iterative_authalic_parameterizer_3(Border_parameterizer border_parameterizer = Border_parameterizer(),
@@ -191,7 +195,7 @@ public:
   template <typename FaceRange, typename VertexUVmap>
   NT compute_area_distortion(const FaceRange& face_range,
                              const NT A_3D,
-                             TriangleMesh& tmesh,
+                             Triangle_mesh& tmesh,
                              const VertexUVmap uvmap)
   {
     Face_NT_map area_2DMap = get(Face_NT_tag(), tmesh);
@@ -292,7 +296,7 @@ protected:
   template <typename VertexIndexMap>
   void copy_sparse_matrix(const Matrix& src,
                           Matrix& dest,
-                          const TriangleMesh& tmesh,
+                          const Triangle_mesh& tmesh,
                           const Vertex_set& vertices,
                           const VertexIndexMap vimap)
   {
@@ -312,14 +316,14 @@ protected:
   }
 
 private:
-  double compute_vertex_L2(const TriangleMesh& tmesh,
+  double compute_vertex_L2(const Triangle_mesh& tmesh,
                            const vertex_descriptor v) const
   {
     NT phi = 0, local_area = 0;
 
     for(face_descriptor f : CGAL::faces_around_target(halfedge(v, tmesh), tmesh))
     {
-      if(f == boost::graph_traits<TriangleMesh>::null_face())
+      if(f == boost::graph_traits<Triangle_mesh>::null_face())
         continue;
 
       phi += CGAL::square(get(m_face_L2_map, f)) * get(m_face_areas, f);
@@ -330,7 +334,7 @@ private:
   }
 
   void compute_vertices_L2(const Vertex_set& vertices,
-                           TriangleMesh& tmesh)
+                           Triangle_mesh& tmesh)
   {
     m_vertex_L2_map = get(Vertex_double_tag(), tmesh);
     for(vertex_descriptor v : vertices)
@@ -385,7 +389,7 @@ private:
 
   template <typename VertexUVMap>
   NT compute_face_L2(const face_descriptor f,
-                     const TriangleMesh& tmesh,
+                     const Triangle_mesh& tmesh,
                      const VertexUVMap uvmap,
                      const PPM ppmap) const
   {
@@ -418,7 +422,7 @@ private:
 
   template <typename FaceRange, typename VertexUVMap>
   void compute_faces_L2(const FaceRange& face_range,
-                        TriangleMesh& tmesh,
+                        Triangle_mesh& tmesh,
                         const VertexUVMap uvmap)
   {
     m_face_L2_map = get(Face_NT_tag(), tmesh);
@@ -433,7 +437,7 @@ private:
 
   template <typename FaceRange>
   NT initialize_faces_areas(const FaceRange& face_range,
-                            TriangleMesh& tmesh)
+                            Triangle_mesh& tmesh)
   {
     m_face_areas = get(Face_NT_tag(), tmesh);
     NT total_area = 0;
@@ -490,7 +494,7 @@ private:
                                           Matrix& A_prev,
                                           Vector&,
                                           Vector&,
-                                          const TriangleMesh& tmesh,
+                                          const Triangle_mesh& tmesh,
                                           vertex_descriptor v,
                                           VertexIndexMap vimap)
   {
@@ -613,9 +617,9 @@ private:
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
-  NT compute_w_ij(const TriangleMesh& tmesh,
+  NT compute_w_ij(const Triangle_mesh& tmesh,
                   vertex_descriptor main_vertex_v_i,
-                  vertex_around_target_circulator neighbor_vertex_v_j) const
+                  Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const
   {
     const PPM ppmap = get(vertex_point, tmesh);
 
@@ -655,7 +659,7 @@ private:
   Error_code setup_inner_vertex_relations_cotangent(Matrix& A,
                                                     Vector&,
                                                     Vector&,
-                                                    const TriangleMesh& tmesh,
+                                                    const Triangle_mesh& tmesh,
                                                     vertex_descriptor v,
                                                     VertexIndexMap& vimap)
   {
@@ -706,12 +710,12 @@ private:
   Error_code setup_inner_vertex_relations_MVC(Matrix& A,
                                               Vector&,
                                               Vector&,
-                                              TriangleMesh& tmesh,
+                                              Triangle_mesh& tmesh,
                                               vertex_descriptor v,
                                               VertexIndexMap& vimap) const
   {
     auto vpm = get_const_property_map(CGAL::vertex_point, tmesh);
-    CGAL::internal::Mean_value_weight<TriangleMesh, decltype(vpm)> compute_mvc(tmesh, vpm);
+    CGAL::internal::Mean_value_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
 
     const int i = get(vimap, v);
 
@@ -746,7 +750,7 @@ private:
                                                Matrix& A_prev,
                                                Vector&,
                                                Vector&,
-                                               const TriangleMesh& tmesh,
+                                               const Triangle_mesh& tmesh,
                                                vertex_descriptor v,
                                                VertexIndexMap vimap,
                                                NT gamma)
@@ -806,27 +810,27 @@ public:
   /// "u = constant" and "v = constant".
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   ///
   /// \param A the matrix in both linear system
   /// \param Bu the right hand side vector in the linear system of x coordinates
   /// \param Bv the right hand side vector in the linear system of y coordinates
-  /// \param mesh a triangulated surface.
-  /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param tmesh a triangulated surface
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`
+  /// \param uvmap an instanciation of the class `VertexUVmap`
+  /// \param vimap an instanciation of the class `VertexIndexMap`
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
   /// \pre `A`, `Bu`, and `Bv` must be allocated.
   /// \pre Border vertices must be parameterized.
   template <typename VertexUVmap, typename VertexIndexMap>
   void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv,
-                                          const TriangleMesh& tmesh,
+                                          const Triangle_mesh& tmesh,
                                           halfedge_descriptor bhd,
                                           VertexUVmap uvmap,
                                           VertexIndexMap vimap) const
@@ -853,14 +857,14 @@ public:
   /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
   /// \param tmesh a triangulated surface
@@ -878,7 +882,7 @@ public:
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  Error_code parameterize(TriangleMesh& tmesh,
+  Error_code parameterize(Triangle_mesh& tmesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
@@ -895,7 +899,7 @@ public:
     std::vector<face_descriptor> cc_faces;
     cc_faces.reserve(num_faces(tmesh));
 
-    internal::Containers_filler<TriangleMesh, Vertex_set> fc(tmesh, cc_vertices, &cc_faces);
+    internal::Containers_filler<Triangle_mesh, Vertex_set> fc(tmesh, cc_vertices, &cc_faces);
     Polygon_mesh_processing::connected_component(face(opposite(bhd, tmesh), tmesh), tmesh,
                                                  boost::make_function_output_iterator(fc));
 
@@ -954,7 +958,7 @@ public:
           {
 #if 0
             status = setup_inner_vertex_relations(A, A_prev, Bu, Bv, tmesh, v, vimap);
-#elif 0
+#elif 1
             status = setup_inner_vertex_relations_cotangent(A, Bu, Bv, tmesh, v, vimap);
 #else
             status = setup_inner_vertex_relations_MVC(A, Bu, Bv, tmesh, v, vimap);
@@ -1092,7 +1096,7 @@ public:
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  Error_code parameterize(TriangleMesh& tmesh,
+  Error_code parameterize(Triangle_mesh& tmesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
@@ -1106,7 +1110,7 @@ public:
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
-  Error_code parameterize(TriangleMesh& tmesh,
+  Error_code parameterize(Triangle_mesh& tmesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
@@ -1118,7 +1122,7 @@ public:
   }
 
   template <typename VertexUVmap>
-  Error_code parameterize(TriangleMesh& tmesh,
+  Error_code parameterize(Triangle_mesh& tmesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           const int iterations = 15)
