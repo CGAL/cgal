@@ -517,11 +517,14 @@ _compute_next_intersection(Halfedge_handle he,
                            bool& intersection_on_right_boundary)
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_compute_next_intersection(" << he->curve() << ")" << std::endl;
+  std::cout << "_compute_next_intersection(" << he->curve() << ", "
+            << skip_first_point << ")" << std::endl;
 #endif
 
   auto equal = m_geom_traits->equal_2_object();
   auto compare_xy = m_geom_traits->compare_xy_2_object();
+  auto ctr_min = m_geom_traits->construct_min_vertex_2_object();
+  auto is_closed = m_geom_traits->is_closed_2_object();
 
   // Get a pointer to the curve associated with the halfedge.
   const X_monotone_curve_2* p_curve = &(he->curve());
@@ -545,15 +548,17 @@ _compute_next_intersection(Halfedge_handle he,
     while (! inter_list.empty()) {
       // Compare that current object with m_left_pt (if exists).
       ip = object_cast<Intersect_point_2>(&(inter_list.front()));
-
-      if (m_left_on_boundary) {
-        // The left end lie on the left boundary, so all intersections are
-        // valid, as they lie to its right.
-        valid_intersection = true;
-      }
-      else if (ip != nullptr) {
-        if (m_has_right_pt && m_right_on_boundary &&
-            m_geom_traits->equal_2_object()(ip->first, m_right_pt))
+      if (ip != nullptr) {
+        // We have an intersection point
+        if (m_left_on_boundary) {
+          // The left-end lies on the left boundary. If the intersection point
+          // is not equal to the left-end, the intersection is valid, because
+          // it must lie to its right.
+          if (m_has_left_pt) valid_intersection = ! equal(ip->first, m_left_pt);
+          else valid_intersection = true;
+        }
+        else if (m_has_right_pt && m_right_on_boundary &&
+            equal(ip->first, m_right_pt))
         {
           valid_intersection = true;
           intersection_on_right_boundary = true;
@@ -561,9 +566,7 @@ _compute_next_intersection(Halfedge_handle he,
         else {
           // We have a simple intersection point - make sure it lies to the
           // right of m_left_pt.
-          valid_intersection =
-            (m_geom_traits->compare_xy_2_object()(ip->first, m_left_pt) ==
-             LARGER);
+          valid_intersection = (compare_xy(ip->first, m_left_pt) == LARGER);
         }
       }
       else {
@@ -571,18 +574,13 @@ _compute_next_intersection(Halfedge_handle he,
         icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
         CGAL_assertion(icv != nullptr);
 
-        if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
+        if (is_closed(*icv, ARR_MIN_END)) {
           // The curve has a valid left point - make sure it lies to the
           // right of m_left_pt.
-          valid_intersection =
-            (m_geom_traits->compare_xy_2_object()
-             (m_geom_traits->construct_min_vertex_2_object()(*icv), m_left_pt) !=
-             SMALLER);
+          valid_intersection = (compare_xy(ctr_min(*icv), m_left_pt) != SMALLER);
         }
-        else {
-          // In this case the overlap is not valid.
-          valid_intersection = false;
-        }
+        // In this case the overlap is not valid.
+        else valid_intersection = false;
       }
 
       // Found an intersection to m_left_pt's right.
@@ -612,22 +610,25 @@ _compute_next_intersection(Halfedge_handle he,
   while (! inter_list.empty()) {
     // Compare that current object with m_left_pt (if exists).
     ip = object_cast<Intersect_point_2>(&(inter_list.front()));
-
     if (ip != nullptr) {
-      // We have a simple intersection point - if we don't have to skip it,
-      // make sure it lies to the right of m_left_pt (if m_left_pt is on the
-      // left boundary, all points lie to it right).
+      // We have an intersection point -
+      // Check whether we need to skip the first intersection
       if (is_first && skip_first_point) valid_intersection = false;
-      else if (m_left_on_boundary) valid_intersection = true;
-      else if (m_has_right_pt && m_right_on_boundary &&
-               m_geom_traits->equal_2_object()(ip->first, m_right_pt))
+      else if (m_left_on_boundary) {
+        // The left-end lies on the left boundary. If the intersection point
+        // is not equal to the left-end, the intersection is valid, because
+        // it must lie to its right.
+        if (m_has_left_pt) valid_intersection = ! equal(ip->first, m_left_pt);
+        else valid_intersection = true;
+      }
+      else if (m_right_on_boundary && m_has_right_pt &&
+               equal(ip->first, m_right_pt))
       {
         valid_intersection = true;
         intersection_on_right_boundary = true;
       }
       else {
-        valid_intersection =
-          (m_geom_traits->compare_xy_2_object()(ip->first, m_left_pt) == LARGER);
+        valid_intersection = (compare_xy(ip->first, m_left_pt) == LARGER);
       }
     }
     else if (m_left_on_boundary) {
@@ -640,13 +641,10 @@ _compute_next_intersection(Halfedge_handle he,
       icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
       CGAL_assertion(icv != nullptr);
 
-      if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
+      if (is_closed(*icv, ARR_MIN_END)) {
         // The curve has a valid left point - make sure it lies to the
         // right of m_left_pt.
-        valid_intersection =
-          (m_geom_traits->compare_xy_2_object()
-           (m_geom_traits->construct_min_vertex_2_object()(*icv), m_left_pt) !=
-           SMALLER);
+        valid_intersection = (compare_xy(ctr_min(*icv), m_left_pt) != SMALLER);
       }
       // In this case the overlap is not valid.
       else valid_intersection = false;
@@ -773,7 +771,8 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
                        bool& leftmost_on_right_boundary)
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_leftmost_intersection(" << he_curr->curve() << ")" << std::endl;
+  std::cout << "_leftmost_intersection(" << he_curr->curve() << ", "
+            << on_boundary << ")" << std::endl;
 #endif
 
   // Obtain some geometry-traits functors.
@@ -884,7 +883,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_leftmost_intersection_with_face_boundary()" << std::endl;
+  std::cout << "_leftmost_intersection_with_face_boundary(" << on_boundary
+            << ")" << std::endl;
 #endif
   // Mark that we have not found any intersection (or overlap) yet.
   m_found_intersect = false;
@@ -961,7 +961,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _zone_in_face(Face_handle face, bool on_boundary)
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_zone_in_face() " << on_boundary << std::endl;
+  std::cout << "_zone_in_face(" << on_boundary << ")" << std::endl;
 #endif
 
   // Obtain some geometry-traits functors.
