@@ -292,8 +292,7 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
  * `ArrangementPointLocation_2` concept.
  * </UL>
  */
-template <typename Traits, typename Dcel,
-          typename PointLocation>
+template <typename Traits, typename Dcel,typename PointLocation>
 typename Arrangement_2<Traits,Dcel>::Halfedge_handle
 insert_non_intersecting_curve(Arrangement_2<Traits,Dcel>& arr,
                               const typename Traits::X_monotone_curve_2& xc,
