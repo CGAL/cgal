@@ -838,13 +838,13 @@ compile_and_run_with_flags()
 #---------------------------------------------------------------------#
 # construction with segments
 #---------------------------------------------------------------------#
-test_construction_segments()
+test_construction_segments_no_union_find()
 {
   local nt=$CGAL_GMPQ_NT;
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$SEGMENT_GEOM_TRAITS;
-  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
-  compile_and_run_with_flags test_construction segments "$flags"
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DCGAL_ARRANGEMENT_DISABLE_UNION_SET_CCB";
+  compile_and_run_with_flags test_construction segments_no_union_find "$flags"
 }
 
 #---------------------------------------------------------------------#
@@ -1709,6 +1709,7 @@ compile_and_run test_iso_verts
 compile_and_run test_vert_ray_shoot_vert_segments
 
 test_construction_segments
+test_construction_segments_no_union_find
 test_construction_linear_curves
 test_construction_spherical_arcs
 test_construction_polylines

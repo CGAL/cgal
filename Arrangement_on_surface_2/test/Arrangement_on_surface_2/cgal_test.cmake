@@ -1392,6 +1392,7 @@ compile_and_run(test_iso_verts)
 compile_and_run(test_vert_ray_shoot_vert_segments)
 
 test_construction_segments()
+test_construction_segments_no_union_find()
 test_construction_linear_curves()
 test_construction_spherical_arcs()
 test_construction_polylines()
