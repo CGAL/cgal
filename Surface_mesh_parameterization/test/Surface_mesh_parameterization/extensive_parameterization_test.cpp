@@ -31,6 +31,7 @@ typedef Kernel::Point_3                           Point_3;
 #define DCM_PM_SEAM_MESH
 #define DAC_SM_SEAM_MESH
 #define ORBIFOLD_SM_MESH
+#define ITERATIVE_SURF_MESH
 
 // POLYHEDRON_MESH
 typedef CGAL::Polyhedron_3<Kernel>                                PMesh;
@@ -472,6 +473,59 @@ int main(int, char**)
     }
   }
 #endif // ORBIFOLD_SM_MESH
+
+  // ***************************************************************************
+  // ITERATIVE AUTHALIC WITH SURFACE_MESH
+  // ***************************************************************************
+
+#ifdef ITERATIVE_SURF_MESH
+  {
+    std::cout << " ----------- ITERATIVE AUTHALIC SURFACE MESH ----------- " << std::endl;
+
+    std::ifstream in("data/oni.off");
+    SMesh sm;
+    in >> sm;
+    if(!in || num_vertices(sm) == 0) {
+      std::cerr << "Problem loading the input data" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    SM_halfedge_descriptor hd = PMP::longest_border(sm).first;
+    assert(hd != SM_halfedge_descriptor());
+
+    // UV map
+    typedef SMesh::Property_map<SM_vertex_descriptor, Point_2>  UV_pmap;
+    UV_pmap uvpm = sm.add_property_map<SM_vertex_descriptor, Point_2>("h:uv").first;
+
+    // Indices map
+    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    Indices indices;
+    PMP::connected_component(face(opposite(hd, sm), sm), sm,
+                             boost::make_function_output_iterator(
+                               SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
+
+    // Vertex parameterized map
+    boost::unordered_set<SM_vertex_descriptor> vs;
+    SMP::internal::Bool_property_map<boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+
+    // Parameterizer
+    SMP::Iterative_authalic_parameterizer_3<SMesh> parameterizer;
+
+    double error = 0;
+    int iterations = 15;
+    SMP::Error_code status = parameterizer.parameterize(sm, hd, uvpm, vipm, vpm, iterations, error);
+    SMP::Error_code status_bis = parameterizer.parameterize(sm, uvpm, 10);
+
+    if(status != SMP::OK || status_bis != SMP::OK) {
+      std::cout << "Encountered a problem: " << status << std::endl;
+      return EXIT_FAILURE;
+    }
+    else {
+      std::cout << "Parameterized with Barycentric (SM)!" << std::endl;
+    }
+  }
+#endif // DAC_SM_SEAM_MESH
 
   std::cout << "Done!" << std::endl;
 
