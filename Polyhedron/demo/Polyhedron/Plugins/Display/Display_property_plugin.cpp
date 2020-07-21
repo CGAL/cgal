@@ -1782,7 +1782,7 @@ private:
     maxBox = *(end-1);
     dock_widget->minBox->setValue(minBox);
     dock_widget->maxBox->setValue(maxBox);
-    //fill v:color pmap
+    //fill f:color pmap
     SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
         smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
 
