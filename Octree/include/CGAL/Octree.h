@@ -225,11 +225,8 @@ public:
       // Check if this node needs to be processed
       if (split_criterion(*current)) {
 
-        // Split this node
-        current->split();
-
-        // Redistribute its points
-        reassign_points((*current));
+        // Split the node, redistributing its points to its children
+        split((*current));
 
         // Process each of its children
         for (int i = 0; i < 8; ++i)
@@ -506,8 +503,9 @@ private: // functions :
 
   }
 
-  void reassign_points(Node &node) {
+  void split(Node &node) {
 
+    node.split();
     Point center = compute_barycenter_position(node);
     reassign_points(node, node.points().begin(), node.points().end(), center);
   }
