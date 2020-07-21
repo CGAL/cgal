@@ -722,7 +722,7 @@ public:
 
       // Intersect the two supporting lines.
       auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
-      CGAL_assertion(res);
+      CGAL_assertion(bool(res));
 
       // Check if we have a single intersection point.
       const Point_2* ip = boost::get<Point_2>(&*res);
