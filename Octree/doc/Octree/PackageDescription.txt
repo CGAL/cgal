@@ -1,31 +1,37 @@
 /// \defgroup PkgOctreeRef Octree Reference
+
 /// \defgroup PkgOctreeClasses Classes
+/// \ingroup PkgOctreeRef
+
 /// \defgroup PkgOctreeConcepts Concepts
-/// \ingroup PgkOctreeRef
+/// \ingroup PkgOctreeRef
 
 /*!
 \addtogroup PkgOctreeRef
 
 \cgalPkgDescriptionBegin{Octree,PkgOctree}
-
-\cgalPkgPicture{octree-benchmark-plot-statue_scan-release_mode-1000000_points.png}
-
+\cgalPkgPicture{octree_thumbnail.png}
 \cgalPkgSummaryBegin
-
-\cgalPkgAuthor{Jackson Campolattaro, xxx}
+\cgalPkgAuthor{Jackson Campolattaro, Cédric Portaneri, Tong Zhao, xxx}
 \cgalPkgDesc{
 This package ...
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
  ...  The package provides ...}
-\cgalPkgManuals{Octree,PkgOctreeRef}
+\cgalPkgManuals{Chapter_Octree,PkgOctreeRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-This is all placeholder information
-\cgalPkgSince{0.9}
-\cgalPkgBib{cgal:y-t2}
-\cgalPkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip,Regular Triangulation,regular_triangulation_2.zip,Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
+\cgalPkgSince{5.3}
+\cgalPkgBib{cgal:cpz-o}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Classes}
+- ` CGAL::Octree::Octree<class PointRange, class PointMap>`
 */
