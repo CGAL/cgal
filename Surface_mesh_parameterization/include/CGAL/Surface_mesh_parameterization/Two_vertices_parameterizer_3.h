@@ -57,6 +57,8 @@ class Two_vertices_parameterizer_3
 // Public types
 public:
   /// Triangle mesh type
+  typedef TriangleMesh_                                            Triangle_mesh;
+
   typedef TriangleMesh_                                            TriangleMesh;
 
   /// Mesh vertex type
