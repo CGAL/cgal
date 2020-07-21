@@ -303,14 +303,15 @@ public:
    * \brief Find the leaf node which would contain a point
    *
    * Traverses the octree and finds the deepest cell that has a domain enclosing the point passed.
-   * Behavior when a node is outside the octree is currently undefined.
+   * The point passed must be within the region enclosed by the octree (bbox of the root node).
    *
    * \param p The point to find a node for
    * \return A const reference to the node which would contain the point
    */
   const Node &locate(const Point &p) const {
 
-    // TODO: Asser that p is inside the octree
+    // Make sure the point is enclosed by the octree
+    assert(do_intersect(p, bbox(m_root)));
 
     // Start at the root node
     auto *node_for_point = &m_root;
