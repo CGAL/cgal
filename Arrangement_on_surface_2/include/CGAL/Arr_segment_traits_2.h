@@ -715,12 +715,14 @@ public:
       if (!CGAL::do_overlap(cv1.bbox(), cv2.bbox()))
         return oi;
 
-      // Intersect the two supporting lines.
+      // Early ending with specialized do_intersect
       const Kernel& kernel = m_traits;
-      auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
+      if (!do_intersect (cv1.left(), cv1.right(), cv2.left(), cv2.right(), kernel))
+        return oi;
 
-      // The supporting line are parallel lines and do not intersect:
-      if (! res) return oi;
+      // Intersect the two supporting lines.
+      auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
+      CGAL_assertion(res);
 
       // Check if we have a single intersection point.
       const Point_2* ip = boost::get<Point_2>(&*res);
@@ -786,6 +788,62 @@ public:
       }
 
       return oi;
+    }
+
+    // Specialized do_intersect with many tests skipped because at
+    // this point, we already know which point is left / right for
+    // both segments
+    bool do_intersect (const Point_2 &A1,
+                       const Point_2 &A2,
+                       const Point_2 &B1,
+                       const Point_2 &B2,
+                       const Kernel& k) const
+    {
+      typename Kernel::Less_xy_2 less_xy;
+      typename Kernel::Compare_xy_2 compare_xy;
+
+      switch(make_certain(compare_xy(A1,B1))) {
+        case SMALLER:
+          switch(make_certain(compare_xy(A2,B1))) {
+            case SMALLER:
+              return false;
+            case EQUAL:
+              return true;
+            default: // LARGER
+              switch(make_certain(compare_xy(A2,B2))) {
+                case SMALLER:
+                  return CGAL::Intersections::internal
+                    ::seg_seg_do_intersect_crossing(A1,A2,B1,B2, k);
+                case EQUAL:
+                  return true;
+                default: // LARGER
+                  return CGAL::Intersections::internal
+                    ::seg_seg_do_intersect_contained(A1,A2,B1,B2, k);
+              }
+          }
+        case EQUAL:
+          return true;
+        default: // LARGER
+          switch(make_certain(compare_xy(B2,A1))) {
+            case SMALLER:
+              return false;
+            case EQUAL:
+              return true;
+            default: // LARGER
+              switch(make_certain(compare_xy(B2,A2))) {
+                case SMALLER:
+                  return CGAL::Intersections::internal
+                    ::seg_seg_do_intersect_crossing(B1,B2,A1,A2, k);
+                case EQUAL:
+                  return true;
+                default: // LARGER
+                  return CGAL::Intersections::internal
+                    ::seg_seg_do_intersect_contained(B1,B2,A1,A2, k);
+              }
+          }
+      }
+      CGAL_assertion(false);
+      return false;
     }
   };
 
