@@ -22,50 +22,6 @@
 
 using std::ostream;
 
-template<class PointRange,
-        class PointMap>
-ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap> &octree) {
-
-  // Create a range of nodes
-//  auto nodes = octree.template walk<CGAL::Octree::Walker::Preorder>();
-  auto nodes = octree.walk(CGAL::Octree::Walker::Preorder());
-
-  // Iterate over the range and print each node
-//  for (auto &n : nodes) {
-//
-//    for (int i = 0; i < n.depth() - 1; ++i)
-//      os << " │  ";
-//
-//    if (!n.is_root()) {
-//
-//      if (n.index() == 7)
-//        os << " └─";
-//      else
-//        os << " ├─";
-//    }
-//
-//    os << n << std::endl;
-//
-//    if (!n.is_leaf()) {
-//
-//      for (int i = 0; i < n.depth(); ++i)
-//        os << " │  ";
-//
-//      os << " ┬ " << std::endl;
-//    }
-//  }
-
-  // Iterate over the range and print each node
-  for (auto &n : nodes) {
-
-    for (int i = 0; i < n.depth(); ++i)
-      os << ". ";
-
-    os << n << std::endl;
-  }
-
-  return os;
-}
 
 template<typename Value>
 ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
@@ -108,6 +64,53 @@ ostream &operator<<(ostream &os, const CGAL::Octree::Node::Node<Value> &node) {
 
   // Wrap information in brackets
   os << "}";
+
+  return os;
+}
+
+template<class PointRange,
+        class PointMap>
+ostream &operator<<(ostream &os, const CGAL::Octree::Octree<PointRange, PointMap> &octree) {
+
+  // Create a range of nodes
+//  auto nodes = octree.template walk<CGAL::Octree::Walker::Preorder>();
+  auto nodes = octree.walk(CGAL::Octree::Walker::Preorder());
+
+  // Iterate over the range and print each node
+//  for (auto &n : nodes) {
+//
+//    for (int i = 0; i < n.depth() - 1; ++i)
+//      os << " │  ";
+//
+//    if (!n.is_root()) {
+//
+//      if (n.index() == 7)
+//        os << " └─";
+//      else
+//        os << " ├─";
+//    }
+//
+//    os << n << std::endl;
+//
+//    if (!n.is_leaf()) {
+//
+//      for (int i = 0; i < n.depth(); ++i)
+//        os << " │  ";
+//
+//      os << " ┬ " << std::endl;
+//    }
+//  }
+
+  // Iterate over the range
+  for (auto &n : nodes) {
+
+    // Show the depth
+    for (int i = 0; i < n.depth(); ++i)
+      os << ". ";
+
+    // Print the node
+    os << n << std::endl;
+  }
 
   return os;
 }

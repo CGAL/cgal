@@ -41,6 +41,8 @@
 #include <vector>
 #include <math.h>
 
+using namespace std::placeholders;
+
 namespace CGAL {
 
 namespace Octree {
@@ -287,8 +289,8 @@ public:
 
     const Node *first = walker.first(&m_root);
 
-    Node_walker next = std::bind(&Walker::template next<Points_iterator_range>,
-                                 walker, std::placeholders::_1);
+    Node_walker next = std::bind(&Walker::template next<typename PointRange::iterator>,
+                                 walker, _1);
 
     return boost::make_iterator_range(Walker_iterator<const Node>(first, next),
                                       Walker_iterator<const Node>());
