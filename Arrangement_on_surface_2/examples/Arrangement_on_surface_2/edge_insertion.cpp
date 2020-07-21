@@ -1,21 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/edge_insertion.cpp
 // Constructing an arrangement using the simple edge-insertion functions.
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arrangement_2.h>
-
+#include "arr_inexact_construction_segments.h"
 #include "arr_print.h"
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT                                          Number_type;
-
-typedef CGAL::Arr_segment_traits_2<Kernel>                  Traits;
-typedef Traits::Point_2                                     Point;
-typedef Traits::X_monotone_curve_2                          Segment;
-typedef CGAL::Arrangement_2<Traits>                         Arrangement;
-typedef Arrangement::Vertex_handle                          Vertex_handle;
-typedef Arrangement::Halfedge_handle                        Halfedge_handle;
 
 int main()
 {
@@ -30,8 +17,8 @@ int main()
   Vertex_handle v3 = e2->target();
   Halfedge_handle e3 = arr.insert_from_right_vertex(s3, v3);
   Vertex_handle v4 = e3->target();
-  arr.insert_at_vertices(s4, v4, v1);
-  arr.insert_at_vertices(s5, v1, v3);
+  arr.insert_at_vertices(s4, v4, v1);   // return e4
+  arr.insert_at_vertices(s5, v1, v3);   // return e5
 
   print_arrangement(arr);
   return 0;

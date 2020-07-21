@@ -76,12 +76,14 @@ public:
   /// \name Types inherited from the base Arrangement_on_surface_2
   /// @{
 
-  typedef typename Arrangement_on_surface_2::Point_2            Point_2;
-  typedef typename Arrangement_on_surface_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Arrangement_on_surface_2::Size               Size;
+  typedef typename Arrangement_on_surface_2::Point_2             Point_2;
+  typedef typename Arrangement_on_surface_2::X_monotone_curve_2  X_monotone_curve_2;
+  typedef typename Arrangement_on_surface_2::Size                Size;
+
   typedef typename Arrangement_on_surface_2::Vertex              Vertex;
   typedef typename Arrangement_on_surface_2::Halfedge            Halfedge;
   typedef typename Arrangement_on_surface_2::Face                Face;
+
   typedef typename Arrangement_on_surface_2::Vertex_handle       Vertex_handle;
   typedef typename Arrangement_on_surface_2::Halfedge_handle     Halfedge_handle;
   typedef typename Arrangement_on_surface_2::Face_handle         Face_handle;
@@ -94,6 +96,23 @@ public:
   typedef typename Arrangement_on_surface_2::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   typedef typename Arrangement_on_surface_2::Hole_iterator       Hole_iterator;
   typedef typename Arrangement_on_surface_2::Isolated_vertex_iterator Isolated_vertex_iterator;
+
+  typedef typename Arrangement_on_surface_2::Vertex_handle       Vertex_const_handle;
+  typedef typename Arrangement_on_surface_2::Halfedge_handle     Halfedge_const_handle;
+  typedef typename Arrangement_on_surface_2::Face_handle         Face_const_handle;
+  typedef typename Arrangement_on_surface_2::Vertex_iterator     Vertex_const_iterator;
+  typedef typename Arrangement_on_surface_2::Halfedge_iterator   Halfedge_const_iterator;
+  typedef typename Arrangement_on_surface_2::Edge_iterator       Edge_const_iterator;
+  typedef typename Arrangement_on_surface_2::Face_iterator       Face_const_iterator;
+  typedef typename Arrangement_on_surface_2::Unbounded_face_iterator
+    Unbounded_face_const_iterator;
+  typedef typename Arrangement_on_surface_2::Halfedge_around_vertex_circulator
+    Halfedge_around_const_vertex_circulator;
+  typedef typename Arrangement_on_surface_2::Ccb_halfedge_circulator
+    Ccb_halfedge_const_circulator;
+  typedef typename Arrangement_on_surface_2::Hole_iterator       Hole_const_iterator;
+  typedef typename Arrangement_on_surface_2::Isolated_vertex_iterator
+    Isolated_vertex_const_iterator;
 
   /// @}
 

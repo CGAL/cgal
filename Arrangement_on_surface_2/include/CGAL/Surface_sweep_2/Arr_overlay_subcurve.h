@@ -102,7 +102,7 @@ public:
     m_above(nullptr)
   { m_top_face.red = nullptr; }
 
-  /*! Get the subcurve lying above above this subcurve in the status line. */
+  /*! Get the subcurve lying above this subcurve in the status line. */
   Self* subcurve_above() const { return m_above; }
 
   /*! Set the subcurve above. */

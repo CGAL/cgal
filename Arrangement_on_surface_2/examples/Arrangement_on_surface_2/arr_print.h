@@ -36,7 +36,7 @@ void print_neighboring_vertices (typename Arrangement::Vertex_const_handle v)
 // boundary.
 //
 template <typename Arrangement>
-void print_ccb (typename Arrangement::Ccb_halfedge_const_circulator circ)
+void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ)
 {
   typename Arrangement::Ccb_halfedge_const_circulator curr = circ;
   typename Arrangement::Halfedge_const_handle he;
@@ -90,7 +90,7 @@ void print_face (typename Arrangement::Face_const_handle f)
 // Print the given arrangement.
 //
 template<class Arrangement>
-void print_arrangement (const Arrangement& arr)
+void print_arrangement(const Arrangement& arr)
 {
   CGAL_precondition (arr.is_valid());
 
