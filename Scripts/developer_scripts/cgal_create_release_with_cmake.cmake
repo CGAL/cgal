@@ -182,6 +182,8 @@ string(REPLACE "CGAL_VERSION ${CGAL_VERSION_INPUT}" "CGAL_VERSION ${CGAL_VERSION
 #  update CGAL_VERSION_NR
 if (CGAL_VERSION_NR)
   string(REGEX REPLACE "CGAL_VERSION_NR 10[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]" "CGAL_VERSION_NR ${CGAL_VERSION_NR}" file_content "${file_content}")
+  math(EXPR CGAL_BUILD_VERSION "${CGAL_VERSION_NR} % 10000")
+  file(WRITE ${release_dir}/lib/cmake/CGAL/CGALConfigBuildVersion.cmake "set(CGAL_BUILD_VERSION ${CGAL_BUILD_VERSION})")
 endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
 
