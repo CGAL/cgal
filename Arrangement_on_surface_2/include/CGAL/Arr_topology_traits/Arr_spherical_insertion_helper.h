@@ -100,7 +100,7 @@ public:
   virtual void before_handle_event(Event* event);
 
   //@}
-  
+
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
 
@@ -156,8 +156,8 @@ void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
 before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
 {
   // Ignore events that do not have boundary conditions.
-  const Arr_parameter_space ps_x = event->parameter_space_in_x();
-  const Arr_parameter_space ps_y = event->parameter_space_in_y();
+  auto ps_x = event->parameter_space_in_x();
+  auto ps_y = event->parameter_space_in_y();
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
 
   if (event->is_isolated()) return;
@@ -168,8 +168,7 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 0) &&
                    (event->number_of_right_curves() == 1));
-    const X_monotone_curve_2& xc =
-        (*(event->right_curves_begin()))->last_curve();
+    const auto& xc = (*(event->right_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) return;
 
     // If a vertex on the south pole does not exists, create one.
@@ -186,8 +185,7 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 1) &&
                    (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    const auto& xc = (*(event->left_curves_begin()))->last_curve();
 
     if (xc.halfedge_handle() != Halfedge_handle()) {
       // Update the current top face.
@@ -204,20 +202,19 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
   }
 
   if (ps_x == ARR_LEFT_BOUNDARY) {
-    // Process left discontinuity boundary:
-    // The event has only right curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    // CGAL_assertion((event->number_of_left_curves() == 0) &&
-    //                (event->number_of_right_curves() >= 1));
-    const X_monotone_curve_2& xc =
-      (*(event->right_curves_begin()))->last_curve();
+    // If the event is an end-point of a curve that coincides with the
+    // identification boundary, it may not have right curves at all
+    if (0 == event->number_of_right_curves()) return;
+
+    // Otherwise, it may still have a left curve...
+    const auto& xc = (*(event->right_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) {
       // Update the current top face.
       this->m_spherical_face = xc.halfedge_handle()->twin()->face();
       return;
     }
 
-    // If a vertex on the line of discontinuity does not exists. create one.
+    // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = this->m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
       this->m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
@@ -231,8 +228,7 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() >= 1) &&
                    (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    const auto& xc = (*(event->left_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) return;
 
     // If a vertex on the line of discontinuity does not exists. create one.
