@@ -505,8 +505,16 @@ private: // functions :
 
   void split(Node &node) {
 
+    // Make sure the node hasn't already been split
+    assert(node.is_leaf());
+
+    // Split the node to create children
     node.split();
+
+    // Find the point to around which the node is split
     Point center = compute_barycenter_position(node);
+
+    // Add the node's points to its children
     reassign_points(node, node.points().begin(), node.points().end(), center);
   }
 
