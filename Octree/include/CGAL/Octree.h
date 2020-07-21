@@ -370,13 +370,19 @@ public:
   /*!
    * \brief Find the K points in a tree that are nearest to the search point and within a specific radius
    *
-   * \todo
+   * This function guarantees that there are no closer points than the ones returned,
+   * but it does not guarantee that it will return at least K points.
+   * For a query where the search radius encloses K or fewer points, all enclosed points will be returned.
+   * If the search radius passed is too small, no points may be returned.
+   * This function is useful when the user already knows how sparse the points are,
+   * or if they don't care about points that are too far away.
+   * Setting a small radius may have performance benefits.
    *
    * \tparam Point_output_iterator an output iterator type that will accept points
    * \param search_point the location to find points near
    * \param search_radius_squared the size of the region to search within
    * \param k the number of points to find
-   * \param output the output iterator to add the found points to
+   * \param output the output iterator to add the found points to (in order of increasing distance)
    */
   template<typename Point_output_iterator>
   void nearest_k_neighbours_in_radius(const Point &search_point, FT search_radius_squared, std::size_t k,
@@ -398,12 +404,13 @@ public:
   /*!
    * \brief Find the K points in a tree that are nearest to the search point
    *
-   * \todo
+   * This function is equivalent to invoking nearest_k_neighbours_in_radius for an infinite radius.
+   * For a tree with K or fewer points, all points in the tree will be returned.
    *
    * \tparam Point_output_iterator an output iterator type that will accept points
    * \param search_point the location to find points near
    * \param k the number of points to find
-   * \param output the output iterator to add the found points to
+   * \param output the output iterator to add the found points to (in order of increasing distance)
    */
   template<typename Point_output_iterator>
   void nearest_k_neighbours(const Point &search_point, std::size_t k, Point_output_iterator output) const {
