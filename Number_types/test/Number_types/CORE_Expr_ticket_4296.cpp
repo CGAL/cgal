@@ -1,5 +1,5 @@
 #include <CGAL/CORE/Expr.h>
-using NT = CORE::Expr;
+typedef CORE::Expr NT;
 
 int main() {
 

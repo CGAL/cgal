@@ -32,22 +32,28 @@ namespace CGAL {
   // It would be nicer to write the table in the other direction: Orientation_of_points_tag is good up to 6, Side_of_oriented_sphere_tag up to 5, etc.
 template<class> struct Functors_without_division { typedef typeset<> type; };
 template<> struct Functors_without_division<Dimension_tag<1> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<2> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<3> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag >::type  type;
 };
 template<> struct Functors_without_division<Dimension_tag<4> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<5> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 template<> struct Functors_without_division<Dimension_tag<6> > {
-  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+  typedef typeset<Orientation_of_points_tag>
+  ::add<Side_of_oriented_sphere_tag>::type type;
 };
 
 // FIXME:
@@ -60,8 +66,8 @@ struct Cartesian_filter_K : public Base_
     CGAL_NO_UNIQUE_ADDRESS Store_kernel<AK_> sak;
     CGAL_NO_UNIQUE_ADDRESS Store_kernel<EK_> sek;
 
-    constexpr Cartesian_filter_K(){}
-    constexpr Cartesian_filter_K(int d):Base_(d){}
+    CGAL_CONSTEXPR Cartesian_filter_K(){}
+    CGAL_CONSTEXPR Cartesian_filter_K(int d):Base_(d){}
     //FIXME: or do we want an instance of AK and EK belonging to this kernel,
     //instead of a reference to external ones?
     CGAL_CONSTEXPR Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),sak(a),sek(b){}

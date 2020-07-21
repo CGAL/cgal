@@ -144,14 +144,14 @@ public:
   void inc_size() {
     ++m_size;
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-    if(m_size > (m_approximate_size * precision_of_approximate_size_plus_1))
+    if(m_size > (m_approximate_size * 1.10))
       refresh_approximate_size();
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   }
   void dec_size() {
     --m_size;
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-    if((m_size * precision_of_approximate_size_plus_1) < m_approximate_size)
+    if((m_size * 1.10) < m_approximate_size)
       refresh_approximate_size();
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   }
@@ -192,7 +192,6 @@ protected:
 
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   // `m_size` plus or minus `precision_of_approximate_size - 1`
-  static constexpr double precision_of_approximate_size_plus_1 = 1.10;
   size_type m_approximate_size;
   std::atomic<size_type> m_atomic_approximate_size;
   void refresh_approximate_size() {
