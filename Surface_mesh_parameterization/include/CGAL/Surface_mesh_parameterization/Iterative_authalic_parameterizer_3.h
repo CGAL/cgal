@@ -1142,7 +1142,7 @@ public:
   {
     const halfedge_descriptor bhd = Polygon_mesh_processing::longest_border(tmesh).first;
 
-    return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iterations);
+    return parameterize(tmesh, bhd, uvmap, iterations);
   }
 };
 
