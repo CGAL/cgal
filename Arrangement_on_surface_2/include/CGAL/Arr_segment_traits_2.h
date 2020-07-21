@@ -711,6 +711,10 @@ public:
       typedef boost::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
+      // Early ending with Bbox overlapping test
+      if (!CGAL::do_overlap(cv1.bbox(), cv2.bbox()))
+        return oi;
+
       // Intersect the two supporting lines.
       const Kernel& kernel = m_traits;
       auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
@@ -1068,8 +1072,9 @@ public:
   Bbox_2 bbox() const
   {
     Kernel kernel;
-    Segment_2 seg = kernel.construct_segment_2_object()(this->m_ps, this->m_pt);
-    return (kernel.construct_bbox_2_object()(seg));
+    typename Kernel::Construct_bbox_2
+      construct_bbox = kernel.construct_bbox_2_object();
+    return construct_bbox(this->m_ps) + construct_bbox(this->m_pt);
   }
 
   /*! Obtain the segment source.
