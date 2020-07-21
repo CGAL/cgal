@@ -264,13 +264,6 @@ public:
   /// @{
 
   /*!
-   * \brief Provides read and write access to the root node, and by extension the rest of the tree
-   *
-   * \return a reference to the root node of the tree
-   */
-  Node &root() { return m_root; }
-
-  /*!
    * \brief Provides read-only access to the root node, and by extension the rest of the tree
    *
    * \return a const reference to the root node of the tree
@@ -464,6 +457,7 @@ public:
 
 private: // functions :
 
+  // TODO: Could this method name be reduced to just "center" ?
   Point barycenter(const Node &node) const {
 
     // Determine the side length of this node

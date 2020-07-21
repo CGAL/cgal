@@ -29,7 +29,7 @@ void test_1_point() {
 
   // Check that the topology matches
   Octree::Node single_node{};
-  single_node.value() = octree.root().value();
+  single_node.points() = octree.root().points();
   assert(single_node == octree.root());
 
 }
