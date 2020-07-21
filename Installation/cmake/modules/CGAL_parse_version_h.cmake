@@ -14,5 +14,6 @@ function(cgal_parse_version_h version_h_file name)
   MATH(EXPR ${ARGV3} "${CMAKE_MATCH_5}")        # minor version without leading 0
   set(${ARGV3} "${${ARGV3}}" PARENT_SCOPE)
   set(${ARGV4} "${CMAKE_MATCH_6}" PARENT_SCOPE)                 # patch number
-  set(${ARGV5} "${CMAKE_MATCH_7}" PARENT_SCOPE)                 # build number
+  MATH(EXPR ${ARGV5} "${CMAKE_MATCH_7}")        # build number version without leading 0
+  set(${ARGV5} "${${ARGV5}}" PARENT_SCOPE)                      # build number
 endfunction()
