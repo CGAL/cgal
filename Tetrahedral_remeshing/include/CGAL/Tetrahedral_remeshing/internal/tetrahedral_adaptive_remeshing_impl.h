@@ -286,7 +286,7 @@ public:
   }
 
   //peel off slivers
-  std::size_t postprocess(const double sliver_angle = 0.1)
+  std::size_t postprocess(const double sliver_angle = 2.)
   {
     if (m_protect_boundaries)
       return 0;
@@ -298,35 +298,33 @@ public:
 
     std::size_t nb_slivers_peel = 0;
     std::vector<std::pair<Cell_handle, std::array<bool, 4> > > peelable_cells;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    double mindh = 180.;
+#endif
     for (Cell_handle cit : tr().finite_cell_handles())
     {
       std::array<bool, 4> facets_on_surface;
-      short count = 0;
-      if(m_c3t3.is_in_complex(cit) && min_dihedral_angle(tr(), cit) < sliver_angle)
+      if (m_c3t3.is_in_complex(cit))
       {
-        for (int i = 0; i < 4; ++i)
-        {
-          if (!m_c3t3.is_in_complex(cit->neighbor(i)))
-          {
-            facets_on_surface[i] = true;
-            ++count;
-          }
-          else
-            facets_on_surface[i] = false;
-        }
-        if(count > 1)
+        const double dh = min_dihedral_angle(tr(), cit);
+        if(dh < sliver_angle && is_peelable(m_c3t3, cit, facets_on_surface))
           peelable_cells.push_back(std::make_pair(cit, facets_on_surface));
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+        mindh = (std::min)(dh, mindh);
+#endif
       }
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "Min dihedral angle : " << mindh << std::endl;
     std::cout << "Peelable cells : " << peelable_cells.size() << std::endl;
 #endif
 
     for (auto c_i : peelable_cells)
     {
       Cell_handle c = c_i.first;
-      std::array<bool, 4> f_on_surface = c_i.second;
+      const std::array<bool, 4>& f_on_surface = c_i.second;
 
       boost::optional<Surface_patch_index> patch;
       for (int i = 0; i < 4; ++i)
