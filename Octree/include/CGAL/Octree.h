@@ -142,6 +142,8 @@ public:
    * The resulting octree will have a root node with no children that contains the points passed.
    * That root node will have a bounding box that encloses all of the points passed,
    * with padding according to the enlarge_ratio
+   * This single-node octree is valid and compatible with all Octree functionality,
+   * but any performance benefits are unlikely to be realized unless the tree is refined.
    *
    * \param point_range random access iterator over the indices of the points
    * \param point_map maps the point indices to their coordinate locations
@@ -197,7 +199,8 @@ public:
   /*!
    * \brief Subdivide an octree's nodes and sub-nodes until it meets the given criteria
    *
-   * \todo
+   * The split criterion can be any function pointer that takes a Node pointer
+   * and returns a boolean value (where true implies that a Node needs to be split).
    *
    * \param split_criterion rule to use when determining whether or not a node needs to be subdivided
    */
@@ -239,12 +242,17 @@ public:
   /*!
    * \brief Refine an octree using a max depth and max number of points in a node as split criterion
    *
-   * \todo
+   * This is equivalent to calling:
+   *
+   *     refine(Split_criterion::Max_depth_or_bucket_size(max_depth, bucket_size));
+   *
+   * This functionality is provided for consistency with older octree implementations
+   * which did not allow for custom split criterion.
    *
    * \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split)
    * \param bucket_size maximum points a node is allowed to contain
    */
-  void refine(size_t max_depth, size_t bucket_size) {
+  void refine(size_t max_depth = 10, size_t bucket_size = 20) {
     refine(Split_criterion::Max_depth_or_bucket_size(max_depth, bucket_size));
   }
 
@@ -256,16 +264,12 @@ public:
   /*!
    * \brief Provides read and write access to the root node, and by extension the rest of the tree
    *
-   * \todo
-   *
    * \return a reference to the root node of the tree
    */
   Node &root() { return m_root; }
 
   /*!
    * \brief Provides read-only access to the root node, and by extension the rest of the tree
-   *
-   * \todo
    *
    * \return a const reference to the root node of the tree
    */
