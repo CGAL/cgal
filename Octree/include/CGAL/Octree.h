@@ -426,7 +426,10 @@ public:
   /*!
    * \brief Compares the topology of a pair of Octrees
    *
-   * \todo
+   * Trees may be considered equivalent even if they contain different points.
+   * Equivalent trees must have the same bounding box and the same node structure.
+   * Node structure is evaluated by comparing the root nodes using the node equality operator.
+   * \todo Should I link to that?
    *
    * \param rhs tree to compare with
    * \return whether the trees have the same topology
@@ -445,6 +448,11 @@ public:
     return rhs.m_root == m_root;
   }
 
+  /*!
+   * \brief Compares the topology of a pair of Octrees
+   * \param rhs tree to compare with
+   * \return whether the trees have different topology
+   */
   bool operator!=(const Octree<PointRange, PointMap> &rhs) const {
     return !operator==(rhs);
   }
@@ -510,7 +518,7 @@ private: // functions :
     Bbox node_cube = bbox(node);
 
     // Check for overlap between the node's box and the sphere as a box, to quickly catch some cases
-    // FIXME: Activating this causes slower times!
+    // FIXME: Activating this causes slower times
 //    if (!do_overlap(node_cube, sphere.bbox()))
 //      return false;
 
