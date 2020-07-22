@@ -17,7 +17,10 @@ TARGETS = \
   incremental_insertion.pdf \
   global_insertion.pdf \
   global_removal.pdf \
-  unbounded_non_intersecting.pdf
+  unbounded_non_intersecting.pdf \
+  unb_dcel.pdf \
+  polylines.pdf \
+  circles.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

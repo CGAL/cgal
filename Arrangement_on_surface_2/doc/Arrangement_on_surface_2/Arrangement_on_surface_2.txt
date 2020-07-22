@@ -2183,7 +2183,9 @@ unbounded face bounded by the bounding rectangle.
 Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location with respect to the
 bounding bounding rectangle:
+
 <OL>
+
 <LI>A vertex, associated with a point in \f$\mathbb{R}^2\f$ whose
 coordinates are bounded. Such a vertex always lies inside the
 bounding rectangle.
@@ -3399,12 +3401,15 @@ attached to each individual segment; see Section
 \ref arr_ssecmeta_tr. This makes it possible to associate different
 data objects with the different segments that compose a polyline.
 
-\cgalFigureBegin{arr_figex_12,ex_12.png} An arrangement of three
-polylines, as constructed in `polylines.cpp`. Disks mark vertices
-associated with polyline endpoints, while circles mark vertices that
-correspond to intersection points. Note that \f$\pi_2\f$ is split into
-three \f$ x\f$-monotone polylines, and that \f$\pi_1\f$ and
-\f$\pi_3\f$ have two overlapping sections.
+\cgalFigureBegin{arr_figex_12,polylines.png}
+
+An arrangement of three polylines, as constructed in
+`polylines.cpp`. Disks mark vertices associated with polyline
+endpoints, while circles mark vertices that correspond to intersection
+points. Note that \f$\pi_2\f$ is split into three \f$ x\f$-monotone
+polylines, and that \f$\pi_1\f$ and \f$\pi_3\f$ have two overlapping
+sections.
+
 \cgalFigureEnd
 
 The following example program constructs an arrangement of three
@@ -3476,12 +3481,14 @@ algebraic numbers of degree 2, is <em>not</em> the same as the
 rational coordinates. The coordinates of a point are represented using
 the nested `CoordNT` number-type.
 
-\cgalFigureBegin{arr_figex_13,ex_13.png}
+\cgalFigureBegin{arr_figex_13,circles.png}
+
 An arrangement of three circles constructed in `circles.cpp`. Each
 circle is split into two \f$x\f$-monotone circular arcs, whose
 endpoints are drawn as disks. Circles mark vertices that correspond to
 intersection points. The vertex \f$y_{\rm max}\f$ is a common
 intersection point of all three circles.
+
 \cgalFigureEnd
 
 In the following example an arrangement of three full circles is
