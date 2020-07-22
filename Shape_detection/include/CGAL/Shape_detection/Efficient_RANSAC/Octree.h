@@ -15,6 +15,7 @@
 #define CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_OCTREE_H
 
 #include <CGAL/license/Shape_detection.h>
+#include <CGAL/Octree.h>
 
 #include <stack>
 #include <limits>
@@ -169,6 +170,9 @@ class Octree : public PointAccessor {
   template<class Sd_traits>
   friend
   class ::CGAL::Shape_detection::Efficient_RANSAC;
+
+
+  typedef CGAL::Octree::Octree<Input_iterator, Point_map> Internal_octree;
 
 //      struct Cell {
 //        std::size_t first, last;
