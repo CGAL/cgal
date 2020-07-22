@@ -498,8 +498,8 @@ in a type-safe way \cgal uses return values of type
 `boost::optional< boost::variant< T...  > >` were `T...` is a
 list of all possible resulting geometric objects.  The exact result
 type of an intersection can be determined through the metafunction
-`cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>` or
-`cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>`, where
+`CGAL::cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>` or
+`CGAL::cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>`, where
 `Type1` and `Type2` are the types of the objects used in the
 intersection computation.
 
@@ -525,7 +525,7 @@ std::cin >> segment_1 >> segment_2;
 // auto v = intersection(segment_1, segment_2);
 
 /* C++03 */
-cpp11::result_of<K::Intersect_2(Segment_2, Segment_2)>::type
+CGAL::cpp11::result_of<K::Intersect_2(Segment_2, Segment_2)>::type
 v = intersection(segment_1, segment_2);
 if(v) {
   /* not empty */

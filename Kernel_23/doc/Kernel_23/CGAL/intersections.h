@@ -95,7 +95,7 @@ The following tables give the possible values for `Type1` and `Type2`.
 
 \cgalHeading{2D Intersections}
 
-The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
+The return type can be obtained through `cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
 It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -191,7 +191,7 @@ intersections existing with the type `Iso_rectangle_2`. Note that the return typ
 
 \cgalHeading{3D Intersections}
 
-The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
+The return type can be obtained through `cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
 It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -350,7 +350,7 @@ The following examples demonstrate the most common use of
 `intersection()` functions with the 2D and 3D Linear %Kernel.
 
 In the first two examples we intersect a segment and a line.
-The result type can be obtained with `CGAL::cpp11::result_of`. It looks simpler
+The result type can be obtained with `cpp11::result_of`. It looks simpler
 if you use a C++ compiler which supports `auto`,
 but you must anyways know that the result type is a `boost::optional<boost::variant<..> >`, in order to unpack the point or segment.
 
