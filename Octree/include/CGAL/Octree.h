@@ -133,7 +133,6 @@ private: // data members :
   FT m_bbox_side;              /* input bounding box side length (cube) */
 
   std::vector<FT> m_side_per_depth;      /* side length per node's depth */
-  std::vector<size_t> m_unit_per_depth; /* number of unit node (smallest) inside one node for each depth for one axis */
 
 public:
 
