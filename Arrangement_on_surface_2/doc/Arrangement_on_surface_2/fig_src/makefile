@@ -9,7 +9,15 @@ TARGETS = \
   special_edge_insertion.pdf \
   isolated_vertices.pdf \
   edge_insertion.pdf \
-  triangle.pdf
+  triangle.pdf \
+  pred_around_vertex.pdf \
+  arr_segs.pdf \
+  insert.pdf \
+  point_location.pdf \
+  incremental_insertion.pdf \
+  global_insertion.pdf \
+  global_removal.pdf \
+  unbounded_non_intersecting.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

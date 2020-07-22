@@ -206,7 +206,9 @@ in the Boost Graph Library to arrangement types. Finally, in Section
 \ref aos_sec-tips we provide some tips that can be applied to expedite
 computation.
 
+<!--=========================================================================-->
 \section aos_sec-basic Basic Arrangements
+<!--=========================================================================-->
 
 We start with a formal definition of two-dimensional arrangements, and
 proceed with an introduction to the data structure used to represent
@@ -342,6 +344,7 @@ every face may contain isolated vertices in its interior.  See
 see \cgalCite{bkos-cgaa-00} Chapter 2.
 
 \cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
+
 An arrangement of interior-disjoint line segments with some of the
 \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has
 a single connected component that forms a hole inside it, and this
@@ -1220,7 +1223,9 @@ in the public interface of the arrangement class. Instead, the
 arrangement operations; see more details in the Reference Manual.
 \cgalAdvancedEnd
 
+<!--=========================================================================-->
 \section arr_secqueries Issuing Queries on an Arrangement
+<!--=========================================================================-->
 
 One of the most useful query types defined on arrangements is the
 <em>point-location</em> query: Given a point, find the arrangement
@@ -1396,7 +1401,7 @@ vary according to the user choice.} for answering queries:
   built by a randomized incremental construction algorithm (RIC).
 
 <LI> `Arr_triangulation_point_location<Arrangement>` uses a
-  constrained triangulation, provided by the \ref PkgTriangulation3
+  constrained triangulation, provided by the \ref PkgTriangulation2
   package, as a search strcture. Every time the arrangement is
   modified the constrained triangulation search-structure is
   reconstructed from scrach, where the edges of the arrangement are
@@ -1456,8 +1461,14 @@ dynamic and is frequently going through changes, the
 `Arr_trapezoid_ric_point_location` class template should be the
 selected point-location strategy.
 
-\cgalFigureBegin{arr_figex_8,ex_5.png}
-The arrangement of line segments, as constructed in `point_location.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$q_1, \ldots, q_6\f$ are drawn as crosses.
+\cgalFigureBegin{arr_figex_8,point_location.png}
+
+The arrangement of line segments, as constructed in
+`point_location.cpp`, `vertical_ray_shooting.cpp`, and
+`batched_point_location.cpp`. The arrangement vertices are drawn as
+small rings, while the query points \f$q_1, \ldots, q_6\f$ are drawn
+as crosses.
+
 \cgalFigureEnd
 
 The program listed below constructs a simple arrangement of five line
@@ -1594,7 +1605,9 @@ is essentially equivalent to the six separate queries performed in
 
 \cgalExample{Arrangement_on_surface_2/batched_point_location.cpp}
 
+<!--=========================================================================-->
 \section arr_secgl_funcs Free Functions in the Arrangement Package
+<!--=========================================================================-->
 
 The `Arrangement_2` class template is used to represent
 two-dimensional subdivisions induced by planar curves. Its interface
@@ -1774,13 +1787,15 @@ insertion operation may involve splitting curves.
 \subsubsection arr_sssecinsert_ex Inserting Intersecting Line Segments (code example)
 <!----------------------------------------------------------------------------->
 
-\cgalFigureBegin{arr_figex_10,ex_8.png}
+\cgalFigureBegin{arr_figex_10,incremental_insertion.png}
+
 An arrangement of five intersecting line segments, as constructed in
 `incremental_insertion.cpp` and `aggregated_insertion.cpp`. The
 segment endpoints are marked by black disks and the arrangement
 vertices that correspond to intersection points are marked by
 circles. The query point \f$q\f$ is marked with a cross and the face
 that contains it is shaded.
+
 \cgalFigureEnd
 
 The program below constructs an arrangement of intersecting
@@ -1909,12 +1924,14 @@ arrangement, where we denote the number of edges in the arrangement by
 curves one by one. For larger input sets, we use the aggregated
 insertion procedures.
 
-\cgalFigureBegin{arr_figex_unb1,ex_10.png}
+\cgalFigureBegin{arr_figex_unb1,global_insertion.png}
+
 An arrangement of intersecting line segments, as constructed in
 `global_insertion.cpp`. The segments of \f${\mathcal S}_1\f$ are
 drawn in solid lines and the segments of \f${\mathcal S}_2\f$ are
 drawn in dark dashed lines. Note that the segment \f$ s\f$ (light
 dashed line) overlaps one of the segments in \f${\mathcal S}_1\f$.
+
 \cgalFigureEnd
 
 In the example below we aggregately construct an arrangement of a set
@@ -1965,8 +1982,8 @@ from the arrangement by simply calling `arr.remove_edge(e)`
 end vertices of `e` becomes isolated or redundant after the removal
 of the edge, it is removed as well.
 
-\image html h_shape.png
-\image latex h_shape.png
+\image html global_removal.png
+\image latex global_removal.png
 
 The following example demonstrates the usage of the free removal
 functions. It creates an arrangement of four line segment forming
@@ -1977,9 +1994,9 @@ vertical line segments:
 
 \cgalExample{Arrangement_on_surface_2/global_removal.cpp}
 
+<!--=========================================================================-->
 \section aos_sec-unbounded Arrangements of Unbounded Curves
-
-\cgalModifBegin
+<!--=========================================================================-->
 
 Previous sections dealt only with arrangements of line segments,
 namely of bounded curves. Such arrangements always have one unbounded
@@ -2037,10 +2054,11 @@ direction of \f$(1,0)\f$, to the arrangement of \f$y = -x\f$ and \f$y
 edge-manipulation functions can also be applied on edges associated
 with unbounded curves.
 
-\cgalModifEnd
+\cgalFigureBegin{arr_figunb_dcel,unbounded_non_intersecting.png}
 
-\cgalFigureBegin{arr_figunb_dcel,ex_unb1.png}
-An arrangement of unbounded linear objects, as constructed in unbounded_non_intersecting.cpp.
+An arrangement of unbounded linear objects, as constructed in
+`unbounded_non_intersecting.cpp`.
+
 \cgalFigureEnd
 
 The following example demonstrates the use of the insertion function
@@ -2109,9 +2127,11 @@ above.
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements
 <!----------------------------------------------------------------------------->
+
 \cgalAdvancedBegin
 
 \cgalFigureBegin{typenormal,unb_dcel.png}
+
 A \sc{Dcel} representing an arrangement of four lines. Halfedges are
 drawn as thin arrows. The vertices \f$v_1, \ldots, v_8\f$ lie at
 infinity, and are not associated with valid points. The halfedges that
@@ -2121,6 +2141,7 @@ curves. The face denoted \f$f_0\f$ (lightly shaded) is the fictitious
 that bounds the actual arrangement. The four fictitious vertices
 \f$v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$v_{\rm tr}\f$
 represent the four corners of the bounding rectangle.
+
 \cgalFigureEnd
 
 Given a set \f$\cal C\f$ of unbounded curves, a simple approach for
@@ -2277,9 +2298,9 @@ using the following procedure:
 \endcode
 \cgalAdvancedEnd
 
+<!--=========================================================================-->
 \section aos_sec-curved_surfaces Arrangements on Curved Surfaces
-
-\cgalModifBegin
+<!--=========================================================================-->
 
 We are given a surface \f$S\f$ in \f$\mathbb{R}^3\f$ and a set \f$\cal
 C \f$ of curves embedded in this surface. The curves subdivide \f$S\f$
@@ -2526,9 +2547,9 @@ Sites are drawn in red and Voronoi edges are drawn in blue.
 (d) A degenerate power diagram of 14 sites on the sphere.
 \cgalFigureCaptionEnd
 
-\cgalModifEnd
-
+<!--=========================================================================-->
 \section aos_sec-geom_traits The Geometry Traits
+<!--=========================================================================-->
 
 A geometry traits class encapsulates the definitions of the geometric
 entities and implements the geometric predicates and constructions
@@ -2791,8 +2812,6 @@ also model the `ArrangementLandmarkTraits_2` concept.
 <!----------------------------------------------------------------------------->
 \subsubsection aos_ssec-traits-curved Unbounded or Curved Surface Concepts
 <!----------------------------------------------------------------------------->
-
-\cgalModifBegin
 
 We descend to the bottom level of the hierarchy. The refinements
 described in this section provide the requirements imposed on traits
@@ -3117,8 +3136,6 @@ lies in the image of the horizontal and identified sides of the
 boundary.
 
 </DL>
-
-\cgalModifEnd
 
 <!----------------------------------------------------------------------------->
 \subsection aos_ssec-geom_traits-models Models of the Geometry Traits Concepts
@@ -3974,8 +3991,6 @@ algebraic segments. The computed arrangement is displayed in
 \subsubsection arr_ssectr_spherical Arcs of Great Circle Embedded in the Sphere
 <!----------------------------------------------------------------------------->
 
-\cgalModifBegin
-
 The `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` class template
 handles arcs of great circles (also known as geodesic arcs) that lie
 on the unit sphere (centered at the origin). It is a model of the
@@ -4031,8 +4046,6 @@ identification curve is drawn as a gray tube.
 \cgalFigureEnd
 
 \cgalExample{Arrangement_on_surface_2/spherical_insert.cpp}
-
-\cgalModifEnd
 
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecmeta_tr Traits-Class Decorators
@@ -4171,7 +4184,9 @@ instantiate the curve-data traits:
 
 \cgalExample{Arrangement_on_surface_2/dual_with_data.cpp}
 
+<!--=========================================================================-->
 \section aos_sec-topol_traits The Topology Traits
+<!--=========================================================================-->
 
 At this point we do not expose the topology traits concept. The
 package contains one topology traits, namely,
@@ -4181,7 +4196,9 @@ arrangement embeded on a sphere defined over a parameter space the
 left and right boundary sides of which are identified and the top and
 bottom boundary sides are contracted.
 
+<!--=========================================================================-->
 \section arr_secnotif The Notification Mechanism
+<!--=========================================================================-->
 
 For some applications it is essential to know exactly what
 happens inside a specific arrangement-instance. For example, when
@@ -4302,7 +4319,9 @@ extended and store additional data, as they help updating this
 data on-line. See Section \ref arr_secex_dcel for more details
 and examples.
 
+<!--=========================================================================-->
 \section arr_secex_dcel Extending the DCEL
+<!--=========================================================================-->
 
 For many applications of the arrangement package it is necessary to
 store additional information (perhaps of non-geometric nature) with
@@ -4410,7 +4429,9 @@ concept `ArrangementDcel`, whose exact specification is listed in the
 Reference Manual.
 \cgalAdvancedEnd
 
+<!--=========================================================================-->
 \section arr_secoverlay Overlaying Arrangements
+<!--=========================================================================-->
 
 Assume that we are given two geographic maps represented as
 arrangements with some data objects attached to their faces,
@@ -4540,7 +4561,9 @@ into an unbounded face (indexed 1) and a bounded face (indexed 2):
 
 \cgalExample{Arrangement_on_surface_2/overlay_unbounded.cpp}
 
+<!--=========================================================================-->
 \section arr_secarr_with_hist Storing the Curve History
+<!--=========================================================================-->
 
 As stated at the beginning of this chapter (Section \ref
 aos_sec-intro), when one constructs an arrangement induced by a set
@@ -4717,7 +4740,9 @@ arrangement-with-history instance:
 
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 
+<!--=========================================================================-->
 \section aos_sec-io Input/Output Streams
+<!--=========================================================================-->
 
 In some cases, one would like to save an arrangement object
 constructed by some application, so that later on it can be
@@ -4855,7 +4880,9 @@ an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
 
+<!--=========================================================================-->
 \section aos_sec-bgl Adapting to Boost Graphs
+<!--=========================================================================-->
 
 <span class="textsc">Boost</span>\cgalFootnote{See also <span class="textsc">Boost</span>'s homepage at: <TT>www.boost.org</TT>.}
 is a collection of portable \cpp libraries that extend the Standard Template Library (<span class="textsc">Stl</span>). The <span class="textsc">Boost</span> Graph Library (<span class="textsc">bgl</span>), which one of the libraries in the collection, offers an
@@ -5004,7 +5031,9 @@ the faces:
 
 \cgalExample{Arrangement_on_surface_2/bgl_dual_adapter.cpp}
 
+<!--=========================================================================-->
 \section aos_sec-tips How To Speed Up Your Computation
+<!--=========================================================================-->
 
 Before the specific tips, we remind you that compiling programs with
 debug flags disabled and with optimization flags enabled significantly
@@ -5104,7 +5133,9 @@ be avoided by storing the results obtained by the first call, and
 reusing them when needed.
 </OL>
 
+<!--=========================================================================-->
 \section aos_sec-design Design and Implementation History
+<!--=========================================================================-->
 
 The code of this package is the result of a long development process.
 Initially (and until version 3.1), the code was spread among several
