@@ -160,10 +160,16 @@ public:
   /*!
    * \brief Access the child nodes of this node by their indices
    *
-   * \todo
+   * \todo Explain how index values map to the Index type
    *
-   * \param index
-   * \return
+   * Retrieves a reference to the child node described by the index.
+   * The operator can be chained.
+   * for example, to access the third child of the second child of the fifth child of a node `n`
+   *
+   *     n[5][2][3];
+   *
+   * \param index The index of the child node, as an int
+   * \return A reference to the node
    */
   Node<Point_index> &operator[](int index) {
 
@@ -176,10 +182,8 @@ public:
   /*!
    * \brief Read-only access the child nodes of this node by their indices
    *
-   * \todo
-   *
-   * \param index
-   * \return
+   * \param index The index of the child node, as an int
+   * \return A const reference to the node
    */
   const Node<Point_index> &operator[](int index) const {
 
