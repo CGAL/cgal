@@ -513,9 +513,9 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           os_surf << "2 " << current_pos << " " << final_position << std::endl,
 #endif
-                  // move vertex
-                  v->set_point(typename Tr::Point(
-                                 final_position.x(), final_position.y(), final_position.z()));
+          // move vertex
+          typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+          check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
         }
         else if (neighbors[vid] > 0)
         {
@@ -546,9 +546,9 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           os_surf << "2 " << current_pos << " " << final_position << std::endl,
 #endif
-                  // move vertex
-                  v->set_point(
-                    typename Tr::Point(final_position.x(), final_position.y(), final_position.z()));
+          // move vertex
+          typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+          check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
         }
       }
 #endif //CGAL_TETRAHEDRAL_REMESHING_SMOOTH_SHARP_EDGES
