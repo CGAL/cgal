@@ -124,7 +124,11 @@ public:
   /*!
    * \brief Split a node into subnodes
    *
-   * \todo
+   * Only leaf nodes should be split.
+   * When a node is split it is no longer a leaf node.
+   * 8 Children are constructed automatically, and their values are set.
+   * Contents of this node are _not_ propagated automatically.
+   * It's the responsibility of the caller to redistribute the points contained by a node after splitting
    */
   void split() {
 
