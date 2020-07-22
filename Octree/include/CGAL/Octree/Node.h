@@ -94,12 +94,12 @@ public:
   /*!
    * \brief Creates a new node, optionally as the child of a parent
    *
-   * \todo This warrant further explanation
+   * \todo This warrants further explanation
    *
    * \param parent
    * \param index
    */
-  Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
+  explicit Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
 
     if (parent) {
 
