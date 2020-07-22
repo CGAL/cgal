@@ -104,7 +104,8 @@ public:
    * \param parent A reference to the node containing this one
    * \param index This node's relationship to its parent
    */
-  explicit Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
+  explicit Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0),
+                                                                        m_location({0, 0, 0}) {
 
     if (parent) {
 
@@ -173,10 +174,8 @@ public:
    */
   Node<Point_index> &operator[](int index) {
 
-    assert(!is_leaf());
-    assert(0 <= index && index < 8);
-
-    return (*m_children)[index];
+    // FIXME: I'm incredulous that this is the correct way of doing this, I'd love to hear a second opinion!
+    return const_cast<Node<Point_index> &>(static_cast<const Node<Point_index> &>(*this)[index]);
   }
 
   /*!
