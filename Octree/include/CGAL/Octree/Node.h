@@ -231,7 +231,7 @@ public:
 
   /*!
    * \brief Retrieve this node's index in relation to its parent
-   * \return
+   * \return the index of this nod3
    */
   Index index() const {
 
@@ -248,13 +248,13 @@ public:
 
   /*!
    * \brief Determine whether this node is a leaf node
-   * \return
+   * \return whether this node has no children
    */
   bool is_leaf() const { return (!m_children); }
 
   /*!
    * \brief Determine whether this node is the root node
-   * \return
+   * \return whether this node has no parent
    */
   bool is_root() const { return (!m_parent); }
 
