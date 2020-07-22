@@ -46,7 +46,14 @@ The second query asks if the curves are <em>freely homotopic</em> while the thir
 
 The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}.
 
+\subsection SMTopology_simplicity Simplicity Test
 
+Given a cycle drawn on a surface one can ask if the cycle can be continously deformed to a cycle that does not intersect with itself. Cycles that deform to a non-self-intersecting cycle are said <em>simple</em>. Any contractible cycle is simple but this is not true for cycles on more complicated topology. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
+
+The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
+- Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is simple on \f$\cal{M}\f$.
+
+The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \f$O(n + l\log{l})\f$-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
 
 \section SMTopology_HowToUse API Description
 
@@ -120,6 +127,18 @@ the input surface. This is otherwise independent of the size of input surface,
 
 Each time a `Surface_mesh_topology::Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Curves_on_surface_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
 
+\subsection SMTopology_Query_Simplicity Testing Simplicity
+
+Given a `Surface_mesh_topology::Path_on_surface` \f$p\f$, the class `Surface_mesh_topology::Curves_on_surface_topology` provides the following function:
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle "is_homotopic_to_simple_cycle"(\f$p\f$) returns `true` if the closed curve \f$p\f$ is homotopic to some simple cycle.
+
+Like homotopy tests, the first step is to simplify the input combinatorial surface. The algorithm will share the surface with homotopy tests and invoke the simplification if the preprocessing has not been done yet.
+\note The user must not modify the input surface as long as simplicity tests are performed with this `Surface_mesh_topology::Curves_on_surface_topology`.
+
+Each time a `Surface_mesh_topology::Path_on_surface` is provided for a simplicity test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Curves_on_surface_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
+
+
 \section SMTopology_Examples Examples
 
 \subsection SMTopology_Example_I_II_III Compute Shortest Non-contractible Cycle
@@ -145,6 +164,10 @@ The following example computes the face width, and visualizes it if CGAL_Qt5 is 
 \subsection SMTopology_Example_V Basic Homotopy Test
 The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if CGAL_Qt5 is enabled.
 \cgalExample{Surface_mesh_topology/path_homotopy_double_torus.cpp}
+
+\subsection SMTopology_Example_VI Basic Simplicity Test
+The following example shows how to test the simplicity of a closed path on a double torus. The original path is visualized if CGAL_Qt5 is enabled.
+\cgalExample{Surface_mesh_topology/path_simplicity_double_torus_2.cpp}
 
 \subsection SMTopology_Example_VI_VII Polygonal Schema
 Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
@@ -262,9 +285,18 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 \subsection SMTopology_Homotopy_Test Homotopy Test
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
+\subsection SMTopology_Simplicity_Test Simplicity Test
+It can be shown that a closed curve is simple up to homotopy if and only if there is no intersection between any two geodesic liftings of the curve to the universal covering space embedded in a Poincaré Disk. Moreover, the Poincaré Disk can be tessellated by regular fundamental polygons.
+
+The quadrangulation represents the local connectivity information of the tesselation. Let \f$C\f$ be a closed curve and \f$\cal{C}\f$ be its canonical form. It can be proven that instead of considering the geodesic in a Poincaré Disk, \f$C\f$ is simple up to homotopy if and only if it is possible to arrange an ordering for edges in \f$\cal{C}\f$ with the same projection such that there is no self-intersection in the projection of \f$\cal{C}\f$ while allowing certain homotopy-preserving operation known as <em>switch</em>.
+
+Given \f$\cal{C}\f$, the algorithm preprocesses the path in linear time to identify all possible switches. The algorithm then processes edges in \f$\cal{C}\f$ one by one, tries to switch if an intersection can be avoided and then tries to insert the edge in the existing ordering without creating any intersection. Finally the ordering is checked to make sure it is indeed intersection free.
+
+To speed up determining relative order to the first edge, the algorithm uses a modified version of Knuth-Morris-Pratt algorithm to pre-compute the relative ordering in linear time. The orderings are maintained in red-black trees, contributing to the \f$\log{l}\f$ factor in the running time.
+
 \section Implementation History
 
-The code was developed in 2018 by Guillaume Damiand and Francis Lazarus. Felix Castillon contributed to the extension of the homotopy test to the case of surfaces with boundaries. Thien Hoang added methods to compute shortest non-contractible cycles, edge width and face width as part of the program Google Summer of Code 2019.
+The code was developed in 2018 by Guillaume Damiand and Francis Lazarus. Felix Castillon contributed to the extension of the homotopy test to the case of surfaces with boundaries. Thien Hoang added methods to compute shortest non-contractible cycles, edge width and face width as part of the program Google Summer of Code 2019. Shuhao Tan added methods to test simplicity of a closed curve as part of the program Google Summer of Code 2020.
 
 */
 } /* namespace CGAL */

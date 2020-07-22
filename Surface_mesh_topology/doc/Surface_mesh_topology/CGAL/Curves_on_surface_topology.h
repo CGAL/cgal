@@ -39,6 +39,11 @@ namespace Surface_mesh_topology {
      */
     bool is_contractible(const Path_on_surface<Mesh>& p) const;
 
+    /*! returns `true` if the closed path `p` is homotopic to some simple cycle.
+     *  @pre `p` must be a closed path on `amesh`.
+     */
+    bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p) const;
+
     /*!  returns a non-contractible cycle of type `Path_on_surface` with minimal number of edges. This number of edges is the edge width of the mesh.
      */
     Path_on_surface<Mesh> compute_edge_width() const;
