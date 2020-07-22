@@ -12,6 +12,8 @@
 #ifndef CGAL_OCTREE_WALKER_CRITERION_H
 #define CGAL_OCTREE_WALKER_CRITERION_H
 
+#include <CGAL/license/Octree.h>
+
 #include <iostream>
 #include <boost/range/iterator_range.hpp>
 #include "Node.h"

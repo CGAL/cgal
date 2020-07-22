@@ -12,6 +12,8 @@
 #ifndef CGAL_OCTREE_IO_H
 #define CGAL_OCTREE_IO_H
 
+#include <CGAL/license/Octree.h>
+
 #include <CGAL/Octree.h>
 #include <CGAL/Octree/Node.h>
 #include <CGAL/Octree/Walker_criterion.h>

@@ -12,6 +12,8 @@
 #ifndef CGAL_OCTREE_WALKER_ITERATOR_H
 #define CGAL_OCTREE_WALKER_ITERATOR_H
 
+#include <CGAL/license/Octree.h>
+
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
