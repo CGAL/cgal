@@ -1307,7 +1307,7 @@ namespace CircularFunctors {
       typedef typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type type;
     };
 
-    typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type
+    decltype(auto)
     operator()( const Circle_2& c) const
     { return LK_Compute_squared_radius_2()(c); }
 
@@ -1320,7 +1320,7 @@ namespace CircularFunctors {
     FT operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return LK_Compute_squared_radius_2()(p, q, r); }
 
-    typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type
+    decltype(auto)
     operator()(const Circular_arc_2& c) const
     { return c.rep().squared_radius(); }
 
