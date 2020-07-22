@@ -20,7 +20,6 @@
 #include <CGAL/license/Circular_kernel_3.h>
 
 
-#include <CGAL/result_of.h>
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
@@ -117,19 +116,19 @@ namespace CGAL {
      : RCircular_arc_3(a)
       {}
 
-    typename cpp11::result_of<typename R::Construct_circular_source_vertex_3(Circular_arc_3)>::type
+    decltype(auto)
     source() const
     {
       return typename R::Construct_circular_source_vertex_3()(*this);
     }
 
-    typename cpp11::result_of<typename R::Construct_circular_target_vertex_3(Circular_arc_3)>::type
+    decltype(auto)
     target() const
     {
       return typename R::Construct_circular_target_vertex_3()(*this);
     }
 
-    typename cpp11::result_of<typename R::Construct_circle_3(Circular_arc_3)>::type
+    decltype(auto)
     supporting_circle() const
     {
       return typename R::Construct_circle_3()(*this);
