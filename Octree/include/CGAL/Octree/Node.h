@@ -50,17 +50,26 @@ public:
   /*!
    * \brief Set of bits representing this node's relationship to its parent
    *
-   * \todo This deserves a more in-depth description
+   * Equivalent to an array of three booleans,
+   * where index[0] is whether x is greater,
+   * index[1] is whether y is greater,
+   * and index[2] is whether z is greater.
+   * Used to represent a node's relationship to the center of its parent.
    */
   typedef std::bitset<3> Index;
 
   /*!
-   * \brief Coordinate location representing this node's relationship with its parent
+   * \brief Coordinate location representing this node's relationship with the rest of the tree
    *
-   * \todo This deserves a more in-depth description
+   * Each value (x, y, z) of a location is calculated by doubling the parent's location
+   * and adding the Index.
+   * \todo Maybe I should add an example?
    */
   typedef std::array<uint32_t, 3> Int_location;
 
+  /*!
+   * \brief A collection of point indices represented by begin and end iterators
+   */
   typedef boost::iterator_range<Point_index> Point_range;
 
   /// @}
@@ -119,7 +128,7 @@ public:
     m_children = std::make_unique<Child_list>();
     for (int index = 0; index < 8; index++) {
 
-      (*m_children)[index] = std::move(Node<Point_index>(this, { Index(index) }));
+      (*m_children)[index] = std::move(Node<Point_index>(this, {Index(index)}));
     }
   }
 
