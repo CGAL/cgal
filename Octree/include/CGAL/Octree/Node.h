@@ -213,13 +213,16 @@ public:
 
   /*!
    * \brief Retrieve this node's depth in the tree
-   * \return
+   * \return the depth of this node, where root has a depth of 0
    */
   const uint8_t &depth() const { return m_depth; }
 
   /*!
    * \brief Retrieve this node's location in the tree
-   * \return
+   *
+   * \todo Should I link to an explanation of the location type?
+   *
+   * \return this node's location
    */
   Int_location location() const {
 
