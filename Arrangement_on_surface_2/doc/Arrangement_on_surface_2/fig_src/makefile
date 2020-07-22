@@ -20,7 +20,16 @@ TARGETS = \
   unbounded_non_intersecting.pdf \
   unb_dcel.pdf \
   polylines.pdf \
-  circles.pdf
+  circles.pdf \
+  conics.pdf \
+  rational_functions.pdf \
+  unbounded_rational_functions.pdf \
+  bezier_curves.pdf \
+  algebraic_curves.pdf \
+  algebraic_curves_decomposition.pdf \
+  algebraic_segments.pdf \
+  curve_history.pdf \
+  edge_manipulation_curve_history.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

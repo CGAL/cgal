@@ -3653,8 +3653,10 @@ functions such as `source()`, `target()` and `orientation()`.
 \subsubsection Arrangement_on_surface_2ExamplesforArrangements Examples for Arrangements of Conics
 <!----------------------------------------------------------------------------->
 
-\cgalFigureBegin{arr_figex_14,ex_14.png}
+\cgalFigureBegin{arr_figex_14,conics.png}
+
 An arrangement of mixed conic arcs, as constructed in conics.cpp
+
 \cgalFigureEnd
 
 The following example demonstrates the usage of the various
@@ -3764,8 +3766,11 @@ coefficients of \f$P'\f$ and \f$Q'\f$ to the constructor. In this
 case the constructor normalizes the coefficients and stores the
 desired polynomials \f$P\f$ and \f$Q\f$.
 
-\cgalFigureBegin{arr_figex_16,ex_16.png}
-An arrangement of four arcs of rational functions, as constructed in rational_functions.cpp.
+\cgalFigureBegin{arr_figex_16,rational_functions.png}
+
+An arrangement of four arcs of rational functions, as constructed in
+rational_functions.cpp.
+
 \cgalFigureEnd
 
 The following example demonstrates the construction of an arrangement
@@ -3775,9 +3780,11 @@ arcs:
 
 \cgalExample{Arrangement_on_surface_2/rational_functions.cpp}
 
-\cgalFigureBegin{arr_figex_unb_rat,ex_unb_rat.png} An arrangement of
-six arcs of rational functions, as constructed in
+\cgalFigureBegin{arr_figex_unb_rat,unbounded_rational_functions.png}
+
+An arrangement of six arcs of rational functions, as constructed in
 unbounded_rational_functions.cpp
+
 \cgalFigureEnd
 
 The following example demonstrates the construction of an arrangement
@@ -3844,9 +3851,11 @@ The `Arr_Bezier_curve_traits_2` is a model of the
 `ArrangementLandmarkTraits_2` concept, so it is impossible to use the
 landmark point-location strategy for arrangements of rational arcs).
 
-\cgalFigureBegin{arr_figex_bez,Bezier_arr.png}
+\cgalFigureBegin{arr_figex_bez,bezier_curves.png}
+
 An arrangement of ten B&eacute;zier curves of degree \f$5\f$, as
 constructed in `Bezier_curves.cpp`.
+
 \cgalFigureEnd
 
 The following example reads a set of B&eacute;zier curves from an
@@ -3896,9 +3905,11 @@ This polynomial type is also available by the traits class
 and constitutes a valid model
 of the concept `Polynomial_d` with two variables (see ??).
 
-\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png} An
-arrangement of algebraic curves of degrees \f$1\f$, \f$ 2\f$, \f$3\f$,
-and \f$6\f$, as constructed in `algebraic_curves.cpp`.
+\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png}
+
+An arrangement of algebraic curves of degrees \f$1\f$, \f$ 2\f$,
+\f$3\f$, and \f$6\f$, as constructed in `algebraic_curves.cpp`.
+
 \cgalFigureEnd
 
 The following examples computes the arrangement induced by the four curves
@@ -3954,7 +3965,8 @@ a weakly \f$x\f$-monotone segment that is either vertical, or its
 \f$x\f$-range contains no critical point in its interior.
 \cgalAdvancedEnd
 
-\cgalFigureBegin{arr_figcylindrical_decomposition,cylindrical_decomposition.png}
+\cgalFigureBegin{arr_figcylindrical_decomposition,algebraic_curves_decomposition.png}
+
 The critical \f$x\f$-coordinates of an algebraic curve (dashed
 lines), and its decomposition into terminal segments (in different
 colors). The segment from \f$p\f$ to \f$q\f$ consists of the union
@@ -4719,8 +4731,13 @@ the details).
 \subsection arr_ssecarr_hist_ex Examples
 <!----------------------------------------------------------------------------->
 
-\cgalFigureBegin{arr_figex_24,ex_24.png}
-An arrangement with history as constructed in `curve_history.cpp`. Note that \f$s_1\f$ and \f$s_3\f$ overlap over two edges. The point-location query points are drawn as lightly shaded dots.
+\cgalFigureBegin{arr_figex_24,curve_history.png}
+
+An arrangement with history as constructed in
+`curve_history.cpp`. Note that \f$s_1\f$ and \f$s_3\f$ overlap over
+two edges. The point-location query points are drawn as lightly shaded
+dots.
+
 \cgalFigureEnd
 
 In the following example we construct a simple arrangement of six line
@@ -4733,8 +4750,14 @@ auxiliary function `locate_point()` defined in the header file
 
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
 
-\cgalFigureBegin{arr_figex_25,ex_25.png}
-An arrangement with history of nine circle as constructed in `edge_manipulation_curve_history.cpp`. Note the vertical tangency points of \f$c_0\f$, marked as dark dots, which subdivide this circle into an upper half and a lower half, each consists of 9 edges. The large circle \f$c_0\f$ is eventually removed from the arrangement, with all 18 edges it induces.
+\cgalFigureBegin{arr_figex_25,edge_manipulation_curve_history.png}
+
+An arrangement with history of nine circle as constructed in
+`edge_manipulation_curve_history.cpp`. Note the vertical tangency
+points of \f$c_0\f$, marked as dark dots, which subdivide this circle
+into an upper half and a lower half, each consists of 9 edges. The
+large circle \f$c_0\f$ is eventually removed from the arrangement,
+with all 18 edges it induces.
 \cgalFigureEnd
 
 The following example demonstrates the usage of the free `remove()`
