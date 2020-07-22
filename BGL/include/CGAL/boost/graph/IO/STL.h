@@ -100,7 +100,7 @@ public:
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
+  \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -155,7 +155,7 @@ bool read_STL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
+  \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */

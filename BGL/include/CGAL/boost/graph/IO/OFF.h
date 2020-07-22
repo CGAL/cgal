@@ -152,7 +152,7 @@ bool read_OFF_BGL(std::istream& is,
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
+  \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
@@ -247,7 +247,7 @@ bool read_OFF(std::istream& is, Graph& g,
 
   \pre The data must represent a 2-manifold
 
-  \returns `true` if reading was succesful and the resulting mesh is valid, `false` otherwise.
+  \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
