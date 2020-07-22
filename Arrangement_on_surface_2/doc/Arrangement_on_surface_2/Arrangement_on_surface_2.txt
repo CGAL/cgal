@@ -481,7 +481,7 @@ typedef CGAL::Arrangement_2<Traits_2>                   Arrangement;
 int main()
 {
   Arrangement arr;
-  Point p1(0, 0), p2(0, 4), p3(4, 0);
+  Point p1(1, 1), p2(1, 2), p3(2, 1);
   Segment cv[] = {Segment(p1, p2), Segment(p2, p3), Segment(p3, p1)};
   CGAL::insert(arr, &cv[0], &cv[sizeof(cv)/sizeof(Segment)]);
   return 0;
@@ -923,7 +923,7 @@ v1, v2)`\endlink returns a handle to the halfedge directed from
 
 </UL>
 
-\cgalFigureBegin{arr_figex_2,ex_1.png}
+\cgalFigureBegin{arr_figex_2,edge_insertion.png}
 
 The arrangement of the line segments \f$s_1, \ldots, s_5\f$
 constructed in `edge_insertion.cpp`. The arrows mark the direction of
@@ -1006,7 +1006,7 @@ member function `Arrangement_2::vertex::face()`. The member function
 `Arrangement_2::remove_isolated_vertex(Vertex_handle v)` accepts a
 handle to an isolated vertex and removes it from the arrangement.
 
-\cgalFigureBegin{arr_figex_3,ex_2.png}
+\cgalFigureBegin{arr_figex_3,isolated_vertices.png}
 
 An arrangement of line segments containing three isolated vertices,
 as constructed in `isolated_vertices.cpp`. The vertices \f$u_2\f$
@@ -1049,7 +1049,7 @@ construct the two curves \f$c_1\f$ and \f$c_2\f$, which are the two
 subcurves that result from splitting the \f$x\f$-monotone curve
 associated with the edge \f$e\f$ at \f$p\f$. Then, you have to issue
 the call \link Arrangement_2::split_edge() `arr.split_edge(he, c1,
-c2)`\endlink, where where `arr` identifies the arrangement \f$\calA\f$
+c2)`\endlink, where where `arr` identifies the arrangement \f$\cal A\f$
 and `he` is a handle to one of the two halfedges that represent the
 edge \f$e\f$. The function splits the two halfedges that represent
 \f$e\f$ into two pairs of halfedges, respectively. Two new halfedges
@@ -1088,7 +1088,7 @@ supplying additional Boolean flags to \link Arrangement_2::remove_edge
 `remove_edge()`\endlink indicating whether the source or the target
 vertices are to be removed should they become isolated.
 
-\cgalFigureBegin{arr_figex_4,ex_3.png}
+\cgalFigureBegin{arr_figex_4,edge_manipulation.png}
 
 The three steps of the example program `edge_manipulation.cpp`. In
 Step (a) it constructs an arrangement of four line segments. In Step
@@ -1198,7 +1198,7 @@ respectively, that correspond to the curve endpoints. The other one
 accepts a handle to one vertex and a handle to the predecessor
 halfedge around the other vertex.
 
-\cgalFigureBegin{arr_figex_5,ex_4.png}
+\cgalFigureBegin{arr_figex_5,special_edge_insertion.png}
 An arrangement of line segments, as constructed in
 `special_edge_insertion.cpp`. Note that \f$p_0\f$ is initially
 inserted as an isolated point and later on connected to the other four
