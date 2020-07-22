@@ -94,10 +94,15 @@ public:
   /*!
    * \brief Creates a new node, optionally as the child of a parent
    *
-   * \todo This warrants further explanation
+   * If no parent is provided, the node created is assumed to be the root of a tree.
+   * This means that the parent reference is a nullptr, and the depth is zero.
+   * If a parent is provided, the node becomes the child of that parent.
+   * In that case, an index should be passed, telling this node its relationship to its parent.
+   * Depth and location are automatically determined in the constructor,
+   * and should generally be considered immutable after construction.
    *
-   * \param parent
-   * \param index
+   * \param parent A reference to the node containing this one
+   * \param index This node's relationship to its parent
    */
   explicit Node(Node<Point_index> *parent = nullptr, Index index = 0) : m_parent(parent), m_depth(0), m_location({0, 0, 0}) {
 
