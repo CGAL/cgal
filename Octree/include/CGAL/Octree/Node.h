@@ -265,7 +265,7 @@ public:
 
   /*!
    * \brief Access to the content held by this node
-   * \return
+   * \return a reference to the collection of point indices
    */
   Point_range &points() {
     return const_cast<Point_range &>(static_cast<const Node<Point_index> &>(*this).points());
@@ -273,13 +273,13 @@ public:
 
   /*!
    * \brief Read-only access to the content held by this node
-   * \return
+   * \return a read-only reference to the collection of point indices
    */
   const Point_range &points() const { return m_points; }
 
   /*!
    * \brief Check whether this node contains any points
-   * \return
+   * \return if this node contains no points
    */
   bool is_empty() const {
     return m_points.empty();
@@ -287,7 +287,7 @@ public:
 
   /*!
    * \brief Count the points contained by this node
-   * \return
+   * \return the number of points this node owns
    */
   std::size_t number_of_points() const {
     return std::distance(m_points.begin(), m_points.end());
