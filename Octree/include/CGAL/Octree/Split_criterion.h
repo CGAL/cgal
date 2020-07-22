@@ -12,6 +12,8 @@
 #ifndef CGAL_OCTREE_SPLIT_CRITERION_H
 #define CGAL_OCTREE_SPLIT_CRITERION_H
 
+#include <CGAL/license/Octree.h>
+
 #include <iostream>
 
 namespace CGAL {
