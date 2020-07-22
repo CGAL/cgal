@@ -101,7 +101,7 @@ cd $ROOT
   mkdir config_dir
   cd config_dir
   cmake -DWITH_tests=ON -DBUILD_TESTING=ON ..
-  ctest -j2 -R test_config_file --output-on-failure
+  ctest -j2 -L CGAL_cmake_testsuite --output-on-failure
   cd ..
   rm -rf ./config_dir
   #==-- configure all CGAL with -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON, and then launch CTest on a few labels. --==

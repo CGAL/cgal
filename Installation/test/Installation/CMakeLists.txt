@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-cmake_minimum_required(VERSION 3.7...3.15)
+cmake_minimum_required(VERSION 3.11...3.15)
 project( Installation_Tests )
 
 
@@ -193,7 +193,6 @@ add_test(NAME install_non_standard_cgal
 #test CGAL_DIR=non standard place without cgal_qt5
 add_test(NAME test_config_file_3
 COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_3 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
-set_property(TEST test_config_file_3 APPEND PROPERTY LABELS Installation_Tests "test_config_file_3")
 list(APPEND test_config_lst "test_config_file_3")
 
 if(CGAL_Qt5_FOUND)
@@ -207,14 +206,12 @@ if(CGAL_Qt5_FOUND)
   #test CGAL_DIR=non standard place with cgal_qt5
   add_test(NAME test_config_file_4
     COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5 -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
-  set_property(TEST test_config_file_4 APPEND PROPERTY LABELS Installation_Tests "test_config_file_4")
   list(APPEND test_config_lst "test_config_file_4")
 endif()#CGAL_Qt5_FOUND
 
 #test CGAL_DIR=non standard build
 add_test(NAME test_config_file_5
 COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_5 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_build -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_build)
-set_property(TEST test_config_file_5 APPEND PROPERTY LABELS Installation_Tests "test_config_file_5")
 list(APPEND test_config_lst "test_config_file_5")
 
 foreach(tgt ${test_config_lst})
@@ -229,13 +226,17 @@ foreach(tgt ${test_config_lst})
 
   set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY FIXTURES_SETUP ${tgt}_target)
   set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY FIXTURES_CLEANUP ${tgt}_target)
-  set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY LABELS Installation_Tests ${tgt}_target)
-  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY LABELS Installation_Tests ${tgt}_target)
   set_property(TEST ${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
   set_property(TEST compile__${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
   set_property(TEST compile__${tgt} APPEND PROPERTY DEPENDS ${tgt})
   set_property(TEST exec__${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
   set_property(TEST exec__${tgt} APPEND PROPERTY DEPENDS compile__${tgt})
+
+  set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+  set_property(TEST ${tgt} APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+  set_property(TEST compile__${tgt} APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+  set_property(TEST exec__${tgt} APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
 
 endforeach()
 
@@ -244,10 +245,16 @@ set_property(TEST config_non_standard_cgal APPEND PROPERTY FIXTURES_SETUP test_c
 set_property(TEST install_non_standard_cgal APPEND PROPERTY FIXTURES_SETUP test_config_file_3_target)
 set_property(TEST test_config_file_3 test_config_file_5 APPEND PROPERTY FIXTURES_REQUIRED test_config_file_3_target)
 
+set_property(TEST install_non_standard_cgal APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+set_property(TEST config_non_standard_cgal APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+
 if(CGAL_Qt5_FOUND)
   set_property(TEST install_non_standard_cgal_qt5 APPEND PROPERTY DEPENDS config_non_standard_cgal_qt5)
   set_property(TEST config_non_standard_cgal_qt5 APPEND PROPERTY FIXTURES_SETUP test_config_file_4_target)
   set_property(TEST install_non_standard_cgal_qt5 APPEND PROPERTY FIXTURES_SETUP test_config_file_4_target)
   set_property(TEST test_config_file_4 APPEND PROPERTY FIXTURES_REQUIRED test_config_file_4_target)
+
+  set_property(TEST install_non_standard_cgal_qt5 APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+  set_property(TEST config_non_standard_cgal_qt5 APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
 endif()#CGAL_Qt5_FOUND
 
