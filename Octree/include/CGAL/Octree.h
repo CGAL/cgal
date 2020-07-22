@@ -278,6 +278,13 @@ public:
   const Node &root() const { return m_root; }
 
   /*!
+   * \brief Finds the deepest level reached by a leaf node in this tree
+   *
+   * \return the deepest level, where root is 0
+   */
+  std::size_t max_depth_reached() const { return m_max_depth_reached; }
+
+  /*!
    * \brief Constructs an input range of nodes using a tree walker function
    *
    * The result is a boost range created from iterators that meet the criteria defining a Forward Input Iterator
@@ -388,7 +395,7 @@ public:
    */
   template<typename Point_output_iterator>
   void nearest_k_neighbors_in_radius(const Point &search_point, FT search_radius_squared, std::size_t k,
-                                      Point_output_iterator output) const {
+                                     Point_output_iterator output) const {
 
     // Create an empty list of points
     std::vector<Point_with_distance> points_list;
@@ -549,7 +556,7 @@ private: // functions :
   };
 
   void nearest_k_neighbors_recursive(Sphere &search_bounds, const Node &node,
-                                      std::vector<Point_with_distance> &results, FT epsilon = 0) const {
+                                     std::vector<Point_with_distance> &results, FT epsilon = 0) const {
 
     // Check whether the node has children
     if (node.is_leaf()) {
