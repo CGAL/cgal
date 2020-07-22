@@ -252,10 +252,54 @@ void tetrahedral_isotropic_remeshing(
                                  CGAL::parameters::all_default());
 }
 
+/*!
+* \ingroup PkgTetrahedralRemeshingRef
+* converts the triangulation contained in the input to a `Triangulation_3`.
+*
+* This function should be used to generate a valid triangulation
+* for tetrahedral remeshing, when the input triangulation is generated with the
+* tetrahedral mesh generation package.
+*
+* @tparam Tr is the underlying triangulation for `Mesh_complex_3_in_triangulation_3`.
+*            It can be instantiated with any 3D regular triangulation of CGAL provided
+*            that its vertex and cell base classes are models of the concepts
+*            `MeshVertexBase_3` (refined by `RemeshingCellBase_3`)
+*            and `MeshCellBase_3` (refined by `RemeshingVertexBase_3`), respectively.
+* @tparam CornerIndex is the type of the indices for feature corners.
+*            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
+*            the `Corner_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+* @tparam CurveIndex is the type of the indices for feature curves.
+*            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
+*            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+*
+* @param c3t3 the complex containing the triangulation to be remeshed.
+*/
+
+template<typename Tr,
+         typename CornerIndex,
+         typename CurveIndex>
+CGAL::Triangulation_3<typename Tr::Geom_traits,
+                      typename Tr::Triangulation_data_structure>
+convert_to_triangulation_3(
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3)
+{
+  using GT   = typename Tr::Geom_traits;
+  using TDS  = typename Tr::Triangulation_data_structure;
+
+  CGAL::Triangulation_3<GT, TDS> tr;
+  tr.swap(c3t3.triangulation());
+  return tr;
+}
+
 ///////////////////////////////////////////////////
 /////// MESH_COMPLEX_3_IN_TRIANGULATION_3 /////////
 ///////////////////////////////////////////////////
 
+///////
+////// Warning with using this version :
+////// the triangulation after remeshing is not regular anymore
+////// the empty-sphere property is not respected
+///////
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename NamedParameters>
