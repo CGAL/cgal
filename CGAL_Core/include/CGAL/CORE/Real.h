@@ -27,7 +27,9 @@
  ***************************************************************************/
 #ifndef _CORE_REAL_H_
 #define _CORE_REAL_H_
+
 #include "RealRep.h"
+#include <CGAL/use.h>
 
 namespace CORE {
 // class Real
