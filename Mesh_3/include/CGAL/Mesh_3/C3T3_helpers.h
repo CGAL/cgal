@@ -1246,7 +1246,7 @@ private:
         }
       }
 
-      return surface;
+      return surface ? surface : Surface_patch();
     }
 
 
