@@ -151,6 +151,8 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_config_file)
 if(CGAL_Qt5_FOUND)
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5)
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/non_standard_build_qt5)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5)
+  configure_file(test_configuration_qt5.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5/CMakeLists.txt @ONLY)
 endif()#CGAL_Qt5_FOUND
 
 
@@ -204,7 +206,7 @@ if(CGAL_Qt5_FOUND)
 
   #test CGAL_DIR=non standard place with cgal_qt5
   add_test(NAME test_config_file_4
-    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5 -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
   set_property(TEST test_config_file_4 APPEND PROPERTY LABELS Installation_Tests "test_config_file_4")
   list(APPEND test_config_lst "test_config_file_4")
 endif()#CGAL_Qt5_FOUND
@@ -219,12 +221,22 @@ foreach(tgt ${test_config_lst})
   #add_custom_target(${tgt}_target)
   add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
   add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
+  add_test(NAME compile__${tgt}
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt} --config "$<CONFIG>")
+    add_test(NAME exec__${tgt}
+      COMMAND ./test_configuration
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
 
   set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY FIXTURES_SETUP ${tgt}_target)
   set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY FIXTURES_CLEANUP ${tgt}_target)
   set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY LABELS Installation_Tests ${tgt}_target)
   set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY LABELS Installation_Tests ${tgt}_target)
   set_property(TEST ${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
+  set_property(TEST compile__${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
+  set_property(TEST compile__${tgt} APPEND PROPERTY DEPENDS ${tgt})
+  set_property(TEST exec__${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
+  set_property(TEST exec__${tgt} APPEND PROPERTY DEPENDS compile__${tgt})
+
 endforeach()
 
 set_property(TEST install_non_standard_cgal APPEND PROPERTY DEPENDS config_non_standard_cgal)
