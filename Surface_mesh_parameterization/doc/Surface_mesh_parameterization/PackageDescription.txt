@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceMeshParameterization}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, and Andreas Fabri}
+\cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, Andreas Fabri, and Hardik Jain}
 \cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from
 a suitable domain to the surface. In this package, we focus on triangulated surfaces
 that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.

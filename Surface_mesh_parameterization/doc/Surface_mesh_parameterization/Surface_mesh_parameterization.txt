@@ -7,8 +7,7 @@ namespace CGAL {
 \anchor chapsurface_mesh_parameterization
 \cgalAutoToc
 
-\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, Andreas Fabri, and
-Mael Rouxel-Labbé
+\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, Mael Rouxel-Labb&eacute;, Andreas Fabri and Hardik Jain
 
 \warning The API and structure of this package have greatly changed with CGAL 4.11.
 Users who wish to use the former API must use a version prior to 4.11.
@@ -545,6 +544,9 @@ parameterization technique was also added with the help of its authors, Noam Aig
 and Yaron Lipman. Finally, the class `Seam_mesh` was introduced to handle
 virtual borders. The class `Seam_mesh` is also a model of a `FaceGraph`,
 and replaces a wrapper which had a more complicated API.
+
+Iterative authalic parameterization was added in CGAL 5.2 by Mael Rouxel-Labbé,
+based on a prototype developed by Hardik Jain.
 
 */
 } /* namespace CGAL */
