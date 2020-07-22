@@ -98,12 +98,12 @@ cd $ROOT
 
   if [ "$ARG" = "Installation" ]
   then
-  mkdir config_dir
-  cd config_dir
+  mkdir build_dir
+  cd build_dir
   cmake -DWITH_tests=ON -DBUILD_TESTING=ON ..
   ctest -j2 -L CGAL_cmake_testsuite --output-on-failure
   cd ..
-  rm -rf ./config_dir
+  rm -rf ./build_dir
   #==-- configure all CGAL with -DWITH_examples=ON -DWITH_demos=ON -DWITH_tests=ON, and then launch CTest on a few labels. --==
   mkdir config_dir
   cd config_dir

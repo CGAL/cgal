@@ -192,7 +192,7 @@ add_test(NAME install_non_standard_cgal
 
 #test CGAL_DIR=non standard place without cgal_qt5
 add_test(NAME test_config_file_3
-COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_3 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
+COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_3 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install/lib/cmake/CGAL -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install/lib/cmake/CGAL)
 list(APPEND test_config_lst "test_config_file_3")
 
 if(CGAL_Qt5_FOUND)
@@ -205,7 +205,7 @@ if(CGAL_Qt5_FOUND)
 
   #test CGAL_DIR=non standard place with cgal_qt5
   add_test(NAME test_config_file_4
-    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5 -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install)
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5 -B ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4 -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL)
   list(APPEND test_config_lst "test_config_file_4")
 endif()#CGAL_Qt5_FOUND
 
