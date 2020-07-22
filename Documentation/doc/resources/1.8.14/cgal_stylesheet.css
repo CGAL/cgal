@@ -345,3 +345,41 @@ div.summary
 {
   width: auto;
 }
+
+.collapsible {
+  background-color: white;
+  color: #602020;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font: 14px Roboto,sans-serif;
+}
+
+.active, .collapsible:hover {
+  background-color: white;
+}
+
+.collapsible:after {
+  content: '\25B6';
+  color: #7A93C5;
+  font-weight: bold;
+  float: left;
+  margin-left: -20px;
+  margin-right: 5px;
+}
+
+.active:after {
+  content: "\25BC";
+}
+
+.content {
+  padding: 0 18px;
+  color: black;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: white;
+}
