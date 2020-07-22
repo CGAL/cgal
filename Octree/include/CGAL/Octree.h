@@ -215,6 +215,9 @@ public:
     if (!m_root.is_leaf())
       m_root.unsplit();
 
+    // Make sure the max depth is reset as well
+    m_max_depth_reached = 0;
+
     // create a side length map
     for (int i = 0; i <= (int) 32; i++)
       m_side_per_depth.push_back(m_bbox_side / (FT) (1 << i));
