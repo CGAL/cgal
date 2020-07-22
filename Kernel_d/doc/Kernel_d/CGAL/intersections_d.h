@@ -147,7 +147,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
   // auto result = intersection(seg, lin);
 
   // without C++11 support
-  typename cpp11::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
+  typename CGAL::cpp11::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
     result = intersection(seg, lin);
 
   if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); }
