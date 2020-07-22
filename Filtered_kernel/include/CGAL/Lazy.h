@@ -1705,7 +1705,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
   BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_CONSTRUCTION_OPERATOR, _)
 
   // nullary
-  typename Type_mapper< typename cpp11::result_of<AC()>::type ,AK, LK>::type
+  decltype(auto)
   operator()() const
   {
     typedef typename cpp11::result_of<AC()>::type AT;
