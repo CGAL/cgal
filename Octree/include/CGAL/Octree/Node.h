@@ -267,7 +267,9 @@ public:
    * \brief Access to the content held by this node
    * \return
    */
-  Point_range &points() { return m_points; }
+  Point_range &points() {
+    return const_cast<Point_range &>(static_cast<const Node<Point_index> &>(*this).points());
+  }
 
   /*!
    * \brief Read-only access to the content held by this node
