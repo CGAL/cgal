@@ -513,7 +513,7 @@ int main(int, char**)
     SMP::Iterative_authalic_parameterizer_3<SMesh> parameterizer;
 
     double error = 0;
-    int iterations = 15;
+    unsigned int iterations = 15;
     SMP::Error_code status = parameterizer.parameterize(sm, hd, uvpm, vipm, vpm, iterations, error);
     SMP::Error_code status_bis = parameterizer.parameterize(sm, uvpm, 10);
 

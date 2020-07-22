@@ -299,6 +299,25 @@ for both systems) is asymmetric.
 Floater Mean Value Coordinates. Rightmost: parameter space.
 \cgalFigureCaptionEnd
 
+\subsubsection Surface_mesh_parameterizationIterativeAuthalic Iterative Authalic Parameterization
+
+`Surface_mesh_parameterization::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+
+The Iterative Authalic parameterization method has been introduced by
+Jain et al. \cgalCite{cgal:j-lrsspp-19}. This parameterization
+is a fixed border parameterization and is part of the authalic parameterization family,
+meaning that it aims to minimize area distortion between the input surface mesh and the parameterized output.
+More precisely, the approach used by this parameterizer is to iteratively redistribute
+the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
+
+\cgalFigureAnchor{Surface_mesh_parameterizationfigiterativeauthalic}
+<center>
+<img src="iterative_authalic.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigiterativeauthalic}
+Iterative Authalic Parameterization (the blue line depicts the cut graph). Rightmost: parameter space.
+\cgalFigureCaptionEnd
+
 \subsubsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods
 
 Parameterization methods for borders are used as traits classes modifying the

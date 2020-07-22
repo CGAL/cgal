@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   typedef SMP::Iterative_authalic_parameterizer_3<Surface_mesh, Border_parameterizer> Parameterizer;
   Parameterizer parameterizer(border_parameterizer);
 
-  const int iterations = (argc > 2) ? std::atoi(argv[2]) : 15;
+  const unsigned int iterations = (argc > 2) ? std::atoi(argv[2]) : 15;
   SMP::Error_code err = parameterizer.parameterize(sm, bhd, uv_map, iterations);
 
   if(err != SMP::OK)

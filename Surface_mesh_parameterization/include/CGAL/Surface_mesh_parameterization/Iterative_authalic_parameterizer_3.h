@@ -851,34 +851,6 @@ public:
     }
   }
 
-  /// computes a one-to-one mapping from a triangular 3D surface mesh
-  /// to a piece of the 2D space.
-  /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
-  ///
-  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
-  ///         as value type.
-  /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
-  ///         a unique integer as value type.
-  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
-  ///         a Boolean as value type.
-  ///
-  /// \param tmesh a triangulated surface
-  /// \param bhd a halfedge descriptor on the boundary of `mesh`
-  /// \param uvmap an instanciation of the class `VertexUVmap`
-  /// \param vimap an instanciation of the class `VertexIndexMap`
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`
-  /// \param iterations an integer number of iterations to run the parameterization
-  /// \param error return error value of the iterative process
-  ///
-  /// \pre `tmesh` must be a triangular mesh.
-  /// \pre The mesh border must be mapped onto a convex polygon.
-  /// \pre The vertices must be indexed (`vimap` must be initialized).
-  ///
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -887,7 +859,7 @@ public:
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap,
-                          int& iterations,
+                          unsigned int& iterations,
                           double& error)
   {
     CGAL_precondition(is_valid_polygon_mesh(tmesh));
@@ -936,12 +908,12 @@ public:
     if(DEBUG_L0)
       std::cout << std::endl;
 
-    int last_best_i = 0;
+    unsigned int last_best_i = 0;
     NT gamma = 1; // @todo what value should that be
     bool is_changed = false;
 
     // iterate it with the new weights
-    int i = 0;
+    unsigned int i = 0;
     while(i < iterations)
     {
       if(DEBUG_L0)
@@ -1101,12 +1073,39 @@ public:
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap,
-                          int& iterations)
+                          unsigned int& iterations)
   {
     double unused_error;
     return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iterations, unused_error);
   }
 
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
+  /// to a piece of the 2D space.
+  /// The mapping is piecewise linear (linear in each triangle).
+  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
+  ///
+  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
+  ///         as value type.
+  /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         a unique integer as value type.
+  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         a Boolean as value type.
+  ///
+  /// \param tmesh a triangulated surface
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`
+  /// \param uvmap an instanciation of the class `VertexUVmap`
+  /// \param vimap an instanciation of the class `VertexIndexMap`
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`
+  /// \param iterations an integer number of iterations to run the parameterization
+  ///
+  /// \pre `tmesh` must be a triangular mesh.
+  /// \pre The mesh border must be mapped onto a convex polygon.
+  /// \pre The vertices must be indexed (`vimap` must be initialized).
+  ///
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1115,7 +1114,7 @@ public:
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap,
-                          const int& iterations = 15)
+                          const unsigned int iterations = 15)
   {
     int iter = iterations; // need a non-const ref
     return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iter);
@@ -1125,7 +1124,7 @@ public:
   Error_code parameterize(Triangle_mesh& tmesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
-                          const int iterations = 15)
+                          const unsigned int iterations = 15)
   {
     Vertex_int_map vimap = get(Vertex_int_tag(), tmesh);
     internal::fill_index_map_of_cc(bhd, tmesh, vimap);
@@ -1138,7 +1137,7 @@ public:
   template <typename VertexUVmap>
   Error_code parameterize(Triangle_mesh& tmesh,
                           VertexUVmap uvmap,
-                          const int iterations = 15)
+                          const unsigned int iterations = 15)
   {
     const halfedge_descriptor bhd = Polygon_mesh_processing::longest_border(tmesh).first;
 
