@@ -875,7 +875,7 @@ public:
     Polygon_mesh_processing::connected_component(face(opposite(bhd, tmesh), tmesh), tmesh,
                                                  boost::make_function_output_iterator(fc));
 
-    int nv = static_cast<int>(cc_vertices.size());
+    std::size_t nv = cc_vertices.size();
     if(nv == 0)
       return ERROR_EMPTY_MESH;
 
@@ -985,7 +985,7 @@ public:
       CGAL_postcondition(Du == NT(1));
       CGAL_postcondition(Dv == NT(1));
 
-//      for(int i=0; i<nv; ++i)
+//      for(std::size_t i=0; i<nv; ++i)
 //        std::cout << "Sol[" << i << "] = " << Xu[i] << " " << Xv[i] << std::endl;
 
       // Copy A to A_prev, it is a computationally inefficient task but neccesary
@@ -1114,9 +1114,10 @@ public:
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap,
-                          const unsigned int iterations = 15)
+                          // the '&' below is important, otherwise the function just calls itself
+                          const unsigned int& iterations = 15)
   {
-    int iter = iterations; // need a non-const ref
+    unsigned int iter = iterations; // need a non-const ref
     return parameterize(tmesh, bhd, uvmap, vimap, vpmap, iter);
   }
 
