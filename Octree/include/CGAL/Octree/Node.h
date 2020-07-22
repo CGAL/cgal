@@ -200,7 +200,14 @@ public:
   /*!
    * \brief Read-only access to this node's parent
    *
-   * \return
+   * Ownership of a node is not equivalent to ownership of the entire tree,
+   * so it's not possible to obtain write access to a node's parent,
+   * only its children.
+   * Note that the return type is nullable,
+   * attempting to find the parent of a root node will return null.
+   * \todo Should I instead assert the node isn't root? (that would make this undefined behavior)
+   *
+   * \return A const pointer to the parent of this node (possibly nullptr)
    */
   const Node<Point_index> *parent() const { return m_parent; }
 
