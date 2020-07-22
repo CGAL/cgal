@@ -63,7 +63,7 @@ void naive_vs_octree(std::size_t dataset_size) {
             << "distance^2 of "
             << CGAL::squared_distance(naive_nearest, random_point) << " "
             << "with a time of "
-            << naive_elapsed_time.count()
+            << naive_elapsed_time.count() << "s "
             << std::endl;
 
   // Do the same using the octree
@@ -84,7 +84,7 @@ void naive_vs_octree(std::size_t dataset_size) {
             << "distance^2 of "
             << CGAL::squared_distance(octree_nearest, random_point) << " "
             << "with a time of "
-            << octree_elapsed_time.count()
+            << octree_elapsed_time.count() << "s "
             << std::endl;
 
   // Check that they produce the same answer
