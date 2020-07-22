@@ -9,11 +9,6 @@ namespace CGAL {
 
 \authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, Mael Rouxel-Labb&eacute;, Andreas Fabri and Hardik Jain
 
-\warning The API and structure of this package have greatly changed with CGAL 4.11.
-Users who wish to use the former API must use a version prior to 4.11.
-Section \ref Surface_mesh_parameterizationBasics gives a gentle introduction to
-the new, much simpler, API.
-
 \section Surface_mesh_parameterizationIntroduction Introduction
 
 Parameterizing a surface amounts to finding a one-to-one mapping from
