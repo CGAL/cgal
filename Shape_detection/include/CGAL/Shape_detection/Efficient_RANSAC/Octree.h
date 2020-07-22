@@ -17,5 +17,15 @@
 #include <CGAL/license/Shape_detection.h>
 #include <CGAL/Octree.h>
 
+namespace CGAL {
+namespace Shape_detection {
+
+template<class Traits>
+class Octree : CGAL::Octree::Octree<typename Traits::Input_range, typename Traits::Point_map> {
+
+};
+
+}
+}
 
 #endif
