@@ -280,7 +280,7 @@ providing for a given file format with shorter name `XXX` an input function `rea
 and an output function called `write_XXX(output, data_structure)`. Whenever possible, a <em>generic</em> I/O function
 which can deduce the file format from the extension is also provided for convenience.
 
-In the following subsection, file formats supported in \cgal are listed along with compatible
+In the following subsections, file formats supported in \cgal are listed along with compatible
 \cgal data structures. A reverse viewpoint, listing the data structures which can be used for a specific file format
 is available on the page: \ref IOStreamSupportedFileFormats.
 
