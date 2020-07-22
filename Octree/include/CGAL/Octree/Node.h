@@ -144,7 +144,8 @@ public:
   /*!
    * \brief Eliminate this node's children, making it a leaf node
    *
-   * \todo
+   * When a node is un-split, its children are automatically deleted.
+   * After un-splitting a node it will be considered a leaf node
    */
   void unsplit() {
 
