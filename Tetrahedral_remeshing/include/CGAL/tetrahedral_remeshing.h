@@ -97,7 +97,7 @@ namespace CGAL
 *                           Otherwise, the topology is preserved, but atomic operations
 *                           can be performed on the surfaces, and along feature polylines,
 *                           such that boundaries are remeshed.}
-*     \cgalParamType{Boolean}
+*     \cgalParamType{`bool`}
 *     \cgalParamDefault{`true`}
 *     \cgalParamExtra{Boundaries are between the exterior and the interior,
 *                     between two subdomains, between the areas selected or not for remeshing
@@ -135,11 +135,24 @@ namespace CGAL
 *     \cgalParamExtra{During the meshing process, the set of selected cells evolves consistently with
 *                     the atomic operations that are performed, so the property map must be writable.}
 *   \cgalParamNEnd
-*  \cgalParamBegin{smooth_constrained_edges} If `true`, the end vertices of the edges set as
-*    constrained in `edge_is_constrained_map` move along the
-*    constrained polylines they belong to.
-*  \cgalParamEnd
-* \cgalNamedParamsEnd
+*
+*   \cgalParamNBegin{smooth_constrained_edges}
+*     \cgalParamDescription{If `true`, the end vertices of the edges set as
+*                           constrained in `edge_is_constrained_map` move along the
+*                           constrained polylines they belong to.}
+*     \cgalParamType{`bool`}
+*     \cgalParamDefault{`false`}
+*     \cgalParamExtra{The endvertices of constraints listed
+*                     by `edge_is_constrained_map`, and edges incident to at least three subdomains
+*                     are made eligible to one dimensional smoothing, along the constrained polylines they belong to.
+*                     Corners (i.e. vertices incident to more than 2 constrained edges) are not allowed
+*                     to move at all.\n
+*                     Note that activating the smoothing step on polyline constraints tends to reduce
+*                     the quality of the minimal dihedral angle in the mesh.\n
+*                     If `remesh_boundaries` is set to `false`, this parameter is ignored.}
+*   \cgalParamNEnd
+*
+*  \cgalNamedParamsEnd
 *
 * \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 *
