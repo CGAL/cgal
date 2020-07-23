@@ -48,10 +48,10 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_simplicity Simplicity Test
 
-Given a cycle drawn on a surface one can ask if the cycle can be continously deformed to a cycle that does not intersect with itself. Cycles that deform to a non-self-intersecting cycle are said <em>simple</em>. Any contractible cycle is simple but this is not true for cycles on more complicated topology. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
+Given a cycle drawn on a surface one can ask if the cycle can be continously deformed to a cycle that does not intersect with itself. Any contractible cycle deforms to a simple cycle but this is not true for more complicated cycles. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
 
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
-- Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is simple on \f$\cal{M}\f$.
+- Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is homotopic to a simple one on \f$\cal{M}\f$.
 
 The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \f$O(n + l\log{l})\f$-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
 
@@ -286,13 +286,33 @@ The canonical form of a curve is obtained by flattening its brackets, removing i
 It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
 
 \subsection SMTopology_Simplicity_Test Simplicity Test
-It can be shown that a closed curve is simple up to homotopy if and only if there is no intersection between any two geodesic liftings of the curve to the universal covering space embedded in a Poincaré Disk. Moreover, the Poincaré Disk can be tessellated by regular fundamental polygons.
+It can be shown that a closed curve is homotopic to a simple one if and only if its canonical form can be made intersection free via infinitesimal perturbations and some homotopy preserving operations. One can imagine each edge in the quadrangulation has width and each vertex in the quadrangulation has area so that paths visiting the same vertex/edge multiple times can avoid intersection within a vertex or an edge. See \cgalFigureRef{fig_perturbation_sample} for an example.
+\cgalFigureBegin{fig_perturbation_sample,perturbation_sample.svg}
+ Applying perturbation to reduce 2 intersections between red subpath and blue subpath.
+    \cgalFigureEnd
 
-The quadrangulation represents the local connectivity information of the tesselation. Let \f$C\f$ be a closed curve and \f$\cal{C}\f$ be its canonical form. It can be proven that instead of considering the geodesic in a Poincaré Disk, \f$C\f$ is simple up to homotopy if and only if it is possible to arrange an ordering for edges in \f$\cal{C}\f$ with the same projection such that there is no self-intersection in the projection of \f$\cal{C}\f$ while allowing certain homotopy-preserving operation known as <em>switch</em>.
+Such perturbation can be expressed as orderings of edges from the canonical form which cross the same edge in the quadrangulation. The idea of the algorithm is to inductively build such ordering and try to avoid intersection as best as we can.
 
-Given \f$\cal{C}\f$, the algorithm preprocesses the path in linear time to identify all possible switches. The algorithm then processes edges in \f$\cal{C}\f$ one by one, tries to switch if an intersection can be avoided and then tries to insert the edge in the existing ordering without creating any intersection. Finally the ordering is checked to make sure it is indeed intersection free.
+\subsubsection SMTopology_Simplicity_Test_Primitive Detect Repetition
+It can be proven that if the canonical form can be expressed as concatenation of two or more copies of the same path, the path can never be made to be intersection free. So the first step of the algorithm is to detect repetition.
 
-To speed up determining relative order to the first edge, the algorithm uses a modified version of Knuth-Morris-Pratt algorithm to pre-compute the relative ordering in linear time. The orderings are maintained in red-black trees, contributing to the \f$\log{l}\f$ factor in the running time.
+Let \f$P\f$ be a path and let \f$+\f$ be the operator of concatenation. It can be shown that \f$P\f$ contains no repetition if and only if there are only 2 matchings of \f$P\f$ in \f$P+P\f$ (matching the first and the second copy). The algorithm resorts to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical form contains no repetition.
+
+\subsubsection SMTopology_Simplicity_Test_Switch Avoid Crossing by Switching
+Apart from applying perturbation, the algorithm also tries to avoid crossing using a homotopy-preserving operation known as <em>switch</em>. A switch is triggered when intersection could be avoided by turning a left L-shaped subpath into a right L-shaped subpath. See \cgalFigureRef{fig_switch_sample} for an example.
+
+\subsubsection SMTopology_Simplicity_Test_Relative_Order Decide Relative Order
+Since the algorithm inductively builds an ordering, it has to determine relative order between the edge being processed and edges that has been ordered. There are three cases to consider.
+
+-# The predecessor of the current edge is adjacent to another edge which forms the same turn of the predecessor and the current edge. In this case, the current edge must be adjacent to the edge forming the turn. See \cgalFigureRef{fig_relative_order_corner}.
+\cgalFigureBegin{fig_relative_order_corner,relative_order_corner.svg}
+ The red edge is being processed. The blue edge is adjacent to green edge (the predecessor of the red edge) in the previously constructed ordering and forms a turn (blue-pink turn) same to the green-red turn. The red edge must be right next to the pink edge in the ordering.
+    \cgalFigureEnd
+
+-# Comparing the current edge with another edge by the predecessor of the current edge. If the edge being compared against has predecessor/successor extended to the direction of the predecessor of the current edge, and they doesn't form the same turn. The relative order of edges around the vertex can be used as the relative order between the edges. See  \cgalFigureRef{fig_relative_order_normal}.
+\cgalFigureBegin{fig_relative_order_normal,relative_order_normal.svg}
+ The red edge is being processed and is compared against the pink edge. Since the green edge (the predecessor of the red edge) is to the right of the blue edge around the vertex, red edge must be to the right of the pink edge in the ordering.
+    \cgalFigureEnd
 
 \section Implementation History
 
