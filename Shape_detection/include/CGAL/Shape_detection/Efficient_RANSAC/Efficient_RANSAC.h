@@ -650,16 +650,11 @@ public:
       best_candidate->m_indices.clear();
 
       best_candidate->m_score =
-              m_global_octree->score(
+              score(m_global_octree,
                     best_candidate,
                     m_shape_index,
                     FT(3) * m_options.epsilon,
                     m_options.normal_threshold);
-//              score(*m_global_octree,
-//                    best_candidate,
-//                    m_shape_index,
-//                    FT(3) * m_options.epsilon,
-//                    m_options.normal_threshold);
 
       best_expected = static_cast<FT>(best_candidate->m_score);
 
@@ -983,11 +978,12 @@ private:
     std::size_t new_sampled_points = 0;
 
     do {
-      new_score = m_direct_octrees[candidate->m_nb_subset_used]->score(
-              candidate,
-              m_shape_index,
-              m_options.epsilon,
-              m_options.normal_threshold);
+      new_score =
+              score(m_direct_octrees[candidate->m_nb_subset_used],
+                    candidate,
+                    m_shape_index,
+                    m_options.epsilon,
+                    m_options.normal_threshold);
 
       candidate->m_score += new_score;
 
