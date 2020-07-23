@@ -167,6 +167,8 @@ namespace CGAL {
       template<class Sd_traits>
         friend class ::CGAL::Shape_detection::Efficient_RANSAC;
 
+    public:
+
       struct Cell {
         std::size_t first, last;
         Cell *child[8];
@@ -192,6 +194,8 @@ namespace CGAL {
           else return (last - first + 1);
         }
       };
+
+    private:
 
       // --------------------------------------------------------------------------
       // Utilities
