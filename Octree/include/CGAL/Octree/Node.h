@@ -174,8 +174,10 @@ public:
    */
   Node<Point_index> &operator[](int index) {
 
-    // FIXME: I'm incredulous that this is the correct way of doing this, I'd love to hear a second opinion!
-    return const_cast<Node<Point_index> &>(static_cast<const Node<Point_index> &>(*this)[index]);
+    assert(!is_leaf());
+    assert(0 <= index && index < 8);
+
+    return (*m_children)[index];
   }
 
   /*!
@@ -267,9 +269,7 @@ public:
    * \brief Access to the content held by this node
    * \return a reference to the collection of point indices
    */
-  Point_range &points() {
-    return const_cast<Point_range &>(static_cast<const Node<Point_index> &>(*this).points());
-  }
+  Point_range &points() { return m_points; }
 
   /*!
    * \brief Read-only access to the content held by this node
