@@ -129,8 +129,11 @@ int main()
 
         const std::string& output_file("data/cube_result.off");
         std::ofstream output_stream(output_file.c_str());
-        if (output_stream && CGAL::write_off(output_stream, model))
+        if (output_stream && CGAL::write_off(output_stream, model)) {
+                // flush the buffer
+                output_stream << std::flush;
                 std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
+        }
         else {
                 std::cerr << " Failed saving file." << std::endl;
                 return EXIT_FAILURE;
@@ -143,8 +146,11 @@ int main()
         algo.output_candidate_faces(candidate_faces);
         const std::string& candidate_faces_file("data/cube_candidate_faces.off");
         std::ofstream candidate_stream(candidate_faces_file.c_str());
-        if (candidate_stream && CGAL::write_off(candidate_stream, candidate_faces))
+        if (candidate_stream && CGAL::write_off(candidate_stream, candidate_faces)) {
+                // flush the buffer
+                output_stream << std::flush;
                 std::cout << "Candidate faces saved to " << candidate_faces_file << "." << std::endl;
+        }
 
         return EXIT_SUCCESS;
 }
