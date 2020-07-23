@@ -51,10 +51,13 @@ private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
   boost::unordered_map<Surface_patch_index, std::size_t> subdomain_FMLS_indices;
+  bool m_smooth_constrained_edges;
 
 public:
   template<typename CellSelector>
-  void init(const C3t3& c3t3, const CellSelector& cell_selector)
+  void init(const C3t3& c3t3,
+            const CellSelector& cell_selector,
+            const bool smooth_constrained_edges)
   {
     //collect a map of vertices surface indices
     boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
@@ -71,6 +74,8 @@ public:
                       vertices_normals,
                       vertices_surface_indices,
                       c3t3);
+
+    m_smooth_constrained_edges = smooth_constrained_edges;
   }
 
 private:
@@ -404,11 +409,11 @@ public:
 
     Tr& tr = c3t3.triangulation();
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_SMOOTH_SHARP_EDGES
     //collect a map of vertices surface indices
     boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
-    collect_vertices_surface_indices(c3t3, vertices_surface_indices);
-#endif
+    if(m_smooth_constrained_edges)
+      collect_vertices_surface_indices(c3t3, vertices_surface_indices);
+
     //collect a map of normals at surface vertices
     boost::unordered_map<Vertex_handle,
           boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
@@ -439,9 +444,8 @@ public:
       }
     }
 
-    if (!protect_boundaries)
+    if (!protect_boundaries && m_smooth_constrained_edges)
     {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_SMOOTH_SHARP_EDGES
       /////////////// EDGES IN COMPLEX //////////////////
       //collect neighbors
       for (const Edge& e : tr.finite_edges())
@@ -551,7 +555,6 @@ public:
           check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
         }
       }
-#endif //CGAL_TETRAHEDRAL_REMESHING_SMOOTH_SHARP_EDGES
 
       smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
       neighbors.assign(nbv, -1);

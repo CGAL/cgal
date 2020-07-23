@@ -108,6 +108,10 @@ namespace CGAL
 *    modified) by remeshing.
 *    By default, all cells with a non-zero `Subdomain_index` are selected.
 *  \cgalParamEnd
+*  \cgalParamBegin{smooth_constrained_edges} If `true`, the end vertices of the edges set as
+*    constrained in `edge_is_constrained_map` move along the
+*    constrained polylines they belong to.
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
@@ -166,6 +170,9 @@ void tetrahedral_isotropic_remeshing(
   //                              false);
   std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations),
                                         1);
+  bool smooth_constrained_edges
+    = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
+                       false);
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::cell_selector_t,
@@ -219,6 +226,7 @@ void tetrahedral_isotropic_remeshing(
     Tr, SizingFunction, ECMap, FCMap, SelectionFunctor, Visitor> Remesher;
   Remesher remesher(tr, sizing, protect
                   , ecmap, fcmap
+                  , smooth_constrained_edges
                   , cell_select
                   , visitor);
 
@@ -359,6 +367,10 @@ void tetrahedral_isotropic_remeshing(
   bool protect = !remesh_surfaces;
   std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
+  bool smooth_constrained_edges
+    = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
+      false);
+
   typedef typename internal_np::Lookup_named_param_def <
   internal_np::cell_selector_t,
               NamedParameters,
@@ -414,6 +426,7 @@ void tetrahedral_isotropic_remeshing(
   > Remesher;
   Remesher remesher(c3t3, sizing, protect
                     , ecmap, fcmap
+                    , smooth_constrained_edges
                     , cell_select
                     , visitor);
 

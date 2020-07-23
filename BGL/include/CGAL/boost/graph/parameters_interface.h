@@ -172,6 +172,7 @@ CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundari
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(remeshing_visitor_t, remeshing_visitor, remeshing_visitor)
+CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

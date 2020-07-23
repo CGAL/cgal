@@ -95,6 +95,24 @@ It must be default constructible.\n
 (i.e. with a non-zero `Subdomain_index`) are selected.
 \cgalNPEnd
 
+\cgalNPBegin{smooth_constrained_edges}
+\anchor Remeshing_smooth_constrained_edges
+enables the smoothing step in `tetrahedral_isotropic_remeshing()`
+to be performed on vertices that are endpoints of constraints listed
+by \ref Remeshing_edge_is_constrained_map "edge_is_constrained_map",
+and edges incident to at least three subdomains.
+The vertices move along the constrained polylines they belong to.
+Corners (i.e. vertices incident to more than 2 constraints) are not allowed
+to move at all.\n
+Note that activating the smoothing step on polyline constraints tends to reduce
+the quality of the minimal dihedral angle in the mesh.\n
+If \ref Remeshing_remesh_boundaries "remesh_boundaries" is
+set to `false`, this parameter is ignored.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+
 \cgalNPTableEnd
 
 */
