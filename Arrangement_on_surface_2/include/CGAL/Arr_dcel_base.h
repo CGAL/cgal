@@ -473,7 +473,16 @@ public:
   const Inner_ccb* inner_ccb() const
   {
     CGAL_precondition(is_on_inner_ccb());
-    return (reinterpret_cast<const Inner_ccb*>(_clean_pointer(this->p_comp)));
+
+    const Inner_ccb* out = reinterpret_cast<const Inner_ccb*>(_clean_pointer(this->p_comp));
+    if (out->is_valid())
+      return out;
+    // else
+    while (!out->is_valid())
+      out = out->next();
+    const_cast<Halfedge*>(this)->set_inner_ccb(out);
+
+    return out;
   }
 
   /*! Get an incident inner CCB (non-const version).
@@ -482,11 +491,20 @@ public:
   Inner_ccb* inner_ccb()
   {
     CGAL_precondition(is_on_inner_ccb());
-    return (reinterpret_cast<Inner_ccb*>(_clean_pointer(this->p_comp)));
+
+    Inner_ccb* out = reinterpret_cast<Inner_ccb*>(_clean_pointer(this->p_comp));
+    if (out->is_valid())
+      return out;
+    // else
+    while (!out->is_valid())
+      out = out->next();
+    set_inner_ccb(out);
+
+    return out;
   }
 
   /*! Set the incident inner CCB. */
-  void set_inner_ccb(Inner_ccb *ic)
+  void set_inner_ccb(const Inner_ccb *ic)
   {
     // Set the component pointer and set its LSB.
     this->p_comp = _set_lsb(ic);
@@ -763,18 +781,27 @@ public:
   typedef typename Face::Inner_ccb_iterator  Inner_ccb_iterator;
 
 private:
-  Face* p_f;                  // The face the contains the CCB in its interior.
+  union
+  {
+    Face* f;                  // The face the contains the CCB in its interior.
+    Arr_inner_ccb* icc;       // next inner CCB in chain to valid icc
+  } f_or_icc;
   Inner_ccb_iterator  iter;   // The inner CCB identifier.
-  bool iter_is_not_singular;
+  enum
+  {
+    ITER_IS_SINGULAR,
+    ITER_IS_NOT_SINGULAR,
+    INVALID
+  } status;
 
 public:
   /*! Default constructor. */
-  Arr_inner_ccb() : p_f(nullptr), iter_is_not_singular(false) {}
+  Arr_inner_ccb() : status(ITER_IS_SINGULAR) { f_or_icc.f = nullptr; }
 
   /*! Copy constructor. */
   Arr_inner_ccb(const Arr_inner_ccb& other) :
-    p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
-  { if (other.iter_is_not_singular) iter = other.iter; }
+    f_or_icc(other.f_or_icc), status(other.status)
+  { if (other.status == ITER_IS_NOT_SINGULAR) iter = other.iter; }
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge() const { return (*iter); }
@@ -786,33 +813,63 @@ public:
   void set_halfedge(Halfedge *he) { *iter = he; }
 
   /*! Get the incident face (const version). */
-  const Face* face() const { return (p_f); }
+  const Face* face() const
+  {
+    CGAL_assertion (status != INVALID);
+    return f_or_icc.f;
+  }
 
   /*! Get the incident face (non-const version). */
-  Face* face() { return (p_f); }
+  Face* face()
+  {
+    CGAL_assertion (status != INVALID);
+    return f_or_icc.f;
+  }
 
   /*! Set the incident face. */
-  void set_face(Face* f) { p_f = f; }
+  void set_face(Face* f)
+  {
+    CGAL_assertion (status != INVALID);
+    f_or_icc.f = f;
+  }
 
   /*! Get the iterator (const version). */
   Inner_ccb_iterator iterator() const
   {
-    CGAL_assertion(iter_is_not_singular);
+    CGAL_assertion(status == ITER_IS_NOT_SINGULAR);
     return (iter);
   }
 
   /*! Get the iterator (non-const version). */
   Inner_ccb_iterator iterator()
   {
-    CGAL_assertion(iter_is_not_singular);
+    CGAL_assertion(status == ITER_IS_NOT_SINGULAR);
     return (iter);
   }
 
   /*! Set the inner CCB iterator. */
   void set_iterator(Inner_ccb_iterator it)
   {
+    CGAL_assertion (status != INVALID);
     iter = it;
-    iter_is_not_singular = true;
+    status = ITER_IS_NOT_SINGULAR;
+  }
+
+  /*! Check validity */
+  bool is_valid() const { return (status != INVALID); }
+
+  /*! Get the next CCB to primary chain. */
+  Arr_inner_ccb* next() const
+  {
+    CGAL_assertion (status == INVALID);
+    return f_or_icc.icc;
+  }
+
+  /*! Set the next CCB to primary chain. */
+  void set_next(Arr_inner_ccb* next)
+  {
+    status = INVALID;
+    f_or_icc.icc = next;
   }
 };
 
