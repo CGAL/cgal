@@ -909,6 +909,14 @@ protected:
   bool                    m_own_traits;    // inidicates whether the geometry
                                            // traits should be freed up.
 
+  bool                    m_sweep_mode = false;
+                                           // sweep mode efficiently
+                                           // merges inner CCB but
+                                           // keeps invalid inner CCB
+                                           // and memory overhead that
+                                           // should be cleaned
+                                           // afterwards
+
 public:
   /// \name Constructors.
   //@{
@@ -938,6 +946,9 @@ public:
 
   /*! Destructor. */
   virtual ~Arrangement_on_surface_2();
+
+  /*! Change mode. */
+  void set_sweep_mode (bool mode) { m_sweep_mode = mode; }
 
   /*! Clear the arrangement. */
   virtual void clear();
@@ -1515,6 +1526,37 @@ public:
                           bool remove_target = true);
 
   //@}
+
+  /*!
+   * Cleans the inner CCB if sweep mode was used, by removing all
+   * non-valid inner CCBs
+   */
+  void clean_inner_ccbs()
+  {
+    for (DHalfedge_iter he = _dcel().halfedges_begin();
+         he != _dcel().halfedges_end(); ++ he)
+    {
+      if (!he->is_on_inner_ccb())
+        continue;
+
+      DInner_ccb* ic1 = he->inner_ccb_no_redirect();
+      if (ic1->is_valid())
+        continue;
+
+      DInner_ccb* ic2 = he->inner_ccb();
+      if (!ic2->halfedge()->is_on_inner_ccb()
+          || ic2->halfedge()->inner_ccb_no_redirect() != ic2)
+        ic2->set_halfedge(&(*he));
+    }
+
+    typename Dcel::Inner_ccb_iterator it = _dcel().inner_ccbs_begin();
+    while (it != _dcel().inner_ccbs_end())
+    {
+      typename Dcel::Inner_ccb_iterator current = it ++;
+      if (!current->is_valid())
+        _dcel().delete_inner_ccb(&*current);
+    }
+  }
 
 protected:
   /// \name Determining the boundary-side conditions.
