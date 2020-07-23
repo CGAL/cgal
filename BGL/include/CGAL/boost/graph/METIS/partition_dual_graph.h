@@ -129,7 +129,7 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 
 /// \ingroup PkgBGLPartition
 ///
-/// Computes a partition of the input triangular mesh into `nparts` parts,
+/// computes a partition of the input triangular mesh into `nparts` parts,
 /// based on the mesh's dual graph. The resulting partition is stored in the vertex and/or face
 /// property maps that are passed as parameters using \ref bgl_namedparameters "Named Parameters".
 ///

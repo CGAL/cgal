@@ -30,7 +30,7 @@ namespace Polygon_mesh_processing {
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Adds the vertices and faces of a mesh into a (possibly non-empty) polygon soup.
+/// adds the vertices and faces of a mesh into a (possibly non-empty) polygon soup.
 ///
 /// \tparam PolygonMesh a model of `FaceListGraph`
 /// \tparam PointRange a model of the concepts `RandomAccessContainer` and

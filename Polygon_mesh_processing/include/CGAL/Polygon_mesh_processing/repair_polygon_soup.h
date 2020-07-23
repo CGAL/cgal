@@ -216,7 +216,7 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 
 // \ingroup PMP_repairing_grp
 //
-// Splits "pinched" polygons, that is polygons for which a point appears more than once,
+// splits "pinched" polygons, that is polygons for which a point appears more than once,
 // into multiple non-pinched polygons.
 //
 // \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -322,7 +322,7 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 
 // \ingroup PMP_repairing_grp
 //
-// Removes polygons with fewer than 2 points from the soup.
+// removes polygons with fewer than 2 points from the soup.
 //
 // \tparam PointRange a model of the concept `Container` whose value type is the point type.
 // \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -379,7 +379,7 @@ std::size_t remove_degenerate_polygons_in_polygon_soup(PointRange& points,
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Removes the isolated points from a polygon soup.
+/// removes the isolated points from a polygon soup.
 /// A point is considered <i>isolated</i> if it does not appear in any polygon of the soup.
 ///
 /// \tparam PointRange a model of the concept `SequenceContainer` whose value type is the point type.
@@ -481,7 +481,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Merges the duplicate points in a polygon soup.
+/// merges the duplicate points in a polygon soup.
 /// Note that the index of a point that is merged with another point will thus change
 /// in all the polygons that the point appears in.
 ///
@@ -795,7 +795,7 @@ struct Duplicate_collector<ValueType, CGAL::Emptyset_iterator>
 
 // \ingroup PMP_repairing_grp
 //
-// Collects duplicate polygons in a polygon soup, that is polygons that share the same vertices in the same
+// collects duplicate polygons in a polygon soup, that is polygons that share the same vertices in the same
 // order.
 //
 // \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -872,7 +872,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Merges the duplicate polygons in a polygon soup. Two polygons are duplicate if they share the same
+/// merges the duplicate polygons in a polygon soup. Two polygons are duplicate if they share the same
 /// vertices in the same order. Note that the first vertex of the polygon does not matter, that is
 /// the triangle `0,1,2` is a duplicate of the triangle `2,0,1`.
 ///
@@ -1023,7 +1023,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Cleans a given polygon soup through various repairing operations. More precisely, this function
+/// cleans a given polygon soup through various repairing operations. More precisely, this function
 /// carries out the following tasks, in the same order as they are listed:
 /// - merging of duplicate points, using the function
 ///   `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`;
