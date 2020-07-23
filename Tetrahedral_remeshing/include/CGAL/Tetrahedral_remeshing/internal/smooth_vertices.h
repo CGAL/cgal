@@ -515,7 +515,7 @@ public:
             final_position = smoothed_position;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          os_surf << "2 " << current_pos << " " << final_position << std::endl,
+          os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
           // move vertex
           typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
@@ -548,7 +548,7 @@ public:
             final_position = current_pos;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          os_surf << "2 " << current_pos << " " << final_position << std::endl,
+          os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
           // move vertex
           typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
