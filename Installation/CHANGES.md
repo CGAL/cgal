@@ -30,6 +30,10 @@ Release date: July 2020
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
 
+### Installation
+
+-   The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 
 -   Two new, detailed tutorials have been added:

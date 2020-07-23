@@ -44,6 +44,7 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(Real, Zero, 0);
   return Zero;
 }
