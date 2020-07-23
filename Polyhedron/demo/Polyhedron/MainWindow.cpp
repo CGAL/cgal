@@ -409,32 +409,18 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
 void addActionToMenu(QAction* action, QMenu* menu)
 {
-  bool added = false;
-  QString atxt = action->text().remove("&");
-  if(atxt.isEmpty())
-    return;
-  for(QAction* it : menu->actions())
-  {
-    QString btxt = it->text().remove("&");
-    int i = 0;
-    if(btxt.isEmpty())
-    {
-      continue;
-    }
-    while(i < atxt.size()
-          && i < btxt.size()
-          && atxt[i] == btxt[i])
-      ++i;
-    bool res = (i == atxt.size() || i == btxt.size() || atxt[i] < btxt[i]);
-    if (res)
-    {
-      menu->insertAction(it, action);
-      added = true;
-      break;
-    }
-  }
-  if(!added)
+  auto actions = menu->actions();
+  auto it = std::lower_bound(actions.begin(), actions.end(),
+                             action->text().remove("&"),
+                             [](QAction* a, QString text) {
+                               return a->text().remove("&").compare(text) < 0;
+                             });
+  if(it == actions.end()) {
     menu->addAction(action);
+  }
+  else {
+    menu->insertAction(*it, action);
+  }
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
