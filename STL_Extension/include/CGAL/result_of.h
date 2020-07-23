@@ -40,7 +40,16 @@ namespace CGAL{
 
 namespace cpp11{
 
-using std::result_of;
+// When we switch to C++17, we should use the std::invoke_result instead.
+// #if __cplusplus >= 201703L
+//   template<typename F>
+//   struct result_of : public std::invoke_result<F>
+//   {
+
+//   };
+// #else
+  using std::result_of;
+// #endif
 
 }
 

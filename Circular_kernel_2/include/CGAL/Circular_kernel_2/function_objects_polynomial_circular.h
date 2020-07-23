@@ -1299,12 +1299,12 @@ namespace CircularFunctors {
 
     template<typename F>
     struct result<F(Circular_arc_2)> {
-      typedef typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type type;
+      typedef decltype(std::declval<LK_Compute_squared_radius_2>()(Circle_2())) type;
     };
 
     template<typename F>
     struct result<F(Circle_2)> {
-      typedef typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type type;
+      typedef decltype(std::declval<LK_Compute_squared_radius_2>()(Circle_2())) type;
     };
 
     decltype(auto)
