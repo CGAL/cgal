@@ -650,10 +650,16 @@ public:
       best_candidate->m_indices.clear();
 
       best_candidate->m_score =
-              m_global_octree->score(best_candidate,
-                                     m_shape_index,
-                                     FT(3) * m_options.epsilon,
-                                     m_options.normal_threshold);
+              m_global_octree->score(
+                    best_candidate,
+                    m_shape_index,
+                    FT(3) * m_options.epsilon,
+                    m_options.normal_threshold);
+//              score(*m_global_octree,
+//                    best_candidate,
+//                    m_shape_index,
+//                    FT(3) * m_options.epsilon,
+//                    m_options.normal_threshold);
 
       best_expected = static_cast<FT>(best_candidate->m_score);
 
@@ -1012,18 +1018,18 @@ private:
   // TODO: Make these work outside the octree!
 
   template<class PointAccessor>
-  std::size_t fullScore(internal::Octree<PointAccessor> octree, Shape *candidate,
+  std::size_t fullScore(internal::Octree<PointAccessor> *octree, Shape *candidate,
                         std::vector<int> &shapeIndex,
                         FT epsilon,
                         FT normal_threshold) {
 
-    std::vector<std::size_t> indices(octree.m_root->size());
-    for (std::size_t i = 0; i < octree.m_root->size(); i++) {
-      indices[i] = index(octree.m_root->first + i);
+    std::vector<std::size_t> indices(octree->m_root->size());
+    for (std::size_t i = 0; i < octree->m_root->size(); i++) {
+      indices[i] = index(octree->m_root->first + i);
     }
 
-    candidate->cost_function(this->begin() + octree.m_root->first,
-                             this->begin() + octree.m_root->last,
+    candidate->cost_function(octree->begin() + octree->m_root->first,
+                             octree->begin() + octree->m_root->last,
                              shapeIndex,
                              epsilon,
                              normal_threshold,
@@ -1033,7 +1039,7 @@ private:
   }
 
   template<class PointAccessor>
-  std::size_t score(internal::Octree<PointAccessor> octree, Shape *candidate,
+  std::size_t score(internal::Octree<PointAccessor> *octree, Shape *candidate,
                     std::vector<int> &shapeIndex,
                     FT epsilon,
                     FT normal_threshold) {
@@ -1041,13 +1047,13 @@ private:
     typedef typename internal::Octree<PointAccessor>::Cell Cell;
 
     std::stack<Cell *> stack;
-    stack.push(octree.m_root);
+    stack.push(octree->m_root);
 
     while (!stack.empty()) {
       Cell *cell = stack.top();
       stack.pop();
 
-      FT width = octree.m_width / (1 << (cell->level));
+      FT width = octree->m_width / (1 << (cell->level));
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
@@ -1062,8 +1068,8 @@ private:
         std::vector<std::size_t> indices;
         indices.reserve(cell->size());
         for (std::size_t i = 0; i < cell->size(); i++) {
-          if (shapeIndex[this->index(cell->first + i)] == -1) {
-            indices.push_back(this->index(cell->first + i));
+          if (shapeIndex[octree->index(cell->first + i)] == -1) {
+            indices.push_back(octree->index(cell->first + i));
           }
         }
 
