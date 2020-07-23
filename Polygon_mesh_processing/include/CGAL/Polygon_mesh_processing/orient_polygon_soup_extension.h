@@ -78,8 +78,10 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
 
 /*!
  * \ingroup PMP_orientation_grp
+ *
  * orients each triangle of a triangle soup using the orientation of its
  * closest non degenerate triangle in `tm_ref`.
+ *
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
                         Possible values are `Sequential_tag` (the default),
                         `Parallel_if_available_tag`, and `Parallel_tag`.
@@ -93,18 +95,22 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \param tm_ref the reference triangle_mesh.
  * \param points the points of the soup.
  * \param triangles the triangles of the soup.
- * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm_ref`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{geom_traits} a geometric traits class instance.
- *      The traits class must provide the nested functor `Collinear_3`
- *      to check whether three points are collinear.
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm_ref`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm_ref)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{The traits class must provide the nested functor `Collinear_3` to check whether three points are collinear. }
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \attention The types of points in `PointRange`, `geom_traits` and `vertex_point_map` must be the same.
