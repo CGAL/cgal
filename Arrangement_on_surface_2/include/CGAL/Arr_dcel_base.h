@@ -482,11 +482,10 @@ public:
     const Inner_ccb* out = reinterpret_cast<const Inner_ccb*>(_clean_pointer(this->p_comp));
     if (out->is_valid())
       return out;
-    // else
-    while (!out->is_valid())
-      out = out->next();
-    const_cast<Halfedge*>(this)->set_inner_ccb(out);
 
+    // else
+    out = const_cast<Inner_ccb*>(out)->reduce_path();
+    const_cast<Halfedge*>(this)->set_inner_ccb(out);
     return out;
   }
 
@@ -500,12 +499,17 @@ public:
     Inner_ccb* out = reinterpret_cast<Inner_ccb*>(_clean_pointer(this->p_comp));
     if (out->is_valid())
       return out;
-    // else
-    while (!out->is_valid())
-      out = out->next();
-    set_inner_ccb(out);
 
+    // else
+    out = out->reduce_path();
+    set_inner_ccb(out);
     return out;
+  }
+
+  Inner_ccb* inner_ccb_no_redirect()
+  {
+    CGAL_precondition(is_on_inner_ccb());
+    return reinterpret_cast<Inner_ccb*>(_clean_pointer(this->p_comp));
   }
 
   /*! Set the incident inner CCB. */
@@ -809,13 +813,25 @@ public:
   { if (other.status == ITER_IS_NOT_SINGULAR) iter = other.iter; }
 
   /*! Get a halfedge along the component (const version). */
-  const Halfedge* halfedge() const { return (*iter); }
+  const Halfedge* halfedge() const
+  {
+    CGAL_assertion (is_valid());
+    return (*iter);
+  }
 
   /*! Get a halfedge along the component (non-const version). */
-  Halfedge* halfedge() { return (*iter); }
+  Halfedge* halfedge()
+  {
+    CGAL_assertion (is_valid());
+    return (*iter);
+  }
 
   /*! Set a representative halfedge for the component. */
-  void set_halfedge(Halfedge *he) { *iter = he; }
+  void set_halfedge(Halfedge *he)
+  {
+    CGAL_assertion (is_valid());
+    *iter = he;
+  }
 
   /*! Get the incident face (const version). */
   const Face* face() const
@@ -855,7 +871,7 @@ public:
   /*! Set the inner CCB iterator. */
   void set_iterator(Inner_ccb_iterator it)
   {
-    CGAL_assertion (status != INVALID);
+    CGAL_assertion (is_valid());
     iter = it;
     status = ITER_IS_NOT_SINGULAR;
   }
@@ -875,6 +891,15 @@ public:
   {
     status = INVALID;
     f_or_icc.icc = next;
+  }
+
+  Arr_inner_ccb* reduce_path()
+  {
+    if (is_valid())
+      return this;
+    // else
+    f_or_icc.icc = f_or_icc.icc->reduce_path();
+    return f_or_icc.icc;
   }
 };
 
@@ -999,6 +1024,7 @@ public:
   typedef typename Face_list::iterator                Face_iterator;
   typedef CGAL::N_step_adaptor_derived<Halfedge_iterator, 2>
                                                       Edge_iterator;
+  typedef typename Inner_ccb_list::iterator           Inner_ccb_iterator;
 
   // Definitions of const iterators.
   typedef typename Vertex_list::const_iterator        Vertex_const_iterator;
@@ -1075,6 +1101,9 @@ public:
   {
     return make_prevent_deref_range(edges_begin(), edges_end());
   }
+
+  Inner_ccb_iterator inner_ccbs_begin() { return in_ccbs.begin(); }
+  Inner_ccb_iterator inner_ccbs_end()   { return in_ccbs.end(); }
   //@}
 
   /// \name Obtaining constant iterators.
