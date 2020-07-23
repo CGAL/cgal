@@ -99,6 +99,7 @@ public Q_SLOTS:
       double target_length = ui.edgeLength_dspinbox->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
+      bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -110,7 +111,8 @@ public Q_SLOTS:
           c3t3_item->c3t3(),
           target_length,
           CGAL::parameters::remesh_boundaries(!protect)
-          .number_of_iterations(nb_iter));
+          .number_of_iterations(nb_iter)
+          .smooth_constrained_edges(smooth_edges));
 
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
 
@@ -204,6 +206,10 @@ private:
     ui.nbIterations_spinbox->setValue(1);
 
     ui.protect_checkbox->setChecked(false);
+    ui.smoothEdges_checkBox->setChecked(false);
+
+    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
+            ui.smoothEdges_checkBox, SLOT(setDisabled(bool)));
 
     return ui;
   }
