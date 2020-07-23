@@ -323,6 +323,25 @@ public:
                                &arrays[FLAT_NORMAL_COLORED_FACES],
                                &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {
+    // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
+    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
+
+    // Add custom key description (see keyPressEvent).
+    setKeyDescription(::Qt::Key_E, "Toggles edges display");
+    setKeyDescription(::Qt::Key_M, "Toggles mono color");
+    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
+    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
+    setKeyDescription(::Qt::Key_T, "Toggles text display");
+    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
+    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
+    setKeyDescription(::Qt::Key_W, "Toggles faces display");
+    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
+    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
+    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
+    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
+    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
+    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
+
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
     else
@@ -1212,25 +1231,6 @@ protected:
     // Restore previous viewer state.
     restoreStateFromFile();
     initializeOpenGLFunctions();
-
-    // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
-
-    // Add custom key description (see keyPressEvent).
-    setKeyDescription(::Qt::Key_E, "Toggles edges display");
-    setKeyDescription(::Qt::Key_M, "Toggles mono color");
-    setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
-    setKeyDescription(::Qt::Key_S, "Switch between flat/Gouraud shading display");
-    setKeyDescription(::Qt::Key_T, "Toggles text display");
-    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
-    setKeyDescription(::Qt::Key_V, "Toggles vertices display");
-    setKeyDescription(::Qt::Key_W, "Toggles faces display");
-    setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
-    setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
-    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
-    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
-    setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
-    setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
 
     // Light default parameters
     glLineWidth(m_size_edges);
