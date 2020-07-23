@@ -571,53 +571,6 @@ namespace CGAL {
         return candidate->m_indices.size();
       }
 
-      std::size_t score(Shape *candidate,
-                   std::vector<int> &shapeIndex,
-                   FT epsilon,
-                   FT normal_threshold) {
-
-        std::stack<Cell *> stack;
-        stack.push(m_root);
-
-        while(!stack.empty()) {
-          Cell *cell = stack.top();
-          stack.pop();
-
-          FT width = m_width / (1<<(cell->level));
-
-          FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
-
-          FT dist = candidate->squared_distance(cell->center);
-
-          if (dist > (diag * diag))
-            continue;
-
-          // differ between full or partial overlap?
-          // if full overlap further traversal of this branch is not necessary
-          if (cell->isLeaf()) {
-            std::vector<std::size_t> indices;
-            indices.reserve(cell->size());
-            for (std::size_t i = 0;i<cell->size();i++) {
-              if (shapeIndex[this->index(cell->first + i)] == -1) {
-                indices.push_back(this->index(cell->first + i));
-              }
-            }
-
-            candidate->cost_function(epsilon,
-                                     normal_threshold,
-                                     indices);
-          }
-          else {
-            for (std::size_t i = 0;i<8;i++)
-              if (cell->child[i])
-                stack.push(cell->child[i]);
-          }
-
-        }
-
-        return candidate->m_indices.size();
-      }
-
       void setBucketSize(std::size_t bucketSize) {
         m_bucket_size = bucketSize;
       }
