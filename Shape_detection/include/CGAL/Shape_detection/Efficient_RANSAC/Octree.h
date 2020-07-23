@@ -551,26 +551,6 @@ namespace CGAL {
         return m_max_level;
       }
 
-      std::size_t fullScore(Shape *candidate,
-                       std::vector<int> &shapeIndex,
-                       FT epsilon,
-                       FT normal_threshold) {
-
-        std::vector<std::size_t> indices(m_root->size());
-        for (std::size_t i = 0;i<m_root->size();i++) {
-          indices[i] = index(m_root->first + i);
-        }
-
-        candidate->cost_function(this->begin() + m_root->first,
-                                 this->begin() + m_root->last,
-                                 shapeIndex,
-                                 epsilon,
-                                 normal_threshold,
-                                 indices);
-
-        return candidate->m_indices.size();
-      }
-
       void setBucketSize(std::size_t bucketSize) {
         m_bucket_size = bucketSize;
       }
