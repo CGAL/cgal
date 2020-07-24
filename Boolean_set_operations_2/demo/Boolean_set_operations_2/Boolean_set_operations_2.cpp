@@ -1248,8 +1248,12 @@ private:
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
+
+      //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
     // COPY_OP = 6
     // MOVE_OP = 7
+      //hence these 2 are abandoned
+    
     // PASTE_OP = 8
     // CLEAR_OP = 9
     // DELETEALL_OP = 10
@@ -6161,7 +6165,8 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
       actionMoveH->setChecked(false);
       actionPasteH->setChecked(false);
 
-      get_new_state(6);
+      //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
+      //get_new_state(6);
 
       //operation_name
        // COMPLEMENT_OP = 0
@@ -6229,7 +6234,8 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
       actionCopyH->setChecked(false);
       actionPasteH->setChecked(false);
 
-      get_new_state(7);
+      //makes no sense to just undo copy/move alone but rather be used with paste and that is handled anyways
+      //get_new_state(7);
 
       //operation_name
        // COMPLEMENT_OP = 0
