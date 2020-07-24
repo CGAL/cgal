@@ -383,17 +383,17 @@ bool read_3MF(const std::string& fname,
  * \brief extracts ranges of points and triangles from a 3mf file.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value type` is
+ *  `BackInsertionSequence` whose `value_type` is
  *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value type` is the point type.
+ *  whose `value_type` is the point type.
  * \tparam PolygonRanges a model of the concept `RandomAccessContainer` whose
  *  `value_type` is a model of the concept `RandomAccessContainer`
  *  whose `value_type` is a model of the concept `RandomAccessContainer` whose
  *  `value_type` is std::size_t.
  * \tparam ColorRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value type` is
+ *  `BackInsertionSequence` whose `value_type` is
  *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value type` is `CGAL::Color`.
+ *  whose `value_type` is `CGAL::Color`.
  *
  * \param fname the name of the 3mf file to read.
  * \param all_points a `PointRanges` that will contain the points of the meshes in `fname`.
@@ -434,9 +434,9 @@ int read_3MF(const std::string& fname,
  *  `all_polygons` into the 3mf file `fname`.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value type` is
+ *  `BackInsertionSequence` whose `value_type` is
  * a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value type` is the point type.
+ *  whose `value_type` is the point type.
  * \tparam PolygonRanges a model of the concept `RandomAccessContainer` whose
  *  `value_type` is a model of the concept `RandomAccessContainer`
  * whose `value_type` is a model of the concept `RandomAccessContainer` whose

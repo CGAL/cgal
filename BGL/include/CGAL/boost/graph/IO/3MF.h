@@ -38,7 +38,7 @@ namespace CGAL {
  * \brief writes the triangle meshes contained in `gs` into the 3mf file `filename`.
  *
  * \tparam GraphRange a model of the concepts `RandomAccessContainer`
- *                    and `BackInsertionSequence` whose `value type` is
+ *                    and `BackInsertionSequence` whose `value_type` is
  *                    a model of the concepts `FaceGraph` and `HalfedgeListGraph`
  *                    that has only triangle faces.
  *
