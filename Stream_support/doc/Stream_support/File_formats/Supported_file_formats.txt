@@ -31,6 +31,8 @@ users to provide more properties such as associating normals or colors to vertic
 
 A precise specification of the format is available at <a href="http://www.geomview.org/docs/html/OFF.html">geomview.org</a>.
 
+Note that the format defines both ASCII and binary OFF formats, but only the ASCII OFF format is supported in \cgal.
+
 The following table lists some \cgal data structures that have I/O functions compatible with this file format.
 
 <table class="iotable">
@@ -362,6 +364,8 @@ which offers combinatorial repairing while reading bad inputs.
 
 \section IOStream3MF 3D Manufacturing Format (3MF)
 
+\attention \cgal needs to be configured with the 3MF Libraries for this function to be available.
+
 The `3MF`, using the file extension `.3mf`, is an open source file format created by the 3MF Consortium.
 It is an XML-based format that aims to enhance the \ref IOStreamSTL by adding means to include
 extra information such as colors.
@@ -420,13 +424,15 @@ using the function \link PkgBGLIoFuncsWRL `CGAL::write_WRL()` \endlink.
 
 \section IOStreamVTK VTK (VTU / VTP) File Formats
 
+\attention \cgal needs to be configured with the VTK Libraries for this function to be available.
+
 The VTK libraries use different file formats to handle data structures, but we only support two:
 - The `VTU` format can be used to store am unordered collection of 3D cells, like tetrahedra,
   but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>,
   it is the format reserved to store `Unstructured Grids`, and in \cgal,
   we use it to store triangulations(2D and 3D).
 
-- The `VTP` format can be used to store collections of points, lines and triangles.
+- The `VTP` format can be used to store collections of points, lines, and triangles.
   In the <a href="https://vtk.org/"> VTK Libraries</a>, it is the format
   reserved to store `PolyData`, and in \cgal, we use it to store Polygon Meshes.
 

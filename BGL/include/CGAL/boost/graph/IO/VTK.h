@@ -138,7 +138,6 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  * \cgalNamedParamsEnd
  *
  * \pre The data must represent a 2-manifold
- * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
  *
  * \returns `true` if reading was successful, `false` otherwise.
 */
