@@ -325,7 +325,7 @@ private:
   }
 
   template<typename CellRange, typename Tr>
-  void check_inversion_and_move(const typename Tr::Vertex_handle v,
+  bool check_inversion_and_move(const typename Tr::Vertex_handle v,
                                 const typename Tr::Point& final_pos,
                                 const CellRange& inc_cells,
                                 const Tr& /* tr */)
@@ -362,6 +362,8 @@ private:
 
     if (!valid_orientation) //move failed
       v->set_point(backup);
+
+    return valid_orientation;
   }
 
   void collect_vertices_surface_indices(
@@ -404,8 +406,8 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Smooth vertices...";
     std::cout.flush();
-    std::size_t nb_done = 0;
 #endif
+    std::size_t nb_done = 0;
 
     Tr& tr = c3t3.triangulation();
 
@@ -518,8 +520,9 @@ public:
           os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
           // move vertex
-          typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-          check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
+          const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr))
+            nb_done++;
         }
         else if (neighbors[vid] > 0)
         {
@@ -551,8 +554,9 @@ public:
           os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
           // move vertex
-          typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-          check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
+          const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr))
+            nb_done++;
         }
       }
     }
@@ -621,12 +625,11 @@ public:
             final_position = smoothed_position;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          os_surf << "2 " << current_pos << " " << final_position << std::endl,
+          os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
-                  check_inversion_and_move(v, typename Tr::Point(
-                                             final_position.x(), final_position.y(), final_position.z()),
-                                           inc_cells[vid],
-                                           tr);
+          const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr))
+            nb_done++;
         }
         else if (neighbors[vid] > 0)
         {
@@ -638,7 +641,8 @@ public:
           if (boost::optional<Vector_3> mls_projection = project(si, current_pos))
           {
             const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
-            check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
+            if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr))
+              nb_done++;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
             os_surf0 << "2 " << current_pos << " " << new_pos << std::endl;
@@ -684,14 +688,13 @@ public:
       const std::size_t& vid = vertex_id.at(v);
       if (c3t3.in_dimension(v) == 3 && neighbors[vid] > 1)
       {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-        ++nb_done;
-#endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         os_vol << "2 " << point(v->point());
 #endif
         const Vector_3 p = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
-        check_inversion_and_move(v, typename Tr::Point(p.x(), p.y(), p.z()), inc_cells[vid], tr);
+        typename Tr::Point new_pos(p.x(), p.y(), p.z());
+        if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr))
+          nb_done++;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         os_vol << " " << point(v->point()) << std::endl;
