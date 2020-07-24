@@ -1204,23 +1204,25 @@ public:
 };
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+
 /************************************************************************
  * Triangulate hole by using a cdt_2
  ************************************************************************/
 // /!\ points.first == points.last
 
-
 template <
-  typename PointRange, //need size()
+  typename PointRange1, // need size()
+  typename PointRange2,
   typename Tracer,
   typename Validity_checker,
   typename Traits
 >
 bool
-triangulate_hole_polyline_with_cdt(const PointRange& points,
-                          Tracer& tracer,
-                          const Validity_checker& is_valid,
-                          const Traits& traits)
+triangulate_hole_polyline_with_cdt(const PointRange1& points,
+                                   const PointRange2& third_points,
+                                   Tracer& tracer,
+                                   const Validity_checker& is_valid,
+                                   const Traits& traits)
 {
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point_3;
@@ -1235,9 +1237,15 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     traits.collinear_3_object();
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
+  std::vector<Point_3> Q(boost::begin(third_points), boost::end(third_points));
+
   if (P.front() != P.back()) {
     P.push_back(P.front());
+    if (!Q.empty() && P.size() > Q.size()) {
+      Q.push_back(Q.front());
+    }
   }
+  CGAL_assertion(P.size() == Q.size());
 
   FT x = FT(0), y = FT(0), z = FT(0);
   std::size_t num_normals = 0;
@@ -1255,19 +1263,53 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
       continue;
 
     // Computing the normal of a triangle.
-    const Vector_3 tri_normal = CGAL::normal(p1, p2, p3);
-    x += tri_normal.x(); y += tri_normal.y(); z += tri_normal.z();
+    const Vector_3 n = CGAL::normal(p1, p2, p3);
+    // If it is a positive normal ->
+    if (
+      ( n.x() >  FT(0)                                    ) ||
+      ( n.x() == FT(0) && n.y() >  FT(0)                  ) ||
+      ( n.x() == FT(0) && n.y() == FT(0) && n.z() > FT(0) )) {
+      x += n.x(); y += n.y(); z += n.z();
+    } else { // otherwise invert ->
+      x -= n.x(); y -= n.y(); z -= n.z();
+    }
     ++num_normals;
   }
 
   if (num_normals < 1)
     return false;
 
+  // Find non-collinear the hole boundary points in order
+  // to check the hole orientation.
+  std::vector<Point_3> pts;
+  pts.reserve(3);
+  pts.push_back(ref_point);
+  for (std::size_t i = 1; i < size; ++i) {
+    const std::size_t ip = i + 1;
+    const Point_3& p1 = ref_point;
+    const Point_3& p2 = P[i];
+    const Point_3& p3 = P[ip];
+    if (!collinear_3(p1, p2, p3)) {
+      pts.push_back(p2);
+      pts.push_back(p3);
+      break;
+    }
+  }
+
+  // Not sure about that!
+  if (CGAL::orientation(pts[0], pts[1], pts[2], Q[0]) != CGAL::NEGATIVE) {
+    // std::cout << "positive" << std::endl;
+  } else {
+    // std::cout << "negative" << std::endl;
+    x = -x; y = -y; z = -z;
+  }
+
   // Setting the final normal.
   x /= static_cast<FT>(num_normals);
   y /= static_cast<FT>(num_normals);
   z /= static_cast<FT>(num_normals);
   const Vector_3 avg_normal = Vector_3(x, y, z);
+  // std::cout << "avg: " << avg_normal << std::endl;
 
   // Checking the hole simplicity.
   typedef Triangulation_2_projection_traits_3<Traits> P_traits;

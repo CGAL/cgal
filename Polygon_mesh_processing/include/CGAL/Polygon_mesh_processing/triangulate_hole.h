@@ -399,6 +399,7 @@ bool use_dt3 =
     if(!use_cdt ||
        !triangulate_hole_polyline_with_cdt(
          points,
+         third_points,
          tracer,
          is_valid,
          choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits))))
