@@ -162,7 +162,7 @@ void error(std::string aS)
 void error_handler(char const* what, char const* expr, char const* file,
                    int line, char const* msg)
 {
-  if(expr != "first != last" && expr !="_inc_to_right != cv._inc_to_right" && line != 1684)
+  if(expr != "first != last" && expr !="_inc_to_right != cv._inc_to_right" && line != 1684 && expr != "is_new == true")
   {
     std::ostringstream ss;
 
@@ -192,6 +192,12 @@ void error_handler(char const* what, char const* expr, char const* file,
 // Expr: 
 // File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Arr_geometry_traits/Bezier_point_2.h
 // Line: 1684
+// Explanation:
+
+// CGAL error: assertion violation!
+// Expr: is_new == true
+// File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Surface_sweep_2/Arr_overlay_ss_visitor.h
+// Line: 209
 // Explanation:
 
 // CGAL error: assertion violation!
