@@ -135,6 +135,7 @@ struct Scene_surface_mesh_item_priv{
                               << GouraudPlusEdges
                               << Points;
     item->setProperty("classname", QString("surface_mesh"));
+    ids_need_update = false;
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -167,7 +168,8 @@ struct Scene_surface_mesh_item_priv{
                               << Gouraud
                                  << GouraudPlusEdges
                               << Points;
-    item->setProperty("classname", QString("surface_mesh"));
+    item->setProperty("classname", QString("surface_mesh"));\
+    ids_need_update = false;
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -223,7 +225,6 @@ struct Scene_surface_mesh_item_priv{
   mutable bool edges_displayed;
   mutable bool faces_displayed;
   mutable bool all_displayed;
-  mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
 
   std::string comments;
@@ -238,7 +239,6 @@ struct Scene_surface_mesh_item_priv{
   mutable bool isinit;
   mutable std::vector<unsigned int> idx_data_;
   mutable std::size_t idx_data_size;
-  mutable std::map<unsigned int, unsigned int> current_indices; //map im values to ghosts-free values
   mutable std::vector<unsigned int> idx_edge_data_;
   mutable std::size_t idx_edge_data_size;
   mutable std::vector<unsigned int> idx_feature_edge_data_;
@@ -266,6 +266,7 @@ struct Scene_surface_mesh_item_priv{
   bool has_nm_vertices;
   int genus;
   bool self_intersect;
+  bool ids_need_update;
   mutable QSlider* alphaSlider;
   QList<RenderingMode> supported_rendering_modes;
 };
@@ -2016,6 +2017,7 @@ void Scene_surface_mesh_item_priv::fillTargetedIds(const face_descriptor &select
                                                  CGAL::Three::Viewer_interface *viewer,
                                                  const CGAL::qglviewer::Vec& offset)
 {
+  all_displayed = false;
   compute_displayed_ids(*smesh_,
                         viewer,
                         selected_fh,
@@ -2367,9 +2369,31 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
             getTriangleContainer(0)->getVbo(Tri::Smooth_normals),
             new_point,id);
     }
+    d->ids_need_update = true;
+    redraw();
   }
-  invalidate_aabb_tree();
-  redraw();
+}
+
+void Scene_surface_mesh_item::updateIds(vertex_descriptor vh)
+{
+  if(d->ids_need_update &&
+     (d->faces_displayed || d->vertices_displayed || d->edges_displayed))
+  {
+    invalidate_aabb_tree();
+
+    if(d->all_displayed)
+    {
+      d->killIds();
+      d->all_displayed = true;
+      ::printVertexIds(*d->smesh_, d->textVItems);
+    }
+    else
+    {
+      d->fillTargetedIds(face(halfedge(vh, *d->smesh_), *d->smesh_),
+                         face_graph()->point(vh), CGAL::Three::Three::mainViewer(), CGAL::Three::Three::mainViewer()->offset());
+    }
+    d->ids_need_update = false;
+  }
 }
 
 void Scene_surface_mesh_item::switchToGouraudPlusEdge(bool b)
