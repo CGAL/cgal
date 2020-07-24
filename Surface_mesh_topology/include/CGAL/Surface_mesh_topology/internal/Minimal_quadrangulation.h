@@ -571,190 +571,18 @@ public:
       auto factorization=p_canonized.factorize();
       // If the path length is 1, it must be simple
       res = factorization.second <= 1 && factorization.first.length() <= 1;
-      if (factorization.second <= 1 && !res) {
+      if (factorization.second <= 1 && !res)
+      {
         // If the curve is not primitive, there must be at least
         // one self intersection
 
         auto& p_original = factorization.first;
         p_original.simplify_flips();
-        std::vector<Dart_const_handle> pr;
-        pr.reserve(p_original.length());
-        for(std::size_t i = 0; i < p_original.length(); ++i)
-        {
-          pr.emplace_back(p_original[i]);
-        }
+        
+        auto perturbation = compute_perturbation(p_original);
 
-        // Compute the backward cyclic KMP failure table for the curve
-        std::vector<std::size_t> suffix_len = compute_common_circular_suffix(p_original);
-        std::vector<bool> switchable = compute_switchable(p_original);
-
-        typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
-                typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
-        std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
-        rb_nodes.reserve(pr.size());
-        std::unordered_map<size_type, rbtree> trees;
-
-        for (std::size_t i = 0; i < pr.size(); ++i)
-        {
-          Dart_const_handle dh = pr[i];
-          auto dart_id = get_absolute_idx(dh);
-          rb_nodes.emplace_back(i);
-          auto& node = rb_nodes.back();
-
-          // Check whether current darts needs to be switched
-          if (i > 0 && switchable[i])
-          {
-            // Look at the t-1 turn of [i-1, i, i + 1]
-            Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
-            size_type dleft_id = get_absolute_idx(dleft);
-            if(trees[dleft_id].size() > 0)
-            {
-              std::size_t max_turn_idx = is_absolutely_directed(dleft) ? trees[dleft_id].begin()->m_idx : trees[dleft_id].rbegin()->m_idx;
-              Dart_const_handle dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
-              // If there exists a crossing that can be avoided, switch
-              if(get_order_relative_to(pr[i - 1], dleft) > get_order_relative_to(dprev, dleft))
-              {
-                switch_dart(pr, i, switchable);
-                dh = pr[i];
-                dart_id = get_absolute_idx(pr[i]);
-              }
-            }
-          }
-          // Insert current darts
-          if (trees[dart_id].empty())
-          {
-            trees[dart_id].push_back(node);
-          }
-          else
-          {
-            // First check whether there is another corner in the previous part of the path
-            // where it matches p[i - 1] -> p[i]
-            // If so, p[i] must be inserted adjacent to one such corner
-            size_type prev_dart_id = get_absolute_idx(pr[i - 1]);
-            auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
-            if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
-            {
-              auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::prev(it_prev)->m_idx, pr[i - 1])]);
-              if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
-              {
-                trees[dart_id].insert_before(std::next(it_adjacent), node);
-              }
-              else
-              {
-                trees[dart_id].insert_before(it_adjacent, node);
-              }
-            }
-            else if (std::next(it_prev) != trees[prev_dart_id].end() && is_same_corner(pr, std::next(it_prev)->m_idx, i - 1))
-            {
-              auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::next(it_prev)->m_idx, pr[i-1])]);
-              if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
-              {
-                trees[dart_id].insert_before(it_adjacent, node);
-              }
-              else
-              {
-                trees[dart_id].insert_before(std::next(it_adjacent), node);
-              }
-            }
-            else
-            {
-              /// There is no same corner in the previous of the path
-              /// Perform usual unzip insertion
-              auto less_than_in_tree = is_absolutely_directed(dh)?
-                std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()};
-              auto comparator = [this, &pr, &p_original, &suffix_len, &less_than_in_tree] (const std::size_t& key, const rbtree::value_type& b) -> bool {
-                if (b.m_idx == 0 && pr[key] == pr[0])
-                {
-                  if(pr[key] != p_original[key]) {
-                    // current edge was switched so it should always be on the right side (more clockwise)
-                    return less_than_in_tree(0, 1);
-                  }
-                  /// Comparing to pr[0], needs to check longest suffix
-                  std::size_t current_dividing_idx = key + p_original.length() - 1 - suffix_len[key - 1];
-                  std::size_t path_end_dividing_idx = p_original.length() - 1 - suffix_len[key - 1];
-                  std::size_t last_same_idx = (path_end_dividing_idx == p_original.length() - 1) ? 0 : path_end_dividing_idx + 1;
-                  if (current_dividing_idx >= p_original.length())
-                  {
-                    current_dividing_idx -= p_original.length();
-                  }
-                  Dart_const_handle dbase = p_original[last_same_idx],
-                                    dcur = p_original[current_dividing_idx],
-                                    d0 = p_original[path_end_dividing_idx];
-
-                  std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
-                  std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
-                  return less_than_in_tree(key_prev_order, b_prev_order);
-                }
-                else
-                {
-                  std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
-                  Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
-                  std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
-                  return less_than_in_tree(key_prev_order, b_prev_order);
-                }
-              };
-              auto it_after = trees[dart_id].upper_bound(i, comparator);
-              trees[dart_id].insert_before(it_after, node);
-            }
-          }
-        }
         // Check whether orders form a valid parenthesis expression
-        res = true;
-        auto marktemp=get_local_map().get_new_mark();
-        for (auto it=get_local_map().darts().begin();
-             res && it!=get_local_map().darts().end(); ++it)
-        {
-          if (!get_local_map().is_marked(it, marktemp))
-          {
-            std::stack<std::pair<std::size_t, bool>> parenthesis_pairing;
-            Dart_const_handle dh2=it;
-            do
-            {
-              get_local_map().mark(dh2, marktemp);
-              auto dart_id = get_absolute_idx(dh2);
-              auto handle_node = [&dh2, &pr, &parenthesis_pairing] (const rbtree::value_type& node) {
-                auto curr_dart = std::make_pair(node.m_idx, pr[node.m_idx] == dh2);
-                if (parenthesis_pairing.empty())
-                {
-                  parenthesis_pairing.push(curr_dart);
-                }
-                else
-                {
-                  /// We can cancel a pair of dart iff
-                  /// 1) They are adjacent in the path (wrap around for the last dart)
-                  /// 2) The first one is going in and the second one is going out
-                  auto prev_dart = parenthesis_pairing.top();
-                  auto next_dart = curr_dart;
-                  if(!next_dart.second)
-                  {
-                    std::swap(next_dart, prev_dart);
-                  }
-                  if ((next_dart.first - prev_dart.first == 1 || (next_dart.first == 0 && prev_dart.first == pr.size() - 1)) &&
-                      (!prev_dart.second && next_dart.second))
-                  {
-                    parenthesis_pairing.pop();
-                  }
-                  else
-                  {
-                    parenthesis_pairing.push(curr_dart);
-                  }
-                }
-              };
-              if(is_absolutely_directed(dh2))
-              {
-                std::for_each(trees[dart_id].begin(), trees[dart_id].end(), handle_node);
-              }
-              else
-              {
-                std::for_each(trees[dart_id].rbegin(), trees[dart_id].rend(), handle_node);
-              }
-              dh2 = get_local_map().template beta<2, 1>(dh2);
-            }
-            while(dh2!=it && res);
-            res = res && parenthesis_pairing.empty();
-          }
-        }
-        get_local_map().free_mark(marktemp);
+        res = is_ordering_simple(perturbation.first, perturbation.second);
       }
     }
 
@@ -1866,6 +1694,217 @@ protected:
       }
     }
 
+    return res;
+  }
+
+  /// Compute a tentative ordering to avoid intersection
+  /// @pre the input path should be primitive
+  /// @return A pair of final path and correspondent ordering
+  std::pair<Path_on_surface<Local_map>, std::unordered_map<size_type, std::vector<std::size_t>>> compute_perturbation(const Path_on_surface<Local_map>& p) const
+  {
+    std::vector<Dart_const_handle> pr;
+    pr.reserve(p.length());
+    for(std::size_t i = 0; i < p.length(); ++i)
+    {
+      pr.emplace_back(p[i]);
+    }
+
+    // Compute the backward cyclic KMP failure table for the curve
+    std::vector<std::size_t> suffix_len = compute_common_circular_suffix(p);
+    std::vector<bool> switchable = compute_switchable(p);
+
+    typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
+            typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
+    std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
+    rb_nodes.reserve(pr.size());
+    std::unordered_map<size_type, rbtree> trees;
+
+    for (std::size_t i = 0; i < pr.size(); ++i)
+    {
+      Dart_const_handle dh = pr[i];
+      auto dart_id = get_absolute_idx(dh);
+      rb_nodes.emplace_back(i);
+      auto& node = rb_nodes.back();
+
+      // Check whether current darts needs to be switched
+      if (i > 0 && switchable[i])
+      {
+        // Look at the t-1 turn of [i-1, i, i + 1]
+        Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
+        size_type dleft_id = get_absolute_idx(dleft);
+        if(trees[dleft_id].size() > 0)
+        {
+          std::size_t max_turn_idx = is_absolutely_directed(dleft) ? trees[dleft_id].begin()->m_idx : trees[dleft_id].rbegin()->m_idx;
+          Dart_const_handle dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
+          // If there exists a crossing that can be avoided, switch
+          if(get_order_relative_to(pr[i - 1], dleft) > get_order_relative_to(dprev, dleft))
+          {
+            switch_dart(pr, i, switchable);
+            dh = pr[i];
+            dart_id = get_absolute_idx(pr[i]);
+          }
+        }
+      }
+      // Insert current darts
+      if (trees[dart_id].empty())
+      {
+        trees[dart_id].push_back(node);
+      }
+      else
+      {
+        // First check whether there is another corner in the previous part of the path
+        // where it matches p[i - 1] -> p[i]
+        // If so, p[i] must be inserted adjacent to one such corner
+        size_type prev_dart_id = get_absolute_idx(pr[i - 1]);
+        auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
+        if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
+        {
+          auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::prev(it_prev)->m_idx, pr[i - 1])]);
+          if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
+          {
+            trees[dart_id].insert_before(std::next(it_adjacent), node);
+          }
+          else
+          {
+            trees[dart_id].insert_before(it_adjacent, node);
+          }
+        }
+        else if (std::next(it_prev) != trees[prev_dart_id].end() && is_same_corner(pr, std::next(it_prev)->m_idx, i - 1))
+        {
+          auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::next(it_prev)->m_idx, pr[i-1])]);
+          if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
+          {
+            trees[dart_id].insert_before(it_adjacent, node);
+          }
+          else
+          {
+            trees[dart_id].insert_before(std::next(it_adjacent), node);
+          }
+        }
+        else
+        {
+          /// There is no same corner in the previous of the path
+          /// Perform usual unzip insertion
+          auto less_than_in_tree = is_absolutely_directed(dh)?
+            std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()};
+          auto comparator = [this, &pr, &p, &suffix_len, &less_than_in_tree] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+            if (b.m_idx == 0 && pr[key] == pr[0])
+            {
+              if(pr[key] != p[key]) {
+                // current edge was switched so it should always be on the right side (more clockwise)
+                return less_than_in_tree(0, 1);
+              }
+              /// Comparing to pr[0], needs to check longest suffix
+              std::size_t current_dividing_idx = key + p.length() - 1 - suffix_len[key - 1];
+              std::size_t path_end_dividing_idx = p.length() - 1 - suffix_len[key - 1];
+              std::size_t last_same_idx = (path_end_dividing_idx == p.length() - 1) ? 0 : path_end_dividing_idx + 1;
+              if (current_dividing_idx >= p.length())
+              {
+                current_dividing_idx -= p.length();
+              }
+              Dart_const_handle dbase = p[last_same_idx],
+                                dcur = p[current_dividing_idx],
+                                d0 = p[path_end_dividing_idx];
+
+              std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
+              std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
+              return less_than_in_tree(key_prev_order, b_prev_order);
+            }
+            else
+            {
+              std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
+              Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
+              std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
+              return less_than_in_tree(key_prev_order, b_prev_order);
+            }
+          };
+          auto it_after = trees[dart_id].upper_bound(i, comparator);
+          trees[dart_id].insert_before(it_after, node);
+        }
+      }
+    }
+
+    Path_on_surface<Local_map> p_perturbed(get_local_map());
+    for(const auto& dp: pr)
+    {
+      p_perturbed.push_back(dp);
+    }
+    std::unordered_map<size_type, std::vector<std::size_t>> ordering;
+    for(const auto& edge_ordering: trees)
+    {
+      std::transform(edge_ordering.second.begin(), edge_ordering.second.end(),
+                     std::back_inserter(ordering[edge_ordering.first]),
+                     [] (const rbtree::value_type& node)
+                     {
+                       return node.m_idx;
+                     });
+    }
+    return std::make_pair(p_perturbed, ordering);
+  }
+
+  /// @return true iff the ordering of the edges in the input path is intersection free
+  bool is_ordering_simple(const Path_on_surface<Local_map>& p, const std::unordered_map<size_type, std::vector<std::size_t>>& ordering) const
+  {
+    bool res = true;
+    auto marktemp=get_local_map().get_new_mark();
+    for (auto it=get_local_map().darts().begin();
+         res && it!=get_local_map().darts().end(); ++it)
+    {
+      if (!get_local_map().is_marked(it, marktemp))
+      {
+        std::stack<std::pair<std::size_t, bool>> parenthesis_pairing;
+        Dart_const_handle dh2=it;
+        do
+        {
+          get_local_map().mark(dh2, marktemp);
+          auto dart_id = get_absolute_idx(dh2);
+          auto handle_node = [&dh2, &p, &parenthesis_pairing] (const std::size_t& idx) {
+            auto curr_dart = std::make_pair(idx, p[idx] == dh2);
+            if (parenthesis_pairing.empty())
+            {
+              parenthesis_pairing.push(curr_dart);
+            }
+            else
+            {
+              /// We can cancel a pair of dart iff
+              /// 1) They are adjacent in the path (wrap around for the last dart)
+              /// 2) The first one is going in and the second one is going out
+              auto prev_dart = parenthesis_pairing.top();
+              auto next_dart = curr_dart;
+              if(!next_dart.second)
+              {
+                std::swap(next_dart, prev_dart);
+              }
+              if ((next_dart.first - prev_dart.first == 1 || (next_dart.first == 0 && prev_dart.first == p.length() - 1)) &&
+                  (!prev_dart.second && next_dart.second))
+              {
+                parenthesis_pairing.pop();
+              }
+              else
+              {
+                parenthesis_pairing.push(curr_dart);
+              }
+            }
+          };
+          auto it_dart_ordering = ordering.find(dart_id);
+          if (it_dart_ordering != ordering.cend())
+          {
+            if (is_absolutely_directed(dh2))
+            {
+              std::for_each(it_dart_ordering->second.cbegin(), it_dart_ordering->second.cend(), handle_node);
+            }
+            else
+            {
+              std::for_each(it_dart_ordering->second.crbegin(), it_dart_ordering->second.crend(), handle_node);
+            }
+          }
+          dh2 = get_local_map().template beta<2, 1>(dh2);
+        }
+        while(dh2!=it);
+        res = res && parenthesis_pairing.empty();
+      }
+    }
+    get_local_map().free_mark(marktemp);
     return res;
   }
 
