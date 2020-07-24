@@ -47,7 +47,7 @@ namespace internal {
 template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
-              PolygonRange& faces,
+              PolygonRange& polygons,
               VertexNormalOutputIterator,
               VertexTextureOutputIterator,
               const bool verbose = true)
@@ -128,22 +128,22 @@ bool read_OBJ(std::istream& is,
     else if(s == "f")
     {
       int i;
-      faces.emplace_back();
+      polygons.emplace_back();
       while(iss >> i)
       {
         if(i < 1)
         {
-          const std::size_t n = faces.back().size();
-          ::CGAL::internal::resize(faces.back(), n + 1);
-          faces.back()[n] = points.size() + offset_idx + i; // negative indices are relative references
+          const std::size_t n = polygons.back().size();
+          ::CGAL::internal::resize(polygons.back(), n + 1);
+          polygons.back()[n] = points.size() + offset_idx + i; // negative indices are relative references
           if(i < mini)
             mini = i;
         }
         else
         {
-          const std::size_t n = faces.back().size();
-          ::CGAL::internal::resize(faces.back(), n + 1);
-          faces.back()[n] = i + offset_idx - 1;
+          const std::size_t n = polygons.back().size();
+          ::CGAL::internal::resize(polygons.back(), n + 1);
+          polygons.back()[n] = i + offset_idx - 1;
           if(i-1 > maxi)
             maxi = i-1;
         }
@@ -214,7 +214,7 @@ bool read_OBJ(std::istream& is,
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
-              PolygonRange& faces,
+              PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
@@ -223,7 +223,7 @@ bool read_OBJ(std::istream& is,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), true);
 
-  return IO::internal::read_OBJ(is, points, faces,
+  return IO::internal::read_OBJ(is, points, polygons,
                                 CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
                                 verbose);
 }
