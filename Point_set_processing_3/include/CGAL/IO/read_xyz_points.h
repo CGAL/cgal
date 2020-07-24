@@ -40,15 +40,10 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   \brief reads points (positions + normals, if available) from a .xyz ASCII stream.
-
-   The function expects for each point a line with the x y z position,
-   optionally followed by the nx ny nz normal.
-   The first line may contain the number of points in the file.
-   Empty lines and comments starting by # character are allowed.
+   \brief reads points (positions + normals, if available), using the \ref IOStreamXYZ.
 
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -64,8 +59,8 @@ namespace CGAL {
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
@@ -188,15 +183,10 @@ bool read_XYZ(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
-   \brief reads points (positions + normals, if available) from a .xyz ASCII file.
-
-   The function expects for each point a line with the x y z position,
-   optionally followed by the nx ny nz normal.
-   The first line may contain the number of points in the file.
-   Empty lines and comments starting by # character are allowed.
+   \brief reads points (positions + normals, if available), using the \ref IOStreamXYZ.
 
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -212,8 +202,8 @@ bool read_XYZ(std::istream& is,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 

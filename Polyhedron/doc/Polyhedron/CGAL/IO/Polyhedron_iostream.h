@@ -4,9 +4,8 @@ namespace CGAL {
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
 
-This function reads a polyhedral surface in %Object File Format, OFF,
-with file extension <TT>.off</TT>, which is also understood by
-Geomview \cgalCite{cgal:p-gmgv16-96}, from the input stream `in` and
+reads a polyhedral surface in %Object File Format, OFF,
+with file extension <TT>.off</TT>, from the input stream `in` and
 appends it to the polyhedral surface \f$ P\f$. Only the point coordinates
 and facets from the input stream are used to build the polyhedral
 surface. Neither normal vectors nor color attributes are evaluated.
@@ -18,7 +17,8 @@ format automatically and can read both.
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
 \sa \link PkgPolyhedronIOFunc `operator<<(std::ostream&, Polyhedron_3<PolyhedronTraits_3>&)`\endlink
 
-This function overloads the generic function \link PkgBGLIoFuncsOFF `read_OFF(std::istream&, FaceGraph)`\endlink.
+This function overloads the generic function \link PkgBGLIoFuncsOFF `read_OFF(std::istream&, FaceGraph)`\endlink
+(if no named parameters are used).
 
 \cgalHeading{Implementation}
 
@@ -28,9 +28,8 @@ class, which allows the construction in a single, efficient scan pass
 of the input and handles also all the possible flexibility of the
 polyhedral surface.
 
-\note Before \cgal 5.0 this function has set the `ios::badbit` of the input stream `in`
-when the file contained 0 vertices.
-
+\note Starting with \cgal 5.2, this function will no longer set the `ios::badbit`
+      of the input stream `in` if the file contains 0 vertices.
 */
 template <class PolyhedronTraits_3>
 bool read_OFF( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
@@ -55,10 +54,9 @@ std::istream& operator>>( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P)
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
 
-This function writes the polyhedral surface \f$P\f$ to the output
+writes the polyhedral surface \f$P\f$ to the output
 stream `out` using the %Object File Format, OFF, with file extension
-<TT>.off</TT>, which is also understood by GeomView \cgalCite{cgal:p-gmgv16-96}. The
-output is in ASCII format. From the polyhedral surface, only the point
+<TT>.off</TT>. The output is in ASCII format. From the polyhedral surface, only the point
 coordinates and facets are written. Neither normal vectors nor color
 attributes are used.
 
@@ -69,7 +67,8 @@ to allow for (a few) structuring comments in the output. Otherwise,
 the output would be free of comments. The default for writing is ASCII
 without comments.
 
-This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(std::istream&,FaceGraph)` \endlink.
+This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(std::istream&,FaceGraph)` \endlink
+(if no named parameters are used).
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`

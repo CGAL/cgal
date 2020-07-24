@@ -75,6 +75,8 @@ public:
 
   \brief reads the graph `g` from the stream `in`, using the \ref IOStreamOBJ.
 
+  The data is expected to represent a 2-manifold (possibly with borders).
+
   Ignores comment lines which start with a hash, and lines with whitespace.
 
   \attention The graph `g` is not cleared, and the data from the stream is added.
@@ -89,7 +91,7 @@ public:
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -102,8 +104,6 @@ public:
       \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
 
   \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 
@@ -142,6 +142,8 @@ bool read_OBJ(std::istream& is, Graph& g,
 
   \brief reads the graph `g` from the file `fname`, using the \ref IOStreamOBJ.
 
+  The data is expected to represent a 2-manifold (possibly with borders).
+
   Ignores comment lines which start with a hash, and lines with whitespace.
 
   \attention The graph `g` is not cleared, and the data from the stream is added.
@@ -156,7 +158,7 @@ bool read_OBJ(std::istream& is, Graph& g,
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -169,8 +171,6 @@ bool read_OBJ(std::istream& is, Graph& g,
       \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
 
   \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 

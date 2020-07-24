@@ -154,7 +154,7 @@ public:
         return const_iterator (l, k);
     }
 
-    /* Returns the the minimum value that has a key strictly greater than
+    /* Returns the minimum value that has a key strictly greater than
      * the specified key.
      *
      * @param x The threshold key

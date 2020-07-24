@@ -389,7 +389,7 @@ bool read_3MF(const std::string& fname,
  * \tparam TriangleRanges a model of the concept `RandomAccessContainer` whose
  *                        `value_type` is a model of the concept `RandomAccessContainer`
  *                        whose `value_type` is a model of the concept `RandomAccessContainer` whose
- *                        `value_type` is an integer type.
+ *                        `value_type` is an unsigned integer type convertible to `std::size_t`.
  * \tparam ColorRanges a model of the concepts `RandomAccessContainer` and
  *                     `BackInsertionSequence` whose `value_type` is
  *                     a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
@@ -439,7 +439,7 @@ int read_3MF(const std::string& fname,
  * \tparam TriangleRanges a model of the concept `RandomAccessContainer` whose
  *                        `value_type` is a model of the concept `RandomAccessContainer`
  *                        whose `value_type` is a model of the concept `RandomAccessContainer` whose
- *                        `value_type` is an integer type.
+ *                        `value_type` is an unsigned integer type convertible to `std::size_t`.
  *
  * \param fname the name of the 3mf file to write
  * \param all_points a `PointRanges` that contains the points of the soups to write

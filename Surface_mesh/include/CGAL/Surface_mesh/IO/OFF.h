@@ -261,8 +261,8 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 /// \brief extracts the surface mesh from an input stream in the \ref IOStreamOFF
 ///        and appends it to the surface mesh `sm`.
 ///
-/// This function reads the point property as well as vertex normals, vertex and face colors,
-/// and texture vertex coordinates. Those properties are stored in internal property maps
+/// This function reads points as well as vertex normals, vertex and face colors,
+/// and texture vertex coordinates. Those last four attributes are stored in internal property maps
 /// named "v:normal", "v:color", "f:color", and `"v:texcoord"`, respectively.
 /// If property maps are passed through named parameters (see below),
 /// then they are used instead of the internal ones.
@@ -283,39 +283,41 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `sm`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `Surface_mesh::Vertex_index`
-///                    as key type and `%Point_3` as value type}
+///     \cgalParamType{a class model of `WritablePropertyMap` with `Surface_mesh::Vertex_index`
+///                    as key type and `Point` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
-///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `sm`.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{vertex_normal_map}
 ///     \cgalParamDescription{a property map associating normals to the vertices of `sm`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `Surface_mesh::Vertex_index`
-///                    as key type and `%Vector_3` as value type}
-///     \cgalParamDefault{vertex normals will be output using the internal property map, if it exists}
+///     \cgalParamType{a class model of `WritablePropertyMap` with `Surface_mesh::Vertex_index`
+///                    as key type and a 3D vector type issued from the same kernel as `Point` as value type}
+///     \cgalParamDefault{If this parameter is unsused, vertex normals (if they exist)
+///                       will be written in an internal property map called `v:normal`.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{vertex_color_map}
 ///     \cgalParamDescription{a property map associating colors to the vertices of `sm`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `Surface_mesh::Vertex_index`
+///     \cgalParamType{a class model of `WritablePropertyMap` with `Surface_mesh::Vertex_index`
 ///                    as key type and `CGAL::Color` as value type}
-///     \cgalParamDefault{vertex colors will be output using the internal property map, if it exists}
+///     \cgalParamDefault{If this parameter is unsused, vertex colors (if they exist)
+///                       will be written in an internal property map called `v:color`.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{vertex_texture_map}
 ///     \cgalParamDescription{a property map associating textures to the vertices of `sm`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `Surface_mesh::Vertex_index`
-///                    as key type and `%Point_2` as value type}
-///     \cgalParamDefault{vertex textures will be output using the internal property map, if it exists}
+///     \cgalParamType{a class model of `WritablePropertyMap` with `Surface_mesh::Vertex_index`
+///                    as key type and a 2D vector type issued from the same kernel as `Point` as value type}
+///     \cgalParamDefault{If this parameter is unsused, vertex textures (if they exist)
+///                       will be written in an internal property map called `v:texcoords`.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{face_color_map}
 ///     \cgalParamDescription{a property map associating colors to the faces of `sm`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `Surface_mesh::Face_index`
+///     \cgalParamType{a class model of `WritablePropertyMap` with `Surface_mesh::Face_index`
 ///                    as key type and `CGAL::Color` as value type}
-///     \cgalParamDefault{face colors will be output using the internal property map, if it exists}
+///     \cgalParamDefault{If this parameter is unsused, face colors (if they exist)
+///                       will be written in an internal property map called `f:color`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -506,10 +508,10 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 /// the following property maps internal to the surface mesh, if they exist and if they are not
 /// already present in the named parameters:
 ///
-/// - vertex:normal map (property map named "v:normal" in the surface mesh)
-/// - vertex:color map (property map named "v:color" in the surface mesh)
-/// - vertex:texture map (property map named "v:texcoord" in the surface mesh)
-/// - face:color map (property map named "f:color" in the surface mesh)
+/// - vertex normals (property map named "v:normal" in the surface mesh)
+/// - vertex colors (property map named "v:color" in the surface mesh)
+/// - vertex textures (property map named "v:texcoord" in the surface mesh)
+/// - face colors (property map named "f:color" in the surface mesh)
 ///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.
@@ -524,38 +526,36 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `sm`}
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `Surface_mesh::Vertex_index`
-///                    as key type and `%Point_3` as value type}
+///                    as key type and `%Point` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
-///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-///                     must be available in `sm`.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{vertex_normal_map}
 ///     \cgalParamDescription{a property map associating normals to the vertices of `sm`}
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `Surface_mesh::Vertex_index`
-///                    as key type and `%Vector_3` as value type}
-///     \cgalParamDefault{vertex normals will be output using the internal property map, if it exists}
+///                    as key type and a 3D vector type issued from the same kernel as `Point` as value type}
+///     \cgalParamDefault{vertex normals will be output using the internal property map, if it exists.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{vertex_color_map}
 ///     \cgalParamDescription{a property map associating colors to the vertices of `sm`}
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `Surface_mesh::Vertex_index`
 ///                    as key type and `CGAL::Color` as value type}
-///     \cgalParamDefault{vertex colors will be output using the internal property map, if it exists}
+///     \cgalParamDefault{vertex colors will be output using the internal property map, if it exists.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{vertex_texture_map}
 ///     \cgalParamDescription{a property map associating textures to the vertices of `sm`}
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `Surface_mesh::Vertex_index`
-///                    as key type and `%Point_2` as value type}
-///     \cgalParamDefault{vertex textures will be output using the internal property map, if it exists}
+///                    as key type and a 2D point type issued from the same kernel as `Point` as value type}
+///     \cgalParamDefault{vertex textures will be output using the internal property map, if it exists.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{face_color_map}
 ///     \cgalParamDescription{a property map associating colors to the faces of `sm`}
 ///     \cgalParamType{a class model of `ReadablePropertyMap` with `Surface_mesh::Face_index`
 ///                    as key type and `CGAL::Color` as value type}
-///     \cgalParamDefault{face colors will be output using the internal property map, if it exists}
+///     \cgalParamDefault{face colors will be output using the internal property map, if it exists.}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{stream_precision}

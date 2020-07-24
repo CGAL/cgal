@@ -37,7 +37,7 @@ namespace Polygon_mesh_processing {
 /*!
   \ingroup PMP_IO_grp
 
- * \brief Attempts to read a file as a polygon mesh; in case of failure, reads the file as a polygon soup,
+ * \brief attempts to read a file as a polygon mesh; in case of failure, reads the file as a polygon soup,
  * repairs and orients it to obtain a polygon mesh.
  *
  * Supported file formats are the following:
@@ -61,7 +61,7 @@ namespace Polygon_mesh_processing {
  *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -82,7 +82,7 @@ namespace Polygon_mesh_processing {
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \return `true` if the reading and conversion worked, `false` otherwise.
+ * \return `true` if the reading and conversion were successful, `false` otherwise.
  *
  * \sa \link PkgBGLIOFct `CGAL::write_polygon_mesh()` \endlink
  */

@@ -240,9 +240,6 @@ public:
 
   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
-
   \param is the input stream
   \param point_set the point set
   \param comments optional PLY comments.
@@ -327,8 +324,8 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
   header. Each line starting by "comment " in the header is
   appended to the `comments` string (without the "comment " word).
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
+  \tparam Point the point type of the `Point_set_3`
+  \tparam Vector the vector type of the `Point_set_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the input file
@@ -468,8 +465,8 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 
   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
+  \tparam Point the point type of the `Point_set_3`
+  \tparam Vector the vector type of the `Point_set_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
@@ -737,8 +734,8 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   the header of the PLY stream (each line will be precedeed by
   "comment ").
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
+  \tparam Point the point type of the `Point_set_3`
+  \tparam Vector the vector type of the `Point_set_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the output file

@@ -147,8 +147,8 @@ the detailed API of the Point Set Processing functions.
 
 \subsection Point_set_processing_3Points_io Points And Normals
 
-\cgal provides functions to read and write sets of points or sets of
-points with normals from the following file formats:
+\cgal provides functions to read and write sets of points (possibly with normals)
+from the following file formats:
 
 - \link IOStreamXYZ XYZ \endlink (ASCII file three point coordinates `x y z` per line or three
 point coordinates and three normal vector coordinates `x y z nx ny nz`

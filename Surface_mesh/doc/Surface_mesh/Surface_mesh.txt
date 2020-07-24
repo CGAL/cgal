@@ -314,12 +314,12 @@ this boils down to an identity function as vertices \em are indices.
 \section sectionSurfaceMesh_IO Surface Mesh I/O
 
 As a model of `FaceGraph` (see Section \ref sectionSurfaceMesh_BGL), `CGAL::Surface_mesh`
-can be read from and written to files using a number of different file formats. Refer to
+can be read from and written using a number of different file formats. Refer to
 the \ref PkgBGLIOFct of the \ref PkgBGL package, and the \ref PMP_IO_grp of the \ref PkgPolygonMeshProcessing
 package for more information.
 
-In addition, this package provides overloads of these I/O functions specific to `CGAL::Surface_mesh`
-to read and write directly from/to internal property maps,
+In addition, this package provides `Surface_mesh`-specific overloads of the I/O functions
+from the \ref PkgBGL package. This enables reading/writing directly from/to internal property maps,
 see \ref PkgSurfaceMeshIOFunc for more information.
 
 \section sectionSurfaceMesh_memory Memory Management

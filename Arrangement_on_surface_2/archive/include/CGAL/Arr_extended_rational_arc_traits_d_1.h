@@ -10,7 +10,7 @@
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
-//TODO: somehow use the fact the the x-value is the same in all comparisons
+//TODO: somehow use the fact the x-value is the same in all comparisons
 
 #ifndef CGAL_ARR_VERTICAL_SEGMENT_TRAITS
 #define CGAL_ARR_VERTICAL_SEGMENT_TRAITS

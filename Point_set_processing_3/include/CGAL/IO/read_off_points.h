@@ -43,14 +43,10 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief reads points (positions + normals, if available) from a .off ASCII stream.
-
-   The function expects for each point a line with the x y z position,
-   optionally followed by the nx ny nz normal.
-   Faces are ignored.
+   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -66,8 +62,8 @@ namespace CGAL {
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
@@ -201,14 +197,10 @@ bool read_OFF(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief reads points (positions + normals, if available) from a .off ASCII file.
-
-   The function expects for each point a line with the x y z position,
-   optionally followed by the nx ny nz normal.
-   Faces are ignored.
+   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -224,8 +216,8 @@ bool read_OFF(std::istream& is,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 

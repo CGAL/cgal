@@ -65,8 +65,8 @@ namespace CGAL {
   parameters if called with a `CGAL::Point_set_3` object as argument.
 
 
-  \tparam Point Point type.
-  \tparam Vector Normal vector type.
+  \tparam Point Point type
+  \tparam Vector Normal vector type
 
   \cgalModels `Range`
  */

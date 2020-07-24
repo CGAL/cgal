@@ -103,8 +103,8 @@ bool read_polygon_soup(const std::string& fname, PointRange& points, PolygonRang
  * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
- *                      whose value_type is a model of the concept `RandomAccessContainer`
- *                      whose value_type is `std::size_t`.
+ *                      whose `value_type` is a model of the concept `RandomAccessContainer`
+ *                      whose `value_type` is `std::size_t`.
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -214,8 +214,8 @@ bool write_polygon_soup(const std::string& fname, PointRange& points, PolygonRan
  * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
- *                      whose value_type is a model of the concept `RandomAccessContainer`
- *                      whose value_type is `std::size_t`.
+ *                      whose `value_type` is a model of the concept `RandomAccessContainer`
+ *                      whose `value_type` is `std::size_t`.
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *

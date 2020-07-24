@@ -366,7 +366,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
    \tparam PropertyHandler handlers to recover properties.
 
@@ -432,7 +432,7 @@ bool read_LAS_with_properties(std::istream& is,
    \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -509,7 +509,7 @@ bool read_LAS(std::istream& is, OutputIterator output,
    Potential additional properties are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 

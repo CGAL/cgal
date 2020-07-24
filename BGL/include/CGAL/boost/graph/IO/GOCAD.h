@@ -82,6 +82,8 @@ public:
 ///
 /// \brief reads the graph `g` from the input stream, using the \ref IOStreamGocad.
 ///
+/// The data is expected to represent a 2-manifold (possibly with borders).
+///
 /// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
 /// \tparam Graph a model of `MutableFaceGraph`
@@ -95,7 +97,7 @@ public:
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -108,8 +110,6 @@ public:
 ///     \cgalParamDefault{`true`}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
-///
-/// \pre The data must represent a 2-manifold
 ///
 /// \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 ///
@@ -167,6 +167,8 @@ bool read_GOCAD(std::istream& is, Graph& g,
 ///
 /// \brief reads the graph `g` from the file `fname`, using the \ref IOStreamGocad.
 ///
+/// The data is expected to represent a 2-manifold (possibly with borders).
+///
 /// \attention The graph `g` is not cleared, and the data from the stream is added.
 ///
 /// \tparam Graph a model of `MutableFaceGraph`
@@ -180,7 +182,7 @@ bool read_GOCAD(std::istream& is, Graph& g,
 /// \cgalNamedParamsBegin
 ///   \cgalParamNBegin{vertex_point_map}
 ///     \cgalParamDescription{a property map associating points to the vertices of `g`}
-///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+///     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
 ///                    as key type and `%Point_3` as value type}
 ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
 ///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -197,8 +199,6 @@ bool read_GOCAD(std::istream& is, Graph& g,
 /// \sa Overloads of this function for specific models of the concept `FaceGraph`.
 ///
 /// \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
-///
-/// \pre The data must represent a 2-manifold
 ///
 template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

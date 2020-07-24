@@ -525,7 +525,7 @@ compare (const NT& num) const {
 }
 
 // compare of two values that may be in different extension
-// However, the default is, that the the numbers are defined over the same
+// However, the default is, that the numbers are defined over the same
 // extension.
 CGAL::Comparison_result
   compare(const Self& y, bool in_same_extension = !ACDE_TAG::value ) const

@@ -281,7 +281,7 @@ public:
   virtual Header_data header()const;
   //!Returns true if the item has statistics.
   virtual bool has_stats()const{return false;}
-  //!Returns a QString containing the requested value for the the table in the statistics dialog
+  //!Returns a QString containing the requested value for the table in the statistics dialog
   /*! \verbatim
    * Example :
    *  ____________________________

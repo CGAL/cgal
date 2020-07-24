@@ -145,8 +145,8 @@ private:
 * boundaries of the polygons provided in `polygons`.
 *
 * @tparam PolygonRange a model of the concept `RandomAccessContainer`
-* whose value_type is a model of the concept `RandomAccessContainer`
-* whose value_type is `std::size_t`.
+* whose `value_type` is a model of the concept `RandomAccessContainer`
+* whose `value_type` is `std::size_t`.
 *
 * @param polygons each element in the range describes a polygon
 * using the indices of the vertices.

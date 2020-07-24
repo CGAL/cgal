@@ -90,6 +90,8 @@ bool read_OFF_BGL(std::istream& is,
 
   \brief reads the graph `g` from data in the input stream, using the \ref IOStreamOFF.
 
+  The data is expected to represent a 2-manifold (possibly with borders).
+
   This function reads the point property as well as vertex normals (NOFF), vertex and face colors (COFF),
   and texture vertex coordinates (TOFF). Those properties are stored in property maps that
   are passed through named parameters (see below), when passed.
@@ -108,7 +110,7 @@ bool read_OFF_BGL(std::istream& is,
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -117,28 +119,28 @@ bool read_OFF_BGL(std::istream& is,
 
     \cgalParamNBegin{vertex_normal_map}
       \cgalParamDescription{a property map associating normals to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Vector_3` as value type}
       \cgalParamDefault{vertex normals that may exist in the input will be ignored}
     \cgalParamNEnd
 
     \cgalParamNBegin{vertex_color_map}
       \cgalParamDescription{a property map associating colors to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{vertex colors that may exist in the input will be ignored}
     \cgalParamNEnd
 
     \cgalParamNBegin{vertex_texture_map}
       \cgalParamDescription{a property map associating textures to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_2` as value type}
       \cgalParamDefault{vertex textures that may exist in the input will be ignored}
     \cgalParamNEnd
 
     \cgalParamNBegin{face_color_map}
       \cgalParamDescription{a property map associating colors to the faces of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{face colors that may exist in the input will be ignored}
     \cgalParamNEnd
@@ -149,8 +151,6 @@ bool read_OFF_BGL(std::istream& is,
       \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
 
   \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 
@@ -185,6 +185,8 @@ bool read_OFF(std::istream& is, Graph& g,
 
   \brief reads the graph `g` from the file `fname`, using the \ref IOStreamOFF.
 
+  The data is expected to represent a 2-manifold (possibly with borders).
+
   This function reads the point property as well as vertex normals (NOFF), vertex and face colors (COFF),
   and texture vertex coordinates (TOFF). Those properties are stored in property maps that
   are passed through named parameters (see below), when passed.
@@ -203,7 +205,7 @@ bool read_OFF(std::istream& is, Graph& g,
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_point_map}
       \cgalParamDescription{a property map associating points to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_3` as value type}
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -212,28 +214,28 @@ bool read_OFF(std::istream& is, Graph& g,
 
     \cgalParamNBegin{vertex_normal_map}
       \cgalParamDescription{a property map associating normals to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Vector_3` as value type}
       \cgalParamDefault{vertex normals that may exist in the input will be ignored}
     \cgalParamNEnd
 
     \cgalParamNBegin{vertex_color_map}
       \cgalParamDescription{a property map associating colors to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{vertex colors that may exist in the input will be ignored}
     \cgalParamNEnd
 
     \cgalParamNBegin{vertex_texture_map}
       \cgalParamDescription{a property map associating textures to the vertices of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `%Point_2` as value type}
       \cgalParamDefault{vertex textures that may exist in the input will be ignored}
     \cgalParamNEnd
 
     \cgalParamNBegin{face_color_map}
       \cgalParamDescription{a property map associating colors to the faces of `g`}
-      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
                      as key type and `CGAL::Color` as value type}
       \cgalParamDefault{face colors that may exist in the input will be ignored}
     \cgalParamNEnd
@@ -244,8 +246,6 @@ bool read_OFF(std::istream& is, Graph& g,
       \cgalParamDefault{`true`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
-
-  \pre The data must represent a 2-manifold
 
   \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 

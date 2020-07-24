@@ -69,7 +69,7 @@ namespace CGAL {
 /**
  \ingroup PkgPointSetProcessing3IOLas
 
- Generates a %LAS property handler to write 3D points.
+ \brief generates a %LAS property handler to write 3D points.
 
  \tparam PointMap the property map used to store points.
 
@@ -162,7 +162,7 @@ namespace LAS {
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` with properties to a .las stream.
+   \brief writes the range of `points` with properties to a .las stream.
 
    Properties are handled through a variadic list of property
    handlers. A `PropertyHandle` is a `std::pair<PropertyMap,
@@ -250,7 +250,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   \brief Saves the range of `points` (positions only) using the \ref IOStreamLAS.
+   \brief writes the range of `points` (positions only), using the \ref IOStreamLAS.
 
    \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
@@ -317,7 +317,7 @@ bool write_LAS(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only) using the \ref IOStreamLAS.
+   Saves the range of `points` (positions only), using the \ref IOStreamLAS.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.

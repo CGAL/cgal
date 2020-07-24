@@ -116,6 +116,8 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \brief reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
  *
+ * The data is expected to represent a 2-manifold (possibly with borders).
+ *
  * \attention The graph `g` is not cleared, and the data from the stream is added.
  *
  * \tparam Graph a model of `MutableFaceGraph`
@@ -128,7 +130,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -137,7 +139,6 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  *
  * \cgalNamedParamsEnd
  *
- * \pre The data must represent a 2-manifold
  *
  * \returns `true` if reading was successful, `false` otherwise.
 */

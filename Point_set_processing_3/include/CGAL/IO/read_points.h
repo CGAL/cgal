@@ -89,7 +89,7 @@ bool read_points(const std::string& fname, OutputIterator output)
   The format is detected from the filename extension (letter case is not important).
 
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-  It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+  It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
   \tparam PointOutputIterator iterator over output points.
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -105,8 +105,8 @@ bool read_points(const std::string& fname, OutputIterator output)
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
@@ -115,12 +115,20 @@ bool read_points(const std::string& fname, OutputIterator output)
        \cgalParamType{a model of `Kernel`}
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
+
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+       \cgalParamExtra{This parameter is only relevant for `PLY` reading: the `OFF` and `XYZ` formats
+                       are always ASCII, and the `LAS` format is always binary.}
+     \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if reading was successful, `false` otherwise.
 */
-template <typename OutputIteratorValueType, typename OutputIterator, typename NamedParameters>
-bool read_points(const char* fname, OutputIterator output, const NamedParameters& np)
+template <typename OutputIteratorValueType, typename PointOutputIterator, typename NamedParameters>
+bool read_points(const char* fname, PointOutputIterator output, const NamedParameters& np)
 {
   return read_points<OutputIteratorValueType>(std::string(fname), output, np);
 }

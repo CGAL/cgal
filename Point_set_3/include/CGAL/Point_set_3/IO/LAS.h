@@ -65,9 +65,6 @@ void check_if_property_is_used(PointSet& point_set,
 
   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
-
   \param is the input stream
   \param point_set the point set
 
@@ -159,10 +156,7 @@ bool read_LAS(std::istream& is,
 /*!
   \ingroup PkgPointSet3IOLAS
 
-  \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
-
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
+  \brief reads the content of an intput file in the \ref IOStreamLAS into a point set.
 
   \param fname the path to the input file
   \param point_set the point set
@@ -217,8 +211,8 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 
   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
+  \tparam Point the point type of the `Point_set_3`
+  \tparam Vector the vector type of the `Point_set_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
@@ -426,8 +420,8 @@ bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
 
   \brief writes the content of a point set into an output file in the \ref IOStreamLAS.
 
-  \tparam Point a `CGAL::Point_3`
-  \tparam Vector a `CGAL::Vector_3`
+  \tparam Point the point type of the `Point_set_3`
+  \tparam Vector the vector type of the `Point_set_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the output file

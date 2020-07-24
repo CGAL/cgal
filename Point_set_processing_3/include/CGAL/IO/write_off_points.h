@@ -91,13 +91,7 @@ bool write_OFF_PSP(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
-
-   The function writes for each point a line with the x y z position
-   followed by the nx ny nz normal (if available).
-
-   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A>
-         of the output stream might not be sufficient depending on the data to be written.
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -115,7 +109,7 @@ bool write_OFF_PSP(std::ostream& os,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
        \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
      \cgalParamNEnd
@@ -134,8 +128,6 @@ bool write_OFF_PSP(std::ostream& os,
    \cgalNamedParamsEnd
 
    \returns `true` if writing was successful, `false` otherwise.
-
-   \sa \ref IOStreamOFF
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
@@ -163,13 +155,7 @@ bool write_OFF(std::ostream& os, const PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3IOOff
 
-   \brief saves the range of `points` (positions + normals, if available) to a .off ASCII stream.
-
-   The function writes for each point a line with the x y z position
-   followed by the nx ny nz normal (if available).
-
-   \note The <A HREF="https://en.cppreference.com/w/cpp/io/ios_base/precision">`precision()`</A>
-         of the output stream might not be sufficient depending on the data to be written.
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -187,9 +173,9 @@ bool write_OFF(std::ostream& os, const PointRange& points,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
        \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

@@ -292,14 +292,12 @@ Result of the run of the draw_polyhedron program. A window shows the polyhedron 
 
 \anchor sectionPolyIO
 
-Simple file I/O for polyhedral surfaces is already provided in the
-library. The file I/O considers so far only the topology of the
+The file I/O currently considers only the topology of the
 surface and its point coordinates. It ignores a possible plane
 equation or any user-added attributes, such as color.
 
 The default file format supported in \cgal for output as well as for
-input is the \ref IOStreamOFF, with file extension <TT>.off</TT>,
-which is also understood by Geomview \cgalCite{cgal:p-gmgv16-96}.
+input is the \ref IOStreamOFF, with file extension <TT>.off</TT>.
 The modifier `set_pretty_mode()` can be used to allow for (a few) structuring comments in the output.
 Otherwise, the output would be free of comments. The default for writing is without comments.
 Since this file format is the default format, iostream operators are provided for it.
@@ -503,8 +501,7 @@ illustrating further the design of the halfedge data structure.
 This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
 output are in the %Object File Format, OFF, with the common file
-extension <TT>.off</TT>, which is also understood by
-Geomview \cgalCite{cgal:p-gmgv16-96}.
+extension <TT>.off</TT>.
 
 The refinement is a single step of the \f$ \sqrt{3}\f$-scheme for creating
 a subdivision surface \cgalCite{cgal:k-s-00}. Each step subdivides a facet

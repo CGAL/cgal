@@ -2695,9 +2695,9 @@ protected:
      * if arcs' x-ranges overlap; otherwise returns \c false
      *
      * \param cv2 The second arc
-     * \param pt_low Output: Point indicating the lower bound of the the joint
+     * \param pt_low Output: Point indicating the lower bound of the joint
      *        x-range
-     * \param pt_high Output: Point indicating the upper bound of the the joint
+     * \param pt_high Output: Point indicating the upper bound of the joint
      *        x-range
      * \return \c true, if arcs overlap, \c false otherwise
      *

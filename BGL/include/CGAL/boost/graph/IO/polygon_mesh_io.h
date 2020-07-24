@@ -140,6 +140,8 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *
  * The format is detected from the filename extension (letter case is not important).
  *
+ * The data is expected to represent a 2-manifold (possibly with borders).
+ *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -150,7 +152,7 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
- *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -172,8 +174,6 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  * \cgalNamedParamsEnd
  *
  * Other named parameters may be used according to the file extension, see \ref PkgBGLIOFct for an exhaustive list.
- *
- * \pre The data must represent a 2-manifold
  *
  * \return `true` if reading was successful, `false` otherwise.
  *

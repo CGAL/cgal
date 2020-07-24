@@ -69,7 +69,7 @@ bool write_points(const std::string& fname,const PointRange& points,
 /**
   \ingroup PkgPointSetProcessing3IO
 
-  \brief saves the range of `points` with properties to a file.
+  \brief writes the range of `points` with properties to a file.
 
   Supported file formats are the following:
   - \ref IOStreamOFF (`.off`)
@@ -95,9 +95,9 @@ bool write_points(const std::string& fname,const PointRange& points,
     \cgalParamNEnd
 
     \cgalParamNBegin{normal_map}
-      \cgalParamDescription{a property map associating normals to the elements of the poing range}
+      \cgalParamDescription{a property map associating normals to the elements of the point range}
       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-      \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+      \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
     \cgalParamNEnd
 
     \cgalParamNBegin{geom_traits}
@@ -105,6 +105,14 @@ bool write_points(const std::string& fname,const PointRange& points,
       \cgalParamType{a model of `Kernel`}
       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
     \cgalParamNEnd
+
+     \cgalParamNBegin{use_binary_mode}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`true`}
+       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
+                       are always ASCII, and the `LAS` format is always binary.}
+     \cgalParamNEnd
 
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}

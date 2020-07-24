@@ -79,9 +79,7 @@ namespace CGAL {
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief saves the range of `points` with properties using \ref IOStreamPLY.
-
-   %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
+   \brief writes the range of `points` with properties using \ref IOStreamPLY.
 
    Properties are handled through a variadic list of property
    handlers. A `PropertyHandler` can either be:
@@ -141,9 +139,7 @@ template <typename PointRange,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief saves the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
-
-   %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
+   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
    \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
@@ -163,7 +159,7 @@ template <typename PointRange,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
        \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
      \cgalParamNEnd
@@ -239,9 +235,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief saves the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
-
-   %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
+   \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -265,9 +259,9 @@ bool write_PLY(std::ostream& os, const PointRange& points,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
        \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
-       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
      \cgalParamNEnd
 
      \cgalParamNBegin{geom_traits}

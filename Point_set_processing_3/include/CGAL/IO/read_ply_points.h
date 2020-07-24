@@ -123,7 +123,7 @@ make_ply_normal_reader(VectorMap normal_map);
   the value type of `PropertyMap` from N objects of types `T`.
 
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-  It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+  It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
   \tparam PointOutputIterator iterator over output points.
   \tparam PropertyHandler handlers to recover properties.
 
@@ -198,14 +198,14 @@ bool read_PLY_with_properties(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief reads points (positions + normals, if available) from a .ply stream (ASCII or binary).
+   \brief reads points (positions + normals, if available), using the \ref IOStreamPLY.
 
    Potential additional point properties and faces are ignored.
 
    \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -221,8 +221,8 @@ bool read_PLY_with_properties(std::istream& is,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 
@@ -274,12 +274,12 @@ bool read_PLY(std::istream& is,
 /**
    \ingroup PkgPointSetProcessing3IOPly
 
-   \brief reads points (positions + normals, if available) from a .ply file (ASCII or binary).
+   \brief reads points (positions + normals, if available), using the \ref IOStreamPLY.
 
    Potential additional point properties and faces are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -301,8 +301,8 @@ bool read_PLY(std::istream& is,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing range}
-       \cgalParamType{a model of `ReadWritePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
        \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
      \cgalParamNEnd
 

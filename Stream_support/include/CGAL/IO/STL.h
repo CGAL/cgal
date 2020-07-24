@@ -49,14 +49,13 @@ namespace CGAL {
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
+ *                      whose `value_type` is itself a model of the concept `SequenceContainer`
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
  * \param points points of the soup of triangles
- * \param facets a `TriangleRange`. Each element in it describes a triangle
- *        using the indices of the points in `points`.
+ * \param facets a range of triangles; each triangle uses the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -181,14 +180,13 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
+ *                      whose `value_type` is itself a model of the concept `SequenceContainer`
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
  * \param points points of the soup of triangles
- * \param facets a `TriangleRange`. Each element in it describes a triangle
- *        using the indices of the points in `points`.
+ * \param facets a range of triangles; each triangle uses the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -208,8 +206,11 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const char* fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+bool read_STL(const char* fname, PointRange& points, TriangleRange& facets, const CGAL_BGL_NP_CLASS& np
+#ifndef DOXYGEN_RUNNING
+              , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+#endif
+              )
 {
   const bool binary = parameters::choose_parameter(parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -264,14 +265,13 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
+ *                      whose `value_type` is itself a model of the concept `SequenceContainer`
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
  * \param points points of the soup of triangles
- * \param facets a `TriangleRange`. Each element in it describes a triangle
- *        using the indices of the points in `points`.
+ * \param facets a range of triangles; each triangle uses the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -377,14 +377,13 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
- *                      whose value_type is itself a model of the concept `SequenceContainer`
- *                      whose value_type is an integer type.
+ *                      whose `value_type` is itself a model of the concept `SequenceContainer`
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
  * \param points points of the soup of triangles
- * \param facets a `TriangleRange`. Each element in it describes a triangle
- *        using the indices of the points in `points`.
+ * \param facets a range of triangles; each triangle uses the indices of the points in `points`.
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
