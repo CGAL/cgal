@@ -555,11 +555,14 @@ public:
           check_inversion_and_move(v, new_pos, inc_cells[vid], tr);
         }
       }
+    }
 
-      smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
-      neighbors.assign(nbv, -1);
+    smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
+    neighbors.assign(nbv, -1);
 
-      /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
+    /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
+    if (!protect_boundaries)
+    {
       for (const Edge& e : tr.finite_edges())
       {
         if (is_boundary(c3t3, e, cell_selector) && !c3t3.is_in_complex(e))
