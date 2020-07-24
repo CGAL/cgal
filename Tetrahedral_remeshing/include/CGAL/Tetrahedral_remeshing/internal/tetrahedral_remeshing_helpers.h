@@ -25,6 +25,8 @@
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
+#include <boost/container/flat_set.hpp>
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -761,20 +763,20 @@ Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  std::vector<Subdomain_index> subdomains_v0;
-  incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
-  std::sort(subdomains_v0.begin(), subdomains_v0.end());
+  boost::container::flat_set<Subdomain_index> subdomains_v0;
+  incident_subdomains(v0, c3t3,
+    std::inserter(subdomains_v0, subdomains_v0.begin()));
 
-  std::vector<Subdomain_index> subdomains_v1;
-  incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
-  std::sort(subdomains_v1.begin(), subdomains_v1.end());
+  boost::container::flat_set<Subdomain_index> subdomains_v1;
+  incident_subdomains(v1, c3t3,
+    std::inserter(subdomains_v1, subdomains_v1.begin()));
 
   if (subdomains_v0.size() == subdomains_v1.size())
   {
-    for (unsigned int i = 0; i < subdomains_v0.size(); i++)
-      if (subdomains_v0[i] != subdomains_v1[i])
-        return DIFFERENT;
-    return EQUAL;
+    if(std::equal(subdomains_v0.begin(), subdomains_v0.end(), subdomains_v1.begin()))
+      return EQUAL;
+    else
+      return DIFFERENT;
   }
   else
   {
