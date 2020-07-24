@@ -50,17 +50,17 @@ NMR::MODELTRANSFORM initMatrix()
 } // namespace transform_nmr_internal
 
 template<typename PointRange,
-         typename PolygonRange,
+         typename TriangleRange,
          typename ColorRange>
 bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
                     const NMR::MODELTRANSFORM& transform,
                     PointRange& points,
-                    PolygonRange& triangles,
+                    TriangleRange& triangles,
                     ColorRange& colors,
                     std::string& name)
 {
   typedef typename boost::range_value<PointRange>::type      Point_3;
-  typedef typename boost::range_value<PolygonRange>::type    Polygon;
+  typedef typename boost::range_value<TriangleRange>::type   Triangle;
   typedef typename Kernel_traits<Point_3>::Kernel            Kernel;
 
   HRESULT hResult;
@@ -121,7 +121,7 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
   {
     NMR::MODELMESHTRIANGLE pTriangle;
     NMR::lib3mf_meshobject_gettriangle(pMeshObject, pid, &pTriangle);
-    Polygon triangle(3);
+    Triangle triangle(3);
     for(DWORD i = 0; i< 3; ++i)
       triangle[i] = pTriangle.m_nIndices[i];
     triangles[pid] = triangle;

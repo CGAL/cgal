@@ -40,21 +40,21 @@ namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
 
-template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
-         typename PointRange, typename PolygonRange, typename ColorRange>
+template<typename PointRanges, typename TriangleRanges, typename ColorRanges,
+         typename PointRange, typename TriangleRange, typename ColorRange>
 bool read_3MF(const std::string& fname,
               PointRanges& all_points,
-              PolygonRanges& all_polygons,
+              TriangleRanges& all_triangles,
               ColorRanges& all_colors,
               std::vector<std::string>& names,
               std::function<bool(NMR::PLib3MFModelMeshObject*,
                                  const NMR::MODELTRANSFORM&,
                                  PointRange&,
-                                 PolygonRange&,
+                                 TriangleRange&,
                                  ColorRange&,
                                  std::string&)> func)
 {
-  DWORD nInterfaceVersionMajor, nInterfaceVersionMinor, nInterfaceVersionMicro, nbVertices, nbPolygons;
+  DWORD nInterfaceVersionMajor, nInterfaceVersionMinor, nInterfaceVersionMicro, nbVertices, nbTriangles;
   HRESULT hResult;
   NMR::PLib3MFModel * pModel;
   NMR::PLib3MFModelReader * pReader;
@@ -221,16 +221,16 @@ bool read_3MF(const std::string& fname,
 
                 pMeshObject = compResource;
                 NMR::lib3mf_meshobject_getvertexcount(pMeshObject, &nbVertices);
-                NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbPolygons);
+                NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbTriangles);
                 PointRange points (nbVertices);
-                PolygonRange triangles(nbPolygons);
-                ColorRange colors(nbPolygons);
+                TriangleRange triangles(nbTriangles);
+                ColorRange colors(nbTriangles);
                 std::string name;
 
                 if(func(pMeshObject, Transform, points, triangles, colors, name))
                 {
                   all_points.push_back(points);
-                  all_polygons.push_back(triangles);
+                  all_triangles.push_back(triangles);
                   all_colors.push_back(colors);
                   names.push_back(name);
                 }
@@ -311,10 +311,10 @@ bool read_3MF(const std::string& fname,
       {
         pMeshObject = pObjectResource;
         NMR::lib3mf_meshobject_getvertexcount(pMeshObject, &nbVertices);
-        NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbPolygons);
+        NMR::lib3mf_meshobject_gettrianglecount(pMeshObject, &nbTriangles);
         PointRange points (nbVertices);
-        PolygonRange triangles(nbPolygons);
-        ColorRange colors(nbPolygons);
+        TriangleRange triangles(nbTriangles);
+        ColorRange colors(nbTriangles);
         std::string name;
 
         // Check Object Transform
@@ -349,7 +349,7 @@ bool read_3MF(const std::string& fname,
 
         if(func(pMeshObject, Transform, points, triangles, colors, name)){
           all_points.push_back(points);
-          all_polygons.push_back(triangles);
+          all_triangles.push_back(triangles);
           all_colors.push_back(colors);
           names.push_back(name);
         }
@@ -386,7 +386,7 @@ bool read_3MF(const std::string& fname,
  *  `BackInsertionSequence` whose `value_type` is
  *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *  whose `value_type` is the point type.
- * \tparam PolygonRanges a model of the concept `RandomAccessContainer` whose
+ * \tparam TriangleRanges a model of the concept `RandomAccessContainer` whose
  *  `value_type` is a model of the concept `RandomAccessContainer`
  *  whose `value_type` is a model of the concept `RandomAccessContainer` whose
  *  `value_type` is std::size_t.
@@ -398,29 +398,29 @@ bool read_3MF(const std::string& fname,
  * \param fname the name of the 3mf file to read.
  * \param all_points a `PointRanges` that will contain the points of the meshes in `fname`.
  *  Each of these meshes will add a range of its points.
- * \param all_polygons a `PolygonRanges` that will contain the triangles of the meshes in `fname`.
+ * \param all_triangles a `TriangleRanges` that will contain the triangles of the meshes in `fname`.
  *  Each of these meshes will add a range of its triangles. A `triangle` of
- *  `all_polygons[i]` contains the indices of its points in `all_points[i]`.
+ *  `all_triangles[i]` contains the indices of its points in `all_points[i]`.
  * \param all_colors will contain the color of each triangle for each soup.
  * \param names will contain the name of each mesh in `fname` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
  *
  * \returns `true` if reading was successful, `false` otherwise.
  */
-template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
+template<typename PointRanges, typename TriangleRanges, typename ColorRanges>
 int read_3MF(const std::string& fname,
              PointRanges& all_points,
-             PolygonRanges& all_polygons,
+             TriangleRanges& all_triangles,
              ColorRanges& all_colors,
              std::vector<std::string>& names)
 {
   typedef typename boost::range_value<PointRanges>::type    PointRange;
-  typedef typename boost::range_value<PolygonRanges>::type  PolygonRange;
+  typedef typename boost::range_value<TriangleRanges>::type TriangleRange;
   typedef typename boost::range_value<ColorRanges>::type    ColorRange;
 
-  return read_3MF<PointRanges,PolygonRanges,ColorRanges,
-                  PointRange, PolygonRange, ColorRange>(fname, all_points, all_polygons, all_colors, names,
-                                                        extract_soups<PointRange, PolygonRange, ColorRange>);
+  return read_3MF<PointRanges, TriangleRanges,ColorRanges,
+                  PointRange, TriangleRange, ColorRange>(fname, all_points, all_triangles, all_colors, names,
+                                                         extract_soups<PointRange, TriangleRange, ColorRange>);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,28 +431,28 @@ int read_3MF(const std::string& fname,
  * \ingroup PkgStreamSupportIoFuncs3MF
  *
  * \brief writes the triangle soups contained in `all_points` and
- *  `all_polygons` into the 3mf file `fname`.
+ *  `all_triangles` into the 3mf file `fname`.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
  *  `BackInsertionSequence` whose `value_type` is
  * a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *  whose `value_type` is the point type.
- * \tparam PolygonRanges a model of the concept `RandomAccessContainer` whose
+ * \tparam TriangleRanges a model of the concept `RandomAccessContainer` whose
  *  `value_type` is a model of the concept `RandomAccessContainer`
  * whose `value_type` is a model of the concept `RandomAccessContainer` whose
  *  `value_type` is std::size_t.
  *
  * \param fname the name of the 3mf file to write.
  * \param all_points a `PointRanges` that contains the points of the soups to write.
- * \param all_polygons a `PolygonRanges` that contains the triangles of the soups in `fname`.
+ * \param all_triangles a `TriangleRanges` that contains the triangles of the soups in `fname`.
  * \param names contains the name of each mesh to be output.
  *
  * \return `true` if the writing is successful, `false` otherwise.
  */
-template<typename PointRanges, typename PolygonRanges>
+template<typename PointRanges, typename TriangleRanges>
 bool write_3MF(const std::string& fname,
                const PointRanges& all_points,
-               const PolygonRanges& all_polygons,
+               const TriangleRanges& all_triangles,
                const std::vector<std::string>& names)
 {
   // Create Model Instance
@@ -477,8 +477,8 @@ bool write_3MF(const std::string& fname,
       name = std::string("");
     }
 
-    std::vector<CGAL::Color> colors(all_polygons[id].size());
-    IO::write_mesh_to_model(all_points[id], all_polygons[id], colors, name, &pMeshObject, pModel);
+    std::vector<CGAL::Color> colors(all_triangles[id].size());
+    IO::write_mesh_to_model(all_points[id], all_triangles[id], colors, name, &pMeshObject, pModel);
   }
 
   return IO::export_model_to_file(fname, pModel);
@@ -487,24 +487,24 @@ bool write_3MF(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 // convenience
-template<typename PointRange, typename PolygonRange>
+template<typename PointRange, typename TriangleRange>
 bool write_3MF(const std::string& fname,
                const PointRange& points,
-               const PolygonRange& polygons,
+               const TriangleRange& triangles,
                const std::string& name)
 {
   std::vector<PointRange> all_points(1, points);
-  std::vector<PointRange> all_polygons(1, polygons);
+  std::vector<PointRange> all_triangles(1, triangles);
   std::vector<std::string> names(1, name);
 
-  return write_3MF(fname, all_points, all_polygons, names);
+  return write_3MF(fname, all_points, all_triangles, names);
 }
 
-template<typename PointRange, typename PolygonRange>
-bool write_3MF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
+template<typename PointRange, typename TriangleRange>
+bool write_3MF(const std::string& fname, const PointRange& points, const TriangleRange& triangles,
                typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
 {
-  return write_triangle_soup_to_3mf(fname, points, polygons, "anonymous");
+  return write_triangle_soup_to_3mf(fname, points, triangles, "anonymous");
 }
 
 /// \endcond

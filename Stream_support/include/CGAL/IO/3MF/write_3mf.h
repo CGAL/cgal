@@ -128,9 +128,9 @@ bool export_model_to_file(const std::string& file_name,
   return true;
 }
 
-template<typename PointRange, typename PolygonRange, typename ColorRange>
+template<typename PointRange, typename TriangleRange, typename ColorRange>
 bool write_mesh_to_model(const PointRange& points,
-                         const PolygonRange& polygons,
+                         const TriangleRange& triangles,
                          const ColorRange& colors,
                          const std::string& name,
                          NMR::PLib3MFModelMeshObject** pMeshObject,
@@ -158,7 +158,7 @@ bool write_mesh_to_model(const PointRange& points,
   for(const auto& point : points)
     pVertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
 
-  for(const auto& triangle : polygons)
+  for(const auto& triangle : triangles)
     pTriangles.push_back(tmf_internal::fnCreateTriangle(triangle[0], triangle[1], triangle[2]));
 
   hResult = NMR::lib3mf_meshobject_setgeometry(*pMeshObject, pVertices.data(),

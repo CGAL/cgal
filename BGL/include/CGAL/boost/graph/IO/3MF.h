@@ -70,18 +70,18 @@ bool write_3MF(const std::string& filename,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor            vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor              face_descriptor;
 
-  typedef std::vector<std::size_t>                                              Polygon;
-  typedef std::vector<Polygon>                                                  PolygonRange;
+  typedef std::vector<std::size_t>                                              Triangle;
+  typedef std::vector<Triangle>                                                 TriangleRange;
   typedef std::vector<Point>                                                    PointRange;
 
   std::vector<PointRange> all_points;
-  std::vector<PolygonRange> all_polygons;
+  std::vector<TriangleRange> all_triangles;
 
   for(const FaceGraph& g : gs)
   {
     PointRange points;
     points.reserve(num_vertices(g));
-    PolygonRange triangles;
+    TriangleRange triangles;
     triangles.reserve(num_faces(g));
 
     VPM vpm = get(boost::vertex_point, g);
@@ -97,17 +97,17 @@ bool write_3MF(const std::string& filename,
     all_points.push_back(points);
     for(const face_descriptor f : faces(g))
     {
-      Polygon triangle;
+      Triangle triangle;
       for(vertex_descriptor vert : CGAL::vertices_around_face(halfedge(f, g), g))
         triangle.push_back(vertex_id_map[vert]);
 
       triangles.push_back(triangle);
     }
 
-    all_polygons.push_back(triangles);
+    all_triangles.push_back(triangles);
   }
 
-  return write_3MF(filename, all_points, all_polygons, names);
+  return write_3MF(filename, all_points, all_triangles, names);
 }
 
 } // namespace CGAL
