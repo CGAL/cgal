@@ -362,6 +362,31 @@ public:
       vao[i].destroy();
   }
 
+  void set_draw_vertices(bool b) {
+    m_draw_vertices = b;
+  }
+  void set_draw_edges(bool b) {
+    m_draw_edges = b;
+  }
+  void set_draw_rays(bool b) {
+    m_draw_rays = b;
+  }
+  void set_draw_lines(bool b) {
+    m_draw_lines = b;
+  }
+  void set_draw_faces(bool b) {
+    m_draw_faces = b;
+  }
+  void set_use_mono_color(bool b) {
+    m_use_mono_color = b;
+  }
+  void set_inverse_normal(bool b) {
+    m_inverse_normal = b;
+  }
+  void set_draw_text(bool b) {
+    m_draw_text = b;
+  }
+
   void clear()
   {
     for (unsigned int i=0; i<LAST_INDEX; ++i)
