@@ -200,6 +200,13 @@ void error_handler(char const* what, char const* expr, char const* file,
 // Line: 1122
 // Explanation:
 
+// CGAL error: precondition violation!
+// Expr: ! is_degen
+// File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Arr_segment_traits_2.h
+// Line: 145
+// Explanation:Cannot construct a degenerate segment
+
+
 //A way to maintain 3 set of polygons namely red,blue and result for all
 // boolean operations
 
@@ -6720,6 +6727,7 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
         }
         else
         {
+          on_actionUndo_triggered();
           show_error("DISJOINT POLYGON SET ERROR\n\nCannot perform Minkowski Sum operation since Input Bucket contains more than disjoint polygons!!!");
           m_disjoint = false;
         }
