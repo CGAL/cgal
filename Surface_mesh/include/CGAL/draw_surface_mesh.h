@@ -42,8 +42,8 @@ namespace CGAL
 struct DefaultColorFunctorSM
 {
   template<typename SM>
-  static CGAL::Color run(const SM&,
-                         typename SM::Face_index fh)
+  CGAL::Color operator()(const SM&,
+                         typename SM::Face_index fh) const
   {
     if (fh==boost::graph_traits<SM>::null_face()) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
@@ -53,16 +53,9 @@ struct DefaultColorFunctorSM
   }
 };
 
-template<class SM, class ColorFunctor>
 class SimpleSurfaceMeshViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
-  typedef typename SM::Point Point;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
-  typedef typename SM::Vertex_index vertex_descriptor;
-  typedef typename SM::Face_index face_descriptor;
-  typedef typename SM::Edge_index edge_descriptor;
-  typedef typename SM::Halfedge_index halfedge_descriptor;
 
 public:
   /// Construct the viewer.
@@ -70,66 +63,103 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
+  template <typename SM>
   SimpleSurfaceMeshViewerQt(QWidget* parent,
                             const SM& amesh,
                             const char* title="Basic Surface_mesh Viewer",
-                            bool anofaces=false,
-                            const ColorFunctor& fcolor=ColorFunctor()) :
+                            bool anofaces=false)
+    : SimpleSurfaceMeshViewerQt(parent, amesh, title, anofaces, DefaultColorFunctorSM())
+  {
+  }
+
+  template <typename SM, typename ColorFunctor>
+  SimpleSurfaceMeshViewerQt(QWidget* parent,
+                            const SM& amesh,
+                            const char* title,
+                            bool anofaces,
+                            ColorFunctor fcolor) :
     // First draw: no vertex; edges, faces; mono-color; inverse normal
     Base(parent, title, false, true, true, true, false),
-    sm(amesh),
-    m_nofaces(anofaces),
-    m_fcolor(fcolor)
+    m_compute_elements_impl(compute_elements_functor(amesh, anofaces, fcolor))
   {
+  }
+
+  void init() override {
     compute_elements();
+    Base::init();
+  }
+
+  void compute_elements() {
+    m_compute_elements_impl();
+  }
+
+  template <typename SM, typename ColorFunctor>
+  void set_mesh(const SM& amesh,
+                bool anofaces=false,
+                ColorFunctor fcolor=DefaultColorFunctorSM()) {
+    m_compute_elements_impl = compute_elements_functor(amesh, anofaces, fcolor);
+    redraw();
   }
 
 protected:
-  void compute_face(face_descriptor fh)
+  template <typename SM, typename ColorFunctor>
+  std::function<void()>
+  compute_elements_functor(const SM& sm,
+                           bool anofaces,
+                           ColorFunctor fcolor)
   {
-    CGAL::Color c=m_fcolor.run(sm, fh);
+    // This function return a lambda expression, type-erased in a
+    // `std::function<void()>` object.
+    return [this, &sm, anofaces, fcolor]()
+    {
+      this->clear();
+
+      if (!anofaces)
+      {
+        for (typename SM::Face_range::iterator f=sm.faces().begin();
+             f!=sm.faces().end(); ++f)
+        {
+          if (*f!=boost::graph_traits<SM>::null_face())
+            { this->compute_face(sm, *f, fcolor); }
+        }
+      }
+
+      for (typename SM::Edge_range::iterator e=sm.edges().begin();
+           e!=sm.edges().end(); ++e)
+      { this->compute_edge(sm, *e); }
+
+      for (typename SM::Vertex_range::iterator v=sm.vertices().begin();
+           v!=sm.vertices().end(); ++v)
+      { this->compute_vertex(sm, *v); }
+    };
+  }
+
+  template <typename SM, typename face_descriptor, typename ColorFunctor>
+  void compute_face(const SM& sm, face_descriptor fh, const ColorFunctor& fcolor)
+  {
+    CGAL::Color c=fcolor(sm, fh);
     face_begin(c);
-    halfedge_descriptor hd=sm.halfedge(fh);
+    auto hd=sm.halfedge(fh);
     do
     {
-      add_point_in_face(sm.point(sm.source(hd)), get_vertex_normal(hd));
+      add_point_in_face(sm.point(sm.source(hd)), get_vertex_normal(sm, hd));
       hd=sm.next(hd);
     }
     while(hd!=sm.halfedge(fh));
     face_end();
   }
 
-  void compute_edge(edge_descriptor e)
+  template <typename SM, typename edge_descriptor>
+  void compute_edge(const SM& sm, edge_descriptor e)
   {
     add_segment(sm.point(sm.source(sm.halfedge(e))),
                 sm.point(sm.target(sm.halfedge(e))));
   }
 
-  void compute_vertex(vertex_descriptor vh)
+  template <typename SM, typename vertex_descriptor>
+  void compute_vertex(const SM& sm, vertex_descriptor vh)
   { add_point(sm.point(vh)); }
 
-  void compute_elements()
-  {
-    clear();
-
-    if (!m_nofaces)
-    {
-      for (typename SM::Face_range::iterator f=sm.faces().begin();
-           f!=sm.faces().end(); ++f)
-      {
-        if (*f!=boost::graph_traits<SM>::null_face())
-        { compute_face(*f); }
-      }
-    }
-
-    for (typename SM::Edge_range::iterator e=sm.edges().begin();
-         e!=sm.edges().end(); ++e)
-    { compute_edge(*e); }
-
-    for (typename SM::Vertex_range::iterator v=sm.vertices().begin();
-         v!=sm.vertices().end(); ++v)
-    { compute_vertex(*v); }
-  }
 
   virtual void keyPressEvent(QKeyEvent *e)
   {
@@ -148,7 +178,8 @@ protected:
   }
 
 protected:
-  Local_vector get_face_normal(halfedge_descriptor he)
+  template <typename SM, typename halfedge_descriptor>
+  Local_vector get_face_normal(const SM& sm, halfedge_descriptor he)
   {
     Local_vector normal=CGAL::NULL_VECTOR;
     halfedge_descriptor end=he;
@@ -166,7 +197,8 @@ protected:
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 
-  Local_vector get_vertex_normal(halfedge_descriptor he)
+  template <typename SM, typename halfedge_descriptor>
+  Local_vector get_vertex_normal(const SM& sm, halfedge_descriptor he)
   {
     Local_vector normal=CGAL::NULL_VECTOR;
     halfedge_descriptor end=he;
@@ -174,7 +206,7 @@ protected:
     {
       if (!sm.is_border(he))
       {
-        Local_vector n=get_face_normal(he);
+        Local_vector n=get_face_normal(sm, he);
         normal=typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
       }
       he=sm.next(sm.opposite(he));
@@ -189,9 +221,7 @@ protected:
   }
 
 protected:
-  const SM& sm;
-  bool m_nofaces;
-  const ColorFunctor& m_fcolor;
+  std::function<void()> m_compute_elements_impl;
 };
 
 // Specialization of draw function.
@@ -211,9 +241,8 @@ void draw(const Surface_mesh<K>& amesh,
     int argc=1;
     const char* argv[2]={"surface_mesh_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    DefaultColorFunctorSM fcolor;
-    SimpleSurfaceMeshViewerQt<Surface_mesh<K>, DefaultColorFunctorSM>
-      mainwindow(app.activeWindow(), amesh, title, nofill, fcolor);
+    SimpleSurfaceMeshViewerQt mainwindow(app.activeWindow(), amesh, title,
+                                         nofill);
     mainwindow.show();
     app.exec();
   }
