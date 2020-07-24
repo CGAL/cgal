@@ -36,8 +36,9 @@
 #  define WIN64
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
+#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
 #endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
@@ -295,6 +296,10 @@
 // Same for C++14.
 #if __cplusplus >= 201402L || _MSVC_LANG >= 201402L
 #  define CGAL_CXX14 1
+#endif
+// Same for C++17
+#if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
+#  define CGAL_CXX17 1
 #endif
 
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
@@ -559,7 +564,7 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if __has_cpp_attribute(no_unique_address)
+#if CGAL_CXX11 && __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
@@ -627,6 +632,7 @@ using std::max;
 
 //
 // Compatibility with CGAL-4.14.
+#ifndef CGAL_NO_DEPRECATED_CODE
 //
 // That is temporary, and will be replaced by a namespace alias, as
 // soon as we can remove cpp11::result_of, and <CGAL/atomic.h> and
@@ -663,7 +669,7 @@ namespace CGAL {
   using cpp11::array;
   using cpp11::copy_n;
 } // end of the temporary compatibility with CGAL-4.14
-
+#endif // CGAL_NO_DEPRECATED_CODE
 namespace CGAL {
 
 // Typedef for the type of nullptr.

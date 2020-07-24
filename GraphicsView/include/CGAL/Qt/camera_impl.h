@@ -1725,6 +1725,11 @@ CGAL_INLINE_FUNCTION
    MAT(out, 3, 3) = r3[7];
    return 1;
   }
+
+#undef MAT
+#undef SWAP_ROWS_GLdouble
+#undef SWAP_ROWS_DOUBLE
+
 CGAL_INLINE_FUNCTION
 int unProject(GLdouble winx, GLdouble winy, GLdouble winz, GLdouble *modelview, GLdouble *projection, int *viewport,
               GLdouble *objX,GLdouble *objY,GLdouble *objZ)

@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois, Noura Faraj
+// Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
 #ifndef CGAL_INTERNAL_TET_REMESHING_HELPERS_H
 #define CGAL_INTERNAL_TET_REMESHING_HELPERS_H
@@ -305,6 +305,28 @@ typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vert
       return c3t3.surface_patch_index(f);
   }
   return Surface_patch_index();
+}
+
+template<typename C3t3>
+void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
+{
+  switch (v->in_dimension())
+  {
+  case 3:
+    v->set_index(v->cell()->subdomain_index());
+    break;
+  case 2:
+    v->set_index(surface_patch_index(v, c3t3));
+    break;
+  case 1:
+    v->set_index(typename C3t3::Curve_index(1));
+    break;
+  case 0:
+    v->set_index(boost::get<typename C3t3::Corner_index>(v->index()));
+    break;
+  default:
+    CGAL_assertion(false);
+  }
 }
 
 template<typename C3t3>
