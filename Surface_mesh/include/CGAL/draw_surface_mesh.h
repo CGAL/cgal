@@ -12,6 +12,9 @@
 #ifndef CGAL_DRAW_SURFACE_MESH_H
 #define CGAL_DRAW_SURFACE_MESH_H
 
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Dynamic_property_map.h>
+
 #ifdef DOXYGEN_RUNNING
 
 /*!
@@ -55,7 +58,7 @@ struct DefaultColorFunctorSM
 
 class SimpleSurfaceMeshViewerQt : public Basic_viewer_qt
 {
-  typedef Basic_viewer_qt Base;
+  using Base = Basic_viewer_qt;
 
 public:
   /// Construct the viewer.
@@ -108,9 +111,21 @@ protected:
                            bool anofaces,
                            ColorFunctor fcolor)
   {
+    using Point = typename SM::Point;
+    using Kernel = typename CGAL::Kernel_traits<Point>::Kernel;
+    using Vector = typename Kernel::Vector_3;
+
+    auto vnormals = get(CGAL::dynamic_vertex_property_t<Vector>(), sm);
+    {
+      // temporary face property map needed by `compute_normals`
+      auto fpm = get(CGAL::dynamic_face_property_t<Vector>(), sm);
+
+      CGAL::Polygon_mesh_processing::compute_normals(sm, vnormals, fpm);
+    }
+
     // This function return a lambda expression, type-erased in a
     // `std::function<void()>` object.
-    return [this, &sm, anofaces, fcolor]()
+    return [this, &sm, vnormals, anofaces, fcolor]()
     {
       this->clear();
 
@@ -120,7 +135,7 @@ protected:
              f!=sm.faces().end(); ++f)
         {
           if (*f!=boost::graph_traits<SM>::null_face())
-            { this->compute_face(sm, *f, fcolor); }
+            { this->compute_face(sm, vnormals, *f, fcolor); }
         }
       }
 
@@ -134,15 +149,17 @@ protected:
     };
   }
 
-  template <typename SM, typename face_descriptor, typename ColorFunctor>
-  void compute_face(const SM& sm, face_descriptor fh, const ColorFunctor& fcolor)
+  template <typename SM, typename VNormals, typename face_descriptor, typename ColorFunctor>
+  void compute_face(const SM& sm, VNormals vnormals,
+                    face_descriptor fh, const ColorFunctor& fcolor)
   {
     CGAL::Color c=fcolor(sm, fh);
     face_begin(c);
     auto hd=sm.halfedge(fh);
     do
     {
-      add_point_in_face(sm.point(sm.source(hd)), get_vertex_normal(sm, hd));
+      auto v = sm.source(hd);
+      add_point_in_face(sm.point(v), get(vnormals, v));
       hd=sm.next(hd);
     }
     while(hd!=sm.halfedge(fh));
@@ -175,49 +192,6 @@ protected:
 
     // Call the base method to process others/classicals key
     Base::keyPressEvent(e);
-  }
-
-protected:
-  template <typename SM, typename halfedge_descriptor>
-  Local_vector get_face_normal(const SM& sm, halfedge_descriptor he)
-  {
-    Local_vector normal=CGAL::NULL_VECTOR;
-    halfedge_descriptor end=he;
-    unsigned int nb=0;
-    do
-    {
-      internal::newell_single_step_3
-        (this->get_local_point(sm.point(sm.source(he))),
-         this->get_local_point(sm.point(sm.target(he))), normal);
-      ++nb;
-      he=sm.next(he);
-    }
-    while (he!=end);
-    assert(nb>0);
-    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
-  }
-
-  template <typename SM, typename halfedge_descriptor>
-  Local_vector get_vertex_normal(const SM& sm, halfedge_descriptor he)
-  {
-    Local_vector normal=CGAL::NULL_VECTOR;
-    halfedge_descriptor end=he;
-    do
-    {
-      if (!sm.is_border(he))
-      {
-        Local_vector n=get_face_normal(sm, he);
-        normal=typename Local_kernel::Construct_sum_of_vectors_3()(normal, n);
-      }
-      he=sm.next(sm.opposite(he));
-    }
-    while (he!=end);
-
-    if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
-    { normal=(typename Local_kernel::Construct_scaled_vector_3()
-              (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-
-    return normal;
   }
 
 protected:
