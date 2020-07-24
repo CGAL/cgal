@@ -51,18 +51,18 @@ bool read_3MF(const std::string& filename,
               std::vector<CGAL::Surface_mesh<Point> >& output)
 {
   typedef std::vector<Point>                                  PointRange;
-  typedef std::vector<std::size_t>                            Polygon;
-  typedef std::vector<Polygon>                                PolygonRange;
+  typedef std::vector<std::size_t>                            Triangle;
+  typedef std::vector<Triangle>                               TriangleRange;
   typedef CGAL::Surface_mesh<Point>                           SMesh;
   typedef typename SMesh::Vertex_index                        Vertex_index;
   typedef typename SMesh::Face_index                          Face_index;
 
   std::vector<PointRange> all_points;
-  std::vector<PolygonRange> all_polygons;
+  std::vector<TriangleRange> all_triangles;
   std::vector<std::string> names;
   std::vector<std::vector<CGAL::Color> > all_colors;
 
-  const bool success = CGAL::read_3MF(filename, all_points, all_polygons, all_colors, names);
+  const bool success = CGAL::read_3MF(filename, all_points, all_triangles, all_colors, names);
   if(!success)
   {
     std::cerr << "Error in reading meshes." << std::endl;
@@ -77,7 +77,7 @@ bool read_3MF(const std::string& filename,
   {
     bool skip = false;
     SMesh sm;
-    PolygonRange triangles = all_polygons[i];
+    TriangleRange triangles = all_triangles[i];
     PointRange points = all_points[i];
     std::vector<CGAL::Color> colors = all_colors[i];
 
@@ -87,7 +87,7 @@ bool read_3MF(const std::string& filename,
     for(const Point& p : points)
       sm.add_vertex(p);
 
-    for(Polygon& triangle : triangles)
+    for(Triangle& triangle : triangles)
     {
       std::vector<Vertex_index> face;
       face.reserve(triangle.size());
