@@ -570,6 +570,12 @@ public:
     { return m_buffer_for_colored_faces.face_end(); }
   }
 
+  virtual void redraw()
+  {
+    initialize_buffers();
+    update();
+  }
+
 protected:
   // Shortcuts to simplify function calls.
   template<typename KPoint>
@@ -1218,12 +1224,6 @@ protected:
       }
       glEnable(GL_LIGHTING);
     }
-  }
-
-  virtual void redraw()
-  {
-    initialize_buffers();
-    update();
   }
 
   virtual void init()
