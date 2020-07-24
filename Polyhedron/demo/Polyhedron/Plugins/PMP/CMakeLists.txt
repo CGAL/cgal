@@ -77,7 +77,7 @@ polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_stitching_plugin K
 target_link_libraries(polyhedron_stitching_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
 
 qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
-polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PMP IO Classification Mesh_3)
+polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PMP Viewer Classification Mesh_3)
 target_link_libraries(selection_plugin PUBLIC scene_selection_item scene_points_with_normal_item scene_polylines_item)
 
 #to keep it simple to compile
@@ -111,7 +111,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(distance_plugin PUBLIC CGAL::TBB_support)
 endif()
 
-polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS IO Mesh_3 PMP)
+polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS Viewer Mesh_3 PMP)
 target_link_libraries(detect_sharp_edges_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)
