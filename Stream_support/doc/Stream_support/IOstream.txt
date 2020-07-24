@@ -427,7 +427,7 @@ The table above only lists the functions that work with any polygon mesh.
       <td>`read_VTP()`</td>
       <td>`read_OBJ()`</td>
       <td>`read_GOCAD()`</td>
-      <td> - </td>
+      <td><center> - </center></td>
     </tr>
     <tr>
       <td>Output</td>
@@ -482,7 +482,7 @@ from the standard \cgal I/O functions, for clarity reasons.
 </tr>
 <tr>
 <td>Output</td>
-<td> - </td>
+<td><center> - </center></td>
 <td>write_multi_point_WKT()</td>
 <td>write_multi_linestring_WKT()</td>
 <td>write_multi_polygon_WKT()</td>
