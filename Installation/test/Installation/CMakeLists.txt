@@ -159,89 +159,89 @@ endif()#CGAL_Qt5_FOUND
 
 #If ctest is ran from a global config, CGAL_SOURCE_DIR exists, but from Installation/test it doesn't. In that case, however, there is a CGAL_DIR.
 if("${CGAL_SOURCE_DIR}" STREQUAL "")
-  set(CGAL_SOURCE_DIR ${CGAL_DIR})
+  set(CGAL_SOURCE_DIR "${CGAL_DIR}")
 endif()
 
 configure_file(test_configuration.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_config_file/CMakeLists.txt @ONLY)
 
 #test CGAL_DIR = source_dir (Git_root or CGAL-5.x dir.
 add_test(NAME test_config_file
-  COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CGAL_SOURCE_DIR} -DCGAL_GIVEN_DIR=${CGAL_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/test_config_file #src
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file) #build
+  COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CGAL_SOURCE_DIR}" -DCGAL_GIVEN_DIR="${CGAL_SOURCE_DIR}"
+    "${CMAKE_CURRENT_BINARY_DIR}/test_config_file" #src
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file") #build
 list(APPEND test_config_lst "test_config_file")
 
 if ( CGAL_BRANCH_BUILD )
   #test CGAL_DIR = Git/Installation/lib/cmake/CGAL
   add_test(NAME test_config_file_2
-    COMMAND ${CMAKE_COMMAND}   -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/ -DCGAL_GIVEN_DIR=${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL
-      ${CMAKE_CURRENT_BINARY_DIR}/test_config_file
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2)
+    COMMAND ${CMAKE_COMMAND}   -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/" -DCGAL_GIVEN_DIR="${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL"
+      "${CMAKE_CURRENT_BINARY_DIR}/test_config_file"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2")
 elseif(CGAL_TEST_SUITE)#CGAL_BRANCH_BUILD
   #test CGAL_DIR = CGAL-5.x/lib/cmake/CGAL
   add_test(NAME test_config_file_2
-    COMMAND ${CMAKE_COMMAND}  -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CGAL_SOURCE_DIR}/lib/cmake/CGAL/ -DCGAL_GIVEN_DIR=${CGAL_SOURCE_DIR}/lib/cmake/CGAL
-      ${CMAKE_CURRENT_BINARY_DIR}/test_config_file
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2)
+    COMMAND ${CMAKE_COMMAND}  -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CGAL_SOURCE_DIR}/lib/cmake/CGAL/" -DCGAL_GIVEN_DIR="${CGAL_SOURCE_DIR}/lib/cmake/CGAL"
+      "${CMAKE_CURRENT_BINARY_DIR}/test_config_file"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2")
 else()#CGAL_BRANCH_BUILD
   #use the CGAL_DIR
   add_test(NAME test_config_file_2
-    COMMAND ${CMAKE_COMMAND}  -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/ -DCGAL_GIVEN_DIR=${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL
-      ${CMAKE_CURRENT_BINARY_DIR}/test_config_file
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2)
+    COMMAND ${CMAKE_COMMAND}  -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/" -DCGAL_GIVEN_DIR="${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL"
+      "${CMAKE_CURRENT_BINARY_DIR}/test_config_file"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_2")
 endif()#CGAL_BRANCH_BUILD
 list(APPEND test_config_lst "test_config_file_2")
 
 #configure cgal for a non standard install without qt5
 add_test(NAME config_non_standard_cgal
-  COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install
-  ${CGAL_SOURCE_DIR}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/non_standard_build)
+  COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX="${CMAKE_CURRENT_BINARY_DIR}/non_standard_install"
+  "${CGAL_SOURCE_DIR}"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/non_standard_build")
 #install cgal in the non standard place
 add_test(NAME install_non_standard_cgal
-  COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/non_standard_build --target "install" --config "$<CONFIG>")
+  COMMAND ${CMAKE_COMMAND} --build "${CMAKE_CURRENT_BINARY_DIR}/non_standard_build" --target "install" --config "$<CONFIG>")
 
 #test CGAL_DIR=non standard place without cgal_qt5
 add_test(NAME test_config_file_3
-COMMAND ${CMAKE_COMMAND}  -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install/lib/cmake/CGAL -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install/lib/cmake/CGAL
-${CMAKE_CURRENT_BINARY_DIR}/test_config_file
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_3)
+COMMAND ${CMAKE_COMMAND}  -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CMAKE_CURRENT_BINARY_DIR}/non_standard_install/lib/cmake/CGAL" -DCGAL_GIVEN_DIR="${CMAKE_CURRENT_BINARY_DIR}/non_standard_install/lib/cmake/CGAL"
+"${CMAKE_CURRENT_BINARY_DIR}/test_config_file"
+WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_3")
 list(APPEND test_config_lst "test_config_file_3")
 
 if(CGAL_Qt5_FOUND)
   #configure cgal for a non standard install with qt5
   add_test(NAME config_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5 -DWITH_CGAL_Qt5=ON
-    ${CGAL_SOURCE_DIR}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/non_standard_build_qt5)
+    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX="${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5" -DWITH_CGAL_Qt5=ON
+    "${CGAL_SOURCE_DIR}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/non_standard_build_qt5")
   #install cgal in the non standard place
   add_test(NAME install_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/non_standard_build_qt5 --target "install" --config "$<CONFIG>")
+    COMMAND ${CMAKE_COMMAND} --build "${CMAKE_CURRENT_BINARY_DIR}/non_standard_build_qt5" --target "install" --config "$<CONFIG>")
 
   #test CGAL_DIR=non standard place with cgal_qt5
   add_test(NAME test_config_file_4
-    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL
-    ${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4)
+    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL" -DCGAL_GIVEN_DIR="${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5/lib/cmake/CGAL"
+    "${CMAKE_CURRENT_BINARY_DIR}/test_config_file_qt5"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_4")
   list(APPEND test_config_lst "test_config_file_4")
 endif()#CGAL_Qt5_FOUND
 
 #test CGAL_DIR=non standard build
 add_test(NAME test_config_file_5
-COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_build -DCGAL_GIVEN_DIR=${CMAKE_CURRENT_BINARY_DIR}/non_standard_build
- ${CMAKE_CURRENT_BINARY_DIR}/test_config_file
- WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_5)
+COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCGAL_DIR="${CMAKE_CURRENT_BINARY_DIR}/non_standard_build" -DCGAL_GIVEN_DIR="${CMAKE_CURRENT_BINARY_DIR}/non_standard_build"
+ "${CMAKE_CURRENT_BINARY_DIR}/test_config_file"
+ WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_config_file_5")
 list(APPEND test_config_lst "test_config_file_5")
 
 foreach(tgt ${test_config_lst})
   #add_custom_target(${tgt}_target)
-  add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
-  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
+  add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/build-${tgt}")
+  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/build-${tgt}")
   add_test(NAME compile__${tgt}
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt} --config "$<CONFIG>")
+    COMMAND ${CMAKE_COMMAND} --build "${CMAKE_CURRENT_BINARY_DIR}/build-${tgt}" --config "$<CONFIG>")
     add_test(NAME exec__${tgt}
       COMMAND ./test_configuration
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-${tgt})
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-${tgt}")
 
   set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY FIXTURES_SETUP ${tgt}_target)
   set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY FIXTURES_CLEANUP ${tgt}_target)
