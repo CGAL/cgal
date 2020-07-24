@@ -35,18 +35,18 @@ namespace CGAL {
 /*!
  * \ingroup PkgBGLIoFuncs3MF
  *
- * \brief writes the triangle meshes contained in `gs` into the 3mf file `filename`.
+ * \brief writes the triangle meshes contained in `gs` into the file `filename`, using the \ref IOStream3MF.
  *
  * \tparam GraphRange a model of the concepts `RandomAccessContainer`
  *                    and `BackInsertionSequence` whose `value_type` is
  *                    a model of the concepts `FaceGraph` and `HalfedgeListGraph`
  *                    that has only triangle faces.
  *
- * \param filename the name of the 3mf file to write.
+ * \param filename the name of the 3mf file to write
  * \param gs a container of triangle meshes to write. An internal property map for `CGAL::vertex_point_t`
  *           must be available for each mesh.
  * \param names a range of `std::string` associating a name to each mesh to be written out, which
- *              will appear in the output.
+ *              will appear in the output
  *
  * \return `true` if the writing is successful, `false` otherwise.
  *
@@ -70,7 +70,8 @@ bool write_3MF(const std::string& filename,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor            vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor              face_descriptor;
 
-  typedef std::vector<std::size_t>                                              Triangle;
+  // @todo `Triangle` ought to be just array<int, 3>
+  typedef std::vector<int>                                                      Triangle;
   typedef std::vector<Triangle>                                                 TriangleRange;
   typedef std::vector<Point>                                                    PointRange;
 
@@ -85,9 +86,11 @@ bool write_3MF(const std::string& filename,
     triangles.reserve(num_faces(g));
 
     VPM vpm = get(boost::vertex_point, g);
-    std::unordered_map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, std::size_t> vertex_id_map;
 
-    std::size_t i = 0;
+    // @todo dynamic pmap
+    std::unordered_map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, int> vertex_id_map;
+
+    int i = 0;
     for(const vertex_descriptor v : vertices(g))
     {
       points.push_back(get(vpm, v));
@@ -101,6 +104,7 @@ bool write_3MF(const std::string& filename,
       for(vertex_descriptor vert : CGAL::vertices_around_face(halfedge(f, g), g))
         triangle.push_back(vertex_id_map[vert]);
 
+      CGAL_assertion(triangle.size() == 3);
       triangles.push_back(triangle);
     }
 

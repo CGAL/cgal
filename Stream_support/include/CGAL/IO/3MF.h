@@ -380,30 +380,30 @@ bool read_3MF(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncs3MF
  *
- * \brief extracts ranges of points and triangles from a 3mf file.
+ * \brief reads ranges of points and triangles from an input file, using the \ref IOStream3MF.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value_type` is
- *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value_type` is the point type.
+ *                     `BackInsertionSequence` whose `value_type` is
+ *                     a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                     whose `value_type` is the point type.
  * \tparam TriangleRanges a model of the concept `RandomAccessContainer` whose
- *  `value_type` is a model of the concept `RandomAccessContainer`
- *  whose `value_type` is a model of the concept `RandomAccessContainer` whose
- *  `value_type` is std::size_t.
+ *                        `value_type` is a model of the concept `RandomAccessContainer`
+ *                        whose `value_type` is a model of the concept `RandomAccessContainer` whose
+ *                        `value_type` is an integer type.
  * \tparam ColorRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value_type` is
- *  a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value_type` is `CGAL::Color`.
+ *                     `BackInsertionSequence` whose `value_type` is
+ *                     a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                     whose `value_type` is `CGAL::Color`.
  *
- * \param fname the name of the 3mf file to read.
+ * \param fname the name of the 3mf file to read
  * \param all_points a `PointRanges` that will contain the points of the meshes in `fname`.
- *  Each of these meshes will add a range of its points.
+ *                   Each of these meshes will add a range of its points.
  * \param all_triangles a `TriangleRanges` that will contain the triangles of the meshes in `fname`.
- *  Each of these meshes will add a range of its triangles. A `triangle` of
- *  `all_triangles[i]` contains the indices of its points in `all_points[i]`.
+ *                      Each of these meshes will add a range of its triangles. A `triangle` of
+ *                      `all_triangles[i]` contains the indices of its points in `all_points[i]`.
  * \param all_colors will contain the color of each triangle for each soup.
  * \param names will contain the name of each mesh in `fname` if any.
- *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
+ *             If the i-th mesh has no name, it will be called "Unknown Mesh" in `names`.
  *
  * \returns `true` if reading was successful, `false` otherwise.
  */
@@ -430,22 +430,21 @@ int read_3MF(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncs3MF
  *
- * \brief writes the triangle soups contained in `all_points` and
- *  `all_triangles` into the 3mf file `fname`.
+ * \brief writes the triangle soups contained in `all_points` and `all_triangles` into the file `fname`, using the \ref IOStream3MF.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
- *  `BackInsertionSequence` whose `value_type` is
- * a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *  whose `value_type` is the point type.
+ *                     `BackInsertionSequence` whose `value_type` is
+ *                     a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                     whose `value_type` is the point type.
  * \tparam TriangleRanges a model of the concept `RandomAccessContainer` whose
- *  `value_type` is a model of the concept `RandomAccessContainer`
- * whose `value_type` is a model of the concept `RandomAccessContainer` whose
- *  `value_type` is std::size_t.
+ *                        `value_type` is a model of the concept `RandomAccessContainer`
+ *                        whose `value_type` is a model of the concept `RandomAccessContainer` whose
+ *                        `value_type` is an integer type.
  *
- * \param fname the name of the 3mf file to write.
- * \param all_points a `PointRanges` that contains the points of the soups to write.
- * \param all_triangles a `TriangleRanges` that contains the triangles of the soups in `fname`.
- * \param names contains the name of each mesh to be output.
+ * \param fname the name of the 3mf file to write
+ * \param all_points a `PointRanges` that contains the points of the soups to write
+ * \param all_triangles a `TriangleRanges` that contains the triangles of the soups in `fname`
+ * \param names a range of std::string` associating a name to each soup, which will appear in the output
  *
  * \return `true` if the writing is successful, `false` otherwise.
  */
