@@ -86,7 +86,7 @@ bool read_points(const std::string& fname, OutputIterator output)
   - \ref IOStreamLAS (`.las`)
   - \ref IOStreamXYZ (`.xyz`)
 
-  The format is detected from the filename extension.
+  The format is detected from the filename extension (letter case is not important).
 
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
   It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.

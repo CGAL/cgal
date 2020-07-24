@@ -77,7 +77,7 @@ bool write_points(const std::string& fname,const PointRange& points,
   - \ref IOStreamLAS (`.las`)
   - \ref IOStreamXYZ (`.xyz`)
 
-  The format is detected from the filename extension.
+  The format is detected from the filename extension (letter case is not important).
 
   \tparam PointRange is a model of `ConstRange`. The value type of
   its iterator is the key type of the named parameter `point_map`.

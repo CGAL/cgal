@@ -118,9 +118,9 @@ bool read_point_set(const std::string& fname,
   - \ref IOStreamLAS (`.las`)
   - \ref IOStreamXYZ (`.xyz`)
 
-  The format is detected from the filename extension. If the file contains
-  normal vectors, the normal map is added to the point set. For PLY
-  input, all point properties found in the header are added.
+  The format is detected from the filename extension (letter case is not important).
+  If the file contains normal vectors, the normal map is added to the point set.
+  For PLY input, all point properties found in the header are added.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -200,7 +200,7 @@ bool write_point_set(const std::string& fname,
   - \ref IOStreamLAS (`.las`)
   - \ref IOStreamXYZ (`.xyz`)
 
-  The format is detected from the filename extension.
+  The format is detected from the filename extension (letter case is not important).
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`

@@ -138,7 +138,7 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
  *
- * The format is detected from the filename extension.
+ * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -261,7 +261,7 @@ bool write_polygon_mesh(const std::string& fname, Graph& g)
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
  *
- * The format is detected from the filename extension.
+ * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

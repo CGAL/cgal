@@ -100,7 +100,7 @@ bool read_polygon_soup(const std::string& fname, PointRange& points, PolygonRang
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
  *
- * The format is detected from the filename extension.
+ * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is a model of the concept `RandomAccessContainer`
@@ -211,7 +211,7 @@ bool write_polygon_soup(const std::string& fname, PointRange& points, PolygonRan
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
  *
- * The format is detected from the filename extension.
+ * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is a model of the concept `RandomAccessContainer`

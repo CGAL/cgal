@@ -48,7 +48,7 @@ namespace Polygon_mesh_processing {
  * - \ref IOStreamGocad (`.ts`)
  * - \ref IOStreamVTK (`.vtp`)
  *
- * The format is detected from the filename extension.
+ * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PolygonMesh a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
