@@ -75,6 +75,7 @@
       <addaction name="actionMove"/>
       <addaction name="actionPaste"/> -->
       <addaction name="actionDeleteAll"/>
+      <addaction name="actionUndo"/>
       <addaction name="actionNew"/>
    </widget>
    <!-- <widget class="QMenu" name="menuOperations">
@@ -106,7 +107,7 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuOperations"/>
+   <!-- <addaction name="menuOperations"/> -->
    <addaction name="menuView"/>
    <addaction name="menu_Help"/>
   </widget>
@@ -274,6 +275,17 @@
         </item>
         <item>
           <widget class="QToolBar" name="OperationsToolBar34">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionUndo" />
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar35">
            <attribute name="toolBarArea" >
             <enum>TopToolBarArea</enum>
            </attribute>
@@ -2881,6 +2893,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/undo.png</normaloff>:/cgal/icons/resources/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name ="shortcut">
+    <string>Ctrl+Z</string>
    </property>
   </action>
   <action name="actionRecenter">

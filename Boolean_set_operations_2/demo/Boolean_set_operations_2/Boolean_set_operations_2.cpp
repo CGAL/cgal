@@ -162,7 +162,7 @@ void error(std::string aS)
 void error_handler(char const* what, char const* expr, char const* file,
                    int line, char const* msg)
 {
-  if(expr != "first != last")
+  if(expr != "first != last" && expr !="_inc_to_right != cv._inc_to_right" && line != 1684)
   {
     std::ostringstream ss;
 
@@ -187,12 +187,18 @@ void error_handler(char const* what, char const* expr, char const* file,
   }
 }
 
+
+// CGAL error: assertion violation!
+// Expr: 
+// File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Arr_geometry_traits/Bezier_point_2.h
+// Line: 1684
+// Explanation:
+
 // CGAL error: assertion violation!
 // Expr: _inc_to_right != cv._inc_to_right
 // File: /home/ronnie8888/Documents/cgal-public-dev/Arrangement_on_surface_2/include/CGAL/Arr_geometry_traits/Bezier_x_monotone_2.h
 // Line: 1122
 // Explanation:
-//****************************************************
 
 //A way to maintain 3 set of polygons namely red,blue and result for all
 // boolean operations
@@ -200,6 +206,12 @@ void error_handler(char const* what, char const* expr, char const* file,
 enum {
   BLUE_GROUP, RED_GROUP, BLACK_GROUP, BROWN_GROUP, YELLOW_GROUP, 
   MAGENTA_GROUP, AQUA_GROUP,  RESULT_GROUP , COMP_GROUP};
+
+// enum {
+//   COMPLEMENT_OP, INTERSECTION_OP, UNION_OP, DIFFERENCE_OP, SYMMETRIC_dIFFERENCE_OP, 
+//   MINKOWSKI_SUM_OP, COPY_OP, MOVE_OP, PASTE_OP, CLEAR_OP, START_OP};
+
+
 
 //A way to maintain 3 category of polygons namely linear,circular
 //enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2and BEZIER_TPYE = 3 CONIC_TYPE = 4 
@@ -687,6 +699,281 @@ typedef Curve_set_container::const_iterator     Curve_set_const_iterator;
 typedef Curve_set_container::iterator           Curve_set_iterator;
 
 
+class State_current{
+  // a conatiner which deletes an object when last shared_ptr gets deleted or
+  // re-initiated
+
+
+  // COMPLEMENT_OP = 0
+  // INTERSECTION_OP = 1
+  // UNION_OP = 2
+  // DIFFERENCE_OP = 3
+  // SYMMETRIC_dIFFERENCE_OP = 4
+  // MINKOWSKI_SUM_OP = 5
+  // COPY_OP = 6
+  // MOVE_OP = 7
+  // PASTE_OP = 8
+  // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+  // START_OP = 11
+
+public:
+  State_current( size_t operation_name, size_t aType);
+
+public:
+  Curve_set& set(size_t aGroup) { return m_curve_sets[aGroup]; }
+  //gets which group is currently active now
+  //size_t active_group() const { return m_color_active; }
+  // size_t complement_group() const {return m_color_complement; } //see if needed
+
+  //sets the current active group
+  Curve_set& active_set(size_t m_color_active)  { return set(m_color_active); }
+
+
+  //size_t move_group() const { return m_color_move; }
+  Curve_set& move_set(size_t m_color_move)  { return set(m_color_move); }
+
+  //setting curve
+  Curve_set& blue_set() { return set(BLUE_GROUP); }
+  Curve_set& red_set() { return set(RED_GROUP); }
+  Curve_set& black_set() { return set(BLACK_GROUP); }
+  Curve_set& brown_set() { return set(BROWN_GROUP); }
+  Curve_set& yellow_set() { return set(YELLOW_GROUP); }
+  Curve_set& magenta_set() { return set(MAGENTA_GROUP); }
+  Curve_set& aqua_set() { return set(AQUA_GROUP); }
+  Curve_set& result_set(){return set(RESULT_GROUP);}
+
+  void ToogleView(size_t aGROUP, bool a_check) 
+  {
+    if (a_check) set(aGROUP).gi()->show();
+    else set(aGROUP).gi()->hide();
+  }
+
+  //returns circular containers
+  // Circular_region_source_container const& states_stack.back().blue_circular_sources() const
+  // { return m_blue_circular_sources; }
+
+  Circular_region_source_container& blue_circular_sources()
+  { return m_blue_circular_sources; }
+
+  // Circular_region_source_container const& red_circular_sources () const
+  // { return m_red_circular_sources; }
+
+  Circular_region_source_container& red_circular_sources()
+  { return m_red_circular_sources; }
+
+  // Circular_region_source_container const& red_circular_sources () const
+  // { return m_red_circular_sources; }
+
+  Circular_region_source_container& black_circular_sources()
+  { return m_black_circular_sources; }
+
+  Circular_region_source_container& brown_circular_sources()
+  { return m_brown_circular_sources; }
+
+  Circular_region_source_container& yellow_circular_sources()
+  { return m_yellow_circular_sources; }
+
+  Circular_region_source_container& magenta_circular_sources()
+  { return m_magenta_circular_sources; }
+
+  Circular_region_source_container& aqua_circular_sources()
+  { return m_aqua_circular_sources; }
+
+  Circular_region_source_container& result_circular_sources()
+  { return m_result_circular_sources; }
+
+
+  //returns linear containers
+  // Linear_region_source_container const& states_stack.back().blue_linear_sources() const
+  // { return m_blue_linear_sources; }
+  Linear_region_source_container& blue_linear_sources()
+  { return m_blue_linear_sources; }
+
+  // Linear_region_source_container const& red_linear_sources () const
+  // { return m_red_linear_sources; }
+
+  Linear_region_source_container& red_linear_sources()
+  { return m_red_linear_sources; }
+
+  Linear_region_source_container& black_linear_sources()
+  { return m_black_linear_sources; }
+
+  Linear_region_source_container& brown_linear_sources()
+  { return m_brown_linear_sources; }
+
+  Linear_region_source_container& yellow_linear_sources()
+  { return m_yellow_linear_sources; }
+
+  Linear_region_source_container& magenta_linear_sources()
+  { return m_magenta_linear_sources; }
+
+  Linear_region_source_container& aqua_linear_sources()
+  { return m_aqua_linear_sources; }
+
+  Linear_region_source_container& result_linear_sources()
+  { return m_result_linear_sources; }
+
+
+//Same for Bezier 
+
+  Bezier_region_source_container& blue_bezier_sources()
+  { return m_blue_bezier_sources; }
+
+  Bezier_region_source_container& red_bezier_sources()
+  { return m_red_bezier_sources; }
+
+  Bezier_region_source_container& black_bezier_sources()
+  { return m_black_bezier_sources; }
+
+  Bezier_region_source_container& brown_bezier_sources()
+  { return m_brown_bezier_sources; }
+
+  Bezier_region_source_container& yellow_bezier_sources()
+  { return m_yellow_bezier_sources; }
+
+  Bezier_region_source_container& magenta_bezier_sources()
+  { return m_magenta_bezier_sources; }
+
+  Bezier_region_source_container& aqua_bezier_sources()
+  { return m_aqua_bezier_sources; }
+
+  Bezier_region_source_container& result_bezier_sources()
+  { return m_result_bezier_sources; }
+
+  //returns active blue container
+  // Circular_region_source_container const& states_stack.back().active_circular_sources(m_color_active) const
+  // { return m_blue_active ? m_blue_circular_sources : m_red_circular_sources; }
+
+
+
+  Circular_region_source_container& active_circular_sources(size_t m_color_active)
+  {
+    //return m_blue_active ? m_blue_circular_sources : m_red_circular_sources;
+    switch(m_color_active) {
+     case 0: return m_blue_circular_sources;
+     case 1: return m_red_circular_sources;
+     case 2: return m_black_circular_sources;
+     case 3: return m_brown_circular_sources;
+     case 4: return m_yellow_circular_sources;
+     case 5: return m_magenta_circular_sources;
+     case 6: return m_aqua_circular_sources;
+     case 7: return m_result_circular_sources;
+
+
+     default: break;
+    }
+
+    CGAL_warning_msg(true, "Should not reach here!");
+    return m_blue_circular_sources;
+  }
+
+  //returns active linear container
+  //  Linear_region_source_container const& states_stack.back().active_linear_sources(m_color_active) const
+  // { return m_blue_active ? m_blue_linear_sources : m_red_linear_sources; }
+
+  Linear_region_source_container& active_linear_sources(size_t m_color_active)
+  {
+    //return m_blue_active ? m_blue_linear_sources : m_red_linear_sources;
+    switch(m_color_active) {
+     case 0: return m_blue_linear_sources;
+     case 1: return m_red_linear_sources;
+     case 2: return m_black_linear_sources;
+     case 3: return m_brown_linear_sources;
+     case 4: return m_yellow_linear_sources;
+     case 5: return m_magenta_linear_sources;
+     case 6: return m_aqua_linear_sources;
+     case 7: return m_result_linear_sources;
+
+     default: break;
+    }
+
+    CGAL_warning_msg(true, "Should not reach here!");
+    return m_blue_linear_sources;
+  }
+
+  Bezier_region_source_container& active_bezier_sources(size_t m_color_active)
+  {
+    //return m_blue_active ? m_blue_linear_sources : m_red_linear_sources;
+    switch(m_color_active) {
+     case 0: return m_blue_bezier_sources;
+     case 1: return m_red_bezier_sources;
+     case 2: return m_black_bezier_sources;
+     case 3: return m_brown_bezier_sources;
+     case 4: return m_yellow_bezier_sources;
+     case 5: return m_magenta_bezier_sources;
+     case 6: return m_aqua_bezier_sources;
+     case 7: return m_result_bezier_sources;
+
+     default: break;
+    }
+
+    CGAL_warning_msg(true, "Should not reach here!");
+    return m_blue_bezier_sources;
+  }
+
+public:
+  Curve_set_container m_curve_sets;
+  //container for curves
+  Circular_region_source_container m_blue_circular_sources;
+  Circular_region_source_container m_red_circular_sources;
+  Circular_region_source_container m_black_circular_sources;
+  Circular_region_source_container m_brown_circular_sources;
+  Circular_region_source_container m_yellow_circular_sources;
+  Circular_region_source_container m_magenta_circular_sources;
+  Circular_region_source_container m_aqua_circular_sources;
+
+  Circular_region_source_container m_result_circular_sources;
+
+  Linear_region_source_container m_blue_linear_sources;
+  Linear_region_source_container m_red_linear_sources;
+  Linear_region_source_container m_black_linear_sources;
+  Linear_region_source_container m_brown_linear_sources;
+  Linear_region_source_container m_yellow_linear_sources;
+  Linear_region_source_container m_magenta_linear_sources;
+  Linear_region_source_container m_aqua_linear_sources;
+
+  Linear_region_source_container m_result_linear_sources;
+
+  Bezier_region_source_container m_blue_bezier_sources;
+  Bezier_region_source_container m_red_bezier_sources;
+  Bezier_region_source_container m_black_bezier_sources;
+  Bezier_region_source_container m_brown_bezier_sources;
+  Bezier_region_source_container m_yellow_bezier_sources;
+  Bezier_region_source_container m_magenta_bezier_sources;
+  Bezier_region_source_container m_aqua_bezier_sources;
+
+  Bezier_region_source_container m_result_bezier_sources;
+
+  //size_t m_state_num;
+  size_t m_operation;
+  size_t m_type;
+
+};
+
+State_current::State_current(size_t operation_name, size_t aType) : m_operation(operation_name), m_type(aType)
+{
+  // for setting Curve_set of aGroup type an int representing a set of polygon
+  // of a specific type
+
+  //default setups with Linear
+  m_curve_sets.push_back(Curve_set(m_type, sPens[BLUE_GROUP], sBrushes[BLUE_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[RED_GROUP], sBrushes[RED_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[BLACK_GROUP],sBrushes[BLACK_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[BROWN_GROUP],sBrushes[BROWN_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[YELLOW_GROUP],sBrushes[YELLOW_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[MAGENTA_GROUP],sBrushes[MAGENTA_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[AQUA_GROUP], sBrushes[AQUA_GROUP]));
+  m_curve_sets.push_back(Curve_set(m_type, sPens[RESULT_GROUP], sBrushes[RESULT_GROUP]));
+}
+
+//State::
+
+typedef std::vector<State_current>                  state_container;
+
+typedef state_container::const_iterator     state_const_iterator;
+typedef state_container::iterator           state_iterator;
+
 class MainWindow : public CGAL::Qt::DemosMainWindow ,
                    public Ui::Boolean_set_operations_2
 {
@@ -760,45 +1047,15 @@ private:
   bool minkowksi_sum_operated;
   bool m_disjoint;
 
-  Curve_set_container m_curve_sets;
-  //container for curves
-  Circular_region_source_container m_blue_circular_sources;
-  Circular_region_source_container m_red_circular_sources;
-  Circular_region_source_container m_black_circular_sources;
-  Circular_region_source_container m_brown_circular_sources;
-  Circular_region_source_container m_yellow_circular_sources;
-  Circular_region_source_container m_magenta_circular_sources;
-  Circular_region_source_container m_aqua_circular_sources;
+  size_t m_state_num;
 
-  Circular_region_source_container m_result_circular_sources;
-  Circular_region_source_container m_comp_circular_sources;
-
-  Linear_region_source_container m_blue_linear_sources;
-  Linear_region_source_container m_red_linear_sources;
-  Linear_region_source_container m_black_linear_sources;
-  Linear_region_source_container m_brown_linear_sources;
-  Linear_region_source_container m_yellow_linear_sources;
-  Linear_region_source_container m_magenta_linear_sources;
-  Linear_region_source_container m_aqua_linear_sources;
-
-  Linear_region_source_container m_result_linear_sources;
-  Linear_region_source_container m_comp_linear_sources;
-
-  Bezier_region_source_container m_blue_bezier_sources;
-  Bezier_region_source_container m_red_bezier_sources;
-  Bezier_region_source_container m_black_bezier_sources;
-  Bezier_region_source_container m_brown_bezier_sources;
-  Bezier_region_source_container m_yellow_bezier_sources;
-  Bezier_region_source_container m_magenta_bezier_sources;
-  Bezier_region_source_container m_aqua_bezier_sources;
-
-  Bezier_region_source_container m_result_bezier_sources;
-  Bezier_region_source_container m_comp_bezier_sources;
-
-  QGraphicsLineItem *xAxis = new QGraphicsLineItem();
-  QGraphicsLineItem *yAxis = new QGraphicsLineItem();
+  QGraphicsLineItem *xAxis  = new QGraphicsLineItem();
+  QGraphicsLineItem *yAxis  = new QGraphicsLineItem();
 
   //typedefs of classes used to draw circular and linear polygon
+
+  state_container states_stack;
+
   CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>* m_linear_input;
   CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>* m_circular_input;
   CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* m_bezier_input ;
@@ -810,7 +1067,6 @@ private:
   void dragEnterEvent(QDragEnterEvent* event);
   void dropEvent(QDropEvent* event);
   void zoomToFit();
-  void ToogleView(size_t aGROUP, bool a_check);
   
 
 protected slots:
@@ -819,6 +1075,7 @@ protected slots:
 
 public slots:
   void processInput(CGAL::Object o);
+  void on_actionUndo_triggered();
   void on_actionNew_triggered();
   void on_actionAxis_triggered();
   void on_actionRecenter_triggered();
@@ -957,6 +1214,150 @@ signals:
   void changed();
 
 private:
+  // void change_state_type(State_current m_state_x, int aType)
+  // {
+  //   switch_set_type(m_state_x.blue_set(), aType);
+  //   switch_set_type(m_state_x.red_set(), aType);
+  //   switch_set_type(m_state_x.black_set(), aType);
+  //   switch_set_type(m_state_x.brown_set(), aType);
+  //   switch_set_type(m_state_x.yellow_set(), aType);
+  //   switch_set_type(m_state_x.magenta_set(), aType);
+  //   switch_set_type(m_state_x.aqua_set(), aType);
+  //   switch_set_type(m_state_x.result_set(), aType);
+  // }
+
+  void get_new_state(size_t operation_name)
+  {
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // DRAWPOL_OP = 11
+    // START_OP = 12
+
+    if(operation_name == 12)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        State_current m_state = State_current(operation_name, 1);
+        states_stack.push_back(m_state);
+        states_stack.back();
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        { link_GI(si->gi());}
+      }
+      else if(!m_bezier_active)
+      {
+        State_current m_state = State_current(operation_name, 2);
+        states_stack.push_back(m_state);
+        states_stack.back();
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        { link_GI(si->gi());}
+      }
+      else
+      {
+        State_current m_state = State_current(operation_name, 3);
+        states_stack.push_back(m_state);
+        states_stack.back();
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        { link_GI(si->gi());}
+      }
+    }
+    else
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        State_current m_state_x = State_current(operation_name, 1);
+
+        for (int i=0;i<8;i++)
+        {
+          m_state_x.m_curve_sets[i].assign(states_stack.back().m_curve_sets[i]);     
+        }
+
+        modelChanged();
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        {  unlink_GI(si->gi());}
+        
+        modelChanged();
+
+        states_stack.push_back(m_state_x);
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        {  link_GI(si->gi());}
+
+        modelChanged();
+
+      }
+      else if(!m_bezier_active)
+      {
+        State_current m_state_x = State_current(operation_name, 2);
+
+
+        for (int i=0;i<8;i++)
+        {
+          m_state_x.m_curve_sets[i].assign(states_stack.back().m_curve_sets[i]);     
+        }
+
+        modelChanged();
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        {  unlink_GI(si->gi());}
+        
+        modelChanged();
+
+        states_stack.push_back(m_state_x);
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        {  link_GI(si->gi());}
+
+        modelChanged();
+      }
+      else
+      {
+        State_current m_state_x = State_current(operation_name, 3);
+
+        for (int i=0;i<8;i++)
+        {
+          m_state_x.m_curve_sets[i].assign(states_stack.back().m_curve_sets[i]);     
+        }
+
+        modelChanged();
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        {  unlink_GI(si->gi());}
+        
+        modelChanged();
+
+        states_stack.push_back(m_state_x);
+
+        for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+        {  link_GI(si->gi());}
+
+        modelChanged();
+
+      }
+    }
+
+    m_state_num = states_stack.size();
+
+    actionUndo->setEnabled(true);
+
+    // for confirming the num of each state during debugging
+    //show_warning("State num: "+to_string(states_stack.size()));
+    modelChanged();
+  }
+
   void modelChanged() { emit(changed()); }
 
   //warning message for user
@@ -972,207 +1373,7 @@ private:
     QMessageBox::warning(this,QString(aTitle.c_str()), QString(aQuestion.c_str()));
   }
 
-  // for setting Curve_set of aGroup type an int representing a set of polygon
-  // of a specific type
-  Curve_set& set(size_t aGroup) { return m_curve_sets[aGroup]; }
 
-  //setting curve
-  Curve_set& blue_set() { return set(BLUE_GROUP); }
-  Curve_set& red_set() { return set(RED_GROUP); }
-  Curve_set& black_set() { return set(BLACK_GROUP); }
-  Curve_set& brown_set() { return set(BROWN_GROUP); }
-  Curve_set& yellow_set() { return set(YELLOW_GROUP); }
-  Curve_set& magenta_set() { return set(MAGENTA_GROUP); }
-  Curve_set& aqua_set() { return set(AQUA_GROUP); }
-  Curve_set& result_set(){return set(RESULT_GROUP);}
-  Curve_set& comp_set(){return set(COMP_GROUP);}
-
-  //gets which group is currently active now
-  size_t active_group() const { return m_color_active; }
-  // size_t complement_group() const {return m_color_complement; } //see if needed
-
-  //sets the current active group
-  Curve_set& active_set()  { return set(active_group()); }
-
-
-  size_t move_group() const { return m_color_move; }
-  Curve_set& move_set()  { return set(move_group()); }
-
-  //returns circular containers
-  // Circular_region_source_container const& blue_circular_sources() const
-  // { return m_blue_circular_sources; }
-
-  Circular_region_source_container& blue_circular_sources()
-  { return m_blue_circular_sources; }
-
-  // Circular_region_source_container const& red_circular_sources () const
-  // { return m_red_circular_sources; }
-
-  Circular_region_source_container& red_circular_sources()
-  { return m_red_circular_sources; }
-
-  // Circular_region_source_container const& red_circular_sources () const
-  // { return m_red_circular_sources; }
-
-  Circular_region_source_container& black_circular_sources()
-  { return m_black_circular_sources; }
-
-  Circular_region_source_container& brown_circular_sources()
-  { return m_brown_circular_sources; }
-
-  Circular_region_source_container& yellow_circular_sources()
-  { return m_yellow_circular_sources; }
-
-  Circular_region_source_container& magenta_circular_sources()
-  { return m_magenta_circular_sources; }
-
-  Circular_region_source_container& aqua_circular_sources()
-  { return m_aqua_circular_sources; }
-
-  Circular_region_source_container& result_circular_sources()
-  { return m_result_circular_sources; }
-
-  Circular_region_source_container& comp_circular_sources()
-  { return m_comp_circular_sources; }
-
-
-
-
-  //returns linear containers
-  // Linear_region_source_container const& blue_linear_sources() const
-  // { return m_blue_linear_sources; }
-  Linear_region_source_container& blue_linear_sources()
-  { return m_blue_linear_sources; }
-
-  // Linear_region_source_container const& red_linear_sources () const
-  // { return m_red_linear_sources; }
-
-  Linear_region_source_container& red_linear_sources()
-  { return m_red_linear_sources; }
-
-  Linear_region_source_container& black_linear_sources()
-  { return m_black_linear_sources; }
-
-  Linear_region_source_container& brown_linear_sources()
-  { return m_brown_linear_sources; }
-
-  Linear_region_source_container& yellow_linear_sources()
-  { return m_yellow_linear_sources; }
-
-  Linear_region_source_container& magenta_linear_sources()
-  { return m_magenta_linear_sources; }
-
-  Linear_region_source_container& aqua_linear_sources()
-  { return m_aqua_linear_sources; }
-
-  Linear_region_source_container& result_linear_sources()
-  { return m_result_linear_sources; }
-
-  Linear_region_source_container& comp_linear_sources()
-  { return m_comp_linear_sources; }
-
-
-
-//Same for Bezier 
-
-  Bezier_region_source_container& blue_bezier_sources()
-  { return m_blue_bezier_sources; }
-
-  Bezier_region_source_container& red_bezier_sources()
-  { return m_red_bezier_sources; }
-
-  Bezier_region_source_container& black_bezier_sources()
-  { return m_black_bezier_sources; }
-
-  Bezier_region_source_container& brown_bezier_sources()
-  { return m_brown_bezier_sources; }
-
-  Bezier_region_source_container& yellow_bezier_sources()
-  { return m_yellow_bezier_sources; }
-
-  Bezier_region_source_container& magenta_bezier_sources()
-  { return m_magenta_bezier_sources; }
-
-  Bezier_region_source_container& aqua_bezier_sources()
-  { return m_aqua_bezier_sources; }
-
-  Bezier_region_source_container& result_bezier_sources()
-  { return m_result_bezier_sources; }
-
-  Bezier_region_source_container& comp_bezier_sources()
-  { return m_comp_bezier_sources; }
-
-
-  //returns active blue container
-  // Circular_region_source_container const& active_circular_sources() const
-  // { return m_blue_active ? m_blue_circular_sources : m_red_circular_sources; }
-
-
-
-  Circular_region_source_container& active_circular_sources()
-  {
-    //return m_blue_active ? m_blue_circular_sources : m_red_circular_sources;
-    switch(m_color_active) {
-     case 0: return m_blue_circular_sources;
-     case 1: return m_red_circular_sources;
-     case 2: return m_black_circular_sources;
-     case 3: return m_brown_circular_sources;
-     case 4: return m_yellow_circular_sources;
-     case 5: return m_magenta_circular_sources;
-     case 6: return m_aqua_circular_sources;
-     case 7: return m_result_circular_sources;
-
-
-     default: break;
-    }
-
-    CGAL_warning_msg(true, "Should not reach here!");
-    return m_blue_circular_sources;
-  }
-
-  //returns active linear container
-  //  Linear_region_source_container const& active_linear_sources() const
-  // { return m_blue_active ? m_blue_linear_sources : m_red_linear_sources; }
-
-  Linear_region_source_container& active_linear_sources()
-  {
-    //return m_blue_active ? m_blue_linear_sources : m_red_linear_sources;
-    switch(m_color_active) {
-     case 0: return m_blue_linear_sources;
-     case 1: return m_red_linear_sources;
-     case 2: return m_black_linear_sources;
-     case 3: return m_brown_linear_sources;
-     case 4: return m_yellow_linear_sources;
-     case 5: return m_magenta_linear_sources;
-     case 6: return m_aqua_linear_sources;
-     case 7: return m_result_linear_sources;
-
-     default: break;
-    }
-
-    CGAL_warning_msg(true, "Should not reach here!");
-    return m_blue_linear_sources;
-  }
-
-  Bezier_region_source_container& active_bezier_sources()
-  {
-    //return m_blue_active ? m_blue_linear_sources : m_red_linear_sources;
-    switch(m_color_active) {
-     case 0: return m_blue_bezier_sources;
-     case 1: return m_red_bezier_sources;
-     case 2: return m_black_bezier_sources;
-     case 3: return m_brown_bezier_sources;
-     case 4: return m_yellow_bezier_sources;
-     case 5: return m_magenta_bezier_sources;
-     case 6: return m_aqua_bezier_sources;
-     case 7: return m_result_bezier_sources;
-
-     default: break;
-    }
-
-    CGAL_warning_msg(true, "Should not reach here!");
-    return m_blue_bezier_sources;
-  }
 
   void SetViewBlue(bool a_check) { showBlue->setChecked(a_check); }
   void SetViewRed(bool a_check) { showRed->setChecked(a_check); }
@@ -1184,7 +1385,7 @@ private:
   void SetViewResult(bool a_check) { showResult->setChecked(a_check); }
 
   //changes the set of polygons of a specific type
-  //void ToogleView(size_t aGROUP, bool a_check);
+  //void states_stack.back().ToogleView(size_t aGROUP, bool a_check);
 
   void link_GI(CGAL::Qt::GraphicsItem* aGI)
   {
@@ -1261,7 +1462,8 @@ MainWindow::MainWindow() :
   empty_warn(true), // default
   m_disjoint(false), //default
   m_pan(false),
-  m_grid(false)
+  m_grid(false),
+  m_state_num(0)
 {
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
@@ -1270,19 +1472,6 @@ MainWindow::MainWindow() :
   setupUi(this);  
 
   setAcceptDrops(true);
-  //default setups with Linear
-  m_curve_sets.push_back(Curve_set(1, sPens[BLUE_GROUP], sBrushes[BLUE_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[RED_GROUP], sBrushes[RED_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[BLACK_GROUP],sBrushes[BLACK_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[BROWN_GROUP],sBrushes[BROWN_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[YELLOW_GROUP],sBrushes[YELLOW_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[MAGENTA_GROUP],sBrushes[MAGENTA_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[AQUA_GROUP], sBrushes[AQUA_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[RESULT_GROUP], sBrushes[RESULT_GROUP]));
-  m_curve_sets.push_back(Curve_set(1, sPens[COMP_GROUP], sBrushes[COMP_GROUP]));
-
-  for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si)
-    link_GI(si->gi());
   //
   // Setup the m_scene and the view
   //
@@ -1312,6 +1501,29 @@ MainWindow::MainWindow() :
 
   this->addRecentFiles(this->menuFile, this->actionClose);
 
+
+  // COMPLEMENT_OP = 0
+  // INTERSECTION_OP = 1
+  // UNION_OP = 2
+  // DIFFERENCE_OP = 3
+  // SYMMETRIC_dIFFERENCE_OP = 4
+  // MINKOWSKI_SUM_OP = 5
+  // COPY_OP = 6
+  // MOVE_OP = 7
+  // PASTE_OP = 8
+  // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+  //DrawPoly_OP = 11
+  //LinearPoly_OP = 12
+  //CircularPoly_OP = 13
+  //BezierPoly_OP = 14
+  // START_OP = 15
+
+  //initializing and pushing first state in States_stack
+  get_new_state(12);
+  actionUndo->setEnabled(false);
+
+
   //initializing classes to draw respective polygons using mouse
   m_bezier_input = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>(this, &m_scene);
   m_linear_input = new CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>(this, &m_scene);
@@ -1326,24 +1538,6 @@ MainWindow::MainWindow() :
   QObject::connect(m_bezier_input, SIGNAL(generate(CGAL::Object)), this,
                    SLOT(processInput(CGAL::Object)));
 
-  //m_linear_input -> get_BoundingRect();
-
-  // QObject::connect(actionComplementH, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionComplementH_toggled(bool)));
-  // QObject::connect(actionUnionH, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionUnionH_toggled(bool)));
-  // QObject::connect(actionIntersectionH, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionIntersectionH_toggled(bool)));
-  // QObject::connect(actionDifferenceH, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionDifferenceH_toggled(bool)));
-  // QObject::connect(actionSymmetric_DifferenceH, SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionSymmetric_DifferenceH_toggled(bool)));
-  // QObject::connect(actionMinkowski_SumH , SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionMinkowski_SumH_toggled(bool)));
-
-  // QObject::connect(actionClearH , SIGNAL(toggled(bool)), this,
-  //                  SLOT(on_actionClearH_toggled(bool)));
-  
   m_scene.installEventFilter(m_linear_input);
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this,
                     SLOT(close()));
@@ -1364,11 +1558,6 @@ MainWindow::MainWindow() :
   QObject::connect(drawAqua , SIGNAL(toggled(bool)), this,
                    SLOT(on_drawAqua_toggled(bool)));
 
-
-  //QObject::connect(actionPAN,SIGNAL(toggled(bool)), this,
-    //         SLOT(on_actionPAN_toggled(bool)));
-  //QObject::connect(Minkowksi_Sum,SIGNAL(toggled(bool)), this,
-    //         SLOT(on_actionMinkMode_toggled(bool)));
   QObject::connect(showBlue, SIGNAL(toggled(bool)), this,
                    SLOT(on_showBlue_toggled(bool)));
   QObject::connect(showRed, SIGNAL(toggled(bool)), this,
@@ -1574,12 +1763,13 @@ MainWindow::MainWindow() :
   m_linear_input -> mLinearGI -> setPen(sPens[0]);
   m_linear_input -> mHandleGI -> setPen(sPens[0]);
 
-  blue_set().clear();red_set().clear();black_set().clear();brown_set().clear();yellow_set().clear();magenta_set().clear();aqua_set().clear();
+  states_stack.back().blue_set().clear();states_stack.back().red_set().clear();states_stack.back().black_set().clear();states_stack.back().brown_set().clear();states_stack.back().yellow_set().clear();states_stack.back().magenta_set().clear();states_stack.back().aqua_set().clear();
 }
+
 
 void MainWindow::on_showBlue_toggled(bool a_check)
 { 
-	ToogleView(BLUE_GROUP, a_check); 
+	states_stack.back().ToogleView(BLUE_GROUP, a_check); 
 	if(a_check) m_color_visible++;
 	else m_color_visible--;
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
@@ -1587,7 +1777,7 @@ void MainWindow::on_showBlue_toggled(bool a_check)
 }
 
 void MainWindow::on_showRed_toggled(bool a_check)
-{ ToogleView(RED_GROUP, a_check); 
+{ states_stack.back().ToogleView(RED_GROUP, a_check); 
 	if(a_check) m_color_visible++;
 	else m_color_visible--;
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
@@ -1595,7 +1785,7 @@ void MainWindow::on_showRed_toggled(bool a_check)
 }
 
 void MainWindow::on_showBlack_toggled(bool a_check)
-{ ToogleView(BLACK_GROUP, a_check); 
+{ states_stack.back().ToogleView(BLACK_GROUP, a_check); 
 	if(a_check) m_color_visible++;
 	else m_color_visible--;
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
@@ -1603,7 +1793,7 @@ void MainWindow::on_showBlack_toggled(bool a_check)
 }
 
 void MainWindow::on_showBrown_toggled(bool a_check)
-{ ToogleView(BROWN_GROUP, a_check);
+{ states_stack.back().ToogleView(BROWN_GROUP, a_check);
 	if(a_check) m_color_visible++;
 	else m_color_visible--;
 	if (m_color_visible==7) VisibleHeader->setChecked(true); 
@@ -1611,7 +1801,7 @@ void MainWindow::on_showBrown_toggled(bool a_check)
 }
 
 void MainWindow::on_showYellow_toggled(bool a_check)
-{ ToogleView(YELLOW_GROUP, a_check); 
+{ states_stack.back().ToogleView(YELLOW_GROUP, a_check); 
 	if(a_check) m_color_visible++;
 	else m_color_visible--;
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
@@ -1619,7 +1809,7 @@ void MainWindow::on_showYellow_toggled(bool a_check)
 }
 
 void MainWindow::on_showMagenta_toggled(bool a_check)
-{ ToogleView(MAGENTA_GROUP, a_check);
+{ states_stack.back().ToogleView(MAGENTA_GROUP, a_check);
 	if(a_check) m_color_visible++;
 	else m_color_visible--; 
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
@@ -1627,7 +1817,7 @@ void MainWindow::on_showMagenta_toggled(bool a_check)
 }
 
 void MainWindow::on_showAqua_toggled(bool a_check)
-{ ToogleView(AQUA_GROUP, a_check);
+{ states_stack.back().ToogleView(AQUA_GROUP, a_check);
 	if(a_check) m_color_visible++;
 	else m_color_visible--;
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
@@ -1635,7 +1825,7 @@ void MainWindow::on_showAqua_toggled(bool a_check)
 }
 
 void MainWindow::on_showResult_toggled(bool a_check)
-{ ToogleView(RESULT_GROUP, a_check);}
+{ states_stack.back().ToogleView(RESULT_GROUP, a_check);}
 
 void MainWindow::on_VisibleHeader_toggled(bool a_check)
 {
@@ -3270,13 +3460,13 @@ void MainWindow::on_actionMinusColor_triggered()
 
   if (!(m_visible_yellow || m_visible_magenta || m_visible_aqua))
   { 
-    m_curve_sets[3].clear();
-    //m_curve_sets[7].clear();
+    states_stack.back().m_curve_sets[3].clear();
+    //states_stack.back().m_curve_sets[7].clear();
     m_color_active = 0;
 
-    brown_circular_sources().clear();
-    brown_linear_sources().clear();
-    brown_bezier_sources().clear();
+    states_stack.back().brown_circular_sources().clear();
+    states_stack.back().brown_linear_sources().clear();
+    states_stack.back().brown_bezier_sources().clear();
 
     m_visible_brown = false;
     showBrown -> setVisible(false);
@@ -3325,12 +3515,12 @@ void MainWindow::on_actionMinusColor_triggered()
 
   else if (!(m_visible_magenta || m_visible_aqua))
   { 
-    m_curve_sets[4].clear();
+    states_stack.back().m_curve_sets[4].clear();
     m_color_active = 0;
 
-    yellow_circular_sources().clear();
-    yellow_linear_sources().clear();
-    yellow_bezier_sources().clear();
+    states_stack.back().yellow_circular_sources().clear();
+    states_stack.back().yellow_linear_sources().clear();
+    states_stack.back().yellow_bezier_sources().clear();
 
     m_visible_yellow = false;
     showYellow -> setVisible(false);
@@ -3374,12 +3564,12 @@ void MainWindow::on_actionMinusColor_triggered()
 
   else if (! m_visible_aqua)
   { 
-    m_curve_sets[5].clear();
+    states_stack.back().m_curve_sets[5].clear();
     m_color_active = 0;
 
-    magenta_circular_sources().clear();
-    magenta_linear_sources().clear();
-    magenta_bezier_sources().clear();
+    states_stack.back().magenta_circular_sources().clear();
+    states_stack.back().magenta_linear_sources().clear();
+    states_stack.back().magenta_bezier_sources().clear();
 
     m_visible_magenta = false;
     showMagenta -> setVisible(false);
@@ -3422,13 +3612,12 @@ void MainWindow::on_actionMinusColor_triggered()
 
   else
   {
-
-    m_curve_sets[6].clear();
+    states_stack.back().m_curve_sets[6].clear();
     m_color_active = 0;
 
-    aqua_circular_sources().clear();
-    aqua_linear_sources().clear();
-    aqua_bezier_sources().clear();
+    states_stack.back().aqua_circular_sources().clear();
+    states_stack.back().aqua_linear_sources().clear();
+    states_stack.back().aqua_bezier_sources().clear();
 
 
     m_visible_aqua = false;
@@ -3473,48 +3662,91 @@ void MainWindow::on_actionMinusColor_triggered()
   modelChanged();
 }
 
+void MainWindow::on_actionUndo_triggered()
+{
+  if(m_state_num > 1)
+  {
+    
+    //unlink GI for last state
+    for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+    {  unlink_GI(si->gi());}
 
+    modelChanged();
+
+    // pop last state
+    states_stack.pop_back();
+
+    //modelChanged();
+
+    for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
+    { link_GI(si->gi());}
+
+    if(states_stack.size()==1)
+    {
+      actionUndo->setEnabled(false);
+    }
+
+    m_state_num = states_stack.size();
+    
+    // for confirming the num of each state during debugging
+    // show_error("State num: "+to_string(states_stack.size()));
+    modelChanged();
+  }
+  else
+  {
+    show_error("Nothing to Undo!!!");
+  }
+
+}
+ 
 //////////////#################################
 void MainWindow::on_actionNew_triggered()       
 {
-  for( Curve_set_iterator si = m_curve_sets.begin(); si != m_curve_sets.end() ; ++ si )
+  while(m_state_num>1)
+  {
+    on_actionUndo_triggered();
+  }
+
+  // get_new_state(12);
+
+  for( Curve_set_iterator si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end() ; ++ si )
     si->clear();
 
   this->graphicsView->setSceneRect(-320, -210, 640, 420);
 
-  result_set().clear();
-  blue_set().clear();
-  black_set().clear();
-  brown_set().clear();
-  red_set().clear();
-  yellow_set().clear();
-  magenta_set().clear();
-  aqua_set().clear();
+  states_stack.back().result_set().clear();
+  states_stack.back().blue_set().clear();
+  states_stack.back().black_set().clear();
+  states_stack.back().brown_set().clear();
+  states_stack.back().red_set().clear();
+  states_stack.back().yellow_set().clear();
+  states_stack.back().magenta_set().clear();
+  states_stack.back().aqua_set().clear();
 
-  blue_circular_sources().clear();
-  red_circular_sources().clear();
-  black_circular_sources().clear();
-  brown_circular_sources().clear();
-  yellow_circular_sources().clear();
-  magenta_circular_sources().clear();
-  aqua_circular_sources().clear();
-  result_circular_sources().clear();
+  states_stack.back().blue_circular_sources().clear();
+  states_stack.back().red_circular_sources().clear();
+  states_stack.back().black_circular_sources().clear();
+  states_stack.back().brown_circular_sources().clear();
+  states_stack.back().yellow_circular_sources().clear();
+  states_stack.back().magenta_circular_sources().clear();
+  states_stack.back().aqua_circular_sources().clear();
+  states_stack.back().result_circular_sources().clear();
 
-  blue_linear_sources().clear();
-  red_linear_sources().clear();
-  black_linear_sources().clear();
-  brown_linear_sources().clear();
-  yellow_linear_sources().clear();
-  magenta_linear_sources().clear();
-  result_linear_sources().clear();
+  states_stack.back().blue_linear_sources().clear();
+  states_stack.back().red_linear_sources().clear();
+  states_stack.back().black_linear_sources().clear();
+  states_stack.back().brown_linear_sources().clear();
+  states_stack.back().yellow_linear_sources().clear();
+  states_stack.back().magenta_linear_sources().clear();
+  states_stack.back().result_linear_sources().clear();
 
-  blue_bezier_sources().clear();
-  red_bezier_sources().clear();
-  black_bezier_sources().clear();
-  brown_bezier_sources().clear();
-  yellow_bezier_sources().clear();
-  magenta_bezier_sources().clear();
-  result_bezier_sources().clear();
+  states_stack.back().blue_bezier_sources().clear();
+  states_stack.back().red_bezier_sources().clear();
+  states_stack.back().black_bezier_sources().clear();
+  states_stack.back().brown_bezier_sources().clear();
+  states_stack.back().yellow_bezier_sources().clear();
+  states_stack.back().magenta_bezier_sources().clear();
+  states_stack.back().result_bezier_sources().clear();
     
   SetViewBlue  (true);
   SetViewRed   (true);
@@ -3533,13 +3765,18 @@ void MainWindow::on_actionNew_triggered()
   m_disjoint = false;
   // empty_warn = true;
 
-  m_grid = true;
-  on_actionAxis_triggered();
+  if(m_grid)
+  {
+    actionAxis->setChecked(false);
+  }
+
   m_pan = false;
 
   m_linear_input->Reset();
   m_circular_input->Reset();
   m_bezier_input->Reset();
+
+
   
   m_color_active = 0;
   m_color_move = 1111;
@@ -3567,7 +3804,7 @@ void MainWindow::on_actionNew_triggered()
   actionCopyH->setChecked(false);
   actionMoveH->setChecked(false);
   actionPasteH->setChecked(false);
-  actionAxis->setChecked(false);
+  //actionAxis->setChecked(false);
 
   actionComplementH -> setChecked(false);
   actionUnionH -> setChecked(false);
@@ -3818,7 +4055,6 @@ void MainWindow::on_actionNew_triggered()
   line0007 -> setGeometry(QRect(380,0,7,125));
   line0006 -> setGeometry(QRect(70,0,7,125));
 
-  m_scene.update();
   zoomToFit();
   modelChanged();
 }
@@ -3826,15 +4062,32 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::on_actionDeleteAll_triggered()
 {
   bool lDone = false;
-  //bool lProceed = result_set().is_empty() ? true : ask_user_yesno("Store result","All polygons will be deleted\n continue anyway?\n");
+  //bool lProceed = states_stack.back().result_set().is_empty() ? true : ask_user_yesno("Store result","All polygons will be deleted\n continue anyway?\n");
   if (true) {
-    blue_set().clear();blue_circular_sources().clear();blue_bezier_sources().clear();blue_linear_sources().clear();
-    red_set().clear();red_circular_sources().clear();red_bezier_sources().clear();red_linear_sources().clear();
-    black_set().clear();black_circular_sources().clear();black_bezier_sources().clear();black_linear_sources().clear();
-    brown_set().clear();brown_circular_sources().clear();brown_bezier_sources().clear();brown_linear_sources().clear();
-    yellow_set().clear();yellow_circular_sources().clear();yellow_bezier_sources().clear();yellow_linear_sources().clear();
-    magenta_set().clear();magenta_circular_sources().clear();magenta_bezier_sources().clear();magenta_linear_sources().clear();
-    aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();
+
+    get_new_state(10);
+
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
+
+    states_stack.back().blue_set().clear();states_stack.back().blue_circular_sources().clear();states_stack.back().blue_bezier_sources().clear();states_stack.back().blue_linear_sources().clear();
+    states_stack.back().red_set().clear();states_stack.back().red_circular_sources().clear();states_stack.back().red_bezier_sources().clear();states_stack.back().red_linear_sources().clear();
+    states_stack.back().black_set().clear();states_stack.back().black_circular_sources().clear();states_stack.back().black_bezier_sources().clear();states_stack.back().black_linear_sources().clear();
+    states_stack.back().brown_set().clear();states_stack.back().brown_circular_sources().clear();states_stack.back().brown_bezier_sources().clear();states_stack.back().brown_linear_sources().clear();
+    states_stack.back().yellow_set().clear();states_stack.back().yellow_circular_sources().clear();states_stack.back().yellow_bezier_sources().clear();states_stack.back().yellow_linear_sources().clear();
+    states_stack.back().magenta_set().clear();states_stack.back().magenta_circular_sources().clear();states_stack.back().magenta_bezier_sources().clear();states_stack.back().magenta_linear_sources().clear();
+    states_stack.back().aqua_set().clear();states_stack.back().aqua_circular_sources().clear();states_stack.back().aqua_bezier_sources().clear();states_stack.back().aqua_linear_sources().clear();
 
     on_actionDeleteResult();
   }
@@ -3850,7 +4103,7 @@ void MainWindow::on_actionDeleteResult()
     bool lDone  = false;
     bool lProceed;
 
-    /*if(result_set().is_empty()||result_set().is_empty()||result_set().is_empty()||result_set().is_empty()||result_set().is_empty()||result_set().is_empty()||result_set().is_empty())
+    /*if(states_stack.back().result_set().is_empty()||states_stack.back().result_set().is_empty()||states_stack.back().result_set().is_empty()||states_stack.back().result_set().is_empty()||states_stack.back().result_set().is_empty()||states_stack.back().result_set().is_empty()||states_stack.back().result_set().is_empty())
     {
       bool lProceed = ask_user_yesno("Store result","Result will be deleted\n continue anyway?\n");
     }*/
@@ -3858,7 +4111,7 @@ void MainWindow::on_actionDeleteResult()
     if (true)
     {
 
-    result_set().clear();result_circular_sources().clear();result_bezier_sources().clear();result_linear_sources().clear();
+      states_stack.back().result_set().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();states_stack.back().result_linear_sources().clear();
 
       lDone = true;
     }
@@ -3872,60 +4125,76 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 		bool lDone = false;
 		bool lProceed;
 
+    get_new_state(9);
+
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
+
 		if(clearBlue -> isChecked()) 
 		{
-			blue_set().clear();
-			blue_linear_sources().clear();
-			blue_circular_sources().clear();
-			blue_bezier_sources().clear();
+			states_stack.back().blue_set().clear();
+			states_stack.back().blue_linear_sources().clear();
+			states_stack.back().blue_circular_sources().clear();
+			states_stack.back().blue_bezier_sources().clear();
 		}
 
 		if(clearBlack -> isChecked()) 
 		{
-			black_set().clear();
-			black_linear_sources().clear();
-			black_circular_sources().clear();
-			black_bezier_sources().clear();
+			states_stack.back().black_set().clear();
+			states_stack.back().black_linear_sources().clear();
+			states_stack.back().black_circular_sources().clear();
+			states_stack.back().black_bezier_sources().clear();
 		}
 
 		if(clearRed -> isChecked()) 
 		{
-			red_set().clear();
-			red_linear_sources().clear();
-			red_circular_sources().clear();
-			red_bezier_sources().clear();
+			states_stack.back().red_set().clear();
+			states_stack.back().red_linear_sources().clear();
+			states_stack.back().red_circular_sources().clear();
+			states_stack.back().red_bezier_sources().clear();
 		}
 
 		if(clearBrown -> isChecked()) 
 		{
-			brown_set().clear();
-			brown_linear_sources().clear();
-			brown_circular_sources().clear();
-			brown_bezier_sources().clear();
+			states_stack.back().brown_set().clear();
+			states_stack.back().brown_linear_sources().clear();
+			states_stack.back().brown_circular_sources().clear();
+			states_stack.back().brown_bezier_sources().clear();
 		}
 
 		if(clearYellow -> isChecked()) 
 		{
-			yellow_set().clear();
-			yellow_linear_sources().clear();
-			yellow_circular_sources().clear();
-			yellow_bezier_sources().clear();
+			states_stack.back().yellow_set().clear();
+			states_stack.back().yellow_linear_sources().clear();
+			states_stack.back().yellow_circular_sources().clear();
+			states_stack.back().yellow_bezier_sources().clear();
 		}
 
 		if(clearMagenta -> isChecked()) 
 		{
-			magenta_set().clear();
-			magenta_linear_sources().clear();
-			magenta_circular_sources().clear();
-			magenta_bezier_sources().clear();
+			states_stack.back().magenta_set().clear();
+			states_stack.back().magenta_linear_sources().clear();
+			states_stack.back().magenta_circular_sources().clear();
+			states_stack.back().magenta_bezier_sources().clear();
 		}
 
 		if(clearAqua -> isChecked()) 
 		{
-			aqua_set().clear();
-			aqua_linear_sources().clear();
-			aqua_circular_sources().clear();
-			aqua_bezier_sources().clear();
+			states_stack.back().aqua_set().clear();
+			states_stack.back().aqua_linear_sources().clear();
+			states_stack.back().aqua_circular_sources().clear();
+			states_stack.back().aqua_bezier_sources().clear();
 		}
 
 		if(!(clearBlue -> isChecked()) && !(clearRed -> isChecked()) && !(clearBlack -> isChecked()) && !(clearBrown -> isChecked()) && !(clearYellow -> isChecked()) && !(clearMagenta -> isChecked()) && !(clearAqua -> isChecked()))
@@ -3946,13 +4215,13 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 void MainWindow::on_drawBlue_toggled(bool /* a_check */) 
 { 
   m_color_active = 0; 
-  if(blue_set().is_linear())
+  if(states_stack.back().blue_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
     m_linear_input -> mLinearGI -> setPen(sPens[0]);
     m_linear_input -> mHandleGI -> setPen(sPens[0]);
   }
-  else if (blue_set().is_circular())
+  else if (states_stack.back().blue_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[0]);
     m_circular_input -> mCircularGI -> setPen(sPens[0]);
@@ -3970,13 +4239,13 @@ void MainWindow::on_drawRed_toggled(bool /* a_check */)
 { 
   m_color_active = 1; 
 
-  if(red_set().is_linear())
+  if(states_stack.back().red_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[1]);
     m_linear_input -> mLinearGI -> setPen(sPens[1]);
     m_linear_input -> mHandleGI -> setPen(sPens[1]);
   }
-  else if (red_set().is_circular())
+  else if (states_stack.back().red_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[1]);
     m_circular_input -> mCircularGI -> setPen(sPens[1]);
@@ -3994,13 +4263,13 @@ void MainWindow::on_drawBlack_toggled(bool /* a_check */)
 {
   m_color_active = 2;
 
-  if(black_set().is_linear())
+  if(states_stack.back().black_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[2]);
     m_linear_input -> mLinearGI -> setPen(sPens[2]);
     m_linear_input -> mHandleGI -> setPen(sPens[2]);
   }
-  else if (black_set().is_circular())
+  else if (states_stack.back().black_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[2]);
     m_circular_input -> mCircularGI -> setPen(sPens[2]);
@@ -4017,13 +4286,13 @@ void MainWindow::on_drawBlack_toggled(bool /* a_check */)
 void MainWindow::on_drawBrown_toggled(bool /* a_check */) 
 { 
   m_color_active = 3; 
-  if(brown_set().is_linear())
+  if(states_stack.back().brown_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[3]);
     m_linear_input -> mLinearGI -> setPen(sPens[3]);
     m_linear_input -> mHandleGI -> setPen(sPens[3]);
   }
-  else if (brown_set().is_circular())
+  else if (states_stack.back().brown_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[3]);
     m_circular_input -> mCircularGI -> setPen(sPens[3]);
@@ -4040,13 +4309,13 @@ void MainWindow::on_drawBrown_toggled(bool /* a_check */)
 void MainWindow::on_drawYellow_toggled(bool /* a_check */) 
 { 
   m_color_active = 4; 
-  if(yellow_set().is_linear())
+  if(states_stack.back().yellow_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[4]);
     m_linear_input -> mLinearGI -> setPen(sPens[4]);
     m_linear_input -> mHandleGI -> setPen(sPens[4]);
   }
-  else if (yellow_set().is_circular())
+  else if (states_stack.back().yellow_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[4]);
     m_circular_input -> mCircularGI -> setPen(sPens[4]);
@@ -4063,13 +4332,13 @@ void MainWindow::on_drawYellow_toggled(bool /* a_check */)
 void MainWindow::on_drawMagenta_toggled(bool /* a_check */) 
 { 
   m_color_active = 5; 
-  if(magenta_set().is_linear())
+  if(states_stack.back().magenta_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[5]);
     m_linear_input -> mLinearGI -> setPen(sPens[5]);
     m_linear_input -> mHandleGI -> setPen(sPens[5]);
   }
-  else if (magenta_set().is_circular())
+  else if (states_stack.back().magenta_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[5]);
     m_circular_input -> mCircularGI -> setPen(sPens[5]);
@@ -4087,13 +4356,13 @@ void MainWindow::on_drawAqua_toggled(bool /* a_check */)
 { 
   m_color_active = 6; 
 
-  if(aqua_set().is_linear())
+  if(states_stack.back().aqua_set().is_linear())
   {
     m_linear_input -> mOngoingPieceGI -> setPen(sPens[6]);
     m_linear_input -> mLinearGI -> setPen(sPens[6]);
     m_linear_input -> mHandleGI -> setPen(sPens[6]);
   }
-  else if (aqua_set().is_circular())
+  else if (states_stack.back().aqua_set().is_circular())
   {
     m_circular_input -> mOngoingPieceGI -> setPen(sPens[6]);
     m_circular_input -> mCircularGI -> setPen(sPens[6]);
@@ -4581,7 +4850,7 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
   {
     if ( !save_circular(QFileDialog::getSaveFileName(this, 
     tr("Save Result Circular Polygon Set"), "../data", tr("Circular Curve files (*.lps)") ) 
-                       ,result_set().circular()
+                       ,states_stack.back().result_set().circular()
                        )
        )
     {
@@ -4593,7 +4862,7 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
   {
     if ( !save_bezier_result(QFileDialog::getSaveFileName(this, 
     tr("Save Result Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
-                            ,result_set().bezier() 
+                            ,states_stack.back().result_set().bezier() 
                             )
        )
     {
@@ -4604,7 +4873,7 @@ bool save_bezier_sources ( QString aFileName, Bezier_region_source_container con
   {
     if ( !save_linear(QFileDialog::getSaveFileName(this, 
     tr("Save Result Linear Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
-                       ,result_set().linear()
+                       ,states_stack.back().result_set().linear()
                        )
        )
     {
@@ -4626,29 +4895,30 @@ void MainWindow::switch_set_type(Curve_set& aSet, int aType)
 
 void MainWindow::switch_sets_type(int aType)
 {
-  switch_set_type(blue_set(), aType);
-  switch_set_type(red_set(), aType);
-  switch_set_type(black_set(), aType);
-  switch_set_type(brown_set(), aType);
-  switch_set_type(yellow_set(), aType);
-  switch_set_type(magenta_set(), aType);
-  switch_set_type(aqua_set(), aType);
-  switch_set_type(result_set(), aType);
+  switch_set_type(states_stack.back().blue_set(), aType);
+  switch_set_type(states_stack.back().red_set(), aType);
+  switch_set_type(states_stack.back().black_set(), aType);
+  switch_set_type(states_stack.back().brown_set(), aType);
+  switch_set_type(states_stack.back().yellow_set(), aType);
+  switch_set_type(states_stack.back().magenta_set(), aType);
+  switch_set_type(states_stack.back().aqua_set(), aType);
+  switch_set_type(states_stack.back().result_set(), aType);
 }
 
 bool MainWindow::ensure_circular_mode()
 {
 
   if (! m_circular_active) {
-    bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
-      black_set().is_empty() && brown_set().is_empty() &&
-      yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty() && result_set().is_empty();
+    bool lProceed = states_stack.back().blue_set().is_empty() && states_stack.back().red_set().is_empty() &&
+      states_stack.back().black_set().is_empty() && states_stack.back().brown_set().is_empty() &&
+      states_stack.back().yellow_set().is_empty() && states_stack.back().magenta_set().is_empty() &&
+      states_stack.back().aqua_set().is_empty() && states_stack.back().result_set().is_empty();
 
     if (! lProceed)
       lProceed = ask_user_yesno("Circular mode switch",
         "You are about to load a circular poygon, but there are linear/bezier curves already loaded.\n" \
         "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
+        "Once deleted you cannot undo the action.\n" \
         "Yes to remove and proceed?\n");
 
     if (lProceed) {
@@ -4668,15 +4938,16 @@ bool MainWindow::ensure_bezier_mode()
 {
   if (! m_bezier_active )
   {
-    bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
-      black_set().is_empty() && brown_set().is_empty() &&
-      yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty() && result_set().is_empty();
+    bool lProceed = states_stack.back().blue_set().is_empty() && states_stack.back().red_set().is_empty() &&
+      states_stack.back().black_set().is_empty() && states_stack.back().brown_set().is_empty() &&
+      states_stack.back().yellow_set().is_empty() && states_stack.back().magenta_set().is_empty() &&
+      states_stack.back().aqua_set().is_empty() && states_stack.back().result_set().is_empty();
     
     if ( ! lProceed )
       lProceed = ask_user_yesno("Bezier mode switch",
         "You are about to load a Bezier curve, but there are linear/bezier polygons already loaded.\n" \
         "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
+        "Once deleted you cannot undo the action.\n" \
         "Yes to remove and proceed?\n") ;
       
     if ( lProceed )
@@ -4696,15 +4967,16 @@ bool MainWindow::ensure_bezier_mode()
 bool MainWindow::ensure_linear_mode()
 {
   if (m_circular_active || m_bezier_active) {
-    bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
-      black_set().is_empty() && brown_set().is_empty() &&
-      yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty() && result_set().is_empty();
+    bool lProceed = states_stack.back().blue_set().is_empty() && states_stack.back().red_set().is_empty() &&
+      states_stack.back().black_set().is_empty() && states_stack.back().brown_set().is_empty() &&
+      states_stack.back().yellow_set().is_empty() && states_stack.back().magenta_set().is_empty() &&
+      states_stack.back().aqua_set().is_empty() && states_stack.back().result_set().is_empty();
 
     if (! lProceed)
       lProceed = ask_user_yesno("Linear mode switch",
         "You are about to load a linear poygon, but there are circular/bezier polygons already loaded.\n" \
         "Both types are not interoperable. In order to proceed, the polygons must be removed first.\n" \
+        "Once deleted you cannot undo the action.\n" \
         "Yes to remove and proceed?\n");
 
     if (lProceed) {
@@ -4742,12 +5014,12 @@ void MainWindow::open(QString fileName)
     if(fileName.endsWith(".lps"))
     {
       if ( ensure_circular_mode() )
-        lRead = read_linear(fileName,active_set().circular(), active_circular_sources() ) ;
+        lRead = read_linear(fileName,states_stack.back().active_set(m_color_active).circular(), states_stack.back().active_circular_sources(m_color_active) ) ;
     }
     else if (fileName.endsWith(".bps"))
     {
       if ( ensure_bezier_mode() )
-        lRead = read_bezier(fileName,active_set().bezier(), active_bezier_sources() ) ;
+        lRead = read_bezier(fileName,states_stack.back().active_set(m_color_active).bezier(), states_stack.back().active_bezier_sources(m_color_active) ) ;
     }
     if (lRead) {
       modelChanged();
@@ -4765,17 +5037,23 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     if(ensure_circular_mode()) 
     {
+
+      while(m_state_num>1)
+      {
+        on_actionUndo_triggered();
+      }
+      
       actionPAN->setChecked(false);
       actionInsertLinear->setChecked( false );
-    actionInsertBezier->setChecked( false ); 
-    //actionInsertMink_Polygon -> setChecked(false);
+      actionInsertBezier->setChecked( false ); 
+      //actionInsertMink_Polygon -> setChecked(false);
       m_scene.installEventFilter(m_circular_input);
-        on_actionDeleteResult();
-        actionMinkowski_SumH -> setEnabled(false);
+      on_actionDeleteResult();
+      actionMinkowski_SumH -> setEnabled(false);
 
-    m_circular_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
-    m_circular_input -> mCircularGI -> setPen(sPens[m_color_active]);
-    m_circular_input -> mHandleGI -> setPen(sPens[m_color_active]);
+      m_circular_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
+      m_circular_input -> mCircularGI -> setPen(sPens[m_color_active]);
+      m_circular_input -> mHandleGI -> setPen(sPens[m_color_active]);
     }
     else
   	{
@@ -4794,10 +5072,16 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     if(ensure_bezier_mode()) 
     { 
+      
+      while(m_state_num>1)
+      {
+        on_actionUndo_triggered();
+      }
+      
       actionPAN->setChecked(false);
       actionInsertLinear->setChecked( false );
-    actionInsertCircular->setChecked( false );
-    //actionInsertMink_Polygon -> setChecked(false);
+      actionInsertCircular->setChecked( false );
+      //actionInsertMink_Polygon -> setChecked(false);
       m_scene.installEventFilter(m_bezier_input);
       on_actionDeleteResult();
 
@@ -4822,6 +5106,11 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     if (ensure_linear_mode())
     {
+      while(m_state_num>1)
+      {
+        on_actionUndo_triggered();
+      }
+
       actionPAN->setChecked(false);
       actionInsertCircular->setChecked( false );
       actionInsertBezier->setChecked( false ); 
@@ -4829,7 +5118,7 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
       m_scene.installEventFilter(m_linear_input);
       on_actionDeleteResult();
 
-        actionMinkowski_SumH -> setEnabled(true);
+      actionMinkowski_SumH -> setEnabled(true);
     }
     else
   	{
@@ -4857,11 +5146,26 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
     actionMoveH->setChecked(false);
     actionPasteH->setChecked(false);
 
+    get_new_state(0);
 
-	  result_set().clear();
-    result_linear_sources().clear();
-    result_circular_sources().clear();
-    result_bezier_sources().clear();
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
+
+	  states_stack.back().result_set().clear();
+    states_stack.back().result_linear_sources().clear();
+    states_stack.back().result_circular_sources().clear();
+    states_stack.back().result_bezier_sources().clear();
 
     if(!m_circular_active && !m_bezier_active)
     {
@@ -4878,7 +5182,7 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
 
     //m_circular_input->get_BoundingRect();
     
-    if(!active_set().is_empty())
+    if(!states_stack.back().active_set(m_color_active).is_empty())
     {
       if(empty_warn)
       {
@@ -4890,107 +5194,107 @@ void MainWindow::on_actionComplementH_toggled(bool aChecked)
       {
         case 0:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-          blue_set().join(result_set());
-          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          states_stack.back().blue_set().join(states_stack.back().result_set());
+          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
           break;
       
         case 1:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-          red_set().join(result_set());
-          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          states_stack.back().red_set().join(states_stack.back().result_set());
+          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
           break;
       
         case 2:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-          black_set().join(result_set());
-          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          states_stack.back().black_set().join(states_stack.back().result_set());
+          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
           break;
       
         case 3:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-          brown_set().join(result_set());
-          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          states_stack.back().brown_set().join(states_stack.back().result_set());
+          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
           break;
       
         case 4:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-          yellow_set().join(result_set());
-          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          states_stack.back().yellow_set().join(states_stack.back().result_set());
+          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
           break;
           
         case 5:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-          magenta_set().join(result_set());
-          result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+          states_stack.back().magenta_set().join(states_stack.back().result_set());
+          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
           break;
       
         case 6:switch(m_color_complement)
         {
-          case 0: if(!blue_set().is_empty()) {result_set().difference(blue_set());} break;
-          case 1: if(!red_set().is_empty()) {result_set().difference(red_set());} break;
-          case 2: if(!black_set().is_empty()) {result_set().difference(black_set());} break;
-          case 3: if(!brown_set().is_empty()) {result_set().difference(brown_set());} break;
-          case 4: if(!yellow_set().is_empty()) {result_set().difference(yellow_set());} break;
-          case 5: if(!magenta_set().is_empty()) {result_set().difference(magenta_set());} break;
-          case 6: if(!aqua_set().is_empty()) {result_set().difference(aqua_set());} break;
+          case 0: if(!states_stack.back().blue_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().blue_set());} break;
+          case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().red_set());} break;
+          case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().black_set());} break;
+          case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().brown_set());} break;
+          case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().yellow_set());} break;
+          case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().magenta_set());} break;
+          case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().difference(states_stack.back().aqua_set());} break;
         }
 
-            aqua_set().join(result_set());
-            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+            states_stack.back().aqua_set().join(states_stack.back().result_set());
+            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
             break;
       
 
@@ -5024,14 +5328,28 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
     actionMoveH->setChecked(false);
     actionPasteH->setChecked(false);
 
+    get_new_state(1);
 
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
 	  
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
+	  states_stack.back().result_set().clear();
+	  states_stack.back().result_linear_sources().clear();
+	  states_stack.back().result_circular_sources().clear();
+	  states_stack.back().result_bezier_sources().clear();
 
-    if(!active_set().is_empty())
+    if(!states_stack.back().active_set(m_color_active).is_empty())
     {
       if(empty_warn)
       {
@@ -5040,159 +5358,159 @@ void MainWindow::on_actionIntersectionH_toggled(bool aChecked)
     }
 
 	  switch(m_color_active) {
-	        case 0:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	        case 0:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	            break;
+	          states_stack.back().result_set().difference(states_stack.back().blue_set());
+	          states_stack.back().blue_set().join(states_stack.back().result_set());
+	          states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
+	          break;
 
-	      case 1:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	      case 1:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
 	            
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().red_set());
+	            states_stack.back().red_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
 	        
 
-	      case 2:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	      case 2:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
 
-	          result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          states_stack.back().result_set().difference(states_stack.back().black_set());
+	            states_stack.back().black_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 3:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	      case 3:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
 
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().brown_set());
+	            states_stack.back().brown_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 4:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	      case 4:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
 	            
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	            states_stack.back().yellow_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 5:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	      case 5:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
 	            
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	            states_stack.back().magenta_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	        case 6:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+	        case 6:if (!states_stack.back().blue_set().is_empty() && m_blue_int) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_int) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_int) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_int) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_int) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_int) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_int) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (m_blue_int) result_set().intersect(blue_set());
-	          if (m_red_int) result_set().intersect(red_set());
-	          if (m_black_int) result_set().intersect(black_set());
-	          if (m_brown_int) result_set().intersect(brown_set());
-	          if (m_yellow_int) result_set().intersect(yellow_set());
-	          if (m_magenta_int) result_set().intersect(magenta_set());
-	          if (m_aqua_int) result_set().intersect(aqua_set());
+	          if (m_blue_int) states_stack.back().result_set().intersect(states_stack.back().blue_set());
+	          if (m_red_int) states_stack.back().result_set().intersect(states_stack.back().red_set());
+	          if (m_black_int) states_stack.back().result_set().intersect(states_stack.back().black_set());
+	          if (m_brown_int) states_stack.back().result_set().intersect(states_stack.back().brown_set());
+	          if (m_yellow_int) states_stack.back().result_set().intersect(states_stack.back().yellow_set());
+	          if (m_magenta_int) states_stack.back().result_set().intersect(states_stack.back().magenta_set());
+	          if (m_aqua_int) states_stack.back().result_set().intersect(states_stack.back().aqua_set());
 
 
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().aqua_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
 	      default: break;
@@ -5280,12 +5598,28 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
 	      else color1 = 6;
 	  }
 
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
+    get_new_state(3);
 
-    if(!active_set().is_empty())
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
+
+	  states_stack.back().result_set().clear();
+	  states_stack.back().result_linear_sources().clear();
+	  states_stack.back().result_circular_sources().clear();
+	  states_stack.back().result_bezier_sources().clear();
+
+    if(!states_stack.back().active_set(m_color_active).is_empty())
     {
       if(empty_warn)
       {
@@ -5294,138 +5628,138 @@ void MainWindow::on_actionDifferenceH_toggled(bool aChecked)
     }
 
 	  switch(m_color_active){  
-	      case 0:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
-	            else if(color1 == 6) result_set().assign(aqua_set());
+	      case 0:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	            else if(color1 == 6) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 	          
-	        if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().blue_set());
+	            states_stack.back().blue_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 1:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
+	      case 1:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
 
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 0) states_stack.back().result_set().difference(states_stack.back().blue_set());
+	        else if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().red_set());
+	            states_stack.back().red_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
 
-	      case 2:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
+	      case 2:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
 
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 0) states_stack.back().result_set().difference(states_stack.back().blue_set());
+	        else if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().black_set());
+	            states_stack.back().black_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 3:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
+	      case 3:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
 
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 0) states_stack.back().result_set().difference(states_stack.back().blue_set());
+	        else if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().brown_set());
+	            states_stack.back().brown_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 4:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
+	      case 4:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
 
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 0) states_stack.back().result_set().difference(states_stack.back().blue_set());
+	        else if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	            states_stack.back().yellow_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 5:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
+	      case 5:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
 
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 0) states_stack.back().result_set().difference(states_stack.back().blue_set());
+	        else if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	            states_stack.back().magenta_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 6:if(color1 == 0) result_set().assign(blue_set());
-	        else if(color1 == 1) result_set().assign(red_set());
-	        else if(color1 == 2) result_set().assign(black_set());
-	        else if(color1 == 3) result_set().assign(brown_set());
-	        else if(color1 == 4) result_set().assign(yellow_set());
-	        else if(color1 == 5) result_set().assign(magenta_set());
+	      case 6:if(color1 == 0) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if(color1 == 1) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if(color1 == 2) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if(color1 == 3) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if(color1 == 4) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if(color1 == 5) states_stack.back().result_set().assign(states_stack.back().magenta_set());
 
-	        if (color2 == 0) result_set().difference(blue_set());
-	        else if (color2 == 1) result_set().difference(red_set());
-	        else if (color2 == 2) result_set().difference(black_set());
-	        else if (color2 == 3) result_set().difference(brown_set());
-	        else if (color2 == 4) result_set().difference(yellow_set());
-	        else if (color2 == 5) result_set().difference(magenta_set());
-	        else if (color2 == 6) result_set().difference(aqua_set());
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (color2 == 0) states_stack.back().result_set().difference(states_stack.back().blue_set());
+	        else if (color2 == 1) states_stack.back().result_set().difference(states_stack.back().red_set());
+	        else if (color2 == 2) states_stack.back().result_set().difference(states_stack.back().black_set());
+	        else if (color2 == 3) states_stack.back().result_set().difference(states_stack.back().brown_set());
+	        else if (color2 == 4) states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	        else if (color2 == 5) states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	        else if (color2 == 6) states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().aqua_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 	      
 	  }
@@ -5468,14 +5802,28 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
     actionMoveH->setChecked(false);
     actionPasteH->setChecked(false);
 
+    get_new_state(4);
 
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
 
-	  result_set().clear();
-	  result_linear_sources().clear(); 
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
+	  states_stack.back().result_set().clear();
+	  states_stack.back().result_linear_sources().clear(); 
+	  states_stack.back().result_circular_sources().clear();
+	  states_stack.back().result_bezier_sources().clear();
     
-    if(!active_set().is_empty())
+    if(!states_stack.back().active_set(m_color_active).is_empty())
     {
       if(empty_warn)
       {
@@ -5486,138 +5834,138 @@ void MainWindow::on_actionSymmetric_DifferenceH_toggled(bool aChecked)
 	  switch(m_color_active)
 	  {
 
-	        case 0:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	        else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	        else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	        else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	        else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	        else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	        else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	        case 0:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	        else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	        else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	        else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	        else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	        else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	        else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	        if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	        if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	        if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	        if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	        if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	        if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	        if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	        if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	        if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	        if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	        if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	        if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().blue_set());
+	            states_stack.back().blue_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	          case 1:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	          case 1:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	          if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	          if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	          if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	          if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	          if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().red_set());
+	            states_stack.back().red_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	          case 2:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	          case 2:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	          if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	          if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	          if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	          if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	          if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().black_set());
+	            states_stack.back().black_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 3:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	      case 3:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());\
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	          if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	          if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	          if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	          if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	          if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());\
+	            states_stack.back().result_set().difference(states_stack.back().brown_set());
+	            states_stack.back().brown_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 4:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	      case 4:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	          if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	          if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	          if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	          if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	          if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	            states_stack.back().yellow_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
 
-	      case 5:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	      case 5:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	          if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	          if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	          if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	          if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	          if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	            states_stack.back().magenta_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 6:if (!blue_set().is_empty() && m_blue_sym_diff) result_set().assign(blue_set());
-	          else if (!red_set().is_empty() && m_red_sym_diff) result_set().assign(red_set());
-	          else if (!black_set().is_empty() && m_black_sym_diff) result_set().assign(black_set());
-	          else if (!brown_set().is_empty() && m_brown_sym_diff) result_set().assign(brown_set());
-	          else if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().assign(yellow_set());
-	          else if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().assign(magenta_set());
-	          else if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().assign(aqua_set());
+	      case 6:if (!states_stack.back().blue_set().is_empty() && m_blue_sym_diff) states_stack.back().result_set().assign(states_stack.back().blue_set());
+	          else if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          else if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().assign(states_stack.back().black_set());
+	          else if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().assign(states_stack.back().brown_set());
+	          else if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().assign(states_stack.back().yellow_set());
+	          else if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().assign(states_stack.back().magenta_set());
+	          else if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().assign(states_stack.back().aqua_set());
 
-	          if (!red_set().is_empty() && m_red_sym_diff) result_set().symmetric_difference(red_set());
-	          if (!black_set().is_empty() && m_black_sym_diff) result_set().symmetric_difference(black_set());
-	          if (!brown_set().is_empty() && m_brown_sym_diff) result_set().symmetric_difference(brown_set());
-	          if (!yellow_set().is_empty() && m_yellow_sym_diff) result_set().symmetric_difference(yellow_set());
-	          if (!magenta_set().is_empty() && m_magenta_sym_diff) result_set().symmetric_difference(magenta_set());
-	          if (!aqua_set().is_empty() && m_aqua_sym_diff) result_set().symmetric_difference(aqua_set());
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	          if (!states_stack.back().red_set().is_empty() && m_red_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().red_set());
+	          if (!states_stack.back().black_set().is_empty() && m_black_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().black_set());
+	          if (!states_stack.back().brown_set().is_empty() && m_brown_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().brown_set());
+	          if (!states_stack.back().yellow_set().is_empty() && m_yellow_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().yellow_set());
+	          if (!states_stack.back().magenta_set().is_empty() && m_magenta_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().magenta_set());
+	          if (!states_stack.back().aqua_set().is_empty() && m_aqua_sym_diff) states_stack.back().result_set().symmetric_difference(states_stack.back().aqua_set());
+	            states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().aqua_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 	  }
 
@@ -5650,12 +5998,28 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
     actionMoveH->setChecked(false);
     actionPasteH->setChecked(false);
 
-	  result_set().clear();
-	  result_linear_sources().clear();
-	  result_circular_sources().clear();
-	  result_bezier_sources().clear();
+    get_new_state(2);
+
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // COPY_OP = 6
+    // MOVE_OP = 7
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // START_OP = 11
+
+	  states_stack.back().result_set().clear();
+	  states_stack.back().result_linear_sources().clear();
+	  states_stack.back().result_circular_sources().clear();
+	  states_stack.back().result_bezier_sources().clear();
     
-    if(!active_set().is_empty())
+    if(!states_stack.back().active_set(m_color_active).is_empty())
     {
       if(empty_warn)
       {
@@ -5665,95 +6029,95 @@ void MainWindow::on_actionUnionH_toggled(bool aChecked)
 
 	  switch(m_color_active)  
 	  {
-	      case 0:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	      case 0:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(blue_set());
-	            blue_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().blue_set());
+	            states_stack.back().blue_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 1:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	      case 1:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(red_set());
-	            red_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().red_set());
+	            states_stack.back().red_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 2:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	      case 2:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(black_set());
-	            black_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().black_set());
+	            states_stack.back().black_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	        case 3:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	        case 3:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(brown_set());
-	            brown_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().brown_set());
+	            states_stack.back().brown_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	        case 4:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	        case 4:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(yellow_set());
-	            yellow_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().yellow_set());
+	            states_stack.back().yellow_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 5:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	      case 5:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(magenta_set());
-	            magenta_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().magenta_set());
+	            states_stack.back().magenta_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 
-	      case 6:if(m_red_union) result_set().assign(red_set());
-	          if(m_blue_union) result_set().join(blue_set());
-	          if(m_black_union) result_set().join(black_set());
-	          if(m_brown_union) result_set().join(brown_set());
-	          if(m_magenta_union) result_set().join(magenta_set());
-	          if(m_yellow_union) result_set().join(yellow_set());
-	          if(m_aqua_union) result_set().join(aqua_set());
+	      case 6:if(m_red_union) states_stack.back().result_set().assign(states_stack.back().red_set());
+	          if(m_blue_union) states_stack.back().result_set().join(states_stack.back().blue_set());
+	          if(m_black_union) states_stack.back().result_set().join(states_stack.back().black_set());
+	          if(m_brown_union) states_stack.back().result_set().join(states_stack.back().brown_set());
+	          if(m_magenta_union) states_stack.back().result_set().join(states_stack.back().magenta_set());
+	          if(m_yellow_union) states_stack.back().result_set().join(states_stack.back().yellow_set());
+	          if(m_aqua_union) states_stack.back().result_set().join(states_stack.back().aqua_set());
 
-	            result_set().difference(aqua_set());
-	            aqua_set().join(result_set());
-	            result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
+	            states_stack.back().result_set().difference(states_stack.back().aqua_set());
+	            states_stack.back().aqua_set().join(states_stack.back().result_set());
+	            states_stack.back().result_set().clear();states_stack.back().result_linear_sources().clear();states_stack.back().result_circular_sources().clear();states_stack.back().result_bezier_sources().clear();
 	            break;
 	  }
 	  
@@ -5784,20 +6148,36 @@ void MainWindow::on_actionCopyH_toggled(bool aChecked)
       actionMoveH->setChecked(false);
       actionPasteH->setChecked(false);
 
-      result_set().clear();
-      result_linear_sources().clear();
-      result_circular_sources().clear();
-      result_bezier_sources().clear();
+      get_new_state(6);
+
+      //operation_name
+       // COMPLEMENT_OP = 0
+      // INTERSECTION_OP = 1
+      // UNION_OP = 2
+      // DIFFERENCE_OP = 3
+      // SYMMETRIC_dIFFERENCE_OP = 4
+      // MINKOWSKI_SUM_OP = 5
+      // COPY_OP = 6
+      // MOVE_OP = 7
+      // PASTE_OP = 8
+      // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+      // START_OP = 11
+
+      states_stack.back().result_set().clear();
+      states_stack.back().result_linear_sources().clear();
+      states_stack.back().result_circular_sources().clear();
+      states_stack.back().result_bezier_sources().clear();
     
       switch(m_color_copy)
       {
-        case 0: if(!blue_set().is_empty()) result_set().assign(blue_set());break;
-        case 1: if(!red_set().is_empty()) result_set().assign(red_set());break;
-        case 2: if(!black_set().is_empty()) result_set().assign(black_set());break;
-        case 3: if(!brown_set().is_empty()) result_set().assign(brown_set());break;
-        case 4: if(!yellow_set().is_empty()) result_set().assign(yellow_set());break;
-        case 5: if(!magenta_set().is_empty()) result_set().assign(magenta_set());break;
-        case 6: if(!aqua_set().is_empty()) result_set().assign(aqua_set());break;
+        case 0: if(!states_stack.back().blue_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().blue_set());break;
+        case 1: if(!states_stack.back().red_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().red_set());break;
+        case 2: if(!states_stack.back().black_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().black_set());break;
+        case 3: if(!states_stack.back().brown_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().brown_set());break;
+        case 4: if(!states_stack.back().yellow_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().yellow_set());break;
+        case 5: if(!states_stack.back().magenta_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().magenta_set());break;
+        case 6: if(!states_stack.back().aqua_set().is_empty()) states_stack.back().result_set().assign(states_stack.back().aqua_set());break;
         default: show_warning("Please select a Bucket!!!");break;
       }
 
@@ -5836,22 +6216,37 @@ void MainWindow::on_actionMoveH_toggled(bool aChecked)
       actionCopyH->setChecked(false);
       actionPasteH->setChecked(false);
 
+      get_new_state(7);
+
+      //operation_name
+       // COMPLEMENT_OP = 0
+      // INTERSECTION_OP = 1
+      // UNION_OP = 2
+      // DIFFERENCE_OP = 3
+      // SYMMETRIC_dIFFERENCE_OP = 4
+      // MINKOWSKI_SUM_OP = 5
+      // COPY_OP = 6
+      // MOVE_OP = 7
+      // PASTE_OP = 8
+      // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+      // START_OP = 11
       
-      result_set().clear();
-      result_linear_sources().clear();
-      result_circular_sources().clear();
-      result_bezier_sources().clear();
+      states_stack.back().result_set().clear();
+      states_stack.back().result_linear_sources().clear();
+      states_stack.back().result_circular_sources().clear();
+      states_stack.back().result_bezier_sources().clear();
       
 
       switch(m_color_move_ext)
       {
-        case 0: if(!blue_set().is_empty()) { result_set().assign(blue_set()); m_color_move=0; } break;
-        case 1: if(!red_set().is_empty()) {result_set().assign(red_set()); m_color_move=1; } break;
-        case 2: if(!black_set().is_empty()) {result_set().assign(black_set()); m_color_move=2; } break;
-        case 3: if(!brown_set().is_empty()) {result_set().assign(brown_set()); m_color_move=3; } break;
-        case 4: if(!yellow_set().is_empty()) {result_set().assign(yellow_set()); m_color_move=4; } break;
-        case 5: if(!magenta_set().is_empty()) {result_set().assign(magenta_set()); m_color_move=5; } break;
-        case 6: if(!aqua_set().is_empty()) {result_set().assign(aqua_set()); m_color_move=6; } break;
+        case 0: if(!states_stack.back().blue_set().is_empty()) { states_stack.back().result_set().assign(states_stack.back().blue_set()); m_color_move=0; } break;
+        case 1: if(!states_stack.back().red_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().red_set()); m_color_move=1; } break;
+        case 2: if(!states_stack.back().black_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().black_set()); m_color_move=2; } break;
+        case 3: if(!states_stack.back().brown_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().brown_set()); m_color_move=3; } break;
+        case 4: if(!states_stack.back().yellow_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().yellow_set()); m_color_move=4; } break;
+        case 5: if(!states_stack.back().magenta_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().magenta_set()); m_color_move=5; } break;
+        case 6: if(!states_stack.back().aqua_set().is_empty()) {states_stack.back().result_set().assign(states_stack.back().aqua_set()); m_color_move=6; } break;
         default: show_warning("Please select a Bucket!!!");break;
       }
 
@@ -5887,10 +6282,26 @@ void MainWindow::on_actionPasteH_toggled(bool aChecked)
       actionMoveH->setChecked(false);
       actionCopyH->setChecked(false);
 
-    if(!result_set().is_empty())
+      get_new_state(8);
+
+      //operation_name
+       // COMPLEMENT_OP = 0
+      // INTERSECTION_OP = 1
+      // UNION_OP = 2
+      // DIFFERENCE_OP = 3
+      // SYMMETRIC_dIFFERENCE_OP = 4
+      // MINKOWSKI_SUM_OP = 5
+      // COPY_OP = 6
+      // MOVE_OP = 7
+      // PASTE_OP = 8
+      // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+      // START_OP = 11
+
+    if(!states_stack.back().result_set().is_empty())
     {
         
-        // if(!active_set().is_empty())
+        // if(!states_stack.back().active_set(m_color_active).is_empty())
         // {
         //   if(empty_warn)
         //   {
@@ -5903,83 +6314,83 @@ void MainWindow::on_actionPasteH_toggled(bool aChecked)
         {
           case 0: if(m_color_cm==0) 
               { 
-                blue_set().join(result_set());
+                states_stack.back().blue_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                blue_set().join(result_set());
-                move_set().clear();
+                states_stack.back().blue_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
 
           case 1: if(m_color_cm==0) 
               { 
-                red_set().join(result_set());
+                states_stack.back().red_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                red_set().join(result_set());
-                move_set().clear();
+                states_stack.back().red_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
           case 2: if(m_color_cm==0) 
               { 
-                black_set().join(result_set());
+                states_stack.back().black_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                black_set().join(result_set());
-                move_set().clear();
+                states_stack.back().black_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
           case 3: if(m_color_cm==0) 
               { 
-                brown_set().join(result_set());
+                states_stack.back().brown_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                brown_set().join(result_set());
-                move_set().clear();
+                states_stack.back().brown_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
           case 4: if(m_color_cm==0) 
               { 
-                yellow_set().join(result_set());
+                states_stack.back().yellow_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                yellow_set().join(result_set());
-                move_set().clear();
+                states_stack.back().yellow_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
           case 5: if(m_color_cm==0) 
               { 
-                magenta_set().join(result_set());
+                states_stack.back().magenta_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                magenta_set().join(result_set());
-                move_set().clear();
+                states_stack.back().magenta_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
           case 6: if(m_color_cm==0) 
               { 
-                aqua_set().join(result_set());
+                states_stack.back().aqua_set().join(states_stack.back().result_set());
               }
               else if(m_color_cm==1)
               {
-                aqua_set().join(result_set());
-                move_set().clear();
+                states_stack.back().aqua_set().join(states_stack.back().result_set());
+                states_stack.back().move_set(m_color_move).clear();
               }
               break;
         default: show_warning("Please select a Bucket!!!");break;
         }
 
         
-        result_set().clear();
-        result_linear_sources().clear();
-        result_circular_sources().clear();
-        result_bezier_sources().clear();
+        states_stack.back().result_set().clear();
+        states_stack.back().result_linear_sources().clear();
+        states_stack.back().result_circular_sources().clear();
+        states_stack.back().result_bezier_sources().clear();
     }
     else
     {
@@ -6007,13 +6418,13 @@ Polygon_with_holes_2 MainWindow::getMinkInputPolygon(size_t colorx)
 
   switch(colorx)
   {
-    case 0:lps = blue_set().linear(); break;
-    case 1:lps = red_set().linear(); break;
-    case 2:lps = black_set().linear(); break;
-    case 3:lps = brown_set().linear(); break;
-    case 4:lps = yellow_set().linear(); break;
-    case 5:lps = magenta_set().linear(); break;
-    case 6:lps = aqua_set().linear(); break;
+    case 0:lps = states_stack.back().blue_set().linear(); break;
+    case 1:lps = states_stack.back().red_set().linear(); break;
+    case 2:lps = states_stack.back().black_set().linear(); break;
+    case 3:lps = states_stack.back().brown_set().linear(); break;
+    case 4:lps = states_stack.back().yellow_set().linear(); break;
+    case 5:lps = states_stack.back().magenta_set().linear(); break;
+    case 6:lps = states_stack.back().aqua_set().linear(); break;
   }
 
   Pgn_with_holes_container res(lps.number_of_polygons_with_holes());
@@ -6088,7 +6499,23 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 	    actionDifferenceH->setChecked(false); 
 	    actionSymmetric_DifferenceH->setChecked(false); 
 
-      if(!active_set().is_empty())
+      get_new_state(5);
+
+      //operation_name
+       // COMPLEMENT_OP = 0
+      // INTERSECTION_OP = 1
+      // UNION_OP = 2
+      // DIFFERENCE_OP = 3
+      // SYMMETRIC_dIFFERENCE_OP = 4
+      // MINKOWSKI_SUM_OP = 5
+      // COPY_OP = 6
+      // MOVE_OP = 7
+      // PASTE_OP = 8
+      // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+      // START_OP = 11
+
+      if(!states_stack.back().active_set(m_color_active).is_empty())
       {
         if(empty_warn)
         {
@@ -6153,121 +6580,121 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
         // Compute the Minkowski sum using the decomposition approach.
         CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
 
-	      if(color1 == 0 && !blue_set().is_empty()) 
+	      if(color1 == 0 && !states_stack.back().blue_set().is_empty()) 
 	      {
 
           p0 = getMinkInputPolygon(color1);
-	        if(color2 == 1 && !red_set().is_empty()) 
+	        if(color2 == 1 && !states_stack.back().red_set().is_empty()) 
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 2 && !black_set().is_empty()) 
+  	      else if(color2 == 2 && !states_stack.back().black_set().is_empty()) 
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 3 && !brown_set().is_empty()) 
+  	      else if(color2 == 3 && !states_stack.back().brown_set().is_empty()) 
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 4 && !yellow_set().is_empty())
+  	      else if(color2 == 4 && !states_stack.back().yellow_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 5 && !magenta_set().is_empty())
+  	      else if(color2 == 5 && !states_stack.back().magenta_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 6 && !aqua_set().is_empty())
+  	      else if(color2 == 6 && !states_stack.back().aqua_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
 	      }
 
 
-	      else if(color1 == 1 && !red_set().is_empty()) 
+	      else if(color1 == 1 && !states_stack.back().red_set().is_empty()) 
 	      {
 
           p0 = getMinkInputPolygon(color1);
-	        if(color2 == 2 && !black_set().is_empty())
+	        if(color2 == 2 && !states_stack.back().black_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 3 && !brown_set().is_empty())
+  	      else if(color2 == 3 && !states_stack.back().brown_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 4 && !yellow_set().is_empty())
+  	      else if(color2 == 4 && !states_stack.back().yellow_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 5 && !magenta_set().is_empty())
+  	      else if(color2 == 5 && !states_stack.back().magenta_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-  	      else if(color2 == 6 && !aqua_set().is_empty())
+  	      else if(color2 == 6 && !states_stack.back().aqua_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
 	      }
 
 
-	      else if(color1 == 2 && !black_set().is_empty()) 
+	      else if(color1 == 2 && !states_stack.back().black_set().is_empty()) 
 	      {
 
           p0 = getMinkInputPolygon(color1);
-	        if(color2 == 3 && !brown_set().is_empty())
+	        if(color2 == 3 && !states_stack.back().brown_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-          else if(color2 == 4 && !yellow_set().is_empty())
+          else if(color2 == 4 && !states_stack.back().yellow_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-          else if(color2 == 5 && !magenta_set().is_empty())
+          else if(color2 == 5 && !states_stack.back().magenta_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-          else if(color2 == 6 && !aqua_set().is_empty())
+          else if(color2 == 6 && !states_stack.back().aqua_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
 	      }
 
 
-	      else if(color1 == 3 && !brown_set().is_empty()) 
+	      else if(color1 == 3 && !states_stack.back().brown_set().is_empty()) 
 	      {
           p0 = getMinkInputPolygon(color1);
-	        if(color2 == 4 && !yellow_set().is_empty())
+	        if(color2 == 4 && !states_stack.back().yellow_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-          else if(color2 == 5 && !magenta_set().is_empty())
+          else if(color2 == 5 && !states_stack.back().magenta_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-          else if(color2 == 6 && !aqua_set().is_empty())
+          else if(color2 == 6 && !states_stack.back().aqua_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
 	      }
 
-	      else if(color1 == 4 && !yellow_set().is_empty())
+	      else if(color1 == 4 && !states_stack.back().yellow_set().is_empty())
 	      {
 	        p0 = getMinkInputPolygon(color1);
-          if(color2 == 5 && !magenta_set().is_empty())
+          if(color2 == 5 && !states_stack.back().magenta_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
-          else if(color2 == 6 && !aqua_set().is_empty())
+          else if(color2 == 6 && !states_stack.back().aqua_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
 	      }
 
-	      else if(color1 == 5 && !magenta_set().is_empty())
+	      else if(color1 == 5 && !states_stack.back().magenta_set().is_empty())
 	      {
           p0 = getMinkInputPolygon(color1);
-          if(color2 == 6 && !aqua_set().is_empty())
+          if(color2 == 6 && !states_stack.back().aqua_set().is_empty())
           {
             p1 = getMinkInputPolygon(color2);
           }
@@ -6279,11 +6706,13 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
           Polygon_with_holes_2 mink_sum_res  = CGAL::minkowski_sum_2(p0, p1);    
           if (!mink_sum_res.is_unbounded()) 
           {
+            m_linear_input->m_is_mink = true;
             m_linear_input->get_Minkowski_result(mink_sum_res,p0);
             m_linear_input->m_hole=true;
             m_linear_input->get_Minkowski_holes(mink_sum_res,p0);
-            result_set().clear(); result_linear_sources().clear();
+            states_stack.back().result_set().clear(); states_stack.back().result_linear_sources().clear();
             m_linear_input->m_hole=false;
+            m_linear_input->m_is_mink=false;
           }
           else ask_user_ok("Minkowski Sum Operation Error", "resultant polygon is unbounded\n");
           lDone = true;
@@ -6309,12 +6738,6 @@ void MainWindow::on_actionMinkowski_SumH_toggled(bool aChecked)
 	}
 }
 
-//to change which polygons to see on the screen
-void MainWindow::ToogleView(size_t aGROUP, bool a_check) 
-{
-  if (a_check) set(aGROUP).gi()->show();
-  else set(aGROUP).gi()->hide();
-}
 
 void MainWindow::on_actionAxis_triggered()
 {
@@ -6454,7 +6877,7 @@ void MainWindow::zoomToFit()
 {
   boost::optional<QRectF> lTotalRect;
 
-  for (auto si = m_curve_sets.begin(); si != m_curve_sets.end(); ++ si) 
+  for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si) 
   {
     if (!si->is_empty()) 
     {
@@ -6544,6 +6967,7 @@ void MainWindow::processInput(CGAL::Object o)
 
     try
     {
+
       if(CGAL::assign(lBI, o))
       {
         if ( ensure_bezier_mode() )
@@ -6554,17 +6978,18 @@ void MainWindow::processInput(CGAL::Object o)
            
           if(!m_bezier_input->isboundingRect())
           {  
-            active_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
+            get_new_state(11);
+            states_stack.back().active_set(m_color_active).bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
             Bezier_region_source br ; 
             br.push_back (lBI.second);
-            active_bezier_sources().push_back(br);
+            states_stack.back().active_bezier_sources(m_color_active).push_back(br);
           }
           else
           {
-            result_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
+            states_stack.back().result_set().bezier().join( Bezier_polygon_with_holes(lBI.first) ) ;  
             Bezier_region_source br ; 
             br.push_back (lBI.second);
-            result_bezier_sources().push_back(br);
+            states_stack.back().result_bezier_sources().push_back(br);
           }  
             
         }
@@ -6583,18 +7008,22 @@ void MainWindow::processInput(CGAL::Object o)
 
             if(!m_linear_input->isboundingRect() && !m_linear_input->ishole())
             {
-              active_set().linear().join(lCPWH);
-              active_linear_sources().push_back(lCPWH);
+              if(!m_linear_input->is_mink())
+              {
+                get_new_state(11);
+              }
+              states_stack.back().active_set(m_color_active).linear().join(lCPWH);
+              states_stack.back().active_linear_sources(m_color_active).push_back(lCPWH);
             }
             else
             {
-              result_set().linear().join(lCPWH);
-              result_linear_sources().push_back(lCPWH);
+              states_stack.back().result_set().linear().join(lCPWH);
+              states_stack.back().result_linear_sources().push_back(lCPWH);
               if(m_linear_input->ishole())
               {
-                active_set().difference(result_set());
-                result_set().clear();
-                result_linear_sources().clear();
+                states_stack.back().active_set(m_color_active).difference(states_stack.back().result_set());
+                states_stack.back().result_set().clear();
+                states_stack.back().result_linear_sources().clear();
               }
             }
         }
@@ -6612,13 +7041,14 @@ void MainWindow::processInput(CGAL::Object o)
 
           if(!m_circular_input->isboundingRect())
           {
-            active_set().circular().join(lCPWH) ;  
-            active_circular_sources().push_back(lCPWH);
+            get_new_state(11);
+            states_stack.back().active_set(m_color_active).circular().join(lCPWH) ;  
+            states_stack.back().active_circular_sources(m_color_active).push_back(lCPWH);
           }
           else
           {
-            result_set().circular().join(lCPWH) ;  
-            result_circular_sources().push_back(lCPWH);
+            states_stack.back().result_set().circular().join(lCPWH) ;  
+            states_stack.back().result_circular_sources().push_back(lCPWH);
           }
         }
       }

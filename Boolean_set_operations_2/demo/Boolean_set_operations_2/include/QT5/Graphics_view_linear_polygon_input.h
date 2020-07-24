@@ -84,7 +84,8 @@ public:
     mHandlePen(QColor(255, 165, 0)),
     mState(Start),
     m_bound_rect(true),
-    m_hole(false)
+    m_hole(false),
+    m_is_mink(false)
   {
     mOngoingPieceGI->setPen(mOngoingCurvePen);
     mHandleGI->setPen(mHandlePen);
@@ -530,6 +531,11 @@ public:
     return m_hole;
   }
 
+  bool is_mink()
+  {
+    return m_is_mink;
+  }
+
 
 public:
   QGraphicsScene* mScene;
@@ -548,6 +554,8 @@ public:
   int mState;
 
   bool m_bound_rect;
+
+  bool m_is_mink;
 
   bool m_hole;
 
