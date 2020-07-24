@@ -145,7 +145,7 @@ template <typename PointRange,
 
    %PLY is either ASCII or binary depending on the value of `CGAL::get_mode(os)`.
 
-   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.

@@ -274,7 +274,7 @@ bool read_PLY(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+ * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -432,9 +432,9 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
- * writes the content of `points` and `polygons` in `out`, using the \ref IOStreamPLY.
+ * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamPLY.
  *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+ * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `SequenceContainer`

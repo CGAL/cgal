@@ -202,7 +202,7 @@ bool read_PLY_with_properties(std::istream& is,
 
    Potential additional point properties and faces are ignored.
 
-   \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.

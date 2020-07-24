@@ -174,6 +174,8 @@ namespace LAS {
    See documentation of `read_LAS_with_properties()` for the
    list of available `LAS_property::Tag` classes.
 
+   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
    \tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
@@ -248,7 +250,9 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only) using the \ref IOStreamLAS.
+   \brief Saves the range of `points` (positions only) using the \ref IOStreamLAS.
+
+   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.

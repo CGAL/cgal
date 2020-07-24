@@ -45,7 +45,7 @@ namespace CGAL {
  *
  * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
  *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+ * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
@@ -258,9 +258,9 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
- * writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
+ * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+ * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`

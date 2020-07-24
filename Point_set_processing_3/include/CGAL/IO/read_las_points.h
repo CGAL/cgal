@@ -363,6 +363,8 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    - `LAS_property::B` with type `unsigned short`
    - `LAS_property::I` with type `unsigned short`
 
+   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+
    \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
    It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
    \tparam OutputIterator iterator over output points.
@@ -426,6 +428,8 @@ bool read_LAS_with_properties(std::istream& is,
    \brief reads points (position only) using the \ref IOStreamLAS.
 
    Potential additional properties are ignored.
+
+   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It is default to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.

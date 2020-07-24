@@ -70,9 +70,9 @@ public:
 
   \brief reads the graph `g` from the input stream, using the \ref IOStreamSTL.
 
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
-
   \attention The graph `g` is not cleared, and the data from the stream is added.
+
+  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -203,7 +203,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 
   \brief writes the graph `g` in the output stream `os`, using the \ref IOStreamSTL.
 
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

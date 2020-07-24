@@ -63,6 +63,8 @@ void check_if_property_is_used(PointSet& point_set,
 
   \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
 
+  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
 
@@ -212,6 +214,8 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
   \ingroup PkgPointSet3IOLAS
 
   \brief writes the content of a point set into an output stream in the \ref IOStreamLAS.
+
+  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`

@@ -238,7 +238,7 @@ public:
   header. Each line starting by "comment " in the header is
   appended to the `comments` string (without the "comment " word).
 
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file
+  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
@@ -466,6 +466,8 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
   the header of the PLY stream (each line will be precedeed by
   "comment ").
 
+  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+
   \tparam Point a `CGAL::Point_3`
   \tparam Vector a `CGAL::Vector_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -482,8 +484,6 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
     \cgalParamDefault{`6`}
    \cgalParamNEnd
   \cgalNamedParamsEnd
-
-  \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file
 
   \return `true` if the reading was successful, `false` otherwise.
 */

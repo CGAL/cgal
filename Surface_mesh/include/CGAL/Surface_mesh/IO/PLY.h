@@ -714,7 +714,7 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 
 /// \ingroup PkgSurfaceMeshIOFuncPLY
 ///
-/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ifstream` when reading a binary file.
+/// \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 ///
 /// \brief extracts the surface mesh from an input stream in the \ref IOStreamPLY
 ///        and appends it to the surface mesh `sm`.
@@ -883,7 +883,7 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 /// simple types are inserted in the stream. The halfedges follow
 /// the same behavior.
 ///
-/// \attention Be mindful of the flag `std::ios::binary` flag when creating the `ofstream` when writing a binary file.
+/// \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 ///
 /// \tparam Point The type of the \em point property of a vertex. There is no requirement on `P`,
 ///               besides being default constructible and assignable.
