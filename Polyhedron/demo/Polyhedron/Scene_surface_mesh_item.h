@@ -156,6 +156,7 @@ public:
   void computeElements() const Q_DECL_OVERRIDE;
   void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
   void updateVertex(vertex_descriptor vh);
+  void updateIds(vertex_descriptor vh);
   void switchToGouraudPlusEdge(bool b); //replace flatPlusEdge by gouraudPlusEdge and ban Flat.
 Q_SIGNALS:
   void item_is_about_to_be_changed();
