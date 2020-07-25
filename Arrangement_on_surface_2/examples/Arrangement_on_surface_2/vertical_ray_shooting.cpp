@@ -8,26 +8,26 @@
 #include "arr_inexact_construction_segments.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement_2> Walk_pl;
-typedef CGAL::Arr_trapezoid_ric_point_location<Arrangement_2>   Trap_pl;
+typedef CGAL::Arr_walk_along_line_point_location<Arrangement> Walk_pl;
+typedef CGAL::Arr_trapezoid_ric_point_location<Arrangement>   Trap_pl;
 
 int main()
 {
   // Construct the arrangement.
-  Arrangement_2 arr;
+  Arrangement arr;
   construct_segments_arr(arr);
 
   // Perform some vertical ray-shooting queries using the walk strategy.
   Walk_pl walk_pl(arr);
-  shoot_vertical_ray(walk_pl, Point_2(1, 4));
-  shoot_vertical_ray(walk_pl, Point_2(4, 3));
-  shoot_vertical_ray(walk_pl, Point_2(6, 3));
+  shoot_vertical_ray(walk_pl, Point(1, 4));
+  shoot_vertical_ray(walk_pl, Point(4, 3));
+  shoot_vertical_ray(walk_pl, Point(6, 3));
 
   // Attach the trapezoid-RIC object to the arrangement and perform queries.
   Trap_pl trap_pl(arr);
-  shoot_vertical_ray(trap_pl, Point_2(3, 2));
-  shoot_vertical_ray(trap_pl, Point_2(5, 2));
-  shoot_vertical_ray(trap_pl, Point_2(1, 0));
+  shoot_vertical_ray(trap_pl, Point(3, 2));
+  shoot_vertical_ray(trap_pl, Point(5, 2));
+  shoot_vertical_ray(trap_pl, Point(1, 0));
 
   return 0;
 }

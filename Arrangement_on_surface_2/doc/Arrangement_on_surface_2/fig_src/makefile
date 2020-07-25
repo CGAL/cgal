@@ -29,7 +29,8 @@ TARGETS = \
   algebraic_curves_decomposition.pdf \
   algebraic_segments.pdf \
   curve_history.pdf \
-  edge_manipulation_curve_history.pdf
+  edge_manipulation_curve_history.pdf \
+  vertical_decomposition.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean

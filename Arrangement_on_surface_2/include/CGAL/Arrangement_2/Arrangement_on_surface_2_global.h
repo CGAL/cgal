@@ -528,7 +528,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>& arr,
 template <typename GeometryTraits_2, typename TopologyTraits>
 void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
             const typename GeometryTraits_2::X_monotone_curve_2& c,
-            const Object& obj)
+            typename Arr_point_location_result<
+              Arrangement_on_surface_2<GeometryTraits_2,
+                                       TopologyTraits> >::type obj)
 {
   typedef GeometryTraits_2                              Gt2;
   typedef TopologyTraits                                Tt;
@@ -596,7 +598,8 @@ template <typename GeometryTraits_2, typename TopologyTraits>
 CGAL_DEPRECATED void insert_x_monotone_curve
 (Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  const typename GeometryTraits_2::X_monotone_curve_2& c,
- const Object& obj)
+ typename Arr_point_location_result<
+   Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits> >::type obj)
 {
   insert(arr, c, obj);
 }

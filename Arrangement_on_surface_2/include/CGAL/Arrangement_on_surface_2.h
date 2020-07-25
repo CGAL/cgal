@@ -46,6 +46,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
+#include <CGAL/Arr_point_location_result.h>
 
 namespace CGAL {
 
@@ -2854,7 +2855,8 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <typename GeomTraits, typename TopTraits>
 void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
             const typename GeomTraits::X_monotone_curve_2& c,
-            const Object& obj);
+            typename Arr_point_location_result<
+              Arrangement_on_surface_2<GeomTraits, TopTraits> >::type obj);
 
 /*!
  * Insert an x-monotone curve into the arrangement, such that the curve
