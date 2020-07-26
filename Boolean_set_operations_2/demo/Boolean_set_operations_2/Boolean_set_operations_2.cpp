@@ -58,7 +58,6 @@
 #include <QGraphicsPathItem>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
-#include <QWheelEvent>
 #include <QKeyEvent>
 
 #include <CGAL/basic.h>
@@ -1501,7 +1500,7 @@ MainWindow::MainWindow() :
   //this->on_actionInsertLinear_triggered();
 
   // Turn the vertical axis upside down
-  this->graphicsView->scale(1, -1);
+  this->graphicsView->scale(2, -2);
 
   //adding basic setups
 
@@ -3730,6 +3729,7 @@ void MainWindow::on_actionNew_triggered()
     si->clear();
 
   this->graphicsView->setSceneRect(-320, -210, 640, 420);
+  this->graphicsView->scale(2, -2);
 
   states_stack.back().result_set().clear();
   states_stack.back().blue_set().clear();
