@@ -29,6 +29,10 @@
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 
+#if CGAL_MESH_3_STATS_THREADS
+#  include <thread>
+#endif
+
 namespace CGAL {
 
 // Without erase counter
@@ -113,6 +117,10 @@ public:
   // Types
   typedef typename MD::Index                      Index;
   typedef typename GT::FT                         FT;
+
+#if CGAL_MESH_3_STATS_THREADS
+  std::thread::id thread_id;
+#endif
 
   // Constructor
   Mesh_vertex_base_3()

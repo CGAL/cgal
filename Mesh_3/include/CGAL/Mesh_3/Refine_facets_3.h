@@ -52,6 +52,10 @@
 #include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
 
+#if CGAL_MESH_3_STATS_THREADS
+#  include <thread>
+#endif
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -322,6 +326,10 @@ public:
   /// Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
   {
+#if CGAL_MESH_3_STATS_THREADS
+    v->thread_id = std::this_thread::get_id();
+#endif
+
     restore_restricted_Delaunay(v);
   }
 

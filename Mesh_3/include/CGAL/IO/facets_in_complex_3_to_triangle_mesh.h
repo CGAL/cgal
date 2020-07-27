@@ -140,6 +140,29 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                        true/*point outward*/, true /*extract all facets*/);
 }
 
+template <class C3T3, class TriangleMesh>
+void save_patch_id_if_surface_mesh(const C3T3& c3t3, TriangleMesh& graph,
+                                   CGAL::Tag_true)
+{
+  using Face_patch_id = typename C3T3::Surface_patch_index;
+  auto face_pmap = graph.template add_property_map<typename TriangleMesh::Face_index, Face_patch_id>("f:patch_id").first;
+  auto fit = c3t3.facets_in_complex_begin();
+  auto fend = c3t3.facets_in_complex_end();
+  for(auto f: faces(graph)) {
+    CGAL_assertion(fit != fend);
+
+    put(face_pmap, f, c3t3.surface_patch_index(*fit));
+    ++fit;
+  }
+  CGAL_assertion(fit == fend);
+}
+
+template <class C3T3, class TriangleMesh>
+void save_patch_id_if_surface_mesh(const C3T3& c3t3, TriangleMesh& graph,
+                                   CGAL::Tag_false)
+{ // not a Surface_mesh<Point>: do nothing
+}
+
 } // end namespace internal
 
 } // end namespace Mesh_3
@@ -168,16 +191,22 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
 
   typedef std::array<std::size_t, 3>                                       Face;
 
-  std::vector<Face> faces;
-  std::vector<Point_3> points;
+  {
+    std::vector<Face> faces;
+    std::vector<Point_3> points;
 
-  Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
+    Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
 
-  if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
-    PMP::orient_polygon_soup(points, faces);
-  CGAL_postcondition(PMP::is_polygon_soup_a_polygon_mesh(faces));
+    if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+      PMP::orient_polygon_soup(points, faces);
+    CGAL_postcondition(PMP::is_polygon_soup_a_polygon_mesh(faces));
 
-  PMP::polygon_soup_to_polygon_mesh(points, faces, graph);
+    PMP::polygon_soup_to_polygon_mesh(points, faces, graph);
+  }
+  Mesh_3::internal::save_patch_id_if_surface_mesh(
+      c3t3, graph,
+      CGAL::Boolean_tag<
+          std::is_same<TriangleMesh, CGAL::Surface_mesh<Point_3>>::value>());
 }
 
 } // namespace CGAL

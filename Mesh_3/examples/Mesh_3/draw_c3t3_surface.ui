@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Window</class>
+ <widget class="QWidget" name="Window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>344</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Display c2t3</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="CGAL::Basic_viewer_qt" name="viewer" native="true"/>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>&amp;Timeline</string>
+       </property>
+       <property name="buddy">
+        <cstring>timelineSlider</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Thread &amp;id</string>
+       </property>
+       <property name="buddy">
+        <cstring>threadBox</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QSlider" name="timelineSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="timelineBox"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="threadBox"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CGAL::Basic_viewer_qt</class>
+   <extends>QWidget</extends>
+   <header location="global">CGAL/Qt/Basic_viewer_qt.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>timelineBox</tabstop>
+  <tabstop>timelineSlider</tabstop>
+  <tabstop>threadBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>timelineSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>timelineBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>421</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timelineBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>timelineSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>504</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>435</x>
+     <y>219</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

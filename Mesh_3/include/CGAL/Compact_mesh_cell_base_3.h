@@ -32,6 +32,9 @@
 
 #include <boost/type_traits/is_same.hpp>
 
+#if CGAL_MESH_3_STATS_THREADS
+#  include <thread>
+#endif
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
@@ -309,6 +312,10 @@ public:
   }
 
 public:
+#if CGAL_MESH_3_STATS_THREADS
+  std::array<std::thread::id, 4> thread_ids;
+#endif
+
   // Constructors
   Compact_mesh_cell_base_3()
     : surface_index_table_()

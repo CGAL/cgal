@@ -8,7 +8,11 @@ if ( CGAL_MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
-find_package(CGAL COMPONENTS ImageIO)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+find_package(Qt5 COMPONENTS Widgets)
+
+find_package(CGAL COMPONENTS ImageIO Qt5)
 find_package(Boost)
 
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
@@ -76,8 +80,15 @@ target_link_libraries(mesh_polyhedral_domain_with_surface_inside PUBLIC CGAL::Ei
 create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
 target_link_libraries(remesh_polyhedral_surface PUBLIC CGAL::Eigen_support)
 
-create_single_source_cgal_program( "remesh_polyhedral_surface_sm.cpp" )
-target_link_libraries(remesh_polyhedral_surface_sm PUBLIC CGAL::Eigen_support)
+create_single_source_cgal_program( "remesh_polyhedral_surface_sm.cpp" draw_c3t3_surface.h)
+target_link_libraries(remesh_polyhedral_surface_sm PUBLIC CGAL::Eigen_support CGAL::CGAL_Qt5)
+target_compile_definitions(remesh_polyhedral_surface_sm PUBLIC CGAL_USE_BASIC_VIEWER QT_NO_KEYWORDS)
+target_include_directories(remesh_polyhedral_surface_sm PUBLIC .)
+
+create_single_source_cgal_program( "draw_mesh_surface.cpp" draw_c3t3_surface.h)
+target_link_libraries(draw_mesh_surface PUBLIC CGAL::Eigen_support CGAL::CGAL_Qt5)
+target_compile_definitions(draw_mesh_surface PUBLIC CGAL_USE_BASIC_VIEWER QT_NO_KEYWORDS)
+target_include_directories(draw_mesh_surface PUBLIC .)
 
 create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
 target_link_libraries(mesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen_support)
@@ -150,7 +161,8 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
       mesh_polyhedral_domain_with_features
       mesh_polyhedral_domain_with_features_sm
       mesh_polyhedral_domain_with_lipschitz_sizing
-      mesh_two_implicit_spheres_with_balls)
+      mesh_two_implicit_spheres_with_balls
+      remesh_polyhedral_surface_sm)
     if(TARGET ${target})
       target_link_libraries(${target} PUBLIC CGAL::TBB_support)
     endif()
