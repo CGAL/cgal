@@ -203,7 +203,7 @@ list(APPEND test_config_lst "test_config_file_2")
 #configure cgal for a non standard install without qt5
 get_filename_component(CORRECT_INSTALL_PATH "${CMAKE_CURRENT_BINARY_DIR}/non standard install/dummy.txt" DIRECTORY)
 add_test(NAME config_non_standard_cgal
-  COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CORRECT_INSTALL_PATH}
+  COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CORRECT_INSTALL_PATH} -DCGAL_INSTALL_LIB_DIR=lib
   "${CGAL_SOURCE_DIR}"
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/non_standard_build")
 #install cgal in the non standard place
@@ -221,7 +221,7 @@ list(APPEND test_config_lst "test_config_file_3")
 if(CGAL_Qt5_FOUND)
   #configure cgal for a non standard install with qt5
   add_test(NAME config_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5 -DWITH_CGAL_Qt5=ON
+    COMMAND ${CMAKE_COMMAND} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib -DWITH_CGAL_Qt5=ON
     "${CGAL_SOURCE_DIR}"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/non_standard_build_qt5")
   #install cgal in the non standard place
