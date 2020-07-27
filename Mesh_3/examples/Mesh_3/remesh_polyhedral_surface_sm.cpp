@@ -71,12 +71,13 @@ int main(int argc, char*argv[])
   // Output
   dump_c3t3(c3t3, "out");
 
+#if CGAL_USE_BASIC_VIEWER
   {
     using Mesh = CGAL::Surface_mesh<K::Point_3>;
     Mesh surface_mesh = draw_c3t3_surface(c3t3);
-
     std::ofstream out("out.ply");
     out.precision(17);
     write_ply(out, surface_mesh, "essai");
   }
+#endif
 }
