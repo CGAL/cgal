@@ -1015,6 +1015,7 @@ private:
   bool m_aqua_int;
   bool m_grid;
   bool m_pan;
+  bool m_reset;
 
   bool m_blue_union;
   bool m_red_union;
@@ -1247,6 +1248,8 @@ private:
     // DIFFERENCE_OP = 3
     // SYMMETRIC_dIFFERENCE_OP = 4
     // MINKOWSKI_SUM_OP = 5
+    // RESET_OP = 6
+    // PAN_OP = 7 (Not needed hence removing)
 
       //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
     // COPY_OP = 6
@@ -1479,6 +1482,7 @@ MainWindow::MainWindow() :
   m_disjoint(false), //default
   m_pan(false),
   m_grid(false),
+  m_reset(false),
   m_state_num(0)
 {
   CGAL::set_error_handler  (error_handler);
@@ -1500,7 +1504,7 @@ MainWindow::MainWindow() :
   //this->on_actionInsertLinear_triggered();
 
   // Turn the vertical axis upside down
-  this->graphicsView->scale(2, -2);
+  this->graphicsView->scale(2.5, -2.5);
 
   //adding basic setups
 
@@ -3682,10 +3686,43 @@ void MainWindow::on_actionUndo_triggered()
 {
   if(m_state_num > 1)
   {
+    //operation_name
+     // COMPLEMENT_OP = 0
+    // INTERSECTION_OP = 1
+    // UNION_OP = 2
+    // DIFFERENCE_OP = 3
+    // SYMMETRIC_dIFFERENCE_OP = 4
+    // MINKOWSKI_SUM_OP = 5
+    // RESET_OP = 6
+    // PAN_OP = 7(not needed hence removed)
+
+      //makes no sense to just undo copy alone but rather be used with paste and that is handled anyways
+    // COPY_OP = 6
+    // MOVE_OP = 7
+      //hence these 2 are abandoned
     
+    // PASTE_OP = 8
+    // CLEAR_OP = 9
+    // DELETEALL_OP = 10
+    // DRAWPOL_OP = 11
+    // START_OP = 12
+
     //unlink GI for last state
     for (auto si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end(); ++ si)
     {  unlink_GI(si->gi());}
+
+    switch(states_stack.back().m_operation)
+    {
+      case 0: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
+      case 1: if(actionIntersectionH->isChecked()) actionIntersectionH->setChecked(false); break;
+      case 2: if(actionUnionH->isChecked()) actionUnionH->setChecked(false); break;
+      case 3: if(actionDifferenceH->isChecked()) actionDifferenceH->setChecked(false); break;
+      case 4: if(actionSymmetric_DifferenceH->isChecked()) actionSymmetric_DifferenceH->setChecked(false); break;
+      case 5: if(actionMinkowski_SumH->isChecked()) actionMinkowski_SumH->setChecked(false); break;
+      case 8: if(actionPasteH->isChecked()) actionPasteH->setChecked(false); break;
+      case 10: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
+      case 11: if(actionComplementH->isChecked()) actionComplementH->setChecked(false); break;
+    }
 
     modelChanged();
 
@@ -3703,6 +3740,7 @@ void MainWindow::on_actionUndo_triggered()
     }
 
     m_state_num = states_stack.size();
+
     
     // for confirming the num of each state during debugging
     // show_error("State num: "+to_string(states_stack.size()));
@@ -3718,18 +3756,17 @@ void MainWindow::on_actionUndo_triggered()
 //////////////#################################
 void MainWindow::on_actionNew_triggered()       
 {
-  while(m_state_num>1)
-  {
-    on_actionUndo_triggered();
-  }
+  // while(m_state_num>1)
+  // {
+  //   on_actionUndo_triggered();
+  // }
 
-  // get_new_state(12);
+  if(m_state_num>1) get_new_state(6);
 
   for( Curve_set_iterator si = states_stack.back().m_curve_sets.begin(); si != states_stack.back().m_curve_sets.end() ; ++ si )
     si->clear();
 
   this->graphicsView->setSceneRect(-320, -210, 640, 420);
-  this->graphicsView->scale(2, -2);
 
   states_stack.back().result_set().clear();
   states_stack.back().blue_set().clear();
@@ -3777,8 +3814,8 @@ void MainWindow::on_actionNew_triggered()
   actionAddColor -> setEnabled(true);
   actionMinusColor -> setEnabled(false);
   
-  m_circular_active = false;
-  m_bezier_active = false;
+  // m_circular_active = false;
+  // m_bezier_active = false;
   m_disjoint = false;
   // empty_warn = true;
 
@@ -3787,13 +3824,11 @@ void MainWindow::on_actionNew_triggered()
     actionAxis->setChecked(false);
   }
 
-  m_pan = false;
-
   m_linear_input->Reset();
   m_circular_input->Reset();
   m_bezier_input->Reset();
 
-
+  m_pan = false;
   
   m_color_active = 0;
   m_color_move = 1111;
@@ -3830,9 +3865,28 @@ void MainWindow::on_actionNew_triggered()
   actionSymmetric_DifferenceH -> setChecked(false);
   actionMinkowski_SumH -> setChecked(false);
 
-  actionInsertLinear -> setChecked(true); 
-  actionInsertCircular -> setChecked(false); 
-  actionInsertBezier -> setChecked(false); 
+  m_reset = true;
+  if(!m_circular_active && !m_bezier_active)
+  {
+    actionInsertLinear -> setChecked(true); 
+    actionInsertCircular -> setChecked(false); 
+    actionInsertBezier -> setChecked(false); 
+  }
+  else if(!m_bezier_active)
+  {
+    actionInsertLinear -> setChecked(false); 
+    actionInsertCircular -> setChecked(true); 
+    actionInsertBezier -> setChecked(false); 
+  }
+  else
+  {
+    actionInsertLinear -> setChecked(false); 
+    actionInsertCircular -> setChecked(false); 
+    actionInsertBezier -> setChecked(true);   
+  }
+
+  m_reset = false;
+
   actionMinkowski_SumH -> setEnabled(true);
   actionDifferenceH -> setEnabled(true);
 
@@ -4082,6 +4136,17 @@ void MainWindow::on_actionDeleteAll_triggered()
   //bool lProceed = states_stack.back().result_set().is_empty() ? true : ask_user_yesno("Store result","All polygons will be deleted\n continue anyway?\n");
   if (true) {
 
+
+    actionComplementH->setChecked(false);
+    actionIntersectionH->setChecked(false);
+    actionUnionH->setChecked(false);
+    actionDifferenceH->setChecked(false);
+    actionSymmetric_DifferenceH->setChecked(false);
+    actionMinkowski_SumH->setChecked(false);
+    actionPasteH->setChecked(false);
+    actionComplementH->setChecked(false);
+    actionComplementH->setChecked(false);
+
     get_new_state(10);
 
     //operation_name
@@ -4141,6 +4206,16 @@ void MainWindow::on_actionClearH_toggled(bool aChecked)
 	{
 		bool lDone = false;
 		bool lProceed;
+
+    actionComplementH->setChecked(false);
+    actionIntersectionH->setChecked(false);
+    actionUnionH->setChecked(false);
+    actionDifferenceH->setChecked(false);
+    actionSymmetric_DifferenceH->setChecked(false);
+    actionMinkowski_SumH->setChecked(false);
+    actionPasteH->setChecked(false);
+    actionComplementH->setChecked(false);
+    actionComplementH->setChecked(false);
 
     get_new_state(9);
 
@@ -5054,10 +5129,12 @@ void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     if(ensure_circular_mode()) 
     {
-
-      while(m_state_num>1)
+      if(!m_pan && !m_reset)
       {
-        on_actionUndo_triggered();
+        while(m_state_num>1)
+        {
+          on_actionUndo_triggered();
+        }
       }
       
       actionPAN->setChecked(false);
@@ -5089,10 +5166,12 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     if(ensure_bezier_mode()) 
     { 
-      
-      while(m_state_num>1)
+      if(!m_pan && !m_reset)
       {
-        on_actionUndo_triggered();
+        while(m_state_num>1)
+        {
+          on_actionUndo_triggered();
+        }
       }
       
       actionPAN->setChecked(false);
@@ -5123,9 +5202,12 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
     this->graphicsView->setDragMode(QGraphicsView::NoDrag);
     if (ensure_linear_mode())
     {
-      while(m_state_num>1)
+      if(!m_pan && !m_reset)
       {
-        on_actionUndo_triggered();
+        while(m_state_num>1)
+        {
+          on_actionUndo_triggered();
+        }
       }
 
       actionPAN->setChecked(false);
@@ -6782,6 +6864,7 @@ void MainWindow::on_actionPAN_triggered()
 
   if(!m_pan)
   {
+    //get_new_state(7);
 
     if (!m_circular_active && !m_bezier_active) 
     {
@@ -6833,7 +6916,6 @@ void MainWindow::on_actionPAN_triggered()
   }
   else
   {
-
     if(! (m_circular_active || m_bezier_active) )
     {
       actionInsertLinear->setChecked(true);

@@ -3048,7 +3048,7 @@
      <normaloff>:/cgal/icons/resources/hand.png</normaloff>:/cgal/icons/resources/hand.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;PAN</string>
+    <string>&amp;Pan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
