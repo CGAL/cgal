@@ -504,6 +504,23 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   }
 }
 
+template<typename Vertex_handle, typename CellVector>
+bool is_edge_uv(Vertex_handle u,
+                Vertex_handle v,
+                const CellVector& cells_incident_to_u)
+{
+  if (u == v)
+    return false;
+
+  for (typename CellVector::value_type c : cells_incident_to_u)
+  {
+    int j;
+    if (c->has_vertex(v, j))
+      return true;
+  }
+  return false;
+}
+
 template<typename C3t3, typename CandidatesQueue>
 void find_best_flip_to_improve_dh(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
@@ -547,6 +564,9 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
       }
     }
 
+    boost::container::small_vector<Cell_handle, 64> inc_vh;
+    tr.incident_cells(vh, std::back_inserter(inc_vh));
+
     Facet_circulator facet_circulator = curr_fcirc;
     Facet_circulator facet_done = curr_fcirc;
 
@@ -563,9 +583,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          Cell_handle ch;
-          int i0, i1;
-          if (tr.is_edge(curr_vertex, vh, ch, i0, i1))
+          if (is_edge_uv(vh, curr_vertex, inc_vh))
             is_edge = true;
         }
       }
