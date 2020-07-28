@@ -12,9 +12,6 @@
 #ifndef CGAL_DRAW_SURFACE_MESH_H
 #define CGAL_DRAW_SURFACE_MESH_H
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Dynamic_property_map.h>
-
 #ifdef DOXYGEN_RUNNING
 
 /*!
