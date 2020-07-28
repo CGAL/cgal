@@ -74,7 +74,9 @@ public:
     mOngoingCurvePen(QColor(255, 215, 0)),
     mHandlePen(QColor(255, 165, 0)),
     mState(Start),
-    m_bound_rect(true)
+    m_bound_rect(true),
+    m_last_circular(false),
+    m_last(false)
   {
     mOngoingPieceGI->setPen(mOngoingCurvePen);
     mHandleGI->setPen(mHandlePen);
@@ -151,6 +153,19 @@ public:
        default: break; //! \todo handle default case
       }
     }
+
+    else  if (aEvent->button() == ::Qt::RightButton) {
+      switch (mState) {
+        case PieceOngoing:
+          // allowing user to curve last piece as well
+          m_last = true;
+          mState = HandleOngoing;
+          rHandled = true;
+          break;
+
+         default: break; //! \todo handle default case
+       }
+    }
     return rHandled;
   }
 
@@ -168,6 +183,11 @@ public:
       break;
 
      case HandleOngoing:
+      if(m_last)
+      {
+        mP1 = cvt(mCircularPolygonPieces.front().source());
+        m_last_circular = true;
+      }
       UpdateHandle(lP);
       UpdateOngoingPiece();
       rHandled = true;
@@ -207,8 +227,13 @@ public:
     }
     else if (aEvent->button() == ::Qt::RightButton) {
       switch (mState) {
-       case PieceOngoing:
+       case HandleOngoing:
         //cout<<"hello in Graphics_view_circular_polygon"<<endl;
+        if(m_last_circular)
+        { 
+          HideHandle();
+          CommitOngoingPiece(lP);
+        }
         m_bound_rect = false;
         CommitCurrCircularPolygon();
         ReStart();
@@ -377,19 +402,27 @@ public:
 
       if (xcvs.size() > 0) {
         //cout<<"point 4"<<endl;
-        Arc_point const& first_point = xcvs.front().source();
-        Arc_point const& last_point =  xcvs.back().target();
 
-        CGAL_assertion(!first_point.x().is_extended() &&
-                       !first_point.y().is_extended());
-        CGAL_assertion(!last_point. x().is_extended() &&
-                       !last_point .y().is_extended());
-        FT fxs = first_point.x().alpha();
-        FT fys = first_point.y().alpha();
-        FT lxs = last_point .x().alpha();
-        FT lys = last_point .y().alpha();
-        xcvs.push_back(Circular_X_monotone_curve(Point(lxs,lys),
-                                                 Point(fxs,fys)));
+        if(!m_last_circular)
+        {
+          Arc_point const& first_point = xcvs.front().source();
+          Arc_point const& last_point =  xcvs.back().target();
+
+          CGAL_assertion(!first_point.x().is_extended() &&
+                         !first_point.y().is_extended());
+          CGAL_assertion(!last_point. x().is_extended() &&
+                         !last_point .y().is_extended());
+          FT fxs = first_point.x().alpha();
+          FT fys = first_point.y().alpha();
+          FT lxs = last_point .x().alpha();
+          FT lys = last_point .y().alpha();
+          xcvs.push_back(Circular_X_monotone_curve(Point(lxs,lys),
+                                                   Point(fxs,fys)));
+        }
+
+        m_last = false;
+        m_last_circular = false;
+
         //cout<<"add curves if circular"<<endl;
         Circular_polygon cp(xcvs.begin(), xcvs.end());
         //cout<<"point 5"<<endl;
@@ -473,6 +506,8 @@ public:
   QPen mHandlePen;
 
   bool m_bound_rect;
+  bool m_last_circular;
+  bool m_last;
 
   Circular_curve_vector mCircularPolygonPieces;
   Circular_curve_vector mOngoingPieceCtr;

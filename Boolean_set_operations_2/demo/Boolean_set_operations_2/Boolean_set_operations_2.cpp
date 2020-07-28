@@ -1762,7 +1762,7 @@ MainWindow::MainWindow() :
   this->graphicsView->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
   // axis 
 
-  QPen *dashedLine {new QPen(QBrush(Qt::black), 1, Qt::DashLine)};
+  QPen *dashedLine {new QPen(QBrush(Qt::black), 1, Qt::SolidLine)};
   xAxis->setLine(-15500000, 0, 15500000, 0);
   xAxis->setPen(*dashedLine);
   yAxis->setLine(0, -10000000, 0, 10000000);
@@ -1790,56 +1790,322 @@ MainWindow::MainWindow() :
 void MainWindow::on_showBlue_toggled(bool a_check)
 { 
 	states_stack.back().ToogleView(BLUE_GROUP, a_check); 
-	if(a_check) m_color_visible++;
-	else m_color_visible--;
+	if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawBlue->setEnabled(true);
+  }
+	else 
+  {
+    m_color_visible--;
+    if(showRed->isChecked()) drawRed->setChecked(true);
+    else if(showBlack->isChecked()) drawBlack->setChecked(true);
+    else if(showBrown->isChecked()) drawBrown->setChecked(true);
+    else if(showYellow->isChecked()) drawYellow->setChecked(true);
+    else if(showMagenta->isChecked()) drawMagenta->setChecked(true);
+    else if(showAqua->isChecked()) drawAqua->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawBlue->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
 	//else VisibleHeader->setChecked(false);
 }
 
 void MainWindow::on_showRed_toggled(bool a_check)
 { states_stack.back().ToogleView(RED_GROUP, a_check); 
-	if(a_check) m_color_visible++;
-	else m_color_visible--;
+  if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawRed->setEnabled(true);
+  }
+  else 
+  {
+    m_color_visible--;
+    if(showBlue->isChecked()) drawBlue->setChecked(true);
+    else if(showBlack->isChecked()) drawBlack->setChecked(true);
+    else if(showBrown->isChecked()) drawBrown->setChecked(true);
+    else if(showYellow->isChecked()) drawYellow->setChecked(true);
+    else if(showMagenta->isChecked()) drawMagenta->setChecked(true);
+    else if(showAqua->isChecked()) drawAqua->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawRed->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
 	// else VisibleHeader->setChecked(false);
 }
 
 void MainWindow::on_showBlack_toggled(bool a_check)
 { states_stack.back().ToogleView(BLACK_GROUP, a_check); 
-	if(a_check) m_color_visible++;
-	else m_color_visible--;
+  if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawBlack->setEnabled(true);
+  }
+  else 
+  {
+    m_color_visible--;
+    if(showBlue->isChecked()) drawBlue->setChecked(true);
+    else if(showRed->isChecked()) drawRed->setChecked(true);
+    else if(showBrown->isChecked()) drawBrown->setChecked(true);
+    else if(showYellow->isChecked()) drawYellow->setChecked(true);
+    else if(showMagenta->isChecked()) drawMagenta->setChecked(true);
+    else if(showAqua->isChecked()) drawAqua->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawBlack->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
 	//else VisibleHeader->setChecked(false);
 }
 
 void MainWindow::on_showBrown_toggled(bool a_check)
 { states_stack.back().ToogleView(BROWN_GROUP, a_check);
-	if(a_check) m_color_visible++;
-	else m_color_visible--;
+  if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawBrown->setEnabled(true);
+  }
+  else 
+  {
+    m_color_visible--;
+    if(showBlue->isChecked()) drawBlue->setChecked(true);
+    else if(showRed->isChecked()) drawRed->setChecked(true);
+    else if(showBlack->isChecked()) drawBlack->setChecked(true);
+    else if(showYellow->isChecked()) drawYellow->setChecked(true);
+    else if(showMagenta->isChecked()) drawMagenta->setChecked(true);
+    else if(showAqua->isChecked()) drawAqua->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawBrown->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true); 
 	//else VisibleHeader->setChecked(false);
 }
 
 void MainWindow::on_showYellow_toggled(bool a_check)
 { states_stack.back().ToogleView(YELLOW_GROUP, a_check); 
-	if(a_check) m_color_visible++;
-	else m_color_visible--;
+  if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawYellow->setEnabled(true);
+  }
+  else 
+  {
+    m_color_visible--;
+    if(showBlue->isChecked()) drawBlue->setChecked(true);
+    else if(showRed->isChecked()) drawRed->setChecked(true);
+    else if(showBlack->isChecked()) drawBlack->setChecked(true);
+    else if(showBrown->isChecked()) drawBrown->setChecked(true);
+    else if(showMagenta->isChecked()) drawMagenta->setChecked(true);
+    else if(showAqua->isChecked()) drawAqua->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawYellow->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
 	//else VisibleHeader->setChecked(false);
 }
 
 void MainWindow::on_showMagenta_toggled(bool a_check)
 { states_stack.back().ToogleView(MAGENTA_GROUP, a_check);
-	if(a_check) m_color_visible++;
-	else m_color_visible--; 
+  if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawMagenta->setEnabled(true);
+  }
+  else 
+  {
+    m_color_visible--;
+    if(showBlue->isChecked()) drawBlue->setChecked(true);
+    else if(showRed->isChecked()) drawRed->setChecked(true);
+    else if(showBlack->isChecked()) drawBlack->setChecked(true);
+    else if(showBrown->isChecked()) drawBrown->setChecked(true);
+    else if(showYellow->isChecked()) drawYellow->setChecked(true);
+    else if(showAqua->isChecked()) drawAqua->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawMagenta->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
 	//else VisibleHeader->setChecked(false);
 }
 
 void MainWindow::on_showAqua_toggled(bool a_check)
 { states_stack.back().ToogleView(AQUA_GROUP, a_check);
-	if(a_check) m_color_visible++;
-	else m_color_visible--;
+  if(a_check) 
+  {
+    if(m_color_visible==0)
+    {
+      if(!m_circular_active && !m_bezier_active)
+      {
+        m_scene.installEventFilter(m_linear_input);
+      }
+      else if(!m_bezier_active)
+      {
+        m_scene.installEventFilter(m_circular_input);
+      }
+      else
+      {
+        m_scene.installEventFilter(m_bezier_input);
+      }
+    }
+    m_color_visible++;
+    drawAqua->setEnabled(true);
+  }
+  else 
+  {
+    m_color_visible--;
+    if(showBlue->isChecked()) drawBlue->setChecked(true);
+    else if(showRed->isChecked()) drawRed->setChecked(true);
+    else if(showBlack->isChecked()) drawBlack->setChecked(true);
+    else if(showBrown->isChecked()) drawBrown->setChecked(true);
+    else if(showYellow->isChecked()) drawYellow->setChecked(true);
+    else if(showMagenta->isChecked()) drawMagenta->setChecked(true);
+    else 
+    {
+      m_scene.removeEventFilter(m_linear_input); 
+      m_scene.removeEventFilter(m_bezier_input);
+      m_scene.removeEventFilter(m_circular_input);
+      m_linear_input->Reset();
+      m_circular_input->Reset();
+      m_bezier_input->Reset();
+    }
+    drawAqua->setEnabled(false);
+  }
 	if (m_color_visible==7) VisibleHeader->setChecked(true);
 	//else VisibleHeader->setChecked(false);
 }
@@ -3829,7 +4095,7 @@ void MainWindow::on_actionNew_triggered()
   m_bezier_input->Reset();
 
   m_pan = false;
-  
+
   m_color_active = 0;
   m_color_move = 1111;
   m_color_cm = 1111;
@@ -3887,7 +4153,7 @@ void MainWindow::on_actionNew_triggered()
 
   m_reset = false;
 
-  actionMinkowski_SumH -> setEnabled(true);
+  // actionMinkowski_SumH -> setEnabled(true);
   actionDifferenceH -> setEnabled(true);
 
 
@@ -5163,30 +5429,30 @@ void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 {
   if(aChecked)
   {
-    this->graphicsView->setDragMode(QGraphicsView::NoDrag);
-    if(ensure_bezier_mode()) 
-    { 
-      if(!m_pan && !m_reset)
-      {
-        while(m_state_num>1)
+      this->graphicsView->setDragMode(QGraphicsView::NoDrag);
+      if(ensure_bezier_mode()) 
+      { 
+        if(!m_pan && !m_reset)
         {
-          on_actionUndo_triggered();
+          while(m_state_num>1)
+          {
+            on_actionUndo_triggered();
+          }
         }
-      }
-      
-      actionPAN->setChecked(false);
-      actionInsertLinear->setChecked( false );
-      actionInsertCircular->setChecked( false );
-      //actionInsertMink_Polygon -> setChecked(false);
-      m_scene.installEventFilter(m_bezier_input);
-      on_actionDeleteResult();
+        
+        actionPAN->setChecked(false);
+        actionInsertLinear->setChecked( false );
+        actionInsertCircular->setChecked( false );
+        //actionInsertMink_Polygon -> setChecked(false);
+        m_scene.installEventFilter(m_bezier_input);
+        on_actionDeleteResult();
 
-        actionMinkowski_SumH -> setEnabled(false);
+          actionMinkowski_SumH -> setEnabled(false);
 
-        m_bezier_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
-    m_bezier_input -> mBezierGI -> setPen(sPens[m_color_active]);
-    m_bezier_input -> mHandle0GI -> setPen(sPens[m_color_active]);
-    m_bezier_input -> mHandle1GI -> setPen(sPens[m_color_active]);
+          m_bezier_input -> mOngoingPieceGI -> setPen(sPens[m_color_active]);
+      m_bezier_input -> mBezierGI -> setPen(sPens[m_color_active]);
+      m_bezier_input -> mHandle0GI -> setPen(sPens[m_color_active]);
+      m_bezier_input -> mHandle1GI -> setPen(sPens[m_color_active]);
     }
     else
   	{

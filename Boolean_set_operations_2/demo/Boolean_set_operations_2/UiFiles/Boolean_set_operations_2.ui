@@ -2967,10 +2967,10 @@
      <normaloff>:/cgal/icons/resources/insert_circle.xpm</normaloff>:/cgal/icons/resources/insert_circle.xpm</iconset>
    </property>
    <property name="text">
-    <string>Draw Circular polygon</string>
+    <string>Draw Line segments and circular arcs</string>
    </property>
    <property name="toolTip" >
-    <string>Draw Circular Polygon</string>
+    <string>Draw Line segments and circular arcs</string>
    </property>
   </action>
   <action name="actionVisible">

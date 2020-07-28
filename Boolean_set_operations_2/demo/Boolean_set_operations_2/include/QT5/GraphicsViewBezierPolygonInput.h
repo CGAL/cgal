@@ -71,6 +71,8 @@ namespace Qt {
       , mHandlePen       ( QColor(0,0,255) )
       , mBezierGI        ( 0               )
       , m_bound_rect     ( true            )
+      , m_last_bezier  ( false           )
+      , m_last           ( false           )
     {
       mOngoingPieceGI = new GI(&mOngoingPieceCtr) ;
       mHandle0GI      = new QGraphicsLineItem();
@@ -157,6 +159,19 @@ namespace Qt {
             break;
         }
       }
+
+      else  if (aEvent->button() == ::Qt::RightButton) {
+        switch (mState) {
+          case PieceOngoing:
+            // allowing user to curve last piece as well
+            m_last = true;
+            mState = HandleOngoing;
+            rHandled = true;
+            break;
+
+           default: break; //! \todo handle default case
+         }
+    }
       
       return rHandled ;
     }
@@ -187,10 +202,13 @@ namespace Qt {
           break;
           
         case HandleOngoing:
-        
+          if(m_last)
+          {
+            mP1 = mBezierPolygonPieces.front().control_point(0);
+            m_last_bezier = true;
+          }
           UpdateHandles(lP);
           UpdateOngoingPiece();
-          
           rHandled = true ;
           break;
           
@@ -238,8 +256,13 @@ namespace Qt {
       {
         switch (mState)
         {
-          case PieceOngoing: 
+          case HandleOngoing: 
             m_bound_rect = false;
+            if(m_last_bezier)
+            { 
+              HideHandles();
+              CommitOngoingPiece(lP);
+            }
             CloseCurrBundary();
             CommitCurrBezierPolygon();
             ReStart();
@@ -411,7 +434,7 @@ namespace Qt {
 
     void CloseCurrBundary()
     {
-      if ( mBezierPolygonPieces.size() > 0 && ongoing_piece()!= NULL )
+      if ( mBezierPolygonPieces.size() > 0 && ongoing_piece()!= NULL  && !m_last_bezier)
       {
         std::vector<Point> lControlPoints(ongoing_piece()->control_points_begin(),ongoing_piece()->control_points_end());
         
@@ -462,6 +485,8 @@ namespace Qt {
       
       if ( xcvs.size() > 0 )
       {
+        m_last = false;
+        m_last_bezier = false;
         Bezier_polygon bp(xcvs.begin(), xcvs.end());
         emit(generate(CGAL::make_object( std::make_pair(bp,mBezierPolygonPieces))));
       }  
@@ -469,110 +494,7 @@ namespace Qt {
 
     void get_BoundingRect()
     {
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,-10000000),Point(-10000000,10000000)));
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(-10000000,10000000),Point(10000000,10000000)));
-      // mOngoingPieceCtr.push_back(Linear_curve(Point(10000000,10000000),Point(10000000,-10000000)));
-
-      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[0]);
-      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[1]);
-      // mLinearPolygonPieces.push_back(mOngoingPieceCtr[2]);
-
-      // m_bound_rect = true;
-      // CommitCurrLinearPolygon();
-      // ReStart();
-
-
-
-
-      //press 
-      // case Start: 
-      //         mP0      = lP;
-      //         mState   = PieceOrFirstHandleStarted;
-      //         rHandled = true;
-      //         break;
-
-      //       case PieceOngoing: 
-      //         mP1      = lP;
-      //         mState   = HandleOngoing;
-      //         rHandled = true;
-      //         break;
-
-
-      //move
-      // case PieceOrFirstHandleStarted:
-      //       mState   = FirstHandleOngoing;
-      //       rHandled = true;
-      //       break;
-            
-      //     case PieceOngoing: 
-      //       mP1 = lP;
-      //       UpdateOngoingPiece();
-      //       rHandled = true ;
-      //       break;
-
-      //     case FirstHandleOngoing:
-      //       UpdateVeryFirstHandle(lP);
-      //       rHandled = true ;
-      //       break;
-            
-      //     case HandleOngoing:
-          
-      //       UpdateHandles(lP);
-      //       UpdateOngoingPiece();
-            
-      //       rHandled = true ;
-      //       break;
-            
-      //     case PieceEnded:
-      //       mState   = PieceOngoing;
-      //       rHandled = true;
-      //       break;
-
-
-      //release
-
-      // if ( aEvent->button() == ::Qt::LeftButton )
-      //   {
-      //     switch (mState)
-      //     {
-      //       case PieceOrFirstHandleStarted:
-      //         mState   = PieceOngoing;
-      //         rHandled = true;
-      //         break;
-              
-      //       case FirstHandleOngoing:
-      //         UpdateVeryFirstHandle(lP);
-      //         mPrevH0  = mH1 ;
-      //         mH1      = boost::optional<Point>();
-      //         mState   = PieceOngoing;
-      //         rHandled = true;
-      //         break;
-            
-      //       case HandleOngoing: 
-      //         UpdateHandles(lP);
-      //         CommitOngoingPiece(lP);
-      //         mState   = PieceEnded;
-      //         rHandled = true;
-      //         break;
-      //     }
-      //   }
-      //   else if ( aEvent->button() == ::Qt::RightButton )
-      //   {
-      //     switch (mState)
-      //     {
-      //       case PieceOngoing: 
-      //         m_bound_rect = false;
-      //         CloseCurrBundary();
-      //         CommitCurrBezierPolygon();
-      //         ReStart();
-      //         rHandled = true;
-      //         break;
-      //     }    
-      //   }
-        
-
-
-
+     
       m_bound_rect = true;
 
       mP0 = Point(-15500000,-10000000);
@@ -615,41 +537,6 @@ namespace Qt {
       CloseCurrBundary();
       CommitCurrBezierPolygon();
       ReStart();
-
-      // HideHandle();
-      // CommitOngoingPiece(Point(-10000000,10000000));
-      // mState   = PieceEnded;
-
-      // mState   = PieceOngoing;
-
-      // mP1 = Point(10000000,10000000);
-      // UpdateOngoingPiece();
-
-      // mP1 = Point(10000000,10000000);
-      // mState = HandleOngoing;
-      // HideHandle();
-      // CommitOngoingPiece(Point(10000000,10000000));
-      // mState   = PieceEnded;
-
-      // mState   = PieceOngoing;
-
-      // mP1 = Point(10000000,-10000000);
-      // UpdateOngoingPiece();
-
-      // mP1 = Point(10000000,-10000000);
-      // mState = HandleOngoing;
-      // HideHandle();
-      // CommitOngoingPiece(Point(10000000,-10000000));
-      // mState   = PieceEnded;
-
-      // mState   = PieceOngoing;
-
-      // mP1 = Point(-9000000,-9000000);
-      // UpdateOngoingPiece();
-
-      // CommitCurrCircularPolygon();
-      // ReStart();
-
     }
 
     bool isboundingRect()
@@ -670,7 +557,9 @@ namespace Qt {
     QPen mHandlePen ;    
 
     bool m_bound_rect;
-    
+    bool m_last_bezier;
+    bool m_last;
+      
     Bezier_curve_vector mBezierPolygonPieces ;
     Bezier_curve_vector mOngoingPieceCtr ;  
 
