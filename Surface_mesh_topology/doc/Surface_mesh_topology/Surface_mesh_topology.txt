@@ -300,6 +300,9 @@ Let \f$P\f$ be a path and let \f$+\f$ be the operator of concatenation. It can b
 
 \subsubsection SMTopology_Simplicity_Test_Switch Avoid Crossing by Switching
 Apart from applying perturbation, the algorithm also tries to avoid crossing using a homotopy-preserving operation known as <em>switch</em>. A switch is triggered when intersection could be avoided by turning a left L-shaped subpath into a right L-shaped subpath. See \cgalFigureRef{fig_switch_sample} for an example.
+\cgalFigureBegin{fig_switch_sample,switch_sample.svg}
+ Top-left, an intersection between red subpath and green subpath at the start of a left L-shaped red subpath. Top-right, switch the left L-shape to right L-shape to avoid the intersection. Bottom, no switch because no intersection can be avoided.
+    \cgalFigureEnd
 
 \subsubsection SMTopology_Simplicity_Test_Relative_Order Decide Relative Order
 Since the algorithm inductively builds an ordering, it has to determine relative order between the edge being processed and edges that has been ordered. There are three cases to consider.
