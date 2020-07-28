@@ -123,7 +123,7 @@ CGAL and the Boost Graph Library (BGL)
     uses this alpha expansion graphcut to regularize the borders of a
     selected faces on a triangle mesh.
 
-See https://www.cgal.org/2020/06/09/cgal51-beta1/ for a complete list of
+See https://www.cgal.org/2020/07/28/cgal51-beta2/ for a complete list of
 changes.
 
 
