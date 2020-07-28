@@ -21,6 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -140,10 +141,10 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                        true/*point outward*/, true /*extract all facets*/);
 }
 
-template <class C3T3, class TriangleMesh>
-void save_patch_id_if_surface_mesh(const C3T3& c3t3, TriangleMesh& graph,
-                                   CGAL::Tag_true)
+template <class C3T3, class Point>
+void save_patch_id_if_surface_mesh(const C3T3& c3t3, Surface_mesh<Point>& graph)
 {
+  using TriangleMesh = Surface_mesh<Point>;
   using Face_patch_id = typename C3T3::Surface_patch_index;
   auto face_pmap = graph.template add_property_map<typename TriangleMesh::Face_index, Face_patch_id>("f:patch_id").first;
   auto fit = c3t3.facets_in_complex_begin();
@@ -158,8 +159,7 @@ void save_patch_id_if_surface_mesh(const C3T3& c3t3, TriangleMesh& graph,
 }
 
 template <class C3T3, class TriangleMesh>
-void save_patch_id_if_surface_mesh(const C3T3& c3t3, TriangleMesh& graph,
-                                   CGAL::Tag_false)
+void save_patch_id_if_surface_mesh(const C3T3& c3t3, TriangleMesh& graph)
 { // not a Surface_mesh<Point>: do nothing
 }
 
@@ -203,10 +203,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
 
     PMP::polygon_soup_to_polygon_mesh(points, faces, graph);
   }
-  Mesh_3::internal::save_patch_id_if_surface_mesh(
-      c3t3, graph,
-      CGAL::Boolean_tag<
-          std::is_same<TriangleMesh, CGAL::Surface_mesh<Point_3>>::value>());
+  Mesh_3::internal::save_patch_id_if_surface_mesh(c3t3, graph);
 }
 
 } // namespace CGAL
