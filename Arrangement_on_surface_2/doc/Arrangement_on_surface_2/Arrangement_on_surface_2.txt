@@ -2861,38 +2861,45 @@ traits class that models the concept `ArrangementLandmarkTraits_2`;
 see Section \ref aos_sssec-tr_lanmarks_concept.
 
 <DL>
-<DT><B>`Compare_x_2`:</B><DD> Compares the \f$x\f$-coordinates of two points.
-<DT><B>`Compare_xy_2`:</B><DD> Compares two points lexicographically, first by
-  their \f$x\f$-coordinates, and if they are equal, by their
+
+<DT>\link ArrangementBasicTraits_2::Compare_x_2 <B>`Compare_x_2`</B>\endlink:
+<DD>Compares the \f$x\f$-coordinates of two points.
+
+<DT>\link ArrangementBasicTraits_2::Compare_xy_2 <B>`Compare_xy_2`</B>\endlink:
+<DD>Compares two points lexicographically, first by their
+  \f$x\f$-coordinates, and if they are equal, by their
   \f$y\f$-coordinates.
 
-<DT><B>`Equal_2`:</B><DD> There are two overloaded Boolean operators
-  that test equality. One returns true iff two given points represent
-  the same geometric point in the two-dimensional surface, and the
-  second returns true iff the graphs of two given \f$x\f$-monotone
-  curves are the same.\cgalFootnote{The predicate that tests equality
-  between graphs of two \f$x\f$-monotone curves is used only for
-  testing as part of the test suite.}
+<DT>\link ArrangementBasicTraits_2::Equal_2 <B>`Equal_2`</B>\endlink:
+<DD>There are two overloaded Boolean operators that test equality. One
+  returns true iff two given points represent the same geometric point
+  in the two-dimensional surface, and the second returns true iff the
+  graphs of two given \f$x\f$-monotone curves are the
+  same.\cgalFootnote{The predicate that tests equality between graphs
+  of two \f$x\f$-monotone curves is used only for testing as part of
+  the test suite.}
 
-<DT><B>`Construct_min_vertex_2`:</B><DD> Returns the lexicographically
-  smallest (or left) endpoint of an \f$x\f$-monotone curve.
+<DT>\link ArrangementBasicTraits_2::Construct_min_vertex_2 <B>`Construct_min_vertex_2`</B>\endlink:
+<DD>Returns the lexicographically smallest (or left) endpoint of an
+  \f$x\f$-monotone curve.
 
-<DT><B>`Construct_max_vertex_2`:</B><DD> Returns the lexicographically
-  largeset (or right) endpoint of an \f$x\f$-monotone curve.
+<DT>\link ArrangementBasicTraits_2::Construct_max_vertex_2 <B>`Construct_max_vertex_2`</B>\endlink:
+<DD> Returns the lexicographically largeset (or right) endpoint of an
+  \f$x\f$-monotone curve.
 
-<DT><B>`Is_vertical_2`:</B><DD> Determines whether an \f$x\f$-monotone curve
-  is vertical.
+<DT>\link ArrangementBasicTraits_2::Is_vertical_2 <B>`Is_vertical_2`</B>\endlink:
+<DD> Determines whether an \f$x\f$-monotone curve is vertical.
 
-<DT><B>`Compare_y_at_x_2`:</B><DD> Given an \f$x\f$-monotone curve \f$c\f$
-  and a point \f$p\f$ that lies in the \f$x\f$-range of \f$c\f$, determines
-  whether \f$p\f$ is below, above or lies on \f$c\f$.
+<DT>\link ArrangementBasicTraits_2::Compare_y_at_x_2 <B>`Compare_y_at_x_2`</B>\endlink:
+<DD>Given an \f$x\f$-monotone curve \f$c\f$ and a point \f$p\f$ that
+  lies in the \f$x\f$-range of \f$c\f$, determines whether \f$p\f$ is
+  below, above or lies on \f$c\f$.
 
-<DT><B>`Compare_y_at_x_right_2`:</B><DD> Given two \f$x\f$-monotone curves
-  \f$c_1\f$ and \f$c_2\f$ that share a common minimal (left) endpoint
-  \f$p\f$, determines whether \f$c_1\f$ is above or below \f$c_2\f$
-  immediately to the right of \f$p\f$, or whether the two curves overlap
-  there.
-</DL>
+<DT>\link ArrangementBasicTraits_2::Compare_y_at_x_right_2 <B>`Compare_y_at_x_right_2`</B>\endlink:
+<DD> Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ that
+  share a common minimal (left) endpoint \f$p\f$, determines whether
+  \f$c_1\f$ is above or below \f$c_2\f$ immediately to the right of
+  \f$p\f$, or whether the two curves overlap there.  </DL>
 
 Every model of the concept `ArrangementBasicTraits_2` needs to define
 a nested type named \link ArrangementBasicTraits_2::Has_left_category
@@ -2900,11 +2907,13 @@ a nested type named \link ArrangementBasicTraits_2::Has_left_category
 supports the following predicate:
 
 <DL>
-<DT><B>`Compare_y_at_x_left_2`:</B><DD> Given two \f$x\f$-monotone curves
-  \f$c_1\f$ and \f$c_2\f$ that share a common maximal (right) endpoint
-  \f$p\f$, determines whether \f$c_1\f$ is above or under \f$c_2\f$
-  immediately to the left of \f$p\f$, or whether the two curves overlap
-  there.
+
+<DT>\link ArrangementBasicTraits_2::Compare_y_at_x_left_2 <B>`Compare_y_at_x_left_2`</B>\endlink:
+<DD> Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ that
+  share a common maximal (right) endpoint \f$p\f$, determines whether
+  \f$c_1\f$ is above or under \f$c_2\f$ immediately to the left of
+  \f$p\f$, or whether the two curves overlap there.
+
 </DL>
 
 If the `ArrangementBasicTraits_2::Has_left_category` type nested in a
@@ -2924,15 +2933,18 @@ the boundary of the parameter space. The nature of the input curves,
 whether they are expected to reach or approach the left, right,
 bottom, or top side of the boundary of the parameter space, must be
 conveyed by the traits class. This is done through the definition of
-four additional nested types, namely \link
-ArrangementBasicTraits_2::Left_side_category
-`Left_side_category`\endlink, \link
-ArrangementBasicTraits_2::Right_side_category
-`Right_side_category`\endlink, \link
-ArrangementBasicTraits_2::Bottom_side_category
-`Bottom_side_category`\endlink, and \link
-ArrangementBasicTraits_2::Top_side_category
-`Top_side_category`\endlink.  Each of those types must be convertible
+four additional nested types, namely
+<ol>
+<li>\link ArrangementBasicTraits_2::Left_side_category
+`Left_side_category`\endlink,
+<li>\link ArrangementBasicTraits_2::Right_side_category
+`Right_side_category`\endlink,
+<li>\link ArrangementBasicTraits_2::Bottom_side_category
+`Bottom_side_category`\endlink, and
+<li>\link ArrangementBasicTraits_2::Top_side_category
+`Top_side_category`\endlink.
+</ol>
+Each of those types must be convertible
 to the type `Arr_oblivious_side_tag` for the class to be a model of
 the concept `ArrangementBasicTraits_2`.
 
@@ -2973,32 +2985,34 @@ operations:
 
 <DL>
 
-<DT><B>`Split_2`:</B><DD> Splits an \f$x\f$-monotone curve \f$c\f$ into
-  two subcurves at a given point \f$p\f$ that lies in the interior of
-  \f$c\f$.
+<DT>\link ArrangementXMonotoneTraits_2::Split_2 <B>`Split_2`</B>\endlink:
+<DD> Splits an \f$x\f$-monotone curve \f$c\f$ into two subcurves at a
+  given point \f$p\f$ that lies in the interior of \f$c\f$.
 
-<DT><B>`Are_mergeable_2`:</B><DD> Determines whether two \f$ x\f$-monotone
-  curves \f$c_1\f$ and \f$c_2\f$ that share a common endpoint can be
-  merged into a single continuous \f$x\f$-monotone curve representable by
-  the traits class.\cgalFootnote{On the face of it this seems a difficult
-  predicate to implement. In practice we use very simple tests to decide
-  whether two curves are mergeable: We check whether their underlying
-  curves are identical and whether they do not bend to form a
-  non-\f$x\f$-monotone curve.}
+<DT>\link ArrangementXMonotoneTraits_2::Are_mergeable_2 <B>`Are_mergeable_2`</B>\endlink:
+<DD> Determines whether two \f$ x\f$-monotone curves \f$c_1\f$ and
+  \f$c_2\f$ that share a common endpoint can be merged into a single
+  continuous \f$x\f$-monotone curve representable by the traits
+  class.\cgalFootnote{On the face of it this seems a difficult
+  predicate to implement. In practice we use very simple tests to
+  decide whether two curves are mergeable: We check whether their
+  underlying curves are identical and whether they do not bend to form
+  a non-\f$x\f$-monotone curve.}
 
-<DT><B>`Merge_2`:</B><DD> Merges two mergeable \f$x\f$-monotone curves
-  into a single curve.
+<DT>\link ArrangementXMonotoneTraits_2::Merge_2 <B>`Merge_2`</B>\endlink:
+<DD> Merges two mergeable \f$x\f$-monotone curves into a single curve.
 
-<DT><B>`Intersection_2`:</B><DD> Computes all intersection points and
-  overlapping sections of two given \f$x\f$-monotone curves. If possible,
-  computes also the multiplicity of each intersection point. Providing
-  the multiplicity of an intersection point is not required, but it can
-  expedite the arrangement construction. Typically, the multiplicity is
-  a byproduct of the intersection computation. However, if it is not
-  available, undefined multiplicity (coded as 0) is assumed. Having the
+<DT>\link ArrangementXMonotoneTraits_2::Intersect_2 <B>`Intersect_2`</B>\endlink:
+<DD> Computes all intersection points and overlapping sections of two
+  given \f$x\f$-monotone curves. If possible, computes also the
+  multiplicity of each intersection point. Providing the multiplicity
+  of an intersection point is not required, but it can expedite the
+  arrangement construction. Typically, the multiplicity is a byproduct
+  of the intersection computation. However, if it is not available,
+  undefined multiplicity (coded as 0) is assumed. Having the
   multiplicity of intersection points while constructing arrangements
-  enables the exploitation of the geometric knowledge intersection points
-  may have.
+  enables the exploitation of the geometric knowledge intersection
+  points may have.
 
 </DL>
 
@@ -3031,9 +3045,9 @@ single isolated point.  In particular a model of the refined concept
 has to support the following additional operation:
 
 <DL>
-<DT><B>`Make_x_monotone_2`:</B><DD> Divides a given general curve of type
-  `Curve_2` into continuous weakly \f$x\f$-monotone curves and isolated points.
-</DL>
+<DT>\link ArrangementTraits_2::Make_x_monotone_2 <B>`Make_x_monotone_2`</B>\endlink:
+<DD> Divides a given general curve of type `Curve_2` into continuous
+  weakly \f$x\f$-monotone curves and isolated points.  </DL>
 
 Note that a model of the refined concept `ArrangementTraits_2` is
 required only when using the free `insert()` function templates (see
@@ -3069,8 +3083,10 @@ fixed precision number type (typically the double-precision
 floating-point `double`) and support the operation below (in addition
 to fulfilling the requirements listed by the `ArrangementBasicTraits_2`
 concept).
+
 <DL>
-<DT><B>`Approximate_2`:</B>
+
+<DT>\link ArrangementApproximateTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:
 <DD> Given a point `p`, approximate the \f$x\f$ and
 \f$y\f$-coordinates of `p` using a not necessarily multi-precision
 number type. We use this operation for approximate
@@ -3078,14 +3094,19 @@ computations---there are certain operations performed during the
 search for the location of the point that need not be exact, and that
 can be performed faster when carried out, for example, using a
 fixed-precision number type.
+
 </DL>
+
 A model of the `ArrangementConstructXMonotoneCurveTraits_2` concept
 must support the operation below (in addition to fulfilling the
 requirements listed by the `ArrangementBasicTraits_2` concept).
+
 <DL>
-<DT><B>`Construct_x_monotone_curve_2`:</B>
+
+<DT>\link ArrangementConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2 <B>`Construct_x_monotone_curve_2`</B>\endlink:
 <DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
 an \f$x\f$-monotone curve connecting \f$p_1\f$ and \f$p_2\f$.
+
 </DL>
 
 Most traits classes model the `ArrangementTraits_2` concept, and some
@@ -3210,8 +3231,7 @@ following predicate:
 
 <DL>
 
-<DT><B>`Parameter_space_in_x_2`:</B>
-
+<DT>\link ArrangementHorizontalSideTraits_2::Parameter_space_in_x_2 <B>`Parameter_space_in_x_2`</B>\endlink:
 <DD>This predicate is overloaded with two versions. We distinguish
 between identified and non-identified sides as explained below.
 
@@ -3244,7 +3264,7 @@ following predicate:
 
 <DL>
 
-<DT><B>`Parameter_space_in_y_2`:</B>
+<DT>\link ArrangementVerticalSideTraits_2::Parameter_space_in_y_2 <B>`Parameter_space_in_y_2`</B>\endlink:
 
 <DD>This predicate is overloaded with two versions. We distinguish
 between identified and non-identified sides as explained below.
@@ -3290,8 +3310,8 @@ The concept `ArrangementHorizontalSideTraits_2` requires two additional
 predicates:
 
 <DL>
-<DT><B>`Compare_x_on_boundary_2`:</B>
 
+<DT>\link ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2 <B>`Compare_x_on_boundary_2`</B>\endlink:
 <DD>This predicate is overloaded with three versions.
 We distinguish between open and non-open sides as explained below.
 
@@ -3335,8 +3355,7 @@ other words, this overloaded version is required only for the concepts
 `ArrangementIdentifiedBottomTraits_2` and
 `ArrangementIdentifiedTopTraits_2`.
 
-<DT><B>`Compare_x_near_boundary_2`:</B>
-
+<DT>\link ArrangementHorizontalSideTraits_2::Compare_x_near_boundary_2 <B>`Compare_x_near_boundary_2`</B>\endlink:
 <DD>Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ and an
 enumerator that specifies either the minimum ends or the maximum ends
 of the two curves, and thus map to parameter values \f$d_1, d_2 \in
@@ -3354,13 +3373,16 @@ boundary-side, \f$p\f$ is located far to the top in a similar
 manner. Another precondition assures that the \f$x\f$-coordinates of
 the limits of the curves at their respective ends are equal. That is,
 the predicate `Compare_x_on_boundary_2` applied to \f$c_1\f$,
-\f$c_2\f$, and \f$i\f$ evaluates to `EQUAL`.  </DL>
+\f$c_2\f$, and \f$i\f$ evaluates to `EQUAL`.
+
+</DL>
 
 The concept `ArrangementVerticalSideTraits_2` requires two
 additional predicates:
 
 <DL>
-<DT><B>`Compare_y_on_boundary_2`:</B>
+
+<DT>\link ArrangementVerticalSideTraits_2::Compare_y_on_boundary_2 <B>`Compare_y_on_boundary_2`</B>\endlink:
 
 <DD>Given two points \f$p_1\f$ and \f$p_2\f$, such that at least one
 of them lies on a vertical boundary side, compare the
@@ -3374,7 +3396,7 @@ for the concepts `ArrangementClosedLeftTraits_2`,
 `ArrangementClosedRightTraits_2`, `ArrangementIdentifiedLeftTraits_2`
 and `ArrangementIdentifiedRightTraits_2` concepts.
 
-<DT><B>`Compare_y_near_boundary_2`:</B>
+<DT>\link ArrangementVerticalSideTraits_2::Compare_y_near_boundary_2 <B>`Compare_y_near_boundary_2`</B>\endlink:
 
 <DD> Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$, and an
 enumerator \f$i\f$ that specifies either the minimum ends or the
