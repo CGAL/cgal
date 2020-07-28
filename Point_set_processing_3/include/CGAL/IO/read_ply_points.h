@@ -123,7 +123,8 @@ make_ply_normal_reader(VectorMap normal_map);
   the value type of `PropertyMap` from N objects of types `T`.
 
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-  It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+  It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+  It can be omitted when the default is fine.
   \tparam PointOutputIterator iterator over output points.
   \tparam PropertyHandler handlers to recover properties.
 
@@ -205,7 +206,8 @@ bool read_PLY_with_properties(std::istream& is,
    \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -279,7 +281,8 @@ bool read_PLY(std::istream& is,
    Potential additional point properties and faces are ignored.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 

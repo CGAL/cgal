@@ -159,13 +159,6 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *                     must be available in `Graph`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
- *     \cgalParamExtra{This applies only to the \ref IOStreamPLY file format. }
- *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
  *     \cgalParamType{Boolean}
@@ -271,13 +264,6 @@ bool write_polygon_mesh(const std::string& fname, Graph& g)
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
- *     \cgalParamExtra{This applies only to the \ref IOStreamPLY file format. }
- *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `g`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
@@ -291,6 +277,7 @@ bool write_polygon_mesh(const std::string& fname, Graph& g)
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
+ *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}

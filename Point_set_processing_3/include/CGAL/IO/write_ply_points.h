@@ -174,6 +174,7 @@ template <typename PointRange,
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
+       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
@@ -181,8 +182,7 @@ template <typename PointRange,
 
    \sa `write_PLY_with_properties()`
 */
-template <typename PointRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
@@ -274,6 +274,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
+       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 

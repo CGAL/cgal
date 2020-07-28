@@ -125,10 +125,11 @@ bool read_VTP(const char* fname,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concept `SequenceContainer`
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
  *
  * \param fname the path to the input file
  * \param points points of the soup of polygons.
@@ -360,10 +361,10 @@ void write_soup_polys_points(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -459,10 +460,10 @@ bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& p
  *
  * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file

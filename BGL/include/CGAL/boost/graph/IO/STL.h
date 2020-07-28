@@ -226,6 +226,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
+       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -309,18 +310,18 @@ bool write_STL(std::ostream& os,
 }
 
 /*!
-\ingroup PkgBGLIoFuncsSTL
+  \ingroup PkgBGLIoFuncsSTL
 
- \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamSTL.
+  \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamSTL.
 
- \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
- \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
- \param fname the name of the output stream
- \param g the graph to be written
- \param np optional \ref bgl_namedparameters "Named Parameters" described below
+  \param fname the name of the output stream
+  \param g the graph to be written
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
- \cgalNamedParamsBegin
+  \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
       \cgalParamType{Boolean}
@@ -340,14 +341,15 @@ bool write_STL(std::ostream& os,
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
+       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
     \cgalParamNEnd
- \cgalNamedParamsEnd
+  \cgalNamedParamsEnd
 
- \pre The graph must contain only triangle faces.
+  \pre The graph must contain only triangle faces.
 
- \returns `true` if writing was successful, `false` otherwise.
+  \returns `true` if writing was successful, `false` otherwise.
 
- \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)

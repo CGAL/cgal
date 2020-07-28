@@ -900,6 +900,7 @@ CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string
 ///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
 ///     \cgalParamType{int}
 ///     \cgalParamDefault{`6`}
+///     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///

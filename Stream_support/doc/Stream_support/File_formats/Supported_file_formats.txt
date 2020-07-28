@@ -475,6 +475,8 @@ by the <a href="https://www.fei.com/software/avizo3d">Avizo</a> software to read
 A single \cgal data structure, `CGAL::Mesh_complex_3_in_triangulation_3`, can be exported into `.am` files.
 This can be done using the function `CGAL::output_to_avizo()`.
 
+A precise specification of the format is available
+<a href="https://assets.thermofisher.com/TFS-Assets/MSD/Product-Guides/users-guide-avizo-software-2019.pdf">in this guide</a>.
 
 \section IOStreamMedit Medit File Format
 

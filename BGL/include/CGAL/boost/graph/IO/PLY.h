@@ -326,6 +326,7 @@ bool read_PLY(const std::string& fname, Graph& g,
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
+      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
 
@@ -534,6 +535,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
+      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
 

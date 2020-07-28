@@ -46,7 +46,8 @@ namespace CGAL {
    \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -200,7 +201,8 @@ bool read_OFF(std::istream& is,
    \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
-   It defaults to `value_type_traits<PointOutputIterator>::%type` and can be omitted when the default is fine.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
    \tparam PointOutputIterator iterator over output points.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 

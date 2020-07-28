@@ -15,9 +15,6 @@
 
 #include <CGAL/Point_set_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-
 #ifdef CGAL_LINKED_WITH_LASLIB
 #include <CGAL/IO/read_las_points.h>
 #include <CGAL/IO/write_las_points.h>
@@ -25,12 +22,6 @@
 
 #include <fstream>
 #include <string>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 #if defined(CGAL_LINKED_WITH_LASLIB) || defined(DOXYGEN_RUNNING)
 
@@ -213,37 +204,23 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 
   \tparam Point the point type of the `Point_set_3`
   \tparam Vector the vector type of the `Point_set_3`
-  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param os the output stream
   \param point_set the point set
-  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-  \cgalNamedParamsBegin
-    \cgalParamNBegin{stream_precision}
-      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-      \cgalParamType{int}
-      \cgalParamDefault{`6`}
-    \cgalParamNEnd
-  \cgalNamedParamsEnd
 
   \note All LAS properties are written as described in `read_LAS_with_properties()`.
 
   \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector>
 bool write_LAS(std::ostream& os,
-               CGAL::Point_set_3<Point, Vector>& point_set,
-               const CGAL_BGL_NP_CLASS& np)
+               CGAL::Point_set_3<Point, Vector>& point_set)
 {
   if(!os)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
-
-  const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
-  os << std::setprecision(precision);
 
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::template Property_map<float> Float_map;
@@ -405,16 +382,6 @@ bool write_LAS(std::ostream& os,
   return okay;
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_LAS(os, point_set, parameters::all_default());
-}
-
-/// \endcond
-
 /*!
   \ingroup PkgPointSet3IOLAS
 
@@ -422,52 +389,29 @@ bool write_LAS(std::ostream& os, CGAL::Point_set_3<Point, Vector>& point_set)
 
   \tparam Point the point type of the `Point_set_3`
   \tparam Vector the vector type of the `Point_set_3`
-  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param fname the path to the output file
   \param point_set the point set
-  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-
-  \cgalNamedParamsBegin
-    \cgalParamNBegin{stream_precision}
-      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-      \cgalParamType{int}
-      \cgalParamDefault{`6`}
-    \cgalParamNEnd
-  \cgalNamedParamsEnd
 
   \note All LAS properties are written as described in `read_LAS_with_properties()`.
 
   \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector>
 bool write_LAS(const char* fname,
-               CGAL::Point_set_3<Point, Vector>& point_set,
-               const CGAL_BGL_NP_CLASS& np)
+               CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname, std::ios::binary);
   CGAL::set_mode(os, CGAL::IO::BINARY);
-  return write_LAS(os, point_set, np);
+  return write_LAS(os, point_set);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename Point, typename Vector>
-bool write_LAS(const char* fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_LAS(fname, point_set, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
-{
-  return write_LAS(fname.c_str(), point_set, np);
-}
-
-template <typename Point, typename Vector>
 bool write_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return write_LAS(fname.c_str(), point_set, parameters::all_default());
+  return write_LAS(fname.c_str(), point_set);
 }
 
 /// \endcond

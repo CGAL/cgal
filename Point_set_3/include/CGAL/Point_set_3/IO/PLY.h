@@ -456,7 +456,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 
   \brief writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
-  If found, the normal map is inserted to the stream. All other
+  If it exists, the normal map is inserted in the stream. All other
   properties with simple types are inserted in the stream.
 
   If provided, the `comments` string is included line by line in
@@ -477,8 +477,9 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
   \cgalNamedParamsBegin
    \cgalParamNBegin{stream_precision}
      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-      \cgalParamType{int}
-    \cgalParamDefault{`6`}
+     \cgalParamType{int}
+     \cgalParamDefault{`6`}
+     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
    \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -727,8 +728,8 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 
   \brief writes a point set with properties in an output stream in the \ref IOStreamPLY.
 
-  If found, the normal map is inserted to the stream. All other
-  properties with simple types are inserted in the stream.
+  If it exists, the normal map is written in the file. All other
+  properties with simple types are written in the file.
 
   If provided, the `comments` string is included line by line in
   the header of the PLY stream (each line will be precedeed by
@@ -754,6 +755,7 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
+      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

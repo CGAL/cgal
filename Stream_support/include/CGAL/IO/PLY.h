@@ -276,10 +276,11 @@ bool read_PLY(std::istream& is,
  *
  * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concept `SequenceContainer`
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
@@ -346,9 +347,9 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
  * \brief reads the content of `fname` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concept `SequenceContainer`
+ * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an integer type
+ *                      and `BackInsertionSequence` whose `value_type` is an integer type
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
@@ -436,10 +437,10 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *
  * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param out the output stream
@@ -453,6 +454,7 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
+ *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -520,10 +522,10 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
  *
  * \brief writes the content of `points` and `polygons` in  the file `fname`, using the \ref IOStreamPLY.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
@@ -543,6 +545,7 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
+ *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

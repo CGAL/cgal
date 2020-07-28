@@ -274,12 +274,6 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
        \cgalParamType{a model of `Kernel`}
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
-
-    \cgalParamNBegin{stream_precision}
-      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-      \cgalParamType{int}
-      \cgalParamDefault{`6`}
-    \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \returns `true` if writing was successful, `false` otherwise.
@@ -307,9 +301,6 @@ bool write_LAS(std::ostream& os,
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
-
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os << std::setprecision(precision);
 
   return write_LAS_with_properties(os, points, make_las_point_writer(point_map));
 }
@@ -339,12 +330,6 @@ bool write_LAS(std::ostream& os,
        \cgalParamType{a model of `Kernel`}
        \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
-
-    \cgalParamNBegin{stream_precision}
-      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
-      \cgalParamType{int}
-      \cgalParamDefault{`6`}
-    \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \returns `true` if writing was successful, `false` otherwise.

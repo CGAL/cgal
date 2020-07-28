@@ -43,6 +43,8 @@ class Point_set_3;
 
   \brief reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
 
+  If normals are present in the input stream, a normal map will be created and filled.
+
   \param is the input stream
   \param point_set the point set
 
@@ -78,6 +80,8 @@ bool read_XYZ(std::istream& is,
   \ingroup PkgPointSet3IOXYZ
 
   \brief reads the content of an input file in the \ref IOStreamXYZ into a point set.
+
+  If normals are present in the input file, a normal map will be created and filled.
 
   \param fname the path to the input file
   \param point_set the point set
@@ -126,6 +130,8 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
 
   \brief writes the content of a point set into an output stream in the \ref IOStreamXYZ.
 
+  If it exists, the normal map associated to the point set is inserted in the stream.
+
   \tparam Point the point type of the `Point_set_3`
   \tparam Vector the vector type of the `Point_set_3`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -171,6 +177,8 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \ingroup PkgPointSet3IOXYZ
 
   \brief writes the content of a point set into an output file in the \ref IOStreamXYZ.
+
+  If it exists, the normal map associated to the point set is inserted in the stream.
 
   \tparam Point the point type of the `Point_set_3`
   \tparam Vector the vector type of the `Point_set_3`
