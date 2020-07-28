@@ -1,6 +1,4 @@
-#define CGAL_MESH_3_VERBOSE 1
 #define CGAL_MESH_3_STATS_THREADS 1
-#define CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE 1
 
 #include "draw_c3t3_surface.h"
 
@@ -19,8 +17,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron> Mesh_domain;
-
-using Kernel = K;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,CGAL::Parallel_tag>::type Tr;
@@ -58,15 +54,14 @@ int main(int argc, char*argv[])
   domain.detect_features(); //includes detection of borders
 
   // Mesh criteria
-  // Mesh_criteria criteria(edge_size = 0.03,
-  //                        facet_angle = 25, facet_size = 0.03, facet_distance = 0.003,
-  //                        cell_radius_edge_ratio = 3, cell_size = 0.5);
-  Mesh_criteria criteria(edge_size = 0.003,
-                         facet_angle = 25, facet_size = 0.003, facet_distance = 0.0003,
-                         cell_radius_edge_ratio = 3, cell_size = 0.05);
+  Mesh_criteria criteria(edge_size = 0.025,
+                         facet_angle = 25,
+                         facet_size = 0.1,
+                         facet_distance = 0.001);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude(), manifold());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(),
+                                      no_exude(), manifold_with_boundary());
 
   // Output
   dump_c3t3(c3t3, "out");
