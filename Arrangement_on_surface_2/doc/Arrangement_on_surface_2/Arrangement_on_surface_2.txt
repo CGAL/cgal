@@ -1038,7 +1038,7 @@ isolated vertices that are still contained in the unbounded face
 
 While reading the previous subsection you learned how to insert new
 points that induce isolated vertices into the arrangement. You may
-wonder now how you can insert a new point that lies on an an
+wonder now how you can insert a new point that lies on an
 \f$x\f$-monotone curve that is associated with existing arrangement
 edge.
 
@@ -1055,11 +1055,11 @@ construct the two curves \f$c_1\f$ and \f$c_2\f$, which are the two
 subcurves that result from splitting the \f$x\f$-monotone curve
 associated with the edge \f$e\f$ at \f$p\f$. Then, you have to issue
 the call \link Arrangement_2::split_edge() `arr.split_edge(he, c1,
-c2)`\endlink, where where `arr` identifies the arrangement \f$\cal A\f$
-and `he` is a handle to one of the two halfedges that represent the
-edge \f$e\f$. The function splits the two halfedges that represent
-\f$e\f$ into two pairs of halfedges, respectively. Two new halfedges
-are incident to the new vertex \f$v\f$ associated with \f$p\f$. The
+c2)`\endlink, where `arr` identifies the arrangement \f$\cal A\f$ and
+`he` is a handle to one of the two halfedges that represent the edge
+\f$e\f$. The function splits the two halfedges that represent \f$e\f$
+into two pairs of halfedges, respectively. Two new halfedges are
+incident to the new vertex \f$v\f$ associated with \f$p\f$. The
 function returns a handle to the new halfedge, the source of which is
 the source vertex of the halfedge handled by `he`, and the target of
 which is the new vertex \f$v\f$.
@@ -1906,7 +1906,7 @@ curve, first its left endpoint is located; then, its zone is computed
 starting from its left endpoint location. The zone computation
 terminates when an intersection with an arrangement curve or point is
 found or when the right endpoint is reached.  A given point-location
-object is used for locating the left endpoint of the the curve in the
+object is used for locating the left endpoint of the curve in the
 existing arrangement. There is a variant that instead of accepting a
 user-defined point-location object, it constructs a local object of
 the walk point-location type, namely, an instance of the
@@ -2404,7 +2404,7 @@ unbounded face bounded by the bounding rectangle.
 
 Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location with respect to the
-bounding bounding rectangle:
+bounding rectangle:
 
 <OL>
 
@@ -2437,8 +2437,10 @@ horizontal edges of the bounding rectangle (either the bottom one if
 \f$v_4\f$ and \f$v_5\f$ in \cgalFigureRef{arr_figunb_dcel} are of this
 type.
 
-<LI> \anchor typefictitious The fictitious vertices that
-represent the four corners of the bounding bounding rectangle.  </OL>
+<LI> \anchor typefictitious The fictitious vertices that represent the
+four corners of the bounding rectangle.
+
+</OL>
 
 A vertex (at infinity) of Type \ref typeunbounded or Type \ref
 typeunboundedvertical above always has three incident edges: one
@@ -2778,17 +2780,38 @@ Sites are drawn in red and Voronoi edges are drawn in blue.
 <!--=========================================================================-->
 
 A geometry traits class encapsulates the definitions of the geometric
-entities and implements the geometric predicates and constructions
-needed by instances of the `Arrangement_on_surface_2` class template
-and by the peripheral algorithms that operate on objects of such
-instances. Observe that that there are different levels of
-requirements from the traits class; namely, the traits class can model
-different concept refinement-levels.
+entities and the implementation of the geometric predicates and
+constructions that handle these geometric entities, used by the
+`Arrangement_on_surface_2` class template and by the peripheral
+modules. The identified minimal requirements imposed by the various
+algorithms that apply to arrangements are organized in a hierarchy of
+refined geometry-traits concepts.  The requirements listed by each
+concept include only the utterly essential types and operations needed
+to implement specific algorithms. This modular structuring yields
+controllable parts that can be produced, maintained, and utilized with
+less effort. For each operation, all the preconditions that its
+operands must satisfy are specified as well, as these may simplify the
+implementation of models of these concepts even further. Each traits
+class models one or more concepts. This section contains a detailed
+description of the concepts in the refinement hierarchy and the
+various traits classes that model these concepts.
 
-This section is divided into three parts. The first part desribes the
-refinement hierarchy of the arrangement-traits conepts. The seond part
-reviews various models of these conepts. These are traits classes,
-which handle different curve families, such as line segments,
+All the algebra required for constructing and manipulating
+arrangements is concentrated in the traits classes. The knowledge
+required to devise a good traits class is very different from the
+knowledge required for the development of the rest of the package or
+for using the package. It has less to do with computational geometry
+and it involves mainly algebra and numerical computation. This way,
+traits classes for new types of curves can be developed with little
+knowledge of algorithms and data structures in computational
+geometry. In this section we discuss how to use existing traits
+classes, but we also explain the concepts these traits classes
+model---a starting point for every novice developer of such classes.
+
+This section is divided into three parts. The first part describes the
+refinement hierarchy of the arrangement geometry-traits concepts. The
+second part reviews various models of these concepts. These traits
+classes handle different curve families, such as line segments,
 polylines, conic arcs, B&eacute;zier curves, algebraic curves, and
 geodesic arcs on the sphere. The last part introduces decorators for
 geometric traits classes. A decorator of a traits class attaches
@@ -2799,10 +2822,14 @@ class, thereby extending it.
 \subsection aos_ssec-geom_traits-concepts The Hierarchy of the Geometry Traits Concepts
 <!----------------------------------------------------------------------------->
 
-A rather large directed acyclic graph is required to capture the entire
-hierarchy of the geometry traits-class conepts. In the following
-sections we review individual clusters of the graph and desribe the
-relations between them. Figure
+A hierarchy of related concepts can be viewed as a directed acyclic
+graph, where a node of the graph represents a concept and an arc
+represents a refinement relation. An arc directed from concept \sc{A}
+to concept \sc{B} indicates that concept \sc{B} refines concept
+\sc{A}.  A rather large direccted acyclic graph is required to capture
+the entire hierarchy of the geometry traits-class concepts. In the
+following sections we review individual clusters of the graph and
+describe the relations between them. Figure
 \cgalFigureRef{aos_fig-central_concept_cluster} depicts the central
 cluster.
 
@@ -2816,55 +2843,66 @@ The hierarchy of the main geometry traits concepts.
 \subsubsection aos_sssec-geom_traits-concepts_basic The Basic Concept
 <!----------------------------------------------------------------------------->
 
-A model of the basic concept, `ArrangementBasicTraits_2`, needs to
-define the types `%Point_2` and `%X_monotone_curve_2`, where objects
-of the first type are the geometric mapping of arrangement vertices,
-and objects of the latter type are the geometric mapping of edges. In
-addition, it has to support the the set of predicates listed
-below. This basic set of predicates is sufficient for constructing
-arrangements of bounded \f$x\f$-monotone curves that are pairwise
-disjoint in their interiors and points that do not lie in the interior
-of the curves. The basic set of predicates is also sufficient for
-answering vertical ray-shooting queries and point-location queries
-with a small exception: Locating a point using the landmark strategy
-requires a traits class that models the concept
-`ArrangementLandmarkTraits_2`; see Section \ref
-aos_sssec-tr_lanmarks_concept.
+A model of the basic concept `ArrangementBasicTraits_2` needs to
+define the types \link ArrangementBasicTraits_2::Point_2
+`Point_2`\endlink and \link
+ArrangementBasicTraits_2::X_monotone_curve_2
+`X_monotone_curve_2`\endlink, where objects of the former type are the
+geometric mapping of arrangement vertices, and objects of the latter
+type are the geometric mapping of edges. In addition, it has to
+support the set of predicates listed below. This basic set of
+predicates is sufficient for constructing arrangements of bounded
+\f$x\f$-monotone curves that are pairwise disjoint in their interiors
+and points that do not lie in the interiors of the curves. The basic
+set of predicates is also sufficient for answering vertical
+ray-shooting queries and point-location queries with a small
+exception: Locating a point using the landmark strategy requires a
+traits class that models the concept `ArrangementLandmarkTraits_2`;
+see Section \ref aos_sssec-tr_lanmarks_concept.
 
 <DL>
 <DT><B>`Compare_x_2`:</B><DD> Compares the \f$x\f$-coordinates of two points.
 <DT><B>`Compare_xy_2`:</B><DD> Compares two points lexicographically, first by
   their \f$x\f$-coordinates, and if they are equal, by their
   \f$y\f$-coordinates.
-<DT><B>`Equal_2`:</B><DD> There are two overloaded Boolean operators that
-  test equality. One returns true iff two given points represent the same
-  geometric point in the plane, and the second returns true iff the graphs
-  of two given \f$x\f$-monotone curves are the same.\cgalFootnote{The
-  predicate that tests equality between graphs of two \f$x\f$-monotone
-  curves is used only for testing as part of the test suite.}
-<DT><B>`Construct_min_vertex_2`,`Construct_max_vertex_2`:</B><DD>
-  Returns the lexicographically smaller or left (resp. larger or right)
-  endpoint of an \f$x\f$-monotone curve.
+
+<DT><B>`Equal_2`:</B><DD> There are two overloaded Boolean operators
+  that test equality. One returns true iff two given points represent
+  the same geometric point in the two-dimensional surface, and the
+  second returns true iff the graphs of two given \f$x\f$-monotone
+  curves are the same.\cgalFootnote{The predicate that tests equality
+  between graphs of two \f$x\f$-monotone curves is used only for
+  testing as part of the test suite.}
+
+<DT><B>`Construct_min_vertex_2`:</B><DD> Returns the lexicographically
+  smallest (or left) endpoint of an \f$x\f$-monotone curve.
+
+<DT><B>`Construct_max_vertex_2`:</B><DD> Returns the lexicographically
+  largeset (or right) endpoint of an \f$x\f$-monotone curve.
+
 <DT><B>`Is_vertical_2`:</B><DD> Determines whether an \f$x\f$-monotone curve
   is vertical.
+
 <DT><B>`Compare_y_at_x_2`:</B><DD> Given an \f$x\f$-monotone curve \f$c\f$
   and a point \f$p\f$ that lies in the \f$x\f$-range of \f$c\f$, determines
-  whether \f$p\f$ lies below, above or on \f$c\f$.
+  whether \f$p\f$ is below, above or lies on \f$c\f$.
+
 <DT><B>`Compare_y_at_x_right_2`:</B><DD> Given two \f$x\f$-monotone curves
   \f$c_1\f$ and \f$c_2\f$ that share a common minimal (left) endpoint
-  \f$p\f$, determines whether \f$c_1\f$ lies above or under \f$c_2\f$
+  \f$p\f$, determines whether \f$c_1\f$ is above or below \f$c_2\f$
   immediately to the right of \f$p\f$, or whether the two curves overlap
   there.
 </DL>
 
-Each model of the concept `ArrangementBasicTraits_2` needs to define a
-tag named `ArrangementBasicTraits_2::Has_left_category`. It determines
-whether the traits class supports the following predicate:
+Every model of the concept `ArrangementBasicTraits_2` needs to define
+a nested type named \link ArrangementBasicTraits_2::Has_left_category
+`Has_left_category`\endlink. It determines whether the traits class
+supports the following predicate:
 
 <DL>
 <DT><B>`Compare_y_at_x_left_2`:</B><DD> Given two \f$x\f$-monotone curves
   \f$c_1\f$ and \f$c_2\f$ that share a common maximal (right) endpoint
-  \f$p\f$, determines whether \f$c_1\f$ lies above or under \f$c_2\f$
+  \f$p\f$, determines whether \f$c_1\f$ is above or under \f$c_2\f$
   immediately to the left of \f$p\f$, or whether the two curves overlap
   there.
 </DL>
@@ -2876,9 +2914,9 @@ but in practice the category is typically explicitly defined as the
 tag.} the model must support the predicate. If the type is defined as
 `Tag_false`, we resort to an internal version, which is based just on
 the reduced set of provided operations.  The internal version might be
-less efficient, but it exempts the traits developer from the
-potentially non-trivial task of providing an (efficient)
-implementation of this predicate.
+less efficient, but it exempts the traits developer from the providing
+an (efficient) implementation of this predicate---a task that turns
+out to be nontrivial in some cases.
 
 The basic set of predicates is sufficient for constructing
 arrangements of \f$x\f$-monotone curves that do not reach or approach
@@ -2886,21 +2924,27 @@ the boundary of the parameter space. The nature of the input curves,
 whether they are expected to reach or approach the left, right,
 bottom, or top side of the boundary of the parameter space, must be
 conveyed by the traits class. This is done through the definition of
-four additional nested types, namely `Left_side_category`,
-`Right_side_category`, `Bottom_side_category`, and
-`Top_side_category`. Each of those types must be convertible to the
-type `Arr_oblivious_side_tag` for the class to be a model of the
-concept `ArrangementBasicTraits_2`.
+four additional nested types, namely \link
+ArrangementBasicTraits_2::Left_side_category
+`Left_side_category`\endlink, \link
+ArrangementBasicTraits_2::Right_side_category
+`Right_side_category`\endlink, \link
+ArrangementBasicTraits_2::Bottom_side_category
+`Bottom_side_category`\endlink, and \link
+ArrangementBasicTraits_2::Top_side_category
+`Top_side_category`\endlink.  Each of those types must be convertible
+to the type `Arr_oblivious_side_tag` for the class to be a model of
+the concept `ArrangementBasicTraits_2`.
 
 <!----------------------------------------------------------------------------->
-\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersecting x-Monotone Curves}
+\subsubsection aos_sssec-geom_traits-concepts_intersecting Intersecting x-Monotone Curves
 <!----------------------------------------------------------------------------->
 
 Constructing an arrangement induced by \f$x\f$-monotone curves that
-may intersect in their interior requires operations that are not
-listed by the `ArrangementBasicTraits_2` concept. The additional
-operations are listed by the concept `ArrangementXMonotoneTraits_2`,
-which refines the basic arrangement-traits concept described above.
+may intersect in their interior requires operations that are not part
+of the `ArrangementBasicTraits_2` concept. The additional operations
+are listed by the concept `ArrangementXMonotoneTraits_2`, which
+refines the basic arrangement geometry-traits concept described above.
 While models of the `ArrangementXMonotoneTraits_2` concept still
 handle only \f$x\f$-monotone curves, the curves are not restricted to
 be disjoint in their interiors. Such a model must be capable of
@@ -2908,17 +2952,18 @@ computing points of intersection between \f$x\f$-monotone curves,
 splitting curves at these intersection points to obtain pairs of
 interior-disjoint subcurves, and optionally merging pairs of
 subcurves. A point of intersection between two curves is also
-represented by the `%Point_2` type. A model of the refined concept must
-define an additional type called `Multiplicity`.  An object of this
-type indicates the multiplicity of the intersection point of two
-curves, also referred to as the <em>intersection
-number</em>.\cgalFootnote{See,
-e.g., http://en.wikipedia.org/wiki/Intersection_number for more
-information about intersection numbers.} Loosely speaking, if two
-curves intersect at a point \f$p\f$ but have different tangents (first
-derivatives) at \f$p\f$, \f$p\f$ is of multiplicity 1. If the curve
-tangents are equal but their curvatures (second derivatives) are not,
-\f$p\f$ is of multiplicity 2, and so on. The multiplicity of points of
+represented by the \link ArrangementBasicTraits_2::Point_2
+`Point_2`\endlink type. A model of the refined concept must define an
+additional type called `Multiplicity`.  An object of this type
+indicates the multiplicity of the intersection point of two curves,
+also referred to as the <em>intersection
+number</em>.\cgalFootnote{See, e.g.,
+http://en.wikipedia.org/wiki/Intersection_number for more information
+about intersection numbers.} Loosely speaking, if two curves intersect
+at a point \f$p\f$ but have different tangents (first derivatives) at
+\f$p\f$, The point \f$p\f$ is of multiplicity 1. If the curve tangents
+are equal but their curvatures (second derivatives) are not, \f$p\f$
+is of multiplicity 2, and so on. The multiplicity of points of
 intersection between line segments is always 1, and the multiplicity
 of a point of intersection between two polylines is 1 if the
 intersection point is interior to the corresponding two line segments
@@ -2927,9 +2972,11 @@ refined concept thus has to support the following additional
 operations:
 
 <DL>
-<DT><B>`Split_2`:</B><DD> Splits an \f$x\f$-monotone curve \f$c\f$ at a
-  given point \f$p\f$, which lies in the interior of \f$c\f$, into two
-  subcurves.
+
+<DT><B>`Split_2`:</B><DD> Splits an \f$x\f$-monotone curve \f$c\f$ into
+  two subcurves at a given point \f$p\f$ that lies in the interior of
+  \f$c\f$.
+
 <DT><B>`Are_mergeable_2`:</B><DD> Determines whether two \f$ x\f$-monotone
   curves \f$c_1\f$ and \f$c_2\f$ that share a common endpoint can be
   merged into a single continuous \f$x\f$-monotone curve representable by
@@ -2938,8 +2985,10 @@ operations:
   whether two curves are mergeable: We check whether their underlying
   curves are identical and whether they do not bend to form a
   non-\f$x\f$-monotone curve.}
+
 <DT><B>`Merge_2`:</B><DD> Merges two mergeable \f$x\f$-monotone curves
   into a single curve.
+
 <DT><B>`Intersection_2`:</B><DD> Computes all intersection points and
   overlapping sections of two given \f$x\f$-monotone curves. If possible,
   computes also the multiplicity of each intersection point. Providing
@@ -2950,7 +2999,9 @@ operations:
   multiplicity of intersection points while constructing arrangements
   enables the exploitation of the geometric knowledge intersection points
   may have.
+
 </DL>
+
 Using a model of the `ArrangementXMonotoneTraits_2` it is
 possible to construct arrangements of sets of \f$x\f$-monotone curves
 (and points) that may intersect one another. The two operations
@@ -2968,27 +3019,28 @@ edges.
 The concept `ArrangementTraits_2` refines the
 `ArrangementXMonotoneTraits_2` concept. A model of the refined concept
 must define an additional type that is used to represent general, not
-necessarily \f$x\f$-monotone and not necessarily connected, curves,
+necessarily \f$x\f$-monotone and not necessarily continuous, curves,
 named `Curve_2`. It also has to support the subdivision of a curve of
 that type into a set of continuous \f$x\f$-monotone curves and
 isolated points. For example, the curve \f$c:\ (x^2 + y^2)(x^2 + y^2 -
 1) = 0\f$ comprises the unit circle (the locus of all points for which
-\f$x^2 + y^2 = 1\f$) and the origin \f$(0,0)\f$. \f$c\f$ should
-therefore be subdivided into two circular arcs, the upper part and the
-lower part of the unit circle, and a single isolated point.  In
-particular a model of the refined concept has to support the following
-additional operation:
+\f$x^2 + y^2 = 1\f$) and the origin (the singular point
+\f$(0,0)\f$). \f$c\f$ should therefore be subdivided into two circular
+arcs, the upper part and the lower part of the unit circle, and a
+single isolated point.  In particular a model of the refined concept
+has to support the following additional operation:
 
 <DL>
 <DT><B>`Make_x_monotone_2`:</B><DD> Divides a given general curve of type
   `Curve_2` into continuous weakly \f$x\f$-monotone curves and isolated points.
 </DL>
 
-Note that the a model of the refined concept `ArrangementTraits_2` is
-required only when using the free `insert()` functions (see Section \ref
-arr_secgl_funcs), which accept an object of type `Curve_2` or a range
-of objects of that type. In all other cases it is sufficient to use a
-model of the `ArrangementXMonotoneTraits_2` concept.
+Note that a model of the refined concept `ArrangementTraits_2` is
+required only when using the free `insert()` function templates (see
+Section \ref arr_secgl_funcs) that accept an object of type `Curve_2`
+or a range of objects of that type. In all other cases it is
+sufficient to use a model of the `ArrangementXMonotoneTraits_2`
+concept.
 
 <!----------------------------------------------------------------------------->
 \subsubsection aos_sssec-tr_lanmarks_concept The Landmark Concept
@@ -3049,8 +3101,8 @@ classes used with arrangements that support unbounded curves and
 arrangements embedded in curved surfaces. In particular, these
 requirements list additional operations that handle boundary
 conditions of curves that either reach the boundary of the parameter
-space (the pre-image of their endpoints lie on the boundary) or
-approach it (the pre-image of their endpoints approach the
+space (the pre-images of their endpoints lie on the boundary) or
+approach it (the pre-images of their endpoints approach the
 boundary). For each side of the parameter space there are four
 available concepts, models of which can be used to handle open,
 closed, contracted, and identified side,
@@ -3164,7 +3216,7 @@ following predicate:
 between identified and non-identified sides as explained below.
 
 (i) Given a curve \f$c = (x(t), y(t))\f$ and an enumerator that
-specify either the minimum end or the maximum end of the curve, and
+specifies either the minimum end or the maximum end of the curve, and
 thus map to a parameter value \f$d \in \{0,1\}\f$, determine the
 location of the \f$d\f$-end of \f$c\f$ with respect to the
 \f$x\f$-axis. More precisely, if \f$c\f$ is open at its \f$d\f$-end
@@ -3183,7 +3235,7 @@ containing \f$p\f$ cannot be open and must not be identified. In other
 words, this overloaded version is required only for the concepts
 `ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
 `ArrangementContractedLeftTraits_2` and
-`ArrangementContractedRightTraits_2` concepts.
+`ArrangementContractedRightTraits_2`.
 
 </DL>
 
@@ -3197,7 +3249,7 @@ following predicate:
 <DD>This predicate is overloaded with two versions. We distinguish
 between identified and non-identified sides as explained below.
 
-(i) Given a curve \f$c\f$ and an enumerator that specify either the
+(i) Given a curve \f$c\f$ and an enumerator that specifies either the
 minimum end or the maximum end of the curve, and thus map to a
 parameter value \f$d \in \{0,1\}\f$, determine the location of the
 \f$d\f$-end of \f$c\f$ with respect to the \f$y\f$-axis. More
@@ -3217,7 +3269,7 @@ containing \f$p\f$ cannot be open and must not be identified. In other
 words, this overloaded version is required only for the concepts
 `ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
 `ArrangementContractedBottomTraits_2` and
-`ArrangementContractedTopTraits_2` concepts.
+`ArrangementContractedTopTraits_2`.
 
 </DL>
 
@@ -3281,29 +3333,28 @@ is, \f$y_{p_1} \in \{y_{\rm min},y_{\rm max}\}\f$ (resp. \f$y_{p_2}
 other words, this overloaded version is required only for the concepts
 `ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
 `ArrangementIdentifiedBottomTraits_2` and
-`ArrangementIdentifiedTopTraits_2` concepts.
+`ArrangementIdentifiedTopTraits_2`.
 
 <DT><B>`Compare_x_near_boundary_2`:</B>
 
 <DD>Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$ and an
-enumerator \f$i\f$ that specifies either the minimum ends or the
-maximum ends of the two curves, and thus map to parameter values
-\f$d_1, d_2 \in \{0,1\}\f$, respectively, compare the
-\f$x\f$-coordinate of the curves near their respective limits or
-ends. That is, compare the \f$x\f$-coordinates of the horizontal
-projection of a point \f$p\f$ onto \f$c_1\f$ and onto \f$c_2\f$. A
-precondition assures that \f$c_1\f$ and \f$c_2\f$ have vertical
-asymptotes at their respective ends. Furthermore, both curves approach
-the same boundary-side, either the bottom or the top, at their
-respective ends. If both curves approach the bottom boundary-side,
-\f$p\f$ is located far to the bottom, such that the result is
-invariant under a translation of \f$p\f$ farther to the bottom. If
-both curves approach the top boundary-side, \f$p\f$ is located far to
-the top in a similar manner. Another precondition assures that the
-\f$x\f$-coordinates of the limits of the curves at their respective
-ends are equal. That is, the predicate `Compare_x_on_boundary_2`
-applied to \f$c_1\f$, \f$c_2\f$, and \f$i\f$ evaluates to `EQUAL`.
-</DL>
+enumerator that specifies either the minimum ends or the maximum ends
+of the two curves, and thus map to parameter values \f$d_1, d_2 \in
+\{0,1\}\f$, respectively, compare the \f$x\f$-coordinate of the curves
+near their respective limits or ends. That is, compare the
+\f$x\f$-coordinates of the horizontal projection of a point \f$p\f$
+onto \f$c_1\f$ and onto \f$c_2\f$. A precondition assures that
+\f$c_1\f$ and \f$c_2\f$ have vertical asymptotes at their respective
+ends. Furthermore, both curves approach the same boundary-side, either
+the bottom or the top, at their respective ends. If both curves
+approach the bottom boundary-side, \f$p\f$ is located far to the
+bottom, such that the result is invariant under a translation of
+\f$p\f$ farther to the bottom. If both curves approach the top
+boundary-side, \f$p\f$ is located far to the top in a similar
+manner. Another precondition assures that the \f$x\f$-coordinates of
+the limits of the curves at their respective ends are equal. That is,
+the predicate `Compare_x_on_boundary_2` applied to \f$c_1\f$,
+\f$c_2\f$, and \f$i\f$ evaluates to `EQUAL`.  </DL>
 
 The concept `ArrangementVerticalSideTraits_2` requires two
 additional predicates:
@@ -3393,7 +3444,7 @@ traits-class by attaching auxiliary data with the geometric objects.
 The `Arr_segment_traits_2<Kernel>` class used so far in most example
 programs in this chapter is a model of the concepts
 `ArrangementTraits_2`, `ArrangementLandmarkTraits_2`, and
-`ArrangementDirectionalXMonotoneTraits_2`; the later enables Boolean
+`ArrangementDirectionalXMonotoneTraits_2`; the latter enables Boolean
 set operations. It is parameterized by a geometric kernel and uses the
 `Kernel::Point_2` type as it point type. However, neither the
 `Curve_2` nor the `X_monotone_curve_2` types are identical to the
@@ -3707,7 +3758,7 @@ compute the union of a set of dilated polygons.
 The `Arr_circle_segment_traits_2<Kernel>` class-template is designed
 for efficient handling of arrangements of circular arcs and line
 segments.  It is a model of the concepts `ArrangementTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`; the later enables Boolean
+`ArrangementDirectionalXMonotoneTraits_2`; the latter enables Boolean
 set operations. Note that it is not a model of
 `ArrangementLandmarkTraits_2` concept, so it is impossible to use the
 landmark point-location strategy. The traits class template is
@@ -3945,7 +3996,7 @@ approximating or interpolating more complicated curves; see, e.g.,
 
 `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` is a model of
 the concepts `ArrangementTraits_2`, `ArrangementOpenBoundaryTraits_2`,
-and `ArrangementDirectionalXMonotoneTraits_2`; the later enables
+and `ArrangementDirectionalXMonotoneTraits_2`; the latter enables
 Boolean set operations. Note that it is not a model of
 `ArrangementLandmarkTraits_2` concept, so it is impossible to use the
 landmark point-location strategy with this traits class.
@@ -5127,7 +5178,7 @@ also demonstrates how to re-read the arrangement from a file:
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension_io.cpp}
 
-You may develop your own own formatter classes - models of the
+You may develop your own formatter classes - models of the
 `ArrangementInputFormatter` and `ArrangementOutputFormatter`
 concepts, as defined in the Reference Manual.
 Doing so, you can define other I/O formats, such as an XML-based
