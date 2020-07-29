@@ -120,14 +120,9 @@ public:
 //
 template<class MD,
          class K_ = Default,
-         class Concurrency_tag = Sequential_tag,
+         class Concurrency_tag_ = Sequential_tag,
          class Vertex_base_ = Default,
          class Cell_base_   = Default>
-struct Mesh_triangulation_3;
-
-// Sequential version (default)
-template<class MD, class K_, class Concurrency_tag,
-         class Vertex_base_, class Cell_base_>
 struct Mesh_triangulation_3
 {
 private:
@@ -147,7 +142,8 @@ private:
                                   typename MD::Subdomain_index,
                                   typename MD::Surface_patch_index,
                                   typename MD::Index> >::type;
-
+  using Concurrency_tag =
+      typename Default::Get<Concurrency_tag_, Sequential_tag>::type;
   struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
                                                      Concurrency_tag> {};
   using Triangulation =
@@ -156,7 +152,7 @@ private:
 
 public:
   using type = Triangulation;
-  using Type = type;;
+  using Type = type;
 };  // end struct Mesh_triangulation_3
 }  // end namespace CGAL
 
