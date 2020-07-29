@@ -313,7 +313,7 @@ struct Read_write_index<Indices_types, boost::variant<Args...>> {
   template <std::size_t... Is>
   Index get_index(int dimension, std::index_sequence<Is...>) const{
     static const Index variants[] = { std::tuple_element_t<Is, Indices_types>{}... };
-    return variants[3-dimension];
+    return variants[dimension < 0 ? 0 : 3-dimension];
   }
 
   void operator()(std::ostream& os, int, Index index) const {
