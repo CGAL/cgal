@@ -23,8 +23,6 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 
-extern int scoreTime;
-
 namespace CGAL {
 namespace Shape_detection {
 
