@@ -28,9 +28,6 @@ extern int scoreTime;
 namespace CGAL {
 namespace Shape_detection {
 
-template<class Traits>
-class Efficient_RANSAC;
-
 namespace internal {
 
 const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
@@ -530,10 +527,10 @@ private:
 
     return m_bBox;
   }
+
 };
 }
 }
-
 }
 
 #endif
