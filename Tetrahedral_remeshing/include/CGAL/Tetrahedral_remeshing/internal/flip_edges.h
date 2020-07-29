@@ -711,7 +711,9 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   facet_circulator++;
   facet_circulator++;
 
-  std::vector<Vertex_handle> vertices_around_edge;
+  boost::container::small_vector<Cell_handle, 64> inc_vh;
+  tr.incident_cells(vh, std::back_inserter(inc_vh));
+
   do
   {
     //Get the ids of the opposite vertices
@@ -721,18 +723,13 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        Cell_handle ch;
-        int i0, i1;
-        if (tr.is_edge(curr_vertex, vh, ch, i0, i1))
+        if (is_edge_uv(vh, curr_vertex, inc_vh))
           return NOT_FLIPPABLE;
-
-        vertices_around_edge.push_back(curr_vertex);
       }
     }
   } while (++facet_circulator != facet_done);
 
 
-  std::vector<Cell_handle> cells_around_edge;
   boost::container::small_vector<Cell_handle, 20> to_remove;
 
   //Neighbors that will need to be updated after flip
@@ -751,8 +748,6 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   Cell_circulator done = cell_circulator;
   do
   {
-    cells_around_edge.push_back(cell_circulator);
-
     //Facets opposite to vh0
     Facet facet_vh0(cell_circulator, cell_circulator->index(vh0));
     neighbor_facets.insert(tr.mirror_facet(facet_vh0));
