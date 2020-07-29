@@ -452,6 +452,7 @@ public:
     return m_bBox;
   }
 
+  const Cell *root() const { return m_root; }
 
   Sd_traits m_traits;
   Bbox_3 m_bBox;
