@@ -159,7 +159,6 @@ class Octree : public PointAccessor {
 
   typedef typename PointAccessor::Sd_traits Sd_traits;
   typedef typename Sd_traits::Input_range::iterator Input_iterator;
-  typedef Shape_base<Sd_traits> Shape;
   typedef typename Sd_traits::Point_3 Point_3;
   typedef typename Sd_traits::Vector_3 Vector_3;
   typedef typename Sd_traits::FT FT;
