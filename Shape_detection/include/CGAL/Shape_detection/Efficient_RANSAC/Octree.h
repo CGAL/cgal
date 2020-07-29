@@ -347,7 +347,7 @@ public:
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
                                         transl(cell->center, constr_vec(
-                                                ORIGIN, constr_pt(-width, -width, -width))),
+                                                ORIGIN, Point_3(-width, -width, -width))),
                                         cell->level + 1);
 
               if (cell->child[7]->size() > m_bucket_size)
@@ -360,7 +360,7 @@ public:
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
                                       transl(cell->center, constr_vec(
-                                              ORIGIN, constr_pt(width, -width, -width))),
+                                              ORIGIN, Point_3(width, -width, -width))),
                                       cell->level + 1);
 
             if (cell->child[6]->size() > m_bucket_size)
@@ -375,7 +375,7 @@ public:
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
                                       transl(cell->center, constr_vec(
-                                              ORIGIN, constr_pt(-width, width, -width))),
+                                              ORIGIN, Point_3(-width, width, -width))),
                                       cell->level + 1);
 
             if (cell->child[5]->size() > m_bucket_size)
@@ -388,7 +388,7 @@ public:
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
                                     transl(cell->center, constr_vec(
-                                            ORIGIN, constr_pt(width, width, -width))),
+                                            ORIGIN, Point_3(width, width, -width))),
                                     cell->level + 1);
 
           if (cell->child[4]->size() > m_bucket_size)
@@ -404,7 +404,7 @@ public:
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
                                       transl(cell->center, constr_vec(
-                                              ORIGIN, constr_pt(-width, -width, width))),
+                                              ORIGIN, Point_3(-width, -width, width))),
                                       cell->level + 1);
 
             if (cell->child[3]->size() > m_bucket_size)
@@ -417,7 +417,7 @@ public:
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
                                     transl(cell->center, constr_vec(
-                                            ORIGIN, constr_pt(width, -width, width))),
+                                            ORIGIN, Point_3(width, -width, width))),
                                     cell->level + 1);
 
           if (cell->child[2]->size() > m_bucket_size)
@@ -432,7 +432,7 @@ public:
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
                                     transl(cell->center, constr_vec(
-                                            ORIGIN, constr_pt(-width, width, width))),
+                                            ORIGIN, Point_3(-width, width, width))),
                                     cell->level + 1);
 
           if (cell->child[1]->size() > m_bucket_size)
@@ -446,7 +446,7 @@ public:
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
                                     transl(cell->center, constr_vec(
-                                            ORIGIN, constr_pt(width, width, width))),
+                                            ORIGIN, Point_3(width, width, width))),
                                     cell->level + 1);
 
           if (cell->child[0]->size() > m_bucket_size)
@@ -600,9 +600,9 @@ private:
 
     m_width = (std::max)(max[0] - min[0],
                          (std::max)(max[1] - min[1], max[2] - min[2])) * (FT) 0.5;
-    m_center = constr_pt((min[0] + max[0]) * (FT) 0.5,
-                         (min[1] + max[1]) * (FT) 0.5,
-                         (min[2] + max[2]) * (FT) 0.5);
+    m_center = Point_3((min[0] + max[0]) * (FT) 0.5,
+                       (min[1] + max[1]) * (FT) 0.5,
+                       (min[2] + max[2]) * (FT) 0.5);
 
     return m_bBox;
   }
