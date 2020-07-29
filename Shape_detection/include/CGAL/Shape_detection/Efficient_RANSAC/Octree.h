@@ -195,22 +195,19 @@ public:
 public:
 
   Octree(Sd_traits const &traits)
-          : m_traits(traits), m_bucket_size(20), m_set_max_level(10), m_root(nullptr) {}
+          : m_traits(traits), m_set_max_level(10), m_root(nullptr) {}
 
   Octree(Sd_traits const &traits,
          const Input_iterator &first,
          const Input_iterator &beyond,
          Point_map &point_pmap,
          std::size_t offset = 0,
-         std::size_t bucketSize = 20,
          std::size_t maxLevel = 10)
           : PointAccessor(first, beyond, offset),
             m_traits(traits),
             m_root(nullptr),
-            m_bucket_size(bucketSize),
             m_set_max_level(maxLevel),
-            m_point_pmap(point_pmap)
-            {}
+            m_point_pmap(point_pmap) {}
 
   ~Octree() {
     if (!m_root)
@@ -238,7 +235,7 @@ public:
   // | 3.| 2.|
   // +---+---+
   // z max before z min, then y max before y min, then x max before x min
-  void createTree(double cluster_epsilon_for_max_level_recomputation = -1.) {
+  void createTree(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 20) {
     buildBoundingCube();
     std::size_t count = 0;
     m_max_level = 0;
@@ -337,7 +334,7 @@ public:
                                         cell->center + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
                                         cell->level + 1);
 
-              if (cell->child[7]->size() > m_bucket_size)
+              if (cell->child[7]->size() > bucketSize)
                 stack.push(cell->child[7]);
             }
           } else zLowYLowXSplit = cell->first - 1;
@@ -349,7 +346,7 @@ public:
                                       cell->center + Vector_3(ORIGIN, Point_3(width, -width, -width)),
                                       cell->level + 1);
 
-            if (cell->child[6]->size() > m_bucket_size)
+            if (cell->child[6]->size() > bucketSize)
               stack.push(cell->child[6]);
           }
         } else zLowYSplit = cell->first - 1;
@@ -363,7 +360,7 @@ public:
                                       cell->center + Vector_3(ORIGIN, Point_3(-width, width, -width)),
                                       cell->level + 1);
 
-            if (cell->child[5]->size() > m_bucket_size)
+            if (cell->child[5]->size() > bucketSize)
               stack.push(cell->child[5]);
           }
         } else zLowYHighXSplit = zLowYSplit;
@@ -375,7 +372,7 @@ public:
                                     cell->center + Vector_3(ORIGIN, Point_3(width, width, -width)),
                                     cell->level + 1);
 
-          if (cell->child[4]->size() > m_bucket_size)
+          if (cell->child[4]->size() > bucketSize)
             stack.push(cell->child[4]);
         }
       } else zSplit = cell->first - 1;
@@ -390,7 +387,7 @@ public:
                                       cell->center + Vector_3(ORIGIN, Point_3(-width, -width, width)),
                                       cell->level + 1);
 
-            if (cell->child[3]->size() > m_bucket_size)
+            if (cell->child[3]->size() > bucketSize)
               stack.push(cell->child[3]);
           }
         } else zHighYLowXSplit = zSplit;
@@ -402,7 +399,7 @@ public:
                                     cell->center + Vector_3(ORIGIN, Point_3(width, -width, width)),
                                     cell->level + 1);
 
-          if (cell->child[2]->size() > m_bucket_size)
+          if (cell->child[2]->size() > bucketSize)
             stack.push(cell->child[2]);
         }
 
@@ -416,7 +413,7 @@ public:
                                     cell->center + Vector_3(ORIGIN, Point_3(-width, width, width)),
                                     cell->level + 1);
 
-          if (cell->child[1]->size() > m_bucket_size)
+          if (cell->child[1]->size() > bucketSize)
             stack.push(cell->child[1]);
         }
       } else zHighYHighXSplit = zHighYSplit;
@@ -429,7 +426,7 @@ public:
                                     cell->center + Vector_3(ORIGIN, Point_3(width, width, width)),
                                     cell->level + 1);
 
-          if (cell->child[0]->size() > m_bucket_size)
+          if (cell->child[0]->size() > bucketSize)
             stack.push(cell->child[0]);
         }
       }
@@ -457,7 +454,6 @@ private:
   Cell *m_root;
   Point_3 m_center;
   FT m_width;
-  std::size_t m_bucket_size;
   std::size_t m_set_max_level;
   std::size_t m_max_level;
   Point_map m_point_pmap;
