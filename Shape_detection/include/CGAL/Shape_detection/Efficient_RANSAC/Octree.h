@@ -195,18 +195,16 @@ public:
 public:
 
   Octree(Sd_traits const &traits)
-          : m_traits(traits), m_set_max_level(10), m_root(nullptr) {}
+          : m_traits(traits), m_root(nullptr) {}
 
   Octree(Sd_traits const &traits,
          const Input_iterator &first,
          const Input_iterator &beyond,
          Point_map &point_pmap,
-         std::size_t offset = 0,
-         std::size_t maxLevel = 10)
+         std::size_t offset = 0)
           : PointAccessor(first, beyond, offset),
             m_traits(traits),
             m_root(nullptr),
-            m_set_max_level(maxLevel),
             m_point_pmap(point_pmap) {}
 
   ~Octree() {
@@ -235,7 +233,8 @@ public:
   // | 3.| 2.|
   // +---+---+
   // z max before z min, then y max before y min, then x max before x min
-  void createTree(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 20) {
+  void createTree(double cluster_epsilon_for_max_level_recomputation = -1., std::size_t bucketSize = 2,
+                  std::size_t maxLevel = 10) {
     buildBoundingCube();
     std::size_t count = 0;
     m_max_level = 0;
@@ -246,7 +245,7 @@ public:
               + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin())
               + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
 
-      m_set_max_level = std::size_t(std::log(bbox_diagonal
+      maxLevel = std::size_t(std::log(bbox_diagonal
                                              / cluster_epsilon_for_max_level_recomputation)
                                     / std::log(2.0));
     }
@@ -259,7 +258,7 @@ public:
       stack.pop();
 
       m_max_level = std::max<std::size_t>(m_max_level, cell->level);
-      if (cell->level == m_set_max_level)
+      if (cell->level == maxLevel)
         continue;
 
       std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
@@ -454,7 +453,6 @@ private:
   Cell *m_root;
   Point_3 m_center;
   FT m_width;
-  std::size_t m_set_max_level;
   std::size_t m_max_level;
   Point_map m_point_pmap;
 
