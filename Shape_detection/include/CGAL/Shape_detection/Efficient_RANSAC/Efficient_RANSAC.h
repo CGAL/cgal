@@ -741,7 +741,7 @@ public:
           num_invalid++;
 
           for (std::size_t j = 0; j < m_num_subsets; j++) {
-            if (m_direct_octrees[j] && m_direct_octrees[j]->m_root) {
+            if (m_direct_octrees[j] && m_direct_octrees[j]->root()) {
               std::size_t offset = m_direct_octrees[j]->offset();
 
               if (offset <= indices_points_best_candidate.at(i) &&
@@ -1022,11 +1022,11 @@ private:
 
     typedef typename internal::Octree<PointAccessor>::Cell Cell;
 
-    std::stack<Cell *> stack;
-    stack.push(octree->m_root);
+    std::stack<const Cell *> stack;
+    stack.push(octree->root());
 
     while (!stack.empty()) {
-      Cell *cell = stack.top();
+      const Cell *cell = stack.top();
       stack.pop();
 
       FT width = octree->m_width / (1 << (cell->level));
@@ -1074,7 +1074,7 @@ private:
     typedef typename internal::Octree<PointAccessor>::Cell Cell;
 
     bool upperZ, upperY, upperX;
-    Cell *cur = octree->m_root;
+    const Cell *cur = octree->root();
 
     while (cur && cur->level < level) {
       upperX = cur->center.x() <= p.x();
