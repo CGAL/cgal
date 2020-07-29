@@ -564,6 +564,9 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
       }
     }
 
+    if(tr.is_infinite(vh))
+      continue;
+
     boost::container::small_vector<Cell_handle, 64> inc_vh;
     tr.incident_cells(vh, std::back_inserter(inc_vh));
 
@@ -584,12 +587,15 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
           if (is_edge_uv(vh, curr_vertex, inc_vh))
+          {
             is_edge = true;
+            break;
+          }
         }
       }
     } while (++facet_circulator != facet_done);
 
-    if (!is_edge && !tr.is_infinite(vh))
+    if (!is_edge)
       opposite_vertices.push_back(vh);
 
     nb_cells_around_edge++;
@@ -607,9 +613,8 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Cell_circulator cell_circulator = tr.incident_cells(edge);
   Cell_circulator done = cell_circulator;
 
-  for (std::size_t i = 0; i < opposite_vertices.size(); ++i)
+  for (Vertex_handle vh : opposite_vertices)
   {
-    Vertex_handle vh = opposite_vertices[i];
     bool keep = true;
 
     std::vector<Facet> facets;
