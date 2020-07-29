@@ -444,15 +444,15 @@ public:
     }
   }
 
-  std::size_t maxLevel() {
-    return m_max_level;
-  }
+  std::size_t maxLevel() { return m_max_level; }
 
-  const Bbox_3 &boundingBox() {
-    return m_bBox;
-  }
+  const Bbox_3 &boundingBox() const { return m_bBox; }
 
   const Cell *root() const { return m_root; }
+
+  FT width() const { return m_width; }
+
+private:
 
   Sd_traits m_traits;
   Bbox_3 m_bBox;
