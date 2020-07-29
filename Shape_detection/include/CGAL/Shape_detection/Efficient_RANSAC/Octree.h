@@ -198,8 +198,6 @@ private:
   // --------------------------------------------------------------------------
   // Utilities
   // --------------------------------------------------------------------------
-  Point_3 constr_pt(FT x, FT y, FT z) const { return m_traits.construct_point_3_object()(x, y, z); }
-
   Vector_3 constr_vec(const Point_3 &p, const Point_3 &q) const { return m_traits.construct_vector_3_object()(p, q); }
 
   Point_3 transl(const Point_3 &p, const Vector_3 &v) { return m_traits.construct_translated_point_3_object()(p, v); }
