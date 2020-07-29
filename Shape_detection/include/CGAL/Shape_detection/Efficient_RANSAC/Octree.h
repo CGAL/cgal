@@ -214,11 +214,11 @@ private:
     CGAL_assertion(d < 3);
     switch (d) {
       case 0:
-        return get_x(p);
+        return p.x();
       case 1:
-        return get_y(p);
+        return p.y();
       case 2:
-        return get_z(p);
+        return p.z();
       default:
         return FT(0);
     }
@@ -306,32 +306,32 @@ public:
       std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
       std::size_t zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
-      std::size_t zSplit = split(cell->first, cell->last, 2, get_z(cell->center));
+      std::size_t zSplit = split(cell->first, cell->last, 2, cell->center.z());
 
       if (zSplit != size_t_max) {
 
-        zLowYSplit = split(cell->first, zSplit, 1, get_y(cell->center));
+        zLowYSplit = split(cell->first, zSplit, 1, cell->center.y());
         if (zLowYSplit != size_t_max) {
           zLowYLowXSplit = split(cell->first,
-                                 zLowYSplit, 0, get_x(cell->center));
+                                 zLowYSplit, 0, cell->center.x());
           zLowYHighXSplit = split(zLowYSplit + 1,
-                                  zSplit, 0, get_x(cell->center));
+                                  zSplit, 0, cell->center.x());
         } else {
           zLowYLowXSplit = size_t_max;
-          zLowYHighXSplit = split(cell->first, zSplit, 0, get_x(cell->center));
+          zLowYHighXSplit = split(cell->first, zSplit, 0, cell->center.x());
         }
 
-        zHighYSplit = split(zSplit + 1, cell->last, 1, get_y(cell->center));
+        zHighYSplit = split(zSplit + 1, cell->last, 1, cell->center.y());
 
         if (zHighYSplit != size_t_max) {
           zHighYHighXSplit = split(zHighYSplit + 1,
-                                   cell->last, 0, get_x(cell->center));
+                                   cell->last, 0, cell->center.x());
           zHighYLowXSplit = split(zSplit + 1,
-                                  zHighYSplit, 0, get_x(cell->center));
+                                  zHighYSplit, 0, cell->center.x());
         } else {
           zHighYLowXSplit = size_t_max;
           zHighYHighXSplit = split(zSplit + 1,
-                                   cell->last, 0, get_x(cell->center));
+                                   cell->last, 0, cell->center.x());
         }
       } else {
         zLowYSplit = size_t_max;
@@ -341,24 +341,24 @@ public:
         zHighYSplit = split(cell->first,
                             cell->last,
                             1,
-                            get_y(cell->center));
+                            cell->center.y());
 
         if (zHighYSplit != size_t_max) {
           zHighYHighXSplit = split(zHighYSplit + 1,
                                    cell->last,
                                    0,
-                                   get_x(cell->center));
+                                   cell->center.x());
 
           zHighYLowXSplit = split(cell->first,
                                   zHighYSplit,
                                   0,
-                                  get_x(cell->center));
+                                  cell->center.x());
         } else {
           zHighYLowXSplit = size_t_max;
           zHighYHighXSplit = split(cell->first,
                                    cell->last,
                                    0,
-                                   get_x(cell->center));
+                                   cell->center.x());
         }
       }
 
@@ -499,9 +499,9 @@ public:
     Cell *cur = m_root;
 
     while (cur && cur->level < level) {
-      upperX = get_x(cur->center) <= get_x(p);
-      upperY = get_y(cur->center) <= get_y(p);
-      upperZ = get_z(cur->center) <= get_z(p);
+      upperX = cur->center.x() <= p.x();
+      upperY = cur->center.y() <= p.y();
+      upperZ = cur->center.z() <= p.z();
 
       if (upperZ) {
         if (upperY)
@@ -624,12 +624,12 @@ private:
 
     for (std::size_t i = 0; i < this->size(); i++) {
       Point_3 p = get(m_point_pmap, *this->at(i));
-      min[0] = (std::min<FT>)(min[0], get_x(p));
-      min[1] = (std::min<FT>)(min[1], get_y(p));
-      min[2] = (std::min<FT>)(min[2], get_z(p));
-      max[0] = (std::max<FT>)(max[0], get_x(p));
-      max[1] = (std::max<FT>)(max[1], get_y(p));
-      max[2] = (std::max<FT>)(max[2], get_z(p));
+      min[0] = (std::min<FT>)(min[0], p.x());
+      min[1] = (std::min<FT>)(min[1], p.y());
+      min[2] = (std::min<FT>)(min[2], p.z());
+      max[0] = (std::max<FT>)(max[0], p.x());
+      max[1] = (std::max<FT>)(max[1], p.y());
+      max[2] = (std::max<FT>)(max[2], p.z());
     }
 
     m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
