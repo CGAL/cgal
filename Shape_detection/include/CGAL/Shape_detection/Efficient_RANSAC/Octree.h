@@ -547,6 +547,19 @@ public:
   }
 
 
+  Sd_traits m_traits;
+  Bbox_3 m_bBox;
+  Cell *m_root;
+  Point_3 m_center;
+  FT m_width;
+  std::size_t m_bucket_size;
+  std::size_t m_set_max_level;
+  std::size_t m_max_level;
+  Point_map m_point_pmap;
+  Normal_map m_normal_pmap;
+
+private:
+
   // returns index of last point below threshold
   std::size_t split(std::size_t first, std::size_t last, std::size_t dimension, FT threshold) {
     if (last == size_t_max || first == size_t_max)
@@ -600,19 +613,6 @@ public:
             static_cast<unsigned int>(dimension)) < threshold) ?
            first : (first == origFirst) ? size_t_max : first - 1;
   }
-
-  Sd_traits m_traits;
-  Bbox_3 m_bBox;
-  Cell *m_root;
-  Point_3 m_center;
-  FT m_width;
-  std::size_t m_bucket_size;
-  std::size_t m_set_max_level;
-  std::size_t m_max_level;
-  Point_map m_point_pmap;
-  Normal_map m_normal_pmap;
-
-private:
 
   const Bbox_3 &buildBoundingCube() {
     FT min[] = {std::numeric_limits<FT>::infinity(),
