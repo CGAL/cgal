@@ -342,8 +342,7 @@ public:
               //---
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
-                                        transl(cell->center, Vector_3(
-                                                ORIGIN, Point_3(-width, -width, -width))),
+                                        cell->center + Vector_3(ORIGIN, Point_3(-width, -width, -width)),
                                         cell->level + 1);
 
               if (cell->child[7]->size() > m_bucket_size)
@@ -355,8 +354,7 @@ public:
             //+--
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
-                                      transl(cell->center, Vector_3(
-                                              ORIGIN, Point_3(width, -width, -width))),
+                                      cell->center + Vector_3(ORIGIN, Point_3(width, -width, -width)),
                                       cell->level + 1);
 
             if (cell->child[6]->size() > m_bucket_size)
@@ -370,8 +368,7 @@ public:
             //-+-
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
-                                      transl(cell->center, Vector_3(
-                                              ORIGIN, Point_3(-width, width, -width))),
+                                      cell->center + Vector_3(ORIGIN, Point_3(-width, width, -width)),
                                       cell->level + 1);
 
             if (cell->child[5]->size() > m_bucket_size)
@@ -383,8 +380,7 @@ public:
           //++-
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
-                                    transl(cell->center, Vector_3(
-                                            ORIGIN, Point_3(width, width, -width))),
+                                    cell->center + Vector_3(ORIGIN, Point_3(width, width, -width)),
                                     cell->level + 1);
 
           if (cell->child[4]->size() > m_bucket_size)
@@ -399,8 +395,7 @@ public:
             //--+
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
-                                      transl(cell->center, Vector_3(
-                                              ORIGIN, Point_3(-width, -width, width))),
+                                      cell->center + Vector_3(ORIGIN, Point_3(-width, -width, width)),
                                       cell->level + 1);
 
             if (cell->child[3]->size() > m_bucket_size)
@@ -412,8 +407,7 @@ public:
           //+-+
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
-                                    transl(cell->center, Vector_3(
-                                            ORIGIN, Point_3(width, -width, width))),
+                                    cell->center + Vector_3(ORIGIN, Point_3(width, -width, width)),
                                     cell->level + 1);
 
           if (cell->child[2]->size() > m_bucket_size)
@@ -427,8 +421,7 @@ public:
           //-++
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
-                                    transl(cell->center, Vector_3(
-                                            ORIGIN, Point_3(-width, width, width))),
+                                    cell->center + Vector_3(ORIGIN, Point_3(-width, width, width)),
                                     cell->level + 1);
 
           if (cell->child[1]->size() > m_bucket_size)
@@ -441,8 +434,7 @@ public:
           //+++
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
-                                    transl(cell->center, Vector_3(
-                                            ORIGIN, Point_3(width, width, width))),
+                                    cell->center + Vector_3(ORIGIN, Point_3(width, width, width)),
                                     cell->level + 1);
 
           if (cell->child[0]->size() > m_bucket_size)
