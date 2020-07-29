@@ -546,34 +546,6 @@ public:
     return m_bBox;
   }
 
-  const Bbox_3 &buildBoundingCube() {
-    FT min[] = {std::numeric_limits<FT>::infinity(),
-                std::numeric_limits<FT>::infinity(),
-                std::numeric_limits<FT>::infinity()};
-    FT max[] = {-std::numeric_limits<FT>::infinity(),
-                -std::numeric_limits<FT>::infinity(),
-                -std::numeric_limits<FT>::infinity()};
-
-    for (std::size_t i = 0; i < this->size(); i++) {
-      Point_3 p = get(m_point_pmap, *this->at(i));
-      min[0] = (std::min<FT>)(min[0], get_x(p));
-      min[1] = (std::min<FT>)(min[1], get_y(p));
-      min[2] = (std::min<FT>)(min[2], get_z(p));
-      max[0] = (std::max<FT>)(max[0], get_x(p));
-      max[1] = (std::max<FT>)(max[1], get_y(p));
-      max[2] = (std::max<FT>)(max[2], get_z(p));
-    }
-
-    m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
-
-    m_width = (std::max)(max[0] - min[0],
-                         (std::max)(max[1] - min[1], max[2] - min[2])) * (FT) 0.5;
-    m_center = constr_pt((min[0] + max[0]) * (FT) 0.5,
-                         (min[1] + max[1]) * (FT) 0.5,
-                         (min[2] + max[2]) * (FT) 0.5);
-
-    return m_bBox;
-  }
 
   // returns index of last point below threshold
   std::size_t split(std::size_t first, std::size_t last, std::size_t dimension, FT threshold) {
@@ -639,6 +611,37 @@ public:
   std::size_t m_max_level;
   Point_map m_point_pmap;
   Normal_map m_normal_pmap;
+
+private:
+
+  const Bbox_3 &buildBoundingCube() {
+    FT min[] = {std::numeric_limits<FT>::infinity(),
+                std::numeric_limits<FT>::infinity(),
+                std::numeric_limits<FT>::infinity()};
+    FT max[] = {-std::numeric_limits<FT>::infinity(),
+                -std::numeric_limits<FT>::infinity(),
+                -std::numeric_limits<FT>::infinity()};
+
+    for (std::size_t i = 0; i < this->size(); i++) {
+      Point_3 p = get(m_point_pmap, *this->at(i));
+      min[0] = (std::min<FT>)(min[0], get_x(p));
+      min[1] = (std::min<FT>)(min[1], get_y(p));
+      min[2] = (std::min<FT>)(min[2], get_z(p));
+      max[0] = (std::max<FT>)(max[0], get_x(p));
+      max[1] = (std::max<FT>)(max[1], get_y(p));
+      max[2] = (std::max<FT>)(max[2], get_z(p));
+    }
+
+    m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
+
+    m_width = (std::max)(max[0] - min[0],
+                         (std::max)(max[1] - min[1], max[2] - min[2])) * (FT) 0.5;
+    m_center = constr_pt((min[0] + max[0]) * (FT) 0.5,
+                         (min[1] + max[1]) * (FT) 0.5,
+                         (min[2] + max[2]) * (FT) 0.5);
+
+    return m_bBox;
+  }
 };
 }
 }
