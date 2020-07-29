@@ -1029,7 +1029,7 @@ private:
       const Cell *cell = stack.top();
       stack.pop();
 
-      FT width = octree->m_width / (1 << (cell->level));
+      FT width = octree->width() / (1 << (cell->level));
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 

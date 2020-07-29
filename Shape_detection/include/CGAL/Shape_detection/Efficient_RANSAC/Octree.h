@@ -444,7 +444,7 @@ public:
     }
   }
 
-  std::size_t maxLevel() { return m_max_level; }
+  std::size_t maxLevel() const { return m_max_level; }
 
   const Bbox_3 &boundingBox() const { return m_bBox; }
 
