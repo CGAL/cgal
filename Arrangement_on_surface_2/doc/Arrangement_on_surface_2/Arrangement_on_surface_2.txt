@@ -3118,44 +3118,65 @@ also model the `ArrangementLandmarkTraits_2` concept.
 
 We descend to the bottom level of the hierarchy. The refinements
 described in this section provide the requirements imposed on traits
-classes used with arrangements that support unbounded curves and
-arrangements embedded in curved surfaces. In particular, these
-requirements list additional operations that handle boundary
-conditions of curves that either reach the boundary of the parameter
-space (the pre-images of their endpoints lie on the boundary) or
-approach it (the pre-images of their endpoints approach the
-boundary). For each side of the parameter space there are four
-available concepts, models of which can be used to handle open,
-closed, contracted, and identified side,
-respectively. \cgalFootnote{Note that we explicitly distinguish
-closed-only, contracted, and identified sides, although the latter two
-are closed in \f$\Phi\f$ as well.}  Theoretically, this makes for a
-total of \f$4^4 = 256\f$ combinations. However, only a subset of them
-is meaningful. If a side is identified, the opposite side must also be
-identified. In addition, a contracted side must be adjacent to two
-identified sides. This narrows down the number of valid combinations
-to 35.
+classes used with arrangements induced by curves that reach or
+approach any one of the four sides of the parameter space. This
+typically occurs with unbounded curves or with arrangements embedded
+in curved surfaces. In particular, these requirements list additional
+operations that handle boundary conditions of curves that either reach
+the specific sides of the parameter-space boundary (the pre-images of
+their endpoints lie on a boundary side) or approach it (the pre-images
+of their endpoints approach a boundary side).
 
-The types `Left_side_category`, `Right_side_category`,
-`Bottom_side_category`, and `Top_side_category` nested in every model
-of the `ArrangementBasicTraits_2` concept indicate whether the
-corresponding boundary side is open, closed, contracted, or
-identified, respectively, or whether the type of the boundary side is
-irrelevant, as curves inserted into the arrangement are never expected
-to reach the boundary side. In particular, these types nested in
-models of the concepts `ArrangementOpenLeftTraits_2`,
-`ArrangementOpenRightTraits_2`, `ArrangementOpenBottomTraits_2`, and
-`ArrangementOpenTopTraits_2`, respectively, must be convertible to
-`Arr_open_side_tag`. Similarly, these types must be convertible to
-`Arr_closed_side_tag`, `Arr_constracter_side_tag`, or
-`Arr_identified_side_tag` when nested in models of the corresponding
-concepts. For example, the `Arr_rational_function_traits_2`
-traits-model supports unbounded curves; see Section \ref
-arr_ssectr_ratfunc. Thus, all four nested types are defined as
-`Arr_open_side_tag`.  Adversely, all four types nested in the
-`Arr_segment_traits_2` traits-model (see Section \ref arr_ssectr_segs)
-are defined as `Arr_oblivious_side_tag`, as segments are always
-bounded.
+The categories `Left_side_category`, `Right_side_category`,
+`Bottom_side_category`, and `Top_side_category`, nested in every
+geometry traits class indicate whether the corresponding boundary side
+(i.e., left, right, bootom, and top) is open, closed, contracted, or
+identified, and whether this information is relevant at all. When all
+curves inserted into the arrangement are not expected to reach that
+particular boundary side, the information is
+iirelevant.\cgalFootnote{Note that we explicitly distinguish
+closed-only, contracted, and identified sides, although the latter two
+are closed in \f$\Phi\f$ as well.} Each one of the categories above
+must be convertible to one of the type tags listed below according to
+the boundary condition that should be handled.
+
+<ul>
+
+<li>`Arr_open_side_tag`
+<li>`Arr_closed_side_tag`
+<li>`Arr_contracted_side_tag`
+<li>`Arr_identified_side_tag`
+<li>`Arr_oblivious_side_tag`
+
+</ul>
+
+For each of the four sides of the parameter space there are four
+available concepts, models of which can be used to handle open,
+closed, contracted, and identified side, respectively. (When curves
+are not expected to reach or a pproach a particular side, no special
+handling is required; thus, there is no need for corresponding
+concepts.) For example, it is required that the category type \link
+ArrangementOpenBottomTraits_2::Bottom_side_category
+`Bottom_side_category`\endlink, nested in models of the concept
+`ArrangementOpenBottomTraits_2` is convertible to the tag type
+`Arr_open_side_tag`.  This makes for a total of 16 such abstract
+concepts. Any one of these individual concept is useless on its own;
+only refinments of 0, 1, 2, 3, or 4 abstract concepts (which capture
+the conditions that occur in the four sides simultaneously) are
+purposeful. Theoretically, there are \f$\sum_{i=0}^4\binom{i}{4} \cdot
+4^i = 625\f$ such refinements. However, only a subset of them is
+meaningful. If a side is identified, the opposite side must also be
+identified. In addition, a contracted side must be adjacent to two
+identified sides. While this narrows down the number of tangible
+refinements, the total number is still high; in practice we have used
+only two so far, namely, `ArrangementOpenTraits_2` and
+`ArrangementSphericalTraits_2`; see below for more details. Many of
+the traits class-templates provided by the \ref
+PkgArrangementOnSurface2 package do not handle boundary conditions at
+all. Some of them, such as the `Arr_segment_traits_2` traits (see
+Section \ref arr_ssectr_segs) only handle bounded curves. Thus, the
+four category types nested in these models are defined to be
+`Arr_oblivious_side_tag`.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-open_concept_hierarchy,open_concept_hierarchy.png}
