@@ -198,8 +198,6 @@ private:
   // --------------------------------------------------------------------------
   // Utilities
   // --------------------------------------------------------------------------
-  Vector_3 constr_vec(const Point_3 &p, const Point_3 &q) const { return m_traits.construct_vector_3_object()(p, q); }
-
   Point_3 transl(const Point_3 &p, const Vector_3 &v) { return m_traits.construct_translated_point_3_object()(p, v); }
 
 public:
@@ -344,7 +342,7 @@ public:
               //---
               cell->child[7] = new Cell(cell->first,
                                         zLowYLowXSplit,
-                                        transl(cell->center, constr_vec(
+                                        transl(cell->center, Vector_3(
                                                 ORIGIN, Point_3(-width, -width, -width))),
                                         cell->level + 1);
 
@@ -357,7 +355,7 @@ public:
             //+--
             cell->child[6] = new Cell(zLowYLowXSplit + 1,
                                       zLowYSplit,
-                                      transl(cell->center, constr_vec(
+                                      transl(cell->center, Vector_3(
                                               ORIGIN, Point_3(width, -width, -width))),
                                       cell->level + 1);
 
@@ -372,7 +370,7 @@ public:
             //-+-
             cell->child[5] = new Cell(zLowYSplit + 1,
                                       zLowYHighXSplit,
-                                      transl(cell->center, constr_vec(
+                                      transl(cell->center, Vector_3(
                                               ORIGIN, Point_3(-width, width, -width))),
                                       cell->level + 1);
 
@@ -385,7 +383,7 @@ public:
           //++-
           cell->child[4] = new Cell(zLowYHighXSplit + 1,
                                     zSplit,
-                                    transl(cell->center, constr_vec(
+                                    transl(cell->center, Vector_3(
                                             ORIGIN, Point_3(width, width, -width))),
                                     cell->level + 1);
 
@@ -401,7 +399,7 @@ public:
             //--+
             cell->child[3] = new Cell(zSplit + 1,
                                       zHighYLowXSplit,
-                                      transl(cell->center, constr_vec(
+                                      transl(cell->center, Vector_3(
                                               ORIGIN, Point_3(-width, -width, width))),
                                       cell->level + 1);
 
@@ -414,7 +412,7 @@ public:
           //+-+
           cell->child[2] = new Cell(zHighYLowXSplit + 1,
                                     zHighYSplit,
-                                    transl(cell->center, constr_vec(
+                                    transl(cell->center, Vector_3(
                                             ORIGIN, Point_3(width, -width, width))),
                                     cell->level + 1);
 
@@ -429,7 +427,7 @@ public:
           //-++
           cell->child[1] = new Cell(zHighYSplit + 1,
                                     zHighYHighXSplit,
-                                    transl(cell->center, constr_vec(
+                                    transl(cell->center, Vector_3(
                                             ORIGIN, Point_3(-width, width, width))),
                                     cell->level + 1);
 
@@ -443,7 +441,7 @@ public:
           //+++
           cell->child[0] = new Cell(zHighYHighXSplit + 1,
                                     cell->last,
-                                    transl(cell->center, constr_vec(
+                                    transl(cell->center, Vector_3(
                                             ORIGIN, Point_3(width, width, width))),
                                     cell->level + 1);
 
