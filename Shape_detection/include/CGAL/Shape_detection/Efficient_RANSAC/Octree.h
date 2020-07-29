@@ -198,18 +198,6 @@ private:
   // --------------------------------------------------------------------------
   // Utilities
   // --------------------------------------------------------------------------
-  FT get_x(const Vector_3 &v) { return m_traits.compute_x_3_object()(v); }
-
-  FT get_y(const Vector_3 &v) { return m_traits.compute_y_3_object()(v); }
-
-  FT get_z(const Vector_3 &v) { return m_traits.compute_z_3_object()(v); }
-
-  FT get_x(const Point_3 &p) { return m_traits.compute_x_3_object()(p); }
-
-  FT get_y(const Point_3 &p) { return m_traits.compute_y_3_object()(p); }
-
-  FT get_z(const Point_3 &p) { return m_traits.compute_z_3_object()(p); }
-
   FT get_coord(const Point_3 &p, unsigned int d) {
     CGAL_assertion(d < 3);
     switch (d) {
