@@ -572,34 +572,26 @@ private:
 
     while (first < last) {
       // find first above threshold
-      while (get_coord(
-              get(m_point_pmap, *this->at(first)),
-              static_cast<unsigned int>(dimension)) < threshold
+      while (get(m_point_pmap, *this->at(first))[dimension] < threshold
              && first < last) {
         first++;
       }
 
       // check if last has been reached
       if (first == last) {
-        return (get_coord(
-                get(m_point_pmap, *this->at(first)),
-                static_cast<unsigned int>(dimension)) < threshold) ?
+        return (get(m_point_pmap, *this->at(first))[dimension] < threshold) ?
                first : (first == origFirst) ? size_t_max : first - 1;
       }
 
       // find last below threshold
-      while (get_coord(
-              get(m_point_pmap, *this->at(last)),
-              static_cast<unsigned int>(dimension)) >= threshold
+      while (get(m_point_pmap, *this->at(last))[dimension] >= threshold
              && last > first) {
         last--;
       }
 
       // check if first has been reached
       if (last == first) {
-        return (get_coord(
-                get(m_point_pmap, *this->at(first)),
-                static_cast<unsigned int>(dimension)) < threshold) ?
+        return (get(m_point_pmap, *this->at(first))[dimension] < threshold) ?
                first : (first == origFirst) ? size_t_max : first - 1;
       }
 
@@ -608,9 +600,7 @@ private:
       last--;
     }
 
-    return (get_coord(
-            get(m_point_pmap, *this->at(first)),
-            static_cast<unsigned int>(dimension)) < threshold) ?
+    return (get(m_point_pmap, *this->at(first))[dimension] < threshold) ?
            first : (first == origFirst) ? size_t_max : first - 1;
   }
 
