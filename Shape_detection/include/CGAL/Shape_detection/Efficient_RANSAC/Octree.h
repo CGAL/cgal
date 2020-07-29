@@ -488,6 +488,7 @@ public:
     }
   }
 
+  // TODO: Can this be externalized?
   bool drawSamplesFromCellContainingPoint(const Point_3 &p,
                                           std::size_t level,
                                           std::set<std::size_t> &indices,
@@ -539,10 +540,6 @@ public:
 
   std::size_t maxLevel() {
     return m_max_level;
-  }
-
-  void setBucketSize(std::size_t bucketSize) {
-    m_bucket_size = bucketSize;
   }
 
   const Bbox_3 &boundingBox() {
