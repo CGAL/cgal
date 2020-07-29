@@ -198,20 +198,6 @@ private:
   // --------------------------------------------------------------------------
   // Utilities
   // --------------------------------------------------------------------------
-  FT get_coord(const Point_3 &p, unsigned int d) {
-    CGAL_assertion(d < 3);
-    switch (d) {
-      case 0:
-        return p.x();
-      case 1:
-        return p.y();
-      case 2:
-        return p.z();
-      default:
-        return FT(0);
-    }
-  }
-
   Point_3 constr_pt(FT x, FT y, FT z) const { return m_traits.construct_point_3_object()(x, y, z); }
 
   Vector_3 constr_vec(const Point_3 &p, const Point_3 &q) const { return m_traits.construct_vector_3_object()(p, q); }
