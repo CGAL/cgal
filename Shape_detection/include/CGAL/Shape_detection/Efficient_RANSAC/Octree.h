@@ -163,7 +163,6 @@ class Octree : public PointAccessor {
   typedef typename Sd_traits::Vector_3 Vector_3;
   typedef typename Sd_traits::FT FT;
   typedef typename Sd_traits::Point_map Point_map;
-  typedef typename Sd_traits::Normal_map Normal_map;
 
 public:
 
@@ -202,7 +201,6 @@ public:
          const Input_iterator &first,
          const Input_iterator &beyond,
          Point_map &point_pmap,
-         Normal_map &normal_pmap,
          std::size_t offset = 0,
          std::size_t bucketSize = 20,
          std::size_t maxLevel = 10)
@@ -211,8 +209,8 @@ public:
             m_root(nullptr),
             m_bucket_size(bucketSize),
             m_set_max_level(maxLevel),
-            m_point_pmap(point_pmap),
-            m_normal_pmap(normal_pmap) {}
+            m_point_pmap(point_pmap)
+            {}
 
   ~Octree() {
     if (!m_root)
@@ -463,7 +461,6 @@ private:
   std::size_t m_set_max_level;
   std::size_t m_max_level;
   Point_map m_point_pmap;
-  Normal_map m_normal_pmap;
 
 private:
 
