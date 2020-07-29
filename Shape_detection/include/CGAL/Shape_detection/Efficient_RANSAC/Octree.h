@@ -193,14 +193,8 @@ public:
     }
   };
 
-private:
-
-  // --------------------------------------------------------------------------
-  // Utilities
-  // --------------------------------------------------------------------------
-  Point_3 transl(const Point_3 &p, const Vector_3 &v) { return p + v; }
-
 public:
+
   Octree(Sd_traits const &traits)
           : m_traits(traits), m_bucket_size(20), m_set_max_level(10), m_root(nullptr) {}
 
