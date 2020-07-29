@@ -198,7 +198,7 @@ private:
   // --------------------------------------------------------------------------
   // Utilities
   // --------------------------------------------------------------------------
-  Point_3 transl(const Point_3 &p, const Vector_3 &v) { return m_traits.construct_translated_point_3_object()(p, v); }
+  Point_3 transl(const Point_3 &p, const Vector_3 &v) { return p + v; }
 
 public:
   Octree(Sd_traits const &traits)
