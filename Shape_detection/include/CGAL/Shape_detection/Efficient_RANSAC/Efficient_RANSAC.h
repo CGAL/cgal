@@ -557,13 +557,14 @@ public:
                       static_cast<unsigned int>(m_num_available_points));
             while (m_shape_index[first_sample] != -1);
 
-            done = m_global_octree->drawSamplesFromCellContainingPoint(
-                    get(m_point_pmap,
-                        *(m_input_iterator_first + first_sample)),
-                    select_random_octree_level(),
-                    indices,
-                    m_shape_index,
-                    required_samples);
+            done =
+                    drawSamplesFromCellContainingPoint(m_global_octree,
+                                                       get(m_point_pmap,
+                                                           *(m_input_iterator_first + first_sample)),
+                                                       select_random_octree_level(),
+                                                       indices,
+                                                       m_shape_index,
+                                                       required_samples);
 
             if (callback && !callback(num_invalid / double(m_num_total_points)))
               return false;
@@ -1013,7 +1014,8 @@ private:
 
   // TODO: Make these work outside the octree!
   template<class PointAccessor>
-  std::size_t score(internal::Octree<PointAccessor> *octree, Shape *candidate,
+  std::size_t score(internal::Octree<PointAccessor> *octree,
+                    Shape *candidate,
                     std::vector<int> &shapeIndex,
                     FT epsilon,
                     FT normal_threshold) {
@@ -1059,6 +1061,59 @@ private:
     }
 
     return candidate->m_indices.size();
+  }
+
+  template<class PointAccessor>
+  bool drawSamplesFromCellContainingPoint(internal::Octree<PointAccessor> *octree,
+                                          const Point &p,
+                                          std::size_t level,
+                                          std::set<std::size_t> &indices,
+                                          const std::vector<int> &shapeIndex,
+                                          std::size_t requiredSamples) {
+
+    typedef typename internal::Octree<PointAccessor>::Cell Cell;
+
+    bool upperZ, upperY, upperX;
+    Cell *cur = octree->m_root;
+
+    while (cur && cur->level < level) {
+      upperX = cur->center.x() <= p.x();
+      upperY = cur->center.y() <= p.y();
+      upperZ = cur->center.z() <= p.z();
+
+      if (upperZ) {
+        if (upperY)
+          cur = (upperX) ? cur->child[0] : cur->child[1];
+        else cur = (upperX) ? cur->child[2] : cur->child[3];
+      } else {
+        if (upperY)
+          cur = (upperX) ? cur->child[4] : cur->child[5];
+        else cur = (upperX) ? cur->child[6] : cur->child[7];
+      }
+    }
+
+    if (cur) {
+      std::size_t enough = 0;
+      for (std::size_t i = cur->first; i <= cur->last; i++) {
+        std::size_t j = octree->index(i);
+        if (shapeIndex[j] == -1) {
+          enough++;
+          if (enough >= requiredSamples)
+            break;
+        }
+      }
+      if (enough >= requiredSamples) {
+        do {
+          std::size_t p = CGAL::get_default_random().
+                  uniform_int<std::size_t>(0, cur->size() - 1);
+          std::size_t j = octree->index(cur->first + p);
+          if (shapeIndex[j] == -1)
+            indices.insert(j);
+        } while (indices.size() < requiredSamples);
+
+        return true;
+      } else return false;
+    } else return false;
   }
 
 private:
